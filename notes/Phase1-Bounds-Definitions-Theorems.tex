@@ -1,23 +1,7 @@
 % ============================================================
 % Phase 1: Bounds, Supremum/Infimum, and Core Preliminaries
-% INCLUDE FILE: meant to be used with \input{...}
+% INCLUDE FILE — NO PREAMBLE COMMANDS
 % ============================================================
-% Improve spacing around theorem environments
-\usepackage{mathtools}
-\usepackage{setspace}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
-
-\theoremstyle{plain}
-\newtheorem{theorem}[definition]{Theorem}
-\newtheorem{axiom}[definition]{Axiom}
-
-\theoremstyle{remark}
-\newtheorem{remark}[definition]{Remark}
-\newtheorem{noteenv}[definition]{Note}
-
-\setlength{\parskip}{0.6em}
-\setlength{\parindent}{0pt}
 
 \section{Number Systems and Basic Structure}
 
@@ -29,39 +13,35 @@
 \Q &= \left\{\frac{m}{n} : m\in\Z,\ n\in\N\right\}.
 \end{aligned}
 \]
-
-
 \end{definition}
 
 \begin{remark}
-Some authors define $\N=\{0,1,2,\dots\}$. In this document we follow the convention
-$\N=\{1,2,3,\dots\}$ unless otherwise stated.
+Some authors define $\N=\{0,1,2,\dots\}$.  
+In this document we follow the convention $\N=\{1,2,3,\dots\}$ unless stated otherwise.
 \end{remark}
 
 % ============================================================
 \section{Peano Axioms and Induction}
 % ============================================================
 
-\begin{axiom}[Peano axioms (one common formulation)]
-There is a set $\N_0$ of natural numbers containing a distinguished element $0$ and a successor function
-$S:\N_0\to\N_0$ satisfying:
+\begin{axiom}[Peano axioms]
+There exists a set $\N_0$, an element $0\in\N_0$, and a successor function
+$S:\N_0\to\N_0$ such that:
 \begin{enumerate}
   \item $0\in\N_0$.
-  \item For every $n\in\N_0$, $S(n)\in\N_0$.
+  \item If $n\in\N_0$, then $S(n)\in\N_0$.
   \item There is no $n\in\N_0$ such that $S(n)=0$.
-  \item If $S(n)=S(m)$ then $n=m$ (injectivity of successor).
-  \item (Induction axiom) If $A\subseteq \N_0$ contains $0$ and satisfies $n\in A\Rightarrow S(n)\in A$,
-  then $A=\N_0$.
+  \item If $S(n)=S(m)$, then $n=m$.
+  \item (Induction axiom)  
+  If $A\subseteq\N_0$ satisfies $0\in A$ and
+  $n\in A\Rightarrow S(n)\in A$, then $A=\N_0$.
 \end{enumerate}
 \end{axiom}
 
 \begin{theorem}[Principle of mathematical induction]
-Let $P(n)$ be a statement about $n\in\N$. If:
-\begin{enumerate}
-  \item $P(1)$ is true, and
-  \item for all $k\in\N$, $P(k)\Rightarrow P(k+1)$,
-\end{enumerate}
-then $P(n)$ is true for all $n\in\N$.
+Let $P(n)$ be a statement about $n\in\N$.  
+If $P(1)$ is true and $P(k)\Rightarrow P(k+1)$ for all $k\in\N$,  
+then $P(n)$ holds for all $n\in\N$.
 \end{theorem}
 
 \begin{theorem}[Well-ordering principle]
@@ -69,7 +49,7 @@ Every nonempty subset of $\N$ has a least element.
 \end{theorem}
 
 \begin{remark}
-The well-ordering principle and the principle of induction are equivalent (over standard foundational systems).
+The well-ordering principle and mathematical induction are equivalent.
 \end{remark}
 
 % ============================================================
@@ -81,9 +61,9 @@ A function $f:A\to B$ assigns to each $a\in A$ a unique element $f(a)\in B$.
 \end{definition}
 
 \begin{definition}[Injective (one-to-one)]
-A function $f:A\to B$ is \emph{injective} if for all $x_1,x_2\in A$,
+A function $f:A\to B$ is injective if
 \[
-f(x_1)=f(x_2)\;\Rightarrow\; x_1=x_2.
+f(x_1)=f(x_2)\;\Rightarrow\;x_1=x_2.
 \]
 \end{definition}
 
@@ -92,354 +72,97 @@ f(x_1)=f(x_2)\;\Rightarrow\; x_1=x_2.
 % ============================================================
 
 \begin{definition}[Cardinality]
-Two sets $A$ and $B$ have the same \emph{cardinality} if there exists a bijection $f:A\to B$.
-The cardinality of $A$ is denoted $|A|$.
+Two sets $A$ and $B$ have the same cardinality if there exists a bijection $A\to B$.
 \end{definition}
 
 \begin{definition}[Countable]
-A set $S$ is \emph{countable} if it is finite or if there exists a bijection $S\to\N$.
+A set is countable if it is finite or admits a bijection with $\N$.
 \end{definition}
 
-\begin{theorem}[Schr\"oder--Bernstein (Cantor--Bernstein)]
-Let $A$ and $B$ be sets. If there exist injections $f:A\to B$ and $g:B\to A$,
-then there exists a bijection $h:A\to B$. In particular, $|A|=|B|$.
+\begin{theorem}[Schr\"oder--Bernstein]
+If there exist injections $A\to B$ and $B\to A$, then $|A|=|B|$.
 \end{theorem}
 
-\begin{theorem}[Countability and uncountability]
-The sets $\Z$ and $\Q$ are countable. The set $\R$ is uncountable.
+\begin{theorem}
+The sets $\Z$ and $\Q$ are countable, while $\R$ is uncountable.
 \end{theorem}
 
 % ============================================================
-\section{Absolute Value and Distance on \texorpdfstring{$\R$}{R}}
+\section[Absolute Value and Distance]{Absolute Value and Distance on $\R$}
 % ============================================================
 
 \begin{definition}[Absolute value]
-For $x\in\R$,
 \[
 |x|=\begin{cases}
-x, & x\ge 0,\\
--x,& x<0.
+x,&x\ge0,\\
+-x,&x<0.
 \end{cases}
 \]
 \end{definition}
 
-\begin{theorem}[Basic properties of absolute value]
-For all $x,y\in\R$:
-\begin{enumerate}
-  \item (Nonnegativity) $|x|\ge 0$, and $|x|=0\iff x=0$.
-  \item (Multiplicativity) $|xy|=|x||y|$.
-  \item (Triangle inequality) $|x+y|\le |x|+|y|$.
-\end{enumerate}
+\begin{theorem}[Triangle inequality]
+For all $x,y\in\R$,
+\[
+|x+y|\le|x|+|y|.
+\]
 \end{theorem}
 
-\begin{definition}[Distance on the real line]
-Define $d:\R\times\R\to\R$ by
+\begin{definition}[Distance on $\R$]
 \[
 d(x,y)=|x-y|.
 \]
 \end{definition}
 
-\begin{theorem}[Metric properties on $\R$]
-For all $x,y,z\in\R$, the function $d(x,y)=|x-y|$ satisfies:
-\begin{enumerate}
-  \item (Nonnegativity) $d(x,y)\ge 0$.
-  \item (Identity of indiscernibles) $d(x,y)=0 \iff x=y$.
-  \item (Symmetry) $d(x,y)=d(y,x)$.
-  \item (Triangle inequality) $d(x,z)\le d(x,y)+d(y,z)$.
-\end{enumerate}
-\end{theorem}
-
 \begin{theorem}[$\varepsilon$-characterization of equality]
-Let $a,b\in\R$. Then $a=b$ if and only if
+For $a,b\in\R$,
 \[
-\forall \varepsilon>0,\quad |a-b|<\varepsilon.
+a=b \iff (\forall\varepsilon>0)\ |a-b|<\varepsilon.
 \]
 \end{theorem}
 
-\begin{noteenv}[Future problem]
-Prove the $\varepsilon$-characterization of equality and add it to a problem set later.
+\begin{noteenv}
+Add a proof of this characterization to a later problem set.
 \end{noteenv}
 
 % ============================================================
-\section{Ordered Field Framework (Field Axioms + Order Properties)}
+\section[Bounds and Completeness]{Bounds, Suprema, Infima, and Completeness}
 % ============================================================
 
-\subsection{Field axioms (algebraic structure)}
-\begin{axiom}[Field axioms for $\R$]
-The set $\R$ is equipped with operations $+$ and $\cdot$ such that:
-\begin{enumerate}
-  \item (Additive associativity) $(a+b)+c=a+(b+c)$.
-  \item (Additive commutativity) $a+b=b+a$.
-  \item (Additive identity) $\exists 0\in\R$ such that $a+0=a$.
-  \item (Additive inverses) $\forall a\in\R,\exists (-a)\in\R$ with $a+(-a)=0$.
-  \item (Multiplicative associativity) $(ab)c=a(bc)$.
-  \item (Multiplicative commutativity) $ab=ba$.
-  \item (Multiplicative identity) $\exists 1\in\R$, $1\ne 0$, such that $a\cdot 1=a$.
-  \item (Multiplicative inverses) $\forall a\in\R\setminus\{0\},\exists a^{-1}\in\R$ with $aa^{-1}=1$.
-  \item (Distributivity) $a(b+c)=ab+ac$.
-\end{enumerate}
-\end{axiom}
-
-\subsection{Order axioms (order structure)}
-\begin{axiom}[Order axioms / ordered field properties (standard list)]
-The set $\R$ has a total order $<$ compatible with addition and multiplication:
-\begin{enumerate}
-  \item (Trichotomy) For $a,b\in\R$, exactly one of $a<b$, $a=b$, $a>b$ holds.
-  \item (Transitivity) If $a<b$ and $b<c$, then $a<c$.
-  \item (Additive monotonicity) If $a<b$, then $a+c<b+c$ for all $c\in\R$.
-  \item (Multiplicative monotonicity) If $a<b$ and $c>0$, then $ac<bc$.
-\end{enumerate}
-\end{axiom}
-
-% ============================================================
-\section{Bounds, Suprema, Infima, and Completeness}
-% ============================================================
-
-\subsection{Bounds and unboundedness}
-
-\begin{definition}[Upper bound / lower bound]
+\begin{definition}[Upper and lower bounds]
 Let $A\subseteq\R$.
 \begin{itemize}
-  \item A number $U\in\R$ is an \emph{upper bound} of $A$ if $\forall a\in A,\; a\le U$.
-  \item A number $L\in\R$ is a \emph{lower bound} of $A$ if $\forall a\in A,\; L\le a$.
+  \item $U$ is an upper bound if $a\le U$ for all $a\in A$.
+  \item $L$ is a lower bound if $L\le a$ for all $a\in A$.
 \end{itemize}
 \end{definition}
 
-\begin{definition}[Unbounded]
-A set $A\subseteq\R$ is \emph{unbounded above} if it has no upper bound, i.e.
-\[
-\forall M\in\R,\;\exists a\in A \text{ such that } a>M.
-\]
-Similarly, $A$ is \emph{unbounded below} if $\forall m\in\R,\exists a\in A$ such that $a<m$.
-If both occur, $A$ is \emph{unbounded}.
+\begin{definition}[Supremum]
+$\alpha=\sup A$ if $\alpha$ is an upper bound of $A$ and
+for every $\varepsilon>0$ there exists $a\in A$ with $\alpha-\varepsilon<a$.
 \end{definition}
 
-\begin{definition}[$\varepsilon$-upper bound formulation (buffered bound)]
-Let $A\subseteq\R$. A number $U\in\R$ is an upper bound of $A$ if and only if
-\[
-\forall \varepsilon>0,\;\forall a\in A,\quad a\le U+\varepsilon.
-\]
-Similarly, $L\in\R$ is a lower bound of $A$ if and only if
-\[
-\forall \varepsilon>0,\;\forall a\in A,\quad L-\varepsilon\le a.
-\]
+\begin{definition}[Infimum]
+$\beta=\inf A$ if $\beta$ is a lower bound of $A$ and
+for every $\varepsilon>0$ there exists $a\in A$ with $a<\beta+\varepsilon$.
 \end{definition}
 
-\begin{noteenv}[Future problem]
-Prove the $\varepsilon$-upper/lower bound formulations and add them to a problem set later.
-\end{noteenv}
-
-\subsection{Visualizing bounds and $\varepsilon$-definitions}
-
-% ---------- Figure A: epsilon approximation for sup/inf ----------
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[x=1cm,y=1cm,>=Latex]
-
-\def\xL{0}
-\def\xR{14}
-\def\infA{4}
-\def\supA{10.5}
-\def\eps{1.5}
-\def\aSup{9.8}
-\def\aInf{4.6}
-
-\draw[thick] (\xL,0) -- (\xR,0);
-
-\draw[line width=3pt] (\infA+0.3,0) -- (\supA-0.9,0);
-\foreach \x in {9.3,9.6,9.85,10.1} {
-  \fill (\x,0) circle (2pt);
-}
-\node[below] at ({(\infA+\supA)/2},-0.4) {$A$};
-
-\draw[decorate,decoration={brace,amplitude=6pt}]
-(\xL,-0.8) -- (\infA,-0.8);
-\node[below] at ({(\xL+\infA)/2},-1.2) {lower bounds};
-
-\draw[decorate,decoration={brace,amplitude=6pt}]
-(\supA,-0.8) -- (\xR,-0.8);
-\node[below] at ({(\supA+\xR)/2},-1.2) {upper bounds};
-
-\draw[thick] (\infA,0) -- (\infA,0.55);
-\node[above] at (\infA,0.55) {$\inf A$};
-
-\draw[thick] (\supA,0) -- (\supA,0.55);
-\node[above] at (\supA,0.55) {$\sup A$};
-
-\draw[thick] (\supA-\eps,0) -- (\supA,0);
-\draw[<->] (\supA-\eps,0.9) -- (\supA,0.9);
-\node[above] at (\supA-\eps/2,0.9) {$\varepsilon$};
-
-\fill (\aSup,0) circle (2.5pt);
-\node[above right] at (\aSup,0.05) {$a\in A$};
-
-\node[align=left] at (12.4,1.7)
-{$\forall \varepsilon>0\ \exists a\in A$\\
-$\sup A-\varepsilon<a\le \sup A$};
-
-\draw[thick] (\infA,0) -- (\infA+\eps,0);
-\draw[<->] (\infA,0.9) -- (\infA+\eps,0.9);
-\node[above] at (\infA+\eps/2,0.9) {$\varepsilon$};
-
-\fill (\aInf,0) circle (2.5pt);
-\node[above left] at (\aInf,0.05) {$a\in A$};
-
-\node[align=left] at (2.2,1.7)
-{$\forall \varepsilon>0\ \exists a\in A$\\
-$\inf A\le a<\inf A+\varepsilon$};
-
-\end{tikzpicture}
-\caption{Supremum and infimum via the $\varepsilon$-approximation property.}
-\end{figure}
-
-% ---------- Figure B: epsilon-buffered upper/lower bounds ----------
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[x=1cm,y=1cm,>=Latex]
-
-\def\xL{0}
-\def\xR{14}
-\def\infA{4}
-\def\supA{10.5}
-\def\eps{1.4}
-
-\draw[thick] (\xL,0) -- (\xR,0);
-
-\draw[line width=3pt] (\infA+0.3,0) -- (\supA-0.9,0);
-\foreach \x in {9.3,9.6,9.9,10.15} {
-  \fill (\x,0) circle (2pt);
-}
-\node[below] at ({(\infA+\supA)/2},-0.4) {$A$};
-
-\draw[thick] (\supA,0) -- (\supA,0.55);
-\node[above] at (\supA,0.55) {$U=\sup A$};
-
-\draw[dashed,thick] (\supA+\eps,0) -- (\supA+\eps,0.55);
-\node[above] at (\supA+\eps,0.55) {$U+\varepsilon$};
-
-\draw[decorate,decoration={brace,amplitude=6pt}]
-(\supA,0.9) -- (\supA+\eps,0.9);
-\node[above] at (\supA+\eps/2,0.9) {$\varepsilon$};
-
-\node[align=left] at (12.2,1.9)
-{$\forall a\in A$\\
-$a\le U+\varepsilon$};
-
-\draw[thick] (\infA,0) -- (\infA,0.55);
-\node[above] at (\infA,0.55) {$L=\inf A$};
-
-\draw[dashed,thick] (\infA-\eps,0) -- (\infA-\eps,0.55);
-\node[above] at (\infA-\eps,0.55) {$L-\varepsilon$};
-
-\draw[decorate,decoration={brace,amplitude=6pt}]
-(\infA-\eps,0.9) -- (\infA,0.9);
-\node[above] at (\infA-\eps/2,0.9) {$\varepsilon$};
-
-\node[align=left] at (2.3,1.9)
-{$\forall a\in A$\\
-$L-\varepsilon\le a$};
-
-\end{tikzpicture}
-\caption{Upper and lower bounds with $\varepsilon$-buffers.}
-\end{figure}
-
-\subsection{Supremum, infimum, maximum, minimum}
-
-\begin{definition}[Supremum (least upper bound)]
-Let $A\subseteq\R$ be nonempty and bounded above. A number $\alpha\in\R$ is the \emph{supremum} of $A$,
-written $\alpha=\sup A$, if:
-\begin{enumerate}
-  \item $\alpha$ is an upper bound of $A$, and
-  \item for every $\varepsilon>0$ there exists $a\in A$ such that $\alpha-\varepsilon<a$.
-\end{enumerate}
-\end{definition}
-
-\begin{definition}[Infimum (greatest lower bound)]
-Let $A\subseteq\R$ be nonempty and bounded below. A number $\beta\in\R$ is the \emph{infimum} of $A$,
-written $\beta=\inf A$, if:
-\begin{enumerate}
-  \item $\beta$ is a lower bound of $A$, and
-  \item for every $\varepsilon>0$ there exists $a\in A$ such that $a<\beta+\varepsilon$.
-\end{enumerate}
-\end{definition}
-
-\begin{definition}[Maximum and minimum]
-Let $A\subseteq\R$.
-\begin{itemize}
-  \item $M\in A$ is a \emph{maximum} of $A$ if $\forall a\in A,\ a\le M$.
-  \item $m\in A$ is a \emph{minimum} of $A$ if $\forall a\in A,\ m\le a$.
-\end{itemize}
-\end{definition}
-
-\begin{remark}
-If $\max A$ exists, then $\max A=\sup A$. If $\min A$ exists, then $\min A=\inf A$.
-The key distinction is: maxima/minima must belong to the set.
-\end{remark}
-
-\subsection{Completeness}
-
-\begin{axiom}[Axiom of completeness (least upper bound property)]
-Every nonempty subset of $\R$ that is bounded above has a least upper bound (a supremum) in $\R$.
+\begin{axiom}[Completeness]
+Every nonempty subset of $\R$ that is bounded above has a supremum in $\R$.
 \end{axiom}
 
 % ============================================================
-\section{Core Consequences and Standard Theorems}
+\section{Standard Consequences}
 % ============================================================
 
 \begin{theorem}[Archimedean property]
-For every real number $x\in\R$ there exists $n\in\N$ such that $n>x$.
-Equivalently, for every $y>0$ there exists $m\in\N$ such that $\frac{1}{m}<y$.
+For every $x\in\R$ there exists $n\in\N$ such that $n>x$.
 \end{theorem}
 
-\begin{theorem}[Density of the rationals in the reals]
-For any $a,b\in\R$ with $a<b$, there exists $q\in\Q$ such that
-\[
-a<q<b.
-\]
+\begin{theorem}[Density of $\Q$ in $\R$]
+For any $a<b$ in $\R$ there exists $q\in\Q$ with $a<q<b$.
 \end{theorem}
-
-\begin{remark}
-Trivially, $\R$ is dense in $\R$ (between any two distinct reals lies another real).
-The density statement of real analysis interest is the density of $\Q$ in $\R$.
-\end{remark}
 
 \begin{theorem}[Nested interval property]
-Let $\{[a_n,b_n]\}_{n=1}^\infty$ be a sequence of closed intervals such that
-\[
-[a_1,b_1]\supseteq [a_2,b_2]\supseteq [a_3,b_3]\supseteq \cdots.
-\]
-Then
-\[
-\bigcap_{n=1}^\infty [a_n,b_n]\neq\varnothing.
-\]
-Moreover, if $b_n-a_n\to 0$, then the intersection consists of exactly one point.
+If $[a_n,b_n]$ is a nested sequence of closed intervals, then
+$\bigcap_{n=1}^\infty [a_n,b_n]\neq\varnothing$.
 \end{theorem}
-
-% ============================================================
-\section{Notes for Future Problem Sets (Proof Targets)}
-% ============================================================
-
-\begin{noteenv}[Transformation rules for bounds/sup/inf]
-Write proofs for how bounds, supremum, and infimum behave under:
-\begin{itemize}
-  \item translations $A\mapsto A+r=\{a+r:a\in A\}$,
-  \item scalings $A\mapsto cA=\{ca:a\in A\}$ (separate cases $c>0$ and $c<0$),
-\end{itemize}
-and do this for:
-\[
-\text{upper/lower bounds, }\sup,\inf,\max,\min.
-\]
-\end{noteenv}
-
-\begin{noteenv}[Union/intersection rules for sup/inf and bounds]
-Write proofs for relationships involving unions and intersections, e.g.
-\[
-\sup(A\cup B),\ \inf(A\cup B),\ \sup(A\cap B),\ \inf(A\cap B),
-\]
-and corresponding statements about upper/lower bounds (under appropriate hypotheses, e.g. nonempty intersections).
-\end{noteenv}
-
-\begin{noteenv}[Exercise: translation of supremum/infimum]
-Let $A\subseteq\R$ and define $B=\{x+r:\ x\in A\}$ for a fixed real $r$.
-Prove the relationship between $\sup A$ and $\sup B$ (and similarly for $\inf$).
-\end{noteenv}
