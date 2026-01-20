@@ -1,6 +1,7 @@
 % ============================================================
-% Phase 1: Bounds, Supremum/Infimum, and Core Preliminaries
-% INCLUDE FILE — NO PREAMBLE COMMANDS
+% Phase 1: Foundations for Real Analysis
+% Core Definitions, Axioms, and Theorems
+% INCLUDE FILE — to be used with \input{...}
 % ============================================================
 
 \section{Number Systems and Basic Structure}
@@ -17,7 +18,7 @@
 
 \begin{remark}
 Some authors define $\N=\{0,1,2,\dots\}$.  
-In this document we follow the convention $\N=\{1,2,3,\dots\}$ unless stated otherwise.
+In this document we follow the convention $\N=\{1,2,3,\dots\}$ unless otherwise stated.
 \end{remark}
 
 % ============================================================
@@ -25,16 +26,16 @@ In this document we follow the convention $\N=\{1,2,3,\dots\}$ unless stated oth
 % ============================================================
 
 \begin{axiom}[Peano axioms]
-There exists a set $\N_0$, an element $0\in\N_0$, and a successor function
-$S:\N_0\to\N_0$ such that:
+There exists a set $\N_0$, a distinguished element $0\in\N_0$, and a successor function
+$S:\N_0\to\N_0$ satisfying:
 \begin{enumerate}
   \item $0\in\N_0$.
   \item If $n\in\N_0$, then $S(n)\in\N_0$.
   \item There is no $n\in\N_0$ such that $S(n)=0$.
   \item If $S(n)=S(m)$, then $n=m$.
   \item (Induction axiom)  
-  If $A\subseteq\N_0$ satisfies $0\in A$ and
-  $n\in A\Rightarrow S(n)\in A$, then $A=\N_0$.
+  If $A\subseteq\N_0$ contains $0$ and satisfies  
+  $n\in A \Rightarrow S(n)\in A$, then $A=\N_0$.
 \end{enumerate}
 \end{axiom}
 
@@ -49,7 +50,7 @@ Every nonempty subset of $\N$ has a least element.
 \end{theorem}
 
 \begin{remark}
-The well-ordering principle and mathematical induction are equivalent.
+The well-ordering principle and the principle of induction are equivalent.
 \end{remark}
 
 % ============================================================
@@ -63,7 +64,7 @@ A function $f:A\to B$ assigns to each $a\in A$ a unique element $f(a)\in B$.
 \begin{definition}[Injective (one-to-one)]
 A function $f:A\to B$ is injective if
 \[
-f(x_1)=f(x_2)\;\Rightarrow\;x_1=x_2.
+f(x_1)=f(x_2)\Rightarrow x_1=x_2.
 \]
 \end{definition}
 
@@ -88,14 +89,15 @@ The sets $\Z$ and $\Q$ are countable, while $\R$ is uncountable.
 \end{theorem}
 
 % ============================================================
-\section[Absolute Value and Distance]{Absolute Value and Distance on $\R$}
+\section{Absolute Value and Distance on $\R$}
 % ============================================================
 
 \begin{definition}[Absolute value]
 \[
-|x|=\begin{cases}
-x,&x\ge0,\\
--x,&x<0.
+|x|=
+\begin{cases}
+x, & x\ge 0,\\
+-x, & x<0.
 \end{cases}
 \]
 \end{definition}
@@ -103,11 +105,11 @@ x,&x\ge0,\\
 \begin{theorem}[Triangle inequality]
 For all $x,y\in\R$,
 \[
-|x+y|\le|x|+|y|.
+|x+y|\le |x|+|y|.
 \]
 \end{theorem}
 
-\begin{definition}[Distance on $\R$]
+\begin{definition}[Distance on the real line]
 \[
 d(x,y)=|x-y|.
 \]
@@ -116,53 +118,83 @@ d(x,y)=|x-y|.
 \begin{theorem}[$\varepsilon$-characterization of equality]
 For $a,b\in\R$,
 \[
-a=b \iff (\forall\varepsilon>0)\ |a-b|<\varepsilon.
+a=b \iff (\forall \varepsilon>0)\ |a-b|<\varepsilon.
 \]
 \end{theorem}
 
 \begin{noteenv}
-Add a proof of this characterization to a later problem set.
+Add a proof of this characterization to a future problem set.
 \end{noteenv}
 
 % ============================================================
-\section[Bounds and Completeness]{Bounds, Suprema, Infima, and Completeness}
+\section{Bounds, Suprema, Infima, and Completeness}
 % ============================================================
+
+\subsection{Visualizing bounds and $\varepsilon$-definitions}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,>=Latex]
+\def\xL{0}\def\xR{14}\def\infA{4}\def\supA{10.5}\def\eps{1.5}
+\draw[thick] (\xL,0)--(\xR,0);
+\draw[line width=3pt] (\infA+0.3,0)--(\supA-0.9,0);
+\node[below] at ({(\infA+\supA)/2},-0.4) {$A$};
+\draw[thick] (\infA,0)--(\infA,0.5);
+\draw[thick] (\supA,0)--(\supA,0.5);
+\node[above] at (\infA,0.5) {$\inf A$};
+\node[above] at (\supA,0.5) {$\sup A$};
+\end{tikzpicture}
+\caption{Location of bounds, supremum, and infimum.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,>=Latex]
+\def\xL{0}\def\xR{14}\def\infA{4}\def\supA{10.5}\def\eps{1.2}
+\draw[thick] (\xL,0)--(\xR,0);
+\draw[line width=3pt] (\infA+0.3,0)--(\supA-0.9,0);
+\draw[dashed] (\supA+\eps,0)--(\supA+\eps,0.5);
+\node[above] at (\supA+\eps,0.5) {$\sup A+\varepsilon$};
+\draw[dashed] (\infA-\eps,0)--(\infA-\eps,0.5);
+\node[above] at (\infA-\eps,0.5) {$\inf A-\varepsilon$};
+\end{tikzpicture}
+\caption{$\varepsilon$-buffer interpretation of bounds.}
+\end{figure}
+
+\subsection{Definitions}
 
 \begin{definition}[Upper and lower bounds]
 Let $A\subseteq\R$.
 \begin{itemize}
-  \item $U$ is an upper bound if $a\le U$ for all $a\in A$.
-  \item $L$ is a lower bound if $L\le a$ for all $a\in A$.
+  \item $U$ is an upper bound of $A$ if $a\le U$ for all $a\in A$.
+  \item $L$ is a lower bound of $A$ if $L\le a$ for all $a\in A$.
 \end{itemize}
 \end{definition}
 
 \begin{definition}[Supremum]
-$\alpha=\sup A$ if $\alpha$ is an upper bound of $A$ and
-for every $\varepsilon>0$ there exists $a\in A$ with $\alpha-\varepsilon<a$.
+Let $A\subseteq\R$ be nonempty and bounded above.  
+A number $\alpha\in\R$ is the supremum of $A$, written $\alpha=\sup A$, if:
+\begin{enumerate}
+  \item $\alpha$ is an upper bound of $A$, and
+  \item for every $\varepsilon>0$ there exists $a\in A$ such that
+  \[
+  \alpha-\varepsilon<a\le\alpha.
+  \]
+\end{enumerate}
 \end{definition}
 
 \begin{definition}[Infimum]
-$\beta=\inf A$ if $\beta$ is a lower bound of $A$ and
-for every $\varepsilon>0$ there exists $a\in A$ with $a<\beta+\varepsilon$.
+Let $A\subseteq\R$ be nonempty and bounded below.  
+A number $\beta\in\R$ is the infimum of $A$, written $\beta=\inf A$, if:
+\begin{enumerate}
+  \item $\beta$ is a lower bound of $A$, and
+  \item for every $\varepsilon>0$ there exists $a\in A$ such that
+  \[
+  \beta\le a<\beta+\varepsilon.
+  \]
+\end{enumerate}
 \end{definition}
 
-\begin{axiom}[Completeness]
+\begin{axiom}[Axiom of completeness]
 Every nonempty subset of $\R$ that is bounded above has a supremum in $\R$.
 \end{axiom}
-
-% ============================================================
-\section{Standard Consequences}
-% ============================================================
-
-\begin{theorem}[Archimedean property]
-For every $x\in\R$ there exists $n\in\N$ such that $n>x$.
-\end{theorem}
-
-\begin{theorem}[Density of $\Q$ in $\R$]
-For any $a<b$ in $\R$ there exists $q\in\Q$ with $a<q<b$.
-\end{theorem}
-
-\begin{theorem}[Nested interval property]
-If $[a_n,b_n]$ is a nested sequence of closed intervals, then
-$\bigcap_{n=1}^\infty [a_n,b_n]\neq\varnothing$.
-\end{theorem}
