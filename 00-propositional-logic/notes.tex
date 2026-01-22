@@ -46,9 +46,68 @@ F & F & T & F & F & T \\
 \end{tabular}
 \end{center}
 
+\noindent\textbf{Order of Operations in Propositional Logic.}
+The standard precedence of logical connectives, from highest to lowest, is as follows:
+\begin{enumerate}
+  \item Parentheses
+  \item Negation ($\neg$)
+  \item Conjunction ($\wedge$) and Disjunction ($\vee$)
+  \item Conditional ($\rightarrow$) and Biconditional ($\leftrightarrow$)
+\end{enumerate}
+
+\noindent
+When connectives have the same precedence level (for example, $\wedge$ and $\vee$),
+parentheses should be used to avoid ambiguity.
+
+The \textbf{converse} of a conditional proposition $P \rightarrow Q$ is the conditional
+proposition obtained by interchanging the antecedent and the consequent, namely
+$Q \rightarrow P$. In general, a conditional proposition and its converse are not
+logically equivalent.
+
+The \textbf{contrapositive} of a conditional proposition $P \rightarrow Q$ is the
+conditional proposition obtained by negating both the antecedent and the consequent
+and reversing their order, namely $\neg Q \rightarrow \neg P$. A conditional
+proposition is logically equivalent to its contrapositive.
+
+The \textbf{inverse} of a conditional proposition $P \rightarrow Q$ is the conditional
+proposition obtained by negating both the antecedent and the consequent without
+reversing their order, namely $\neg P \rightarrow \neg Q$. In general, a conditional
+proposition and its inverse are not logically equivalent.
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Form} 
+& \textbf{Expression} 
+& \textbf{Equivalent to $P \rightarrow Q$?} 
+& \textbf{Equivalent to $Q \rightarrow P$?} \\
+\hline
+Conditional 
+& $P \rightarrow Q$ 
+& Yes 
+& No \\
+\hline
+Converse 
+& $Q \rightarrow P$ 
+& No 
+& Yes \\
+\hline
+Inverse 
+& $\neg P \rightarrow \neg Q$ 
+& No 
+& Yes \\
+\hline
+Contrapositive 
+& $\neg Q \rightarrow \neg P$ 
+& Yes 
+& No \\
+\hline
+\end{tabular}
+\end{center}
 
 
-
+\noindent\textbf{Source.}
+\srccite{LibreTextsLogicForAll}{Chapter~3}.
 
 \subsubsection*{Rules of Inference}
 
@@ -145,6 +204,91 @@ From a proposition, one may validly infer its double negation:
 
 \vspace{0.75em}
 
+\textbf{Rule of Adjunction} is a rule of inference stating that if two propositions
+$P$ and $Q$ have each been established as true, then their conjunction $P \wedge Q$
+may be validly inferred. The rule permits the introduction of a conjunction from
+its conjuncts.
+
+Symbolically:
+\[
+\begin{array}{ll}
+\text{Premise 1.} & P \\
+\text{Premise 2.} & Q \\
+\hline
+\text{Conclusion.} & P \wedge Q
+\end{array}
+\]
+
+\textbf{Rule of Simplification} is a rule of inference stating that from a conjunction
+$P \wedge Q$, one may validly infer either of its conjuncts. The rule permits the
+elimination of a conjunction into its component propositions.
+
+Symbolically:
+\[
+\begin{array}{ll}
+\text{Premise.} & P \wedge Q \\
+\hline
+\text{Conclusion.} & P
+\end{array}
+\qquad
+\text{or}
+\qquad
+\begin{array}{ll}
+\text{Premise.} & P \wedge Q \\
+\hline
+\text{Conclusion.} & Q
+\end{array}
+\]
+
+\textbf{Disjunction Introduction / Law of Addition}
+ is a rule of inference stating that from a proposition
+$P$, one may validly infer a disjunction in which $P$ is a disjunct. That is, if $P$ has
+been established as true, then $P \vee Q$ may be inferred for any proposition $Q$.
+Likewise, from $Q$ one may infer $P \vee Q$.
+
+Symbolically:
+\[
+\begin{array}{ll}
+\text{Premise.} & P \\
+\hline
+\text{Conclusion.} & P \vee Q
+\end{array}
+\qquad
+\text{or}
+\qquad
+\begin{array}{ll}
+\text{Premise.} & Q \\
+\hline
+\text{Conclusion.} & P \vee Q
+\end{array}
+\]
+\end{definition}
+
+\textbf{Disjunction Elimination}
+is a rule of inference stating that if a disjunction
+$P \vee Q$ has been established, and if a proposition $R$ can be derived from the
+assumption that $P$ is true and also from the assumption that $Q$ is true, then $R$
+may be validly inferred without either assumption. The rule justifies reasoning by
+cases.
+
+Symbolically:
+\[
+\begin{array}{l}
+P \vee Q \\
+\begin{array}{ll}
+\text{Assume } P & \vdots \\
+& R
+\end{array}
+\qquad
+\begin{array}{ll}
+\text{Assume } Q & \vdots \\
+& R
+\end{array}
+\\ \hline
+R
+\end{array}
+\]
+\end{definition}
 
 
 
@@ -152,10 +296,107 @@ From a proposition, one may validly infer its double negation:
 
 
 
+The rule states that if a disjunction
+$P \vee Q$ is given as a premise, and if a conclusion $R$ can be derived both from the
+assumption that $P$ is true and from the assumption that $Q$ is true, then $R$ may be
+validly inferred without either assumption.
+
+Symbolically:
+\[
+\begin{array}{l}
+P \vee Q \\
+\begin{array}{ll}
+\text{Assume } P & \vdots \\
+& R
+\end{array}
+\qquad
+\begin{array}{ll}
+\text{Assume } Q & \vdots \\
+& R
+\end{array}
+\\ \hline
+R
+\end{array}
+\]
+
+
+\textbf{Modus Tollendo Ponens} is a rule of inference stating that if a disjunction
+$P \vee Q$ has been established and one of its disjuncts is denied, then the other
+disjunct may be validly inferred. The rule licenses the elimination of a disjunction
+when one alternative is shown to be false.
+
+Symbolically:
+\[
+\begin{array}{ll}
+\text{Premise 1.} & P \vee Q \\
+\text{Premise 2.} & \neg P \\
+\hline
+\text{Conclusion.} & Q
+\end{array}
+\qquad
+\text{or}
+\qquad
+\begin{array}{ll}
+\text{Premise 1.} & P \vee Q \\
+\text{Premise 2.} & \neg Q \\
+\hline
+\text{Conclusion.} & P
+\end{array}
+\]
+
+
+Remove below
+
+
+\noindent\textbf{Symbolically:}
+
+\[
+\begin{array}{ll}
+\begin{array}{l}
+\text{Premise 1.}\; P \vee Q \\
+\text{Premise 2.}\; \neg P \\ \hline
+\text{Conclusion.}\; Q
+\end{array}
+&
+\qquad\text{or}\qquad
+\begin{array}{l}
+\text{Premise 1.}\; P \vee Q \\
+\text{Premise 2.}\; \neg Q \\ \hline
+\text{Conclusion.}\; P
+\end{array}
+\end{array}
+\]
+
+
+remove above
 
 
 
 
+
+
+
+\textbf{Reiteration Rule} is a rule of inference that permits any previously
+established statement in a proof to be restated at a later step. Reiteration does not
+introduce new information, but allows earlier results to be reused when needed.
+
+\noindent\textbf{Source.}
+\srccite{OpenLogicForallxCalgary}{Chapter~17 — Basic Rules for TFL}.
+
+The \textbf{Law of Hypothetical Syllogism} is a rule of inference stating that if one
+conditional proposition asserts that $P$ implies $Q$, and a second conditional
+proposition asserts that $Q$ implies $R$, then one may validly infer that $P$ implies
+$R$. The rule captures the transitivity of implication.
+
+Symbolically:
+\[
+\begin{array}{ll}
+\text{Premise 1.} & P \rightarrow Q \\
+\text{Premise 2.} & Q \rightarrow R \\
+\hline
+\text{Conclusion.} & P \rightarrow R
+\end{array}
+\]
 
 
 
