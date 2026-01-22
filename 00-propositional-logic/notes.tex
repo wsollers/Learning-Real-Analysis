@@ -1,42 +1,32 @@
-% notes.tex
+% =========================================================
+% Propositional Logic — Rules, Connectives, and Equivalences
+% =========================================================
 
+\chapter*{Propositional Logic Foundations}
+\addcontentsline{toc}{chapter}{Propositional Logic Foundations}
 
+% =========================================================
+% Logical Connectives
+% =========================================================
 
-
-
-
-
-
-
-\noindent\textbf{Source.} \srccite{Gerstein}{Chapter~1, \S1.2}
-
-
-
-
-
-\noindent
+\noindent\textbf{Logical Connectives (Semantic)}
 The basic logical connectives in propositional logic are:
-\emph{and}, \emph{or}, \emph{not}, and \emph{implication}.
+\emph{negation}, \emph{conjunction}, \emph{disjunction}, and \emph{conditional}.
 They are denoted symbolically by
 \[
-\land \quad \lor \quad \neg \quad \rightarrow
+\neg \quad \wedge \quad \vee \quad \rightarrow
 \]
-respectively.
+Their meanings are defined semantically by truth tables.
 
 \vspace{1em}
 
-\noindent
-Their meanings are defined by the following truth tables.
-
-\vspace{1em}
-
-\subsubsection*{Truth Tables for the Basic Logical Connectives}
+\subsection*{Truth Tables for the Basic Logical Connectives}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{|c|c||c|c|c|c|}
 \hline
-$p$ & $q$ & $\neg p$ & $p \land q$ & $p \lor q$ & $p \rightarrow q$ \\
+$p$ & $q$ & $\neg p$ & $p \wedge q$ & $p \vee q$ & $p \rightarrow q$ \\
 \hline
 T & T & F & T & T & T \\
 T & F & F & F & T & F \\
@@ -46,8 +36,13 @@ F & F & T & F & F & T \\
 \end{tabular}
 \end{center}
 
-\noindent\textbf{Order of Operations in Propositional Logic.}
-The standard precedence of logical connectives, from highest to lowest, is as follows:
+% =========================================================
+% Order of Operations
+% =========================================================
+
+\subsection*{Order of Operations in Propositional Logic}
+
+The standard precedence of logical connectives (highest to lowest) is:
 \begin{enumerate}
   \item Parentheses
   \item Negation ($\neg$)
@@ -55,348 +50,422 @@ The standard precedence of logical connectives, from highest to lowest, is as fo
   \item Conditional ($\rightarrow$) and Biconditional ($\leftrightarrow$)
 \end{enumerate}
 
-\noindent
-When connectives have the same precedence level (for example, $\wedge$ and $\vee$),
-parentheses should be used to avoid ambiguity.
+When connectives have the same precedence, parentheses must be used to avoid ambiguity.
+\subsection*{Tautology, Contradiction, and Logical Equivalence}
 
-The \textbf{converse} of a conditional proposition $P \rightarrow Q$ is the conditional
-proposition obtained by interchanging the antecedent and the consequent, namely
-$Q \rightarrow P$. In general, a conditional proposition and its converse are not
-logically equivalent.
+In propositional logic, formulas may be classified according to their truth
+values under all possible truth assignments.
 
-The \textbf{contrapositive} of a conditional proposition $P \rightarrow Q$ is the
-conditional proposition obtained by negating both the antecedent and the consequent
-and reversing their order, namely $\neg Q \rightarrow \neg P$. A conditional
-proposition is logically equivalent to its contrapositive.
+A \textbf{tautology} is a propositional formula that is true under every possible
+truth valuation. Tautologies represent statements that are logically true
+independently of the truth values of their component propositions. Tautologies
+are denoted symbolically by
+\[
+\top
+\]
+or, in semantic notation, by writing $\vDash P$ to indicate that $P$ is true in
+all interpretations.
 
-The \textbf{inverse} of a conditional proposition $P \rightarrow Q$ is the conditional
-proposition obtained by negating both the antecedent and the consequent without
-reversing their order, namely $\neg P \rightarrow \neg Q$. In general, a conditional
-proposition and its inverse are not logically equivalent.
+A \textbf{contradiction} is a propositional formula that is false under every
+possible truth valuation. Contradictions represent statements that cannot be
+true under any interpretation. Contradictions are denoted symbolically by
+\[
+\bot
+\]
+or, equivalently, by writing $\vDash \neg P$ for a formula that is false in all
+interpretations.
 
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Form} 
-& \textbf{Expression} 
-& \textbf{Equivalent to $P \rightarrow Q$?} 
-& \textbf{Equivalent to $Q \rightarrow P$?} \\
-\hline
-Conditional 
-& $P \rightarrow Q$ 
-& Yes 
-& No \\
-\hline
-Converse 
-& $Q \rightarrow P$ 
-& No 
-& Yes \\
-\hline
-Inverse 
-& $\neg P \rightarrow \neg Q$ 
-& No 
-& Yes \\
-\hline
-Contrapositive 
-& $\neg Q \rightarrow \neg P$ 
-& Yes 
-& No \\
-\hline
-\end{tabular}
-\end{center}
+Two propositional formulas $P$ and $Q$ are said to be \textbf{logically
+equivalent} if they have the same truth value under every possible truth
+valuation. Logical equivalence is written symbolically as
+\[
+P \equiv Q
+\]
+and indicates that $P$ and $Q$ may be substituted for one another in any logical
+context without changing truth value.
 
+% =========================================================
+% Inference Rules (Logical Rules)
+% =========================================================
 
-\noindent\textbf{Source.}
-\srccite{LibreTextsLogicForAll}{Chapter~3}.
+\section*{Rules of Inference (Logical / Truth-Preserving)}
+\addcontentsline{toc}{section}{Rules of Inference}
 
-\subsubsection*{Rules of Inference}
+\begin{definition}[Modus Ponens — Logical Inference Rule]
+\textbf{Modus Ponens}, also called the \emph{Law of Detachment}, states that from a
+conditional proposition and its antecedent, the consequent may be inferred.
 
-\noindent\textbf{Source.} \srccite{SuppesHillFirstCourseLogic}{Chapter~2, \S2}
-
-$\textbf{The Law of Detachment} $
-(Modus Ponens) is a form of syllogism. It states that if a conditional statement and its hypothesis are accepted as true, its conclusion will also be true. Three basic elements are at the core of the Law (or Rule) of Detachment. These can be expressed in a simple formulation:
-
-\textbf{Modus Ponens} is a rule of inference stating that from a conditional proposition
-$P \rightarrow Q$ and its antecedent $P$, one may validly infer the consequent $Q$.
-Symbolically:
 \[
 \begin{array}{ll}
-\text{Premise 1.} & P \rightarrow Q \\
-\text{Premise 2.} & P \\
-\hline
-\text{Conclusion.} & Q
+P \rightarrow Q \\
+P \\ \hline
+Q
 \end{array}
 \]
 
+This rule is truth-preserving and fundamental to all deductive systems.
+\end{definition}
+
+\begin{definition}[Modus Tollens — Logical Inference Rule]
+\textbf{Modus Tollens}, also called \emph{denying the consequent}, states that from a
+conditional proposition and the negation of its consequent, the negation of the
+antecedent may be inferred.
 
 \[
-\text{If } P \rightarrow Q \text{ is true and } P \text{ is true, then } Q \text{ must be true.}
-\]
-
-\noindent\textbf{Remark (Contrapositive Form).}
-The conditional proposition $P \rightarrow Q$ is logically equivalent to its
-contrapositive $\neg Q \rightarrow \neg P$. Consequently, modus ponens may be
-applied to the contrapositive form: from $\neg Q \rightarrow \neg P$ and $\neg Q$,
-one may validly infer $\neg P$. This use is justified by logical equivalence and
-does not introduce a new rule of inference.
-
-
-\textbf{Modus Tollens} is a rule of inference stating that from a conditional proposition
-$P \rightarrow Q$ and the negation of its consequent $\neg Q$, one may validly infer
-the negation of the antecedent $\neg P$.
-Symbolically:
-\[
-\begin{array}{c}
+\begin{array}{ll}
 P \rightarrow Q \\
-\neg Q \\
-\hline
+\neg Q \\ \hline
 \neg P
 \end{array}
 \]
+\end{definition}
+
+\begin{definition}[Hypothetical Syllogism — Logical Inference Rule]
+\textbf{Hypothetical Syllogism}, also called the \emph{chain rule}, states that if one
+conditional implies a second and the second implies a third, then the first implies the
+third.
 
 \[
-\text{If } P \rightarrow Q \text{ is true and } \neg Q \text{ is true, then } \neg P \text{ must be true.}
-\]
-
-
-$\textbf{Law of Detachment}$
-The Law of Detachment is a rule of inference stating that if a conditional
-proposition $P \rightarrow Q$ is true and its antecedent $P$ is true, then the
-consequent $Q$ may be validly inferred. The law of detachment is equivalent to
-modus ponens.
-
-$\textbf{Law of Premises}$
-The Law of Premises is the principle that any statement explicitly assumed
-as a premise in a proof may be asserted as true at any subsequent step of that proof,
-provided it has not been discharged. Premises serve as the foundational assumptions
-from which conclusions are derived.
-
-\noindent\textbf{Double Negation.}
-The \textbf{Rule of Double Negation} permits the elimination or introduction of
-two successive negations without changing the truth value of a proposition.
-
-\vspace{0.5em}
-
-\noindent
-\textbf{(Elimination Form).}
-From the negation of a negation of a proposition, one may validly infer the
-proposition itself:
-\[
 \begin{array}{ll}
-\text{Premise.} & \neg\neg P \\
-\hline
-\text{Conclusion.} & P
-\end{array}
-\]
-
-\vspace{0.75em}
-
-\noindent
-\textbf{(Introduction Form).}
-From a proposition, one may validly infer its double negation:
-\[
-\begin{array}{ll}
-\text{Premise.} & P \\
-\hline
-\text{Conclusion.} & \neg\neg P
-\end{array}
-\]
-
-\vspace{0.75em}
-
-\textbf{Rule of Adjunction} is a rule of inference stating that if two propositions
-$P$ and $Q$ have each been established as true, then their conjunction $P \wedge Q$
-may be validly inferred. The rule permits the introduction of a conjunction from
-its conjuncts.
-
-Symbolically:
-\[
-\begin{array}{ll}
-\text{Premise 1.} & P \\
-\text{Premise 2.} & Q \\
-\hline
-\text{Conclusion.} & P \wedge Q
-\end{array}
-\]
-
-\textbf{Rule of Simplification} is a rule of inference stating that from a conjunction
-$P \wedge Q$, one may validly infer either of its conjuncts. The rule permits the
-elimination of a conjunction into its component propositions.
-
-Symbolically:
-\[
-\begin{array}{ll}
-\text{Premise.} & P \wedge Q \\
-\hline
-\text{Conclusion.} & P
-\end{array}
-\qquad
-\text{or}
-\qquad
-\begin{array}{ll}
-\text{Premise.} & P \wedge Q \\
-\hline
-\text{Conclusion.} & Q
-\end{array}
-\]
-
-\textbf{Disjunction Introduction / Law of Addition}
- is a rule of inference stating that from a proposition
-$P$, one may validly infer a disjunction in which $P$ is a disjunct. That is, if $P$ has
-been established as true, then $P \vee Q$ may be inferred for any proposition $Q$.
-Likewise, from $Q$ one may infer $P \vee Q$.
-
-Symbolically:
-\[
-\begin{array}{ll}
-\text{Premise.} & P \\
-\hline
-\text{Conclusion.} & P \vee Q
-\end{array}
-\qquad
-\text{or}
-\qquad
-\begin{array}{ll}
-\text{Premise.} & Q \\
-\hline
-\text{Conclusion.} & P \vee Q
+P \rightarrow Q \\
+Q \rightarrow R \\ \hline
+P \rightarrow R
 \end{array}
 \]
 \end{definition}
 
-\textbf{Disjunction Elimination}
-is a rule of inference stating that if a disjunction
-$P \vee Q$ has been established, and if a proposition $R$ can be derived from the
-assumption that $P$ is true and also from the assumption that $Q$ is true, then $R$
-may be validly inferred without either assumption. The rule justifies reasoning by
-cases.
+\begin{definition}[Disjunctive Syllogism — Logical Inference Rule]
+\textbf{Disjunctive Syllogism}, also called \emph{modus tollendo ponens}, states that from
+a disjunction and the negation of one disjunct, the other disjunct may be inferred.
 
-Symbolically:
 \[
-\begin{array}{l}
+\begin{array}{ll}
 P \vee Q \\
-\begin{array}{ll}
-\text{Assume } P & \vdots \\
-& R
+\neg P \\ \hline
+Q
 \end{array}
-\qquad
-\begin{array}{ll}
-\text{Assume } Q & \vdots \\
-& R
-\end{array}
-\\ \hline
-R
-\end{array}
-\]
-\end{definition}
-
-
-
-
-
-
-
-The rule states that if a disjunction
-$P \vee Q$ is given as a premise, and if a conclusion $R$ can be derived both from the
-assumption that $P$ is true and from the assumption that $Q$ is true, then $R$ may be
-validly inferred without either assumption.
-
-Symbolically:
-\[
-\begin{array}{l}
-P \vee Q \\
-\begin{array}{ll}
-\text{Assume } P & \vdots \\
-& R
-\end{array}
-\qquad
-\begin{array}{ll}
-\text{Assume } Q & \vdots \\
-& R
-\end{array}
-\\ \hline
-R
-\end{array}
-\]
-
-
-\textbf{Modus Tollendo Ponens} is a rule of inference stating that if a disjunction
-$P \vee Q$ has been established and one of its disjuncts is denied, then the other
-disjunct may be validly inferred. The rule licenses the elimination of a disjunction
-when one alternative is shown to be false.
-
-Symbolically:
-\[
-\begin{array}{ll}
-\text{Premise 1.} & P \vee Q \\
-\text{Premise 2.} & \neg P \\
-\hline
-\text{Conclusion.} & Q
-\end{array}
-\qquad
-\text{or}
-\qquad
-\begin{array}{ll}
-\text{Premise 1.} & P \vee Q \\
-\text{Premise 2.} & \neg Q \\
-\hline
-\text{Conclusion.} & P
-\end{array}
-\]
-
-
-Remove below
-
-
-\noindent\textbf{Symbolically:}
-
-\[
-\begin{array}{ll}
-\begin{array}{l}
-\text{Premise 1.}\; P \vee Q \\
-\text{Premise 2.}\; \neg P \\ \hline
-\text{Conclusion.}\; Q
-\end{array}
-&
 \qquad\text{or}\qquad
-\begin{array}{l}
-\text{Premise 1.}\; P \vee Q \\
-\text{Premise 2.}\; \neg Q \\ \hline
-\text{Conclusion.}\; P
-\end{array}
+\begin{array}{ll}
+P \vee Q \\
+\neg Q \\ \hline
+P
 \end{array}
 \]
+\end{definition}
 
+\begin{definition}[Adjunction — Logical Inference Rule]
+\textbf{Adjunction}, also called \emph{Conjunction Introduction}, states that if two
+propositions have been established, their conjunction may be inferred.
 
-remove above
-
-
-
-
-
-
-
-\textbf{Reiteration Rule} is a rule of inference that permits any previously
-established statement in a proof to be restated at a later step. Reiteration does not
-introduce new information, but allows earlier results to be reused when needed.
-
-\noindent\textbf{Source.}
-\srccite{OpenLogicForallxCalgary}{Chapter~17 — Basic Rules for TFL}.
-
-The \textbf{Law of Hypothetical Syllogism} is a rule of inference stating that if one
-conditional proposition asserts that $P$ implies $Q$, and a second conditional
-proposition asserts that $Q$ implies $R$, then one may validly infer that $P$ implies
-$R$. The rule captures the transitivity of implication.
-
-Symbolically:
 \[
 \begin{array}{ll}
-\text{Premise 1.} & P \rightarrow Q \\
-\text{Premise 2.} & Q \rightarrow R \\
-\hline
-\text{Conclusion.} & P \rightarrow R
+P \\
+Q \\ \hline
+P \wedge Q
 \end{array}
 \]
+\end{definition}
+
+\begin{definition}[Simplification — Logical Inference Rule]
+\textbf{Simplification}, also called \emph{Conjunction Elimination}, states that from a
+conjunction, either conjunct may be inferred.
+
+\[
+\begin{array}{ll}
+P \wedge Q \\ \hline
+P
+\end{array}
+\qquad\text{or}\qquad
+\begin{array}{ll}
+P \wedge Q \\ \hline
+Q
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Disjunction Elimination — Logical Inference Rule]
+\textbf{Disjunction Elimination}, also called \emph{Proof by Cases}, states that if a
+disjunction is true and the same conclusion can be derived from each disjunct, then that
+conclusion may be inferred.
+
+\[
+\begin{array}{l}
+P \vee Q \\
+\begin{array}{l}
+\text{Assume } P \\ \vdots \\ R
+\end{array}
+\quad
+\begin{array}{l}
+\text{Assume } Q \\ \vdots \\ R
+\end{array}
+\\ \hline
+R
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Conditional Proof — Structural Rule]
+\textbf{Conditional Proof} states that if assuming $P$ leads to $Q$, then the conditional
+$P \rightarrow Q$ may be inferred.
+
+\[
+\begin{array}{l}
+\text{Assume } P \\ \vdots \\ Q \\ \hline
+P \rightarrow Q
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Indirect Proof — Structural Rule]
+\textbf{Indirect Proof}, also called \emph{Reductio ad Absurdum}, states that if assuming
+$\neg P$ leads to a contradiction, then $P$ may be inferred.
+
+\[
+\begin{array}{l}
+\text{Assume } \neg P \\ \vdots \\ \bot \\ \hline
+P
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Constructive Dilemma — Logical Inference Rule]
+The \textbf{Constructive Dilemma} propagates cases forward through conditionals.
+
+\[
+\begin{array}{l}
+P \vee Q \\
+P \rightarrow R \\
+Q \rightarrow S \\ \hline
+R \vee S
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Destructive Dilemma — Logical Inference Rule]
+The \textbf{Destructive Dilemma} propagates negated consequents backward.
+
+\[
+\begin{array}{l}
+P \rightarrow R \\
+Q \rightarrow S \\
+\neg R \vee \neg S \\ \hline
+\neg P \vee \neg Q
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Reiteration — Structural Rule]
+\textbf{Reiteration} allows any previously derived statement to be restated later in a
+proof.
+
+\[
+\begin{array}{l}
+P \\ \hline
+P
+\end{array}
+\]
+\end{definition}
+
+% =========================================================
+% Structural / Syntactic Rules
+% =========================================================
+
+
+\begin{definition}[Rule of Premises — Structural Rule]
+The \textbf{Rule of Premises} states that any proposition listed as a premise in a
+proof may be asserted at any later step of that proof. This rule introduces no
+new information and serves only to make assumptions explicit.
+
+\[
+\begin{array}{l}
+P \\ \hline
+P
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Reiteration — Structural Rule]
+\textbf{Reiteration} permits a statement that has already been derived earlier in
+a proof to be restated at a later point. It is used to make prior results
+available in new contexts, such as subproofs.
+
+\[
+\begin{array}{l}
+P \\ \hline
+P
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Assumption Rule — Structural Rule]
+The \textbf{Assumption Rule} allows a proposition to be temporarily introduced
+for the purpose of reasoning within a subproof. Assumptions must be discharged
+before the proof is completed.
+
+\[
+\begin{array}{l}
+\text{Assume } P
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Subproof Discharge — Structural Rule]
+\textbf{Subproof Discharge} marks the closing of a subproof and permits conclusions
+derived under an assumption to be used to justify conditionals, negations, or
+case reasoning. The assumption is no longer available after discharge.
+
+\[
+\begin{array}{l}
+\text{Assume } P \\ \vdots \\ Q \\ \hline
+P \rightarrow Q
+\end{array}
+\]
+\end{definition}
+
+% =========================================================
+% Structural / Syntactic Rules
+% =========================================================
+
+\begin{definition}[De Morgan's Laws — Replacement Rule]
+\textbf{De Morgan's Laws} describe how negation distributes over conjunction and
+disjunction. They allow logically equivalent formulas to replace one another.
+
+\[
+\neg (P \wedge Q) \;\equiv\; \neg P \vee \neg Q
+\]
+\[
+\neg (P \vee Q) \;\equiv\; \neg P \wedge \neg Q
+\]
+\end{definition}
+
+\begin{definition}[Commutation (Commutativity) — Replacement Rule]
+\textbf{Commutation} states that the order of propositions joined by conjunction
+or disjunction does not affect truth value.
+
+\[
+P \wedge Q \;\equiv\; Q \wedge P
+\]
+\[
+P \vee Q \;\equiv\; Q \vee P
+\]
+\end{definition}
+
+\begin{definition}[Association (Associativity) — Replacement Rule]
+\textbf{Association} states that when the same connective is repeated, the placement
+of parentheses does not affect logical meaning.
+
+\[
+(P \wedge Q) \wedge R \;\equiv\; P \wedge (Q \wedge R)
+\]
+\[
+(P \vee Q) \vee R \;\equiv\; P \vee (Q \vee R)
+\]
+\end{definition}
+
+\begin{definition}[Distribution — Replacement Rule]
+The \textbf{Distributive Laws} describe how conjunction and disjunction distribute
+over one another.
+
+\[
+P \wedge (Q \vee R) \;\equiv\; (P \wedge Q) \vee (P \wedge R)
+\]
+\[
+P \vee (Q \wedge R) \;\equiv\; (P \vee Q) \wedge (P \vee R)
+\]
+\end{definition}
+
+\begin{definition}[Double Negation — Replacement Rule]
+The \textbf{Double Negation Law} states that a proposition is logically equivalent
+to the negation of its negation.
+
+\[
+\neg\neg P \;\equiv\; P
+\]
+\end{definition}
+
+\begin{definition}[Contraposition — Replacement Rule]
+\textbf{Contraposition} states that a conditional proposition is logically equivalent
+to its contrapositive.
+
+\[
+P \rightarrow Q \;\equiv\; \neg Q \rightarrow \neg P
+\]
+\end{definition}
+
+\begin{definition}[Material Implication — Replacement Rule]
+\textbf{Material Implication} rewrites a conditional using negation and disjunction.
+
+\[
+P \rightarrow Q \;\equiv\; \neg P \vee Q
+\]
+\end{definition}
+
+\begin{definition}[Biconditional Expansion — Replacement Rule]
+\textbf{Biconditional Expansion} states that a biconditional is equivalent to a
+conjunction of two conditionals.
+
+\[
+P \leftrightarrow Q \;\equiv\; (P \rightarrow Q) \wedge (Q \rightarrow P)
+\]
+\end{definition}
+
+\begin{definition}[Exportation / Importation — Replacement Rule]
+\textbf{Exportation} and \textbf{Importation} relate conditionals with conjunctions
+in the antecedent.
+
+\[
+(P \wedge Q) \rightarrow R \;\equiv\; P \rightarrow (Q \rightarrow R)
+\]
+\end{definition}
+
+\begin{definition}[Idempotent Laws — Replacement Rule]
+The \textbf{Idempotent Laws} state that repeating a proposition under conjunction
+or disjunction does not change its value.
+
+\[
+P \wedge P \;\equiv\; P
+\]
+\[
+P \vee P \;\equiv\; P
+\]
+\end{definition}
+
+\begin{definition}[Absorption Laws — Replacement Rule]
+The \textbf{Absorption Laws} describe how a proposition absorbs a compound containing
+itself.
+
+\[
+P \wedge (P \vee Q) \;\equiv\; P
+\]
+\[
+P \vee (P \wedge Q) \;\equiv\; P
+\]
+\end{definition}
+
+\begin{definition}[Identity, Domination, and Negation Laws — Replacement Rules]
+These laws describe interactions with truth and falsity.
+
+\[
+P \wedge \top \;\equiv\; P \qquad P \vee \bot \;\equiv\; P
+\]
+\[
+P \vee \top \;\equiv\; \top \qquad P \wedge \bot \;\equiv\; \bot
+\]
+\[
+P \vee \neg P \;\equiv\; \top \qquad P \wedge \neg P \;\equiv\; \bot
+\]
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
