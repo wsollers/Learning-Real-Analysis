@@ -2,8 +2,54 @@
 % Propositional Logic — Rules, Connectives, and Equivalences
 % =========================================================
 
-\chapter*{Propositional Logic Foundations}
-\addcontentsline{toc}{chapter}{Propositional Logic Foundations}
+
+% =========================================================
+% Definition of Well Formed Formula
+% =========================================================
+
+\begin{definition}[Well-Formed Formula (Recursive Definition)]
+Let $\mathcal{L}$ be a propositional language whose atomic formulas are propositional
+variables
+\[
+\mathsf{Prop} = \{P_1, P_2, P_3, \dots\}
+\]
+and whose logical connectives include
+\[
+\neg, \wedge, \vee, \rightarrow, \leftrightarrow.
+\]
+
+The set $\mathsf{WFF}_{\mathcal{L}}$ of \emph{well-formed formulas} of $\mathcal{L}$ is
+defined recursively as follows:
+
+\begin{enumerate}
+  \item \textbf{Atomic formulas.}
+  Every propositional variable $P \in \mathsf{Prop}$ is a well-formed formula.
+
+  \item \textbf{Negation.}
+  If $\varphi$ is a well-formed formula, then $\neg \varphi$ is a well-formed formula.
+
+  \item \textbf{Binary connectives.}
+  If $\varphi$ and $\psi$ are well-formed formulas, then each of the following
+  is a well-formed formula:
+  \[
+  (\varphi \wedge \psi), \quad
+  (\varphi \vee \psi), \quad
+  (\varphi \rightarrow \psi), \quad
+  (\varphi \leftrightarrow \psi).
+  \]
+
+  \item \textbf{Closure.}
+  No expression is a well-formed formula unless it can be obtained by finitely many
+  applications of rules (1)--(3).
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+This definition is recursive (or inductive) because it specifies how to build
+complex formulas from simpler ones. As a consequence, proofs about well-formed
+formulas typically proceed by \emph{structural induction}.
+\end{remark}
+
 
 % =========================================================
 % Logical Connectives
@@ -84,12 +130,119 @@ P \equiv Q
 and indicates that $P$ and $Q$ may be substituted for one another in any logical
 context without changing truth value.
 
+
+
+
+\section*{Tautological Implication, Logical Implication, and Derivability}
+
+We distinguish three related but fundamentally different notions of implication
+used in logic: \emph{tautological implication}, \emph{logical implication}, and
+\emph{derivability}. Although they are closely connected, they belong to
+different levels of analysis.
+
+\subsection*{Definitions}
+
+\begin{definition}[Tautological Implication]
+Let $P$ and $Q$ be propositional formulas.
+We say that \emph{$P$ tautologically implies $Q$}, written
+\[
+P \models_{\mathsf{taut}} Q,
+\]
+if and only if the conditional formula $P \rightarrow Q$ is a tautology;
+that is, it is true under every possible truth valuation.
+\end{definition}
+
+\begin{definition}[Logical Implication (Semantic Consequence)]
+Let $\Gamma$ be a set of formulas and let $Q$ be a formula.
+We say that \emph{$\Gamma$ logically implies $Q$}, written
+\[
+\Gamma \models Q,
+\]
+if and only if, for every interpretation under which all formulas in $\Gamma$
+are true, the formula $Q$ is also true.
+\end{definition}
+
+\begin{definition}[Derivability (Syntactic Consequence)]
+Let $\Gamma$ be a set of formulas and let $Q$ be a formula.
+We say that \emph{$Q$ is derivable from $\Gamma$}, written
+\[
+\Gamma \vdash Q,
+\]
+if and only if there exists a formal proof of $Q$ from the assumptions in
+$\Gamma$ using the rules of a specified deductive system.
+\end{definition}
+
+\subsection*{Conceptual Distinctions}
+
+Although these notions are related, they differ in important ways.
+
+\paragraph{Tautological Implication.}
+Tautological implication is a purely semantic notion restricted to propositional
+logic. It depends only on truth tables and does not involve proof systems,
+axioms, or inference rules. The statement $P \models_{\mathsf{taut}} Q$ holds
+precisely when there is no valuation under which $P$ is true and $Q$ is false.
+
+\paragraph{Logical Implication.}
+Logical implication generalizes tautological implication. It is also semantic,
+but it applies to arbitrary sets of formulas and to richer languages, such as
+predicate logic. Logical implication concerns truth preservation across all
+models or interpretations, not merely truth tables.
+
+\paragraph{Derivability.}
+Derivability is a syntactic notion. It depends on a chosen formal proof system
+and concerns what can be obtained by applying inference rules step by step.
+Unlike logical implication, derivability makes no direct reference to truth or
+interpretations.
+
+\subsection*{Relationships Between the Notions}
+
+These concepts are connected by fundamental metatheorems of logic:
+
+\begin{itemize}
+  \item \textbf{Soundness:} If $\Gamma \vdash Q$, then $\Gamma \models Q$.
+  \item \textbf{Completeness (Propositional Logic):} If $\Gamma \models Q$,
+        then $\Gamma \vdash Q$.
+\end{itemize}
+
+In propositional logic, tautological implication is a special case of logical
+implication:
+\[
+P \models_{\mathsf{taut}} Q
+\quad \text{if and only if} \quad
+\{P\} \models Q.
+\]
+
+\subsection*{Summary Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Notion} & \textbf{Symbol} & \textbf{Nature} \\
+\hline
+Tautological implication & $P \models_{\mathsf{taut}} Q$ & Semantic, truth-table based \\
+Logical implication & $\Gamma \models Q$ & Semantic, model-theoretic \\
+Derivability & $\Gamma \vdash Q$ & Syntactic, proof-theoretic \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Key Takeaway}
+
+Tautological implication and logical implication concern \emph{truth in all
+interpretations}, whereas derivability concerns \emph{formal provability within
+a system}. The distinction between $\models$ and $\vdash$ is central to modern
+logic and underlies the soundness and completeness theorems.
+
+
+
+
 % =========================================================
 % Inference Rules (Logical Rules)
 % =========================================================
 
 \section*{Rules of Inference (Logical / Truth-Preserving)}
-\addcontentsline{toc}{section}{Rules of Inference}
+
 
 \begin{definition}[Modus Ponens — Logical Inference Rule]
 \textbf{Modus Ponens}, also called the \emph{Law of Detachment}, states that from a
@@ -229,7 +382,7 @@ P
 \end{definition}
 
 \begin{definition}[Constructive Dilemma — Logical Inference Rule]
-The \textbf{Constructive Dilemma} propagates cases forward through conditionals.
+The \textbf{Constructive Dilemma} propagates cases forwardA through conditionals.
 
 \[
 \begin{array}{l}
@@ -265,6 +418,47 @@ P
 \end{array}
 \]
 \end{definition}
+
+% =========================================================
+% Biconditional Inference Rules
+% =========================================================
+
+\begin{definition}[Biconditional Elimination — Logical Inference Rule]
+\textbf{Biconditional Elimination} states that from a biconditional, either
+directional conditional may be inferred.
+
+\[
+\begin{array}{ll}
+P \leftrightarrow Q \\ \hline
+P \rightarrow Q
+\end{array}
+\qquad
+\begin{array}{ll}
+P \leftrightarrow Q \\ \hline
+Q \rightarrow P
+\end{array}
+\]
+
+This rule corresponds to extracting the component implications contained in
+a biconditional.
+\end{definition}
+
+\begin{definition}[Biconditional Introduction — Logical Inference Rule]
+\textbf{Biconditional Introduction} states that if each of two propositions
+implies the other, then their biconditional may be inferred.
+
+\[
+\begin{array}{ll}
+P \rightarrow Q \\
+Q \rightarrow P \\ \hline
+P \leftrightarrow Q
+\end{array}
+\]
+
+This rule captures the meaning of logical equivalence as mutual implication.
+\end{definition}
+
+
 
 % =========================================================
 % Structural / Syntactic Rules
