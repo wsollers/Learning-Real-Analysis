@@ -1,32 +1,77 @@
 % =========================================================
-% Propositional Logic — Rules, Connectives, and Equivalences
+% Propositional Logic — Reorganized Notes
 % =========================================================
 
 
-% =========================================================
-% Definition of Well Formed Formula
-% =========================================================
 
-\begin{definition}[Well-Formed Formula (Recursive Definition)]
-Let $\mathcal{L}$ be a propositional language whose atomic formulas are propositional
-variables
+% ---------------------------------------------------------
+\subsection{Syntax of Propositional Logic}
+% ---------------------------------------------------------
+
+\subsubsection{Propositional Variables}
+
+\begin{definition}[Propositional Variable]
+A \emph{propositional variable} (or \emph{atomic proposition}) is a symbol that
+represents a statement that can be either true or false.
+
+The set of propositional variables is denoted
 \[
 \mathsf{Prop} = \{P_1, P_2, P_3, \dots\}
 \]
-and whose logical connectives include
-\[
-\neg, \wedge, \vee, \rightarrow, \leftrightarrow.
-\]
+or, informally, by letters such as $P, Q, R, S, \dots$.
+\end{definition}
 
-The set $\mathsf{WFF}_{\mathcal{L}}$ of \emph{well-formed formulas} of $\mathcal{L}$ is
-defined recursively as follows:
+\begin{remark}
+Propositional variables are the atomic building blocks of propositional logic.
+They have no internal structure and are assigned truth values directly by a
+truth assignment.
+\end{remark}
+
+\subsubsection{Logical Connectives}
+
+\begin{definition}[Logical Connectives]
+The \emph{logical connectives} of propositional logic are symbols used to build
+compound formulas from simpler ones. The standard connectives are:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Symbol} & \textbf{Name} & \textbf{Arity} & \textbf{Reading} \\
+\hline
+$\neg$ & Negation & Unary & ``not'' \\
+$\wedge$ & Conjunction & Binary & ``and'' \\
+$\vee$ & Disjunction & Binary & ``or'' \\
+$\rightarrow$ & Conditional (Implication) & Binary & ``if \dots\ then'' \\
+$\leftrightarrow$ & Biconditional & Binary & ``if and only if'' \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{remark}
+Different authors use different symbols. Common alternatives include:
+$\sim$ or $!$ for negation, $\&$ or $\cdot$ for conjunction, $|$ or $+$ for
+disjunction, and $\supset$ or $\Rightarrow$ for the conditional.
+\end{remark}
+
+\subsubsection{Well-Formed Formulas}
+
+\begin{definition}[Well-Formed Formula]
+Let $\mathcal{L}$ be a propositional language with propositional variables
+$\mathsf{Prop}$ and logical connectives $\neg, \wedge, \vee, \rightarrow,
+\leftrightarrow$.
+
+The set $\mathsf{WFF}_{\mathcal{L}}$ of \emph{well-formed formulas} (wffs) of
+$\mathcal{L}$ is defined recursively as follows:
 
 \begin{enumerate}
   \item \textbf{Atomic formulas.}
   Every propositional variable $P \in \mathsf{Prop}$ is a well-formed formula.
 
   \item \textbf{Negation.}
-  If $\varphi$ is a well-formed formula, then $\neg \varphi$ is a well-formed formula.
+  If $\varphi$ is a well-formed formula, then $\neg \varphi$ is a well-formed
+  formula.
 
   \item \textbf{Binary connectives.}
   If $\varphi$ and $\psi$ are well-formed formulas, then each of the following
@@ -39,233 +84,619 @@ defined recursively as follows:
   \]
 
   \item \textbf{Closure.}
-  No expression is a well-formed formula unless it can be obtained by finitely many
-  applications of rules (1)--(3).
+  No expression is a well-formed formula unless it can be obtained by finitely
+  many applications of rules (1)--(3).
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Atomic and Molecular Formulas]
+A formula is \emph{atomic} if it is a propositional variable.
+
+A formula is \emph{molecular} (or \emph{compound}) if it is not atomic; that is,
+if it is constructed using at least one logical connective.
+\end{definition}
+
+\begin{remark}
+The definition of well-formed formulas is recursive (or inductive). As a
+consequence, proofs about well-formed formulas typically proceed by
+\emph{structural induction} on the formation of the formula.
+\end{remark}
+
+\subsubsection{Subformulas}
+
+\begin{definition}[Subformula]
+The set of \emph{subformulas} of a formula $\varphi$, denoted
+$\mathrm{Sub}(\varphi)$, is defined recursively as follows:
+
+\begin{enumerate}
+  \item If $\varphi$ is atomic, then $\mathrm{Sub}(\varphi) = \{\varphi\}$.
+
+  \item If $\varphi = \neg\psi$, then
+  $\mathrm{Sub}(\varphi) = \{\varphi\} \cup \mathrm{Sub}(\psi)$.
+
+  \item If $\varphi = (\psi \circ \chi)$ for a binary connective $\circ$, then
+  $\mathrm{Sub}(\varphi) = \{\varphi\} \cup \mathrm{Sub}(\psi) \cup \mathrm{Sub}(\chi)$.
+\end{enumerate}
+
+A subformula of $\varphi$ other than $\varphi$ itself is called a \emph{proper
+subformula}.
+\end{definition}
+
+\subsubsection{Formula Complexity}
+
+\begin{definition}[Formula Depth]
+The \emph{depth} (or \emph{complexity}) of a formula $\varphi$, denoted
+$\mathrm{depth}(\varphi)$, is defined recursively as follows:
+
+\begin{enumerate}
+  \item If $\varphi$ is atomic, then $\mathrm{depth}(\varphi) = 0$.
+
+  \item If $\varphi = \neg\psi$, then
+  $\mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1$.
+
+  \item If $\varphi = (\psi \circ \chi)$ for a binary connective $\circ$, then
+  \[
+  \mathrm{depth}(\varphi) = \max\{\mathrm{depth}(\psi), \mathrm{depth}(\chi)\} + 1.
+  \]
 \end{enumerate}
 \end{definition}
 
 \begin{remark}
-This definition is recursive (or inductive) because it specifies how to build
-complex formulas from simpler ones. As a consequence, proofs about well-formed
-formulas typically proceed by \emph{structural induction}.
+The depth of a formula corresponds to the height of its parse tree. It measures
+the maximum nesting of connectives.
 \end{remark}
 
+\subsubsection{Precedence and Parentheses}
 
-% =========================================================
-% Logical Connectives
-% =========================================================
+\begin{definition}[Operator Precedence]
+The standard precedence of logical connectives (from highest to lowest) is:
+\begin{enumerate}
+  \item Parentheses (override all precedence)
+  \item Negation ($\neg$)
+  \item Conjunction ($\wedge$)
+  \item Disjunction ($\vee$)
+  \item Conditional ($\rightarrow$)
+  \item Biconditional ($\leftrightarrow$)
+\end{enumerate}
+\end{definition}
 
-\noindent\textbf{Logical Connectives (Semantic)}
-The basic logical connectives in propositional logic are:
-\emph{negation}, \emph{conjunction}, \emph{disjunction}, and \emph{conditional}.
-They are denoted symbolically by
+\begin{remark}
+When connectives have the same precedence, parentheses must be used to avoid
+ambiguity. Some authors treat $\wedge$ and $\vee$ as having equal precedence;
+others assign $\wedge$ higher precedence than $\vee$.
+
+The conditional $\rightarrow$ is typically right-associative:
+$P \rightarrow Q \rightarrow R$ means $P \rightarrow (Q \rightarrow R)$.
+\end{remark}
+
+\begin{example}
+Using standard precedence:
+\begin{itemize}
+  \item $\neg P \wedge Q$ means $(\neg P) \wedge Q$, not $\neg(P \wedge Q)$.
+  \item $P \vee Q \wedge R$ means $P \vee (Q \wedge R)$ if $\wedge$ has higher
+        precedence than $\vee$.
+  \item $P \rightarrow Q \vee R$ means $P \rightarrow (Q \vee R)$.
+\end{itemize}
+\end{example}
+
+% ---------------------------------------------------------
+\subsection{Semantics of Propositional Logic}
+% ---------------------------------------------------------
+
+\subsubsection{Truth Assignments}
+
+\begin{definition}[Truth Assignment]
+A \emph{truth assignment} (or \emph{valuation}) is a function
 \[
-\neg \quad \wedge \quad \vee \quad \rightarrow
+v : \mathsf{Prop} \to \{\mathsf{T}, \mathsf{F}\}
 \]
-Their meanings are defined semantically by truth tables.
+that assigns a truth value to each propositional variable.
+\end{definition}
 
-\vspace{1em}
+\begin{definition}[Extension to All Formulas]
+Every truth assignment $v$ extends uniquely to a function
+$\hat{v} : \mathsf{WFF} \to \{\mathsf{T}, \mathsf{F}\}$ defined recursively:
 
-\subsection*{Truth Tables for the Basic Logical Connectives}
+\begin{enumerate}
+  \item If $\varphi \in \mathsf{Prop}$, then $\hat{v}(\varphi) = v(\varphi)$.
+
+  \item $\hat{v}(\neg\varphi) = \mathsf{T}$ iff $\hat{v}(\varphi) = \mathsf{F}$.
+
+  \item $\hat{v}(\varphi \wedge \psi) = \mathsf{T}$ iff
+        $\hat{v}(\varphi) = \mathsf{T}$ and $\hat{v}(\psi) = \mathsf{T}$.
+
+  \item $\hat{v}(\varphi \vee \psi) = \mathsf{T}$ iff
+        $\hat{v}(\varphi) = \mathsf{T}$ or $\hat{v}(\psi) = \mathsf{T}$.
+
+  \item $\hat{v}(\varphi \rightarrow \psi) = \mathsf{T}$ iff
+        $\hat{v}(\varphi) = \mathsf{F}$ or $\hat{v}(\psi) = \mathsf{T}$.
+
+  \item $\hat{v}(\varphi \leftrightarrow \psi) = \mathsf{T}$ iff
+        $\hat{v}(\varphi) = \hat{v}(\psi)$.
+\end{enumerate}
+
+We typically write $v(\varphi)$ instead of $\hat{v}(\varphi)$.
+\end{definition}
+
+\subsubsection{Truth Tables}
+
+\begin{definition}[Truth Table]
+A \emph{truth table} is a tabular representation of all possible truth values
+of a formula under all possible truth assignments to its propositional variables.
+\end{definition}
 
 \begin{center}
+\textbf{Truth Tables for the Basic Logical Connectives}
+
+\vspace{0.5em}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{|c|c||c|c|c|c|}
+\begin{tabular}{|c|c||c|c|c|c|c|}
 \hline
-$p$ & $q$ & $\neg p$ & $p \wedge q$ & $p \vee q$ & $p \rightarrow q$ \\
+$P$ & $Q$ & $\neg P$ & $P \wedge Q$ & $P \vee Q$ & $P \rightarrow Q$ & $P \leftrightarrow Q$ \\
 \hline
-T & T & F & T & T & T \\
-T & F & F & F & T & F \\
-F & T & T & F & T & T \\
-F & F & T & F & F & T \\
+T & T & F & T & T & T & T \\
+T & F & F & F & T & F & F \\
+F & T & T & F & T & T & F \\
+F & F & T & F & F & T & T \\
 \hline
 \end{tabular}
 \end{center}
 
-% =========================================================
-% Order of Operations
-% =========================================================
+\begin{remark}
+A formula with $n$ distinct propositional variables has $2^n$ rows in its truth
+table, corresponding to the $2^n$ possible truth assignments.
+\end{remark}
 
-\subsection*{Order of Operations in Propositional Logic}
+\subsubsection{Satisfaction and Truth}
 
-The standard precedence of logical connectives (highest to lowest) is:
-\begin{enumerate}
-  \item Parentheses
-  \item Negation ($\neg$)
-  \item Conjunction ($\wedge$) and Disjunction ($\vee$)
-  \item Conditional ($\rightarrow$) and Biconditional ($\leftrightarrow$)
-\end{enumerate}
+\begin{definition}[Satisfaction]
+A truth assignment $v$ \emph{satisfies} a formula $\varphi$, written
+$v \models \varphi$, if $v(\varphi) = \mathsf{T}$.
 
-When connectives have the same precedence, parentheses must be used to avoid ambiguity.
-\subsection*{Tautology, Contradiction, and Logical Equivalence}
+A truth assignment $v$ satisfies a set of formulas $\Gamma$ if $v$ satisfies
+every formula in $\Gamma$.
+\end{definition}
 
-In propositional logic, formulas may be classified according to their truth
-values under all possible truth assignments.
+\begin{definition}[Truth under an Assignment]
+A formula $\varphi$ is \emph{true under} $v$ if $v \models \varphi$.
+A formula $\varphi$ is \emph{false under} $v$ if $v \not\models \varphi$.
+\end{definition}
 
-A \textbf{tautology} is a propositional formula that is true under every possible
-truth valuation. Tautologies represent statements that are logically true
-independently of the truth values of their component propositions. Tautologies
-are denoted symbolically by
+\subsubsection{Validity, Satisfiability, and Contradiction}
+
+\begin{definition}[Tautology]
+A formula $\varphi$ is a \emph{tautology} (or is \emph{valid}) if it is true
+under every truth assignment.
+
+We write $\models \varphi$ to indicate that $\varphi$ is a tautology.
+
+Tautologies are sometimes denoted by the symbol $\top$.
+\end{definition}
+
+\begin{definition}[Contradiction]
+A formula $\varphi$ is a \emph{contradiction} (or is \emph{unsatisfiable}) if
+it is false under every truth assignment.
+
+Contradictions are sometimes denoted by the symbol $\bot$.
+\end{definition}
+
+\begin{definition}[Satisfiable Formula]
+A formula $\varphi$ is \emph{satisfiable} if there exists at least one truth
+assignment under which $\varphi$ is true.
+
+A formula is satisfiable if and only if it is not a contradiction.
+\end{definition}
+
+\begin{definition}[Contingency]
+A formula $\varphi$ is a \emph{contingency} if it is neither a tautology nor a
+contradiction; that is, it is true under some assignments and false under others.
+\end{definition}
+
+\begin{remark}
+Every formula falls into exactly one of these three categories:
+\begin{itemize}
+  \item Tautology: true under all assignments.
+  \item Contradiction: false under all assignments.
+  \item Contingency: true under some, false under others.
+\end{itemize}
+\end{remark}
+
+\begin{example}
+\begin{itemize}
+  \item $P \vee \neg P$ is a tautology (law of excluded middle).
+  \item $P \wedge \neg P$ is a contradiction.
+  \item $P \rightarrow Q$ is a contingency.
+\end{itemize}
+\end{example}
+
+\subsubsection{Logical Consequence}
+
+\begin{definition}[Logical Consequence]
+Let $\Gamma$ be a set of formulas and $\varphi$ a formula.
+We say that $\varphi$ is a \emph{logical consequence} of $\Gamma$, written
 \[
-\top
+\Gamma \models \varphi,
 \]
-or, in semantic notation, by writing $\vDash P$ to indicate that $P$ is true in
-all interpretations.
+if every truth assignment that satisfies all formulas in $\Gamma$ also satisfies
+$\varphi$.
 
-A \textbf{contradiction} is a propositional formula that is false under every
-possible truth valuation. Contradictions represent statements that cannot be
-true under any interpretation. Contradictions are denoted symbolically by
-\[
-\bot
-\]
-or, equivalently, by writing $\vDash \neg P$ for a formula that is false in all
-interpretations.
-
-Two propositional formulas $P$ and $Q$ are said to be \textbf{logically
-equivalent} if they have the same truth value under every possible truth
-valuation. Logical equivalence is written symbolically as
-\[
-P \equiv Q
-\]
-and indicates that $P$ and $Q$ may be substituted for one another in any logical
-context without changing truth value.
-
-
-
-
-\section*{Tautological Implication, Logical Implication, and Derivability}
-
-We distinguish three related but fundamentally different notions of implication
-used in logic: \emph{tautological implication}, \emph{logical implication}, and
-\emph{derivability}. Although they are closely connected, they belong to
-different levels of analysis.
-
-\subsection*{Definitions}
+Equivalently, there is no truth assignment under which all formulas in $\Gamma$
+are true and $\varphi$ is false.
+\end{definition}
 
 \begin{definition}[Tautological Implication]
-Let $P$ and $Q$ be propositional formulas.
-We say that \emph{$P$ tautologically implies $Q$}, written
+Let $P$ and $Q$ be formulas.
+We say that $P$ \emph{tautologically implies} $Q$, written
 \[
 P \models_{\mathsf{taut}} Q,
 \]
-if and only if the conditional formula $P \rightarrow Q$ is a tautology;
-that is, it is true under every possible truth valuation.
+if and only if the formula $P \rightarrow Q$ is a tautology.
+
+Equivalently, $\{P\} \models Q$.
 \end{definition}
 
-\begin{definition}[Logical Implication (Semantic Consequence)]
-Let $\Gamma$ be a set of formulas and let $Q$ be a formula.
-We say that \emph{$\Gamma$ logically implies $Q$}, written
+\begin{remark}
+Tautological implication is a special case of logical consequence where the
+premise set is a singleton.
+\end{remark}
+
+\subsubsection{Logical Equivalence}
+
+\begin{definition}[Logical Equivalence]
+Two formulas $\varphi$ and $\psi$ are \emph{logically equivalent}, written
 \[
-\Gamma \models Q,
+\varphi \equiv \psi,
 \]
-if and only if, for every interpretation under which all formulas in $\Gamma$
-are true, the formula $Q$ is also true.
-\end{definition}
+if they have the same truth value under every truth assignment.
 
-\begin{definition}[Derivability (Syntactic Consequence)]
-Let $\Gamma$ be a set of formulas and let $Q$ be a formula.
-We say that \emph{$Q$ is derivable from $\Gamma$}, written
-\[
-\Gamma \vdash Q,
-\]
-if and only if there exists a formal proof of $Q$ from the assumptions in
-$\Gamma$ using the rules of a specified deductive system.
-\end{definition}
-
-\subsection*{Conceptual Distinctions}
-
-Although these notions are related, they differ in important ways.
-
-\paragraph{Tautological Implication.}
-Tautological implication is a purely semantic notion restricted to propositional
-logic. It depends only on truth tables and does not involve proof systems,
-axioms, or inference rules. The statement $P \models_{\mathsf{taut}} Q$ holds
-precisely when there is no valuation under which $P$ is true and $Q$ is false.
-
-\paragraph{Logical Implication.}
-Logical implication generalizes tautological implication. It is also semantic,
-but it applies to arbitrary sets of formulas and to richer languages, such as
-predicate logic. Logical implication concerns truth preservation across all
-models or interpretations, not merely truth tables.
-
-\paragraph{Derivability.}
-Derivability is a syntactic notion. It depends on a chosen formal proof system
-and concerns what can be obtained by applying inference rules step by step.
-Unlike logical implication, derivability makes no direct reference to truth or
-interpretations.
-
-\subsection*{Relationships Between the Notions}
-
-These concepts are connected by fundamental metatheorems of logic:
-
+Equivalently:
 \begin{itemize}
-  \item \textbf{Soundness:} If $\Gamma \vdash Q$, then $\Gamma \models Q$.
-  \item \textbf{Completeness (Propositional Logic):} If $\Gamma \models Q$,
-        then $\Gamma \vdash Q$.
+  \item $\varphi \models \psi$ and $\psi \models \varphi$.
+  \item $\varphi \leftrightarrow \psi$ is a tautology.
+  \item $\varphi$ and $\psi$ have identical truth tables.
 \end{itemize}
+\end{definition}
 
-In propositional logic, tautological implication is a special case of logical
-implication:
+\begin{remark}
+Logically equivalent formulas may be substituted for one another in any context
+without changing the truth value of the containing formula.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Logical Equivalences}
+% ---------------------------------------------------------
+
+\subsubsection{Double Negation}
+
+\begin{theorem}[Double Negation]
 \[
-P \models_{\mathsf{taut}} Q
-\quad \text{if and only if} \quad
-\{P\} \models Q.
+\neg\neg P \;\equiv\; P
 \]
+\end{theorem}
 
-\subsection*{Summary Table}
+\subsubsection{De Morgan's Laws}
+
+\begin{theorem}[De Morgan's Laws]
+\begin{align*}
+\neg(P \wedge Q) &\;\equiv\; \neg P \vee \neg Q \\
+\neg(P \vee Q) &\;\equiv\; \neg P \wedge \neg Q
+\end{align*}
+\end{theorem}
+
+\subsubsection{Commutativity}
+
+\begin{theorem}[Commutativity]
+\begin{align*}
+P \wedge Q &\;\equiv\; Q \wedge P \\
+P \vee Q &\;\equiv\; Q \vee P \\
+P \leftrightarrow Q &\;\equiv\; Q \leftrightarrow P
+\end{align*}
+\end{theorem}
+
+\subsubsection{Associativity}
+
+\begin{theorem}[Associativity]
+\begin{align*}
+(P \wedge Q) \wedge R &\;\equiv\; P \wedge (Q \wedge R) \\
+(P \vee Q) \vee R &\;\equiv\; P \vee (Q \vee R) \\
+(P \leftrightarrow Q) \leftrightarrow R &\;\equiv\; P \leftrightarrow (Q \leftrightarrow R)
+\end{align*}
+\end{theorem}
+
+\subsubsection{Distributivity}
+
+\begin{theorem}[Distributivity]
+\begin{align*}
+P \wedge (Q \vee R) &\;\equiv\; (P \wedge Q) \vee (P \wedge R) \\
+P \vee (Q \wedge R) &\;\equiv\; (P \vee Q) \wedge (P \vee R)
+\end{align*}
+\end{theorem}
+
+\subsubsection{Idempotence}
+
+\begin{theorem}[Idempotence]
+\begin{align*}
+P \wedge P &\;\equiv\; P \\
+P \vee P &\;\equiv\; P
+\end{align*}
+\end{theorem}
+
+\subsubsection{Absorption}
+
+\begin{theorem}[Absorption]
+\begin{align*}
+P \wedge (P \vee Q) &\;\equiv\; P \\
+P \vee (P \wedge Q) &\;\equiv\; P
+\end{align*}
+\end{theorem}
+
+\subsubsection{Identity Laws}
+
+\begin{theorem}[Identity Laws]
+\begin{align*}
+P \wedge \top &\;\equiv\; P \\
+P \vee \bot &\;\equiv\; P
+\end{align*}
+\end{theorem}
+
+\subsubsection{Domination Laws}
+
+\begin{theorem}[Domination Laws]
+\begin{align*}
+P \vee \top &\;\equiv\; \top \\
+P \wedge \bot &\;\equiv\; \bot
+\end{align*}
+\end{theorem}
+
+\subsubsection{Negation Laws}
+
+\begin{theorem}[Negation Laws]
+\begin{align*}
+P \vee \neg P &\;\equiv\; \top \quad \text{(Law of Excluded Middle)} \\
+P \wedge \neg P &\;\equiv\; \bot \quad \text{(Law of Non-Contradiction)}
+\end{align*}
+\end{theorem}
+
+\subsubsection{Conditional Equivalences}
+
+\begin{theorem}[Material Implication]
+\[
+P \rightarrow Q \;\equiv\; \neg P \vee Q
+\]
+\end{theorem}
+
+\begin{theorem}[Contraposition]
+\[
+P \rightarrow Q \;\equiv\; \neg Q \rightarrow \neg P
+\]
+\end{theorem}
+
+\begin{theorem}[Exportation / Importation]
+\[
+(P \wedge Q) \rightarrow R \;\equiv\; P \rightarrow (Q \rightarrow R)
+\]
+\end{theorem}
+
+\begin{theorem}[Negation of Conditional]
+\[
+\neg(P \rightarrow Q) \;\equiv\; P \wedge \neg Q
+\]
+\end{theorem}
+
+\subsubsection{Biconditional Equivalences}
+
+\begin{theorem}[Biconditional Expansion]
+\[
+P \leftrightarrow Q \;\equiv\; (P \rightarrow Q) \wedge (Q \rightarrow P)
+\]
+\end{theorem}
+
+\begin{theorem}[Biconditional as Disjunction]
+\[
+P \leftrightarrow Q \;\equiv\; (P \wedge Q) \vee (\neg P \wedge \neg Q)
+\]
+\end{theorem}
+
+\begin{theorem}[Negation of Biconditional]
+\[
+\neg(P \leftrightarrow Q) \;\equiv\; P \leftrightarrow \neg Q \;\equiv\; \neg P \leftrightarrow Q
+\]
+\end{theorem}
+
+\subsubsection{Summary of Logical Equivalences}
 
 \begin{center}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{|l|l|l|}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|}
 \hline
-\textbf{Notion} & \textbf{Symbol} & \textbf{Nature} \\
+\textbf{Name} & \textbf{Equivalence} \\
 \hline
-Tautological implication & $P \models_{\mathsf{taut}} Q$ & Semantic, truth-table based \\
-Logical implication & $\Gamma \models Q$ & Semantic, model-theoretic \\
-Derivability & $\Gamma \vdash Q$ & Syntactic, proof-theoretic \\
+Double Negation & $\neg\neg P \equiv P$ \\
+\hline
+De Morgan (1) & $\neg(P \wedge Q) \equiv \neg P \vee \neg Q$ \\
+De Morgan (2) & $\neg(P \vee Q) \equiv \neg P \wedge \neg Q$ \\
+\hline
+Commutativity & $P \wedge Q \equiv Q \wedge P$; \; $P \vee Q \equiv Q \vee P$ \\
+\hline
+Associativity & $(P \wedge Q) \wedge R \equiv P \wedge (Q \wedge R)$ \\
+              & $(P \vee Q) \vee R \equiv P \vee (Q \vee R)$ \\
+\hline
+Distributivity & $P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)$ \\
+               & $P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)$ \\
+\hline
+Idempotence & $P \wedge P \equiv P$; \; $P \vee P \equiv P$ \\
+\hline
+Absorption & $P \wedge (P \vee Q) \equiv P$; \; $P \vee (P \wedge Q) \equiv P$ \\
+\hline
+Identity & $P \wedge \top \equiv P$; \; $P \vee \bot \equiv P$ \\
+\hline
+Domination & $P \vee \top \equiv \top$; \; $P \wedge \bot \equiv \bot$ \\
+\hline
+Negation & $P \vee \neg P \equiv \top$; \; $P \wedge \neg P \equiv \bot$ \\
+\hline
+Material Implication & $P \rightarrow Q \equiv \neg P \vee Q$ \\
+\hline
+Contraposition & $P \rightarrow Q \equiv \neg Q \rightarrow \neg P$ \\
+\hline
+Exportation & $(P \wedge Q) \rightarrow R \equiv P \rightarrow (Q \rightarrow R)$ \\
+\hline
+Biconditional & $P \leftrightarrow Q \equiv (P \rightarrow Q) \wedge (Q \rightarrow P)$ \\
 \hline
 \end{tabular}
 \end{center}
 
-\subsection*{Key Takeaway}
+% ---------------------------------------------------------
+\subsection{Normal Forms}
+% ---------------------------------------------------------
 
-Tautological implication and logical implication concern \emph{truth in all
-interpretations}, whereas derivability concerns \emph{formal provability within
-a system}. The distinction between $\models$ and $\vdash$ is central to modern
-logic and underlies the soundness and completeness theorems.
+\subsubsection{Literals and Clauses}
 
+\begin{definition}[Literal]
+A \emph{literal} is either a propositional variable or the negation of a
+propositional variable.
 
+A \emph{positive literal} is a propositional variable $P$.
+A \emph{negative literal} is the negation of a propositional variable $\neg P$.
+\end{definition}
 
+\begin{definition}[Clause]
+A \emph{clause} is a disjunction of literals.
 
-% =========================================================
-% Inference Rules (Logical Rules)
-% =========================================================
+A \emph{conjunctive clause} (or \emph{term}) is a conjunction of literals.
+\end{definition}
 
-\section*{Rules of Inference (Logical / Truth-Preserving)}
+\subsubsection{Negation Normal Form}
 
+\begin{definition}[Negation Normal Form]
+A formula is in \emph{negation normal form} (NNF) if:
+\begin{enumerate}
+  \item Negation ($\neg$) is applied only to propositional variables.
+  \item The only connectives used are $\neg$, $\wedge$, and $\vee$.
+\end{enumerate}
+\end{definition}
 
-\begin{definition}[Modus Ponens — Logical Inference Rule]
-\textbf{Modus Ponens}, also called the \emph{Law of Detachment}, states that from a
-conditional proposition and its antecedent, the consequent may be inferred.
+\begin{theorem}[NNF Conversion]
+Every propositional formula is logically equivalent to a formula in negation
+normal form.
+\end{theorem}
 
+\begin{remark}[Procedure for NNF Conversion]
+\begin{enumerate}
+  \item Eliminate $\rightarrow$ and $\leftrightarrow$ using:
+  \begin{align*}
+    P \rightarrow Q &\equiv \neg P \vee Q \\
+    P \leftrightarrow Q &\equiv (P \wedge Q) \vee (\neg P \wedge \neg Q)
+  \end{align*}
+  \item Push negations inward using De Morgan's laws and double negation:
+  \begin{align*}
+    \neg(P \wedge Q) &\equiv \neg P \vee \neg Q \\
+    \neg(P \vee Q) &\equiv \neg P \wedge \neg Q \\
+    \neg\neg P &\equiv P
+  \end{align*}
+\end{enumerate}
+\end{remark}
+
+\subsubsection{Conjunctive Normal Form}
+
+\begin{definition}[Conjunctive Normal Form]
+A formula is in \emph{conjunctive normal form} (CNF) if it is a conjunction of
+clauses; that is, a conjunction of disjunctions of literals:
 \[
-\begin{array}{ll}
+\bigwedge_{i} \bigvee_{j} L_{ij}
+\]
+where each $L_{ij}$ is a literal.
+\end{definition}
+
+\begin{theorem}[CNF Existence]
+Every propositional formula is logically equivalent to a formula in conjunctive
+normal form.
+\end{theorem}
+
+\begin{example}
+The formula $(P \vee Q) \wedge (\neg P \vee R) \wedge (Q \vee \neg R)$ is in CNF.
+\end{example}
+
+\subsubsection{Disjunctive Normal Form}
+
+\begin{definition}[Disjunctive Normal Form]
+A formula is in \emph{disjunctive normal form} (DNF) if it is a disjunction of
+conjunctive clauses; that is, a disjunction of conjunctions of literals:
+\[
+\bigvee_{i} \bigwedge_{j} L_{ij}
+\]
+where each $L_{ij}$ is a literal.
+\end{definition}
+
+\begin{theorem}[DNF Existence]
+Every propositional formula is logically equivalent to a formula in disjunctive
+normal form.
+\end{theorem}
+
+\begin{example}
+The formula $(P \wedge Q) \vee (\neg P \wedge R) \vee (Q \wedge \neg R)$ is in DNF.
+\end{example}
+
+\subsubsection{Conversion Procedures}
+
+\begin{remark}[CNF Conversion Procedure]
+To convert a formula to CNF:
+\begin{enumerate}
+  \item Convert to negation normal form.
+  \item Apply distribution of $\vee$ over $\wedge$:
+  \[
+  P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)
+  \]
+  \item Repeat until the formula is a conjunction of disjunctions.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[DNF Conversion Procedure]
+To convert a formula to DNF:
+\begin{enumerate}
+  \item Convert to negation normal form.
+  \item Apply distribution of $\wedge$ over $\vee$:
+  \[
+  P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)
+  \]
+  \item Repeat until the formula is a disjunction of conjunctions.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Truth Table Method]
+CNF and DNF can also be constructed directly from a truth table:
+\begin{itemize}
+  \item \textbf{DNF:} For each row where the formula is true, form a conjunctive
+        clause using positive literals for variables assigned T and negative
+        literals for variables assigned F. Take the disjunction of all such clauses.
+  \item \textbf{CNF:} For each row where the formula is false, form a disjunctive
+        clause using positive literals for variables assigned F and negative
+        literals for variables assigned T. Take the conjunction of all such clauses.
+\end{itemize}
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Inference Rules}
+% ---------------------------------------------------------
+
+\subsubsection{Basic Inference Rules}
+
+\begin{definition}[Modus Ponens]
+\textbf{Modus Ponens} (Law of Detachment): From a conditional and its antecedent,
+infer the consequent.
+\[
+\begin{array}{l}
 P \rightarrow Q \\
 P \\ \hline
 Q
 \end{array}
 \]
-
-This rule is truth-preserving and fundamental to all deductive systems.
 \end{definition}
 
-\begin{definition}[Modus Tollens — Logical Inference Rule]
-\textbf{Modus Tollens}, also called \emph{denying the consequent}, states that from a
-conditional proposition and the negation of its consequent, the negation of the
-antecedent may be inferred.
-
+\begin{definition}[Modus Tollens]
+\textbf{Modus Tollens} (Denying the Consequent): From a conditional and the
+negation of its consequent, infer the negation of the antecedent.
 \[
-\begin{array}{ll}
+\begin{array}{l}
 P \rightarrow Q \\
 \neg Q \\ \hline
 \neg P
@@ -273,13 +704,12 @@ P \rightarrow Q \\
 \]
 \end{definition}
 
-\begin{definition}[Hypothetical Syllogism — Logical Inference Rule]
-\textbf{Hypothetical Syllogism}, also called the \emph{chain rule}, states that if one
-conditional implies a second and the second implies a third, then the first implies the
-third.
-
+\begin{definition}[Hypothetical Syllogism]
+\textbf{Hypothetical Syllogism} (Chain Rule): From two conditionals where the
+consequent of the first is the antecedent of the second, infer a conditional
+linking the first antecedent to the second consequent.
 \[
-\begin{array}{ll}
+\begin{array}{l}
 P \rightarrow Q \\
 Q \rightarrow R \\ \hline
 P \rightarrow R
@@ -287,18 +717,17 @@ P \rightarrow R
 \]
 \end{definition}
 
-\begin{definition}[Disjunctive Syllogism — Logical Inference Rule]
-\textbf{Disjunctive Syllogism}, also called \emph{modus tollendo ponens}, states that from
-a disjunction and the negation of one disjunct, the other disjunct may be inferred.
-
+\begin{definition}[Disjunctive Syllogism]
+\textbf{Disjunctive Syllogism} (Modus Tollendo Ponens): From a disjunction and the
+negation of one disjunct, infer the other disjunct.
 \[
-\begin{array}{ll}
+\begin{array}{l}
 P \vee Q \\
 \neg P \\ \hline
 Q
 \end{array}
 \qquad\text{or}\qquad
-\begin{array}{ll}
+\begin{array}{l}
 P \vee Q \\
 \neg Q \\ \hline
 P
@@ -306,12 +735,13 @@ P
 \]
 \end{definition}
 
-\begin{definition}[Adjunction — Logical Inference Rule]
-\textbf{Adjunction}, also called \emph{Conjunction Introduction}, states that if two
-propositions have been established, their conjunction may be inferred.
+\subsubsection{Conjunction Rules}
 
+\begin{definition}[Conjunction Introduction]
+\textbf{Conjunction Introduction} (Adjunction): From two propositions, infer
+their conjunction.
 \[
-\begin{array}{ll}
+\begin{array}{l}
 P \\
 Q \\ \hline
 P \wedge Q
@@ -319,28 +749,39 @@ P \wedge Q
 \]
 \end{definition}
 
-\begin{definition}[Simplification — Logical Inference Rule]
-\textbf{Simplification}, also called \emph{Conjunction Elimination}, states that from a
-conjunction, either conjunct may be inferred.
-
+\begin{definition}[Conjunction Elimination]
+\textbf{Conjunction Elimination} (Simplification): From a conjunction, infer
+either conjunct.
 \[
-\begin{array}{ll}
+\begin{array}{l}
 P \wedge Q \\ \hline
 P
 \end{array}
 \qquad\text{or}\qquad
-\begin{array}{ll}
+\begin{array}{l}
 P \wedge Q \\ \hline
 Q
 \end{array}
 \]
 \end{definition}
 
-\begin{definition}[Disjunction Elimination — Logical Inference Rule]
-\textbf{Disjunction Elimination}, also called \emph{Proof by Cases}, states that if a
-disjunction is true and the same conclusion can be derived from each disjunct, then that
-conclusion may be inferred.
+\subsubsection{Disjunction Rules}
 
+\begin{definition}[Disjunction Introduction]
+\textbf{Disjunction Introduction} (Addition): From a proposition, infer any
+disjunction containing it.
+\[
+\begin{array}{l}
+P \\ \hline
+P \vee Q
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Disjunction Elimination]
+\textbf{Disjunction Elimination} (Proof by Cases): If a disjunction is true and
+the same conclusion follows from each disjunct, then that conclusion may be
+inferred.
 \[
 \begin{array}{l}
 P \vee Q \\
@@ -357,10 +798,11 @@ R
 \]
 \end{definition}
 
-\begin{definition}[Conditional Proof — Structural Rule]
-\textbf{Conditional Proof} states that if assuming $P$ leads to $Q$, then the conditional
-$P \rightarrow Q$ may be inferred.
+\subsubsection{Conditional Rules}
 
+\begin{definition}[Conditional Introduction]
+\textbf{Conditional Introduction} (Conditional Proof): If assuming $P$ leads to
+$Q$, then infer $P \rightarrow Q$.
 \[
 \begin{array}{l}
 \text{Assume } P \\ \vdots \\ Q \\ \hline
@@ -369,10 +811,52 @@ P \rightarrow Q
 \]
 \end{definition}
 
-\begin{definition}[Indirect Proof — Structural Rule]
-\textbf{Indirect Proof}, also called \emph{Reductio ad Absurdum}, states that if assuming
-$\neg P$ leads to a contradiction, then $P$ may be inferred.
+\subsubsection{Biconditional Rules}
 
+\begin{definition}[Biconditional Introduction]
+\textbf{Biconditional Introduction}: From two conditionals in opposite directions,
+infer their biconditional.
+\[
+\begin{array}{l}
+P \rightarrow Q \\
+Q \rightarrow P \\ \hline
+P \leftrightarrow Q
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Biconditional Elimination]
+\textbf{Biconditional Elimination}: From a biconditional, infer either component
+conditional.
+\[
+\begin{array}{l}
+P \leftrightarrow Q \\ \hline
+P \rightarrow Q
+\end{array}
+\qquad
+\begin{array}{l}
+P \leftrightarrow Q \\ \hline
+Q \rightarrow P
+\end{array}
+\]
+\end{definition}
+
+\subsubsection{Negation Rules}
+
+\begin{definition}[Negation Introduction]
+\textbf{Negation Introduction} (Reductio ad Absurdum): If assuming $P$ leads to
+a contradiction, then infer $\neg P$.
+\[
+\begin{array}{l}
+\text{Assume } P \\ \vdots \\ \bot \\ \hline
+\neg P
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[Negation Elimination]
+\textbf{Negation Elimination} (Indirect Proof): If assuming $\neg P$ leads to a
+contradiction, then infer $P$.
 \[
 \begin{array}{l}
 \text{Assume } \neg P \\ \vdots \\ \bot \\ \hline
@@ -381,9 +865,22 @@ P
 \]
 \end{definition}
 
-\begin{definition}[Constructive Dilemma — Logical Inference Rule]
-The \textbf{Constructive Dilemma} propagates cases forwardA through conditionals.
+\begin{definition}[Double Negation Elimination]
+\textbf{Double Negation Elimination}: From a double negation, infer the original
+proposition.
+\[
+\begin{array}{l}
+\neg\neg P \\ \hline
+P
+\end{array}
+\]
+\end{definition}
 
+\subsubsection{Dilemma Rules}
+
+\begin{definition}[Constructive Dilemma]
+\textbf{Constructive Dilemma}: From a disjunction and two conditionals whose
+antecedents are the disjuncts, infer the disjunction of the consequents.
 \[
 \begin{array}{l}
 P \vee Q \\
@@ -394,9 +891,9 @@ R \vee S
 \]
 \end{definition}
 
-\begin{definition}[Destructive Dilemma — Logical Inference Rule]
-The \textbf{Destructive Dilemma} propagates negated consequents backward.
-
+\begin{definition}[Destructive Dilemma]
+\textbf{Destructive Dilemma}: From two conditionals and the disjunction of their
+negated consequents, infer the disjunction of their negated antecedents.
 \[
 \begin{array}{l}
 P \rightarrow R \\
@@ -407,10 +904,10 @@ Q \rightarrow S \\
 \]
 \end{definition}
 
-\begin{definition}[Reiteration — Structural Rule]
-\textbf{Reiteration} allows any previously derived statement to be restated later in a
-proof.
+\subsubsection{Structural Rules}
 
+\begin{definition}[Reiteration]
+\textbf{Reiteration}: Any previously derived statement may be restated.
 \[
 \begin{array}{l}
 P \\ \hline
@@ -419,256 +916,269 @@ P
 \]
 \end{definition}
 
-% =========================================================
-% Biconditional Inference Rules
-% =========================================================
-
-\begin{definition}[Biconditional Elimination — Logical Inference Rule]
-\textbf{Biconditional Elimination} states that from a biconditional, either
-directional conditional may be inferred.
-
-\[
-\begin{array}{ll}
-P \leftrightarrow Q \\ \hline
-P \rightarrow Q
-\end{array}
-\qquad
-\begin{array}{ll}
-P \leftrightarrow Q \\ \hline
-Q \rightarrow P
-\end{array}
-\]
-
-This rule corresponds to extracting the component implications contained in
-a biconditional.
+\begin{definition}[Assumption]
+\textbf{Assumption Rule}: A proposition may be temporarily assumed for the
+purpose of a subproof. Assumptions must be discharged before the proof is
+complete.
 \end{definition}
 
-\begin{definition}[Biconditional Introduction — Logical Inference Rule]
-\textbf{Biconditional Introduction} states that if each of two propositions
-implies the other, then their biconditional may be inferred.
+\subsubsection{Summary of Inference Rules}
 
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Rule} & \textbf{Premises} & \textbf{Conclusion} \\
+\hline
+Modus Ponens & $P \rightarrow Q$, $P$ & $Q$ \\
+Modus Tollens & $P \rightarrow Q$, $\neg Q$ & $\neg P$ \\
+Hypothetical Syllogism & $P \rightarrow Q$, $Q \rightarrow R$ & $P \rightarrow R$ \\
+Disjunctive Syllogism & $P \vee Q$, $\neg P$ & $Q$ \\
+Conjunction Introduction & $P$, $Q$ & $P \wedge Q$ \\
+Conjunction Elimination & $P \wedge Q$ & $P$ (or $Q$) \\
+Disjunction Introduction & $P$ & $P \vee Q$ \\
+Constructive Dilemma & $P \vee Q$, $P \rightarrow R$, $Q \rightarrow S$ & $R \vee S$ \\
+Destructive Dilemma & $P \rightarrow R$, $Q \rightarrow S$, $\neg R \vee \neg S$ & $\neg P \vee \neg Q$ \\
+Biconditional Introduction & $P \rightarrow Q$, $Q \rightarrow P$ & $P \leftrightarrow Q$ \\
+Biconditional Elimination & $P \leftrightarrow Q$ & $P \rightarrow Q$ \\
+Double Negation Elimination & $\neg\neg P$ & $P$ \\
+\hline
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------
+\subsection{Proof Systems}
+% ---------------------------------------------------------
+
+\subsubsection{Derivability}
+
+\begin{definition}[Derivability]
+Let $\Gamma$ be a set of formulas and $\varphi$ a formula.
+We say that $\varphi$ is \emph{derivable} from $\Gamma$, written
 \[
-\begin{array}{ll}
+\Gamma \vdash \varphi,
+\]
+if there exists a formal proof of $\varphi$ from the assumptions in $\Gamma$
+using the rules of a specified deductive system.
+\end{definition}
+
+\begin{remark}
+Derivability is a \emph{syntactic} notion. It depends on a chosen proof system
+and concerns what can be obtained by applying inference rules step by step.
+Unlike logical consequence, derivability makes no direct reference to truth or
+interpretations.
+\end{remark}
+
+\subsubsection{Soundness and Completeness}
+
+\begin{definition}[Soundness]
+A proof system is \emph{sound} if every derivable formula is valid.
+
+Formally, if $\Gamma \vdash \varphi$, then $\Gamma \models \varphi$.
+\end{definition}
+
+\begin{definition}[Completeness]
+A proof system is \emph{complete} if every valid formula is derivable.
+
+Formally, if $\Gamma \models \varphi$, then $\Gamma \vdash \varphi$.
+\end{definition}
+
+\begin{theorem}[Soundness and Completeness of Propositional Logic]
+The standard proof systems for propositional logic (natural deduction, sequent
+calculus, Hilbert systems) are both sound and complete.
+
+Thus, for propositional logic:
+\[
+\Gamma \vdash \varphi \quad\Longleftrightarrow\quad \Gamma \models \varphi.
+\]
+\end{theorem}
+
+\begin{remark}
+Soundness ensures that proofs do not lead us astray: we cannot prove false
+statements from true premises. Completeness ensures that proofs are powerful
+enough: every valid argument can be formally verified.
+\end{remark}
+
+\subsubsection{Comparison: Semantic vs.\ Syntactic Notions}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Notion} & \textbf{Symbol} & \textbf{Nature} \\
+\hline
+Tautological implication & $P \models_{\mathsf{taut}} Q$ & Semantic, truth-table based \\
+Logical consequence & $\Gamma \models \varphi$ & Semantic, model-theoretic \\
+Derivability & $\Gamma \vdash \varphi$ & Syntactic, proof-theoretic \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The distinction between $\models$ (semantic entailment) and $\vdash$ (syntactic
+derivability) is central to logic. Soundness and completeness theorems establish
+the correspondence between these two perspectives.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Common Errors and Fallacies}
+% ---------------------------------------------------------
+
+\subsubsection{Formal Fallacies}
+
+\begin{definition}[Affirming the Consequent]
+\textbf{Affirming the Consequent} is the invalid inference:
+\[
+\begin{array}{l}
 P \rightarrow Q \\
-Q \rightarrow P \\ \hline
-P \leftrightarrow Q
+Q \\ \hline
+P \quad \text{(INVALID)}
 \end{array}
 \]
 
-This rule captures the meaning of logical equivalence as mutual implication.
+This is fallacious because $Q$ being true does not guarantee that $P$ is true;
+$Q$ might be true for other reasons.
 \end{definition}
 
+\begin{example}
+``If it rains, the ground is wet. The ground is wet. Therefore, it rained.''
 
+This is invalid: the ground might be wet because of a sprinkler.
+\end{example}
 
-% =========================================================
-% Structural / Syntactic Rules
-% =========================================================
-
-
-\begin{definition}[Rule of Premises — Structural Rule]
-The \textbf{Rule of Premises} states that any proposition listed as a premise in a
-proof may be asserted at any later step of that proof. This rule introduces no
-new information and serves only to make assumptions explicit.
-
+\begin{definition}[Denying the Antecedent]
+\textbf{Denying the Antecedent} is the invalid inference:
 \[
 \begin{array}{l}
-P \\ \hline
-P
+P \rightarrow Q \\
+\neg P \\ \hline
+\neg Q \quad \text{(INVALID)}
 \end{array}
 \]
+
+This is fallacious because the conditional $P \rightarrow Q$ says nothing about
+what happens when $P$ is false.
 \end{definition}
 
-\begin{definition}[Reiteration — Structural Rule]
-\textbf{Reiteration} permits a statement that has already been derived earlier in
-a proof to be restated at a later point. It is used to make prior results
-available in new contexts, such as subproofs.
+\begin{example}
+``If it rains, the ground is wet. It did not rain. Therefore, the ground is not wet.''
 
-\[
-\begin{array}{l}
-P \\ \hline
-P
-\end{array}
-\]
-\end{definition}
+This is invalid: the ground might be wet for other reasons.
+\end{example}
 
-\begin{definition}[Assumption Rule — Structural Rule]
-The \textbf{Assumption Rule} allows a proposition to be temporarily introduced
-for the purpose of reasoning within a subproof. Assumptions must be discharged
-before the proof is completed.
+\subsubsection{Comparison: Valid vs.\ Invalid Inference Patterns}
 
-\[
-\begin{array}{l}
-\text{Assume } P
-\end{array}
-\]
-\end{definition}
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Pattern} & \textbf{Valid?} & \textbf{Form} \\
+\hline
+Modus Ponens & Yes & $P \rightarrow Q$, $P$ $\therefore$ $Q$ \\
+Modus Tollens & Yes & $P \rightarrow Q$, $\neg Q$ $\therefore$ $\neg P$ \\
+Affirming the Consequent & No & $P \rightarrow Q$, $Q$ $\therefore$ $P$ \\
+Denying the Antecedent & No & $P \rightarrow Q$, $\neg P$ $\therefore$ $\neg Q$ \\
+\hline
+\end{tabular}
+\end{center}
 
-\begin{definition}[Subproof Discharge — Structural Rule]
-\textbf{Subproof Discharge} marks the closing of a subproof and permits conclusions
-derived under an assumption to be used to justify conditionals, negations, or
-case reasoning. The assumption is no longer available after discharge.
+\subsubsection{Common Truth Table Errors}
 
-\[
-\begin{array}{l}
-\text{Assume } P \\ \vdots \\ Q \\ \hline
-P \rightarrow Q
-\end{array}
-\]
-\end{definition}
+\begin{remark}[Common Errors]
+\begin{itemize}
+  \item \textbf{Misunderstanding the conditional:} The conditional
+        $P \rightarrow Q$ is false only when $P$ is true and $Q$ is false. It is
+        true in all other cases, including when $P$ is false.
 
-% =========================================================
-% Structural / Syntactic Rules
-% =========================================================
+  \item \textbf{Confusing $\rightarrow$ with $\leftrightarrow$:} The conditional
+        is not symmetric; $P \rightarrow Q$ is not equivalent to $Q \rightarrow P$.
 
-\begin{definition}[De Morgan's Laws — Replacement Rule]
-\textbf{De Morgan's Laws} describe how negation distributes over conjunction and
-disjunction. They allow logically equivalent formulas to replace one another.
+  \item \textbf{Confusing ``or'' meanings:} In logic, $\vee$ is inclusive
+        (true when at least one disjunct is true). Exclusive or (true when
+        exactly one is true) is written $P \oplus Q$ or $(P \vee Q) \wedge \neg(P \wedge Q)$.
 
-\[
-\neg (P \wedge Q) \;\equiv\; \neg P \vee \neg Q
-\]
-\[
-\neg (P \vee Q) \;\equiv\; \neg P \wedge \neg Q
-\]
-\end{definition}
+  \item \textbf{Forgetting rows:} A truth table for $n$ variables must have
+        $2^n$ rows.
 
-\begin{definition}[Commutation (Commutativity) — Replacement Rule]
-\textbf{Commutation} states that the order of propositions joined by conjunction
-or disjunction does not affect truth value.
+  \item \textbf{Operator precedence:} Failing to account for precedence leads
+        to incorrect parsing of formulas.
+\end{itemize}
+\end{remark}
 
-\[
-P \wedge Q \;\equiv\; Q \wedge P
-\]
-\[
-P \vee Q \;\equiv\; Q \vee P
-\]
-\end{definition}
+\subsubsection{Fallacy Checklist}
 
-\begin{definition}[Association (Associativity) — Replacement Rule]
-\textbf{Association} states that when the same connective is repeated, the placement
-of parentheses does not affect logical meaning.
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{5cm}|p{8cm}|}
+\hline
+\textbf{Fallacy} & \textbf{Diagnostic Question} \\
+\hline
+Affirming the Consequent & Was $Q$ used to infer $P$ from $P \rightarrow Q$? \\
+\hline
+Denying the Antecedent & Was $\neg P$ used to infer $\neg Q$ from $P \rightarrow Q$? \\
+\hline
+Misreading Conditional & Was the conditional treated as false when the antecedent is false? \\
+\hline
+Confusing Implication Direction & Was $P \rightarrow Q$ confused with $Q \rightarrow P$? \\
+\hline
+Missing Cases & Were all $2^n$ rows of the truth table considered? \\
+\hline
+\end{tabular}
+\end{center}
 
-\[
-(P \wedge Q) \wedge R \;\equiv\; P \wedge (Q \wedge R)
-\]
-\[
-(P \vee Q) \vee R \;\equiv\; P \vee (Q \vee R)
-\]
-\end{definition}
+% ---------------------------------------------------------
+\subsection{Summary Tables}
+% ---------------------------------------------------------
 
-\begin{definition}[Distribution — Replacement Rule]
-The \textbf{Distributive Laws} describe how conjunction and disjunction distribute
-over one another.
+\subsubsection{Connective Truth Tables}
 
-\[
-P \wedge (Q \vee R) \;\equiv\; (P \wedge Q) \vee (P \wedge R)
-\]
-\[
-P \vee (Q \wedge R) \;\equiv\; (P \vee Q) \wedge (P \vee R)
-\]
-\end{definition}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|c|c|c|c|}
+\hline
+$P$ & $Q$ & $\neg P$ & $P \wedge Q$ & $P \vee Q$ & $P \rightarrow Q$ & $P \leftrightarrow Q$ \\
+\hline
+T & T & F & T & T & T & T \\
+T & F & F & F & T & F & F \\
+F & T & T & F & T & T & F \\
+F & F & T & F & F & T & T \\
+\hline
+\end{tabular}
+\end{center}
 
-\begin{definition}[Double Negation — Replacement Rule]
-The \textbf{Double Negation Law} states that a proposition is logically equivalent
-to the negation of its negation.
+\subsubsection{Classification of Formulas}
 
-\[
-\neg\neg P \;\equiv\; P
-\]
-\end{definition}
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Classification} & \textbf{Definition} & \textbf{Example} \\
+\hline
+Tautology & True under all assignments & $P \vee \neg P$ \\
+Contradiction & False under all assignments & $P \wedge \neg P$ \\
+Contingency & True under some, false under others & $P \rightarrow Q$ \\
+Satisfiable & True under at least one assignment & $P$, $P \vee Q$ \\
+\hline
+\end{tabular}
+\end{center}
 
-\begin{definition}[Contraposition — Replacement Rule]
-\textbf{Contraposition} states that a conditional proposition is logically equivalent
-to its contrapositive.
+\subsubsection{Comparison: Propositional vs.\ Predicate Logic}
 
-\[
-P \rightarrow Q \;\equiv\; \neg Q \rightarrow \neg P
-\]
-\end{definition}
-
-\begin{definition}[Material Implication — Replacement Rule]
-\textbf{Material Implication} rewrites a conditional using negation and disjunction.
-
-\[
-P \rightarrow Q \;\equiv\; \neg P \vee Q
-\]
-\end{definition}
-
-\begin{definition}[Biconditional Expansion — Replacement Rule]
-\textbf{Biconditional Expansion} states that a biconditional is equivalent to a
-conjunction of two conditionals.
-
-\[
-P \leftrightarrow Q \;\equiv\; (P \rightarrow Q) \wedge (Q \rightarrow P)
-\]
-\end{definition}
-
-\begin{definition}[Exportation / Importation — Replacement Rule]
-\textbf{Exportation} and \textbf{Importation} relate conditionals with conjunctions
-in the antecedent.
-
-\[
-(P \wedge Q) \rightarrow R \;\equiv\; P \rightarrow (Q \rightarrow R)
-\]
-\end{definition}
-
-\begin{definition}[Idempotent Laws — Replacement Rule]
-The \textbf{Idempotent Laws} state that repeating a proposition under conjunction
-or disjunction does not change its value.
-
-\[
-P \wedge P \;\equiv\; P
-\]
-\[
-P \vee P \;\equiv\; P
-\]
-\end{definition}
-
-\begin{definition}[Absorption Laws — Replacement Rule]
-The \textbf{Absorption Laws} describe how a proposition absorbs a compound containing
-itself.
-
-\[
-P \wedge (P \vee Q) \;\equiv\; P
-\]
-\[
-P \vee (P \wedge Q) \;\equiv\; P
-\]
-\end{definition}
-
-\begin{definition}[Identity, Domination, and Negation Laws — Replacement Rules]
-These laws describe interactions with truth and falsity.
-
-\[
-P \wedge \top \;\equiv\; P \qquad P \vee \bot \;\equiv\; P
-\]
-\[
-P \vee \top \;\equiv\; \top \qquad P \wedge \bot \;\equiv\; \bot
-\]
-\[
-P \vee \neg P \;\equiv\; \top \qquad P \wedge \neg P \;\equiv\; \bot
-\]
-\end{definition}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Aspect} & \textbf{Propositional Logic} & \textbf{Predicate Logic} \\
+\hline
+Atomic formulas & Propositional variables & Predicate symbols applied to terms \\
+\hline
+Internal structure & None & Contains terms, variables, functions \\
+\hline
+Quantifiers & Not available & $\forall$, $\exists$ \\
+\hline
+Semantic evaluation & Truth assignments & Structures and variable assignments \\
+\hline
+Decision problem & Decidable (truth tables) & Undecidable in general \\
+\hline
+\end{tabular}
+\end{center}

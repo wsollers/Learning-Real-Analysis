@@ -1,77 +1,13 @@
 % =========================================================
-% Predicate Calculus — Quantifiers and Rules
+% Predicate Calculus — Reorganized Notes
 % =========================================================
 
-\subsection{Predicate Calculus}
 
+% ---------------------------------------------------------
+\subsection{Syntax of First-Order Logic}
+% ---------------------------------------------------------
 
-\begin{definition}[Atomic Formula]
-An \emph{atomic formula} is a well-formed formula that contains no logical
-connectives or quantifiers.
-
-Formally, if $P$ is an $n$-ary predicate symbol and
-$t_1,\dots,t_n$ are terms, then
-\[
-P(t_1,\dots,t_n)
-\]
-is an atomic formula.
-
-Atomic formulas are the simplest formulas of a language and serve as the base
-case for the recursive definition of well-formed formulas.
-\end{definition}
-
-\begin{definition}[Molecular Formula]
-A \emph{molecular formula} is a well-formed formula that is formed from one or
-more atomic formulas by the application of logical connectives or quantifiers.
-
-Formally, a formula $\varphi$ is molecular if it is obtained by finitely many
-applications of formation rules involving negation, binary connectives, or
-quantifiers to atomic formulas.
-\end{definition}
-
-\begin{remark}
-Atomic formulas express basic properties or relations, while molecular formulas
-express compound statements built from atomic formulas using the logical
-apparatus of the language.
-\end{remark}
-
-
-
-
-
-
-\begin{definition}[Predicate]
-A \emph{predicate} is an expression containing one or more variables that
-represents a property or relation and becomes a proposition when all of its
-variables are instantiated.
-
-Formally, a predicate may be viewed in two equivalent ways:
-\begin{enumerate}
-  \item \textbf{Syntactic view.}
-  A predicate is an open formula $\varphi(x_1,\dots,x_n)$ of a formal language,
-  which does not have a truth value until specific objects are substituted for
-  its variables.
-
-  \item \textbf{Semantic view.}
-  Given a domain of discourse $D$, an $n$-ary predicate determines a function
-  \[
-  P : D^n \to \{\mathsf{T}, \mathsf{F}\},
-  \]
-  assigning a truth value to each ordered $n$-tuple of elements of $D$.
-\end{enumerate}
-
-Under an interpretation, these two views coincide: for any
-$a_1,\dots,a_n \in D$, the instantiated formula
-$\varphi(a_1,\dots,a_n)$ is true if and only if
-$P(a_1,\dots,a_n) = \mathsf{T}$.
-\end{definition}
-
-
-\begin{remark}
-A predicate is not itself a proposition, since it does not have a truth value
-until its variables are instantiated. Once all variables are replaced by
-elements of the domain, the resulting expression is a proposition.
-\end{remark}
+\subsubsection{Terms}
 
 \begin{definition}[Variable]
 A \emph{variable} is a syntactic symbol that ranges over elements of a fixed
@@ -80,40 +16,6 @@ domain of discourse.
 Variables serve as placeholders in formulas and do not refer to specific objects
 until they are assigned values or bound by quantifiers.
 \end{definition}
-
-\begin{definition}[Atomic Formula]
-An \emph{atomic formula} is a well-formed formula obtained by applying an
-$n$-ary predicate symbol to $n$ terms.
-
-In particular, if $P$ is an $n$-ary predicate symbol and
-$t_1, \dots, t_n$ are terms, then
-\[
-P(t_1, \dots, t_n)
-\]
-is an atomic formula.
-
-Atomic formulas contain no logical connectives or quantifiers.
-\end{definition}
-
-\begin{remark}[Predicates vs.\ Relations]
-Predicates and relations are closely related but conceptually distinct.
-
-A \emph{predicate} is a syntactic or semantic device: syntactically, it is an
-open formula or predicate symbol; semantically, it determines a truth-valued
-function on a domain.
-
-A \emph{relation}, by contrast, is a purely set-theoretic object. An $n$-ary
-relation on a domain $D$ is a subset $R \subseteq D^n$.
-
-Under an interpretation, a predicate symbol corresponds to a relation by
-identifying the tuples for which the predicate is true:
-\[
-P(a_1,\dots,a_n) \text{ is true } \iff (a_1,\dots,a_n) \in R.
-\]
-
-Thus, predicates belong to the \emph{language} of logic, while relations belong
-to the \emph{structures} used to interpret that language.
-\end{remark}
 
 \begin{definition}[Term]
 A \emph{term} is a syntactic expression intended to denote an object in the
@@ -147,8 +49,285 @@ an element of the domain of discourse, but the term itself is not an object of
 the domain.
 \end{remark}
 
+\subsubsection{Formulas}
 
+\begin{definition}[Atomic Formula]
+An \emph{atomic formula} is a well-formed formula obtained by applying an
+$n$-ary predicate symbol to $n$ terms.
 
+If $P$ is an $n$-ary predicate symbol and $t_1, \dots, t_n$ are terms, then
+\[
+P(t_1, \dots, t_n)
+\]
+is an atomic formula.
+
+Atomic formulas contain no logical connectives or quantifiers and serve as the
+base case for the recursive definition of well-formed formulas.
+\end{definition}
+
+\begin{definition}[Well-Formed Formula]
+The set of \emph{well-formed formulas} (wffs) of a first-order language is
+defined recursively as follows:
+\begin{enumerate}
+  \item \textbf{Atomic formulas.}
+  Every atomic formula is a well-formed formula.
+
+  \item \textbf{Negation.}
+  If $\varphi$ is a formula, then $\neg\varphi$ is a formula.
+
+  \item \textbf{Binary connectives.}
+  If $\varphi$ and $\psi$ are formulas and
+  $\circ \in \{\wedge, \vee, \rightarrow, \leftrightarrow\}$, then
+  $(\varphi \circ \psi)$ is a formula.
+
+  \item \textbf{Quantification.}
+  If $\varphi$ is a formula and $x$ is a variable, then
+  $\forall x\,\varphi$ and $\exists x\,\varphi$ are formulas.
+
+  \item \textbf{Closure.}
+  No expression is a formula unless it can be obtained by finitely many
+  applications of rules (1)--(4).
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Molecular Formula]
+A \emph{molecular formula} is a well-formed formula that is not atomic.
+
+Equivalently, a formula is molecular if it is formed from one or more atomic
+formulas by the application of logical connectives or quantifiers.
+\end{definition}
+
+\begin{remark}
+Atomic formulas express basic properties or relations, while molecular formulas
+express compound statements built from atomic formulas using the logical
+apparatus of the language.
+\end{remark}
+
+\subsubsection{Free and Bound Variables}
+
+\begin{definition}[Scope of a Quantifier]
+Let $\varphi$ be a formula of a first-order language.
+
+If $\varphi$ is of the form $\forall x\,\psi$ or $\exists x\,\psi$, then the
+formula $\psi$ is called the \emph{scope} of the quantifier.
+
+The quantifier is said to \emph{bind} all occurrences of the variable $x$ that
+appear within its scope.
+\end{definition}
+
+\begin{definition}[Bound and Free Occurrences]
+An occurrence of a variable $x$ in a formula $\varphi$ is \emph{bound} if it lies
+within the scope of a quantifier $\forall x$ or $\exists x$.
+
+An occurrence of $x$ is \emph{free} if it is not bound by any quantifier in
+$\varphi$.
+\end{definition}
+
+\begin{definition}[Free Variable]
+A variable $x$ is said to be \emph{free} in a formula $\varphi$ if there exists
+an occurrence of $x$ in $\varphi$ that is not within the scope of a quantifier
+binding $x$.
+
+Equivalently, $x$ is free in $\varphi$ if the truth value of $\varphi$ under a
+structure depends on the value assigned to $x$ by a variable assignment.
+\end{definition}
+
+\begin{definition}[Free Variables of a Formula]
+The set $\mathrm{FV}(\varphi)$ of free variables of a formula $\varphi$ is defined
+recursively as follows:
+\begin{enumerate}
+  \item If $\varphi$ is an atomic formula $P(t_1,\dots,t_n)$, then
+  \[
+  \mathrm{FV}(\varphi) = \bigcup_{i=1}^n \mathrm{Var}(t_i),
+  \]
+  where $\mathrm{Var}(t_i)$ denotes the set of variables occurring in the term
+  $t_i$.
+
+  \item $\mathrm{FV}(\neg \varphi) = \mathrm{FV}(\varphi)$.
+
+  \item $\mathrm{FV}(\varphi \circ \psi)
+  = \mathrm{FV}(\varphi) \cup \mathrm{FV}(\psi)$,
+  where $\circ$ is any binary connective.
+
+  \item $\mathrm{FV}(\forall x\,\varphi)
+  = \mathrm{FV}(\varphi) \setminus \{x\}$.
+
+  \item $\mathrm{FV}(\exists x\,\varphi)
+  = \mathrm{FV}(\varphi) \setminus \{x\}$.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Sentence]
+A \emph{sentence} (or \emph{closed formula}) is a formula with no free variables.
+
+Formally, $\varphi$ is a sentence if and only if $\mathrm{FV}(\varphi) = \varnothing$.
+\end{definition}
+
+\begin{remark}
+Terms themselves contain only free variables.
+Variables become bound only through quantification in formulas.
+The interpretation of a formula depends exactly on the values assigned to its
+free variables.
+\end{remark}
+
+\begin{example}
+In the formula $\forall x\,(P(x) \rightarrow Q(x))$, the scope of $\forall x$ is
+the formula $(P(x) \rightarrow Q(x))$.
+
+In the formula $(\forall x\,P(x)) \wedge Q(x)$, the scope of $\forall x$ is $P(x)$
+only; the occurrence of $x$ in $Q(x)$ is free.
+\end{example}
+
+\subsubsection{Substitution}
+
+\begin{definition}[Substitution Notation]
+Let $\varphi$ be a formula, $x$ a variable, and $t$ a term.
+
+The expression $\varphi[t/x]$ denotes the formula obtained from $\varphi$ by
+replacing every \emph{free} occurrence of $x$ with the term $t$, leaving bound
+occurrences of $x$ unchanged.
+\end{definition}
+
+\begin{definition}[Free for Substitution]
+A term $t$ is \emph{free for} $x$ in $\varphi$ if no free occurrence of $x$ in
+$\varphi$ lies within the scope of a quantifier $\forall y$ or $\exists y$ where
+$y$ is a variable occurring in $t$.
+
+Equivalently, $t$ is free for $x$ in $\varphi$ if the substitution $\varphi[t/x]$
+does not result in any variable in $t$ becoming bound.
+\end{definition}
+
+\begin{remark}[Capture-Avoiding Substitution]
+A substitution $\varphi[t/x]$ is admissible only if $t$ is free for $x$ in
+$\varphi$. If this condition is violated, a variable occurring in $t$ may become
+bound after substitution, changing the meaning of the formula.
+\end{remark}
+
+\begin{definition}[Alpha-Equivalence]
+Formulas that differ only by the names of bound variables are logically
+equivalent.
+\[
+\forall x\,\varphi \;\equiv\; \forall y\,\varphi[y/x]
+\quad\text{(provided $y$ is not free in $\varphi$)}
+\]
+This equivalence is called \emph{alpha-equivalence} or \emph{alphabetic variance}.
+\end{definition}
+
+\subsubsection{Formula Complexity}
+
+\begin{definition}[Formula Depth]
+The \emph{depth} (or \emph{complexity}) of a formula $\varphi$, denoted
+$\mathrm{depth}(\varphi)$, is a natural number defined recursively as follows:
+\begin{enumerate}
+  \item \textbf{Atomic case.}
+  If $\varphi$ is an atomic formula, then
+  $\mathrm{depth}(\varphi) = 0$.
+
+  \item \textbf{Negation.}
+  If $\varphi$ is of the form $\neg \psi$, then
+  $\mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1$.
+
+  \item \textbf{Binary connectives.}
+  If $\varphi$ is of the form $(\psi \circ \chi)$, where
+  $\circ \in \{\wedge,\vee,\rightarrow,\leftrightarrow\}$, then
+  \[
+  \mathrm{depth}(\varphi)
+  =
+  \max\{\mathrm{depth}(\psi),\mathrm{depth}(\chi)\} + 1.
+  \]
+
+  \item \textbf{Quantifiers.}
+  If $\varphi$ is of the form $\forall x\,\psi$ or $\exists x\,\psi$, then
+  $\mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+The depth of a formula measures the maximum number of logical formation steps
+required to build the formula from atomic formulas. It corresponds to the height
+of the formula's syntactic parse tree.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Semantics of First-Order Logic}
+% ---------------------------------------------------------
+
+\subsubsection{Structures and Interpretations}
+
+\begin{definition}[First-Order Language]
+A \emph{first-order language} $\mathcal{L}$ consists of:
+\begin{itemize}
+  \item a set of constant symbols,
+  \item a set of function symbols, each with a specified arity, and
+  \item a set of predicate symbols, each with a specified arity.
+\end{itemize}
+In addition, every first-order language includes a countable set of variables and
+the logical symbols $\neg, \wedge, \vee, \rightarrow, \leftrightarrow, \forall,
+\exists$, and (optionally) $=$.
+\end{definition}
+
+\begin{definition}[Structure]
+Let $\mathcal{L}$ be a first-order language.
+A \emph{structure} (or \emph{interpretation}) for $\mathcal{L}$ is an ordered pair
+\[
+\mathcal{M} = \langle D, I \rangle,
+\]
+where:
+\begin{enumerate}
+  \item $D$ is a nonempty set called the \emph{domain of discourse} (or
+  \emph{universe}), and
+  \item $I$ is an interpretation function that assigns:
+  \begin{itemize}
+    \item to each constant symbol $c$ of $\mathcal{L}$ an element
+          $I(c) \in D$,
+    \item to each $n$-ary function symbol $f$ of $\mathcal{L}$ a function
+          $I(f) : D^n \to D$,
+    \item to each $n$-ary predicate symbol $P$ of $\mathcal{L}$ a relation
+          $I(P) \subseteq D^n$.
+  \end{itemize}
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Nonempty Domain Convention]
+Throughout these notes, we assume that the domain of discourse is nonempty. This
+is the standard convention in classical first-order logic.
+
+If empty domains were permitted, some standard equivalences would fail. In
+particular, the inference $\forall x\,\varphi \Rightarrow \exists x\,\varphi$
+(subalternation) would be invalid, since the universal statement is vacuously
+true in an empty domain while the existential statement is false.
+\end{remark}
+
+\begin{definition}[Variable Assignment]
+Let $\mathcal{M} = \langle D, I \rangle$ be a structure for a language
+$\mathcal{L}$.
+A \emph{variable assignment} is a function
+\[
+s : \mathsf{Var} \to D
+\]
+that assigns to each variable an element of the domain.
+\end{definition}
+
+\begin{definition}[Modified Assignment]
+Let $s$ be a variable assignment, $x$ a variable, and $d \in D$.
+The \emph{modified assignment} $s[x \mapsto d]$ is defined by
+\[
+s[x \mapsto d](y) =
+\begin{cases}
+d & \text{if } y = x, \\
+s(y) & \text{if } y \neq x.
+\end{cases}
+\]
+\end{definition}
+
+\begin{remark}
+A structure assigns meaning only to the non-logical symbols of the language.
+The interpretation of variables is provided separately by a variable
+assignment. Together, a structure and a variable assignment determine the
+truth or falsity of formulas.
+\end{remark}
+
+\subsubsection{Interpretation of Terms}
 
 \begin{definition}[Interpretation of a Term]
 Let $\mathcal{M} = \langle D, I \rangle$ be a structure for a language
@@ -179,327 +358,261 @@ as follows:
 \end{enumerate}
 \end{definition}
 
+\subsubsection{Satisfaction and Truth}
 
+\begin{definition}[Satisfaction]
+Let $\mathcal{M} = \langle D, I \rangle$ be a structure, $s$ a variable
+assignment, and $\varphi$ a formula.
 
+The relation $\mathcal{M}, s \models \varphi$ (read ``$\mathcal{M}$ satisfies
+$\varphi$ under $s$'' or ``$\varphi$ is true in $\mathcal{M}$ under $s$'') is
+defined recursively as follows:
 
-
-\begin{definition}[Free Variable]
-A variable $x$ is said to be \emph{free} in a formula $\varphi$ if there exists
-an occurrence of $x$ in $\varphi$ that is not within the scope of a quantifier
-binding $x$.
-
-Equivalently, $x$ is free in $\varphi$ if the value of $\varphi$ under a structure
-depends on the value assigned to $x$ by a variable assignment.
-\end{definition}
-
-
-
-
-\begin{definition}[Free Variables of a Formula]
-The set $\mathrm{FV}(\varphi)$ of free variables of a formula $\varphi$ is defined
-recursively as follows:
 \begin{enumerate}
-  \item If $\varphi$ is an atomic formula $P(t_1,\dots,t_n)$, then
+  \item \textbf{Atomic formulas.}
   \[
-  \mathrm{FV}(\varphi) = \bigcup_{i=1}^n \mathrm{Var}(t_i),
+  \mathcal{M}, s \models P(t_1, \dots, t_n)
+  \quad\Longleftrightarrow\quad
+  (\llbracket t_1 \rrbracket_{\mathcal{M},s}, \dots,
+   \llbracket t_n \rrbracket_{\mathcal{M},s}) \in I(P).
   \]
-  where $\mathrm{Var}(t_i)$ denotes the set of variables occurring in the term
-  $t_i$.
 
-  \item $\mathrm{FV}(\neg \varphi) = \mathrm{FV}(\varphi)$.
-
-  \item $\mathrm{FV}(\varphi \circ \psi)
-  = \mathrm{FV}(\varphi) \cup \mathrm{FV}(\psi)$,
-  where $\circ$ is any binary connective.
-
-  \item $\mathrm{FV}(\forall x\,\varphi)
-  = \mathrm{FV}(\varphi) \setminus \{x\}$.
-
-  \item $\mathrm{FV}(\exists x\,\varphi)
-  = \mathrm{FV}(\varphi) \setminus \{x\}$.
-\end{enumerate}
-\end{definition}
-
-
-\begin{remark}
-Terms themselves contain only free variables.
-Variables become bound only through quantification in formulas.
-The interpretation of a formula depends exactly on the values assigned to its
-free variables.
-\end{remark}
-
-
-
-
-
-\begin{definition}[Structure / Interpretation]
-Let $\mathcal{L}$ be a first-order language consisting of
-\begin{itemize}
-  \item constant symbols,
-  \item function symbols with specified arities, and
-  \item predicate symbols with specified arities.
-\end{itemize}
-
-A \emph{structure} (or \emph{interpretation}) for $\mathcal{L}$ is an ordered pair
-\[
-\mathcal{M} = \langle D, I \rangle,
-\]
-where:
-\begin{enumerate}
-  \item $D$ is a nonempty set called the \emph{domain of discourse}, and
-  \item $I$ is an interpretation function that assigns:
-  \begin{itemize}
-    \item to each constant symbol $c$ of $\mathcal{L}$ an element
-          $I(c) \in D$,
-    \item to each $n$-ary function symbol $f$ of $\mathcal{L}$ a function
-          \[
-          I(f) : D^n \to D,
-          \]
-    \item to each $n$-ary predicate symbol $P$ of $\mathcal{L}$ a relation
-          \[
-          I(P) \subseteq D^n.
-          \]
-  \end{itemize}
-\end{enumerate}
-\end{definition}
-
-
-\begin{definition}[Variable Assignment]
-Let $\mathcal{M} = \langle D, I \rangle$ be a structure for a language
-$\mathcal{L}$.
-A \emph{variable assignment} is a function
-\[
-s : \mathsf{Var} \to D
-\]
-that assigns to each variable an element of the domain.
-\end{definition}
-
-\begin{remark}
-A structure assigns meaning only to the non-logical symbols of the language.
-The interpretation of variables is provided separately by a variable
-assignment. Together, a structure and a variable assignment determine the
-truth or falsity of formulas.
-\end{remark}
-
-
-
-
-
-
-\begin{center}
-\resizebox{\linewidth}{!}{%
-\begin{tikzpicture}[
-  node distance=3.8cm,
-  every node/.style={draw, rectangle, rounded corners, align=center, inner sep=8pt},
-  arrow/.style={->, thick}
-]
-\node (var) {\textbf{Variables}\\ $x_1,\dots,x_n$};
-\node (pred) [right=of var] {\textbf{Predicate / Atomic Formula}\\ $P(x_1,\dots,x_n)$};
-\node (rel)  [right=of pred] {\textbf{Relation in a Structure}\\ $R \subseteq D^n$};
-
-\draw[arrow] (var) -- node[above]{\small substitution} (pred);
-\draw[arrow] (pred) -- node[above]{\small interpretation} (rel);
-\end{tikzpicture}%
-}
-\end{center}
-
-
-
-\begin{remark}
-Syntactically, variables are placeholders and predicates are formulas.
-Semantically, an interpretation assigns to each predicate symbol a relation,
-and an atomic formula is true precisely when the corresponding tuple of
-variable values lies in that relation.
-\end{remark}
-
-
-\begin{definition}[Formula Depth / Complexity]
-The \emph{depth} (or \emph{complexity}) of a formula $\varphi$, denoted
-$\mathrm{depth}(\varphi)$, is a natural number defined recursively as follows:
-\begin{enumerate}
-  \item \textbf{Atomic case.}
-  If $\varphi$ is an atomic formula, then
+  \item \textbf{Equality} (if $=$ is in the language).
   \[
-  \mathrm{depth}(\varphi) = 0.
+  \mathcal{M}, s \models (t_1 = t_2)
+  \quad\Longleftrightarrow\quad
+  \llbracket t_1 \rrbracket_{\mathcal{M},s} =
+  \llbracket t_2 \rrbracket_{\mathcal{M},s}.
   \]
 
   \item \textbf{Negation.}
-  If $\varphi$ is of the form $\neg \psi$, then
   \[
-  \mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1.
+  \mathcal{M}, s \models \neg\varphi
+  \quad\Longleftrightarrow\quad
+  \mathcal{M}, s \not\models \varphi.
   \]
 
-  \item \textbf{Binary connectives.}
-  If $\varphi$ is of the form $(\psi \circ \chi)$, where
-  $\circ \in \{\wedge,\vee,\rightarrow,\leftrightarrow\}$, then
+  \item \textbf{Conjunction.}
   \[
-  \mathrm{depth}(\varphi)
-  =
-  \max\{\mathrm{depth}(\psi),\mathrm{depth}(\chi)\} + 1.
+  \mathcal{M}, s \models (\varphi \wedge \psi)
+  \quad\Longleftrightarrow\quad
+  \mathcal{M}, s \models \varphi \text{ and } \mathcal{M}, s \models \psi.
   \]
 
-  \item \textbf{Quantifiers.}
-  If $\varphi$ is of the form $\forall x\,\psi$ or $\exists x\,\psi$, then
+  \item \textbf{Disjunction.}
   \[
-  \mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1.
+  \mathcal{M}, s \models (\varphi \vee \psi)
+  \quad\Longleftrightarrow\quad
+  \mathcal{M}, s \models \varphi \text{ or } \mathcal{M}, s \models \psi.
+  \]
+
+  \item \textbf{Implication.}
+  \[
+  \mathcal{M}, s \models (\varphi \rightarrow \psi)
+  \quad\Longleftrightarrow\quad
+  \mathcal{M}, s \not\models \varphi \text{ or } \mathcal{M}, s \models \psi.
+  \]
+
+  \item \textbf{Biconditional.}
+  \[
+  \mathcal{M}, s \models (\varphi \leftrightarrow \psi)
+  \quad\Longleftrightarrow\quad
+  (\mathcal{M}, s \models \varphi \Leftrightarrow \mathcal{M}, s \models \psi).
+  \]
+
+  \item \textbf{Universal quantification.}
+  \[
+  \mathcal{M}, s \models \forall x\,\varphi
+  \quad\Longleftrightarrow\quad
+  \text{for all } d \in D,\; \mathcal{M}, s[x \mapsto d] \models \varphi.
+  \]
+
+  \item \textbf{Existential quantification.}
+  \[
+  \mathcal{M}, s \models \exists x\,\varphi
+  \quad\Longleftrightarrow\quad
+  \text{there exists } d \in D \text{ such that }
+  \mathcal{M}, s[x \mapsto d] \models \varphi.
   \]
 \end{enumerate}
 \end{definition}
 
+\begin{definition}[Truth in a Structure]
+A sentence $\varphi$ is \emph{true} in a structure $\mathcal{M}$, written
+$\mathcal{M} \models \varphi$, if $\mathcal{M}, s \models \varphi$ for every
+(equivalently, for some) variable assignment $s$.
 
-
-\begin{remark}
-The depth of a formula measures the maximum number of logical formation steps
-required to build the formula from atomic formulas. It corresponds to the height
-of the formula’s syntactic parse tree.
-\end{remark}
-
-
-
-\begin{definition}[Atomic Formula]
-An \emph{atomic formula} is a well-formed formula containing no logical
-connectives or quantifiers.
+A sentence $\varphi$ is \emph{false} in $\mathcal{M}$ if $\mathcal{M} \not\models \varphi$.
 \end{definition}
 
-\begin{definition}[Molecular Formula]
-A \emph{molecular formula} is a well-formed formula constructed from one or more
-atomic formulas using logical connectives or quantifiers.
+\begin{definition}[Validity and Satisfiability]
+A formula $\varphi$ is:
+\begin{itemize}
+  \item \emph{valid} (or a \emph{logical truth}) if $\mathcal{M}, s \models \varphi$
+  for every structure $\mathcal{M}$ and every assignment $s$;
+  \item \emph{satisfiable} if $\mathcal{M}, s \models \varphi$ for some structure
+  $\mathcal{M}$ and some assignment $s$;
+  \item \emph{unsatisfiable} (or a \emph{contradiction}) if it is not satisfiable.
+\end{itemize}
 \end{definition}
 
+\begin{remark}
+For sentences (closed formulas), truth depends only on the structure, not on the
+variable assignment, since there are no free variables whose values could affect
+the truth value.
+\end{remark}
 
-\begin{center}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
-\hline
-\textbf{Aspect}
-& \textbf{Propositional Logic}
-& \textbf{Predicate Logic}
-\\ \hline
+\subsubsection{Models and Theories}
 
-\textbf{Atomic formulas}
-&
-Propositional variables
-(e.g.\ $P$, $Q$, $R$)
-&
-Predicate symbols applied to terms
-(e.g.\ $P(x)$, $R(x,y)$)
-\\ \hline
+\begin{definition}[Model]
+Let $\varphi$ be a sentence and $\mathcal{M}$ a structure.
+We say that $\mathcal{M}$ is a \emph{model} of $\varphi$ if $\mathcal{M} \models \varphi$.
 
-\textbf{Internal structure}
-&
-No internal structure
-&
-Contain terms, variables, constants, and functions
-\\ \hline
+More generally, if $\Gamma$ is a set of sentences, then $\mathcal{M}$ is a
+\emph{model} of $\Gamma$ if $\mathcal{M} \models \gamma$ for every $\gamma \in \Gamma$.
+In this case, we write $\mathcal{M} \models \Gamma$.
+\end{definition}
 
-\textbf{Dependence on variables}
-&
-None
-&
-May contain free variables
-\\ \hline
+\begin{definition}[Theory]
+A \emph{theory} is a set of sentences.
 
-\textbf{Semantic interpretation}
-&
-Assigned a truth value directly
-&
-True or false relative to a structure and assignment
-\\ \hline
+A theory $T$ is \emph{satisfiable} (or \emph{consistent}) if it has at least one
+model.
 
-\textbf{Examples of atomic formulas}
-&
-$P$, $Q$, $R$
-&
-$P(a)$, $Q(x)$, $R(f(x),y)$
-\\ \hline
-
-\textbf{Molecular formulas}
-&
-Formed using connectives
-(e.g.\ $\neg P$, $P \wedge Q$)
-&
-Formed using connectives and quantifiers
-(e.g.\ $\forall x\,P(x)$)
-\\ \hline
-
-\textbf{Use of quantifiers}
-&
-Not available
-&
-Essential component
-\\ \hline
-
-\textbf{Examples of molecular formulas}
-&
-$P \rightarrow (Q \vee R)$
-&
-$\forall x\,(P(x) \rightarrow Q(x))$
-\\ \hline
-
-\textbf{Semantic evaluation}
-&
-Truth tables
-&
-Satisfaction in a structure
-\\ \hline
-\end{tabular}
-\end{center}
-
+A theory $T$ is \emph{complete} if for every sentence $\varphi$ in the language,
+either $T \models \varphi$ or $T \models \neg\varphi$.
+\end{definition}
 
 \begin{remark}
-In propositional logic, atomic formulas are indivisible units of truth.
-In predicate logic, atomic formulas already express structured relationships
-between objects. Molecular formulas in both systems arise by combining atomic
-formulas, but predicate logic additionally permits quantification over variables,
-greatly increasing expressive power.
+In some contexts, a theory is required to be closed under logical consequence:
+if $T \models \varphi$, then $\varphi \in T$. In other contexts, a theory is
+simply any set of sentences (the axioms), and consequences are derived from it.
 \end{remark}
 
+\begin{definition}[Logical Consequence]
+Let $\Gamma$ be a set of formulas and $\varphi$ a formula.
+We say that $\varphi$ is a \emph{logical consequence} of $\Gamma$, written
+\[
+\Gamma \models \varphi,
+\]
+if for every structure $\mathcal{M}$ and every variable assignment $s$:
+\[
+\text{if } \mathcal{M}, s \models \gamma \text{ for all } \gamma \in \Gamma,
+\text{ then } \mathcal{M}, s \models \varphi.
+\]
 
+Equivalently, every model of $\Gamma$ is a model of $\varphi$.
+\end{definition}
 
-\begin{remark}[From Syntax to Semantics with Quantifiers]
-The interpretation of formulas in predicate logic proceeds in stages, from
-syntactic expressions to semantic truth conditions.
-\end{remark}
+\begin{definition}[Logical Equivalence]
+Two formulas $\varphi$ and $\psi$ are \emph{logically equivalent}, written
+$\varphi \equiv \psi$, if each is a logical consequence of the other:
+\[
+\varphi \equiv \psi
+\quad\Longleftrightarrow\quad
+(\varphi \models \psi \text{ and } \psi \models \varphi).
+\]
 
-\begin{center}
-\resizebox{\linewidth}{!}{%
-\begin{tikzpicture}[
-  node distance=3.2cm,
-  every node/.style={draw, rectangle, rounded corners, align=center, inner sep=8pt},
-  arrow/.style={->, thick}
-]
-
-\node (var) {\textbf{Variables}\\ $x_1,\dots,x_n$};
-
-\node (term) [right=of var] {\textbf{Terms}\\ $t_1,\dots,t_n$};
-
-\node (atom) [right=of term] {\textbf{Atomic Formula}\\ $P(t_1,\dots,t_n)$};
-
-\node (form) [right=of atom] {\textbf{Formula}\\ $\forall x\,\varphi,\;\exists x\,\varphi$};
-
-\node (rel) [right=of form] {\textbf{Relation / Truth Condition}\\ $R \subseteq D^n$};
-
-\draw[arrow] (var) -- node[above]{\small substitution} (term);
-\draw[arrow] (term) -- node[above]{\small formation} (atom);
-\draw[arrow] (atom) -- node[above]{\small logical construction} (form);
-\draw[arrow] (form) -- node[above]{\small interpretation \& satisfaction} (rel);
-
-\end{tikzpicture}
-}
-\end{center}
-
+Equivalently, $\varphi$ and $\psi$ have the same truth value in every structure
+under every variable assignment.
+\end{definition}
 
 \begin{remark}
-Variables and terms belong purely to syntax.
-Predicates form atomic formulas.
-Logical connectives and quantifiers build complex formulas.
-A structure and variable assignment then determine whether a formula is satisfied,
-with quantifiers ranging over the domain of discourse.
+The notation $\models \varphi$ (with empty left-hand side) means that $\varphi$
+is valid: it is true in all structures under all assignments.
 \end{remark}
 
+\subsubsection{Predicates and Relations}
 
+\begin{definition}[Predicate]
+A \emph{predicate} is an expression containing one or more variables that
+represents a property or relation and becomes a proposition when all of its
+variables are instantiated.
 
+Formally, a predicate may be viewed in two equivalent ways:
+\begin{enumerate}
+  \item \textbf{Syntactic view.}
+  A predicate is an open formula $\varphi(x_1,\dots,x_n)$ of a formal language,
+  which does not have a truth value until specific objects are substituted for
+  its variables.
 
+  \item \textbf{Semantic view.}
+  Given a domain of discourse $D$, an $n$-ary predicate determines a function
+  \[
+  P : D^n \to \{\mathsf{T}, \mathsf{F}\},
+  \]
+  assigning a truth value to each ordered $n$-tuple of elements of $D$.
+\end{enumerate}
+
+Under an interpretation, these two views coincide: for any
+$a_1,\dots,a_n \in D$, the instantiated formula
+$\varphi(a_1,\dots,a_n)$ is true if and only if
+$P(a_1,\dots,a_n) = \mathsf{T}$.
+\end{definition}
+
+\begin{remark}
+A predicate is not itself a proposition, since it does not have a truth value
+until its variables are instantiated. Once all variables are replaced by
+elements of the domain, the resulting expression is a proposition.
+\end{remark}
+
+\begin{remark}[Predicates vs.\ Relations]
+Predicates and relations are closely related but conceptually distinct.
+
+A \emph{predicate} is a syntactic or semantic device: syntactically, it is an
+open formula or predicate symbol; semantically, it determines a truth-valued
+function on a domain.
+
+A \emph{relation}, by contrast, is a purely set-theoretic object. An $n$-ary
+relation on a domain $D$ is a subset $R \subseteq D^n$.
+
+Under an interpretation, a predicate symbol corresponds to a relation by
+identifying the tuples for which the predicate is true:
+\[
+P(a_1,\dots,a_n) \text{ is true } \iff (a_1,\dots,a_n) \in R.
+\]
+
+Thus, predicates belong to the \emph{language} of logic, while relations belong
+to the \emph{structures} used to interpret that language.
+\end{remark}
+
+\subsubsection{Substitution Lemmas}
+
+\begin{lemma}[Substitution Lemma for Terms]
+Let $\mathcal{M}$ be a structure and $s$ a variable assignment.
+For any term $t$, variable $x$, and $d \in D$,
+\[
+\llbracket t \rrbracket_{\mathcal{M},\,s[x\mapsto d]}
+=
+\llbracket t[d/x] \rrbracket_{\mathcal{M},\,s}.
+\]
+\end{lemma}
+
+\begin{remark}
+Evaluating a term after modifying an assignment is equivalent to substituting
+the value directly into the term.
+\end{remark}
+
+\begin{lemma}[Substitution Lemma for Formulas]
+Let $\varphi$ be a formula, $t$ a term free for $x$ in $\varphi$, and $x$ a variable.
+Then for any structure $\mathcal{M}$ and assignment $s$,
+\[
+\mathcal{M},s \models \varphi[t/x]
+\quad\Longleftrightarrow\quad
+\mathcal{M},\,s[x\mapsto \llbracket t \rrbracket_{\mathcal{M},s}] \models \varphi.
+\]
+\end{lemma}
+
+\begin{remark}
+This lemma formally connects syntactic substitution with semantic evaluation and
+is essential for soundness proofs.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Quantifiers}
+% ---------------------------------------------------------
+
+\subsubsection{Universal and Existential Quantifiers}
 
 \begin{definition}[Universal Quantifier]
 The \emph{universal quantifier}, denoted by $\forall$, is a logical operator that
@@ -512,7 +625,6 @@ If $\varphi$ is a formula and $x$ is a variable, then
 \]
 is a formula, read as ``for all $x$, $\varphi$.''
 \end{definition}
-
 
 \begin{definition}[Existential Quantifier]
 The \emph{existential quantifier}, denoted by $\exists$, is a logical operator that
@@ -538,156 +650,76 @@ existential quantifier expresses a local condition. Both quantifiers bind
 variables and thereby control the scope of variable dependence in formulas.
 \end{remark}
 
-\begin{definition}[Scope of a Quantifier]
-Let $\varphi$ be a formula of a first-order language.
+\subsubsection{Unique Existential Quantifier}
 
-If $\varphi$ is of the form $\forall x\,\psi$ or $\exists x\,\psi$, then the
-formula $\psi$ is called the \emph{scope} of the quantifier.
+\begin{definition}[Unique Existential Quantifier]
+The \emph{unique existential quantifier}, denoted by $\exists!$, asserts that
+there exists exactly one element satisfying a given property.
 
-The quantifier is said to \emph{bind} all occurrences of the variable $x$ that
-appear within its scope.
-\end{definition}
+If $\varphi$ is a formula and $x$ is a variable, then
+\[
+\exists! x\,\varphi
+\]
+is an abbreviation for
+\[
+\exists x\,\bigl(\varphi \wedge \forall y\,(\varphi[y/x] \rightarrow y = x)\bigr),
+\]
+where $y$ is a variable not occurring in $\varphi$.
 
-
-\begin{definition}[Bound and Free Occurrences]
-An occurrence of a variable $x$ in a formula $\varphi$ is \emph{bound} if it lies
-within the scope of a quantifier $\forall x$ or $\exists x$.
-
-An occurrence of $x$ is \emph{free} if it is not bound by any quantifier in
-$\varphi$.
-\end{definition}
-
-
-
-
-
-
-
-
-
-\begin{example}
-In the formula $\forall x\,(P(x) \rightarrow Q(x))$, the scope of $\forall x$ is
-the formula $(P(x) \rightarrow Q(x))$.
-
-In the formula $(\forall x\,P(x)) \wedge Q(x)$, the scope of $\forall x$ is $P(x)$
-only; the occurrence of $x$ in $Q(x)$ is free.
-\end{example}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.35}
-\begin{tabular}{|p{4cm}|p{6cm}|p{5cm}|}
-\hline
-\textbf{Rule Name}
-& \textbf{Schema}
-& \textbf{Conditions / Notes}
-\\ \hline
-
-\textbf{Universal Instantiation (UI)}
-&
-$\forall x\,\varphi \;\Rightarrow\; \varphi[t/x]$
-&
-$t$ must be a term free for $x$ in $\varphi$
-\\ \hline
-
-\textbf{Existential Generalization (EG)}
-&
-$\varphi[t/x] \;\Rightarrow\; \exists x\,\varphi$
-&
-$t$ may be any term
-\\ \hline
-
-\textbf{Existential Instantiation (EI)}
-&
-$\exists x\,\varphi \;\Rightarrow\; \varphi[c/x]$
-&
-$c$ is a new constant symbol (witness)
-\\ \hline
-
-\textbf{Universal Generalization (UG)}
-&
-$\varphi \;\Rightarrow\; \forall x\,\varphi$
-&
-$x$ not free in any undischarged assumption
-\\ \hline
-
-\textbf{Quantifier Negation (De Morgan)}
-&
-$\neg\forall x\,\varphi \;\equiv\; \exists x\,\neg\varphi$
-&
-Scope preserved
-\\ \cline{2-3}
-&
-$\neg\exists x\,\varphi \;\equiv\; \forall x\,\neg\varphi$
-&
-\\ \hline
-
-\textbf{Quantifier Commutation}
-&
-$\forall x\,\forall y\,\varphi \;\equiv\; \forall y\,\forall x\,\varphi$
-&
-Same quantifier type only
-\\ \cline{2-3}
-&
-$\exists x\,\exists y\,\varphi \;\equiv\; \exists y\,\exists x\,\varphi$
-&
-\\ \hline
-
-\textbf{Quantifier Distribution}
-&
-$\forall x\,(\varphi \wedge \psi) \;\equiv\; (\forall x\,\varphi) \wedge (\forall x\,\psi)$
-&
-$x$ not free in $\psi$
-\\ \cline{2-3}
-&
-$\exists x\,(\varphi \vee \psi) \;\equiv\; (\exists x\,\varphi) \vee (\exists x\,\psi)$
-&
-$x$ not free in $\psi$
-\\ \hline
-
-\textbf{Renaming Bound Variables}
-&
-$\forall x\,\varphi \;\equiv\; \forall y\,\varphi[y/x]$
-&
-$y$ not free in $\varphi$
-\\ \cline{2-3}
-&
-$\exists x\,\varphi \;\equiv\; \exists y\,\varphi[y/x]$
-&
-(alpha-equivalence)
-\\ \hline
-
-\textbf{Vacuous Quantification}
-&
-$\forall x\,\varphi \;\equiv\; \varphi$
-&
-$x$ not free in $\varphi$
-\\ \cline{2-3}
-&
-$\exists x\,\varphi \;\equiv\; \varphi$
-&
-\\ \hline
-
-\end{tabular}
-\end{center}
-
-\begin{definition}[Substitution Notation]
-Let $\varphi$ be a formula, $x$ a variable, and $t$ a term.
-
-The expression $\varphi[t/x]$ denotes the formula obtained from $\varphi$ by
-replacing every \emph{free} occurrence of $x$ with the term $t$, leaving bound
-occurrences of $x$ unchanged.
+Equivalently,
+\[
+\exists! x\,\varphi
+\;\equiv\;
+\exists x\,\varphi \;\wedge\; \forall x\,\forall y\,
+\bigl((\varphi \wedge \varphi[y/x]) \rightarrow x = y\bigr).
+\]
 \end{definition}
 
 \begin{remark}
-Rules for quantifier manipulation are constrained by scope and variable binding.
-Violating these constraints leads to variable capture or invalid inferences.
-For this reason, existential instantiation and universal generalization impose
-strict side conditions.
+The unique existential quantifier combines existence and uniqueness:
+$\exists! x\,\varphi$ asserts that there is at least one $x$ satisfying $\varphi$
+(existence) and at most one such $x$ (uniqueness).
 \end{remark}
 
-\section*{Negation Rules for Quantifiers}
+\begin{example}
+The statement ``there is exactly one even prime number'' can be formalized as
+\[
+\exists! x\,(P(x) \wedge E(x)),
+\]
+where $P(x)$ means ``$x$ is prime'' and $E(x)$ means ``$x$ is even.''
+\end{example}
 
-\begin{definition}[Quantifier Negation Laws]
+\subsubsection{Bounded Quantifiers}
+
+\begin{definition}[Bounded Quantifiers]
+Let $A$ be a set (or a predicate defining a set).
+The \emph{bounded universal quantifier} and \emph{bounded existential quantifier}
+are abbreviations defined as follows:
+\begin{align*}
+\forall x \in A\,\varphi &\;:=\; \forall x\,(x \in A \rightarrow \varphi), \\
+\exists x \in A\,\varphi &\;:=\; \exists x\,(x \in A \wedge \varphi).
+\end{align*}
+\end{definition}
+
+\begin{remark}
+Bounded quantifiers restrict the domain of quantification to a specified set.
+They are common in mathematical practice and often improve readability.
+
+Note the asymmetry: the bounded universal uses implication ($\rightarrow$),
+while the bounded existential uses conjunction ($\wedge$). This ensures the
+correct logical meaning when the restriction is empty.
+\end{remark}
+
+\begin{example}
+The statement ``every natural number has a successor'' can be written as
+\[
+\forall n \in \mathbb{N}\,\exists m \in \mathbb{N}\,(m = n + 1).
+\]
+\end{example}
+
+\subsubsection{Quantifier Negation}
+
+\begin{theorem}[Quantifier Negation Laws]
 Let $\varphi$ be any formula. The negation of quantified formulas is governed by
 the following equivalences:
 \begin{align*}
@@ -695,7 +727,7 @@ the following equivalences:
 \neg \exists x\,\varphi &\;\equiv\; \forall x\,\neg \varphi.
 \end{align*}
 These equivalences preserve logical meaning while reversing the quantifier.
-\end{definition}
+\end{theorem}
 
 \begin{remark}[Procedure for Negating Quantifiers]
 To negate a quantified statement:
@@ -706,12 +738,10 @@ To negate a quantified statement:
 \end{enumerate}
 \end{remark}
 
-
 \begin{example}
 \[
 \neg(\forall x\,P(x)) \;\equiv\; \exists x\,\neg P(x).
 \]
-
 \[
 \neg(\exists x\,P(x)) \;\equiv\; \forall x\,\neg P(x).
 \]
@@ -733,8 +763,495 @@ without changing the quantifier. For example,
 \]
 \end{remark}
 
+\begin{remark}[Negating Statements with Multiple Quantifiers]
+Negating a statement with multiple quantifiers requires systematically pushing
+the negation inward while reversing each quantifier encountered.
 
-\section*{Negating Quantified Statements: English vs.\ Logic}
+For example, consider the formula
+\[
+\forall x\,\exists y\,P(x,y).
+\]
+Its negation is computed as follows:
+\[
+\begin{aligned}
+\neg\bigl(\forall x\,\exists y\,P(x,y)\bigr)
+&\equiv \exists x\,\neg\bigl(\exists y\,P(x,y)\bigr) \\
+&\equiv \exists x\,\forall y\,\neg P(x,y).
+\end{aligned}
+\]
+\end{remark}
+
+\begin{remark}[Negating a Statement with Three Quantifiers]
+Consider the formula
+\[
+\forall x\,\exists y\,\forall z\,R(x,y,z).
+\]
+Negating this statement proceeds by successively pushing the negation inward:
+\[
+\begin{aligned}
+\neg\bigl(\forall x\,\exists y\,\forall z\,R(x,y,z)\bigr)
+&\equiv \exists x\,\neg\bigl(\exists y\,\forall z\,R(x,y,z)\bigr) \\
+&\equiv \exists x\,\forall y\,\neg\bigl(\forall z\,R(x,y,z)\bigr) \\
+&\equiv \exists x\,\forall y\,\exists z\,\neg R(x,y,z).
+\end{aligned}
+\]
+\end{remark}
+
+\begin{remark}[Negating Quantified Implications]
+Consider the quantified formula
+\[
+\forall x\,\exists y\,\bigl((A(x) \rightarrow B(y)) \wedge (D(x,y) \rightarrow F(y))\bigr).
+\]
+
+We negate this statement by systematically pushing the negation inward.
+
+\textbf{Step 1: Negate the outer quantifiers.}
+\[
+\exists x\,\forall y\,\neg\bigl((A(x) \rightarrow B(y)) \wedge (D(x,y) \rightarrow F(y))\bigr).
+\]
+
+\textbf{Step 2: Apply De Morgan's law to the conjunction.}
+\[
+\exists x\,\forall y\,
+\bigl(
+\neg(A(x) \rightarrow B(y))
+\;\vee\;
+\neg(D(x,y) \rightarrow F(y))
+\bigr).
+\]
+
+\textbf{Step 3: Negate the implications.}
+Using $\neg(P \rightarrow Q) \equiv P \wedge \neg Q$:
+\[
+\exists x\,\forall y\,
+\bigl(
+(A(x) \wedge \neg B(y))
+\;\vee\;
+(D(x,y) \wedge \neg F(y))
+\bigr).
+\]
+\end{remark}
+
+\begin{remark}[General Schema for Negating Quantified Implications]
+Let $\varphi$ and $\psi$ be formulas.
+Consider a quantified implication of the form
+\[
+Q_1 x_1\, Q_2 x_2 \cdots Q_n x_n \bigl(\varphi \rightarrow \psi\bigr),
+\]
+where each $Q_i \in \{\forall,\exists\}$.
+
+The negation is:
+\[
+\neg\Bigl(Q_1 x_1 \cdots Q_n x_n (\varphi \rightarrow \psi)\Bigr)
+\;\equiv\;
+Q_1' x_1 \cdots Q_n' x_n (\varphi \wedge \neg \psi),
+\]
+where each $Q_i'$ is the dual quantifier:
+$\forall' = \exists$ and $\exists' = \forall$.
+\end{remark}
+
+\subsubsection{Quantifier Commutation and Distribution}
+
+\begin{theorem}[Quantifier Commutation]
+Quantifiers of the same type commute:
+\begin{align*}
+\forall x\,\forall y\,\varphi &\;\equiv\; \forall y\,\forall x\,\varphi, \\
+\exists x\,\exists y\,\varphi &\;\equiv\; \exists y\,\exists x\,\varphi.
+\end{align*}
+However, quantifiers of different types do not commute in general:
+\[
+\forall x\,\exists y\,\varphi \;\not\equiv\; \exists y\,\forall x\,\varphi.
+\]
+\end{theorem}
+
+\begin{theorem}[Quantifier Distribution]
+Let $x$ not be free in $\psi$. Then:
+\begin{align*}
+\forall x\,(\varphi \wedge \psi) &\;\equiv\; (\forall x\,\varphi) \wedge \psi, \\
+\forall x\,(\psi \wedge \varphi) &\;\equiv\; \psi \wedge (\forall x\,\varphi), \\
+\exists x\,(\varphi \vee \psi) &\;\equiv\; (\exists x\,\varphi) \vee \psi, \\
+\exists x\,(\psi \vee \varphi) &\;\equiv\; \psi \vee (\exists x\,\varphi).
+\end{align*}
+\end{theorem}
+
+\begin{theorem}[Distribution over Conjunction and Disjunction]
+\begin{align*}
+\forall x\,(\varphi \wedge \psi) &\;\equiv\; (\forall x\,\varphi) \wedge (\forall x\,\psi), \\
+\exists x\,(\varphi \vee \psi) &\;\equiv\; (\exists x\,\varphi) \vee (\exists x\,\psi).
+\end{align*}
+However:
+\begin{align*}
+\forall x\,(\varphi \vee \psi) &\;\not\equiv\; (\forall x\,\varphi) \vee (\forall x\,\psi), \\
+\exists x\,(\varphi \wedge \psi) &\;\not\equiv\; (\exists x\,\varphi) \wedge (\exists x\,\psi).
+\end{align*}
+\end{theorem}
+
+\subsubsection{Vacuous Quantification}
+
+\begin{theorem}[Vacuous Quantification]
+If $x$ does not occur free in $\varphi$, then:
+\begin{align*}
+\forall x\,\varphi &\;\equiv\; \varphi, \\
+\exists x\,\varphi &\;\equiv\; \varphi.
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+A quantifier is \emph{vacuous} if it binds a variable that does not occur free
+in its scope. Vacuous quantifiers may be added or removed without changing the
+meaning of a formula.
+\end{remark}
+
+\subsubsection{Renaming Bound Variables}
+
+\begin{theorem}[Renaming Bound Variables]
+If $y$ does not occur in $\varphi$, then:
+\begin{align*}
+\forall x\,\varphi &\;\equiv\; \forall y\,\varphi[y/x], \\
+\exists x\,\varphi &\;\equiv\; \exists y\,\varphi[y/x].
+\end{align*}
+This is a consequence of alpha-equivalence.
+\end{theorem}
+
+\subsubsection{Prenex Normal Form}
+
+\begin{definition}[Prenex Normal Form]
+A first-order formula is in \emph{prenex normal form} (PNF) if it has the shape
+\[
+Q_1 x_1\, Q_2 x_2 \cdots Q_n x_n \;\; \psi,
+\]
+where each $Q_i \in \{\forall,\exists\}$ and $\psi$ contains no quantifiers
+(i.e.\ $\psi$ is quantifier-free). The prefix
+$Q_1 x_1 \cdots Q_n x_n$ is called the \emph{quantifier prefix}, and $\psi$ is
+the \emph{matrix}.
+\end{definition}
+
+\begin{theorem}[Prenex Normal Form Theorem]
+Every first-order formula is logically equivalent to a formula in prenex normal
+form.
+\end{theorem}
+
+\begin{remark}[Procedure for Converting to Prenex Normal Form]
+Given a formula $\varphi$, the following steps produce an equivalent formula in
+prenex normal form:
+
+\begin{enumerate}
+  \item \textbf{Eliminate $\leftrightarrow$ and $\rightarrow$.}
+  Rewrite using only $\neg,\wedge,\vee$:
+  \[
+  (A \rightarrow B) \equiv (\neg A \vee B),\qquad
+  (A \leftrightarrow B) \equiv (A \rightarrow B)\wedge(B \rightarrow A).
+  \]
+
+  \item \textbf{Push negations inward (Negation Normal Form).}
+  Use De Morgan's laws and quantifier-negation laws until $\neg$ applies only
+  to atomic formulas.
+
+  \item \textbf{Standardize bound variables apart.}
+  Rename bound variables so that no variable is quantified twice and no bound
+  variable coincides with any free variable.
+
+  \item \textbf{Pull quantifiers outward.}
+  Use the quantifier-pulling rules to move all quantifiers to the front.
+\end{enumerate}
+\end{remark}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{6.5cm}|p{6.5cm}|}
+\hline
+\textbf{Equivalence} & \textbf{Side Condition} \\
+\hline
+$(\forall x\,\phi)\wedge \psi \;\equiv\; \forall x\,(\phi\wedge \psi)$
+& $x \notin \mathrm{FV}(\psi)$ \\
+\hline
+$\psi \wedge (\forall x\,\phi) \;\equiv\; \forall x\,(\psi\wedge \phi)$
+& $x \notin \mathrm{FV}(\psi)$ \\
+\hline
+$(\exists x\,\phi)\vee \psi \;\equiv\; \exists x\,(\phi\vee \psi)$
+& $x \notin \mathrm{FV}(\psi)$ \\
+\hline
+$\psi \vee (\exists x\,\phi) \;\equiv\; \exists x\,(\psi\vee \phi)$
+& $x \notin \mathrm{FV}(\psi)$ \\
+\hline
+$(\forall x\,\phi)\vee \psi \;\equiv\; \forall x\,(\phi\vee \psi)$
+& $x \notin \mathrm{FV}(\psi)$ \\
+\hline
+$(\exists x\,\phi)\wedge \psi \;\equiv\; \exists x\,(\phi\wedge \psi)$
+& $x \notin \mathrm{FV}(\psi)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{example}[Prenex Normal Form Conversion]
+Normalize the scope of
+\[
+\varphi := \neg\Bigl(\forall x\,P(x) \rightarrow \exists y\,Q(y)\Bigr).
+\]
+
+\textbf{Step 1 (Eliminate $\rightarrow$).}
+\[
+\varphi \equiv \neg\Bigl(\neg\forall x\,P(x)\;\vee\;\exists y\,Q(y)\Bigr).
+\]
+
+\textbf{Step 2 (Push $\neg$ inward).}
+\[
+\varphi \equiv \bigl(\forall x\,P(x)\bigr)\wedge \bigl(\forall y\,\neg Q(y)\bigr).
+\]
+
+\textbf{Step 3 (Standardize apart).}
+Variables are already distinct.
+
+\textbf{Step 4 (Pull quantifiers outward).}
+\[
+\varphi \equiv \forall x\,\forall y\,(P(x)\wedge \neg Q(y)).
+\]
+\end{example}
+
+% ---------------------------------------------------------
+\subsection{Inference Rules for Quantifiers}
+% ---------------------------------------------------------
+
+\subsubsection{Universal Instantiation and Generalization}
+
+\begin{definition}[Universal Instantiation (UI)]
+From a universally quantified statement, one may infer any instance obtained by
+substituting a term for the bound variable:
+\[
+\forall x\,\varphi \;\Rightarrow\; \varphi[t/x].
+\]
+\end{definition}
+
+\begin{remark}[Side Condition for UI]
+The term $t$ must be free for $x$ in $\varphi$; that is, no variable occurring in
+$t$ may become bound as a result of the substitution.
+\end{remark}
+
+\begin{definition}[Universal Generalization (UG)]
+From a formula, one may infer a universally quantified statement:
+\[
+\varphi \;\Rightarrow\; \forall x\,\varphi.
+\]
+\end{definition}
+
+\begin{remark}[Restriction on UG]
+The variable $x$ must not occur free in any undischarged assumption on which
+$\varphi$ depends.
+\end{remark}
+
+\subsubsection{Existential Instantiation and Generalization}
+
+\begin{definition}[Existential Instantiation (EI)]
+From an existentially quantified statement, one may infer an instance with a
+fresh constant symbol (witness):
+\[
+\exists x\,\varphi \;\Rightarrow\; \varphi[c/x].
+\]
+\end{definition}
+
+\begin{remark}[Witness Discipline for EI]
+The constant $c$ must be a \emph{new} constant symbol that does not appear in:
+\begin{itemize}
+  \item the formula $\varphi$,
+  \item any undischarged assumption, or
+  \item the final conclusion of the proof.
+\end{itemize}
+The constant $c$ represents an arbitrary but fixed witness to the existential
+claim.
+\end{remark}
+
+\begin{definition}[Existential Generalization (EG)]
+From a formula containing a term, one may infer an existential statement:
+\[
+\varphi[t/x] \;\Rightarrow\; \exists x\,\varphi.
+\]
+\end{definition}
+
+\begin{remark}
+EG has no side conditions: any term $t$ may be replaced by an existentially
+quantified variable.
+\end{remark}
+
+\subsubsection{Summary of Quantifier Rules}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Rule} & \textbf{Form} & \textbf{Key Restriction} \\
+\hline
+UI & $\forall x\,\varphi \Rightarrow \varphi[t/x]$ & $t$ free for $x$ \\
+EI & $\exists x\,\varphi \Rightarrow \varphi[c/x]$ & $c$ fresh witness \\
+EG & $\varphi[t/x] \Rightarrow \exists x\,\varphi$ & none \\
+UG & $\varphi \Rightarrow \forall x\,\varphi$ & $x$ not free in assumptions \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Derived Inference Patterns}
+
+\begin{remark}[Arbitrary Element Argument]
+To prove $\forall x\,\varphi(x)$, fix an arbitrary element $x$ and prove
+$\varphi(x)$ without making any special assumptions about $x$. Then apply UG.
+\end{remark}
+
+\begin{remark}[Witness Argument]
+To prove $\exists x\,\varphi(x)$, explicitly exhibit a term $t$ such that
+$\varphi(t)$ holds. Then apply EG.
+\end{remark}
+
+\begin{remark}[Counterexample Argument]
+To refute $\forall x\,\varphi(x)$, it suffices to produce a term $t$ such that
+$\neg\varphi(t)$ holds.
+
+To refute $\exists x\,\varphi(x)$, one must show that $\varphi(t)$ fails for all
+terms $t$.
+\end{remark}
+
+\subsubsection{Soundness and Completeness}
+
+\begin{definition}[Soundness]
+A proof system is \emph{sound} if every provable formula is valid.
+
+Formally, if $\Gamma \vdash \varphi$ (i.e., $\varphi$ is provable from $\Gamma$),
+then $\Gamma \models \varphi$ (i.e., $\varphi$ is a logical consequence of $\Gamma$).
+\end{definition}
+
+\begin{definition}[Completeness]
+A proof system is \emph{complete} if every valid formula is provable.
+
+Formally, if $\Gamma \models \varphi$, then $\Gamma \vdash \varphi$.
+\end{definition}
+
+\begin{theorem}[Soundness of First-Order Logic]
+The standard inference rules for first-order logic (including UI, UG, EI, EG,
+and the propositional rules) are sound: they preserve truth in all structures.
+
+If $\Gamma \vdash \varphi$, then $\Gamma \models \varphi$.
+\end{theorem}
+
+\begin{theorem}[G\"{o}del's Completeness Theorem]
+First-order logic is complete: every logically valid formula is provable.
+
+If $\Gamma \models \varphi$, then $\Gamma \vdash \varphi$.
+
+Equivalently, if a set of sentences $\Gamma$ is consistent (has no proof of
+contradiction), then $\Gamma$ has a model.
+\end{theorem}
+
+\begin{remark}
+Soundness ensures that proofs do not lead us astray: we cannot prove false
+statements from true premises. Completeness ensures that proofs are powerful
+enough: every true statement (in the sense of being true in all models) can
+be established by a proof.
+
+Together, soundness and completeness show that syntactic provability ($\vdash$)
+and semantic entailment ($\models$) coincide for first-order logic.
+\end{remark}
+
+\begin{remark}
+G\"{o}del's completeness theorem should not be confused with his incompleteness
+theorems, which concern the limitations of formal systems capable of expressing
+arithmetic.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Equality}
+% ---------------------------------------------------------
+
+\subsubsection{Equality Introduction}
+
+\begin{definition}[Equality Introduction (Reflexivity)]
+For any term $t$, one may infer
+\[
+t = t.
+\]
+\end{definition}
+
+\begin{remark}
+Reflexivity requires no premises and holds for all terms under all
+interpretations.
+\end{remark}
+
+\subsubsection{Equality Elimination}
+
+\begin{definition}[Equality Elimination (Substitution of Equals)]
+Let $\varphi$ be a formula and let $x$ be a variable.
+From
+\[
+t_1 = t_2
+\quad\text{and}\quad
+\varphi[t_1/x],
+\]
+one may infer
+\[
+\varphi[t_2/x].
+\]
+\end{definition}
+
+\begin{remark}
+Equality elimination permits the replacement of a term by an equal term in any
+formula position, provided the substitution is capture-avoiding.
+\end{remark}
+
+\subsubsection{Derived Equality Rules}
+
+\begin{theorem}[Symmetry of Equality]
+From $t_1 = t_2$, one may infer $t_2 = t_1$.
+\end{theorem}
+
+\begin{theorem}[Transitivity of Equality]
+From $t_1 = t_2$ and $t_2 = t_3$, one may infer $t_1 = t_3$.
+\end{theorem}
+
+\begin{theorem}[Term Substitution under Equality]
+If $t_1 = t_2$, then for any function symbol $f$,
+\[
+f(\dots,t_1,\dots) = f(\dots,t_2,\dots).
+\]
+\end{theorem}
+
+\begin{theorem}[Predicate Substitution under Equality]
+If $t_1 = t_2$ and $P$ is an $n$-ary predicate symbol, then
+\[
+P(\dots,t_1,\dots) \;\Leftrightarrow\; P(\dots,t_2,\dots).
+\]
+\end{theorem}
+
+\begin{remark}
+These derived rules express that functions and predicates respect equality.
+\end{remark}
+
+\subsubsection{Summary of Equality Rules}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Rule} & \textbf{Form} & \textbf{Status} \\
+\hline
+Reflexivity & $t=t$ & Inference rule \\
+Equality Elimination & $t_1=t_2,\;\varphi[t_1/x]\Rightarrow\varphi[t_2/x]$ & Inference rule \\
+Symmetry & $t_1=t_2 \Rightarrow t_2=t_1$ & Derived \\
+Transitivity & $t_1=t_2,\;t_2=t_3 \Rightarrow t_1=t_3$ & Derived \\
+Term Substitution & $f(\dots,t_1,\dots)=f(\dots,t_2,\dots)$ & Derived \\
+Predicate Substitution & $P(\dots,t_1,\dots)\Leftrightarrow P(\dots,t_2,\dots)$ & Derived \\
+\hline
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------
+\subsection{Translation and Interpretation}
+% ---------------------------------------------------------
+
+\subsubsection{English to Logic}
+
+\begin{remark}[Translation Discipline]
+When translating a symbolic formula into natural language, logical equivalences
+may be used to analyze or verify meaning. However, the English translation must
+respect the original quantifier nesting of the given formula, unless explicitly
+instructed to normalize or rewrite the expression.
+\end{remark}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.35}
@@ -787,810 +1304,16 @@ $\exists x\,\forall y\,P(x,y)$
 $\forall x\,\exists y\,\neg P(x,y)$
 \\ \hline
 
-Every object satisfies at least one condition
-&
-$\forall x\,\exists y\,C(x,y)$
-&
-$\exists x\,\forall y\,\neg C(x,y)$
-\\ \hline
-
-There exists an object satisfying all conditions
-&
-$\exists x\,\forall y\,C(x,y)$
-&
-$\forall x\,\exists y\,\neg C(x,y)$
-\\ \hline
-
 \end{tabular}
 \end{center}
 
-\begin{remark}[How to Negate Quantified Statements]
-To negate a quantified statement:
-\begin{enumerate}
-  \item Reverse each quantifier as it is crossed ($\forall \leftrightarrow \exists$).
-  \item Push the negation inward to the predicate.
-  \item Preserve the order of quantifiers.
-\end{enumerate}
+\subsubsection{Quantifier Scope Ambiguity}
+
+\begin{remark}[Scope Determines Meaning]
+Natural language often leaves quantifier scope ambiguous.
+Formal logic resolves this ambiguity by fixing a precise quantifier order.
+Changing the order of quantifiers generally changes the meaning of the statement.
 \end{remark}
-
-\begin{remark}
-Negating a quantified statement changes the claim about the domain, not merely the
-predicate. The negation of a universal claim asserts the existence of a
-counterexample; the negation of an existential claim asserts universal failure.
-\end{remark}
-
-\section*{Common Incorrect Negations of Quantified Statements}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.35}
-\begin{tabular}{|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
-\hline
-\textbf{Original Statement}
-& \textbf{Incorrect Negation}
-& \textbf{Why It Is Wrong}
-\\ \hline
-
-$\forall x\,P(x)$
-&
-$\forall x\,\neg P(x)$
-&
-Fails to flip the quantifier; this asserts that \emph{everyone} fails $P$, not
-that a counterexample exists.
-\\ \hline
-
-$\exists x\,P(x)$
-&
-$\exists x\,\neg P(x)$
-&
-Negates the predicate but not the existential claim; this still asserts existence.
-\\ \hline
-
-$\forall x\,\exists y\,P(x,y)$
-&
-$\exists x\,\exists y\,\neg P(x,y)$
-&
-Only the inner quantifier was flipped; negation must pass through \emph{all}
-quantifiers.
-\\ \hline
-
-$\exists x\,\forall y\,P(x,y)$
-&
-$\forall x\,\forall y\,\neg P(x,y)$
-&
-Overstrengthened the negation; this claims universal failure rather than failure
-for each candidate witness.
-\\ \hline
-
-$\neg(\forall x\,P(x))$
-&
-$\forall x\,\neg P(x)$
-&
-Misapplies De Morgan’s law; negation must switch $\forall$ to $\exists$.
-\\ \hline
-
-$\neg(\exists x\,P(x))$
-&
-$\exists x\,\neg P(x)$
-&
-Incorrectly preserves the existential quantifier instead of switching to
-$\forall$.
-\\ \hline
-
-$\forall x\,(P(x)\rightarrow Q(x))$
-&
-$\forall x\,(P(x)\wedge \neg Q(x))$
-&
-Negates the implication incorrectly; the correct negation is
-$\exists x\,(P(x)\wedge \neg Q(x))$.
-\\ \hline
-
-$\exists x\,(P(x)\wedge Q(x))$
-&
-$\exists x\,(P(x)\vee Q(x))$
-&
-Negates the connective instead of the quantified statement.
-\\ \hline
-
-\end{tabular}
-\end{center}
-
-\begin{remark}[Negation Discipline]
-When negating a quantified statement, the negation must be pushed inward across
-\emph{every} quantifier, flipping each one, until it reaches the atomic
-predicate. Negating only the predicate or only one quantifier changes the
-logical claim.
-\end{remark}
-
-\begin{remark}
-Most incorrect negations arise from treating quantifiers like adjectives rather
-than operators. Quantifiers control scope, not emphasis.
-\end{remark}
-
-\begin{remark}[Negating Statements with Multiple Quantifiers]
-Negating a statement with multiple quantifiers requires systematically pushing
-the negation inward while reversing each quantifier encountered.
-
-For example, consider the formula
-\[
-\forall x\,\exists y\,P(x,y).
-\]
-Its negation is computed as follows:
-\[
-\begin{aligned}
-\neg\bigl(\forall x\,\exists y\,P(x,y)\bigr)
-&\equiv \exists x\,\neg\bigl(\exists y\,P(x,y)\bigr) \\
-&\equiv \exists x\,\forall y\,\neg P(x,y).
-\end{aligned}
-\]
-
-Thus, the negation asserts the existence of an element $x$ such that \emph{for
-every} $y$, the predicate $P(x,y)$ fails. Each quantifier is reversed as the
-negation passes through its scope, and the negation ultimately applies to the
-atomic formula.
-\end{remark}
-
-\begin{remark}[Negating a Statement with Three Quantifiers]
-Consider the formula
-\[
-\forall x\,\exists y\,\forall z\,R(x,y,z).
-\]
-Negating this statement proceeds by successively pushing the negation inward and
-reversing each quantifier encountered:
-\[
-\begin{aligned}
-\neg\bigl(\forall x\,\exists y\,\forall z\,R(x,y,z)\bigr)
-&\equiv \exists x\,\neg\bigl(\exists y\,\forall z\,R(x,y,z)\bigr) \\
-&\equiv \exists x\,\forall y\,\neg\bigl(\forall z\,R(x,y,z)\bigr) \\
-&\equiv \exists x\,\forall y\,\exists z\,\neg R(x,y,z).
-\end{aligned}
-\]
-
-Thus, the negation asserts that there exists an element $x$ such that for every
-$y$ there exists a $z$ for which the relation $R(x,y,z)$ does not hold. Each
-quantifier is reversed in turn as the negation passes through its scope, and the
-order of quantifiers is preserved.
-\end{remark}
-
-\begin{remark}[Negating a Quantified Statement with Implications in the Predicate]
-Consider the quantified formula
-\[
-\forall x\,\exists y\,\bigl((A(x) \rightarrow B(y)) \wedge (D(x,y) \rightarrow F(y))\bigr).
-\]
-
-We negate this statement by systematically pushing the negation inward.
-
-\medskip
-\textbf{Step 1: Negate the outer quantifiers.}
-\[
-\neg\forall x\,\exists y\,\Phi
-\;\equiv\;
-\exists x\,\forall y\,\neg\Phi,
-\]
-so we obtain
-\[
-\exists x\,\forall y\,\neg\bigl((A(x) \rightarrow B(y)) \wedge (D(x,y) \rightarrow F(y))\bigr).
-\]
-
-\medskip
-\textbf{Step 2: Apply De Morgan’s law to the conjunction.}
-\[
-\neg(\alpha \wedge \beta) \equiv \neg\alpha \vee \neg\beta,
-\]
-giving
-\[
-\exists x\,\forall y\,
-\bigl(
-\neg(A(x) \rightarrow B(y))
-\;\vee\;
-\neg(D(x,y) \rightarrow F(y))
-\bigr).
-\]
-
-\medskip
-\textbf{Step 3: Negate the implications.}
-Using
-\[
-\neg(P \rightarrow Q) \equiv P \wedge \neg Q,
-\]
-we obtain
-\[
-\exists x\,\forall y\,
-\bigl(
-(A(x) \wedge \neg B(y))
-\;\vee\;
-(D(x,y) \wedge \neg F(y))
-\bigr).
-\]
-
-\medskip
-Thus, the negation of the original statement is
-\[
-\exists x\,\forall y\,
-\bigl(
-(A(x) \wedge \neg B(y))
-\;\vee\;
-(D(x,y) \wedge \neg F(y))
-\bigr).
-\]
-\end{remark}
-
-\begin{remark}
-The negated statement asserts that there exists an element $x$ such that for
-every $y$, at least one of the implications fails: either $A(x)$ holds while
-$B(y)$ fails, or $D(x,y)$ holds while $F(y)$ fails. Negation converts each
-implication into a concrete counterexample.
-\end{remark}
-
-\begin{remark}[General Schema for Negating Quantified Implications]
-Let $\varphi(x_1,\dots,x_n)$ and $\psi(x_1,\dots,x_n)$ be formulas.
-Consider a quantified implication of the form
-\[
-Q_1 x_1\, Q_2 x_2 \cdots Q_n x_n \bigl(\varphi \rightarrow \psi\bigr),
-\]
-where each $Q_i \in \{\forall,\exists\}$.
-
-The negation of this statement is obtained by:
-\begin{enumerate}
-  \item reversing each quantifier in order,
-  \item pushing the negation inward to the implication, and
-  \item replacing the implication by a conjunction with a negated consequent.
-\end{enumerate}
-
-Formally,
-\[
-\neg\Bigl(Q_1 x_1 \cdots Q_n x_n (\varphi \rightarrow \psi)\Bigr)
-\;\equiv\;
-Q_1' x_1 \cdots Q_n' x_n (\varphi \wedge \neg \psi),
-\]
-where each $Q_i'$ is the dual quantifier:
-\[
-\forall' = \exists,
-\qquad
-\exists' = \forall.
-\]
-\end{remark}
-
-\begin{remark}[Negating Quantified Compound Implications]
-If the matrix of a quantified formula is a conjunction of implications,
-\[
-Q_1 x_1 \cdots Q_n x_n
-\bigl((\varphi_1 \rightarrow \psi_1)\wedge(\varphi_2 \rightarrow \psi_2)\bigr),
-\]
-then its negation is given by
-\[
-Q_1' x_1 \cdots Q_n' x_n
-\bigl((\varphi_1 \wedge \neg \psi_1)\vee(\varphi_2 \wedge \neg \psi_2)\bigr),
-\]
-where the quantifiers are flipped as before.
-\end{remark}
-
-\begin{remark}
-Negating a quantified implication does not assert that the antecedent is false.
-Instead, it asserts the existence (or universality, depending on scope) of a
-counterexample in which the antecedent holds and the consequent fails.
-\end{remark}
-
-\begin{remark}
-To negate a quantified implication, look for a witness where the hypothesis is
-true and the conclusion is false, and adjust quantifiers accordingly.
-\end{remark}
-
-\begin{definition}[Quantified Opposition Forms]
-Let $P(x)$ be a formula with one free variable.
-The four standard quantified forms are:
-\begin{align*}
-\textbf{Universal Affirmative (A):} &\quad \forall x\,P(x) \\
-\textbf{Universal Negative (E):} &\quad \forall x\,\neg P(x) \\
-\textbf{Existential Affirmative (I):} &\quad \exists x\,P(x) \\
-\textbf{Existential Negative (O):} &\quad \exists x\,\neg P(x)
-\end{align*}
-\end{definition}
-
-\begin{center}
-\begin{tikzpicture}[
-  every node/.style={draw, rectangle, align=center, minimum width=4cm, minimum height=1.2cm},
-  node distance=3.8cm
-]
-
-\node (A) {$\forall x\,P(x)$\\\small Universal Affirmative (A)};
-\node (E) [right=of A] {$\forall x\,\neg P(x)$\\\small Universal Negative (E)};
-\node (I) [below=of A] {$\exists x\,P(x)$\\\small Existential Affirmative (I)};
-\node (O) [below=of E] {$\exists x\,\neg P(x)$\\\small Existential Negative (O)};
-
-% Contradictories
-\draw[<->, thick] (A) -- (O);
-\draw[<->, thick] (E) -- (I);
-
-% Subalternation
-\draw[->, thick] (A) -- (I);
-\draw[->, thick] (E) -- (O);
-
-% Contraries
-\draw[<->, dashed] (A) -- (E);
-
-% Subcontraries
-\draw[<->, dashed] (I) -- (O);
-
-\end{tikzpicture}
-\end{center}
-
-\begin{remark}[Logical Relations in First-Order Logic]
-In first-order logic with nonempty domains:
-\begin{itemize}
-  \item \textbf{Contradictories:}
-  \[
-  \forall x\,P(x) \;\text{and}\; \exists x\,\neg P(x)
-  \]
-  \[
-  \forall x\,\neg P(x) \;\text{and}\; \exists x\,P(x)
-  \]
-  cannot both be true and cannot both be false.
-
-  \item \textbf{Subalternation:}
-  \[
-  \forall x\,P(x) \Rightarrow \exists x\,P(x),
-  \quad
-  \forall x\,\neg P(x) \Rightarrow \exists x\,\neg P(x).
-  \]
-
-  \item \textbf{Contraries and Subcontraries:}
-  These relations do \emph{not} generally hold in first-order logic without
-  existential presuppositions.
-\end{itemize}
-\end{remark}
-
-\begin{remark}[Modern Status of the Square]
-In classical first-order logic, only contradiction and subalternation are
-logically valid relations. The traditional notions of contrariety and
-subcontrariety rely on existential assumptions and are not preserved in general
-model-theoretic semantics.
-\end{remark}
-
-\begin{remark}
-The square of opposition for quantified formulas visualizes logical relations
-between $\forall$ and $\exists$, but in first-order logic only contradiction and
-subalternation are semantically valid without additional assumptions.
-\end{remark}
-
-\begin{definition}[Quantified Forms for a Binary Predicate]
-Let $R(x,y)$ be a formula with two free variables.
-The four standard quantified forms are:
-\begin{align*}
-\textbf{A (Universal--Universal):} 
-&\quad \forall x\,\forall y\,R(x,y) \\[0.3em]
-\textbf{E (Universal--Negative):} 
-&\quad \forall x\,\forall y\,\neg R(x,y) \\[0.3em]
-\textbf{I (Existential--Existential):} 
-&\quad \exists x\,\exists y\,R(x,y) \\[0.3em]
-\textbf{O (Existential--Negative):} 
-&\quad \exists x\,\exists y\,\neg R(x,y)
-\end{align*}
-\end{definition}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{c@{\qquad}c}
-$\forall x\,\forall y\,R(x,y)$
-&
-$\forall x\,\forall y\,\neg R(x,y)$
-\\[1.2em]
-$\exists x\,\exists y\,R(x,y)$
-&
-$\exists x\,\exists y\,\neg R(x,y)$
-\end{tabular}
-\end{center}
-
-\begin{remark}[Valid Relations for Binary Predicates]
-In classical first-order logic with nonempty domains:
-\begin{itemize}
-  \item \textbf{Contradictories:}
-  \[
-  \forall x\,\forall y\,R(x,y)
-  \quad\text{and}\quad
-  \exists x\,\exists y\,\neg R(x,y)
-  \]
-  cannot both be true and cannot both be false.
-
-  \[
-  \forall x\,\forall y\,\neg R(x,y)
-  \quad\text{and}\quad
-  \exists x\,\exists y\,R(x,y)
-  \]
-  cannot both be true and cannot both be false.
-
-  \item \textbf{Subalternation:}
-  \[
-  \forall x\,\forall y\,R(x,y)
-  \;\Rightarrow\;
-  \exists x\,\exists y\,R(x,y),
-  \]
-  \[
-  \forall x\,\forall y\,\neg R(x,y)
-  \;\Rightarrow\;
-  \exists x\,\exists y\,\neg R(x,y).
-  \]
-\end{itemize}
-\end{remark}
-
-\begin{remark}[Failure of Classical Relations]
-As with unary predicates, the classical notions of \emph{contrariety} and
-\emph{subcontrariety} do not generally hold for binary predicates in modern
-first-order logic. These relations require existential presuppositions not
-guaranteed by the semantics.
-\end{remark}
-
-\begin{example}
-\[
-\forall x\,\exists y\,R(x,y)
-\qquad\text{vs.}\qquad
-\exists x\,\forall y\,R(x,y).
-\]
-These formulas are not equivalent and do not occupy the same position in a
-square of opposition.
-\end{example}
-
-\begin{remark}
-Whenever a predicate has arity greater than one, quantifier order becomes part
-of the meaning; there is no single “square” without fixing scope.
-\end{remark}
-
-\section*{Instantiation and Elimination Rules}
-
-Throughout, let $\varphi$ be a formula, $x$ a variable, and $t$ a term.
-All substitutions are assumed to be capture-avoiding.
-
-\begin{definition}[Universal Instantiation (UI)]
-From a universally quantified statement, one may infer any instance obtained by
-substituting a term for the bound variable:
-\[
-\forall x\,\varphi \;\Rightarrow\; \varphi[t/x].
-\]
-\end{definition}
-
-\begin{remark}[Side Condition]
-The term $t$ must be free for $x$ in $\varphi$; that is, no variable occurring in
-$t$ may become bound as a result of the substitution.
-\end{remark}
-
-\begin{remark}[Witness Discipline]
-The constant $c$ represents an arbitrary but fixed witness. It may not appear in
-any undischarged assumption or in the final conclusion of the proof.
-\end{remark}
-
-\begin{definition}[Existential Generalization (EG)]
-From a formula containing a term, one may infer an existential statement:
-\[
-\varphi[t/x] \;\Rightarrow\; \exists x\,\varphi.
-\]
-\end{definition}
-
-\begin{definition}[Universal Generalization (UG)]
-From a formula, one may infer a universally quantified statement:
-\[
-\varphi \;\Rightarrow\; \forall x\,\varphi.
-\]
-\end{definition}
-
-\begin{remark}[Restriction on Generalization]
-The variable $x$ must not occur free in any undischarged assumption on which
-$\varphi$ depends.
-\end{remark}
-
-\begin{remark}[Quantifier Elimination as Counterexample]
-To refute $\forall x\,\varphi(x)$, it suffices to produce a term $t$ such that
-$\neg\varphi(t)$ holds.
-
-To refute $\exists x\,\varphi(x)$, one must show that $\varphi(t)$ fails for all
-terms $t$.
-\end{remark}
-
-\begin{remark}[Derived Inference Patterns]
-The following patterns are commonly used and derivable from the basic rules:
-\begin{itemize}
-  \item \textbf{Arbitrary Element Argument:}
-  To prove $\forall x\,\varphi(x)$, fix an arbitrary $x$ and prove $\varphi(x)$
-  without special assumptions.
-
-  \item \textbf{Witness Argument:}
-  To prove $\exists x\,\varphi(x)$, explicitly exhibit a term $t$ such that
-  $\varphi(t)$ holds.
-\end{itemize}
-\end{remark}
-
-\begin{remark}[Common Errors]
-\begin{itemize}
-  \item Choosing a witness before establishing an existential premise.
-  \item Using a witness constant introduced by EI outside its allowed scope.
-  \item Generalizing universally over a variable that depends on a special
-        assumption.
-\end{itemize}
-\end{remark}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Rule} & \textbf{Form} & \textbf{Key Restriction} \\
-\hline
-UI & $\forall x\,\varphi \Rightarrow \varphi[t/x]$ & $t$ free for $x$ \\
-EI & $\exists x\,\varphi \Rightarrow \varphi[c/x]$ & $c$ fresh witness \\
-EG & $\varphi[t/x] \Rightarrow \exists x\,\varphi$ & none \\
-UG & $\varphi \Rightarrow \forall x\,\varphi$ & $x$ not free in assumptions \\
-\hline
-\end{tabular}
-\end{center}
-
-\section*{Equality Rules and Substitution Lemmas}
-
-Throughout, assume equality $\;=\;$ is part of the language and is interpreted
-as identity on the domain.
-
-\begin{definition}[Equality Introduction (Reflexivity)]
-For any term $t$, one may infer
-\[
-t = t.
-\]
-\end{definition}
-
-\begin{remark}
-Reflexivity requires no premises and holds for all terms under all
-interpretations.
-\end{remark}
-
-\begin{definition}[Equality Elimination (Substitution of Equals)]
-Let $\varphi$ be a formula and let $x$ be a variable.
-From
-\[
-t_1 = t_2
-\quad\text{and}\quad
-\varphi[t_1/x],
-\]
-one may infer
-\[
-\varphi[t_2/x].
-\]
-\end{definition}
-
-\begin{remark}
-Equality elimination permits the replacement of a term by an equal term in any
-formula position, provided the substitution is capture-avoiding.
-\end{remark}
-
-\begin{definition}[Term Substitution under Equality]
-If $t_1 = t_2$, then for any function symbol $f$,
-\[
-f(\dots,t_1,\dots) = f(\dots,t_2,\dots).
-\]
-\end{definition}
-
-\begin{remark}
-This rule expresses that functions respect equality.
-\end{remark}
-
-\begin{definition}[Predicate Substitution under Equality]
-If $t_1 = t_2$ and $P$ is an $n$-ary predicate symbol, then
-\[
-P(\dots,t_1,\dots) \;\Leftrightarrow\; P(\dots,t_2,\dots).
-\]
-\end{definition}
-
-\begin{remark}
-This expresses that predicates are invariant under replacement of equals.
-\end{remark}
-
-\begin{lemma}[Substitution Lemma for Terms]
-Let $\mathcal{M}$ be a structure and $s$ a variable assignment.
-For any term $t$ and variable $x$,
-\[
-\llbracket t \rrbracket_{\mathcal{M},\,s[x\mapsto d]}
-=
-\llbracket t[d/x] \rrbracket_{\mathcal{M},\,s}.
-\]
-\end{lemma}
-
-\begin{remark}
-Evaluating a term after modifying an assignment is equivalent to substituting
-the value directly into the term.
-\end{remark}
-
-\begin{lemma}[Substitution Lemma for Formulas]
-Let $\varphi$ be a formula, $t$ a term, and $x$ a variable.
-Then for any structure $\mathcal{M}$ and assignment $s$,
-\[
-\mathcal{M},s \models \varphi[t/x]
-\quad\Longleftrightarrow\quad
-\mathcal{M},\,s[x\mapsto \llbracket t \rrbracket_{\mathcal{M},s}] \models \varphi,
-\]
-provided the substitution is capture-avoiding.
-\end{lemma}
-
-\begin{remark}
-This lemma formally connects syntactic substitution with semantic evaluation and
-is essential for soundness proofs.
-\end{remark}
-
-\begin{remark}[Common Errors with Equality]
-\begin{itemize}
-  \item Substituting inside the scope of a quantifier without checking capture.
-  \item Replacing a term by an equal term in one occurrence but not another.
-  \item Treating equality as a predicate rather than as identity.
-\end{itemize}
-\end{remark}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Rule / Lemma} & \textbf{Form} & \textbf{Status} \\
-\hline
-Reflexivity & $t=t$ & Inference rule \\
-Equality Elimination & $t_1=t_2,\;\varphi[t_1/x]\Rightarrow\varphi[t_2/x]$ & Inference rule \\
-Term Substitution & $f(\dots,t_1,\dots)=f(\dots,t_2,\dots)$ & Derived rule \\
-Predicate Substitution & $P(\dots,t_1,\dots)\Leftrightarrow P(\dots,t_2,\dots)$ & Derived rule \\
-Substitution Lemma (Terms) & Semantic equivalence & Meta-theorem \\
-Substitution Lemma (Formulas) & Semantic equivalence & Meta-theorem \\
-\hline
-\end{tabular}
-\end{center}
-
-\begin{remark}
-Equality elimination is the only nonlogical inference rule specific to identity.
-All other equality reasoning is justified by the substitution lemmas.
-\end{remark}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section*{Quantifier Fallacy Checklist}
-
-Use the following checklist to identify common errors involving quantifiers,
-scope, and negation in formal proofs.
-
-\begin{center}
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{|p{6cm}|p{7.5cm}|}
-\hline
-\textbf{Fallacy}
-& \textbf{Diagnostic Question}
-\\ \hline
-
-\textbf{Failure to Flip Quantifier Under Negation}
-&
-Was $\forall$ changed to $\exists$ (or vice versa) when negating a quantified
-statement?
-\\ \hline
-
-\textbf{Negating Predicate Only}
-&
-Was only the predicate negated while the quantifier was left unchanged?
-\\ \hline
-
-\textbf{Partial Quantifier Negation}
-&
-When negating nested quantifiers, were \emph{all} quantifiers crossed by the
-negation and flipped?
-\\ \hline
-
-\textbf{Quantifier Order Confusion}
-&
-Was the order of quantifiers changed without justification
-(e.g.\ $\forall x\,\exists y$ replaced by $\exists y\,\forall x$)?
-\\ \hline
-
-\textbf{Illicit Quantifier Swap}
-&
-Were $\forall$ and $\exists$ commuted when they are not of the same type?
-\\ \hline
-
-\textbf{Variable Capture}
-&
-Did substitution introduce a variable that became bound unintentionally?
-\\ \hline
-
-\textbf{Illegal Existential Instantiation}
-&
-Was a witness chosen before an existential statement was established?
-\\ \hline
-
-\textbf{Illicit Universal Generalization}
-&
-Was a universally quantified conclusion drawn from a statement depending on a
-specific object or assumption?
-\\ \hline
-
-\textbf{Scope Ambiguity}
-&
-Was the scope of a quantifier unclear or implicitly extended beyond its
-syntactic bounds?
-\\ \hline
-
-\textbf{Vacuous Quantification Misuse}
-&
-Was a quantifier added or removed even though the variable does not occur free
-in the formula, without noting equivalence?
-\\ \hline
-
-\textbf{Confusing Object vs Property}
-&
-Was a property of an object incorrectly treated as a property of all objects
-(or vice versa)?
-\\ \hline
-
-\end{tabular}
-\end{center}
-
-\begin{remark}[Referee Guidance]
-Quantifier errors almost always stem from ignoring scope or treating quantifiers
-as informal linguistic modifiers. Every quantifier introduces a binding context
-that must be respected syntactically before semantic reasoning is applied.
-\end{remark}
-
-\begin{remark}
-If a proof step would still make sense after replacing $\forall$ with ``for most''
-or $\exists$ with ``maybe'', it is almost certainly invalid.
-\end{remark}
-
-\section*{Quantifier-Scope Ambiguity: Same English, Different Logic}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.35}
@@ -1637,30 +1360,6 @@ $\forall y\,\exists x\,K(x,y)$
 Every student is known by at least one teacher.
 \\ \hline
 
-Every city has a park
-&
-$\forall x\,\exists y\,H(x,y)$
-&
-Each city has at least one (possibly different) park.
-\\ \cline{2-3}
-&
-$\exists y\,\forall x\,H(x,y)$
-&
-There is a single park that belongs to every city.
-\\ \hline
-
-Some student read every book
-&
-$\exists x\,\forall y\,R(x,y)$
-&
-One student read all the books.
-\\ \cline{2-3}
-&
-$\forall y\,\exists x\,R(x,y)$
-&
-Every book was read by at least one student.
-\\ \hline
-
 Every function has a zero
 &
 $\forall f\,\exists x\,Z(f,x)$
@@ -1676,178 +1375,399 @@ There is a single point that is a zero of every function.
 \end{tabular}
 \end{center}
 
-\begin{remark}[Scope Determines Meaning]
-Natural language often leaves quantifier scope ambiguous.
-Formal logic resolves this ambiguity by fixing a precise quantifier order.
-Changing the order of quantifiers generally changes the meaning of the statement.
-\end{remark}
+\subsubsection{Square of Opposition}
 
-\section*{Prenex Normal Form: Workflow for Scope Normalization}
-
-\begin{definition}[Prenex Normal Form]
-A first-order formula is in \emph{prenex normal form} (PNF) if it has the shape
-\[
-Q_1 x_1\, Q_2 x_2 \cdots Q_n x_n \;\; \psi,
-\]
-where each $Q_i \in \{\forall,\exists\}$ and $\psi$ contains no quantifiers
-(i.e.\ $\psi$ is quantifier-free). The prefix
-$Q_1 x_1 \cdots Q_n x_n$ is called the \emph{quantifier prefix}, and $\psi$ is
-the \emph{matrix}.
+\begin{definition}[Quantified Opposition Forms]
+Let $P(x)$ be a formula with one free variable.
+The four standard quantified forms are:
+\begin{align*}
+\textbf{Universal Affirmative (A):} &\quad \forall x\,P(x) \\
+\textbf{Universal Negative (E):} &\quad \forall x\,\neg P(x) \\
+\textbf{Existential Affirmative (I):} &\quad \exists x\,P(x) \\
+\textbf{Existential Negative (O):} &\quad \exists x\,\neg P(x)
+\end{align*}
 \end{definition}
 
-\subsection*{Scope Normalization Workflow (Reference Procedure)}
+\begin{center}
+\begin{tikzpicture}[
+  every node/.style={draw, rectangle, align=center, minimum width=4cm, minimum height=1.2cm},
+  node distance=3.8cm
+]
 
-Given a formula $\varphi$, the following steps produce an equivalent formula in
-prenex normal form (under standard side conditions noted below).
+\node (A) {$\forall x\,P(x)$\\\small Universal Affirmative (A)};
+\node (E) [right=of A] {$\forall x\,\neg P(x)$\\\small Universal Negative (E)};
+\node (I) [below=of A] {$\exists x\,P(x)$\\\small Existential Affirmative (I)};
+\node (O) [below=of E] {$\exists x\,\neg P(x)$\\\small Existential Negative (O)};
 
-\begin{enumerate}
-  \item \textbf{Eliminate $\leftrightarrow$ and $\rightarrow$.}
-  Rewrite using only $\neg,\wedge,\vee$ (and quantifiers):
-  \[
-  (A \rightarrow B) \equiv (\neg A \vee B),\qquad
-  (A \leftrightarrow B) \equiv (A \rightarrow B)\wedge(B \rightarrow A).
-  \]
+% Contradictories
+\draw[<->, thick] (A) -- (O);
+\draw[<->, thick] (E) -- (I);
 
-  \item \textbf{Push negations inward (Negation Normal Form).}
-  Use De Morgan’s laws and quantifier-negation laws until $\neg$ applies only
-  to atomic formulas:
-  \[
-  \neg\forall x\,\phi \equiv \exists x\,\neg\phi,\qquad
-  \neg\exists x\,\phi \equiv \forall x\,\neg\phi.
-  \]
+% Subalternation
+\draw[->, thick] (A) -- (I);
+\draw[->, thick] (E) -- (O);
 
-  \item \textbf{Standardize bound variables apart.}
-  Rename bound variables so that:
-  \begin{itemize}
-    \item no variable is quantified twice, and
-    \item no bound variable coincides with any free variable.
-  \end{itemize}
-  (This prevents variable capture during quantifier movement.)
+% Contraries
+\draw[<->, dashed] (A) -- (E);
 
-  \item \textbf{Pull quantifiers outward (Prenexing).}
-  Repeatedly apply the following equivalences to move quantifiers to the front,
-  producing a quantifier prefix and a quantifier-free matrix.
-\end{enumerate}
+% Subcontraries
+\draw[<->, dashed] (I) -- (O);
 
-\subsection*{Quantifier-Pulling Rules (with Side Conditions)}
+\end{tikzpicture}
+\end{center}
 
-In the rules below, $x$ must not occur free in the indicated side formula
-(otherwise the transformation is not valid).
+\begin{remark}[Logical Relations in First-Order Logic]
+In first-order logic with nonempty domains:
+\begin{itemize}
+  \item \textbf{Contradictories:}
+  $\forall x\,P(x)$ and $\exists x\,\neg P(x)$;
+  $\forall x\,\neg P(x)$ and $\exists x\,P(x)$.
+  These pairs cannot both be true and cannot both be false.
+
+  \item \textbf{Subalternation:}
+  $\forall x\,P(x) \Rightarrow \exists x\,P(x)$ and
+  $\forall x\,\neg P(x) \Rightarrow \exists x\,\neg P(x)$.
+
+  \item \textbf{Contraries and Subcontraries:}
+  These relations do \emph{not} generally hold in first-order logic without
+  existential presuppositions.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Modern Status of the Square]
+In classical first-order logic, only contradiction and subalternation are
+logically valid relations. The traditional notions of contrariety and
+subcontrariety rely on existential assumptions and are not preserved in general
+model-theoretic semantics.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Common Errors and Fallacies}
+% ---------------------------------------------------------
+
+\subsubsection{Quantifier Fallacy Checklist}
 
 \begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{|p{6.5cm}|p{6.5cm}|}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{6cm}|p{7.5cm}|}
 \hline
-\textbf{Equivalence} & \textbf{Side Condition} \\
-\hline
-$(\forall x\,\phi)\wedge \psi \;\equiv\; \forall x\,(\phi\wedge \psi)$
-& $x \notin \mathrm{FV}(\psi)$ \\
-\hline
-$\psi \wedge (\forall x\,\phi) \;\equiv\; \forall x\,(\psi\wedge \phi)$
-& $x \notin \mathrm{FV}(\psi)$ \\
-\hline
-$(\exists x\,\phi)\vee \psi \;\equiv\; \exists x\,(\phi\vee \psi)$
-& $x \notin \mathrm{FV}(\psi)$ \\
-\hline
-$\psi \vee (\exists x\,\phi) \;\equiv\; \exists x\,(\psi\vee \phi)$
-& $x \notin \mathrm{FV}(\psi)$ \\
-\hline
-$(\forall x\,\phi)\vee \psi \;\Rightarrow\; \forall x\,(\phi\vee \psi)$
-& $x \notin \mathrm{FV}(\psi)$ \\
-\hline
-$(\exists x\,\phi)\wedge \psi \;\Rightarrow\; \exists x\,(\phi\wedge \psi)$
-& $x \notin \mathrm{FV}(\psi)$ \\
-\hline
+\textbf{Fallacy}
+& \textbf{Diagnostic Question}
+\\ \hline
+
+\textbf{Failure to Flip Quantifier Under Negation}
+&
+Was $\forall$ changed to $\exists$ (or vice versa) when negating a quantified
+statement?
+\\ \hline
+
+\textbf{Negating Predicate Only}
+&
+Was only the predicate negated while the quantifier was left unchanged?
+\\ \hline
+
+\textbf{Partial Quantifier Negation}
+&
+When negating nested quantifiers, were \emph{all} quantifiers crossed by the
+negation and flipped?
+\\ \hline
+
+\textbf{Quantifier Order Confusion}
+&
+Was the order of quantifiers changed without justification?
+\\ \hline
+
+\textbf{Illicit Quantifier Swap}
+&
+Were $\forall$ and $\exists$ commuted when they are not of the same type?
+\\ \hline
+
+\textbf{Variable Capture}
+&
+Did substitution introduce a variable that became bound unintentionally?
+\\ \hline
+
+\textbf{Illegal Existential Instantiation}
+&
+Was a witness chosen before an existential statement was established?
+\\ \hline
+
+\textbf{Illicit Universal Generalization}
+&
+Was a universally quantified conclusion drawn from a statement depending on a
+specific object?
+\\ \hline
+
+\textbf{Scope Ambiguity}
+&
+Was the scope of a quantifier unclear or implicitly extended beyond its
+syntactic bounds?
+\\ \hline
+
+\textbf{Vacuous Quantification Misuse}
+&
+Was a quantifier added or removed even though the variable does not occur free
+in the formula?
+\\ \hline
+
 \end{tabular}
 \end{center}
 
 \begin{remark}
-The last two lines are \emph{one-way} implications in general; they are not
-equivalences without additional assumptions. The first four lines are true
-equivalences (under the stated side conditions).
+Quantifier errors almost always stem from ignoring scope or treating quantifiers
+as informal linguistic modifiers. Every quantifier introduces a binding context
+that must be respected syntactically before semantic reasoning is applied.
 \end{remark}
 
-\subsection*{Worked Scope Normalization (Example)}
+\subsubsection{Common Incorrect Negations}
 
-\begin{example}
-Normalize the scope of
-\[
-\varphi := \neg\Bigl(\forall x\,P(x) \rightarrow \exists y\,Q(y)\Bigr).
-\]
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Original Statement}
+& \textbf{Incorrect Negation}
+& \textbf{Why It Is Wrong}
+\\ \hline
 
-\textbf{Step 1 (Eliminate $\rightarrow$).}
-\[
-\varphi \equiv \neg\Bigl(\neg\forall x\,P(x)\;\vee\;\exists y\,Q(y)\Bigr).
-\]
+$\forall x\,P(x)$
+&
+$\forall x\,\neg P(x)$
+&
+Fails to flip the quantifier; this asserts that \emph{everyone} fails $P$.
+\\ \hline
 
-\textbf{Step 2 (Push $\neg$ inward).}
-\[
-\varphi \equiv \Bigl(\forall x\,P(x)\Bigr)\wedge \neg\exists y\,Q(y).
-\]
-\[
-\neg\exists y\,Q(y) \equiv \forall y\,\neg Q(y),
-\quad\text{so}\quad
-\varphi \equiv \bigl(\forall x\,P(x)\bigr)\wedge \bigl(\forall y\,\neg Q(y)\bigr).
-\]
+$\exists x\,P(x)$
+&
+$\exists x\,\neg P(x)$
+&
+Negates the predicate but not the existential claim.
+\\ \hline
 
-\textbf{Step 3 (Standardize apart).}
-Variables are already distinct, so proceed.
+$\forall x\,\exists y\,P(x,y)$
+&
+$\exists x\,\exists y\,\neg P(x,y)$
+&
+Only the outer quantifier was flipped.
+\\ \hline
 
-\textbf{Step 4 (Pull quantifiers outward).}
-\[
-(\forall x\,P(x))\wedge(\forall y\,\neg Q(y))
-\equiv
-\forall x\,\forall y\,(P(x)\wedge \neg Q(y)).
-\]
+$\exists x\,\forall y\,P(x,y)$
+&
+$\forall x\,\forall y\,\neg P(x,y)$
+&
+Overstrengthened the negation.
+\\ \hline
 
-Thus a prenex normal form of $\varphi$ is
-\[
-\forall x\,\forall y\,(P(x)\wedge \neg Q(y)).
-\]
-\end{example}
+$\forall x\,(P(x)\rightarrow Q(x))$
+&
+$\forall x\,(P(x)\wedge \neg Q(x))$
+&
+Negates incorrectly; the correct negation is
+$\exists x\,(P(x)\wedge \neg Q(x))$.
+\\ \hline
 
-\subsection*{Checklist (Avoiding Scope Errors)}
-\begin{itemize}
-  \item Standardize bound variables apart before moving quantifiers.
-  \item Do not move a quantifier across a subformula in which its variable occurs free.
-  \item Use quantifier-negation laws when pushing negations inward.
-  \item Track whether a transformation is an equivalence or only an implication.
-\end{itemize}
+\end{tabular}
+\end{center}
 
-
-\begin{definition}[Equality Rules]
-\begin{itemize}
-  \item \textbf{Reflexivity:} $\; x = x$
-  \item \textbf{Substitution of Equals:}
-  From $x = y$ and $\varphi[x]$, infer $\varphi[y]$
-\end{itemize}
-\end{definition}
-
-\begin{definition}[Alpha-Equivalence]
-Formulas that differ only by the names of bound variables are logically
-equivalent.
-\[
-\forall x\,\varphi \;\equiv\; \forall y\,\varphi[y/x]
-\quad\text{(provided $y$ is not free in $\varphi$)}
-\]
-\end{definition}
-
-\begin{remark}[Capture-Avoiding Substitution]
-A substitution $\varphi[t/x]$ is admissible only if no variable occurring in $t$
-becomes bound after substitution.
+\begin{remark}[Negation Discipline]
+When negating a quantified statement, the negation must be pushed inward across
+\emph{every} quantifier, flipping each one, until it reaches the atomic
+predicate. Negating only the predicate or only one quantifier changes the
+logical claim.
 \end{remark}
 
-\begin{rule}[Translation Discipline]
-When translating a symbolic formula into natural language, logical equivalences may be used to analyze or verify meaning. However, the English translation must respect the original quantifier nesting of the given formula, unless explicitly instructed to normalize or rewrite the expression.
-\end{rule}
+\subsubsection{Common Errors with Inference Rules}
 
+\begin{remark}[Common Errors]
+\begin{itemize}
+  \item Choosing a witness before establishing an existential premise.
+  \item Using a witness constant introduced by EI outside its allowed scope.
+  \item Generalizing universally over a variable that depends on a special
+        assumption.
+  \item Substituting inside the scope of a quantifier without checking capture.
+  \item Replacing a term by an equal term in one occurrence but not another.
+\end{itemize}
+\end{remark}
 
+\begin{remark}
+If a proof step would still make sense after replacing $\forall$ with ``for most''
+or $\exists$ with ``maybe'', it is almost certainly invalid.
+\end{remark}
 
+% ---------------------------------------------------------
+\subsection{Summary Tables}
+% ---------------------------------------------------------
 
+\subsubsection{Comparison: Propositional vs.\ Predicate Logic}
 
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Aspect}
+& \textbf{Propositional Logic}
+& \textbf{Predicate Logic}
+\\ \hline
 
+\textbf{Atomic formulas}
+&
+Propositional variables (e.g.\ $P$, $Q$, $R$)
+&
+Predicate symbols applied to terms (e.g.\ $P(x)$, $R(x,y)$)
+\\ \hline
 
+\textbf{Internal structure}
+&
+No internal structure
+&
+Contain terms, variables, constants, and functions
+\\ \hline
 
+\textbf{Dependence on variables}
+&
+None
+&
+May contain free variables
+\\ \hline
 
+\textbf{Semantic interpretation}
+&
+Assigned a truth value directly
+&
+True or false relative to a structure and assignment
+\\ \hline
 
+\textbf{Use of quantifiers}
+&
+Not available
+&
+Essential component
+\\ \hline
 
+\textbf{Semantic evaluation}
+&
+Truth tables
+&
+Satisfaction in a structure
+\\ \hline
+
+\end{tabular}
+\end{center}
+
+\subsubsection{Quantifier Rules Summary}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{|p{4cm}|p{6cm}|p{5cm}|}
+\hline
+\textbf{Rule Name}
+& \textbf{Schema}
+& \textbf{Conditions / Notes}
+\\ \hline
+
+\textbf{Universal Instantiation}
+&
+$\forall x\,\varphi \;\Rightarrow\; \varphi[t/x]$
+&
+$t$ must be free for $x$ in $\varphi$
+\\ \hline
+
+\textbf{Existential Generalization}
+&
+$\varphi[t/x] \;\Rightarrow\; \exists x\,\varphi$
+&
+$t$ may be any term
+\\ \hline
+
+\textbf{Existential Instantiation}
+&
+$\exists x\,\varphi \;\Rightarrow\; \varphi[c/x]$
+&
+$c$ is a new constant symbol
+\\ \hline
+
+\textbf{Universal Generalization}
+&
+$\varphi \;\Rightarrow\; \forall x\,\varphi$
+&
+$x$ not free in any undischarged assumption
+\\ \hline
+
+\textbf{Quantifier Negation}
+&
+$\neg\forall x\,\varphi \;\equiv\; \exists x\,\neg\varphi$
+&
+\\ \cline{2-3}
+&
+$\neg\exists x\,\varphi \;\equiv\; \forall x\,\neg\varphi$
+&
+\\ \hline
+
+\textbf{Quantifier Commutation}
+&
+$\forall x\,\forall y\,\varphi \;\equiv\; \forall y\,\forall x\,\varphi$
+&
+Same quantifier type only
+\\ \cline{2-3}
+&
+$\exists x\,\exists y\,\varphi \;\equiv\; \exists y\,\exists x\,\varphi$
+&
+\\ \hline
+
+\textbf{Vacuous Quantification}
+&
+$\forall x\,\varphi \;\equiv\; \varphi$
+&
+$x$ not free in $\varphi$
+\\ \cline{2-3}
+&
+$\exists x\,\varphi \;\equiv\; \varphi$
+&
+\\ \hline
+
+\textbf{Renaming Bound Variables}
+&
+$\forall x\,\varphi \;\equiv\; \forall y\,\varphi[y/x]$
+&
+$y$ not free in $\varphi$
+\\ \hline
+
+\end{tabular}
+\end{center}
+
+\subsubsection{Syntax to Semantics Overview}
+
+\begin{center}
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+  node distance=3.2cm,
+  every node/.style={draw, rectangle, rounded corners, align=center, inner sep=8pt},
+  arrow/.style={->, thick}
+]
+
+\node (var) {\textbf{Variables}\\ $x_1,\dots,x_n$};
+
+\node (term) [right=of var] {\textbf{Terms}\\ $t_1,\dots,t_n$};
+
+\node (atom) [right=of term] {\textbf{Atomic Formula}\\ $P(t_1,\dots,t_n)$};
+
+\node (form) [right=of atom] {\textbf{Formula}\\ $\forall x\,\varphi,\;\exists x\,\varphi$};
+
+\node (rel) [right=of form] {\textbf{Truth in Structure}\\ $\mathcal{M}, s \models \varphi$};
+
+\draw[arrow] (var) -- node[above]{\small substitution} (term);
+\draw[arrow] (term) -- node[above]{\small formation} (atom);
+\draw[arrow] (atom) -- node[above]{\small logical construction} (form);
+\draw[arrow] (form) -- node[above]{\small satisfaction} (rel);
+
+\end{tikzpicture}
+}
+\end{center}
+
+\begin{remark}
+Variables and terms belong purely to syntax.
+Predicates form atomic formulas.
+Logical connectives and quantifiers build complex formulas.
+A structure and variable assignment then determine whether a formula is satisfied,
+with quantifiers ranging over the domain of discourse.
+\end{remark}

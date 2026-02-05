@@ -1527,6 +1527,7 @@ quotient sets.
 
 
 
+
 \subsection{Functions}
 
 \begin{definition}[Function]
@@ -1551,47 +1552,106 @@ of the codomain).
 Thus, every function is a relation, but not every relation is a function.
 \end{remark}
 
-\begin{remark}[Domain and Codomain]
+\begin{definition}[Domain and Codomain]
 If $f$ is a function from $A$ to $B$, we write
 \[
 f : A \to B,
 \]
-where $A$ is called the \emph{domain} of $f$ and $B$ the \emph{codomain}.
-The set
-\[
-\{\, b \in B \mid \exists a \in A,\ f(a)=b \,\}
-\]
-is called the \emph{image} of $f$ and may be a proper subset of $B$.
-\end{remark}
+where $A$ is called the \emph{domain} of $f$, denoted $\dom(f)$, and $B$ the
+\emph{codomain}, denoted $\cod(f)$.
+\end{definition}
 
-\begin{definition}[Preimage]
-Let $f : A \to B$ be a function, and let $S \subseteq B$.
-The \emph{preimage} (or \emph{inverse image}) of $S$ under $f$ is the set
+\begin{definition}[Image of a Function]
+Let $f : A \to B$ be a function.
+The \emph{image} (or \emph{range}) of $f$ is the set
 \[
-f^{-1}(S) \;:=\; \{\, a \in A \mid f(a) \in S \,\}.
+\im(f) \;:=\; \{\, b \in B \mid \exists a \in A,\ f(a)=b \,\}.
+\]
+The image may be a proper subset of the codomain.
+\end{definition}
+
+\begin{definition}[Image of a Set]
+Let $f : A \to B$ be a function, and let $S \subseteq A$.
+The \emph{image} of $S$ under $f$ is the set
+\[
+f(S) \;:=\; \{\, f(a) \mid a \in S \,\} \;=\; \{\, b \in B \mid \exists a \in S,\ f(a)=b \,\}.
 \]
 \end{definition}
 
 \begin{remark}
-The notation $f^{-1}(S)$ does \emph{not} denote an inverse function.
-It is defined for every function $f$, regardless of whether $f$ is injective or
-bijective.
-
-Preimages are fundamental because they are always well-defined and interact
-cleanly with set operations.
+The image of the entire domain equals the image of the function:
+$f(A) = \im(f)$.
 \end{remark}
 
-\begin{remark}
-Preimages preserve set-theoretic structure:
-for any subsets $S,T \subseteq B$,
+\begin{definition}[Preimage]
+Let $f : A \to B$ be a function, and let $T \subseteq B$.
+The \emph{preimage} (or \emph{inverse image}) of $T$ under $f$ is the set
 \[
-f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T),
-\quad
-f^{-1}(S \cap T) = f^{-1}(S) \cap f^{-1}(T),
-\quad
-f^{-1}(S^c) = (f^{-1}(S))^c.
+f^{-1}(T) \;:=\; \{\, a \in A \mid f(a) \in T \,\}.
 \]
+\end{definition}
+
+\begin{remark}
+The notation $f^{-1}(T)$ does \emph{not} denote an inverse function.
+It is defined for every function $f$, regardless of whether $f$ is injective or
+bijective.
+\end{remark}
+
+\begin{definition}[Fiber]
+Let $f : A \to B$ be a function, and let $b \in B$.
+The \emph{fiber} of $f$ over $b$ is the preimage of the singleton $\{b\}$:
+\[
+f^{-1}(\{b\}) \;=\; \{\, a \in A \mid f(a) = b \,\}.
+\]
+\end{definition}
+
+\begin{remark}
+The fibers of a function $f : A \to B$ partition the domain $A$.
+More precisely, the collection
+\[
+\{\, f^{-1}(\{b\}) \mid b \in \im(f) \,\}
+\]
+is a partition of $A$, and two elements $a_1, a_2 \in A$ lie in the same fiber
+if and only if $f(a_1) = f(a_2)$.
+
+Thus, every function induces an equivalence relation on its domain:
+\[
+a_1 \sim_f a_2 \;\Longleftrightarrow\; f(a_1) = f(a_2),
+\]
+and the equivalence classes are precisely the fibers of $f$.
+\end{remark}
+
+\begin{theorem}[Preimages Preserve Set Operations]
+Let $f : A \to B$ be a function.
+For any subsets $S, T \subseteq B$,
+\begin{enumerate}[label=(\roman*)]
+\item $f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T)$,
+\item $f^{-1}(S \cap T) = f^{-1}(S) \cap f^{-1}(T)$,
+\item $f^{-1}(S \setminus T) = f^{-1}(S) \setminus f^{-1}(T)$,
+\item $f^{-1}(S^c) = (f^{-1}(S))^c$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+Preimages preserve all set-theoretic operations.
 This property makes preimages central in topology, measure theory, and analysis.
+\end{remark}
+
+\begin{theorem}[Images and Set Operations]
+Let $f : A \to B$ be a function.
+For any subsets $S, T \subseteq A$,
+\begin{enumerate}[label=(\roman*)]
+\item $f(S \cup T) = f(S) \cup f(T)$,
+\item $f(S \cap T) \subseteq f(S) \cap f(T)$,
+\item $f(S \setminus T) \supseteq f(S) \setminus f(T)$.
+\end{enumerate}
+Equality holds in (ii) and (iii) for all $S, T$ if and only if $f$ is injective.
+\end{theorem}
+
+\begin{remark}
+Forward images preserve unions but generally do not preserve intersections or
+complements.
+This asymmetry between images and preimages is fundamental.
 \end{remark}
 
 \begin{definition}[Graph of a Function]
@@ -1611,12 +1671,6 @@ $f : A \to B$ if and only if $G$ is left-total and right-unique.
 
 Thus, functions may be identified with their graphs, and a function is nothing
 more than a special kind of relation.
-\end{remark}
-
-\begin{remark}
-Viewing functions via their graphs allows many properties of functions to be
-proved using set-theoretic and relational arguments.
-This perspective will be used implicitly in later sections.
 \end{remark}
 
 \begin{definition}[Injective Function]
@@ -1640,7 +1694,7 @@ Formally,
 \[
 \forall b \in B,\; \exists a \in A \text{ such that } f(a)=b.
 \]
-Equivalently, $\operatorname{im}(f)=B$.
+Equivalently, $\im(f)=B$.
 \end{definition}
 
 \begin{definition}[Bijective Function]
@@ -1649,82 +1703,36 @@ We say that $f$ is \emph{bijective} if it is both injective and surjective.
 \end{definition}
 
 \begin{remark}
-Injectivity concerns uniqueness of preimages, surjectivity concerns completeness
-of images, and bijectivity combines both.
-These properties govern whether functions admit inverses and how they behave
-under composition and quotient constructions.
+Injectivity concerns uniqueness of preimages: each fiber has at most one element.
+Surjectivity concerns completeness of images: every fiber is nonempty.
+Bijectivity combines both: every fiber has exactly one element.
 \end{remark}
 
-
-
-
-\begin{definition}[Inverse Function]
-Let $f : A \to B$ be a bijective function.
-The \emph{inverse function} of $f$ is the function
+\begin{definition}[Identity Function]
+Let $A$ be a set.
+The \emph{identity function} on $A$ is the function
 \[
-f^{-1} : B \to A
+\id_A : A \to A,
+\qquad
+\id_A(a)=a \text{ for all } a \in A.
 \]
-defined by the rule
+\end{definition}
+
+\begin{definition}[Inclusion Map]
+Let $A \subseteq B$ be sets.
+The \emph{inclusion map} (or \emph{canonical injection}) from $A$ to $B$ is the function
 \[
-f^{-1}(b) = a \quad\text{if and only if}\quad f(a)=b.
+\iota : A \hookrightarrow B,
+\qquad
+\iota(a) = a \text{ for all } a \in A.
 \]
 \end{definition}
 
 \begin{remark}
-A function admits an inverse if and only if it is bijective.
-In this case,
-\[
-f^{-1} \circ f = \mathrm{id}_A
-\quad\text{and}\quad
-f \circ f^{-1} = \mathrm{id}_B.
-\]
+The inclusion map is injective.
+It differs from the identity function in that the codomain may be strictly larger
+than the domain.
 \end{remark}
-
-\begin{definition}[Left Inverse]
-Let $f : A \to B$ be a function.
-A function $g : B \to A$ is called a \emph{left inverse} of $f$ if
-\[
-g \circ f = \operatorname{id}_A,
-\]
-that is,
-\[
-\forall a \in A,\quad g(f(a)) = a.
-\]
-\end{definition}
-\begin{definition}[Right Inverse]
-Let $f : A \to B$ be a function.
-A function $h : B \to A$ is called a \emph{right inverse} of $f$ if
-\[
-f \circ h = \operatorname{id}_B,
-\]
-that is,
-\[
-\forall b \in B,\quad f(h(b)) = b.
-\]
-\end{definition}
-\begin{remark}[Inverses and Function Properties]
-Let $f : A \to B$ be a function.
-\begin{enumerate}[label=(\roman*)]
-\item If $f$ has a left inverse, then $f$ is injective.
-\item If $f$ has a right inverse, then $f$ is surjective.
-\item If $f$ has both a left inverse and a right inverse, then they are equal,
-and $f$ is bijective.
-\end{enumerate}
-\end{remark}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \begin{definition}[Composition of Functions]
 Let
@@ -1745,93 +1753,114 @@ defined by
 \]
 \end{definition}
 
-\begin{remark}
-Function composition is associative:
-if $f : A \to B$, $g : B \to C$, and $h : C \to D$, then
+\begin{theorem}[Associativity of Composition]
+Let $f : A \to B$, $g : B \to C$, and $h : C \to D$ be functions.
+Then
 \[
 h \circ (g \circ f) = (h \circ g) \circ f.
 \]
-However, composition is generally not commutative:
-\[
-g \circ f \neq f \circ g
-\quad\text{in general}.
-\]
+\end{theorem}
+
+\begin{remark}
+Composition is generally not commutative: $g \circ f \neq f \circ g$ in general,
+even when both compositions are defined.
 \end{remark}
 
-\begin{remark}[Interaction with Identity]
+\begin{theorem}[Identity and Composition]
 For any function $f : A \to B$,
 \[
-f \circ \mathrm{id}_A = f
+f \circ \id_A = f
 \quad\text{and}\quad
-\mathrm{id}_B \circ f = f.
+\id_B \circ f = f.
 \]
 Thus, identity functions act as neutral elements for composition.
-\end{remark}
+\end{theorem}
 
-\begin{remark}[Injectivity and Surjectivity Under Composition]
-Let
-\[
-f : A \to B
-\quad\text{and}\quad
-g : B \to C
-\]
-be functions.
-
+\begin{theorem}[Injectivity and Surjectivity Under Composition]
+Let $f : A \to B$ and $g : B \to C$ be functions.
 \begin{enumerate}[label=(\roman*)]
 \item If $f$ and $g$ are injective, then $g \circ f$ is injective.
-
 \item If $f$ and $g$ are surjective, then $g \circ f$ is surjective.
-
-\item If $g \circ f$ is injective, then $f$ must be injective.
-(The function $g$ need not be injective.)
-
-\item If $g \circ f$ is surjective, then $g$ must be surjective.
-(The function $f$ need not be surjective.)
+\item If $g \circ f$ is injective, then $f$ is injective.
+\item If $g \circ f$ is surjective, then $g$ is surjective.
 \end{enumerate}
+\end{theorem}
+
+\begin{remark}
+In (iii), the function $g$ need not be injective.
+In (iv), the function $f$ need not be surjective.
 \end{remark}
 
+\begin{definition}[Inverse Function]
+Let $f : A \to B$ be a bijective function.
+The \emph{inverse function} of $f$ is the function
+\[
+f^{-1} : B \to A
+\]
+defined by the rule
+\[
+f^{-1}(b) = a \quad\text{if and only if}\quad f(a)=b.
+\]
+\end{definition}
 
+\begin{theorem}[Characterization of Inverse Functions]
+Let $f : A \to B$ be a bijective function.
+Then
+\[
+f^{-1} \circ f = \id_A
+\quad\text{and}\quad
+f \circ f^{-1} = \id_B.
+\]
+Conversely, a function admits an inverse if and only if it is bijective.
+\end{theorem}
 
+\begin{theorem}[Inverse of a Composition]
+Let $f : A \to B$ and $g : B \to C$ be bijective functions.
+Then $g \circ f$ is bijective and
+\[
+(g \circ f)^{-1} = f^{-1} \circ g^{-1}.
+\]
+\end{theorem}
 
+\begin{definition}[Left Inverse]
+Let $f : A \to B$ be a function.
+A function $g : B \to A$ is called a \emph{left inverse} of $f$ if
+\[
+g \circ f = \id_A,
+\]
+that is, $g(f(a)) = a$ for all $a \in A$.
+\end{definition}
 
+\begin{definition}[Right Inverse]
+Let $f : A \to B$ be a function.
+A function $h : B \to A$ is called a \emph{right inverse} (or \emph{section}) of $f$ if
+\[
+f \circ h = \id_B,
+\]
+that is, $f(h(b)) = b$ for all $b \in B$.
+\end{definition}
 
+\begin{theorem}[One-Sided Inverses and Function Properties]
+Let $f : A \to B$ be a function.
+\begin{enumerate}[label=(\roman*)]
+\item $f$ has a left inverse if and only if $f$ is injective (and $A$ is nonempty
+or $A = B = \varnothing$).
+\item $f$ has a right inverse if and only if $f$ is surjective.
+\item If $f$ has both a left inverse $g$ and a right inverse $h$, then $g = h$,
+and $f$ is bijective.
+\end{enumerate}
+\end{theorem}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\begin{remark}
+The existence of a right inverse for every surjective function is equivalent to
+the Axiom of Choice.
+\end{remark}
 
 \begin{definition}[Constant Function]
 Let $f : A \to B$ be a function.
 We say that $f$ is \emph{constant} if there exists $b_0 \in B$ such that
 \[
 \forall a \in A,\; f(a)=b_0.
-\]
-\end{definition}
-
-\begin{definition}[Identity Function]
-Let $A$ be a set.
-The \emph{identity function} on $A$ is the function
-\[
-\mathrm{id}_A : A \to A,
-\qquad
-\mathrm{id}_A(a)=a \text{ for all } a \in A.
 \]
 \end{definition}
 
@@ -1848,22 +1877,13 @@ f|_C(a)=f(a) \quad \text{for all } a \in C.
 \end{definition}
 
 \begin{definition}[Extension of a Function]
-Let $A$ and $B$ be sets with $A \subseteq A'$, and let
-\[
-f : A \to C
-\quad\text{and}\quad
-g : A' \to C
-\]
-be functions.
+Let $A \subseteq A'$, and let $f : A \to B$ and $g : A' \to B$ be functions.
 We say that $g$ is an \emph{extension} of $f$ (and that $f$ is a \emph{restriction}
 of $g$) if
 \[
-g|_A = f.
+g|_A = f,
 \]
-Equivalently,
-\[
-\forall a \in A,\; g(a)=f(a).
-\]
+that is, $g(a) = f(a)$ for all $a \in A$.
 \end{definition}
 
 \begin{remark}
@@ -1878,26 +1898,6 @@ Questions about extending functions under additional conditions
 lead to important results such as the Tietze Extension Theorem
 and the Hahn–Banach Theorem.
 \end{remark}
-
-\begin{remark}
-Functions interact naturally with equivalence relations.
-A function $f : A \to B$ is said to be \emph{constant on equivalence classes}
-of a relation $R$ on $A$ if
-\[
-(a,b)\in R \;\Longrightarrow\; f(a)=f(b).
-\]
-This condition is exactly what is required for $f$ to factor uniquely through
-the quotient map $\pi : A \to A/R$.
-\end{remark}
-
-\begin{definition}[Image of a Set]
-Let $f : A \to B$ be a function and let $S \subseteq A$.
-The \emph{image} of $S$ under $f$ is
-\[
-f(S) := \{\, f(a) \mid a \in S \,\}.
-\]
-\end{definition}
-
 
 
 
