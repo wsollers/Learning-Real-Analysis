@@ -2,8 +2,6 @@
 % Propositional Logic — Reorganized Notes
 % =========================================================
 
-
-
 % ---------------------------------------------------------
 \subsection{Syntax of Propositional Logic}
 % ---------------------------------------------------------
@@ -100,6 +98,51 @@ if it is constructed using at least one logical connective.
 The definition of well-formed formulas is recursive (or inductive). As a
 consequence, proofs about well-formed formulas typically proceed by
 \emph{structural induction} on the formation of the formula.
+\end{remark}
+
+\subsubsection{Unique Readability}
+
+\begin{theorem}[Unique Readability]
+Every well-formed formula has exactly one parsing; that is, every wff can be
+constructed in exactly one way according to the recursive definition.
+
+More precisely, for every well-formed formula $\varphi$, exactly one of the
+following holds:
+\begin{enumerate}
+  \item $\varphi$ is a propositional variable.
+  \item $\varphi = \neg\psi$ for a unique wff $\psi$.
+  \item $\varphi = (\psi \circ \chi)$ for a unique binary connective $\circ$ and
+        unique wffs $\psi$ and $\chi$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+Unique readability is essential for the well-definedness of semantic evaluation.
+Without it, a formula might have multiple parse trees, leading to ambiguous
+truth values.
+
+The theorem relies on the use of parentheses to disambiguate binary connectives.
+Without parentheses, expressions like $P \wedge Q \vee R$ would be ambiguous.
+\end{remark}
+
+\begin{definition}[Parse Tree]
+The \emph{parse tree} (or \emph{formation tree}) of a formula $\varphi$ is a
+labeled tree representing the unique construction of $\varphi$ according to the
+recursive definition of well-formed formulas.
+
+\begin{itemize}
+  \item Each leaf is labeled with a propositional variable.
+  \item Each internal node is labeled with a connective.
+  \item A node labeled $\neg$ has one child.
+  \item A node labeled with a binary connective has two children.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The unique readability theorem guarantees that every wff has a unique parse tree.
+This justifies the use of structural induction: to prove a property holds for
+all formulas, it suffices to prove it for atomic formulas and show it is
+preserved by each connective.
 \end{remark}
 
 \subsubsection{Subformulas}
@@ -363,6 +406,369 @@ without changing the truth value of the containing formula.
 \end{remark}
 
 % ---------------------------------------------------------
+\subsection{Additional Connectives}
+% ---------------------------------------------------------
+
+\subsubsection{Exclusive Or (XOR)}
+
+\begin{definition}[Exclusive Or]
+The \emph{exclusive or} (or \emph{exclusive disjunction}), denoted $\oplus$ or
+$\veebar$, is a binary connective that is true when exactly one of its operands
+is true.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|}
+\hline
+$P$ & $Q$ & $P \oplus Q$ \\
+\hline
+T & T & F \\
+T & F & T \\
+F & T & T \\
+F & F & F \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[XOR Equivalences]
+The exclusive or can be expressed using standard connectives:
+\begin{align*}
+P \oplus Q &\;\equiv\; (P \vee Q) \wedge \neg(P \wedge Q) \\
+P \oplus Q &\;\equiv\; (P \wedge \neg Q) \vee (\neg P \wedge Q) \\
+P \oplus Q &\;\equiv\; \neg(P \leftrightarrow Q)
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+The exclusive or differs from the inclusive or ($\vee$) only when both operands
+are true: $P \vee Q$ is true in this case, but $P \oplus Q$ is false.
+
+In natural language, ``or'' is often ambiguous between inclusive and exclusive
+readings. ``Would you like coffee or tea?'' typically means exclusive or, while
+``Students who have taken calculus or linear algebra may enroll'' typically
+means inclusive or.
+\end{remark}
+
+\begin{theorem}[Properties of XOR]
+\begin{align*}
+P \oplus Q &\;\equiv\; Q \oplus P && \text{(Commutativity)} \\
+(P \oplus Q) \oplus R &\;\equiv\; P \oplus (Q \oplus R) && \text{(Associativity)} \\
+P \oplus \bot &\;\equiv\; P && \text{(Identity)} \\
+P \oplus \top &\;\equiv\; \neg P && \text{(Negation)} \\
+P \oplus P &\;\equiv\; \bot && \text{(Self-inverse)} \\
+P \oplus \neg P &\;\equiv\; \top && \\
+P \wedge (Q \oplus R) &\;\equiv\; (P \wedge Q) \oplus (P \wedge R) && \text{(Distributivity of $\wedge$ over $\oplus$)}
+\end{align*}
+\end{theorem}
+
+\subsubsection{NAND (Sheffer Stroke)}
+
+\begin{definition}[NAND]
+The \emph{NAND} connective (also called the \emph{Sheffer stroke}), denoted
+$\uparrow$ or $|$, is the negation of conjunction. It is false only when both
+operands are true.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|}
+\hline
+$P$ & $Q$ & $P \uparrow Q$ \\
+\hline
+T & T & F \\
+T & F & T \\
+F & T & T \\
+F & F & T \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[NAND Definition]
+\[
+P \uparrow Q \;\equiv\; \neg(P \wedge Q)
+\]
+\end{theorem}
+
+\begin{theorem}[Expressing Connectives with NAND]
+All standard connectives can be expressed using only NAND:
+\begin{align*}
+\neg P &\;\equiv\; P \uparrow P \\
+P \wedge Q &\;\equiv\; (P \uparrow Q) \uparrow (P \uparrow Q) \\
+P \vee Q &\;\equiv\; (P \uparrow P) \uparrow (Q \uparrow Q) \\
+P \rightarrow Q &\;\equiv\; P \uparrow (Q \uparrow Q)
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+The NAND connective is not associative:
+\[
+(P \uparrow Q) \uparrow R \;\not\equiv\; P \uparrow (Q \uparrow R)
+\]
+\end{remark}
+
+\subsubsection{NOR (Peirce Arrow)}
+
+\begin{definition}[NOR]
+The \emph{NOR} connective (also called the \emph{Peirce arrow} or \emph{Quine
+dagger}), denoted $\downarrow$, is the negation of disjunction. It is true only
+when both operands are false.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|}
+\hline
+$P$ & $Q$ & $P \downarrow Q$ \\
+\hline
+T & T & F \\
+T & F & F \\
+F & T & F \\
+F & F & T \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[NOR Definition]
+\[
+P \downarrow Q \;\equiv\; \neg(P \vee Q)
+\]
+\end{theorem}
+
+\begin{theorem}[Expressing Connectives with NOR]
+All standard connectives can be expressed using only NOR:
+\begin{align*}
+\neg P &\;\equiv\; P \downarrow P \\
+P \vee Q &\;\equiv\; (P \downarrow Q) \downarrow (P \downarrow Q) \\
+P \wedge Q &\;\equiv\; (P \downarrow P) \downarrow (Q \downarrow Q) \\
+P \rightarrow Q &\;\equiv\; ((P \downarrow P) \downarrow Q) \downarrow ((P \downarrow P) \downarrow Q)
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+Like NAND, NOR is not associative:
+\[
+(P \downarrow Q) \downarrow R \;\not\equiv\; P \downarrow (Q \downarrow R)
+\]
+\end{remark}
+
+\subsubsection{Summary of Additional Connectives}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|c|c|}
+\hline
+$P$ & $Q$ & $P \oplus Q$ & $P \uparrow Q$ & $P \downarrow Q$ \\
+\hline
+T & T & F & F & F \\
+T & F & T & T & F \\
+F & T & T & T & F \\
+F & F & F & T & T \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Connective} & \textbf{Symbol} & \textbf{Name} & \textbf{Equivalent} \\
+\hline
+Exclusive Or & $\oplus$, $\veebar$ & XOR & $\neg(P \leftrightarrow Q)$ \\
+NAND & $\uparrow$, $|$ & Sheffer stroke & $\neg(P \wedge Q)$ \\
+NOR & $\downarrow$ & Peirce arrow & $\neg(P \vee Q)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------
+\subsection{Functional Completeness}
+% ---------------------------------------------------------
+
+\subsubsection{Truth Functions}
+
+\begin{definition}[Truth Function]
+An $n$-ary \emph{truth function} is a function
+\[
+f : \{\mathsf{T}, \mathsf{F}\}^n \to \{\mathsf{T}, \mathsf{F}\}.
+\]
+
+There are exactly $2^{2^n}$ distinct $n$-ary truth functions.
+\end{definition}
+
+\begin{example}
+For $n = 1$, there are $2^{2^1} = 4$ unary truth functions:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+$P$ & $f_1$ & $f_2$ & $f_3$ & $f_4$ \\
+\hline
+T & T & T & F & F \\
+F & T & F & T & F \\
+\hline
+\end{tabular}
+\end{center}
+These correspond to: $f_1 = \top$ (constant true), $f_2 = P$ (identity),
+$f_3 = \neg P$ (negation), $f_4 = \bot$ (constant false).
+\end{example}
+
+\begin{example}
+For $n = 2$, there are $2^{2^2} = 16$ binary truth functions, including
+conjunction, disjunction, conditional, biconditional, NAND, NOR, XOR, and others.
+\end{example}
+
+\subsubsection{Functional Completeness}
+
+\begin{definition}[Functional Completeness]
+A set $S$ of logical connectives is \emph{functionally complete} (or
+\emph{adequate}) if every truth function can be expressed by a formula using
+only connectives from $S$.
+
+Equivalently, $S$ is functionally complete if for every truth function $f$,
+there exists a formula $\varphi$ built using only connectives in $S$ such that
+$\varphi$ computes $f$.
+\end{definition}
+
+\begin{theorem}[Standard Functionally Complete Sets]
+The following sets of connectives are functionally complete:
+\begin{enumerate}
+  \item $\{\neg, \wedge\}$
+  \item $\{\neg, \vee\}$
+  \item $\{\neg, \rightarrow\}$
+  \item $\{\bot, \rightarrow\}$ where $\bot$ is the constant false
+  \item $\{\neg, \wedge, \vee\}$
+  \item $\{\neg, \wedge, \vee, \rightarrow, \leftrightarrow\}$
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof Sketch for $\{\neg, \wedge\}$]
+We show that $\{\neg, \wedge\}$ can express all truth functions by showing it
+can express $\vee$, and thus can construct DNF formulas.
+
+By De Morgan's law:
+\[
+P \vee Q \;\equiv\; \neg(\neg P \wedge \neg Q)
+\]
+
+Since every truth function can be expressed in DNF (using $\neg$, $\wedge$,
+$\vee$), and $\vee$ can be expressed using $\neg$ and $\wedge$, it follows that
+$\{\neg, \wedge\}$ is functionally complete.
+\end{proof}
+
+\begin{theorem}[NAND is Functionally Complete]
+The singleton set $\{\uparrow\}$ (NAND alone) is functionally complete.
+\end{theorem}
+
+\begin{proof}
+We can express $\neg$ and $\wedge$ using only NAND:
+\begin{align*}
+\neg P &\equiv P \uparrow P \\
+P \wedge Q &\equiv (P \uparrow Q) \uparrow (P \uparrow Q)
+\end{align*}
+Since $\{\neg, \wedge\}$ is functionally complete, so is $\{\uparrow\}$.
+\end{proof}
+
+\begin{theorem}[NOR is Functionally Complete]
+The singleton set $\{\downarrow\}$ (NOR alone) is functionally complete.
+\end{theorem}
+
+\begin{proof}
+We can express $\neg$ and $\vee$ using only NOR:
+\begin{align*}
+\neg P &\equiv P \downarrow P \\
+P \vee Q &\equiv (P \downarrow Q) \downarrow (P \downarrow Q)
+\end{align*}
+Since $\{\neg, \vee\}$ is functionally complete, so is $\{\downarrow\}$.
+\end{proof}
+
+\subsubsection{Adequate Sets of Connectives}
+
+\begin{definition}[Adequate Set]
+An \emph{adequate set} of connectives is a functionally complete set. A
+\emph{minimal adequate set} is an adequate set such that no proper subset is
+adequate.
+\end{definition}
+
+\begin{theorem}[Minimal Adequate Sets]
+The minimal adequate sets of connectives are:
+\begin{enumerate}
+  \item $\{\uparrow\}$ (NAND alone)
+  \item $\{\downarrow\}$ (NOR alone)
+  \item $\{\neg, \wedge\}$
+  \item $\{\neg, \vee\}$
+  \item $\{\neg, \rightarrow\}$
+  \item $\{\bot, \rightarrow\}$
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Non-Adequate Sets]
+The following sets are \emph{not} functionally complete:
+\begin{enumerate}
+  \item $\{\wedge, \vee\}$ — cannot express negation
+  \item $\{\wedge, \vee, \rightarrow, \leftrightarrow\}$ — cannot express negation
+  \item $\{\neg\}$ — cannot combine propositions
+  \item $\{\rightarrow\}$ — cannot express functions that are false when all
+        inputs are false
+  \item $\{\leftrightarrow, \neg\}$ — cannot express functions that are true
+        for an odd number of true inputs other than exactly one
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+To show that a set $S$ is not functionally complete, one typically identifies
+a property preserved by all connectives in $S$ that is not preserved by some
+truth function. Common properties used include:
+\begin{itemize}
+  \item Preserving truth (true when all inputs are true)
+  \item Preserving falsity (false when all inputs are false)
+  \item Monotonicity
+  \item Affine/linear (expressible as XOR of inputs and constants)
+  \item Self-duality
+\end{itemize}
+\end{remark}
+
+\subsubsection{Post's Functional Completeness Theorem}
+
+\begin{theorem}[Post's Theorem]
+A set $S$ of Boolean functions is functionally complete if and only if for each
+of the following five properties, $S$ contains at least one function that does
+not have that property:
+
+\begin{enumerate}
+  \item \textbf{Truth-preserving:} $f(\mathsf{T}, \dots, \mathsf{T}) = \mathsf{T}$
+  \item \textbf{Falsity-preserving:} $f(\mathsf{F}, \dots, \mathsf{F}) = \mathsf{F}$
+  \item \textbf{Monotonic:} If $x_i \leq y_i$ for all $i$ (where $\mathsf{F} < \mathsf{T}$),
+        then $f(x_1, \dots, x_n) \leq f(y_1, \dots, y_n)$
+  \item \textbf{Affine:} $f$ can be written as $a_0 \oplus a_1 x_1 \oplus \cdots \oplus a_n x_n$
+        for constants $a_i \in \{\mathsf{T}, \mathsf{F}\}$
+  \item \textbf{Self-dual:} $f(x_1, \dots, x_n) = \neg f(\neg x_1, \dots, \neg x_n)$
+\end{enumerate}
+\end{theorem}
+
+\begin{example}[Applying Post's Theorem]
+To verify that $\{\neg, \wedge\}$ is functionally complete:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Property} & $\neg$ & $\wedge$ \\
+\hline
+Truth-preserving & No ($\neg\mathsf{T} = \mathsf{F}$) & Yes \\
+Falsity-preserving & No ($\neg\mathsf{F} = \mathsf{T}$) & Yes \\
+Monotonic & No & Yes \\
+Affine & Yes ($\neg P \equiv \mathsf{T} \oplus P$) & No \\
+Self-dual & Yes ($\neg P = \neg(\neg(\neg P))$) & No \\
+\hline
+\end{tabular}
+\end{center}
+
+For each property, at least one of $\{\neg, \wedge\}$ lacks it, so by Post's
+theorem the set is functionally complete.
+\end{example}
+
+% ---------------------------------------------------------
 \subsection{Logical Equivalences}
 % ---------------------------------------------------------
 
@@ -501,6 +907,63 @@ P \leftrightarrow Q \;\equiv\; (P \wedge Q) \vee (\neg P \wedge \neg Q)
 \[
 \neg(P \leftrightarrow Q) \;\equiv\; P \leftrightarrow \neg Q \;\equiv\; \neg P \leftrightarrow Q
 \]
+\end{theorem}
+
+\subsubsection{Duality Principle}
+
+\begin{definition}[Dual Formula]
+The \emph{dual} of a formula $\varphi$, denoted $\varphi^d$, is obtained by
+simultaneously replacing:
+\begin{itemize}
+  \item $\wedge$ with $\vee$ and $\vee$ with $\wedge$
+  \item $\top$ with $\bot$ and $\bot$ with $\top$
+\end{itemize}
+while leaving propositional variables and negations unchanged.
+\end{definition}
+
+\begin{example}
+\begin{align*}
+(P \wedge Q)^d &= P \vee Q \\
+(P \vee \top)^d &= P \wedge \bot \\
+(\neg P \wedge (Q \vee R))^d &= \neg P \vee (Q \wedge R) \\
+(P \wedge (P \vee Q))^d &= P \vee (P \wedge Q)
+\end{align*}
+\end{example}
+
+\begin{theorem}[Duality Principle]
+If $\varphi \equiv \psi$ is a logical equivalence involving only the connectives
+$\neg$, $\wedge$, $\vee$, $\top$, and $\bot$, then $\varphi^d \equiv \psi^d$ is
+also a logical equivalence.
+\end{theorem}
+
+\begin{example}[Dual Equivalences]
+From each equivalence, we can derive its dual:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Original Equivalence} & \textbf{Dual Equivalence} \\
+\hline
+$P \wedge \top \equiv P$ & $P \vee \bot \equiv P$ \\
+$P \vee \top \equiv \top$ & $P \wedge \bot \equiv \bot$ \\
+$P \wedge (P \vee Q) \equiv P$ & $P \vee (P \wedge Q) \equiv P$ \\
+$\neg(P \wedge Q) \equiv \neg P \vee \neg Q$ & $\neg(P \vee Q) \equiv \neg P \wedge \neg Q$ \\
+$P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)$ & $P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)$ \\
+\hline
+\end{tabular}
+\end{center}
+\end{example}
+
+\begin{theorem}[Semantic Duality]
+For any formula $\varphi$ built from $\neg$, $\wedge$, $\vee$, $\top$, $\bot$:
+\[
+\varphi^d \equiv \neg\varphi[\neg P_1/P_1, \dots, \neg P_n/P_n]
+\]
+where $P_1, \dots, P_n$ are the propositional variables in $\varphi$.
+
+Equivalently, $\varphi^d$ evaluated at $(v_1, \dots, v_n)$ equals the negation
+of $\varphi$ evaluated at $(\neg v_1, \dots, \neg v_n)$.
 \end{theorem}
 
 \subsubsection{Summary of Logical Equivalences}
@@ -947,6 +1410,167 @@ Double Negation Elimination & $\neg\neg P$ & $P$ \\
 \end{center}
 
 % ---------------------------------------------------------
+\subsection{Resolution}
+% ---------------------------------------------------------
+
+\subsubsection{The Resolution Rule}
+
+\begin{definition}[Resolution]
+\textbf{Resolution} is an inference rule that operates on clauses (disjunctions
+of literals). Given two clauses, one containing a literal $L$ and the other
+containing its complement $\neg L$, resolution produces a new clause called the
+\emph{resolvent}.
+
+\[
+\begin{array}{l}
+C_1 \vee L \\
+C_2 \vee \neg L \\ \hline
+C_1 \vee C_2
+\end{array}
+\]
+
+where $C_1$ and $C_2$ are (possibly empty) disjunctions of literals, and $L$ is
+a literal.
+\end{definition}
+
+\begin{definition}[Complementary Literals]
+Two literals are \emph{complementary} if one is the negation of the other. That
+is, $L$ and $\neg L$ are complementary.
+
+In resolution, we \emph{resolve} on a pair of complementary literals, eliminating
+them from the resolvent.
+\end{definition}
+
+\begin{example}
+Resolving the clauses $(P \vee Q)$ and $(\neg P \vee R)$ on $P$:
+\[
+\begin{array}{l}
+P \vee Q \\
+\neg P \vee R \\ \hline
+Q \vee R
+\end{array}
+\]
+\end{example}
+
+\begin{example}
+Resolving $(P \vee Q \vee R)$ and $(\neg Q \vee S)$ on $Q$:
+\[
+\begin{array}{l}
+P \vee Q \vee R \\
+\neg Q \vee S \\ \hline
+P \vee R \vee S
+\end{array}
+\]
+\end{example}
+
+\subsubsection{The Empty Clause}
+
+\begin{definition}[Empty Clause]
+The \emph{empty clause}, denoted $\square$ or $\bot$, is the disjunction of no
+literals. The empty clause is always false (it represents a contradiction).
+\end{definition}
+
+\begin{example}
+Resolving the unit clauses $P$ and $\neg P$:
+\[
+\begin{array}{l}
+P \\
+\neg P \\ \hline
+\square
+\end{array}
+\]
+\end{example}
+
+\subsubsection{Resolution Refutation}
+
+\begin{definition}[Resolution Refutation]
+A \emph{resolution refutation} (or \emph{resolution proof}) of a set of clauses
+$\Gamma$ is a derivation of the empty clause $\square$ from $\Gamma$ using only
+the resolution rule.
+
+If a resolution refutation exists, then $\Gamma$ is unsatisfiable.
+\end{definition}
+
+\begin{theorem}[Soundness of Resolution]
+If the empty clause can be derived from a set of clauses $\Gamma$ by resolution,
+then $\Gamma$ is unsatisfiable.
+\end{theorem}
+
+\begin{theorem}[Completeness of Resolution]
+If a set of clauses $\Gamma$ is unsatisfiable, then the empty clause can be
+derived from $\Gamma$ by resolution.
+\end{theorem}
+
+\begin{remark}
+Resolution is a \emph{refutation-complete} proof system: it can derive the empty
+clause from any unsatisfiable set of clauses. However, it is not designed to
+derive arbitrary consequences, only to detect unsatisfiability.
+\end{remark}
+
+\subsubsection{Using Resolution to Test Validity}
+
+\begin{remark}[Testing Validity by Refutation]
+To test whether $\Gamma \models \varphi$:
+\begin{enumerate}
+  \item Negate the conclusion: form $\neg\varphi$.
+  \item Convert all formulas in $\Gamma \cup \{\neg\varphi\}$ to CNF.
+  \item Apply resolution repeatedly.
+  \item If the empty clause is derived, then $\Gamma \models \varphi$.
+  \item If no new clauses can be derived and $\square$ is not among them, then
+        $\Gamma \not\models \varphi$.
+\end{enumerate}
+\end{remark}
+
+\begin{example}[Resolution Refutation]
+Show that $\{P \rightarrow Q, Q \rightarrow R\} \models P \rightarrow R$.
+
+\textbf{Step 1: Negate the conclusion.}
+\[
+\neg(P \rightarrow R) \equiv P \wedge \neg R
+\]
+
+\textbf{Step 2: Convert to CNF.}
+\begin{align*}
+P \rightarrow Q &\equiv \neg P \vee Q \\
+Q \rightarrow R &\equiv \neg Q \vee R \\
+P \wedge \neg R &\text{ gives clauses } P \text{ and } \neg R
+\end{align*}
+
+Clauses: $\{\neg P \vee Q, \; \neg Q \vee R, \; P, \; \neg R\}$
+
+\textbf{Step 3: Apply resolution.}
+\begin{enumerate}
+  \item Resolve $(\neg P \vee Q)$ and $P$ on $P$: derive $Q$.
+  \item Resolve $(\neg Q \vee R)$ and $Q$ on $Q$: derive $R$.
+  \item Resolve $R$ and $\neg R$ on $R$: derive $\square$.
+\end{enumerate}
+
+Since $\square$ is derived, the original set is unsatisfiable, so
+$\{P \rightarrow Q, Q \rightarrow R\} \models P \rightarrow R$.
+\end{example}
+
+\subsubsection{Resolution Strategies}
+
+\begin{remark}[Resolution Strategies]
+Various strategies can make resolution more efficient:
+
+\begin{itemize}
+  \item \textbf{Unit resolution:} Always resolve with a unit clause (a clause
+        with exactly one literal) when possible.
+
+  \item \textbf{Set of support:} Maintain a ``set of support'' (initially the
+        negated conclusion) and require that at least one parent clause in each
+        resolution step comes from this set.
+
+  \item \textbf{Linear resolution:} Each resolution step uses the most recently
+        derived clause as one of its parents.
+
+  \item \textbf{Input resolution:} At least one parent in each resolution must
+        be an original input clause.
+\end{itemize}
+\end{remark}
+
+% ---------------------------------------------------------
 \subsection{Proof Systems}
 % ---------------------------------------------------------
 
@@ -985,7 +1609,7 @@ Formally, if $\Gamma \models \varphi$, then $\Gamma \vdash \varphi$.
 
 \begin{theorem}[Soundness and Completeness of Propositional Logic]
 The standard proof systems for propositional logic (natural deduction, sequent
-calculus, Hilbert systems) are both sound and complete.
+calculus, Hilbert systems, resolution) are both sound and complete.
 
 Thus, for propositional logic:
 \[
@@ -1018,6 +1642,200 @@ Derivability & $\Gamma \vdash \varphi$ & Syntactic, proof-theoretic \\
 The distinction between $\models$ (semantic entailment) and $\vdash$ (syntactic
 derivability) is central to logic. Soundness and completeness theorems establish
 the correspondence between these two perspectives.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Compactness Theorem}
+% ---------------------------------------------------------
+
+\subsubsection{Statement of Compactness}
+
+\begin{theorem}[Compactness Theorem for Propositional Logic]
+A set of formulas $\Gamma$ is satisfiable if and only if every finite subset of
+$\Gamma$ is satisfiable.
+
+Equivalently:
+\begin{itemize}
+  \item If $\Gamma$ is unsatisfiable, then some finite subset of $\Gamma$ is
+        unsatisfiable.
+  \item If every finite subset of $\Gamma$ is satisfiable, then $\Gamma$ is
+        satisfiable.
+\end{itemize}
+\end{theorem}
+
+\begin{remark}
+The ``if'' direction is trivial: if $\Gamma$ is satisfiable, then any truth
+assignment satisfying $\Gamma$ also satisfies every subset of $\Gamma$.
+
+The ``only if'' direction (the substantive content) states that satisfiability
+of an infinite set reduces to satisfiability of its finite subsets.
+\end{remark}
+
+\subsubsection{Consequence Form of Compactness}
+
+\begin{corollary}[Compactness for Logical Consequence]
+If $\Gamma \models \varphi$, then there exists a finite subset
+$\Gamma_0 \subseteq \Gamma$ such that $\Gamma_0 \models \varphi$.
+
+Equivalently, logical consequence from an infinite set of premises always
+depends on only finitely many of those premises.
+\end{corollary}
+
+\begin{proof}
+Suppose $\Gamma \models \varphi$. Then $\Gamma \cup \{\neg\varphi\}$ is
+unsatisfiable. By compactness, some finite subset
+$\Gamma_0 \cup \{\neg\varphi\}$ is unsatisfiable. Thus $\Gamma_0 \models \varphi$.
+\end{proof}
+
+\subsubsection{Applications of Compactness}
+
+\begin{example}[Graph Coloring]
+Let $G$ be an infinite graph. If every finite subgraph of $G$ is $k$-colorable,
+then $G$ is $k$-colorable.
+
+\textbf{Proof sketch:} For each vertex $v$ and color $i \in \{1, \dots, k\}$,
+introduce a propositional variable $C_{v,i}$ meaning ``vertex $v$ has color $i$.''
+
+Add formulas:
+\begin{itemize}
+  \item For each vertex $v$: $C_{v,1} \vee C_{v,2} \vee \cdots \vee C_{v,k}$
+        (every vertex has some color).
+  \item For each vertex $v$ and distinct colors $i, j$:
+        $\neg(C_{v,i} \wedge C_{v,j})$ (no vertex has two colors).
+  \item For each edge $(u, v)$ and each color $i$:
+        $\neg(C_{u,i} \wedge C_{v,i})$ (adjacent vertices have different colors).
+\end{itemize}
+
+Each finite subset of these formulas involves only finitely many vertices, hence
+a finite subgraph. If every finite subgraph is $k$-colorable, every finite subset
+is satisfiable. By compactness, the entire set is satisfiable, giving a
+$k$-coloring of $G$.
+\end{example}
+
+\begin{example}[Nonstandard Models]
+Compactness can be used to construct ``nonstandard'' models with unexpected
+properties by adding infinitely many formulas that are individually consistent
+with a theory but together force new elements.
+\end{example}
+
+\subsubsection{Proof of Compactness}
+
+\begin{remark}[Proof Methods]
+The compactness theorem can be proved in several ways:
+
+\begin{enumerate}
+  \item \textbf{Via completeness:} If every finite subset of $\Gamma$ is
+        satisfiable, then no finite subset derives a contradiction. By
+        completeness, $\Gamma$ itself does not derive a contradiction, so
+        $\Gamma$ is consistent, hence (by completeness again) satisfiable.
+
+  \item \textbf{Direct construction:} Build a satisfying assignment for $\Gamma$
+        by systematically extending partial assignments, ensuring consistency
+        with all formulas in $\Gamma$. This typically uses König's lemma or
+        Zorn's lemma.
+
+  \item \textbf{Ultraproducts:} Use ultraproducts of finite satisfying
+        assignments to construct a satisfying assignment for $\Gamma$.
+\end{enumerate}
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Craig's Interpolation Theorem}
+% ---------------------------------------------------------
+
+\subsubsection{Statement of Craig's Theorem}
+
+\begin{definition}[Common Language]
+Given formulas $\varphi$ and $\psi$, the \emph{common language} of $\varphi$ and
+$\psi$ consists of the propositional variables that occur in both formulas.
+\end{definition}
+
+\begin{theorem}[Craig's Interpolation Theorem]
+Let $\varphi$ and $\psi$ be propositional formulas such that $\varphi \models \psi$
+and $\varphi$ and $\psi$ share at least one propositional variable.
+
+Then there exists a formula $\theta$ (called an \emph{interpolant}) such that:
+\begin{enumerate}
+  \item $\varphi \models \theta$
+  \item $\theta \models \psi$
+  \item Every propositional variable in $\theta$ occurs in both $\varphi$ and $\psi$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+The interpolant $\theta$ serves as a ``bridge'' between $\varphi$ and $\psi$,
+capturing the logically relevant content that $\varphi$ and $\psi$ have in common.
+\end{remark}
+
+\subsubsection{Examples of Interpolation}
+
+\begin{example}
+Let $\varphi = P \wedge Q$ and $\psi = P \vee R$.
+
+We have $\varphi \models \psi$ since $(P \wedge Q) \models P$ and $P \models (P \vee R)$.
+
+An interpolant is $\theta = P$:
+\begin{itemize}
+  \item $(P \wedge Q) \models P$ \checkmark
+  \item $P \models (P \vee R)$ \checkmark
+  \item $P$ contains only the variable $P$, which appears in both $\varphi$ and $\psi$ \checkmark
+\end{itemize}
+\end{example}
+
+\begin{example}
+Let $\varphi = (P \wedge Q) \vee (P \wedge R)$ and $\psi = P \vee S$.
+
+We have $\varphi \models \psi$ since $\varphi \models P$ and $P \models (P \vee S)$.
+
+An interpolant is $\theta = P$:
+\begin{itemize}
+  \item $((P \wedge Q) \vee (P \wedge R)) \models P$ \checkmark
+  \item $P \models (P \vee S)$ \checkmark
+  \item $P$ appears in both $\varphi$ and $\psi$ \checkmark
+\end{itemize}
+\end{example}
+
+\begin{example}
+Let $\varphi = P \rightarrow Q$ and $\psi = \neg Q \rightarrow \neg P$.
+
+These are logically equivalent (contraposition), so $\varphi \models \psi$.
+
+The common variables are $P$ and $Q$. Possible interpolants include:
+\begin{itemize}
+  \item $\theta = P \rightarrow Q$ (which equals $\varphi$)
+  \item $\theta = \neg P \vee Q$
+\end{itemize}
+\end{example}
+
+\subsubsection{Significance of Interpolation}
+
+\begin{remark}[Logical Significance]
+Craig's interpolation theorem has several important consequences:
+
+\begin{enumerate}
+  \item \textbf{Modularity of reasoning:} If $\varphi \models \psi$, the reason
+        can be expressed using only the common vocabulary.
+
+  \item \textbf{Definability:} Interpolation is closely related to Beth's
+        definability theorem, which concerns when implicit definitions can be
+        made explicit.
+
+  \item \textbf{Proof theory:} Interpolation can be proved constructively using
+        proof systems like sequent calculus, giving an algorithm to find
+        interpolants.
+
+  \item \textbf{Computer science applications:} Interpolation is used in model
+        checking, program verification, and automated reasoning.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Non-trivial Cases]
+When $\varphi$ is a tautology, we can take $\theta = \top$.
+When $\psi$ is a tautology, we can take $\theta = \top$.
+When $\varphi$ is a contradiction, we can take $\theta = \bot$.
+
+The theorem is most interesting when $\varphi$ and $\psi$ are contingent formulas
+with genuine logical content.
 \end{remark}
 
 % ---------------------------------------------------------
@@ -1134,14 +1952,14 @@ Missing Cases & Were all $2^n$ rows of the truth table considered? \\
 
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
-\begin{tabular}{|c|c||c|c|c|c|c|}
+\begin{tabular}{|c|c||c|c|c|c|c|c|c|c|}
 \hline
-$P$ & $Q$ & $\neg P$ & $P \wedge Q$ & $P \vee Q$ & $P \rightarrow Q$ & $P \leftrightarrow Q$ \\
+$P$ & $Q$ & $\neg P$ & $P \wedge Q$ & $P \vee Q$ & $P \rightarrow Q$ & $P \leftrightarrow Q$ & $P \oplus Q$ & $P \uparrow Q$ & $P \downarrow Q$ \\
 \hline
-T & T & F & T & T & T & T \\
-T & F & F & F & T & F & F \\
-F & T & T & F & T & T & F \\
-F & F & T & F & F & T & T \\
+T & T & F & T & T & T & T & F & F & F \\
+T & F & F & F & T & F & F & T & T & F \\
+F & T & T & F & T & T & F & T & T & F \\
+F & F & T & F & F & T & T & F & T & T \\
 \hline
 \end{tabular}
 \end{center}
@@ -1158,6 +1976,26 @@ Tautology & True under all assignments & $P \vee \neg P$ \\
 Contradiction & False under all assignments & $P \wedge \neg P$ \\
 Contingency & True under some, false under others & $P \rightarrow Q$ \\
 Satisfiable & True under at least one assignment & $P$, $P \vee Q$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Functionally Complete Sets}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Set of Connectives} & \textbf{Functionally Complete?} \\
+\hline
+$\{\neg, \wedge\}$ & Yes \\
+$\{\neg, \vee\}$ & Yes \\
+$\{\neg, \rightarrow\}$ & Yes \\
+$\{\uparrow\}$ (NAND) & Yes \\
+$\{\downarrow\}$ (NOR) & Yes \\
+$\{\wedge, \vee\}$ & No \\
+$\{\rightarrow\}$ & No \\
+$\{\neg, \leftrightarrow\}$ & No \\
 \hline
 \end{tabular}
 \end{center}
@@ -1179,6 +2017,33 @@ Quantifiers & Not available & $\forall$, $\exists$ \\
 Semantic evaluation & Truth assignments & Structures and variable assignments \\
 \hline
 Decision problem & Decidable (truth tables) & Undecidable in general \\
+\hline
+Compactness & Yes & Yes \\
+\hline
+Interpolation & Yes & Yes \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Key Metatheorems}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Theorem} & \textbf{Statement} \\
+\hline
+Soundness & If $\Gamma \vdash \varphi$, then $\Gamma \models \varphi$ \\
+\hline
+Completeness & If $\Gamma \models \varphi$, then $\Gamma \vdash \varphi$ \\
+\hline
+Compactness & $\Gamma$ is satisfiable iff every finite subset is satisfiable \\
+\hline
+Craig's Interpolation & If $\varphi \models \psi$, there exists $\theta$ in the common
+language with $\varphi \models \theta \models \psi$ \\
+\hline
+Functional Completeness & $\{\neg, \wedge\}$, $\{\neg, \vee\}$, $\{\uparrow\}$, $\{\downarrow\}$
+can express all truth functions \\
 \hline
 \end{tabular}
 \end{center}
