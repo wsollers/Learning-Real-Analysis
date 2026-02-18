@@ -1,0 +1,207 @@
+% =========================================================
+% Subsequences
+% File: notes-subsequences.tex
+% =========================================================
+
+\subsection{Subsequences}
+
+% (Original local heading preserved)
+\subsubsection{Subsequence}
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{definition}[Subsequence]
+Let $(a_n)$ be a sequence in $\mathbb{R}$.
+A sequence $(a_{n_k})$ is called a \emph{subsequence} of $(a_n)$ if
+there exists a function
+\[
+k \mapsto n_k
+\]
+from $\mathbb{N}$ to $\mathbb{N}$ such that
+\begin{enumerate}
+    \item $n_k < n_{k+1}$ for all $k \in \mathbb{N}$, and
+    \item the $k$th term of the new sequence is $a_{n_k}$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+A subsequence is obtained by selecting terms from $(a_n)$ without duplication
+while preserving their original order.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+\begin{theorem}[Subsequences inherit the same limit]
+Let $(a_n)$ be a sequence of real numbers and let $(a_{n_k})$ be any subsequence,
+where $(n_k)$ is strictly increasing.
+If $a_n \to L$, then $a_{n_k} \to L$.
+\end{theorem}
+
+\begin{proof}
+Assume $a_n \to L$. Let $\varepsilon > 0$ be arbitrary.
+By definition of convergence, there exists $N \in \mathbb{N}$ such that
+\[
+n \ge N \implies |a_n - L| < \varepsilon.
+\]
+
+Since $(n_k)$ is strictly increasing and unbounded in $\mathbb{N}$,
+there exists $K$ such that
+\[
+k \ge K \implies n_k \ge N.
+\]
+
+Thus for all $k \ge K$,
+\[
+|a_{n_k} - L| < \varepsilon.
+\]
+
+Hence $a_{n_k} \to L$.
+\end{proof}
+
+\begin{remark}[Uniqueness of limits]
+This theorem implies that limits of sequences are unique.
+If a sequence had two distinct limits, then every subsequence
+would converge to both limits, which is impossible.
+\end{remark}
+
+\begin{remark}[Detecting nonconvergence]
+If a sequence admits two subsequences converging to different limits,
+then the original sequence cannot converge.
+\end{remark}
+
+% ---------------------------------------------------------
+
+\begin{theorem}[Bolzano--Weierstrass]
+Every bounded sequence of real numbers has a convergent subsequence.
+Equivalently: if $(a_n)$ is bounded in $\mathbb{R}$, then there exist
+$L \in \mathbb{R}$ and a strictly increasing sequence $(n_k)$ in $\mathbb{N}$
+such that $a_{n_k} \to L$.
+\end{theorem}
+
+\begin{proof}
+Let $(a_n)$ be bounded. Then there exist real numbers $m<M$ such that
+$a_n \in [m,M]$ for all $n \in \mathbb{N}$.
+
+We construct nested closed intervals
+\[
+I_k = [\alpha_k,\beta_k] \subseteq [m,M]
+\]
+such that:
+
+\begin{enumerate}
+\item $I_{k+1} \subseteq I_k$,
+\item $\beta_k-\alpha_k = \dfrac{M-m}{2^{k-1}}$,
+\item infinitely many terms lie in each $I_k$.
+\end{enumerate}
+
+Start with $I_1=[m,M]$.
+Given $I_k=[\alpha_k,\beta_k]$, let $c_k=\dfrac{\alpha_k+\beta_k}{2}$ and split
+
+\[
+I_k = [\alpha_k,c_k]\ \cup\ [c_k,\beta_k].
+\]
+
+At least one half contains infinitely many terms.
+Define $I_{k+1}$ to be such a half.
+
+Because the intervals are nested and their lengths tend to $0$,
+their intersection contains exactly one point.
+Let
+\[
+L = \bigcap_{k=1}^\infty I_k.
+\]
+
+Now construct $n_1<n_2<\cdots$ with $a_{n_k}\in I_k$.
+This is possible because each $I_k$ contains infinitely many terms.
+
+Let $\varepsilon>0$.
+Choose $K$ such that $\beta_K-\alpha_K<\varepsilon$.
+For $k\ge K$,
+\[
+a_{n_k}, L \in I_K
+\]
+so
+\[
+|a_{n_k}-L|\le \beta_K-\alpha_K < \varepsilon.
+\]
+
+Thus $a_{n_k}\to L$.
+\end{proof}
+
+\begin{corollary}[Existence of subsequential limits]
+Every bounded sequence admits at least one subsequential limit.
+\end{corollary}
+
+\begin{corollary}[Sequential compactness of closed intervals]
+Every sequence contained in a closed bounded interval
+$[a,b]$ has a convergent subsequence whose limit lies in $[a,b]$.
+\end{corollary}
+
+\begin{proof}
+If $(a_n)\subseteq [a,b]$, then it is bounded.
+By Bolzano--Weierstrass it has a convergent subsequence.
+Since $[a,b]$ is closed, the limit lies in $[a,b]$.
+\end{proof}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+This section establishes two structural principles.
+
+\medskip
+
+\textbf{(1) Stability of Limits.}
+
+\[
+a_n \to L
+\Rightarrow
+a_{n_k} \to L.
+\]
+
+Convergence is preserved under passage to subsequences.
+
+\medskip
+
+\textbf{(2) Emergence of Subsequence Limits.}
+
+\[
+\text{Bounded}
+\Rightarrow
+\text{Convergent subsequence}.
+\]
+
+Boundedness alone does not ensure convergence,
+but it guarantees partial convergence.
+
+\medskip
+
+\begin{remark}[Logical Structure]
+
+\[
+\text{Convergent}
+\Rightarrow
+\text{All subsequences converge to same limit},
+\]
+
+\[
+\text{Bounded}
+\Rightarrow
+\text{Bolzano--Weierstrass}
+\Rightarrow
+\text{Existence of subsequential limits}.
+\]
+
+These results form the bridge between basic convergence
+theory and completeness theory.
+
+Bolzano--Weierstrass is equivalent (in an ordered field)
+to:
+\begin{itemize}
+\item The Monotone Convergence Theorem,
+\item The Cauchy Criterion,
+\item The Nested Interval Property.
+\end{itemize}
+
+\end{remark}

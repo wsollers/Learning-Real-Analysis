@@ -850,6 +850,53 @@ where each $Q_i'$ is the dual quantifier:
 $\forall' = \exists$ and $\exists' = \forall$.
 \end{remark}
 
+\begin{theorem}[Negation of Bounded Quantifiers]
+Let $A$ be a set and $\varphi$ a formula. Then:
+\begin{align*}
+\neg(\forall x \in A\,\varphi) &\;\equiv\; \exists x \in A\,\neg\varphi, \\
+\neg(\exists x \in A\,\varphi) &\;\equiv\; \forall x \in A\,\neg\varphi.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+We derive each equivalence by expanding the bounded quantifier and applying 
+standard logical laws.
+
+\textbf{Universal case.}
+\begin{align*}
+\neg(\forall x \in A\,\varphi) 
+&\equiv \neg\forall x\,(x \in A \rightarrow \varphi) 
+    && \text{(definition of bounded $\forall$)} \\
+&\equiv \exists x\,\neg(x \in A \rightarrow \varphi) 
+    && \text{(quantifier negation)} \\
+&\equiv \exists x\,(x \in A \wedge \neg\varphi) 
+    && \text{(since $\neg(P \rightarrow Q) \equiv P \wedge \neg Q$)} \\
+&\equiv \exists x \in A\,\neg\varphi 
+    && \text{(definition of bounded $\exists$)}
+\end{align*}
+
+\textbf{Existential case.}
+\begin{align*}
+\neg(\exists x \in A\,\varphi) 
+&\equiv \neg\exists x\,(x \in A \wedge \varphi) 
+    && \text{(definition of bounded $\exists$)} \\
+&\equiv \forall x\,\neg(x \in A \wedge \varphi) 
+    && \text{(quantifier negation)} \\
+&\equiv \forall x\,(x \in A \rightarrow \neg\varphi) 
+    && \text{(since $\neg(P \wedge Q) \equiv P \rightarrow \neg Q$)} \\
+&\equiv \forall x \in A\,\neg\varphi 
+    && \text{(definition of bounded $\forall$)}
+\end{align*}
+\end{proof}
+
+\begin{remark}
+The domain restriction $x \in A$ is preserved under negation because it 
+functions as a constraint on \emph{which} elements are quantified over, 
+not as part of the claim being negated. The negation passes through the 
+quantifier and affects only the inner formula $\varphi$.
+\end{remark}
+
+
 \subsubsection{Quantifier Commutation and Distribution}
 
 \begin{theorem}[Quantifier Commutation]
@@ -1107,6 +1154,327 @@ $\neg\varphi(t)$ holds.
 To refute $\exists x\,\varphi(x)$, one must show that $\varphi(t)$ fails for all
 terms $t$.
 \end{remark}
+
+
+\subsubsection{Logical Strength and Quantifier Structure}
+
+
+
+\begin{definition}[Logical entailment]
+Let $A$ and $B$ be statements (sentences in predicate logic).
+We write
+\[
+A \models B
+\]
+and say that \emph{$A$ entails $B$} if, in every structure/interpretation in which $A$ is true,
+$B$ is also true.
+Equivalently, $A \models B$ means that $A \rightarrow B$ is valid.
+\end{definition}
+
+\begin{definition}[Logical strength]
+Let $A$ and $B$ be statements.
+We say that \emph{$A$ is (logically) stronger than $B$} if
+\[
+A \models B
+\quad\text{but}\quad
+B \not\models A.
+\]
+We say that \emph{$A$ and $B$ are logically equivalent} if
+\[
+A \models B \quad\text{and}\quad B \models A.
+\]
+\end{definition}
+
+\begin{remark}
+``Stronger'' here means ``harder to satisfy'' (fewer models).
+If $A$ is stronger than $B$, then $A$ rules out more possibilities than $B$ does.
+\end{remark}
+
+\begin{remark}[Strength vs.\ information]
+If $A \models B$, then $A$ contains at least as much information as $B$.
+If $A$ is strictly stronger than $B$, then $A$ contains strictly more information.
+\end{remark}
+
+
+
+\begin{definition}[Model set viewpoint]
+For a statement $A$, let $\mathrm{Mod}(A)$ denote the class of all interpretations in which $A$ is true.
+Then
+\[
+A \models B \quad\Longleftrightarrow\quad \mathrm{Mod}(A) \subseteq \mathrm{Mod}(B).
+\]
+\end{definition}
+
+\begin{remark}
+Thus ``$A$ is stronger than $B$'' is literally the statement
+\[
+\mathrm{Mod}(A) \subsetneq \mathrm{Mod}(B).
+\]
+\end{remark}
+
+\begin{remark}[Quantifier blocks]
+A typical quantified statement has the schematic form
+\[
+Q_1 x_1\; Q_2 x_2\; \cdots\; Q_k x_k \;\; \Phi(x_1,\dots,x_k),
+\]
+where each $Q_i \in \{\forall,\exists\}$ and $\Phi$ is quantifier-free.
+The \emph{quantifier ordering} is the sequence $Q_1,Q_2,\dots,Q_k$.
+\end{remark}
+
+\begin{definition}[Quantifier alternation]
+A \emph{quantifier alternation} occurs when $Q_i \ne Q_{i+1}$ for some $i$.
+For example, $\forall x\,\exists y\,\Phi(x,y)$ has one alternation, while $\forall x\,\forall y\,\Phi(x,y)$ has none.
+\end{definition}
+
+\begin{remark}[Why alternation increases ``strength demands'']
+Statements of the form $\forall x\,\exists y\,\Phi(x,y)$ require a \emph{rule} assigning, to each $x$, some (possibly dependent) witness $y$.
+In contrast, $\exists y\,\forall x\,\Phi(x,y)$ requires a \emph{single} uniform witness $y$ that works for all $x$.
+These are fundamentally different demands.
+\end{remark}
+
+\begin{remark}[Order matters: in general you cannot swap $\forall$ and $\exists$]
+In general,
+\[
+\forall x\,\exists y\,\Phi(x,y) \not\equiv \exists y\,\forall x\,\Phi(x,y).
+\]
+The first allows $y$ to depend on $x$; the second forbids that dependence.
+\end{remark}
+
+\begin{example}[A concrete swap failure]
+Let the domain be $\mathbb{R}$ and let $\Phi(x,y)$ be the formula $(y>x)$.
+Then
+\[
+\forall x\,\exists y\,(y>x)
+\]
+is true (given any $x$, take $y=x+1$), but
+\[
+\exists y\,\forall x\,(y>x)
+\]
+is false (no single real number is larger than all real numbers).
+\end{example}
+
+\begin{example}[Pure propositional entailment]
+Let
+\[
+A := (P \land Q),
+\qquad
+B := P.
+\]
+Then
+\[
+A \models B,
+\]
+because whenever $P \land Q$ is true, $P$ must be true.
+However,
+\[
+B \not\models A,
+\]
+since $P$ may be true while $Q$ is false.
+
+Thus $P \land Q$ is strictly stronger than $P$.
+\end{example}
+
+\begin{example}[Divisibility over $\mathbb{Z}$]
+Let
+\[
+A := \text{``$x$ is divisible by $4$''},
+\qquad
+B := \text{``$x$ is even''}.
+\]
+Then
+\[
+A \models B,
+\]
+because every integer divisible by $4$ is even.
+
+But
+\[
+B \not\models A,
+\]
+since $6$ is even but not divisible by $4$.
+
+Thus ``divisible by $4$'' is strictly stronger than ``even.''
+\end{example}
+
+\begin{example}[Quantifier strength: swapping order]
+Let the domain be $\mathbb{R}$ and define
+\[
+A := \forall x \in \mathbb{R}\; \exists y \in \mathbb{R}\ (y > x),
+\]
+\[
+B := \exists y \in \mathbb{R}\; \forall x \in \mathbb{R}\ (y > x).
+\]
+
+Statement $A$ is true: for any $x$, take $y = x + 1$.
+
+Statement $B$ is false: no single real number exceeds all real numbers.
+
+Hence
+\[
+B \models A,
+\]
+but
+\[
+A \not\models B.
+\]
+
+Thus $\exists y\,\forall x$ is strictly stronger than $\forall x\,\exists y$.
+\end{example}
+
+\begin{example}[Universal vs.\ existential strength]
+Let the domain be $\mathbb{R}$ and define
+\[
+A := \forall x\; (x^2 \ge 0),
+\]
+\[
+B := \exists x\; (x^2 \ge 0).
+\]
+
+Then
+\[
+A \models B,
+\]
+since if every $x$ satisfies $x^2 \ge 0$, then certainly some $x$ does.
+
+But
+\[
+B \not\models A,
+\]
+since the existence of one nonnegative square does not imply all squares are nonnegative.
+
+Thus universal statements are generally stronger than corresponding existential ones.
+\end{example}
+
+% =========================================================
+\subsubsection*{A Strength Hierarchy for Common Logical Forms}
+
+\begin{remark}
+Logical strength can often be visualized by arranging statements so that
+stronger statements appear above weaker ones.
+If $A$ is above $B$, then $A \models B$.
+\end{remark}
+
+\paragraph{Model-set interpretation.}
+Recall that
+\[
+A \models B
+\quad \Longleftrightarrow \quad
+\mathrm{Mod}(A) \subseteq \mathrm{Mod}(B).
+\]
+Thus a stronger statement has a \emph{smaller} class of models.
+
+\bigskip
+
+\paragraph{Basic propositional hierarchy (fixed predicates $P,Q$).}
+
+\[
+\begin{array}{c}
+P \land Q \\[4pt]
+\Downarrow \\[4pt]
+P \\[4pt]
+\Downarrow \\[4pt]
+P \lor Q
+\end{array}
+\]
+
+\begin{itemize}
+\item $P \land Q$ is strongest (most restrictive).
+\item $P$ is weaker.
+\item $P \lor Q$ is weakest (least restrictive).
+\end{itemize}
+
+\bigskip
+
+\paragraph{Quantifier strength hierarchy (same predicate $\Phi(x)$).}
+
+\[
+\begin{array}{c}
+\forall x\, \Phi(x) \\[6pt]
+\Downarrow \\[6pt]
+\exists x\, \Phi(x)
+\end{array}
+\]
+
+\begin{itemize}
+\item Universal statements are generally stronger than existential ones.
+\item If something holds for all $x$, then it certainly holds for some $x$.
+\item The converse fails in general.
+\end{itemize}
+
+\bigskip
+
+\paragraph{Alternating quantifier hierarchy (two-variable case).}
+
+\[
+\begin{array}{c}
+\exists y\, \forall x\, \Phi(x,y) \\[6pt]
+\Downarrow \\[6pt]
+\forall x\, \exists y\, \Phi(x,y)
+\end{array}
+\]
+
+\begin{itemize}
+\item $\exists y\,\forall x$ requires a \emph{single uniform witness}.
+\item $\forall x\,\exists y$ allows the witness to depend on $x$.
+\item Uniformity is strictly stronger than dependence.
+\end{itemize}
+
+\begin{remark}[General Pattern]
+Logical strength increases when you:
+\begin{itemize}
+\item Add conjuncts ($A \land B$ stronger than $A$),
+\item Replace $\exists$ with $\forall$,
+\item Move existential quantifiers outward (requiring uniform witnesses),
+\item Introduce quantifier alternation.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Caution]
+Quantifier order cannot generally be swapped.
+The hierarchy above holds for fixed predicates.
+Strength comparisons may fail if the internal formula changes.
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsubsection{Soundness and Completeness}
 
