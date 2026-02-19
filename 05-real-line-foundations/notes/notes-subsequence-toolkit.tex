@@ -1,0 +1,317 @@
+% =========================================================
+% Sequences toolkit
+% File: notes-toolkit.tex
+% =========================================================
+
+\subsection{Sequences Toolkit}
+
+% =========================================================
+% Subsequence Decomposition Lemma
+% =========================================================
+
+\begin{lemma}[Subsequence Decomposition Lemma]
+Let $(a_n)$ be a sequence in $\mathbb{R}$ and let $k \in \mathbb{N}$ with $k \ge 1$.
+For each $r \in \{0,1,\dots,k-1\}$, define the subsequence
+\[
+(a_{kn+r})_{n=0}^{\infty}.
+\]
+Then:
+
+\begin{enumerate}
+\item The index set $\mathbb{N}$ decomposes as
+\[
+\mathbb{N}
+=
+\bigcup_{r=0}^{k-1}
+\{\, kn+r : n \in \mathbb{N} \,\}.
+\]
+
+\item The sets
+\[
+\{\, kn+r : n \in \mathbb{N} \,\}
+\quad\text{and}\quad
+\{\, kn+s : n \in \mathbb{N} \,\}
+\]
+are disjoint whenever $r \ne s$.
+\end{enumerate}
+
+Consequently, every term $a_m$ of the sequence belongs to exactly one of the subsequences
+\[
+(a_{kn}), (a_{kn+1}), \dots, (a_{kn+k-1}).
+\]
+\end{lemma}
+
+\begin{theorem}[Residue-Class Convergence Criterion]
+Let $(a_n)$ be a sequence in $\mathbb{R}$ and let $k \ge 1$.
+If for each $r \in \{0,1,\dots,k-1\}$ the subsequence
+\[
+(a_{kn+r})
+\]
+converges to the same limit $L$, then $(a_n)$ converges to $L$.
+\end{theorem}
+
+% =========================================================
+% Residue-Class Convergence Theorem
+% =========================================================
+
+\begin{theorem}[Residue-Class Convergence Theorem]
+Let $(a_n)$ be a sequence in $\mathbb{R}$ and let $k \in \mathbb{N}$ with $k \ge 1$.
+For each $r \in \{0,1,\dots,k-1\}$, consider the subsequence
+\[
+(a_{kn+r})_{n=0}^{\infty}.
+\]
+
+If for every $r \in \{0,1,\dots,k-1\}$ the subsequence $(a_{kn+r})$
+converges to the same limit $L$, then the full sequence $(a_n)$
+converges to $L$.
+\end{theorem}
+
+\begin{proof}
+Let $\varepsilon > 0$ be arbitrary.
+
+For each $r \in \{0,1,\dots,k-1\}$, since
+\[
+(a_{kn+r}) \to L,
+\]
+there exists $N_r \in \mathbb{N}$ such that for all $n \ge N_r$,
+\[
+|a_{kn+r} - L| < \varepsilon.
+\]
+
+Define
+\[
+N := \max_{0 \le r \le k-1} \{ kN_r + r \}.
+\]
+
+Now let $m \in \mathbb{N}$ with $m \ge N$.
+By the Division Algorithm, there exist unique integers $n \in \mathbb{N}$
+and $r \in \{0,1,\dots,k-1\}$ such that
+\[
+m = kn + r.
+\]
+
+Because $m \ge kN_r + r$, it follows that $n \ge N_r$.
+Hence,
+\[
+|a_m - L|
+=
+|a_{kn+r} - L|
+<
+\varepsilon.
+\]
+
+Since $\varepsilon>0$ was arbitrary, we conclude that
+\[
+(a_n) \to L.
+\]
+\end{proof}
+
+% =========================================================
+% Finite Partition Convergence Principle
+% =========================================================
+
+\begin{theorem}[Finite Partition Convergence Principle]
+Let $(a_n)$ be a sequence in a metric space $(X,d)$.
+Suppose the index set $\mathbb{N}$ admits a finite partition
+\[
+\mathbb{N} = E_1 \cup E_2 \cup \cdots \cup E_k,
+\]
+where:
+
+\begin{enumerate}
+\item $E_i \cap E_j = \varnothing$ whenever $i \ne j$,
+\item each $E_i$ is infinite.
+\end{enumerate}
+
+For each $i \in \{1,\dots,k\}$, let $(a_n)_{n \in E_i}$ denote the
+subsequence indexed by $E_i$.
+
+If each subsequence $(a_n)_{n \in E_i}$ converges to the same limit $L \in X$,
+then the full sequence $(a_n)$ converges to $L$.
+\end{theorem}
+
+\begin{proof}
+Let $\varepsilon > 0$ be arbitrary.
+
+For each $i \in \{1,\dots,k\}$, since $(a_n)_{n \in E_i} \to L$,
+there exists $N_i \in \mathbb{N}$ such that for all $n \in E_i$ with $n \ge N_i$,
+\[
+d(a_n, L) < \varepsilon.
+\]
+
+Define
+\[
+N := \max\{N_1, \dots, N_k\}.
+\]
+
+Now let $m \ge N$.
+Since $\mathbb{N} = \bigcup_{i=1}^k E_i$, there exists a unique
+$i$ such that $m \in E_i$.
+
+Because $m \ge N \ge N_i$ and $m \in E_i$, we have
+\[
+d(a_m, L) < \varepsilon.
+\]
+
+Since $\varepsilon > 0$ was arbitrary,
+\[
+(a_n) \to L.
+\]
+\end{proof}
+
+
+% =========================================================
+% Structural Transfer of Sequence Properties
+% =========================================================
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Property} 
+& \textbf{Inherited by Subsequences?} 
+& \textbf{Reflected by One Subsequence?}
+& \textbf{Structural Type} \\
+\hline
+Convergent 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Cauchy 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Bounded 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Monotone 
+& Yes 
+& No 
+& Global Structural Property \\
+\hline
+Eventually monotone 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Every subsequence convergent 
+& --- 
+& Yes 
+& Universal Subsequence Property \\
+\hline
+Every subsequence Cauchy 
+& --- 
+& Yes 
+& Universal Subsequence Property \\
+\hline
+\end{tabular}
+\end{center}
+
+% =========================================================
+% Structural Classes of Sequence Properties
+% =========================================================
+
+\begin{definition}[Tail Property]
+A property $\mathcal{P}$ of sequences is called a \emph{tail property}
+if whenever two sequences $(a_n)$ and $(b_n)$ satisfy
+\[
+a_n = b_n \quad \text{for all } n \ge N
+\]
+for some $N \in \mathbb{N}$, then
+\[
+(a_n) \text{ satisfies } \mathcal{P}
+\quad \Longleftrightarrow \quad
+(b_n) \text{ satisfies } \mathcal{P}.
+\]
+In other words, altering finitely many initial terms does not affect
+whether the sequence has property $\mathcal{P}$.
+\end{definition}
+
+\begin{definition}[Universal Subsequence Property]
+A property $\mathcal{P}$ of sequences is called a
+\emph{universal subsequence property}
+if for every sequence $(a_n)$,
+\[
+(a_n) \text{ satisfies } \mathcal{P}
+\quad \Longleftrightarrow \quad
+\text{every subsequence of } (a_n) \text{ satisfies } \mathcal{P}.
+\]
+\end{definition}
+
+
+
+
+
+
+% =========================================================
+% Residue Classes Modulo k
+% =========================================================
+
+\begin{definition}[Residue classes modulo $k$]
+Let $k \in \mathbb{N}$ with $k \ge 1$. 
+For each $r \in \{0,1,\dots,k-1\}$, define the \emph{residue class modulo $k$} by
+\[
+[r]_k 
+:=
+\{\, m \in \mathbb{Z} : m \equiv r \pmod{k} \,\}.
+\]
+\end{definition}
+
+\begin{proposition}[Partition property]
+Let $k \in \mathbb{N}$, $k \ge 1$. Then the collection
+\[
+\{[0]_k, [1]_k, \dots, [k-1]_k\}
+\]
+forms a partition of $\mathbb{Z}$. That is:
+
+\begin{enumerate}
+\item \textbf{Union property:}
+\[
+\mathbb{Z}
+=
+\bigcup_{r=0}^{k-1} [r]_k.
+\]
+
+\item \textbf{Disjointness property:}
+For $r \ne s$,
+\[
+[r]_k \cap [s]_k = \varnothing.
+\]
+\end{enumerate}
+\end{proposition}
+
+\begin{example}[Residue classes modulo $3$]
+The three residue classes modulo $3$ are:
+\[
+[0]_3 = \{ 0,3,6,9,\dots \},
+\]
+\[
+[1]_3 = \{ 1,4,7,10,\dots \},
+\]
+\[
+[2]_3 = \{ 2,5,8,11,\dots \}.
+\]
+
+They satisfy
+\[
+\mathbb{Z} = [0]_3 \cup [1]_3 \cup [2]_3
+\]
+and
+\[
+[0]_3 \cap [1]_3
+=
+[1]_3 \cap [2]_3
+=
+[0]_3 \cap [2]_3
+=
+\varnothing.
+\]
+\end{example}
+
+
+
+
+
