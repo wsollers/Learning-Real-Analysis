@@ -1,0 +1,415 @@
+% =========================================================
+% Monotone Approximation + Completeness Equivalences
+% =========================================================
+
+\subsection{Monotone Approximation and Completeness Equivalences}
+\label{sec:monotone-approx-and-completeness}
+
+% ---------------------------------------------------------
+\subsubsection{Monotone Approximation of Suprema and Infima}
+
+\begin{proposition}[Monotone Approximation of Bounds]
+\label{prop:monotone-approx-bounds}
+Let $S \subset \mathbb{R}$ be nonempty and bounded. Then there exist
+monotone sequences $\{x_n\}_{n\in\mathbb{N}}$ and $\{y_n\}_{n\in\mathbb{N}}$
+such that $x_n, y_n \in S$ for all $n$ and
+\[
+\sup S = \lim_{n\to\infty} x_n,
+\qquad
+\inf S = \lim_{n\to\infty} y_n.
+\]
+\end{proposition}
+
+\begin{remark}[Source note]\label{rem:source-lebl-2.1.13}
+\srccite{LeblBasicAnalysisI}{Proposition~2.1.13}.
+\end{remark}
+
+
+% ---------------------------------------------------------
+\subsubsection{Supremum Case: Proof + Dissection}
+
+\begin{proof}[Proof (Supremum case)]
+Assume $S$ is nonempty and bounded above. Let $\alpha := \sup S$.
+By the $\varepsilon$-characterization of supremum,
+\[
+\forall \varepsilon > 0,\ \exists s \in S
+\text{ such that }
+\alpha - \varepsilon < s \le \alpha.
+\]
+For each $n\in\mathbb{N}$, apply this with $\varepsilon = 1/n$ to choose $x_n \in S$ such that
+\[
+\alpha - \frac{1}{n} < x_n \le \alpha.
+\]
+This sequence need not be monotone. Define a monotone modification by
+\[
+X_n := \max\{x_1,\dots,x_n\}.
+\]
+Then $X_n \in S$, $X_n \le X_{n+1}$, and $X_n \le \alpha$ for all $n$.
+Moreover, for each $n$ we have
+\[
+\alpha - \frac{1}{n} < X_n \le \alpha,
+\]
+hence $X_n \to \alpha$. Therefore, $\{X_n\}$ is monotone increasing in $S$ and converges to $\sup S$.
+\end{proof}
+
+\paragraph{Quantifier Dissection (Supremum engine).}
+Let $\alpha := \sup S$. The core logical clause used to \emph{build} a sequence is
+\[
+(\forall \varepsilon>0)(\exists s\in S)\ \big(\alpha-\varepsilon<s\le \alpha\big).
+\]
+Choosing a \emph{specific} $\varepsilon$-schedule, e.g.\ $\varepsilon_n = 1/n$, yields
+\[
+(\forall n\in\mathbb{N})(\exists x_n\in S)\ \Big(\alpha-\frac1n<x_n\le \alpha\Big),
+\]
+and monotonicity is forced by the definitional operator
+\[
+X_n := \max\{x_1,\dots,x_n\}.
+\]
+
+\paragraph{Logical Skeleton (Supremum case).}
+\[
+\Big(S\neq\varnothing \ \land\ S \text{ bounded above}\Big)
+\Rightarrow
+\exists \alpha\in\mathbb{R}\ (\alpha=\sup S)
+\Rightarrow
+\exists (X_n)\subset S\ \Big(X_n\uparrow \alpha\Big).
+\]
+
+\paragraph{Logical Skeleton (Pure quantifier form; supremum part).}
+\[
+\forall S\subset\mathbb{R}\Big[
+\big((\exists s_0\in S)\land(\exists M)(\forall s\in S)(s\le M)\big)
+\rightarrow
+\exists (X_n)_{n\in\mathbb{N}}
+\]
+\[
+\Big(
+(\forall n)(X_n\in S)\land(\forall n)(X_n\le X_{n+1})
+\land(\forall \varepsilon>0)(\exists N)(\forall n\ge N)(|X_n-\sup S|<\varepsilon)
+\Big)\Big].
+\]
+
+\paragraph{Construction Mechanism (Supremum).}
+\begin{itemize}
+\item \textbf{Approximate from inside:} for each $n$, pick $x_n\in S$ with $\sup S-\frac1n < x_n\le \sup S$.
+\item \textbf{Monotonize:} set $X_n := \max\{x_1,\dots,x_n\}$.
+\item \textbf{Conclude:} $X_n\uparrow \sup S$.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsubsection{Infimum Case: Symmetric Proof + Dissection}
+
+\begin{proof}[Proof (Infimum case)]
+Assume $S$ is nonempty and bounded below. Let $\beta := \inf S$.
+By the $\varepsilon$-characterization of infimum,
+\[
+\forall \varepsilon > 0,\ \exists s \in S
+\text{ such that }
+\beta \le s < \beta + \varepsilon.
+\]
+For each $n\in\mathbb{N}$, apply this with $\varepsilon = 1/n$ to choose $y_n \in S$ such that
+\[
+\beta \le y_n < \beta + \frac{1}{n}.
+\]
+This sequence need not be monotone. Define a monotone modification by
+\[
+Y_n := \min\{y_1,\dots,y_n\}.
+\]
+Then $Y_n \in S$ for all $n$, since $Y_n = y_k$ for some $k \le n$ and each $y_k \in S$.
+Also $Y_{n+1}\le Y_n$, and $\beta \le Y_n$ for all $n$.
+Moreover, since $Y_n \le y_n$, we have
+\[
+\beta \le Y_n < \beta + \frac{1}{n},
+\]
+hence $Y_n \to \beta$. Therefore, $\{Y_n\}$ is monotone decreasing in $S$ and converges to $\inf S$.
+\end{proof}
+
+\paragraph{Quantifier Dissection (Infimum engine).}
+Let $\beta := \inf S$. The core clause is
+\[
+(\forall \varepsilon>0)(\exists s\in S)\ \big(\beta\le s<\beta+\varepsilon\big).
+\]
+Choosing $\varepsilon_n = 1/n$ yields
+\[
+(\forall n\in\mathbb{N})(\exists y_n\in S)\ \Big(\beta\le y_n<\beta+\frac1n\Big),
+\]
+and monotonicity is enforced by
+\[
+Y_n := \min\{y_1,\dots,y_n\}.
+\]
+
+\paragraph{Logical Skeleton (Infimum case).}
+\[
+\Big(S\neq\varnothing \ \land\ S \text{ bounded below}\Big)
+\Rightarrow
+\exists \beta\in\mathbb{R}\ (\beta=\inf S)
+\Rightarrow
+\exists (Y_n)\subset S\ \Big(Y_n\downarrow \beta\Big).
+\]
+
+\paragraph{Logical Skeleton (Pure quantifier form; infimum part).}
+\[
+\forall S\subset\mathbb{R}\Big[
+\big((\exists s_0\in S)\land(\exists m)(\forall s\in S)(m\le s)\big)
+\rightarrow
+\exists (Y_n)_{n\in\mathbb{N}}
+\]
+\[
+\Big(
+(\forall n)(Y_n\in S)\land(\forall n)(Y_{n+1}\le Y_n)
+\land(\forall \varepsilon>0)(\exists N)(\forall n\ge N)(|Y_n-\inf S|<\varepsilon)
+\Big)\Big].
+\]
+
+\paragraph{Construction Mechanism (Infimum).}
+\begin{itemize}
+\item \textbf{Approximate from inside:} for each $n$, pick $y_n\in S$ with $\inf S\le y_n< \inf S+\frac1n$.
+\item \textbf{Monotonize:} set $Y_n := \min\{y_1,\dots,y_n\}$.
+\item \textbf{Conclude:} $Y_n\downarrow \inf S$.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsubsection{Least Upper Bound Property \texorpdfstring{$\Longleftrightarrow$}{<->} Monotone Convergence}
+
+\begin{definition}[Least Upper Bound Property (LUB)]
+\label{def:LUB}
+We say $\mathbb{R}$ has the \emph{least upper bound property} if every nonempty set
+$A\subset\mathbb{R}$ that is bounded above has a supremum in $\mathbb{R}$.
+\end{definition}
+
+\begin{theorem}[Monotone Convergence Theorem (MCT)]
+\label{thm:MCT}
+Every bounded monotone sequence of real numbers converges.
+\end{theorem}
+
+\begin{theorem}[Equivalence: LUB $\Longleftrightarrow$ MCT]
+\label{thm:LUB-iff-MCT}
+The following are equivalent:
+\begin{enumerate}
+\item $\mathbb{R}$ has the least upper bound property.
+\item Every bounded monotone sequence of real numbers converges.
+\end{enumerate}
+\end{theorem}
+
+% ---------------------------------------------------------
+\subsubsection{(LUB $\Rightarrow$ MCT): Proof + Dissection}
+
+\begin{proof}[Proof of \texorpdfstring{$(1)\Rightarrow(2)$}{(1)=> (2)}]
+Assume the least upper bound property.
+Let $\{x_n\}$ be monotone increasing and bounded above.
+Set
+\[
+A := \{x_n : n\in\mathbb{N}\}.
+\]
+Then $A$ is nonempty and bounded above, so $\alpha := \sup A$ exists.
+
+We claim $x_n \to \alpha$.
+Let $\varepsilon>0$.
+Since $\alpha=\sup A$, $\alpha-\varepsilon$ is not an upper bound for $A$,
+so there exists $N$ such that $x_N>\alpha-\varepsilon$.
+By monotonicity, for all $n\ge N$,
+\[
+\alpha-\varepsilon < x_N \le x_n \le \alpha,
+\]
+hence $|x_n-\alpha|<\varepsilon$ for all $n\ge N$.
+Therefore $x_n\to\alpha$.
+\end{proof}
+
+\paragraph{Quantifier Dissection (LUB $\Rightarrow$ MCT).}
+The convergence proof is the same quantifier engine as supremum approximation:
+\[
+\alpha=\sup A
+\ \Rightarrow\
+(\forall \varepsilon>0)\ \exists N\ (x_N>\alpha-\varepsilon),
+\]
+and monotonicity upgrades $\exists N$ to a tail statement:
+\[
+(\forall \varepsilon>0)(\exists N)(\forall n\ge N)\ (\alpha-\varepsilon<x_n\le \alpha).
+\]
+
+\paragraph{Logical Skeleton (LUB $\Rightarrow$ MCT).}
+\[
+\text{bounded increasing }(x_n)
+\Rightarrow
+A=\{x_n\}\text{ bounded above}
+\Rightarrow
+\exists \alpha=\sup A
+\Rightarrow
+x_n\to \alpha.
+\]
+
+\paragraph{Logical Skeleton (Pure quantifier form; LUB $\Rightarrow$ MCT).}
+\[
+\Big(
+\forall A\subset\mathbb{R}\big((\exists a_0\in A)\land(\exists M)(\forall a\in A)(a\le M)\Rightarrow \exists \sup A\big)
+\Big)
+\Rightarrow
+\]
+\[
+\forall (x_n)\Big(
+\big((\forall n)(x_n\le x_{n+1})\land(\exists M)(\forall n)(x_n\le M)\big)
+\Rightarrow
+\exists L\ (\forall \varepsilon>0)(\exists N)(\forall n\ge N)(|x_n-L|<\varepsilon)
+\Big).
+\]
+
+\paragraph{Construction Mechanism (LUB $\Rightarrow$ MCT).}
+\begin{itemize}
+\item Form the image set $A=\{x_n\}$.
+\item Use LUB to produce $\alpha=\sup A$.
+\item Use the $\varepsilon$-witness property of $\sup$ to get one index $N$ with $x_N>\alpha-\varepsilon$.
+\item Use monotonicity to push that inequality to all $n\ge N$.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsubsection{(MCT $\Rightarrow$ LUB): Proof + Dissection (Bisection Construction)}
+
+\begin{proof}[Proof of \texorpdfstring{$(2)\Rightarrow(1)$}{(2)=> (1)}]
+Assume every bounded monotone sequence converges.
+Let $A\subset\mathbb{R}$ be nonempty and bounded above.
+If $A$ has a maximum, then $\sup A=\max A$ and we are done.
+Assume $A$ has no maximum.
+
+Choose $l_1\in A$, and choose any upper bound $u_1$ of $A$ (so $(\forall a\in A)(a\le u_1)$).
+Define sequences $\{l_n\}$ and $\{u_n\}$ recursively as follows.
+Given $l_n$ and $u_n$, set
+\[
+m_n := \frac{l_n+u_n}{2}.
+\]
+If $m_n$ is an upper bound for $A$, define
+\[
+l_{n+1}:=l_n,\qquad u_{n+1}:=m_n.
+\]
+If $m_n$ is not an upper bound for $A$, define
+\[
+l_{n+1}:=m_n,\qquad u_{n+1}:=u_n.
+\]
+Then:
+\begin{itemize}
+\item $\{l_n\}$ is monotone increasing and bounded above by $u_1$;
+\item $\{u_n\}$ is monotone decreasing and bounded below by $l_1$;
+\item every $u_n$ is an upper bound for $A$;
+\item for each $n$, $l_n$ is \emph{not} an upper bound for $A$, verified by induction:
+  $l_1 \in A$ and $A$ has no maximum, so $l_1$ is not an upper bound.
+  At each step, $l_{n+1}$ is either $l_n$ (inheriting the invariant) or $m_n$ when $m_n$
+  is not an upper bound (directly satisfying the invariant); in neither case is $l_{n+1}$
+  an upper bound for $A$.
+\end{itemize}
+Also,
+\[
+u_{n+1}-l_{n+1}=\frac{u_n-l_n}{2}
+\quad\Rightarrow\quad
+u_n-l_n=\frac{u_1-l_1}{2^{n-1}}\xrightarrow[n\to\infty]{}0.
+\]
+
+By the assumed monotone convergence principle, $\{l_n\}$ converges to some $s\in\mathbb{R}$,
+and $\{u_n\}$ converges to some $t\in\mathbb{R}$.
+But $0\le u_n-l_n\to 0$, hence $t-s=0$ and $s=t$.
+Denote this common limit by $s$.
+
+We claim $s=\sup A$.
+
+\emph{$s$ is an upper bound:}
+For any $a\in A$, since $u_n$ is an upper bound we have $a\le u_n$ for all $n$.
+Taking limits gives $a\le s$.
+
+\emph{$s$ is least:}
+Let $\varepsilon>0$. Choose $N$ such that $u_N-l_N<\varepsilon$.
+Then
+\[
+l_N > u_N-\varepsilon \ge s-\varepsilon.
+\]
+Since $l_N$ is not an upper bound, there exists $a\in A$ with $a>l_N$,
+hence $a>s-\varepsilon$.
+Therefore
+\[
+(\forall \varepsilon>0)(\exists a\in A)\ (s-\varepsilon<a),
+\]
+so $s$ satisfies the $\varepsilon$-characterization of $\sup A$ and is thus $\sup A$.
+\end{proof}
+
+\paragraph{Quantifier Dissection (MCT $\Rightarrow$ LUB).}
+The bisection construction is a \emph{quantifier-control machine}:
+\begin{itemize}
+\item Maintain a \emph{universal} invariant: $(\forall a\in A)(a\le u_n)$ (upper-bound witness).
+\item Maintain a \emph{failure} invariant: $l_n$ is not an upper bound, i.e.\
+$(\exists a\in A)(a>l_n)$ (inside-point witness).
+\item Force a shrinking bracket: $u_n-l_n\to 0$ (metric control).
+\item Use MCT to produce limits of monotone bounded sequences and collapse the bracket.
+\item Convert ``$l_N$ is not an upper bound'' into the required $\varepsilon$-witness for $\sup$:
+\[
+(\forall \varepsilon>0)(\exists a\in A)(s-\varepsilon<a).
+\]
+\end{itemize}
+
+\paragraph{Logical Skeleton (MCT $\Rightarrow$ LUB).}
+\[
+A\neq\varnothing,\ A\text{ bounded above}
+\Rightarrow
+\exists (l_n)\uparrow,\ \exists (u_n)\downarrow,\ u_n-l_n\to 0
+\Rightarrow
+l_n\to s,\ u_n\to s
+\Rightarrow
+s \text{ is an upper bound and is least}
+\Rightarrow
+s=\sup A.
+\]
+
+\paragraph{Logical Skeleton (Pure quantifier form; MCT $\Rightarrow$ LUB).}
+\[
+\Big(
+\forall (x_n)\big(
+((\forall n)(x_n\le x_{n+1})\land(\exists M)(\forall n)(x_n\le M))
+\Rightarrow
+\exists L(\forall \varepsilon>0)(\exists N)(\forall n\ge N)(|x_n-L|<\varepsilon)
+\big)
+\Big)
+\Rightarrow
+\]
+\[
+\forall A\subset\mathbb{R}\Big(
+((\exists a_0\in A)\land(\exists U)(\forall a\in A)(a\le U))
+\Rightarrow
+\exists s\in\mathbb{R}\ \big(s=\sup A\big)
+\Big).
+\]
+
+\paragraph{Construction Mechanism (MCT $\Rightarrow$ LUB).}
+\begin{itemize}
+\item Pick $l_1\in A$ and an upper bound $u_1$.
+\item Repeatedly bisect: $m_n=(l_n+u_n)/2$.
+\item If $m_n$ is an upper bound, tighten from above: $u_{n+1}=m_n$.
+\item If not, tighten from below: $l_{n+1}=m_n$.
+\item The bracket width shrinks geometrically, and MCT provides limits.
+\item Use invariants to prove the limit is the least upper bound.
+\end{itemize}
+
+% ---------------------------------------------------------
+\subsubsection{Logical Implications for the Journey}
+
+\begin{remark}[Why this matters structurally]
+The chain of ideas in this subsection is a reusable meta-template:
+\[
+\text{(Order axiom / extremal property)}
+\Longleftrightarrow
+\text{(Monotone sequential convergence)}.
+\]
+It explains why so much of early analysis can be done with monotone sequences:
+they are a \emph{computational interface} to completeness.
+\end{remark}
+
+\begin{remark}[Downstream reuse]
+The quantifier pattern
+\[
+(\forall \varepsilon>0)(\exists \text{witness})
+\Rightarrow
+(\exists \text{sequence with controlled tail})
+\]
+reappears in:
+\begin{itemize}
+\item Bolzano--Weierstrass (extracting convergent subsequences),
+\item $\limsup/\liminf$ (tail suprema as a decreasing sequence),
+\item compactness (finite subcovers as ``finite witnesses''),
+\item later approximation theorems (simple functions, step functions, etc.).
+\end{itemize}
+\end{remark}

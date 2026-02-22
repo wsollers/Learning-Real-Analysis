@@ -1,225 +1,232 @@
 % =========================================================
-% Bounded Sequences and Types of Bounds
+% Bounds and Extremal Values (Set-Theoretic)
 % =========================================================
 
-\subsection{Bounded Sequences and Types of Bounds}
-
-\subsubsection{Bounded Sequences}
+\subsection{Bounds and Extremal Values}
+\label{sec:bounds}
 
 % ---------------------------------------------------------
 \subsubsection{Basic Definitions}
 
-\begin{definition}[Bounded sequence]
-A sequence $(x_n)$ in $\mathbb{R}$ is called \emph{bounded} if there exists a real
-number $M>0$ such that
+\begin{definition}[Upper Bound]
+Let $A \subseteq \mathbb{R}$.
+A number $u \in \mathbb{R}$ is an \emph{upper bound} for $A$ if
 \[
-|x_n| \le M
-\quad\text{for all } n\in\mathbb{N}.
+\forall a \in A,\quad a \le u.
 \]
 \end{definition}
 
-\begin{remark}[Equivalent form]
-A sequence $(x_n)$ is bounded if and only if there exist real numbers
-$m$ and $M$ such that
+\begin{definition}[Lower Bound]
+Let $A \subseteq \mathbb{R}$.
+A number $\ell \in \mathbb{R}$ is a \emph{lower bound} for $A$ if
 \[
-m \le x_n \le M
-\quad\text{for all } n\in\mathbb{N}.
-\]
-\end{remark}
-
-\begin{remark}[Logical form]
-\[
-\exists M>0\;
-\forall n\in\mathbb{N}\;
-\bigl(|x_n|\le M\bigr).
-\]
-\[
-\exists m,M\in\mathbb{R}\;
-\forall n\in\mathbb{N}\;
-\bigl(m\le x_n \le M\bigr).
-\]
-\end{remark}
-
-\begin{remark}[Functional viewpoint]
-A sequence $\{x_n\}_{n=1}^\infty$ is bounded precisely when the function
-\[
-x : \mathbb{N} \to \mathbb{R}
-\]
-defined by $x(n)=x_n$ is bounded on its domain.
-\end{remark}
-
-\begin{remark}
-A sequence $\{x_n\}_{n=1}^\infty$ in $\mathbb{R}$ is bounded
-if and only if the subset
-\[
-\{x_n : n \in \mathbb{N}\} \subseteq \mathbb{R}
-\]
-is bounded.
-\end{remark}
-
-\begin{remark}[Three structural viewpoints of a sequence]
-A sequence may be understood at three distinct but equivalent levels:
-
-\begin{enumerate}
-    \item \textbf{Function viewpoint:}
-    A sequence $\{x_n\}_{n=1}^\infty$ is a function
-    \[
-    x : \mathbb{N} \to \mathbb{R}, \quad x(n)=x_n.
-    \]
-
-    \item \textbf{Set (range) viewpoint:}
-    The values of the sequence form the subset
-    \[
-    \{x_n : n \in \mathbb{N}\} \subseteq \mathbb{R},
-    \]
-    which is the range of the function.
-
-    \item \textbf{Order-theoretic viewpoint:}
-    Boundedness of the sequence is not a property of the index set
-    $\mathbb{N}$ but of this subset of $\mathbb{R}$.
-    Thus the sequence is bounded if and only if its range
-    $\{x_n : n \in \mathbb{N}\}$ is bounded in $\mathbb{R}$.
-\end{enumerate}
-
-These perspectives are logically equivalent but conceptually distinct,
-and each becomes useful in different parts of analysis.
-\end{remark}
-
-
-
-% ---------------------------------------------------------
-% Types of Bounds for Sequences
-% ---------------------------------------------------------
-
-\begin{definition}[Upper bound]
-A real number $M$ is an \emph{upper bound} for the sequence $(x_n)$ if
-\[
-x_n \le M
-\quad\text{for all } n\in\mathbb{N}.
+\forall a \in A,\quad \ell \le a.
 \]
 \end{definition}
 
-\begin{definition}[Lower bound]
-A real number $m$ is a \emph{lower bound} for the sequence $(x_n)$ if
-\[
-m \le x_n
-\quad\text{for all } n\in\mathbb{N}.
-\]
-\end{definition}
-
-\begin{definition}[Bounded above / below]
-A sequence $(x_n)$ is said to be
+\begin{definition}[Bounded Above / Below]
+A set $A \subseteq \mathbb{R}$ is said to be:
 \begin{itemize}
-\item \emph{bounded above} if it has at least one upper bound;
-\item \emph{bounded below} if it has at least one lower bound;
-\item \emph{bounded} if it is both bounded above and bounded below.
+  \item \emph{bounded above} if it has at least one upper bound;
+  \item \emph{bounded below} if it has at least one lower bound;
+  \item \emph{bounded} if it is both bounded above and bounded below.
 \end{itemize}
 \end{definition}
 
-% ---------------------------------------------------------
-% Least Upper and Greatest Lower Bounds
-% ---------------------------------------------------------
-
-\begin{definition}[Supremum of a sequence]
-If the set
+\begin{definition}[Maximum]
+Let $A \subseteq \mathbb{R}$.
+A number $m \in A$ is a \emph{maximum} of $A$, written $m = \max A$, if
 \[
-\{x_n : n\in\mathbb{N}\}
-\]
-is bounded above, its least upper bound is called the \emph{supremum}
-of the sequence and is denoted
-\[
-\sup\{x_n\}
-\quad\text{or}\quad
-\sup_{n\in\mathbb{N}} x_n.
+\forall a \in A,\quad a \le m.
 \]
 \end{definition}
 
-\begin{definition}[Infimum of a sequence]
-If the set
+\begin{definition}[Minimum]
+Let $A \subseteq \mathbb{R}$.
+A number $m \in A$ is a \emph{minimum} of $A$, written $m = \min A$, if
 \[
-\{x_n : n\in\mathbb{N}\}
-\]
-is bounded below, its greatest lower bound is called the \emph{infimum}
-of the sequence and is denoted
-\[
-\inf\{x_n\}
-\quad\text{or}\quad
-\inf_{n\in\mathbb{N}} x_n.
+\forall a \in A,\quad m \le a.
 \]
 \end{definition}
 
 \begin{remark}
-The supremum or infimum of a sequence need not be attained by any term of the sequence.
+Every maximum is an upper bound that is also a member of $A$; every
+minimum is a lower bound that is also a member of $A$.
+In particular, $\max A$ and $\min A$ need not exist, but when they do
+they are unique.
+The concepts of supremum and infimum generalise this: they are the
+\emph{least} upper bound and \emph{greatest} lower bound respectively,
+and need not belong to $A$.
+Both are unique when they exist
+(see Proposition~\ref{prop:sup-unique}).
 \end{remark}
 
-% ---------------------------------------------------------
-% Extremal Values
-% ---------------------------------------------------------
+\begin{proposition}[Uniqueness of Supremum and Infimum]
+\label{prop:sup-unique}
+Let $A \subseteq \mathbb{R}$ be nonempty.
+If $\sup A$ exists, it is unique. If $\inf A$ exists, it is unique.
+\end{proposition}
 
-\begin{definition}[Maximum and minimum of a sequence]
-A sequence $(x_n)$ has a \emph{maximum} if there exists $N\in\mathbb{N}$ such that
-\[
-x_N \ge x_n
-\quad\text{for all } n\in\mathbb{N}.
-\]
-A sequence $(x_n)$ has a \emph{minimum} if there exists $N\in\mathbb{N}$ such that
-\[
-x_N \le x_n
-\quad\text{for all } n\in\mathbb{N}.
-\]
+\begin{proof}
+We prove uniqueness of the supremum; the argument for the infimum is
+symmetric. Suppose $s$ and $s'$ both satisfy the definition of $\sup A$.
+Since $s = \sup A$ and $s'$ is an upper bound for $A$, we have $s \le s'$.
+Since $s' = \sup A$ and $s$ is an upper bound for $A$, we have $s' \le s$.
+Hence $s = s'$.
+\end{proof}
+
+\begin{definition}[Supremum (Least Upper Bound)]
+Let $A \subseteq \mathbb{R}$ be nonempty and bounded above.
+A number $s \in \mathbb{R}$ is the \emph{supremum} of $A$,
+written $s = \sup A$, if:
+\begin{enumerate}
+  \item $s$ is an upper bound for $A$, and
+  \item if $u$ is any upper bound for $A$, then $s \le u$.
+\end{enumerate}
 \end{definition}
 
-\begin{remark}
-If a maximum exists, then
-\[
-\max\{x_n\} = \sup\{x_n\},
-\]
-and similarly for a minimum and the infimum.
-\end{remark}
+\begin{definition}[Infimum (Greatest Lower Bound)]
+Let $A \subseteq \mathbb{R}$ be nonempty and bounded below.
+A number $s \in \mathbb{R}$ is the \emph{infimum} of $A$,
+written $s = \inf A$, if:
+\begin{enumerate}
+  \item $s$ is a lower bound for $A$, and
+  \item if $\ell$ is any lower bound for $A$, then $\ell \le s$.
+\end{enumerate}
+\end{definition}
 
 % ---------------------------------------------------------
-\subsubsection{Main Theorems}
+\subsubsection{Equivalent Formulations}
 
-% (No independent theorems were present in the source extract.)
-% This section is definitional in nature.
+The definition of supremum requires checking all upper bounds. The
+following proposition gives an equivalent condition that is often easier
+to apply in practice, replacing the universal quantifier over upper bounds
+with a local $\varepsilon$-witness condition.
+
+\begin{proposition}[$\varepsilon$-Characterization of Supremum and Infimum]
+\label{prop:eps-char}
+Let $A \subseteq \mathbb{R}$ be nonempty. Both of the following hold.
+\begin{enumerate}
+  \item If $A$ is bounded above and $s \in \mathbb{R}$, then $s = \sup A$
+        if and only if both of the following conditions hold:
+        \begin{enumerate}[(a)]
+          \item $s$ is an upper bound for $A$, and
+          \item for every $\varepsilon > 0$, there exists $a \in A$ such that
+                $s - \varepsilon < a$.
+        \end{enumerate}
+  \item If $A$ is bounded below and $s \in \mathbb{R}$, then $s = \inf A$
+        if and only if both of the following conditions hold:
+        \begin{enumerate}[(a)]
+          \item $s$ is a lower bound for $A$, and
+          \item for every $\varepsilon > 0$, there exists $a \in A$ such that
+                $a < s + \varepsilon$.
+        \end{enumerate}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+We prove (1); the proof of (2) is symmetric.
+
+($\Rightarrow$) Suppose $s = \sup A$. Then $s$ is an upper bound by
+definition. Let $\varepsilon > 0$. Since $s - \varepsilon < s$ and $s$ is
+the \emph{least} upper bound, $s - \varepsilon$ is not an upper bound for
+$A$. Hence there exists $a \in A$ with $a > s - \varepsilon$.
+
+($\Leftarrow$) Suppose (a) and (b) hold. Let $u$ be any upper bound for
+$A$. Suppose for contradiction that $u < s$. Set $\varepsilon = s - u > 0$.
+By (b), there exists $a \in A$ with $a > s - \varepsilon = u$, contradicting
+$u$ being an upper bound. Hence $s \le u$, so $s$ is the least upper bound.
+\end{proof}
+
+\begin{corollary}[$\varepsilon$-Approximation]
+\label{cor:eps-approx}
+Let $A \subseteq \mathbb{R}$ be nonempty.
+\begin{enumerate}
+  \item If $s = \sup A$, then
+        $\forall \varepsilon > 0,\ \exists a \in A$ such that
+        $s - \varepsilon < a \le s$.
+  \item If $s = \inf A$, then
+        $\forall \varepsilon > 0,\ \exists a \in A$ such that
+        $s \le a < s + \varepsilon$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+We prove (1); the proof of (2) is symmetric. By
+Proposition~\ref{prop:eps-char}(1), there exists $a \in A$ with
+$a > s - \varepsilon$. Since $s$ is an upper bound for $A$, we also have
+$a \le s$. Hence $s - \varepsilon < a \le s$.
+\end{proof}
+
+% ---------------------------------------------------------
+\subsubsection{Summary Table}
+
+\begin{remark}[Predicate vs.\ Existence: Structural Template]
+Each bound-type concept is defined by a predicate $P_A(x)$ on $\mathbb{R}$.
+\begin{itemize}
+  \item \textbf{Predicate form.} The statement ``$x$ is a $P$-object of
+        $A$'' means $P_A(x)$ holds for a specific identified $x$.
+        To prove this, exhibit $x$ and verify $P_A(x)$ directly.
+  \item \textbf{Existence form.} The statement ``$A$ has a $P$-object''
+        means $\exists x\, P_A(x)$.
+        Once established, fix such an $x$ and reason from $P_A(x)$.
+\end{itemize}
+\end{remark}
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Concept} & \textbf{Predicate $P_A(x)$} &
+\textbf{Predicate Form} & \textbf{Existence Form} \\
+\midrule
+Upper bound
+  & $\forall a \in A,\; a \le x$
+  & $x$ is an upper bound of $A$
+  & $A$ is bounded above \\
+Lower bound
+  & $\forall a \in A,\; a \ge x$
+  & $x$ is a lower bound of $A$
+  & $A$ is bounded below \\
+Maximum
+  & $x \in A \land \forall a \in A,\; a \le x$
+  & $x = \max A$
+  & $A$ has a maximum \\
+Minimum
+  & $x \in A \land \forall a \in A,\; a \ge x$
+  & $x = \min A$
+  & $A$ has a minimum \\
+Supremum
+  & $(\forall a \in A,\; a \le x)
+     \land (\forall\varepsilon>0,\;\exists a \in A,\; a > x-\varepsilon)$
+  & $x = \sup A$
+  & $\sup A$ exists \\
+Infimum
+  & $(\forall a \in A,\; a \ge x)
+     \land (\forall\varepsilon>0,\;\exists a \in A,\; a < x+\varepsilon)$
+  & $x = \inf A$
+  & $\inf A$ exists \\
+\bottomrule
+\end{tabular}
+\caption{Rows grouped by logical complexity: bounds (universal only),
+extrema (membership + universal), least/greatest bounds
+(universal + approximation).}
+\end{table}
 
 % ---------------------------------------------------------
 \subsubsection{Consequences}
 
-The logical implication of this entire section is:
-
-\[
-\text{Bounded sequence}
-\Longleftrightarrow
-\text{Range } \{x_n\} \text{ is bounded in } \mathbb{R}.
-\]
-
-Thus sequence boundedness reduces to set boundedness.
-
-Moreover:
-
-\[
-\text{Maximum} \Rightarrow \text{Supremum attained},
-\]
-\[
-\text{Minimum} \Rightarrow \text{Infimum attained}.
-\]
-
-But the converse need not hold unless the supremum or infimum
-is actually realized by some term of the sequence.
-
 \begin{remark}[Logical Structure]
 The structural progression is:
-
 \[
 \text{Upper/Lower bounds}
-\Rightarrow
+\;\Rightarrow\;
 \text{Boundedness}
-\Rightarrow
+\;\Rightarrow\;
 \text{Supremum/Infimum}
-\Rightarrow
+\;\Rightarrow\;
 \text{Maximum/Minimum}.
 \]
-
 All later extremal and limit arguments depend on this hierarchy.
 \end{remark}

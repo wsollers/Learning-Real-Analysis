@@ -1,8 +1,8 @@
 \documentclass[11pt]{report}
 
-% ============================
+% ============================================================
 % Packages
-% ============================
+% ============================================================
 
 % Page layout
 \usepackage[margin=1in]{geometry}
@@ -14,35 +14,55 @@
 % Lists and tables
 \usepackage{enumitem}
 \usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{makecell}
 
-% Colors and links
+% Colours and links
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{bookmark}
 
+% TikZ
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows.meta,
+  backgrounds,
+  calc,
+  decorations.pathreplacing,
+  decorations.markings,
+  fit,
+  patterns,
+  positioning,
+  shapes.geometric
+}
+
+% Miscellaneous
+\usepackage{stmaryrd}
+\usepackage{multicol}
+\usepackage{checkend}
+\usepackage{placeins}
+\usepackage{float}
 % Bibliography
 \usepackage[authoryear]{natbib}
 
-\usepackage{tikz}
-\usetikzlibrary{positioning}
-\usetikzlibrary{patterns}
-\usepackage{tabularx}
-\usetikzlibrary{calc}
-\usetikzlibrary{arrows.meta}
-\usetikzlibrary{decorations.pathreplacing,decorations.markings}
-\usetikzlibrary{positioning,calc,fit}
-\usetikzlibrary{backgrounds}
-\usepackage{stmaryrd} % provides \llbracket \rrbracket
+% ============================================================
+% Colours
+% ============================================================
 
+\definecolor{indexblue}{HTML}{1a3a6b}
+\definecolor{natblue}{HTML}{2e6db4}
+\definecolor{realorange}{HTML}{c45c13}
+\definecolor{sigmagreen}{HTML}{1a6b3a}
+\definecolor{lightblue}{HTML}{dce8f7}
+\definecolor{lightorange}{HTML}{fde8d8}
+\definecolor{propbox}{HTML}{f0f4ff}
+\definecolor{propborder}{HTML}{7a9fd4}
 
+% ============================================================
+% Theorem environments
+% ============================================================
 
-
-
-
-
-% -------------------------------------------------
-% Theorem / Definition / Axiom Infrastructure
-% -------------------------------------------------
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -57,10 +77,12 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 \newtheorem{example}[theorem]{Example}
+\newtheorem{principle}[theorem]{Principle}
 
-% -------------------------------------------------
-% House-style proof-writing macros (optional)
-% -------------------------------------------------
+% ============================================================
+% Proof-writing macros
+% ============================================================
+
 \newcommand{\Given}{\textbf{Given.}\ }
 \newcommand{\Goal}{\textbf{Goal.}\ }
 \newcommand{\Strategy}{\textbf{Strategy.}\ }
@@ -80,127 +102,110 @@
 \newcommand{\Hence}{\textbf{Hence,}\ }
 \newcommand{\Therefore}{\textbf{Therefore,}\ }
 \newcommand{\AsReq}{\textbf{as required.}}
+\newcommand{\checkbox}{$\square$\ }
+
+% ============================================================
+% Math operators
+% ============================================================
 
 \DeclareMathOperator{\id}{id}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\cod}{cod}
 \DeclareMathOperator{\im}{im}
 
+% ============================================================
+% Citation macros
+% ============================================================
+
+\newcommand{\srcciteauthor}[1]{%
+  \textsc{\citeauthor{#1}}%
+}
+
+\newcommand{\srccitesection}[2]{%
+  \textsc{\citeauthor{#1}}, \textit{#2} [\citeyear{#1}]%
+}
+
+% ============================================================
+% Layout
+% ============================================================
 
 \setlength{\parskip}{0.75\baselineskip}
 \setlength{\parindent}{0pt}
-
-\hypersetup{
-  colorlinks=true,
-  linkcolor=blue!60!black,
-  citecolor=blue!60!black,
-  urlcolor=blue!60!black
-}
-
 \setlist[itemize]{leftmargin=*}
 
-
-% ============================
-% Source citation macro
-% ============================
-
-\newcommand{\srccite}[2]{%
-  \textsc{#1}, \textit{#2}%
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = blue!60!black,
+  citecolor  = blue!60!black,
+  urlcolor   = blue!60!black,
 }
 
-
-
-% ============================
-% Numbering / TOC depth
-% ============================
+% ============================================================
+% Numbering and TOC depth
+% ============================================================
 
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
-% Ensure clean section numbering
 \renewcommand{\thesection}{\arabic{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 
-% ============================
+% ============================================================
 % Document
-% ============================
+% ============================================================
 
 \begin{document}
 
-% ============================
-% Cover Page
-% ============================
-
+% ── Cover page ────────────────────────────────────────────────────────────────
 \begin{titlepage}
   \centering
   \vspace*{2.5cm}
-
-  {\Huge\bfseries Learning Real Analysis\par}
+  {\Huge\bfseries Learning Abstract Mathematics\par}
   \vspace{1.5cm}
-
-  {\Large A Structured Journey Through Logic, Sets, and Analysis\par}
+  {\Large A Structured Journey Through Logic, Sets, Algebra, and Analysis\par}
   \vspace{2.5cm}
-
   {\Large William E. Sollers III\par}
   \vspace{1cm}
-
   {\large \today\par}
-
   \vfill
   {\large ``Proof is the price of admission.''\par}
 \end{titlepage}
 
-% ============================
-% Front Matter
-% ============================
-
+% ── Front matter ──────────────────────────────────────────────────────────────
 \tableofcontents
 \clearpage
 
+% ── Chapters ──────────────────────────────────────────────────────────────────
 \input{map}
-
 \input{00-propositional-logic/index}
 \input{01-predicate-calculus/index}
 \input{02-sets-relations-functions/index}
 \input{03-proof-techniques/index}
 \input{04-axiom-systems/index}
 \input{05-real-line-foundations/index}
+\input{06-intro-metric-spaces/index}
+\input{07-intro-point-set-topology/index}
 
 
+\input{100-linear-algebra/index}
 
+\input{200-algebraic-geometry/index}
+% ── Glossary ──────────────────────────────────────────────────────────────────
+\input{glossary-foundations}
 
-
-\input{glossary-foundations.tex}
-
+% ── Appendices ────────────────────────────────────────────────────────────────
 \appendix
+\clearpage \input{appendices/logical-fallacies}
+\clearpage \input{appendices/proof-techniques}
+\clearpage \input{appendices/rules-to-remember}
+\clearpage \input{appendices/propositional-logic-rules}
+\clearpage \input{appendices/proof-style-guide}
+\clearpage \input{appendices/tips}
+
+% ── Bibliography ──────────────────────────────────────────────────────────────
 \clearpage
-\input{appendices/logical-fallacies}
-\clearpage
-\input{appendices/proof-techniques}
-\clearpage
-\input{appendices/rules-to-remember}
-\clearpage
-\input{appendices/propositional-logic-rules}
-\clearpage
-\input{appendices/proof-style-guide}
-\clearpage
-\input{appendices/tips}
-
-
-
-
-
-
-
-
-
-% ============================
-% Bibliography
-% ============================
-
-\clearpage
-\bibliographystyle{plain}
-\bibliography{bibliography/analysis.bib}
+\bibliographystyle{plainnat}
+\bibliography{bibliography/analysis}
 
 \end{document}

@@ -55,25 +55,117 @@ When $X=\mathbb{R}^m$, we speak of a \emph{vector-valued sequence}.
 \end{remark}
 
 \begin{definition}[Subsequence]
-Let $(x_n)$ be a sequence in $X$.
-Let $(n_k)$ be a strictly increasing sequence in $\mathbb{N}$.
-Then the sequence $(x_{n_k})$ is called a \emph{subsequence} of $(x_n)$.
+Let $(x_n)_{n \in \mathbb{N}}$ be a sequence in $X$, i.e., a function
+\[
+x : \mathbb{N} \to X, \qquad n \mapsto x_n.
+\]
+A function $y : \mathbb{N} \to X$ is a \emph{subsequence} of $(x_n)$ if and
+only if there exists a strictly increasing function
+\[
+\sigma : \mathbb{N} \to \mathbb{N},
+\qquad
+k < \ell \implies \sigma(k) < \sigma(\ell),
+\]
+such that $y = x \circ \sigma$. Writing $n_k := \sigma(k)$, the composed
+function takes the form
+\[
+(x \circ \sigma)(k) = x(\sigma(k)) = x(n_k) =: x_{n_k},
+\]
+and the subsequence is written
+\[
+(x_{n_k})_{k \in \mathbb{N}}
+\quad\text{or simply}\quad
+(x_{n_k}).
+\]
 \end{definition}
 
-\begin{remark}
-The strict monotonicity of $(n_k)$ ensures order preservation.
-This guarantees that subsequences do not reorder terms but only delete some.
+\begin{remark}[Logical Form]
+A function $y : \mathbb{N} \to X$ is a subsequence of $x$ if and only if
+\[
+\exists\, \sigma : \mathbb{N} \to \mathbb{N}
+\;\Bigl(
+  \forall\, k < \ell \in \mathbb{N},\ \sigma(k) < \sigma(\ell)
+  \;\wedge\;
+  y = x \circ \sigma
+\Bigr).
+\]
+The quantifier $\exists\,\sigma$ asserts that a witnessing index function
+can be exhibited. The subsequence is the composition $y = x \circ \sigma$,
+not $\sigma$ itself.
+\end{remark}
+
+\begin{remark}[Function Composition]
+The composition $x \circ \sigma$ makes the two-layer structure explicit:
+\[
+\mathbb{N}
+\xrightarrow{\ \sigma\ }
+\mathbb{N}
+\xrightarrow{\ x\ }
+X.
+\]
+$\sigma$ selects an infinite subset of indices in their natural order;
+$x$ maps those indices to elements of $X$.
+The subsequence is entirely determined by the choice of $\sigma$.
+\end{remark}
+
+\begin{remark}[Implications of Strict Monotonicity]
+Since $\sigma$ is strictly increasing, the following hold.
+\begin{itemize}
+  \item \textbf{Injectivity.} Strict monotonicity implies injectivity:
+        $k \neq \ell \implies \sigma(k) \neq \sigma(\ell)$,
+        since either $k < \ell$, giving $\sigma(k) < \sigma(\ell)$,
+        or $k > \ell$, giving $\sigma(k) > \sigma(\ell)$.
+
+  \item \textbf{Index growth.} $\sigma(k) \geq k$ for all $k \in \mathbb{N}$.
+        This follows directly from strict monotonicity and the discreteness
+        of $\mathbb{N}$: $\sigma(1) \geq 1$, and $\sigma(k+1) \geq \sigma(k) + 1$,
+        so $\sigma(k) \geq k$ at each step without appeal to a separate
+        induction argument.
+
+  \item \textbf{Divergence of indices.} Since $\sigma(k) \geq k$ for all $k$
+        and $k \to \infty$, it follows immediately that $\sigma(k) \to \infty$.
+        This is not an independent assumption — it is a consequence of strict
+        monotonicity alone. In particular, $n_k \to \infty$, so every
+        subsequence reaches arbitrarily far into the original sequence.
+        This fact is used in convergence proofs where $n_k$ must be
+        eventually large.
+
+  \item \textbf{Order preservation.} $k < \ell \implies n_k < n_\ell$,
+        so the relative order of selected terms is unchanged.
+
+  \item \textbf{Deletion only.} Terms of $(x_n)$ may be omitted but
+        never duplicated or reinserted out of order. A subsequence is
+        a selection, not a rearrangement.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Common Notation]
+Equivalent notations for the subsequence $x \circ \sigma$:
+\[
+(x_{n_k})_{k=1}^{\infty},
+\qquad
+(x_{n_k}),
+\qquad
+k \mapsto x_{n_k}.
+\]
+The index $k$ tracks position within the subsequence;
+$n_k = \sigma(k)$ tracks position within the original sequence.
+These two indices must be kept distinct in proofs.
 \end{remark}
 
 \begin{remark}[Sources]
-This functional definition of a sequence appears in
-\cite{AbbottUnderstandingAnalysis},
-\cite{TaoAnalysis1},
-\cite{RossElementaryAnalysis},
-\cite{Rudin1976},
-and \cite{LeblBasicAnalysisI}.
+The functional definition of a sequence as a map $x : \mathbb{N} \to X$
+appears in \srcciteauthor{AbbottUnderstandingAnalysis},
+\srcciteauthor{TaoAnalysis1},
+\srcciteauthor{RossElementaryAnalysis},
+\srcciteauthor{Rudin1976},
+and \srcciteauthor{LeblBasicAnalysisI}.
+The compositional formulation $x \circ \sigma$ is made explicit in
+\srccitesection{TaoAnalysis1}{Chapter~6}
+and \srccitesection{Rudin1976}{Chapter~3}.
 \end{remark}
-
+\FloatBarrier
+\input{05-real-line-foundations/notes/subsequence-figure-01}
 % ---------------------------------------------------------
 \subsubsection{Main Theorems}
 
