@@ -1,230 +1,74 @@
 % =========================================================
-% Proof Techniques
+% Proof Techniques — Notes Assembly
 % =========================================================
+\begin{tcolorbox}[
+  colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Where You Are in the Journey}},
+  fonttitle=\small\bfseries
+]
+\begin{center}
+\small
+Propositional Logic $\;\to\;$ Predicate Calculus
+$\;\to\;$ Sets \& Functions
+$\;\to\;$ \textbf{Proof Techniques}
+$\;\to\;$ Real Analysis $\;\to\;$ Algebraic Structures
+$\;\to\;$ Linear Algebra $\;\to\;$ $\cdots$
+\end{center}
+\medskip
+\noindent\textbf{How we got here.}
+Logic gave us the language of valid inference and sets gave us the
+objects we reason about. This chapter asks the operational question:
+how do we build a valid mathematical argument from start to finish?
 
-\subsection{A General Procedure for Writing Proofs}
+\medskip
+\noindent\textbf{What this chapter builds.}
+A complete architecture for proof writing: how to read a statement
+and identify its proof strategy immediately; how to execute that
+strategy step by step; how to use induction to reason about
+well-ordered and recursive structures; and how to deploy specific
+algebraic tactics when progress stalls.
 
-Mathematical proofs follow precise logical rules, but they are not written
-randomly. Most proofs can be constructed systematically by following a small
-number of disciplined steps. This section records a general \emph{proof-writing
-procedure} intended to be applied consciously until it becomes internalized.
+\medskip
+\noindent\textbf{Where this leads.}
+Every proof in every subsequent chapter uses this toolkit.
+Epsilon-delta analysis uses direct proof and contradiction.
+Algebraic structure proofs use the uniqueness and
+satisfy-and-cite patterns. Induction appears throughout
+number theory, algebra, and combinatorics.
+\end{tcolorbox}
+\vspace{1em}
 
-\subsection{The Proof Construction Algorithm}
+\subsection*{Structural Roadmap}
 
-When asked to prove a mathematical statement, proceed as follows.
+This chapter is organized in six sections of increasing specificity.
 
-\subsubsection*{Step 0: Classify the Statement}
+\begin{center}
+\textbf{Architecture $\longrightarrow$ Construction
+$\longrightarrow$ Structures $\longrightarrow$ Induction
+$\longrightarrow$ Tactics $\longrightarrow$ Reference}
+\end{center}
 
-Before writing the proof, determine the logical form of the claim. Common forms
-include:
-\begin{itemize}
-\item Universal statements: $\forall x\, P(x)$
-\item Conditional statements: $P \rightarrow Q$
-\item Biconditional statements: $P \leftrightarrow Q$
-\item Existential statements: $\exists x\, P(x)$
-\item Equality statements: $X = Y$
-\item Set equality: $A = B$
-\item Structural assertions: ``$R$ is an equivalence relation'', ``$f$ is injective''
-\end{itemize}
+Sections 1--4 should be read sequentially on first pass.
+Sections 5--6 are reference material to consult when working a
+proof and progress stalls.
 
-The logical form determines the overall structure of the proof.
+\begin{remark}[Four distinct questions]
+\textbf{Architecture} answers: what kind of proof is this and what
+skeleton should it have?
+\textbf{Construction} answers: how do I execute that skeleton
+line by line?
+\textbf{Structures} answers: what do the standard proof patterns
+look like in practice?
+\textbf{Tactics} answers: once a proof is in progress,
+what specific moves are available?
+These are four different questions. Conflating them is the most
+common source of proof-writing paralysis.
+\end{remark}
 
-\subsubsection*{Step 1: Restate the Givens}
-
-Explicitly record what is given. Introduce all sets, relations, and functions,
-and note any structural properties that are assumed.
-
-For example:
-\begin{quote}
-Let $A$ be a set and let $R$ be an equivalence relation on $A$.
-\end{quote}
-
-This licenses the later use of reflexivity, symmetry, and transitivity without
-reintroducing them each time.
-
-\subsubsection*{Step 2: Identify the Objects and Their Types}
-
-Before reasoning begins, identify the \emph{type} of each object involved:
-\begin{itemize}
-\item Is it an element, a set, a function, or a relation?
-\item What is its ambient universe?
-\end{itemize}
-
-For example:
-\[
-x \in A,
-\quad
-f : A \to B,
-\quad
-R \subseteq A \times A.
-\]
-
-Many logical errors arise from confusing equality, membership, and inclusion.
-Every object used in a proof must have a declared type.
-
-\subsubsection*{Step 3: Introduce Arbitrary Elements}
-
-If the claim is universal, immediately introduce arbitrary elements.
-
-For example:
-\[
-\text{Let } a,b \in A \text{ be arbitrary.}
-\]
-
-This step enables general reasoning and avoids illegal specialization.
-No conclusions may be drawn from an arbitrary element other than those justified
-by the hypotheses.
-
-\subsubsection*{Step 4: Expand the Goal}
-
-Rewrite the conclusion using definitions rather than named concepts.
-
-Examples:
-\begin{itemize}
-\item To prove $f$ is injective, expand the definition of injectivity.
-\item To prove $A = B$, prove $A \subseteq B$ and $B \subseteq A$.
-\item To prove $x \in A \cup B$, rewrite it as $x \in A \lor x \in B$.
-\end{itemize}
-
-One should never attempt to prove a named concept directly without first
-expanding its definition.
-
-\subsubsection*{Step 5: Introduce Helper Objects}
-
-Introduce any auxiliary objects needed for the argument, such as witnesses,
-intermediate elements, blocks of a partition, bounds, or images under functions.
-
-Examples:
-\[
-\text{Let } x \in A,
-\quad
-\text{let } P_a \text{ be the block containing } a,
-\quad
-\text{let } b := f(a).
-\]
-
-No object should appear in a proof without being explicitly introduced.
-
-\subsubsection*{Step 6: Apply One Definition or Property at a Time}
-
-Each logical step should follow from exactly one of:
-\begin{itemize}
-\item a definition,
-\item a hypothesis,
-\item a previously proved theorem,
-\item a basic logical rule.
-\end{itemize}
-
-If progress stalls, identify which definition has not yet been unpacked.
-Avoid combining multiple logical moves into a single unexplained step.
-
-\subsubsection*{Step 7: Use Forward and Backward Reasoning}
-
-Proofs often alternate between two modes:
-\begin{itemize}
-\item \emph{Forward reasoning}: deducing consequences from the hypotheses.
-\item \emph{Backward reasoning}: rewriting the goal to determine what would
-suffice to prove it.
-\end{itemize}
-
-Backward reasoning is particularly effective when the conclusion is complex
-or involves nested definitions.
-
-\subsubsection*{Step 8: Handle Cases Explicitly}
-
-If a statement naturally splits into cases, enumerate them clearly and exhaust
-all possibilities.
-
-For example:
-\[
-\text{Either } x \in A \text{ or } x \notin A.
-\]
-
-Each case must be treated separately, and together the cases must cover all
-possibilities.
-
-\subsubsection*{Step 9: Close the Argument}
-
-Once the desired conclusion has been reached, explicitly state it and explain
-why it completes the proof.
-
-Examples:
-\begin{itemize}
-\item ``Thus $x \in B$, so $A \subseteq B$.''  
-\item ``Hence $f$ is injective.''  
-\item ``Therefore the two sets are equal.''
-\end{itemize}
-
-\subsubsection*{Step 10: Signal Completion}
-
-Conclude cleanly with a standard closing such as
-\[
-\qed
-\]
-or an explicit statement that the proof is complete.
-
-\subsection{Legal Moves in Proofs}
-
-The following rules should be enforced throughout every proof:
-\begin{itemize}
-\item An existential witness may not be chosen before existence is proved.
-\item An arbitrary element may only be introduced under universal scope.
-\item The conclusion may never be assumed.
-\item Definitions must be applied in full, not partially.
-\end{itemize}
-
-Violations of these rules invalidate the argument, even if the conclusion is
-correct.
-
-\subsection{Line-by-Line Proof Discipline}
-
-For each line of a proof, the following questions should be silently checked:
-\begin{enumerate}[label=(\roman*)]
-\item Has every object appearing in the line been defined?
-\item Which definition, hypothesis, or theorem justifies this step?
-\item Does this step move the argument closer to the stated goal?
-\end{enumerate}
-
-If any answer is unclear, the line should be rewritten.
-
-\subsection{Specialized Proof Templates}
-
-The general algorithm specializes naturally to common proof types.
-
-\paragraph{Implication ($P \rightarrow Q$).}
-Assume $P$, expand its definition, deduce consequences, and conclude $Q$.
-
-\paragraph{Biconditional ($P \leftrightarrow Q$).}
-Prove $P \Rightarrow Q$ and $Q \Rightarrow P$ separately.
-
-\paragraph{Set Equality ($A = B$).}
-Prove $A \subseteq B$ and $B \subseteq A$.
-
-\paragraph{Existence ($\exists x\, P(x)$).}
-Explicitly define a candidate object and verify that it satisfies $P$.
-
-\paragraph{Structural Properties.}
-Statements such as ``$R$ is an equivalence relation'' or ``$f$ is a partial order''
-should be expanded into their component properties and used selectively as needed.
-
-\subsection{Stop Conditions}
-
-A proof is complete when:
-\begin{itemize}
-\item a universal claim has been shown for an arbitrary element;
-\item an existential claim has produced a valid witness;
-\item a set equality has established both inclusions;
-\item each direction of a biconditional has been proved.
-\end{itemize}
-
-Knowing when to stop is as important as knowing how to begin.
-
-\subsection{Remark on Practice}
-
-This procedure is intentionally explicit and mechanical.
-With practice, these steps become internalized and are applied subconsciously.
-Experienced mathematicians follow the same process, but omit intermediate steps
-once correctness is assured.
-
-Until fluency is achieved, it is preferable to write proofs that are slightly
-longer but logically complete rather than shorter proofs with implicit gaps.
+\input{proof-techniques/notes/architecture/index}
+\input{proof-techniques/notes/construction/index}
+\input{proof-techniques/notes/structures/index}
+\input{proof-techniques/notes/induction/index}
+\input{proof-techniques/notes/tactics/index}
+\input{proof-techniques/notes/reference/index}

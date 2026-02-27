@@ -1,0 +1,66 @@
+% =========================================================
+% Integral Domains
+% =========================================================
+\paragraph{Integral Domains}
+
+\begin{remark}[Motivation]
+In $\mathbb{Z}$, if $ab = 0$ then $a = 0$ or $b = 0$.
+This feels obvious but it is not an axiom of rings --- it fails in
+$\mathbb{Z}/6\mathbb{Z}$, where $[2] \cdot [3] = [0]$ even though
+neither $[2]$ nor $[3]$ is zero. Elements that behave like $[2]$
+and $[3]$ are called zero divisors, and rings without them are
+integral domains.
+
+This property matters because it is exactly what is needed for
+multiplicative cancellation --- and for the zero product argument
+that appears throughout linear algebra.
+\end{remark}
+
+\begin{definition}[Zero Divisor]
+Let $R$ be a commutative ring with unity.
+A nonzero element $a \in R$ is a \emph{zero divisor} if there exists
+a nonzero $b \in R$ such that $a \cdot b = 0$.
+\end{definition}
+
+\begin{definition}[Integral Domain]
+A commutative ring with unity $R$ is an \emph{integral domain} if
+$R$ has no zero divisors. Equivalently,
+\[
+a \cdot b = 0 \;\Longrightarrow\; a = 0 \;\text{ or }\; b = 0
+\quad \text{for all } a, b \in R.
+\]
+\end{definition}
+
+\begin{remark}[Connection to Linear Algebra]
+The zero product property is the theorem cited in the vector space proof
+that $av = \mathbf{0} \Rightarrow a = 0$ or $v = \mathbf{0}$.
+Specifically, the case $a \neq 0$ uses the fact that the scalar field
+$\mathbb{F}$ has no zero divisors --- which holds because every field
+is an integral domain (proved in the next section).
+
+The proof is not about vectors at all. It is about the scalar field.
+\end{remark}
+
+\begin{proposition}[Cancellation in Integral Domains]
+\label{prop:domain-cancellation}
+Let $R$ be an integral domain and $a, b, c \in R$ with $a \neq 0$.
+Then
+\[
+ab = ac \;\Longrightarrow\; b = c.
+\]
+\end{proposition}
+\input{intro-algebraic-structures/notes/rings/proofs/pf-domain-cancellation}
+
+\begin{example}[Integral Domains and Non-Examples]
+\begin{enumerate}[label=(\roman*)]
+  \item $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$:
+        all integral domains.
+  \item $\mathbb{Z}[x]$: integral domain.
+  \item $\mathbb{Z}/p\mathbb{Z}$ for prime $p$: integral domain
+        (in fact a field, as shown in the next section).
+  \item $\mathbb{Z}/6\mathbb{Z}$: \emph{not} an integral domain,
+        since $[2][3] = [0]$ with $[2],[3] \neq [0]$.
+  \item $M_2(\mathbb{R})$: \emph{not} an integral domain ---
+        not commutative, and admits zero divisors.
+\end{enumerate}
+\end{example}
