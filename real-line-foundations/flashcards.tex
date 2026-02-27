@@ -37,6 +37,8 @@
 % =========================================================
 \newlength{\FC@CardW}\setlength{\FC@CardW}{5in}
 \newlength{\FC@CardH}\setlength{\FC@CardH}{3in}
+\newlength{\FC@InnerW}\setlength{\FC@InnerW}{4.80in}
+\newlength{\FC@InnerH}\setlength{\FC@InnerH}{2.80in}
 
 % Horizontal placement: center the 5" card on 8.5" paper.
 \newlength{\FC@XShift}\setlength{\FC@XShift}{0pt}
@@ -74,21 +76,25 @@
     anchor=\FC@anchor,
     minimum width=\FC@CardW,
     minimum height=\FC@CardH,
-    inner sep=0.10in,
+    inner sep=0pt,
     rotate=#2
   ] at ([xshift=\FC@XShift,yshift=-#1]current page.north) {%
     \begin{minipage}[t][\FC@CardH]{\FC@CardW}%
       \setlength{\parskip}{0pt}%
       \setlength{\parindent}{0pt}%
-      \footnotesize
-      #3%
+      \hspace{0.10in}%
+      \begin{minipage}[t][\FC@InnerH]{\FC@InnerW}%
+        \vspace{0.10in}%
+        \footnotesize
+        #3%
+      \end{minipage}%
     \end{minipage}%
   };
 }
 
 % Front face: centered, large bold term label (A deck)
 \newcommand{\FC@FrontFace}[1]{%
-  \begin{minipage}[c][\FC@CardH][c]{\FC@CardW}%
+  \begin{minipage}[c][\FC@InnerH][c]{\FC@InnerW}%
     \centering
     {\Large\bfseries #1}%
   \end{minipage}%
