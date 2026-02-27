@@ -24,8 +24,596 @@ Prove Proposition~2.2.12.
 \vspace{0.75em}
 
 \noindent
-\textbf{Proof.}
+% =========================================================
+% Proof: RA-TAO-C02-S2.2-E03
+% Proposition 2.2.12 — Basic Properties of Order
+% =========================================================
+\clearpage
+\phantomsection
+\hypertarget{proof-RA-TAO-C02-S2.2-E03}{}
 
+\section*{Proof --- RA-TAO-C02-S2.2-E03}
+
+\noindent
+\hyperlink{ws-RA-TAO-C02-S2.2-E03}{\textbf{← Back to worksheet}}
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysisI}{Chapter~2, \S2.2, Exercise~2.2.3}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Prove Proposition~2.2.12: for all $a, b, c \in \mathbb{N}$,
+
+\begin{enumerate}
+  \item[(a)] $a \geq a$
+  \item[(b)] $a \geq b$ and $b \geq c$ $\Rightarrow$ $a \geq c$
+  \item[(c)] $a \geq b$ and $b \geq a$ $\Rightarrow$ $a = b$
+  \item[(d)] $a \geq b \iff a + c \geq b + c$
+  \item[(e)] $a < b \iff a\pp \leq b$
+  \item[(f)] $a < b \iff b = a + d$ for some positive $d$
+\end{enumerate}
+
+\noindent\textbf{Definition in use.}
+$n \geq m \iff \exists\, k \in \mathbb{N},\ n = m + k$.
+\quad
+$n > m \iff n \geq m$ and $n \neq m$.
+
+\vspace{1em}
+
+% =========================================================
+% Part (a)
+% =========================================================
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (a): Reflexivity.} Show $a \geq a$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a = a + 0
+&
+L2.2.2: $n + 0 = n$. Apply with $n = a$.
+\\[10pt]
+
+\tagAM
+&
+a \geq a
+&
+Witness $k = 0$ satisfies $a = a + 0$.
+By Def~2.2.11, $a \geq a$. \hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+
+% =========================================================
+% Part (b)
+% =========================================================
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (b): Transitivity.}
+Assume $a \geq b$ and $b \geq c$. Show $a \geq c$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a = b + m \text{ for some } m \in \mathbb{N}
+&
+Unpack $a \geq b$ using Def~2.2.11.
+\\[10pt]
+
+\tagDU
+&
+b = c + n \text{ for some } n \in \mathbb{N}
+&
+Unpack $b \geq c$ using Def~2.2.11.
+\\[10pt]
+
+\tagAM
+&
+a = (c + n) + m
+&
+Substitute $b = c + n$ into $a = b + m$.
+\\[10pt]
+
+\tagTA
+&
+a = c + (n + m)
+&
+P2.2.5 (associativity): $(c+n)+m = c+(n+m)$.
+\\[10pt]
+
+\tagAM
+&
+a \geq c
+&
+Witness $k = n + m \in \mathbb{N}$ satisfies $a = c + k$.
+By Def~2.2.11, $a \geq c$. \hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+
+% =========================================================
+% Part (c)
+% =========================================================
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (c): Anti-symmetry.}
+Assume $a \geq b$ and $b \geq a$. Show $a = b$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a = b + m \text{ for some } m \in \mathbb{N}
+&
+Unpack $a \geq b$ using Def~2.2.11.
+\\[10pt]
+
+\tagDU
+&
+b = a + n \text{ for some } n \in \mathbb{N}
+&
+Unpack $b \geq a$ using Def~2.2.11.
+\\[10pt]
+
+\tagAM
+&
+a = (a + n) + m
+&
+Substitute $b = a + n$ into $a = b + m$.
+\\[10pt]
+
+\tagTA
+&
+a = a + (n + m)
+&
+P2.2.5 (associativity).
+\\[10pt]
+
+\tagTA
+&
+a = a + 0
+&
+L2.2.2: $a + 0 = a$.
+\\[10pt]
+
+\tagTA
+&
+n + m = 0
+&
+P2.2.6 (cancellation): $a + (n+m) = a + 0 \Rightarrow n+m = 0$.
+\\[10pt]
+
+\tagTA
+&
+n = 0 \text{ and } m = 0
+&
+C2.2.9: $n + m = 0 \Rightarrow n = 0$ and $m = 0$.
+\\[10pt]
+
+\tagAM
+&
+a = b
+&
+Substitute $m = 0$: $a = b + 0 = b$ by L2.2.2.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+
+% =========================================================
+% Part (d)
+% =========================================================
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (d): Addition preserves order.}
+Show $a \geq b \iff a + c \geq b + c$.
+
+\medskip
+\noindent\textit{Forward} ($\Rightarrow$): Assume $a \geq b$. Show $a + c \geq b + c$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a = b + m \text{ for some } m \in \mathbb{N}
+&
+Unpack $a \geq b$.
+\\[10pt]
+
+\tagAM
+&
+a + c = (b + m) + c
+&
+Add $c$ to both sides.
+\\[10pt]
+
+\tagTA
+&
+(b + m) + c = b + (m + c)
+&
+P2.2.5 (associativity).
+\\[10pt]
+
+\tagTA
+&
+b + (m + c) = b + (c + m)
+&
+P2.2.4 (commutativity) applied to $m + c$.
+\\[10pt]
+
+\tagTA
+&
+b + (c + m) = (b + c) + m
+&
+P2.2.5 (associativity), regrouping.
+\\[10pt]
+
+\tagAM
+&
+a + c \geq b + c
+&
+Witness $k = m$ satisfies $a + c = (b+c) + m$.
+By Def~2.2.11. \hfill$\blacksquare_{\Rightarrow}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textit{Backward} ($\Leftarrow$): Assume $a + c \geq b + c$. Show $a \geq b$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a + c = (b + c) + m \text{ for some } m \in \mathbb{N}
+&
+Unpack $a + c \geq b + c$.
+\\[10pt]
+
+\tagTA
+&
+a + c = b + (c + m)
+&
+P2.2.5 (associativity).
+\\[10pt]
+
+\tagTA
+&
+a + c = b + (m + c)
+&
+P2.2.4 (commutativity) applied to $c + m$.
+\\[10pt]
+
+\tagTA
+&
+a + c = (b + m) + c
+&
+P2.2.5 (associativity), regrouping.
+\\[10pt]
+
+\tagTA
+&
+a = b + m
+&
+P2.2.6 (cancellation): cancel $c$ from both sides.
+\\[10pt]
+
+\tagAM
+&
+a \geq b
+&
+Witness $k = m$. By Def~2.2.11.
+\hfill$\blacksquare_{\Leftarrow}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+
+% =========================================================
+% Part (e)
+% =========================================================
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (e).} Show $a < b \iff a\pp \leq b$.
+
+\medskip
+\noindent\textit{Forward} ($\Rightarrow$): Assume $a < b$.
+Show $a\pp \leq b$, i.e., $\exists\, k \in \mathbb{N},\ b = a\pp + k$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+b = a + m \text{ for some } m \in \mathbb{N},\quad a \neq b
+&
+Unpack $a < b$ using Def~2.2.11.
+\\[10pt]
+
+\tagDU
+&
+m \neq 0
+&
+If $m = 0$ then $b = a + 0 = a$ by L2.2.2,
+contradicting $a \neq b$.
+\\[10pt]
+
+\tagTA
+&
+m \text{ is positive}
+&
+Def~2.2.7: $m \neq 0 \Rightarrow m$ positive.
+\\[10pt]
+
+\tagTA
+&
+\exists\, n \in \mathbb{N},\ n\pp = m
+&
+L2.2.10 (predecessor): $m$ positive
+$\Rightarrow$ exactly one predecessor exists.
+\\[10pt]
+
+\tagDU
+&
+b = a + n\pp
+&
+Substitute $m = n\pp$.
+\\[10pt]
+
+\tagTA
+&
+b = (a + n)\pp
+&
+L2.2.3: $a + (n\pp) = (a+n)\pp$.
+\\[10pt]
+
+\tagTA
+&
+b = a\pp + n
+&
+A2: $(a\pp) + n = (a + n)\pp$.
+Read right-to-left: $(a+n)\pp = a\pp + n$.
+\\[10pt]
+
+\tagAM
+&
+a\pp \leq b
+&
+Witness $k = n$ satisfies $b = a\pp + n$.
+By Def~2.2.11. \hfill$\blacksquare_{\Rightarrow}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textit{Backward} ($\Leftarrow$): Assume $a\pp \leq b$. Show $a < b$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+b = a\pp + k \text{ for some } k \in \mathbb{N}
+&
+Unpack $a\pp \leq b$ using Def~2.2.11.
+\\[10pt]
+
+\tagTA
+&
+b = (a + 1) + k
+&
+Corollary: $a\pp = a + 1$.
+\\[10pt]
+
+\tagTA
+&
+b = a + (1 + k)
+&
+P2.2.5 (associativity).
+\\[10pt]
+
+\tagAM
+&
+a \leq b
+&
+Witness $1 + k \in \mathbb{N}$ satisfies $b = a + (1+k)$.
+\\[10pt]
+
+\tagDU
+&
+1 + k = k\pp \neq 0
+&
+Corollary: $1 + k = k\pp$.
+P3: $k\pp \neq 0$ for all $k$.
+\\[10pt]
+
+\tagTA
+&
+a \neq b
+&
+If $a = b$ then $b = a + (k\pp)$ gives $k\pp = 0$
+by P2.2.6, contradicting P3.
+\\[10pt]
+
+\tagAM
+&
+a < b
+&
+$a \leq b$ and $a \neq b$. By Def~2.2.11.
+\hfill$\blacksquare_{\Leftarrow}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+
+% =========================================================
+% Part (f)
+% =========================================================
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (f).} Show $a < b \iff b = a + d$ for some positive $d$.
+
+\medskip
+\noindent\textit{Forward} ($\Rightarrow$): Assume $a < b$. Show the witness $d$ is positive.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+b = a + d \text{ for some } d \in \mathbb{N},\quad a \neq b
+&
+Unpack $a < b$ using Def~2.2.11.
+\\[10pt]
+
+\tagDU
+&
+d \neq 0
+&
+If $d = 0$: $b = a + 0 = a$ by L2.2.2,
+contradicting $a \neq b$.
+\\[10pt]
+
+\tagAM
+&
+d \text{ is positive}
+&
+Def~2.2.7: $d \neq 0 \Rightarrow d$ positive.
+\hfill$\blacksquare_{\Rightarrow}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textit{Backward} ($\Leftarrow$): Assume $b = a + d$ with $d$ positive. Show $a < b$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}}
+& \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a \leq b
+&
+Witness $d$ satisfies $b = a + d$. By Def~2.2.11.
+\\[10pt]
+
+\tagDU
+&
+a \neq b
+&
+If $a = b$: $a = a + d$, so $d = 0$ by P2.2.6,
+contradicting $d$ positive (Def~2.2.7).
+\\[10pt]
+
+\tagAM
+&
+a < b
+&
+$a \leq b$ and $a \neq b$. By Def~2.2.11.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+
+% =========================================================
+% Remarks
+% =========================================================
+\begin{remark}[Unpacking the definition is the whole job]
+Every part of this proof begins by unpacking $\geq$ or $<$
+into an existence claim plus (for strict order) a negation.
+The proof then works entirely with witnesses and named results.
+No new ideas are introduced --- only toolkit citations.
+\end{remark}
+
+\begin{remark}[Toolkit dependency map]
+The six parts draw on the toolkit in order of increasing depth:
+(a) uses only L2.2.2; (b) adds P2.2.5; (c) adds P2.2.6 and C2.2.9;
+(d) adds P2.2.4; (e) adds L2.2.10, L2.2.3, A2, P3;
+(f) adds only Def~2.2.7. Each part is essentially one toolkit
+citation away from closure once the witnesses are in hand.
+\end{remark}
+
+\begin{remark}[Part (e) is the hardest]
+Part (e) is the only part requiring multiple non-trivial steps
+in both directions. The forward direction needs L2.2.10 to
+extract a predecessor from the positive witness, then L2.2.3
+and A2 to rewrite the expression into the required form.
+The key move is reading A2 right-to-left:
+$(a+n)\pp = a\pp + n$.
+\end{remark}
+
+\vspace{1em}
+\noindent
+\hyperlink{ws-RA-TAO-C02-S2.2-E03}{\textbf{← Back to worksheet}}
 \vspace{1em}
 \noindent
 \hyperlink{ws-RA-TAO-C02-S2.2-E03}{\textbf{← Back to worksheet}}
