@@ -78,3 +78,123 @@ When stuck choosing $P(n)$:
     is slightly weaker than $P(n+1)$? If yes, strengthen $P(n)$.
 \end{enumerate}
 \end{remark}
+
+% =========================================================
+% Choosing P(n): Axiomatic and Recursive Settings
+% =========================================================
+
+\paragraph{Choosing $P(n)$ in Axiomatic and Recursive Settings.}
+\label{sec:choosing-pn-axiomatic}
+
+The examples above assume $P(n)$ is a formula handed to you or
+readable from a sequence. In axiomatic settings (e.g., Tao
+Chapter~2), the goal is stated as a universal claim about a
+recursively defined operation, and $P(n)$ must be
+\emph{constructed} from the logical form of the goal.
+Two rules govern this construction.
+
+\begin{remark}[Rule 1: $P(n)$ mirrors the logical form of the goal]
+Every universal claim has the form $\forall n,\ \Phi(n)$.
+Strip the universal quantifier. What remains is $P(n)$.
+
+\medskip
+\noindent The shape of $P(n)$ is determined by $\Phi$:
+
+\medskip
+\noindent
+\begin{tabular}{ll}
+\toprule
+\textbf{Goal form} & \textbf{Shape of $P(n)$} \\
+\midrule
+$\forall n,\ f(n) = g(n)$ & Equality: $P(n) :\equiv f(n) = g(n)$ \\[4pt]
+$\forall n,\ A(n) \Rightarrow B(n)$ & Conditional: $P(n) :\equiv A(n) \Rightarrow B(n)$ \\[4pt]
+$\forall n,\ A(n) \Leftrightarrow B(n)$ & Biconditional: $P(n) :\equiv A(n) \Leftrightarrow B(n)$ \\[4pt]
+$\forall n,\ \varphi(n)$ & Simple property: $P(n) :\equiv \varphi(n)$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent Do not add or remove hypotheses. Do not simplify.
+Transcribe the logical form exactly.
+\end{remark}
+
+\begin{remark}[Rule 2: Induct on the recursive variable]
+When the goal involves a recursively defined operation,
+identify which variable the definition recurses on.
+Induct on that variable and hold all others fixed.
+
+\medskip
+\noindent To find the recursive variable: locate the definition
+of the operation and identify which variable is reduced in the
+recursive clause.
+
+\medskip
+\noindent
+\begin{tabular}{lll}
+\toprule
+\textbf{Definition} & \textbf{Recursive clause} & \textbf{Induct on} \\
+\midrule
+Addition (Tao A1--A2) & $(n\pp) + m := (n + m)\pp$ & $n$ \\[4pt]
+Multiplication (Tao M1--M2) & $(n\pp) \times m := (n \times m) + m$ & $n$ \\[4pt]
+Exponentiation (Tao) & $m^{n\pp} := m^n \times m$ & $n$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent The non-recursive variable is held fixed throughout
+the induction and treated as an arbitrary element of $\mathbb{N}$.
+\end{remark}
+
+\begin{example}[Constructing $P(n)$ for a conditional goal]
+\textbf{Goal.} Prove Lemma~2.3.3: for all $n, m \in \mathbb{N}$,
+if $n > 0$ and $m > 0$ then $nm > 0$.
+
+\medskip
+\noindent\textbf{Step 1 — Read the logical form.}
+The goal is a universal conditional:
+$\forall n,\ (n > 0 \wedge m > 0) \Rightarrow nm > 0$.
+Strip the quantifier:
+\[
+P(n) :\equiv \text{if } n > 0 \text{ and } m > 0
+\text{ then } n \times m > 0.
+\]
+
+\noindent\textbf{Step 2 — Identify the recursive variable.}
+The operation is multiplication. M2 recurses on $n$:
+$(n\pp) \times m := (n \times m) + m$.
+Induct on $n$, hold $m$ fixed.
+
+\medskip
+\noindent\textbf{Step 3 — Check the base case form.}
+$P(0)$ states: if $0 > 0$ and $m > 0$ then $0 \times m > 0$.
+The hypothesis $0 > 0$ is false, so $P(0)$ is vacuously true.
+A conditional $P(n)$ will often produce a vacuous base case
+when the hypothesis excludes $n = 0$.
+\end{example}
+
+\begin{remark}[Vacuous base cases are a signal, not a problem]
+When $P(n)$ is a conditional and its hypothesis fails at the base
+value, the base case is vacuously true by definition.
+This is expected and requires no further argument.
+It signals that the claim only has content for values of $n$
+where the hypothesis holds --- positivity, nonzero-ness, a bound,
+or any other precondition that excludes the base case.
+The induction then establishes the claim for all $n$ where the
+hypothesis is satisfied.
+\end{remark}
+
+
+\begin{remark}[Diagnostic questions for axiomatic settings]
+When constructing $P(n)$ in an axiomatic proof:
+\begin{enumerate}
+  \item What is the logical form of the goal?
+    Write it out with explicit quantifiers before choosing $P(n)$.
+  \item Which operation is involved?
+    Find its recursive definition and identify the recursive variable.
+  \item Does the base case require $n = 0$ to satisfy a hypothesis?
+    If the hypothesis fails at $n = 0$, expect a vacuous base case.
+  \item After writing $P(n\pp)$, can I apply the recursive definition
+    to expose $P(n)$ or an earlier lemma?
+    If not, the wrong variable may have been chosen.
+\end{enumerate}
+\end{remark}

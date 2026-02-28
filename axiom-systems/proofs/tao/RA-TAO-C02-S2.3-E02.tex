@@ -12,7 +12,7 @@
 
 \noindent
 \textbf{Source.}
-\srccite{TaoAnalysisI}{Chapter~2, \S2.3, Exercise~2.3.2}.
+\srccite{TaoAnalysis1}{Chapter~2, \S2.3, Exercise~2.3.2}.
 
 \vspace{0.75em}
 
@@ -30,8 +30,194 @@ both positive, then $nm$ is also positive.
 \vspace{0.75em}
 
 \noindent
-\textbf{Proof.}
+% =========================================================
+% Proof: Lemma 2.3.3 — No Zero Divisors
+% =========================================================
 
+\begin{lemma}[No zero divisors]
+\label{lem:no-zero-divisors}
+Let $n, m$ be natural numbers. Then $n \times m = 0$ if and only if
+at least one of $n, m$ is equal to zero. In particular, if $n$ and $m$
+are both positive, then $nm$ is also positive.
+\end{lemma}
+
+\begin{proof}
+We prove both directions of the biconditional separately.
+Per Tao's hint, we prove the harder direction $(\Rightarrow)$ first,
+via its contrapositive.
+
+% ---------------------------------------------------------
+\medskip
+\noindent\textbf{Part 1: $(\Rightarrow)$ direction (via contrapositive).}
+
+We prove by induction on $n$ the statement:
+\[
+P(n) :\equiv \text{if } n > 0 \text{ and } m > 0
+\text{ then } n \times m > 0.
+\]
+
+\medskip
+\noindent\textbf{Base case} ($n = 0$).
+$P(0)$ states: if $0 > 0$ and $m > 0$ then $0 \times m > 0$.
+The hypothesis $0 > 0$ is false, so $P(0)$ is vacuously true.
+
+\medskip
+\noindent\textbf{Inductive step.}
+Assume $P(n)$ holds. We show $P(n\pp)$.
+
+$P(n\pp)$ states: if $n\pp > 0$ and $m > 0$ then $(n\pp) \times m > 0$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} &
+\multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} &
+\textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagTA
+&
+n\pp > 0
+&
+By P3: $n\pp \neq 0$ for all $n \in \mathbb{N}$, and in
+$\mathbb{N}$ nonzero means positive. The first hypothesis
+of $P(n\pp)$ is automatically satisfied; the live hypothesis
+is $m > 0$.
+\\[10pt]
+
+\tagDU
+&
+(n\pp) \times m = (n \times m) + m
+&
+Definition of multiplication M2:
+$(n\pp) \times m := (n \times m) + m$.
+\\[10pt]
+
+\tagIH
+&
+n \times m \geq 0
+&
+$n \times m \in \mathbb{N}$, so $n \times m \geq 0$.
+(The inductive hypothesis $P(n)$ gives $nm > 0$ when
+$n > 0$; when $n = 0$, $nm = 0$. Either way $nm \geq 0$.)
+\\[10pt]
+
+\tagTA
+&
+(n \times m) + m > 0
+&
+Proposition~2.2.8: if $b > 0$ and $a \in \mathbb{N}$
+then $a + b > 0$. Apply with $a := nm \geq 0$
+and $b := m > 0$.
+\\[10pt]
+
+\tagAM
+&
+(n\pp) \times m > 0
+&
+Substituting M2. \hfill$\blacksquare_{P(n\pp)}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent
+By induction (P5), $P(n)$ holds for all $n \in \mathbb{N}$.
+Thus if $n > 0$ and $m > 0$ then $nm > 0$, i.e., $nm \neq 0$.
+Taking the contrapositive: if $nm = 0$ then $n = 0$ or $m = 0$.
+\hfill$\blacksquare_{(\Rightarrow)}$
+
+% ---------------------------------------------------------
+\medskip
+\noindent\textbf{Part 2: $(\Leftarrow)$ direction.}
+
+We prove: if $n = 0$ or $m = 0$, then $nm = 0$.
+We split into two cases.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} &
+\multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} &
+\textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+\textbf{Case 1}: \text{assume } n = 0
+&
+First disjunct of the hypothesis.
+\\[10pt]
+
+\tagDU
+&
+0 \times m = 0
+&
+Definition of multiplication M1: $0 \times m := 0$.
+\\[10pt]
+
+\tagDU
+&
+\textbf{Case 2}: \text{assume } m = 0
+&
+Second disjunct of the hypothesis.
+\\[10pt]
+
+\tagTA
+&
+n \times 0 = 0 \times n = 0
+&
+Commutativity (Lemma~2.3.2), then M1.
+\hfill$\blacksquare_{(\Leftarrow)}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent
+Both directions established. Therefore
+$nm = 0 \iff n = 0 \text{ or } m = 0$.
+
+\medskip
+\noindent
+The ``in particular'' clause is immediate: if $n > 0$ and $m > 0$
+then neither is zero, so by $(\Rightarrow)$ we have $nm \neq 0$,
+i.e., $nm > 0$.
+
+\end{proof}
+
+\begin{remark}[Contrapositive as the proof engine]
+The direction $nm = 0 \Rightarrow n = 0$ or $m = 0$ is proved via
+its contrapositive: if $n > 0$ and $m > 0$ then $nm > 0$.
+This is the natural choice because the negation of the conclusion
+is more tractable than the hypothesis $nm = 0$ alone.
+\end{remark}
+
+\begin{remark}[Vacuous base case]
+The base case $P(0)$ is vacuously true because the hypothesis
+$n > 0$ fails at $n = 0$. This is the same pattern as Lemma~2.2.10.
+A vacuous base case is logically valid and requires no further argument;
+it appears whenever the claim carries a positivity precondition.
+\end{remark}
+
+\begin{remark}[Proposition 2.2.8 closes the inductive step]
+The key tool in the inductive step is not the inductive hypothesis
+directly but Proposition~2.2.8: any natural number plus a positive
+natural number is positive. This fires because $m > 0$ is in scope
+throughout the induction. The inductive hypothesis contributes
+$nm \geq 0$, which is all that is needed.
+\end{remark}
+
+\begin{remark}[The ``in particular'' clause is free]
+The positivity statement is not proved separately --- it is exactly
+what Part~1 establishes. Tao attaches it as a named consequence
+to make it available by citation in later results, notably
+Proposition~2.3.6 (multiplication preserves order).
+\end{remark}
 \vspace{1em}
 \noindent
 \hyperlink{ws-RA-TAO-C02-S2.3-E02}{\textbf{← Back to worksheet}}
