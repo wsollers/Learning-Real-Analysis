@@ -1,181 +1,211 @@
 % =========================================================
 % Systems of Sets
-% File: set-algebras/notes/notes-set-algebras.tex
 % =========================================================
 
-\subsubsection{Families of Sets and Closure Operations}
+\subsection{Systems of Sets}
 
-Let $X$ be a set.
-A \emph{family of sets on $X$} is a collection
-\[
-\mathcal{F} \subseteq 2^X.
-\]
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Systems of Sets --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Structure} & \textbf{Closure properties} & \textbf{Detail} \\
+\midrule
+Family of sets   & Any $\mathcal{F} \subseteq 2^X$                                          & \hyperref[def:family-sets]{↓ Def} \\
+Closed under $*$ & Inputs in $\mathcal{F}$ implies output in $\mathcal{F}$                   & \hyperref[def:closure-op]{↓ Def} \\
+Ring of sets     & Closed under $\cup$ and $\setminus$                                      & \hyperref[def:ring-sets]{↓ Def} \\
+Algebra of sets  & Contains $X$; closed under $(\cdot)^c$ and $\cup$                        & \hyperref[def:algebra-sets]{↓ Def} \\
+$\sigma$-ring    & Ring closed under countable $\cup$                                        & \hyperref[def:sigma-ring]{↓ Def} \\
+$\sigma$-algebra & Algebra closed under countable $\cup$                                     & \hyperref[def:sigma-algebra]{↓ Def} \\
+\midrule
+\multicolumn{3}{l}{\textit{Key results:}} \\
+\midrule
+Algebra = ring + $X$ & Equivalent characterisation                                          & \hyperref[prop:algebra-ring]{↓ Prop} \\
+$\sigma$-algebra closure & Also closed under countable $\cap$, $\setminus$, finite Boolean ops & \hyperref[prop:sigma-closure]{↓ Prop} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
 
-The objects of study are not elements of $X$,
-but collections of subsets and their stability
-under set-theoretic operations.
+\vspace{1em}
 
-\vspace{0.5em}
+% ---------------------------------------------------------
+% Families and closure
+% ---------------------------------------------------------
 
-\begin{definition}[Closure Under an Operation]
-Let $\mathcal{F} \subseteq 2^X$ and let $\ast$
-be an operation on subsets of $X$.
-We say that $\mathcal{F}$ is \emph{closed under $\ast$}
-if whenever the inputs belong to $\mathcal{F}$,
-the result also belongs to $\mathcal{F}$.
-\end{definition}
+Let $X$ be a set. A \emph{family of sets on $X$} is a collection
+$\mathcal{F} \subseteq 2^X$. The objects of study are not elements of $X$
+but collections of subsets, classified by their stability under
+set-theoretic operations.
 
-\vspace{0.5em}
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Family of Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:family-sets}
+Let $X$ be a set. A \emph{family of sets on $X$} is any collection
+$\mathcal{F} \subseteq 2^X$.
+\end{tcolorbox}
 
-Typical operations include:
-\[
-\cup, \quad \cap, \quad (\cdot)^c, \quad \setminus,
-\quad \triangle.
-\]
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Closure Under an Operation)}},
+  fonttitle=\small\bfseries]
+\label{def:closure-op}
+Let $\mathcal{F} \subseteq 2^X$ and let $*$ be an operation on subsets of
+$X$. We say $\mathcal{F}$ is \emph{closed under $*$} if whenever the inputs
+to $*$ belong to $\mathcal{F}$, the output also belongs to $\mathcal{F}$.
+\end{tcolorbox}
 
-\vspace{0.5em}
-
-\begin{remark}
-Different combinations of closure properties
-produce distinct algebraic structures.
-The strength of a system of sets is determined
-by which operations it is stable under.
+\begin{remark}[Typical operations]
+The operations of interest are $\cup$, $\cap$, $(\cdot)^c$, $\setminus$,
+and $\triangle$ (symmetric difference). Different combinations of closure
+under these operations produce the distinct algebraic structures defined
+below.
 \end{remark}
 
-% =========================================================
-% Finite Closure Structures
-% =========================================================
+% ---------------------------------------------------------
+% Finite closure structures
+% ---------------------------------------------------------
 
-\subsubsection{Finite Closure Structures}
-
-\begin{definition}[Ring of Sets]
-A nonempty collection $\mathcal{R} \subseteq 2^X$
-is a \emph{ring of sets} if:
-
-\begin{enumerate}
-  \item $A,B \in \mathcal{R} \Rightarrow A \cup B \in \mathcal{R}$,
-  \item $A,B \in \mathcal{R} \Rightarrow A \setminus B \in \mathcal{R}$.
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Ring of Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:ring-sets}
+A nonempty collection $\mathcal{R} \subseteq 2^X$ is a \emph{ring of sets}
+if it is closed under finite union and set difference:
+\begin{enumerate}[label=(\roman*)]
+  \item $A, B \in \mathcal{R} \;\Rightarrow\; A \cup B \in \mathcal{R}$,
+  \item $A, B \in \mathcal{R} \;\Rightarrow\; A \setminus B \in \mathcal{R}$.
 \end{enumerate}
-\end{definition}
+\end{tcolorbox}
 
-\vspace{0.5em}
+\begin{remark}[Intersection and symmetric difference]
+A ring of sets is automatically closed under $\cap$ and $\triangle$,
+since $A \cap B = A \setminus (A \setminus B)$ and
+$A \triangle B = (A \setminus B) \cup (B \setminus A)$.
+Under symmetric difference and intersection, a ring of sets is an abelian
+group under $\triangle$ and a commutative monoid under $\cap$, making it
+a Boolean ring in the algebraic sense.
+\end{remark}
 
-\begin{definition}[Algebra of Sets (Field of Sets)]
-A collection $\mathcal{A} \subseteq 2^X$
-is an \emph{algebra of sets} if:
-
-\begin{enumerate}
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Algebra of Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:algebra-sets}
+A collection $\mathcal{A} \subseteq 2^X$ is an \emph{algebra of sets}
+(also called a \emph{field of sets}) if:
+\begin{enumerate}[label=(\roman*)]
   \item $X \in \mathcal{A}$,
-  \item $A \in \mathcal{A} \Rightarrow A^c \in \mathcal{A}$,
-  \item $A,B \in \mathcal{A} \Rightarrow A \cup B \in \mathcal{A}$.
+  \item $A \in \mathcal{A} \;\Rightarrow\; A^c \in \mathcal{A}$,
+  \item $A, B \in \mathcal{A} \;\Rightarrow\; A \cup B \in \mathcal{A}$.
 \end{enumerate}
-\end{definition}
+\end{tcolorbox}
 
-\vspace{0.5em}
+\begin{proposition}[Algebra = Ring + $X$]\label{prop:algebra-ring}
+An algebra of sets is precisely a ring of sets that contains $X$.
+\end{proposition}
 
-\begin{theorem}[Equivalent Characterization]
-An algebra of sets is precisely
-a ring of sets that contains $X$.
-\end{theorem}
+\begin{proof}
+If $\mathcal{A}$ is an algebra, then $X \in \mathcal{A}$ by (i), and
+$A \setminus B = A \cap B^c \in \mathcal{A}$ since $B^c \in \mathcal{A}$
+by (ii) and $A \cap B^c = (A^c \cup B)^c \in \mathcal{A}$ by closure under
+complements and union. So $\mathcal{A}$ is a ring containing $X$.
 
-\vspace{0.5em}
+Conversely, if $\mathcal{R}$ is a ring with $X \in \mathcal{R}$, then for
+any $A \in \mathcal{R}$ we have $A^c = X \setminus A \in \mathcal{R}$ by
+the ring's closure under $\setminus$. So $\mathcal{R}$ is an algebra.
+\end{proof}
 
-\begin{remark}
-Finite closure yields stability under all
-finite Boolean combinations:
-finite unions, finite intersections,
-differences, complements,
-and symmetric differences.
+\begin{remark}[Finite Boolean stability]
+An algebra of sets is closed under all finite Boolean combinations:
+finite unions, finite intersections, complements, differences, and
+symmetric differences. The qualifier ``finite'' is essential; the next
+step is to add closure under countably infinite operations.
 \end{remark}
 
-\vspace{0.5em}
+% ---------------------------------------------------------
+% Countable closure structures
+% ---------------------------------------------------------
 
-\begin{remark}
-With symmetric difference
-\[
-A \triangle B := (A \setminus B) \cup (B \setminus A),
-\]
-a ring of sets forms an abelian group
-under the operation $\triangle$.
-This connects set algebras with Boolean rings.
-\end{remark}
-
-% =========================================================
-% Countable Closure Structures
-% =========================================================
-
-\subsubsection{Countable Closure Structures}
-
-\begin{definition}[$\sigma$-Ring]
-A ring of sets $\mathcal{R}$ is a \emph{$\sigma$-ring}
-if it is closed under countable unions:
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\sigma$-Ring)}},
+  fonttitle=\small\bfseries]
+\label{def:sigma-ring}
+A ring of sets $\mathcal{R}$ is a \emph{$\sigma$-ring} if it is also
+closed under countable unions:
 \[
 A_1, A_2, \dots \in \mathcal{R}
-\Rightarrow
+\;\Rightarrow\;
 \bigcup_{n=1}^{\infty} A_n \in \mathcal{R}.
 \]
-\end{definition}
+\end{tcolorbox}
 
-\vspace{0.5em}
-
-\begin{definition}[$\sigma$-Algebra]
-A collection $\mathcal{F} \subseteq 2^X$
-is a \emph{$\sigma$-algebra} if:
-
-\begin{enumerate}
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\sigma$-Algebra)}},
+  fonttitle=\small\bfseries]
+\label{def:sigma-algebra}
+A collection $\mathcal{F} \subseteq 2^X$ is a \emph{$\sigma$-algebra} if:
+\begin{enumerate}[label=(\roman*)]
   \item $X \in \mathcal{F}$,
-  \item $A \in \mathcal{F} \Rightarrow A^c \in \mathcal{F}$,
-  \item $A_1, A_2, \dots \in \mathcal{F}
-        \Rightarrow
-        \bigcup_{n=1}^{\infty} A_n \in \mathcal{F}$.
+  \item $A \in \mathcal{F} \;\Rightarrow\; A^c \in \mathcal{F}$,
+  \item $A_1, A_2, \dots \in \mathcal{F} \;\Rightarrow\;
+        \displaystyle\bigcup_{n=1}^{\infty} A_n \in \mathcal{F}$.
 \end{enumerate}
-\end{definition}
+\end{tcolorbox}
 
-\vspace{0.5em}
+\begin{proposition}[Closure consequences of a $\sigma$-algebra]\label{prop:sigma-closure}
+Every $\sigma$-algebra $\mathcal{F}$ is also closed under countable
+intersections, set differences, and all finite Boolean combinations.
+\end{proposition}
 
-\begin{theorem}[Closure Consequences]
-A $\sigma$-algebra is closed under:
-\begin{enumerate}
-  \item Countable intersections,
-  \item Differences,
-  \item Finite Boolean combinations.
-\end{enumerate}
-\end{theorem}
+\begin{proof}
+Countable intersections: $\bigcap_{n=1}^\infty A_n
+= \left(\bigcup_{n=1}^\infty A_n^c\right)^c \in \mathcal{F}$
+by closure under complements and countable unions.
+Set difference: $A \setminus B = A \cap B^c \in \mathcal{F}$
+by closure under complements and (finite) intersection.
+Finite Boolean combinations follow from the algebra property, which is
+implied by the $\sigma$-algebra axioms (as $\sigma$-algebra implies algebra).
+\end{proof}
 
-\vspace{0.5em}
-
-\begin{remark}
-The transition from finite closure to countable closure
-marks the passage from purely algebraic stability
-to compatibility with limit processes.
+\begin{remark}[Finite vs.\ countable closure]
+The passage from an algebra to a $\sigma$-algebra is precisely the step
+from finite to countable closure. This is what makes $\sigma$-algebras
+compatible with limit processes: if measurable sets are approximated by
+sequences of other measurable sets, the limit set remains measurable.
 \end{remark}
 
-% =========================================================
-% Structural Hierarchy
-% =========================================================
-
-\subsubsection{Hierarchy of Closure Regimes}
+% ---------------------------------------------------------
+% Hierarchy
+% ---------------------------------------------------------
 
 \begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-Structure & Closed Under Complements & Finite Unions & Countable Unions \\
-\hline
-Ring & No & Yes & No \\
-Algebra & Yes & Yes & No \\
-$\sigma$-Algebra & Yes & Yes & Yes \\
-\hline
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Structure} & \textbf{Contains $X$} & \textbf{Closed under $(\cdot)^c$} & \textbf{Closed under $\bigcup$} \\
+\midrule
+Ring of sets   & No  & No  & Finite only \\
+Algebra        & Yes & Yes & Finite only \\
+$\sigma$-Ring  & No  & No  & Countable \\
+$\sigma$-Algebra & Yes & Yes & Countable \\
+\bottomrule
 \end{tabular}
 \end{center}
 
-\vspace{0.5em}
-
-\begin{remark}[Structural Perspective]
-Systems of sets are classified by the strength
-of their closure properties.
-
-Finite closure produces algebraic systems.
-Countable closure produces $\sigma$-systems.
-Further extensions (e.g.\ arbitrary unions)
-lead to topological structures.
+\begin{remark}[Reading the hierarchy]
+Each row is strictly stronger than the one above it: every algebra is a
+ring, and every $\sigma$-algebra is both an algebra and a $\sigma$-ring.
+The top of the hierarchy, the $\sigma$-algebra, is the natural domain for
+measure theory because it combines the Boolean stability of an algebra with
+the limit-compatibility of countable closure.
 \end{remark}
