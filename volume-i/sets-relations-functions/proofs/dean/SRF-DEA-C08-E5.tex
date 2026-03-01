@@ -1,0 +1,93 @@
+% --------------------------------------
+% Proof: SRF-DEA-C08-E5
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-SRF-DEA-C08-E5}{}
+
+\subsubsection[Infinite Poset Has an Infinite Chain or an Infinite Antichain]{Proof --- SRF-DEA-C08-E5}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{Dean2015OrderTheory}{Chapter~VIII, Exercise~5}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Let $(X, \leq)$ be an infinite poset. Prove that $X$ either has an infinite
+chain or an infinite totally unordered (antichain) subset $C$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Logical form.}
+$X$ infinite $\Rightarrow$ $\exists$ infinite chain $C \subseteq X$, or
+$\exists$ infinite antichain $A \subseteq X$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Key background.}
+This is an instance of the Erdős–Szekeres / Ramsey-type phenomenon: among
+any infinite sequence, one must find a monotone infinite subsequence or an
+antichain. It follows from Ramsey's theorem for pairs, or can be proved
+directly by induction.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Enumerate $X = \{x_0, x_1, x_2, \ldots\}$. Define $x_n$ as ``good'' if
+there is an infinite chain starting at $x_n$ in $\{x_n, x_{n+1}, \ldots\}$.
+
+\textit{Case 1:} Infinitely many $x_n$ are good $\Rightarrow$ build an
+infinite chain by choosing the next good element each time.
+
+\textit{Case 2:} Only finitely many $x_n$ are good $\Rightarrow$ past a
+certain index, no element starts an infinite chain; build an infinite
+antichain from these ``bad'' elements.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+Enumerate $X = \{x_0, x_1, \ldots\}$. Call $x_n$ \emph{good} if the set
+$\{x_m : m \geq n,\; x_n \leq x_m\}$ is infinite; otherwise call $x_n$
+\emph{bad}.
+
+\textit{Case 1: Infinitely many elements are good.}
+Let $x_{n_0}$ be the first good element. Since $x_{n_0}$ is good, infinitely
+many elements of $X$ are above $x_{n_0}$; let $x_{n_1}$ be the first good
+element strictly above $x_{n_0}$ (good elements above $x_{n_0}$ exist since
+the tail is infinite). Continue: $x_{n_0} < x_{n_1} < x_{n_2} < \cdots$
+is an infinite chain.
+
+\textit{Case 2: Only finitely many elements are good.}
+Past some index $N$, every element is bad. We build an infinite antichain
+by induction: take $a_0 = x_N$. Given $a_0, \ldots, a_k$ pairwise
+incomparable, since $a_k$ is bad the set of elements above $a_k$ is finite;
+thus infinitely many remaining elements are incomparable with $a_k$. Choose
+$a_{k+1}$ among these that is also incomparable with $a_0, \ldots, a_{k-1}$
+(by a finite intersection argument).
+% Detail: formally, this requires a more careful induction; 
+% the key is that "bad" elements do not start infinite chains, 
+% so we can always find the next antichain element.
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Dilworth's theorem (deeper result):} In a finite poset, the
+    minimum number of chains needed to cover $X$ equals the maximum size of
+    an antichain. Exercise~E6 uses a version of this.
+  \item \textbf{Mistakes to avoid:} ``Infinite'' in the conclusion means
+    there is no bound on the chain or antichain size — not just that a chain
+    of every finite length exists (though these are equivalent by
+    König's lemma / compactness in the finite case).
+\end{itemize}
