@@ -389,3 +389,136 @@ Not every remark applies to every result. Use what is warranted:
 | Linear Algebra | ✓ | ✓ | Complete |
 | Abstract Algebra | ✓ | ✓ | Complete |
 | Algebraic Geometry | ✓ | ✓ | Complete |
+
+
+## 6. Proof Architecture
+
+### 6.1 Directory Structure
+
+Each chapter's `proofs/` folder is reorganised into three subdirectories:
+```
+proofs/
+  notes/
+    index.tex       ← Orchestrator: inputs all notes proofs in dependency order
+    <ID>.tex        ← One proof per file (foundational or sketch format)
+  exercises/
+    index.tex       ← Orchestrator: inputs exercise proofs
+    CANDIDATES.md   ← Log of propositions/corollaries available as future exercises
+    <ID>.tex        ← One exercise proof per file
+  scratch/
+    (never compiled into main.tex — working drafts only)
+```
+
+`proofs/scratch/` is never `\input`'d anywhere. It is a working area for
+in-session proof attempts and is excluded from compilation.
+
+---
+
+### 6.2 Proof Classification
+
+**Notes proofs** (`proofs/notes/`) are canonical reference proofs tied to
+theorems and lemmas in the chapter notes. A result earns a notes proof entry
+if any of the following hold:
+
+- The proof introduces a technique that recurs in analysis (induction
+  structure, epsilon arguments, equivalence class manipulation, diagonal
+  arguments)
+- The result is load-bearing for a subsequent construction
+- The proof structure is non-obvious and worth studying again
+- The proof is a canonical example of a general pattern
+
+Propositions and corollaries whose proofs follow immediately from preceding
+results do **not** get a notes proof entry. They are logged in
+`proofs/exercises/CANDIDATES.md` as future exercise material.
+
+**Exercise proofs** (`proofs/exercises/`) are working practice. They are
+disposable — they may be added, revised, or deleted without affecting the
+notes proof library.
+
+---
+
+### 6.3 Two Proof Formats
+
+#### Deep Study Format (3-column)
+
+Used for proofs where the strategy is non-obvious, the technique is
+important, or the result is foundational enough to warrant repeated study.
+Examples: Bolzano-Weierstrass, Archimedean property, construction of $\mathbb{R}$,
+supremum/infimum existence, algebraic properties of number system constructions.
+```latex
+% Deep study proof — 3-column layout
+% Column 1: Step number and claim
+% Column 2: Formal justification
+% Column 3: Annotation / strategic remark
+\begin{proof}
+\begin{longtable}{p{0.28\textwidth} p{0.35\textwidth} p{0.28\textwidth}}
+\toprule
+\textbf{Step / Claim} & \textbf{Justification} & \textbf{Annotation} \\
+\midrule
+[Claim of step 1] & [Rule, definition, or prior result cited] & [Why this move; what it sets up] \\
+\addlinespace
+[Claim of step 2] & [Justification] & [Annotation] \\
+\bottomrule
+\end{longtable}
+\end{proof}
+```
+
+#### Sketch Format (compact)
+
+Used for proofs worth retaining as reference but not requiring deep unpacking.
+A single tcolorbox containing the statement, a two-to-three sentence proof
+sketch naming the key move, and any dependencies worth noting.
+```latex
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Proof Sketch — [Result name and source]}},
+  fonttitle=\small\bfseries]
+\textbf{Statement.} [Full statement of the result.]
+
+\textbf{Key move.} [One to three sentences naming the central technique
+and why it works. No step-by-step detail.]
+
+\textbf{Depends on.} [List any definitions or prior results this proof
+requires, with labels if available.]
+\end{tcolorbox}
+```
+
+---
+
+### 6.4 Navigation Links
+
+Every theorem or lemma in the chapter notes that has a `proofs/notes/` entry
+**must** carry a forward nav link to its proof. Every proof file **must**
+carry a return nav link to its theorem in the notes.
+
+**In the notes file** (after the theorem/lemma environment):
+```latex
+\begin{remark}[Proof]
+See \hyperref[prf:add-comm]{Proof → Commutativity of Addition}.
+\end{remark}
+```
+
+**At the top of the proof file:**
+```latex
+\begin{remark}[Return]
+\hyperref[prop:add-comm]{← Back to Proposition 2.2.4 in Notes}
+\end{remark}
+```
+
+Labels follow the pattern:
+- Notes label: `\label{thm:...}` / `\label{lem:...}` / `\label{prop:...}`
+- Proof label: `\label{prf:...}` using the same root identifier
+
+---
+
+### 6.5 Exercise Candidates Log
+
+`proofs/exercises/CANDIDATES.md` is a plain Markdown file maintained
+alongside the exercise proofs. Each entry records:
+```
+| Result | Location in notes | What the proof requires |
+|--------|-------------------|------------------------|
+| Prop 2.2.5 — Addition is associative | integers/notes/addition.tex | Induction on c; uses L2.2.2 and L2.2.3 |
+```
+
+This log is the source list for future exercise generation sessions.
