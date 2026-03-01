@@ -1,0 +1,90 @@
+% =========================================================
+% Common Errors and Fallacies
+% =========================================================
+
+\subsection{Reference: Common Errors and Fallacies}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Errors and Fallacies — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Error category} & \textbf{Where it arises} & \textbf{Detail} \\
+\midrule
+Quantifier fallacies & Negation, scope, and swap errors & \hyperref[tab:qfallacies]{↓ Table} \\
+Common incorrect negations & Forgetting to flip quantifiers & \hyperref[tab:neg-errors]{↓ Table} \\
+Inference rule errors & Misuse of UI, UG, EI, EG & \hyperref[rem:inf-errors]{↓ Rem} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{center}\label{tab:qfallacies}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{5.5cm}|p{7.5cm}|}
+\hline
+\textbf{Fallacy} & \textbf{Diagnostic Question} \\ \hline
+Failure to flip quantifier under negation & Was $\forall$ changed to $\exists$ (or vice versa) when negating? \\ \hline
+Negating predicate only & Was only the predicate negated while the quantifier was left unchanged? \\ \hline
+Partial quantifier negation & When negating nested quantifiers, were \emph{all} quantifiers flipped? \\ \hline
+Quantifier order confusion & Was the order of quantifiers changed without justification? \\ \hline
+Illicit quantifier swap & Were $\forall$ and $\exists$ commuted when they are not of the same type? \\ \hline
+Variable capture & Did substitution introduce a variable that became bound unintentionally? \\ \hline
+Illegal existential instantiation & Was a witness chosen before an existential statement was established? \\ \hline
+Illicit universal generalization & Was a universally quantified conclusion drawn from a statement depending on a specific object? \\ \hline
+Scope ambiguity & Was the scope of a quantifier unclear or implicitly extended beyond its syntactic bounds? \\ \hline
+Vacuous quantification misuse & Was a quantifier added or removed even though the variable does not occur free in the formula? \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{remark}
+Quantifier errors almost always stem from ignoring scope or treating quantifiers
+as informal linguistic modifiers. Every quantifier introduces a binding context
+that must be respected syntactically before semantic reasoning is applied.
+\end{remark}
+
+\vspace{1em}
+
+\begin{center}\label{tab:neg-errors}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Original} & \textbf{Incorrect Negation} & \textbf{Why It Is Wrong} \\ \hline
+$\forall x\,P(x)$ & $\forall x\,\neg P(x)$ & Fails to flip the quantifier; asserts everyone fails $P$. \\ \hline
+$\exists x\,P(x)$ & $\exists x\,\neg P(x)$ & Negates the predicate but not the existential claim. \\ \hline
+$\forall x\,\exists y\,P(x,y)$ & $\exists x\,\exists y\,\neg P(x,y)$ & Only the outer quantifier was flipped. \\ \hline
+$\exists x\,\forall y\,P(x,y)$ & $\forall x\,\forall y\,\neg P(x,y)$ & Overstrengthened the negation. \\ \hline
+$\forall x\,(P(x)\rightarrow Q(x))$ & $\forall x\,(P(x)\wedge \neg Q(x))$ & Correct negation is $\exists x\,(P(x)\wedge \neg Q(x))$. \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{remark}[Negation discipline]
+When negating a quantified statement, push the negation inward across
+\emph{every} quantifier, flipping each one, until it reaches the atomic
+predicate. Negating only the predicate or only one quantifier changes the
+logical claim in an incorrect direction.
+\end{remark}
+
+\begin{remark}[Common inference rule errors]\label{rem:inf-errors}
+\begin{itemize}
+  \item Choosing a witness before establishing an existential premise.
+  \item Using a witness constant introduced by EI outside its allowed scope.
+  \item Generalizing universally over a variable that depends on a special
+  assumption.
+  \item Substituting inside the scope of a quantifier without checking for
+  variable capture.
+  \item Replacing a term by an equal term in one occurrence but not another.
+\end{itemize}
+\end{remark}
+
+\begin{remark}
+A useful informal check: if a proof step would still make sense after replacing
+$\forall$ with ``for most'' or $\exists$ with ``maybe'', the step is almost
+certainly invalid.
+\end{remark}

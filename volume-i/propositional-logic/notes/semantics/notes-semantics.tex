@@ -1,0 +1,224 @@
+% =========================================================
+% Semantics of Propositional Logic
+% =========================================================
+
+\subsection{Semantics of Propositional Logic}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Semantics Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Truth assignment   & Function $v: \mathsf{Prop} \to \{\mathsf{T},\mathsf{F}\}$ & \hyperref[def:truth-assign]{↓ Def} \\
+Truth under $v$    & $v \models \varphi$ iff $v(\varphi) = \mathsf{T}$ & \hyperref[def:satisfaction]{↓ Def} \\
+Tautology          & True under all assignments ($\models\varphi$) & \hyperref[def:tautology]{↓ Def} \\
+Contradiction      & False under all assignments & \hyperref[def:contradiction]{↓ Def} \\
+Satisfiable        & True under at least one assignment & \hyperref[def:satisfiable]{↓ Def} \\
+Contingency        & Neither tautology nor contradiction & \hyperref[def:contingency]{↓ Def} \\
+Logical consequence & $\Gamma \models \varphi$ & \hyperref[def:consequence]{↓ Def} \\
+Logical equivalence & $\varphi \equiv \psi$ ($\varphi \leftrightarrow \psi$ is a tautology) & \hyperref[def:log-equiv]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Truth Assignment and Extension
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Truth Assignment)}},
+  fonttitle=\small\bfseries]
+\label{def:truth-assign}
+A \emph{truth assignment} (or \emph{valuation}) is a function
+\[
+v : \mathsf{Prop} \to \{\mathsf{T}, \mathsf{F}\}.
+\]
+Every truth assignment extends \emph{uniquely} to
+$\hat{v} : \mathsf{WFF} \to \{\mathsf{T}, \mathsf{F}\}$ by:
+\begin{enumerate}
+  \item $\hat{v}(P) = v(P)$ for $P \in \mathsf{Prop}$.
+  \item $\hat{v}(\neg\varphi) = \mathsf{T}$ iff $\hat{v}(\varphi) = \mathsf{F}$.
+  \item $\hat{v}(\varphi \wedge \psi) = \mathsf{T}$ iff $\hat{v}(\varphi) = \hat{v}(\psi) = \mathsf{T}$.
+  \item $\hat{v}(\varphi \vee \psi) = \mathsf{T}$ iff $\hat{v}(\varphi) = \mathsf{T}$ or $\hat{v}(\psi) = \mathsf{T}$.
+  \item $\hat{v}(\varphi \rightarrow \psi) = \mathsf{T}$ iff $\hat{v}(\varphi) = \mathsf{F}$ or $\hat{v}(\psi) = \mathsf{T}$.
+  \item $\hat{v}(\varphi \leftrightarrow \psi) = \mathsf{T}$ iff $\hat{v}(\varphi) = \hat{v}(\psi)$.
+\end{enumerate}
+We write $v(\varphi)$ for $\hat{v}(\varphi)$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+A truth assignment is an interpretation: it gives a definite truth value to
+every atomic proposition, and the extension rules then compute the truth value
+of every compound formula mechanically. There is no ambiguity once $v$ is fixed.
+\end{remark}
+
+\begin{remark}[Fully quantified]
+$\hat{v}$ is the unique function $\mathsf{WFF} \to \{\mathsf{T},\mathsf{F}\}$
+extending $v$ and compatible with the recursive structure of wffs.
+Uniqueness follows from unique readability: each wff has exactly one form,
+so the recursive cases never conflict.
+\end{remark}
+
+\begin{remark}[Truth table connection]
+A formula with $n$ distinct variables has exactly $2^n$ distinct truth
+assignments. The truth table lists all of them, one per row.
+\end{remark}
+
+\begin{center}
+\small\textbf{Truth Tables for Standard Connectives}
+
+\vspace{0.5em}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{cc|ccccc}
+\toprule
+$P$ & $Q$ & $\neg P$ & $P \wedge Q$ & $P \vee Q$ & $P \rightarrow Q$ & $P \leftrightarrow Q$ \\
+\midrule
+T & T & F & T & T & T & T \\
+T & F & F & F & T & F & F \\
+F & T & T & F & T & T & F \\
+F & F & T & F & F & T & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------
+% Satisfaction
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Satisfaction)}},
+  fonttitle=\small\bfseries]
+\label{def:satisfaction}
+A truth assignment $v$ \emph{satisfies} formula $\varphi$, written
+$v \models \varphi$, if $v(\varphi) = \mathsf{T}$.
+
+$v$ satisfies a set $\Gamma$ if $v \models \varphi$ for every $\varphi \in \Gamma$.
+\end{tcolorbox}
+
+\begin{remark}[Intuition]
+$v \models \varphi$ is the semantic turnstile: $v$ makes $\varphi$ true.
+The symbol $\models$ without a subscript on the left will be reused for
+logical consequence ($\Gamma \models \varphi$) — context determines which reading.
+\end{remark}
+
+% ---------------------------------------------------------
+% Tautology / Contradiction / Satisfiable / Contingency
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definitions (Formula Classification)}},
+  fonttitle=\small\bfseries]
+\begin{description}
+  \item[Tautology\label{def:tautology}] $\varphi$ is a \emph{tautology} (written $\models\varphi$)
+    if $v \models \varphi$ for every truth assignment $v$.
+  \item[Contradiction\label{def:contradiction}] $\varphi$ is a \emph{contradiction} (or \emph{unsatisfiable})
+    if $v \not\models \varphi$ for every $v$.
+  \item[Satisfiable\label{def:satisfiable}] $\varphi$ is \emph{satisfiable} if there exists some $v$ with $v \models \varphi$.
+  \item[Contingency\label{def:contingency}] $\varphi$ is a \emph{contingency} if it is neither a tautology nor a contradiction.
+\end{description}
+\end{tcolorbox}
+
+\begin{remark}[Mutual exclusivity and exhaustiveness]
+Every formula belongs to exactly one category:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Category} & \textbf{True under all $v$?} & \textbf{True under some $v$?} \\
+\midrule
+Tautology     & Yes & Yes (trivially) \\
+Contradiction & No  & No \\
+Contingency   & No  & Yes \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{remark}
+
+\begin{remark}[Key logical implication]
+A formula is satisfiable if and only if it is \emph{not} a contradiction.
+This equivalence is the bridge between satisfiability and unsatisfiability,
+and is the basis for refutation proofs (prove $\varphi$ by deriving a
+contradiction from $\neg\varphi$).
+\end{remark}
+
+\begin{example}
+\begin{itemize}
+  \item $P \vee \neg P$ — tautology (law of excluded middle).
+  \item $P \wedge \neg P$ — contradiction.
+  \item $P \rightarrow Q$ — contingency (false when $P = \mathsf{T}$, $Q = \mathsf{F}$).
+\end{itemize}
+\end{example}
+
+% ---------------------------------------------------------
+% Logical Consequence
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Logical Consequence)}},
+  fonttitle=\small\bfseries]
+\label{def:consequence}
+$\varphi$ is a \emph{logical consequence} of $\Gamma$, written $\Gamma \models \varphi$,
+if every truth assignment satisfying $\Gamma$ also satisfies $\varphi$.
+
+Formally: $\forall v,\; (v \models \Gamma) \Rightarrow (v \models \varphi)$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+$\Gamma \models \varphi$ means: there is no way to make all of $\Gamma$ true
+while making $\varphi$ false. The premise set $\Gamma$ semantically forces $\varphi$.
+\end{remark}
+
+\begin{remark}[Special cases]
+\begin{itemize}
+  \item $\emptyset \models \varphi$ iff $\varphi$ is a tautology.
+  \item $\Gamma \models \varphi$ for any $\Gamma$ containing a contradiction.
+  \item $\{P\} \models Q$ iff $P \rightarrow Q$ is a tautology
+        (\emph{tautological implication}).
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Connection to proof systems]
+The fundamental theorem of propositional logic:
+$\Gamma \models \varphi \;\Leftrightarrow\; \Gamma \vdash \varphi$ (soundness and completeness).
+The left side is semantic; the right side is syntactic. They coincide for
+propositional logic.
+\end{remark}
+
+% ---------------------------------------------------------
+% Logical Equivalence
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Logical Equivalence)}},
+  fonttitle=\small\bfseries]
+\label{def:log-equiv}
+$\varphi$ and $\psi$ are \emph{logically equivalent}, written $\varphi \equiv \psi$,
+if they have the same truth value under every truth assignment. Equivalently:
+\begin{itemize}
+  \item $\varphi \models \psi$ and $\psi \models \varphi$, or
+  \item $\varphi \leftrightarrow \psi$ is a tautology, or
+  \item $\varphi$ and $\psi$ have identical truth tables.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{remark}[Intuition]
+Logically equivalent formulas say the same thing — they agree on every possible
+state of affairs. They can be freely substituted for one another in any context.
+\end{remark}
+
+\begin{remark}[Equivalence is an equivalence relation]
+$\equiv$ is reflexive ($\varphi \equiv \varphi$), symmetric, and transitive.
+Moreover, it is a \emph{congruence}: if $\varphi \equiv \psi$, then
+$(\varphi \circ \chi) \equiv (\psi \circ \chi)$ for any connective $\circ$ and
+formula $\chi$. This substitution property is what makes equivalences useful
+for formula simplification.
+\end{remark}

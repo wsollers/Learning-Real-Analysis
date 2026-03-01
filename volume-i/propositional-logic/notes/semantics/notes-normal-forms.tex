@@ -1,0 +1,176 @@
+% =========================================================
+% Normal Forms
+% =========================================================
+
+\subsection{Normal Forms}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Normal Forms — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Form} & \textbf{Structure} & \textbf{Detail} \\
+\midrule
+Literal      & $P$ or $\neg P$ & \hyperref[def:literal]{↓ Def} \\
+Clause (disjunctive) & Disjunction of literals & \hyperref[def:clause]{↓ Def} \\
+NNF          & Negations only on variables; uses $\neg,\wedge,\vee$ only & \hyperref[def:nnf]{↓ Def} \\
+CNF          & Conjunction of disjunctions of literals $\bigwedge_i\bigvee_j L_{ij}$ & \hyperref[def:cnf]{↓ Def} \\
+DNF          & Disjunction of conjunctions of literals $\bigvee_i\bigwedge_j L_{ij}$ & \hyperref[def:dnf]{↓ Def} \\
+\midrule
+NNF existence & Every formula $\equiv$ some NNF formula & \hyperref[prop:nnf-exists]{↓ Prop} \\
+CNF existence & Every formula $\equiv$ some CNF formula & \hyperref[prop:cnf-exists]{↓ Prop} \\
+DNF existence & Every formula $\equiv$ some DNF formula & \hyperref[prop:dnf-exists]{↓ Prop} \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\textbf{Conversion pipeline:} Original formula $\xrightarrow{\text{elim } \rightarrow,\leftrightarrow}$
+NNF $\xrightarrow{\text{distribute } \vee/\wedge}$ CNF or DNF
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Literals and Clauses
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definitions (Literal and Clause)}},
+  fonttitle=\small\bfseries]
+\label{def:literal}
+A \emph{literal} is a propositional variable ($P$, a \emph{positive literal})
+or the negation of one ($\neg P$, a \emph{negative literal}).
+
+\label{def:clause}
+A \emph{(disjunctive) clause} is a disjunction of literals:
+$L_1 \vee L_2 \vee \cdots \vee L_k$.
+
+A \emph{conjunctive clause} (or \emph{term}) is a conjunction of literals:
+$L_1 \wedge L_2 \wedge \cdots \wedge L_k$.
+\end{tcolorbox}
+
+\begin{remark}[Why literals matter]
+CNF and DNF are defined in terms of literals, not arbitrary formulas. Literals
+are the atoms of normal form theory. Every formula in NNF is a tree whose
+leaves are literals.
+\end{remark}
+
+% ---------------------------------------------------------
+% NNF
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Negation Normal Form — NNF)}},
+  fonttitle=\small\bfseries]
+\label{def:nnf}
+A formula is in \emph{negation normal form} (NNF) if:
+\begin{enumerate}
+  \item Negation ($\neg$) is applied only to propositional variables (no negations of compound formulas).
+  \item The only connectives used are $\neg$, $\wedge$, $\vee$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{proposition}\label{prop:nnf-exists}
+Every propositional formula is logically equivalent to a formula in NNF.
+\end{proposition}
+
+\begin{remark}[Conversion procedure]
+\begin{enumerate}
+  \item Eliminate $\rightarrow$: replace $P \rightarrow Q$ with $\neg P \vee Q$.
+  \item Eliminate $\leftrightarrow$: replace $P \leftrightarrow Q$ with
+        $(P \wedge Q) \vee (\neg P \wedge \neg Q)$.
+  \item Push $\neg$ inward via De Morgan and double negation:
+        $\neg(P \wedge Q) \to \neg P \vee \neg Q$;\quad
+        $\neg(P \vee Q) \to \neg P \wedge \neg Q$;\quad
+        $\neg\neg P \to P$.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Why NNF first]
+NNF is the prerequisite for CNF/DNF conversion. Once in NNF, the only remaining
+structural operations are distributing $\wedge$ over $\vee$ (for CNF) or
+$\vee$ over $\wedge$ (for DNF).
+\end{remark}
+
+% ---------------------------------------------------------
+% CNF
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Conjunctive Normal Form — CNF)}},
+  fonttitle=\small\bfseries]
+\label{def:cnf}
+A formula is in \emph{conjunctive normal form} (CNF) if it is a conjunction of
+disjunctive clauses:
+\[
+\bigwedge_{i=1}^{m} \bigvee_{j=1}^{n_i} L_{ij}
+\]
+where each $L_{ij}$ is a literal.
+\end{tcolorbox}
+
+\begin{proposition}\label{prop:cnf-exists}
+Every propositional formula is logically equivalent to a formula in CNF.
+\end{proposition}
+
+\begin{remark}[CNF conversion from NNF]
+Distribute $\vee$ over $\wedge$ repeatedly:
+$P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)$.
+Repeat until no $\vee$ sits above a $\wedge$ in the parse tree.
+\end{remark}
+
+\begin{remark}[Truth-table method for CNF]
+For each row where the formula is \emph{false}, form a disjunctive clause
+using positive literals for variables assigned $\mathsf{F}$ and negative literals
+for variables assigned $\mathsf{T}$. Take the conjunction of all such clauses.
+\end{remark}
+
+\begin{remark}[Consequence — resolution]
+CNF is the required input format for the resolution proof procedure.
+Every satisfiability solver (SAT solver) works on CNF.
+\end{remark}
+
+\begin{example}
+$(P \vee Q) \wedge (\neg P \vee R) \wedge (Q \vee \neg R)$ is in CNF.
+\end{example}
+
+% ---------------------------------------------------------
+% DNF
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Disjunctive Normal Form — DNF)}},
+  fonttitle=\small\bfseries]
+\label{def:dnf}
+A formula is in \emph{disjunctive normal form} (DNF) if it is a disjunction of
+conjunctive clauses:
+\[
+\bigvee_{i=1}^{m} \bigwedge_{j=1}^{n_i} L_{ij}
+\]
+where each $L_{ij}$ is a literal.
+\end{tcolorbox}
+
+\begin{proposition}\label{prop:dnf-exists}
+Every propositional formula is logically equivalent to a formula in DNF.
+\end{proposition}
+
+\begin{remark}[DNF conversion from NNF]
+Distribute $\wedge$ over $\vee$ repeatedly:
+$P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)$.
+\end{remark}
+
+\begin{remark}[Truth-table method for DNF]
+For each row where the formula is \emph{true}, form a conjunctive clause
+using positive literals for variables assigned $\mathsf{T}$ and negative literals
+for variables assigned $\mathsf{F}$. Take the disjunction of all such clauses.
+\end{remark}
+
+\begin{remark}[CNF vs.\ DNF trade-off]
+CNF and DNF can both be exponentially larger than the original formula.
+Neither is always more compact. The choice depends on application:
+resolution needs CNF; model enumeration benefits from DNF.
+\end{remark}

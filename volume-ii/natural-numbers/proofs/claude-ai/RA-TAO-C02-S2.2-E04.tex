@@ -1,0 +1,303 @@
+% --------------------------------------
+% Proof: RA-TAO-C02-S2.2-E04
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-RA-TAO-C02-S2.2-E04}{}
+
+\subsubsection[Trichotomy Gaps (P2.2.13)]{Proof --- RA-TAO-C02-S2.2-E04}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysis1}{Chapter~2, \S2.2, Exercise~2.2.4}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Justify each of the three statements marked \emph{(why?)} in Tao's
+sketch proof of Proposition~2.2.13 (Trichotomy of order for natural
+numbers). The three gaps are:
+
+\medskip
+\begin{enumerate}
+  \item[\textbf{(i)}] \textbf{Base case} ($a = 0$, $b$ fixed).
+    Tao claims: $0 \leq b$ for all $b \in \mathbb{N}$. \emph{(why?)}
+
+  \item[\textbf{(ii)}] \textbf{Inductive step, case $a > b$.}
+    Tao claims: if $a > b$, then $a\pp > b$. \emph{(why?)}
+
+  \item[\textbf{(iii)}] \textbf{Inductive step, case $a = b$.}
+    Tao claims: if $a = b$, then $a\pp > b$. \emph{(why?)}
+\end{enumerate}
+
+\medskip
+\noindent
+For each item give a complete justification using only
+Definition~2.2.11, Proposition~2.2.12, and the Peano axioms.
+Do not appeal to trichotomy itself.
+
+\vspace{0.75em}
+
+\noindent\textbf{Available toolkit.}
+P1--P5, Definition~2.2.11 (order), Lemma~2.2.2, Lemma~2.2.3,
+Proposition~2.2.4 (commutativity), Proposition~2.2.5 (associativity),
+Proposition~2.2.6 (cancellation), Proposition~2.2.12 (order properties).
+
+\vspace{1em}
+
+% =========================================================
+% Part (i)
+% =========================================================
+
+\vspace{1em}
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (i).} Show $0 \leq b$ for all $b \in \mathbb{N}$.
+
+\begin{proof}[Proof of Part (i)]
+Let $b \in \mathbb{N}$ be arbitrary.
+We must show $0 \leq b$, i.e.\ by Definition~2.2.11, that there exists
+$a \in \mathbb{N}$ such that $b = 0 + a$.
+Set $a := b$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} & \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagUW
+&
+\text{Let } b \in \mathbb{N} \text{ be arbitrary.}
+&
+Introduce universal witness for the claim $\forall b \in \mathbb{N},\; 0 \leq b$.
+\\[10pt]
+
+\tagEX
+&
+\text{Set } a := b.
+&
+Candidate witness for the existential in Def~2.2.11:
+we need $b = 0 + a$ for some $a \in \mathbb{N}$.
+\\[10pt]
+
+\tagDU
+&
+0 + b = b
+&
+Definition of addition, base clause (A1): $0 + m := m$.
+\\[10pt]
+
+\tagDU
+&
+b = 0 + a
+&
+Substituting $a := b$ gives $0 + a = 0 + b = b$.
+Hence the witness satisfies the definition.
+\\[10pt]
+
+\tagDU
+&
+\therefore\; 0 \leq b
+&
+By Definition~2.2.11 ($n \geq m$ iff $\exists a \in \mathbb{N},\; n = m + a$),
+with $n = b$, $m = 0$, $a = b$.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+\end{proof}
+
+\begin{remark}[Proof shape: universal-existential]
+The claim $\forall b \in \mathbb{N},\; 0 \leq b$ has a universal-existential
+structure. The outer universal quantifier is discharged by introducing an
+arbitrary witness (UW); the inner existential in Definition~2.2.11
+is satisfied by constructing the witness $a := b$ (EX) and verifying it
+via the base clause of addition (A1). No induction is needed.
+\end{remark}
+
+% =========================================================
+% Part (ii)
+% =========================================================
+
+\vspace{1em}
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (ii).} Assume $a > b$. Show $a\pp > b$.
+
+\begin{proof}[Proof of Part (ii)]
+Let $a, b \in \mathbb{N}$ be arbitrary. Assume $a > b$.
+By Definition~2.2.11, $a > b$ means $a \geq b$ and $a \neq b$,
+i.e.\ there exists $c \in \mathbb{N}$ such that $a = b + c$ and $a \neq b$.
+We must show $a\pp > b$, i.e.\ $\exists c' \in \mathbb{N},\; a\pp = b + c'$
+and $a\pp \neq b$.
+Set $c' := c + 1$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} & \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagUW
+&
+\text{Let } a, b \in \mathbb{N} \text{ be arbitrary.}
+&
+Introduce universal witnesses.
+\\[10pt]
+
+\tagDU
+&
+\text{Assume } a > b \text{, i.e. }
+\exists\, c \in \mathbb{N},\; a = b + c \;\wedge\; a \neq b.
+&
+Definition~2.2.11: $n > m \Leftrightarrow n \geq m \wedge n \neq m$,
+and $n \geq m \Leftrightarrow \exists a \in \mathbb{N},\; n = m + a$.
+\\[10pt]
+
+\tagEX
+&
+\text{Set } c' := c + 1.
+&
+Candidate witness for $a\pp = b + c'$.
+\\[10pt]
+
+\tagAM
+&
+a\pp = a + 1 = (b + c) + 1 = b + (c + 1) = b + c'
+&
+$a\pp = a + 1$ by the corollary $n\pp = n+1$;
+substitute $a = b + c$; associativity (P~2.2.5).
+\\[10pt]
+
+\tagTA
+&
+a\pp \neq b
+&
+Suppose $a\pp = b$. Then $b + c + 1 = b$, so by cancellation (P~2.2.6),
+$c + 1 = 0$. But $c + 1 = c\pp$ and $c\pp \neq 0$ by P3. Contradiction.
+\\[10pt]
+
+\tagDU
+&
+\therefore\; a\pp > b
+&
+We have $a\pp = b + c'$ with $c' \in \mathbb{N}$ and $a\pp \neq b$,
+so $a\pp > b$ by Definition~2.2.11.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+\end{proof}
+
+\begin{remark}[Proof shape: universal conditional, direct]
+The claim $\forall a,b \in \mathbb{N},\; a > b \Rightarrow a\pp > b$
+is a universal conditional. Introduce arbitrary witnesses (UW),
+assume the hypothesis (P), unpack it via Definition~2.2.11 (DU),
+construct a witness for the conclusion (EX), verify both conjuncts,
+and close by Definition~2.2.11 (DU). The key move is $c' := c + 1$:
+incrementing the existing gap witness to account for the successor.
+\end{remark}
+
+% =========================================================
+% Part (iii)
+% =========================================================
+
+\vspace{1em}
+\noindent\rule{\textwidth}{0.4pt}
+\noindent\textbf{Part (iii).} Assume $a = b$. Show $a\pp > b$.
+
+\begin{proof}[Proof of Part (iii)]
+Let $a, b \in \mathbb{N}$ be arbitrary. Assume $a = b$.
+We must show $a\pp > b$, i.e.\ $\exists c \in \mathbb{N},\; a\pp = b + c$
+and $a\pp \neq b$.
+Set $c := 1$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} & \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagUW
+&
+\text{Let } a, b \in \mathbb{N} \text{ be arbitrary.}
+&
+Introduce universal witnesses.
+\\[10pt]
+
+\tagDU
+&
+\text{Assume } a = b.
+&
+Hypothesis (P of the conditional).
+\\[10pt]
+
+\tagDU
+&
+\text{Goal: } \exists c \in \mathbb{N},\; a\pp = b + c \;\wedge\; a\pp \neq b.
+&
+Unpack $a\pp > b$ via Definition~2.2.11.
+\\[10pt]
+
+\tagEX
+&
+\text{Set } c := 1.
+&
+Candidate witness.
+\\[10pt]
+
+\tagAM
+&
+a\pp = a + 1 = b + 1 = b + c
+&
+$a\pp = a + 1$ by the corollary $n\pp = n + 1$;
+substitute $a = b$ from hypothesis.
+\\[10pt]
+
+\tagTA
+&
+a\pp \neq b
+&
+Suppose $a\pp = b$. Then $b + 1 = b$, so by cancellation (P~2.2.6),
+$1 = 0$. But $1 = 0\pp$ and $0\pp \neq 0$ by P3. Contradiction.
+\\[10pt]
+
+\tagDU
+&
+\therefore\; a\pp > b
+&
+We have $a\pp = b + c$ with $c = 1 \in \mathbb{N}$ and $a\pp \neq b$,
+so $a\pp > b$ by Definition~2.2.11.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+\end{proof}
+
+\begin{remark}[Proof shape: universal conditional, direct]
+The claim $\forall a,b \in \mathbb{N},\; a = b \Rightarrow a\pp > b$
+is a universal conditional. The witness $c := 1$ is forced by the
+structure of the goal: $a\pp = a + 1$ by the successor corollary,
+and the hypothesis $a = b$ immediately gives $a + 1 = b + 1 = b + c$.
+The non-equality $a\pp \neq b$ follows from P3 via cancellation ---
+the same closing argument as Part~(ii).
+\end{remark}
+
+\begin{remark}[Common structure of Parts (ii) and (iii)]
+Both parts share the same proof architecture: construct a witness
+for the existential in Definition~2.2.11, verify the equality conjunct
+by algebraic manipulation, and close the inequality conjunct by
+deriving a contradiction with P3 via cancellation. The only difference
+is the witness: $c' = c + 1$ in Part~(ii) (inherited from the hypothesis),
+and $c = 1$ in Part~(iii) (forced directly by the successor corollary).
+\end{remark}
+
+\vspace{1em}

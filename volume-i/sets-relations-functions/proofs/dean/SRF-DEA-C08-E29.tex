@@ -1,0 +1,86 @@
+% --------------------------------------
+% Proof: SRF-DEA-C08-E29
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-SRF-DEA-C08-E29}{}
+
+\subsubsection[Every Partial Order Extends to a Linear Order]{Proof --- SRF-DEA-C08-E29}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{Dean2015OrderTheory}{Chapter~VIII, Exercise~29}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Suppose $(T, \leq)$ is a poset. Prove that $\leq$ can be ``enlarged'' to a
+relation $\leq^*$ such that $(T, \leq^*)$ is a chain, where
+``enlarges'' means ${\leq} \subseteq {\leq^*} \subseteq T \times T$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Note.}
+This is Szpilrajn's Theorem (see \hyperref[thm:szpilrajn]{notes-order-extensions})
+in the form: every partial order extends to a linear order.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Apply Zorn's Lemma to the poset $\mathcal{E}$ of all partial orders on $T$
+that extend $\leq$, ordered by $\subseteq$. Show every chain in $\mathcal{E}$
+has an upper bound; conclude a maximal element $\leq^*$ exists; show $\leq^*$
+must be total.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+Let $\mathcal{E} = \{\, R \subseteq T \times T : R \text{ is a partial order
+on } T \text{ extending } \leq\,\}$, ordered by inclusion.
+
+\textit{Chains have upper bounds.} Let $\mathcal{C} \subseteq \mathcal{E}$
+be a chain. The union $R_0 = \bigcup \mathcal{C}$ is a relation extending
+$\leq$. We verify $R_0$ is a partial order:
+\begin{itemize}
+  \item \emph{Reflexivity:} Each $R \in \mathcal{C}$ contains $(x,x)$, so
+    $R_0$ does.
+  \item \emph{Antisymmetry:} If $xR_0 y$ and $y R_0 x$, then $xRy$ for some
+    $R \in \mathcal{C}$ and $ySx$ for some $S \in \mathcal{C}$. Since
+    $\mathcal{C}$ is a chain, say $R \subseteq S$; then $xSy$ and $ySx$, so
+    $x = y$ by antisymmetry of $S$.
+  \item \emph{Transitivity:} If $xR_0 y$ and $y R_0 z$, choose $R, S \in
+    \mathcal{C}$ with $xRy$, $ySz$. WLOG $R \subseteq S$; then $xSy$ and
+    $ySz$, so $xSz$ by transitivity of $S$, giving $x R_0 z$.
+\end{itemize}
+So $R_0 \in \mathcal{E}$ is an upper bound for $\mathcal{C}$.
+
+\textit{Maximal element.} By Zorn's Lemma, $\mathcal{E}$ has a maximal
+element $\leq^*$.
+
+\textit{$\leq^*$ is total.} Suppose $x, y \in T$ are incomparable under
+$\leq^*$. Consider the relation $\leq^{**}$ defined as the transitive closure
+of $\leq^* \cup \{(x,y)\}$. One checks $\leq^{**}$ is a partial order
+extending $\leq^*$ (and hence $\leq$), with $\leq^* \subsetneq \leq^{**}$,
+contradicting maximality of $\leq^*$.
+
+Therefore $\leq^*$ is a linear order extending $\leq$.
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Hint resolution:} The hint asks: if $\leq$ is already a
+    linear order, can it be enlarged? No — a linear order on $T$ is already
+    maximal in $\mathcal{E}$ (nothing can be added while keeping antisymmetry
+    and transitivity). This confirms the maximal elements of $\mathcal{E}$
+    are exactly the linear orders extending $\leq$.
+\end{itemize}
