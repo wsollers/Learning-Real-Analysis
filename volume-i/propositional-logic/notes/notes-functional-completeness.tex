@@ -1,0 +1,191 @@
+% =========================================================
+% Functional Completeness
+% =========================================================
+
+\subsection{Functional Completeness}
+% ---------------------------------------------------------
+
+\subsubsection{Truth Functions}
+
+\begin{definition}[Truth Function]
+An $n$-ary \emph{truth function} is a function
+\[
+f : \{\mathsf{T}, \mathsf{F}\}^n \to \{\mathsf{T}, \mathsf{F}\}.
+\]
+
+There are exactly $2^{2^n}$ distinct $n$-ary truth functions.
+\end{definition}
+
+\begin{example}
+For $n = 1$, there are $2^{2^1} = 4$ unary truth functions:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c||c|c|c|c|}
+\hline
+$P$ & $f_1$ & $f_2$ & $f_3$ & $f_4$ \\
+\hline
+T & T & T & F & F \\
+F & T & F & T & F \\
+\hline
+\end{tabular}
+\end{center}
+These correspond to: $f_1 = \top$ (constant true), $f_2 = P$ (identity),
+$f_3 = \neg P$ (negation), $f_4 = \bot$ (constant false).
+\end{example}
+
+\begin{example}
+For $n = 2$, there are $2^{2^2} = 16$ binary truth functions, including
+conjunction, disjunction, conditional, biconditional, NAND, NOR, XOR, and others.
+\end{example}
+
+\subsubsection{Functional Completeness}
+
+\begin{definition}[Functional Completeness]
+A set $S$ of logical connectives is \emph{functionally complete} (or
+\emph{adequate}) if every truth function can be expressed by a formula using
+only connectives from $S$.
+
+Equivalently, $S$ is functionally complete if for every truth function $f$,
+there exists a formula $\varphi$ built using only connectives in $S$ such that
+$\varphi$ computes $f$.
+\end{definition}
+
+\begin{theorem}[Standard Functionally Complete Sets]
+The following sets of connectives are functionally complete:
+\begin{enumerate}
+  \item $\{\neg, \wedge\}$
+  \item $\{\neg, \vee\}$
+  \item $\{\neg, \rightarrow\}$
+  \item $\{\bot, \rightarrow\}$ where $\bot$ is the constant false
+  \item $\{\neg, \wedge, \vee\}$
+  \item $\{\neg, \wedge, \vee, \rightarrow, \leftrightarrow\}$
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof Sketch for $\{\neg, \wedge\}$]
+We show that $\{\neg, \wedge\}$ can express all truth functions by showing it
+can express $\vee$, and thus can construct DNF formulas.
+
+By De Morgan's law:
+\[
+P \vee Q \;\equiv\; \neg(\neg P \wedge \neg Q)
+\]
+
+Since every truth function can be expressed in DNF (using $\neg$, $\wedge$,
+$\vee$), and $\vee$ can be expressed using $\neg$ and $\wedge$, it follows that
+$\{\neg, \wedge\}$ is functionally complete.
+\end{proof}
+
+\begin{theorem}[NAND is Functionally Complete]
+The singleton set $\{\uparrow\}$ (NAND alone) is functionally complete.
+\end{theorem}
+
+\begin{proof}
+We can express $\neg$ and $\wedge$ using only NAND:
+\begin{align*}
+\neg P &\equiv P \uparrow P \\
+P \wedge Q &\equiv (P \uparrow Q) \uparrow (P \uparrow Q)
+\end{align*}
+Since $\{\neg, \wedge\}$ is functionally complete, so is $\{\uparrow\}$.
+\end{proof}
+
+\begin{theorem}[NOR is Functionally Complete]
+The singleton set $\{\downarrow\}$ (NOR alone) is functionally complete.
+\end{theorem}
+
+\begin{proof}
+We can express $\neg$ and $\vee$ using only NOR:
+\begin{align*}
+\neg P &\equiv P \downarrow P \\
+P \vee Q &\equiv (P \downarrow Q) \downarrow (P \downarrow Q)
+\end{align*}
+Since $\{\neg, \vee\}$ is functionally complete, so is $\{\downarrow\}$.
+\end{proof}
+
+\subsubsection{Adequate Sets of Connectives}
+
+\begin{definition}[Adequate Set]
+An \emph{adequate set} of connectives is a functionally complete set. A
+\emph{minimal adequate set} is an adequate set such that no proper subset is
+adequate.
+\end{definition}
+
+\begin{theorem}[Minimal Adequate Sets]
+The minimal adequate sets of connectives are:
+\begin{enumerate}
+  \item $\{\uparrow\}$ (NAND alone)
+  \item $\{\downarrow\}$ (NOR alone)
+  \item $\{\neg, \wedge\}$
+  \item $\{\neg, \vee\}$
+  \item $\{\neg, \rightarrow\}$
+  \item $\{\bot, \rightarrow\}$
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Non-Adequate Sets]
+The following sets are \emph{not} functionally complete:
+\begin{enumerate}
+  \item $\{\wedge, \vee\}$ — cannot express negation
+  \item $\{\wedge, \vee, \rightarrow, \leftrightarrow\}$ — cannot express negation
+  \item $\{\neg\}$ — cannot combine propositions
+  \item $\{\rightarrow\}$ — cannot express functions that are false when all
+        inputs are false
+  \item $\{\leftrightarrow, \neg\}$ — cannot express functions that are true
+        for an odd number of true inputs other than exactly one
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+To show that a set $S$ is not functionally complete, one typically identifies
+a property preserved by all connectives in $S$ that is not preserved by some
+truth function. Common properties used include:
+\begin{itemize}
+  \item Preserving truth (true when all inputs are true)
+  \item Preserving falsity (false when all inputs are false)
+  \item Monotonicity
+  \item Affine/linear (expressible as XOR of inputs and constants)
+  \item Self-duality
+\end{itemize}
+\end{remark}
+
+\subsubsection{Post's Functional Completeness Theorem}
+
+\begin{theorem}[Post's Theorem]
+A set $S$ of Boolean functions is functionally complete if and only if for each
+of the following five properties, $S$ contains at least one function that does
+not have that property:
+
+\begin{enumerate}
+  \item \textbf{Truth-preserving:} $f(\mathsf{T}, \dots, \mathsf{T}) = \mathsf{T}$
+  \item \textbf{Falsity-preserving:} $f(\mathsf{F}, \dots, \mathsf{F}) = \mathsf{F}$
+  \item \textbf{Monotonic:} If $x_i \leq y_i$ for all $i$ (where $\mathsf{F} < \mathsf{T}$),
+        then $f(x_1, \dots, x_n) \leq f(y_1, \dots, y_n)$
+  \item \textbf{Affine:} $f$ can be written as $a_0 \oplus a_1 x_1 \oplus \cdots \oplus a_n x_n$
+        for constants $a_i \in \{\mathsf{T}, \mathsf{F}\}$
+  \item \textbf{Self-dual:} $f(x_1, \dots, x_n) = \neg f(\neg x_1, \dots, \neg x_n)$
+\end{enumerate}
+\end{theorem}
+
+\begin{example}[Applying Post's Theorem]
+To verify that $\{\neg, \wedge\}$ is functionally complete:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Property} & $\neg$ & $\wedge$ \\
+\hline
+Truth-preserving & No ($\neg\mathsf{T} = \mathsf{F}$) & Yes \\
+Falsity-preserving & No ($\neg\mathsf{F} = \mathsf{T}$) & Yes \\
+Monotonic & No & Yes \\
+Affine & Yes ($\neg P \equiv \mathsf{T} \oplus P$) & No \\
+Self-dual & Yes ($\neg P = \neg(\neg(\neg P))$) & No \\
+\hline
+\end{tabular}
+\end{center}
+
+For each property, at least one of $\{\neg, \wedge\}$ lacks it, so by Post's
+theorem the set is functionally complete.
+\end{example}
+
+% ---------------------------------------------------------

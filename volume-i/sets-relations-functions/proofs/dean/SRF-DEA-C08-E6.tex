@@ -1,0 +1,82 @@
+% --------------------------------------
+% Proof: SRF-DEA-C08-E6
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-SRF-DEA-C08-E6}{}
+
+\subsubsection[Poset with Longest Chain $n$ Decomposes into $n$ Antichains]{Proof --- SRF-DEA-C08-E6}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{Dean2015OrderTheory}{Chapter~VIII, Exercise~6}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Let $(X, \leq)$ be a poset in which the longest chain has length $n \in
+\mathbb{N}$. Prove that $X$ can be written as the union of $n$ totally
+unordered (antichain) subsets, and that $n$ is the minimum number of
+antichains needed.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Logical form.}
+$\mathrm{length}(\text{longest chain in } X) = n
+\Rightarrow X = A_1 \cup \cdots \cup A_n$ where each $A_i$ is an antichain,
+and $n$ is optimal.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Key definition.}
+The \emph{length} of a chain is the number of elements minus 1 (or the
+number of strict inequalities).
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Define $A_k = \{x \in X : \text{the longest chain ending at } x \text{ has
+length exactly } k-1\}$ for $k = 1, \ldots, n$. Prove:
+(i) each $A_k$ is an antichain, (ii) $X = \bigcup A_k$, (iii) fewer than
+$n$ antichains do not suffice.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+For each $x \in X$, define $\ell(x)$ as the length of the longest chain in
+$X$ ending at $x$ (starting from a minimal element). Set
+$A_k = \{x \in X : \ell(x) = k-1\}$ for $k = 1, \ldots, n$.
+
+\textit{Each $A_k$ is an antichain:} Suppose $x, y \in A_k$ and $x < y$.
+Then $\ell(y) \geq \ell(x) + 1 = k$, so $y \notin A_k$. Contradiction.
+
+\textit{$X = \bigcup_{k=1}^n A_k$:} Since the longest chain has length
+$n-1$ (i.e., $n$ elements), $\ell(x) \in \{0, 1, \ldots, n-1\}$ for all
+$x$. Hence every $x$ belongs to some $A_k$.
+
+\textit{Optimality:} Any chain of length $n-1$ has $n$ elements, each with
+a distinct $\ell$-value, hence each in a different antichain. So at least $n$
+antichains are required.
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Mirsky's theorem:} This result is known as Mirsky's theorem
+    (1971), the ``dual'' of Dilworth's theorem. Dilworth decomposes a poset
+    into chains using the antichain width; Mirsky decomposes into antichains
+    using the chain height.
+  \item \textbf{Connection to E5:} If $X$ is infinite with no infinite
+    antichain, then the longest chain is infinite (by E5) and this
+    decomposition has infinitely many layers.
+\end{itemize}

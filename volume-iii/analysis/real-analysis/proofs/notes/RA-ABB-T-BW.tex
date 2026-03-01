@@ -1,0 +1,121 @@
+% --------------------------------------
+% Proof: RA-ABB-T-BW
+% Theorem — Bolzano--Weierstrass
+% Format: Deep study (3-column)
+% --------------------------------------
+\clearpage
+\phantomsection
+\label{prf:bolzano-weierstrass}
+\hypertarget{proof-RA-ABB-T-BW}{}
+
+\subsubsection[Bolzano--Weierstrass Theorem]{Proof --- RA-ABB-T-BW}
+
+\begin{remark}[Return]
+\hyperref[thm:bolzano-weierstrass]{$\leftarrow$ Back to Theorem (Bolzano--Weierstrass) in Notes}
+\end{remark}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{AbbottUnderstandingAnalysis}{Chapter~2, \S2.5, Theorem~2.5.5}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Every bounded sequence in $\mathbb{R}$ has a convergent subsequence.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Logical form.}
+$\bigl(\exists M > 0,\ \forall n,\ |x_n| \le M\bigr)
+\Rightarrow
+\bigl(\exists\ \text{subsequence}\ (x_{n_k}),\ \exists L,\ x_{n_k} \to L\bigr)$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Key background.}
+Monotone Subsequence Theorem (Tao / Abbott): every sequence has a monotone subsequence.
+Monotone Convergence Theorem (MCT).
+A subsequence of a bounded sequence is bounded.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Every sequence has a monotone subsequence (Monotone Subsequence Theorem).
+A monotone subsequence of a bounded sequence is itself bounded and monotone.
+By MCT, it converges.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+Let $(x_n)$ be bounded: $|x_n| \le M$ for all $n$.
+
+\begin{longtable}{p{0.28\textwidth} p{0.35\textwidth} p{0.28\textwidth}}
+\toprule
+\textbf{Step / Claim} & \textbf{Justification} & \textbf{Annotation} \\
+\midrule
+$(x_n)$ has a monotone subsequence $(x_{n_k})$.
+& Monotone Subsequence Theorem.
+& Every sequence (bounded or not) has a monotone subsequence.
+\\
+\addlinespace
+$(x_{n_k})$ is bounded: $|x_{n_k}| \le M$ for all $k$.
+& $(x_{n_k})$ selects terms from $(x_n)$; $|x_n| \le M$ for all $n$.
+& Boundedness passes to subsequences.
+\\
+\addlinespace
+$(x_{n_k})$ is monotone and bounded.
+& From the two steps above.
+& MCT hypotheses are satisfied.
+\\
+\addlinespace
+$(x_{n_k})$ converges by MCT.
+& Monotone Convergence Theorem.
+& The convergent subsequence is $(x_{n_k})$.
+\\
+\bottomrule
+\end{longtable}
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{The Monotone Subsequence Theorem (proof sketch).}
+A \emph{peak} of $(x_n)$ is an index $n$ such that $x_n \ge x_k$ for all $k \ge n$.
+\textbf{Case 1:} If $(x_n)$ has infinitely many peaks $n_1 < n_2 < \cdots$, then
+$(x_{n_k})$ is decreasing (each peak dominates all later terms).
+\textbf{Case 2:} If peaks are finite, there exists $N$ after which no peaks occur.
+Starting from any $n_1 > N$: since $n_1$ is not a peak, $\exists n_2 > n_1$ with $x_{n_2} > x_{n_1}$.
+By induction, obtain a strictly increasing subsequence.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Proof is a composition.} BW = Monotone Subsequence Theorem + MCT.
+    Recognising the proof as a two-step composition is essential: BW itself
+    provides very little new machinery; it assembles what is already there.
+
+  \item \textbf{Peak argument.} The Monotone Subsequence Theorem (via peaks)
+    is an elegant combinatorial trick. Peaks are the indices from which the
+    sequence is eventually non-increasing. Their abundance determines which
+    type of monotone subsequence is extracted.
+
+  \item \textbf{Uses of BW.} Bolzano--Weierstrass is the backbone of:
+    Cauchy Criterion (every Cauchy sequence has a convergent subsequence $\to$
+    the subsequence limit is the full sequence limit), Heine--Borel theorem
+    (compact $\Leftrightarrow$ closed and bounded in $\mathbb{R}^n$), and
+    sequential compactness arguments throughout analysis.
+
+  \item \textbf{Completeness dependency.} BW requires MCT, which requires
+    the Completeness Axiom. The theorem fails in $\mathbb{Q}$ (bounded sequences
+    in $\mathbb{Q}$ may not have convergent subsequences in $\mathbb{Q}$).
+\end{itemize}

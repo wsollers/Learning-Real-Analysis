@@ -1,0 +1,207 @@
+% =========================================================
+% Equivalence Classes and Partitions
+% =========================================================
+
+\subsection{Equivalence Classes and Partitions}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Equivalence and Partitions — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Equivalence class  & $[a]_R = \{x \in A \mid (a,x)\in R\}$                        & \hyperref[def:equiv-class]{↓ Def} \\
+Quotient set       & $A/R$: all equivalence classes                                & \hyperref[def:quotient-set]{↓ Def} \\
+Index of $R$       & Cardinality of $A/R$                                          & \hyperref[def:index]{↓ Def} \\
+Canonical surjection & $\pi : A \to A/R$, $\pi(a) = [a]$                          & \hyperref[def:canonical-surj]{↓ Def} \\
+Partition          & Nonempty, disjoint, covering collection of subsets            & \hyperref[def:partition]{↓ Def} \\
+Rep.\ independence & $[a]=[b] \iff (a,b)\in R$                                    & \hyperref[lem:rep-independence]{↓ Lem} \\
+Equiv.--partition correspondence & Bijection between equiv.\ relations and partitions & \hyperref[thm:equiv-partition]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Equivalence Class)}},
+  fonttitle=\small\bfseries]
+\label{def:equiv-class}
+Let $R$ be an equivalence relation on $A$. For $a \in A$, the
+\emph{equivalence class} of $a$ is:
+\[
+[a]_R \;:=\; \{\, x \in A \mid (a,x) \in R \,\}.
+\]
+When $R$ is clear from context, we write $[a]$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+$[a]_R$ is the set of all elements that $R$ declares ``the same as $a$.''
+Two elements lie in the same class iff they are related: this is precisely
+the Representative Independence Lemma below.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Quotient Set)}},
+  fonttitle=\small\bfseries]
+\label{def:quotient-set}
+The \emph{quotient set} of $A$ by $R$ is the set of all equivalence classes:
+\[
+A / R \;:=\; \{\, [a]_R \mid a \in A \,\}.
+\]
+\end{tcolorbox}
+
+\begin{definition}[Index of an Equivalence Relation]\label{def:index}
+The \emph{index} of $R$ on $A$ is the cardinality $|A/R|$, i.e.\ the number
+of equivalence classes.
+\end{definition}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Canonical Surjection)}},
+  fonttitle=\small\bfseries]
+\label{def:canonical-surj}
+The \emph{canonical surjection} (quotient map) is the function
+\[
+\pi : A \to A/R,
+\qquad
+\pi(a) := [a].
+\]
+\end{tcolorbox}
+
+\begin{remark}[Properties of $\pi$]
+$\pi$ is surjective by construction. Elements $a, b \in A$ satisfy
+$\pi(a) = \pi(b)$ iff $(a,b) \in R$. The canonical surjection is the
+prototype for all quotient constructions: it reappears as the quotient
+homomorphism in algebra and the quotient map in topology.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partition)}},
+  fonttitle=\small\bfseries]
+\label{def:partition}
+A \emph{partition} of $A$ is a collection $\mathcal{P}$ of subsets of $A$ such
+that:
+\begin{enumerate}[label=(\roman*)]
+\item every block is nonempty: $\forall P \in \mathcal{P},\; P \neq \varnothing$;
+\item distinct blocks are disjoint:
+$\forall P,Q \in \mathcal{P},\; P \neq Q \rightarrow P \cap Q = \varnothing$;
+\item the blocks cover $A$: $\bigcup_{P \in \mathcal{P}} P = A$.
+\end{enumerate}
+The sets $P \in \mathcal{P}$ are called the \emph{blocks} of the partition.
+\end{tcolorbox}
+
+\begin{remark}[Partition vs.\ cover]
+Every partition of $A$ is a cover of $A$ whose members are nonempty and
+pairwise disjoint. Partitions are precisely the covers satisfying the
+disjointness condition.
+\end{remark}
+
+% ---------------------------------------------------------
+% Core Lemma and Theorem
+% ---------------------------------------------------------
+
+\begin{lemma}[Representative Independence Lemma]\label{lem:rep-independence}
+Let $R$ be an equivalence relation on $A$. For any $a,b \in A$,
+\[
+[a] = [b]
+\;\;\Longleftrightarrow\;\;
+(a,b) \in R.
+\]
+\end{lemma}
+
+\begin{proof}
+($\Rightarrow$) Assume $[a] = [b]$. Since $a \in [a]$, we have $a \in [b]$,
+so $(b,a) \in R$. By symmetry, $(a,b) \in R$.
+
+($\Leftarrow$) Assume $(a,b) \in R$.
+
+\emph{$[a] \subseteq [b]$:} Let $x \in [a]$, so $(a,x) \in R$. Since
+$(b,a) \in R$ (by symmetry) and $(a,x) \in R$, transitivity gives
+$(b,x) \in R$, so $x \in [b]$.
+
+The reverse inclusion follows by symmetry of the argument.
+\end{proof}
+
+\begin{remark}[Consequence for quotient maps]
+This lemma is the key fact underlying well-definedness of functions on quotient
+sets: a function $f : A \to B$ defined by $f([a]) = \cdots$ is well-defined
+iff the formula gives the same output for all representatives of $[a]$.
+\end{remark}
+
+\begin{theorem}[Equivalence Relations and Partitions]\label{thm:equiv-partition}
+Let $A$ be a set.
+\begin{enumerate}[label=(\roman*)]
+\item If $R$ is an equivalence relation on $A$, then $A/R$ is a partition of $A$.
+\item If $\mathcal{P}$ is a partition of $A$, then the relation
+$R_{\mathcal{P}}$ defined by
+\[
+(a,b) \in R_{\mathcal{P}} \;\Longleftrightarrow\;
+\exists P \in \mathcal{P} \text{ with } a \in P \text{ and } b \in P
+\]
+is an equivalence relation on $A$.
+\item These constructions are inverse: $R_{A/R} = R$ and $A/R_{\mathcal{P}} = \mathcal{P}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(i)} We verify the three partition conditions for $A/R$.
+
+\emph{Nonemptiness.} For any $a \in A$, reflexivity gives $(a,a) \in R$, so
+$a \in [a]_R \neq \varnothing$.
+
+\emph{Covering.} For any $x \in A$, reflexivity gives $x \in [x]_R \subseteq
+\bigcup A/R$.
+
+\emph{Disjointness.} Suppose $[a]_R \cap [b]_R \neq \varnothing$; pick
+$x \in [a]_R \cap [b]_R$. Then $(a,x) \in R$ and $(b,x) \in R$. By symmetry
+$(x,b) \in R$, and transitivity gives $(a,b) \in R$. By the Representative
+Independence Lemma, $[a]_R = [b]_R$.
+
+\textbf{(ii)} We check reflexivity, symmetry, and transitivity for
+$R_{\mathcal{P}}$.
+
+\emph{Reflexive.} Any $a \in A$ lies in some block $P$ (covering), so
+$(a,a) \in R_{\mathcal{P}}$.
+
+\emph{Symmetric.} If $a,b \in P$ then $b,a \in P$, so symmetry is immediate.
+
+\emph{Transitive.} If $a,b \in P$ and $b,c \in Q$, then $b \in P \cap Q \neq
+\varnothing$, so $P = Q$ by disjointness. Hence $a,c \in P$ and
+$(a,c) \in R_{\mathcal{P}}$.
+
+\textbf{(iii)} For $R \mapsto A/R \mapsto R_{A/R}$: $(a,b) \in R_{A/R}$
+iff $a,b$ lie in a common block $[x]_R$, which by the Representative
+Independence Lemma is equivalent to $(a,b) \in R$.
+
+For $\mathcal{P} \mapsto R_{\mathcal{P}} \mapsto A/R_{\mathcal{P}}$: for
+each $a \in A$ let $P_a$ be the unique block containing $a$. One verifies
+$[a]_{R_{\mathcal{P}}} = P_a$, so $A/R_{\mathcal{P}} = \mathcal{P}$.
+\end{proof}
+
+\begin{remark}[Significance]
+This theorem establishes a bijection between equivalence relations on $A$
+and partitions of $A$. The two perspectives---``same block'' (partition) and
+``related'' (equivalence relation)---are interchangeable and each is more
+natural in different contexts.
+\end{remark}
+
+\begin{example}[Extremal equivalence relations]
+On any set $A$:
+\begin{enumerate}
+\item The \emph{equality relation} $(a,b) \in R \iff a=b$ gives singleton
+classes $[a] = \{a\}$ and the finest partition of $A$.
+\item The \emph{universal relation} $R = A \times A$ gives $[a] = A$ for all
+$a$, and the coarsest partition (one block).
+\end{enumerate}
+All other equivalence relations on $A$ lie strictly between these extremes.
+\end{example}

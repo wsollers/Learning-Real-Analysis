@@ -1,0 +1,132 @@
+% --------------------------------------
+% Proof: NN-TAO-P2.2.4
+% Proposition 2.2.4 — Commutativity of addition
+% Format: Deep study (3-column)
+% --------------------------------------
+\clearpage
+\phantomsection
+\label{prf:add-comm}
+\hypertarget{proof-NN-TAO-P2.2.4}{}
+
+\subsubsection[Commutativity of Addition (P2.2.4)]{Proof --- NN-TAO-P2.2.4}
+
+\begin{remark}[Return]
+\hyperref[prop:add-comm]{$\leftarrow$ Back to Proposition 2.2.4 in Notes}
+\end{remark}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysis1}{Chapter~2, \S2.2, Proposition~2.2.4}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+For all $n, m \in \mathbb{N}$, $n + m = m + n$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Logical form.}
+$\forall n \in \mathbb{N},\ \forall m \in \mathbb{N},\ n + m = m + n$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Key background.}
+L2.2.2: $n + 0 = n$. \quad
+L2.2.3: $n + (m\pp) = (n+m)\pp$. \quad
+Axiom A1: $0 + m = m$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Fix $m$; induct on $n$.
+Base case uses L2.2.2 (to handle $0 + m$) and A1 (to handle $m + 0$).
+Inductive step uses L2.2.3 and the IH.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+Fix $m \in \mathbb{N}$ arbitrary.
+
+\begin{longtable}{p{0.28\textwidth} p{0.35\textwidth} p{0.28\textwidth}}
+\toprule
+\textbf{Step / Claim} & \textbf{Justification} & \textbf{Annotation} \\
+\midrule
+\emph{Base case.} $0 + m = m + 0$.
+&
+LHS: $0 + m = m$ by A1. RHS: $m + 0 = m$ by L2.2.2.
+&
+Both sides equal $m$. Uses \emph{both} L2.2.2 and A1.
+\\
+\addlinespace
+\emph{IH.} Assume $n + m = m + n$.
+&
+Induction assumption.
+&
+$P(n)$ for fixed $m$.
+\\
+\addlinespace
+\emph{Inductive step.} Show $(n\pp) + m = m + (n\pp)$.
+&
+&
+\\
+$(n\pp) + m = (n + m)\pp$
+&
+A2.
+&
+Left argument is a successor; A2 fires.
+\\
+$(n + m)\pp = (m + n)\pp$
+&
+IH: $n + m = m + n$.
+&
+Substitute; successor respects equality.
+\\
+$(m + n)\pp = m + (n\pp)$
+&
+L2.2.3 (read right to left): $m + (n\pp) = (m+n)\pp$.
+&
+This is the key move: L2.2.3 lets us move the successor from left to right.
+\\
+\emph{Conclusion.} $(n\pp) + m = m + (n\pp)$.
+&
+Chain above.
+&
+$P(n\pp)$ established.
+\\
+\addlinespace
+By induction on $n$, the result holds for all $n$ and all fixed $m$.
+Since $m$ was arbitrary, it holds for all $m$.
+&
+P5.
+&
+\\
+\bottomrule
+\end{longtable}
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Scaffolding dependency.} This proof is only possible \emph{after}
+    L2.2.2 and L2.2.3. Those lemmas are purpose-built for exactly this use.
+    The logical dependency graph is: A1, A2 $\to$ L2.2.2, L2.2.3 $\to$ P2.2.4.
+
+  \item \textbf{Induction variable.} We induct on $n$ (the left argument),
+    not $m$. The reason is the same as always: A2 fires on the left argument,
+    and A2 is what the inductive step needs.
+
+  \item \textbf{Consequence.} With commutativity established, the distinction
+    between ``left'' and ``right'' properties collapses for addition.
+    Every ``right'' induction result (L2.2.2, L2.2.3) can now be transferred
+    to a ``left'' result by commutativity.
+\end{itemize}

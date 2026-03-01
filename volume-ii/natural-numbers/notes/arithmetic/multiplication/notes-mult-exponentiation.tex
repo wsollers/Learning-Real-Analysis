@@ -1,0 +1,110 @@
+% =========================================================
+% Properties of Exponentiation on N (Mendelson Thm 6.3)
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem 6.3 — Basic Properties of Exponentiation
+    \normalfont(\srccite{MendelsonNT}{Ch.~2, \S2.6, Theorem~6.3})}},
+  fonttitle=\small\bfseries]
+For all $x, y, z \in \mathbb{N}$:
+\[
+\textbf{(a)}\quad x^{y+z} = x^y \times x^z
+\qquad
+\textbf{(b)}\quad (x^y)^z = x^{y \times z}
+\qquad
+\textbf{(c)}\quad (x \times y)^z = x^z \times y^z
+\]
+\end{tcolorbox}
+
+\begin{remark}[Recall the definition]
+Exponentiation on $\mathbb{N}$ is defined recursively (Tao Def.~2.3.11,
+Mendelson Thm.~6.1):
+\[
+x^0 := 1,
+\qquad
+x^{n\pp} := x^n \times x.
+\]
+So $x^{n\pp}$ appends one more factor of $x$ on the right.
+All three parts of Thm~6.3 are proved by induction on $z$.
+\end{remark}
+
+\begin{remark}[Why induct on $z$?]
+$z$ is the variable that appears in the exponent on the
+left-hand side in a form that interacts directly with the recursive
+definition. Specifically:
+\begin{itemize}
+  \item In (a), $x^{y+z}$ recurses on $z$ via $y + z\pp = (y+z)\pp$.
+  \item In (b), $(x^y)^z$ recurses on $z$ directly.
+  \item In (c), $(x \times y)^z$ recurses on $z$ directly.
+\end{itemize}
+Fix all other variables and let $z$ be the induction variable.
+\end{remark}
+
+\begin{remark}[Part (a): $x^{y+z} = x^y \times x^z$ — the exponent addition law]
+This is the multiplicative analogue of the distributive law.
+It says: raising $x$ to a sum of exponents is the same as
+multiplying the separate powers.
+
+\medskip
+\textbf{Proof sketch (induct on $z$).}
+\begin{itemize}
+  \item Base case $z = 0$: $x^{y+0} = x^y = x^y \times 1 = x^y \times x^0$.
+    Uses L2.2.2 ($y+0=y$) and the definition $x^0 = 1$.
+  \item Inductive step: assume $x^{y+z} = x^y \times x^z$. Then:
+    \[
+    x^{y+z\pp} = x^{(y+z)\pp} = x^{y+z} \times x
+    \stackrel{\text{IH}}{=} (x^y \times x^z) \times x
+    = x^y \times (x^z \times x) = x^y \times x^{z\pp}.
+    \]
+    Uses L2.2.3 ($y + z\pp = (y+z)\pp$), the definition of
+    $x^{(y+z)\pp}$, the inductive hypothesis, and associativity (P2.3.5).
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Part (b): $(x^y)^z = x^{y \times z}$ — the power of a power law]
+Exponentiating a power collapses to multiplication of exponents.
+
+\medskip
+\textbf{Proof sketch (induct on $z$).}
+\begin{itemize}
+  \item Base case $z = 0$: $(x^y)^0 = 1 = x^0 = x^{y \times 0}$.
+    Uses M1 ($y \times 0 = 0$) and the definition $x^0 = 1$.
+  \item Inductive step: assume $(x^y)^z = x^{y \times z}$. Then:
+    \[
+    (x^y)^{z\pp} = (x^y)^z \times x^y
+    \stackrel{\text{IH}}{=} x^{y \times z} \times x^y = x^{y \times z + y}
+    = x^{y \times z\pp}.
+    \]
+    Uses the definition of $(x^y)^{z\pp}$, the inductive hypothesis,
+    part (a) to combine $x^{y \times z} \times x^y = x^{y \times z + y}$,
+    and M2 ($(y \times z\pp) = y \times z + y$).
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Part (c): $(x \times y)^z = x^z \times y^z$ — the product power law]
+A product raised to a power distributes over the factors.
+
+\medskip
+\textbf{Proof sketch (induct on $z$).}
+\begin{itemize}
+  \item Base case $z = 0$: $(x \times y)^0 = 1 = 1 \times 1 = x^0 \times y^0$.
+  \item Inductive step: assume $(x \times y)^z = x^z \times y^z$. Then:
+    \[
+    (x \times y)^{z\pp} = (x \times y)^z \times (x \times y)
+    \stackrel{\text{IH}}{=} (x^z \times y^z) \times (x \times y).
+    \]
+    Rearrange using commutativity and associativity to get
+    $(x^z \times x) \times (y^z \times y) = x^{z\pp} \times y^{z\pp}$.
+    The rearrangement requires four applications of P2.3.5 (associativity)
+    and one of L2.3.2 (commutativity).
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Also useful: Mendelson Lemma 6.2 ($1^x = 1$)]
+Proved by induction on $x$:
+base $1^0 = 1$;
+step $1^{x\pp} = 1^x \times 1 = 1 \times 1 = 1$.
+This is needed as a lemma in the uniqueness argument for the
+definition of exponentiation and is useful in its own right.
+\end{remark}

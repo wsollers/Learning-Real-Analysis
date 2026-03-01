@@ -1,0 +1,95 @@
+% =========================================================
+% Strong Induction
+% =========================================================
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem: Strong Induction}},
+  fonttitle=\small\bfseries]
+Let $P(n)$ be a statement depending on $n \in \mathbb{N}$.
+Suppose that for every $n \in \mathbb{N}$:
+\[
+\Big(\forall k < n,\; P(k)\Big) \Rightarrow P(n).
+\]
+Then $P(n)$ holds for all $n \in \mathbb{N}$.
+\end{tcolorbox}
+
+\begin{remark}[The base case in strong induction]
+When $n = 0$, the hypothesis $\forall k < 0,\; P(k)$ is vacuously
+true (no $k < 0$ exists in $\mathbb{N}$). So the step for $n = 0$
+reduces to showing $P(0)$ unconditionally --- this is the base case,
+and it is implicit in the universal statement rather than listed
+separately. In practice, still write the base case explicitly.
+\end{remark}
+
+\begin{remark}[When to use strong induction]
+Use strong induction when the proof of $P(n+1)$ requires knowing
+$P(k)$ for some $k < n$ that is not specifically $k = n$.
+
+The diagnostic: in the inductive step, write
+$P(n+1) = f(P(?), P(?), \ldots)$ and ask what values of $?$ you need.
+If the answer includes anything other than $n$, use strong induction.
+
+Canonical situations:
+\begin{itemize}
+  \item Recursive sequences: $a_{n+1} = a_n + a_{n-1}$ (need $n-1$).
+  \item Prime factorization: $n+1 = ab$ requires $P(a)$ and $P(b)$
+    where $a, b < n+1$ but are otherwise arbitrary.
+  \item Any argument that breaks $n+1$ into parts.
+\end{itemize}
+\end{remark}
+
+\begin{tcolorbox}[colback=gray!4, colframe=gray!35, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Template: Strong Induction Proof}},
+  fonttitle=\small\bfseries]
+Let $P(n)$ denote: [\emph{write it out}].
+
+\medskip
+\noindent\textbf{Base case} ($n = [\text{start}]$).
+[\emph{Verify directly.}]
+
+\medskip
+\noindent\textbf{Inductive step.}
+Let $n > [\text{start}]$ and assume $P(k)$ holds for all
+$[\text{start}] \leq k < n$.
+\textit{(Strong inductive hypothesis.)}
+We show $P(n)$ holds.
+
+[\emph{Work. Use $P(k)$ for some specific $k < n$.}]
+
+Hence $P(n)$ holds.
+
+By strong induction, $P(n)$ holds for all $n \geq [\text{start}]$. \qed
+\end{tcolorbox}
+
+\begin{example}[Every integer $n \geq 2$ has a prime factor]
+\textit{Proof.}
+Let $P(n)$: ``$n$ has a prime factor''.
+
+\medskip
+\noindent\textbf{Base case} ($n = 2$).
+$2$ is prime, so $2$ is a prime factor of itself.
+
+\medskip
+\noindent\textbf{Inductive step.}
+Let $n > 2$ and assume $P(k)$ holds for all $2 \leq k < n$.
+
+\textbf{Case 1}: $n$ is prime. Then $n$ is its own prime factor.
+
+\textbf{Case 2}: $n$ is composite. Then $n = ab$ for some
+$2 \leq a, b < n$.
+By the strong inductive hypothesis applied to $a$,
+$a$ has a prime factor $p$.
+Then $p \mid a$ and $a \mid n$, so $p \mid n$.
+
+In both cases $n$ has a prime factor. By strong induction,
+$P(n)$ holds for all $n \geq 2$. \qed
+\end{example}
+
+\begin{remark}[Why weak induction cannot do this directly]
+In the prime factor proof, the composite case splits $n$ into $a < n$.
+We need $P(a)$, not $P(n-1)$. Weak induction only provides $P(n-1)$,
+which is useless if $a \neq n-1$.
+Strong induction provides $P(k)$ for all $k < n$,
+covering whatever value $a$ takes.
+\end{remark}

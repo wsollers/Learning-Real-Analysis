@@ -1,0 +1,163 @@
+% =========================================================
+% Quantifier Laws: Negation, Commutation, Distribution,
+% Vacuous Quantification, and Renaming
+% =========================================================
+
+\subsection{Quantifiers: Quantifier Laws}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Quantifier Laws — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Law} & \textbf{Equivalence} & \textbf{Condition} & \textbf{Detail} \\
+\midrule
+Negation (1) & $\neg\forall x\,\varphi \equiv \exists x\,\neg\varphi$ & — & \hyperref[thm:qneg]{↓ Thm} \\
+Negation (2) & $\neg\exists x\,\varphi \equiv \forall x\,\neg\varphi$ & — & \hyperref[thm:qneg]{↓ Thm} \\
+Same-type commutation & $\forall x\,\forall y\,\varphi \equiv \forall y\,\forall x\,\varphi$ & same type & \hyperref[thm:qcomm]{↓ Thm} \\
+Distribution $\forall$/$\wedge$ & $\forall x\,(\varphi\wedge\psi)\equiv(\forall x\,\varphi)\wedge(\forall x\,\psi)$ & — & \hyperref[thm:qdist]{↓ Thm} \\
+Distribution $\exists$/$\vee$ & $\exists x\,(\varphi\vee\psi)\equiv(\exists x\,\varphi)\vee(\exists x\,\psi)$ & — & \hyperref[thm:qdist]{↓ Thm} \\
+Vacuous $\forall$ & $\forall x\,\varphi \equiv \varphi$ & $x \notin \mathrm{FV}(\varphi)$ & \hyperref[thm:vacuous]{↓ Thm} \\
+Renaming & $\forall x\,\varphi \equiv \forall y\,\varphi[y/x]$ & $y$ not free in $\varphi$ & \hyperref[thm:rename]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Quantifier Negation
+% ---------------------------------------------------------
+
+\begin{proposition}[Quantifier Negation Laws]\label{thm:qneg}
+For any formula $\varphi$:
+\begin{align*}
+\neg \forall x\,\varphi &\;\equiv\; \exists x\,\neg \varphi, \\
+\neg \exists x\,\varphi &\;\equiv\; \forall x\,\neg \varphi.
+\end{align*}
+\end{proposition}
+
+\begin{remark}[English reading]
+To negate a universally quantified statement, swap $\forall$ for $\exists$ and
+negate the inner formula. To negate an existential, swap $\exists$ for $\forall$
+and negate. The negation pushes through the quantifier, flipping it.
+\end{remark}
+
+\begin{remark}[Procedure for negating nested quantifiers]
+When negating a statement with multiple quantifiers, push the negation inward
+past every quantifier, flipping each one, until it reaches the atomic predicate.
+For example:
+\[
+\neg(\forall x\,\exists y\,\varphi)
+\equiv \exists x\,\neg(\exists y\,\varphi)
+\equiv \exists x\,\forall y\,\neg\varphi.
+\]
+\end{remark}
+
+\begin{remark}[General schema for negating quantified implications]
+For $Q_1 x_1 \cdots Q_n x_n (\varphi \rightarrow \psi)$ where each $Q_i \in \{\forall,\exists\}$:
+\[
+\neg\bigl(Q_1 x_1 \cdots Q_n x_n (\varphi \rightarrow \psi)\bigr)
+\;\equiv\;
+Q_1' x_1 \cdots Q_n' x_n (\varphi \wedge \neg \psi),
+\]
+where $Q_i' = \exists$ when $Q_i = \forall$, and $Q_i' = \forall$ when $Q_i = \exists$.
+\end{remark}
+
+\begin{remark}[Common error]
+Negating only the predicate without flipping the quantifier is incorrect:
+$\neg(\forall x\,P(x)) \not\equiv \forall x\,\neg P(x)$.
+The right side asserts that \emph{every} element fails $P$, which is much
+stronger than merely asserting that not every element satisfies $P$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Commutation
+% ---------------------------------------------------------
+
+\begin{proposition}[Quantifier Commutation]\label{thm:qcomm}
+Quantifiers of the same type commute:
+\begin{align*}
+\forall x\,\forall y\,\varphi &\;\equiv\; \forall y\,\forall x\,\varphi, \\
+\exists x\,\exists y\,\varphi &\;\equiv\; \exists y\,\exists x\,\varphi.
+\end{align*}
+However, quantifiers of different types do \emph{not} commute in general:
+\[
+\forall x\,\exists y\,\varphi \;\not\equiv\; \exists y\,\forall x\,\varphi.
+\]
+\end{proposition}
+
+\begin{remark}[Common error]
+Swapping $\forall$ and $\exists$ changes the meaning. The statement
+$\exists y\,\forall x\,\varphi$ requires a single uniform witness $y$ that
+works for all $x$, whereas $\forall x\,\exists y\,\varphi$ allows a different
+$y$ for each $x$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Distribution
+% ---------------------------------------------------------
+
+\begin{proposition}[Quantifier Distribution]\label{thm:qdist}
+The following distribution equivalences hold:
+\begin{align*}
+\forall x\,(\varphi \wedge \psi) &\;\equiv\; (\forall x\,\varphi) \wedge (\forall x\,\psi), \\
+\exists x\,(\varphi \vee \psi) &\;\equiv\; (\exists x\,\varphi) \vee (\exists x\,\psi).
+\end{align*}
+The following do \emph{not} hold in general:
+\begin{align*}
+\forall x\,(\varphi \vee \psi) &\;\not\equiv\; (\forall x\,\varphi) \vee (\forall x\,\psi), \\
+\exists x\,(\varphi \wedge \psi) &\;\not\equiv\; (\exists x\,\varphi) \wedge (\exists x\,\psi).
+\end{align*}
+Additionally, when $x \notin \mathrm{FV}(\psi)$:
+\begin{align*}
+\forall x\,(\varphi \wedge \psi) &\;\equiv\; (\forall x\,\varphi) \wedge \psi, \\
+\exists x\,(\varphi \vee \psi) &\;\equiv\; (\exists x\,\varphi) \vee \psi.
+\end{align*}
+\end{proposition}
+
+\begin{remark}[Mnemonic]
+Universal distributes over conjunction ($\forall$/$\wedge$ match because both
+are ``all-or-nothing''); existential distributes over disjunction
+($\exists$/$\vee$ match because both assert ``at least one'').
+\end{remark}
+
+% ---------------------------------------------------------
+% Vacuous Quantification
+% ---------------------------------------------------------
+
+\begin{proposition}[Vacuous Quantification]\label{thm:vacuous}
+If $x$ does not occur free in $\varphi$, then:
+\begin{align*}
+\forall x\,\varphi &\;\equiv\; \varphi, \\
+\exists x\,\varphi &\;\equiv\; \varphi.
+\end{align*}
+\end{proposition}
+
+\begin{remark}[English reading]
+A quantifier is vacuous if its bound variable does not appear free in the scope.
+Such quantifiers may be freely added or removed without changing meaning.
+\end{remark}
+
+% ---------------------------------------------------------
+% Renaming Bound Variables
+% ---------------------------------------------------------
+
+\begin{proposition}[Renaming Bound Variables]\label{thm:rename}
+If $y$ does not occur in $\varphi$, then:
+\begin{align*}
+\forall x\,\varphi &\;\equiv\; \forall y\,\varphi[y/x], \\
+\exists x\,\varphi &\;\equiv\; \exists y\,\varphi[y/x].
+\end{align*}
+\end{proposition}
+
+\begin{remark}[Consequence]
+This is a direct consequence of alpha-equivalence (Definition~\ref{def:alpha-equiv}).
+Renaming bound variables is the standard technique for avoiding variable
+capture when applying substitution rules.
+\end{remark}

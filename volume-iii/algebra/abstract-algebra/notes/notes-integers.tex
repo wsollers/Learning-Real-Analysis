@@ -1,0 +1,840 @@
+% =========================================================
+% NOTES TEMPLATE (Definitions → Theorems/Proofs → Consequences)
+% File: notes-integers.tex
+% =========================================================
+
+\subsection{Integers}
+\label{sec:integers}  
+
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions and Theorems}
+
+\begin{axiom}[Well Ordering Principle]
+Every nonempty set of positive integers contains a smallest member.
+\[
+\forall A\,
+\Bigl(
+\bigl( A \subseteq \mathbb{N}
+\land \exists a\,(a \in A) \bigr)
+\Rightarrow
+\exists m\,
+\bigl(
+m \in A
+\land
+\forall a\,(a \in A \Rightarrow m \le a)
+\bigr)
+\Bigr).
+\]
+\end{axiom}
+
+\begin{remark}
+The well-ordering principle asserts that every nonempty subset, $A$,
+of $\mathbb{N}$ possesses a least element.
+Its quantifier structure is:
+\[
+\forall A\;
+(\exists a \in A \Rightarrow \exists m \in A\;\forall a \in A).
+\]
+This principle is equivalent to the principle of mathematical induction.
+\end{remark}
+
+\begin{remark}[Axiomatic Status of the Well-Ordering Principle]
+The Well-Ordering Principle is not a theorem of elementary arithmetic.
+It cannot be proved using only the usual algebraic laws of addition
+and multiplication on $\mathbb{N}$.
+
+Rather, it is taken as an axiom describing the order structure of
+the natural numbers.  In standard foundations, it is equivalent
+to the Principle of Mathematical Induction and the Least Element
+Principle.  Thus one must assume one of these principles in order
+to derive the others.
+
+In particular, arithmetic identities alone do not imply that every
+nonempty subset of $\mathbb{N}$ has a smallest element; this property
+is part of the defining structure of the natural numbers.
+\end{remark}
+
+\begin{remark}[Intuition]
+Intuitively: the Well-Ordering Principle says you can always find a
+``smallest'' object in any nonempty collection of positive integers.
+This gives us a foothold — once we have a minimal element,
+we can derive divisibility and gcd properties by contradiction.
+\end{remark}
+
+\begin{definition}
+Let $a, b \in \mathbb{Z}$ with $b \neq 0$. In the expression $\dfrac{a}{b}$,
+we call $a$ the \textit{numerator} and $b$ the \textit{denominator}.
+\end{definition}
+
+\begin{definition}
+Let $a, b \in \mathbb{Z}$. We say $a$ is a \textit{multiple} of $b$ if
+$a = bk$ for some $k \in \mathbb{Z}$.
+\end{definition}
+
+\begin{definition}[Divisibility]
+Let $a, b \in \mathbb{Z}$ with $b \neq 0$.
+We say $b$ \emph{divides} $a$, written $b \mid a$, if there exists
+an integer $k$ such that
+\[
+a = bk.
+\]
+If $b$ divides $a$, we call $b$ a \emph{divisor} (or \emph{factor}) of $a$,
+and $a$ a \emph{multiple} of $b$.
+If $b$ does not divide $a$, we write $b \nmid a$.
+\end{definition}
+
+\begin{remark}[Unpacking Divisibility]
+The statement $b \mid a$ is a claim about the \emph{existence} of an integer
+$k$ such that $a = bk$. It says nothing about a remainder --- divisibility means
+the remainder is exactly zero.
+
+For example:
+\begin{itemize}
+\item $3 \mid 12$ because $12 = 3 \cdot 4$.
+\item $5 \nmid 13$ because $13 = 5 \cdot 2 + 3$ and the remainder $3 \neq 0$.
+\end{itemize}
+
+This is the foundation for gcd, lcm, and Bézout's Identity.
+\end{remark}
+
+\begin{remark}[Intuition]
+Intuitively: $b \mid a$ means $b$ fits into $a$ a whole number of times,
+with nothing left over. Division is exact.
+\end{remark}
+
+\begin{lemma}[Divisibility of Linear Combinations]
+\label{lem:div-linear-combo}
+Let $a, b \in \mathbb{Z}$. If $t \mid a$ and $t \mid b$, then $t$ divides
+every integer linear combination of $a$ and $b$. That is,
+\[
+t \mid (ua + vb)
+\quad \text{for all } u, v \in \mathbb{Z}.
+\]
+\end{lemma}
+
+\begin{proof}
+Since $t \mid a$ and $t \mid b$, there exist integers $x, y$ such that
+\[
+a = tx, \qquad b = ty.
+\]
+Then for any $u, v \in \mathbb{Z}$,
+\[
+ua + vb = u(tx) + v(ty) = t(ux + vy).
+\]
+Since $ux + vy \in \mathbb{Z}$, we have $t \mid (ua + vb)$.
+\end{proof}
+
+\begin{remark}
+This lemma is used constantly in number theory. Its most important
+instance is: since $\gcd(a,b)$ divides both $a$ and $b$, it divides
+every linear combination $ua + vb$. In particular it divides
+$d = as + bt$ from Bézout's Identity, which is how we verify
+the greatest-ness of the gcd.
+\end{remark}
+
+\begin{remark}[Intuition]
+Intuitively: if $t$ fits into both $a$ and $b$ individually with no remainder,
+then $t$ must fit into any way you scale and combine them --- the remainders
+simply cannot accumulate.
+\end{remark}
+
+\begin{theorem}[Division Algorithm]
+Let $a$ and $b$ be integers with $b > 0$. Then there exist unique integers
+$q$ and $r$ such that
+\[
+a = bq + r,
+\qquad
+0 \le r < b.
+\]
+\end{theorem}
+
+\begin{remark}
+In the Division Algorithm, $a = bq + r$, we say $a$ is the \textit{dividend}
+and $b$ is the \textit{divisor}. This corresponds to the division $a / b$,
+yielding quotient $q$ and remainder $r$. When $r = 0$, we write $b \mid a$
+(``$b$ divides $a$''), meaning $a = bq$ for some integer $q$.
+\end{remark}
+
+\begin{proof}
+We begin with the existence portion of the theorem. Consider the set
+\[
+S = \{\, a - bk \mid k \in \mathbb{Z},\; a - bk \ge 0 \,\}.
+\]
+
+If $0 \in S$, then $b$ divides $a$ and we obtain the desired result with
+$q = a/b$ and $r = 0$.
+
+Now assume $0 \notin S$. Since $S$ is nonempty
+(if $a > 0$, then $a - b\cdot 0 = a \in S$;
+if $a < 0$, then choosing $k$ sufficiently negative makes $a - bk \ge 0$),
+we may apply the Well-Ordering Principle to conclude that $S$ has a smallest
+member, say
+\[
+r = a - bq.
+\]
+Then
+\[
+a = bq + r
+\quad \text{and} \quad r \ge 0.
+\]
+It remains to prove that $r < b$.
+
+Suppose, to the contrary, that $r \ge b$. Then
+\[
+a - b(q+1)
+=
+a - bq - b
+=
+r - b
+\ge 0,
+\]
+so that $a - b(q+1) \in S$. But
+\[
+a - b(q+1) < a - bq,
+\]
+contradicting the minimality of $r = a - bq$. Hence $r < b$.
+
+\medskip
+
+To establish uniqueness, suppose there exist integers $q, q', r, r'$
+such that
+\[
+a = bq + r, \qquad 0 \le r < b,
+\]
+and
+\[
+a = bq' + r', \qquad 0 \le r' < b.
+\]
+
+Subtracting the two equations gives
+\[
+b(q - q') = r' - r.
+\]
+
+Thus $b$ divides $r' - r$. Without loss of generality, assume $r' \ge r$.
+Then
+\[
+0 \le r' - r < b.
+\]
+
+The only multiple of $b$ in this interval is $0$. Therefore,
+\[
+r' - r = 0,
+\]
+so $r' = r$ and hence $q = q'$.
+
+This completes the proof.
+\end{proof}
+\cite{GallianCAA7}
+
+\begin{definition}[Quotient and Remainder]
+Let $a,b \in \mathbb{Z}$ with $b>0$.
+If integers $q$ and $r$ satisfy
+\[
+a = bq + r,
+\qquad
+0 \le r < b,
+\]
+then:
+\begin{itemize}
+\item $q$ is called the \emph{quotient} of $a$ divided by $b$,
+\item $r$ is called the \emph{remainder} of $a$ divided by $b$.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The conditions $0 \le r < b$ ensure uniqueness.
+Without this bound on $r$, the representation
+\[
+a = bq + r
+\]
+would not be unique, since one could replace $(q,r)$ with
+\[
+(q+1, r-b), \quad (q-1, r+b), \quad \text{etc.}
+\]
+The remainder condition selects exactly one representative.
+\end{remark}
+
+\begin{remark}[Interpretation of quotient and remainder]
+The quotient measures how many full copies of $b$ fit into $a$,
+while the remainder measures the leftover part that is strictly
+smaller than $b$.
+\end{remark}
+
+\begin{definition}
+An integer $p > 1$ is called \textit{prime} if its only positive divisors
+are $1$ and $p$.
+\end{definition}
+
+\begin{definition}[Greatest Common Divisor]
+Let $a$ and $b$ be integers, not both zero. The greatest common divisor
+of $a$ and $b$ is the largest of all common divisors of $a$ and $b$.
+
+A positive integer $d$ is called the \emph{greatest common divisor}
+of $a$ and $b$ if:
+\begin{enumerate}
+\item $d \mid a$ and $d \mid b$ (that is, $d$ divides both $a$ and $b$), and
+\item Whenever $c$ is an integer such that $c \mid a$ and $c \mid b$,
+then $c \mid d$.
+\end{enumerate}
+
+The greatest common divisor of $a$ and $b$ is denoted
+\[
+\gcd(a,b).
+\]
+\end{definition}
+
+\begin{remark}[Intuition]
+Intuitively: the gcd is the largest ruler that measures both $a$ and $b$
+exactly, with no remainder. Any other common divisor must itself be measured
+exactly by the gcd.
+\end{remark}
+
+\begin{definition}[Relatively Prime Integers]
+Two integers $a$ and $b$ are said to be \emph{relatively prime}
+(or \emph{coprime}) if
+\[
+\gcd(a,b) = 1.
+\]
+\end{definition}
+
+\begin{remark}
+If $\gcd(a,b) = 1$, then the only positive integer dividing both $a$ and $b$
+is $1$. In this case, $a$ and $b$ share no common prime factors.
+\end{remark}
+
+\begin{theorem}[Bézout's Identity]
+Let $a$ and $b$ be integers, not both zero.
+Then there exist integers $s$ and $t$ such that
+\[
+\gcd(a,b) = as + bt.
+\]
+
+Moreover, $\gcd(a,b)$ is the smallest positive integer
+of the form
+\[
+as + bt,
+\quad s,t \in \mathbb{Z}.
+\]
+\end{theorem}
+
+\begin{remark}
+The set
+\[
+\{\, as + bt : s,t \in \mathbb{Z} \,\}
+\]
+is called the set of \emph{integer linear combinations} of $a$ and $b$.
+Bézout's Identity asserts that the greatest common divisor
+is the minimal positive element of this set.
+\end{remark}
+
+\begin{proof}
+Consider the set
+\[
+S = \{\, am + bn \mid m,n \in \mathbb{Z},\; am + bn > 0 \,\}.
+\]
+
+Since $S$ is nonempty (if some choice of $m,n$ gives $am+bn<0$,
+replace $m,n$ with $-m,-n$), the Well-Ordering Principle
+implies that $S$ has a smallest element.
+Denote this smallest element by
+\[
+d = as + bt
+\]
+for some integers $s,t$.
+
+We claim that $d = \gcd(a,b)$.
+
+\medskip
+\noindent
+\textbf{Step 1: $d$ divides $a$ and $b$.}
+
+Apply the Division Algorithm to write
+\[
+a = dq + r,
+\qquad
+0 \le r < d.
+\]
+
+If $r > 0$, then
+\[
+r = a - dq
+  = a - (as + bt)q
+  = a - asq - btq
+  = a(1 - sq) + b(-tq).
+\]
+Thus $r$ is of the form $am + bn$, and since $r>0$,
+we have $r \in S$. But $r < d$, contradicting
+the minimality of $d$. Hence $r = 0$, so $d \mid a$.
+
+By symmetry, the same argument shows that $d \mid b$.
+Thus $d$ is a common divisor of $a$ and $b$.
+
+\medskip
+\noindent
+\textbf{Step 2: $d$ is the greatest common divisor.}
+
+Let $d'$ be any other common divisor of $a$ and $b$.
+Then there exist integers $h,k$ such that
+\[
+a = d'h,
+\qquad
+b = d'k.
+\]
+
+Substituting into $d = as + bt$ gives
+\[
+d = (d'h)s + (d'k)t
+  = d'(hs + kt).
+\]
+
+Hence $d'$ divides $d$.
+Therefore, every common divisor of $a$ and $b$
+divides $d$, and so $d$ is the greatest common divisor.
+
+\medskip
+
+Thus,
+\[
+d = \gcd(a,b).
+\]
+\end{proof}
+
+\begin{remark}[Structural Map of the Proof]
+This proof has three distinct logical engines.
+
+\begin{enumerate}
+\item \textbf{Well-Ordering Principle (existence of a minimal positive combination).}
+We define
+\[
+S=\{\,am+bn : m,n\in\mathbb{Z},\; am+bn>0\,\}.
+\]
+The Well-Ordering Principle is invoked \emph{exactly here} to guarantee that
+$S$ has a smallest element $d$. This is the sole point where order-theoretic
+structure on $\mathbb{N}$ enters.
+
+\item \textbf{Division Algorithm (turning minimality into divisibility).}
+After choosing the minimal $d\in S$, we apply the Division Algorithm to write
+\[
+a = dq + r,\qquad 0 \le r < d.
+\]
+The key move is: if $r>0$, then $r$ can be rewritten as another positive
+integer linear combination of $a$ and $b$, hence $r\in S$, contradicting the
+minimality of $d$. Therefore $r=0$ and $d\mid a$ (and similarly $d\mid b$).
+So the Division Algorithm is used \emph{exactly here} to convert the order
+statement ``$d$ is smallest'' into the algebraic statement ``$d$ divides.''
+
+\item \textbf{Greatest-ness (universal property among common divisors).}
+Finally, for any common divisor $d'$ of $a$ and $b$, writing $a=d'h$ and $b=d'k$
+shows
+\[
+d = as+bt = d'(hs+kt),
+\]
+so $d' \mid d$. This establishes that $d$ is the \emph{greatest} common divisor
+in the divisibility order.
+\end{enumerate}
+
+\medskip
+\noindent
+\textbf{Prototype Euclidean-domain argument.}
+The overall pattern is the Euclidean-domain template:
+\[
+\text{(nonempty set of ``sizes'')} \xRightarrow{\text{well-ordering}}
+\text{minimal element} \xRightarrow{\text{division algorithm}}
+\text{divisibility + gcd characterization}.
+\]
+In $\mathbb{Z}$, the ``size'' is the usual order on positive integers; in a
+general Euclidean domain, the ``size'' is a Euclidean function
+$\delta:R\setminus\{0\}\to\mathbb{N}$, and the same minimality-plus-division
+strategy produces gcds and Bézout-type identities.
+\end{remark}
+
+\begin{corollary}
+Let $a$ and $b$ be relatively prime integers.
+Then there exist integers $s$ and $t$ such that
+\[
+as + bt = 1.
+\]
+\end{corollary}
+
+\begin{proof}
+If $a$ and $b$ are relatively prime, then
+\[
+\gcd(a,b) = 1.
+\]
+By Bézout's Identity, there exist integers $s$ and $t$ such that
+\[
+\gcd(a,b) = as + bt.
+\]
+Substituting $\gcd(a,b)=1$ gives
+\[
+as + bt = 1.
+\]
+\end{proof}
+
+\begin{remark}[Bézout in Both Directions]
+Bézout's Identity is often applied in two distinct directions,
+and it is important to keep them separate.
+
+\medskip
+\noindent
+\textbf{Forward direction.}
+If $\gcd(a,b) = d$, then there exist integers $s, t$ such that
+\[
+as + bt = d.
+\]
+This is the content of the theorem itself.
+
+\medskip
+\noindent
+\textbf{Reverse direction.}
+If there exist integers $s, t$ such that $as + bt = 1$, then
+$\gcd(a,b) = 1$.
+
+\medskip
+\noindent
+\emph{Proof of reverse direction.}
+Let $d = \gcd(a,b)$. By the forward direction, $d \mid a$ and $d \mid b$,
+so by Lemma~\ref{lem:div-linear-combo}, $d \mid (as + bt) = 1$.
+Since $d > 0$ and $d \mid 1$, we conclude $d = 1$.
+
+\medskip
+More generally, if $as + bt = c$ for some integers $s, t$, then
+$\gcd(a,b) \mid c$, since $\gcd(a,b)$ divides any linear combination
+of $a$ and $b$.
+\end{remark}
+
+\begin{remark}[Intuition]
+Intuitively: a linear combination equaling $1$ leaves no room for any
+common factor greater than $1$ --- if $d > 1$ divided both $a$ and $b$,
+it would divide the combination too, but nothing greater than $1$ divides $1$.
+\end{remark}
+
+\begin{theorem}[Equivalent Characterizations of Relatively Prime Integers]
+For integers $a$ and $b$, the following are equivalent:
+
+\begin{enumerate}
+\item $\gcd(a,b)=1$.
+\item There exist integers $s,t$ such that $as+bt=1$.
+\item $a$ and $b$ share no common prime factor.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Euclid's Lemma]
+Let $p$ be a prime integer.
+If
+\[
+p \mid ab,
+\]
+then
+\[
+p \mid a \quad \text{or} \quad p \mid b.
+\]
+\end{theorem}
+
+\begin{proof}
+Suppose $p$ is prime and $p \mid ab$.
+If $p \mid a$, we are done.
+So assume that $p \nmid a$.
+We must show that $p \mid b$.
+
+Because $p$ is prime and $p \nmid a$, it follows that
+\[
+\gcd(p,a) = 1.
+\]
+By Bézout's Identity, there exist integers $s$ and $t$ such that
+\[
+1 = as + pt.
+\]
+
+Multiplying both sides by $b$ gives
+\[
+b = abs + ptb.
+\]
+
+Since $p \mid ab$, the term $abs$ is divisible by $p$.
+The term $ptb$ is clearly divisible by $p$.
+Therefore the right-hand side is divisible by $p$,
+and hence $p \mid b$.
+
+Thus, if $p \mid ab$, then $p \mid a$ or $p \mid b$.
+\end{proof}
+
+\begin{remark}[Intuition]
+Intuitively: primes cannot be fooled by multiplication --- if a prime
+divides a product, it must have divided one of the factors going in.
+This rigidity is what makes unique prime factorization possible.
+\end{remark}
+
+\begin{definition}[Least Common Multiple]
+Let $a$ and $b$ be nonzero integers.
+The \emph{least common multiple} of $a$ and $b$
+is the unique positive integer $m$ such that:
+
+\begin{enumerate}
+\item $a \mid m$ and $b \mid m$ (so $m$ is a common multiple), and
+\item If $c$ is any positive integer with $a \mid c$ and $b \mid c$,
+then $m \mid c$.
+\end{enumerate}
+
+The least common multiple of $a$ and $b$ is denoted
+\[
+\operatorname{lcm}(a,b).
+\]
+\end{definition}
+
+\begin{remark}[Intuition]
+Intuitively: the lcm is the smallest number that both $a$ and $b$ divide
+into evenly. Any other common multiple must itself be a multiple of the lcm.
+\end{remark}
+
+\begin{remark}[Relation with the Greatest Common Divisor]
+For nonzero integers $a$ and $b$,
+\[
+\gcd(a,b)\,\operatorname{lcm}(a,b) = |ab|.
+\]
+
+Thus the greatest common divisor measures the
+\emph{shared divisibility} of $a$ and $b$,
+while the least common multiple measures their
+\emph{combined multiplicative content}.
+
+In prime factorization terms,
+$\gcd$ takes the minimum exponent of each prime,
+whereas $\operatorname{lcm}$ takes the maximum exponent.
+\end{remark}
+
+\begin{theorem}[Fundamental Theorem of Arithmetic]
+Every integer $n > 1$ is either prime or can be written as a product of primes.
+Moreover, this factorization is unique up to the order of the factors.
+
+That is, if
+\[
+n = p_1 p_2 \cdots p_r
+\quad\text{and}\quad
+n = q_1 q_2 \cdots q_s,
+\]
+where each $p_i$ and $q_j$ is prime, then
+\[
+r = s,
+\]
+and after a reordering of the $q_j$,
+\[
+p_i = q_i \quad \text{for all } i.
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{(Existence)}
+
+We prove by strong induction on $n > 1$ that $n$ is a prime or a product
+of primes.
+
+\medskip
+\emph{Base case:}
+For $n=2$, the statement holds because $2$ is prime.
+
+\medskip
+\emph{Inductive step:}
+Assume every integer $m$ with $2 \le m < n$ is prime or a product of primes.
+If $n$ is prime, we are done.
+
+If $n$ is composite, then
+\[
+n = ab
+\quad\text{with}\quad
+1 < a < n, \; 1 < b < n.
+\]
+By the induction hypothesis, both $a$ and $b$ are products of primes.
+Therefore $n = ab$ is also a product of primes.
+
+Thus every integer greater than $1$ is prime or a product of primes.
+
+\medskip
+\textbf{(Uniqueness)}
+
+Suppose
+\[
+n = p_1 p_2 \cdots p_r
+\quad\text{and}\quad
+n = q_1 q_2 \cdots q_s,
+\]
+where all $p_i$ and $q_j$ are primes.
+
+Since $p_1 \mid n$, we have
+\[
+p_1 \mid q_1 q_2 \cdots q_s.
+\]
+By Euclid's Lemma, $p_1$ divides some $q_j$.
+Because $q_j$ is prime, it follows that
+\[
+p_1 = q_j.
+\]
+
+After reordering, we may assume $p_1 = q_1$.
+Canceling this common factor gives
+\[
+p_2 \cdots p_r = q_2 \cdots q_s.
+\]
+
+Repeating this argument inductively, we conclude that
+\[
+r = s
+\quad\text{and}\quad
+p_i = q_i \text{ for all } i
+\]
+after a suitable reordering.
+
+Therefore, the prime factorization of $n$ is unique up to order.
+\end{proof}
+
+\begin{theorem}[Structural Relation Between $\gcd$ and $\operatorname{lcm}$]
+Let $a$ and $b$ be nonzero integers. Then
+\[
+\gcd(a,b)\,\operatorname{lcm}(a,b) = |ab|.
+\]
+\end{theorem}
+
+\begin{proof}
+Let
+\[
+d = \gcd(a,b).
+\]
+Then there exist integers $a_1$ and $b_1$ such that
+\[
+a = d a_1, \qquad b = d b_1,
+\]
+and $\gcd(a_1,b_1)=1$.
+
+Now
+\[
+ab = d^2 a_1 b_1.
+\]
+
+We claim that $\operatorname{lcm}(a,b) = d a_1 b_1$.
+To see this, note that $a \mid d a_1 b_1$ (since $d a_1 b_1 = a \cdot b_1$)
+and $b \mid d a_1 b_1$ (since $d a_1 b_1 = b \cdot a_1$).
+If $c$ is any common multiple of $a$ and $b$, write $c = a u = b v$
+for integers $u, v$. Then $d a_1 u = d b_1 v$, so $a_1 u = b_1 v$.
+Since $\gcd(a_1, b_1) = 1$, we have $b_1 \mid u$, say $u = b_1 w$,
+giving $c = a u = d a_1 b_1 w$. Hence $d a_1 b_1 \mid c$, confirming
+that $d a_1 b_1$ is the least common multiple.
+
+Therefore,
+\[
+\gcd(a,b)\,\operatorname{lcm}(a,b)
+= d \cdot (d a_1 b_1)
+= d^2 a_1 b_1
+= |ab|.
+\]
+
+Taking absolute value accounts for possible signs of $a$ and $b$.
+\end{proof}
+
+\begin{remark}[Intuition]
+Intuitively: $a$ and $b$ together contain a fixed amount of prime material.
+The gcd captures what they share; the lcm captures everything between them.
+Together they account for the full prime content of $ab$.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences and Logical Implications}
+% ---------------------------------------------------------
+
+\begin{remark}[Logical Dependency Chain]
+The development of the integers in this section follows the chain
+\[
+\begin{aligned}
+\text{Well-Ordering Principle}
+&\;\Rightarrow\;
+\text{Division Algorithm}
+\;\Rightarrow\;
+\text{Bézout's Identity}
+\\[4pt]
+&\;\Rightarrow\;
+\text{Euclid's Lemma}
+\;\Rightarrow\;
+\text{Fundamental Theorem of Arithmetic}.
+\end{aligned}
+\]
+
+Thus the order structure of $\mathbb{N}$ ultimately governs
+prime factorization in $\mathbb{Z}$.
+\end{remark}
+
+\begin{remark}[Equivalences]
+The following principles are logically equivalent:
+
+\begin{itemize}
+\item The Well-Ordering Principle.
+\item The Principle of Mathematical Induction.
+\item The Least Element Principle.
+\end{itemize}
+
+Each encodes the same structural property:
+the integers admit no infinite strictly descending chains.
+\end{remark}
+
+\begin{remark}[Divisibility Structure]
+Bézout's Identity upgrades divisibility into a linear-combination statement:
+\[
+\gcd(a,b)
+=
+\min \{\, as+bt>0 : s,t\in\mathbb{Z} \,\}.
+\]
+
+Thus the gcd is characterized by a universal property:
+it is the greatest element (under divisibility)
+among common divisors of $a$ and $b$.
+\end{remark}
+
+\begin{remark}[Prime Structure]
+Euclid's Lemma implies that primes behave rigidly under multiplication:
+\[
+p \mid ab \Rightarrow p \mid a \text{ or } p \mid b.
+\]
+
+This rigidity is exactly what makes unique prime factorization possible.
+Without Euclid's Lemma, uniqueness would fail.
+\end{remark}
+
+\begin{remark}[Arithmetic Decomposition]
+The Fundamental Theorem of Arithmetic shows that
+every integer $n>1$ decomposes uniquely into prime powers.
+Thus $\mathbb{Z}$ is a \emph{Unique Factorization Domain (UFD)}.
+\end{remark}
+
+\begin{remark}[Duality of $\gcd$ and $\operatorname{lcm}$]
+The identity
+\[
+\gcd(a,b)\,\operatorname{lcm}(a,b)=|ab|
+\]
+reveals a structural duality:
+
+\begin{itemize}
+\item $\gcd$ measures shared prime factors (intersection).
+\item $\operatorname{lcm}$ measures total prime coverage (union).
+\end{itemize}
+
+Together they partition the prime-power structure of $ab$.
+\end{remark}
+
+\begin{remark}[Structural Position]
+This section establishes that:
+
+\begin{itemize}
+\item $\mathbb{Z}$ has a well-ordered positive part.
+\item Divisibility can be analyzed via minimal elements.
+\item Primes control multiplicative structure.
+\item Linear combinations control common divisors.
+\end{itemize}
+
+These ideas generalize later to:
+
+\begin{itemize}
+\item Euclidean domains,
+\item Principal ideal domains,
+\item Unique factorization domains.
+\end{itemize}
+\end{remark}

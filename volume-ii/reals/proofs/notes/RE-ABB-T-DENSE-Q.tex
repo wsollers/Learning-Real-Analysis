@@ -1,0 +1,119 @@
+% --------------------------------------
+% Proof: RE-ABB-T-DENSE-Q
+% Theorem — Density of Q in R
+% Format: Deep study (3-column)
+% --------------------------------------
+\clearpage
+\phantomsection
+\label{prf:density-Q}
+\hypertarget{proof-RE-ABB-T-DENSE-Q}{}
+
+\subsubsection[Density of $\mathbb{Q}$ in $\mathbb{R}$]{Proof --- RE-ABB-T-DENSE-Q}
+
+\begin{remark}[Return]
+\hyperref[thm:density-Q]{$\leftarrow$ Back to Theorem (Density of $\mathbb{Q}$) in Notes}
+\end{remark}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{AbbottUnderstandingAnalysis}{Chapter~1, \S1.4, Theorem~1.4.3};
+\srccite{TaoAnalysis1}{Chapter~5}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+For every $a, b \in \mathbb{R}$ with $a < b$, there exists $q \in \mathbb{Q}$
+with $a < q < b$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Logical form.}
+$\forall a, b \in \mathbb{R},\ (a < b) \Rightarrow \exists q \in \mathbb{Q},\ (a < q < b)$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Key background.}
+Archimedean Property (Theorem \ref{thm:archimedean}): $\forall x > 0,\ \exists n \in \mathbb{N},\ 1/n < x$.
+Floor Lemma: $\forall x \in \mathbb{R},\ \exists! m \in \mathbb{Z},\ m \le x < m+1$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Find $n \in \mathbb{N}$ large enough that the grid $\{\ldots, -1/n, 0, 1/n, 2/n, \ldots\}$
+is fine enough to fit a grid point between $a$ and $b$.
+Use the Floor Lemma to locate the right grid point $m/n$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+\begin{longtable}{p{0.28\textwidth} p{0.35\textwidth} p{0.28\textwidth}}
+\toprule
+\textbf{Step / Claim} & \textbf{Justification} & \textbf{Annotation} \\
+\midrule
+Choose $n \in \mathbb{N}$ with $1/n < b - a$.
+& Archimedean Property applied to $b - a > 0$.
+& The grid of spacing $1/n$ is fine enough to fit between $a$ and $b$.
+\\
+\addlinespace
+Let $m := \lfloor na \rfloor$, so $m \le na < m+1$.
+& Floor Lemma applied to $na$.
+& $m$ is the largest integer not exceeding $na$.
+\\
+\addlinespace
+Set $q := (m+1)/n$.
+& Explicit construction.
+& $q$ is a rational number: integer numerator, natural denominator.
+\\
+\addlinespace
+$q > a$: $q = (m+1)/n > na/n = a$.
+& $m+1 > na$ (from $m = \lfloor na \rfloor$).
+& $q$ exceeds $a$.
+\\
+\addlinespace
+$q < b$: $q = (m+1)/n \le (na+1)/n = a + 1/n < a + (b-a) = b$.
+& $m+1 \le na + 1$ (from floor) and $1/n < b-a$.
+& $q$ is below $b$. Both bounds established.
+\\
+\addlinespace
+$q \in \mathbb{Q}$.
+& $q = (m+1)/n$ with $m+1 \in \mathbb{Z}$, $n \in \mathbb{N}$.
+& By construction.
+\\
+\addlinespace
+Hence $a < q < b$ and $q \in \mathbb{Q}$.
+& Summary of above.
+& Done.
+\\
+\bottomrule
+\end{longtable}
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Proof shape.} Choose $n$ (via Archimedean), choose $m$ (via Floor),
+    construct $q = (m+1)/n$, verify two inequalities. This is the canonical shape
+    of a density argument: gridding + floor.
+
+  \item \textbf{What the proof uses.} Archimedean (to make the grid fine) and
+    Floor (to locate the right grid point). Both depend on Completeness.
+    Density of $\mathbb{Q}$ in $\mathbb{R}$ is thus a consequence of completeness.
+
+  \item \textbf{Corollary: irrationals are dense.} Between any $a < b$ there
+    is a rational $q$, hence also an irrational $q + \sqrt{2}/n$ for $n$ large.
+    The irrationals are also dense.
+
+  \item \textbf{Common error.} Not verifying both $q > a$ and $q < b$.
+    Both inequalities need explicit calculation; neither is automatic from
+    the floor construction alone.
+\end{itemize}

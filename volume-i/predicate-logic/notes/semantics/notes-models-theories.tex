@@ -1,0 +1,122 @@
+% =========================================================
+% Models, Theories, Logical Consequence, Logical Equivalence
+% =========================================================
+
+\subsection{Semantics: Models, Theories, and Logical Consequence}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Models and Theories — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Model $\mathcal{M} \models \Gamma$ & Structure satisfying all sentences of $\Gamma$ & \hyperref[def:model]{↓ Def} \\
+Theory & Set of sentences; consistent if it has a model & \hyperref[def:theory]{↓ Def} \\
+Logical consequence $\Gamma \models \varphi$ & True in every model of $\Gamma$ & \hyperref[def:log-consequence]{↓ Def} \\
+Logical equivalence $\varphi \equiv \psi$ & Mutually entailing formulas & \hyperref[def:log-equiv]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Model
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Model)}},
+  fonttitle=\small\bfseries]
+\label{def:model}
+Let $\varphi$ be a sentence and $\mathcal{M}$ a structure. We say that
+$\mathcal{M}$ is a \emph{model} of $\varphi$ if $\mathcal{M} \models \varphi$.
+
+More generally, if $\Gamma$ is a set of sentences, then $\mathcal{M}$ is a
+model of $\Gamma$ if $\mathcal{M} \models \gamma$ for every $\gamma \in \Gamma$.
+In this case, we write $\mathcal{M} \models \Gamma$.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Theory
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Theory)}},
+  fonttitle=\small\bfseries]
+\label{def:theory}
+A \emph{theory} is a set of sentences.
+
+A theory $T$ is \emph{satisfiable} (or \emph{consistent}) if it has at least
+one model.
+
+A theory $T$ is \emph{complete} if for every sentence $\varphi$ in the
+language, either $T \models \varphi$ or $T \models \neg\varphi$.
+\end{tcolorbox}
+
+\begin{remark}[Source note]
+In some texts, a theory is required to be closed under logical consequence: if
+$T \models \varphi$ then $\varphi \in T$. In other texts, a theory is simply
+any set of axioms from which consequences are derived. Both usages appear in
+the literature.
+\end{remark}
+
+% ---------------------------------------------------------
+% Logical Consequence
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Logical Consequence)}},
+  fonttitle=\small\bfseries]
+\label{def:log-consequence}
+Let $\Gamma$ be a set of formulas and $\varphi$ a formula. We say that
+$\varphi$ is a \emph{logical consequence} of $\Gamma$, written
+$\Gamma \models \varphi$, if for every structure $\mathcal{M}$ and every
+variable assignment $s$:
+\[
+\text{if } \mathcal{M}, s \models \gamma \text{ for all } \gamma \in \Gamma,
+\text{ then } \mathcal{M}, s \models \varphi.
+\]
+Equivalently, every model of $\Gamma$ is a model of $\varphi$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Logical consequence says: if all the hypotheses in $\Gamma$ are true in some
+structure, then $\varphi$ must be true there too. This is the semantic notion
+of entailment.
+\end{remark}
+
+\begin{remark}[Notation]
+The notation $\models \varphi$ (empty left-hand side) means $\varphi$ is
+valid: it is a logical consequence of the empty set of premises.
+\end{remark}
+
+% ---------------------------------------------------------
+% Logical Equivalence
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Logical Equivalence)}},
+  fonttitle=\small\bfseries]
+\label{def:log-equiv}
+Two formulas $\varphi$ and $\psi$ are \emph{logically equivalent}, written
+$\varphi \equiv \psi$, if each is a logical consequence of the other:
+\[
+\varphi \equiv \psi
+\quad\Longleftrightarrow\quad
+(\varphi \models \psi \text{ and } \psi \models \varphi).
+\]
+Equivalently, $\varphi$ and $\psi$ have the same truth value in every structure
+under every variable assignment.
+\end{tcolorbox}
+
+\begin{remark}[Consequence]
+Logical equivalence is the semantic counterpart of provable bi-implication.
+Two logically equivalent formulas are interchangeable in any context without
+changing truth values.
+\end{remark}

@@ -1,0 +1,831 @@
+% ============================================================
+%  Algebraic Structures — Complete Reference
+%  Foundations + all 10 Structure Blueprints
+%
+%  Required in main.tex preamble:
+%    \usepackage{tcolorbox}
+%    \tcbuselibrary{skins}
+%    \usepackage{amsthm,amsmath,amssymb,xcolor}
+%    \newtheorem{definition}{Definition}[chapter]
+%    \newtheorem{remark}{Remark}[chapter]
+%    and all \definecolor{cSet}...{cVS} + nodetext/sigtext/lbltext
+%
+%  Usage:
+%    \input{blueprint-macros}          % shared box/header macros
+%    \input{algebraic-structures-complete}
+% ============================================================
+
+% =============================================================
+%  FOUNDATIONS
+%  Sets · Functions · Model Theory · Unary Operation
+% =============================================================
+\clearpage
+\thispagestyle{plain}
+
+% ── Page heading ─────────────────────────────────────────────
+\noindent\vbox{\offinterlineskip
+  \hbox{\colorbox{lbltext!85!black}{%
+    \parbox[c][2.4em]{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \color{nodetext}%
+      \hspace{8pt}{\large\bfseries Foundations}%
+      \hfill{\footnotesize\scshape\bfseries
+        Sets · Functions · Model Theory\hspace{8pt}}%
+    }%
+  }}%
+}\par\vspace{8pt}
+
+% =============================================================
+%  §1  Model-Theoretic Foundations
+% =============================================================
+\subsubsection*{Model-Theoretic Foundations}
+
+\noindent
+Model theory provides a precise language for describing algebraic
+structures: a \emph{signature} names the operations and constants a
+structure carries, and a \emph{model} (or \emph{structure}) interprets
+those names on a concrete set.  Every algebraic structure in these
+blueprints is a model of some first-order signature.
+
+\begin{definition}[First-Order Signature]
+  A \textbf{first-order signature} $\mathcal{L}$ consists of:
+  \begin{itemize}
+    \item \textbf{Constant symbols} $c_1, c_2, \ldots$ — naming distinguished
+          elements,
+    \item \textbf{Function symbols} $f_1, f_2, \ldots$, each equipped with a
+          specified \textbf{arity} $n \in \mathbb{N}$ — naming $n$-ary
+          operations,
+    \item \textbf{Relation symbols} $R_1, R_2, \ldots$ (optional), each with a
+          specified arity — naming predicates.
+  \end{itemize}
+\end{definition}
+
+\begin{definition}[$\mathcal{L}$-Structure]
+  Given a signature $\mathcal{L}$, an \textbf{$\mathcal{L}$-structure}
+  $\mathcal{A}$ consists of:
+  \begin{itemize}
+    \item A nonempty set $A$, called the \textbf{universe} (or
+          \emph{carrier set}),
+    \item For each constant symbol $c$: an element $c^{\mathcal{A}} \in A$,
+    \item For each $n$-ary function symbol $f$: a function
+          $f^{\mathcal{A}} : A^n \to A$,
+    \item For each $n$-ary relation symbol $R$: a subset
+          $R^{\mathcal{A}} \subseteq A^n$.
+  \end{itemize}
+  We write $\mathcal{A} = (A, \ldots)$, listing the universe and
+  interpretations.
+\end{definition}
+
+\begin{remark}
+  The signature is the \emph{type}; the structure is the \emph{instance}.
+  A group, for example, has signature
+  $\mathcal{L}_{\mathrm{grp}} = \{*, e, {}^{-1}\}$
+  where $*$ has arity 2, ${}^{-1}$ has arity 1, and $e$ is a constant.
+  Any group $(G, *, e, {}^{-1})$ is then an $\mathcal{L}_{\mathrm{grp}}$-structure
+  satisfying the group axioms.  The axioms themselves are
+  \emph{first-order sentences} in $\mathcal{L}_{\mathrm{grp}}$, and a
+  \textbf{model} of those sentences is precisely a group.
+  This framework unifies all algebraic structures: rings, fields, vector
+  spaces, and so on are models of their respective signatures.
+\end{remark}
+
+\medskip
+
+% =============================================================
+%  §2  Functions
+% =============================================================
+\subsubsection*{Functions}
+
+\noindent
+A function is the primitive notion underlying every algebraic operation.
+Before studying operations on sets, we record the full structure of
+functions and their properties.
+
+\begin{definition}[Function]
+  Let $A$ and $B$ be sets. A \textbf{function} $f : A \to B$ is a rule
+  such that
+  \[
+    (\forall\, a \in A)\;(\exists!\, b \in B)\;(f(a) = b).
+  \]
+  The components of $f$ are:
+  \begin{itemize}
+    \item \textbf{Domain}: $\operatorname{dom}(f) = A$,
+    \item \textbf{Codomain}: $\operatorname{cod}(f) = B$,
+    \item \textbf{Graph}: $\Gamma_f = \{(a,\, f(a)) : a \in A\}
+          \subseteq A \times B$.
+  \end{itemize}
+  Two functions are equal iff they have the same domain, codomain, and graph.
+\end{definition}
+
+\begin{definition}[Image and Preimage]
+  Let $f : A \to B$, $S \subseteq A$, $T \subseteq B$.
+  \begin{itemize}
+    \item \textbf{Image of $f$}:
+      $\displaystyle\operatorname{Im}(f) = f(A) = \{\,f(a) : a \in A\,\}
+       \subseteq B$.
+    \item \textbf{Image of a subset} $S$:
+      $\displaystyle f(S) = \{\,f(s) : s \in S\,\} \subseteq B$.
+    \item \textbf{Preimage of a subset} $T$:
+      $\displaystyle f^{-1}(T) = \{\,a \in A : f(a) \in T\,\} \subseteq A$.
+  \end{itemize}
+  Note: $f^{-1}(T)$ is defined for every function $f$; it does \emph{not}
+  require $f$ to be invertible.
+\end{definition}
+
+\begin{definition}[Injective, Surjective, Bijective]
+  Let $f : A \to B$.
+  \begin{itemize}
+    \item \textbf{Injective} (one-to-one):
+      \[
+        (\forall\, a_1, a_2 \in A)\;
+        \bigl(f(a_1) = f(a_2) \;\Rightarrow\; a_1 = a_2\bigr).
+      \]
+      Equivalently, distinct inputs give distinct outputs.
+    \item \textbf{Surjective} (onto):
+      \[
+        (\forall\, b \in B)\;(\exists\, a \in A)\;(f(a) = b).
+      \]
+      Equivalently, $\operatorname{Im}(f) = B$.
+    \item \textbf{Bijective}: $f$ is both injective and surjective.
+      Equivalently, $f$ establishes a one-to-one correspondence between
+      $A$ and $B$.
+  \end{itemize}
+\end{definition}
+
+\begin{definition}[Inverse Function]
+  If $f : A \to B$ is bijective, then its \textbf{inverse}
+  $f^{-1} : B \to A$ is the unique function satisfying
+  \[
+    (\forall\, a \in A)\quad f^{-1}(f(a)) = a,
+    \qquad
+    (\forall\, b \in B)\quad f(f^{-1}(b)) = b.
+  \]
+  That is, $f^{-1} \circ f = \mathrm{id}_A$ and
+  $f \circ f^{-1} = \mathrm{id}_B$.
+  A function has an inverse if and only if it is bijective.
+\end{definition}
+
+\begin{remark}
+  Injectivity, surjectivity, and bijectivity measure how faithfully
+  $f$ maps $A$ into $B$.  Injective: no collisions.  Surjective: full
+  coverage.  Bijective: perfect pairing.  In algebra, the morphisms that
+  preserve structure and are bijective (isomorphisms) are the ones that
+  identify structures as \emph{the same up to relabelling}.
+  Note also the distinction between $\operatorname{Im}(f) \subseteq B$
+  (a subset) and $f^{-1}(T) \subseteq A$ (a preimage): the former goes
+  forward, the latter pulls back, and neither requires the function to be
+  invertible.
+\end{remark}
+
+\medskip
+
+% =============================================================
+%  §3  Unary Operation
+% =============================================================
+\subsubsection*{Unary (Singular) Operation}
+
+\noindent
+Before defining binary operations (arity 2), we fix the simpler case of
+arity 1.  Unary operations appear throughout algebra: negation $a \mapsto -a$,
+multiplicative inverse $a \mapsto a^{-1}$, complex conjugation
+$z \mapsto \bar{z}$, and set complementation.
+
+\begin{definition}[Unary Operation]
+  Let $S$ be a set. A \textbf{unary operation} on $S$ is a function
+  \[
+    f : S \to S.
+  \]
+  Components:
+  \begin{itemize}
+    \item \textbf{Underlying set}: $S$ (domain and codomain coincide),
+    \item \textbf{Function}: $f$,
+    \item \textbf{Closure}: $(\forall\, x \in S)\;(\exists!\, y \in S)\;(y = f(x))$.
+  \end{itemize}
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{unary}} = \{\,f\,\},
+    \qquad f \text{ a function symbol of arity } 1.
+  \]
+  The structure $(S, f)$ is then an $\mathcal{L}_{\mathrm{unary}}$-structure
+  with no axioms beyond closure.
+\end{definition}
+
+\begin{remark}
+  A unary operation is to a binary operation what a button is to a lever:
+  it takes one input and produces one output, always within the same set.
+  In group theory the inverse map ${}^{-1} : G \to G$ is a unary operation
+  built into the signature; the axiom $a \cdot a^{-1} = e$ then constrains
+  it.  Similarly, in a ring, negation $- : A \to A$ is unary.  Naming
+  unary operations explicitly in the signature (rather than deriving them)
+  is the model-theoretic convention that keeps axioms first-order.
+\end{remark}
+
+\clearpage
+
+
+% =============================================================
+%  BLUEPRINT 1 — Set
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cSet}{Set}{S}
+
+\begin{bpnew}{cSet}{New at Set}
+  \bpitem{$\exists$}{a,\,b,\,c \in S}{\relax}
+\end{bpnew}
+
+\begin{definition}[Set]
+  A \textbf{set} $S$ is a well-defined collection of distinct objects called
+  \textbf{elements}.  We write $a \in S$ to denote that $a$ is an element of
+  $S$, and $a \notin S$ otherwise.  Two sets are equal if and only if they
+  have the same elements:
+  \[
+    S = T \iff \forall\,x:\; (x \in S \iff x \in T).
+  \]
+\end{definition}
+
+\begin{remark}
+  A set carries no additional structure — no operations, no ordering, no notion
+  of distance.  It is the blank slate from which all algebraic structures are
+  built by adding operations and axioms.  When we define a Magma $(A, *)$,
+  the $A$ is just a set; the operation $*$ is layered on top.
+\end{remark}
+
+\bpfooter{%
+  \textbf{Extended by:} Binary Operation, Magma \textit{(add a closed map)}
+}{%
+  \textbf{Note:} No operations or axioms at this level.
+  The carrier set is the only ingredient.
+}
+
+
+% =============================================================
+%  BLUEPRINT 2 — Binary Operation
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cBinop}{Binary Operation}{$* : A \times A \to A$}
+
+\begin{bpnew}{cBinop}{New at Binary Operation}
+  \bpitem{$\mathrm{f}$}{* : A \times A \to A}{the binary map}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a * b \in A}{closure}
+\end{bpnew}
+
+\begin{bpinh}{cSet}{Inherited from Set}
+  \bpitem{$\exists$}{a,\,b,\,c \in A}{elements of the carrier set}
+\end{bpinh}
+
+\begin{definition}[Binary Operation]
+  Let $A$ be a set.  A \textbf{binary operation} on $A$ is a function
+  \[
+    * : A \times A \to A
+  \]
+  that assigns to each ordered pair $(a, b) \in A \times A$ a unique element
+  $a * b \in A$.  The defining property is \textbf{closure}:
+  $\forall\,a, b \in A,\; a * b \in A$, i.e.\ the operation never escapes the
+  set.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{bin}} = \{\,*\,\},
+    \qquad * \text{ a function symbol of arity } 2.
+  \]
+\end{definition}
+
+\begin{remark}
+  A binary operation is a \emph{concept}, not a structure in its own right —
+  it is the interface that all group-like structures implement.  Closure is the
+  only requirement: there are no demands on how $*$ behaves (no associativity,
+  no identity, no inverses).  In OOP terms, this is a pure abstract interface;
+  Magma is the first concrete class that implements it.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Set \textit{(carrier $A$)}\\
+  \textbf{HAS-A:} implemented by Magma and all descendants
+}{%
+  \textbf{Note:} Addition $+$ on $\mathbb{Z}$, multiplication $\cdot$ on
+  $\mathbb{R}$, and function composition are all binary operations.
+}
+
+
+% =============================================================
+%  BLUEPRINT 3 — Magma
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cMagma}{Magma}{(A,\,*)}
+
+\begin{bpnew}{cMagma}{New at Magma}
+  \bpitem{$\mathrm{f}$}{* : A \times A \to A}{closed binary operation}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a * b \in A}{closure}
+\end{bpnew}
+
+\begin{bpinh}{cSet}{Inherited from Set}
+  \bpitem{$\exists$}{a,\,b,\,c \in A}{elements of the carrier set}
+\end{bpinh}
+
+\begin{definition}[Magma]
+  A \textbf{magma} is a pair $(A, *)$ where $A$ is a nonempty set and
+  $* : A \times A \to A$ is a binary operation satisfying:
+  \[
+    \forall\,a, b \in A:\; a * b \in A. \tag{Closure}
+  \]
+  No further axioms are imposed on $*$.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{magma}} = \{\,*\,\},
+    \qquad * \text{ a function symbol of arity } 2.
+  \]
+\end{definition}
+
+\begin{remark}
+  A magma is the weakest non-trivial algebraic structure — the bare minimum
+  for calling something an algebra.  The single axiom, closure, merely says
+  that applying $*$ to elements of $A$ stays inside $A$.  This rules out
+  partial operations but imposes no coherence (no associativity, no identity,
+  no inverses).  Most naturally occurring operations satisfy much more, which
+  is why the Magma is usually the invisible foundation rather than the object
+  of study itself.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Set \quad \textbf{HAS-A:} Binary Operation\\
+  \textbf{Extended by:} Semigroup \textit{(adds associativity)}
+}{%
+  \textbf{Example:} $(\mathbb{N},\,\text{rock-paper-scissors})$ is a magma —
+  closed, but not associative.
+}
+
+
+% =============================================================
+%  BLUEPRINT 4 — Semigroup
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cSemi}{Semigroup}{(A,\,*)}
+
+\begin{bpnew}{cSemi}{New at Semigroup}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a*b)*c = a*(b*c)}{associativity}
+\end{bpnew}
+
+\begin{bpinh}{cMagma}{Inherited from Magma}
+  \bpitem{$\mathrm{f}$}{* : A \times A \to A}{closed binary operation}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a * b \in A}{closure}
+\end{bpinh}
+
+\begin{bpinh}{cSet}{Inherited from Set}
+  \bpitem{$\exists$}{a,\,b,\,c \in A}{elements of the carrier set}
+\end{bpinh}
+
+\begin{definition}[Semigroup]
+  A \textbf{semigroup} is a pair $(A, *)$ where $A$ is a nonempty set and
+  $* : A \times A \to A$ is a binary operation satisfying:
+  \begin{align*}
+    \forall\,a,b \in A:&\; a * b \in A \tag{Closure}\\
+    \forall\,a,b,c \in A:&\; (a * b) * c = a * (b * c) \tag{Associativity}
+  \end{align*}
+
+  \noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{semi}} = \{\,*\,\},
+    \qquad * \text{ a function symbol of arity } 2.
+  \]
+\end{definition}
+
+\begin{remark}
+  Associativity is what allows us to write $a * b * c$ without parentheses —
+  the result is the same regardless of how we bracket a chain of operations.
+  This seemingly minor property has profound consequences: it enables induction
+  arguments over products, underpins the theory of free monoids (strings), and
+  is what makes the integers under addition well-behaved.  The semigroup is the
+  first structure where the operation itself has meaningful algebraic content.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Magma \quad \textbf{HAS-A:} Binary Operation\\
+  \textbf{Extended by:} Monoid \textit{(adds identity element)}
+}{%
+  \textbf{Examples:} $(\mathbb{Z}^+, +)$, $(\mathbb{N}, \cdot)$,
+  non-empty strings under concatenation.\\
+  \textbf{Non-example:} $(\mathbb{Z}, -)$ — subtraction is not associative.
+}
+
+
+% =============================================================
+%  BLUEPRINT 5 — Monoid
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cMonoid}{Monoid}{(A,\,*,\,e)}
+
+\begin{bpnew}{cMonoid}{New at Monoid}
+  \bpitem{$\exists$}{e \in A}{identity element}
+  \bpitem{$\forall$}{\forall\,a \in A:\; a * e = e * a = a}{identity law}
+\end{bpnew}
+
+\begin{bpinh}{cSemi}{Inherited from Semigroup}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a*b)*c = a*(b*c)}{associativity}
+\end{bpinh}
+
+\begin{bpinh}{cMagma}{Inherited from Magma}
+  \bpitem{$\mathrm{f}$}{* : A \times A \to A}{closed binary operation}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a * b \in A}{closure}
+\end{bpinh}
+
+\begin{definition}[Monoid]
+  A \textbf{monoid} is a triple $(A, *, e)$ where $A$ is a nonempty set,
+  $* : A \times A \to A$ is a binary operation, and $e \in A$, satisfying:
+  \begin{align*}
+    \forall\,a,b \in A:&\; a * b \in A \tag{Closure}\\
+    \forall\,a,b,c \in A:&\; (a*b)*c = a*(b*c) \tag{Associativity}\\
+    \forall\,a \in A:&\; a * e = e * a = a \tag{Identity}
+  \end{align*}
+  The element $e$ is called the \textbf{identity} (or \textbf{neutral element})
+  of $*$.  It is unique: if $e'$ also satisfies the identity law, then
+  $e = e * e' = e'$.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{mon}} = \{\,*,\, e\,\},
+    \quad * \text{ arity } 2,\quad e \text{ a constant symbol.}
+  \]
+\end{definition}
+
+\begin{remark}
+  The identity element gives the monoid a ``do nothing'' operation — a baseline
+  from which all elements are measured.  This is what makes monoids so prevalent
+  in computing: the empty string is the identity under concatenation, $0$ is the
+  identity under addition, $1$ under multiplication, and the empty list under
+  append.  Monoids are the algebraic abstraction of \emph{combining things with
+  a neutral default}.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Semigroup \quad \textbf{HAS-A:} Binary Operation\\
+  \textbf{Extended by:} Group \textit{(adds inverses)};\ Ring
+  \textit{(HAS-A Monoid under $\cdot$)}
+}{%
+  \textbf{Examples:} $(\mathbb{N}, +, 0)$, $(\mathbb{N}, \cdot, 1)$,
+  $(\Sigma^*, \mathbin{\|}, \varepsilon)$ strings under concatenation.\\
+  \textbf{Identity is unique}: if $a*e'=e'*a=a$ for all $a$, then $e'=e$.
+}
+
+
+% =============================================================
+%  BLUEPRINT 6 — Group
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cGroup}{Group}{$(A,*,e,a^{-1})$}
+
+\begin{bpnew}{cGroup}{New at Group}
+  \bpitem{$\exists$}{\forall\,a \in A,\;\exists\,a^{-1} \in A}{inverse element}
+  \bpitem{$\forall$}{\forall\,a \in A:\; a * a^{-1} = a^{-1} * a = e}{inverse law}
+\end{bpnew}
+
+\begin{bpinh}{cMonoid}{Inherited from Monoid}
+  \bpitem{$\exists$}{e \in A}{identity element}
+  \bpitem{$\forall$}{\forall\,a \in A:\; a * e = e * a = a}{identity law}
+\end{bpinh}
+
+\begin{bpinh}{cSemi}{Inherited from Semigroup}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a*b)*c = a*(b*c)}{associativity}
+\end{bpinh}
+
+\begin{bpinh}{cMagma}{Inherited from Magma}
+  \bpitem{$\mathrm{f}$}{* : A \times A \to A}{closed binary operation}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a * b \in A}{closure}
+\end{bpinh}
+
+\begin{definition}[Group]
+  A \textbf{group} is a quadruple $(A, *, e, {}^{-1})$ where $A$ is a nonempty
+  set, $* : A \times A \to A$, $e \in A$, and ${}^{-1} : A \to A$, satisfying:
+  \begin{align*}
+    \forall\,a,b \in A:&\; a * b \in A \tag{Closure}\\
+    \forall\,a,b,c \in A:&\; (a*b)*c = a*(b*c) \tag{Associativity}\\
+    \forall\,a \in A:&\; a * e = e * a = a \tag{Identity}\\
+    \forall\,a \in A:&\; a * a^{-1} = a^{-1} * a = e \tag{Inverses}
+  \end{align*}
+  The inverse $a^{-1}$ is unique for each $a$, and $(a^{-1})^{-1} = a$.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{grp}} = \{\,*,\, e,\, {}^{-1}\,\},
+    \quad * \text{ arity } 2,\quad {}^{-1} \text{ arity } 1,\quad
+    e \text{ a constant.}
+  \]
+\end{definition}
+
+\begin{remark}
+  Inverses are what turn a monoid into a group, and the conceptual leap is
+  significant: every element now has an ``undo.''  This is the algebraic
+  abstraction of \emph{reversible processes} — rotations of a shape,
+  permutations of a set, invertible linear maps.  Group theory is arguably the
+  most central structure in all of algebra, connecting symmetry in geometry,
+  number theory (e.g.\ $(\mathbb{Z}/n\mathbb{Z})^*$), and the classification of
+  elementary particles in physics.  Note that commutativity is \emph{not}
+  required: $a * b$ need not equal $b * a$.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Monoid \quad \textbf{HAS-A:} Binary Operation\\
+  \textbf{Extended by:} Abelian Group \textit{(adds commutativity)}
+}{%
+  \textbf{Examples:} $(\mathbb{Z}, +, 0)$, $(S_n, \circ, \mathrm{id})$
+  permutations, $(GL_n(\mathbb{R}), \cdot, I)$ invertible matrices.\\
+  \textbf{Non-example:} $(\mathbb{N}, +)$ — no additive inverses.
+}
+
+
+% =============================================================
+%  BLUEPRINT 7 — Abelian Group
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cAbelian}{Abelian Group}{$(A,+,0,-a)$}
+
+\begin{bpnew}{cAbelian}{New at Abelian Group}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a + b = b + a}{commutativity}
+  \bpitem{$\exists$}{\text{rename: } e \to 0,\quad a^{-1} \to {-a},\quad * \to +}{notational convention}
+\end{bpnew}
+
+\begin{bpinh}{cGroup}{Inherited from Group}
+  \bpitem{$\exists$}{\forall\,a \in A,\;\exists\,{-a} \in A}{additive inverse}
+  \bpitem{$\forall$}{\forall\,a \in A:\; a + ({-a}) = ({-a}) + a = 0}{inverse law}
+  \bpitem{$\exists$}{0 \in A}{additive identity}
+  \bpitem{$\forall$}{\forall\,a \in A:\; a + 0 = 0 + a = a}{identity law}
+\end{bpinh}
+
+\begin{bpinh}{cSemi}{Inherited from Semigroup}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a+b)+c = a+(b+c)}{associativity}
+\end{bpinh}
+
+\begin{definition}[Abelian Group]
+  A \textbf{group} $(A, +, 0, -)$ is called \textbf{abelian} (or
+  \textbf{commutative}) if it additionally satisfies:
+  \[
+    \forall\,a, b \in A:\; a + b = b + a. \tag{Commutativity}
+  \]
+  By convention, the operation is written $+$, the identity as $0$, and the
+  inverse of $a$ as $-a$.  An abelian group is thus a quintuple $(A, +, 0, -)$
+  satisfying closure, associativity, identity, inverses, and commutativity.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{ab}} = \{\,+,\, 0,\, -\,\},
+    \quad + \text{ arity } 2,\quad - \text{ arity } 1,\quad
+    0 \text{ a constant.}
+  \]
+\end{definition}
+
+\begin{remark}
+  Commutativity is one axiom, but it changes the character of the structure
+  profoundly.  Abelian groups are far more tractable than general groups: their
+  subgroup structure is simpler, they admit a full classification theorem (every
+  finitely generated abelian group is a product of cyclic groups), and they form
+  the additive backbone of every ring and field.  The additive notation $+$
+  signals commutativity by convention throughout algebra.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Group \quad \textbf{HAS-A:} Binary Operation\\
+  \textbf{Extended by:} Ring \textit{(HAS-A Ab.\ Group under $+$)};\ Vector
+  Space \textit{(HAS-A Ab.\ Group on vectors)}
+}{%
+  \textbf{Examples:} $(\mathbb{Z}, +, 0)$, $(\mathbb{R}, +, 0)$,
+  $(\mathbb{Z}/n\mathbb{Z}, +, \bar{0})$.\\
+  \textbf{Non-example:} $(S_3, \circ)$ — non-abelian group of order 6.
+}
+
+
+% =============================================================
+%  BLUEPRINT 8 — Ring
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cRing}{Ring}{$(A,+,\cdot,0,1)$}
+
+\begin{bpnew}{cRing}{New at Ring}
+  \bpitem{$\mathrm{f}$}{\cdot : A \times A \to A}{multiplicative binary operation}
+  \bpitem{$\exists$}{1 \in A}{multiplicative identity}
+  \bpitem{$\forall$}{\forall\,a \in A:\; a \cdot 1 = 1 \cdot a = a}{identity law for $\cdot$}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a \cdot b) \cdot c = a \cdot (b \cdot c)}{associativity of $\cdot$}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; a\cdot(b+c) = a\cdot b + a\cdot c}{left distributivity}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a+b)\cdot c = a\cdot c + b\cdot c}{right distributivity}
+\end{bpnew}
+
+\noindent
+\begin{minipage}[t]{0.485\linewidth}
+  \begin{bpinh}{cAbelian}{HAS-A: Abelian Group under addition}
+    \bpitem{$\mathrm{f}$}{+ : A \times A \to A}{addition}
+    \bpitem{$\exists$}{0 \in A}{additive identity}
+    \bpitem{$\exists$}{\forall\,a,\;\exists\,{-a} \in A}{additive inverse}
+    \bpitem{$\forall$}{\forall\,a,b:\; a+b = b+a}{commutativity of $+$}
+    \bpitem{$\forall$}{\forall\,a,b,c:\; (a+b)+c = a+(b+c)}{associativity of $+$}
+  \end{bpinh}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.485\linewidth}
+  \begin{bpinh}{cMonoid}{HAS-A: Monoid under multiplication}
+    \bpitem{$\mathrm{f}$}{\cdot : A \times A \to A}{multiplication}
+    \bpitem{$\exists$}{1 \in A}{multiplicative identity}
+    \bpitem{$\forall$}{\forall\,a,b,c:\; (a\cdot b)\cdot c = a\cdot(b\cdot c)}{associativity of $\cdot$}
+  \end{bpinh}
+\end{minipage}
+
+\begin{definition}[Ring]
+  A \textbf{ring} is a tuple $(A, +, \cdot, 0, 1)$ where $A$ is a nonempty set
+  satisfying:
+  \begin{align*}
+    (A,+,0,-)\  &\text{is an abelian group} \tag{Ab.\ Group under $+$}\\
+    (A,\cdot,1)\ &\text{is a monoid} \tag{Monoid under $\cdot$}\\
+    \forall\,a,b,c \in A:\ &a\cdot(b+c) = a\cdot b + a\cdot c \tag{Left Distributivity}\\
+    \forall\,a,b,c \in A:\ &(a+b)\cdot c = a\cdot c + b\cdot c \tag{Right Distributivity}
+  \end{align*}
+  Note: $\cdot$ need not be commutative, and multiplicative inverses need not
+  exist.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{ring}} = \{\,+,\,\cdot,\,0,\,1,\,-\,\},
+    \quad +,\cdot \text{ arity } 2,\quad - \text{ arity } 1,\quad
+    0,1 \text{ constants.}
+  \]
+\end{definition}
+
+\begin{remark}
+  A ring is the algebraic formalization of \emph{arithmetic}: two operations
+  linked by distributivity.  The integers $\mathbb{Z}$ are the canonical
+  example.  Distributivity is the bridge between addition and multiplication —
+  it is what makes the two operations interact coherently rather than live as
+  independent structures on the same set.  Rings with commutative multiplication
+  are called \emph{commutative rings}; those where every nonzero element has a
+  multiplicative inverse are \emph{division rings}; both together give a
+  \emph{field}.
+\end{remark}
+
+\bpfooter{%
+  \textbf{HAS-A:} Abelian Group $(A,+,0,-)$;\ Monoid $(A,\cdot,1)$\\
+  \textbf{Extended by:} Field \textit{(adds mult.\ inverses + commutativity)}
+}{%
+  \textbf{Examples:} $(\mathbb{Z},+,\cdot)$, $M_n(\mathbb{R})$ matrices,
+  $\mathbb{Z}[x]$ polynomials.\\
+  \textbf{Non-example:} $(\mathbb{N},+,\cdot)$ — no additive inverses.
+}
+
+
+% =============================================================
+%  BLUEPRINT 9 — Field
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cField}{Field}{$(A,+,\cdot,0,1,a^{-1})$}
+
+\begin{bpnew}{cField}{New at Field}
+  \bpitem{$\exists$}{\forall\,a \in A\setminus\{0\},\;\exists\,a^{-1} \in A}{multiplicative inverse}
+  \bpitem{$\forall$}{\forall\,a \in A\setminus\{0\}:\; a \cdot a^{-1} = a^{-1} \cdot a = 1}{inverse law}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a \cdot b = b \cdot a}{commutativity of $\cdot$}
+\end{bpnew}
+
+\begin{bpinh}{cRing}{Inherited from Ring}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; a\cdot(b+c)=a\cdot b+a\cdot c}{left distributivity}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a+b)\cdot c=a\cdot c+b\cdot c}{right distributivity}
+  \bpitem{$\exists$}{1 \in A}{multiplicative identity}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a\cdot b)\cdot c = a\cdot(b\cdot c)}{associativity of $\cdot$}
+\end{bpinh}
+
+\begin{bpinh}{cAbelian}{Inherited from Abelian Group (under addition)}
+  \bpitem{$\mathrm{f}$}{+ : A \times A \to A}{addition}
+  \bpitem{$\exists$}{0 \in A}{additive identity}
+  \bpitem{$\exists$}{\forall\,a,\;\exists\,{-a} \in A}{additive inverse}
+  \bpitem{$\forall$}{\forall\,a,b \in A:\; a+b = b+a}{commutativity of $+$}
+  \bpitem{$\forall$}{\forall\,a,b,c \in A:\; (a+b)+c = a+(b+c)}{associativity of $+$}
+\end{bpinh}
+
+\begin{definition}[Field]
+  A \textbf{field} is a tuple $(A, +, \cdot, 0, 1)$ where $A$ is a set with
+  $|A| \geq 2$, satisfying all ring axioms plus:
+  \begin{align*}
+    \forall\,a,b \in A:\ & a \cdot b = b \cdot a \tag{Commutativity of $\cdot$}\\
+    \forall\,a \in A\setminus\{0\},\ \exists\,a^{-1} \in A:\ &
+      a \cdot a^{-1} = a^{-1} \cdot a = 1 \tag{Multiplicative Inverses}
+  \end{align*}
+  Equivalently, $(A\setminus\{0\}, \cdot, 1, {}^{-1})$ is an abelian group.
+  The condition $0 \ne 1$ (i.e.\ $|A|\ge 2$) excludes the trivial ring.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{fld}} = \{\,+,\,\cdot,\,0,\,1,\,-,\,{}^{-1}\,\},
+    \quad +,\cdot \text{ arity } 2,\quad -,{}^{-1} \text{ arity } 1,\quad
+    0,1 \text{ constants.}
+  \]
+\end{definition}
+
+\begin{remark}
+  A field is a ring where multiplication is as strong as addition: every nonzero
+  element can be divided by.  This is the algebraic setting for linear algebra
+  ($\mathbb{R}$, $\mathbb{C}$, $\mathbb{Q}$) and number theory (finite fields
+  $\mathbb{F}_p$).  Division — the operation conspicuously absent from rings —
+  is what makes solving linear equations ($ax = b \Rightarrow x = a^{-1}b$)
+  always possible for $a \ne 0$.  The insistence on commutativity of $\cdot$
+  distinguishes fields from \emph{division rings} (skew fields), where inverses
+  exist but $ab \ne ba$ generally.
+\end{remark}
+
+\bpfooter{%
+  \textbf{IS-A:} Ring\\
+  \textbf{Used by:} Vector Space \textit{(USES-A Field for scalars)}
+}{%
+  \textbf{Examples:} $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$,
+  $\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$ ($p$ prime).\\
+  \textbf{Non-example:} $\mathbb{Z}$ — no multiplicative inverse for $2$.
+}
+
+
+% =============================================================
+%  BLUEPRINT 10 — Vector Space
+% =============================================================
+\clearpage\thispagestyle{plain}
+\bpheader{cVS}{Vector Space}{$(V,+,0,-v,F,\cdot)$}
+
+\begin{bpnew}{cVS}{New at Vector Space}
+  \bpitem{$\mathrm{f}$}{\cdot : F \times V \to V}{scalar multiplication}
+  \bpitem{$\forall$}{\forall\,a \in F,\,\mathbf{u},\mathbf{v} \in V:\;
+    a\cdot(\mathbf{u}+\mathbf{v}) = a\cdot\mathbf{u} + a\cdot\mathbf{v}}{distributivity over vector addition}
+  \bpitem{$\forall$}{\forall\,a,b \in F,\,\mathbf{v} \in V:\;
+    (a+b)\cdot\mathbf{v} = a\cdot\mathbf{v} + b\cdot\mathbf{v}}{distributivity over scalar addition}
+  \bpitem{$\forall$}{\forall\,a,b \in F,\,\mathbf{v} \in V:\;
+    (ab)\cdot\mathbf{v} = a\cdot(b\cdot\mathbf{v})}{compatibility of scalar mult.}
+  \bpitem{$\forall$}{\forall\,\mathbf{v} \in V:\; 1_F\cdot\mathbf{v} = \mathbf{v}}{identity scalar}
+\end{bpnew}
+
+\noindent
+\begin{minipage}[t]{0.485\linewidth}
+  \begin{bpinh}{cAbelian}{HAS-A: Abelian Group on $V$}
+    \bpitem{$\mathrm{f}$}{+ : V \times V \to V}{vector addition}
+    \bpitem{$\exists$}{\mathbf{0} \in V}{zero vector}
+    \bpitem{$\exists$}{\forall\,\mathbf{v},\;\exists\,{-\mathbf{v}} \in V}{additive inverse}
+    \bpitem{$\forall$}{\forall\,\mathbf{u},\mathbf{v} \in V:\;
+      \mathbf{u}+\mathbf{v}=\mathbf{v}+\mathbf{u}}{commutativity}
+    \bpitem{$\forall$}{\forall\,\mathbf{u},\mathbf{v},\mathbf{w}:\;
+      (\mathbf{u}+\mathbf{v})+\mathbf{w}=\mathbf{u}+(\mathbf{v}+\mathbf{w})}{associativity}
+  \end{bpinh}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.485\linewidth}
+  \begin{bpinh}{cField}{USES-A: Field $F$ for scalars}
+    \bpitem{$\mathrm{f}$}{+,\,\cdot : F \times F \to F}{field operations}
+    \bpitem{$\exists$}{0_F,\, 1_F \in F}{additive \& mult.\ identity}
+    \bpitem{$\exists$}{\forall\,a \in F\setminus\{0\},\;\exists\,a^{-1}}{mult.\ inverse}
+    \bpitem{$\forall$}{\forall\,a,b \in F:\; ab = ba}{commutativity of $\cdot$}
+  \end{bpinh}
+\end{minipage}
+
+\begin{definition}[Vector Space]
+  Let $F$ be a field.  A \textbf{vector space} over $F$ is a tuple
+  $(V, +, \mathbf{0}, -, F, \cdot)$ where $(V, +, \mathbf{0}, -)$ is an
+  abelian group and $\cdot : F \times V \to V$ satisfies, for all $a, b \in F$
+  and $\mathbf{u}, \mathbf{v} \in V$:
+  \begin{align*}
+    a \cdot (\mathbf{u} + \mathbf{v}) &= a\cdot\mathbf{u} + a\cdot\mathbf{v}
+      \tag{Distributivity over vector $+$}\\
+    (a + b)\cdot\mathbf{v} &= a\cdot\mathbf{v} + b\cdot\mathbf{v}
+      \tag{Distributivity over scalar $+$}\\
+    (ab)\cdot\mathbf{v} &= a\cdot(b\cdot\mathbf{v})
+      \tag{Compatibility}\\
+    1_F\cdot\mathbf{v} &= \mathbf{v}
+      \tag{Identity scalar}
+  \end{align*}
+  Elements of $V$ are called \textbf{vectors}; elements of $F$ are called
+  \textbf{scalars}.
+
+  \medskip\noindent
+  Model-theoretic signature:
+  \[
+    \mathcal{L}_{\mathrm{VS}} = \{\,+_V,\,\mathbf{0},\,-_V,\,\cdot\,\}
+    \cup \mathcal{L}_{\mathrm{fld}},
+  \]
+  where $\cdot$ has arity~2 (one scalar, one vector) and
+  $\mathcal{L}_{\mathrm{fld}}$ names the field operations on $F$.
+\end{definition}
+
+\begin{remark}
+  A vector space decouples two roles: vectors are the objects being combined
+  (via $+$), and scalars are the coefficients that stretch or shrink them
+  (via $\cdot$).  The scalars must form a field so that scalar division is
+  always possible — this is what makes Gaussian elimination work.  The four
+  scalar-multiplication axioms together say that scaling behaves consistently
+  with both kinds of addition and with the field's own multiplication.  Linear
+  algebra — spanning sets, bases, dimension, linear maps — is entirely the
+  theory of vector spaces over a field.
+\end{remark}
+
+\bpfooter{%
+  \textbf{HAS-A:} Abelian Group $(V,+,\mathbf{0})$ on vectors\\
+  \textbf{USES-A:} Field $F$ for scalars (external dependency)
+}{%
+  \textbf{Examples:} $\mathbb{R}^n$ over $\mathbb{R}$,\;
+  $\mathbb{C}^n$ over $\mathbb{C}$,\; polynomials $F[x]$ over $F$.\\
+  \textbf{Note:} Changing the field changes the space:
+  $\mathbb{C}$ is dim-2 over $\mathbb{R}$, dim-1 over $\mathbb{C}$.
+}

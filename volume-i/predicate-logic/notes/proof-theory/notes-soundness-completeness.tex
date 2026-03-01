@@ -1,0 +1,94 @@
+% =========================================================
+% Soundness and Completeness of First-Order Logic
+% =========================================================
+
+\subsection{Proof Theory: Soundness and Completeness}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Soundness and Completeness — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Property} & \textbf{Direction} & \textbf{Detail} \\
+\midrule
+Soundness    & $\Gamma \vdash \varphi \Rightarrow \Gamma \models \varphi$ & \hyperref[def:soundness]{↓ Def} \\
+Completeness & $\Gamma \models \varphi \Rightarrow \Gamma \vdash \varphi$ & \hyperref[def:completeness]{↓ Def} \\
+Soundness Theorem (FOL) & All standard FOL rules are sound & \hyperref[thm:fol-sound]{↓ Thm} \\
+Gödel's Completeness Theorem & FOL is complete & \hyperref[thm:godel-complete]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Soundness and Completeness (Definitions)
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Soundness)}},
+  fonttitle=\small\bfseries]
+\label{def:soundness}
+A proof system is \emph{sound} if every provable formula is valid:
+\[
+\Gamma \vdash \varphi \implies \Gamma \models \varphi.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Completeness)}},
+  fonttitle=\small\bfseries]
+\label{def:completeness}
+A proof system is \emph{complete} if every valid formula is provable:
+\[
+\Gamma \models \varphi \implies \Gamma \vdash \varphi.
+\]
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Soundness Theorem for FOL
+% ---------------------------------------------------------
+\begin{theorem}[Soundness of First-Order Logic]\label{thm:fol-sound}
+The standard inference rules for first-order logic (UI, UG, EI, EG, and the
+propositional rules) are sound: they preserve truth in all structures.
+
+If $\Gamma \vdash \varphi$, then $\Gamma \models \varphi$.
+\end{theorem}
+
+% ---------------------------------------------------------
+% Gödel's Completeness Theorem
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Gödel's Completeness Theorem)}},
+  fonttitle=\small\bfseries]
+\label{thm:godel-complete}
+First-order logic is complete: every logically valid formula is provable.
+\[
+\Gamma \models \varphi \implies \Gamma \vdash \varphi.
+\]
+Equivalently: if a set of sentences $\Gamma$ is consistent (has no proof of
+contradiction), then $\Gamma$ has a model.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Soundness ensures proofs do not lead us astray: we cannot prove false statements
+from true premises. Completeness ensures proofs are powerful enough: every
+statement that is true in all models can be established by a formal proof.
+
+Together, soundness and completeness show that syntactic provability ($\vdash$)
+and semantic entailment ($\models$) coincide for first-order logic.
+\end{remark}
+
+\begin{remark}[Completeness vs.\ incompleteness]
+Gödel's completeness theorem (1930) should not be confused with his
+incompleteness theorems (1931). The completeness theorem concerns first-order
+logic as a proof system. The incompleteness theorems concern the limitations of
+formal theories capable of expressing arithmetic, and are a separate result.
+\end{remark}

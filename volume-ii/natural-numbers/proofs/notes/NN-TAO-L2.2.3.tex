@@ -1,0 +1,132 @@
+% --------------------------------------
+% Proof: NN-TAO-L2.2.3
+% Lemma 2.2.3 — Successor on the right: n + (m++) = (n + m)++
+% Format: Deep study (3-column)
+% --------------------------------------
+\clearpage
+\phantomsection
+\label{prf:add-succ-right}
+\hypertarget{proof-NN-TAO-L2.2.3}{}
+
+\subsubsection[Successor on the Right (L2.2.3)]{Proof --- NN-TAO-L2.2.3}
+
+\begin{remark}[Return]
+\hyperref[lem:add-succ-right]{$\leftarrow$ Back to Lemma 2.2.3 in Notes}
+\end{remark}
+
+\bigskip
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysis1}{Chapter~2, \S2.2, Lemma~2.2.3}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+For all $n, m \in \mathbb{N}$, $n + (m\pp) = (n + m)\pp$.
+This is the \emph{right} successor identity; the left version $(n\pp) + m = (n+m)\pp$ is Axiom A2 (definitional).
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Logical form.}
+$\forall n \in \mathbb{N},\ \forall m \in \mathbb{N},\ n + (m\pp) = (n+m)\pp$.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Key background.}
+A1, A2 as in L2.2.2. Lemma 2.2.2 ($n + 0 = n$) is used in the base case.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof strategy.}
+Fix $m$; induct on $n$.
+Again, A2 fires on the left argument, so $n$ is the induction variable.
+The key structural move is that A2 and the inductive hypothesis together
+propagate the successor from right to left inside the expression.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Proof.}
+\begin{proof}
+Fix $m \in \mathbb{N}$ arbitrary.
+
+\begin{longtable}{p{0.28\textwidth} p{0.35\textwidth} p{0.28\textwidth}}
+\toprule
+\textbf{Step / Claim} & \textbf{Justification} & \textbf{Annotation} \\
+\midrule
+\emph{Base case.} $0 + (m\pp) = (0 + m)\pp$.
+&
+A1 applied twice: $0 + (m\pp) = m\pp$ and $0 + m = m$, so $(0+m)\pp = m\pp$.
+&
+A1 with $m := m\pp$ on left; A1 with $m := m$ on right.
+Both sides reduce to $m\pp$.
+\\
+\addlinespace
+\emph{IH.} Assume $n + (m\pp) = (n+m)\pp$ for some $n$.
+&
+Induction assumption, with $m$ fixed.
+&
+$P(n)$ states the equation holds for this $n$ and our fixed $m$.
+\\
+\addlinespace
+\emph{Inductive step.} Show $(n\pp) + (m\pp) = ((n\pp) + m)\pp$.
+&
+&
+\\
+$(n\pp) + (m\pp) = (n + (m\pp))\pp$
+&
+A2 with left argument $n\pp$, right argument $m\pp$.
+&
+A2 fires because left argument is a successor.
+\\
+$(n + (m\pp))\pp = ((n+m)\pp)\pp$
+&
+IH: $n + (m\pp) = (n+m)\pp$.
+&
+Substitute IH under the outer $\pp$.
+\\
+$((n+m)\pp)\pp = ((n\pp)+m)\pp$
+&
+A2 (reversed): $(n\pp)+m = (n+m)\pp$.
+&
+A2 gives $(n\pp)+m=(n+m)\pp$; rewrite the inner term.
+\\
+\emph{Conclusion.} $(n\pp) + (m\pp) = ((n\pp)+m)\pp$.
+&
+Chain of equalities above.
+&
+$P(n\pp)$ established.
+\\
+\addlinespace
+By induction on $n$, the result holds for all $n \in \mathbb{N}$ and all fixed $m$.
+Since $m$ was arbitrary, the result holds for all $m$.
+&
+P5; $m$ was universally quantified from the start.
+&
+\\
+\bottomrule
+\end{longtable}
+\end{proof}
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Remarks.}
+\begin{itemize}
+  \item \textbf{Pair with L2.2.2.} L2.2.2 moves zero from left to right; L2.2.3
+    moves a successor from left to right. Together they provide the
+    two base cases that commutativity (P2.2.4) needs.
+
+  \item \textbf{Induction variable.} Fix $m$ first, then induct on $n$.
+    If you tried to induct on $m$ with $n$ fixed, the recursive structure
+    of addition (A1/A2) would not fire.
+
+  \item \textbf{Consequence.} The pair (L2.2.2, L2.2.3) is all that P2.2.4
+    (commutativity) requires. The proof of commutativity by induction on $n$
+    invokes exactly these two lemmas at the base and inductive step.
+\end{itemize}

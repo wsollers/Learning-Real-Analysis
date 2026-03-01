@@ -1,0 +1,160 @@
+% =========================================================
+% Common Errors and Fallacies
+% =========================================================
+
+\subsection{Common Errors and Fallacies}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Errors and Fallacies — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Error} & \textbf{Form} & \textbf{Valid?} & \textbf{Detail} \\
+\midrule
+Modus Ponens          & $P\to Q,\;P \;\therefore Q$          & \textbf{Yes} & \hyperref[def:mp-valid]{↓} \\
+Modus Tollens         & $P\to Q,\;\neg Q \;\therefore \neg P$ & \textbf{Yes} & \hyperref[def:mt-valid]{↓} \\
+Affirming Consequent  & $P\to Q,\;Q \;\therefore P$          & No           & \hyperref[def:aff-cons]{↓} \\
+Denying Antecedent    & $P\to Q,\;\neg P \;\therefore \neg Q$ & No           & \hyperref[def:deny-ant]{↓} \\
+\midrule
+Conditional misread   & $P\to Q$ is false when $P$ true, $Q$ false only & \hyperref[rem:cond-error]{↓} \\
+Inclusive vs.\ exclusive $\vee$ & Logic uses inclusive or & \hyperref[rem:or-error]{↓} \\
+Missing rows          & $n$ vars $\Rightarrow$ $2^n$ rows needed & \hyperref[rem:rows-error]{↓} \\
+Precedence errors     & $\neg P\wedge Q \neq \neg(P\wedge Q)$ & \hyperref[rem:prec-error]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\subsubsection*{Formal Fallacies}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Affirming the Consequent)}},
+  fonttitle=\small\bfseries]
+\label{def:aff-cons}
+The following inference is \textbf{invalid}:
+\[
+\frac{P \rightarrow Q \qquad Q}{P \quad \text{(INVALID)}}
+\]
+\end{tcolorbox}
+
+\begin{remark}[Why it fails]
+$P \rightarrow Q$ says: whenever $P$ is true, $Q$ must be true. It says nothing
+about what happens when $Q$ is true. $Q$ may hold for reasons entirely unrelated
+to $P$. Countermodel: $P = F$, $Q = T$. Then $P \rightarrow Q$ is true and $Q$
+is true, but $P$ is false.
+\end{remark}
+
+\begin{remark}[English example]
+``If it rains, the ground is wet. The ground is wet. Therefore, it rained.''
+— Invalid: a sprinkler could explain the wet ground.
+\end{remark}
+
+\begin{remark}[Fully quantified diagnostic]
+$\not\models [(P \rightarrow Q) \wedge Q] \rightarrow P$.
+Check: set $P = F$, $Q = T$. The antecedent is $T \wedge T = T$; the consequent
+is $F$. The whole formula is false under this assignment. Not a tautology.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Denying the Antecedent)}},
+  fonttitle=\small\bfseries]
+\label{def:deny-ant}
+The following inference is \textbf{invalid}:
+\[
+\frac{P \rightarrow Q \qquad \neg P}{\neg Q \quad \text{(INVALID)}}
+\]
+\end{tcolorbox}
+
+\begin{remark}[Why it fails]
+$P \rightarrow Q$ only guarantees $Q$ when $P$ holds. When $P$ is false, $Q$
+may be true or false — the conditional is silent. Countermodel: $P = F$, $Q = T$.
+\end{remark}
+
+\begin{remark}[English example]
+``If it rains, the ground is wet. It did not rain. Therefore, the ground is not
+wet.'' — Invalid: a sprinkler could still make the ground wet.
+\end{remark}
+
+\subsubsection*{Valid Inference Patterns for Comparison}
+
+\begin{remark}\label{def:mp-valid}\label{def:mt-valid}
+The two valid patterns involving a conditional:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llll}
+\toprule
+\textbf{Pattern} & \textbf{Form} & \textbf{Valid?} & \textbf{Why} \\
+\midrule
+Modus Ponens & $P\to Q,\; P \;\therefore Q$ & Yes & $\models[(P\to Q)\wedge P]\to Q$ \\
+Modus Tollens & $P\to Q,\;\neg Q \;\therefore\neg P$ & Yes & Contrapositive of MP \\
+Affirming Consequent & $P\to Q,\; Q \;\therefore P$ & \textbf{No} & Countermodel: $P=F, Q=T$ \\
+Denying Antecedent & $P\to Q,\;\neg P \;\therefore\neg Q$ & \textbf{No} & Countermodel: $P=F, Q=T$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The two fallacies are easy to confuse because they \emph{look like} the valid
+patterns with one element swapped.
+\end{remark}
+
+\subsubsection*{Common Truth Table Errors}
+
+\begin{remark}[Misreading the conditional]\label{rem:cond-error}
+The conditional $P \rightarrow Q$ is false \emph{only} in the case
+$(P, Q) = (T, F)$. In all other cases it is true, including when $P$ is false.
+This ``vacuous truth'' is counterintuitive but essential. The mistake is treating
+the conditional as false whenever the antecedent is false.
+\end{remark}
+
+\begin{remark}[Confusing $\rightarrow$ with $\leftrightarrow$]\
+$P \rightarrow Q$ is \emph{not} symmetric. $P \rightarrow Q$ and $Q \rightarrow P$
+are different (they are converses). Treating a conditional as a biconditional
+is a form of affirming the consequent.
+\end{remark}
+
+\begin{remark}[Inclusive vs.\ exclusive or]\label{rem:or-error}
+In formal logic, $\vee$ is \emph{inclusive}: $P \vee Q$ is true when both
+$P$ and $Q$ are true. Natural language ``or'' is often exclusive (``tea or
+coffee'' usually means one but not both). When formalizing English, always
+check which reading is intended.
+\end{remark}
+
+\begin{remark}[Forgetting rows]\label{rem:rows-error}
+A formula with $n$ distinct variables has $2^n$ rows. For 3 variables: 8 rows.
+Omitting rows leads to incorrect classification (e.g., calling a contingency a
+tautology because you only checked favorable assignments).
+\end{remark}
+
+\begin{remark}[Operator precedence errors]\label{rem:prec-error}
+\begin{itemize}
+  \item $\neg P \wedge Q$ means $(\neg P) \wedge Q$, \textbf{not} $\neg(P \wedge Q)$.
+  \item $P \vee Q \wedge R$ means $P \vee (Q \wedge R)$ if $\wedge$ binds tighter.
+  \item When in doubt: add explicit parentheses.
+\end{itemize}
+\end{remark}
+
+\subsubsection*{Fallacy Checklist}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{4.5cm} p{8.5cm}}
+\toprule
+\textbf{Potential error} & \textbf{Diagnostic question} \\
+\midrule
+Affirming the consequent & Was $Q$ used to infer $P$ from $P \rightarrow Q$? \\
+Denying the antecedent & Was $\neg P$ used to infer $\neg Q$ from $P \rightarrow Q$? \\
+Conditional misread & Was the conditional treated as false when the antecedent is false? \\
+Confusing direction & Was $P \rightarrow Q$ treated as equivalent to $Q \rightarrow P$? \\
+Missing rows & Were all $2^n$ truth-table rows considered? \\
+Precedence error & Were all connectives properly parenthesized before evaluating? \\
+Inclusive/exclusive confusion & Was $\vee$ read as exclusive when inclusive was intended? \\
+\bottomrule
+\end{tabular}
+\end{center}

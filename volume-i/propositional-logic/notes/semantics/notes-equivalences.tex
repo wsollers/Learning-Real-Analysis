@@ -1,0 +1,226 @@
+% =========================================================
+% Logical Equivalences
+% =========================================================
+
+\subsection{Logical Equivalences}
+
+% ---------------------------------------------------------
+% TOOLKIT — the summary table replaces the 12 bare theorems
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Logical Equivalences — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Name} & \textbf{Equivalence(s)} & \textbf{Detail} \\
+\midrule
+Double Negation      & $\neg\neg P \equiv P$ & \hyperref[eq:double-neg]{↓} \\
+De Morgan (pair)     & $\neg(P\wedge Q)\equiv\neg P\vee\neg Q$;\quad $\neg(P\vee Q)\equiv\neg P\wedge\neg Q$ & \hyperref[eq:demorgan]{↓} \\
+Commutativity        & $P\wedge Q\equiv Q\wedge P$;\quad $P\vee Q\equiv Q\vee P$ & \hyperref[eq:comm]{↓} \\
+Associativity        & $(P\wedge Q)\wedge R\equiv P\wedge(Q\wedge R)$;\; and $\vee$ & \hyperref[eq:assoc]{↓} \\
+Distributivity       & $P\wedge(Q\vee R)\equiv(P\wedge Q)\vee(P\wedge R)$;\; and dual & \hyperref[eq:dist]{↓} \\
+Idempotence          & $P\wedge P\equiv P$;\quad $P\vee P\equiv P$ & \hyperref[eq:idemp]{↓} \\
+Absorption           & $P\wedge(P\vee Q)\equiv P$;\quad $P\vee(P\wedge Q)\equiv P$ & \hyperref[eq:absorb]{↓} \\
+Identity             & $P\wedge\top\equiv P$;\quad $P\vee\bot\equiv P$ & \hyperref[eq:identity]{↓} \\
+Domination           & $P\vee\top\equiv\top$;\quad $P\wedge\bot\equiv\bot$ & \hyperref[eq:domination]{↓} \\
+Negation Laws        & $P\vee\neg P\equiv\top$;\quad $P\wedge\neg P\equiv\bot$ & \hyperref[eq:negation]{↓} \\
+Material Implication & $P\rightarrow Q\equiv\neg P\vee Q$ & \hyperref[eq:mat-impl]{↓} \\
+Contraposition       & $P\rightarrow Q\equiv\neg Q\rightarrow\neg P$ & \hyperref[eq:contra]{↓} \\
+Exportation          & $(P\wedge Q)\rightarrow R\equiv P\rightarrow(Q\rightarrow R)$ & \hyperref[eq:export]{↓} \\
+Neg.\ Conditional    & $\neg(P\rightarrow Q)\equiv P\wedge\neg Q$ & \hyperref[eq:neg-cond]{↓} \\
+Biconditional Exp.   & $P\leftrightarrow Q\equiv(P\rightarrow Q)\wedge(Q\rightarrow P)$ & \hyperref[eq:bicond-exp]{↓} \\
+Duality Principle    & $\varphi\equiv\psi \Rightarrow \varphi^d\equiv\psi^d$ & \hyperref[thm:duality]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Details
+% ---------------------------------------------------------
+
+\subsubsection*{Core Equivalences}
+
+\begin{proposition}[Double Negation]\label{eq:double-neg}
+$\neg\neg P \;\equiv\; P$
+\end{proposition}
+\begin{remark}[Intuition] Negating twice returns to the original truth value.
+In classical logic, $\neg\neg P$ and $P$ are interchangeable everywhere.
+In intuitionistic logic this fails — $\neg\neg P \Rightarrow P$ is not provable
+without the law of excluded middle.
+\end{remark}
+\begin{remark}[Proof strategy] Truth table: 2 rows, 2 columns; inspect directly.
+\end{remark}
+
+\begin{proposition}[De Morgan's Laws]\label{eq:demorgan}
+\begin{align*}
+\neg(P \wedge Q) &\;\equiv\; \neg P \vee \neg Q \\
+\neg(P \vee Q)   &\;\equiv\; \neg P \wedge \neg Q
+\end{align*}
+\end{proposition}
+\begin{remark}[Intuition] Negation distributes through conjunction/disjunction
+by flipping the connective. ``Not both'' = ``not the first or not the second.''
+``Neither'' = ``not the first and not the second.''
+\end{remark}
+\begin{remark}[Consequence] De Morgan's laws are the primary tool for pushing
+negations inward (step 2 of NNF conversion) and for expanding $\neg$ through
+complex formulas.
+\end{remark}
+\begin{remark}[Logical implication — duality]
+The two De Morgan laws are duals of each other under the duality principle
+(swap $\wedge\leftrightarrow\vee$, $\top\leftrightarrow\bot$).
+\end{remark}
+
+\begin{proposition}[Commutativity]\label{eq:comm}
+$P \wedge Q \equiv Q \wedge P$;\qquad $P \vee Q \equiv Q \vee P$
+\end{proposition}
+\begin{remark}[Intuition] Order of operands does not matter for $\wedge$ and $\vee$.
+Note: $\rightarrow$ is \emph{not} commutative ($P \rightarrow Q \not\equiv Q \rightarrow P$
+in general).
+\end{remark}
+
+\begin{proposition}[Associativity]\label{eq:assoc}
+$(P \wedge Q) \wedge R \equiv P \wedge (Q \wedge R)$;\qquad
+$(P \vee Q) \vee R \equiv P \vee (Q \vee R)$
+\end{proposition}
+\begin{remark}[Intuition] Parenthesization does not affect truth value for chains
+of $\wedge$ or $\vee$. This justifies writing $P \wedge Q \wedge R$ without
+parentheses.
+\end{remark}
+\begin{remark}[Common error] $\rightarrow$ is right-associative by convention
+but \emph{not} associative as an equivalence: $(P \rightarrow Q) \rightarrow R
+\not\equiv P \rightarrow (Q \rightarrow R)$ in general.
+\end{remark}
+
+\begin{proposition}[Distributivity]\label{eq:dist}
+$P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)$;\qquad
+$P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)$
+\end{proposition}
+\begin{remark}[Intuition] $\wedge$ distributes over $\vee$ and $\vee$ distributes
+over $\wedge$ — unlike in arithmetic where only multiplication distributes over
+addition, here both distribute over the other.
+\end{remark}
+\begin{remark}[Consequence] Distributivity is the key step in CNF and DNF
+conversion. DNF uses $\wedge$ over $\vee$; CNF uses $\vee$ over $\wedge$.
+\end{remark}
+
+\begin{proposition}[Idempotence]\label{eq:idemp}
+$P \wedge P \equiv P$;\qquad $P \vee P \equiv P$
+\end{proposition}
+\begin{remark}[Intuition] Repeating a formula under $\wedge$ or $\vee$ adds no
+new information. Useful for simplification.
+\end{remark}
+
+\begin{proposition}[Absorption]\label{eq:absorb}
+$P \wedge (P \vee Q) \equiv P$;\qquad $P \vee (P \wedge Q) \equiv P$
+\end{proposition}
+\begin{remark}[Intuition] The stronger condition absorbs the weaker. If $P$ is
+true, then $P \vee Q$ is certainly true, so $P \wedge (P \vee Q)$ is just $P$.
+\end{remark}
+
+\begin{proposition}[Identity Laws]\label{eq:identity}
+$P \wedge \top \equiv P$;\qquad $P \vee \bot \equiv P$
+\end{proposition}
+\begin{remark}[Intuition] $\top$ is the identity for $\wedge$; $\bot$ is the
+identity for $\vee$. They play the role of 1 and 0 in Boolean algebra.
+\end{remark}
+
+\begin{proposition}[Domination Laws]\label{eq:domination}
+$P \vee \top \equiv \top$;\qquad $P \wedge \bot \equiv \bot$
+\end{proposition}
+\begin{remark}[Intuition] $\top$ dominates $\vee$; $\bot$ dominates $\wedge$.
+A disjunction containing $\top$ is always true; a conjunction containing $\bot$
+is always false.
+\end{remark}
+
+\begin{proposition}[Negation Laws]\label{eq:negation}
+$P \vee \neg P \equiv \top$ \quad (Law of Excluded Middle);\qquad
+$P \wedge \neg P \equiv \bot$ \quad (Law of Non-Contradiction)
+\end{proposition}
+\begin{remark}[Logical significance] These are the two fundamental laws of
+classical logic. Excluded middle ($P \vee \neg P$) is rejected by intuitionists.
+Non-contradiction is accepted universally. They are duals of each other.
+\end{remark}
+
+\subsubsection*{Conditional Equivalences}
+
+\begin{proposition}[Material Implication]\label{eq:mat-impl}
+$P \rightarrow Q \;\equiv\; \neg P \vee Q$
+\end{proposition}
+\begin{remark}[Intuition] The conditional is only false when the antecedent is
+true and the consequent false. In all other cases — including when $P$ is false —
+it is vacuously true. This often surprises newcomers.
+\end{remark}
+\begin{remark}[Consequence] Material implication eliminates $\rightarrow$ in
+favor of $\neg$ and $\vee$, the first step in NNF conversion.
+\end{remark}
+
+\begin{proposition}[Contraposition]\label{eq:contra}
+$P \rightarrow Q \;\equiv\; \neg Q \rightarrow \neg P$
+\end{proposition}
+\begin{remark}[Proof strategy] Proof by contraposition: to prove $P \rightarrow Q$,
+it is equivalent to prove $\neg Q \rightarrow \neg P$. Choose whichever direction
+is easier to argue.
+\end{remark}
+
+\begin{proposition}[Exportation / Importation]\label{eq:export}
+$(P \wedge Q) \rightarrow R \;\equiv\; P \rightarrow (Q \rightarrow R)$
+\end{proposition}
+\begin{remark}[Intuition] A proof from two premises can be restructured as a
+chain of single-premise implications. This is the basis for currying in
+functional programming and natural deduction.
+\end{remark}
+
+\begin{proposition}[Negation of Conditional]\label{eq:neg-cond}
+$\neg(P \rightarrow Q) \;\equiv\; P \wedge \neg Q$
+\end{proposition}
+\begin{remark}[Intuition] The only way a conditional is false is if the antecedent
+holds but the consequent fails.
+\end{remark}
+\begin{remark}[Consequence] Used in refutation proofs: to show $P \rightarrow Q$,
+assume $\neg(P \rightarrow Q) \equiv P \wedge \neg Q$ and derive a contradiction.
+\end{remark}
+
+\begin{proposition}[Biconditional Expansion]\label{eq:bicond-exp}
+$P \leftrightarrow Q \;\equiv\; (P \rightarrow Q) \wedge (Q \rightarrow P)$
+\end{proposition}
+\begin{remark}[Proof strategy] To prove $P \leftrightarrow Q$, prove both
+$P \rightarrow Q$ and $Q \rightarrow P$ separately. This is the standard
+``iff proof'' structure.
+\end{remark}
+
+\subsubsection*{The Duality Principle}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Dual Formula)}},
+  fonttitle=\small\bfseries]
+The \emph{dual} of $\varphi$, written $\varphi^d$, is obtained by simultaneously
+replacing $\wedge \leftrightarrow \vee$ and $\top \leftrightarrow \bot$, leaving
+all variables and negations unchanged.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Duality Principle)}},
+  fonttitle=\small\bfseries]
+\label{thm:duality}
+If $\varphi \equiv \psi$ is a logical equivalence involving only
+$\neg, \wedge, \vee, \top, \bot$, then $\varphi^d \equiv \psi^d$.
+\end{tcolorbox}
+
+\begin{remark}[Intuition] Every valid equivalence has a ``mirror image'' obtained
+by swapping $\wedge\leftrightarrow\vee$ and $\top\leftrightarrow\bot$. De Morgan's
+laws are each other's duals. Identity and Domination are each other's duals.
+\end{remark}
+\begin{remark}[Consequence] Duality halves the number of equivalences to memorize.
+Learn one form; the dual comes for free.
+\end{remark}
+\begin{remark}[Formally]
+For any formula $\varphi$ with variables $P_1,\dots,P_n$:
+$\varphi^d \equiv \neg\varphi[\neg P_1/P_1, \dots, \neg P_n/P_n]$,
+where $\neg P_i / P_i$ denotes simultaneous substitution of $\neg P_i$ for $P_i$.
+\end{remark}
