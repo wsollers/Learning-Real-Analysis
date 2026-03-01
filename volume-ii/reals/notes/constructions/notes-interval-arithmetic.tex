@@ -1,0 +1,78 @@
+% =========================================================
+% Interval Arithmetic
+% =========================================================
+
+\subsection{Interval Arithmetic}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Interval Arithmetic — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Operation} & \textbf{Rule} & \textbf{Detail} \\
+\midrule
+Addition       & $[a,b] + [c,d] = [a+c,\, b+d]$           & \hyperref[def:interval-add]{↓ Def} \\
+Subtraction    & $[a,b] - [c,d] = [a-d,\, b-c]$           & \hyperref[def:interval-sub]{↓ Def} \\
+Multiplication & $[a,b] \cdot [c,d]$ (case analysis)      & \hyperref[def:interval-mult]{↓ Def} \\
+Containment    & $[a,b] \subseteq [c,d] \iff c\leq a, b\leq d$ & \hyperref[def:interval-contain]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Interval Addition)}},
+  fonttitle=\small\bfseries]
+\label{def:interval-add}
+For closed intervals $[a,b]$ and $[c,d]$, their \emph{sum} is
+\[
+  [a,b] + [c,d] \;=\; [a+c,\; b+d].
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Interval Subtraction)}},
+  fonttitle=\small\bfseries]
+\label{def:interval-sub}
+For closed intervals $[a,b]$ and $[c,d]$, their \emph{difference} is
+\[
+  [a,b] - [c,d] \;=\; [a-d,\; b-c].
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Interval Multiplication)}},
+  fonttitle=\small\bfseries]
+\label{def:interval-mult}
+For closed intervals $[a,b]$ and $[c,d]$, their \emph{product} is
+\[
+  [a,b] \cdot [c,d] \;=\;
+  \bigl[\min(ac, ad, bc, bd),\; \max(ac, ad, bc, bd)\bigr].
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Interval Containment)}},
+  fonttitle=\small\bfseries]
+\label{def:interval-contain}
+$[a,b] \subseteq [c,d]$ if and only if $c \leq a$ and $b \leq d$.
+\end{tcolorbox}
+
+\begin{remark}[Motivation]
+Interval arithmetic provides a framework for rigorous numerical computation
+with guaranteed error bounds. A real number $x \in [a,b]$ means the computed
+value may lie anywhere in the interval; operations propagate these bounds.
+\end{remark}
+
+\begin{remark}[Status]
+\textit{This section is a stub. A full treatment — the sub-distributivity law,
+dependency problem, applications to root-finding, and connections to
+compactness — will be developed in a future revision.}
+\end{remark}

@@ -61,7 +61,6 @@ volume-iii/                     ← VOLUME III: Abstract Mathematics
 ```
 <chapter>/
   index.tex           ← \chapter{}, \section{}s, \input{}s — no content here
-  reading-list.tex    ← Annotated bibliography table
   notes/
     index.tex         ← Orchestrator: \input each topic file in dependency order
     <topic>/          ← Subject subfolder when a topic has 3+ files
@@ -73,6 +72,13 @@ volume-iii/                     ← VOLUME III: Abstract Mathematics
       <ID>.tex        ← One proof per file
   capstone.tex        ← End-of-chapter synthesis
 ```
+
+### Reading Lists
+
+Reading list files (`reading-list.tex`) have been **removed** from the project.
+Annotated bibliographies should be maintained externally (e.g.\ in Zotero or
+a separate reference document) rather than compiled into the LaTeX document.
+All `\section{Reading List}` entries have been removed from chapter `index.tex` files.
 
 ### Proof File Naming
 
@@ -160,6 +166,89 @@ Add these colours to `main.tex` alongside the existing `propbox`/`propborder`:
 ...summary table...
 \end{tcolorbox}
 ```
+
+---
+
+
+---
+
+## 2b. Chapter Entry Pattern — Breadcrumb and Roadmap
+
+Every chapter that has a `notes.tex` (or where `notes/index.tex` serves as the
+entry point) **must** open with two elements in this order:
+
+### 1. Breadcrumb Box
+
+The breadcrumb box shows the reader where they are in the full
+curriculum progression. It uses the gray toolkit style:
+
+```latex
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Where You Are in the Journey}},
+  fonttitle=\small\bfseries
+]
+\begin{center}
+\small
+Propositional Logic
+$\;\to\;$ Predicate Calculus
+$\;\to\;$ \textbf{[Current Chapter]}
+$\;\to\;$ [Next Chapter]
+$\;\to\;$ $\cdots$
+\end{center}
+
+\medskip
+\noindent\textbf{How we got here.}
+[One paragraph: what the preceding chapters contributed and why this
+chapter is the natural next step.]
+
+\medskip
+\noindent\textbf{What this chapter builds.}
+[One paragraph: the core content and central objects of study.]
+
+\medskip
+\noindent\textbf{Where this leads.}
+[One paragraph: how this chapter's results feed the next.]
+\end{tcolorbox}
+\vspace{1em}
+```
+
+### 2. Structural Roadmap
+
+Immediately after the breadcrumb, a `\subsection*{Structural Roadmap}`
+block gives the enumerated progression of topics within the chapter:
+
+```latex
+\subsection*{Structural Roadmap}
+
+Each major topic is organised as:
+\begin{center}
+\textbf{Definitions $\longrightarrow$ Main Theorems
+$\longrightarrow$ Consequences and Structural Insight}
+\end{center}
+
+The global progression is:
+\begin{enumerate}
+  \item [First major topic]
+  \item [Second major topic]
+  \ldots
+\end{enumerate}
+
+\begin{remark}[Primary sources]
+[Books and chapter references driving this chapter.]
+\end{remark}
+```
+
+### Rules
+
+- The breadcrumb lives in `notes.tex` (or `notes/index.tex` when no `notes.tex` exists)
+- It is the **first** thing in the file — before any `\subsection` or content
+- Every chapter, including STUB chapters, has a breadcrumb in its `index.tex`
+- STUB chapters place the breadcrumb + a *Status: Planned* box directly in `index.tex`
+- Fully written chapters place the breadcrumb in `notes.tex` and input it via `index.tex`
 
 ---
 
@@ -277,26 +366,26 @@ Not every remark applies to every result. Use what is warranted:
 
 ## 5. Content Status
 
-| Chapter | Status |
-|---------|--------|
-| Propositional Logic | ✓ |
-| Predicate Logic | ✓ |
-| Sets, Relations, Functions | ✓ |
-| Axiom Systems | ✓ |
-| Proof Techniques | ✓ |
-| Model Theory | STUB |
-| Type Theory | STUB |
-| Natural Numbers | STUB (Peano content in Axiom Systems) |
-| Integers | ✓ |
-| Rationals | STUB |
-| Reals | ✓ |
-| Complex | STUB |
-| Real Analysis | ✓ (shared with Reals) |
-| Metric Spaces | ✓ |
-| Point-Set Topology | ✓ |
-| Measure Theory | STUB |
-| Algebraic Structures | ✓ |
-| Set Algebras | ✓ |
-| Linear Algebra | ✓ |
-| Abstract Algebra | ✓ |
-| Algebraic Geometry | ✓ |
+| Chapter | Breadcrumb | Notes | Status |
+|---------|------------|-------|--------|
+| Propositional Logic | ✓ | ✓ | Complete |
+| Predicate Logic | ✓ | ✓ | Complete |
+| Sets, Relations, Functions | ✓ | ✓ | Complete |
+| Axiom Systems | ✓ | ✓ | Complete |
+| Proof Techniques | ✓ | ✓ | Complete |
+| Model Theory | ✓ | — | STUB |
+| Type Theory | ✓ | — | STUB |
+| Natural Numbers | ✓ | — | STUB (Peano content in Axiom Systems) |
+| Integers | ✓ | ✓ | Complete |
+| Rationals | ✓ | — | STUB |
+| Real Numbers (ℝ) | ✓ | ✓ | Complete (foundations + sequences + series + constructions) |
+| Complex | ✓ | — | STUB |
+| Real Analysis | ✓ | ✓ | Notes in Vol II; analysis proper TBD |
+| Metric Spaces | ✓ | ✓ | Complete |
+| Point-Set Topology | ✓ | ✓ | Complete |
+| Measure Theory | ✓ | — | STUB |
+| Algebraic Structures | ✓ | ✓ | Complete |
+| Set Algebras | ✓ | ✓ | Complete |
+| Linear Algebra | ✓ | ✓ | Complete |
+| Abstract Algebra | ✓ | ✓ | Complete |
+| Algebraic Geometry | ✓ | ✓ | Complete |
