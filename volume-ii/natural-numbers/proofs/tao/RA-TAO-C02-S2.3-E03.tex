@@ -1,0 +1,201 @@
+% --------------------------------------
+% Proof: RA-TAO-C02-S2.3-E03
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-RA-TAO-C02-S2.3-E03}{}
+
+\subsubsection[Multiplication is Associative (P2.3.5)]{Proof --- RA-TAO-C02-S2.3-E03}
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysis1}{Chapter~2, \S2.3, Exercise~2.3.3}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Prove Proposition~2.3.5 (Multiplication is associative):
+
+\medskip
+\noindent
+\textbf{Proposition~2.3.5.}
+For any natural numbers $a, b, c$, we have $(a \times b) \times c = a \times (b \times c)$.
+
+\vspace{0.75em}
+
+\noindent
+% =========================================================
+% Proof: Proposition 2.3.5 — Multiplication is Associative
+% =========================================================
+
+\begin{proposition}[Multiplication is associative]
+\label{prop:mult-assoc}
+For any natural numbers $a, b, c$:
+\[
+(a \times b) \times c = a \times (b \times c).
+\]
+\end{proposition}
+
+\begin{proof}
+The goal is a universal equality. We prove by induction on $a$
+the statement:
+\[
+P(a) :\equiv (a \times b) \times c = a \times (b \times c),
+\]
+holding $b$ and $c$ fixed as arbitrary natural numbers.
+
+\medskip
+\noindent\textbf{Base case} ($a = 0$).
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} &
+\multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} &
+\textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+(0 \times b) \times c = 0 \times c
+&
+M1: $0 \times b := 0$. Left side becomes $0 \times c$.
+\\[10pt]
+
+\tagDU
+&
+0 \times c = 0
+&
+M1: $0 \times c := 0$.
+\\[10pt]
+
+\tagDU
+&
+0 \times (b \times c) = 0
+&
+M1: $0 \times (b \times c) := 0$.
+\\[10pt]
+
+\tagAM
+&
+(0 \times b) \times c = 0 \times (b \times c)
+&
+Both sides equal $0$. \hfill$\blacksquare_{P(0)}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textbf{Inductive step.}
+Assume $P(a)$ holds, i.e., assume:
+\[
+(a \times b) \times c = a \times (b \times c). \tag{IH}
+\]
+We show $P(a\pp)$, i.e., that
+$(a\pp \times b) \times c = a\pp \times (b \times c)$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} &
+\multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} &
+\textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a\pp \times b = (a \times b) + b
+&
+M2: $(a\pp) \times b := (a \times b) + b$.
+\\[10pt]
+
+\tagAM
+&
+(a\pp \times b) \times c
+= ((a \times b) + b) \times c
+&
+Substituting M2 into the left side of $P(a\pp)$.
+\\[10pt]
+
+\tagTA
+&
+((a \times b) + b) \times c
+= (a \times b) \times c + b \times c
+&
+Distributive law, Proposition~2.3.4:
+$(\alpha + \beta) \times \gamma
+= \alpha \times \gamma + \beta \times \gamma$.
+Apply with $\alpha := a \times b$, $\beta := b$,
+$\gamma := c$.
+\\[10pt]
+
+\tagIH
+&
+(a \times b) \times c + b \times c
+= a \times (b \times c) + b \times c
+&
+Inductive hypothesis: replace
+$(a \times b) \times c$ with $a \times (b \times c)$.
+\\[10pt]
+
+\tagDU
+&
+a\pp \times (b \times c)
+= a \times (b \times c) + b \times c
+&
+M2: $(a\pp) \times (b \times c)
+:= a \times (b \times c) + (b \times c)$.
+\\[10pt]
+
+\tagAM
+&
+(a\pp \times b) \times c
+= a\pp \times (b \times c)
+&
+Both sides equal
+$a \times (b \times c) + b \times c$.
+\hfill$\blacksquare_{P(a\pp)}$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent
+By induction (P5), $P(a)$ holds for all $a \in \mathbb{N}$.
+Since $b$ and $c$ were arbitrary, associativity holds for all
+$a, b, c \in \mathbb{N}$.
+
+\end{proof}
+
+\begin{remark}[The proof engine: M2 $\to$ distributivity $\to$ IH $\to$ M2]
+The inductive step follows a four-move pattern that recurs
+throughout Chapter~2 multiplication proofs:
+(1) unpack the left side using M2;
+(2) apply distributivity to expose a subexpression matching the IH;
+(3) substitute the IH;
+(4) recognize the result as M2 applied to the right side.
+When a multiplication proof stalls, check whether distributivity
+has been applied.
+\end{remark}
+
+\begin{remark}[Why induct on $a$]
+M2 recurses on the left argument of multiplication:
+$(a\pp) \times m := (a \times m) + m$.
+Inducting on $a$ ensures M2 fires in the inductive step,
+reducing $a\pp \times b$ to $(a \times b) + b$ and exposing
+the inductive hypothesis.
+\end{remark}
+
+\begin{remark}[Distributivity as the bridge]
+The inductive hypothesis gives a fact about $(a \times b) \times c$.
+Distributivity is the bridge that exposes this subexpression
+inside the expanded left side $((a \times b) + b) \times c$.
+Without it, the IH has nothing to attach to.
+\end{remark}
+
+\vspace{1em}

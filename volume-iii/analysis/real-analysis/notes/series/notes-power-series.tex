@@ -1,0 +1,250 @@
+% =========================================================
+% Power Series and Radius of Convergence
+% File: notes-power-series.tex
+% =========================================================
+
+\subsection{Power Series and Radius of Convergence}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Power Series — Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Power series)}},
+  fonttitle=\small\bfseries]
+Let $(a_n)$ be a sequence of real numbers and let $c \in \mathbb{R}$.
+A \emph{power series centered at $c$} is a series of the form
+\[
+\sum_{n=0}^{\infty} a_n (x-c)^n.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Radius of convergence)}},
+  fonttitle=\small\bfseries]
+The \emph{radius of convergence} of a power series
+\[
+\sum_{n=0}^{\infty} a_n (x-c)^n
+\]
+is the number $R \in [0,\infty]$ such that:
+
+\begin{itemize}
+\item the series converges absolutely whenever $|x-c| < R$,
+\item the series diverges whenever $|x-c| > R$.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Interval of convergence)}},
+  fonttitle=\small\bfseries]
+The \emph{interval of convergence} is the set of $x$ for which the series converges.
+It is of the form
+\[
+(c-R,c+R)
+\]
+possibly including one or both endpoints.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+\begin{theorem}[Radius of Convergence Theorem]
+For every power series
+\[
+\sum_{n=0}^{\infty} a_n (x-c)^n,
+\]
+there exists $R \in [0,\infty]$ such that:
+
+\begin{enumerate}
+\item The series converges absolutely for all $|x-c|<R$.
+\item The series diverges for all $|x-c|>R$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Consider the root test applied to the general term:
+\[
+\left|a_n (x-c)^n\right|^{1/n}
+=
+|a_n|^{1/n} |x-c|.
+\]
+
+Let
+\[
+L := \limsup_{n\to\infty} |a_n|^{1/n}.
+\]
+
+By the root test, the series converges absolutely when
+\[
+\limsup_{n\to\infty}
+|a_n|^{1/n} |x-c|
+< 1,
+\]
+i.e.,
+\[
+|x-c| < \frac{1}{L}.
+\]
+
+Similarly, it diverges when
+\[
+|x-c| > \frac{1}{L}.
+\]
+
+Define
+\[
+R := \frac{1}{L},
+\]
+with the conventions:
+\[
+L=0 \Rightarrow R=\infty,
+\qquad
+L=\infty \Rightarrow R=0.
+\]
+
+This establishes the existence of a radius $R$ with the stated properties.
+\end{proof}
+
+\begin{theorem}[Cauchy--Hadamard Formula]
+Let
+\[
+\sum_{n=0}^{\infty} a_n (x-c)^n
+\]
+be a power series. Then the radius of convergence is
+\[
+R
+=
+\frac{1}{\limsup_{n\to\infty} |a_n|^{1/n}}.
+\]
+\end{theorem}
+
+\begin{proof}
+This follows directly from the root test applied in the previous theorem.
+The convergence boundary is determined precisely by
+\[
+\limsup |a_n|^{1/n} |x-c| = 1.
+\]
+Solving for $|x-c|$ gives the formula for $R$.
+\end{proof}
+
+\begin{theorem}[Term-by-term differentiation]
+Let
+\[
+f(x) = \sum_{n=0}^{\infty} a_n (x-c)^n
+\]
+have radius of convergence $R>0$.
+Then for all $|x-c|<R$:
+
+\begin{enumerate}
+\item The series converges uniformly on every closed interval
+\[
+[c-r,c+r] \subset (c-R,c+R).
+\]
+\item The function $f$ is differentiable on $(c-R,c+R)$.
+\item The derivative is obtained by term-by-term differentiation:
+\[
+f'(x)
+=
+\sum_{n=1}^{\infty} n a_n (x-c)^{n-1}.
+\]
+\item The differentiated series has the same radius of convergence $R$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Fix $r<R$. For $|x-c|\le r$, we have
+\[
+|a_n (x-c)^n|
+\le
+|a_n| r^n.
+\]
+Since $r<R$, the series
+\[
+\sum |a_n| r^n
+\]
+converges by the definition of $R$.
+By the Weierstrass $M$-test, the power series converges uniformly on
+$[c-r,c+r]$.
+
+The same argument applies to
+\[
+\sum n a_n (x-c)^{n-1}.
+\]
+
+Uniform convergence of the derivative series implies that differentiation
+may be performed term-by-term, and the radius remains unchanged because
+\[
+\limsup (n|a_n|)^{1/n}
+=
+\limsup |a_n|^{1/n}.
+\]
+\end{proof}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences and Logical Structure}
+
+\begin{remark}[Structural Position]
+Power series sit at the intersection of:
+
+\[
+\text{Sequences}
+\rightarrow
+\text{Series}
+\rightarrow
+\text{Absolute convergence}
+\rightarrow
+\text{Root test}
+\rightarrow
+\text{limsup}.
+\]
+
+The Cauchy--Hadamard formula is the culmination of the entire
+limsup theory.
+\end{remark}
+
+\begin{remark}[Uniform convergence inside the radius]
+On every compact subinterval of $(c-R,c+R)$, power series converge uniformly.
+This makes them exceptionally well-behaved:
+\[
+\text{Inside } R:
+\quad
+\text{Uniform convergence}
+\Rightarrow
+\text{Continuous}
+\Rightarrow
+\text{Differentiable}
+\Rightarrow
+\text{Smooth}.
+\]
+\end{remark}
+
+\begin{remark}[Completeness connection]
+The existence of $R$ ultimately depends on:
+\begin{itemize}
+\item completeness of $\mathbb{R}$,
+\item limsup existence,
+\item root test,
+\item absolute convergence theory.
+\end{itemize}
+
+Thus power series are a structural synthesis of the entire sequence
+and series development.
+\end{remark}
+
+

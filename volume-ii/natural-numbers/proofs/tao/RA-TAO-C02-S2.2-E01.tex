@@ -1,0 +1,183 @@
+% =========================================================
+% Proof Sheets — Tao (Analysis I) — Induction / Natural Numbers
+% Sections 2.2 and 2.3
+% =========================================================
+
+% --------------------------------------
+% Proof: RA-TAO-C02-S2.2-E01
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-RA-TAO-C02-S2.2-E01}{}
+
+\subsubsection[Addition is Associative (P2.2.5)]{Proof --- RA-TAO-C02-S2.2-E01}
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysis1}{Chapter~2, \S2.2, Exercise~2.2.1}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Prove Tao's Proposition~2.2.5 (Addition is associative), namely: for all
+$a,b,c\in\mathbb{N}$,
+\[
+(a+b)+c \;=\; a+(b+c).
+\]
+\emph{(Hint: use induction.)}
+
+\vspace{0.75em}
+
+\noindent
+% =========================================================
+% Proof: Addition is Associative (Tao Prop. 2.2.5)
+% =========================================================
+
+\begin{proposition*}[Addition is associative]
+\label{prop:add-assoc}
+For all $a, b, c \in \mathbb{N}$,
+\[
+(a + b) + c \;=\; a + (b + c).
+\]
+\end{proposition*}
+
+\begin{proof}
+Let $b, c \in \mathbb{N}$ be arbitrary and fixed throughout.
+We induct on $a$.
+
+Let $P(a)$ denote the statement $(a + b) + c = a + (b + c)$.
+
+\medskip
+\noindent\textbf{Base case} ($a = 0$). We show $P(0)$:
+$(0 + b) + c = 0 + (b + c)$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} & \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+(0 + b) + c = b + c
+&
+Apply A1 to the inner sum: $0 + b = b$.
+\\[10pt]
+
+\tagDU
+&
+0 + (b + c) = b + c
+&
+Apply A1 to the outer sum: $0 + (b+c) = b+c$.
+\\[10pt]
+
+\tagAM
+&
+(0 + b) + c \;=\; 0 + (b + c)
+&
+Both sides equal $b + c$. Hence $P(0)$ holds.
+\hfill$\blacksquare_0$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textbf{Inductive step.}
+Assume $P(a)$: $(a + b) + c = a + (b + c)$. \quad
+\textit{(Inductive hypothesis.)}
+
+We show $P(a\pp)$: $(a\pp + b) + c = a\pp + (b + c)$.
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} & \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+a\pp + b = (a + b)\pp
+&
+Apply A2 to the left argument $a\pp$:
+$(a\pp) + b := (a + b)\pp$.
+\\[10pt]
+
+\tagAM
+&
+(a\pp + b) + c = (a+b)\pp + c
+&
+Substituting the result above into the left side of $P(a\pp)$.
+\\[10pt]
+
+\tagDU
+&
+(a+b)\pp + c = ((a+b) + c)\pp
+&
+Apply A2 with left argument $(a+b)\pp$:
+$((a+b)\pp) + c := ((a+b)+c)\pp$.
+\\[10pt]
+
+\tagTA
+&
+((a+b)+c)\pp = (a+(b+c))\pp
+&
+Apply inductive hypothesis $P(a)$:
+$(a+b)+c = a+(b+c)$.
+Substitute inside the successor.
+\\[10pt]
+
+\tagDU
+&
+a\pp + (b+c) = (a + (b+c))\pp
+&
+Apply A2 with left argument $a\pp$:
+$(a\pp) + (b+c) := (a+(b+c))\pp$.
+\\[10pt]
+
+\tagAM
+&
+(a\pp + b) + c \;=\; a\pp + (b+c)
+&
+Left side $= (a+(b+c))\pp$ (steps 1--4).
+Right side $= (a+(b+c))\pp$ (step 5).
+Both sides equal. Hence $P(a\pp)$ holds.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+By induction (P5), $P(a)$ holds for all $a \in \mathbb{N}$.
+\end{proof}
+
+\begin{remark}[Strategy: induction on the left argument]
+Addition in $\mathbb{N}$ is defined by recursion on the
+\emph{left} argument (Rule A2). When proving an identity
+involving addition, always ask which variable sits in the
+left position of the outermost addition on both sides.
+That variable is the one to induct on, because A2 will
+fire cleanly on both sides simultaneously.
+
+Here, both $(a+b)+c$ and $a+(b+c)$ have $a$ (or $a\pp$)
+in the left position of their outermost or inner sums,
+making $a$ the correct induction variable.
+Inducting on $b$ or $c$ would leave A2 unable to simplify
+one or both sides.
+\end{remark}
+
+\begin{remark}[Strategy: inductive hypothesis as a cite]
+The inductive hypothesis $P(a)$ is not used to simplify
+either side directly --- it is used as a \emph{theorem citation}
+at the moment when both sides have been reduced to successors
+of expressions that differ only in grouping.
+This is a common pattern: reduce both sides independently
+using definitions (A1, A2), then close the gap with the
+inductive hypothesis tagged \tagTA.
+\end{remark}
+
+\vspace{1em}

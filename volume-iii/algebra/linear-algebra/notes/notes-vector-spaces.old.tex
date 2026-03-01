@@ -1,0 +1,725 @@
+% =========================================================
+% Vector Spaces
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Preliminary Definitions}
+% ---------------------------------------------------------
+
+\begin{definition}[Abelian group]
+A set $G$ with a binary operation $\ast : G \times G \to G$
+is an \emph{abelian group} if:
+
+\begin{enumerate}
+\item \textbf{Associativity:}
+\[
+(a \ast b) \ast c = a \ast (b \ast c)
+\quad\text{for all } a,b,c \in G.
+\]
+
+\item \textbf{Identity element:}
+There exists $e \in G$ such that
+\[
+a \ast e = e \ast a = a
+\quad\text{for all } a \in G.
+\]
+
+\item \textbf{Inverse element:}
+For each $a \in G$ there exists $b \in G$ such that
+\[
+a \ast b = b \ast a = e.
+\]
+
+\item \textbf{Commutativity:}
+\[
+a \ast b = b \ast a
+\quad\text{for all } a,b \in G.
+\]
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+An abelian group is simply a group whose operation is commutative.
+\end{remark}
+
+\begin{definition}[Field — structural form]
+A \emph{field} is a set $\mathbb{F}$ equipped with two operations
+$+$ and $\cdot$ such that:
+
+\begin{itemize}
+\item $(\mathbb{F}, +)$ is an abelian group,
+\item $(\mathbb{F}\setminus\{0\}, \cdot)$ is an abelian group,
+\item Multiplication distributes over addition.
+\end{itemize}
+\end{definition}
+
+\begin{remark}[Expanded Axioms]
+Expanding the abelian group axioms yields the familiar list:
+
+\begin{itemize}
+\item Associativity, commutativity, identity, and inverse for addition.
+\item Associativity, commutativity, identity, and inverse (for nonzero elements) for multiplication.
+\item The distributive law.
+\end{itemize}
+
+Thus the usual field axioms are not independent assumptions,
+but consequences of the two abelian group structures together with distributivity.
+\end{remark}
+
+\begin{remark}[Structural Summary]
+A field consists of two compatible abelian group structures:
+
+\begin{center}
+\begin{tabular}{l|c|c}
+Structure & Additive Group & Multiplicative Structure \\
+\hline
+Field & Abelian & Abelian (on nonzero elements)
+\end{tabular}
+\end{center}
+
+Distributivity links the two operations.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{The Complex Numbers}
+
+\begin{definition}[Complex Numbers]
+The set of \emph{complex numbers}, denoted $\mathbb{C}$, is defined as
+\[
+\mathbb{C} := \{(a,b) : a,b \in \mathbb{R}\},
+\]
+with operations defined by
+\[
+(a,b) + (c,d) := (a+c,\; b+d),
+\]
+\[
+(a,b)\cdot(c,d) := (ac - bd,\; ad + bc).
+\]
+\end{definition}
+
+\begin{remark}
+We identify $(a,b)$ with the symbol
+\[
+a + bi,
+\]
+where $i := (0,1)$ satisfies
+\[
+i^2 = -1.
+\]
+\end{remark}
+
+\begin{remark}
+With these operations, $\mathbb{C}$ is a field containing $\mathbb{R}$
+as the subset $\{(a,0): a \in \mathbb{R}\}$.
+\end{remark}
+
+\begin{remark}[Field structure of $\mathbb{C}$]
+With the operations defined above, the set $\mathbb{C}$
+satisfies the field axioms.
+
+That is:
+\begin{itemize}
+\item $(\mathbb{C}, +)$ is an abelian group,
+\item $(\mathbb{C}\setminus\{0\}, \cdot)$ is an abelian group,
+\item multiplication distributes over addition.
+\end{itemize}
+
+Hence $\mathbb{C}$ is a field.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{The Space $\mathbb{C}^n$}
+
+\begin{definition}[$\mathbb{C}^n$]
+Let $n \in \mathbb{N}$.
+The set
+\[
+\mathbb{C}^n := \{(z_1, \dots, z_n) : z_i \in \mathbb{C}\}
+\]
+is the set of ordered $n$-tuples of complex numbers.
+
+Addition and scalar multiplication are defined componentwise:
+\[
+(z_1,\dots,z_n) + (w_1,\dots,w_n)
+:=
+(z_1+w_1,\dots,z_n+w_n),
+\]
+\[
+\lambda (z_1,\dots,z_n)
+:=
+(\lambda z_1,\dots,\lambda z_n),
+\quad
+\lambda \in \mathbb{C}.
+\]
+\end{definition}
+
+\begin{remark}
+With these operations, $\mathbb{C}^n$ is a vector space over the field $\mathbb{C}$.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{definition}[Vector Space — informal description]
+A vector space is a set equipped with addition and scalar multiplication
+that behave like familiar vector arithmetic.
+\end{definition}
+
+\begin{remark}
+The informal description suggests structure, but precision requires axioms.
+\end{remark}
+
+\begin{definition}[Vector Space]
+Let $\mathbb{F}$ be a field.
+A \textbf{vector space} over $\mathbb{F}$ is a triple $(V, +, \cdot)$ where $V$ is a set,
+$+: V \times V \to V$ is a binary operation called \textbf{vector addition}, and
+$\cdot : \mathbb{F} \times V \to V$ is a binary operation called \textbf{scalar multiplication}, such that:
+\begin{itemize}
+    \item $(V, +)$ is an abelian group,
+    \item $\alpha (u + v) = \alpha u + \alpha v$ for all $\alpha \in \mathbb{F}$ and $u, v \in V$,
+    \item $(\alpha + \beta) v = \alpha v + \beta v$ for all $\alpha, \beta \in \mathbb{F}$ and $v \in V$,
+    \item $(\alpha \beta) v = \alpha (\beta v)$ for all $\alpha, \beta \in \mathbb{F}$ and $v \in V$,
+    \item $1_{\mathbb{F}} v = v$ for all $v \in V$.
+\end{itemize}
+The elements of $V$ are called \textbf{vectors} and the elements of $\mathbb{F}$ are called \textbf{scalars}.
+\end{definition}
+
+\begin{remark}[Expanded Axioms]
+Expanding the abelian group structure of $(V,+)$ yields the full list of vector space axioms:
+
+\begin{itemize}
+\item \textbf{Associativity of addition:} $(u + v) + w = u + (v + w)$ for all $u,v,w \in V$.
+\item \textbf{Commutativity of addition:} $u + v = v + u$ for all $u,v \in V$.
+\item \textbf{Additive identity:} There exists $\mathbf{0} \in V$ such that $v + \mathbf{0} = v$ for all $v \in V$.
+\item \textbf{Additive inverse:} For each $v \in V$ there exists $-v \in V$ such that $v + (-v) = \mathbf{0}$.
+\item \textbf{Distributivity over vector addition:} $\alpha(u + v) = \alpha u + \alpha v$ for all $\alpha \in \mathbb{F}$, $u,v \in V$.
+\item \textbf{Distributivity over scalar addition:} $(\alpha + \beta)v = \alpha v + \beta v$ for all $\alpha,\beta \in \mathbb{F}$, $v \in V$.
+\item \textbf{Compatibility:} $(\alpha\beta)v = \alpha(\beta v)$ for all $\alpha,\beta \in \mathbb{F}$, $v \in V$.
+\item \textbf{Unit law:} $1_{\mathbb{F}} v = v$ for all $v \in V$.
+\end{itemize}
+
+Thus the structural definition compresses eight axioms into one abelian group condition
+plus four scalar multiplication laws.
+\end{remark}
+
+\begin{remark}[Structural Summary]
+A vector space combines an abelian group with a compatible scalar action:
+
+\begin{center}
+\begin{tabular}{l|c|c}
+Structure & Additive Group & Scalar Action \\
+\hline
+Vector Space & Abelian & $\mathbb{F}$-linear
+\end{tabular}
+\end{center}
+
+The scalar multiplication axioms express compatibility between the field $\mathbb{F}$
+and the group $(V,+)$.
+\end{remark}
+
+\begin{remark}
+With the componentwise operations defined above, $\mathbb{F}^n$ is a vector space
+over $\mathbb{F}$ for any field $\mathbb{F}$ and any $n \in \mathbb{N}$.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Tuples and Lists}
+
+\begin{definition}[$n$-tuple]
+Let $n \in \mathbb{N}$ and let $X$ be a set.
+An \emph{$n$-tuple} of elements of $X$ is a function
+\[
+f : \{1,2,\dots,n\} \to X.
+\]
+We write such a function as
+\[
+(x_1,\dots,x_n),
+\]
+where $x_i := f(i)$ for each $i$.
+\end{definition}
+
+\begin{definition}[Finite list]
+Let $X$ be a set.
+A \emph{finite list} of elements of $X$ is a function
+\[
+f : \{1,2,\dots,n\} \to X
+\]
+for some $n \in \mathbb{N}$.
+\end{definition}
+
+\begin{definition}[Set]
+A \emph{set} is a collection of distinct elements
+with no inherent ordering.
+\end{definition}
+
+\begin{example}
+Consider the elements $1$ and $2$.
+
+The set
+\[
+\{1,2,2\}
+\]
+is equal to
+\[
+\{1,2\},
+\]
+because sets do not record duplicates.
+
+However, the list
+\[
+(1,2,2)
+\]
+is different from
+\[
+(1,2),
+\]
+because lists record both order and repetition.
+\end{example}
+
+\begin{definition}[Coordinate]
+Let $\mathbb{F}$ be a field and let
+\[
+v = (v_1,\dots,v_n) \in \mathbb{F}^n.
+\]
+The element $v_i$ is called the \emph{$i$th coordinate} of $v$.
+\end{definition}
+
+% ---------------------------------------------------------
+\subsubsection{Structural Interpretation of $\mathbb{F}^n$}
+
+\begin{definition}[The space $\mathbb{F}^n$ as a function space]
+Let $\mathbb{F}$ be a field and let $n \in \mathbb{N}$.
+Define
+\[
+\mathbb{F}^n := \{ f : \{1,\dots,n\} \to \mathbb{F} \}.
+\]
+\end{definition}
+
+\begin{remark}
+An element $v \in \mathbb{F}^n$ is therefore a function
+\[
+v : \{1,\dots,n\} \to \mathbb{F}.
+\]
+We write
+\[
+v = (v_1,\dots,v_n),
+\quad \text{where } v_i := v(i).
+\]
+Thus an ordered $n$-tuple is simply a function from an index set.
+\end{remark}
+
+\begin{definition}[Operations in $\mathbb{F}^n$]
+For $v,w \in \mathbb{F}^n$ and $\alpha \in \mathbb{F}$, define:
+\[
+(v+w)(i) := v(i) + w(i),
+\]
+\[
+(\alpha v)(i) := \alpha \, v(i),
+\]
+for each $i \in \{1,\dots,n\}$.
+\end{definition}
+
+\begin{remark}[Pointwise structure]
+Vector addition and scalar multiplication in $\mathbb{F}^n$
+are defined \emph{pointwise}.
+All vector space axioms follow from the corresponding field axioms
+applied coordinatewise.
+\end{remark}
+
+\begin{remark}[Structural Insight]
+When Axler writes
+\[
+v = (v_1,\dots,v_n),
+\]
+he is implicitly identifying $v$ with a function
+\[
+v : \{1,\dots,n\} \to \mathbb{F}.
+\]
+Thus
+\[
+\mathbb{F}^n = \{ f : \{1,\dots,n\} \to \mathbb{F} \}.
+\]
+This function viewpoint makes the structure of $\mathbb{F}^n$
+completely rigorous and conceptually clean.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{The Function-Space Viewpoint}
+
+\begin{remark}
+Our next example of a vector space involves a set of functions.
+Just as $\mathbb{F}^n$ consists of functions from a finite index set into $\mathbb{F}$,
+we may replace that finite index set with any set $S$ whatsoever.
+The resulting space $\mathbb{F}^S$ is again a vector space,
+and this construction subsumes $\mathbb{F}^n$ as a special case.
+\end{remark}
+
+\begin{definition}[Set Exponentiation]
+Let $X$ and $Y$ be sets.
+Define
+\[
+Y^X := \{ f : X \to Y \},
+\]
+the set of all functions from $X$ to $Y$.
+\end{definition}
+
+\begin{remark}
+If $|X| = n$ and $|Y| = m$ are finite, then
+\[
+|Y^X| = m^n.
+\]
+Thus the notation $Y^X$ agrees with the rules of cardinal arithmetic.
+\end{remark}
+
+\begin{definition}[$\mathbb{F}^S$ — the function space over a set]
+Let $\mathbb{F}$ be a field and let $S$ be a set.
+Define
+\[
+\mathbb{F}^S := \{ f : S \to \mathbb{F} \},
+\]
+the set of all functions from $S$ to $\mathbb{F}$.
+
+For $f, g \in \mathbb{F}^S$, define \textbf{addition} by
+\[
+(f + g)(x) := f(x) + g(x)
+\quad \text{for all } x \in S.
+\]
+
+For $\lambda \in \mathbb{F}$ and $f \in \mathbb{F}^S$, define \textbf{scalar multiplication} by
+\[
+(\lambda f)(x) := \lambda f(x)
+\quad \text{for all } x \in S.
+\]
+\end{definition}
+
+\begin{example}[$\mathbb{F}^S$ is a vector space]
+Let $\mathbb{F}$ be a field and let $S$ be a set.
+With the addition and scalar multiplication defined above,
+$\mathbb{F}^S$ is a vector space over $\mathbb{F}$.
+
+The zero vector is the function $\mathbf{0} : S \to \mathbb{F}$ defined by
+$\mathbf{0}(x) = 0$ for all $x \in S$,
+and the additive inverse of $f$ is the function $-f$ defined by
+$(-f)(x) = -f(x)$ for all $x \in S$.
+All vector space axioms follow from the corresponding field axioms applied pointwise.
+\end{example}
+
+\begin{proposition}[Uniqueness of the Additive Identity]
+Let $V$ be a vector space over a field $\mathbb{F}$.
+The additive identity of $V$ is unique.
+\end{proposition}
+
+\begin{proof}
+Suppose $\mathbf{0}$ and $\mathbf{0}'$ are both additive identities in $V$.
+Then
+\[
+\mathbf{0} = \mathbf{0} + \mathbf{0}' = \mathbf{0}',
+\]
+where the first equality holds because $\mathbf{0}'$ is an additive identity,
+and the second because $\mathbf{0}$ is an additive identity.
+Hence $\mathbf{0} = \mathbf{0}'$.
+\end{proof}
+
+\begin{proposition}[Uniqueness of the Additive Inverse]
+Let $V$ be a vector space over a field $\mathbb{F}$.
+For each $v \in V$, the additive inverse of $v$ is unique.
+\end{proposition}
+
+\begin{proof}
+Let $v \in V$ and suppose $w, w' \in V$ both satisfy
+\[
+v + w = \mathbf{0} \qquad \text{and} \qquad v + w' = \mathbf{0}.
+\]
+Then
+\[
+w = w + \mathbf{0} = w + (v + w') = (w + v) + w' = \mathbf{0} + w' = w',
+\]
+where we used the additive identity, the assumption on $w'$,
+associativity, the assumption on $w$, and the additive identity again.
+Hence $w = w'$.
+\end{proof}
+
+\begin{proposition}
+Let $V$ be a vector space over a field $\mathbb{F}$, let $v \in V$,
+and let $\alpha \in \mathbb{F}$. Then:
+\begin{enumerate}
+    \item $0_{\mathbb{F}} v = \mathbf{0}$,
+    \item $\alpha \mathbf{0} = \mathbf{0}$,
+    \item $(-1_{\mathbb{F}}) v = -v$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{(1)} Using distributivity over scalar addition and the additive identity of $\mathbb{F}$,
+\[
+0_{\mathbb{F}} v = (0_{\mathbb{F}} + 0_{\mathbb{F}}) v = 0_{\mathbb{F}} v + 0_{\mathbb{F}} v.
+\]
+Adding $-(0_{\mathbb{F}} v)$ to both sides gives
+\[
+\mathbf{0} = 0_{\mathbb{F}} v,
+\]
+as required.
+
+\textbf{(2)} Using distributivity over vector addition and the additive identity of $V$,
+\[
+\alpha \mathbf{0} = \alpha(\mathbf{0} + \mathbf{0}) = \alpha \mathbf{0} + \alpha \mathbf{0}.
+\]
+Adding $-(\alpha \mathbf{0})$ to both sides gives
+\[
+\mathbf{0} = \alpha \mathbf{0},
+\]
+as required.
+
+\textbf{(3)} We show that $(-1_{\mathbb{F}})v$ satisfies the defining property of $-v$,
+namely that its sum with $v$ equals $\mathbf{0}$. Using the unit law and part (1),
+\[
+v + (-1_{\mathbb{F}})v = 1_{\mathbb{F}} v + (-1_{\mathbb{F}}) v
+= (1_{\mathbb{F}} + (-1_{\mathbb{F}})) v
+= 0_{\mathbb{F}} v
+= \mathbf{0}.
+\]
+By uniqueness of the additive inverse, $(-1_{\mathbb{F}}) v = -v$.
+\end{proof}
+
+\begin{definition}[Coordinate space as a function space]
+Let $\mathbb{F}$ be a field and let
+\[
+[n] := \{1,\dots,n\}.
+\]
+Then
+\[
+\mathbb{F}^n \;=\; \mathbb{F}^{[n]}
+\;=\;
+\{ f : [n] \to \mathbb{F} \}.
+\]
+\end{definition}
+
+\begin{remark}
+An element $v \in \mathbb{F}^n$ is therefore a function
+\[
+v : [n] \to \mathbb{F}.
+\]
+The ordered tuple notation
+\[
+v = (v_1,\dots,v_n)
+\]
+means precisely that
+\[
+v(i) = v_i.
+\]
+Thus an $n$-tuple is simply a function from a finite index set.
+\end{remark}
+
+\begin{definition}[Pointwise operations]
+Let $v,w \in \mathbb{F}^n$ and $\alpha \in \mathbb{F}$.
+Define
+\[
+(v+w)(i) := v(i) + w(i),
+\qquad
+(\alpha v)(i) := \alpha\, v(i),
+\]
+for each $i \in [n]$.
+\end{definition}
+
+\begin{remark}
+Vector addition and scalar multiplication in $\mathbb{F}^n$
+are defined \emph{pointwise}.
+The vector space axioms follow from the field axioms
+applied at each index $i$.
+\end{remark}
+
+\begin{remark}[Structural Insight]
+The notation
+\[
+\mathbb{F}^n = \mathbb{F}^{[n]}
+\]
+reveals that finite-dimensional coordinate spaces
+are function spaces on finite index sets.
+
+More generally, for any set $S$,
+\[
+\mathbb{F}^S := \{ f : S \to \mathbb{F} \}
+\]
+is a vector space under pointwise operations.
+
+Thus finite-dimensional linear algebra is the special case
+of function spaces where the index set is finite.
+\end{remark}
+
+\begin{remark}[Conceptual Unification]
+The passage
+\[
+\mathbb{F}^n
+\quad\longrightarrow\quad
+\mathbb{F}^{\mathbb{N}}
+\quad\longrightarrow\quad
+\mathbb{F}^S
+\]
+shows that:
+\begin{itemize}
+\item Finite tuples are functions on finite sets.
+\item Sequences are functions on $\mathbb{N}$.
+\item General function spaces are vector spaces indexed by arbitrary sets.
+\end{itemize}
+
+This viewpoint unifies finite-dimensional linear algebra
+with infinite-dimensional vector spaces and
+functional analysis.
+\end{remark}
+
+\begin{definition}[Zero vector]
+Let $V$ be a vector space over a field $\mathbb{F}$.
+The \emph{zero vector} of $V$, denoted $\mathbf{0}$, is the additive identity
+of the abelian group $(V,+)$; that is, the unique element $\mathbf{0} \in V$
+such that
+\[
+v + \mathbf{0} = v
+\quad \text{for all } v \in V.
+\]
+\end{definition}
+
+\begin{remark}[Zero vector in $\mathbb{F}^S$]
+In the function space $\mathbb{F}^S$, the zero vector is the function
+\[
+\mathbf{0} : S \to \mathbb{F}
+\quad \text{defined by} \quad
+\mathbf{0}(x) = 0
+\text{ for all } x \in S.
+\]
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{The Space $\mathbb{F}^{\infty}$}
+
+\begin{definition}[$\mathbb{F}^{\infty}$ — the space of sequences]
+Let $\mathbb{F}$ be a field.
+Define
+\[
+\mathbb{F}^{\infty}
+:=
+\{ f : \mathbb{N} \to \mathbb{F} \}.
+\]
+Equivalently,
+\[
+\mathbb{F}^{\infty}
+=
+\{ (x_1,x_2,\dots) : x_k \in \mathbb{F} \text{ for all } k \in \mathbb{N} \}.
+\]
+An element of $\mathbb{F}^{\infty}$ is called a \emph{sequence} of elements of $\mathbb{F}$.
+\end{definition}
+
+\begin{definition}[Pointwise operations on $\mathbb{F}^{\infty}$]
+Let $x=(x_1,x_2,\dots)$ and $y=(y_1,y_2,\dots)$ be elements of $\mathbb{F}^{\infty}$,
+and let $\lambda \in \mathbb{F}$.
+
+Define addition by
+\[
+x+y := (x_1+y_1,\; x_2+y_2,\; \dots),
+\]
+and define scalar multiplication by
+\[
+\lambda x := (\lambda x_1,\; \lambda x_2,\; \dots).
+\]
+Equivalently, in function notation:
+\[
+(x+y)(k) := x(k)+y(k),
+\qquad
+(\lambda x)(k) := \lambda x(k),
+\quad k \in \mathbb{N}.
+\]
+\end{definition}
+
+\begin{remark}
+With the pointwise operations defined above,
+$\mathbb{F}^{\infty}$ is a vector space over $\mathbb{F}$.
+All vector space axioms follow from the corresponding field axioms,
+applied coordinatewise.
+\end{remark}
+
+\begin{remark}[Structural Perspective]
+The space $\mathbb{F}^{\infty}$ is simply the function space
+\[
+\mathbb{F}^{\mathbb{N}},
+\]
+the set of all $\mathbb{F}$-valued functions on $\mathbb{N}$.
+Thus:
+\[
+\mathbb{F}^n = \mathbb{F}^{\{1,\dots,n\}}
+\quad\text{and}\quad
+\mathbb{F}^{\infty} = \mathbb{F}^{\mathbb{N}}
+\]
+are instances of the same construction:
+vector spaces of functions indexed by a set.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Example: $\mathbb{F}^S$ is a Vector Space}
+
+\begin{example}[$\mathbb{F}^S$ is a vector space]
+Let $\mathbb{F}$ be a field and let $S$ be a nonempty set.
+With addition and scalar multiplication defined pointwise by
+\[
+(f+g)(x) := f(x) + g(x),
+\qquad
+(\lambda f)(x) := \lambda f(x),
+\]
+for all $f,g \in \mathbb{F}^S$, $\lambda \in \mathbb{F}$, and $x \in S$,
+the set $\mathbb{F}^S$ is a vector space over $\mathbb{F}$.
+\end{example}
+
+\begin{remark}[Additive identity]
+The additive identity of $\mathbb{F}^S$ is the function
+\[
+\mathbf{0} : S \to \mathbb{F}
+\quad \text{defined by} \quad
+\mathbf{0}(x) = 0
+\text{ for all } x \in S.
+\]
+\end{remark}
+
+\begin{remark}[Additive inverse]
+For $f \in \mathbb{F}^S$, the additive inverse of $f$ is the function
+\[
+- f : S \to \mathbb{F}
+\quad \text{defined by} \quad
+(-f)(x) = -\,f(x)
+\text{ for all } x \in S.
+\]
+\end{remark}
+
+\begin{remark}[Why the axioms hold]
+All vector space axioms follow from the field axioms,
+applied pointwise. For example,
+\[
+((f+g)+h)(x)
+=
+f(x)+g(x)+h(x)
+=
+(f+(g+h))(x),
+\]
+so addition is associative because addition in $\mathbb{F}$ is associative.
+Every other axiom follows similarly.
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

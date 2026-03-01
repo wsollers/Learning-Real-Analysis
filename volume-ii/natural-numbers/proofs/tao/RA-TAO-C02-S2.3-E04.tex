@@ -1,0 +1,174 @@
+% --------------------------------------
+% Proof: RA-TAO-C02-S2.3-E04
+% --------------------------------------
+\clearpage
+\phantomsection
+\hypertarget{proof-RA-TAO-C02-S2.3-E04}{}
+
+\subsubsection[Binomial Square Identity]{Proof --- RA-TAO-C02-S2.3-E04}
+
+\noindent
+\textbf{Source.}
+\srccite{TaoAnalysis1}{Chapter~2, \S2.3, Exercise~2.3.4}.
+
+\vspace{0.75em}
+
+\noindent
+\textbf{Goal.}
+Prove the following identity for all $a, b \in \mathbb{N}$:
+\[
+(a + b)^2 \;=\; a^2 + 2ab + b^2.
+\]
+Here exponentiation is as defined in Definition~2.3.11, and $2ab$ denotes
+$ab + ab$. You may use all results from \S2.2 and \S2.3 without further
+justification.
+
+\vspace{0.75em}
+
+\noindent
+% =========================================================
+% Proof: Exercise 2.3.4 — Binomial Square Identity
+% =========================================================
+
+\begin{proposition}[Binomial square identity]
+\label{prop:binomial-square}
+For all natural numbers $a, b$:
+\[
+(a + b)^2 = a^2 + 2ab + b^2.
+\]
+\end{proposition}
+
+\begin{proof}
+The goal is a universal equality. All tools from Chapter~2 are
+available: Definitions 2.3.1 (multiplication), 2.3.11
+(exponentiation), commutativity (L2.3.2), distributivity
+(P2.3.4), and associativity (P2.3.5).
+No induction is required; the proof is pure algebraic
+manipulation.
+
+\medskip
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} &
+\multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} &
+\textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU
+&
+(a + b)^2 = (a + b) \times (a + b)
+&
+Definition~2.3.11: $m^2 = m^1 \times m = m^0 \times m \times m
+= 1 \times m \times m = m \times m$.
+Apply with $m := a + b$.
+\\[10pt]
+
+\tagTA
+&
+(a + b) \times (a + b)
+= a \times (a + b) + b \times (a + b)
+&
+Distributivity P2.3.4: $(\alpha + \beta) \times \gamma
+= \alpha \times \gamma + \beta \times \gamma$.
+Apply with $\alpha := a$, $\beta := b$,
+$\gamma := (a + b)$.
+\\[10pt]
+
+\tagTA
+&
+a \times (a + b) = a \times a + a \times b
+&
+Distributivity P2.3.4: $\alpha \times (\beta + \gamma)
+= \alpha \times \beta + \alpha \times \gamma$.
+Apply with $\alpha := a$, $\beta := a$, $\gamma := b$.
+\\[10pt]
+
+\tagTA
+&
+b \times (a + b) = b \times a + b \times b
+&
+Distributivity P2.3.4, apply with $\alpha := b$,
+$\beta := a$, $\gamma := b$.
+\\[10pt]
+
+\tagAM
+&
+(a+b)^2
+= a \times a + a \times b + b \times a + b \times b
+&
+Combining the two distributivity expansions.
+\\[10pt]
+
+\tagTA
+&
+b \times a = a \times b
+&
+Commutativity L2.3.2.
+\\[10pt]
+
+\tagAM
+&
+(a+b)^2
+= a \times a + a \times b + a \times b + b \times b
+&
+Substituting $b \times a = a \times b$.
+\\[10pt]
+
+\tagDU
+&
+a \times b + a \times b = 2 \times (a \times b)
+&
+Definition~2.3.1: $2 \times m := (1\pp) \times m
+= (1 \times m) + m = m + m$.
+Apply with $m := a \times b$.
+\\[10pt]
+
+\tagDU
+&
+a \times a = a^2, \quad b \times b = b^2
+&
+Definition~2.3.11: $m^2 = m \times m$.
+\\[10pt]
+
+\tagAM
+&
+(a + b)^2 = a^2 + 2ab + b^2
+&
+Substituting all three simplifications.
+\hfill$\blacksquare$
+\\[6pt]
+
+\bottomrule
+\end{tabular}
+
+\end{proof}
+
+\begin{remark}[No induction required]
+Unlike the preceding results in Chapter~2, this proof requires
+no induction. All tools are already available as proved lemmas
+and definitions. The proof reduces entirely to definition
+unpacking followed by repeated application of distributivity
+and commutativity.
+When all operations involved have known algebraic laws, reach
+for direct manipulation before reaching for induction.
+\end{remark}
+
+\begin{remark}[$2$ is a defined constant, not assumed]
+In Tao's system, $2 := 1\pp = 0\pp\pp$. The identity
+$ab + ab = 2 \times ab$ is not assumed from arithmetic
+intuition but follows directly from Definition~2.3.1:
+$2 \times m = (1\pp) \times m = (1 \times m) + m = m + m$.
+Every numerical constant must be grounded in the Peano
+construction until the full arithmetic toolkit is available.
+\end{remark}
+
+\begin{remark}[Distributivity fires twice]
+The core move is applying distributivity twice: first to
+split $(a+b)(a+b)$ into two terms, then to expand each term.
+This double application of P2.3.4 is the standard engine
+for expanding products of sums in $\mathbb{N}$.
+\end{remark}
+
+\vspace{1em}

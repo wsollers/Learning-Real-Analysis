@@ -1,0 +1,336 @@
+% =========================================================
+% The Integers — Tao Construction (Analysis I, §4.1)
+% =========================================================
+
+% ---------------------------------------------------------
+% Motivation
+% ---------------------------------------------------------
+\begin{remark}[Why the integers are needed]
+The natural number system $\mathbb{N}$ with addition and multiplication
+has reached its limits: subtraction is not available.
+Given $a, b \in \mathbb{N}$ with $a < b$, the expression $a - b$ has
+no value in $\mathbb{N}$. To fix this, we pass to a larger system $\mathbb{Z}$
+in which every natural number has an additive inverse.
+\end{remark}
+
+\begin{remark}[The circularity problem]
+The naive approach — define an integer as a difference $a - b$ of two
+natural numbers — is circular, because the symbol $-$ is exactly what we
+are trying to construct.
+Tao resolves this by introducing a \textbf{placeholder symbol} $--$
+with no arithmetic meaning, using $a {-\!\!-} b$ purely as notation for a
+formal pair $(a, b)$.
+Once subtraction is defined at the end of the construction, we verify that
+$a {-\!\!-} b$ coincides with $a - b$ and discard the scaffolding.
+\end{remark}
+
+\begin{remark}[Why not define integers as signed naturals?]
+One might define an integer as either a positive natural number, zero,
+or the negation of a positive natural number.
+Lemma~4.1.5 (trichotomy) shows this classification is correct, but
+\emph{using it as the definition} forces case-splits for every arithmetic
+operation: negative $\times$ negative, positive $+$ negative of different
+sizes, etc. The verification of the ring laws becomes enormously messy.
+The equivalence-class construction pays one upfront cost and avoids
+all subsequent case-explosion.
+\end{remark}
+
+% ---------------------------------------------------------
+% Definition 4.1.1 — Integers
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.1.1 (Integers)}},
+  fonttitle=\small\bfseries]
+An \textbf{integer} is an expression of the form $a {-\!\!-} b$, where
+$a$ and $b$ are natural numbers.
+
+Two integers are \textbf{equal}:
+\[
+a {-\!\!-} b \;=\; c {-\!\!-} d
+\quad\iff\quad
+a + d \;=\; c + b.
+\]
+The set of all integers is denoted $\mathbb{Z}$.
+\end{tcolorbox}
+
+\begin{remark}[Reading the equality condition]
+The condition $a + d = c + b$ is the cross-addition criterion that would
+hold for genuine differences: $a - b = c - d \iff a + d = c + b$.
+It uses only addition in $\mathbb{N}$, which is already available,
+and avoids any reference to subtraction.
+\end{remark}
+
+\begin{remark}[Equality must be verified as a legitimate equivalence relation]
+Four axioms must be checked: reflexivity, symmetry, transitivity,
+and substitution.
+Reflexivity and symmetry are immediate from the definition.
+Transitivity requires the cancellation law for natural numbers
+(Proposition~2.2.6): the key load-bearing result from Chapter~2.
+Substitution cannot be verified until operations on $\mathbb{Z}$ are
+defined, and must be re-checked for each operation.
+\end{remark}
+
+% ---------------------------------------------------------
+% Definition 4.1.2 — Addition and Multiplication
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.1.2 (Addition and Multiplication)}},
+  fonttitle=\small\bfseries]
+\[
+(a {-\!\!-} b) + (c {-\!\!-} d) \;:=\; (a+c) {-\!\!-} (b+d)
+\]
+\[
+(a {-\!\!-} b) \times (c {-\!\!-} d) \;:=\; (ac+bd) {-\!\!-} (ad+bc)
+\]
+\end{tcolorbox}
+
+\begin{remark}[Motivation for the multiplication formula]
+Expanding the product of genuine differences:
+$(a-b)(c-d) = ac - ad - bc + bd = (ac+bd) - (ad+bc)$.
+The formula is forced by this foreknowledge.
+\end{remark}
+
+% ---------------------------------------------------------
+% Lemma 4.1.3 — Well-definedness
+% ---------------------------------------------------------
+\begin{lemma}[Tao 4.1.3 — Addition and multiplication are well-defined]
+\label{lem:int-well-defined}
+Let $a, b, a', b', c, d \in \mathbb{N}$.
+If $(a {-\!\!-} b) = (a' {-\!\!-} b')$, then:
+\begin{align*}
+(a {-\!\!-} b) + (c {-\!\!-} d) &= (a' {-\!\!-} b') + (c {-\!\!-} d), \\
+(a {-\!\!-} b) \times (c {-\!\!-} d) &= (a' {-\!\!-} b') \times (c {-\!\!-} d),
+\end{align*}
+and similarly when replacing $(c {-\!\!-} d)$ by an equal integer.
+\end{lemma}
+
+\begin{remark}[Why well-definedness must be checked]
+The operations are defined in terms of representatives $(a, b)$ of an
+equivalence class.
+If equal inputs (i.e., equal integers with different representatives)
+gave different outputs, the operation would not be a function on
+$\mathbb{Z}$ — it would be a function on representations, which is
+meaningless.
+This check is the substitution axiom for each operation.
+\end{remark}
+
+% ---------------------------------------------------------
+% Embedding N in Z
+% ---------------------------------------------------------
+\begin{remark}[Embedding $\mathbb{N}$ in $\mathbb{Z}$]
+The integers of the form $n {-\!\!-} 0$ behave identically to the
+natural numbers:
+\[
+(n {-\!\!-} 0) + (m {-\!\!-} 0) = (n+m) {-\!\!-} 0,
+\qquad
+(n {-\!\!-} 0) \times (m {-\!\!-} 0) = nm {-\!\!-} 0.
+\]
+Furthermore $(n {-\!\!-} 0) = (m {-\!\!-} 0)$ if and only if $n = m$.
+We therefore identify $n \equiv n {-\!\!-} 0$, embedding $\mathbb{N}$
+into $\mathbb{Z}$.
+In particular $0 = 0 {-\!\!-} 0$ and $1 = 1 {-\!\!-} 0$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Definition 4.1.4 — Negation
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.1.4 (Negation)}},
+  fonttitle=\small\bfseries]
+$-(a {-\!\!-} b) \;:=\; b {-\!\!-} a$.
+
+In particular, for a positive natural number $n = n {-\!\!-} 0$:
+\[
+-n \;:=\; 0 {-\!\!-} n.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Well-definedness of negation]
+Negation must also be checked as well-defined: if
+$(a {-\!\!-} b) = (a' {-\!\!-} b')$ then $-(a {-\!\!-} b) = -(a' {-\!\!-} b')$.
+This is Exercise~4.1.2.
+\end{remark}
+
+% ---------------------------------------------------------
+% Lemma 4.1.5 — Trichotomy of integers
+% ---------------------------------------------------------
+\begin{lemma}[Tao 4.1.5 — Trichotomy of integers]
+\label{lem:int-trichotomy}
+Let $x$ be an integer. Then exactly one of the following holds:
+\begin{enumerate}
+  \item[(a)] $x = 0$.
+  \item[(b)] $x = n$ for some positive natural number $n$.
+  \item[(c)] $x = -n$ for some positive natural number $n$.
+\end{enumerate}
+If (b) holds we call $x$ a \textbf{positive integer};
+if (c) holds we call $x$ a \textbf{negative integer}.
+\end{lemma}
+
+\begin{remark}[Proof sketch]
+Existence of one case: $x = a {-\!\!-} b$.
+By trichotomy of $\mathbb{N}$ (P2.2.13), either $a > b$, $a = b$,
+or $a < b$.
+Each case yields (b), (a), or (c) respectively.
+Mutual exclusion uses P2.2.8 and Proposition~2.2.6.
+\end{remark}
+
+% ---------------------------------------------------------
+% Proposition 4.1.6 — Laws of algebra
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Proposition 4.1.6 (Laws of Algebra for $\mathbb{Z}$)}},
+  fonttitle=\small\bfseries]
+Let $x, y, z \in \mathbb{Z}$. Then:
+\begin{align*}
+&x + y = y + x &\quad& \text{(commutativity of addition)}\\
+&(x+y)+z = x+(y+z) &\quad& \text{(associativity of addition)}\\
+&x + 0 = 0 + x = x &\quad& \text{(additive identity)}\\
+&x + (-x) = (-x) + x = 0 &\quad& \text{(additive inverse)}\\
+&xy = yx &\quad& \text{(commutativity of multiplication)}\\
+&(xy)z = x(yz) &\quad& \text{(associativity of multiplication)}\\
+&x \cdot 1 = 1 \cdot x = x &\quad& \text{(multiplicative identity)}\\
+&x(y+z) = xy + xz &\quad& \text{(left distributive law)}\\
+&(y+z)x = yx + zx &\quad& \text{(right distributive law)}
+\end{align*}
+\end{tcolorbox}
+
+\begin{remark}[This is the commutative ring axioms]
+These nine identities are exactly the definition of a
+\textbf{commutative ring}.
+Without the identity $xy = yx$ the remaining eight would give a ring.
+Note: these properties were proved for $\mathbb{N}$, but
+$\mathbb{Z} \supsetneq \mathbb{N}$, so the proofs must be redone.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+Write $x = (a {-\!\!-} b)$, $y = (c {-\!\!-} d)$, $z = (e {-\!\!-} f)$
+and expand both sides in terms of natural number arithmetic.
+This is far cleaner than case-splitting on sign via Lemma~4.1.5.
+Tao demonstrates the method on associativity of multiplication.
+\end{remark}
+
+% ---------------------------------------------------------
+% Subtraction
+% ---------------------------------------------------------
+\begin{definition}[Subtraction]
+\label{def:int-subtraction}
+For integers $x, y$:
+\[
+x - y \;:=\; x + (-y).
+\]
+\end{definition}
+
+\begin{remark}[Recovering the $--$ notation]
+Once subtraction is defined, one checks that for natural numbers
+$a, b$:
+\[
+a - b = (a {-\!\!-} 0) + (0 {-\!\!-} b) = a {-\!\!-} b.
+\]
+The placeholder $--$ is now equal to genuine subtraction; the
+scaffolding is removed and $--$ is discarded.
+\end{remark}
+
+% ---------------------------------------------------------
+% Proposition 4.1.8 — No zero divisors
+% ---------------------------------------------------------
+\begin{proposition}[Tao 4.1.8 — No zero divisors]
+\label{prop:int-no-zero-div}
+Let $a, b \in \mathbb{Z}$ with $ab = 0$. Then $a = 0$ or $b = 0$ (or both).
+\end{proposition}
+
+% ---------------------------------------------------------
+% Corollary 4.1.9 — Cancellation law
+% ---------------------------------------------------------
+\begin{corollary}[Tao 4.1.9 — Cancellation law for $\mathbb{Z}$]
+\label{cor:int-cancel}
+Let $a, b, c \in \mathbb{Z}$ with $ac = bc$ and $c \neq 0$. Then $a = b$.
+\end{corollary}
+
+% ---------------------------------------------------------
+% Definition 4.1.10 — Order
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.1.10 (Ordering of $\mathbb{Z}$)}},
+  fonttitle=\small\bfseries]
+Let $n, m \in \mathbb{Z}$.
+\[
+n \geq m \quad\iff\quad n = m + a \text{ for some } a \in \mathbb{N}.
+\]
+\[
+n > m \quad\iff\quad n \geq m \text{ and } n \neq m.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Consistency with $\mathbb{N}$]
+This definition is verbatim the same as Definition~2.2.11 for $\mathbb{N}$.
+Since the embedding $n \equiv n {-\!\!-} 0$ is consistent with addition,
+the two orderings agree on natural numbers.
+\end{remark}
+
+% ---------------------------------------------------------
+% Lemma 4.1.11 — Properties of order
+% ---------------------------------------------------------
+\begin{lemma}[Tao 4.1.11 — Properties of order on $\mathbb{Z}$]
+\label{lem:int-order}
+Let $a, b, c \in \mathbb{Z}$. Then:
+\begin{enumerate}
+  \item[(a)] $a > b$ if and only if $a - b$ is a positive natural number.
+  \item[(b)] \textbf{(Addition preserves order.)} If $a > b$, then $a + c > b + c$.
+  \item[(c)] \textbf{(Positive multiplication preserves order.)}
+    If $a > b$ and $c$ is a positive integer, then $ac > bc$.
+  \item[(d)] \textbf{(Negation reverses order.)} If $a > b$, then $-a < -b$.
+  \item[(e)] \textbf{(Transitivity.)} If $a > b$ and $b > c$, then $a > c$.
+  \item[(f)] \textbf{(Trichotomy.)} Exactly one of $a > b$,\ $a < b$,\ $a = b$ holds.
+\end{enumerate}
+\end{lemma}
+
+\begin{remark}[Strategy: derive from part (a)]
+Part (a) reformulates $>$ in terms of positivity.
+Parts (b)--(f) all follow from (a) by translating into statements about
+positive natural numbers, where the analogous results are already known.
+\end{remark}
+
+% ---------------------------------------------------------
+% Exercise 4.1.8 — Induction fails for Z
+% ---------------------------------------------------------
+\begin{remark}[Exercise 4.1.8 — Induction does not apply to $\mathbb{Z}$]
+Axiom P5 (induction) does not carry over to the integers.
+Specifically: there exists a property $P(n)$ of integers such that
+$P(0)$ is true and $P(n) \Rightarrow P(n\pp)$ for all $n \in \mathbb{Z}$,
+yet $P(n)$ fails for some $n \in \mathbb{Z}$.
+This is because $\mathbb{Z}$ has no smallest element — there is nothing
+to anchor a descent below $0$.
+The situation becomes worse for $\mathbb{Q}$ and $\mathbb{R}$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Toolkit reference table
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Integer Toolkit — Tao §4.1 Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} \\
+\midrule
+Def~4.1.1   & $a{-\!\!-}b = c{-\!\!-}d \iff a+d=c+b$ & Definition \\
+Def~4.1.2   & Addition and multiplication formulas & Definition \\
+L4.1.3      & Operations are well-defined & Expand; use $a+b'=a'+b$ \\
+Def~4.1.4   & $-(a{-\!\!-}b) := b{-\!\!-}a$ & Definition \\
+L4.1.5      & Trichotomy of $\mathbb{Z}$ & Cases $a>b$, $a=b$, $a<b$ \\
+P4.1.6      & Nine ring laws & Expand via representatives \\
+Def~4.1.7   & $x - y := x + (-y)$ & Definition \\
+P4.1.8      & No zero divisors & Uses L2.3.3 \\
+C4.1.9      & Cancellation: $ac=bc, c\neq 0 \Rightarrow a=b$ & Uses P4.1.8 or C2.3.7+L4.1.5 \\
+Def~4.1.10  & Order: $n \geq m \iff n = m+a$, $a \in \mathbb{N}$ & Definition \\
+L4.1.11     & Six order properties & Use part (a) as bridge \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}

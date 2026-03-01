@@ -1,0 +1,217 @@
+% =========================================================
+% Inference Rules
+% =========================================================
+
+\subsection{Inference Rules}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Inference Rules — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Rule} & \textbf{Premises} & \textbf{Conclusion} & \textbf{Detail} \\
+\midrule
+Modus Ponens (MP)         & $P\to Q,\; P$              & $Q$                & \hyperref[def:mp]{↓} \\
+Modus Tollens (MT)        & $P\to Q,\; \neg Q$         & $\neg P$           & \hyperref[def:mt]{↓} \\
+Hypothetical Syllogism    & $P\to Q,\; Q\to R$         & $P\to R$           & \hyperref[def:hs]{↓} \\
+Disjunctive Syllogism     & $P\vee Q,\; \neg P$        & $Q$                & \hyperref[def:ds]{↓} \\
+Conj.\ Introduction       & $P,\; Q$                   & $P\wedge Q$        & \hyperref[def:conj-i]{↓} \\
+Conj.\ Elimination        & $P\wedge Q$                & $P$ (or $Q$)       & \hyperref[def:conj-e]{↓} \\
+Disj.\ Introduction       & $P$                        & $P\vee Q$          & \hyperref[def:disj-i]{↓} \\
+Disj.\ Elimination        & $P\vee Q,\;[P\vdash R],\;[Q\vdash R]$ & $R$  & \hyperref[def:disj-e]{↓} \\
+Cond.\ Introduction (CP)  & $[P \vdash Q]$             & $P\to Q$           & \hyperref[def:cond-i]{↓} \\
+Bicond.\ Introduction     & $P\to Q,\; Q\to P$         & $P\leftrightarrow Q$ & \hyperref[def:bicond-i]{↓} \\
+Bicond.\ Elimination      & $P\leftrightarrow Q$       & $P\to Q$ (or $Q\to P$) & \hyperref[def:bicond-e]{↓} \\
+Neg.\ Introduction (RAA)  & $[P\vdash\bot]$            & $\neg P$           & \hyperref[def:neg-i]{↓} \\
+Neg.\ Elimination         & $[\neg P\vdash\bot]$       & $P$                & \hyperref[def:neg-e]{↓} \\
+Double Neg.\ Elim.        & $\neg\neg P$               & $P$                & \hyperref[def:dne]{↓} \\
+Constructive Dilemma      & $P\vee Q,\;P\to R,\;Q\to S$ & $R\vee S$        & \hyperref[def:cd]{↓} \\
+Destructive Dilemma       & $P\to R,\;Q\to S,\;\neg R\vee\neg S$ & $\neg P\vee\neg Q$ & \hyperref[def:dd]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Details
+% ---------------------------------------------------------
+
+\subsubsection*{Conditional Rules}
+
+\begin{definition}[Modus Ponens]\label{def:mp}
+From a conditional and its antecedent, infer the consequent:
+\[
+\frac{P \rightarrow Q \qquad P}{Q}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] ``If it rains the ground is wet. It is raining.
+Therefore, the ground is wet.'' The most fundamental inference rule. All
+proof systems for classical logic include MP or an equivalent.
+\end{remark}
+\begin{remark}[Fully quantified]
+$\forall P, Q:\; [(P \rightarrow Q) \wedge P] \models Q$.
+\end{remark}
+\begin{remark}[Common error — Affirming the Consequent]
+From $P \rightarrow Q$ and $Q$, one \emph{cannot} infer $P$. This is the
+fallacy of affirming the consequent.
+\end{remark}
+
+\begin{definition}[Modus Tollens]\label{def:mt}
+From a conditional and the negation of its consequent, infer the negation of
+the antecedent:
+\[
+\frac{P \rightarrow Q \qquad \neg Q}{\neg P}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] ``If it rains the ground is wet. The ground is not wet.
+Therefore, it did not rain.'' MT is logically equivalent to applying MP to
+the contrapositive $\neg Q \rightarrow \neg P$.
+\end{remark}
+\begin{remark}[Common error — Denying the Antecedent]
+From $P \rightarrow Q$ and $\neg P$, one \emph{cannot} infer $\neg Q$.
+\end{remark}
+
+\begin{definition}[Hypothetical Syllogism]\label{def:hs}
+From two conditionals chained, infer the composed conditional:
+\[
+\frac{P \rightarrow Q \qquad Q \rightarrow R}{P \rightarrow R}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] Transitivity of implication. Chains of reasoning can
+be composed into a single step.
+\end{remark}
+\begin{remark}[Consequence] Hypothetical syllogism makes $\rightarrow$ transitive,
+allowing arbitrarily long inference chains to be compressed.
+\end{remark}
+
+\begin{definition}[Conditional Introduction (Conditional Proof)]\label{def:cond-i}
+If assuming $P$ in a subproof leads to $Q$, then discharge the assumption and
+infer $P \rightarrow Q$:
+\[
+\frac{[P \vdash Q]}{P \rightarrow Q}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] The standard method for proving a conditional: assume
+the antecedent, derive the consequent, discharge. This corresponds to
+exportation: a proof from hypothesis $P$ of $Q$ is exactly a proof of $P \to Q$.
+\end{remark}
+
+\subsubsection*{Conjunction Rules}
+
+\begin{definition}[Conjunction Introduction]\label{def:conj-i}
+From two formulas, infer their conjunction:
+\[
+\frac{P \qquad Q}{P \wedge Q}
+\]
+\end{definition}
+
+\begin{definition}[Conjunction Elimination]\label{def:conj-e}
+From a conjunction, infer either conjunct:
+\[
+\frac{P \wedge Q}{P} \qquad \frac{P \wedge Q}{Q}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] Introduction: combining two independent truths.
+Elimination: extracting a component from a joint assertion.
+\end{remark}
+
+\subsubsection*{Disjunction Rules}
+
+\begin{definition}[Disjunction Introduction]\label{def:disj-i}
+From a proposition, infer any disjunction containing it:
+\[
+\frac{P}{P \vee Q}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] ``It's raining, so it's raining or snowing.'' Adding
+a disjunct weakens the claim.
+\end{remark}
+
+\begin{definition}[Disjunction Elimination (Proof by Cases)]\label{def:disj-e}
+From a disjunction, if the same conclusion $R$ follows from each disjunct, infer $R$:
+\[
+\frac{P \vee Q \qquad [P \vdash R] \qquad [Q \vdash R]}{R}
+\]
+\end{definition}
+
+\begin{remark}[Proof strategy] Case analysis: prove $R$ holds in case $P$;
+prove $R$ holds in case $Q$; since one of $P, Q$ must hold, conclude $R$.
+\end{remark}
+
+\subsubsection*{Biconditional Rules}
+
+\begin{definition}[Biconditional Introduction]\label{def:bicond-i}
+\[
+\frac{P \rightarrow Q \qquad Q \rightarrow P}{P \leftrightarrow Q}
+\]
+\end{definition}
+
+\begin{definition}[Biconditional Elimination]\label{def:bicond-e}
+\[
+\frac{P \leftrightarrow Q}{P \rightarrow Q} \qquad \frac{P \leftrightarrow Q}{Q \rightarrow P}
+\]
+\end{definition}
+
+\begin{remark}[Proof strategy] Every iff proof has two halves: prove $(\Rightarrow)$
+and prove $(\Leftarrow)$.
+\end{remark}
+
+\subsubsection*{Negation Rules}
+
+\begin{definition}[Negation Introduction (Reductio ad Absurdum)]\label{def:neg-i}
+If assuming $P$ leads to contradiction $\bot$, infer $\neg P$:
+\[
+\frac{[P \vdash \bot]}{\neg P}
+\]
+\end{definition}
+
+\begin{definition}[Negation Elimination (Indirect Proof)]\label{def:neg-e}
+If assuming $\neg P$ leads to $\bot$, infer $P$:
+\[
+\frac{[\neg P \vdash \bot]}{P}
+\]
+\end{definition}
+
+\begin{definition}[Double Negation Elimination]\label{def:dne}
+\[
+\frac{\neg\neg P}{P}
+\]
+\end{definition}
+
+\begin{remark}[Classical vs.\ intuitionistic logic]
+Negation elimination and double negation elimination are classical rules;
+they fail in intuitionistic logic, where $\neg\neg P \Rightarrow P$ is not
+provable without the law of excluded middle. All three rules are equivalent
+to LEM in a suitable sense.
+\end{remark}
+
+\subsubsection*{Dilemma Rules}
+
+\begin{definition}[Constructive Dilemma]\label{def:cd}
+\[
+\frac{P \vee Q \qquad P \rightarrow R \qquad Q \rightarrow S}{R \vee S}
+\]
+\end{definition}
+
+\begin{definition}[Destructive Dilemma]\label{def:dd}
+\[
+\frac{P \rightarrow R \qquad Q \rightarrow S \qquad \neg R \vee \neg S}{\neg P \vee \neg Q}
+\]
+\end{definition}
+
+\begin{remark}[Intuition] Constructive dilemma applies two implications to a
+disjunction, deriving a disjunction of the two conclusions. Destructive dilemma
+is its contrapositive form.
+\end{remark}

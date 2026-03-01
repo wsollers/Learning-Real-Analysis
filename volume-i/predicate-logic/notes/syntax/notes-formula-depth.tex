@@ -1,0 +1,64 @@
+% =========================================================
+% Formula Depth (Complexity)
+% =========================================================
+
+\subsection{Syntax: Formula Depth}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Formula Depth — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Formula depth & Max formation steps from atomic formulas & \hyperref[def:formula-depth]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Formula Depth
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Formula Depth)}},
+  fonttitle=\small\bfseries]
+\label{def:formula-depth}
+The \emph{depth} (or \emph{complexity}) of a formula $\varphi$, denoted
+$\mathrm{depth}(\varphi)$, is a natural number defined recursively:
+\begin{enumerate}
+  \item \textbf{Atomic case.} If $\varphi$ is atomic, then $\mathrm{depth}(\varphi) = 0$.
+
+  \item \textbf{Negation.} If $\varphi = \neg \psi$, then
+  $\mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1$.
+
+  \item \textbf{Binary connectives.} If $\varphi = (\psi \circ \chi)$
+  for $\circ \in \{\wedge,\vee,\rightarrow,\leftrightarrow\}$, then
+  \[
+  \mathrm{depth}(\varphi) = \max\{\mathrm{depth}(\psi),\,\mathrm{depth}(\chi)\} + 1.
+  \]
+
+  \item \textbf{Quantifiers.} If $\varphi = \forall x\,\psi$ or $\varphi = \exists x\,\psi$,
+  then $\mathrm{depth}(\varphi) = \mathrm{depth}(\psi) + 1$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+The depth of a formula measures the maximum number of logical formation steps
+required to build the formula from atomic formulas. It corresponds to the height
+of the formula's syntactic parse tree.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+Formula depth is the standard measure used in structural induction proofs over
+first-order formulas. The base case is depth~$0$ (atomic formulas); the
+inductive step handles each formation rule and assumes the result holds for
+sub-formulas of strictly smaller depth.
+\end{remark}
