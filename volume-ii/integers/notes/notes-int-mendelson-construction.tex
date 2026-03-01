@@ -1,0 +1,396 @@
+% =========================================================
+% The Integers — Mendelson Construction
+% Source: Mendelson, \textit{Number Systems and the
+%   Foundations of Analysis}, Chapters 3--4 (core);
+%   Chapters 5--9 (extended theory).
+% =========================================================
+
+% ---------------------------------------------------------
+% §3.1  The equivalence relation on P × P
+% ---------------------------------------------------------
+\subsubsection*{§3.1 \quad The Equivalence Relation on $P \times P$}
+
+\begin{remark}[Starting point]
+Mendelson begins from $P \times P$, the set of all ordered pairs of
+positive integers (his notation for $\mathbb{N} \setminus \{0\}$).
+Tao uses $\mathbb{N} \times \mathbb{N}$ (including zero).
+The idea is identical: a pair $(n,j)$ represents the
+``formal difference'' $n - j$.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 3.1 (Equivalence relation on $P \times P$)}},
+  fonttitle=\small\bfseries]
+For natural numbers $n, k, j, i$, define a relation $\sim$ on
+ordered pairs by
+\[
+(n,j) \sim (k,i)
+\quad\Longleftrightarrow\quad
+n + i = k + j.
+\]
+\end{tcolorbox}
+
+\begin{theorem}[Mendelson 1.1 --- $\sim$ is an equivalence relation]
+\label{thm:men-equiv}
+For all natural numbers $h,i,j,k,m,n$:
+\begin{enumerate}
+  \item[\normalfont(R)] $(h,i) \sim (h,i)$ \hfill\textit{(Reflexivity)}
+  \item[\normalfont(S)] $(h,i) \sim (j,k) \Rightarrow (j,k) \sim (h,i)$
+    \hfill\textit{(Symmetry)}
+  \item[\normalfont(T)] $\bigl[(h,i)\sim(j,k)\wedge(j,k)\sim(m,n)\bigr]
+    \Rightarrow (h,i)\sim(m,n)$ \hfill\textit{(Transitivity)}
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}[Transitivity uses cancellation]
+As in Tao, transitivity of $\sim$ requires the cancellation law for
+addition in $\mathbb{N}$.
+This is the same load-bearing step in both constructions.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 3.2 (The integers $\mathbb{Z}$)}},
+  fonttitle=\small\bfseries]
+$\mathbb{Z}$ is the set of all equivalence classes of $P \times P$
+under $\sim$.  Elements of $\mathbb{Z}$ are called \textbf{integers}.
+
+Distinguished elements:
+$0_{\mathbb{Z}} = [(1,1)]$, \quad $1_{\mathbb{Z}} = [(2,1)]$.
+\end{tcolorbox}
+
+\begin{remark}[Notation comparison]
+Mendelson writes $[(n,j)]$ for an equivalence class;
+Tao writes $a {-\!\!-} b$ for the same object.
+Mendelson's notation makes the set-theoretic content explicit.
+Tao's notation is cleaner for computation.
+\end{remark}
+
+% ---------------------------------------------------------
+% §3.2  Addition and Multiplication
+% ---------------------------------------------------------
+\subsubsection*{§3.2 \quad Addition and Multiplication}
+
+\begin{lemma}[Mendelson 2.1 --- Addition well-defined]
+\label{lem:men-add-welld}
+If $(n,j) \sim (n_1,j_1)$ and $(k,i) \sim (k_1,i_1)$, then
+$(n+k,\; j+i) \sim (n_1+k_1,\; j_1+i_1)$.
+\end{lemma}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 3.3 (Addition)}},
+  fonttitle=\small\bfseries]
+For $\alpha, \beta \in \mathbb{Z}$ with representatives
+$(n,j) \in \alpha$ and $(k,i) \in \beta$:
+\[
+\alpha +_{\mathbb{Z}} \beta = [(n+k,\; j+i)].
+\]
+Lemma~2.1 guarantees independence of representatives.
+\end{tcolorbox}
+
+\begin{theorem}[Mendelson 2.2 --- Properties of addition]
+\label{thm:men-add}
+For all $\alpha, \beta, \gamma \in \mathbb{Z}$:
+\begin{enumerate}
+  \item[(i)] Commutativity: $\alpha +_{\mathbb{Z}} \beta
+    = \beta +_{\mathbb{Z}} \alpha$.
+  \item[(ii)] Associativity: $\alpha +_{\mathbb{Z}}
+    (\beta +_{\mathbb{Z}} \gamma)
+    = (\alpha +_{\mathbb{Z}} \beta) +_{\mathbb{Z}} \gamma$.
+  \item[(iii)] Additive identity: $\alpha +_{\mathbb{Z}} 0_{\mathbb{Z}}
+    = \alpha$.
+  \item[(iv)] Unique additive inverse: $\exists!\,\delta \in \mathbb{Z}$
+    such that $\alpha +_{\mathbb{Z}} \delta = 0_{\mathbb{Z}}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}[Uniqueness of the inverse]
+Part (iv) asserts both existence \emph{and} uniqueness of $-\alpha$.
+Tao's P4.1.6 asserts existence only; uniqueness follows later from
+C4.1.9.  Mendelson builds uniqueness into the statement.
+\end{remark}
+
+\begin{lemma}[Mendelson 2.3 --- Multiplication well-defined]
+\label{lem:men-mul-welld}
+If $(n,j) \sim (n_1,j_1)$ and $(k,i) \sim (k_1,i_1)$, then
+$(nk+ji,\; jk+ni) \sim (n_1k_1+j_1i_1,\; j_1k_1+n_1i_1)$.
+\end{lemma}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 3.4 (Multiplication)}},
+  fonttitle=\small\bfseries]
+For $\alpha, \beta \in \mathbb{Z}$ with representatives
+$(n,j) \in \alpha$ and $(k,i) \in \beta$:
+\[
+\alpha \times_{\mathbb{Z}} \beta = [(nk+ji,\; jk+ni)].
+\]
+Lemma~2.3 guarantees well-definedness.
+\end{tcolorbox}
+
+\begin{theorem}[Mendelson 2.4 --- Properties of multiplication]
+\label{thm:men-mul}
+For all $\alpha, \beta, \gamma \in \mathbb{Z}$:
+\begin{enumerate}
+  \item[(i)] Commutativity: $\alpha \times_{\mathbb{Z}} \beta
+    = \beta \times_{\mathbb{Z}} \alpha$.
+  \item[(ii)] Associativity: $\alpha \times_{\mathbb{Z}}
+    (\beta \times_{\mathbb{Z}} \gamma)
+    = (\alpha \times_{\mathbb{Z}} \beta) \times_{\mathbb{Z}} \gamma$.
+  \item[(iii)] Distributivity: $\alpha \times_{\mathbb{Z}}
+    (\beta +_{\mathbb{Z}} \gamma)
+    = (\alpha \times_{\mathbb{Z}} \beta)
+    +_{\mathbb{Z}} (\alpha \times_{\mathbb{Z}} \gamma)$.
+  \item[(iv)] Multiplicative identity: $\alpha \times_{\mathbb{Z}}
+    1_{\mathbb{Z}} = \alpha$.
+  \item[(v)] No zero divisors: $\alpha \neq 0_{\mathbb{Z}} \wedge
+    \beta \neq 0_{\mathbb{Z}} \Rightarrow
+    \alpha \times_{\mathbb{Z}} \beta \neq 0_{\mathbb{Z}}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}[Structural consequence]
+Theorems 2.2 and 2.4 establish that
+$(\mathbb{Z}, +_\mathbb{Z}, \times_\mathbb{Z})$ is an
+\textbf{integral domain}: a commutative ring with unit and no zero divisors.
+Mendelson makes this explicit in \S3.3 via abstract definitions.
+\end{remark}
+
+% ---------------------------------------------------------
+% §3.3  Rings and Integral Domains (abstract)
+% ---------------------------------------------------------
+\subsubsection*{§3.3 \quad Rings and Integral Domains (Abstract Theory)}
+
+\begin{remark}[Abstract vs concrete]
+Mendelson develops ring theory abstractly before applying it to $\mathbb{Z}$.
+Tao works concretely throughout, naming the ring structure only in
+Remark 4.1.7.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 3.5 (Ring; integral domain)}},
+  fonttitle=\small\bfseries]
+A \textbf{ring} $(R,+,\times)$: $(R,+)$ is an abelian group;
+$\times$ is associative; $\times$ distributes over $+$ on both sides.
+A ring is \textbf{commutative} if $xy=yx$;
+has a \textbf{unit} if $\exists\,1$ with $x\cdot 1=1\cdot x=x$.
+A nonzero $x$ is a \textbf{zero divisor} if $\exists$ nonzero $y$
+with $xy=0$.
+An \textbf{integral domain} is a commutative ring with unit,
+$0 \neq 1$, and no zero divisors.
+\end{tcolorbox}
+
+\begin{theorem}[Mendelson 3.3 --- Cancellation $\Leftrightarrow$ no zero divisors]
+\label{thm:men-cancel-equiv}
+In a commutative ring with unit:
+\[
+(\forall x,y,z:\; xy=xz \wedge x\neq 0 \Rightarrow y=z)
+\;\Longleftrightarrow\;
+\text{no zero divisors.}
+\]
+\end{theorem}
+
+\begin{theorem}[Mendelson 3.4 --- Trivial ring]
+\label{thm:men-trivial}
+In a ring with unit: $0=1 \Longleftrightarrow R$ is a singleton.
+\end{theorem}
+
+% ---------------------------------------------------------
+% §4  Order
+% ---------------------------------------------------------
+\subsubsection*{§4 \quad Ordered Integral Domains and Order on $\mathbb{Z}$}
+
+\begin{remark}[Strategy]
+Mendelson proves order theory for any integral domain first, then
+instantiates it for $\mathbb{Z}$.
+This gives order on $\mathbb{Q}$ and $\mathbb{R}$ for free later.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.1 (Ordered integral domain)}},
+  fonttitle=\small\bfseries]
+$(R,+,\times,<)$ is an \textbf{ordered integral domain} if
+$(R,+,\times)$ is an integral domain ($0\neq 1$) and $<$ satisfies:
+\begin{enumerate}
+  \item[(O1)] $x \not< x$ \hfill\textit{Irreflexivity}
+  \item[(O2)] $x<y \wedge y<z \Rightarrow x<z$ \hfill\textit{Transitivity}
+  \item[(O3)] $x<y \vee x=y \vee y<x$ \hfill\textit{Trichotomy}
+  \item[(O4)] $x<y \Rightarrow x+z<y+z$ \hfill\textit{Addition-monotone}
+  \item[(O5)] $x<y \wedge 0<z \Rightarrow xz<yz$ \hfill\textit{Positive-mult-monotone}
+\end{enumerate}
+$x$ is \textbf{positive} if $0<x$; \textbf{negative} if $x<0$.
+\end{tcolorbox}
+
+\begin{theorem}[Mendelson 4.1 --- Consequences of order axioms]
+In any ordered integral domain:
+(i)~exactly one of $x<y$, $x=y$, $y<x$ holds;
+(ii)~$x<y \wedge u<v \Rightarrow x+u<y+v$;
+(iii)~$0<z \wedge xz<yz \Rightarrow x<y$.
+\end{theorem}
+
+\begin{theorem}[Mendelson 4.2 --- Order and positivity]
+In any ordered integral domain:
+(i)~$x<y \iff y-x$ positive;
+(ii)~$x<y \iff x-y$ negative;
+(iii)~$x<y \iff -y<-x$;
+(iv)~sum and product of positives are positive;
+(v)~product of two negatives is positive.
+\end{theorem}
+
+\begin{theorem}[Mendelson 4.3 --- Positivity set construction]
+\label{thm:men-pos-set}
+Let $(R,+,\times)$ be an integral domain, $0\neq 1$.
+If $\mathcal{P}\subseteq R$ satisfies:
+$0\notin\mathcal{P}$;
+$\forall x:\; x\in\mathcal{P} \vee x=0 \vee {-x}\in\mathcal{P}$;
+$\mathcal{P}$ closed under $+$ and $\times$;
+then $(R,+,\times,<)$ with $x<y \iff y-x\in\mathcal{P}$ is an
+ordered integral domain and $\mathcal{P}$ is its positive set.
+\end{theorem}
+
+\begin{remark}[Why this matters]
+Theorem 4.3 reduces verifying five order axioms to four positivity
+conditions.  Mendelson uses it to order $\mathbb{Z}$ via
+$\mathcal{P}_\mathbb{Z}$ without checking (O1)--(O5) directly.
+\end{remark}
+
+\begin{lemma}[Mendelson 4.4 --- Positivity is class-invariant]
+For $\alpha\in\mathbb{Z}$ and any two representatives
+$(n,j),(k,i)\in\alpha$: $j<n \iff i<k$.
+\end{lemma}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.5 (Positivity set $\mathcal{P}_\mathbb{Z}$)}},
+  fonttitle=\small\bfseries]
+\[
+\mathcal{P}_{\mathbb{Z}}
+= \bigl\{\alpha\in\mathbb{Z}
+: \forall(n,j)\in\alpha,\; j<n \bigr\}.
+\]
+Lemma 4.4 ensures this is well-defined.
+Intuitively: $\alpha$ is positive iff its representative has
+second coordinate strictly less than first, i.e.\ $n-j > 0$.
+\end{tcolorbox}
+
+\begin{lemma}[Mendelson 4.5]
+$\mathcal{P}_\mathbb{Z}$ satisfies the four conditions of Theorem~4.3.
+\end{lemma}
+
+\begin{corollary}[Mendelson 4.6]
+$(\mathbb{Z},+_\mathbb{Z},\times_\mathbb{Z},<_\mathbb{Z})$ is an
+ordered integral domain with positive set $\mathcal{P}_\mathbb{Z}$.
+\end{corollary}
+
+\begin{theorem}[Mendelson 4.7 --- Recovery of Peano system]
+Let $T(x)=x+_\mathbb{Z}1_\mathbb{Z}$ for $x\in\mathcal{P}_\mathbb{Z}$.
+Then $(\mathcal{P}_\mathbb{Z},T,1_\mathbb{Z})$ is a Peano system.
+\end{theorem}
+
+\begin{remark}[Significance]
+Starting from a Peano system for $\mathbb{N}$, we construct $\mathbb{Z}$,
+and then prove the positive integers \emph{inside} $\mathbb{Z}$ form a
+new Peano system consistent with the original.
+Tao does not prove this explicitly.
+\end{remark}
+
+% ---------------------------------------------------------
+% §4  Absolute Value
+% ---------------------------------------------------------
+\subsubsection*{§4 \quad Absolute Value}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition 4.6 (Absolute value)}},
+  fonttitle=\small\bfseries]
+In any ordered integral domain:
+$|x| = x$ if $0\leq x$; $|x|=-x$ if $x<0$.
+\end{tcolorbox}
+
+\begin{theorem}[Mendelson 4.8 --- Properties of absolute value]
+In any ordered integral domain, $|{\cdot}|$ satisfies:
+(1)~$|x|\geq 0$;
+(2)~$|x|=0\iff x=0$;
+(3)~$|-x|=|x|$;
+(4)~$|x-y|=|y-x|$;
+(5)~$|xy|=|x||y|$;
+(6)~$-|x|\leq x\leq|x|$;
+(7)~$|z|<u\iff -u<z<u$;
+(8)~$|z|\leq u\iff -u\leq z\leq u$;
+(9)~$u\geq v \wedge u\geq -v \Rightarrow u\geq|v|$;
+(10)~$|x+y|\leq|x|+|y|$ \textit{(triangle inequality)};
+(11)~$|x-y|\geq\bigl||x|-|y|\bigr|$ \textit{(reverse triangle inequality)}.
+\end{theorem}
+
+% ---------------------------------------------------------
+% §5  Number theory
+% ---------------------------------------------------------
+\subsubsection*{§5 \quad Division, Divisibility, Primes}
+
+\begin{remark}[Scope]
+This material is not in Tao Ch~4 and is not a prerequisite for real
+analysis.  It is valuable background for number theory and abstract algebra.
+See the comparison table for coverage decisions.
+\end{remark}
+
+\begin{theorem}[Mendelson 5.1 --- Euclidean division]
+For any integer $\alpha>1$ and any integer $\beta$, there exist unique
+integers $q,r$ with $\beta=q\alpha+r$ and $0\leq r<\alpha$.
+\end{theorem}
+
+\begin{definition}[Divisibility]
+$\alpha\mid\beta \iff \exists\,\gamma\in\mathbb{Z}:\;\beta=\alpha\gamma$.
+\end{definition}
+
+\begin{theorem}[Mendelson 5.2--5.9]
+Standard divisibility properties, existence and Bézout form of gcd,
+characterisation of relative primeness, infinitude of primes
+(Euclid), Euclid's lemma ($\rho\mid\alpha\beta\Rightarrow\rho\mid\alpha$
+or $\rho\mid\beta$), and the fundamental theorem of arithmetic
+(unique prime factorisation up to order and sign).
+\end{theorem}
+
+% ---------------------------------------------------------
+% §6  Modular arithmetic
+% ---------------------------------------------------------
+\subsubsection*{§6 \quad Integers Modulo $n$ (Optional)}
+
+\begin{remark}[Scope]
+Congruence mod $n$ as an equivalence relation, $\mathbb{Z}_n$ as a
+commutative ring with unit; integral domain iff $n$ is prime.
+Not required for the real analysis track.
+\end{remark}
+
+% ---------------------------------------------------------
+% §7--9  Structural theory
+% ---------------------------------------------------------
+\subsubsection*{§7--9 \quad Integer Action, Embedding Theory,
+  Uniqueness of $\mathbb{Z}$}
+
+\begin{remark}[Scope]
+Chapters 7--9 are graduate-level algebra.
+Key results:
+\textbf{Thm~8.8}: every characteristic-$0$ integral domain contains
+a copy of $\mathbb{Z}$.
+\textbf{Thm~9.5}: $\mathcal{D}\cong\mathbb{Z}$ iff characteristic~$0$
+and no proper subdomains.
+\textbf{Thm~9.8}: any two well-ordered integral domains are isomorphic
+--- $\mathbb{Z}$ is unique up to isomorphism.
+These results are beyond what is needed for real analysis but are
+worth knowing as statements.
+\end{remark}
+
+\begin{definition}[Well-ordered integral domain]
+An ordered integral domain is \textbf{well-ordered} if every nonempty
+subset of its positive elements contains a least element.
+\end{definition}
+
+\begin{theorem}[Mendelson 9.8 --- Uniqueness of $\mathbb{Z}$]
+Any two well-ordered integral domains are isomorphic.
+In particular, $\mathbb{Z}$ is, up to isomorphism, the unique
+well-ordered integral domain.
+\end{theorem}

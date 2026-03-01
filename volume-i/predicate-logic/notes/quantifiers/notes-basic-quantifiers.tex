@@ -1,0 +1,175 @@
+% =========================================================
+% Universal, Existential, Unique Existential, and Bounded Quantifiers
+% =========================================================
+
+\subsection{Quantifiers: Universal, Existential, and Bounded}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Basic Quantifiers — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Symbol} & \textbf{Reading} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+$\forall x\,\varphi$ & For all $x$, $\varphi$ & True for every domain element & \hyperref[def:universal-q]{↓ Def} \\
+$\exists x\,\varphi$ & There exists $x$ such that $\varphi$ & True for some domain element & \hyperref[def:existential-q]{↓ Def} \\
+$\exists! x\,\varphi$ & There exists exactly one $x$ such that $\varphi$ & Existence + uniqueness & \hyperref[def:unique-exist]{↓ Def} \\
+$\forall x \in A\,\varphi$ & For all $x$ in $A$, $\varphi$ & Restricted universal & \hyperref[def:bounded-q]{↓ Def} \\
+$\exists x \in A\,\varphi$ & There exists $x$ in $A$ such that $\varphi$ & Restricted existential & \hyperref[def:bounded-q]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Universal Quantifier
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Universal Quantifier)}},
+  fonttitle=\small\bfseries]
+\label{def:universal-q}
+The \emph{universal quantifier}, denoted $\forall$, is a logical operator that
+binds a variable and asserts that a formula holds for all elements of the
+domain of discourse.
+
+If $\varphi$ is a formula and $x$ is a variable, then $\forall x\,\varphi$ is
+a formula, read ``for all $x$, $\varphi$.''
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+The universal quantifier expresses a global condition over the entire domain.
+It does not claim the domain is nonempty on its own, but by the nonempty domain
+convention, there is always at least one element to instantiate.
+\end{remark}
+
+% ---------------------------------------------------------
+% Existential Quantifier
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Existential Quantifier)}},
+  fonttitle=\small\bfseries]
+\label{def:existential-q}
+The \emph{existential quantifier}, denoted $\exists$, is a logical operator that
+binds a variable and asserts that a formula holds for at least one element of
+the domain of discourse.
+
+If $\varphi$ is a formula and $x$ is a variable, then $\exists x\,\varphi$ is
+a formula, read ``there exists an $x$ such that $\varphi$.''
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+The existential quantifier expresses a local condition. It does not specify
+which element witnesses the claim; it merely asserts that such a witness exists
+somewhere in the domain.
+\end{remark}
+
+% ---------------------------------------------------------
+% Unique Existential Quantifier
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Unique Existential Quantifier)}},
+  fonttitle=\small\bfseries]
+\label{def:unique-exist}
+The \emph{unique existential quantifier} $\exists!$ asserts that there exists
+exactly one element satisfying a given property. It is an abbreviation:
+\[
+\exists! x\,\varphi
+\;:=\;
+\exists x\,\bigl(\varphi \wedge \forall y\,(\varphi[y/x] \rightarrow y = x)\bigr),
+\]
+where $y$ is a variable not occurring in $\varphi$.
+
+Equivalently,
+\[
+\exists! x\,\varphi
+\;\equiv\;
+\exists x\,\varphi \;\wedge\; \forall x\,\forall y\,
+\bigl((\varphi \wedge \varphi[y/x]) \rightarrow x = y\bigr).
+\]
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+$\exists! x\,\varphi$ combines existence (at least one $x$ satisfies $\varphi$)
+and uniqueness (at most one such $x$ exists). It is not a primitive quantifier
+but a convenient abbreviation.
+\end{remark}
+
+\begin{example}
+``There is exactly one even prime number'' formalizes as
+$\exists! x\,(P(x) \wedge E(x))$, where $P(x)$ means ``$x$ is prime'' and
+$E(x)$ means ``$x$ is even.''
+\end{example}
+
+% ---------------------------------------------------------
+% Bounded Quantifiers
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bounded Quantifiers)}},
+  fonttitle=\small\bfseries]
+\label{def:bounded-q}
+Let $A$ be a set (or a predicate defining a set). The \emph{bounded
+quantifiers} are abbreviations:
+\begin{align*}
+\forall x \in A\,\varphi &\;:=\; \forall x\,(x \in A \rightarrow \varphi), \\
+\exists x \in A\,\varphi &\;:=\; \exists x\,(x \in A \wedge \varphi).
+\end{align*}
+\end{tcolorbox}
+
+\begin{remark}[Asymmetry]
+Bounded universal uses implication ($\rightarrow$), while bounded existential
+uses conjunction ($\wedge$). This is not arbitrary: if the set $A$ is empty,
+$\forall x \in A\,\varphi$ is vacuously true (there is no $x$ to violate the
+implication), while $\exists x \in A\,\varphi$ is false (no witness exists).
+\end{remark}
+
+\begin{remark}[Common error]
+Writing $\forall x \in A\,\varphi$ as $\forall x\,(x \in A \wedge \varphi)$
+is wrong: this would assert that every element is in $A$, not just that every
+element of $A$ satisfies $\varphi$.
+\end{remark}
+
+\begin{theorem}[Negation of Bounded Quantifiers]\label{thm:neg-bounded}
+Let $A$ be a set and $\varphi$ a formula. Then:
+\begin{align*}
+\neg(\forall x \in A\,\varphi) &\;\equiv\; \exists x \in A\,\neg\varphi, \\
+\neg(\exists x \in A\,\varphi) &\;\equiv\; \forall x \in A\,\neg\varphi.
+\end{align*}
+\end{theorem}
+
+\begin{proof}
+We derive each case by expanding and applying standard quantifier negation laws.
+
+\textbf{Universal case.}
+\begin{align*}
+\neg(\forall x \in A\,\varphi)
+&\equiv \neg\forall x\,(x \in A \rightarrow \varphi) \\
+&\equiv \exists x\,\neg(x \in A \rightarrow \varphi) \\
+&\equiv \exists x\,(x \in A \wedge \neg\varphi) \\
+&\equiv \exists x \in A\,\neg\varphi.
+\end{align*}
+
+\textbf{Existential case.}
+\begin{align*}
+\neg(\exists x \in A\,\varphi)
+&\equiv \neg\exists x\,(x \in A \wedge \varphi) \\
+&\equiv \forall x\,\neg(x \in A \wedge \varphi) \\
+&\equiv \forall x\,(x \in A \rightarrow \neg\varphi) \\
+&\equiv \forall x \in A\,\neg\varphi. \qedhere
+\end{align*}
+\end{proof}
+
+\begin{remark}
+The domain restriction $x \in A$ is preserved under negation because it
+functions as a constraint on which elements are quantified over, not as part
+of the claim being negated.
+\end{remark}

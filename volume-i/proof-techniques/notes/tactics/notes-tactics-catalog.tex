@@ -1,0 +1,85 @@
+% =========================================================
+% Tactics Catalog
+% =========================================================
+\paragraph{Catalog of Algebraic Tactics.}
+
+The following tactics are the move-level tools available once
+a proof is in progress and the architecture has been chosen.
+Each entry states the tactic, its precondition (what must
+already be in place), and its effect (what it achieves).
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{p{0.20\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
+\toprule
+\textbf{Tactic} & \textbf{Precondition} & \textbf{Effect} \\
+\midrule
+
+\textbf{Multiply by inverse} &
+  $a \neq 0$ in a field; or $a \in G$ a group element &
+  Multiply both sides by $a^{-1}$; use associativity to collapse
+  $a^{-1} a = e$; isolates the target variable. \\
+
+\textbf{Cancellation} &
+  $ac = bc$ or $ca = cb$ in a group or integral domain &
+  Conclude $a = b$. In a group: multiply by $c^{-1}$.
+  In an integral domain: cite no-zero-divisors. \\
+
+\textbf{Distributivity bridge} &
+  Multiplication by $0$, $-1$, or a negative element &
+  Rewrite the product as a sum using distributivity,
+  then use additive group structure to collapse.
+  The bridge crosses from $\times$ to $+$. \\
+
+\textbf{Add zero} &
+  Need to introduce a term without changing the expression &
+  Write $a = a + 0 = a + (b + (-b))$; regroup to expose
+  needed structure. \\
+
+\textbf{Satisfy-and-cite} &
+  A uniqueness theorem for some object $b$ is in scope &
+  Show $a$ satisfies $b$'s defining property; cite uniqueness;
+  conclude $a = b$. Avoids assume-two-and-compare entirely. \\
+
+\textbf{Double negation} &
+  $-(- a)$ appears or is the goal &
+  $-a$ is the unique element $x$ with $a + x = 0$;
+  $-(-a)$ satisfies this with $x = a$; by uniqueness,
+  $-(-a) = a$. \\
+
+\textbf{Absorb into axiom} &
+  A sub-expression matches the left-hand side of an axiom &
+  Rewrite using the axiom. Tag as \tagTA. \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Distributivity bridge in detail]
+The distributivity bridge is the central tactic for ring and
+field zero/negative proofs. The pattern is always:
+\begin{enumerate}
+  \item Introduce $a \cdot 0$ or $a \cdot (-b)$.
+  \item Write $0 = x + (-x)$ or $-b = b + (-b) + (-b)$\,---\,use
+    the additive inverse definition to expand.
+  \item Apply distributivity: $a(x + y) = ax + ay$.
+  \item Use uniqueness of additive inverse to identify the result.
+\end{enumerate}
+Every instance of ``$a \cdot 0 = 0$'' and ``$a(-b) = -(ab)$''
+uses this bridge. Once seen once, it is immediately recognizable.
+\end{remark}
+
+\begin{remark}[Cancellation: two different theorems]
+``Cancellation'' names two distinct results that must not be conflated:
+\begin{itemize}
+  \item \textbf{Group cancellation}: in any group, $ac = bc$
+    implies $a = b$. Proved by multiplying by $c^{-1}$, which
+    exists by the group inverse axiom.
+  \item \textbf{Domain cancellation}: in an integral domain,
+    $ac = bc$ and $c \neq 0$ imply $a = b$. Proved by rewriting
+    as $c(a - b) = 0$ and citing no zero divisors.
+\end{itemize}
+The preconditions are different. In a group, $c$ need not be
+specified as nonzero (inverses always exist). In an integral domain,
+$c \neq 0$ is essential.
+\end{remark}

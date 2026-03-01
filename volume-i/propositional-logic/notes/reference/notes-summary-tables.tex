@@ -1,0 +1,165 @@
+% =========================================================
+% Summary Tables
+% =========================================================
+
+\subsection{Summary Tables}
+
+\subsubsection*{All Connectives — Truth Tables}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{cc|ccccccc}
+\toprule
+$P$ & $Q$ & $\neg P$ & $P{\wedge}Q$ & $P{\vee}Q$ & $P{\to}Q$ & $P{\leftrightarrow}Q$ & $P{\oplus}Q$ & $P{\uparrow}Q$ \\
+\midrule
+T & T & F & T & T & T & T & F & F \\
+T & F & F & F & T & F & F & T & T \\
+F & T & T & F & T & T & F & T & T \\
+F & F & T & F & F & T & T & F & T \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.4em}
+$P \downarrow Q = \neg(P \vee Q)$: T only in the $F,F$ row.
+\end{center}
+
+\subsubsection*{Formula Classification}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Class} & \textbf{True under} & \textbf{Satisfiable?} & \textbf{Example} \\
+\midrule
+Tautology     & All assignments     & Yes (trivially)       & $P \vee \neg P$ \\
+Contradiction & No assignment       & No                    & $P \wedge \neg P$ \\
+Contingency   & Some, not all       & Yes                   & $P \rightarrow Q$ \\
+\midrule
+Satisfiable   & $\geq 1$ assignment & — (broader category)  & $P$, $P \vee Q$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Key relationship]
+Satisfiable $=$ not a contradiction.
+Every tautology is satisfiable; every contingency is satisfiable.
+The three primary classes (tautology, contradiction, contingency) are mutually
+exclusive and exhaustive.
+\end{remark}
+
+\subsubsection*{Logical Equivalences — Complete Reference}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l l}
+\toprule
+\textbf{Name} & \textbf{Equivalence} \\
+\midrule
+Double Negation       & $\neg\neg P \equiv P$ \\
+De Morgan (1)         & $\neg(P \wedge Q) \equiv \neg P \vee \neg Q$ \\
+De Morgan (2)         & $\neg(P \vee Q) \equiv \neg P \wedge \neg Q$ \\
+Commutativity         & $P \wedge Q \equiv Q \wedge P$;\quad $P \vee Q \equiv Q \vee P$ \\
+Associativity         & $(P \wedge Q) \wedge R \equiv P \wedge (Q \wedge R)$ (and for $\vee$) \\
+Distributivity (1)    & $P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P \wedge R)$ \\
+Distributivity (2)    & $P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee R)$ \\
+Idempotence           & $P \wedge P \equiv P$;\quad $P \vee P \equiv P$ \\
+Absorption            & $P \wedge (P \vee Q) \equiv P$;\quad $P \vee (P \wedge Q) \equiv P$ \\
+Identity              & $P \wedge \top \equiv P$;\quad $P \vee \bot \equiv P$ \\
+Domination            & $P \vee \top \equiv \top$;\quad $P \wedge \bot \equiv \bot$ \\
+Excluded Middle       & $P \vee \neg P \equiv \top$ \\
+Non-Contradiction     & $P \wedge \neg P \equiv \bot$ \\
+Material Implication  & $P \rightarrow Q \equiv \neg P \vee Q$ \\
+Contraposition        & $P \rightarrow Q \equiv \neg Q \rightarrow \neg P$ \\
+Exportation           & $(P \wedge Q) \rightarrow R \equiv P \rightarrow (Q \rightarrow R)$ \\
+Neg.\ Conditional     & $\neg(P \rightarrow Q) \equiv P \wedge \neg Q$ \\
+Bicond.\ Expansion    & $P \leftrightarrow Q \equiv (P \rightarrow Q) \wedge (Q \rightarrow P)$ \\
+Bicond.\ Disjunction  & $P \leftrightarrow Q \equiv (P \wedge Q) \vee (\neg P \wedge \neg Q)$ \\
+Neg.\ Biconditional   & $\neg(P \leftrightarrow Q) \equiv P \oplus Q \equiv P \leftrightarrow \neg Q$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Inference Rules — Valid vs.\ Invalid Patterns}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Rule} & \textbf{Form} & \textbf{Valid?} \\
+\midrule
+Modus Ponens         & $P \rightarrow Q,\; P \;\therefore Q$                & \textbf{Yes} \\
+Modus Tollens        & $P \rightarrow Q,\; \neg Q \;\therefore \neg P$      & \textbf{Yes} \\
+Hypothetical Syllog. & $P \rightarrow Q,\; Q \rightarrow R \;\therefore P \rightarrow R$ & \textbf{Yes} \\
+Disjunctive Syllog.  & $P \vee Q,\; \neg P \;\therefore Q$                  & \textbf{Yes} \\
+Conj.\ Intro         & $P,\; Q \;\therefore P \wedge Q$                     & \textbf{Yes} \\
+Disj.\ Intro         & $P \;\therefore P \vee Q$                            & \textbf{Yes} \\
+\midrule
+Affirm.\ Consequent  & $P \rightarrow Q,\; Q \;\therefore P$                & \textbf{No} \\
+Denying Antecedent   & $P \rightarrow Q,\; \neg P \;\therefore \neg Q$      & \textbf{No} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Functionally Complete Sets}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l c l}
+\toprule
+\textbf{Set} & \textbf{Adequate?} & \textbf{Remark} \\
+\midrule
+$\{\neg, \wedge\}$        & Yes & Minimal \\
+$\{\neg, \vee\}$          & Yes & Minimal \\
+$\{\neg, \rightarrow\}$   & Yes & Minimal \\
+$\{\bot, \rightarrow\}$   & Yes & Minimal \\
+$\{\uparrow\}$ (NAND)     & Yes & Minimal singleton \\
+$\{\downarrow\}$ (NOR)    & Yes & Minimal singleton \\
+$\{\neg,\wedge,\vee,\rightarrow,\leftrightarrow\}$ & Yes & Not minimal \\
+\midrule
+$\{\wedge, \vee\}$        & No  & Cannot express $\neg$ \\
+$\{\rightarrow\}$         & No  & Cannot express falsity-preserving functions \\
+$\{\neg\}$                & No  & Unary only \\
+$\{\neg, \leftrightarrow\}$ & No & Cannot express $\wedge$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Key Metatheorems}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l p{9.5cm}}
+\toprule
+\textbf{Theorem} & \textbf{Statement} \\
+\midrule
+Soundness     & If $\Gamma \vdash \varphi$ then $\Gamma \models \varphi$ \\
+Completeness  & If $\Gamma \models \varphi$ then $\Gamma \vdash \varphi$ \\
+Sound+Complete & $\Gamma \vdash \varphi \Longleftrightarrow \Gamma \models \varphi$ \\
+Compactness   & $\Gamma$ satisfiable $\Longleftrightarrow$ every finite $\Gamma_0 \subseteq \Gamma$ is satisfiable \\
+Craig's Interp.& If $\varphi \models \psi$ (shared vars), $\exists\theta$ with $\varphi\models\theta\models\psi$ and $\mathsf{Var}(\theta)\subseteq\mathsf{Var}(\varphi)\cap\mathsf{Var}(\psi)$ \\
+Post's Theorem & $S$ adequate $\Longleftrightarrow$ for each of 5 Post classes, some member of $S$ lies outside it \\
+Unique Readability & Every wff has a unique parse tree \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Propositional Logic vs.\ Predicate Logic}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.5cm} p{5cm} p{5cm}}
+\toprule
+\textbf{Aspect} & \textbf{Propositional Logic} & \textbf{Predicate Logic} \\
+\midrule
+Atomic formulas & Propositional variables ($P, Q, R$) & Predicate symbols applied to terms \\
+Internal structure & None & Terms, variables, functions \\
+Quantifiers & None & $\forall$, $\exists$ \\
+Semantics & Truth assignments $v: \mathsf{Prop}\to\{T,F\}$ & Structures + variable assignments \\
+Decision problem & Decidable (truth tables, $O(2^n)$) & Undecidable in general \\
+Compactness & Yes & Yes (Gödel, 1930) \\
+Interpolation & Yes & Yes \\
+Soundness/Completeness & Yes & Yes (Gödel, 1930) \\
+Incompleteness & No (decidable) & Yes for arithmetic (Gödel, 1931) \\
+\bottomrule
+\end{tabular}
+\end{center}

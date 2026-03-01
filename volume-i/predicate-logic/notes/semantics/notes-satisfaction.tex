@@ -1,0 +1,138 @@
+% =========================================================
+% Satisfaction, Truth, Validity, Satisfiability
+% =========================================================
+
+\subsection{Semantics: Satisfaction and Truth}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Satisfaction and Truth — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Satisfaction $\mathcal{M}, s \models \varphi$ & Formula true in $\mathcal{M}$ under $s$ & \hyperref[def:satisfaction]{↓ Def} \\
+Truth in a structure $\mathcal{M} \models \varphi$ & True for every assignment  & \hyperref[def:truth-structure]{↓ Def} \\
+Validity / logical truth & True in every structure    & \hyperref[def:validity]{↓ Def} \\
+Satisfiability & True in some structure & \hyperref[def:validity]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Satisfaction
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Satisfaction)}},
+  fonttitle=\small\bfseries]
+\label{def:satisfaction}
+Let $\mathcal{M} = \langle D, I \rangle$ be a structure, $s$ a variable
+assignment, and $\varphi$ a formula. The relation $\mathcal{M}, s \models \varphi$
+(read ``$\mathcal{M}$ satisfies $\varphi$ under $s$'') is defined recursively:
+\begin{enumerate}
+  \item \textbf{Atomic.}
+  $\mathcal{M}, s \models P(t_1, \dots, t_n) \iff
+  (\llbracket t_1 \rrbracket_{\mathcal{M},s}, \dots,
+   \llbracket t_n \rrbracket_{\mathcal{M},s}) \in I(P)$.
+
+  \item \textbf{Equality.}
+  $\mathcal{M}, s \models (t_1 = t_2) \iff
+  \llbracket t_1 \rrbracket_{\mathcal{M},s} = \llbracket t_2 \rrbracket_{\mathcal{M},s}$.
+
+  \item \textbf{Negation.}
+  $\mathcal{M}, s \models \neg\varphi \iff \mathcal{M}, s \not\models \varphi$.
+
+  \item \textbf{Conjunction.}
+  $\mathcal{M}, s \models (\varphi \wedge \psi) \iff
+  \mathcal{M}, s \models \varphi \text{ and } \mathcal{M}, s \models \psi$.
+
+  \item \textbf{Disjunction.}
+  $\mathcal{M}, s \models (\varphi \vee \psi) \iff
+  \mathcal{M}, s \models \varphi \text{ or } \mathcal{M}, s \models \psi$.
+
+  \item \textbf{Implication.}
+  $\mathcal{M}, s \models (\varphi \rightarrow \psi) \iff
+  \mathcal{M}, s \not\models \varphi \text{ or } \mathcal{M}, s \models \psi$.
+
+  \item \textbf{Biconditional.}
+  $\mathcal{M}, s \models (\varphi \leftrightarrow \psi) \iff
+  (\mathcal{M}, s \models \varphi \Leftrightarrow \mathcal{M}, s \models \psi)$.
+
+  \item \textbf{Universal quantification.}
+  $\mathcal{M}, s \models \forall x\,\varphi \iff
+  \text{for all } d \in D,\; \mathcal{M}, s[x \mapsto d] \models \varphi$.
+
+  \item \textbf{Existential quantification.}
+  $\mathcal{M}, s \models \exists x\,\varphi \iff
+  \text{there exists } d \in D \text{ such that }
+  \mathcal{M}, s[x \mapsto d] \models \varphi$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Satisfaction is the bridge between syntax and semantics. It tells us, for each
+formula formation rule, what it means for the formula to hold. Clauses~(1)--(7)
+mirror the propositional connectives; clauses~(8)--(9) are the new quantifier
+clauses unique to first-order logic.
+\end{remark}
+
+\begin{remark}[Fully quantified form for universal quantification]
+The clause $\mathcal{M}, s \models \forall x\,\varphi$ holds if and only if
+for every element $d$ of the domain $D$, the formula $\varphi$ is satisfied
+under the assignment that agrees with $s$ everywhere except that it sends $x$
+to $d$. This is what it means for a property to hold universally.
+\end{remark}
+
+% ---------------------------------------------------------
+% Truth in a Structure
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Truth in a Structure)}},
+  fonttitle=\small\bfseries]
+\label{def:truth-structure}
+A sentence $\varphi$ is \emph{true} in a structure $\mathcal{M}$, written
+$\mathcal{M} \models \varphi$, if $\mathcal{M}, s \models \varphi$ for every
+variable assignment $s$.
+
+A sentence $\varphi$ is \emph{false} in $\mathcal{M}$ if $\mathcal{M}
+\not\models \varphi$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+For sentences (formulas with no free variables), the choice of assignment is
+irrelevant — all assignments agree. So $\mathcal{M} \models \varphi$ is
+well-defined without reference to any particular $s$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Validity and Satisfiability
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Validity and Satisfiability)}},
+  fonttitle=\small\bfseries]
+\label{def:validity}
+A formula $\varphi$ is:
+\begin{itemize}
+  \item \emph{valid} (or a \emph{logical truth}) if $\mathcal{M}, s \models \varphi$
+  for every structure $\mathcal{M}$ and every assignment $s$;
+  \item \emph{satisfiable} if $\mathcal{M}, s \models \varphi$ for some $\mathcal{M}$
+  and some $s$;
+  \item \emph{unsatisfiable} (or a \emph{contradiction}) if it is not satisfiable.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{remark}[Consequence]
+A formula is valid if no structure can make it false. These are the logical
+truths of predicate logic — the formulas provable by logic alone, without any
+special assumptions about the domain.
+\end{remark}

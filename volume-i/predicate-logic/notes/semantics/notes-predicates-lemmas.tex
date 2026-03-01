@@ -1,0 +1,101 @@
+% =========================================================
+% Predicates, Relations, and Substitution Lemmas
+% =========================================================
+
+\subsection{Semantics: Predicates, Relations, and Substitution Lemmas}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Predicates and Substitution Lemmas — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Predicate & Open formula or truth-valued function on domain & \hyperref[def:predicate]{↓ Def} \\
+Substitution Lemma (terms) & Assign vs.\ substitute, same result & \hyperref[lem:subst-terms]{↓ Lem} \\
+Substitution Lemma (formulas) & Syntactic substitution $=$ semantic update & \hyperref[lem:subst-formulas]{↓ Lem} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Predicate
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Predicate)}},
+  fonttitle=\small\bfseries]
+\label{def:predicate}
+A \emph{predicate} is an expression containing one or more variables that
+represents a property or relation and becomes a proposition when all its
+variables are instantiated.
+
+Formally, a predicate has two equivalent views:
+\begin{enumerate}
+  \item \textbf{Syntactic view.} A predicate is an open formula
+  $\varphi(x_1,\dots,x_n)$ that has no truth value until specific objects are
+  substituted for its variables.
+  \item \textbf{Semantic view.} Given a domain $D$, an $n$-ary predicate
+  determines a function $P : D^n \to \{\mathsf{T}, \mathsf{F}\}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Predicates vs.\ relations]
+A \emph{predicate} is a syntactic or semantic device: syntactically, an open
+formula; semantically, a truth-valued function. A \emph{relation} is a purely
+set-theoretic object: an $n$-ary relation on $D$ is a subset $R \subseteq D^n$.
+Under an interpretation, predicates and relations correspond via
+$P(a_1,\dots,a_n) \text{ is true} \iff (a_1,\dots,a_n) \in R$. Thus predicates
+belong to the language of logic, while relations belong to the structures
+interpreting that language.
+\end{remark}
+
+% ---------------------------------------------------------
+% Substitution Lemmas
+% ---------------------------------------------------------
+
+\begin{lemma}[Substitution Lemma for Terms]\label{lem:subst-terms}
+Let $\mathcal{M}$ be a structure, $s$ a variable assignment, $x$ a variable,
+and $d \in D$. For any term $t$,
+\[
+\llbracket t \rrbracket_{\mathcal{M},\,s[x\mapsto d]}
+=
+\llbracket t[d/x] \rrbracket_{\mathcal{M},\,s}.
+\]
+\end{lemma}
+
+\begin{remark}[English reading]
+Evaluating a term after modifying an assignment is the same as substituting
+the value directly into the term and then evaluating. This shows that syntactic
+substitution and semantic update commute for terms.
+\end{remark}
+
+\begin{lemma}[Substitution Lemma for Formulas]\label{lem:subst-formulas}
+Let $\varphi$ be a formula, $t$ a term free for $x$ in $\varphi$. Then for
+any structure $\mathcal{M}$ and assignment $s$,
+\[
+\mathcal{M},s \models \varphi[t/x]
+\quad\Longleftrightarrow\quad
+\mathcal{M},\,s\bigl[x\mapsto \llbracket t \rrbracket_{\mathcal{M},s}\bigr] \models \varphi.
+\]
+\end{lemma}
+
+\begin{remark}[English reading]
+Satisfying $\varphi$ with $x$ replaced by $t$ is the same as satisfying
+$\varphi$ under the assignment that sends $x$ to the value of $t$. This lemma
+formally connects syntactic substitution with semantic evaluation and is
+essential for proving the soundness of Universal Instantiation.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+Both lemmas are proved by structural induction on the term (Lemma for terms)
+or formula (Lemma for formulas). The key cases are variables and quantifiers;
+the remaining cases follow directly from the inductive hypothesis.
+\end{remark}

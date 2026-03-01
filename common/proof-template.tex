@@ -1,0 +1,123 @@
+% =========================
+% Proof Template (Modern Style)
+% =========================
+
+% ---------- Packages (typical) ----------
+% \usepackage{amsmath, amssymb, amsthm}
+% \usepackage{hyperref}
+
+% ---------- Theorem/Proof environments ----------
+% (If you already have these, keep yours.)
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+% ---------- House-style macros (optional but useful) ----------
+\newcommand{\Given}{\textbf{Given.}\ }
+\newcommand{\Goal}{\textbf{Goal.}\ }
+\newcommand{\Strategy}{\textbf{Strategy.}\ }
+\newcommand{\ProofPlan}{\textbf{Plan.}\ }
+\newcommand{\Recall}{\textbf{Recall.}\ }
+\newcommand{\Claim}{\textbf{Claim.}\ }
+\newcommand{\Wlog}{\textit{Without loss of generality}}
+\newcommand{\Fix}{\textbf{Fix.}\ }
+\newcommand{\Let}{\textbf{Let.}\ }
+\newcommand{\Choose}{\textbf{Choose.}\ }
+\newcommand{\Take}{\textbf{Take.}\ }
+\newcommand{\Note}{\textbf{Note.}\ }
+\newcommand{\ByDef}{\textbf{By definition,}\ }
+\newcommand{\ByAss}{\textbf{By assumption,}\ }
+\newcommand{\ByThm}[1]{\textbf{By #1,}\ }
+\newcommand{\Thus}{\textbf{Thus,}\ }
+\newcommand{\Hence}{\textbf{Hence,}\ }
+\newcommand{\Therefore}{\textbf{Therefore,}\ }
+\newcommand{\AsReq}{\textbf{as required.}}
+
+% ============================================================
+% TEMPLATE: A theorem/proposition with a professional proof
+% ============================================================
+
+\begin{theorem}[TITLE GOES HERE]\label{thm:YOUR_LABEL}
+% Statement:
+Let $X$ be \dots\ . Assume \dots\ . Then \dots\ .
+\end{theorem}
+
+\begin{proof}
+% --- (0) Context / Setup (1–3 sentences) ---
+\Given (Write the hypotheses in words if helpful; do not restate everything verbatim unless needed.)
+
+\Goal (State the target conclusion in one sentence: “Show that …”.)
+
+% --- (1) Strategy (optional but recommended for longer proofs) ---
+\Strategy (One sentence describing the approach: direct / contrapositive / contradiction / induction / construction.)
+
+% --- (2) Definitions / key facts (optional, but good when a definition drives the proof) ---
+\Recall (Insert the exact definition(s) or lemma(s) you will use, especially if quantifiers matter.)
+
+% --- (3) Main argument ---
+% Use explicit quantifier discipline: "Let ε>0 be arbitrary. Choose δ>0 ..." etc.
+
+\Let (Introduce arbitrary elements with correct dependency, e.g. “Let $\varepsilon>0$ be arbitrary.”)
+
+\Choose (Choose objects only after existence is justified, e.g. “Since $A\neq\varnothing$, choose $a\in A$.”)
+
+\ByDef (Unpack the definition at the critical step.)
+
+\ByThm{Lemma~\ref{lem:YOUR_LEMMA_LABEL}} (Cite prior results explicitly when used.)
+
+\Therefore Conclude an intermediate result that clearly follows.
+
+% --- (4) Closing (explicitly match the goal statement) ---
+\Hence (Restate the conclusion in the same form as the theorem statement.)
+\AsReq
+\end{proof}
+
+% ============================================================
+% VARIANTS: Common proof shapes
+% ============================================================
+
+% ---------- (A) Proof by Contrapositive ----------
+% \begin{proof}
+% \Strategy We prove the contrapositive.
+% Assume $\neg Q$. We show $\neg P$.
+% ...
+% Hence $\neg Q \Rightarrow \neg P$, so $P \Rightarrow Q$. \AsReq
+% \end{proof}
+
+% ---------- (B) Proof by Contradiction ----------
+% \begin{proof}
+% \Strategy Suppose, toward a contradiction, that the conclusion is false.
+% ...
+% This contradicts (STATE WHAT IT CONTRADICTS).
+% Therefore the conclusion holds. \AsReq
+% \end{proof}
+
+% ---------- (C) Induction ----------
+% \begin{proof}
+% \Strategy We proceed by induction on $n\in\mathbb{N}$.
+% \textbf{Base case.} (Prove for $n=1$ or $n=0$.)
+% \textbf{Inductive hypothesis.} Assume the statement holds for some fixed $n$.
+% \textbf{Inductive step.} Prove it holds for $n+1$ using the hypothesis.
+% Therefore the statement holds for all $n\in\mathbb{N}$. \AsReq
+% \end{proof}
+
+% ---------- (D) Existence / Construction ----------
+% \begin{proof}
+% \Strategy We explicitly construct an object $x$ with the required property.
+% Define $x := \dots$.
+% \Note First check $x$ is well-defined.
+% Then verify the required properties:
+% (i) ...
+% (ii) ...
+% Hence such an $x$ exists. \AsReq
+% \end{proof}
+
+% ---------- (E) Uniqueness (often paired with existence) ----------
+% \begin{proof}
+% \Strategy Suppose $x$ and $y$ both satisfy the defining properties; show $x=y$.
+% ...
+% Therefore the object is unique. \AsReq
+% \end{proof}
