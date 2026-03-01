@@ -1,0 +1,196 @@
+% =========================================================
+% Sets, Membership, and ZFC Axioms
+% =========================================================
+
+\subsection{Sets, Membership, and ZFC Axioms}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Foundations — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Set, membership        & Primitive notions; meaning fixed by axioms & \hyperref[def:set-membership]{↓ Def} \\
+Extensionality         & Sets equal iff same elements & \hyperref[ax:extensionality]{↓ Ax} \\
+Empty Set              & Exists a set with no elements & \hyperref[ax:empty-set]{↓ Ax} \\
+Pairing                & Any two sets can be collected & \hyperref[ax:pairing]{↓ Ax} \\
+Union                  & Elements of sets in a family & \hyperref[ax:union]{↓ Ax} \\
+Power Set              & All subsets form a set & \hyperref[ax:power-set]{↓ Ax} \\
+Infinity               & An infinite set exists & \hyperref[ax:infinity]{↓ Ax} \\
+Separation             & Subsets by definable property & \hyperref[ax:separation]{↓ Ax} \\
+Replacement            & Functional image of a set is a set & \hyperref[ax:replacement]{↓ Ax} \\
+Foundation             & No infinite descending $\in$-chains & \hyperref[ax:foundation]{↓ Ax} \\
+Choice                 & Selection function exists & \hyperref[ax:choice]{↓ Ax} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Primitive Notions
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Set and Membership)}},
+  fonttitle=\small\bfseries]
+\label{def:set-membership}
+In axiomatic set theory, the notions of \emph{set} and \emph{membership} are
+\emph{primitive}.
+
+\begin{itemize}
+  \item A \emph{set} is an object.
+  \item \emph{Membership} is a binary relation, denoted by $\in$, between objects.
+\end{itemize}
+
+If $x$ is an object and $A$ is a set, the statement $x \in A$ is read as
+``$x$ is an element of $A$.'' No definition of ``set'' or ``$\in$'' is given
+in more basic terms. Their meaning is determined entirely by the axioms
+governing them.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Primitive means we do not define these in terms of simpler concepts.
+Rather, we fix their meaning implicitly by stating the axioms they must obey.
+This is the standard approach in formal mathematics: rules of behaviour replace
+informal definitions.
+\end{remark}
+
+\begin{remark}[Consequence]
+All subsequent notions---subsets, ordered pairs, relations, functions,
+number systems---are \emph{definitions} introduced within this axiomatic
+framework. Every proved result is a \emph{theorem} derived logically from the
+axioms via the rules of inference.
+\end{remark}
+
+% ---------------------------------------------------------
+% ZFC AXIOMS — single axiom box
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Axiom System (ZFC)}},
+  fonttitle=\small\bfseries]
+
+\textbf{Axiom of Extensionality.}\label{ax:extensionality}\\
+Two sets are equal iff they have the same elements.
+\[
+\forall A \, \forall B \,
+\Bigl( A = B \iff \forall x \, (x \in A \leftrightarrow x \in B) \Bigr).
+\]
+
+\medskip
+\textbf{Axiom of Empty Set.}\label{ax:empty-set}\\
+There exists a set with no elements.
+\[
+\exists A \, \forall x \, (x \notin A).
+\]
+
+\medskip
+\textbf{Axiom of Pairing.}\label{ax:pairing}\\
+For any two sets, there exists a set containing exactly those two sets.
+\[
+\forall A \, \forall B \, \exists C \,
+\forall x \, (x \in C \leftrightarrow (x = A \lor x = B)).
+\]
+
+\medskip
+\textbf{Axiom of Union.}\label{ax:union}\\
+For any family of sets, there exists a set containing exactly the elements of
+those sets.
+\[
+\forall A \, \exists U \,
+\forall x \,
+\bigl( x \in U \leftrightarrow \exists B \, (B \in A \land x \in B) \bigr).
+\]
+
+\medskip
+\textbf{Axiom of Power Set.}\label{ax:power-set}\\
+For any set, there exists a set of all its subsets.
+\[
+\forall A \, \exists P \,
+\forall x \, (x \in P \leftrightarrow x \subseteq A).
+\]
+
+\medskip
+\textbf{Axiom of Infinity.}\label{ax:infinity}\\
+There exists an infinite set.
+\[
+\exists A \,
+\Bigl( \varnothing \in A \land
+\forall x \, (x \in A \rightarrow x \cup \{x\} \in A) \Bigr).
+\]
+
+\medskip
+\textbf{Axiom Schema of Separation.}\label{ax:separation}\\
+Given a set and a property, there exists a subset containing exactly the
+elements satisfying that property. For any formula $\varphi(x)$,
+\[
+\forall A \, \exists B \,
+\forall x \, (x \in B \leftrightarrow (x \in A \land \varphi(x))).
+\]
+
+\medskip
+\textbf{Axiom Schema of Replacement.}\label{ax:replacement}\\
+If $\varphi(x,y)$ defines a functional relation on a set $A$, then the image
+of $A$ under $\varphi$ is a set. For any formula $\varphi(x,y)$,
+\[
+\forall A\,
+\Bigl(
+\bigl(\forall x \in A\, \exists! y\, \varphi(x,y)\bigr)
+\rightarrow
+\exists B\, \forall y\,
+\bigl(y \in B \leftrightarrow \exists x \in A\, \varphi(x,y)\bigr)
+\Bigr).
+\]
+
+\medskip
+\textbf{Axiom of Foundation.}\label{ax:foundation}\\
+Every nonempty set has an $\in$-minimal element.
+\[
+\forall A \,
+\Bigl( A \neq \varnothing \rightarrow
+\exists x \in A \, (x \cap A = \varnothing) \Bigr).
+\]
+
+\medskip
+\textbf{Axiom of Choice.}\label{ax:choice}\\
+For any family of nonempty sets, there exists a selection function.
+\[
+\forall A \,
+\Bigl(
+(\forall B \in A \, (B \neq \varnothing))
+\rightarrow
+\exists f \,
+\forall B \in A \, (f(B) \in B)
+\Bigr).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Role of the axioms]
+The axioms are not statements to be proved, but rules specifying how $\in$
+behaves and which sets are permitted to exist. From this point onward, set
+theory functions as the underlying language of mathematics: all reasoning
+about mathematical objects is ultimately grounded in these axioms, even when
+they are not cited explicitly.
+\end{remark}
+
+\begin{remark}[Separation vs.\ Replacement]
+Separation is a schema: one axiom instance per definable property $\varphi$.
+It carves out subsets of an already-existing set. Replacement is strictly
+stronger: it can produce sets whose elements are not already contained in any
+pre-existing set, allowing the construction of large stages of the cumulative
+hierarchy.
+\end{remark}
+
+\begin{remark}[Axiom of Choice and right inverses]
+The Axiom of Choice is equivalent to many statements used later in analysis,
+including Zorn's Lemma, the well-ordering theorem, and the statement that every
+surjective function has a right inverse. It is independent of the other ZFC
+axioms.
+\end{remark}

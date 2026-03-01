@@ -1,0 +1,177 @@
+% =========================================================
+% Properties of Relations
+% =========================================================
+
+\subsection{Properties of Relations}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Relational Properties — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Property} & \textbf{Formal definition} & \textbf{Canonical example} & \textbf{Detail} \\
+\midrule
+Reflexive      & $\forall a,\; (a,a)\in R$                           & $=$ on any set      & \hyperref[def:reflexive]{↓ Def} \\
+Irreflexive    & $\forall a,\; (a,a)\notin R$                        & $<$ on $\mathbb{N}$ & \hyperref[def:irreflexive]{↓ Def} \\
+Symmetric      & $(a,b)\in R \Rightarrow (b,a)\in R$                 & ``same age as''     & \hyperref[def:symmetric]{↓ Def} \\
+Antisymmetric  & $(a,b),(b,a)\in R \Rightarrow a=b$                  & $\leq$ on $\mathbb{N}$ & \hyperref[def:antisymmetric]{↓ Def} \\
+Asymmetric     & $(a,b)\in R \Rightarrow (b,a)\notin R$              & $<$ on $\mathbb{N}$ & \hyperref[def:asymmetric]{↓ Def} \\
+Transitive     & $(a,b),(b,c)\in R \Rightarrow (a,c)\in R$           & $\leq$ on $\mathbb{N}$ & \hyperref[def:transitive]{↓ Def} \\
+Total (Connex) & $(a,b)\in R \lor (b,a)\in R$                        & $\leq$ on $\mathbb{R}$ & \hyperref[def:total-rel]{↓ Def} \\
+\midrule
+\multicolumn{4}{l}{\textit{Structural classes formed by combining properties:}} \\
+\midrule
+Equivalence    & Reflexive + Symmetric + Transitive                  & $=$ on any set      & \hyperref[def:equivalence-rel]{↓ Def} \\
+Preorder       & Reflexive + Transitive                              & $\leq$ on $\mathbb{N}$ & \hyperref[def:preorder]{↓ Def} \\
+Partial order  & Reflexive + Antisymmetric + Transitive              & $\subseteq$ on $\mathcal{P}(A)$ & \hyperref[def:partial-order]{↓ Def} \\
+Total order    & Partial order + Total                               & $\leq$ on $\mathbb{R}$ & \hyperref[def:total-order]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Individual property definitions
+% ---------------------------------------------------------
+\begin{definition}[Reflexive Relation]\label{def:reflexive}
+A relation $R$ on $A$ is \emph{reflexive} if every element is related to itself:
+\[
+\forall a \in A, \; (a,a) \in R.
+\]
+\end{definition}
+
+\begin{definition}[Irreflexive Relation]\label{def:irreflexive}
+$R$ is \emph{irreflexive} if no element is related to itself:
+\[
+\forall a \in A, \; (a,a) \notin R.
+\]
+\end{definition}
+
+\begin{remark}[Independence of reflexive and irreflexive]
+A relation may be neither reflexive nor irreflexive (if some but not all
+elements satisfy $(a,a)\in R$). However, a relation cannot be both reflexive
+and irreflexive unless $A = \varnothing$.
+\end{remark}
+
+\begin{definition}[Symmetric Relation]\label{def:symmetric}
+$R$ is \emph{symmetric} if related pairs commute:
+\[
+\forall a,b \in A, \; (a,b) \in R \rightarrow (b,a) \in R.
+\]
+\end{definition}
+
+\begin{definition}[Antisymmetric Relation]\label{def:antisymmetric}
+$R$ is \emph{antisymmetric} if mutual relation implies equality:
+\[
+\forall a,b \in A, \;
+\bigl( (a,b) \in R \land (b,a) \in R \bigr) \rightarrow a = b.
+\]
+\end{definition}
+
+\begin{definition}[Asymmetric Relation]\label{def:asymmetric}
+$R$ is \emph{asymmetric} if related pairs never commute:
+\[
+\forall a,b \in A, \;
+(a,b) \in R \rightarrow (b,a) \notin R.
+\]
+\end{definition}
+
+\begin{remark}[Asymmetric vs.\ antisymmetric]
+Every asymmetric relation is antisymmetric, but not conversely. $\leq$ on
+$\mathbb{R}$ is antisymmetric but not asymmetric (since $1 \leq 1$). Strict
+order $<$ is both asymmetric and irreflexive.
+\end{remark}
+
+\begin{definition}[Transitive Relation]\label{def:transitive}
+$R$ is \emph{transitive} if it extends along chains:
+\[
+\forall a,b,c \in A, \;
+\bigl( (a,b) \in R \land (b,c) \in R \bigr) \rightarrow (a,c) \in R.
+\]
+\end{definition}
+
+\begin{definition}[Total (Connex) Relation]\label{def:total-rel}
+$R$ is \emph{total} (or \emph{connex}) if every pair is comparable:
+\[
+\forall a,b \in A, \;
+(a,b) \in R \lor (b,a) \in R.
+\]
+\end{definition}
+
+% ---------------------------------------------------------
+% Structural classes
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Equivalence Relation)}},
+  fonttitle=\small\bfseries]
+\label{def:equivalence-rel}
+$R$ is an \emph{equivalence relation} on $A$ if it is reflexive, symmetric,
+and transitive.
+\end{tcolorbox}
+
+\begin{remark}[Role in mathematics]
+Equivalence relations axiomatize the idea of ``sameness up to a chosen
+criterion.'' They partition sets into equivalence classes and are the basis
+for quotient constructions throughout algebra, topology, and analysis.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Preorder)}},
+  fonttitle=\small\bfseries]
+\label{def:preorder}
+$R$ is a \emph{preorder} on $A$ if it is reflexive and transitive.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partial Order)}},
+  fonttitle=\small\bfseries]
+\label{def:partial-order}
+$R$ is a \emph{partial order} on $A$ if it is reflexive, antisymmetric, and
+transitive.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Total Order)}},
+  fonttitle=\small\bfseries]
+\label{def:total-order}
+$R$ is a \emph{total order} on $A$ if it is a partial order and is total.
+\end{tcolorbox}
+
+\begin{remark}[Using structural properties in proofs]
+When $R$ is asserted to be an equivalence relation or partial order, this is
+shorthand for the conjunction of its defining properties. In proofs, cite
+only the specific component needed: ``since $R$ is a partial order,
+antisymmetry implies \dots'' rather than restating all properties.
+\end{remark}
+
+\begin{example}[Using a structural property in a proof]
+Let $R$ be an equivalence relation on $A$. For any $a,b \in A$,
+$(a,b) \in R \Rightarrow [a] = [b]$, where $[a] = \{x \in A \mid (a,x) \in R\}$.
+\end{example}
+
+\begin{proof}
+Assume $(a,b) \in R$. By symmetry, $(b,a) \in R$.
+
+\emph{$[a] \subseteq [b]$:} Let $x \in [a]$, so $(a,x) \in R$. Since
+$(b,a) \in R$ and $R$ is transitive, $(b,x) \in R$, so $x \in [b]$.
+
+\emph{$[b] \subseteq [a]$:} Symmetric argument using $(a,b) \in R$.
+
+Therefore $[a] = [b]$.
+\end{proof}
+
+\begin{remark}[Properties are logically independent]
+No basic property implies another in general. A relation may be transitive
+without being reflexive, or symmetric without being transitive. The structural
+classes are distinguished precisely by requiring specific combinations.
+\end{remark}
