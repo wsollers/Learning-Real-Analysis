@@ -1,0 +1,180 @@
+% =========================================================
+% Additional Connectives
+% =========================================================
+
+\subsection{Additional Connectives}
+% ---------------------------------------------------------
+
+\subsubsection{Exclusive Or (XOR)}
+
+\begin{definition}[Exclusive Or]
+The \emph{exclusive or} (or \emph{exclusive disjunction}), denoted $\oplus$ or
+$\veebar$, is a binary connective that is true when exactly one of its operands
+is true.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|}
+\hline
+$P$ & $Q$ & $P \oplus Q$ \\
+\hline
+T & T & F \\
+T & F & T \\
+F & T & T \\
+F & F & F \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[XOR Equivalences]
+The exclusive or can be expressed using standard connectives:
+\begin{align*}
+P \oplus Q &\;\equiv\; (P \vee Q) \wedge \neg(P \wedge Q) \\
+P \oplus Q &\;\equiv\; (P \wedge \neg Q) \vee (\neg P \wedge Q) \\
+P \oplus Q &\;\equiv\; \neg(P \leftrightarrow Q)
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+The exclusive or differs from the inclusive or ($\vee$) only when both operands
+are true: $P \vee Q$ is true in this case, but $P \oplus Q$ is false.
+
+In natural language, ``or'' is often ambiguous between inclusive and exclusive
+readings. ``Would you like coffee or tea?'' typically means exclusive or, while
+``Students who have taken calculus or linear algebra may enroll'' typically
+means inclusive or.
+\end{remark}
+
+\begin{theorem}[Properties of XOR]
+\begin{align*}
+P \oplus Q &\;\equiv\; Q \oplus P && \text{(Commutativity)} \\
+(P \oplus Q) \oplus R &\;\equiv\; P \oplus (Q \oplus R) && \text{(Associativity)} \\
+P \oplus \bot &\;\equiv\; P && \text{(Identity)} \\
+P \oplus \top &\;\equiv\; \neg P && \text{(Negation)} \\
+P \oplus P &\;\equiv\; \bot && \text{(Self-inverse)} \\
+P \oplus \neg P &\;\equiv\; \top && \\
+P \wedge (Q \oplus R) &\;\equiv\; (P \wedge Q) \oplus (P \wedge R) && \text{(Distributivity of $\wedge$ over $\oplus$)}
+\end{align*}
+\end{theorem}
+
+\subsubsection{NAND (Sheffer Stroke)}
+
+\begin{definition}[NAND]
+The \emph{NAND} connective (also called the \emph{Sheffer stroke}), denoted
+$\uparrow$ or $|$, is the negation of conjunction. It is false only when both
+operands are true.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|}
+\hline
+$P$ & $Q$ & $P \uparrow Q$ \\
+\hline
+T & T & F \\
+T & F & T \\
+F & T & T \\
+F & F & T \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[NAND Definition]
+\[
+P \uparrow Q \;\equiv\; \neg(P \wedge Q)
+\]
+\end{theorem}
+
+\begin{theorem}[Expressing Connectives with NAND]
+All standard connectives can be expressed using only NAND:
+\begin{align*}
+\neg P &\;\equiv\; P \uparrow P \\
+P \wedge Q &\;\equiv\; (P \uparrow Q) \uparrow (P \uparrow Q) \\
+P \vee Q &\;\equiv\; (P \uparrow P) \uparrow (Q \uparrow Q) \\
+P \rightarrow Q &\;\equiv\; P \uparrow (Q \uparrow Q)
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+The NAND connective is not associative:
+\[
+(P \uparrow Q) \uparrow R \;\not\equiv\; P \uparrow (Q \uparrow R)
+\]
+\end{remark}
+
+\subsubsection{NOR (Peirce Arrow)}
+
+\begin{definition}[NOR]
+The \emph{NOR} connective (also called the \emph{Peirce arrow} or \emph{Quine
+dagger}), denoted $\downarrow$, is the negation of disjunction. It is true only
+when both operands are false.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|}
+\hline
+$P$ & $Q$ & $P \downarrow Q$ \\
+\hline
+T & T & F \\
+T & F & F \\
+F & T & F \\
+F & F & T \\
+\hline
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[NOR Definition]
+\[
+P \downarrow Q \;\equiv\; \neg(P \vee Q)
+\]
+\end{theorem}
+
+\begin{theorem}[Expressing Connectives with NOR]
+All standard connectives can be expressed using only NOR:
+\begin{align*}
+\neg P &\;\equiv\; P \downarrow P \\
+P \vee Q &\;\equiv\; (P \downarrow Q) \downarrow (P \downarrow Q) \\
+P \wedge Q &\;\equiv\; (P \downarrow P) \downarrow (Q \downarrow Q) \\
+P \rightarrow Q &\;\equiv\; ((P \downarrow P) \downarrow Q) \downarrow ((P \downarrow P) \downarrow Q)
+\end{align*}
+\end{theorem}
+
+\begin{remark}
+Like NAND, NOR is not associative:
+\[
+(P \downarrow Q) \downarrow R \;\not\equiv\; P \downarrow (Q \downarrow R)
+\]
+\end{remark}
+
+\subsubsection{Summary of Additional Connectives}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c||c|c|c|}
+\hline
+$P$ & $Q$ & $P \oplus Q$ & $P \uparrow Q$ & $P \downarrow Q$ \\
+\hline
+T & T & F & F & F \\
+T & F & T & T & F \\
+F & T & T & T & F \\
+F & F & F & T & T \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Connective} & \textbf{Symbol} & \textbf{Name} & \textbf{Equivalent} \\
+\hline
+Exclusive Or & $\oplus$, $\veebar$ & XOR & $\neg(P \leftrightarrow Q)$ \\
+NAND & $\uparrow$, $|$ & Sheffer stroke & $\neg(P \wedge Q)$ \\
+NOR & $\downarrow$ & Peirce arrow & $\neg(P \vee Q)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------

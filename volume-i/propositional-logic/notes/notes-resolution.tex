@@ -1,0 +1,165 @@
+% =========================================================
+% Resolution
+% =========================================================
+
+\subsection{Resolution}
+% ---------------------------------------------------------
+
+\subsubsection{The Resolution Rule}
+
+\begin{definition}[Resolution]
+\textbf{Resolution} is an inference rule that operates on clauses (disjunctions
+of literals). Given two clauses, one containing a literal $L$ and the other
+containing its complement $\neg L$, resolution produces a new clause called the
+\emph{resolvent}.
+
+\[
+\begin{array}{l}
+C_1 \vee L \\
+C_2 \vee \neg L \\ \hline
+C_1 \vee C_2
+\end{array}
+\]
+
+where $C_1$ and $C_2$ are (possibly empty) disjunctions of literals, and $L$ is
+a literal.
+\end{definition}
+
+\begin{definition}[Complementary Literals]
+Two literals are \emph{complementary} if one is the negation of the other. That
+is, $L$ and $\neg L$ are complementary.
+
+In resolution, we \emph{resolve} on a pair of complementary literals, eliminating
+them from the resolvent.
+\end{definition}
+
+\begin{example}
+Resolving the clauses $(P \vee Q)$ and $(\neg P \vee R)$ on $P$:
+\[
+\begin{array}{l}
+P \vee Q \\
+\neg P \vee R \\ \hline
+Q \vee R
+\end{array}
+\]
+\end{example}
+
+\begin{example}
+Resolving $(P \vee Q \vee R)$ and $(\neg Q \vee S)$ on $Q$:
+\[
+\begin{array}{l}
+P \vee Q \vee R \\
+\neg Q \vee S \\ \hline
+P \vee R \vee S
+\end{array}
+\]
+\end{example}
+
+\subsubsection{The Empty Clause}
+
+\begin{definition}[Empty Clause]
+The \emph{empty clause}, denoted $\square$ or $\bot$, is the disjunction of no
+literals. The empty clause is always false (it represents a contradiction).
+\end{definition}
+
+\begin{example}
+Resolving the unit clauses $P$ and $\neg P$:
+\[
+\begin{array}{l}
+P \\
+\neg P \\ \hline
+\square
+\end{array}
+\]
+\end{example}
+
+\subsubsection{Resolution Refutation}
+
+\begin{definition}[Resolution Refutation]
+A \emph{resolution refutation} (or \emph{resolution proof}) of a set of clauses
+$\Gamma$ is a derivation of the empty clause $\square$ from $\Gamma$ using only
+the resolution rule.
+
+If a resolution refutation exists, then $\Gamma$ is unsatisfiable.
+\end{definition}
+
+\begin{theorem}[Soundness of Resolution]
+If the empty clause can be derived from a set of clauses $\Gamma$ by resolution,
+then $\Gamma$ is unsatisfiable.
+\end{theorem}
+
+\begin{theorem}[Completeness of Resolution]
+If a set of clauses $\Gamma$ is unsatisfiable, then the empty clause can be
+derived from $\Gamma$ by resolution.
+\end{theorem}
+
+\begin{remark}
+Resolution is a \emph{refutation-complete} proof system: it can derive the empty
+clause from any unsatisfiable set of clauses. However, it is not designed to
+derive arbitrary consequences, only to detect unsatisfiability.
+\end{remark}
+
+\subsubsection{Using Resolution to Test Validity}
+
+\begin{remark}[Testing Validity by Refutation]
+To test whether $\Gamma \models \varphi$:
+\begin{enumerate}
+  \item Negate the conclusion: form $\neg\varphi$.
+  \item Convert all formulas in $\Gamma \cup \{\neg\varphi\}$ to CNF.
+  \item Apply resolution repeatedly.
+  \item If the empty clause is derived, then $\Gamma \models \varphi$.
+  \item If no new clauses can be derived and $\square$ is not among them, then
+        $\Gamma \not\models \varphi$.
+\end{enumerate}
+\end{remark}
+
+\begin{example}[Resolution Refutation]
+Show that $\{P \rightarrow Q, Q \rightarrow R\} \models P \rightarrow R$.
+
+\textbf{Step 1: Negate the conclusion.}
+\[
+\neg(P \rightarrow R) \equiv P \wedge \neg R
+\]
+
+\textbf{Step 2: Convert to CNF.}
+\begin{align*}
+P \rightarrow Q &\equiv \neg P \vee Q \\
+Q \rightarrow R &\equiv \neg Q \vee R \\
+P \wedge \neg R &\text{ gives clauses } P \text{ and } \neg R
+\end{align*}
+
+Clauses: $\{\neg P \vee Q, \; \neg Q \vee R, \; P, \; \neg R\}$
+
+\textbf{Step 3: Apply resolution.}
+\begin{enumerate}
+  \item Resolve $(\neg P \vee Q)$ and $P$ on $P$: derive $Q$.
+  \item Resolve $(\neg Q \vee R)$ and $Q$ on $Q$: derive $R$.
+  \item Resolve $R$ and $\neg R$ on $R$: derive $\square$.
+\end{enumerate}
+
+Since $\square$ is derived, the original set is unsatisfiable, so
+$\{P \rightarrow Q, Q \rightarrow R\} \models P \rightarrow R$.
+\end{example}
+
+\subsubsection{Resolution Strategies}
+
+\begin{remark}[Resolution Strategies]
+Various strategies can make resolution more efficient:
+
+\begin{itemize}
+  \item \textbf{Unit resolution:} Always resolve with a unit clause (a clause
+        with exactly one literal) when possible.
+
+  \item \textbf{Set of support:} Maintain a ``set of support'' (initially the
+        negated conclusion) and require that at least one parent clause in each
+        resolution step comes from this set.
+
+  \item \textbf{Linear resolution:} Each resolution step uses the most recently
+        derived clause as one of its parents.
+
+  \item \textbf{Input resolution:} At least one parent in each resolution must
+        be an original input clause.
+\end{itemize}
+\end{remark}
+
+% ---------------------------------------------------------
