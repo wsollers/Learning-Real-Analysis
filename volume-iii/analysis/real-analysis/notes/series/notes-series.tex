@@ -1,0 +1,142 @@
+% =========================================================
+% Series
+% File: notes-series.tex
+% =========================================================
+
+\subsection{Series}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[title=Toolkit: Series]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{tcolorbox}[title=Definition (Series)]
+Let $(a_n)$ be a sequence of real numbers.
+The \emph{series} associated with $(a_n)$ is the formal expression
+\[
+\sum_{n=1}^\infty a_n.
+\]
+\end{tcolorbox}
+
+\begin{remark}
+A series is not itself a number, but a symbolic object whose meaning
+is defined via its sequence of partial sums.
+\end{remark}
+
+\begin{tcolorbox}[title=Definition (Partial sums)]
+Given a sequence $(a_n)$, define the sequence of \emph{partial sums}
+$(s_N)$ by
+\[
+s_N := \sum_{n=1}^N a_n.
+\]
+\end{tcolorbox}
+
+\begin{remark}
+The series $\sum_{n=1}^\infty a_n$ is said to \emph{converge} if the sequence
+of partial sums $(s_N)$ converges in $\mathbb{R}$.
+\end{remark}
+
+\begin{remark}[Logical structure]
+\[
+\sum_{n=1}^\infty a_n \text{ converges }
+\iff
+\exists L\in\mathbb{R}\;
+\bigl(
+\lim_{N\to\infty} s_N = L
+\bigr).
+\]
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+\begin{theorem}[Cauchy Condensation Test]
+Let $(a_n)$ be a nonincreasing sequence of nonnegative real numbers.
+Then the series
+\[
+\sum_{n=1}^\infty a_n
+\]
+converges if and only if the condensed series
+\[
+\sum_{k=0}^\infty 2^k\, a_{2^k}
+\]
+converges.
+\end{theorem}
+
+\begin{proof}
+Assume $(a_n)$ is nonincreasing and $a_n\ge 0$. For each $k\ge 0$, consider the block
+\[
+\sum_{n=2^k}^{2^{k+1}-1} a_n.
+\]
+Because $(a_n)$ is nonincreasing, for all $n$ in this block we have
+\[
+a_{2^{k+1}} \le a_n \le a_{2^k}.
+\]
+There are exactly $2^k$ terms in the block, hence
+\[
+2^k a_{2^{k+1}}
+\;\le\;
+\sum_{n=2^k}^{2^{k+1}-1} a_n
+\;\le\;
+2^k a_{2^k}.
+\]
+Summing these inequalities over $k=0,1,\dots,m$ yields
+\[
+\sum_{k=0}^m 2^k a_{2^{k+1}}
+\;\le\;
+\sum_{n=1}^{2^{m+1}-1} a_n
+\;\le\;
+\sum_{k=0}^m 2^k a_{2^k}.
+\]
+Reindex the left condensed sum by $j=k+1$:
+\[
+\sum_{k=0}^m 2^k a_{2^{k+1}}
+=
+\sum_{j=1}^{m+1} 2^{j-1} a_{2^j}
+\le
+\sum_{j=0}^{m+1} 2^{j} a_{2^j}.
+\]
+Therefore, the partial sums of $\sum_{n=1}^\infty a_n$ are trapped between (shifts of)
+the partial sums of the condensed series. Since all sums are nonnegative, it follows that
+\[
+\sum_{n=1}^\infty a_n \text{ converges }
+\iff
+\sum_{k=0}^\infty 2^k a_{2^k} \text{ converges }.
+\]
+\end{proof}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+The logical implication of this section is:
+
+\begin{itemize}
+\item A series is completely determined by its sequence of partial sums.
+\item Convergence of a series is therefore a special case of sequence convergence.
+\item Tests for series are methods for proving convergence of the associated
+partial-sum sequence.
+\item The Cauchy Condensation Test reduces certain monotone nonnegative series
+to a sparser dyadic subsequence.
+\end{itemize}
+
+\begin{remark}[Structural Position]
+\[
+\text{Series convergence}
+=
+\text{Convergence of partial sums}.
+\]
+
+Thus all sequence results (Cauchy Criterion, Bolzano--Weierstrass,
+Algebra of Limits, etc.) apply immediately to series
+via the sequence $(s_N)$.
+\end{remark}

@@ -1,0 +1,451 @@
+% =========================================================
+% Cauchy Sequences
+% File: notes-cauchy-sequences.tex
+% =========================================================
+
+\subsection{Cauchy Sequences}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[title=Toolkit: Cauchy]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% (Original local heading preserved)
+\subsubsection{Cauchy Sequences}
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{tcolorbox}[title=Definition (Cauchy sequence)]
+A sequence $(a_n)$ in $\mathbb{R}$ is Cauchy if
+\[
+\forall \varepsilon > 0 \;\exists N \in \mathbb{N}
+\;\forall m,n \in \mathbb{N},
+\quad
+(m \ge N \land n \ge N)
+\Rightarrow
+|a_n - a_m| < \varepsilon.
+\]
+\end{tcolorbox}
+
+\begin{remark}
+    A Cauchy sequence is one whose terms become arbitrarily close to each other —
+without mentioning a limit.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+% NOTE: The following theorem + proof appears twice in the source extract.
+% Both instances are preserved verbatim below to ensure no content is lost.
+
+\begin{theorem}[Every convergent sequence is Cauchy]
+If $(a_n)$ converges in $\mathbb{R}$, then $(a_n)$ is a Cauchy sequence.
+\end{theorem}
+
+\begin{proof}
+Assume $a_n \to L$. Let $\varepsilon>0$ be arbitrary.
+By convergence, there exists $N\in\mathbb{N}$ such that
+\[
+n\ge N \implies |a_n-L|<\frac{\varepsilon}{2}.
+\]
+Now let $m,n\ge N$. Then, by the triangle inequality,
+\[
+|a_n-a_m|
+= |(a_n-L)-(a_m-L)|
+\le |a_n-L|+|a_m-L|
+< \frac{\varepsilon}{2}+\frac{\varepsilon}{2}
+= \varepsilon.
+\]
+Hence $(a_n)$ is Cauchy.
+\end{proof}
+
+\begin{corollary}[Every convergent series has Cauchy partial sums]
+If $\sum_{n=1}^\infty a_n$ converges and $s_n:=\sum_{k=1}^n a_k$ denotes the sequence
+of partial sums, then $(s_n)$ is a Cauchy sequence. Equivalently,
+\[
+\forall \varepsilon>0\ \exists N\ \text{s.t.}\ m>n\ge N \implies
+\left|\sum_{k=n+1}^{m} a_k\right| < \varepsilon.
+\]
+\end{corollary}
+
+\begin{proof}
+If $\sum_{n=1}^\infty a_n$ converges, then by definition its partial sums satisfy
+$s_n \to S$ for some $S\in\mathbb{R}$. By the theorem above, $(s_n)$ is Cauchy.
+For $m>n$ we have
+\[
+s_m-s_n=\sum_{k=n+1}^{m} a_k,
+\]
+so the Cauchy condition for $(s_n)$ is exactly the displayed tail estimate.
+\end{proof}
+
+\begin{theorem}[Every convergent sequence is Cauchy]
+If $(a_n)$ converges in $\mathbb{R}$, then $(a_n)$ is a Cauchy sequence.
+\end{theorem}
+
+\begin{proof}
+Assume $a_n \to L$. Let $\varepsilon>0$ be arbitrary.
+By convergence, there exists $N\in\mathbb{N}$ such that
+\[
+n\ge N \implies |a_n-L|<\frac{\varepsilon}{2}.
+\]
+Now let $m,n\ge N$. Then, by the triangle inequality,
+\[
+|a_n-a_m|
+= |(a_n-L)-(a_m-L)|
+\le |a_n-L|+|a_m-L|
+< \frac{\varepsilon}{2}+\frac{\varepsilon}{2}
+= \varepsilon.
+\]
+Hence $(a_n)$ is Cauchy.
+\end{proof}
+
+\begin{corollary}[Every convergent series has Cauchy partial sums]
+If $\sum_{n=1}^\infty a_n$ converges and $s_n:=\sum_{k=1}^n a_k$ denotes the sequence
+of partial sums, then $(s_n)$ is a Cauchy sequence. Equivalently,
+\[
+\forall \varepsilon>0\ \exists N\ \text{s.t.}\ m>n\ge N \implies
+\left|\sum_{k=n+1}^{m} a_k\right| < \varepsilon.
+\]
+\end{corollary}
+
+\begin{proof}
+If $\sum_{n=1}^\infty a_n$ converges, then by definition its partial sums satisfy
+$s_n \to S$ for some $S\in\mathbb{R}$. By the theorem above, $(s_n)$ is Cauchy.
+For $m>n$ we have
+\[
+s_m-s_n=\sum_{k=n+1}^{m} a_k,
+\]
+so the Cauchy condition for $(s_n)$ is exactly the displayed tail estimate.
+\end{proof}
+
+\begin{theorem}[Cauchy sequences are bounded]
+If $(a_n)$ is a Cauchy sequence in $\mathbb{R}$, then $(a_n)$ is bounded.
+\end{theorem}
+
+\begin{proof}
+Assume $(a_n)$ is Cauchy. Take $\varepsilon = 1$. Then there exists $N\in\mathbb{N}$
+such that
+\[
+m,n \ge N \implies |a_n-a_m|<1.
+\]
+In particular, fixing $m=N$ gives: for all $n\ge N$,
+\[
+|a_n-a_N|<1 \quad\Longrightarrow\quad |a_n|\le |a_N|+1
+\]
+by the triangle inequality.
+
+Now define
+\[
+M := \max\bigl\{|a_1|,|a_2|,\dots,|a_{N-1}|,\ |a_N|+1\bigr\}.
+\]
+Then for $n<N$ we have $|a_n|\le M$ by construction, and for $n\ge N$ we have
+$|a_n|\le |a_N|+1 \le M$. Hence $|a_n|\le M$ for all $n\in\mathbb{N}$, so $(a_n)$ is bounded.
+\end{proof}
+
+% ---------------------------------------------------------
+\begin{theorem}[Bolzano--Weierstrass Theorem]
+Every bounded sequence in $\mathbb{R}$ has a convergent subsequence.
+\end{theorem}
+
+\begin{proof}
+Let $(a_n)$ be bounded. Then there exists $M>0$ such that
+\[
+|a_n| \le M \quad \text{for all } n\in\mathbb{N}.
+\]
+Thus $(a_n)$ is contained in the closed interval $[-M,M]$.
+
+We first show that every sequence has a monotone subsequence.
+
+\medskip
+
+\emph{Step 1: Monotone Subsequence Lemma.}
+Every sequence of real numbers has a monotone subsequence.
+
+Indeed, define
+\[
+A := \{ m\in\mathbb{N} : a_m \ge a_n \text{ for all } n>m \}.
+\]
+
+There are two cases:
+
+\textbf{Case 1:} $A$ is infinite.  
+Then we may enumerate its elements increasingly,
+$m_1 < m_2 < \cdots$.  
+By definition of $A$, the subsequence $(a_{m_k})$
+is decreasing.
+
+\textbf{Case 2:} $A$ is finite.  
+Then beyond some index $N$, every term fails to be a
+terminal maximum.  
+Hence for each $n\ge N$ there exists $m>n$ with
+$a_m > a_n$.  
+By induction we construct indices
+$n_1<n_2<n_3<\cdots$ such that
+\[
+a_{n_1} < a_{n_2} < a_{n_3} < \cdots.
+\]
+Thus we obtain a strictly increasing subsequence.
+
+\medskip
+
+In either case, $(a_n)$ admits a monotone subsequence.
+
+\medskip
+
+\emph{Step 2: Apply Monotone Convergence.}
+
+Since $(a_n)$ is bounded, any monotone subsequence is
+bounded and monotone.  
+By the Monotone Convergence Theorem,
+every bounded monotone sequence converges.
+
+Therefore the monotone subsequence constructed above
+converges.
+
+Hence $(a_n)$ has a convergent subsequence.
+\end{proof}
+
+\begin{remark}[Logical Position]
+Bolzano--Weierstrass is the bridge between boundedness
+and convergence.  
+A bounded sequence need not converge, but it cannot
+avoid convergence entirely: some subsequence must
+converge.
+\end{remark}
+
+\begin{remark}[Dependence on Completeness]
+The proof relies on the Monotone Convergence Theorem,
+which in turn depends on the Least Upper Bound Property
+of $\mathbb{R}$.  
+Thus Bolzano--Weierstrass is a manifestation of
+completeness.
+\end{remark}
+
+\begin{corollary}[Sequential Compactness of Closed Intervals]
+Every sequence in a closed bounded interval
+$[a,b]\subset\mathbb{R}$ has a convergent subsequence
+whose limit lies in $[a,b]$.
+\end{corollary}
+
+\begin{proof}
+If $(x_n)\subset [a,b]$, then it is bounded.
+By Bolzano--Weierstrass it has a convergent subsequence.
+Since $[a,b]$ is closed, its limit lies in $[a,b]$.
+\end{proof}
+
+\begin{remark}[Structural Consequence]
+Bolzano--Weierstrass supplies the critical step in the
+Cauchy Criterion:
+\[
+\text{Cauchy}
+\Rightarrow
+\text{bounded}
+\Rightarrow
+\text{convergent subsequence}
+\Rightarrow
+\text{full convergence}.
+\]
+It is therefore one of the equivalent formulations of
+completeness.
+\end{remark}
+
+
+
+
+
+\begin{theorem}[Cauchy Criterion in $\mathbb{R}$]
+A sequence $(a_n)$ of real numbers converges if and only if it is Cauchy.
+\end{theorem}
+
+\begin{proof}
+($\Rightarrow$) Assume $a_n \to L$. Let $\varepsilon>0$ be arbitrary.
+Choose $N\in\mathbb{N}$ such that
+\[
+n\ge N \implies |a_n-L|<\frac{\varepsilon}{2}.
+\]
+Then for any $m,n\ge N$, the triangle inequality gives
+\[
+|a_n-a_m|
+\le |a_n-L|+|a_m-L|
+<\frac{\varepsilon}{2}+\frac{\varepsilon}{2}
+=\varepsilon.
+\]
+Hence $(a_n)$ is Cauchy.
+
+($\Leftarrow$) Assume $(a_n)$ is Cauchy. By the theorem \emph{Cauchy sequences are bounded},
+$(a_n)$ is bounded. By the Bolzano--Weierstrass theorem, there exists a convergent
+subsequence $(a_{n_k})$ with
+\[
+a_{n_k}\to L
+\]
+for some $L\in\mathbb{R}$.
+
+We claim $a_n\to L$. Let $\varepsilon>0$ be arbitrary. Since $(a_n)$ is Cauchy,
+there exists $N\in\mathbb{N}$ such that
+\[
+m,n\ge N \implies |a_n-a_m|<\frac{\varepsilon}{2}.
+\]
+Because $a_{n_k}\to L$, there exists $K\in\mathbb{N}$ such that
+\[
+k\ge K \implies |a_{n_k}-L|<\frac{\varepsilon}{2}.
+\]
+Pick $k\ge K$ so that also $n_k\ge N$ (possible since $n_k\to\infty$).
+Then for any $n\ge N$ we have, using the triangle inequality and the Cauchy property,
+\[
+|a_n-L|
+\le |a_n-a_{n_k}| + |a_{n_k}-L|
+< \frac{\varepsilon}{2}+\frac{\varepsilon}{2}
+=\varepsilon.
+\]
+Thus $n\ge N \implies |a_n-L|<\varepsilon$, so $a_n\to L$.
+\end{proof}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+The logical implication of this entire section is:
+
+\begin{remark}[Interdependence of the Major Theorems on Sequences]
+
+At first glance, the principal results of this section may appear to be
+independent facts:
+
+\begin{itemize}
+    \item Convergent $\Rightarrow$ Cauchy
+    \item Cauchy $\Rightarrow$ bounded
+    \item Bolzano--Weierstrass (bounded $\Rightarrow$ convergent subsequence)
+    \item Cauchy Criterion (Cauchy $\Leftrightarrow$ convergent)
+\end{itemize}
+
+In reality, these theorems form a tightly interlocking structure whose
+foundation is the completeness of $\mathbb{R}$.
+
+\medskip
+
+\textbf{Structural Dependencies.}
+
+\begin{enumerate}
+    \item \emph{Convergence $\Rightarrow$ Cauchy.}  
+    This direction uses only the triangle inequality.
+    It does not rely on completeness.
+
+    \item \emph{Cauchy $\Rightarrow$ bounded.}  
+    Once the terms eventually cluster tightly,
+    the entire sequence must lie inside some finite interval.
+
+    \item \emph{Bounded $\Rightarrow$ convergent subsequence} (Bolzano--Weierstrass).  
+    Boundedness alone does not guarantee convergence,
+    but it guarantees partial convergence.
+
+    \item \emph{Cauchy $\Rightarrow$ Convergent} (Cauchy Criterion).  
+    This direction synthesizes the previous results:
+    \[
+    \text{Cauchy}
+    \Rightarrow
+    \text{bounded}
+    \Rightarrow
+    \text{convergent subsequence}
+    \Rightarrow
+    \text{full convergence}.
+    \]
+\end{enumerate}
+
+\medskip
+
+\textbf{Logical Structure.}
+
+\[
+\text{Convergent}
+\Rightarrow
+\text{Cauchy}
+\Rightarrow
+\text{Bounded}
+\Rightarrow
+\text{Convergent subsequence}.
+\]
+
+Completeness of $\mathbb{R}$ upgrades the final step:
+\[
+\text{Cauchy}
+\Longleftrightarrow
+\text{Convergent}.
+\]
+
+Without completeness (for example in $\mathbb{Q}$),
+the implication $\text{Cauchy} \Rightarrow \text{Convergent}$ fails.
+
+\medskip
+\medskip
+
+\begin{remark}[Direct Consequences of Bolzano--Weierstrass]
+
+The Bolzano--Weierstrass Theorem yields several immediate structural facts:
+
+\begin{enumerate}
+    \item \textbf{Bounded nonconvergent sequences oscillate.}  
+    If a bounded sequence does not converge, then it must admit
+    at least two subsequences converging to different limits.
+
+    \item \textbf{Extremal subsequences exist.}  
+    For every bounded sequence $(a_n)$,
+    there exist subsequences converging to
+    $\limsup a_n$ and to $\liminf a_n$.
+
+    \item \textbf{Sequential compactness of closed intervals.}  
+    Every sequence contained in a closed bounded interval
+    $[a,b]$ admits a convergent subsequence
+    whose limit lies in $[a,b]$.
+\end{enumerate}
+
+These facts show that Bolzano--Weierstrass
+controls the \emph{long-term structure} of bounded sequences.
+\end{remark}
+
+\medskip
+
+\textbf{Extended Logical Chain.}
+
+Combining all major results of this section, we obtain:
+
+\[
+\text{Convergent}
+\Rightarrow
+\text{Cauchy}
+\Rightarrow
+\text{Bounded}
+\Rightarrow
+\text{Convergent subsequence}
+\]
+
+and, using completeness,
+
+\[
+\text{Cauchy}
+\Longleftrightarrow
+\text{Convergent}.
+\]
+
+Thus boundedness alone does not ensure convergence,
+but it prevents total divergence.
+Some limiting behavior must emerge.
+
+\textbf{Conceptual Summary.}
+
+Convergence is an external statement about approaching a number.  
+Cauchy is an internal statement about self-consistency of the sequence.  
+
+Completeness asserts that internal consistency is sufficient:
+there are no ``holes'' in the real line.
+
+Thus the Cauchy Criterion is not merely a technical tool —
+it is an equivalent formulation of completeness.
+\end{remark}
+
