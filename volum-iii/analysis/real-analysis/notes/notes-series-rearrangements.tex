@@ -1,0 +1,233 @@
+% =========================================================
+% Manipulation and Rearrangement of Series
+% File: notes-series-manipulations.tex
+% =========================================================
+
+\subsection{Manipulation and Rearrangement of Series}
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+% ---------------------------------------------------------
+
+\begin{definition}[Rearrangement of a series]
+Let $\sum_{n=1}^\infty a_n$ be a series.
+A \emph{rearrangement} of this series is any series of the form
+\[
+\sum_{n=1}^\infty a_{\sigma(n)},
+\]
+where $\sigma : \mathbb{N} \to \mathbb{N}$ is a bijection.
+\end{definition}
+
+\begin{remark}
+A rearrangement preserves all terms of the series,
+but possibly changes their order.
+\end{remark}
+
+\begin{definition}[Regrouping]
+A \emph{regrouping} of a series consists of inserting parentheses
+into the series in such a way that finitely many consecutive terms
+are summed together before taking limits.
+\end{definition}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+% ---------------------------------------------------------
+
+% =========================================================
+% Absolute convergence stability
+% =========================================================
+
+\begin{theorem}[Absolute convergence is stable under rearrangement]
+If $\sum a_n$ converges absolutely, then every rearrangement
+\[
+\sum a_{\sigma(n)}
+\]
+converges and has the same sum.
+\end{theorem}
+
+\begin{proof}
+Assume $\sum |a_n|$ converges.
+Let $S = \sum a_n$.
+
+Let $\sigma$ be any bijection.
+Define partial sums of the rearranged series:
+\[
+S_N' = \sum_{n=1}^N a_{\sigma(n)}.
+\]
+
+Because $\sum |a_n|$ converges,
+the tails of the original series can be made arbitrarily small:
+\[
+\forall \varepsilon>0 \;\exists M
+\quad\text{s.t.}\quad
+\sum_{n>M} |a_n| < \varepsilon.
+\]
+
+Choose $N$ large enough that
+$\{\sigma(1),\dots,\sigma(N)\}$ contains all indices $\le M$.
+Then
+\[
+S_N' - S
+=
+\sum_{\sigma(n)>M} a_{\sigma(n)}
+-
+\sum_{n>M} a_n.
+\]
+
+Both sums are subseries of the tail,
+hence bounded in absolute value by
+\[
+\sum_{n>M} |a_n| < \varepsilon.
+\]
+
+Thus $|S_N' - S| < \varepsilon$.
+Hence $S_N' \to S$.
+\end{proof}
+
+% =========================================================
+% Riemann Rearrangement Theorem
+% =========================================================
+
+\begin{theorem}[Riemann Rearrangement Theorem]
+If $\sum a_n$ converges conditionally
+(i.e.\ converges but not absolutely),
+then for every $L \in \mathbb{R}$
+there exists a rearrangement that converges to $L$.
+
+Moreover, there exist rearrangements that diverge to
+$+\infty$ or $-\infty$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Since the series is conditionally convergent:
+
+\[
+\sum a_n^+ = \infty,
+\qquad
+\sum a_n^- = \infty,
+\]
+
+where
+\[
+a_n^+ = \max(a_n,0),
+\quad
+a_n^- = -\min(a_n,0).
+\]
+
+To rearrange to a prescribed $L$:
+
+\begin{enumerate}
+\item Add positive terms until the partial sum exceeds $L$.
+\item Add negative terms until the partial sum drops below $L$.
+\item Repeat.
+\end{enumerate}
+
+Because positive and negative parts both diverge,
+this process continues indefinitely.
+
+The oscillations shrink to zero since $a_n \to 0$.
+Thus the rearranged series converges to $L$.
+
+For divergence to $\pm\infty$, simply add only enough of one sign.
+\end{proof}
+
+% =========================================================
+% Regrouping stability
+% =========================================================
+
+\begin{theorem}[Regrouping and convergence]
+If $\sum a_n$ converges,
+then any regrouping of finitely many consecutive terms
+converges to the same sum.
+\end{theorem}
+
+\begin{proof}
+Let $S_N$ be partial sums.
+A regrouping defines a subsequence of $(S_N)$.
+
+Since $S_N \to S$,
+every subsequence converges to $S$.
+\end{proof}
+
+\begin{remark}
+Regrouping preserves convergence.
+Rearrangement does not — unless the series converges absolutely.
+\end{remark}
+
+% =========================================================
+% Cauchy Product
+% =========================================================
+
+\begin{definition}[Cauchy product]
+Let $\sum a_n$ and $\sum b_n$ be two series.
+The \emph{Cauchy product} is the series
+\[
+\sum_{n=0}^\infty c_n,
+\quad
+c_n := \sum_{k=0}^n a_k b_{n-k}.
+\]
+\end{definition}
+
+\begin{theorem}[Cauchy Product Theorem]
+If both $\sum a_n$ and $\sum b_n$ converge absolutely,
+then the Cauchy product converges absolutely and
+\[
+\sum c_n
+=
+\left(\sum a_n\right)
+\left(\sum b_n\right).
+\]
+\end{theorem}
+
+\begin{proof}
+Assume absolute convergence.
+
+Then
+\[
+\sum_{n=0}^\infty \sum_{k=0}^n |a_k||b_{n-k}|
+=
+\left(\sum |a_n|\right)
+\left(\sum |b_n|\right),
+\]
+by Fubini-type rearrangement for nonnegative series.
+
+Thus the product series converges absolutely.
+
+One verifies directly that partial sums
+approximate the product of partial sums,
+and the limit follows.
+\end{proof}
+
+% =========================================================
+% Failure without absolute convergence
+% =========================================================
+
+\begin{remark}
+If convergence is not absolute,
+the Cauchy product may fail to converge.
+
+Similarly, rearrangements can change the value.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences and Logical Structure}
+% ---------------------------------------------------------
+
+The hierarchy of stability is:
+
+\[
+\text{Absolute convergence}
+\Rightarrow
+\text{Rearrangement stability}
+\Rightarrow
+\text{Cauchy product stability}.
+\]
+
+Conditional convergence implies instability under rearrangement.
+
+\begin{remark}[Philosophical Summary]
+Absolute convergence behaves like finite sums.
+
+Conditional convergence behaves like an infinite balancing act:
+order matters.
+\end{remark}

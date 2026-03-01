@@ -1,0 +1,255 @@
+\newpage
+
+% =========================================================
+% Proof Planning Worksheet (Quantifier-Aware Version)
+% Theorem: A convergent sequence has a unique limit
+% =========================================================
+
+\section*{Proof Planning Worksheet}
+
+\textbf{Theorem (as written).}  
+A convergent sequence has a unique limit.
+
+\bigskip
+
+% ---------------------------------------------------------
+\subsection*{1. Quantifier Detection (Natural Language Analysis)}
+
+Rewrite the statement in explicit English,
+making all hidden quantifiers visible.
+
+\begin{itemize}
+    \item Is the phrase generic or existential?
+    \item What quantifier does it encode?
+    \item Is the statement conditional?
+    \item Is the statement conjunctive/disjunctive or compound?
+\end{itemize}
+
+Write the expanded English sentence below: \\
+ \\
+For every sequence, if the sequence converges, then there exists a real number L such that the sequence converges to L,
+and if the sequence also converges to some real number M, then M=L.
+\vspace{3cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{2. Logical Skeleton (Propositional Form)}
+
+Abstract the theorem into propositional structure.
+
+Let:
+
+\[
+C(x) := \text{“$x$ is a convergent sequence”}
+\]
+\[
+C(x) := \exists \ell \; L(x,\ell).
+\]
+
+\[
+Q(x) := \text{“$x$ has at most one limit.”}
+\]
+\[
+Q(x) :=
+\forall \ell_1 \forall \ell_2
+\bigl(
+L(x,\ell_1) \land L(x,\ell_2)
+\rightarrow
+\ell_1 = \ell_2
+\bigr).
+\]
+Rewrite the theorem schematically:
+
+\vspace{2cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{3. Predicate-Level Formalization}
+
+Now rewrite the theorem with explicit quantifiers:
+
+\vspace{3cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{4. Expand the Meaning of “Unique”}
+
+Write the full logical expansion of:
+
+\[
+\exists! L \text{ such that } P(L)
+\]
+
+\vspace{3cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{5. Separate Existence from Uniqueness}
+
+Is existence already contained in the hypothesis?
+Or must it be proved?
+
+Explain clearly which part of uniqueness remains to be shown:
+
+\vspace{3cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{6. Structural Decomposition of the Proof}
+
+Before writing any proof, answer:
+
+\begin{itemize}
+    \item What object is fixed?
+    \item What hypothesis is assumed?
+    \item What must ultimately be shown?
+    \item What equality (if any) must be derived?
+\end{itemize}
+
+Write these in clean logical phrases (not narrative prose):
+
+\vspace{4cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{7. Quantifier Expansion of Definitions}
+
+Write the full quantified definition of:
+
+\begin{itemize}
+    \item Convergence
+    \item Limit
+\end{itemize}
+
+Be explicit about:
+
+\[
+\forall \varepsilon \;
+\exists N \;
+\forall n \ge N
+\]
+
+\vspace{5cm}
+\hrule
+\vspace{1cm}
+
+% ---------------------------------------------------------
+\subsection*{8. Scope and Dependency Tracking}
+
+For each quantifier appearing in the theorem or definitions:
+
+\begin{itemize}
+    \item Identify what it ranges over.
+    \item Identify what it may depend on.
+    \item Identify which step of the proof will eliminate it.
+\end{itemize}
+
+\vspace{4cm}
+\hrule
+
+\newpage
+\begin{theorem}
+A convergent sequence has a unique limit.
+\end{theorem}
+
+\begin{proof}
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{Symmetric Form}
+
+\medskip
+
+Let $(x_n)$ be a convergent sequence.
+
+Assume $x_n \to \ell_1$ and $x_n \to \ell_2$.
+
+Let $\varepsilon > 0$ be arbitrary.
+
+From $x_n \to \ell_1$, there exists $N_1$ such that
+\[
+n \ge N_1 \Rightarrow |x_n - \ell_1| < \varepsilon/2.
+\]
+
+From $x_n \to \ell_2$, there exists $N_2$ such that
+\[
+n \ge N_2 \Rightarrow |x_n - \ell_2| < \varepsilon/2.
+\]
+
+Let $N = \max\{N_1, N_2\}$.
+
+Then for $n \ge N$,
+\[
+|\ell_1 - \ell_2|
+\le |\ell_1 - x_n| + |x_n - \ell_2|
+< \varepsilon/2 + \varepsilon/2
+= \varepsilon.
+\]
+
+Since $\varepsilon > 0$ was arbitrary,
+$|\ell_1 - \ell_2| = 0$, hence
+\[
+\ell_1 = \ell_2.
+\]
+
+\medskip
+
+Thus the limit is unique.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{Witness-Based Form}
+
+\medskip
+
+Let $(x_n)$ be a convergent sequence.
+
+Then there exists $L_c$ such that
+\[
+x_n \to L_c.
+\]
+
+Let $m$ be any real number and assume
+\[
+x_n \to m.
+\]
+
+Let $\varepsilon > 0$ be arbitrary.
+
+From $x_n \to L_c$, there exists $N_1$ such that
+\[
+n \ge N_1 \Rightarrow |x_n - L_c| < \varepsilon/2.
+\]
+
+From $x_n \to m$, there exists $N_2$ such that
+\[
+n \ge N_2 \Rightarrow |x_n - m| < \varepsilon/2.
+\]
+
+Let $N = \max\{N_1, N_2\}$.
+
+Then for $n \ge N$,
+\[
+|m - L_c|
+\le |m - x_n| + |x_n - L_c|
+< \varepsilon/2 + \varepsilon/2
+= \varepsilon.
+\]
+
+Since $\varepsilon > 0$ was arbitrary,
+$|m - L_c| = 0$, hence
+\[
+m = L_c.
+\]
+
+\medskip
+
+Thus every limit equals $L_c$, so the limit is unique.
+\end{minipage}
+\end{proof}
+\newpage
