@@ -1,0 +1,352 @@
+% =========================================================
+% Tests for Series
+% File: notes-series-tests.tex
+% =========================================================
+
+\subsection{Tests for Series}
+
+% ---------------------------------------------------------
+\subsubsection{Basic Logical Structure}
+
+All convergence tests reduce to properties of the partial sums
+\[
+s_N = \sum_{n=1}^N a_n.
+\]
+
+Thus every test ultimately proves that $(s_N)$ is either:
+
+\begin{itemize}
+\item bounded and monotone, or
+\item Cauchy.
+\end{itemize}
+
+% =========================================================
+\subsubsection{Main Theorems}
+% =========================================================
+
+% =========================================================
+% Direct Comparison Test
+% =========================================================
+
+\begin{theorem}[Direct Comparison Test]
+Let $a_n,b_n \ge 0$.
+
+\begin{enumerate}
+\item If $a_n \le b_n$ eventually and $\sum b_n$ converges,
+then $\sum a_n$ converges.
+\item If $a_n \ge b_n$ eventually and $\sum b_n$ diverges,
+then $\sum a_n$ diverges.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Assume $a_n \le b_n$ for $n \ge N_0$.
+
+Define partial sums:
+\[
+A_N = \sum_{n=1}^N a_n,
+\qquad
+B_N = \sum_{n=1}^N b_n.
+\]
+
+For $N \ge N_0$,
+\[
+A_N
+=
+A_{N_0-1}
++
+\sum_{n=N_0}^N a_n
+\le
+A_{N_0-1}
++
+\sum_{n=N_0}^N b_n
+\le
+A_{N_0-1}
++
+B_N.
+\]
+
+If $\sum b_n$ converges, $(B_N)$ is bounded.
+Hence $(A_N)$ is bounded and increasing,
+so $\sum a_n$ converges.
+
+The divergence part follows similarly.
+\end{proof}
+
+% =========================================================
+% Limit Comparison Test
+% =========================================================
+
+\begin{theorem}[Limit Comparison Test]
+Let $a_n,b_n > 0$ and suppose
+\[
+\lim_{n\to\infty} \frac{a_n}{b_n} = L,
+\quad 0 < L < \infty.
+\]
+Then
+\[
+\sum a_n \text{ converges }
+\Longleftrightarrow
+\sum b_n \text{ converges}.
+\]
+\end{theorem}
+
+\begin{proof}
+Choose $\varepsilon = L/2$.
+For sufficiently large $n$,
+\[
+\left|\frac{a_n}{b_n} - L\right| < \frac{L}{2},
+\]
+so
+\[
+\frac{L}{2} < \frac{a_n}{b_n} < \frac{3L}{2}.
+\]
+
+Thus for large $n$,
+\[
+\frac{L}{2} b_n \le a_n \le \frac{3L}{2} b_n.
+\]
+
+Apply the Direct Comparison Test.
+\end{proof}
+
+% =========================================================
+% Ratio Test
+% =========================================================
+
+\begin{theorem}[Ratio Test]
+Let
+\[
+L = \limsup_{n\to\infty}
+\left|\frac{a_{n+1}}{a_n}\right|.
+\]
+
+\begin{enumerate}
+\item If $L < 1$, the series converges absolutely.
+\item If $L > 1$, the series diverges.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Assume $L<1$.
+Choose $r$ such that $L<r<1$.
+
+Then eventually
+\[
+\left|\frac{a_{n+1}}{a_n}\right| \le r.
+\]
+
+Hence for $n \ge N$,
+\[
+|a_n|
+\le
+|a_N| r^{\,n-N}.
+\]
+
+Thus $|a_n|$ is bounded above by a geometric sequence.
+Since $\sum r^n$ converges, comparison yields
+absolute convergence.
+
+If $L>1$, then for infinitely many $n$,
+\[
+|a_{n+1}| > |a_n|.
+\]
+Hence $a_n$ does not tend to zero,
+so the series diverges.
+\end{proof}
+
+% =========================================================
+% Root Test
+% =========================================================
+
+\begin{theorem}[Root Test]
+Let
+\[
+L = \limsup_{n\to\infty} \sqrt[n]{|a_n|}.
+\]
+
+\begin{enumerate}
+\item If $L<1$, the series converges absolutely.
+\item If $L>1$, it diverges.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Assume $L<1$.
+Choose $r$ with $L<r<1$.
+
+Then for sufficiently large $n$,
+\[
+\sqrt[n]{|a_n|} \le r,
+\]
+so
+\[
+|a_n| \le r^n.
+\]
+
+Since $\sum r^n$ converges,
+the series converges absolutely by comparison.
+
+If $L>1$, then $|a_n|^{1/n} > 1$ infinitely often,
+so $a_n$ does not tend to zero,
+and the series diverges.
+\end{proof}
+
+% =========================================================
+% Integral Test
+% =========================================================
+
+\begin{theorem}[Integral Test]
+Let $f$ be continuous, positive, decreasing on $[1,\infty)$.
+Let $a_n = f(n)$.
+
+Then
+\[
+\sum a_n
+\text{ converges }
+\Longleftrightarrow
+\int_1^\infty f(x)\,dx
+\text{ converges}.
+\]
+\end{theorem}
+
+\begin{proof}
+For $n\ge1$,
+\[
+\int_{n+1}^{n+2} f(x)\,dx
+\le
+f(n+1)
+\le
+\int_n^{n+1} f(x)\,dx.
+\]
+
+Summing these inequalities yields
+\[
+\int_1^{N+1} f(x)\,dx
+\le
+\sum_{n=1}^N f(n)
+\le
+f(1)+\int_1^N f(x)\,dx.
+\]
+
+Thus the series converges iff the improper integral converges.
+\end{proof}
+
+% =========================================================
+% p-Series
+% =========================================================
+
+\begin{theorem}[p-Series]
+\[
+\sum_{n=1}^\infty \frac{1}{n^p}
+\]
+converges iff $p>1$.
+\end{theorem}
+
+\begin{proof}
+Apply the Integral Test to $f(x)=x^{-p}$.
+\[
+\int_1^\infty x^{-p}\,dx
+=
+\begin{cases}
+\frac{1}{p-1}, & p>1,\\
+\infty, & p\le1.
+\end{cases}
+\]
+\end{proof}
+
+% =========================================================
+% Alternating Series Test
+% =========================================================
+
+\begin{theorem}[Alternating Series Test]
+If $b_n \ge 0$, decreasing, and $b_n\to0$, then
+\[
+\sum (-1)^{n+1} b_n
+\]
+converges.
+\end{theorem}
+
+\begin{proof}
+Let $S_N$ be partial sums.
+Even and odd partial sums form monotone bounded sequences.
+
+One verifies:
+\[
+S_{2k} \le S_{2k+2},
+\qquad
+S_{2k+1} \ge S_{2k+3}.
+\]
+
+Both are bounded and converge.
+Their limits coincide since $b_n\to0$.
+\end{proof}
+
+% =========================================================
+% Dirichlet Test
+% =========================================================
+
+\begin{theorem}[Dirichlet Test]
+If
+\begin{itemize}
+\item partial sums of $\sum a_n$ are bounded,
+\item $b_n$ is monotone and $b_n\to0$,
+\end{itemize}
+then $\sum a_n b_n$ converges.
+\end{theorem}
+
+\begin{proof}
+Use summation by parts:
+\[
+\sum_{n=1}^N a_n b_n
+=
+A_N b_{N+1}
++
+\sum_{n=1}^N A_n (b_n - b_{n+1}).
+\]
+
+Since $A_n$ is bounded and $b_n\to0$,
+each term remains controlled.
+The second sum converges by comparison.
+\end{proof}
+
+% =========================================================
+% Abel Test
+% =========================================================
+
+\begin{theorem}[Abel Test]
+If $\sum a_n$ converges and $b_n$ is bounded monotone,
+then $\sum a_n b_n$ converges.
+\end{theorem}
+
+\begin{proof}
+Again use summation by parts.
+Since $A_n\to A$ and $b_n$ bounded monotone,
+each term is controlled and convergence follows.
+\end{proof}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+Hierarchy of strength:
+
+\[
+\text{Root}
+\Rightarrow
+\text{Ratio}
+\Rightarrow
+\text{Comparison}.
+\]
+
+Absolute convergence tests imply unconditional stability.
+
+Alternating / Dirichlet / Abel capture cancellation-driven convergence.
+
+\begin{remark}[Logical Core]
+All tests ultimately rely on:
+\begin{itemize}
+\item comparison,
+\item Cauchy criterion,
+\item bounded monotone convergence.
+\end{itemize}
+\end{remark}

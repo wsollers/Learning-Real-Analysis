@@ -1,0 +1,483 @@
+\subsection{Recurrence Inequalities and Iterative Control}
+
+Many arguments involving sequences and subsequences rely on
+\emph{propagating an inequality across indices}. 
+This section isolates that structure.
+
+% --------------------------------------------------------
+% General Recurrence Inequality
+% --------------------------------------------------------
+
+\begin{definition}[Recurrence Inequality]
+Let $(u_n)$ be a nonnegative sequence, i.e., $u_n \geq 0$ for all $n \geq 0$.
+We say $(u_n)$ satisfies a \emph{recurrence inequality}
+if there exists a function $T : [0,\infty) \to [0,\infty)$ such that
+\[
+u_{n+1} \le T(u_n)
+\quad \text{for all } n \ge 0.
+\]
+\end{definition}
+
+\begin{remark}
+A recurrence inequality provides \emph{local control}:
+each term is bounded in terms of the previous term.
+The main technique is to \emph{iterate} the inequality
+to obtain global control.
+\end{remark}
+
+\begin{definition}[Iterates of a Function]
+Let $T : [0,\infty) \to [0,\infty)$ be a function. The \emph{$n$-fold iterate} of $T$,
+denoted $T^n$, is defined recursively by
+\[
+T^0(x) := x, \qquad T^{n+1}(x) := T(T^n(x)).
+\]
+\end{definition}
+
+\begin{lemma}[Iterative Propagation]
+Let $(u_n)$ be a nonnegative sequence satisfying
+\[
+u_{n+1} \le T(u_n)
+\]
+for all $n \ge 0$, where $T : [0,\infty) \to [0,\infty)$ is monotone increasing.
+Then for all $n \ge 0$,
+\[
+u_n \le T^n(u_0).
+\]
+\end{lemma}
+
+\begin{proof}
+We proceed by induction on $n$.
+
+For $n = 0$, we have $u_0 \leq T^0(u_0) = u_0$, which holds trivially.
+
+Assume $u_n \le T^n(u_0)$.
+Since $T$ is monotone increasing and $u_n \geq 0$,
+\[
+u_{n+1}
+\le T(u_n)
+\le T(T^n(u_0))
+= T^{n+1}(u_0).
+\]
+This completes the induction.
+\end{proof}
+
+\begin{remark}[Structural Insight]
+The method is:
+\begin{enumerate}
+\item Extract a recurrence inequality.
+\item Iterate it (often by induction).
+\item Obtain explicit asymptotic control.
+\item Deduce convergence or Cauchy behavior.
+\end{enumerate}
+This pattern underlies contraction mapping arguments,
+geometric decay estimates, and certain subadditivity arguments.
+\end{remark}
+
+% --------------------------------------------------------
+% Specific Recurrence Types
+% --------------------------------------------------------
+
+\begin{definition}[Multiplicative Recurrence]
+A nonnegative sequence $(u_n)$ satisfies a \emph{multiplicative recurrence}
+if
+\[
+u_{n+1} \le c u_n
+\quad \text{for some } 0 < c < 1.
+\]
+\end{definition}
+
+\begin{proposition}[Multiplicative Recurrence Bound]
+If $(u_n)$ is nonnegative and satisfies $u_{n+1} \leq c u_n$ with $0 < c < 1$, then
+\[
+u_n \leq c^n u_0.
+\]
+In particular, $u_n \to 0$ as $n \to \infty$.
+\end{proposition}
+
+\begin{proof}
+Apply the Iterative Propagation Lemma with $T(x) = cx$.
+Since $T^n(x) = c^n x$, we obtain $u_n \leq c^n u_0$.
+\end{proof}
+
+\begin{definition}[Affine Recurrence]
+A nonnegative sequence $(u_n)$ satisfies an \emph{affine recurrence}
+if
+\[
+u_{n+1} \le c u_n + b
+\quad \text{for some } 0 < c < 1 \text{ and } b \ge 0.
+\]
+\end{definition}
+
+\begin{proposition}[Affine Recurrence Bound]
+If $(u_n)$ is nonnegative and satisfies $u_{n+1} \le c u_n + b$ with $0 < c < 1$ and $b \ge 0$, then
+\[
+u_n \le c^n u_0 + \frac{b(1 - c^n)}{1 - c}.
+\]
+In particular,
+\[
+\limsup_{n \to \infty} u_n \le \frac{b}{1 - c}.
+\]
+\end{proposition}
+
+\begin{proof}
+We proceed by induction on $n$.
+
+For $n = 0$, the inequality $u_0 \le u_0$ is trivial.
+
+Assume $u_n \le c^n u_0 + \frac{b(1 - c^n)}{1 - c}$. Then
+\begin{align*}
+u_{n+1} 
+&\le c u_n + b \\
+&\le c \left( c^n u_0 + \frac{b(1 - c^n)}{1 - c} \right) + b \\
+&= c^{n+1} u_0 + \frac{bc(1 - c^n)}{1 - c} + b \\
+&= c^{n+1} u_0 + \frac{bc - bc^{n+1} + b(1 - c)}{1 - c} \\
+&= c^{n+1} u_0 + \frac{b - bc^{n+1}}{1 - c} \\
+&= c^{n+1} u_0 + \frac{b(1 - c^{n+1})}{1 - c}.
+\end{align*}
+This completes the induction.
+
+Since $0 < c < 1$, we have $c^n \to 0$ as $n \to \infty$, so
+\[
+\limsup_{n \to \infty} u_n \le \frac{b}{1 - c}. \qedhere
+\]
+\end{proof}
+
+% --------------------------------------------------------
+% Discrete Grönwall Inequality
+% --------------------------------------------------------
+
+\begin{theorem}[Discrete Grönwall Inequality]
+Let $(u_n)$ and $(\beta_n)$ be nonnegative sequences satisfying
+\[
+u_n \le \alpha + \sum_{k=0}^{n-1} \beta_k u_k
+\quad \text{for all } n \ge 0,
+\]
+where $\alpha \ge 0$ is a constant. Then
+\[
+u_n \le \alpha \prod_{k=0}^{n-1} (1 + \beta_k).
+\]
+In particular,
+\[
+u_n \le \alpha \exp\left( \sum_{k=0}^{n-1} \beta_k \right).
+\]
+\end{theorem}
+
+\begin{proof}
+Define 
+\[
+S_n := \sum_{k=0}^{n-1} \beta_k u_k,
+\]
+with the convention $S_0 = 0$ (empty sum).
+
+Then $u_n \leq \alpha + S_n$ by hypothesis, and
+\[
+S_{n+1} - S_n = \beta_n u_n \leq \beta_n (\alpha + S_n).
+\]
+
+We prove by induction that $\alpha + S_n \leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k)$.
+
+For $n = 0$: $\alpha + S_0 = \alpha = \alpha \cdot (\text{empty product}) = \alpha \cdot 1$.
+
+Assume $\alpha + S_n \leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k)$. Then
+\begin{align*}
+\alpha + S_{n+1} 
+&= \alpha + S_n + \beta_n u_n \\
+&\leq \alpha + S_n + \beta_n(\alpha + S_n) \\
+&= (\alpha + S_n)(1 + \beta_n) \\
+&\leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k) \cdot (1 + \beta_n) \\
+&= \alpha \prod_{k=0}^{n}(1 + \beta_k).
+\end{align*}
+This completes the induction.
+
+Since $u_n \leq \alpha + S_n$, we have
+\[
+u_n \leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k).
+\]
+
+For the exponential bound, use $1 + x \leq e^x$ for all $x \geq 0$:
+\[
+\prod_{k=0}^{n-1}(1 + \beta_k) \leq \prod_{k=0}^{n-1} e^{\beta_k} = \exp\left(\sum_{k=0}^{n-1} \beta_k\right). \qedhere
+\]
+\end{proof}
+
+\begin{remark}[Connection to Continuous Grönwall Inequality]
+The discrete Grönwall inequality is the analogue of the continuous 
+\emph{Grönwall--Bellman inequality}: if $u : [a, b] \to \mathbb{R}$ satisfies
+\[
+u(t) \le \alpha + \int_a^t \beta(s)\, u(s)\, ds,
+\]
+with $\alpha \geq 0$ and $\beta(s) \geq 0$, then
+\[
+u(t) \le \alpha \exp\left( \int_a^t \beta(s)\, ds \right).
+\]
+This continuous version is fundamental in the theory of ordinary
+differential equations, particularly for proving uniqueness and
+continuous dependence on initial conditions.
+\end{remark}
+
+% --------------------------------------------------------
+% Subsequence Recurrence
+% --------------------------------------------------------
+
+\begin{definition}[Subsequence Recurrence]
+Let $(a_n)$ be a sequence.
+We say that a \emph{subsequence recurrence inequality}
+holds along $(a_{n_k})$ if there exists a function $T$ such that
+\[
+|a_{n_{k+1}} - a_{n_k}| \le T(|a_{n_k} - a_{n_{k-1}}|)
+\]
+for all sufficiently large $k$.
+\end{definition}
+
+\begin{remark}[Induction on Subsequence Indices]
+When verifying a property $\mathcal{P}(k)$ for all $k \in \mathbb{N}$,
+standard mathematical induction applies to the subsequence index $k$,
+regardless of the values of the original indices $n_k$.
+\end{remark}
+
+% --------------------------------------------------------
+% Terminology
+% --------------------------------------------------------
+
+\begin{definition}[Terminology]
+\begin{itemize}
+\item \textbf{Propagation:} Repeated application of a recurrence inequality.
+\item \textbf{Iterative control:} Bounding $u_n$ via repeated composition $T^n$.
+\item \textbf{Geometric decay:} Bounds of the form $u_n \le C c^n$ with $0 < c < 1$.
+\item \textbf{Telescoping argument:} Summing successive differences to control total variation.
+\item \textbf{Block decomposition:} Writing $n = qk + r$ to propagate additive bounds.
+\end{itemize}
+\end{definition}
+
+% --------------------------------------------------------
+% Subadditive and Superadditive Sequences
+% --------------------------------------------------------
+
+\begin{definition}[Subadditive Sequence]
+A sequence $(a_n)$ is \emph{subadditive} if
+\[
+a_{m+n} \le a_m + a_n
+\quad \text{for all } m, n \in \mathbb{N}.
+\]
+\end{definition}
+
+\begin{definition}[Superadditive Sequence]
+A sequence $(a_n)$ is \emph{superadditive} if
+\[
+a_{m+n} \ge a_m + a_n
+\quad \text{for all } m, n \in \mathbb{N}.
+\]
+\end{definition}
+
+\begin{remark}
+A sequence $(a_n)$ is superadditive if and only if $(-a_n)$ is subadditive.
+This duality allows results about subadditive sequences to be transferred
+to superadditive sequences by negation.
+\end{remark}
+
+\begin{theorem}[Fekete's Lemma for Subadditive Sequences]
+If $(a_n)$ is subadditive, then
+\[
+\lim_{n \to \infty} \frac{a_n}{n}
+=
+\inf_{k \ge 1} \frac{a_k}{k}.
+\]
+In particular, the limit exists (possibly equal to $-\infty$).
+\end{theorem}
+
+\begin{proof}
+Fix $k \ge 1$. For any $n \ge 1$, write $n = qk + r$ with $q \ge 0$ and $0 \le r < k$.
+
+By repeated application of subadditivity,
+\[
+a_n = a_{qk + r} \le a_{qk} + a_r \le q a_k + a_r.
+\]
+
+Divide by $n$:
+\[
+\frac{a_n}{n}
+\le
+\frac{q a_k}{n} + \frac{a_r}{n}
+=
+\frac{qk}{n} \cdot \frac{a_k}{k} + \frac{a_r}{n}.
+\]
+
+As $n \to \infty$, we have $q \to \infty$ and $\frac{qk}{n} \to 1$.
+Since $r \in \{0, 1, \ldots, k-1\}$, the value $a_r$ is bounded 
+(taking values in the finite set $\{a_0, a_1, \ldots, a_{k-1}\}$),
+so $\frac{a_r}{n} \to 0$.
+
+Taking $\limsup$,
+\[
+\limsup_{n \to \infty} \frac{a_n}{n}
+\le
+\frac{a_k}{k}.
+\]
+
+Since $k$ was arbitrary,
+\[
+\limsup_{n \to \infty} \frac{a_n}{n}
+\le
+\inf_{k \ge 1} \frac{a_k}{k}.
+\]
+
+For the reverse inequality, note that for each $n$,
+\[
+\frac{a_n}{n} \ge \inf_{k \ge 1} \frac{a_k}{k}.
+\]
+Therefore,
+\[
+\liminf_{n \to \infty} \frac{a_n}{n}
+\ge
+\inf_{k \ge 1} \frac{a_k}{k}.
+\]
+
+Combining both inequalities, the limit exists and equals the infimum.
+\end{proof}
+
+\begin{theorem}[Fekete's Lemma for Superadditive Sequences]
+If $(a_n)$ is superadditive, then
+\[
+\lim_{n \to \infty} \frac{a_n}{n}
+=
+\sup_{k \ge 1} \frac{a_k}{k}.
+\]
+In particular, the limit exists (possibly equal to $+\infty$).
+\end{theorem}
+
+\begin{proof}
+If $(a_n)$ is superadditive, then $(-a_n)$ is subadditive.
+By Fekete's lemma for subadditive sequences,
+\[
+\lim_{n \to \infty} \frac{-a_n}{n}
+=
+\inf_{k \ge 1} \frac{-a_k}{k}
+=
+-\sup_{k \ge 1} \frac{a_k}{k}.
+\]
+Negating both sides yields the result.
+\end{proof}
+
+% --------------------------------------------------------
+% Contraction Example
+% --------------------------------------------------------
+
+\begin{example}[Contraction-Type Recurrence]
+Suppose $(x_n)$ satisfies
+\[
+|x_{n+1} - x_n|
+\le
+c |x_n - x_{n-1}|
+\quad \text{for all } n \ge 1,
+\]
+where $0 < c < 1$.
+\end{example}
+
+\begin{proposition}
+If $(x_n)$ satisfies a contraction-type recurrence with $0 < c < 1$,
+then $(x_n)$ is Cauchy.
+\end{proposition}
+
+\begin{proof}
+By repeated application of the recurrence,
+\[
+|x_{n+1} - x_n|
+\le
+c^n |x_1 - x_0|.
+\]
+
+For $m > n$, by the triangle inequality and telescoping,
+\[
+|x_m - x_n|
+\le
+\sum_{k=n}^{m-1} |x_{k+1} - x_k|
+\le
+|x_1 - x_0| \sum_{k=n}^{m-1} c^k
+\le
+|x_1 - x_0| \sum_{k=n}^{\infty} c^k
+=
+\frac{|x_1 - x_0|}{1 - c} \cdot c^n.
+\]
+
+As $n \to \infty$, this bound tends to $0$, so $(x_n)$ is Cauchy.
+\end{proof}
+
+% --------------------------------------------------------
+% Subsequence Contraction Example
+% --------------------------------------------------------
+
+\begin{example}[Contraction Along a Subsequence]
+Suppose $(a_{n_k})$ is a subsequence satisfying
+\[
+|a_{n_{k+1}} - a_{n_k}|
+\le
+c |a_{n_k} - a_{n_{k-1}}|
+\quad \text{for all } k \ge 1,
+\]
+where $0 < c < 1$.
+\end{example}
+
+\begin{proposition}
+If $(a_{n_k})$ satisfies a contraction-type recurrence with $0 < c < 1$,
+then $(a_{n_k})$ is Cauchy.
+\end{proposition}
+
+\begin{proof}
+By induction on $k$,
+\[
+|a_{n_{k+1}} - a_{n_k}|
+\le
+c^k |a_{n_1} - a_{n_0}|.
+\]
+
+For $m > k$,
+\[
+|a_{n_m} - a_{n_k}|
+\le
+\sum_{j=k}^{m-1} |a_{n_{j+1}} - a_{n_j}|
+\le
+|a_{n_1} - a_{n_0}| \sum_{j=k}^{m-1} c^j
+\le
+|a_{n_1} - a_{n_0}| \sum_{j=k}^{\infty} c^j
+=
+\frac{|a_{n_1} - a_{n_0}|}{1 - c} \cdot c^k.
+\]
+
+Since $c^k \to 0$ as $k \to \infty$,
+\[
+|a_{n_m} - a_{n_k}| \to 0
+\quad \text{as } k \to \infty.
+\]
+Therefore $(a_{n_k})$ is Cauchy.
+\end{proof}
+
+% --------------------------------------------------------
+% Structural Summary
+% --------------------------------------------------------
+
+\begin{remark}[Unifying Structure]
+The results in this section share a common logical structure:
+\[
+\text{Local inequality}
+\;\Longrightarrow\;
+\text{Iterated bound}
+\;\Longrightarrow\;
+\text{Explicit asymptotic control}
+\;\Longrightarrow\;
+\text{Tail property}.
+\]
+\end{remark}
+
+\begin{remark}[Hierarchy of Recurrence Types]
+The section develops the following hierarchy:
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Type} & \textbf{Key Result} \\
+\hline
+Multiplicative ($u_{n+1} \leq c u_n$) & Geometric decay: $u_n \leq c^n u_0$ \\
+Affine ($u_{n+1} \leq c u_n + b$) & Bounded limit: $\limsup u_n \leq \frac{b}{1-c}$ \\
+Subadditive ($a_{m+n} \leq a_m + a_n$) & Fekete: $\lim \frac{a_n}{n} = \inf \frac{a_k}{k}$ \\
+Discrete integral ($u_n \leq \alpha + \sum \beta_k u_k$) & Grönwall: $u_n \leq \alpha \exp(\sum \beta_k)$ \\
+\end{tabular}
+\end{center}
+\end{remark}
