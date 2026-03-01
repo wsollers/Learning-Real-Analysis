@@ -15,31 +15,38 @@ Propositional Logic
 $\;\to\;$ Predicate Calculus
 $\;\to\;$ Sets \& Functions
 $\;\to\;$ Proof Techniques
-$\;\to\;$ \textbf{Axiom Systems \& Natural Numbers}
-$\;\to\;$ Intro to Algebraic Structures
-$\;\to\;$ Real Line Foundations
+$\;\to\;$ \textbf{Axiom Systems}
+$\;\to\;$ Natural Numbers ($\mathbb{N}$)
+$\;\to\;$ $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$
 $\;\to\;$ $\cdots$
 \end{center}
 
 \medskip
 \noindent\textbf{How we got here.}
-Proof techniques gave us the tools to reason rigorously.
-We now apply those tools to build $\mathbb{N}$ from scratch,
-starting from five axioms and nothing else.
+Proof techniques gave us the tools to reason rigorously --- direct proof,
+contradiction, induction.
+We now turn those tools on mathematics itself: can we build the natural
+numbers from nothing but logical axioms?
+This chapter answers yes.
 
 \medskip
 \noindent\textbf{What this chapter builds.}
-We follow Tao's \emph{Analysis I}, Chapter~2.
-We lay down the Peano axioms, define addition and multiplication
-by recursion, and prove every property of arithmetic that is
-normally assumed without justification.
+We lay down the five Peano axioms, which pin down the structure
+of zero and the successor function.
+We verify that small numerals ($1, 2, 3, \ldots$) exist, confirm
+that the axioms rule out pathological models, and prove the
+Recursion Theorem --- the logical guarantee that recursive
+definitions actually produce well-defined functions.
+These are the \emph{logical primitives}: the minimum needed for
+$\mathbb{N}$ to exist.
 
 \medskip
 \noindent\textbf{Where this leads.}
-The integers $\mathbb{Z}$, rationals $\mathbb{Q}$, and reals $\mathbb{R}$
-are all constructed from $\mathbb{N}$ by successively adjoining
-inverses and completing. Every algebraic structure built later
-inherits the patterns established here.
+Volume~II, Natural Numbers takes over immediately: it uses the Peano
+axioms and the Recursion Theorem as its foundation and builds the full
+arithmetic of $\mathbb{N}$ --- addition, order, multiplication, and
+exponentiation --- from scratch.
+Nothing from that development is assumed here.
 \end{tcolorbox}
 \vspace{1em}
 
@@ -48,30 +55,43 @@ inherits the patterns established here.
 % =========================================================
 \subsection*{Structural Roadmap}
 
-The development follows Tao's axiomatic construction of $\mathbb{N}$
-from the ground up. The architecture is:
+This chapter covers the \emph{logical skeleton} of $\mathbb{N}$ only.
+Arithmetic (addition, order, multiplication, exponentiation) lives in
+\textbf{Volume~II, Natural Numbers}.
 
 \begin{center}
-\textbf{Axioms $\longrightarrow$ Definitions $\longrightarrow$
-Lemmas $\longrightarrow$ Propositions $\longrightarrow$ Corollaries}
+\textbf{Axioms $\longrightarrow$ Numerals
+$\longrightarrow$ Induction principle $\longrightarrow$ Recursion theorem}
 \end{center}
-
-Nothing is assumed; every fact must be derived from what precedes it.
-The available toolkit at each step is exactly what has been proved so far.
 
 The global progression is:
 \begin{enumerate}
-  \item Peano axioms: the logical skeleton of $\mathbb{N}$
-  \item Addition: defined recursively, all properties proved
-  \item Order: defined via addition, full trichotomy proved
-  \item Multiplication: defined recursively, distributive law proved
+  \item \textbf{Peano axioms} (P1--P5): the five axioms that characterise
+        $\mathbb{N}$ up to isomorphism. Includes the induction axiom
+        and a discussion of what the axioms exclude.
+  \item \textbf{Numerals}: defining $1 := 0\pp$, $2 := 1\pp$, \ldots{}
+        and verifying they are distinct natural numbers.
+  \item \textbf{Recursion theorem} (Tao Prop.~2.1.16):
+        for any set $X$, base value $a \in X$, and function $f : X \to X$,
+        there exists a unique $g : \mathbb{N} \to X$ satisfying
+        $g(0) = a$ and $g(n\pp) = f(g(n))$.
+        This theorem is what makes recursive \emph{definitions} legitimate.
 \end{enumerate}
 
 \vspace{1em}
+
+\begin{remark}[Scope boundary]
+The Peano axioms tell us $\mathbb{N}$ \emph{exists} and has the right
+logical shape. The Recursion Theorem tells us recursive definitions
+are \emph{valid}. Everything else --- what $\mathbb{N}$ can \emph{do}
+arithmetically --- is in Volume~II.
+\end{remark}
+
+\begin{remark}[Primary source]
+Tao, \textit{Analysis~I}, Chapter~2, §2.1.
+\end{remark}
 
 % =========================================================
 % Content
 % =========================================================
 \input{volume-i/axiom-systems/notes/peano/index}
-\input{volume-i/axiom-systems/notes/addition/index}
-\input{volume-i/axiom-systems/notes/multiplication/index}
