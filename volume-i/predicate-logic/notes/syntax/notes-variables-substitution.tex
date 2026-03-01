@@ -1,0 +1,204 @@
+% =========================================================
+% Free and Bound Variables; Substitution
+% =========================================================
+
+\subsection{Syntax: Free Variables, Bound Variables, and Substitution}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Variables and Substitution — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Scope of a quantifier  & Formula governed by the quantifier  & \hyperref[def:scope]{↓ Def} \\
+Bound/free occurrence  & Whether $x$ is captured by a quantifier & \hyperref[def:bound-free]{↓ Def} \\
+Free variable $\mathrm{FV}(\varphi)$ & Variables whose values affect truth & \hyperref[def:fv]{↓ Def} \\
+Sentence               & Formula with $\mathrm{FV}(\varphi)=\varnothing$ & \hyperref[def:sentence]{↓ Def} \\
+Substitution $\varphi[t/x]$ & Replace free $x$ by term $t$      & \hyperref[def:subst-notation]{↓ Def} \\
+Free for substitution  & No variable in $t$ becomes bound    & \hyperref[def:free-for]{↓ Def} \\
+Alpha-equivalence      & Renaming bound variables             & \hyperref[def:alpha-equiv]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Scope
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Scope of a Quantifier)}},
+  fonttitle=\small\bfseries]
+\label{def:scope}
+Let $\varphi$ be a formula of a first-order language.
+
+If $\varphi$ is of the form $\forall x\,\psi$ or $\exists x\,\psi$, then the
+formula $\psi$ is called the \emph{scope} of the quantifier.
+
+The quantifier is said to \emph{bind} all occurrences of the variable $x$ that
+appear within its scope.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+The scope is the reach of a quantifier — the subformula it governs. Scope is
+syntactically determined by the parenthesisation of the formula, not by
+proximity to the quantifier symbol.
+\end{remark}
+
+\begin{example}
+In $(\forall x\,P(x)) \wedge Q(x)$, the scope of $\forall x$ is $P(x)$ only.
+The occurrence of $x$ in $Q(x)$ falls outside the scope and is free.
+\end{example}
+
+% ---------------------------------------------------------
+% Bound and Free Occurrences
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bound and Free Occurrences)}},
+  fonttitle=\small\bfseries]
+\label{def:bound-free}
+An occurrence of a variable $x$ in a formula $\varphi$ is \emph{bound} if it
+lies within the scope of a quantifier $\forall x$ or $\exists x$.
+
+An occurrence of $x$ is \emph{free} if it is not bound by any quantifier in
+$\varphi$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+The same variable can have both bound and free occurrences in a single formula.
+Each occurrence is classified independently by checking whether it falls within
+the scope of a binding quantifier.
+\end{remark}
+
+% ---------------------------------------------------------
+% Free Variables FV(φ)
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Free Variables of a Formula)}},
+  fonttitle=\small\bfseries]
+\label{def:fv}
+The set $\mathrm{FV}(\varphi)$ of \emph{free variables} of a formula $\varphi$
+is defined recursively:
+\begin{enumerate}
+  \item If $\varphi = P(t_1,\dots,t_n)$ is atomic, then
+  $\mathrm{FV}(\varphi) = \bigcup_{i=1}^n \mathrm{Var}(t_i)$,
+  where $\mathrm{Var}(t_i)$ is the set of variables in term $t_i$.
+
+  \item $\mathrm{FV}(\neg \varphi) = \mathrm{FV}(\varphi)$.
+
+  \item $\mathrm{FV}(\varphi \circ \psi) = \mathrm{FV}(\varphi) \cup \mathrm{FV}(\psi)$
+  for any binary connective $\circ$.
+
+  \item $\mathrm{FV}(\forall x\,\varphi) = \mathrm{FV}(\varphi) \setminus \{x\}$.
+
+  \item $\mathrm{FV}(\exists x\,\varphi) = \mathrm{FV}(\varphi) \setminus \{x\}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+$\mathrm{FV}(\varphi)$ collects exactly those variables whose values can
+influence the truth of $\varphi$ under a structure. Quantifying over $x$
+removes $x$ from the free set because the quantifier takes responsibility for
+ranging over all (or some) values of $x$.
+\end{remark}
+
+\begin{remark}[Common error]
+Terms themselves contain only free variables. Variables become bound only
+through quantification in formulas. The interpretation of a formula depends
+exactly on the values assigned to its free variables.
+\end{remark}
+
+% ---------------------------------------------------------
+% Sentence
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Sentence)}},
+  fonttitle=\small\bfseries]
+\label{def:sentence}
+A \emph{sentence} (or \emph{closed formula}) is a formula with no free variables.
+
+Formally, $\varphi$ is a sentence if and only if $\mathrm{FV}(\varphi) = \varnothing$.
+\end{tcolorbox}
+
+\begin{remark}[Consequence]
+For sentences, truth depends only on the structure, not on the variable
+assignment. This makes sentences the natural objects to be called true or false
+in a model, without qualification.
+\end{remark}
+
+% ---------------------------------------------------------
+% Substitution Notation
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Substitution Notation)}},
+  fonttitle=\small\bfseries]
+\label{def:subst-notation}
+Let $\varphi$ be a formula, $x$ a variable, and $t$ a term.
+
+The expression $\varphi[t/x]$ denotes the formula obtained from $\varphi$ by
+replacing every \emph{free} occurrence of $x$ with the term $t$, leaving bound
+occurrences of $x$ unchanged.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Free for Substitution
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Free for Substitution)}},
+  fonttitle=\small\bfseries]
+\label{def:free-for}
+A term $t$ is \emph{free for} $x$ in $\varphi$ if no free occurrence of $x$ in
+$\varphi$ lies within the scope of a quantifier $\forall y$ or $\exists y$
+where $y$ is a variable occurring in $t$.
+
+Equivalently, $t$ is free for $x$ in $\varphi$ if the substitution $\varphi[t/x]$
+does not result in any variable in $t$ becoming bound.
+\end{tcolorbox}
+
+\begin{remark}[Capture-avoiding substitution]
+A substitution $\varphi[t/x]$ is admissible only if $t$ is free for $x$ in
+$\varphi$. If this condition is violated, a variable occurring in $t$ may
+become bound after substitution, silently changing the meaning of the formula.
+This is called \emph{variable capture}.
+\end{remark}
+
+\begin{remark}[Common error]
+Variable capture is one of the most common syntactic mistakes in predicate
+logic. Always check that the term being substituted introduces no variables that
+fall inside a binding quantifier in the target formula.
+\end{remark}
+
+% ---------------------------------------------------------
+% Alpha-Equivalence
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Alpha-Equivalence)}},
+  fonttitle=\small\bfseries]
+\label{def:alpha-equiv}
+Formulas that differ only by the names of bound variables are logically
+equivalent. This is called \emph{alpha-equivalence} (or \emph{alphabetic
+variance}):
+\[
+\forall x\,\varphi \;\equiv\; \forall y\,\varphi[y/x]
+\quad\text{(provided $y$ is not free in $\varphi$).}
+\]
+\end{tcolorbox}
+
+\begin{remark}[Consequence]
+Alpha-equivalence is the formal basis for the bound variable renaming used
+in prenex normal form conversion and in any proof where variable capture must
+be avoided. Two alpha-equivalent formulas are interchangeable in all contexts.
+\end{remark}

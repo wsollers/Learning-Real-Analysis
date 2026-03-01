@@ -1,0 +1,105 @@
+% =========================================================
+% Prenex Normal Form
+% =========================================================
+
+\subsection{Quantifiers: Prenex Normal Form}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Prenex Normal Form — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Prenex normal form (PNF) & All quantifiers at front, quantifier-free matrix & \hyperref[def:pnf]{↓ Def} \\
+PNF Theorem & Every formula is equivalent to a PNF formula & \hyperref[thm:pnf]{↓ Thm} \\
+Quantifier-pulling rules & Equivalences for extracting quantifiers & \hyperref[def:pnf]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Prenex Normal Form
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Prenex Normal Form)}},
+  fonttitle=\small\bfseries]
+\label{def:pnf}
+A first-order formula is in \emph{prenex normal form} (PNF) if it has the shape
+\[
+Q_1 x_1\, Q_2 x_2 \cdots Q_n x_n \;\; \psi,
+\]
+where each $Q_i \in \{\forall,\exists\}$ and $\psi$ is quantifier-free. The
+string $Q_1 x_1 \cdots Q_n x_n$ is the \emph{quantifier prefix}; $\psi$ is
+the \emph{matrix}.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% PNF Theorem
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Prenex Normal Form Theorem)}},
+  fonttitle=\small\bfseries]
+\label{thm:pnf}
+Every first-order formula is logically equivalent to a formula in prenex normal
+form.
+\end{tcolorbox}
+
+\begin{remark}[Proof strategy — conversion procedure]
+Given a formula $\varphi$, the following four steps produce an equivalent PNF:
+\begin{enumerate}
+  \item \textbf{Eliminate $\leftrightarrow$ and $\rightarrow$.}
+  Rewrite using only $\neg,\wedge,\vee$:
+  $(A \rightarrow B) \equiv (\neg A \vee B)$.
+  \item \textbf{Push negations inward (Negation Normal Form).}
+  Use De Morgan's laws and quantifier-negation laws until $\neg$ applies only
+  to atomic formulas.
+  \item \textbf{Standardize bound variables apart.}
+  Rename bound variables so that no variable is quantified twice and no bound
+  variable coincides with any free variable.
+  \item \textbf{Pull quantifiers outward.}
+  Apply the quantifier-pulling equivalences (below) to move all quantifiers
+  to the front.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Quantifier-pulling equivalences]
+The following hold when $x \notin \mathrm{FV}(\psi)$:
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{ll}
+\toprule
+\textbf{Equivalence} & \textbf{Side condition} \\
+\midrule
+$(\forall x\,\phi)\wedge \psi \equiv \forall x\,(\phi\wedge \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
+$(\exists x\,\phi)\vee \psi \equiv \exists x\,(\phi\vee \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
+$(\forall x\,\phi)\vee \psi \equiv \forall x\,(\phi\vee \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
+$(\exists x\,\phi)\wedge \psi \equiv \exists x\,(\phi\wedge \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{remark}
+
+\begin{example}[PNF conversion]
+Normalize $\varphi := \neg\bigl(\forall x\,P(x) \rightarrow \exists y\,Q(y)\bigr)$.
+
+\textbf{Step 1 (eliminate $\rightarrow$):}
+$\varphi \equiv \neg\bigl(\neg\forall x\,P(x) \vee \exists y\,Q(y)\bigr)$.
+
+\textbf{Step 2 (push $\neg$ inward):}
+$\varphi \equiv (\forall x\,P(x)) \wedge (\forall y\,\neg Q(y))$.
+
+\textbf{Step 3 (standardize apart):} Variables are already distinct.
+
+\textbf{Step 4 (pull quantifiers outward):}
+$\varphi \equiv \forall x\,\forall y\,(P(x) \wedge \neg Q(y))$.
+\end{example}
