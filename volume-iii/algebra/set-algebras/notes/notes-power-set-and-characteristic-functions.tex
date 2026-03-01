@@ -1,0 +1,138 @@
+% =========================================================
+% The Power Set and Characteristic Functions
+% =========================================================
+
+\subsection{The Power Set and Characteristic Functions}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Power Set and Characteristic Functions --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Power set $2^X$          & All subsets of $X$; $|2^X| = 2^{|X|}$                        & \hyperref[def:power-set-alg]{↓ Def} \\
+Characteristic function  & $\chi_A : X \to \{0,1\}$; encodes membership in $A$          & \hyperref[def:char-fn]{↓ Def} \\
+$2^X \cong \{0,1\}^X$   & Bijection $A \mapsto \chi_A$                                  & \hyperref[prop:power-set-bij]{↓ Prop} \\
+Boolean ring structure   & $(2^X, \triangle, \cap)$ is a Boolean ring                    & \hyperref[prop:boolean-ring]{↓ Prop} \\
+$\mathbb{F}_2$-vector space & $(2^X, \triangle)$ is a vector space over $\mathbb{F}_2$ & \hyperref[prop:f2-vecspace]{↓ Prop} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Power set
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Power Set)}},
+  fonttitle=\small\bfseries]
+\label{def:power-set-alg}
+The \emph{power set} of $X$ is
+\[
+2^X \;:=\; \{\, A \mid A \subseteq X \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Cardinality]
+The notation $2^X$ reflects the identity $|2^X| = 2^{|X|}$ for finite $X$:
+each element of $X$ independently either belongs to a subset (1) or does not
+(0), giving $2^{|X|}$ binary choices in total. For infinite $X$, the same
+exponential notation is retained and $2^X$ denotes the cardinal power.
+\end{remark}
+
+% ---------------------------------------------------------
+% Characteristic functions
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Characteristic Function)}},
+  fonttitle=\small\bfseries]
+\label{def:char-fn}
+Let $A \subseteq X$. The \emph{characteristic function} (or
+\emph{indicator function}) of $A$ is the function
+$\chi_A : X \to \{0,1\}$ defined by
+\[
+\chi_A(x) \;:=\;
+\begin{cases}
+1 & \text{if } x \in A, \\
+0 & \text{if } x \notin A.
+\end{cases}
+\]
+\end{tcolorbox}
+
+\begin{proposition}[Identification of subsets with functions]\label{prop:power-set-bij}
+The map $A \mapsto \chi_A$ is a bijection
+\[
+2^X \;\xrightarrow{\;\sim\;}\; \{0,1\}^X.
+\]
+Consequently, subsets of $X$ and functions from $X$ to $\{0,1\}$ are
+in exact correspondence.
+\end{proposition}
+
+\begin{proof}
+\emph{Injective:} If $\chi_A = \chi_B$, then for every $x \in X$,
+$\chi_A(x) = \chi_B(x)$, which means $x \in A \iff x \in B$, so $A = B$.
+
+\emph{Surjective:} Given any $f : X \to \{0,1\}$, the set
+$A := f^{-1}(\{1\}) = \{x \in X : f(x) = 1\}$ satisfies $\chi_A = f$.
+\end{proof}
+
+\begin{remark}[Functional perspective]
+This bijection means we can study subsets of $X$ as functions, and
+vice versa. The set-theoretic operations then correspond to pointwise
+arithmetic: $\chi_{A \cup B} = \max(\chi_A, \chi_B)$,
+$\chi_{A \cap B} = \min(\chi_A, \chi_B) = \chi_A \cdot \chi_B$, and
+$\chi_{A^c} = 1 - \chi_A$. The symmetric difference corresponds to
+addition modulo 2: $\chi_{A \triangle B} = \chi_A + \chi_B \pmod{2}$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Algebraic structure
+% ---------------------------------------------------------
+
+\begin{proposition}[Boolean ring structure on $2^X$]\label{prop:boolean-ring}
+The power set $(2^X, \triangle, \cap)$, with symmetric difference as
+addition and intersection as multiplication, is a \emph{Boolean ring}:
+a commutative ring in which every element is idempotent ($A \cap A = A$).
+\end{proposition}
+
+\begin{proof}
+One verifies the ring axioms directly. Symmetric difference is associative
+and commutative, $\varnothing$ is the additive identity, and every element
+is its own additive inverse ($A \triangle A = \varnothing$). Intersection
+distributes over $\triangle$ and is associative and commutative with
+identity $X$. Idempotency $A \cap A = A$ holds by definition of intersection.
+\end{proof}
+
+\begin{proposition}[$\mathbb{F}_2$-vector space structure on $2^X$]\label{prop:f2-vecspace}
+The power set $(2^X, \triangle)$, with scalar multiplication defined by
+$0 \cdot A = \varnothing$ and $1 \cdot A = A$, is a vector space over
+the two-element field $\mathbb{F}_2 = \{0,1\}$.
+\end{proposition}
+
+\begin{remark}[Consequence]
+This vector space structure means any family of subsets closed under
+$\triangle$ and containing $\varnothing$ is a subspace of $2^X$ over
+$\mathbb{F}_2$. Characteristic functions are then the natural coordinate
+vectors, and the Boolean operations become linear-algebraic operations.
+This bridge between set theory and linear algebra reappears whenever
+one needs to decompose or represent families of measurable sets.
+\end{remark}
+
+\begin{remark}[Transition]
+The full power set $2^X$ is itself a $\sigma$-algebra --- the largest one
+on $X$. Every $\sigma$-algebra on $X$ is a sub-$\sigma$-algebra of $2^X$,
+just as every subspace of a vector space sits inside the ambient space.
+This ambient structure makes $2^X$ the natural starting point for
+constructing the Borel $\sigma$-algebra in measure theory.
+\end{remark}

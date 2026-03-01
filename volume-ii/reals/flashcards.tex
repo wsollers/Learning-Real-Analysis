@@ -1,0 +1,1622 @@
+% =========================================================
+% APPENDIX — Avery 5388 (3"x5") Flashcards (3-up)
+% Purpose-built, robust, fronts-first then backs (manual refeed)
+%
+% Avery 5388: 3 cards per letter sheet (portrait), stacked top/middle/bottom.
+% This engine:
+%   - stores cards
+%   - prints ALL fronts first (3 per page)
+%   - then prints ALL backs (3 per page)
+%   - supports back rotation + order swapping for calibration
+%   - provides a math wrapper for long quantified forms (aligned line breaks)
+%
+% Paste into your Journey appendix (NOT a standalone document).
+% Requires in preamble:
+%   \usepackage{tikz}
+%   \usetikzlibrary{calc}
+%   \usepackage{enumitem}
+%   \usepackage{amsmath}   % for aligned
+%
+% MANUAL REFEED INSTRUCTIONS (flip on long edge):
+%   BackRotation = 180, BackOrderMode = 1
+%   This reverses top<->bot so card 1's back aligns behind card 1's front.
+%   If your printer flips on short edge instead, set BackOrderMode = 0.
+% =========================================================
+
+\clearpage
+
+\section{Flashcards --- Real Line Foundations (Avery 5388)}
+\label{app:flashcards-real-line-foundations}
+
+\makeatletter
+% Choose: fronts / backs / both
+\newcommand{\FC@PrintMode}{both}
+
+% =========================================================
+% (A) Avery 5388 Geometry (tune these if printer shifts)
+% =========================================================
+\newlength{\FC@CardW}\setlength{\FC@CardW}{5in}
+\newlength{\FC@CardH}\setlength{\FC@CardH}{3in}
+\newlength{\FC@InnerW}\setlength{\FC@InnerW}{4.80in}
+\newlength{\FC@InnerH}\setlength{\FC@InnerH}{2.80in}
+
+% Horizontal placement: center the 5" card on 8.5" paper.
+\newlength{\FC@XShift}\setlength{\FC@XShift}{0pt}
+
+% Vertical offsets: distance from TOP of page to TOP edge of each card.
+% Adjust by small amounts (0.03in steps) if cards land slightly off.
+\newlength{\FC@TopY}\setlength{\FC@TopY}{0.55in}
+\newlength{\FC@MidY}\setlength{\FC@MidY}{3.95in}
+\newlength{\FC@BotY}\setlength{\FC@BotY}{7.35in}
+
+% =========================================================
+% (B) Back-side calibration controls
+% =========================================================
+% For manual refeed, flip the paper on the LONG edge (portrait orientation).
+% BackRotation=180 + BackOrderMode=1 reverses top<->bot so backs align.
+% If your backs are all aligned but upside-down, use BackOrderMode=0.
+\newcommand{\FC@BackRotation}{180}
+\newcommand{\FC@BackOrderMode}{0}
+
+% =========================================================
+% (C) Card rendering helpers
+% =========================================================
+\newcommand{\FC@PlaceCard}[3]{%
+  % #1 = y-shift (TopY/MidY/BotY)
+  % #2 = rotation (0 for fronts, 180 for backs)
+  % #3 = content
+  % When rotation=180 we use anchor=south so the card extends downward
+  % from the placement point (matching the unrotated anchor=north behavior).
+  \def\FC@anchor{north}%
+  \ifnum#2=180\relax \def\FC@anchor{south}\fi
+  \node[
+    draw,
+    rounded corners=3pt,
+    line width=0.4pt,
+    anchor=\FC@anchor,
+    minimum width=\FC@CardW,
+    minimum height=\FC@CardH,
+    inner sep=0pt,
+    rotate=#2
+  ] at ([xshift=\FC@XShift,yshift=-#1]current page.north) {%
+    \begin{minipage}[t][\FC@CardH]{\FC@CardW}%
+      \setlength{\parskip}{0pt}%
+      \setlength{\parindent}{0pt}%
+      \hspace{0.10in}%
+      \begin{minipage}[t][\FC@InnerH]{\FC@InnerW}%
+        \vspace{0.10in}%
+        \footnotesize
+        #3%
+      \end{minipage}%
+    \end{minipage}%
+  };
+}
+
+% Front face: centered, large bold term label (A deck)
+\newcommand{\FC@FrontFace}[1]{%
+  \begin{minipage}[c][\FC@InnerH][c]{\FC@InnerW}%
+    \centering
+    {\Large\bfseries #1}%
+  \end{minipage}%
+}
+
+% Front face for B deck: formula-centered, footnotesize, vertically centered.
+% IMPORTANT: do NOT use \FCQ (display math \[...\]) here — it breaks inside
+% \gdef expansion in tikz nodes. Instead use \begin{displaymath}...\end{displaymath}
+% with explicit \footnotesize and spacing control.
+\newcommand{\FC@FrontFaceB}[1]{%
+  \begin{minipage}[c][\FC@CardH][c]{\FC@CardW}%
+    \setlength{\parskip}{0pt}%
+    \setlength{\parindent}{0pt}%
+    \footnotesize\centering
+    #1%
+  \end{minipage}%
+}
+
+% \FCQB — like \FCQ but safe for use inside B-deck front faces.
+% Uses displaymath + zero display skips.
+\newcommand{\FCQB}[1]{%
+  \begingroup
+  \setlength{\abovedisplayskip}{2pt}%
+  \setlength{\belowdisplayskip}{2pt}%
+  \setlength{\abovedisplayshortskip}{0pt}%
+  \setlength{\belowdisplayshortskip}{0pt}%
+  \begin{displaymath}
+  \begin{aligned}
+  #1
+  \end{aligned}
+  \end{displaymath}%
+  \endgroup
+}
+
+% \NewFlashcardB{FORMULA FRONT}{BACK CONTENT}
+% Like \NewFlashcard but uses \FC@FrontFaceB for the front.
+\newcommand{\NewFlashcardB}[2]{%
+  \advance\FC@slot by 1\relax
+  \ifnum\FC@slot=1\relax
+    \gdef\FC@FOne{\FC@FrontFaceB{#1}}%
+    \gdef\FC@BOne{#2}%
+  \else\ifnum\FC@slot=2\relax
+    \gdef\FC@FTwo{\FC@FrontFaceB{#1}}%
+    \gdef\FC@BTwo{#2}%
+  \else
+    \gdef\FC@FThree{\FC@FrontFaceB{#1}}%
+    \gdef\FC@BThree{#2}%
+    \begingroup
+      \edef\FC@tmpFront{%
+        \noexpand\g@addto@macro\noexpand\FC@FrontPages{%
+          \noexpand\FC@EmitFrontPage
+          {\unexpanded\expandafter{\FC@FOne}}%
+          {\unexpanded\expandafter{\FC@FTwo}}%
+          {\unexpanded\expandafter{\FC@FThree}}%
+        }%
+      }%
+      \FC@tmpFront
+    \endgroup
+    \begingroup
+      \edef\FC@tmpBack{%
+        \noexpand\g@addto@macro\noexpand\FC@BackPages{%
+          \noexpand\FC@EmitBackPage
+          {\unexpanded\expandafter{\FC@BOne}}%
+          {\unexpanded\expandafter{\FC@BTwo}}%
+          {\unexpanded\expandafter{\FC@BThree}}%
+        }%
+      }%
+      \FC@tmpBack
+    \endgroup
+    \FC@slot=0\relax
+  \fi\fi
+}
+
+% A compact wrapper for long quantified displays with good line breaks.
+% Use inside card backs. \abovedisplayskip etc. reduced for tight card layout.
+\newcommand{\FCQ}[1]{%
+  \begingroup
+  \setlength{\abovedisplayskip}{1pt}%
+  \setlength{\belowdisplayskip}{1pt}%
+  \setlength{\abovedisplayshortskip}{0pt}%
+  \setlength{\belowdisplayshortskip}{0pt}%
+  \[
+  \begin{aligned}
+  #1
+  \end{aligned}
+  \]
+  \endgroup
+}
+\newcommand{\FCindent}{\qquad}
+
+% =========================================================
+% (D) Storage and page accumulation (freeze at append-time)
+% =========================================================
+\newcommand{\FC@FrontPages}{}%
+\newcommand{\FC@BackPages}{}%
+
+% Buffer three cards
+\newcommand{\FC@FOne}{} \newcommand{\FC@FTwo}{} \newcommand{\FC@FThree}{}%
+\newcommand{\FC@BOne}{} \newcommand{\FC@BTwo}{} \newcommand{\FC@BThree}{}%
+\newcount\FC@slot \FC@slot=0
+
+\newcommand{\FC@EmitFrontPage}[3]{%
+  \clearpage
+  \thispagestyle{empty}
+  \begin{tikzpicture}[remember picture,overlay]
+    \FC@PlaceCard{\FC@TopY}{0}{#1}
+    \FC@PlaceCard{\FC@MidY}{0}{#2}
+    \FC@PlaceCard{\FC@BotY}{0}{#3}
+  \end{tikzpicture}%
+}
+
+\newcommand{\FC@EmitBackPage}[3]{%
+  \clearpage
+  \thispagestyle{empty}
+  \begin{tikzpicture}[remember picture,overlay]
+    % BackOrderMode:
+    % 0 = same order (1,2,3) — for flip on short edge
+    % 1 = reversed  (3,2,1) — for flip on long edge (STANDARD for portrait refeed)
+    % 2 = rotated   (2,3,1)
+    \ifnum\FC@BackOrderMode=1\relax
+      \FC@PlaceCard{\FC@TopY}{\FC@BackRotation}{#3}%
+      \FC@PlaceCard{\FC@MidY}{\FC@BackRotation}{#2}%
+      \FC@PlaceCard{\FC@BotY}{\FC@BackRotation}{#1}%
+    \else\ifnum\FC@BackOrderMode=2\relax
+      \FC@PlaceCard{\FC@TopY}{\FC@BackRotation}{#2}%
+      \FC@PlaceCard{\FC@MidY}{\FC@BackRotation}{#3}%
+      \FC@PlaceCard{\FC@BotY}{\FC@BackRotation}{#1}%
+    \else
+      \FC@PlaceCard{\FC@TopY}{\FC@BackRotation}{#1}%
+      \FC@PlaceCard{\FC@MidY}{\FC@BackRotation}{#2}%
+      \FC@PlaceCard{\FC@BotY}{\FC@BackRotation}{#3}%
+    \fi\fi
+  \end{tikzpicture}%
+}
+
+% Public API: \NewFlashcard{FRONT TERM}{BACK DEFINITION}
+\newcommand{\NewFlashcard}[2]{%
+  \advance\FC@slot by 1\relax
+  \ifnum\FC@slot=1\relax
+    \gdef\FC@FOne{\FC@FrontFace{#1}}%
+    \gdef\FC@BOne{#2}%
+  \else\ifnum\FC@slot=2\relax
+    \gdef\FC@FTwo{\FC@FrontFace{#1}}%
+    \gdef\FC@BTwo{#2}%
+  \else
+    \gdef\FC@FThree{\FC@FrontFace{#1}}%
+    \gdef\FC@BThree{#2}%
+    % Freeze current triple into the page streams
+    \begingroup
+      \edef\FC@tmpFront{%
+        \noexpand\g@addto@macro\noexpand\FC@FrontPages{%
+          \noexpand\FC@EmitFrontPage
+          {\unexpanded\expandafter{\FC@FOne}}%
+          {\unexpanded\expandafter{\FC@FTwo}}%
+          {\unexpanded\expandafter{\FC@FThree}}%
+        }%
+      }%
+      \FC@tmpFront
+    \endgroup
+    \begingroup
+      \edef\FC@tmpBack{%
+        \noexpand\g@addto@macro\noexpand\FC@BackPages{%
+          \noexpand\FC@EmitBackPage
+          {\unexpanded\expandafter{\FC@BOne}}%
+          {\unexpanded\expandafter{\FC@BTwo}}%
+          {\unexpanded\expandafter{\FC@BThree}}%
+        }%
+      }%
+      \FC@tmpBack
+    \endgroup
+    \FC@slot=0\relax
+  \fi\fi
+}
+
+% Pad if card count is not a multiple of 3
+\newcommand{\FC@FinalizeIfPartial}{%
+  \ifnum\FC@slot=1\relax
+    \gdef\FC@FTwo{}\gdef\FC@FThree{}%
+    \gdef\FC@BTwo{}\gdef\FC@BThree{}%
+  \else\ifnum\FC@slot=2\relax
+    \gdef\FC@FThree{}%
+    \gdef\FC@BThree{}%
+  \fi\fi
+  \ifnum\FC@slot>0\relax
+    \begingroup
+      \edef\FC@tmpFront{%
+        \noexpand\g@addto@macro\noexpand\FC@FrontPages{%
+          \noexpand\FC@EmitFrontPage
+          {\unexpanded\expandafter{\FC@FOne}}%
+          {\unexpanded\expandafter{\FC@FTwo}}%
+          {\unexpanded\expandafter{\FC@FThree}}%
+        }%
+      }%
+      \FC@tmpFront
+    \endgroup
+    \begingroup
+      \edef\FC@tmpBack{%
+        \noexpand\g@addto@macro\noexpand\FC@BackPages{%
+          \noexpand\FC@EmitBackPage
+          {\unexpanded\expandafter{\FC@BOne}}%
+          {\unexpanded\expandafter{\FC@BTwo}}%
+          {\unexpanded\expandafter{\FC@BThree}}%
+        }%
+      }%
+      \FC@tmpBack
+    \endgroup
+    \FC@slot=0\relax
+  \fi
+}
+
+\newcommand{\PrintFlashcardFronts}{%
+  \FC@FinalizeIfPartial
+  \FC@FrontPages
+}
+
+\newcommand{\PrintFlashcardBacks}{%
+  \FC@BackPages
+}
+
+% =========================================================
+% (E) CARD CONTENT
+%
+% Convention: \NewFlashcard{TERM TO BE QUIZZED}{DEFINITION/CONTENT}
+%   Front = term/concept name (centered, large bold)
+%   Back  = definition: Plain English + fully quantified form
+%
+% Notes on line breaks:
+%   - For long quantified forms, use \FCQ{ ... } and break at logical connectors.
+%   - Prefer restricted quantifiers (\forall a\in A) when it improves readability.
+% =========================================================
+
+% ---------- FOUNDATIONS OF R ----------
+
+\NewFlashcard{Axiom of Completeness}{%
+  \textbf{Plain English.}
+  Every nonempty subset of $\mathbb{R}$ that is bounded above has a least upper bound in $\mathbb{R}$.
+  This is what separates $\mathbb{R}$ from $\mathbb{Q}$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R},\;
+    \Big(A\ne\emptyset\ \land\ \exists u\in\mathbb{R}\ \forall a\in A\ (a\le u)\Big) \\
+    &\quad\rightarrow\ \exists s\in\mathbb{R}\ \Big[
+      (\forall a\in A,\ a\le s)\ \land \\
+    &\FCindent \forall u\in\mathbb{R}\big((\forall a\in A,\ a\le u)\to s\le u\big)
+    \Big].
+  }
+
+  \smallskip
+  \textbf{Why it matters.} BW, MCT, Cauchy$\Leftrightarrow$Convergent all depend on this.
+  It fails in $\mathbb{Q}$: $\{q\in\mathbb{Q}: q^2<2\}$ has no supremum in $\mathbb{Q}$.
+}
+
+\NewFlashcard{Archimedean Property}{%
+  \textbf{Plain English.}
+  $\mathbb{N}$ is unbounded in $\mathbb{R}$: no real number is an upper bound for $\mathbb{N}$.
+  Equivalently, $1/n$ can be made smaller than any positive real.
+
+  \smallskip
+  \textbf{Fully quantified (two equivalent forms).}
+  \FCQ{
+    &\text{(i)}\ \forall x\in\mathbb{R}\ \exists n\in\mathbb{N}\ (n>x). \\
+    &\text{(ii)}\ \forall\varepsilon>0\ \exists n\in\mathbb{N}\ \left(\tfrac{1}{n}<\varepsilon\right).
+  }
+
+  \smallskip
+  \textbf{Proof mechanism.} Follows from the Axiom of Completeness:
+  if $\mathbb{N}$ were bounded above, $s=\sup\mathbb{N}$ would exist, but $s-1$
+  cannot be an upper bound, giving $n>s-1$, so $n+1>s$~---~contradiction.
+
+  \smallskip
+  \textbf{Key use.} Form (ii) justifies the ``$\varepsilon=1/n$'' move in proofs.
+}
+
+% ---------- SET-BASED BOUNDS ----------
+
+\NewFlashcard{Upper Bound (Set)}{%
+  \textbf{Plain English.}
+  A real number $u$ is an upper bound of a set $A\subseteq\mathbb{R}$ if every element of $A$ is $\le u$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\ \forall u\in\mathbb{R}\;
+    \big(u \text{ is an upper bound of }A \iff \forall a\in A\ (a\le u)\big).
+  }
+}
+
+\NewFlashcard{Lower Bound (Set)}{%
+  \textbf{Plain English.}
+  A real number $\ell$ is a lower bound of a set $A\subseteq\mathbb{R}$ if every element of $A$ is $\ge\ell$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\ \forall\ell\in\mathbb{R}\;
+    \big(\ell \text{ is a lower bound of }A \iff \forall a\in A\ (\ell\le a)\big).
+  }
+}
+
+\NewFlashcard{Bounded (Set)}{%
+  \textbf{Plain English.}
+  A set $A$ is bounded if it has both an upper bound and a lower bound.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\;
+    \Big(A \text{ bounded}\iff \\
+    &\FCindent \exists u\in\mathbb{R}\ \forall a\in A\ (a\le u) \\
+    &\FCindent \land\ \exists\ell\in\mathbb{R}\ \forall a\in A\ (\ell\le a)\Big).
+  }
+}
+
+\NewFlashcard{Maximum}{%
+  \textbf{Plain English.}
+  $m$ is the maximum of $A$ if $m\in A$ and every $a\in A$ satisfies $a\le m$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\ \forall m\in\mathbb{R}\;
+    \Big(m=\max A \iff (m\in A)\land\forall a\in A\ (a\le m)\Big).
+  }
+}
+
+\NewFlashcard{Minimum}{%
+  \textbf{Plain English.}
+  $m$ is the minimum of $A$ if $m\in A$ and every $a\in A$ satisfies $m\le a$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\ \forall m\in\mathbb{R}\;
+    \Big(m=\min A \iff (m\in A)\land\forall a\in A\ (m\le a)\Big).
+  }
+}
+
+\NewFlashcard{Supremum (LUB)}{%
+  \textbf{Plain English.}
+  $s=\sup A$ if $s$ is an upper bound of $A$, and every upper bound $u$ satisfies $s\le u$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\ \forall s\in\mathbb{R}\;
+    \Big(s=\sup A \iff \\
+    &\FCindent (\forall a\in A\ (a\le s))\ \land \\
+    &\FCindent \forall u\in\mathbb{R}\big[(\forall a\in A\ (a\le u))\rightarrow s\le u\big]\Big).
+  }
+
+  \smallskip
+  \textbf{$\varepsilon$-approx move (used in proofs).}
+  \FCQ{
+    &s=\sup A\ \Rightarrow\ \forall\varepsilon>0\ \exists a\in A\ (s-\varepsilon<a).
+  }
+}
+
+\NewFlashcard{$\varepsilon$-Characterization of Supremum}{%
+  \textbf{Plain English.}
+  $s = \sup A$ can always be approximated from inside $A$: no matter how small
+  $\varepsilon > 0$ is, some element of $A$ lies within $\varepsilon$ of $s$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &s = \sup A\ \Rightarrow\ \forall\varepsilon>0\ \exists a\in A,\ s-\varepsilon < a \le s.
+  }
+
+  \smallskip
+  Equivalently: $s-\varepsilon$ is \emph{not} an upper bound of $A$ for any $\varepsilon>0$.
+
+  \smallskip
+  \textbf{Symmetric form for infimum.}
+  \FCQ{
+    &t = \inf A\ \Rightarrow\ \forall\varepsilon>0\ \exists a\in A,\ t \le a < t+\varepsilon.
+  }
+
+  \smallskip
+  \textbf{Key use.} This is the engine of nearly every completeness proof:
+  MCT, BW (bisection), and Cauchy$\Leftrightarrow$Convergent all invoke it.
+}
+
+
+\NewFlashcard{Infimum (GLB)}{%
+  \textbf{Plain English.}
+  $t=\inf A$ if $t$ is a lower bound of $A$, and every lower bound $\ell$ satisfies $\ell\le t$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall A\subseteq\mathbb{R}\ \forall t\in\mathbb{R}\;
+    \Big(t=\inf A \iff \\
+    &\FCindent (\forall a\in A\ (t\le a))\ \land \\
+    &\FCindent \forall\ell\in\mathbb{R}\big[(\forall a\in A\ (\ell\le a))\rightarrow\ell\le t\big]\Big).
+  }
+
+  \smallskip
+  \textbf{$\varepsilon$-approx move (used in proofs).}
+  \FCQ{
+    &t=\inf A\ \Rightarrow\ \forall\varepsilon>0\ \exists a\in A\ (a<t+\varepsilon).
+  }
+}
+
+% ---------- SEQUENCES ----------
+
+\NewFlashcard{Sequence}{%
+  \textbf{Plain English.}
+  A sequence in $\mathbb{R}$ is a function from $\mathbb{N}$ to $\mathbb{R}$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a\;\big(a \text{ is a real sequence}\iff a:\mathbb{N}\to\mathbb{R}\big).
+  }
+}
+
+\NewFlashcard{Bounded Sequence}{%
+  \textbf{Plain English.}
+  A sequence is bounded if all its terms stay within some fixed distance from $0$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\;
+    \Big(a \text{ bounded}\iff \exists M>0\ \forall n\in\mathbb{N},\ |a_n|\le M\Big).
+  }
+}
+
+\NewFlashcard{NOT Bounded (Sequence)}{%
+  \textbf{Plain English.}
+  A sequence is not bounded if every proposed bound is exceeded in absolute value by some term.
+
+  \smallskip
+  \textbf{Fully quantified (negation).}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\;
+    \Big(\neg(a \text{ bounded})\iff \forall M>0\ \exists n\in\mathbb{N},\ |a_n|>M\Big).
+  }
+}
+
+\NewFlashcard{Convergence}{%
+  \textbf{Plain English.}
+  $a_n\to L$ means the terms eventually get arbitrarily close to $L$ and stay close thereafter.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}\; \\
+    &\Big(a_n\to L \iff
+      \forall\varepsilon>0\ \exists N\in\mathbb{N}\ \forall n\ge N,\ |a_n-L|<\varepsilon\Big).
+  }
+}
+
+\NewFlashcard{NOT Convergent to $L$}{%
+  \textbf{Plain English.}
+  $a_n$ does not converge to $L$ if some tolerance $\varepsilon>0$ is violated infinitely often.
+
+  \smallskip
+  \textbf{Fully quantified (negation).}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}\; \\
+    &\Big(\neg(a_n\to L)\iff
+      \exists\varepsilon>0\ \forall N\in\mathbb{N}\ \exists n\ge N,\ |a_n-L|\ge\varepsilon\Big).
+  }
+}
+
+\NewFlashcard{Cauchy Sequence}{%
+  \textbf{Plain English.}
+  A sequence is Cauchy if its terms eventually get arbitrarily close to each other.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\;
+    \Big(a \text{ Cauchy}\iff \\
+    &\FCindent \forall\varepsilon>0\ \exists N\in\mathbb{N}\ \forall m,n\ge N,\
+      |a_m-a_n|<\varepsilon\Big).
+  }
+}
+
+\NewFlashcard{NOT Cauchy}{%
+  \textbf{Plain English.}
+  Not Cauchy means there is some $\varepsilon>0$ such that, no matter how far out you go, two later terms are at least $\varepsilon$ apart.
+
+  \smallskip
+  \textbf{Fully quantified (negation).}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\;
+    \Big(\neg(a \text{ Cauchy})\iff \\
+    &\FCindent \exists\varepsilon>0\ \forall N\in\mathbb{N}\ \exists m,n\ge N,\
+      |a_m-a_n|\ge\varepsilon\Big).
+  }
+}
+
+% ---------- SUBSEQUENCES ----------
+
+\NewFlashcard{Subsequence}{%
+  \textbf{Plain English.}
+  A subsequence is formed by selecting terms using a strictly increasing index map.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall b:\mathbb{N}\to\mathbb{R}\; \\
+    &\Big(b \text{ is a subseq.\ of }a \iff
+      \exists\sigma:\mathbb{N}\to\mathbb{N}\; \\
+    &\FCindent \big(\forall k<\ell,\ \sigma(k)<\sigma(\ell)\big)
+      \land \big(\forall k,\ b_k=a_{\sigma(k)}\big)\Big).
+  }
+}
+
+\NewFlashcard{Index Growth ($n_k\ge k$)}{%
+  \textbf{Plain English.}
+  If $(n_k)$ is strictly increasing in $\mathbb{N}$, then $n_k\ge k$ for all $k$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall (n_k):\mathbb{N}\to\mathbb{N}\; \\
+    &\Big(\forall k<\ell,\ n_k<n_\ell\Big)
+      \rightarrow \Big(\forall k\in\mathbb{N},\ n_k\ge k\Big).
+  }
+
+  \smallskip
+  \textbf{Proof.} Induction: $n_1\ge 1$; if $n_k\ge k$ then $n_{k+1}\ge n_k+1\ge k+1$.
+}
+
+\NewFlashcard{Subsequential Limit}{%
+  \textbf{Plain English.}
+  $L$ is a subsequential limit of $(a_n)$ if some subsequence of $(a_n)$ converges to $L$.
+  The set of all subsequential limits is written $\mathcal{L}(a_n)$.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &L \text{ is a subsequential limit of }(a_n) \iff \\
+    &\FCindent \exists\sigma:\mathbb{N}\to\mathbb{N}\;\big(\forall k<\ell,\ \sigma(k)<\sigma(\ell)\big) \\
+    &\FCindent \land\ \forall\varepsilon>0\ \exists K\ \forall k\ge K,\ |a_{\sigma(k)}-L|<\varepsilon.
+  }
+
+  \smallskip
+  \textbf{Key fact.} If $a_n\to L$ then $\mathcal{L}(a_n)=\{L\}$ — a convergent sequence
+  has exactly one subsequential limit.
+}
+
+\NewFlashcard{Monotone Subsequence Theorem}{%
+  \textbf{Plain English.}
+  Every real sequence has a monotone subsequence.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \exists b \text{ subseq.\ of } a\; \\
+    &\Big(\forall k,\ b_k\le b_{k+1}\Big)
+      \lor \Big(\forall k,\ b_{k+1}\le b_k\Big).
+  }
+
+  \smallskip
+  \textbf{Proof idea (peak indices).}
+  Call $n$ a \emph{peak} if $a_n\ge a_m$ for all $m>n$.
+  If infinitely many peaks exist, they form a decreasing subsequence.
+  If only finitely many, past the last peak every index can be extended to a
+  strictly increasing subsequence.
+
+  \smallskip
+  \textbf{Why it matters.} Gives an alternative proof of BW:
+  every bounded sequence has a monotone subseq., which by MCT converges.
+}
+
+\NewFlashcard{Convergence via Even/Odd Subsequences}{%
+  \textbf{Plain English.}
+  If the even-indexed and odd-indexed subsequences both converge to the same limit,
+  the full sequence converges to that limit.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}, \\
+    &\big(a_{2n}\to L\ \land\ a_{2n+1}\to L\big)\rightarrow a_n\to L.
+  }
+
+  \smallskip
+  \textbf{Special case of} the Partition Convergence Principle: if $\mathbb{N}$ is
+  split into finitely many infinite parts and the subsequence on each part converges
+  to the same $L$, then $a_n\to L$.
+}
+
+\NewFlashcard{Subsequence of a Subsequence}{%
+  \textbf{Plain English.}
+  A subsequence of a subsequence is itself a subsequence of the original sequence.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a,b,c:\mathbb{N}\to\mathbb{R}, \\
+    &\big(b \text{ subseq.\ of }a\big)\land\big(c \text{ subseq.\ of }b\big)
+      \rightarrow \big(c \text{ subseq.\ of }a\big).
+  }
+
+  \smallskip
+  \textbf{Proof.} If $b_k=a_{n_k}$ with $(n_k)$ strictly increasing, and
+  $c_j=b_{k_j}$ with $(k_j)$ strictly increasing, then $c_j=a_{n_{k_j}}$ and
+  $(n_{k_j})$ is strictly increasing (composition of strictly increasing maps).
+
+  \smallskip
+  \textbf{Key use.} Applying BW twice: a bounded sequence has a convergent
+  subsequence; any subsequence of \emph{that} is also a subsequence of the original.
+}
+
+
+
+\NewFlashcard{Tail Set}{%
+  \textbf{Plain English.}
+  The $n$-tail of $(a_n)$ is the set of all terms from index $n$ onward.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall n\in\mathbb{N}, \\
+    &T_n(a)=\{a_k : k\in\mathbb{N}\land k\ge n\}.
+  }
+}
+
+\NewFlashcard{$s_n = \sup_{k\ge n} a_k$}{%
+  \textbf{Plain English.}
+  $s_n$ is the supremum of the $n$-tail: the least upper bound of all terms from index $n$ onward.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall n\in\mathbb{N}, \\
+    &s_n = \sup\{a_k : k\in\mathbb{N}\land k\ge n\}.
+  }
+
+  \smallskip
+  Note: $(s_n)$ is \emph{decreasing} (larger $n$ = fewer terms to sup over).
+}
+
+\NewFlashcard{$\limsup\, a_n$ (definition)}{%
+  \textbf{Plain English.}
+  $\limsup a_n$ is the limit of the tail suprema; it captures the eventual upper oscillation level.
+
+  \smallskip
+  \textbf{Definition via $s_n$.}
+  \FCQ{
+    &\text{Let }s_n=\sup\{a_k : k\ge n\}. \\
+    &\limsup_{n\to\infty}a_n := \lim_{n\to\infty}s_n
+    \quad\text{(extended reals).}
+  }
+
+  \smallskip
+  $(s_n)$ is decreasing, so the limit always exists in $[-\infty,+\infty]$.
+}
+
+\NewFlashcard{$i_n = \inf_{k\ge n} a_k$}{%
+  \textbf{Plain English.}
+  $i_n$ is the infimum of the $n$-tail: the greatest lower bound of all terms from index $n$ onward.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall n\in\mathbb{N}, \\
+    &i_n = \inf\{a_k : k\in\mathbb{N}\land k\ge n\}.
+  }
+
+  \smallskip
+  Note: $(i_n)$ is \emph{increasing} (larger $n$ = fewer terms to inf over).
+}
+
+\NewFlashcard{$\liminf\, a_n$ (definition)}{%
+  \textbf{Plain English.}
+  $\liminf a_n$ is the limit of the tail infima; it captures the eventual lower oscillation level.
+
+  \smallskip
+  \textbf{Definition via $i_n$.}
+  \FCQ{
+    &\text{Let }i_n=\inf\{a_k : k\ge n\}. \\
+    &\liminf_{n\to\infty}a_n := \lim_{n\to\infty}i_n
+    \quad\text{(extended reals).}
+  }
+
+  \smallskip
+  $(i_n)$ is increasing, so the limit always exists in $[-\infty,+\infty]$.
+}
+
+% ---------- THEOREMS ----------
+
+\NewFlashcard{Uniqueness of Limits}{%
+  \textbf{Plain English.}
+  A sequence cannot converge to two different real numbers.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L,M\in\mathbb{R}, \\
+    &\big(a_n\to L\ \land\ a_n\to M\big)\rightarrow L=M.
+  }
+}
+
+\NewFlashcard{Convergent $\Rightarrow$ Bounded}{%
+  \textbf{Plain English.}
+  Every convergent real sequence is bounded.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}, \\
+    &(a_n\to L)\rightarrow \exists M>0\ \forall n\in\mathbb{N},\ |a_n|\le M.
+  }
+}
+
+\NewFlashcard{Subsequence Inherits Limit}{%
+  \textbf{Plain English.}
+  If a sequence converges, every subsequence converges to the same limit.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}\ \forall b:\mathbb{N}\to\mathbb{R}, \\
+    &\big(a_n\to L\land b \text{ is a subsequence of }a\big)\rightarrow (b_n\to L).
+  }
+}
+
+\NewFlashcard{Bolzano--Weierstrass}{%
+  \textbf{Plain English.}
+  Every bounded real sequence has a convergent subsequence.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &\Big(\exists M>0\ \forall n,\ |a_n|\le M\Big) \\
+    &\quad\rightarrow
+      \exists b:\mathbb{N}\to\mathbb{R}\ \exists L\in\mathbb{R}\; \\
+    &\FCindent \big(b \text{ is a subsequence of }a\ \land\ b_n\to L\big).
+  }
+}
+
+\NewFlashcard{Convergent $\Rightarrow$ Cauchy}{%
+  \textbf{Plain English.}
+  Every convergent sequence is Cauchy.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}, \\
+    &(a_n\to L)\rightarrow (a \text{ is Cauchy}).
+  }
+}
+
+\NewFlashcard{Cauchy $\Rightarrow$ Bounded}{%
+  \textbf{Plain English.}
+  Every Cauchy sequence is bounded.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &(a \text{ Cauchy})\rightarrow \exists M>0\ \forall n\in\mathbb{N},\ |a_n|\le M.
+  }
+}
+
+\NewFlashcard{Cauchy $\Leftrightarrow$ Convergent (in $\mathbb{R}$)}{%
+  \textbf{Plain English.}
+  In $\mathbb{R}$, a sequence converges if and only if it is Cauchy. This is completeness.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &(a \text{ Cauchy})\leftrightarrow \exists L\in\mathbb{R}\ (a_n\to L).
+  }
+}
+
+\NewFlashcard{$\liminf a_n \le \limsup a_n$}{%
+  \textbf{Plain English.}
+  The eventual bottom level is never above the eventual top level.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &\liminf_{n\to\infty}a_n \le \limsup_{n\to\infty}a_n.
+  }
+
+  \smallskip
+  \textbf{Proof idea.} Since $i_n\le s_n$ for all $n$, taking limits preserves the inequality.
+}
+
+\NewFlashcard{Convergence $\Leftrightarrow$ $\liminf = \limsup$}{%
+  \textbf{Plain English.}
+  A sequence converges if and only if liminf and limsup agree; then they equal the limit.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &\Big(\exists L\in\mathbb{R}\ (a_n\to L)\Big) \\
+    &\quad\leftrightarrow
+      \Big(\liminf_{n\to\infty}a_n = \limsup_{n\to\infty}a_n\in\mathbb{R}\Big).
+  }
+}
+
+\NewFlashcard{Monotone Convergence Theorem}{%
+  \textbf{Plain English.}
+  A monotone bounded sequence converges. The limit is the supremum (increasing case)
+  or infimum (decreasing case) of its range.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &\Big(\forall n,\ a_n\le a_{n+1}\Big)\land\Big(\exists M\ \forall n,\ a_n\le M\Big) \\
+    &\quad\rightarrow\ a_n\to\sup\{a_n:n\in\mathbb{N}\}. \\[4pt]
+    &\Big(\forall n,\ a_{n+1}\le a_n\Big)\land\Big(\exists M\ \forall n,\ M\le a_n\Big) \\
+    &\quad\rightarrow\ a_n\to\inf\{a_n:n\in\mathbb{N}\}.
+  }
+
+  \smallskip
+  \textbf{Why it matters.} Equivalent to BW, Cauchy$\Leftrightarrow$Convergent,
+  and the Nested Interval Property — all are manifestations of completeness.
+}
+
+\NewFlashcard{Squeeze Theorem}{%
+  \textbf{Plain English.}
+  If a sequence is trapped between two sequences that share the same limit, it must
+  converge to that same limit.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a,b,c:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}, \\
+    &\Big(\forall n,\ a_n\le b_n\le c_n\Big)
+      \land (a_n\to L) \land (c_n\to L) \\
+    &\quad\rightarrow\ b_n\to L.
+  }
+
+  \smallskip
+  \textbf{Proof idea.} For $n\ge\max(N_a,N_c)$: $L-\varepsilon<a_n\le b_n\le c_n<L+\varepsilon$.
+}
+
+\NewFlashcard{Divergence Criterion}{%
+  \textbf{Plain English.}
+  A sequence diverges if and only if it is unbounded \emph{or} it has two subsequences
+  converging to different limits.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}, \\
+    &\neg(\exists L\in\mathbb{R},\ a_n\to L) \iff \\
+    &\FCindent \Big(\forall M>0\ \exists n,\ |a_n|>M\Big) \\
+    &\FCindent \lor\ \Big(\exists b,c \text{ subseqs of } a,\ \exists L\ne L',\\
+    &\FCindent\quad b_n\to L\ \land\ c_n\to L'\Big).
+  }
+
+  \smallskip
+  \textbf{Practical use.} To show $(a_n)$ diverges: exhibit two subsequences with
+  different limits (e.g.\ even/odd indices for $(-1)^n$).
+}
+
+
+
+\NewFlashcard{Monotone Sequence (definitions)}{%
+  \textbf{Plain English.}
+  A sequence is increasing if each term is $\le$ the next; strictly increasing if each
+  term is $<$ the next. Decreasing and strictly decreasing are symmetric.
+  A sequence is monotone if it is either increasing or decreasing.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &(a_n)\text{ increasing} \iff \forall n,\ a_n\le a_{n+1}. \\
+    &(a_n)\text{ strictly increasing} \iff \forall n,\ a_n < a_{n+1}. \\
+    &(a_n)\text{ decreasing} \iff \forall n,\ a_{n+1}\le a_n. \\
+    &(a_n)\text{ strictly decreasing} \iff \forall n,\ a_{n+1} < a_n. \\
+    &(a_n)\text{ monotone} \iff (a_n)\text{ increasing or decreasing}.
+  }
+}
+
+\NewFlashcard{Order Limit Theorem}{%
+  \textbf{Plain English.}
+  If $x_n \le y_n$ for all $n$ and both sequences converge, then their limits
+  preserve the inequality.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall (x_n),(y_n):\mathbb{N}\to\mathbb{R}\ \forall x,y\in\mathbb{R}, \\
+    &\Big(\forall n,\ x_n\le y_n\Big)\land(x_n\to x)\land(y_n\to y) \\
+    &\quad\rightarrow x\le y.
+  }
+
+  \smallskip
+  \textbf{Warning.} Strict inequality $x_n < y_n$ does \emph{not} guarantee $x < y$
+  (e.g.\ $x_n = 0 < 1/n = y_n$, but both $\to 0$).
+
+  \smallskip
+  \textbf{Why it matters.} Foundation for the Squeeze Theorem and most
+  order-based convergence arguments.
+}
+
+\NewFlashcard{Algebra of Limits}{%
+  \textbf{Plain English.}
+  The set of convergent real sequences is closed under the standard arithmetic operations,
+  and limits commute with those operations.
+  If $x_n\to x$ and $y_n\to y$ then $x_n\pm y_n\to x\pm y$,
+  $cx_n\to cx$, $x_ny_n\to xy$, and $x_n/y_n\to x/y$ (provided $y\ne 0$).
+}
+
+\NewFlashcard{$\limsup$ Characterization}{%
+  \textbf{Plain English.}
+  $L = \limsup a_n$ means two things simultaneously: $L$ is exceeded infinitely often
+  (up to any tolerance), and $L$ is an eventual upper bound (from some point onward).
+
+  \smallskip
+  \textbf{Fully quantified.}
+  $L = \limsup_{n\to\infty} a_n \iff$
+  \FCQ{
+    &\text{(i)}\ \forall\varepsilon>0\ \exists^\infty n,\ a_n > L-\varepsilon. \\
+    &\text{(ii)}\ \forall\varepsilon>0\ \exists N\ \forall n\ge N,\ a_n < L+\varepsilon.
+  }
+
+  \smallskip
+  \textbf{Consequence.} $\limsup a_n$ is the \emph{largest} subsequential limit of $(a_n)$.
+  There always exists a subsequence $a_{n_k}\to L$.
+}
+
+\NewFlashcard{$\liminf$ Characterization}{%
+  \textbf{Plain English.}
+  $\ell = \liminf a_n$ means: $\ell$ is undershot infinitely often, and is an eventual
+  lower bound.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  $\ell = \liminf_{n\to\infty} a_n \iff$
+  \FCQ{
+    &\text{(i)}\ \forall\varepsilon>0\ \exists^\infty n,\ a_n < \ell+\varepsilon. \\
+    &\text{(ii)}\ \forall\varepsilon>0\ \exists N\ \forall n\ge N,\ a_n > \ell-\varepsilon.
+  }
+
+  \smallskip
+  \textbf{Consequence.} $\liminf a_n$ is the \emph{smallest} subsequential limit of $(a_n)$.
+  There always exists a subsequence $a_{n_k}\to\ell$.
+}
+
+\NewFlashcard{Convergence is a Tail Property}{%
+  \textbf{Plain English.}
+  Whether a sequence converges (and to what limit) depends only on its eventual behavior —
+  finitely many initial terms are irrelevant.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\forall a:\mathbb{N}\to\mathbb{R}\ \forall L\in\mathbb{R}\ \forall k\in\mathbb{N}, \\
+    &(a_n \to L) \iff (a_{n+k} \to L).
+  }
+
+  \smallskip
+  \textbf{Why it matters.} Formally justifies every ``without loss of generality,
+  assume $n \ge N_0$\ldots'' move in analysis proofs.
+  Also: $\limsup$, $\liminf$, Cauchy, and boundedness are all tail properties.
+}
+
+\NewFlashcard{Finite Modification Theorem}{%
+  \textbf{Plain English.}
+  Changing finitely many terms of a sequence does not affect convergence or its limit.
+
+  \smallskip
+  \textbf{Fully quantified.}
+  \FCQ{
+    &\text{If }(a_n)\text{ and }(b_n)\text{ differ in only finitely many terms,} \\
+    &\text{then }a_n\to L \iff b_n\to L.
+  }
+
+  \smallskip
+  \textbf{Consequence.} Convergence, divergence, and the limit value are all
+  \emph{tail properties}: they are determined entirely by the eventual behavior
+  of the sequence, not its initial segment.
+}
+
+% ---------- PROOF SKETCH CARDS ----------
+
+\NewFlashcard{Proof Sketch: Convergent $\Rightarrow$ Bounded}{%
+  \textbf{Skeleton / checklist.}
+  \begin{enumerate}[leftmargin=1.2em]
+  \item Assume $a_n\to L$.
+  \item Use $\varepsilon=1$: get $N$ s.t.\ $|a_n-L|<1$ for all $n\ge N$.
+  \item For $n\ge N$: $|a_n|\le|L|+1$ (triangle inequality).
+  \item Bound the finite head $\{a_1,\dots,a_{N-1}\}$ by their maximum.
+  \item Set $M=\max\bigl(|a_1|,\dots,|a_{N-1}|,|L|+1\bigr)$.
+  \end{enumerate}
+}
+
+\NewFlashcard{Proof Sketch: Uniqueness of Limits}{%
+  \textbf{Skeleton / checklist.}
+  \begin{enumerate}[leftmargin=1.2em]
+  \item Assume $a_n\to L$ and $a_n\to M$.
+  \item If $L\ne M$, set $\varepsilon=\tfrac{1}{2}|L-M|>0$.
+  \item Get $N_1,N_2$ for each limit with tolerance $\varepsilon$.
+  \item For $n\ge\max(N_1,N_2)$:
+        $|L-M|\le|L-a_n|+|a_n-M|<2\varepsilon=|L-M|$.
+  \item Contradiction $\Rightarrow L=M$.
+  \end{enumerate}
+}
+
+\NewFlashcard{Proof Sketch: Cauchy $\Rightarrow$ Bounded}{%
+  \textbf{Skeleton / checklist.}
+  \begin{enumerate}[leftmargin=1.2em]
+  \item Assume $(a_n)$ is Cauchy.
+  \item Use $\varepsilon=1$: get $N$ s.t.\ $|a_m-a_n|<1$ for all $m,n\ge N$.
+  \item Fix $n=N$: for $m\ge N$, $|a_m|\le|a_N|+1$.
+  \item Bound the finite head $\{a_1,\dots,a_{N-1}\}$ by their maximum.
+  \item Combine: one global bound $M$.
+  \end{enumerate}
+}
+
+\NewFlashcard{Proof Sketch: Bolzano--Weierstrass}{%
+  \textbf{Skeleton / checklist.}
+  \begin{enumerate}[leftmargin=1.2em]
+  \item Put the bounded sequence inside $[A,B]$.
+  \item Bisect; pick the half containing infinitely many terms.
+  \item Iterate: nested closed intervals with lengths $\to 0$.
+  \item Pick indices $n_k$ so $a_{n_k}$ lies in the $k$-th interval.
+  \item Nested Interval Theorem gives a point $L$; then $a_{n_k}\to L$.
+  \end{enumerate}
+}
+
+\NewFlashcard{Proof Sketch: Convergence $\Leftrightarrow$ $\liminf=\limsup$}{%
+  \textbf{Skeleton / checklist.}
+  \begin{enumerate}[leftmargin=1.2em]
+  \item Define $s_n=\sup_{k\ge n}a_k$, $i_n=\inf_{k\ge n}a_k$.
+  \item Note $i_n\le a_n\le s_n$; $(s_n)$ decreasing, $(i_n)$ increasing.
+  \item ($\Rightarrow$) If $a_n\to L$: tail in $(L{-}\varepsilon,L{+}\varepsilon)$
+        forces $s_n\to L$ and $i_n\to L$.
+  \item ($\Leftarrow$) If $s_n\to L$ and $i_n\to L$: squeeze theorem gives $a_n\to L$.
+  \end{enumerate}
+}
+
+% =========================================================
+% (H) PRINT ORDER
+%   A deck: all fronts (name-first), then all backs
+%   B deck: all fronts (formula-first), then all backs
+%   Accumulators are reset between decks so they don't mix.
+% =========================================================
+
+% --- A deck ---
+\PrintFlashcardFronts
+\PrintFlashcardBacks
+
+% --- Reset for B deck ---
+\gdef\FC@FrontPages{}%
+\gdef\FC@BackPages{}%
+\FC@slot=0\relax
+
+% --- B deck section header ---
+\clearpage
+\section*{Flashcards --- B Deck: Formula-First (Avery 5388)}
+\addcontentsline{toc}{section}{Flashcards --- B Deck: Formula-First}
+
+% =========================================================
+% (G) B DECK — Formula-first pattern recognition cards
+%
+% Convention: \NewFlashcardB{QUANTIFIED FORM}{NAME + PLAIN ENGLISH}
+%   Front = bare quantified condition (no label, no biconditional wrapper)
+%   Back  = concept name (bold) + plain English explanation
+%
+% Design principle:
+%   Definition cards: strip to the naked condition only — you see the
+%   raw symbolic claim and must supply the name and meaning from scratch.
+%   Removing the biconditional wrapper ("X iff ...") prevents the front
+%   from containing its own answer as a label.
+%
+%   Theorem/implication cards: show the FULL symbolic implication or
+%   biconditional, split at the connective. These test whether you can
+%   connect and name two distinct quantified forms.
+%
+% Skipped: proof sketches, pure notation cards (Tail Set, sn, in,
+%          limsup def, liminf def, Index Growth, Sequence).
+% =========================================================
+
+% ---------- B: SET-BASED BOUNDS ----------
+% Fronts show only the bare quantified condition — no label, no biconditional.
+% Goal: see the symbolic form and name the concept from scratch.
+
+\NewFlashcardB{%
+  \FCQB{ \forall a\in A,\ a \le u. }
+}{%
+  \textbf{Upper Bound (Set).}
+  A real number $u$ is an upper bound of $A\subseteq\mathbb{R}$ if every element of $A$ is $\le u$.
+  Note: $u$ need \emph{not} belong to $A$.
+}
+
+\NewFlashcardB{%
+  \FCQB{ \forall a\in A,\ \ell \le a. }
+}{%
+  \textbf{Lower Bound (Set).}
+  A real number $\ell$ is a lower bound of $A\subseteq\mathbb{R}$ if every element of $A$ is $\ge\ell$.
+  Note: $\ell$ need \emph{not} belong to $A$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    &\exists u\in\mathbb{R}\ \forall a\in A,\ a\le u \\
+    &\land\ \exists\ell\in\mathbb{R}\ \forall a\in A,\ \ell\le a.
+  }
+}{%
+  \textbf{Bounded Set.}
+  A set is bounded if it has both an upper bound and a lower bound.
+}
+
+\NewFlashcardB{%
+  \FCQB{ (m\in A)\ \land\ \forall a\in A,\ a \le m. }
+}{%
+  \textbf{Maximum.}
+  $m$ is the maximum of $A$: it belongs to $A$ \emph{and} is an upper bound of $A$.
+  Contrast with $\sup$: max must be \emph{in} $A$.
+}
+
+\NewFlashcardB{%
+  \FCQB{ (m\in A)\ \land\ \forall a\in A,\ m \le a. }
+}{%
+  \textbf{Minimum.}
+  $m$ is the minimum of $A$: it belongs to $A$ \emph{and} is a lower bound of $A$.
+  Contrast with $\inf$: min must be \emph{in} $A$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    &\forall a\in A,\ a \le s \\
+    &\land\ \forall u\in\mathbb{R},\ \big(\forall a\in A,\ a\le u\big) \to s\le u.
+  }
+}{%
+  \textbf{Supremum (LUB).}
+  $s = \sup A$: $s$ is an upper bound of $A$, and $s \le$ every other upper bound.
+
+  \smallskip
+  \textbf{$\varepsilon$-move:} $\forall\varepsilon>0\ \exists a\in A\ (s-\varepsilon < a)$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    &\forall a\in A,\ t \le a \\
+    &\land\ \forall\ell\in\mathbb{R},\ \big(\forall a\in A,\ \ell\le a\big) \to \ell\le t.
+  }
+}{%
+  \textbf{Infimum (GLB).}
+  $t = \inf A$: $t$ is a lower bound of $A$, and every other lower bound $\ell$ satisfies $\ell \le t$.
+
+  \smallskip
+  \textbf{$\varepsilon$-move:} $\forall\varepsilon>0\ \exists a\in A\ (a < t+\varepsilon)$.
+}
+
+% ---------- B: SEQUENCES ----------
+% Same principle: bare condition on front, name + English on back.
+
+\NewFlashcardB{%
+  \FCQB{ \exists M>0\ \forall n\in\mathbb{N},\ |a_n| \le M. }
+}{%
+  \textbf{Bounded Sequence.}
+  All terms lie within fixed distance $M$ from $0$.
+  The bound $M$ is global — it works for every $n$ at once.
+}
+
+\NewFlashcardB{%
+  \FCQB{ \forall M>0\ \exists n\in\mathbb{N},\ |a_n| > M. }
+}{%
+  \textbf{NOT Bounded (Sequence).}
+  Every proposed bound is exceeded: no single $M$ captures all terms.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \forall\varepsilon>0\ \exists N\in\mathbb{N}\ \forall n \ge N,\ |a_n - L| < \varepsilon.
+  }
+}{%
+  \textbf{Convergence} ($a_n \to L$).
+  For every tolerance $\varepsilon>0$, all sufficiently late terms lie within $\varepsilon$ of $L$.
+  The quantifier order $\forall\varepsilon\ \exists N\ \forall n$ is the essential pattern.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \exists\varepsilon>0\ \forall N\in\mathbb{N}\ \exists n \ge N,\ |a_n - L| \ge \varepsilon.
+  }
+}{%
+  \textbf{NOT Convergent to $L$.}
+  Some tolerance $\varepsilon>0$ is violated infinitely often.
+  Quantifier order flips to $\exists\varepsilon\ \forall N\ \exists n$ — the signature of negation.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \forall\varepsilon>0\ \exists N\in\mathbb{N}\ \forall m,n \ge N,\ |a_m - a_n| < \varepsilon.
+  }
+}{%
+  \textbf{Cauchy Sequence.}
+  Terms eventually cluster together: for large enough $N$, any two terms beyond $N$ are within $\varepsilon$.
+  Key distinction from convergence: no limit $L$ appears.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \exists\varepsilon>0\ \forall N\in\mathbb{N}\ \exists m,n \ge N,\ |a_m - a_n| \ge \varepsilon.
+  }
+}{%
+  \textbf{NOT Cauchy.}
+  Some fixed gap $\varepsilon>0$ is never closed: arbitrarily far out, two terms remain at least $\varepsilon$ apart.
+}
+
+% ---------- B: FOUNDATIONS OF R (stripped fronts) ----------
+
+\NewFlashcardB{%
+  \FCQB{
+    &(A\ne\emptyset)\ \land\ (\exists u\in\mathbb{R}\ \forall a\in A,\ a\le u) \\
+    &\quad\rightarrow\ \exists s\in\mathbb{R}\ \big[(\forall a\in A,\ a\le s)\ \land \\
+    &\FCindent \forall u,\ (\forall a\in A,\ a\le u)\to s\le u\big].
+  }
+}{%
+  \textbf{Axiom of Completeness.}
+  Every nonempty bounded-above subset of $\mathbb{R}$ has a supremum in $\mathbb{R}$.
+  This fails in $\mathbb{Q}$ — it is the defining property of $\mathbb{R}$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \forall\varepsilon>0\ \exists n\in\mathbb{N},\ \tfrac{1}{n} < \varepsilon.
+  }
+}{%
+  \textbf{Archimedean Property} (workhorse form).
+  For any $\varepsilon>0$, some $1/n$ undershoots it.
+  This justifies the ``$\varepsilon = 1/n$'' move ubiquitous in analysis proofs.
+
+  \smallskip
+  Equivalent form: $\forall x\in\mathbb{R}\ \exists n\in\mathbb{N},\ n>x$ ($\mathbb{N}$ is unbounded in $\mathbb{R}$).
+}
+
+% ---------- B: SUBSEQUENCES ----------
+
+\NewFlashcardB{%
+  \FCQB{
+    \exists\sigma:\mathbb{N}\to\mathbb{N}\
+    \big(\forall k<\ell,\ \sigma(k)<\sigma(\ell)\big)
+    \land\ a_{\sigma(k)}\to L.
+  }
+}{%
+  \textbf{Subsequential Limit.}
+  $L$ is a subsequential limit of $(a_n)$: some subsequence converges to $L$.
+  If $(a_n)\to L$ then $L$ is the \emph{only} subsequential limit.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \forall a:\mathbb{N}\to\mathbb{R}\ \exists b \text{ subseq.\ of }a, \\
+    \Big(\forall k,\ b_k\le b_{k+1}\Big)
+    \lor \Big(\forall k,\ b_{k+1}\le b_k\Big).
+  }
+}{%
+  \textbf{Monotone Subsequence Theorem.}
+  Every real sequence has a monotone subsequence.
+  Proved via peak indices. Combined with MCT gives an alternative proof of BW.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \big(a_{2n}\to L\ \land\ a_{2n+1}\to L\big)
+    \rightarrow a_n \to L.
+  }
+}{%
+  \textbf{Convergence via Even/Odd Subsequences.}
+  Both parity subsequences converging to $L$ forces the full sequence to $L$.
+  Special case of the Partition Convergence Principle.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \big(b \text{ subseq.\ of }a\big)
+    \land \big(c \text{ subseq.\ of }b\big)
+    \rightarrow \big(c \text{ subseq.\ of }a\big).
+  }
+}{%
+  \textbf{Subsequence of a Subsequence.}
+  Subsequence composition is transitive. Composition of strictly increasing index maps
+  is strictly increasing. Used whenever BW is applied twice in a single proof.
+}
+
+
+
+% ---------- B: MONOTONE + ORDER + ALGEBRA + LIMSUP/INF CHARACTERIZATIONS ----------
+
+\NewFlashcardB{%
+  \FCQB{ \forall n,\ a_n \le a_{n+1}. }
+}{%
+  \textbf{Increasing sequence.}
+  Each term is $\le$ the next. Non-strict — equality permitted.
+  Strictly increasing requires $a_n < a_{n+1}$.
+}
+
+\NewFlashcardB{%
+  \FCQB{ \forall n,\ a_{n+1} \le a_n. }
+}{%
+  \textbf{Decreasing sequence.}
+  Each term is $\ge$ the next. Non-strict — equality permitted.
+  Strictly decreasing requires $a_{n+1} < a_n$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall n,\ x_n\le y_n\Big)
+    \land (x_n\to x) \land (y_n\to y)
+    \rightarrow x \le y.
+  }
+}{%
+  \textbf{Order Limit Theorem.}
+  Termwise inequality is preserved in the limit. Warning: strict inequality $x_n < y_n$
+  does \emph{not} guarantee $x < y$ — the limit can collapse the gap.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    (x_n\to x)\ \land\ (y_n\to y)
+    \;\rightarrow\; x_ny_n \to xy.
+  }
+}{%
+  \textbf{Algebra of Limits.}
+  Limits commute with $+$, $-$, scalar multiple, $\times$, and $\div$ (with $y\ne 0$).
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    s = \sup A\ \Rightarrow\ \forall\varepsilon>0\ \exists a\in A,\ s-\varepsilon < a.
+  }
+}{%
+  \textbf{$\varepsilon$-Characterization of Supremum.}
+  $\sup A$ is always approachable from inside $A$: $s-\varepsilon$ is never an upper bound.
+  Symmetric: $t = \inf A \Rightarrow \forall\varepsilon>0\ \exists a\in A,\ a < t+\varepsilon$.
+  Engine of nearly every completeness proof.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    (a_n \to L)\ \iff\ (a_{n+k} \to L)\ \forall k\in\mathbb{N}.
+  }
+}{%
+  \textbf{Convergence is a Tail Property.}
+  Convergence and its limit are unaffected by any finite initial segment.
+  Formally justifies every ``assume $n \ge N_0$'' move in proofs.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    (a_n),\,(b_n)\text{ differ finitely}
+    \ \Rightarrow\ (a_n\to L \iff b_n\to L).
+  }
+}{%
+  \textbf{Finite Modification Theorem.}
+  Changing finitely many terms preserves convergence and the limit.
+  Consequence of convergence being a tail property.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    &\forall\varepsilon>0\ \exists^\infty n,\ a_n > L-\varepsilon \\
+    &\land\ \forall\varepsilon>0\ \exists N\ \forall n\ge N,\ a_n < L+\varepsilon.
+  }
+}{%
+  \textbf{$\limsup$ Characterization.}
+  $L = \limsup a_n$: exceeded infinitely often from below, eventually bounded above by $L$.
+  $L$ is the \emph{largest} subsequential limit; a subsequence $a_{n_k}\to L$ always exists.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    &\forall\varepsilon>0\ \exists^\infty n,\ a_n < \ell+\varepsilon \\
+    &\land\ \forall\varepsilon>0\ \exists N\ \forall n\ge N,\ a_n > \ell-\varepsilon.
+  }
+}{%
+  \textbf{$\liminf$ Characterization.}
+  $\ell = \liminf a_n$: undershot infinitely often from above, eventually bounded below by $\ell$.
+  $\ell$ is the \emph{smallest} subsequential limit; a subsequence $a_{n_k}\to\ell$ always exists.
+}
+
+% ---------- B: THEOREMS ----------
+
+\NewFlashcardB{%
+  \FCQB{
+    \big(a_n \to L\ \land\ a_n \to M\big)
+    \rightarrow L = M.
+  }
+}{%
+  \textbf{Uniqueness of Limits.}
+  A sequence in $\mathbb{R}$ cannot converge to two different values. Proved by contradiction using $\varepsilon = \tfrac{1}{2}|L-M|$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall\varepsilon>0\ \exists N\ \forall n\ge N,\ |a_n-L|<\varepsilon\Big) \\
+    \rightarrow
+    \Big(\exists M>0\ \forall n,\ |a_n|\le M\Big).
+  }
+}{%
+  \textbf{Convergent $\Rightarrow$ Bounded.}
+  Every convergent sequence is bounded. Use $\varepsilon=1$ to bound the tail, then take max with the finite head.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \big(a_n\to L\ \land\ b \text{ subseq.\ of } a\big)
+    \rightarrow b_n \to L.
+  }
+}{%
+  \textbf{Subsequence Inherits Limit.}
+  If $(a_n)\to L$ then every subsequence also converges to $L$. The same $N$ works since $n_k \ge k$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\exists M>0\ \forall n,\ |a_n|\le M\Big) \\
+    \rightarrow \\
+    \Big(\exists b \text{ subseq.\ of } a,\ \exists L\in\mathbb{R},\ b_n\to L\Big).
+  }
+}{%
+  \textbf{Bolzano--Weierstrass.}
+  Every bounded real sequence has a convergent subsequence. Proved by repeated bisection of a containing interval.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall\varepsilon>0\ \exists N\ \forall n\ge N,\ |a_n-L|<\varepsilon\Big) \\
+    \rightarrow \\
+    \Big(\forall\varepsilon>0\ \exists N\ \forall m,n\ge N,\ |a_m-a_n|<\varepsilon\Big).
+  }
+}{%
+  \textbf{Convergent $\Rightarrow$ Cauchy.}
+  Every convergent sequence is Cauchy. Use the triangle inequality: $|a_m-a_n| \le |a_m-L|+|L-a_n|$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall\varepsilon>0\ \exists N\ \forall m,n\ge N,\ |a_m-a_n|<\varepsilon\Big) \\
+    \rightarrow
+    \Big(\exists M>0\ \forall n,\ |a_n|\le M\Big).
+  }
+}{%
+  \textbf{Cauchy $\Rightarrow$ Bounded.}
+  Every Cauchy sequence is bounded. Use $\varepsilon=1$ to bound the tail from $a_N$, then take max with the finite head.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall\varepsilon>0\ \exists N\ \forall m,n\ge N,\ |a_m-a_n|<\varepsilon\Big) \\
+    \leftrightarrow \\
+    \Big(\exists L\in\mathbb{R}\ \forall\varepsilon>0\ \exists N\ \forall n\ge N,\ |a_n-L|<\varepsilon\Big).
+  }
+}{%
+  \textbf{Cauchy $\Leftrightarrow$ Convergent (in $\mathbb{R}$).}
+  Completeness of $\mathbb{R}$: a sequence converges iff it is Cauchy. ($\Rightarrow$) always holds; ($\Leftarrow$) uses Bolzano--Weierstrass + uniqueness.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall n,\ a_n\le a_{n+1}\Big)
+    \land \Big(\exists M\ \forall n,\ a_n\le M\Big) \\
+    \rightarrow\ a_n \to \sup\{a_n : n\in\mathbb{N}\}.
+  }
+}{%
+  \textbf{Monotone Convergence Theorem} (increasing case).
+  A bounded increasing sequence converges to its supremum.
+  The decreasing case is symmetric: bounded decreasing $\to \inf$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\forall n,\ a_n\le b_n\le c_n\Big)
+    \land (a_n\to L) \land (c_n\to L) \\
+    \rightarrow\ b_n \to L.
+  }
+}{%
+  \textbf{Squeeze Theorem.}
+  A sequence trapped between two sequences sharing a common limit must converge to that limit.
+  Key tool: $L - \varepsilon < a_n \le b_n \le c_n < L + \varepsilon$ for $n \ge \max(N_a, N_c)$.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \neg(\exists L\in\mathbb{R},\ a_n\to L) \iff \\
+    \Big(\forall M>0\ \exists n,\ |a_n|>M\Big) \\
+    \lor\ \Big(\exists \text{ subseqs } b,c\ \exists L\ne L',\ b_n\to L\ \land\ c_n\to L'\Big).
+  }
+}{%
+  \textbf{Divergence Criterion.}
+  $(a_n)$ diverges iff it is unbounded or has two subsequences with different limits.
+  Practical test: exhibit two subsequences converging to distinct values.
+}
+
+
+\NewFlashcardB{%
+  \FCQB{
+    \liminf_{n\to\infty} a_n \;\le\; \limsup_{n\to\infty} a_n.
+  }
+}{%
+  \textbf{$\liminf \le \limsup$.}
+  The eventual lower oscillation level never exceeds the eventual upper one. Follows from $i_n \le s_n$ for all $n$, taking limits.
+}
+
+\NewFlashcardB{%
+  \FCQB{
+    \Big(\exists L\in\mathbb{R},\ a_n\to L\Big) \\
+    \leftrightarrow \\
+    \Big(\liminf_{n\to\infty} a_n = \limsup_{n\to\infty} a_n \in \mathbb{R}\Big).
+  }
+}{%
+  \textbf{Convergence $\Leftrightarrow$ $\liminf = \limsup$.}
+  A sequence converges iff its liminf and limsup agree (and are finite). When they do, the common value is the limit. Proved via the squeeze theorem on $i_n \le a_n \le s_n$.
+}
+
+
+
+% --- Print B deck ---
+\PrintFlashcardFronts
+\PrintFlashcardBacks
+
+\makeatother

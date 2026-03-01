@@ -1,0 +1,304 @@
+% =========================================================
+% Induced Orders and Order Embeddings
+% =========================================================
+
+\subsection{Induced Orders and Order Embeddings}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Induced Orders and Order Embeddings --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Induced preorder    & $x \leq_f y \;\Leftrightarrow\; f(x) \leq' f(y)$; always a preorder  & \hyperref[def:induced-order]{↓ Def} \\
+Induced partial order & Induced order is a partial order iff $f$ is injective              & \hyperref[prop:induced-poset]{↓ Prop} \\
+$f$-indistinguishable & $x \sim_f y$: both $x \leq_f y$ and $y \leq_f x$                   & \hyperref[def:f-indist]{↓ Def} \\
+Order embedding     & Injective, order-preserving, and order-reflecting                     & \hyperref[def:order-embedding]{↓ Def} \\
+Embedding vs.\ isomorphism & Embedding is iso onto image; isomorphism is surjective too & \hyperref[prop:embedding-iso]{↓ Prop} \\
+Suborder            & Restriction of $\leq'$ to a subset $S \subseteq B$                   & \hyperref[def:suborder]{↓ Def} \\
+\midrule
+\multicolumn{2}{l}{\textit{Key results:}} & \\
+\midrule
+\multicolumn{2}{l}{$\leq_f$ preorder: always. \quad Antisymmetry: iff $f$ injective.}       & \hyperref[prop:induced-poset]{↓} \\
+\multicolumn{2}{l}{$f$ order embedding $\Rightarrow$ $(A,\leq_f) \cong (f(A), \leq')$.}    & \hyperref[prop:embedding-iso]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% The construction
+% ---------------------------------------------------------
+
+The simplest way to put an order on a set $A$ is to compare elements of $A$
+\emph{indirectly} through a function into an already-ordered set. This
+construction, called the \emph{induced order} or \emph{pullback order},
+is ubiquitous: it explains how the usual order on $\mathbb{Z}$ restricts
+to $\mathbb{N}$, how functions on a common domain acquire a pointwise order,
+and how subsets inherit the order of the ambient space.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Induced Order)}},
+  fonttitle=\small\bfseries]
+\label{def:induced-order}
+Let $(B, \leq')$ be a partially ordered set and let $f : A \to B$ be a
+function. The \emph{order induced by $f$} (or \emph{pullback order along
+$f$}) is the relation $\leq_f$ on $A$ defined by:
+\[
+x \;\leq_f\; y
+\;\;\Longleftrightarrow\;\;
+f(x) \;\leq'\; f(y).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Intuition]
+Two elements of $A$ are compared by sending them through $f$ and comparing
+their images in $(B, \leq')$. The order on $A$ is entirely inherited from
+$B$ via $f$: we never compare elements of $A$ directly, only their
+$f$-values.
+\end{remark}
+
+\begin{remark}[Fully quantified form]
+$\forall x, y \in A,\quad x \leq_f y \;\Longleftrightarrow\; f(x) \leq' f(y)$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Reflexivity and transitivity: always free
+% ---------------------------------------------------------
+
+\begin{proposition}[$\leq_f$ is always a preorder]\label{prop:induced-preorder}
+For any function $f : A \to B$ and partial order $(B, \leq')$, the relation
+$\leq_f$ is a preorder on $A$: it is reflexive and transitive.
+\end{proposition}
+
+\begin{proof}
+\emph{Reflexive.} For any $x \in A$, $f(x) \leq' f(x)$ by reflexivity of
+$\leq'$, so $x \leq_f x$.
+
+\emph{Transitive.} Suppose $x \leq_f y$ and $y \leq_f z$. Then
+$f(x) \leq' f(y)$ and $f(y) \leq' f(z)$, so $f(x) \leq' f(z)$ by
+transitivity of $\leq'$. Hence $x \leq_f z$.
+\end{proof}
+
+\begin{remark}[Proof strategy]
+Both properties are inherited directly from $(B,\leq')$ by pulling back
+through $f$: reflexivity at $x$ uses reflexivity at $f(x)$, and transitivity
+along $x,y,z$ uses transitivity along $f(x),f(y),f(z)$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Antisymmetry: requires injectivity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($f$-Indistinguishable Elements)}},
+  fonttitle=\small\bfseries]
+\label{def:f-indist}
+Let $f : A \to B$ and $\leq_f$ be the induced order. Two elements
+$x, y \in A$ are \emph{$f$-indistinguishable}, written $x \sim_f y$,
+if both $x \leq_f y$ and $y \leq_f x$, i.e.\ if
+\[
+f(x) \leq' f(y) \quad \text{and} \quad f(y) \leq' f(x).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Intuition]
+Two elements are $f$-indistinguishable when they map to the same position
+in the $\leq'$-order — not necessarily to the same \emph{point}, but to
+mutually comparable points. When $\leq'$ is a partial order (antisymmetric),
+$x \sim_f y$ forces $f(x) = f(y)$, making $f$ non-injective the only
+obstruction to antisymmetry.
+\end{remark}
+
+\begin{proposition}[$\leq_f$ is a partial order iff $f$ is injective]\label{prop:induced-poset}
+Let $(B, \leq')$ be a partially ordered set and $f : A \to B$.
+The induced order $\leq_f$ is a partial order on $A$ if and only if
+$f$ is injective.
+\end{proposition}
+
+\begin{proof}
+We already know $\leq_f$ is a preorder (Proposition~\ref{prop:induced-preorder}).
+It remains to check antisymmetry.
+
+\medskip
+$(\Rightarrow)$ Suppose $\leq_f$ is antisymmetric. Let $x, y \in A$ with
+$f(x) = f(y)$. Then $f(x) \leq' f(y)$ and $f(y) \leq' f(x)$ (by
+reflexivity of $\leq'$, since they are equal), so $x \leq_f y$ and
+$y \leq_f x$. Antisymmetry of $\leq_f$ gives $x = y$. Hence $f$ is
+injective.
+
+\medskip
+$(\Leftarrow)$ Suppose $f$ is injective. Assume $x \leq_f y$ and
+$y \leq_f x$. Then $f(x) \leq' f(y)$ and $f(y) \leq' f(x)$. By
+antisymmetry of $\leq'$, $f(x) = f(y)$. Since $f$ is injective, $x = y$.
+Hence $\leq_f$ is antisymmetric.
+\end{proof}
+
+\begin{remark}[Common error]
+It is tempting to think the induced order is automatically a partial order
+``because $\leq'$ is one.'' It is not. The issue is antisymmetry: if $f$
+collapses two distinct points $x \neq y$ to the same or comparable images,
+we get $x \leq_f y$ and $y \leq_f x$ with $x \neq y$, violating
+antisymmetry. Reflexivity and transitivity lift freely; antisymmetry does
+not.
+\end{remark}
+
+\begin{example}[Non-injective $f$ destroys antisymmetry]
+Let $B = (\mathbb{N}, \leq)$ and let $f : \{a,b\} \to \mathbb{N}$ be the
+constant function $f(a) = f(b) = 0$. Then $a \leq_f b$ (since $0 \leq 0$)
+and $b \leq_f a$ (since $0 \leq 0$), but $a \neq b$. So $\leq_f$ is not
+antisymmetric, confirming that non-injectivity forces a failure.
+\end{example}
+
+\begin{example}[Injective $f$ gives a genuine partial order]
+Let $B = (\mathcal{P}(\{1,2,3\}), \subseteq)$ and let
+$A = \{x, y, z\}$ with $f(x) = \{1\}$, $f(y) = \{2\}$, $f(z) = \{1,2\}$.
+Then $f$ is injective. The induced order has $x \leq_f z$ (since
+$\{1\} \subseteq \{1,2\}$) and $y \leq_f z$ (since $\{2\} \subseteq \{1,2\}$),
+but $x$ and $y$ are incomparable. This is a genuine partial order on $A$.
+\end{example}
+
+% ---------------------------------------------------------
+% Suborders
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Suborder / Restriction)}},
+  fonttitle=\small\bfseries]
+\label{def:suborder}
+Let $(B, \leq')$ be a partially ordered set and $S \subseteq B$. The
+\emph{suborder} on $S$ (or \emph{induced order on $S$}) is the relation
+$\leq'_S$ defined by:
+\[
+x \;\leq'_S\; y
+\;\;\Longleftrightarrow\;\;
+x \leq' y,
+\quad \text{for } x, y \in S.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Connection to induced orders]
+The suborder on $S \subseteq B$ is exactly the order induced by the
+inclusion map $\iota : S \hookrightarrow B$, $\iota(x) = x$. Since $\iota$
+is injective, the suborder is always a partial order whenever $(B,\leq')$
+is. This justifies speaking of ``$S$ with the inherited order'' without
+further verification.
+\end{remark}
+
+% ---------------------------------------------------------
+% Order embeddings
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Order Embedding)}},
+  fonttitle=\small\bfseries]
+\label{def:order-embedding}
+Let $(A, \leq)$ and $(B, \leq')$ be partially ordered sets. A function
+$f : A \to B$ is an \emph{order embedding} if for all $x, y \in A$:
+\[
+x \;\leq\; y
+\;\;\Longleftrightarrow\;\;
+f(x) \;\leq'\; f(y).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Two directions, one condition]
+The $(\Rightarrow)$ direction says $f$ is order-preserving
+(see \hyperref[def:order-pres]{Definition (Order-Preserving Map)}). The
+$(\Leftarrow)$ direction --- $f(x) \leq' f(y) \Rightarrow x \leq y$ ---
+is called \emph{order-reflection}. An order embedding both preserves and
+reflects the order, so $f$ is a perfect local copy of $(A,\leq)$ inside
+$(B,\leq')$.
+\end{remark}
+
+\begin{remark}[Relation to the induced order]
+If $f : A \to B$ is an order embedding from $(A, \leq)$ to $(B, \leq')$,
+then $\leq$ coincides with the induced order $\leq_f$:
+\[
+x \leq y \;\Longleftrightarrow\; f(x) \leq' f(y) \;\Longleftrightarrow\; x \leq_f y.
+\]
+In other words, an order embedding is exactly an injective function whose
+induced order \emph{agrees with the existing order on $A$}.
+\end{remark}
+
+\begin{proposition}[Order embeddings are injective]\label{prop:embedding-injective}
+Every order embedding $f : (A, \leq) \to (B, \leq')$ is injective.
+\end{proposition}
+
+\begin{proof}
+Suppose $f(x) = f(y)$. Then $f(x) \leq' f(y)$ and $f(y) \leq' f(x)$
+(by reflexivity of $\leq'$). By order-reflection, $x \leq y$ and $y \leq x$.
+By antisymmetry of $\leq$, $x = y$.
+\end{proof}
+
+\begin{remark}[Proof strategy]
+Injectivity falls out of the reflection direction: if two elements have the
+same image, reflection forces them to be mutually $\leq$-related, and
+antisymmetry collapses them to equality.
+\end{remark}
+
+\begin{proposition}[Order embedding is isomorphism onto image]\label{prop:embedding-iso}
+If $f : (A, \leq) \to (B, \leq')$ is an order embedding, then $f$ is an
+order isomorphism from $(A, \leq)$ to the suborder $(f(A), \leq'_{f(A)})$.
+\end{proposition}
+
+\begin{proof}
+$f$ is injective by Proposition~\ref{prop:embedding-injective}, and
+it maps $A$ onto $f(A)$ by definition, so $f : A \to f(A)$ is a bijection.
+For $x, y \in A$:
+\[
+x \leq y
+\;\Longleftrightarrow\;
+f(x) \leq' f(y)
+\;\Longleftrightarrow\;
+f(x) \leq'_{f(A)} f(y),
+\]
+where the first equivalence is the order embedding condition and the second
+holds because $f(x), f(y) \in f(A)$ and the suborder agrees with $\leq'$
+on elements of $f(A)$. Hence $f$ is an order isomorphism onto $f(A)$.
+\end{proof}
+
+\begin{remark}[Consequence]
+This proposition is the order-theoretic analogue of the first isomorphism
+theorem: an order embedding always realises $(A,\leq)$ as an isomorphic
+copy of a sub-poset of $(B,\leq')$. When $f$ is also surjective, the
+embedding becomes a full order isomorphism
+(see \hyperref[def:order-iso]{Definition (Order Isomorphism)}).
+\end{remark}
+
+\begin{example}[Standard embeddings]
+Each of the following is an order embedding:
+\begin{enumerate}[label=(\roman*)]
+  \item The inclusion $\mathbb{N} \hookrightarrow \mathbb{Z}$ with standard
+        $\leq$ on both: $m \leq n \iff m \leq n$ trivially. The natural
+        numbers sit inside the integers as an isomorphic copy of $(\mathbb{N},\leq)$.
+  \item The function $f : \mathbb{N} \to \mathbb{N}$, $f(n) = 2n$, embeds
+        $(\mathbb{N},\leq)$ into itself: $m \leq n \iff 2m \leq 2n$.
+        The image is the even numbers with the inherited order.
+  \item The map $A \mapsto A$ from $(\mathcal{P}(X), \subseteq)$ to itself
+        is an order isomorphism (the identity), but any injective
+        $g : \mathcal{P}(X) \to \mathcal{P}(X)$ that preserves and reflects
+        $\subseteq$ is an order embedding.
+\end{enumerate}
+\end{example}
+
+\begin{remark}[Transition]
+Induced orders and embeddings are the order-theoretic counterpart of
+substructures in algebra. Just as a subgroup is a subset closed under the
+group operations, a sub-poset is a subset with the inherited order ---
+and an order embedding is the morphism that witnesses this. In analysis,
+these ideas appear when restricting an order from $\mathbb{R}$ to subsets
+(intervals, sequences, function spaces), and when the completeness property
+is transferred between ordered structures.
+\end{remark}

@@ -1,0 +1,233 @@
+% =========================================================
+% Absolute and Conditional Convergence
+% File: notes-absolute-convergence.tex
+% =========================================================
+
+\subsection{Absolute and Conditional Convergence}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Absolute Convergence — Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Absolute convergence)}},
+  fonttitle=\small\bfseries]
+A series
+\[
+\sum_{n=1}^{\infty} a_n
+\]
+is said to \emph{converge absolutely} if the series
+\[
+\sum_{n=1}^{\infty} |a_n|
+\]
+converges.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Conditional convergence)}},
+  fonttitle=\small\bfseries]
+A series
+\[
+\sum_{n=1}^{\infty} a_n
+\]
+is said to \emph{converge conditionally} if it converges, but does not converge absolutely.
+\end{tcolorbox}
+
+\begin{remark}[Logical form]
+\[
+\text{Absolute convergence}
+\quad\Longleftrightarrow\quad
+\sum |a_n| \text{ converges}.
+\]
+
+\[
+\text{Conditional convergence}
+\quad\Longleftrightarrow\quad
+\sum a_n \text{ converges and } \sum |a_n| \text{ diverges}.
+\]
+\end{remark}
+
+\begin{remark}
+Absolute convergence is a stronger property than convergence.
+It imposes global control on the total variation of the series.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+\begin{theorem}[Absolute convergence implies convergence]
+If
+\[
+\sum_{n=1}^{\infty} |a_n|
+\]
+converges, then
+\[
+\sum_{n=1}^{\infty} a_n
+\]
+converges.
+\end{theorem}
+
+\begin{proof}
+Let $s_N = \sum_{n=1}^N a_n$ and
+$t_N = \sum_{n=1}^N |a_n|$.
+
+Since $\sum |a_n|$ converges, the sequence $(t_N)$ is Cauchy.
+Thus for every $\varepsilon>0$, there exists $N$ such that for all $m>n\ge N$,
+\[
+\sum_{k=n+1}^{m} |a_k| < \varepsilon.
+\]
+
+Now observe:
+\[
+\left|\sum_{k=n+1}^{m} a_k\right|
+\le
+\sum_{k=n+1}^{m} |a_k|.
+\]
+
+Therefore for $m>n\ge N$,
+\[
+|s_m - s_n|
+=
+\left|\sum_{k=n+1}^{m} a_k\right|
+<
+\varepsilon.
+\]
+
+Hence $(s_N)$ is Cauchy.
+By the Cauchy Criterion in $\mathbb{R}$, $(s_N)$ converges.
+Thus $\sum a_n$ converges.
+\end{proof}
+
+\begin{remark}
+The proof uses only:
+\begin{itemize}
+\item the triangle inequality,
+\item the Cauchy Criterion,
+\item completeness of $\mathbb{R}$.
+\end{itemize}
+\end{remark}
+
+\begin{theorem}[Comparison via absolute values]
+If $|a_n| \le b_n$ for all $n$, where $b_n \ge 0$ and
+\[
+\sum b_n
+\]
+converges, then
+\[
+\sum a_n
+\]
+converges absolutely (and hence converges).
+\end{theorem}
+
+\begin{proof}
+Since $|a_n| \le b_n$ and $\sum b_n$ converges,
+the Comparison Test implies $\sum |a_n|$ converges.
+By the previous theorem, $\sum a_n$ converges.
+\end{proof}
+
+\begin{theorem}[Absolute convergence is rearrangement invariant]
+If a series converges absolutely, then every rearrangement of the series
+converges to the same sum.
+\end{theorem}
+
+\begin{remark}
+The proof of this theorem requires additional combinatorial estimates
+and will be developed later in the study of rearrangements.
+The key idea is that absolute convergence prevents cancellation effects
+from altering the limit.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Canonical Examples}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Geometric series)}},
+  fonttitle=\small\bfseries]
+For $|r|<1$,
+\[
+\sum_{n=0}^{\infty} r^n
+\]
+converges absolutely since
+\[
+\sum |r|^n
+\]
+is geometric.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Alternating harmonic series)}},
+  fonttitle=\small\bfseries]
+\[
+\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}
+\]
+converges, but
+\[
+\sum_{n=1}^{\infty} \frac{1}{n}
+\]
+diverges.
+
+Hence it is conditionally convergent.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+The logical implication of this section is:
+
+\[
+\text{Absolute convergence}
+\;\Rightarrow\;
+\text{Convergence}.
+\]
+
+However,
+
+\[
+\text{Convergence}
+\;\not\Rightarrow\;
+\text{Absolute convergence}.
+\]
+
+\begin{remark}[Logical Structure]
+The major sequence theorems interlock as follows:
+
+\[
+\sum |a_n| \text{ converges}
+\Rightarrow
+\text{Cauchy partial sums}
+\Rightarrow
+\text{Convergent series}.
+\]
+
+Absolute convergence therefore sits structurally between:
+
+\[
+\text{Comparison tests}
+\quad\text{and}\quad
+\text{Rearrangement theory}.
+\]
+\end{remark}
+
+\begin{remark}[Philosophical interpretation]
+Absolute convergence eliminates the possibility that convergence
+is caused merely by oscillatory cancellation.
+It measures the total accumulated magnitude of the series.
+\end{remark}

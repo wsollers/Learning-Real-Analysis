@@ -1,0 +1,317 @@
+\documentclass[11pt]{report}
+
+% ============================================================
+% Page layout
+% ============================================================
+\usepackage[margin=1in]{geometry}
+
+% ============================================================
+% Fonts and encoding
+% ============================================================
+\usepackage[T1]{fontenc}
+
+% ============================================================
+% AMS mathematics
+% ============================================================
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+
+% ============================================================
+% Lists and tables
+% ============================================================
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{makecell}
+\usepackage{tabularx}
+
+% ============================================================
+% Colours, boxes, and links
+% ============================================================
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\input{blueprint-macros}
+\usepackage{hyperref}
+\usepackage{bookmark}
+
+% ============================================================
+% TikZ
+% ============================================================
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows.meta,
+  backgrounds,
+  calc,
+  decorations.pathreplacing,
+  decorations.markings,
+  fit,
+  patterns,
+  positioning,
+  shapes.geometric
+}
+
+% ============================================================
+% Miscellaneous
+% ============================================================
+\usepackage{etoolbox}
+\usepackage{expl3}
+\usepackage{float}
+\usepackage{microtype}
+\usepackage{multicol}
+\usepackage{placeins}
+\usepackage{xparse}
+
+% ============================================================
+% Bibliography
+% ============================================================
+\usepackage[authoryear]{natbib}
+
+% ============================================================
+% Three-column proof table column types
+% ============================================================
+\newcolumntype{T}{p{0.06\textwidth}}
+\newcolumntype{S}{>{\everymath{\displaystyle}$\displaystyle}p{0.44\textwidth}<{$}}
+\newcolumntype{J}{p{0.40\textwidth}}
+
+% ============================================================
+% Colours — mathematical content
+% ============================================================
+\definecolor{indexblue}  {HTML}{1a3a6b}
+\definecolor{natblue}    {HTML}{2e6db4}
+\definecolor{realorange} {HTML}{c45c13}
+\definecolor{sigmagreen} {HTML}{1a6b3a}
+\definecolor{lightblue}  {HTML}{dce8f7}
+\definecolor{lightorange}{HTML}{fde8d8}
+\definecolor{propbox}    {HTML}{f0f4ff}
+\definecolor{propborder} {HTML}{7a9fd4}
+% Axiom box — deep violet (unproven primitives)
+\definecolor{axiombox}   {HTML}{f3f0fa}
+\definecolor{axiomborder}{HTML}{8a6abf}
+% Theorem box — warm amber (major named results)
+\definecolor{thmbox}     {HTML}{fff8f0}
+\definecolor{thmborder}  {HTML}{c07840}
+
+% ============================================================
+% Colours — algebraic structures diagram (algebraic-dag.tex)
+% ============================================================
+\definecolor{cSet}    {HTML}{4a4a6a}
+\definecolor{cBinop}  {HTML}{5a5a7a}
+\definecolor{cMagma}  {HTML}{5a4a7a}
+\definecolor{cSemi}   {HTML}{6a5a8a}
+\definecolor{cMonoid} {HTML}{7a6a9a}
+\definecolor{cGroup}  {HTML}{3a52a4}
+\definecolor{cAbelian}{HTML}{2a7a9c}
+\definecolor{cRing}   {HTML}{a44a2a}
+\definecolor{cField}  {HTML}{a4882a}
+\definecolor{cVS}     {HTML}{2a7a4b}
+\definecolor{arrISA}  {HTML}{3a5a9a}
+\definecolor{arrHASA} {HTML}{8a5a20}
+\definecolor{arrUSES} {HTML}{2a7a4a}
+\definecolor{nodetext}{HTML}{ffffff}
+\definecolor{sigtext} {HTML}{ccccdd}
+\definecolor{bodytext}{HTML}{eeeeee}
+\definecolor{lbltext} {HTML}{3a3a5a}
+
+% ============================================================
+% Theorem environments
+% ============================================================
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{principle}[theorem]{Principle}
+
+% Unnumbered variants
+\theoremstyle{plain}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{proposition*}{Proposition}
+\newtheorem*{corollary*}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem*{definition*}{Definition}
+\newtheorem*{axiom*}{Axiom}
+\newtheorem*{assumption*}{Assumption}
+
+\theoremstyle{remark}
+\newtheorem*{remark*}{Remark}
+\newtheorem*{example*}{Example}
+\newtheorem*{principle*}{Principle}
+
+\newtheorem{consequence}[theorem]{Consequence}
+\newtheorem*{consequence*}{Consequence}
+
+% ============================================================
+% Proof-writing macros
+% ============================================================
+\newcommand{\Given}     {\textbf{Given.}\ }
+\newcommand{\Goal}      {\textbf{Goal.}\ }
+\newcommand{\Strategy}  {\textbf{Strategy.}\ }
+\newcommand{\ProofPlan} {\textbf{Plan.}\ }
+\newcommand{\Recall}    {\textbf{Recall.}\ }
+\newcommand{\Claim}     {\textbf{Claim.}\ }
+\newcommand{\Wlog}      {\textit{Without loss of generality}}
+\newcommand{\Fix}       {\textbf{Fix.}\ }
+\newcommand{\Let}       {\textbf{Let.}\ }
+\newcommand{\Choose}    {\textbf{Choose.}\ }
+\newcommand{\Take}      {\textbf{Take.}\ }
+\newcommand{\Note}      {\textbf{Note.}\ }
+\newcommand{\ByDef}     {\textbf{By definition,}\ }
+\newcommand{\ByAss}     {\textbf{By assumption,}\ }
+\newcommand{\ByThm}[1]  {\textbf{By #1,}\ }
+\newcommand{\Thus}      {\textbf{Thus,}\ }
+\newcommand{\Hence}     {\textbf{Hence,}\ }
+\newcommand{\Therefore} {\textbf{Therefore,}\ }
+\newcommand{\AsReq}     {\textbf{as required.}}
+\newcommand{\checkbox}  {$\square$\ }
+\newcommand{\pp}        {\texttt{++}}
+
+% ============================================================
+% Proof annotation tags
+% ============================================================
+\newcommand{\tagDU}{\textbf{\textcolor{blue!70!black}{DU}}}
+\newcommand{\tagTA}{\textbf{\textcolor{green!50!black}{TA}}}
+\newcommand{\tagAM}{\textbf{\textcolor{orange!80!black}{AM}}}
+\newcommand{\tagIH}{\textbf{\textcolor{purple!70!black}{IH}}}
+\newcommand{\tagBC}{\textbf{\textcolor{teal!70!black}{BC}}}
+\newcommand{\tagIS}{\textbf{\textcolor{teal!50!black}{IS}}}
+\newcommand{\tagCS}{\textbf{\textcolor{red!60!black}{CS}}}
+\newcommand{\tagEX}{\textbf{\textcolor{magenta!60!black}{EX}}}
+\newcommand{\tagUW}{\textbf{\textcolor{cyan!60!black}{UW}}}
+% ============================================================
+% Math operators
+% ============================================================
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cod}{cod}
+\DeclareMathOperator{\im}{im}
+
+% ============================================================
+% Citation macros
+% ============================================================
+\newcommand{\srccite}[1]{%
+  \textsc{\citeauthor{#1}}%
+}
+\newcommand{\srcciteauthor}[1]{%
+  \textsc{\citeauthor{#1}}%
+}
+\newcommand{\srccitesection}[2]{%
+  \textsc{\citeauthor{#1}}, \textit{#2} [\citeyear{#1}]%
+}
+
+% ============================================================
+% Layout
+% ============================================================
+\setlength{\parskip}{0.75\baselineskip}
+\setlength{\parindent}{0pt}
+\setlist[itemize]{leftmargin=*}
+
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = blue!60!black,
+  citecolor  = blue!60!black,
+  urlcolor   = blue!60!black,
+}
+
+
+
+% ============================================================
+% Numbering and TOC depth
+% ============================================================
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% ============================================================
+% Document
+% ============================================================
+\begin{document}
+\ExplSyntaxOff
+
+% ── Cover page ────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{2.5cm}
+  {\Huge\bfseries Learning Abstract Mathematics\par}
+  \vspace{1.5cm}
+  {\Large A Structured Journey Through Logic, Sets, Algebra, and Analysis\par}
+  \vspace{2.5cm}
+  {\Large William E. Sollers III\par}
+  \vspace{1cm}
+  {\large \today\par}
+  \vfill
+  {\large ``Proof is the price of admission.''\par}
+\end{titlepage}
+
+% ── Front matter ──────────────────────────────────────────────────────────────
+\tableofcontents
+\clearpage
+
+% ── Road Map ──────────────────────────────────────────────────────────────────
+\input{map}
+
+% ── Volume I: Mathematical Logic ──────────────────────────────────────────────
+\input{volume-i/index}
+\clearpage
+
+% ── Volume II: Foundations of Formal Number Systems ───────────────────────────
+\input{volume-ii/index}
+\clearpage
+
+% ── Volume III: Abstract Mathematics ──────────────────────────────────────────
+\input{volume-iii/index}
+\clearpage
+
+% ── Proof Completion Metrics ──────────────────────────────────────────────────
+\chapter*{Proof Completion Metrics}
+\addcontentsline{toc}{chapter}{Proof Completion Metrics}
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{Chapter} & \textbf{Completed} \\
+\midrule
+Propositional Logic (Bjørndahl, Suppes)             & 24 \\
+Predicate Logic (Suppes Ch.\ 6--8)                  & 12 \\
+Real Analysis (Abbott, Johar, Pons, Ross)            & 12 \\
+Algebraic Structures (groups, rings, fields)         & 8  \\
+Abstract Algebra (Gallian)                           & 9  \\
+Axiom Systems / Tao Ch.\ 2                           & 8  \\
+Linear Algebra (Axler)                              & 5  \\
+\midrule
+\textbf{Total}                                      & \textbf{78} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ── Glossary ──────────────────────────────────────────────────────────────────
+\input{glossary-foundations}
+
+% ── Appendices ────────────────────────────────────────────────────────────────
+\appendix
+\clearpage \input{appendices/logical-fallacies}
+\clearpage \input{appendices/proof-techniques}
+\clearpage \input{appendices/rules-to-remember}
+\clearpage \input{appendices/propositional-logic-rules}
+\clearpage \input{appendices/proof-style-guide}
+\clearpage \input{appendices/tips}
+
+% ── Bibliography ──────────────────────────────────────────────────────────────
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{bibliography/analysis}
+
+\end{document}

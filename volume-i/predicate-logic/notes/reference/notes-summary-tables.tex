@@ -1,0 +1,78 @@
+% =========================================================
+% Summary Tables
+% =========================================================
+
+\subsection{Reference: Summary Tables}
+
+\subsubsection*{Comparison: Propositional vs.\ Predicate Logic}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Aspect} & \textbf{Propositional Logic} & \textbf{Predicate Logic} \\ \hline
+Atomic formulas & Propositional variables (e.g.\ $P$, $Q$) & Predicate symbols applied to terms (e.g.\ $P(x)$, $R(x,y)$) \\ \hline
+Internal structure & No internal structure & Terms, variables, constants, functions \\ \hline
+Dependence on variables & None & May contain free variables \\ \hline
+Semantic interpretation & Assigned a truth value directly & True or false relative to a structure and assignment \\ \hline
+Use of quantifiers & Not available & Essential component \\ \hline
+Semantic evaluation & Truth tables & Satisfaction in a structure \\ \hline
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\subsubsection*{Quantifier Rules Summary}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{|p{4cm}|p{6cm}|p{5cm}|}
+\hline
+\textbf{Rule Name} & \textbf{Schema} & \textbf{Conditions / Notes} \\ \hline
+Universal Instantiation & $\forall x\,\varphi \Rightarrow \varphi[t/x]$ & $t$ must be free for $x$ in $\varphi$ \\ \hline
+Existential Generalization & $\varphi[t/x] \Rightarrow \exists x\,\varphi$ & $t$ may be any term \\ \hline
+Existential Instantiation & $\exists x\,\varphi \Rightarrow \varphi[c/x]$ & $c$ is a new constant symbol \\ \hline
+Universal Generalization & $\varphi \Rightarrow \forall x\,\varphi$ & $x$ not free in any undischarged assumption \\ \hline
+Quantifier Negation & $\neg\forall x\,\varphi \equiv \exists x\,\neg\varphi$ & — \\ \cline{2-3}
+                    & $\neg\exists x\,\varphi \equiv \forall x\,\neg\varphi$ & — \\ \hline
+Quantifier Commutation & $\forall x\,\forall y\,\varphi \equiv \forall y\,\forall x\,\varphi$ & Same quantifier type only \\ \cline{2-3}
+                       & $\exists x\,\exists y\,\varphi \equiv \exists y\,\exists x\,\varphi$ & — \\ \hline
+Vacuous Quantification & $\forall x\,\varphi \equiv \varphi$ & $x$ not free in $\varphi$ \\ \cline{2-3}
+                       & $\exists x\,\varphi \equiv \varphi$ & — \\ \hline
+Renaming Bound Variables & $\forall x\,\varphi \equiv \forall y\,\varphi[y/x]$ & $y$ not free in $\varphi$ \\ \hline
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\subsubsection*{Syntax to Semantics Overview}
+
+\begin{center}
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+  node distance=3.2cm,
+  every node/.style={draw, rectangle, rounded corners, align=center, inner sep=8pt},
+  arrow/.style={->, thick}
+]
+
+\node (var) {\textbf{Variables}\\ $x_1,\dots,x_n$};
+\node (term) [right=of var] {\textbf{Terms}\\ $t_1,\dots,t_n$};
+\node (atom) [right=of term] {\textbf{Atomic Formula}\\ $P(t_1,\dots,t_n)$};
+\node (form) [right=of atom] {\textbf{Formula}\\ $\forall x\,\varphi,\;\exists x\,\varphi$};
+\node (rel)  [right=of form] {\textbf{Truth in Structure}\\ $\mathcal{M}, s \models \varphi$};
+
+\draw[arrow] (var)  -- node[above]{\small substitution} (term);
+\draw[arrow] (term) -- node[above]{\small formation} (atom);
+\draw[arrow] (atom) -- node[above]{\small logical construction} (form);
+\draw[arrow] (form) -- node[above]{\small satisfaction} (rel);
+
+\end{tikzpicture}
+}
+\end{center}
+
+\begin{remark}
+Variables and terms belong purely to syntax. Predicates form atomic formulas.
+Logical connectives and quantifiers build complex formulas. A structure and
+variable assignment then determine whether a formula is satisfied, with
+quantifiers ranging over the domain of discourse.
+\end{remark}

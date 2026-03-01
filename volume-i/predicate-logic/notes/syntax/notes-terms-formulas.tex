@@ -1,0 +1,171 @@
+% =========================================================
+% Terms and Formulas
+% =========================================================
+
+\subsection{Syntax of First-Order Logic: Terms and Formulas}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Terms and Formulas — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Variable          & Symbol ranging over domain elements    & \hyperref[def:variable]{↓ Def} \\
+Term              & Syntactic object denoting a domain element & \hyperref[def:term]{↓ Def} \\
+Atomic formula    & Predicate applied to terms             & \hyperref[def:atomic-formula]{↓ Def} \\
+Well-formed formula & Recursively constructed formula      & \hyperref[def:wff-pred]{↓ Def} \\
+Molecular formula & Non-atomic wff                         & \hyperref[def:molecular]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Variable
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Variable)}},
+  fonttitle=\small\bfseries]
+\label{def:variable}
+A \emph{variable} is a syntactic symbol that ranges over elements of a fixed
+domain of discourse.
+
+Variables serve as placeholders in formulas and do not refer to specific objects
+until they are assigned values or bound by quantifiers.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Variables are the unknowns of predicate logic. They pick out no particular
+object on their own; their value is supplied either by a variable assignment
+(semantics) or by a quantifier (syntax).
+\end{remark}
+
+\begin{remark}[Consequence]
+Because variables have no fixed denotation, the truth of a formula containing
+free variables depends on what values are assigned to those variables. This
+dependence is tracked formally by the variable assignment function $s$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Term
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Term)}},
+  fonttitle=\small\bfseries]
+\label{def:term}
+A \emph{term} is a syntactic expression intended to denote an object in the
+domain of discourse.
+
+The set of terms of a formal language is defined recursively:
+\begin{enumerate}
+  \item \textbf{Variables.} Every variable is a term.
+  \item \textbf{Constants.} Every constant symbol is a term.
+  \item \textbf{Function application.} If $f$ is an $n$-ary function symbol and
+  $t_1, \dots, t_n$ are terms, then $f(t_1, \dots, t_n)$ is a term.
+  \item \textbf{Closure.} No expression is a term unless it can be obtained by
+  finitely many applications of rules (1)--(3).
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Terms are the noun phrases of predicate logic: they name (or describe) objects
+in the domain. Constants name fixed objects; variables name arbitrary ones;
+function symbols build complex names from simpler ones.
+\end{remark}
+
+\begin{remark}[Fully quantified form]
+Terms are purely syntactic objects. Under an interpretation, each term denotes
+an element of the domain of discourse, but the term itself is not an object of
+the domain.
+\end{remark}
+
+% ---------------------------------------------------------
+% Atomic Formula
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Atomic Formula)}},
+  fonttitle=\small\bfseries]
+\label{def:atomic-formula}
+An \emph{atomic formula} is a well-formed formula obtained by applying an
+$n$-ary predicate symbol to $n$ terms.
+
+If $P$ is an $n$-ary predicate symbol and $t_1, \dots, t_n$ are terms, then
+\[
+P(t_1, \dots, t_n)
+\]
+is an atomic formula.
+
+Atomic formulas contain no logical connectives or quantifiers and serve as the
+base case for the recursive definition of well-formed formulas.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Atomic formulas are the simplest complete statements: they assert that a
+predicate (property or relation) holds of specific objects. They are the
+predicate-logic counterpart of propositional variables.
+\end{remark}
+
+% ---------------------------------------------------------
+% Well-Formed Formula
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Well-Formed Formula)}},
+  fonttitle=\small\bfseries]
+\label{def:wff-pred}
+The set of \emph{well-formed formulas} (wffs) of a first-order language is
+defined recursively:
+\begin{enumerate}
+  \item \textbf{Atomic formulas.} Every atomic formula is a well-formed formula.
+  \item \textbf{Negation.} If $\varphi$ is a formula, then $\neg\varphi$ is a formula.
+  \item \textbf{Binary connectives.} If $\varphi$ and $\psi$ are formulas and
+  $\circ \in \{\wedge, \vee, \rightarrow, \leftrightarrow\}$, then
+  $(\varphi \circ \psi)$ is a formula.
+  \item \textbf{Quantification.} If $\varphi$ is a formula and $x$ is a variable,
+  then $\forall x\,\varphi$ and $\exists x\,\varphi$ are formulas.
+  \item \textbf{Closure.} No expression is a formula unless it can be obtained
+  by finitely many applications of rules (1)--(4).
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+The wff definition says exactly which strings of symbols count as grammatical
+sentences of first-order logic. Everything in the language is built bottom-up
+from atomic formulas by the four formation rules.
+\end{remark}
+
+\begin{remark}[Distinction from propositional logic]
+Rule (4) is new: quantifiers bind variables and create formulas from formulas.
+This extra layer is what makes predicate logic more expressive than
+propositional logic.
+\end{remark}
+
+% ---------------------------------------------------------
+% Molecular Formula
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Molecular Formula)}},
+  fonttitle=\small\bfseries]
+\label{def:molecular}
+A \emph{molecular formula} is a well-formed formula that is not atomic.
+
+Equivalently, a formula is molecular if it is formed from one or more atomic
+formulas by the application of logical connectives or quantifiers.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+Atomic formulas express basic properties or relations. Molecular formulas
+express compound statements built from atomic formulas using the logical
+apparatus of the language.
+\end{remark}

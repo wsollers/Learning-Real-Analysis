@@ -1,0 +1,249 @@
+% =========================================================
+% Hasse Diagrams, Supremum and Infimum, and the Duality Principle
+% =========================================================
+
+\subsection{Hasse Diagrams, Supremum and Infimum, and the Duality Principle}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Hasse Diagrams, Sup/Inf, Duality — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Hasse diagram      & Graph encoding a poset; edges only for \emph{cover} relations        & \hyperref[def:hasse]{↓ Def} \\
+Cover relation     & $a \lessdot b$: $a < b$ with nothing strictly between                 & \hyperref[def:cover]{↓ Def} \\
+Supremum (join)    & Least upper bound: $\sup S = \min\,\{\,u \mid u \geq s\ \forall s\in S\,\}$ & \hyperref[def:sup-inf]{↓ Def} \\
+Infimum (meet)     & Greatest lower bound: $\inf S = \max\,\{\,\ell \mid \ell \leq s\ \forall s\in S\,\}$ & \hyperref[def:sup-inf]{↓ Def} \\
+Dual poset         & $(A, \geq)$ obtained by reversing the order on $(A, \leq)$           & \hyperref[def:dual-poset]{↓ Def} \\
+Duality principle  & Every theorem about posets yields a theorem in the dual              & \hyperref[thm:duality]{↓ Prop} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Hasse Diagrams
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Cover Relation)}},
+  fonttitle=\small\bfseries]
+\label{def:cover}
+Let $(A, \leq)$ be a poset and $a, b \in A$. We say $b$ \emph{covers} $a$,
+written $a \lessdot b$, if $a < b$ and there is no $c \in A$ with $a < c < b$.
+\end{tcolorbox}
+
+\begin{remark}[Intuition]
+The cover relation strips the partial order down to its ``essential edges.''
+If $a \lessdot b$, then $b$ is the immediate successor of $a$: you cannot
+insert anything between them. In a finite poset every strict relation
+$a < b$ factors as a finite chain of cover steps.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Hasse Diagram)}},
+  fonttitle=\small\bfseries]
+\label{def:hasse}
+The \emph{Hasse diagram} of a finite poset $(A, \leq)$ is the directed graph
+whose vertices are the elements of $A$, with an upward edge from $a$ to $b$
+whenever $a \lessdot b$. Three graphical conventions apply:
+\begin{enumerate}[label=(\roman*)]
+  \item Reflexive loops ($a \leq a$) are suppressed.
+  \item Edges implied by transitivity are suppressed: if $a \lessdot b$ and
+        $b \lessdot c$, no direct edge from $a$ to $c$ is drawn.
+  \item Direction is encoded by height: $a \lessdot b$ is drawn with $b$
+        strictly above $a$, so arrowheads are unnecessary.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Why Hasse diagrams work]
+Because we keep only cover edges, the diagram is uncluttered while still
+encoding the full order: $a \leq b$ holds in $(A,\leq)$ if and only if there
+is an upward path in the Hasse diagram from $a$ to $b$ (or $a = b$).
+\end{remark}
+
+\begin{example}[Divisibility on $\{1,2,3,4,6,12\}$]
+Order the set $D = \{1, 2, 3, 4, 6, 12\}$ by divisibility ($a \leq b$ iff
+$a \mid b$). The covers are:
+\[
+  1 \lessdot 2,\quad
+  1 \lessdot 3,\quad
+  2 \lessdot 4,\quad
+  2 \lessdot 6,\quad
+  3 \lessdot 6,\quad
+  4 \lessdot 12,\quad
+  6 \lessdot 12.
+\]
+The Hasse diagram places $1$ at the bottom, $12$ at the top, $2$ and $3$
+on the next level up from $1$, $4$ and $6$ above those, and $12$ at the
+apex. The edge $1 \to 4$ is \emph{not} drawn because $1 \lessdot 2 \lessdot 4$
+already connects them through $2$.
+\end{example}
+
+\begin{example}[Power set $\mathcal{P}(\{a,b,c\})$ under inclusion]
+The Hasse diagram has four levels: $\varnothing$ at the bottom; the three
+singletons $\{a\},\{b\},\{c\}$ one level up; the three two-element sets
+above those; and $\{a,b,c\}$ at the top. Each singleton is covered by the
+two two-element sets containing it. This diagram is the Boolean lattice
+$B_3$.
+\end{example}
+
+\begin{remark}[Limitation to finite posets]
+For infinite posets such as $(\mathbb{N}, \leq)$, the cover relation is
+well-defined ($n \lessdot n+1$) but the full diagram cannot be drawn. In
+analysis, Hasse diagrams serve as a conceptual aid for finite or
+schematic examples rather than as a proof tool.
+\end{remark}
+
+% ---------------------------------------------------------
+% Supremum and Infimum (abstract)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Supremum and Infimum)}},
+  fonttitle=\small\bfseries]
+\label{def:sup-inf}
+Let $(A, \leq)$ be a poset and $S \subseteq A$.
+
+The \emph{supremum} (or \emph{least upper bound}) of $S$, written
+$\sup S$, is an element $u^* \in A$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+  \item $u^*$ is an upper bound of $S$: $\forall s \in S,\ s \leq u^*$;
+  \item $u^*$ is least among upper bounds: if $u$ is any upper bound of
+        $S$ then $u^* \leq u$.
+\end{enumerate}
+
+The \emph{infimum} (or \emph{greatest lower bound}) of $S$, written
+$\inf S$, is an element $\ell^* \in A$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+  \item $\ell^*$ is a lower bound of $S$: $\forall s \in S,\ \ell^* \leq s$;
+  \item $\ell^*$ is greatest among lower bounds: if $\ell$ is any lower
+        bound of $S$ then $\ell \leq \ell^*$.
+\end{enumerate}
+
+When they exist, $\sup S$ and $\inf S$ are unique.
+\end{tcolorbox}
+
+\begin{remark}[Uniqueness]
+If $u^*$ and $v^*$ are both suprema of $S$, then $u^*$ is an upper bound
+so $v^* \leq u^*$, and $v^*$ is an upper bound so $u^* \leq v^*$.
+Antisymmetry gives $u^* = v^*$. The same argument applies to infima.
+\end{remark}
+
+\begin{remark}[Sup and inf need not lie in $S$]
+The set $S = (0,1) \subseteq \mathbb{R}$ has $\sup S = 1$ and
+$\inf S = 0$, neither of which belongs to $S$. Contrast with
+$\max S$ and $\min S$, which are the supremum and infimum when they
+happen to lie \emph{in} $S$. Every maximum is a supremum, but not
+conversely.
+\end{remark}
+
+\begin{remark}[Sup and inf need not exist]
+In the poset $(\mathbb{Q}, \leq)$, the set
+$\{r \in \mathbb{Q} : r^2 < 2\}$ is bounded above (e.g.\ by $2$) but
+has no supremum in $\mathbb{Q}$: the candidate $\sqrt{2}$ is not
+rational. This failure is precisely what the completeness axiom for
+$\mathbb{R}$ addresses: it asserts that every nonempty subset of
+$\mathbb{R}$ that is bounded above \emph{does} have a supremum in
+$\mathbb{R}$.
+\end{remark}
+
+\begin{remark}[Connection to greatest and least elements]
+$\sup S$ is the \emph{least element of the set of upper bounds of $S$}
+in $A$; $\inf S$ is the \emph{greatest element of the set of lower
+bounds of $S$} in $A$. This is why they are alternatively called the
+\emph{join} and \emph{meet} of $S$ in lattice theory.
+\end{remark}
+
+\begin{example}[Sup and inf in the divisibility poset]
+In the divisibility poset $(D, \mid)$ with $D = \{1,2,3,4,6,12\}$, take
+$S = \{4, 6\}$. The upper bounds of $S$ (elements divisible by both $4$
+and $6$) are $\{12\}$, so $\sup S = 12$. The lower bounds (elements
+dividing both $4$ and $6$) are $\{1, 2\}$; the greatest of these is
+$2$, so $\inf S = 2$. Note: $\sup S = \mathrm{lcm}(4,6)$ and
+$\inf S = \gcd(4,6)$, revealing that $\gcd$ and $\mathrm{lcm}$ are
+order-theoretic concepts.
+\end{example}
+
+% ---------------------------------------------------------
+% Dual Poset and Duality Principle
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Dual Poset)}},
+  fonttitle=\small\bfseries]
+\label{def:dual-poset}
+Let $(A, \leq)$ be a poset. The \emph{dual poset} is $(A, \geq)$, where
+$a \geq b$ is defined to mean $b \leq a$. The dual is also written
+$(A, \leq^{\mathrm{op}})$.
+\end{tcolorbox}
+
+\begin{remark}[Intuition]
+The dual poset is obtained by flipping the Hasse diagram upside down.
+Every structural feature is preserved but reflected: what was at the
+top is now at the bottom. Minimal elements become maximal, upper bounds
+become lower bounds, and the supremum becomes the infimum.
+\end{remark}
+
+\begin{proposition}[Duality Principle]\label{thm:duality}
+Let $\Phi$ be any first-order statement about a poset $(A, \leq)$
+expressed using only the relation $\leq$. Let $\Phi^*$ be the statement
+obtained from $\Phi$ by replacing every occurrence of $\leq$ with $\geq$
+(equivalently, working in the dual poset). Then:
+\[
+  (A, \leq) \models \Phi
+  \;\;\Longleftrightarrow\;\;
+  (A, \geq) \models \Phi.
+\]
+In particular, if $\Phi$ is a theorem about all posets, then so is
+$\Phi^*$.
+\end{proposition}
+
+\begin{proof}
+The dual $(A, \geq)$ is itself a poset: $\geq$ is reflexive, antisymmetric,
+and transitive because $\leq$ is. Any proof of $\Phi$ in an arbitrary
+poset is therefore a proof of $\Phi^*$ in that same poset (reread with
+the order reversed). The two directions are symmetric.
+\end{proof}
+
+\begin{remark}[Practical use]
+The duality principle means theorems come in pairs at no extra cost.
+Some instances you will use repeatedly in analysis:
+\begin{itemize}
+  \item \emph{Supremum $\leftrightarrow$ Infimum.} Every theorem about
+        $\sup$ yields a theorem about $\inf$ by duality. For instance,
+        if $\sup$ of a bounded-above set exists, duality (applied to the
+        negation of the order) gives that $\inf$ of a bounded-below set
+        exists — and this is exactly how the infimum is deduced from the
+        completeness axiom for $\mathbb{R}$.
+  \item \emph{Minimal $\leftrightarrow$ Maximal.} A statement about
+        minimal elements in a poset dualises to a statement about maximal
+        elements.
+  \item \emph{Well-ordering.} $(\mathbb{N}, \leq)$ is well-ordered (every
+        nonempty subset has a least element); the dual
+        $(\mathbb{N}, \geq)$ is \emph{not} well-ordered (the whole set has
+        no greatest element). Duality preserves the \emph{form} of the
+        definition but does not preserve well-ordering; this asymmetry is
+        a key feature, not a failure of duality.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Transition]
+With Hasse diagrams, $\sup$/$\inf$, and duality in hand, the order
+vocabulary of this chapter is complete. The next payoff is in
+Volume~II: when $\mathbb{R}$ is constructed, the completeness axiom
+is the assertion that every nonempty bounded-above subset of $\mathbb{R}$
+has a supremum — an order-theoretic condition that cannot be satisfied
+by $\mathbb{Q}$, as the example above shows.
+\end{remark}

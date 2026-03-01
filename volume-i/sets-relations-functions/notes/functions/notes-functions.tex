@@ -1,0 +1,221 @@
+% =========================================================
+% Functions: Definitions and Basic Properties
+% =========================================================
+
+\subsection{Functions}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Functions — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Function         & Left-total, right-unique relation                            & \hyperref[def:function]{↓ Def} \\
+Domain / Codomain & $\dom(f) = A$,\; $\cod(f) = B$ for $f : A \to B$            & \hyperref[def:domain-codomain]{↓ Def} \\
+Image of function & $\im(f) = \{f(a) \mid a \in A\}$                            & \hyperref[def:image-function]{↓ Def} \\
+Image of set      & $f(S) = \{f(a) \mid a \in S\}$ for $S \subseteq A$          & \hyperref[def:image-set]{↓ Def} \\
+Preimage          & $f^{-1}(T) = \{a \in A \mid f(a) \in T\}$ for $T \subseteq B$ & \hyperref[def:preimage]{↓ Def} \\
+Fiber             & $f^{-1}(\{b\})$: preimage of a singleton                    & \hyperref[def:fiber]{↓ Def} \\
+Graph             & $\{(a,b) \in A\times B \mid b = f(a)\}$                     & \hyperref[def:graph]{↓ Def} \\
+Injective         & Distinct inputs $\Rightarrow$ distinct outputs               & \hyperref[def:injective]{↓ Def} \\
+Surjective        & Every codomain element is achieved                          & \hyperref[def:surjective]{↓ Def} \\
+Bijective         & Injective and surjective                                    & \hyperref[def:bijective]{↓ Def} \\
+Identity          & $\id_A(a) = a$                                              & \hyperref[def:identity]{↓ Def} \\
+Inclusion map     & $\iota : A \hookrightarrow B$, $\iota(a) = a$ for $A \subseteq B$ & \hyperref[def:inclusion]{↓ Def} \\
+Composition       & $(g \circ f)(a) = g(f(a))$                                  & \hyperref[def:composition]{↓ Def} \\
+Inverse           & Defined for bijections; $f^{-1} \circ f = \id_A$            & \hyperref[def:inverse]{↓ Def} \\
+Left / Right inverse & Section and retraction                                  & \hyperref[def:left-right-inverse]{↓ Def} \\
+Restriction       & $f|_C : C \to B$                                            & \hyperref[def:restriction]{↓ Def} \\
+Extension         & $g : A' \to B$ with $g|_A = f$                              & \hyperref[def:extension]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Function definition
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Function)}},
+  fonttitle=\small\bfseries]
+\label{def:function}
+Let $A$ and $B$ be sets. A \emph{function} from $A$ to $B$ is a relation
+$f \subseteq A \times B$ such that:
+\begin{enumerate}[label=(\roman*)]
+\item (\emph{Existence / left-total}) for every $a \in A$, there exists $b \in B$
+  with $(a,b) \in f$;
+\item (\emph{Uniqueness / right-unique}) if $(a,b_1) \in f$ and $(a,b_2) \in f$
+  then $b_1 = b_2$.
+\end{enumerate}
+If $(a,b) \in f$ we write $f(a) = b$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+A function is a rule assigning to each input exactly one output. The two
+conditions formalize ``defined everywhere'' (existence) and ``single-valued''
+(uniqueness).
+\end{remark}
+
+\begin{remark}[Function as relation]
+Every function is a relation, but not every relation is a function. The two
+conditions that distinguish functions are left-totality and right-uniqueness.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Domain and Codomain)}},
+  fonttitle=\small\bfseries]
+\label{def:domain-codomain}
+If $f$ is a function from $A$ to $B$, we write $f : A \to B$, where $A$ is
+the \emph{domain} $\dom(f)$ and $B$ the \emph{codomain} $\cod(f)$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Image of a Function)}},
+  fonttitle=\small\bfseries]
+\label{def:image-function}
+The \emph{image} (or \emph{range}) of $f : A \to B$ is:
+\[
+\im(f) \;:=\; \{\, b \in B \mid \exists a \in A,\ f(a)=b \,\}.
+\]
+The image may be a proper subset of the codomain.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Image of a Set)}},
+  fonttitle=\small\bfseries]
+\label{def:image-set}
+For $S \subseteq A$, the \emph{image of $S$ under $f$} is:
+\[
+f(S) \;:=\; \{\, f(a) \mid a \in S \,\}.
+\]
+Note $f(A) = \im(f)$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Preimage)}},
+  fonttitle=\small\bfseries]
+\label{def:preimage}
+For $T \subseteq B$, the \emph{preimage} (inverse image) of $T$ under $f$ is:
+\[
+f^{-1}(T) \;:=\; \{\, a \in A \mid f(a) \in T \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Preimage notation warning]
+$f^{-1}(T)$ does \emph{not} denote an inverse function. It is defined for any
+function $f$, regardless of whether $f$ is injective or bijective.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Fiber)}},
+  fonttitle=\small\bfseries]
+\label{def:fiber}
+The \emph{fiber} of $f$ over $b \in B$ is the preimage of the singleton:
+\[
+f^{-1}(\{b\}) \;=\; \{\, a \in A \mid f(a) = b \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fibers partition the domain]
+The collection $\{f^{-1}(\{b\}) \mid b \in \im(f)\}$ is a partition of $A$.
+Every function thus induces an equivalence relation $a_1 \sim_f a_2 \iff f(a_1) = f(a_2)$,
+whose equivalence classes are precisely the fibers.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Graph of a Function)}},
+  fonttitle=\small\bfseries]
+\label{def:graph}
+The \emph{graph} of $f : A \to B$ is:
+\[
+\operatorname{Graph}(f)
+\;:=\;
+\{\, (a,b) \in A \times B \mid b = f(a) \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Function as graph]
+A relation $G \subseteq A \times B$ is the graph of a function $f : A \to B$
+iff $G$ is left-total and right-unique. Functions may therefore be identified
+with their graphs: a function \emph{is} a special kind of relation.
+\end{remark}
+
+% ---------------------------------------------------------
+% Injectivity / Surjectivity / Bijectivity
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Injective Function)}},
+  fonttitle=\small\bfseries]
+\label{def:injective}
+$f : A \to B$ is \emph{injective} (one-to-one) if distinct elements of $A$
+have distinct images:
+\[
+\forall a_1,a_2 \in A,\;
+f(a_1)=f(a_2) \;\Longrightarrow\; a_1=a_2.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Surjective Function)}},
+  fonttitle=\small\bfseries]
+\label{def:surjective}
+$f : A \to B$ is \emph{surjective} (onto) if every element of $B$ is achieved:
+\[
+\forall b \in B,\; \exists a \in A \text{ such that } f(a)=b.
+\]
+Equivalently, $\im(f) = B$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bijective Function)}},
+  fonttitle=\small\bfseries]
+\label{def:bijective}
+$f : A \to B$ is \emph{bijective} if it is both injective and surjective.
+\end{tcolorbox}
+
+\begin{remark}[Fiber interpretation]
+Injectivity: each fiber has at most one element. Surjectivity: every fiber is
+nonempty. Bijectivity: every fiber has exactly one element.
+\end{remark}
+
+% ---------------------------------------------------------
+% Special functions
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Identity and Inclusion)}},
+  fonttitle=\small\bfseries]
+\label{def:identity}
+The \emph{identity function} on $A$ is $\id_A : A \to A$, $\id_A(a) = a$.
+
+If $A \subseteq B$, the \emph{inclusion map} is $\iota : A \hookrightarrow B$,
+$\iota(a) = a$.
+\end{tcolorbox}
+
+\begin{remark}[Identity vs.\ inclusion]
+\label{def:inclusion}
+Both send each element to itself, but the inclusion map has a strictly larger
+codomain when $A \subsetneq B$. The inclusion map is always injective.
+\end{remark}
+
+\begin{definition}[Constant Function]\label{def:constant}
+$f : A \to B$ is \emph{constant} if there exists $b_0 \in B$ with
+$f(a) = b_0$ for all $a \in A$.
+\end{definition}

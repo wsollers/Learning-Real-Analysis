@@ -1,0 +1,141 @@
+% =========================================================
+% Indexed Families and Arbitrary Cartesian Products
+% =========================================================
+
+\subsection{Indexed Families of Sets}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Indexed Families — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Indexed family      & Function $F : I \to \mathcal{P}(U)$; written $\{A_i\}_{i \in I}$ & \hyperref[def:indexed-family]{↓ Def} \\
+Indexed union       & $\bigcup_{i \in I} A_i$: in at least one $A_i$                    & \hyperref[def:indexed-union]{↓ Def} \\
+Indexed intersection & $\bigcap_{i \in I} A_i$: in every $A_i$                         & \hyperref[def:indexed-intersection]{↓ Def} \\
+Pairwise disjoint   & $i \neq j \Rightarrow A_i \cap A_j = \varnothing$                  & \hyperref[def:pairwise-disjoint]{↓ Def} \\
+Cover               & $\bigcup_{C \in \mathcal{C}} C = A$                               & \hyperref[def:cover]{↓ Def} \\
+Arbitrary product   & $\prod_{i \in I} A_i$: choice functions $f : I \to \bigcup A_i$   & \hyperref[def:arbitrary-product]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{remark}[Motivation]
+Many set-theoretic constructions require not just pairs of sets but
+infinite families. Indexed families provide the formal language for
+partitions, equivalence classes, unions over countably or uncountably many
+sets, and products indexed by arbitrary index sets.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Indexed Family of Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:indexed-family}
+Let $I$ be a set (the \emph{index set}) and $U$ a universe. An
+\emph{indexed family of sets} is a function
+\[
+F : I \to \mathcal{P}(U),
+\]
+with $F(i)$ typically written $A_i$. The family is denoted $\{A_i\}_{i \in I}$.
+\end{tcolorbox}
+
+\begin{remark}[Family vs.\ set of sets]
+An indexed family is formally a \emph{function}, not a set of sets.
+Different indices may correspond to the same set: $i \neq j$ does not imply
+$A_i \neq A_j$. This distinction matters for equivalence class constructions.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Indexed Union)}},
+  fonttitle=\small\bfseries]
+\label{def:indexed-union}
+The \emph{union} of the indexed family $\{A_i\}_{i \in I}$ is:
+\[
+\bigcup_{i \in I} A_i
+\;:=\;
+\{\, x \mid \exists i \in I \text{ such that } x \in A_i \,\}.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Indexed Intersection)}},
+  fonttitle=\small\bfseries]
+\label{def:indexed-intersection}
+For $I \neq \varnothing$, the \emph{intersection} of $\{A_i\}_{i \in I}$ is:
+\[
+\bigcap_{i \in I} A_i
+\;:=\;
+\{\, x \mid \forall i \in I,\; x \in A_i \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Why $I \neq \varnothing$ is required]
+If $I = \varnothing$, then $\forall i \in I, x \in A_i$ holds vacuously for
+every $x$, making the intersection the entire universe $U$. This is normally
+left undefined or requires specifying a background universe explicitly.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Pairwise Disjoint Family)}},
+  fonttitle=\small\bfseries]
+\label{def:pairwise-disjoint}
+The family $\{A_i\}_{i \in I}$ is \emph{pairwise disjoint} if
+\[
+\forall i,j \in I,\;
+i \neq j \rightarrow A_i \cap A_j = \varnothing.
+\]
+\end{tcolorbox}
+
+\begin{definition}[Cover]\label{def:cover}
+A collection $\mathcal{C} \subseteq \mathcal{P}(A)$ is a \emph{cover} of $A$ if
+\[
+\bigcup_{C \in \mathcal{C}} C = A.
+\]
+\end{definition}
+
+\vspace{1em}
+\subsection{Arbitrary Cartesian Products}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Arbitrary Cartesian Product)}},
+  fonttitle=\small\bfseries]
+\label{def:arbitrary-product}
+Let $\{A_i\}_{i \in I}$ be an indexed family of sets. The \emph{Cartesian
+product} is:
+\[
+\prod_{i \in I} A_i
+\;:=\;
+\Bigl\{
+f : I \to \bigcup_{i \in I} A_i
+\;\Bigm|\;
+\forall i \in I,\; f(i) \in A_i
+\Bigr\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Elements as choice functions]
+An element of $\prod_{i \in I} A_i$ is a \emph{choice function}: a function
+that assigns to each index $i$ an element of the corresponding set $A_i$.
+For finite $I = \{1,\dots,n\}$, this reduces to the familiar $n$-tuple
+$(a_1,\dots,a_n)$.
+\end{remark}
+
+\begin{remark}[Axiom of Choice connection]
+For infinite $I$, the product $\prod_{i \in I} A_i$ is nonempty iff a choice
+function exists. This existence is not guaranteed by the other ZFC axioms:
+it is equivalent to the Axiom of Choice. Thus the Axiom of Choice is
+precisely the assertion that arbitrary products of nonempty sets are nonempty.
+\end{remark}
