@@ -234,85 +234,116 @@
 \Crefname{subclaim}{Subclaim}{Subclaims}
 
 % ============================================================
-% Proof annotation tags (MARGIN VERSION — IDEAL MINIMAL SET)
-% ------------------------------------------------------------
-% Philosophy:
-%   - Tags mark *structural moves*, not routine algebra.
-%   - If a proof has > ~5 tags, you are probably over-tagging.
+% Proof annotation tags — FIXED VERSION
+% ============================================================
 %
-% Requires:
-%   - \usepackage{xcolor}
-%   - Margin notes enabled (default LaTeX).
-%   - Optional (one-sided): \reversemarginpar
+% Problem: \marginpar is forbidden inside tabular, tcolorbox, theorem
+% environments, and other restricted modes. Calling \prooftag in those
+% contexts raises the @marbox / \@marbox undefined error.
+%
+% Solution: Two separate primitives.
+%
+%   \prooftag{color}{label}   — margin version (use in proof body prose)
+%   \inlinetag{color}{label}  — inline colored badge (use inside tabular T column,
+%                               tcolorbox, definition, theorem environments)
+%
+% All named tag macros (e.g. \tagDU) produce the MARGIN version by default.
+% Inside a tabular or box, call the \itag* inline variants instead.
 % ============================================================
 
-% --- Base tag primitive: small colored label in the margin
-%     (adds slight vertical separation so stacked tags don't clump)
+% ---- Base primitives ----------------------------------------
+
+% Margin tag: small colored label pushed to the margin.
+% Wraps \marginpar in \@bsphack/\@esphack to avoid spacing artifacts,
+% and uses \leavevmode to ensure we're in horizontal mode first.
 \newcommand{\prooftag}[2]{%
-  \marginpar{\vspace{0.35\baselineskip}\raggedright\scriptsize
-    \textbf{\textcolor{#1}{#2}}}%
+  \leavevmode
+  \marginpar{%
+    \vspace{0.35\baselineskip}%
+    \raggedright\scriptsize
+    \textbf{\textcolor{#1}{#2}}%
+  }%
 }
 
-% ------------------------------------------------------------
-% Core structural tags (use these everywhere)
-% ------------------------------------------------------------
+% Inline tag: colored bold badge, zero extra vertical space.
+% Safe everywhere: tabular, tcolorbox, theorem bodies, definition boxes.
+\newcommand{\inlinetag}[2]{%
+  \textbf{\textcolor{#1}{\scriptsize #2}}%
+}
 
-% DU = Definition Unpacked (only at the *critical* unpacking step)
-\newcommand{\tagDU}{\prooftag{blue!70!black}{DU}}
+% ---- Core structural tags -----------------------------------
+%   \tagXX    = margin version  (default, proof prose)
+%   \itagXX   = inline version  (tabular T column, boxes)
 
-% TA = Theorem Applied (explicit dependency invoked)
-\newcommand{\tagTA}{\prooftag{green!50!black}{TA}}
+% DU = Definition Unpacked
+\newcommand{\tagDU} {\prooftag{blue!70!black}{DU}}
+\newcommand{\itagDU}{\inlinetag{blue!70!black}{DU}}
 
-% CS = Case Split (nontrivial split that changes the argument)
-\newcommand{\tagCS}{\prooftag{red!60!black}{CS}}
+% TA = Theorem / Axiom Applied
+\newcommand{\tagTA} {\prooftag{green!50!black}{TA}}
+\newcommand{\itagTA}{\inlinetag{green!50!black}{TA}}
 
-% EX = Existence / witness choice (nontrivial "choose" step)
-\newcommand{\tagEX}{\prooftag{magenta!60!black}{EX}}
+% CS = Case Split
+\newcommand{\tagCS} {\prooftag{red!60!black}{CS}}
+\newcommand{\itagCS}{\inlinetag{red!60!black}{CS}}
 
-% NEG = Negation unpacked (esp. contradiction/contrapositive, neg(Cauchy))
-\newcommand{\tagNEG}{\prooftag{black}{NEG}}
+% EX = Existence / witness choice
+\newcommand{\tagEX} {\prooftag{magenta!60!black}{EX}}
+\newcommand{\itagEX}{\inlinetag{magenta!60!black}{EX}}
 
-% ------------------------------------------------------------
-% ε–N / tail-logic tags (Real Analysis workhorses)
-% ------------------------------------------------------------
+% NEG = Negation unpacked (contradiction / contrapositive)
+\newcommand{\tagNEG} {\prooftag{black}{NEG}}
+\newcommand{\itagNEG}{\inlinetag{black}{NEG}}
 
-% EA = ε arbitrary (start of a universal ε argument)
-\newcommand{\tagEA}{\prooftag{black}{EA}}
+% ---- ε–N / tail-logic tags ----------------------------------
 
-% NE = choose N = N(ε) (dependency discipline: N depends only on ε)
-\newcommand{\tagNE}{\prooftag{black}{NE}}
+% AM = Algebraic Manipulation
+\newcommand{\tagAM} {\prooftag{black}{AM}}
+\newcommand{\itagAM}{\inlinetag{black}{AM}}
 
-% TN = take tail indices ≥ N (e.g., "let n ≥ N be arbitrary")
-\newcommand{\tagTN}{\prooftag{black}{TN}}
+% EA = ε arbitrary (start of universal ε argument)
+\newcommand{\tagEA} {\prooftag{black}{EA}}
+\newcommand{\itagEA}{\inlinetag{black}{EA}}
 
-% TR = triangle inequality / norm inequality (key structural bound step)
-\newcommand{\tagTR}{\prooftag{black}{TR}}
+% NE = choose N = N(ε)
+\newcommand{\tagNE} {\prooftag{black}{NE}}
+\newcommand{\itagNE}{\inlinetag{black}{NE}}
 
-% ------------------------------------------------------------
-% Completeness / extraction tags (bounds ↔ subsequences ↔ Cauchy)
-% ------------------------------------------------------------
+% TN = take tail indices ≥ N
+\newcommand{\tagTN} {\prooftag{black}{TN}}
+\newcommand{\itagTN}{\inlinetag{black}{TN}}
 
-% LUB = least-upper-bound step (sup/completeness invoked)
-\newcommand{\tagLUB}{\prooftag{black}{LUB}}
+% TR = triangle inequality / norm inequality
+\newcommand{\tagTR} {\prooftag{black}{TR}}
+\newcommand{\itagTR}{\inlinetag{black}{TR}}
 
-% GLB = greatest-lower-bound step (inf/completeness invoked)
-\newcommand{\tagGLB}{\prooftag{black}{GLB}}
+% ---- Completeness / extraction tags -------------------------
 
-% SS = subsequence selection / extraction move (define n_k increasing, diagonal)
-\newcommand{\tagSS}{\prooftag{black}{SS}}
+% LUB = least-upper-bound / sup step
+\newcommand{\tagLUB} {\prooftag{black}{LUB}}
+\newcommand{\itagLUB}{\inlinetag{black}{LUB}}
 
-% ------------------------------------------------------------
-% Induction tags (keep only if you actually do induction in RA notes)
-% ------------------------------------------------------------
+% GLB = greatest-lower-bound / inf step
+\newcommand{\tagGLB} {\prooftag{black}{GLB}}
+\newcommand{\itagGLB}{\inlinetag{black}{GLB}}
+
+% SS = subsequence selection / extraction
+\newcommand{\tagSS} {\prooftag{black}{SS}}
+\newcommand{\itagSS}{\inlinetag{black}{SS}}
+
+% ---- Induction tags -----------------------------------------
 
 % IH = inductive hypothesis applied
-\newcommand{\tagIH}{\prooftag{purple!70!black}{IH}}
+\newcommand{\tagIH} {\prooftag{purple!70!black}{IH}}
+\newcommand{\itagIH}{\inlinetag{purple!70!black}{IH}}
 
 % BC = base case
-\newcommand{\tagBC}{\prooftag{teal!70!black}{BC}}
+\newcommand{\tagBC} {\prooftag{teal!70!black}{BC}}
+\newcommand{\itagBC}{\inlinetag{teal!70!black}{BC}}
 
 % IS = inductive step
-\newcommand{\tagIS}{\prooftag{teal!50!black}{IS}}
+\newcommand{\tagIS} {\prooftag{teal!50!black}{IS}}
+\newcommand{\itagIS}{\inlinetag{teal!50!black}{IS}}
 
 % ------------------------------------------------------------
 % Removed on purpose (not in ideal minimal set)

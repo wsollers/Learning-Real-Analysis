@@ -1,0 +1,155 @@
+% =========================================================
+% The Nested Interval Construction of ℝ (Cantor)
+% =========================================================
+
+\subsection{Nested Interval Construction of $\mathbb{R}$ (Cantor)}
+\label{sec:reals-nested-intervals}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Cantor Nested Intervals — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Nested intervals & $I_{n+1}\subseteq I_n$ & \hyperref[def:nested-intervals]{↓ Def} \\
+Diameter / length & $\operatorname{diam}(I_n)$ shrinks to $0$ & \hyperref[def:diameter]{↓ Def} \\
+Cantor intersection principle & $\bigcap_n I_n$ is a single point & \hyperref[thm:cantor-nested]{↓ Thm} \\
+Real as ``limit point'' of rationals & coded by a shrinking rational interval & \hyperref[def:real-as-nested]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Definitions and Theorems
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Nested Interval Sequence)}},
+  fonttitle=\small\bfseries]
+\label{def:nested-intervals}
+A \emph{nested interval sequence} is a sequence of nonempty closed intervals
+\[
+I_n = [a_n,b_n] \subseteq \mathbb{Q}
+\]
+such that for all $n\in\mathbb{N}$,
+\[
+I_{n+1}\subseteq I_n
+\quad\text{(equivalently, } a_n \le a_{n+1} \le b_{n+1} \le b_n\text{).}
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Diameter / Length)}},
+  fonttitle=\small\bfseries]
+\label{def:diameter}
+For an interval $I=[a,b]$ (with $a\le b$), its \emph{diameter} (length) is
+\[
+\operatorname{diam}(I) := b-a.
+\]
+For a nested sequence $I_n=[a_n,b_n]$, we say it \emph{shrinks to a point} if
+\[
+\operatorname{diam}(I_n) \longrightarrow 0 \quad \text{as } n\to\infty.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cantor Nested Interval Principle)}},
+  fonttitle=\small\bfseries]
+\label{thm:cantor-nested}
+Let $(I_n)$ be a nested interval sequence of nonempty closed intervals
+\[
+I_n=[a_n,b_n] \subseteq \mathbb{R}
+\]
+such that $\operatorname{diam}(I_n)\to 0$.
+Then there exists a unique real number $x\in\mathbb{R}$ such that
+\[
+x\in I_n \quad\text{for all } n,
+\qquad\text{i.e.}\qquad
+\bigcap_{n=1}^\infty I_n = \{x\}.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Real Number via Nested Rational Intervals)}},
+  fonttitle=\small\bfseries]
+\label{def:real-as-nested}
+Let $\mathcal{N}$ be the set of all nested sequences of nonempty closed
+\emph{rational} intervals
+\[
+I_n=[a_n,b_n]\subseteq \mathbb{Q},
+\qquad I_{n+1}\subseteq I_n,
+\qquad \operatorname{diam}(I_n)\to 0.
+\]
+Define an equivalence relation $\sim$ on $\mathcal{N}$ by
+\[
+(I_n)\sim(J_n)
+\quad\Longleftrightarrow\quad
+\forall n\ \exists m\ \bigl(I_m\subseteq J_n \ \wedge\  J_m\subseteq I_n\bigr).
+\]
+(Informally: the two sequences eventually refine each other arbitrarily.)
+A \emph{real number} is an equivalence class $[(I_n)]$ under $\sim$.
+
+We denote the resulting set of equivalence classes by $\mathbb{R}$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Remark (Endpoints approximate the same point)}} ,
+  fonttitle=\small\bfseries]
+If $(I_n)=[a_n,b_n]$ is nested with $\operatorname{diam}(I_n)\to 0$, then
+\[
+(b_n-a_n)\to 0,
+\]
+so $(a_n)$ and $(b_n)$ are ``squeezed together.'' In a completed number system,
+this forces them to converge to the \emph{same} point $x$, and the intervals
+are precisely rational ``traps'' for $x$.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Consequences
+% ---------------------------------------------------------
+
+\subsubsection{Consequences}
+
+\begin{remark}[How this constructs completeness]
+The Cantor principle (\autoref{thm:cantor-nested}) is a completeness statement:
+it says that whenever you can trap a number by nested closed intervals whose
+lengths go to $0$, there is a point (indeed a unique point) trapped by all of them.
+
+In the rational numbers $\mathbb{Q}$ this fails: there are nested rational
+intervals with diameters $\to 0$ whose ``intended'' intersection point is
+irrational (e.g.\ intervals shrinking around $\sqrt{2}$), so the intersection
+in $\mathbb{Q}$ is empty. The construction above formally adjoins the missing
+limit points by \emph{declaring} each shrinking nested rational interval
+sequence to represent a real number.
+\end{remark}
+
+\begin{remark}[Comparison with Cauchy completion]
+This is morally the same as the Cauchy-sequence construction:
+\begin{itemize}
+  \item A Cauchy sequence is a list of rational approximations that eventually
+        get arbitrarily close.
+  \item A nested rational interval sequence is a sequence of rational
+        \emph{error bars} whose widths go to $0$.
+\end{itemize}
+One can convert between the two encodings:
+choose a point $q_n\in I_n$ to get a Cauchy sequence $(q_n)$, and conversely
+use Cauchy tails to build shrinking intervals.
+Both yield the same $\mathbb{R}$ up to canonical isomorphism.
+\end{remark}
+
+\begin{remark}[Status]
+\textit{This section is intentionally focused on the construction idea and the
+core nested-interval principle. Full development (addition/multiplication on
+classes, order, and the full completeness axiom) can be added after your
+Cauchy-section, since the proofs mirror each other.}
+\end{remark}
