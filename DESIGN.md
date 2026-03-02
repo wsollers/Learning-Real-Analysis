@@ -749,3 +749,200 @@ material but don't warrant a notes proof entry:
 |--------|------------|-------------------------|
 | Prop 2.2.5 — Associativity | natural-numbers/notes/arithmetic/addition/notes-add-toolkit.tex | Induction on c; uses lem:add-zero-right and lem:add-succ-right |
 ```
+---
+
+## 7. Session Commands
+
+These are the three commands William uses to add and manage proof files.
+Each command triggers a precise, repeatable workflow. All three are
+documented here so any session can execute them without improvisation.
+
+---
+
+### 7.1 `add standard proof for <theorem-name>`
+
+**What it means:** Create a normal-mode proof file for the named theorem,
+add labels and nav links to the notes file, update the chapter index, and
+mark the entry in `proofs-to-do.md` as done.
+
+**When to use:** Default for all new proofs unless justified mode is
+explicitly requested.
+
+**Full procedure:**
+
+1. **Locate the theorem in the notes files.**
+   Search the chapter's `notes/` tree for the theorem name.
+   Read the full statement and any surrounding remarks to understand context,
+   dependencies, and what axioms/definitions are in play.
+
+2. **Add `\label` to the notes environment** (if missing — §6.4):
+   ```latex
+   \begin{proposition}[Name]
+   \label{prop:root-id}
+   Statement.
+   \end{proposition}
+   ```
+
+3. **Add forward nav remark immediately after `\end{proposition}`** (§6.5 Step 2):
+   ```latex
+   \begin{remark}[Proof]
+   See \hyperref[prf:root-id]{Proof $\to$ Name}.
+   \end{remark}
+   ```
+   Insert this *before* any existing `[Intuition]` or `[Why ...]` remarks.
+
+4. **Create the proof file** at `<chapter>/proofs/notes/<proof-id>.tex`
+   using the four-part structure (§6.5 Step 3):
+   - Header comment (theorem name + source file path)
+   - `\subsection*{...}\label{prf:root-id}`
+   - `\begin{remark}[Return]` with `\hyperref[prop:root-id]` back-link
+   - Restated environment (proposition/theorem/lemma/corollary)
+   - `\begin{proof}...\end{proof}` in **normal mode** (§6.6)
+   - `\begin{remark}[Proof shape]` and `\begin{remark}[Dependencies]`
+
+5. **Update `<chapter>/proofs/notes/index.tex`** (§6.5 Step 4):
+   Add `\input{<full-path-from-root>/<proof-id>}` in dependency order.
+
+6. **Mark `proofs-to-do.md`:**
+   Change `· ` to `✓ ` in the Status column for this entry.
+
+7. **Compile and verify** — `lualatex -interaction=nonstopmode main.tex` —
+   confirm no new errors and the page count is sensible.
+
+---
+
+### 7.2 `add justified proof for <theorem-name>`
+
+**What it means:** Create a thorough-mode proof file using the three-column
+tag/step/justification table, with a full Study Notes section at the end
+explaining where each tool appears and why. All nav links and index updates
+apply identically to §7.1.
+
+**When to use:** When explicitly requested, or for proofs where every logical
+step must be visibly justified — Bolzano–Weierstrass, Archimedean property,
+ε-characterisations, construction-level arguments, and any proof William
+specifically wants to study in detail.
+
+**Differences from standard:**
+
+The proof body uses the three-column `{T S J}` table format (§6.6 Thorough Mode)
+instead of prose. The file additionally contains a **Study Notes** section after
+the proof:
+
+```latex
+\noindent\hrule
+\medskip
+\noindent\textbf{Study Notes.}
+\medskip
+\noindent\textit{Where did each tool appear?}
+\medskip
+
+\noindent
+\begin{tabular}{p{0.25\textwidth} p{0.65\textwidth}}
+\toprule
+\textbf{Tool} & \textbf{Role in this proof} \\
+\midrule
+\addlinespace[4pt]
+[Definition / axiom / theorem used]
+&
+[One or two sentences: what it contributed and why it was needed at that point.]
+\\[8pt]
+\bottomrule
+\end{tabular}
+```
+
+The proof file header comment should note `% Mode: justified` so the mode
+is visible without reading the body.
+
+Multi-part proofs use `\noindent\textit{Part N: ...}` section headers between
+table blocks. Sub-arguments (contradiction, case splits) use the `subproof`
+mdframed environment from `sample-theorem.tex`.
+
+Tag legend (include at the top of the proof, after the return remark):
+```latex
+{\small
+  \tagDU\ = Definition Unpacked \quad
+  \tagTA\ = Theorem Applied \quad
+  \tagAM\ = Algebraic Manipulation \quad
+  \tagIH\ = Inductive Hypothesis \quad
+  \tagBC\ = Base Case \quad
+  \tagCS\ = Case Split
+}
+```
+Only list the tags that actually appear in the proof.
+
+All other steps (label, nav remark, index update, proofs-to-do update,
+compile check) are identical to §7.1.
+
+---
+
+### 7.3 `convert proof standard <theorem-name>`
+
+**What it means:** Replace an existing justified proof file with a normal-mode
+version of the same proof. Used after William has studied and internalised a
+proof and wants to reclaim space in the compiled document.
+
+**When to use:** Only on request. Never convert proofs automatically.
+
+**Full procedure:**
+
+1. **Read the existing justified proof file** in full.
+   Extract: the theorem statement, the logical structure of the proof
+   (all the steps and their justifications), and the Dependencies remark.
+
+2. **Write the normal-mode proof** (§6.6 Normal Mode) capturing the same
+   logical content in prose, using house macros (`\Given`, `\Goal`,
+   `\Strategy`, `\ByThm{}`, `\AsReq`, etc.).
+   The prose must preserve every logical dependency — nothing may be silently
+   dropped just because the table column is gone.
+
+3. **Overwrite the existing proof file** with the new normal-mode content.
+   Keep the file name, the `\subsection*` heading, the `\label{prf:...}`,
+   and the return remark unchanged — only the proof body changes.
+
+4. **Remove the Study Notes section** if present (it belongs to justified mode).
+   Keep `\begin{remark}[Proof shape]` and `\begin{remark}[Dependencies]`.
+
+5. **Update the header comment** from `% Mode: justified` to `% Mode: standard`.
+
+6. **Do not touch** the notes file (labels and nav links stay identical),
+   the index (the `\input` line is unchanged), or `proofs-to-do.md`
+   (status stays `✓`).
+
+7. **Compile and verify** — confirm no new errors.
+
+---
+
+### 7.4 Session Strategy
+
+`proofs-to-do.md` is the canonical work list. Work through it in order.
+
+**First pass per chapter:** complete every Easy proof in the chapter before
+starting Medium or Hard proofs in that chapter. This ensures the proof
+infrastructure (labels, nav links, index entries) is in place before tackling
+results that depend on the easy ones.
+
+**After the first pass:** one proof at a time, in the dependency order given
+by the row numbers in `proofs-to-do.md`.
+
+**Tracking:** after each proof is completed, update the Status column in
+`proofs-to-do.md` from `·` to `✓` before ending the session.
+
+**The `→` status** marks a proof that was started but not finished (e.g.
+the proof file exists but has no content, or a compile error was left
+unresolved). Use it to flag interrupted work.
+
+---
+
+### 7.5 The `\Claim` / `\begin{claim}` Distinction
+
+Two separate tools exist for claims:
+
+| Tool | Form | Use |
+|------|------|-----|
+| `\Claim` | `\newcommand` — inline bold "Claim." | Inline assertion in prose mid-paragraph |
+| `\begin{claim}...\end{claim}` | `\newenvironment` — auto-numbered, `\label`-able | Formal sub-result within a multi-claim proof |
+
+Use `\begin{claim}` whenever the claim will be referred back to with `\cref`.
+Use `\Claim` for a one-off assertion that needs no back-reference.
+Never use `\begin{claim}` and `\Claim` for the same logical statement.
