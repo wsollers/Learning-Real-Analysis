@@ -43,7 +43,7 @@ Results are ordered from foundations upward — each entry depends only on resul
 | 18 | I | Each numeral is the set of its predecessors | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
 | 19 | I | Monotonicity | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
 | 20 | I | Unique Readability | `propositional-logic/notes/notes-syntax` | Hard | · |
-| 21 | I | Non-Associativity of NAND | `propositional-logic/notes/syntax/notes-connectives` | Easy | · |
+| 21 | I | Non-Associativity of NAND | `propositional-logic/notes/syntax/notes-connectives` | Easy | ✓ |
 | 22 | I | Non-Associativity of NOR | `propositional-logic/notes/syntax/notes-connectives` | Easy | · |
 | 23 | I | XOR Equivalences | `propositional-logic/notes/notes-connectives` | Medium | · |
 | 24 | I | Properties of XOR | `propositional-logic/notes/notes-connectives` | Medium | · |

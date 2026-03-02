@@ -5,6 +5,24 @@
 
 ---
 
+## 0. Mandatory Pre-Flight for All Proof Commands
+
+Before executing ANY of these commands:
+- `add standard proof for <name>`
+- `add justified proof for <name>`
+- `convert proof standard <name>`
+
+Execute these steps IN ORDER before touching any file:
+
+1. Search project knowledge: `"proof workflow steps proofs-to-do"` → load DESIGN.md §6.5
+2. Search project knowledge: `"proofs-to-do <name>"` → get the exact source file path and current status from `proofs-to-do.md`
+3. Open the source file identified in step 2 — not any other file with a similar name
+4. Only then proceed with DESIGN.md §6.5 Steps 1–6 in order
+
+**No exceptions. Do not infer the source file from memory or search results.**
+
+---
+
 ## 1. File and Folder Conventions
 
 ### Compilation
@@ -538,9 +556,11 @@ $4$ is not equal to $0$.
 \end{proposition}
 ```
 
-**No separate `\begin{remark}[Proof]` block is needed.** The link lives in
-the heading. Existing explanatory remarks (`[Why ...]`, `[Intuition]`, etc.)
-follow `\end{proposition}` as before — they are unaffected.
+**No separate `\begin{remark}[Proof]` block.** Do not add one. The link lives
+in the heading. This is the only correct pattern — an earlier version of this
+document described a `\begin{remark}[Proof]` forward-nav block; that pattern
+is retired and must not be used. Existing explanatory remarks (`[Why ...]`,
+`[Intuition]`, etc.) follow `\end{proposition}` as before — they are unaffected.
 
 **Prerequisite in `main.tex`:** the following must appear once after
 `\hypersetup{...}` (already present in this project):
