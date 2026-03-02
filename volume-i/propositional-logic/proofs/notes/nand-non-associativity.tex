@@ -1,0 +1,152 @@
+% =========================================================
+% Proof: Non-Associativity of NAND (Sheffer Stroke)
+% Source: volume-i/propositional-logic/notes/notes-connectives.tex
+% =========================================================
+
+\subsection*{Non-Associativity of NAND}
+\label{prf:nand-non-associativity}
+
+\begin{remark}[Return]
+\hyperref[rmk:nand-non-associative]{$\leftarrow$ Back to Remark (Non-Associativity of NAND) in Notes}
+\end{remark}
+
+\begin{proposition}[Non-Associativity of NAND]
+\label{prop:nand-non-associativity}
+The NAND connective $\uparrow$ is not associative. That is,
+\[
+    (P \uparrow Q) \uparrow R \;\not\equiv\; P \uparrow (Q \uparrow R).
+\]
+\end{proposition}
+
+\begin{proof}
+\Given The definition $P \uparrow Q \;\equiv\; \neg(P \wedge Q)$.
+\Goal To show that $(P \uparrow Q) \uparrow R \not\equiv P \uparrow (Q \uparrow R)$,
+i.e.\ that the two sides differ in truth value for at least one assignment.
+
+\Strategy We exhibit a counterexample: a single truth-value assignment to $P$, $Q$, $R$
+under which the left-hand side and right-hand side take opposite truth values.
+
+\medskip
+\textbf{Assignment.} Set $P := \mathsf{T}$, $Q := \mathsf{T}$, $R := \mathsf{T}$.
+
+\medskip
+\textbf{Left-hand side: $(P \uparrow Q) \uparrow R$.}
+
+\ByDef $P \uparrow Q \;\equiv\; \neg(P \wedge Q)$.
+Since $P = Q = \mathsf{T}$, we have $P \wedge Q = \mathsf{T}$, so
+\[
+    P \uparrow Q = \neg\mathsf{T} = \mathsf{F}.
+\]
+Now apply NAND to $(\mathsf{F})$ and $R = \mathsf{T}$:
+\[
+    (P \uparrow Q) \uparrow R = \mathsf{F} \uparrow \mathsf{T}
+    = \neg(\mathsf{F} \wedge \mathsf{T}) = \neg\mathsf{F} = \mathsf{T}.
+\]
+
+\medskip
+\textbf{Right-hand side: $P \uparrow (Q \uparrow R)$.}
+
+\ByDef $Q \uparrow R \;\equiv\; \neg(Q \wedge R)$.
+Since $Q = R = \mathsf{T}$, we have $Q \wedge R = \mathsf{T}$, so
+\[
+    Q \uparrow R = \neg\mathsf{T} = \mathsf{F}.
+\]
+Now apply NAND to $P = \mathsf{T}$ and $(\mathsf{F})$:
+\[
+    P \uparrow (Q \uparrow R) = \mathsf{T} \uparrow \mathsf{F}
+    = \neg(\mathsf{T} \wedge \mathsf{F}) = \neg\mathsf{F} = \mathsf{T}.
+\]
+
+\medskip
+\textbf{Wait — let us try a different assignment.} Set $P := \mathsf{T}$, $Q := \mathsf{T}$,
+$R := \mathsf{F}$.
+
+\medskip
+\textbf{Left-hand side: $(P \uparrow Q) \uparrow R$.}
+
+As before, $P \uparrow Q = \mathsf{F}$.
+\[
+    (P \uparrow Q) \uparrow R = \mathsf{F} \uparrow \mathsf{F}
+    = \neg(\mathsf{F} \wedge \mathsf{F}) = \neg\mathsf{F} = \mathsf{T}.
+\]
+
+\medskip
+\textbf{Right-hand side: $P \uparrow (Q \uparrow R)$.}
+
+$Q \uparrow R = \neg(Q \wedge R) = \neg(\mathsf{T} \wedge \mathsf{F}) = \neg\mathsf{F} = \mathsf{T}$.
+\[
+    P \uparrow (Q \uparrow R) = \mathsf{T} \uparrow \mathsf{T}
+    = \neg(\mathsf{T} \wedge \mathsf{T}) = \neg\mathsf{T} = \mathsf{F}.
+\]
+
+\medskip
+\textbf{Comparison.}
+Under the assignment $P = \mathsf{T}$, $Q = \mathsf{T}$, $R = \mathsf{F}$:
+\[
+    (P \uparrow Q) \uparrow R = \mathsf{T}
+    \qquad\text{but}\qquad
+    P \uparrow (Q \uparrow R) = \mathsf{F}.
+\]
+The two formulas differ in truth value.
+
+\Hence $(P \uparrow Q) \uparrow R \not\equiv P \uparrow (Q \uparrow R)$,
+so NAND is not associative. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+This is a \emph{disproof by counterexample}. To refute a universal equivalence
+$A \equiv B$ it suffices to find one truth-value assignment under which $A$ and
+$B$ receive different truth values. One counterexample is logically enough;
+exhaustive case analysis is not required.
+\end{remark}
+
+\begin{remark}[Why the all-true assignment failed]
+Under $P = Q = R = \mathsf{T}$ both sides evaluate to $\mathsf{T}$, so that
+assignment is \emph{not} a counterexample. This illustrates a useful caution: when
+searching for a counterexample to a proposed equivalence, one should try varied
+assignments rather than stopping at the first one checked. The all-false assignment
+$P = Q = R = \mathsf{F}$ also yields $\mathsf{T}$ on both sides (both inner NANDs
+return $\mathsf{T}$, and $\mathsf{T} \uparrow \mathsf{T} = \mathsf{F}$ on both
+sides), so it is not a counterexample either. Mixed assignments are the productive
+place to look.
+\end{remark}
+
+\begin{remark}[Full truth-table survey]
+For completeness, the table below records all eight assignments.
+The columns LHS and RHS abbreviate $(P \uparrow Q) \uparrow R$ and
+$P \uparrow (Q \uparrow R)$, respectively.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c|c||c|c||c|}
+\hline
+$P$ & $Q$ & $R$ & LHS & RHS & Equal? \\
+\hline
+T & T & T & T & T & \checkmark \\
+T & T & F & T & F & \texttimes \\
+T & F & T & F & T & \texttimes \\
+T & F & F & F & T & \texttimes \\
+F & T & T & T & T & \checkmark \\
+F & T & F & T & T & \checkmark \\
+F & F & T & T & T & \checkmark \\
+F & F & F & T & T & \checkmark \\
+\hline
+\end{tabular}
+\end{center}
+
+Three of the eight rows witness non-associativity. The five rows where LHS = RHS do
+not rescue associativity: a logical equivalence must hold on \emph{all} assignments.
+\end{remark}
+
+\begin{remark}[Contrast with XOR]
+Exclusive or ($\oplus$) is associative: $(P \oplus Q) \oplus R \equiv P \oplus (Q
+\oplus R)$ for all assignments. NAND's non-associativity is therefore not a feature
+shared by all non-standard connectives; it is specific to the structure of NAND
+(and similarly NOR).
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof uses only the definition of NAND ($P \uparrow Q \equiv \neg(P \wedge Q)$),
+the truth tables for $\wedge$ and $\neg$, and the semantic criterion for logical
+equivalence (agreement on all truth-value assignments).
+\end{remark}
