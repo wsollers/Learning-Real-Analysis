@@ -51,22 +51,7 @@ Then $(s_n)$ is decreasing and $(i_n)$ is increasing. In particular, each of $(s
 has a limit in $\mathbb{R}\cup\{\pm\infty\}$, and these limits are $\limsup x_n$ and $\liminf x_n$.
 \end{theorem}
 
-\begin{proof}
-For each $n$, the tail set $\{x_k:k\ge n+1\}$ is a subset of the tail set $\{x_k:k\ge n\}$.
-Therefore,
-\[
-s_{n+1}=\sup\{x_k:k\ge n+1\} \le \sup\{x_k:k\ge n\}=s_n,
-\]
-so $(s_n)$ is decreasing. Similarly,
-\[
-i_{n+1}=\inf\{x_k:k\ge n+1\} \ge \inf\{x_k:k\ge n\}=i_n,
-\]
-so $(i_n)$ is increasing.
 
-A monotone real sequence always has a limit in the extended real line
-$\mathbb{R}\cup\{\pm\infty\}$ (possibly infinite), so both $\lim s_n$ and $\lim i_n$ exist in that sense,
-and by definition these are $\limsup x_n$ and $\liminf x_n$.
-\end{proof}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -114,11 +99,7 @@ For any bounded sequence $(a_n)$,
 \]
 \end{theorem}
 
-\begin{proof}
-Let $s_n = \sup\{a_k : k \ge n\}$. Since $(s_n)$ is decreasing and bounded below,
-$\lim_{n\to\infty} s_n = \inf_{n \ge 1} s_n = \inf_{n \ge 1} \sup_{k \ge n} a_k$.
-The $\liminf$ case is analogous.
-\end{proof}
+
 
 \begin{theorem}[Equivalent characterizations]
 Let $(a_n)$ be bounded and let $L = \limsup_{n\to\infty} a_n$. Then:
@@ -136,28 +117,7 @@ Similarly, if $l = \liminf_{n\to\infty} a_n$, then:
 \end{enumerate}
 \end{theorem}
 
-\begin{proof}
-We prove the characterization for $\limsup$; the $\liminf$ case follows by symmetry.
 
-Let $s_n = \sup\{a_k : k \ge n\}$, so $L = \lim_{n\to\infty} s_n$.
-
-\textbf{Property (1):} Fix $\varepsilon > 0$. We must show infinitely many $a_n > L - \varepsilon$.
-Suppose not; then $a_n \le L - \varepsilon$ for all $n \ge N$ for some $N$.
-This means $s_N = \sup\{a_k : k \ge N\} \le L - \varepsilon$.
-Since $(s_n)$ is decreasing, $s_n \le s_N \le L - \varepsilon$ for all $n \ge N$.
-Thus $L = \lim s_n \le L - \varepsilon$, a contradiction.
-
-\textbf{Property (2):} Fix $\varepsilon > 0$. Since $s_n \to L$, there exists $N$ such that
-$s_n < L + \varepsilon$ for all $n \ge N$.
-For any $k \ge N$, we have $a_k \le s_N < L + \varepsilon$.
-Thus $a_n < L + \varepsilon$ for all $n \ge N$.
-
-\textbf{Uniqueness:} Suppose $L'$ also satisfies properties (1) and (2). 
-If $L' > L$, choose $\varepsilon = (L' - L)/2$. 
-By property (2) for $L$, eventually $a_n < L + \varepsilon = L' - \varepsilon$.
-But property (1) for $L'$ requires infinitely many $a_n > L' - \varepsilon$, contradiction.
-Similarly $L' < L$ leads to contradiction. Thus $L' = L$.
-\end{proof}
 
 \begin{theorem}[Basic inequalities]
 Let $(a_n)$ be bounded. Then
@@ -213,21 +173,7 @@ Let $(a_n)$ and $(b_n)$ be bounded sequences. Then
 \]
 \end{theorem}
 
-\begin{proof}
-Let $s_n^a = \sup\{a_k : k \ge n\}$, $s_n^b = \sup\{b_k : k \ge n\}$, and 
-$s_n^{a+b} = \sup\{a_k + b_k : k \ge n\}$.
 
-For any $k \ge n$, we have $a_k \le s_n^a$ and $b_k \le s_n^b$, so
-$a_k + b_k \le s_n^a + s_n^b$.
-Taking the supremum over $k \ge n$ gives $s_n^{a+b} \le s_n^a + s_n^b$.
-
-Taking the limit as $n \to \infty$:
-\[
-\limsup(a_n + b_n) = \lim_{n\to\infty} s_n^{a+b} 
-\le \lim_{n\to\infty}(s_n^a + s_n^b)
-= \limsup a_n + \limsup b_n. \qedhere
-\]
-\end{proof}
 
 \begin{theorem}[Superadditivity of $\liminf$]
 Let $(a_n)$ and $(b_n)$ be bounded sequences. Then
@@ -240,17 +186,7 @@ Let $(a_n)$ and $(b_n)$ be bounded sequences. Then
 \]
 \end{theorem}
 
-\begin{proof}
-Apply sign symmetry and subadditivity:
-\begin{align*}
-\liminf a_n + \liminf b_n 
-&= -\limsup(-a_n) - \limsup(-b_n) \\
-&= -\bigl(\limsup(-a_n) + \limsup(-b_n)\bigr) \\
-&\le -\limsup\bigl((-a_n) + (-b_n)\bigr) \\
-&= -\limsup(-(a_n + b_n)) \\
-&= \liminf(a_n + b_n). \qedhere
-\end{align*}
-\end{proof}
+
 
 \begin{theorem}[Equality when one sequence converges]
 Suppose $(a_n)$ converges to $a$ and $(b_n)$ is bounded. Then
@@ -262,20 +198,7 @@ Suppose $(a_n)$ converges to $a$ and $(b_n)$ is bounded. Then
 \]
 \end{theorem}
 
-\begin{proof}
-We prove the $\limsup$ case. By subadditivity applied twice:
-\[
-\limsup(a_n + b_n) \le \limsup a_n + \limsup b_n = a + \limsup b_n,
-\]
-and
-\[
-\limsup b_n = \limsup\bigl((a_n + b_n) + (-a_n)\bigr) 
-\le \limsup(a_n + b_n) + \limsup(-a_n)
-= \limsup(a_n + b_n) - a.
-\]
-Rearranging gives $a + \limsup b_n \le \limsup(a_n + b_n)$.
-The $\liminf$ case follows by sign symmetry.
-\end{proof}
+
 
 \begin{theorem}[Addition law for convergent sequences]
 Suppose $(a_n)$ and $(b_n)$ are bounded sequences such that
@@ -288,13 +211,7 @@ $a_n \to a$ and $b_n \to b$. Then
 \]
 \end{theorem}
 
-\begin{proof}
-Since $a_n \to a$ and $b_n \to b$, we have
-$\limsup a_n = \liminf a_n = a$
-and
-$\limsup b_n = \liminf b_n = b$.
-Using subadditivity and symmetry yields the result.
-\end{proof}
+
 
 \begin{theorem}[Scalar multiplication]
 Let $(a_n)$ be a bounded sequence and $c \in \mathbb{R}$. Then:
@@ -315,19 +232,7 @@ Let $(a_n)$ be a bounded sequence and $c \in \mathbb{R}$. Then:
 \end{enumerate}
 \end{theorem}
 
-\begin{proof}
-For $c > 0$: Since $\sup(cA) = c \sup(A)$ for any bounded set $A$ and $c > 0$,
-\[
-\sup\{c \cdot a_k : k \ge n\} = c \cdot \sup\{a_k : k \ge n\}.
-\]
-Taking limits gives the result. The $\liminf$ case is analogous.
 
-For $c < 0$: Write $c = -|c|$ and use sign symmetry:
-\[
-\limsup(c \cdot a_n) = \limsup(-|c| \cdot a_n) = -\liminf(|c| \cdot a_n) = -|c| \cdot \liminf a_n = c \cdot \liminf a_n.
-\]
-The second identity follows similarly.
-\end{proof}
 
 \begin{theorem}[Product inequality for nonnegative sequences]
 Let $(a_n)$ and $(b_n)$ be bounded sequences with $a_n \ge 0$ and $b_n \ge 0$ for all $n$. Then
@@ -336,15 +241,7 @@ Let $(a_n)$ and $(b_n)$ be bounded sequences with $a_n \ge 0$ and $b_n \ge 0$ fo
 \]
 \end{theorem}
 
-\begin{proof}
-Let $L = \limsup a_n$ and $M = \limsup b_n$. For any $\varepsilon > 0$, there exists $N$ such that
-$a_n < L + \varepsilon$ and $b_n < M + \varepsilon$ for all $n \ge N$.
-Thus for $n \ge N$:
-\[
-a_n b_n < (L + \varepsilon)(M + \varepsilon).
-\]
-Taking $\limsup$ and then $\varepsilon \to 0$ gives the result.
-\end{proof}
+
 
 \begin{theorem}[Characterization via subsequences]
 Let $(a_n)$ be bounded. Then
@@ -361,25 +258,7 @@ and
 \]
 \end{theorem}
 
-\begin{proof}
-Let $L = \limsup a_n$ and let $S$ denote the set of all subsequential limits of $(a_n)$.
-We show $L = \sup S$.
 
-\textbf{Step 1:} $L \in S$ (so $L \le \sup S$ is immediate once we show $L$ is achieved).
-By the $\varepsilon$-characterization, for each $k \in \mathbb{N}$, there exists $n_k$ with
-$a_{n_k} > L - 1/k$. We can choose $n_k$ strictly increasing.
-Also, $a_{n_k} < L + 1/k$ for large $k$ by property (2).
-Thus $|a_{n_k} - L| < 1/k$ for large $k$, so $a_{n_k} \to L$. Hence $L \in S$.
-
-\textbf{Step 2:} $L \ge \sup S$.
-Suppose $(a_{n_k})$ is a subsequence converging to some $\ell$.
-By property (2) of the $\varepsilon$-characterization, for any $\varepsilon > 0$,
-$a_n < L + \varepsilon$ for all sufficiently large $n$.
-Thus $a_{n_k} < L + \varepsilon$ for large $k$, so $\ell \le L + \varepsilon$.
-Since $\varepsilon$ was arbitrary, $\ell \le L$. This holds for all $\ell \in S$, so $\sup S \le L$.
-
-The $\liminf$ case follows by applying the above to $(-a_n)$ and using sign symmetry.
-\end{proof}
 
 \begin{theorem}[Extremal subsequences]
 Let $(a_n)$ be bounded. Then there exist subsequences
@@ -392,15 +271,7 @@ a_{m_k} \to \liminf_{n\to\infty} a_n.
 \]
 \end{theorem}
 
-\begin{proof}
-Let $L=\limsup a_n$. By the characterization theorem,
-for each $k$ there exists $n_k$ such that
-\[
-a_{n_k} > L - \frac{1}{k}.
-\]
-Choosing $n_k$ strictly increasing produces a subsequence
-converging to $L$. The argument for $\liminf$ is similar.
-\end{proof}
+
 
 \begin{theorem}[Convergence criterion]
 A bounded sequence $(a_n)$ converges if and only if

@@ -43,29 +43,7 @@ such that $x_n, y_n \in S$ for all $n$ and
 % ---------------------------------------------------------
 \subsubsection{Supremum Case: Proof + Dissection}
 
-\begin{proof}[Proof (Supremum case)]
-Assume $S$ is nonempty and bounded above. Let $\alpha := \sup S$.
-By the $\varepsilon$-characterization of supremum,
-\[
-\forall \varepsilon > 0,\ \exists s \in S
-\text{ such that }
-\alpha - \varepsilon < s \le \alpha.
-\]
-For each $n\in\mathbb{N}$, apply this with $\varepsilon = 1/n$ to choose $x_n \in S$ such that
-\[
-\alpha - \frac{1}{n} < x_n \le \alpha.
-\]
-This sequence need not be monotone. Define a monotone modification by
-\[
-X_n := \max\{x_1,\dots,x_n\}.
-\]
-Then $X_n \in S$, $X_n \le X_{n+1}$, and $X_n \le \alpha$ for all $n$.
-Moreover, for each $n$ we have
-\[
-\alpha - \frac{1}{n} < X_n \le \alpha,
-\]
-hence $X_n \to \alpha$. Therefore, $\{X_n\}$ is monotone increasing in $S$ and converges to $\sup S$.
-\end{proof}
+
 
 \paragraph{Quantifier Dissection (Supremum engine).}
 Let $\alpha := \sup S$. The core logical clause used to \emph{build} a sequence is
@@ -114,30 +92,7 @@ X_n := \max\{x_1,\dots,x_n\}.
 % ---------------------------------------------------------
 \subsubsection{Infimum Case: Symmetric Proof + Dissection}
 
-\begin{proof}[Proof (Infimum case)]
-Assume $S$ is nonempty and bounded below. Let $\beta := \inf S$.
-By the $\varepsilon$-characterization of infimum,
-\[
-\forall \varepsilon > 0,\ \exists s \in S
-\text{ such that }
-\beta \le s < \beta + \varepsilon.
-\]
-For each $n\in\mathbb{N}$, apply this with $\varepsilon = 1/n$ to choose $y_n \in S$ such that
-\[
-\beta \le y_n < \beta + \frac{1}{n}.
-\]
-This sequence need not be monotone. Define a monotone modification by
-\[
-Y_n := \min\{y_1,\dots,y_n\}.
-\]
-Then $Y_n \in S$ for all $n$, since $Y_n = y_k$ for some $k \le n$ and each $y_k \in S$.
-Also $Y_{n+1}\le Y_n$, and $\beta \le Y_n$ for all $n$.
-Moreover, since $Y_n \le y_n$, we have
-\[
-\beta \le Y_n < \beta + \frac{1}{n},
-\]
-hence $Y_n \to \beta$. Therefore, $\{Y_n\}$ is monotone decreasing in $S$ and converges to $\inf S$.
-\end{proof}
+
 
 \paragraph{Quantifier Dissection (Infimum engine).}
 Let $\beta := \inf S$. The core clause is
@@ -212,26 +167,7 @@ The following are equivalent:
 % ---------------------------------------------------------
 \subsubsection{(LUB $\Rightarrow$ MCT): Proof + Dissection}
 
-\begin{proof}[Proof of \texorpdfstring{$(1)\Rightarrow(2)$}{(1)=> (2)}]
-Assume the least upper bound property.
-Let $\{x_n\}$ be monotone increasing and bounded above.
-Set
-\[
-A := \{x_n : n\in\mathbb{N}\}.
-\]
-Then $A$ is nonempty and bounded above, so $\alpha := \sup A$ exists.
 
-We claim $x_n \to \alpha$.
-Let $\varepsilon>0$.
-Since $\alpha=\sup A$, $\alpha-\varepsilon$ is not an upper bound for $A$,
-so there exists $N$ such that $x_N>\alpha-\varepsilon$.
-By monotonicity, for all $n\ge N$,
-\[
-\alpha-\varepsilon < x_N \le x_n \le \alpha,
-\]
-hence $|x_n-\alpha|<\varepsilon$ for all $n\ge N$.
-Therefore $x_n\to\alpha$.
-\end{proof}
 
 \paragraph{Quantifier Dissection (LUB $\Rightarrow$ MCT).}
 The convergence proof is the same quantifier engine as supremum approximation:
@@ -282,69 +218,7 @@ x_n\to \alpha.
 % ---------------------------------------------------------
 \subsubsection{(MCT $\Rightarrow$ LUB): Proof + Dissection (Bisection Construction)}
 
-\begin{proof}[Proof of \texorpdfstring{$(2)\Rightarrow(1)$}{(2)=> (1)}]
-Assume every bounded monotone sequence converges.
-Let $A\subset\mathbb{R}$ be nonempty and bounded above.
-If $A$ has a maximum, then $\sup A=\max A$ and we are done.
-Assume $A$ has no maximum.
 
-Choose $l_1\in A$, and choose any upper bound $u_1$ of $A$ (so $(\forall a\in A)(a\le u_1)$).
-Define sequences $\{l_n\}$ and $\{u_n\}$ recursively as follows.
-Given $l_n$ and $u_n$, set
-\[
-m_n := \frac{l_n+u_n}{2}.
-\]
-If $m_n$ is an upper bound for $A$, define
-\[
-l_{n+1}:=l_n,\qquad u_{n+1}:=m_n.
-\]
-If $m_n$ is not an upper bound for $A$, define
-\[
-l_{n+1}:=m_n,\qquad u_{n+1}:=u_n.
-\]
-Then:
-\begin{itemize}
-\item $\{l_n\}$ is monotone increasing and bounded above by $u_1$;
-\item $\{u_n\}$ is monotone decreasing and bounded below by $l_1$;
-\item every $u_n$ is an upper bound for $A$;
-\item for each $n$, $l_n$ is \emph{not} an upper bound for $A$, verified by induction:
-  $l_1 \in A$ and $A$ has no maximum, so $l_1$ is not an upper bound.
-  At each step, $l_{n+1}$ is either $l_n$ (inheriting the invariant) or $m_n$ when $m_n$
-  is not an upper bound (directly satisfying the invariant); in neither case is $l_{n+1}$
-  an upper bound for $A$.
-\end{itemize}
-Also,
-\[
-u_{n+1}-l_{n+1}=\frac{u_n-l_n}{2}
-\quad\Rightarrow\quad
-u_n-l_n=\frac{u_1-l_1}{2^{n-1}}\xrightarrow[n\to\infty]{}0.
-\]
-
-By the assumed monotone convergence principle, $\{l_n\}$ converges to some $s\in\mathbb{R}$,
-and $\{u_n\}$ converges to some $t\in\mathbb{R}$.
-But $0\le u_n-l_n\to 0$, hence $t-s=0$ and $s=t$.
-Denote this common limit by $s$.
-
-We claim $s=\sup A$.
-
-\emph{$s$ is an upper bound:}
-For any $a\in A$, since $u_n$ is an upper bound we have $a\le u_n$ for all $n$.
-Taking limits gives $a\le s$.
-
-\emph{$s$ is least:}
-Let $\varepsilon>0$. Choose $N$ such that $u_N-l_N<\varepsilon$.
-Then
-\[
-l_N > u_N-\varepsilon \ge s-\varepsilon.
-\]
-Since $l_N$ is not an upper bound, there exists $a\in A$ with $a>l_N$,
-hence $a>s-\varepsilon$.
-Therefore
-\[
-(\forall \varepsilon>0)(\exists a\in A)\ (s-\varepsilon<a),
-\]
-so $s$ satisfies the $\varepsilon$-characterization of $\sup A$ and is thus $\sup A$.
-\end{proof}
 
 \paragraph{Quantifier Dissection (MCT $\Rightarrow$ LUB).}
 The bisection construction is a \emph{quantifier-control machine}:

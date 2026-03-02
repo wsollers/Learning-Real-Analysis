@@ -113,17 +113,7 @@ t \mid (ua + vb)
 \]
 \end{lemma}
 
-\begin{proof}
-Since $t \mid a$ and $t \mid b$, there exist integers $x, y$ such that
-\[
-a = tx, \qquad b = ty.
-\]
-Then for any $u, v \in \mathbb{Z}$,
-\[
-ua + vb = u(tx) + v(ty) = t(ux + vy).
-\]
-Since $ux + vy \in \mathbb{Z}$, we have $t \mid (ua + vb)$.
-\end{proof}
+
 
 \begin{remark}
 This lemma is used constantly in number theory. Its most important
@@ -156,76 +146,7 @@ yielding quotient $q$ and remainder $r$. When $r = 0$, we write $b \mid a$
 (``$b$ divides $a$''), meaning $a = bq$ for some integer $q$.
 \end{remark}
 
-\begin{proof}
-We begin with the existence portion of the theorem. Consider the set
-\[
-S = \{\, a - bk \mid k \in \mathbb{Z},\; a - bk \ge 0 \,\}.
-\]
 
-If $0 \in S$, then $b$ divides $a$ and we obtain the desired result with
-$q = a/b$ and $r = 0$.
-
-Now assume $0 \notin S$. Since $S$ is nonempty
-(if $a > 0$, then $a - b\cdot 0 = a \in S$;
-if $a < 0$, then choosing $k$ sufficiently negative makes $a - bk \ge 0$),
-we may apply the Well-Ordering Principle to conclude that $S$ has a smallest
-member, say
-\[
-r = a - bq.
-\]
-Then
-\[
-a = bq + r
-\quad \text{and} \quad r \ge 0.
-\]
-It remains to prove that $r < b$.
-
-Suppose, to the contrary, that $r \ge b$. Then
-\[
-a - b(q+1)
-=
-a - bq - b
-=
-r - b
-\ge 0,
-\]
-so that $a - b(q+1) \in S$. But
-\[
-a - b(q+1) < a - bq,
-\]
-contradicting the minimality of $r = a - bq$. Hence $r < b$.
-
-\medskip
-
-To establish uniqueness, suppose there exist integers $q, q', r, r'$
-such that
-\[
-a = bq + r, \qquad 0 \le r < b,
-\]
-and
-\[
-a = bq' + r', \qquad 0 \le r' < b.
-\]
-
-Subtracting the two equations gives
-\[
-b(q - q') = r' - r.
-\]
-
-Thus $b$ divides $r' - r$. Without loss of generality, assume $r' \ge r$.
-Then
-\[
-0 \le r' - r < b.
-\]
-
-The only multiple of $b$ in this interval is $0$. Therefore,
-\[
-r' - r = 0,
-\]
-so $r' = r$ and hence $q = q'$.
-
-This completes the proof.
-\end{proof}
 \cite{GallianCAA7}
 
 \begin{definition}[Quotient and Remainder]
@@ -329,77 +250,7 @@ Bézout's Identity asserts that the greatest common divisor
 is the minimal positive element of this set.
 \end{remark}
 
-\begin{proof}
-Consider the set
-\[
-S = \{\, am + bn \mid m,n \in \mathbb{Z},\; am + bn > 0 \,\}.
-\]
 
-Since $S$ is nonempty (if some choice of $m,n$ gives $am+bn<0$,
-replace $m,n$ with $-m,-n$), the Well-Ordering Principle
-implies that $S$ has a smallest element.
-Denote this smallest element by
-\[
-d = as + bt
-\]
-for some integers $s,t$.
-
-We claim that $d = \gcd(a,b)$.
-
-\medskip
-\noindent
-\textbf{Step 1: $d$ divides $a$ and $b$.}
-
-Apply the Division Algorithm to write
-\[
-a = dq + r,
-\qquad
-0 \le r < d.
-\]
-
-If $r > 0$, then
-\[
-r = a - dq
-  = a - (as + bt)q
-  = a - asq - btq
-  = a(1 - sq) + b(-tq).
-\]
-Thus $r$ is of the form $am + bn$, and since $r>0$,
-we have $r \in S$. But $r < d$, contradicting
-the minimality of $d$. Hence $r = 0$, so $d \mid a$.
-
-By symmetry, the same argument shows that $d \mid b$.
-Thus $d$ is a common divisor of $a$ and $b$.
-
-\medskip
-\noindent
-\textbf{Step 2: $d$ is the greatest common divisor.}
-
-Let $d'$ be any other common divisor of $a$ and $b$.
-Then there exist integers $h,k$ such that
-\[
-a = d'h,
-\qquad
-b = d'k.
-\]
-
-Substituting into $d = as + bt$ gives
-\[
-d = (d'h)s + (d'k)t
-  = d'(hs + kt).
-\]
-
-Hence $d'$ divides $d$.
-Therefore, every common divisor of $a$ and $b$
-divides $d$, and so $d$ is the greatest common divisor.
-
-\medskip
-
-Thus,
-\[
-d = \gcd(a,b).
-\]
-\end{proof}
 
 \begin{remark}[Structural Map of the Proof]
 This proof has three distinct logical engines.
@@ -458,20 +309,7 @@ as + bt = 1.
 \]
 \end{corollary}
 
-\begin{proof}
-If $a$ and $b$ are relatively prime, then
-\[
-\gcd(a,b) = 1.
-\]
-By Bézout's Identity, there exist integers $s$ and $t$ such that
-\[
-\gcd(a,b) = as + bt.
-\]
-Substituting $\gcd(a,b)=1$ gives
-\[
-as + bt = 1.
-\]
-\end{proof}
+
 
 \begin{remark}[Bézout in Both Directions]
 Bézout's Identity is often applied in two distinct directions,
@@ -533,33 +371,7 @@ p \mid a \quad \text{or} \quad p \mid b.
 \]
 \end{theorem}
 
-\begin{proof}
-Suppose $p$ is prime and $p \mid ab$.
-If $p \mid a$, we are done.
-So assume that $p \nmid a$.
-We must show that $p \mid b$.
 
-Because $p$ is prime and $p \nmid a$, it follows that
-\[
-\gcd(p,a) = 1.
-\]
-By Bézout's Identity, there exist integers $s$ and $t$ such that
-\[
-1 = as + pt.
-\]
-
-Multiplying both sides by $b$ gives
-\[
-b = abs + ptb.
-\]
-
-Since $p \mid ab$, the term $abs$ is divisible by $p$.
-The term $ptb$ is clearly divisible by $p$.
-Therefore the right-hand side is divisible by $p$,
-and hence $p \mid b$.
-
-Thus, if $p \mid ab$, then $p \mid a$ or $p \mid b$.
-\end{proof}
 
 \begin{remark}[Intuition]
 Intuitively: primes cannot be fooled by multiplication --- if a prime
@@ -625,69 +437,7 @@ p_i = q_i \quad \text{for all } i.
 \]
 \end{theorem}
 
-\begin{proof}
-\textbf{(Existence)}
 
-We prove by strong induction on $n > 1$ that $n$ is a prime or a product
-of primes.
-
-\medskip
-\emph{Base case:}
-For $n=2$, the statement holds because $2$ is prime.
-
-\medskip
-\emph{Inductive step:}
-Assume every integer $m$ with $2 \le m < n$ is prime or a product of primes.
-If $n$ is prime, we are done.
-
-If $n$ is composite, then
-\[
-n = ab
-\quad\text{with}\quad
-1 < a < n, \; 1 < b < n.
-\]
-By the induction hypothesis, both $a$ and $b$ are products of primes.
-Therefore $n = ab$ is also a product of primes.
-
-Thus every integer greater than $1$ is prime or a product of primes.
-
-\medskip
-\textbf{(Uniqueness)}
-
-Suppose
-\[
-n = p_1 p_2 \cdots p_r
-\quad\text{and}\quad
-n = q_1 q_2 \cdots q_s,
-\]
-where all $p_i$ and $q_j$ are primes.
-
-Since $p_1 \mid n$, we have
-\[
-p_1 \mid q_1 q_2 \cdots q_s.
-\]
-By Euclid's Lemma, $p_1$ divides some $q_j$.
-Because $q_j$ is prime, it follows that
-\[
-p_1 = q_j.
-\]
-
-After reordering, we may assume $p_1 = q_1$.
-Canceling this common factor gives
-\[
-p_2 \cdots p_r = q_2 \cdots q_s.
-\]
-
-Repeating this argument inductively, we conclude that
-\[
-r = s
-\quad\text{and}\quad
-p_i = q_i \text{ for all } i
-\]
-after a suitable reordering.
-
-Therefore, the prime factorization of $n$ is unique up to order.
-\end{proof}
 
 \begin{theorem}[Structural Relation Between $\gcd$ and $\operatorname{lcm}$]
 Let $a$ and $b$ be nonzero integers. Then
@@ -696,41 +446,7 @@ Let $a$ and $b$ be nonzero integers. Then
 \]
 \end{theorem}
 
-\begin{proof}
-Let
-\[
-d = \gcd(a,b).
-\]
-Then there exist integers $a_1$ and $b_1$ such that
-\[
-a = d a_1, \qquad b = d b_1,
-\]
-and $\gcd(a_1,b_1)=1$.
 
-Now
-\[
-ab = d^2 a_1 b_1.
-\]
-
-We claim that $\operatorname{lcm}(a,b) = d a_1 b_1$.
-To see this, note that $a \mid d a_1 b_1$ (since $d a_1 b_1 = a \cdot b_1$)
-and $b \mid d a_1 b_1$ (since $d a_1 b_1 = b \cdot a_1$).
-If $c$ is any common multiple of $a$ and $b$, write $c = a u = b v$
-for integers $u, v$. Then $d a_1 u = d b_1 v$, so $a_1 u = b_1 v$.
-Since $\gcd(a_1, b_1) = 1$, we have $b_1 \mid u$, say $u = b_1 w$,
-giving $c = a u = d a_1 b_1 w$. Hence $d a_1 b_1 \mid c$, confirming
-that $d a_1 b_1$ is the least common multiple.
-
-Therefore,
-\[
-\gcd(a,b)\,\operatorname{lcm}(a,b)
-= d \cdot (d a_1 b_1)
-= d^2 a_1 b_1
-= |ab|.
-\]
-
-Taking absolute value accounts for possible signs of $a$ and $b$.
-\end{proof}
 
 \begin{remark}[Intuition]
 Intuitively: $a$ and $b$ together contain a fixed amount of prime material.

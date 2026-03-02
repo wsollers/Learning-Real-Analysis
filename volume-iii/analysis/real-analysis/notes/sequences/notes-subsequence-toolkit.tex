@@ -56,31 +56,7 @@ If each subsequence $(a_n)_{n \in E_i}$ converges to the same limit $L$,
 then the full sequence $(a_n)$ converges to $L$.
 \end{theorem}
 
-\begin{proof}
-Let $\varepsilon > 0$ be arbitrary.
 
-For each $i \in \{1, \ldots, k\}$, since $(a_n)_{n \in E_i} \to L$,
-there exists $N_i \in \mathbb{N}$ such that for all $n \in E_i$ with $n \geq N_i$,
-\[
-|a_n - L| < \varepsilon.
-\]
-
-Define
-\[
-N := \max\{N_1, \ldots, N_k\}.
-\]
-
-Now let $m \geq N$.
-Since $\mathbb{N} = \bigcup_{i=1}^k E_i$, there exists $i$ such that $m \in E_i$.
-Since the partition is disjoint, this $i$ is unique.
-
-Because $m \geq N \geq N_i$ and $m \in E_i$, we have
-\[
-|a_m - L| < \varepsilon.
-\]
-
-Since $\varepsilon > 0$ was arbitrary, $(a_n) \to L$.
-\end{proof}
 
 \begin{remark}
 The theorem generalizes to metric spaces: replace $|a_n - L|$ with $d(a_n, L)$.
@@ -92,26 +68,14 @@ If for each $r \in \{0, 1, \ldots, k-1\}$ the subsequence $(a_{kn+r})$
 converges to the same limit $L$, then $(a_n) \to L$.
 \end{corollary}
 
-\begin{proof}
-For each $r \in \{0, 1, \ldots, k-1\}$, define
-\[
-E_r := \{kn + r : n \in \mathbb{N}_0\} = \{r, k+r, 2k+r, \ldots\}.
-\]
-By the Division Algorithm, every $m \in \mathbb{N}_0$ can be written uniquely as
-$m = kn + r$ with $0 \leq r < k$, so the sets $E_0, E_1, \ldots, E_{k-1}$
-partition $\mathbb{N}_0$. Each $E_r$ is infinite.
 
-Apply the Finite Partition Convergence Principle.
-\end{proof}
 
 \begin{corollary}[Even-Odd Convergence]
 Let $(a_n)$ be a sequence. If $(a_{2n}) \to L$ and $(a_{2n+1}) \to L$,
 then $(a_n) \to L$.
 \end{corollary}
 
-\begin{proof}
-Apply Residue-Class Convergence with $k = 2$.
-\end{proof}
+
 
 % =========================================================
 % Inheritance of Sequence Properties
@@ -141,53 +105,26 @@ the original sequence $(a_n)$ also satisfies $\mathcal{P}$.
 If $(a_n) \to L$, then every subsequence $(a_{n_k}) \to L$.
 \end{proposition}
 
-\begin{proof}
-See the main subsequences section (Theorem: Subsequences Inherit Limits).
-\end{proof}
+
 
 \begin{proposition}[Boundedness is Inherited]
 If $(a_n)$ is bounded, then every subsequence $(a_{n_k})$ is bounded.
 \end{proposition}
 
-\begin{proof}
-Suppose $|a_n| \leq M$ for all $n \in \mathbb{N}$.
-For any subsequence $(a_{n_k})$, we have $n_k \in \mathbb{N}$ for each $k$,
-so $|a_{n_k}| \leq M$ for all $k$.
-Thus $(a_{n_k})$ is bounded by $M$.
-\end{proof}
+
 
 \begin{proposition}[Monotonicity is Inherited]
 If $(a_n)$ is monotone increasing (resp.\ decreasing),
 then every subsequence $(a_{n_k})$ is monotone increasing (resp.\ decreasing).
 \end{proposition}
 
-\begin{proof}
-Suppose $(a_n)$ is increasing. Let $(a_{n_k})$ be a subsequence.
-Since $(n_k)$ is strictly increasing, $n_k < n_{k+1}$, so
-\[
-a_{n_k} \leq a_{n_{k+1}}
-\]
-by monotonicity of $(a_n)$. Thus $(a_{n_k})$ is increasing.
-The decreasing case is analogous.
-\end{proof}
+
 
 \begin{proposition}[Cauchy Property is Inherited]
 If $(a_n)$ is Cauchy, then every subsequence $(a_{n_k})$ is Cauchy.
 \end{proposition}
 
-\begin{proof}
-Let $\varepsilon > 0$. Since $(a_n)$ is Cauchy, there exists $N$ such that
-for all $m, n \geq N$, $|a_m - a_n| < \varepsilon$.
 
-Since $(n_k)$ is strictly increasing, $n_k \to \infty$.
-Thus there exists $K$ such that $k \geq K$ implies $n_k \geq N$.
-
-For $j, k \geq K$, we have $n_j, n_k \geq N$, so
-\[
-|a_{n_j} - a_{n_k}| < \varepsilon.
-\]
-Thus $(a_{n_k})$ is Cauchy.
-\end{proof}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -232,18 +169,7 @@ $(a_{2n}) = (1, 1, 1, \ldots)$, but $(a_n)$ is not monotone.
 A subsequence of a subsequence is a subsequence of the original sequence.
 \end{proposition}
 
-\begin{proof}
-Let $(a_{n_k})$ be a subsequence of $(a_n)$, where $(n_k)$ is strictly increasing.
-Let $(a_{n_{k_j}})$ be a subsequence of $(a_{n_k})$, where $(k_j)$ is strictly increasing.
 
-Define $m_j := n_{k_j}$. We claim $(m_j)$ is strictly increasing:
-\[
-m_{j+1} = n_{k_{j+1}} > n_{k_j} = m_j,
-\]
-since $k_{j+1} > k_j$ and $(n_k)$ is strictly increasing.
-
-Thus $(a_{m_j}) = (a_{n_{k_j}})$ is a subsequence of $(a_n)$.
-\end{proof}
 
 \begin{theorem}[Dense Subsequence Criterion]
 Let $(a_n)$ be a sequence and $L \in \mathbb{R}$.
@@ -251,20 +177,7 @@ If every neighborhood of $L$ contains infinitely many terms of $(a_n)$,
 then $(a_n)$ has a subsequence converging to $L$.
 \end{theorem}
 
-\begin{proof}
-We construct $(n_k)$ inductively.
 
-For $k = 1$: The interval $(L - 1, L + 1)$ contains infinitely many terms.
-Choose $n_1$ such that $a_{n_1} \in (L - 1, L + 1)$.
-
-For $k \geq 1$: Suppose $n_1 < n_2 < \cdots < n_k$ have been chosen with
-$|a_{n_j} - L| < 1/j$ for $j = 1, \ldots, k$.
-
-The interval $(L - \frac{1}{k+1}, L + \frac{1}{k+1})$ contains infinitely many terms,
-so there exists $n_{k+1} > n_k$ with $|a_{n_{k+1}} - L| < \frac{1}{k+1}$.
-
-By construction, $|a_{n_k} - L| < \frac{1}{k} \to 0$, so $a_{n_k} \to L$.
-\end{proof}
 
 \begin{remark}[Connection to Cluster Points]
 The Dense Subsequence Criterion characterizes subsequential limits:
@@ -282,36 +195,7 @@ Then there exists a strictly increasing sequence $(n_m)$ such that
 the diagonal sequence $(a_{n_m}^{(m)})$ converges to $L$.
 \end{theorem}
 
-\begin{proof}
-We construct $(n_m)$ inductively.
 
-Since $L_m \to L$, for each $\varepsilon > 0$, there exists $M$ such that
-$m \geq M$ implies $|L_m - L| < \varepsilon$.
-
-For each $m$, since $a_n^{(m)} \to L_m$, there exists $N_m$ such that
-$n \geq N_m$ implies $|a_n^{(m)} - L_m| < \frac{1}{m}$.
-
-Define $n_1 := N_1$. Given $n_1 < n_2 < \cdots < n_{m-1}$, define
-\[
-n_m := \max\{n_{m-1} + 1, N_m\}.
-\]
-Then $(n_m)$ is strictly increasing and $n_m \geq N_m$.
-
-For any $m$,
-\begin{align*}
-|a_{n_m}^{(m)} - L|
-&\leq |a_{n_m}^{(m)} - L_m| + |L_m - L| \\
-&< \frac{1}{m} + |L_m - L|.
-\end{align*}
-
-Given $\varepsilon > 0$, choose $M_1$ such that $m \geq M_1$ implies $|L_m - L| < \varepsilon/2$,
-and choose $M_2$ such that $m \geq M_2$ implies $\frac{1}{m} < \varepsilon/2$.
-For $m \geq \max\{M_1, M_2\}$,
-\[
-|a_{n_m}^{(m)} - L| < \varepsilon.
-\]
-Thus $a_{n_m}^{(m)} \to L$.
-\end{proof}
 
 \begin{remark}
 The Diagonal Subsequence Lemma is used extensively in functional analysis
@@ -373,13 +257,7 @@ Let $\mathcal{P}$ be a universal subsequence property. Then:
 \end{enumerate}
 \end{proposition}
 
-\begin{proof}
-(1) If $(a_n)$ satisfies $\mathcal{P}$, then by definition of universal property,
-every subsequence satisfies $\mathcal{P}$.
 
-(2) If every subsequence of $(a_n)$ satisfies $\mathcal{P}$, then in particular
-$(a_n)$ itself (viewed as the subsequence with $n_k = k$) satisfies $\mathcal{P}$.
-\end{proof}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,

@@ -66,21 +66,7 @@ u_n \le T^n(u_0).
 \]
 \end{lemma}
 
-\begin{proof}
-We proceed by induction on $n$.
 
-For $n = 0$, we have $u_0 \leq T^0(u_0) = u_0$, which holds trivially.
-
-Assume $u_n \le T^n(u_0)$.
-Since $T$ is monotone increasing and $u_n \geq 0$,
-\[
-u_{n+1}
-\le T(u_n)
-\le T(T^n(u_0))
-= T^{n+1}(u_0).
-\]
-This completes the induction.
-\end{proof}
 
 \begin{remark}[Structural Insight]
 The method is:
@@ -118,10 +104,7 @@ u_n \leq c^n u_0.
 In particular, $u_n \to 0$ as $n \to \infty$.
 \end{proposition}
 
-\begin{proof}
-Apply the Iterative Propagation Lemma with $T(x) = cx$.
-Since $T^n(x) = c^n x$, we obtain $u_n \leq c^n u_0$.
-\end{proof}
+
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -146,28 +129,7 @@ In particular,
 \]
 \end{proposition}
 
-\begin{proof}
-We proceed by induction on $n$.
 
-For $n = 0$, the inequality $u_0 \le u_0$ is trivial.
-
-Assume $u_n \le c^n u_0 + \frac{b(1 - c^n)}{1 - c}$. Then
-\begin{align*}
-u_{n+1} 
-&\le c u_n + b \\
-&\le c \left( c^n u_0 + \frac{b(1 - c^n)}{1 - c} \right) + b \\
-&= c^{n+1} u_0 + \frac{bc(1 - c^n)}{1 - c} + b \\
-&= c^{n+1} u_0 + \frac{bc - bc^{n+1} + b(1 - c)}{1 - c} \\
-&= c^{n+1} u_0 + \frac{b - bc^{n+1}}{1 - c} \\
-&= c^{n+1} u_0 + \frac{b(1 - c^{n+1})}{1 - c}.
-\end{align*}
-This completes the induction.
-
-Since $0 < c < 1$, we have $c^n \to 0$ as $n \to \infty$, so
-\[
-\limsup_{n \to \infty} u_n \le \frac{b}{1 - c}. \qedhere
-\]
-\end{proof}
 
 % --------------------------------------------------------
 % Discrete Grönwall Inequality
@@ -189,43 +151,7 @@ u_n \le \alpha \exp\left( \sum_{k=0}^{n-1} \beta_k \right).
 \]
 \end{theorem}
 
-\begin{proof}
-Define 
-\[
-S_n := \sum_{k=0}^{n-1} \beta_k u_k,
-\]
-with the convention $S_0 = 0$ (empty sum).
 
-Then $u_n \leq \alpha + S_n$ by hypothesis, and
-\[
-S_{n+1} - S_n = \beta_n u_n \leq \beta_n (\alpha + S_n).
-\]
-
-We prove by induction that $\alpha + S_n \leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k)$.
-
-For $n = 0$: $\alpha + S_0 = \alpha = \alpha \cdot (\text{empty product}) = \alpha \cdot 1$.
-
-Assume $\alpha + S_n \leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k)$. Then
-\begin{align*}
-\alpha + S_{n+1} 
-&= \alpha + S_n + \beta_n u_n \\
-&\leq \alpha + S_n + \beta_n(\alpha + S_n) \\
-&= (\alpha + S_n)(1 + \beta_n) \\
-&\leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k) \cdot (1 + \beta_n) \\
-&= \alpha \prod_{k=0}^{n}(1 + \beta_k).
-\end{align*}
-This completes the induction.
-
-Since $u_n \leq \alpha + S_n$, we have
-\[
-u_n \leq \alpha \prod_{k=0}^{n-1}(1 + \beta_k).
-\]
-
-For the exponential bound, use $1 + x \leq e^x$ for all $x \geq 0$:
-\[
-\prod_{k=0}^{n-1}(1 + \beta_k) \leq \prod_{k=0}^{n-1} e^{\beta_k} = \exp\left(\sum_{k=0}^{n-1} \beta_k\right). \qedhere
-\]
-\end{proof}
 
 \begin{remark}[Connection to Continuous Grönwall Inequality]
 The discrete Grönwall inequality is the analogue of the continuous 
@@ -324,55 +250,7 @@ If $(a_n)$ is subadditive, then
 In particular, the limit exists (possibly equal to $-\infty$).
 \end{theorem}
 
-\begin{proof}
-Fix $k \ge 1$. For any $n \ge 1$, write $n = qk + r$ with $q \ge 0$ and $0 \le r < k$.
 
-By repeated application of subadditivity,
-\[
-a_n = a_{qk + r} \le a_{qk} + a_r \le q a_k + a_r.
-\]
-
-Divide by $n$:
-\[
-\frac{a_n}{n}
-\le
-\frac{q a_k}{n} + \frac{a_r}{n}
-=
-\frac{qk}{n} \cdot \frac{a_k}{k} + \frac{a_r}{n}.
-\]
-
-As $n \to \infty$, we have $q \to \infty$ and $\frac{qk}{n} \to 1$.
-Since $r \in \{0, 1, \ldots, k-1\}$, the value $a_r$ is bounded 
-(taking values in the finite set $\{a_0, a_1, \ldots, a_{k-1}\}$),
-so $\frac{a_r}{n} \to 0$.
-
-Taking $\limsup$,
-\[
-\limsup_{n \to \infty} \frac{a_n}{n}
-\le
-\frac{a_k}{k}.
-\]
-
-Since $k$ was arbitrary,
-\[
-\limsup_{n \to \infty} \frac{a_n}{n}
-\le
-\inf_{k \ge 1} \frac{a_k}{k}.
-\]
-
-For the reverse inequality, note that for each $n$,
-\[
-\frac{a_n}{n} \ge \inf_{k \ge 1} \frac{a_k}{k}.
-\]
-Therefore,
-\[
-\liminf_{n \to \infty} \frac{a_n}{n}
-\ge
-\inf_{k \ge 1} \frac{a_k}{k}.
-\]
-
-Combining both inequalities, the limit exists and equals the infimum.
-\end{proof}
 
 \begin{theorem}[Fekete's Lemma for Superadditive Sequences]
 If $(a_n)$ is superadditive, then
@@ -384,18 +262,7 @@ If $(a_n)$ is superadditive, then
 In particular, the limit exists (possibly equal to $+\infty$).
 \end{theorem}
 
-\begin{proof}
-If $(a_n)$ is superadditive, then $(-a_n)$ is subadditive.
-By Fekete's lemma for subadditive sequences,
-\[
-\lim_{n \to \infty} \frac{-a_n}{n}
-=
-\inf_{k \ge 1} \frac{-a_k}{k}
-=
--\sup_{k \ge 1} \frac{a_k}{k}.
-\]
-Negating both sides yields the result.
-\end{proof}
+
 
 % --------------------------------------------------------
 % Contraction Example
@@ -420,29 +287,7 @@ If $(x_n)$ satisfies a contraction-type recurrence with $0 < c < 1$,
 then $(x_n)$ is Cauchy.
 \end{proposition}
 
-\begin{proof}
-By repeated application of the recurrence,
-\[
-|x_{n+1} - x_n|
-\le
-c^n |x_1 - x_0|.
-\]
 
-For $m > n$, by the triangle inequality and telescoping,
-\[
-|x_m - x_n|
-\le
-\sum_{k=n}^{m-1} |x_{k+1} - x_k|
-\le
-|x_1 - x_0| \sum_{k=n}^{m-1} c^k
-\le
-|x_1 - x_0| \sum_{k=n}^{\infty} c^k
-=
-\frac{|x_1 - x_0|}{1 - c} \cdot c^n.
-\]
-
-As $n \to \infty$, this bound tends to $0$, so $(x_n)$ is Cauchy.
-\end{proof}
 
 % --------------------------------------------------------
 % Subsequence Contraction Example
@@ -467,34 +312,7 @@ If $(a_{n_k})$ satisfies a contraction-type recurrence with $0 < c < 1$,
 then $(a_{n_k})$ is Cauchy.
 \end{proposition}
 
-\begin{proof}
-By induction on $k$,
-\[
-|a_{n_{k+1}} - a_{n_k}|
-\le
-c^k |a_{n_1} - a_{n_0}|.
-\]
 
-For $m > k$,
-\[
-|a_{n_m} - a_{n_k}|
-\le
-\sum_{j=k}^{m-1} |a_{n_{j+1}} - a_{n_j}|
-\le
-|a_{n_1} - a_{n_0}| \sum_{j=k}^{m-1} c^j
-\le
-|a_{n_1} - a_{n_0}| \sum_{j=k}^{\infty} c^j
-=
-\frac{|a_{n_1} - a_{n_0}|}{1 - c} \cdot c^k.
-\]
-
-Since $c^k \to 0$ as $k \to \infty$,
-\[
-|a_{n_m} - a_{n_k}| \to 0
-\quad \text{as } k \to \infty.
-\]
-Therefore $(a_{n_k})$ is Cauchy.
-\end{proof}
 
 % --------------------------------------------------------
 % Structural Summary
