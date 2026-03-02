@@ -395,130 +395,357 @@ Not every remark applies to every result. Use what is warranted:
 
 ### 6.1 Directory Structure
 
-Each chapter's `proofs/` folder is reorganised into three subdirectories:
+Each chapter's `proofs/` folder contains three subdirectories:
+
 ```
 proofs/
   notes/
-    index.tex       ← Orchestrator: inputs all notes proofs in dependency order
-    <ID>.tex        ← One proof per file (foundational or sketch format)
+    index.tex       ← Orchestrator: \input each proof in dependency order
+    <proof-id>.tex  ← One proof per file
   exercises/
-    index.tex       ← Orchestrator: inputs exercise proofs
-    CANDIDATES.md   ← Log of propositions/corollaries available as future exercises
-    <ID>.tex        ← One exercise proof per file
+    index.tex       ← Orchestrator: \input each exercise proof
+    CANDIDATES.md   ← Log of results available as future exercises
+    <proof-id>.tex  ← One exercise proof per file
   scratch/
-    (never compiled into main.tex — working drafts only)
+    (never compiled — working drafts only)
 ```
 
-`proofs/scratch/` is never `\input`'d anywhere. It is a working area for
-in-session proof attempts and is excluded from compilation.
+`proofs/scratch/` is never `\input`'d anywhere.
 
 ---
 
 ### 6.2 Proof Classification
 
-**Notes proofs** (`proofs/notes/`) are canonical reference proofs tied to
-theorems and lemmas in the chapter notes. A result earns a notes proof entry
-if any of the following hold:
+**Notes proofs** (`proofs/notes/`) are canonical reference proofs. A result
+earns a notes proof entry if any of the following hold:
 
-- The proof introduces a technique that recurs in analysis (induction
-  structure, epsilon arguments, equivalence class manipulation, diagonal
-  arguments)
+- The proof introduces a technique that recurs (induction, epsilon arguments,
+  equivalence class manipulation, diagonal arguments)
 - The result is load-bearing for a subsequent construction
 - The proof structure is non-obvious and worth studying again
 - The proof is a canonical example of a general pattern
 
 Propositions and corollaries whose proofs follow immediately from preceding
-results do **not** get a notes proof entry. They are logged in
-`proofs/exercises/CANDIDATES.md` as future exercise material.
+results do **not** get a notes proof entry — log them in
+`proofs/exercises/CANDIDATES.md` instead.
 
-**Exercise proofs** (`proofs/exercises/`) are working practice. They are
-disposable — they may be added, revised, or deleted without affecting the
-notes proof library.
+**Exercise proofs** (`proofs/exercises/`) are working practice and disposable.
 
 ---
 
-### 6.3 Two Proof Formats
+### 6.3 Proof File Naming
 
-#### Deep Study Format (3-column)
+File names use the theorem name, lowercased, with **hyphens** instead of
+spaces, underscores, or special characters. Do not include `$`, `\neq`,
+`\leq`, or LaTeX markup in file names.
 
-Used for proofs where the strategy is non-obvious, the technique is
-important, or the result is foundational enough to warrant repeated study.
-Examples: Bolzano-Weierstrass, Archimedean property, construction of $\mathbb{R}$,
-supremum/infimum existence, algebraic properties of number system constructions.
+```
+Tao 2.1.4                          → tao-2-1-4.tex
+Tao 2.1.6 — 4 ≠ 0                 → tao-2-1-6-four-neq-zero.tex
+Commutativity of Addition           → commutativity-of-addition.tex
+Bolzano–Weierstrass                 → bolzano-weierstrass.tex
+ε-Characterization of Supremum      → eps-characterization-of-supremum.tex
+Uniqueness of the Additive Identity → uniqueness-of-additive-identity.tex
+```
+
+The file lives in the `proofs/notes/` folder of the **same chapter** as the
+notes file that contains the theorem. For example:
+
+```
+Notes file:  volume-i/axiom-systems/notes/peano/notes-peano-numerals.tex
+Proof file:  volume-i/axiom-systems/proofs/notes/tao-2-1-4.tex
+Index file:  volume-i/axiom-systems/proofs/notes/index.tex
+```
+
+---
+
+### 6.4 Label Conventions
+
+Every theorem-like environment in the notes **must** carry a `\label` before
+its proof file is created. Labels follow the environment-type prefix:
+
+| Environment   | Label prefix | Example                        |
+|---------------|-------------|--------------------------------|
+| `theorem`     | `thm:`      | `\label{thm:bolzano-weierstrass}` |
+| `lemma`       | `lem:`      | `\label{lem:add-zero-right}`   |
+| `proposition` | `prop:`     | `\label{prop:tao-2-1-4}`       |
+| `corollary`   | `cor:`      | `\label{cor:sum-zero}`         |
+| `definition`  | `def:`      | `\label{def:supremum}`         |
+
+The proof file's anchor label uses the prefix `prf:` with the **same root**
+as the notes label:
+
+```
+Notes label:  \label{prop:tao-2-1-4}
+Proof label:  \label{prf:tao-2-1-4}
+```
+
+The root identifier matches the proof file name (with hyphens replacing dots
+where needed):
+
+```
+File name:   tao-2-1-4.tex
+Root:        tao-2-1-4
+Notes label: \label{prop:tao-2-1-4}
+Proof label: \label{prf:tao-2-1-4}
+```
+
+---
+
+### 6.5 Step-by-Step Procedure for Adding a Proof
+
+Follow these steps in order every time a proof is added.
+
+**Step 1 — Add a label to the notes environment (if missing)**
+
+Open the notes file. Find the `\begin{proposition}[...]` (or `\begin{theorem}`,
+`\begin{lemma}`, `\begin{corollary}`) that needs a proof. Add `\label{...}`
+immediately after the opening line, before the statement text:
+
 ```latex
-% Deep study proof — 3-column layout
-% Column 1: Step number and claim
-% Column 2: Formal justification
-% Column 3: Annotation / strategic remark
+\begin{proposition}[Tao 2.1.4]
+\label{prop:tao-2-1-4}
+$3$ is a natural number.
+\end{proposition}
+```
+
+**Step 2 — Add a forward nav remark in the notes file**
+
+Immediately after `\end{proposition}` (or `\end{theorem}` etc.), add a
+`\begin{remark}[Proof]` block pointing to the proof:
+
+```latex
+\begin{remark}[Proof]
+See \hyperref[prf:tao-2-1-4]{Proof $\to$ Tao 2.1.4 --- $3$ is a natural number}.
+\end{remark}
+```
+
+The remark goes **before** any existing `\begin{remark}[Intuition]` or other
+explanatory remarks so the link is the first thing after the statement.
+
+**Step 3 — Create the proof file**
+
+Create `<proof-id>.tex` in the chapter's `proofs/notes/` directory.
+The file has exactly four parts, in this order:
+
+```latex
+% =========================================================
+% Proof: [Full theorem name]
+% Source: [path to notes file relative to project root]
+% =========================================================
+
+\subsection*{[Theorem name as it appears in notes]}
+\label{prf:root-identifier}
+
+\begin{remark}[Return]
+\hyperref[prop:root-identifier]{$\leftarrow$ Back to Proposition ([Name]) in Notes}
+\end{remark}
+
+\begin{proposition}[[Name as in notes]]   % or theorem / lemma / corollary
+[Full statement, copied verbatim from notes]
+\end{proposition}
+
 \begin{proof}
-\begin{longtable}{p{0.28\textwidth} p{0.35\textwidth} p{0.28\textwidth}}
-\toprule
-\textbf{Step / Claim} & \textbf{Justification} & \textbf{Annotation} \\
-\midrule
-[Claim of step 1] & [Rule, definition, or prior result cited] & [Why this move; what it sets up] \\
-\addlinespace
-[Claim of step 2] & [Justification] & [Annotation] \\
-\bottomrule
-\end{longtable}
+[Proof body — see §6.6 for format]
+\end{proof}
+
+\begin{remark}[Proof shape]
+[One paragraph: which technique was used and why.]
+\end{remark}
+
+\begin{remark}[Dependencies]
+[Which definitions, axioms, or prior results this proof requires, with \ref labels.]
+\end{remark}
+```
+
+Rules for the four parts:
+
+1. **Header comment** — always include the full theorem name and the path to
+   the notes file. This makes the file self-documenting.
+
+2. **`\subsection*` + `\label{prf:...}`** — the subsection heading is what
+   appears in the compiled PDF. The label is what the notes file's
+   `\hyperref` targets. Both are required.
+
+3. **Return remark** — always the first environment after the label. Use
+   `$\leftarrow$` for the arrow. Reference the environment type correctly
+   (Proposition / Theorem / Lemma / Corollary).
+
+4. **Restated environment** — copy the statement from the notes verbatim so
+   the proof file is self-contained when read in isolation.
+
+5. **Proof body** — see §6.6 for normal vs. thorough mode.
+
+6. **Closing remarks** — always include at minimum `[Proof shape]` and
+   `[Dependencies]`. Add `[Common error]` or `[Generalisation]` when warranted.
+
+**Step 4 — Update the chapter's `proofs/notes/index.tex`**
+
+Add an `\input{}` line for the new proof file. Lines must appear in
+**dependency order**: if proof B uses a result established in proof A, then A's
+`\input` line comes first. Replace the `% (empty)` placeholder on first use.
+
+```latex
+% ---- [Notes source file name] ----
+% Dependency order: [list results in order]
+\input{volume-i/axiom-systems/proofs/notes/tao-2-1-4}
+\input{volume-i/axiom-systems/proofs/notes/tao-2-1-6}
+\input{volume-i/axiom-systems/proofs/notes/tao-2-1-8}
+```
+
+The `\input` path is **always relative to the project root** (i.e. relative
+to where `main.tex` lives), never relative to the index file itself.
+
+---
+
+### 6.6 Two Proof Modes
+
+All proofs default to **normal mode** unless explicitly requested otherwise.
+
+#### Normal Mode
+
+Normal mode proofs are clean, concise academic prose using the house macros.
+No step-by-step justification table. Commentary is woven into the prose.
+
+The full template is in `common/proof-template.tex`. The essential shapes are:
+
+**Direct proof:**
+```latex
+\begin{proof}
+\Given [hypotheses in plain English].
+\Goal To show [conclusion in one sentence].
+\Strategy We proceed [directly / by induction / by contradiction / ...].
+\Recall [key definition or lemma, with \ref if labelled].
+
+[Main argument as prose paragraphs, using:]
+\Let $x$ be arbitrary.
+\Choose $\delta := \dots$ (such a $\delta$ exists because \dots).
+\ByDef [unpack the definition at the critical step].
+\ByThm{[Name or \ref]} [cite prior result].
+\Therefore [intermediate conclusion].
+
+\Hence [restate final conclusion matching the theorem statement]. \AsReq
 \end{proof}
 ```
 
-#### Sketch Format (compact)
-
-Used for proofs worth retaining as reference but not requiring deep unpacking.
-A single tcolorbox containing the statement, a two-to-three sentence proof
-sketch naming the key move, and any dependencies worth noting.
+**Induction:**
 ```latex
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Proof Sketch — [Result name and source]}},
-  fonttitle=\small\bfseries]
-\textbf{Statement.} [Full statement of the result.]
+\begin{proof}
+\Strategy We proceed by induction on $n$.
 
-\textbf{Key move.} [One to three sentences naming the central technique
-and why it works. No step-by-step detail.]
+\textbf{Base case} ($n = 0$). [Proof for base value.] \checkbox
 
-\textbf{Depends on.} [List any definitions or prior results this proof
-requires, with labels if available.]
-\end{tcolorbox}
+\textbf{Inductive hypothesis.} Assume [P(n)] for some fixed $n$.
+
+\textbf{Inductive step} (show $P(n) \Rightarrow P(n+1)$).
+[Argument using IH, ending with:] \checkbox
+
+\Hence $P(n)$ holds for all $n \in \mathbb{N}$. \AsReq
+\end{proof}
 ```
+
+**Bidirectional (iff / set equality):**
+```latex
+\begin{proof}
+We prove both directions.
+
+\medskip
+\noindent$(\Rightarrow)$ \quad \textit{Assume $P$; we show $Q$.}
+\Given ... \Goal ...
+[Argument.] \checkbox
+
+\medskip
+\noindent$(\Leftarrow)$ \quad \textit{Assume $Q$; we show $P$.}
+\Given ... \Goal ...
+[Argument.] \AsReq
+\end{proof}
+```
+
+**Contradiction / contrapositive:**
+```latex
+% Contradiction
+\begin{proof}
+\Strategy Suppose, toward a contradiction, that [negation of conclusion].
+[Derive contradiction.]
+This contradicts [what]. \Therefore [conclusion] must hold. \AsReq
+\end{proof}
+
+% Contrapositive
+\begin{proof}
+\Strategy We prove the contrapositive: assume $\neg Q$ and deduce $\neg P$.
+\ByAss $\neg Q$, i.e.\ [unpack].
+[Argument establishing $\neg P$.]
+\Therefore $\neg P$. \AsReq
+\end{proof}
+```
+
+**Equations in normal mode:**
+
+| Need | LaTeX |
+|------|-------|
+| Unnumbered display | `\[ ... \]` |
+| Numbered (cite with `\eqref`) | `\begin{equation}\label{eq:name} ... \end{equation}` |
+| Unnumbered multi-line | `\begin{align*} ... \end{align*}` |
+| Numbered multi-line | `\begin{align} ... \label{eq:row} \end{align}` |
+| Annotated step | `&= \dots && \text{(reason)}` |
+
+**Tag macros** (available but used sparingly in normal mode — inline only,
+never in a column):
+
+| Macro | Meaning |
+|-------|---------|
+| `\tagBC` | Base Case |
+| `\tagIS` | Inductive Step |
+| `\tagIH` | Inductive Hypothesis applied |
+| `\tagDU` | Definition Unpacked |
+| `\tagTA` | Theorem Applied |
+| `\tagAM` | Algebraic Manipulation |
+| `\tagCS` | Case Split |
+| `\tagEX` | Existence argument |
+| `\tagUW` | Universal/Witness introduction |
+
+#### Thorough Mode
+
+Thorough mode uses the three-column tag/step/justification table format.
+Use it only when explicitly requested, or for proofs where every logical
+step must be visibly justified (Bolzano–Weierstrass, Archimedean property,
+construction-level arguments).
+
+Column types `T` (tag), `S` (step, displaymath), `J` (justification) are
+defined in `main.tex`. See `volume-iii/algebra/abstract-algebra/notes/sample-theorem.tex`
+for a complete worked example.
+
+```latex
+\noindent\textit{Part N: [Part title].}
+\medskip
+
+\noindent
+\begin{tabular}{T S J}
+\toprule
+\textbf{Tag} & \multicolumn{1}{p{0.44\textwidth}}{\textbf{Step}} & \textbf{Justification} \\
+\midrule
+\addlinespace[4pt]
+
+\tagDU & [math step] & [Justification text.] \\[10pt]
+\tagTA & [math step] & [Justification text.] \\[10pt]
+\tagAM & [math step] & [Justification text.] \\[6pt]
+
+\bottomrule
+\end{tabular}
+```
+
+Sub-arguments (contradiction boxes, case splits) use the `subproof` mdframed
+environment defined in `sample-theorem.tex`.
 
 ---
 
-### 6.4 Navigation Links
+### 6.7 Exercise Candidates Log
 
-Every theorem or lemma in the chapter notes that has a `proofs/notes/` entry
-**must** carry a forward nav link to its proof. Every proof file **must**
-carry a return nav link to its theorem in the notes.
+`proofs/exercises/CANDIDATES.md` records results that are good exercise
+material but don't warrant a notes proof entry:
 
-**In the notes file** (after the theorem/lemma environment):
-```latex
-\begin{remark}[Proof]
-See \hyperref[prf:add-comm]{Proof → Commutativity of Addition}.
-\end{remark}
 ```
-
-**At the top of the proof file:**
-```latex
-\begin{remark}[Return]
-\hyperref[prop:add-comm]{← Back to Proposition 2.2.4 in Notes}
-\end{remark}
+| Result | Notes file | What the proof requires |
+|--------|------------|-------------------------|
+| Prop 2.2.5 — Associativity | natural-numbers/notes/arithmetic/addition/notes-add-toolkit.tex | Induction on c; uses lem:add-zero-right and lem:add-succ-right |
 ```
-
-Labels follow the pattern:
-- Notes label: `\label{thm:...}` / `\label{lem:...}` / `\label{prop:...}`
-- Proof label: `\label{prf:...}` using the same root identifier
-
----
-
-### 6.5 Exercise Candidates Log
-
-`proofs/exercises/CANDIDATES.md` is a plain Markdown file maintained
-alongside the exercise proofs. Each entry records:
-```
-| Result | Location in notes | What the proof requires |
-|--------|-------------------|------------------------|
-| Prop 2.2.5 — Addition is associative | integers/notes/addition.tex | Induction on c; uses L2.2.2 and L2.2.3 |
-```
-
-This log is the source list for future exercise generation sessions.
