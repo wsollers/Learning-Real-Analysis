@@ -1,0 +1,287 @@
+% =========================================================
+% Subsequences
+% File: notes-subsequences.tex
+% =========================================================
+
+\subsection{Subsequences}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Subsequences — Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Subsequence)}},
+  fonttitle=\small\bfseries]
+Let $(a_n)$ be a sequence in $\mathbb{R}$.
+A sequence $(a_{n_k})$ is called a \emph{subsequence} of $(a_n)$ if
+there exists a function
+\[
+k \mapsto n_k
+\]
+from $\mathbb{N}$ to $\mathbb{N}$ such that
+\begin{enumerate}
+    \item $n_k < n_{k+1}$ for all $k \in \mathbb{N}$, and
+    \item the $k$th term of the new sequence is $a_{n_k}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}
+A subsequence is obtained by selecting terms from $(a_n)$ without duplication
+while preserving their original order. The index sequence $(n_k)$ determines
+which terms are selected.
+\end{remark}
+
+\begin{lemma}[Index Growth]
+If $(n_k)$ is a strictly increasing sequence in $\mathbb{N}$, then $n_k \geq k$ for all $k \in \mathbb{N}$.
+In particular, $n_k \to \infty$ as $k \to \infty$.
+\end{lemma}
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Subsequential Limit)}},
+  fonttitle=\small\bfseries]
+Let $(a_n)$ be a sequence. A real number $L$ is called a \emph{subsequential limit}
+of $(a_n)$ if there exists a subsequence $(a_{n_k})$ such that $a_{n_k} \to L$.
+
+The set of all subsequential limits of $(a_n)$ is denoted $\mathcal{L}(a_n)$.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+\begin{theorem}[Subsequences Inherit Limits]
+Let $(a_n)$ be a sequence of real numbers and let $(a_{n_k})$ be any subsequence.
+If $a_n \to L$, then $a_{n_k} \to L$.
+\end{theorem}
+
+
+
+\begin{remark}[Consistency of Subsequential Limits]
+If $(a_n) \to L$, then every subsequence converges to $L$.
+Consequently, a convergent sequence has exactly one subsequential limit:
+\[
+a_n \to L \implies \mathcal{L}(a_n) = \{L\}.
+\]
+\end{remark}
+
+\begin{remark}[Detecting Divergence]
+Contrapositive: if two subsequences of $(a_n)$ converge to different limits,
+then $(a_n)$ does not converge. This provides a practical test for divergence.
+\end{remark}
+
+\begin{theorem}[Convergence via Even and Odd Subsequences]
+Let $(a_n)$ be a sequence. If the even-indexed subsequence $(a_{2n})$ and the
+odd-indexed subsequence $(a_{2n+1})$ both converge to the same limit $L$,
+then $(a_n) \to L$.
+\end{theorem}
+
+
+
+\begin{remark}
+More generally, if $(a_n)$ can be partitioned into finitely many subsequences,
+each converging to the same limit $L$, then $a_n \to L$.
+\end{remark}
+
+% ---------------------------------------------------------
+
+\begin{theorem}[Bolzano--Weierstrass]
+Every bounded sequence of real numbers has a convergent subsequence.
+Equivalently: if $(a_n)$ is bounded in $\mathbb{R}$, then there exist
+$L \in \mathbb{R}$ and a strictly increasing sequence $(n_k)$ in $\mathbb{N}$
+such that $a_{n_k} \to L$.
+\end{theorem}
+
+
+
+\begin{corollary}[Existence of Subsequential Limits]
+Every bounded sequence admits at least one subsequential limit.
+That is, if $(a_n)$ is bounded, then $\mathcal{L}(a_n) \neq \varnothing$.
+\end{corollary}
+
+\begin{corollary}[Sequential Compactness of Closed Intervals]
+Every sequence contained in a closed bounded interval
+$[a, b]$ has a convergent subsequence whose limit lies in $[a, b]$.
+\end{corollary}
+
+
+
+% ---------------------------------------------------------
+
+\begin{theorem}[Monotone Subsequence Theorem]
+Every sequence in $\mathbb{R}$ has a monotone subsequence.
+\end{theorem}
+
+
+
+\begin{remark}[Alternative Proof of Bolzano--Weierstrass]
+The Monotone Subsequence Theorem combined with the Monotone Convergence Theorem
+provides an alternative proof of Bolzano--Weierstrass:
+\begin{enumerate}
+\item Every sequence has a monotone subsequence (Monotone Subsequence Theorem).
+\item A bounded monotone sequence converges (Monotone Convergence Theorem).
+\item Therefore, every bounded sequence has a convergent subsequence.
+\end{enumerate}
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Divergence Criteria}
+
+\begin{theorem}[Characterization of Divergence]
+A sequence $(a_n)$ diverges if and only if at least one of the following holds:
+\begin{enumerate}
+\item $(a_n)$ is unbounded.
+\item $(a_n)$ has two subsequences converging to different finite limits.
+\item $(a_n)$ has a subsequence diverging to $+\infty$ or $-\infty$.
+\end{enumerate}
+\end{theorem}
+
+
+
+% ---------------------------------------------------------
+\subsubsection{Consequences and Structural Summary}
+
+This section establishes three structural principles.
+
+\medskip
+
+\textbf{(1) Inheritance of Limits.}
+\[
+a_n \to L \implies a_{n_k} \to L.
+\]
+Convergence is preserved under passage to subsequences.
+
+\medskip
+
+\textbf{(2) Reconstruction from Subsequences.}
+\[
+(a_{2n} \to L) \land (a_{2n+1} \to L) \implies a_n \to L.
+\]
+Convergence can be established by verifying it on a finite partition.
+
+\medskip
+
+\textbf{(3) Emergence of Subsequential Limits.}
+\[
+\text{Bounded} \implies \text{Convergent subsequence exists}.
+\]
+Boundedness alone does not ensure convergence,
+but it guarantees the existence of convergent subsequences.
+
+\medskip
+
+\begin{remark}[Connection to Limit Superior and Inferior]
+For a bounded sequence $(a_n)$, the set $\mathcal{L}(a_n)$ of subsequential
+limits is nonempty, closed, and bounded. Moreover,
+\[
+\limsup_{n \to \infty} a_n = \sup \mathcal{L}(a_n) = \max \mathcal{L}(a_n),
+\]
+\[
+\liminf_{n \to \infty} a_n = \inf \mathcal{L}(a_n) = \min \mathcal{L}(a_n).
+\]
+Thus $\limsup$ and $\liminf$ are themselves subsequential limits,
+and they are the largest and smallest such limits.
+\end{remark}
+
+\begin{remark}[Logical Structure]
+\[
+\text{Convergent}
+\implies
+\text{All subsequences converge to the same limit},
+\]
+\[
+\text{Bounded}
+\xRightarrow{\text{Bolzano--Weierstrass}}
+\text{Existence of subsequential limits}.
+\]
+
+These results form the bridge between basic convergence
+theory and completeness theory.
+
+Bolzano--Weierstrass is equivalent (in an ordered field) to:
+\begin{itemize}
+\item The Monotone Convergence Theorem,
+\item The Cauchy Criterion,
+\item The Nested Interval Property,
+\item The Least Upper Bound Property.
+\end{itemize}
+\end{remark}
+
+% =========================================================
+% Structural Transfer of Sequence Properties
+% =========================================================
+
+\begin{remark}[Inheritance and Reflection of Properties]
+Different sequence properties behave differently with respect to subsequences.
+\end{remark}
+
+\begin{center}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Property} 
+& \makecell{\textbf{Inherited by} \\ \textbf{Subsequences?}} 
+& \makecell{\textbf{Reflected by One} \\ \textbf{Subsequence?}}
+& \textbf{Structural Type} \\
+\hline
+Convergent 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Cauchy 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Bounded 
+& Yes 
+& No 
+& Global Property \\
+\hline
+Monotone 
+& Yes 
+& No 
+& Global Structural \\
+\hline
+Eventually monotone 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Every subseq.\ convergent 
+& --- 
+& Yes 
+& Universal Property \\
+\hline
+Every subseq.\ Cauchy 
+& --- 
+& Yes 
+& Universal Property \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{remark}
+\emph{Inherited} means: if $(a_n)$ has property $P$, then every subsequence has $P$.
+
+\emph{Reflected} means: if some subsequence has property $P$, then $(a_n)$ has $P$.
+
+Most natural properties are inherited but not reflected. The sequence
+$a_n = (-1)^n$ is bounded and has convergent subsequences, but does not converge.
+\end{remark}

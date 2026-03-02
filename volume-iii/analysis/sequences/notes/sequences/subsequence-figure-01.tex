@@ -1,0 +1,159 @@
+\begin{figure}[H]
+\centering
+
+\begin{tikzpicture}[
+  every node/.style={font=\small},
+  arr/.style={-{Stealth[length=7pt]}, thick},
+  node distance=3.8cm
+]
+
+% ── Set boxes ─────────────────────────────────────────────────────────────────
+\node[
+  draw=indexblue, fill=lightblue, rounded corners=6pt,
+  minimum width=2.6cm, minimum height=7.2cm,
+  label={[font=\bfseries\normalsize, text=indexblue]above:Subsequence Index $k$},
+  label={[font=\small\itshape, text=indexblue]below:$\mathbb{N}$
+         \normalfont\scriptsize(domain of $x\circ\sigma$)}
+] (boxK) at (0,0) {};
+
+\node[
+  draw=natblue, fill=lightblue!60, rounded corners=6pt,
+  minimum width=2.6cm, minimum height=7.2cm,
+  label={[font=\bfseries\normalsize, text=natblue]above:Sequence Index $n_k$},
+  label={[font=\small\itshape, text=natblue]below:$\mathbb{N}$
+         \normalfont\scriptsize(domain of $x$)}
+] (boxN) at (4.8,0) {};
+
+\node[
+  draw=realorange, fill=lightorange, rounded corners=6pt,
+  minimum width=2.6cm, minimum height=7.2cm,
+  label={[font=\bfseries\normalsize, text=realorange]above:Value $x_{n_k}$},
+  label={[font=\small\itshape, text=realorange]below:$\mathbb{R}$
+         \normalfont\scriptsize(codomain)}
+] (boxR) at (9.6,0) {};
+
+% ── Element nodes ─────────────────────────────────────────────────────────────
+\foreach \k/\y in {1/2.6, 2/1.5, 3/0.4, 4/-0.7, 5/-1.8}{
+  \node[circle, fill=indexblue, inner sep=2.5pt,
+        text=white, font=\footnotesize\bfseries]
+    (k\k) at (0,\y) {$\k$};
+}
+\node[font=\footnotesize, text=indexblue] at (0,-2.8) {$\vdots$};
+
+\foreach \n/\y/\lab in {
+  n1/2.6/{$n_1=2$},
+  n2/1.5/{$n_2=5$},
+  n3/0.4/{$n_3=7$},
+  n4/-0.7/{$n_4=11$},
+  n5/-1.8/{$n_5=13$}
+}{
+  \node[circle, fill=natblue, inner sep=2.5pt,
+        text=white, font=\footnotesize\bfseries] (\n) at (4.8,\y) {};
+  \node[font=\footnotesize, text=natblue, right=2pt of \n] {\lab};
+}
+\node[font=\footnotesize, text=natblue] at (4.8,-2.8) {$\vdots$};
+
+\foreach \v/\y/\lab in {
+  v1/2.6/{$x_2$},
+  v2/1.5/{$x_5$},
+  v3/0.4/{$x_7$},
+  v4/-0.7/{$x_{11}$},
+  v5/-1.8/{$x_{13}$}
+}{
+  \node[circle, fill=realorange, inner sep=2.5pt,
+        text=white, font=\footnotesize\bfseries] (\v) at (9.6,\y) {};
+  \node[font=\footnotesize, text=realorange, right=3pt of \v] {\lab};
+}
+\node[font=\footnotesize, text=realorange] at (9.6,-2.8) {$\vdots$};
+
+% ── Mapping arrows ────────────────────────────────────────────────────────────
+\foreach \k/\n in {k1/n1, k2/n2, k3/n3, k4/n4, k5/n5}{
+  \draw[arr, color=sigmagreen] (\k) -- (\n);
+}
+\foreach \n/\v in {n1/v1, n2/v2, n3/v3, n4/v4, n5/v5}{
+  \draw[arr, color=realorange!80!black] (\n) -- (\v);
+}
+
+% ── Function labels ───────────────────────────────────────────────────────────
+\draw[-{Stealth[length=8pt]}, line width=1.4pt, color=sigmagreen, bend left=15]
+  ($(boxK.north east)+(0.1,0.1)$)
+  to node[above, font=\bfseries\normalsize, text=sigmagreen]
+     {$\sigma$ \normalfont\small (strictly increasing)}
+  ($(boxN.north west)+(-0.1,0.1)$);
+
+\draw[-{Stealth[length=8pt]}, line width=1.4pt,
+      color=realorange!80!black, bend left=15]
+  ($(boxN.north east)+(0.1,0.1)$)
+  to node[above, font=\bfseries\normalsize, text=realorange!80!black]
+     {$x$ \normalfont\small (parent sequence)}
+  ($(boxR.north west)+(-0.1,0.1)$);
+
+% ── Composition arrow ─────────────────────────────────────────────────────────
+\draw[-{Stealth[length=9pt]}, line width=1.8pt,
+      color=indexblue!70!black, rounded corners=8pt]
+  ($(boxK.south)+(0,-0.55)$)
+  -- node[below, font=\normalsize\bfseries, text=indexblue!80!black]
+     {$x \circ \sigma \;:\; k \mapsto x_{n_k}$}
+  ($(boxR.south)+(0,-0.55)$);
+
+\end{tikzpicture}
+
+\vspace{0.6cm}
+
+% ── Properties panel ──────────────────────────────────────────────────────────
+\begin{tikzpicture}[
+  every node/.style={font=\small},
+  propnode/.style={
+    draw=propborder, fill=propbox, rounded corners=5pt,
+    text width=3.4cm, align=left, inner sep=8pt,
+    minimum height=2.8cm
+  }
+]
+
+% Header
+\node[font=\small\itshape, text=gray] (header) at (7.4, 1.6)
+  {Four consequences of strict monotonicity:};
+
+\node[propnode] (p1) at (0,0) {
+  \textbf{\textcolor{sigmagreen}{Order Preservation}}\\[4pt]
+  $k < \ell \Rightarrow \sigma(k) < \sigma(\ell)$\\[3pt]
+  {\footnotesize Strict monotonicity. The defining property of $\sigma$.}
+};
+\node[propnode, right=0.35cm of p1] (p2) {
+  \textbf{\textcolor{natblue}{Index Growth}}\\[4pt]
+  $\sigma(k) \geq k \quad \forall k\in\mathbb{N}$\\[3pt]
+  {\footnotesize From strict monotonicity and discreteness of $\mathbb{N}$.}
+};
+\node[propnode, right=0.35cm of p2] (p3) {
+  \textbf{\textcolor{indexblue}{Injectivity}}\\[4pt]
+  $k \neq \ell \Rightarrow \sigma(k) \neq \sigma(\ell)$\\[3pt]
+  {\footnotesize Strict monotonicity implies injectivity directly.}
+};
+\node[propnode, right=0.35cm of p3, text width=3.8cm] (p4) {
+  \textbf{\textcolor{realorange}{Unbounded Indices}}\\[4pt]
+  $\sigma(k) \to \infty$ as $k\to\infty$\\[3pt]
+  {\footnotesize Since $\sigma(k)\geq k\to\infty$. Follows from index growth.}
+};
+\end{tikzpicture}
+
+\vspace{0.4cm}
+
+% ── Key identity box ──────────────────────────────────────────────────────────
+\begin{tikzpicture}
+\node[
+  draw=indexblue, fill=lightblue!40, rounded corners=6pt,
+  inner sep=12pt, text width=11cm, align=center
+]{
+  \textbf{Key Identity}\quad
+  $(x \circ \sigma)(k) \;=\; x\bigl(\sigma(k)\bigr)
+   \;=\; x(n_k) \;=:\; x_{n_k}$\\[6pt]
+{\small $k$ = position in subsequence}\\[2pt]
+  {\small $n_k = \sigma(k)$ = position in original sequence}\\[4pt]
+  {\small\itshape These two indices must be kept distinct in every proof.}
+};
+\end{tikzpicture}
+
+\caption{Subsequence as function composition
+  $\mathbb{N}\xrightarrow{\ \sigma\ }\mathbb{N}\xrightarrow{\ x\ }\mathbb{R}$.}
+\label{fig:subsequence-composition}
+\end{figure}

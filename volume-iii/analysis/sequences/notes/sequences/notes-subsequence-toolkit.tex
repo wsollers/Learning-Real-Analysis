@@ -1,0 +1,412 @@
+% =========================================================
+% Subsequence Toolkit
+% File: notes-subsequence-toolkit.tex
+% =========================================================
+
+\subsection{Subsequence Toolkit}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Subsequence Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+\begin{remark}[Relationship to Subsequences Notes]
+The results in this section assume the foundational facts about subsequences
+proved in the main subsequences section, including:
+\begin{itemize}
+\item Limits are inherited by subsequences.
+\item Convergent sequences have unique limits.
+\item Bolzano–Weierstrass Theorem.
+\end{itemize}
+This section abstracts and generalizes those structural principles.
+\end{remark}
+
+% =========================================================
+% Partition Convergence Principles
+% =========================================================
+
+\subsubsection{Partition Convergence Principles}
+
+\begin{theorem}[Finite Partition Convergence Principle]
+Let $(a_n)$ be a sequence in $\mathbb{R}$.
+Suppose the index set $\mathbb{N}$ admits a finite partition
+\[
+\mathbb{N} = E_1 \cup E_2 \cup \cdots \cup E_k,
+\]
+where:
+\begin{enumerate}
+\item $E_i \cap E_j = \varnothing$ whenever $i \neq j$,
+\item each $E_i$ is infinite.
+\end{enumerate}
+
+For each $i \in \{1, \ldots, k\}$, let $(a_n)_{n \in E_i}$ denote the
+subsequence indexed by $E_i$.
+
+If each subsequence $(a_n)_{n \in E_i}$ converges to the same limit $L$,
+then the full sequence $(a_n)$ converges to $L$.
+\end{theorem}
+
+
+
+\begin{remark}
+The theorem generalizes to metric spaces: replace $|a_n - L|$ with $d(a_n, L)$.
+\end{remark}
+
+\begin{corollary}[Residue-Class Convergence]
+Let $(a_n)$ be a sequence in $\mathbb{R}$ and let $k \geq 1$.
+If for each $r \in \{0, 1, \ldots, k-1\}$ the subsequence $(a_{kn+r})$
+converges to the same limit $L$, then $(a_n) \to L$.
+\end{corollary}
+
+
+
+\begin{corollary}[Even-Odd Convergence]
+Let $(a_n)$ be a sequence. If $(a_{2n}) \to L$ and $(a_{2n+1}) \to L$,
+then $(a_n) \to L$.
+\end{corollary}
+
+
+
+% =========================================================
+% Inheritance of Sequence Properties
+% =========================================================
+
+\subsubsection{Inheritance of Sequence Properties}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Inherited Property)}},
+  fonttitle=\small\bfseries]
+A property $\mathcal{P}$ of sequences is \emph{inherited by subsequences}
+if whenever $(a_n)$ satisfies $\mathcal{P}$, every subsequence $(a_{n_k})$
+also satisfies $\mathcal{P}$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Reflected Property)}},
+  fonttitle=\small\bfseries]
+A property $\mathcal{P}$ of sequences is \emph{reflected by subsequences}
+if whenever some subsequence $(a_{n_k})$ satisfies $\mathcal{P}$,
+the original sequence $(a_n)$ also satisfies $\mathcal{P}$.
+\end{tcolorbox}
+
+\begin{proposition}[Convergence is Inherited]
+If $(a_n) \to L$, then every subsequence $(a_{n_k}) \to L$.
+\end{proposition}
+
+
+
+\begin{proposition}[Boundedness is Inherited]
+If $(a_n)$ is bounded, then every subsequence $(a_{n_k})$ is bounded.
+\end{proposition}
+
+
+
+\begin{proposition}[Monotonicity is Inherited]
+If $(a_n)$ is monotone increasing (resp.\ decreasing),
+then every subsequence $(a_{n_k})$ is monotone increasing (resp.\ decreasing).
+\end{proposition}
+
+
+
+\begin{proposition}[Cauchy Property is Inherited]
+If $(a_n)$ is Cauchy, then every subsequence $(a_{n_k})$ is Cauchy.
+\end{proposition}
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Convergence is Not Reflected)}},
+  fonttitle=\small\bfseries]
+The sequence $a_n = (-1)^n$ has the convergent subsequence
+\[
+(a_{2n}) = (1, 1, 1, \ldots) \to 1,
+\]
+but $(a_n)$ itself does not converge.
+
+Similarly, $(a_{2n+1}) = (-1, -1, -1, \ldots) \to -1$.
+
+This shows that a divergent sequence can have convergent subsequences,
+so convergence is inherited but not reflected.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Boundedness is Not Reflected)}},
+  fonttitle=\small\bfseries]
+Let $a_n = n$ for $n$ odd and $a_n = 0$ for $n$ even.
+The subsequence $(a_{2n}) = (0, 0, 0, \ldots)$ is bounded,
+but $(a_n)$ is unbounded.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Monotonicity is Not Reflected)}},
+  fonttitle=\small\bfseries]
+The sequence $a_n = (-1)^n$ has the monotone (constant) subsequence 
+$(a_{2n}) = (1, 1, 1, \ldots)$, but $(a_n)$ is not monotone.
+\end{tcolorbox}
+
+% =========================================================
+% Additional Subsequence Tools
+% =========================================================
+
+\subsubsection{Additional Subsequence Tools}
+
+\begin{proposition}[Subsequence of a Subsequence]
+A subsequence of a subsequence is a subsequence of the original sequence.
+\end{proposition}
+
+
+
+\begin{theorem}[Dense Subsequence Criterion]
+Let $(a_n)$ be a sequence and $L \in \mathbb{R}$.
+If every neighborhood of $L$ contains infinitely many terms of $(a_n)$,
+then $(a_n)$ has a subsequence converging to $L$.
+\end{theorem}
+
+
+
+\begin{remark}[Connection to Cluster Points]
+The Dense Subsequence Criterion characterizes subsequential limits:
+$L$ is a subsequential limit of $(a_n)$ if and only if every neighborhood
+of $L$ contains infinitely many terms of $(a_n)$. In topological language,
+$L$ is a \emph{cluster point} (or \emph{accumulation point}) of the sequence.
+\end{remark}
+
+\begin{theorem}[Diagonal Subsequence Lemma]
+Let $(a_n^{(m)})_{n=1}^{\infty}$ be a sequence of sequences indexed by $m \in \mathbb{N}$.
+Suppose that for each $m$, the sequence $(a_n^{(m)})_{n=1}^{\infty}$ converges to a limit $L_m$,
+and suppose $L_m \to L$ as $m \to \infty$.
+
+Then there exists a strictly increasing sequence $(n_m)$ such that
+the diagonal sequence $(a_{n_m}^{(m)})$ converges to $L$.
+\end{theorem}
+
+
+
+\begin{remark}
+The Diagonal Subsequence Lemma is used extensively in functional analysis
+and measure theory, particularly in proofs involving weak convergence
+and the construction of convergent subsequences from families of sequences.
+\end{remark}
+
+% =========================================================
+% Structural Classification
+% =========================================================
+
+\subsubsection{Structural Classification of Sequence Properties}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Tail Property)}},
+  fonttitle=\small\bfseries]
+A property $\mathcal{P}$ of sequences is called a \emph{tail property}
+if whenever two sequences $(a_n)$ and $(b_n)$ satisfy
+\[
+a_n = b_n \quad \text{for all } n \geq N
+\]
+for some $N \in \mathbb{N}$, then
+\[
+(a_n) \text{ satisfies } \mathcal{P}
+\quad \Longleftrightarrow \quad
+(b_n) \text{ satisfies } \mathcal{P}.
+\]
+In other words, altering finitely many initial terms does not affect
+whether the sequence has property $\mathcal{P}$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Universal Subsequence Property)}},
+  fonttitle=\small\bfseries]
+A property $\mathcal{P}$ of sequences is called a
+\emph{universal subsequence property}
+if for every sequence $(a_n)$,
+\[
+(a_n) \text{ satisfies } \mathcal{P}
+\quad \Longleftrightarrow \quad
+\text{every subsequence of } (a_n) \text{ satisfies } \mathcal{P}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Universal Properties and Inheritance]
+Universal subsequence properties are necessarily inherited.
+If $\mathcal{P}$ is universal and $(a_n)$ satisfies $\mathcal{P}$,
+then by definition every subsequence satisfies $\mathcal{P}$.
+\end{remark}
+
+\begin{proposition}[Reflection via Universal Properties]
+Let $\mathcal{P}$ be a universal subsequence property. Then:
+\begin{enumerate}
+\item $\mathcal{P}$ is inherited by subsequences.
+\item $\mathcal{P}$ is reflected by the collection of \emph{all} subsequences
+      (though not necessarily by any single subsequence).
+\end{enumerate}
+\end{proposition}
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Universal Property: Every Subsequence is Cauchy)}},
+  fonttitle=\small\bfseries]
+The property ``every subsequence is Cauchy'' is a universal subsequence property.
+Moreover, this property is equivalent to the sequence being Cauchy:
+\begin{itemize}
+\item If $(a_n)$ is Cauchy, then every subsequence is Cauchy (inheritance).
+\item If every subsequence is Cauchy, then $(a_n)$ is Cauchy (since $(a_n)$ is a subsequence of itself).
+\end{itemize}
+In $\mathbb{R}$, this is equivalent to convergence.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Universal Property: Every Subsequence Has a Convergent Subsubsequence)}},
+  fonttitle=\small\bfseries]
+The property ``every subsequence has a convergent subsubsequence'' 
+is equivalent to boundedness:
+\begin{itemize}
+\item If $(a_n)$ is bounded, then every subsequence is bounded (inheritance),
+      and by Bolzano--Weierstrass, every bounded subsequence has a convergent subsubsequence.
+\item Conversely, if $(a_n)$ is unbounded, then it has a subsequence $(a_{n_k})$
+      with $|a_{n_k}| \to \infty$. This subsequence has no bounded subsubsequence,
+      hence no convergent subsubsequence.
+\end{itemize}
+This characterization connects subsequence logic to compactness:
+a set $K \subseteq \mathbb{R}$ is sequentially compact if and only if
+every sequence in $K$ has a convergent subsequence with limit in $K$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Tail Properties)}},
+  fonttitle=\small\bfseries]
+The following are tail properties:
+\begin{itemize}
+\item Convergence (and convergence to a specific limit $L$)
+\item Cauchy property
+\item Boundedness
+\item Eventually monotone
+\item Eventually constant
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example (Non-Tail Properties)}},
+  fonttitle=\small\bfseries]
+The following are \emph{not} tail properties:
+\begin{itemize}
+\item Monotonicity (changing $a_1$ can destroy monotonicity)
+\item Having $a_1 = 0$
+\end{itemize}
+\end{tcolorbox}
+
+% =========================================================
+% Summary Table
+% =========================================================
+
+\subsubsection{Summary of Property Classification}
+
+\begin{center}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Property} 
+& \makecell{\textbf{Inherited by} \\ \textbf{Subsequences?}} 
+& \makecell{\textbf{Reflected by One} \\ \textbf{Subsequence?}}
+& \textbf{Structural Type} \\
+\hline
+Convergent 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Cauchy 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Bounded 
+& Yes 
+& No 
+& Tail Property\textsuperscript{*} \\
+\hline
+Monotone 
+& Yes 
+& No 
+& Global Structural \\
+\hline
+Eventually monotone 
+& Yes 
+& No 
+& Tail Property \\
+\hline
+Every subseq.\ convergent 
+& Yes 
+& Yes (all) 
+& Universal Property \\
+\hline
+Every subseq.\ Cauchy 
+& Yes 
+& Yes (all) 
+& Universal Property \\
+\hline
+\end{tabular}
+\end{center}
+
+\smallskip
+
+\noindent\textsuperscript{*}\textit{Boundedness is a tail property 
+(changing finitely many terms preserves boundedness) and also a global 
+magnitude condition (it constrains all terms).}
+
+\begin{remark}[Interpretation of the Table]
+\emph{Inherited} means: if $(a_n)$ has property $P$, then every subsequence has $P$.
+
+\emph{Reflected by one} means: if some single subsequence has property $P$, 
+then $(a_n)$ has $P$. This is rare.
+
+\emph{Reflected by all} means: if every subsequence has property $P$,
+then $(a_n)$ has $P$. This holds for universal properties.
+
+Most natural properties are inherited but not reflected by any single subsequence.
+Universal properties are both inherited and reflected by the totality of subsequences.
+\end{remark}
+
+% =========================================================
+% Structural Summary
+% =========================================================
+
+\begin{remark}[Hierarchy of Subsequence Properties]
+The structural types form a hierarchy:
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Type} & \textbf{Characterization} \\
+\hline
+Tail Property & Determined by sufficiently late terms \\
+Global Property & Depends on all terms (not just tail) \\
+Universal Property & Equivalent to holding for all subsequences \\
+\end{tabular}
+\end{center}
+
+Understanding this hierarchy clarifies which proof strategies apply:
+\begin{itemize}
+\item Tail properties allow discarding finitely many ``bad'' initial terms.
+\item Global properties require controlling the entire sequence.
+\item Universal properties can be verified by checking all subsequences,
+      or refuted by finding one counterexample subsequence.
+\end{itemize}
+\end{remark}

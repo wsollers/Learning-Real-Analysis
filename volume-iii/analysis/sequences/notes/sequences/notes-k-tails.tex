@@ -1,0 +1,173 @@
+% =========================================================
+% K-Tails of Sequences
+% File: notes-k-tails.tex
+% =========================================================
+
+\subsection{K-Tails of Sequences}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{K Tails — Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% (Original local heading preserved)
+\subsubsection{K-Tails of Sequences}
+
+The long-term behavior of a sequence is completely determined by its
+\emph{tails}.  Finite initial segments play no role in convergence,
+Cauchy behavior, limit superior/inferior, or subsequence extraction.
+
+This section formalizes that principle.
+
+% ---------------------------------------------------------
+\subsubsection{Basic Definitions}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (k-tail of a sequence)}},
+  fonttitle=\small\bfseries]
+Let $(x_n)$ be a sequence in $\mathbb{R}$ and let $k\in\mathbb{N}$.
+The \emph{$k$-tail} of $(x_n)$ is the sequence
+\[
+(x_{k}, x_{k+1}, x_{k+2}, \dots).
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Tail set)}},
+  fonttitle=\small\bfseries]
+Let $(x_n)$ be a sequence and let $k\in\mathbb{N}$.
+The \emph{tail set} beginning at $k$ is
+\[
+T_k := \{x_n : n \ge k\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}
+A $k$-tail removes the first $k-1$ terms of the sequence.
+All analytic behavior of a sequence occurs in its tails.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Main Theorems}
+
+\begin{theorem}[Convergence is a Tail Property]
+A sequence $(x_n)$ converges to $L$ if and only if
+every $k$-tail converges to $L$.
+\end{theorem}
+
+
+
+\begin{theorem}[Finite Modification Theorem]
+If two sequences differ in only finitely many terms,
+then either both converge to the same limit or neither converges.
+\end{theorem}
+
+
+
+\begin{theorem}[Cauchy is a Tail Property]
+A sequence $(x_n)$ is Cauchy if and only if
+every $k$-tail is Cauchy.
+\end{theorem}
+
+
+
+\begin{theorem}[Tail Suprema are Monotone]
+Let $(x_n)$ be bounded and define
+\[
+s_k := \sup T_k.
+\]
+Then $(s_k)$ is a decreasing sequence.
+\end{theorem}
+
+
+
+\begin{theorem}[Limit Superior via Tails]
+If $(x_n)$ is bounded and
+\[
+s_k := \sup T_k,
+\]
+then
+\[
+\limsup x_n = \lim_{k\to\infty} s_k.
+\]
+\end{theorem}
+
+\begin{remark}
+Limit superior captures the eventual upper behavior of
+shrinking tails.
+\end{remark}
+
+\begin{theorem}[Subsequences are Iterated Tails]
+Every subsequence is obtained by repeatedly passing to
+later tails.
+\end{theorem}
+
+
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+The logical implications of this section are:
+
+\begin{itemize}
+\item Convergence ignores finite initial segments.
+\item Cauchy behavior ignores finite initial segments.
+\item $\limsup$ and $\liminf$ are defined entirely through tail sets.
+\item Subsequences are constructed by iterating tails.
+\item All asymptotic behavior is tail behavior.
+\end{itemize}
+
+\begin{corollary}[Finite Alteration Does Not Affect Limit]
+Removing or altering finitely many terms of a convergent sequence
+does not change its limit.
+\end{corollary}
+
+\begin{corollary}[Tails of a Convergent Sequence Converge]
+If $(x_n)$ converges, then any tail of $(x_n)$ converges to the same limit.
+\end{corollary}
+
+\begin{remark}
+The phrase ``for all sufficiently large $n$''
+is precisely tail language.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Structural Principle}
+
+\begin{remark}[Tail Principle]
+In real analysis, properties defined by
+``eventually'' or ``for sufficiently large indices''
+depend only on the tails of sequences.
+
+Finite behavior is analytically irrelevant.
+\end{remark}
+
+\begin{remark}[Logical Structure]
+\[
+\text{Tail containment}
+\Rightarrow
+\text{Convergence}
+\Rightarrow
+\text{Finite modification invariance}.
+\]
+
+\[
+\text{Tail nesting}
+\Rightarrow
+\text{Monotonic tail suprema}
+\Rightarrow
+\limsup \text{ theory}.
+\]
+\end{remark}

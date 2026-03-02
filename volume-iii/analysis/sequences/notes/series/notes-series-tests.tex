@@ -1,0 +1,213 @@
+% =========================================================
+% Tests for Series
+% File: notes-series-tests.tex
+% =========================================================
+
+\subsection{Tests for Series}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Series Tests — Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Core items} & Key definitions/results introduced in this file.\\
+\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
+\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\end{tabular}
+\end{tcolorbox}
+
+
+% ---------------------------------------------------------
+\subsubsection{Basic Logical Structure}
+
+All convergence tests reduce to properties of the partial sums
+\[
+s_N = \sum_{n=1}^N a_n.
+\]
+
+Thus every test ultimately proves that $(s_N)$ is either:
+
+\begin{itemize}
+\item bounded and monotone, or
+\item Cauchy.
+\end{itemize}
+
+% =========================================================
+\subsubsection{Main Theorems}
+% =========================================================
+
+% =========================================================
+% Direct Comparison Test
+% =========================================================
+
+\begin{theorem}[Direct Comparison Test]
+Let $a_n,b_n \ge 0$.
+
+\begin{enumerate}
+\item If $a_n \le b_n$ eventually and $\sum b_n$ converges,
+then $\sum a_n$ converges.
+\item If $a_n \ge b_n$ eventually and $\sum b_n$ diverges,
+then $\sum a_n$ diverges.
+\end{enumerate}
+\end{theorem}
+
+
+
+% =========================================================
+% Limit Comparison Test
+% =========================================================
+
+\begin{theorem}[Limit Comparison Test]
+Let $a_n,b_n > 0$ and suppose
+\[
+\lim_{n\to\infty} \frac{a_n}{b_n} = L,
+\quad 0 < L < \infty.
+\]
+Then
+\[
+\sum a_n \text{ converges }
+\Longleftrightarrow
+\sum b_n \text{ converges}.
+\]
+\end{theorem}
+
+
+
+% =========================================================
+% Ratio Test
+% =========================================================
+
+\begin{theorem}[Ratio Test]
+Let
+\[
+L = \limsup_{n\to\infty}
+\left|\frac{a_{n+1}}{a_n}\right|.
+\]
+
+\begin{enumerate}
+\item If $L < 1$, the series converges absolutely.
+\item If $L > 1$, the series diverges.
+\end{enumerate}
+\end{theorem}
+
+
+
+% =========================================================
+% Root Test
+% =========================================================
+
+\begin{theorem}[Root Test]
+Let
+\[
+L = \limsup_{n\to\infty} \sqrt[n]{|a_n|}.
+\]
+
+\begin{enumerate}
+\item If $L<1$, the series converges absolutely.
+\item If $L>1$, it diverges.
+\end{enumerate}
+\end{theorem}
+
+
+
+% =========================================================
+% Integral Test
+% =========================================================
+
+\begin{theorem}[Integral Test]
+Let $f$ be continuous, positive, decreasing on $[1,\infty)$.
+Let $a_n = f(n)$.
+
+Then
+\[
+\sum a_n
+\text{ converges }
+\Longleftrightarrow
+\int_1^\infty f(x)\,dx
+\text{ converges}.
+\]
+\end{theorem}
+
+
+
+% =========================================================
+% p-Series
+% =========================================================
+
+\begin{theorem}[p-Series]
+\[
+\sum_{n=1}^\infty \frac{1}{n^p}
+\]
+converges iff $p>1$.
+\end{theorem}
+
+
+
+% =========================================================
+% Alternating Series Test
+% =========================================================
+
+\begin{theorem}[Alternating Series Test]
+If $b_n \ge 0$, decreasing, and $b_n\to0$, then
+\[
+\sum (-1)^{n+1} b_n
+\]
+converges.
+\end{theorem}
+
+
+
+% =========================================================
+% Dirichlet Test
+% =========================================================
+
+\begin{theorem}[Dirichlet Test]
+If
+\begin{itemize}
+\item partial sums of $\sum a_n$ are bounded,
+\item $b_n$ is monotone and $b_n\to0$,
+\end{itemize}
+then $\sum a_n b_n$ converges.
+\end{theorem}
+
+
+
+% =========================================================
+% Abel Test
+% =========================================================
+
+\begin{theorem}[Abel Test]
+If $\sum a_n$ converges and $b_n$ is bounded monotone,
+then $\sum a_n b_n$ converges.
+\end{theorem}
+
+
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+
+Hierarchy of strength:
+
+\[
+\text{Root}
+\Rightarrow
+\text{Ratio}
+\Rightarrow
+\text{Comparison}.
+\]
+
+Absolute convergence tests imply unconditional stability.
+
+Alternating / Dirichlet / Abel capture cancellation-driven convergence.
+
+\begin{remark}[Logical Core]
+All tests ultimately rely on:
+\begin{itemize}
+\item comparison,
+\item Cauchy criterion,
+\item bounded monotone convergence.
+\end{itemize}
+\end{remark}
