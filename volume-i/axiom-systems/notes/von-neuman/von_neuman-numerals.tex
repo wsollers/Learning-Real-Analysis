@@ -1,0 +1,185 @@
+% =========================================================
+% von Neumann Numerals (Set-Theoretic Construction of \mathbb{N})
+% File: volume-i/axiomsystems/notes/von-neuman/von_neuman-numerals.tex
+% =========================================================
+
+\subsection{von Neumann Numerals}
+\label{sec:von-neumann-numerals}
+
+% ---------------------------------------------------------
+\subsubsection{Definitions and Theorems}
+% ---------------------------------------------------------
+
+\begin{remark}[Purpose]
+This section isolates the set-theoretic toolkit sufficient to define the
+\emph{von Neumann numerals}
+\[
+0 := \varnothing,\qquad n^{+} := n\cup\{n\},
+\]
+and to prove the key structural facts:
+\[
+m<n\ \Longleftrightarrow\ m\in n,
+\]
+and each numeral is transitive and well-ordered by $\in$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Core Set-Theoretic Axioms Used
+% ---------------------------------------------------------
+
+\begin{axiom}[Extensionality]
+\label{ax:vn-extensionality}
+For all sets $A,B$,
+\[
+\bigl(\forall x\,(x\in A \leftrightarrow x\in B)\bigr)\ \Rightarrow\ A=B.
+\]
+\end{axiom}
+
+\begin{axiom}[Empty Set]
+\label{ax:vn-empty-set}
+There exists a set with no elements, denoted $\varnothing$.
+\end{axiom}
+
+\begin{axiom}[Pairing]
+\label{ax:vn-pairing}
+For any sets $a,b$ there exists $\{a,b\}$.
+\end{axiom}
+
+\begin{definition}[Singleton]
+\label{def:vn-singleton}
+For any set $a$, define $\{a\}:=\{a,a\}$ (exists by Pairing).
+\end{definition}
+
+\begin{axiom}[Union]
+\label{ax:union}
+For any set $A$ there exists a set $\bigcup A$ such that
+\[
+x\in \bigcup A\ \leftrightarrow\ \exists y\in A\ (x\in y).
+\]
+\end{axiom}
+
+\begin{definition}[Binary union]
+\label{def:binary-union}
+For sets $a,b$, define
+\[
+a\cup b := \bigcup\{a,b\}.
+\]
+\end{definition}
+
+\begin{proposition}[Basic properties of union]
+\label{prop:union-basics}
+For all sets $a,b$ and all $x$,
+\[
+x\in a\cup b\ \leftrightarrow\ (x\in a \lor x\in b).
+\]
+\end{proposition}
+
+
+
+% ---------------------------------------------------------
+% von Neumann Numerals
+% ---------------------------------------------------------
+
+\begin{definition}[von Neumann successor]
+\label{def:vn-successor}
+For any set $n$, define its \emph{von Neumann successor} by
+\[
+S_V(n) := n \cup \{n\}.
+\]
+\end{definition}
+
+\begin{definition}[von Neumann numerals]
+\label{def:vn-numerals}
+Define recursively:
+\[
+0_V := \varnothing,\qquad (n+1)_V := S_V(n_V)=n_V\cup\{n_V\}.
+\]
+The sets $n_V$ are called the \emph{von Neumann numerals}.
+\end{definition}
+
+\begin{proposition}[First few von Neumann numerals]
+\label{prop:vn-first-few}
+\[
+0_V=\varnothing,\quad
+1_V=\{0_V\}=\{\varnothing\},\quad
+2_V=\{0_V,1_V\},\quad
+3_V=\{0_V,1_V,2_V\},\ \dots
+\]
+More generally, for $n\ge 1$,
+\[
+n_V=\{0_V,1_V,\dots,(n-1)_V\}.
+\]
+\end{proposition}
+
+
+
+\begin{definition}[Transitive set]
+\label{def:transitive}
+A set $A$ is \emph{transitive} if
+\[
+\forall x\,(x\in A \Rightarrow x\subseteq A).
+\]
+Equivalently, $\forall x\,\forall y\,((y\in x\in A)\Rightarrow y\in A)$.
+\end{definition}
+
+\begin{proposition}[Each von Neumann numeral is transitive]
+\label{prop:vn-transitive}
+For every $n$, the set $n_V$ is transitive.
+\end{proposition}
+
+
+
+\begin{proposition}[Successor is injective]
+\label{prop:vn-successor-injective}
+For all sets $a,b$,
+\[
+S_V(a)=S_V(b)\ \Rightarrow\ a=b.
+\]
+\end{proposition}
+
+
+
+\begin{remark}[About Foundation]
+Proposition~\ref{prop:vn-successor-injective} is usually proved inside ZFC using the
+Axiom of Foundation (Regularity) to exclude membership cycles.
+If you are working in a foundation-free setting, injectivity of successor may require an extra assumption.
+\end{remark}
+
+\begin{proposition}[Order by membership]
+\label{prop:vn-order-by-membership}
+For natural numbers $m,n$,
+\[
+m<n \iff m_V \in n_V.
+\]
+\end{proposition}
+
+
+
+\begin{proposition}[Well-ordering by $\in$]
+\label{prop:vn-well-ordered}
+The relation $\in$ well-orders the set $\mathbb{N}_V := \{n_V : n\in\mathbb{N}\}$,
+and this well-order is isomorphic to $(\mathbb{N},<)$ via $n\mapsto n_V$.
+\end{proposition}
+
+
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+% ---------------------------------------------------------
+
+\begin{corollary}[Each numeral is the set of its predecessors]
+\label{cor:vn-predecessors}
+For every $n$,
+\[
+n_V = \{m_V : m<n\}.
+\]
+\end{corollary}
+
+
+
+\begin{corollary}[Monotonicity]
+\label{cor:vn-monotone}
+If $m<n$, then $m_V \subsetneq n_V$.
+\end{corollary}
+
+

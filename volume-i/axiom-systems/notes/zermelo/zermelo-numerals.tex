@@ -1,0 +1,160 @@
+% =========================================================
+% Zermelo Numerals (Set-Theoretic Construction of \mathbb{N})
+% File: volume-i/axiomsystems/notes/zermelo/zermelo-numerals.tex
+% =========================================================
+
+\subsection{Zermelo Numerals}
+\label{sec:zermelo-numerals}
+
+% ---------------------------------------------------------
+\subsubsection{Definitions and Theorems}
+% ---------------------------------------------------------
+
+\begin{remark}[Purpose]
+This section records a minimal set-theoretic toolkit (axioms, derived constructions,
+and lemmas) sufficient to define the \emph{Zermelo numerals}
+\[
+0 := \varnothing,\qquad n^{+} := \{n\}\quad (n \in \mathbb{N}).
+\]
+The goal is not to redevelop all of ZFC, but to isolate the ingredients used in this construction.
+\end{remark}
+
+% ---------------------------------------------------------
+% Core Set-Theoretic Axioms Used
+% ---------------------------------------------------------
+
+\begin{axiom}[Extensionality]
+\label{ax:extensionality}
+For all sets $A,B$,
+\[
+\bigl(\forall x\,(x\in A \leftrightarrow x\in B)\bigr)\ \Rightarrow\ A=B.
+\]
+\end{axiom}
+
+\begin{axiom}[Empty Set]
+\label{ax:empty-set}
+There exists a set with no elements. We denote one such set by $\varnothing$:
+\[
+\exists E\ \forall x\ (x\notin E).
+\]
+\end{axiom}
+
+\begin{axiom}[Pairing]
+\label{ax:pairing}
+For any sets $a,b$ there exists a set $\{a,b\}$ whose elements are exactly $a$ and $b$:
+\[
+\forall a\,\forall b\,\exists P\ \forall x\ (x\in P \leftrightarrow (x=a \lor x=b)).
+\]
+\end{axiom}
+
+\begin{definition}[Singleton]
+\label{def:singleton}
+For any set $a$, define the \emph{singleton} of $a$ by
+\[
+\{a\} := \{a,a\},
+\]
+whose existence follows from the Pairing Axiom (Axiom~\ref{ax:pairing}).
+\end{definition}
+
+\begin{proposition}[Uniqueness of the empty set]
+\label{prop:empty-unique}
+If $E$ and $E'$ have no elements, then $E=E'$.
+\end{proposition}
+
+
+
+\begin{proposition}[Singleton is well-defined]
+\label{prop:singleton-well-defined}
+For each set $a$ there exists a unique set whose only element is $a$, denoted $\{a\}$.
+\end{proposition}
+
+
+% ---------------------------------------------------------
+% Zermelo Numerals
+% ---------------------------------------------------------
+
+\begin{definition}[Zermelo successor]
+\label{def:zermelo-successor}
+For any set $n$, define its \emph{Zermelo successor} by
+\[
+S_Z(n) := \{n\}.
+\]
+\end{definition}
+
+\begin{definition}[Zermelo numerals]
+\label{def:zermelo-numerals}
+Define recursively:
+\[
+0_Z := \varnothing,\qquad (n+1)_Z := S_Z(n_Z)=\{n_Z\}.
+\]
+The sets $n_Z$ are called the \emph{Zermelo numerals}.
+\end{definition}
+
+\begin{proposition}[First few Zermelo numerals]
+\label{prop:zermelo-first-few}
+\[
+0_Z=\varnothing,\quad
+1_Z=\{\varnothing\},\quad
+2_Z=\{\{\varnothing\}\},\quad
+3_Z=\{\{\{\varnothing\}\}\},\ \dots
+\]
+\end{proposition}
+
+
+
+\begin{proposition}[Injectivity of Zermelo successor]
+\label{prop:zermelo-successor-injective}
+For all sets $a,b$,
+\[
+S_Z(a)=S_Z(b)\ \Rightarrow\ a=b.
+\]
+\end{proposition}
+
+
+
+\begin{proposition}[Distinctness of Zermelo numerals]
+\label{prop:zermelo-distinct}
+If $m\neq n$ as natural numbers, then $m_Z \neq n_Z$ as sets.
+Equivalently, the map $n\mapsto n_Z$ is injective.
+\end{proposition}
+
+
+
+\begin{proposition}[Membership pattern]
+\label{prop:zermelo-membership}
+For Zermelo numerals, we have:
+\[
+m_Z \in n_Z \iff n = m+1.
+\]
+In particular, each $n_Z$ has exactly one element when $n\ge 1$.
+\end{proposition}
+
+
+
+\begin{remark}[Why Zermelo numerals are useful]
+Zermelo numerals are the \emph{iterated singleton tower}.
+They are convenient when you want a very rigid notion of ``$n$ steps'':
+each numeral (except $0$) has exactly one element.
+They are less convenient for encoding order by membership (that role is played better by von Neumann numerals).
+\end{remark}
+
+% ---------------------------------------------------------
+\subsubsection{Consequences}
+% ---------------------------------------------------------
+
+\begin{corollary}[No numeral contains itself]
+\label{cor:zermelo-no-self-membership}
+For every $n$, $n_Z \notin n_Z$.
+\end{corollary}
+
+
+
+\begin{corollary}[Strict chain under membership]
+\label{cor:zermelo-chain}
+For $n\ge 1$,
+\[
+(n-1)_Z \in n_Z,\quad (n-2)_Z \in (n-1)_Z,\ \dots,\ 0_Z \in 1_Z.
+\]
+\end{corollary}
+
+

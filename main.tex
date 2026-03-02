@@ -28,6 +28,11 @@
 \usepackage{tabularx}
 
 % ============================================================
+% Graphics (images)
+% ============================================================
+\usepackage{graphicx}
+
+% ============================================================
 % Colours, boxes, and links
 % ============================================================
 \usepackage{xcolor}
@@ -35,7 +40,10 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins}
 \input{blueprint-macros}
+
+% --- Hyperlinks + clever references (order matters)
 \usepackage{hyperref}
+\usepackage[nameinlink,capitalize,noabbrev]{cleveref}
 \usepackage{bookmark}
 
 % ============================================================
@@ -65,6 +73,7 @@
 \usepackage{placeins}
 \usepackage{xparse}
 \usepackage{multirow}
+
 % ============================================================
 % Bibliography
 % ============================================================
@@ -163,7 +172,7 @@
 \newcommand{\Strategy}  {\textbf{Strategy.}\ }
 \newcommand{\ProofPlan} {\textbf{Plan.}\ }
 \newcommand{\Recall}    {\textbf{Recall.}\ }
-\newcommand{\Claim}     {\textbf{Claim.}\ }
+\newcommand{\claim}     {\textbf{Claim.}\ }
 \newcommand{\Wlog}      {\textit{Without loss of generality}}
 \newcommand{\Fix}       {\textbf{Fix.}\ }
 \newcommand{\Let}       {\textbf{Let.}\ }
@@ -181,6 +190,50 @@
 \newcommand{\pp}        {\texttt{++}}
 
 % ============================================================
+% Nested numbered claims (reset per proof)
+%   Claim 1, Claim 2, ...
+%   Subclaim 1.1, 1.2, ...
+% ============================================================
+\newcounter{claim}
+\newcounter{subclaim}[claim]
+
+\renewcommand{\theclaim}{\arabic{claim}}
+\renewcommand{\thesubclaim}{\theclaim.\arabic{subclaim}}
+
+\AtBeginEnvironment{proof}{%
+  \setcounter{claim}{0}%
+  \setcounter{subclaim}{0}%
+}
+
+\newenvironment{claim}{%
+  \refstepcounter{claim}%
+  \par\medskip
+  \noindent\textbf{Claim \theclaim.}\ \itshape
+}{%
+  \par\medskip
+}
+
+\newenvironment{subclaim}{%
+  \refstepcounter{subclaim}%
+  \par\medskip
+  \noindent\textbf{Subclaim \thesubclaim.}\ \itshape
+}{%
+  \par\medskip
+}
+
+% ============================================================
+% cleveref configuration (prints exactly: "Claim 1", "Subclaim 1.1", "Theorem 2.3")
+% ============================================================
+\crefname{theorem}{Theorem}{Theorems}
+\Crefname{theorem}{Theorem}{Theorems}
+
+\crefname{claim}{Claim}{Claims}
+\Crefname{claim}{Claim}{Claims}
+
+\crefname{subclaim}{Subclaim}{Subclaims}
+\Crefname{subclaim}{Subclaim}{Subclaims}
+
+% ============================================================
 % Proof annotation tags
 % ============================================================
 \newcommand{\tagDU}{\textbf{\textcolor{blue!70!black}{DU}}}
@@ -192,6 +245,7 @@
 \newcommand{\tagCS}{\textbf{\textcolor{red!60!black}{CS}}}
 \newcommand{\tagEX}{\textbf{\textcolor{magenta!60!black}{EX}}}
 \newcommand{\tagUW}{\textbf{\textcolor{cyan!60!black}{UW}}}
+
 % ============================================================
 % Math operators
 % ============================================================
@@ -227,8 +281,6 @@
   urlcolor   = blue!60!black,
 }
 
-
-
 % ============================================================
 % Numbering and TOC depth
 % ============================================================
@@ -255,6 +307,9 @@
   \vfill
   {\large ``Proof is the price of admission.''\par}
 \end{titlepage}
+\clearpage
+
+\input{cantor-quote}
 
 % ── Front matter ──────────────────────────────────────────────────────────────
 \tableofcontents
