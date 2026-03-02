@@ -167,9 +167,9 @@
 % ============================================================
 % Proof-writing macros
 % ============================================================
-\newcommand{\Given}     {\textbf{Given.}\ }
-\newcommand{\Goal}      {\textbf{Goal.}\ }
-\newcommand{\Strategy}  {\textbf{Strategy.}\ }
+\newcommand{\Given}{\par\noindent\textbf{Given. }\ignorespaces}
+\newcommand{\Goal}{\par\noindent\textbf{Goal. }\ignorespaces}
+\newcommand{\Strategy}{\par\noindent\textbf{Strategy. }\ignorespaces}
 \newcommand{\ProofPlan} {\textbf{Plan.}\ }
 \newcommand{\Recall}    {\textbf{Recall.}\ }
 \newcommand{\Claim}     {\textbf{Claim.}\ }   % inline bold marker; \begin{claim} = numbered environment
@@ -234,17 +234,92 @@
 \Crefname{subclaim}{Subclaim}{Subclaims}
 
 % ============================================================
-% Proof annotation tags
+% Proof annotation tags (MARGIN VERSION — IDEAL MINIMAL SET)
+% ------------------------------------------------------------
+% Philosophy:
+%   - Tags mark *structural moves*, not routine algebra.
+%   - If a proof has > ~5 tags, you are probably over-tagging.
+%
+% Requires:
+%   - \usepackage{xcolor}
+%   - Margin notes enabled (default LaTeX).
+%   - Optional (one-sided): \reversemarginpar
 % ============================================================
-\newcommand{\tagDU}{\textbf{\textcolor{blue!70!black}{DU}}}
-\newcommand{\tagTA}{\textbf{\textcolor{green!50!black}{TA}}}
-\newcommand{\tagAM}{\textbf{\textcolor{orange!80!black}{AM}}}
-\newcommand{\tagIH}{\textbf{\textcolor{purple!70!black}{IH}}}
-\newcommand{\tagBC}{\textbf{\textcolor{teal!70!black}{BC}}}
-\newcommand{\tagIS}{\textbf{\textcolor{teal!50!black}{IS}}}
-\newcommand{\tagCS}{\textbf{\textcolor{red!60!black}{CS}}}
-\newcommand{\tagEX}{\textbf{\textcolor{magenta!60!black}{EX}}}
-\newcommand{\tagUW}{\textbf{\textcolor{cyan!60!black}{UW}}}
+
+% --- Base tag primitive: small colored label in the margin
+%     (adds slight vertical separation so stacked tags don't clump)
+\newcommand{\prooftag}[2]{%
+  \marginpar{\vspace{0.35\baselineskip}\raggedright\scriptsize
+    \textbf{\textcolor{#1}{#2}}}%
+}
+
+% ------------------------------------------------------------
+% Core structural tags (use these everywhere)
+% ------------------------------------------------------------
+
+% DU = Definition Unpacked (only at the *critical* unpacking step)
+\newcommand{\tagDU}{\prooftag{blue!70!black}{DU}}
+
+% TA = Theorem Applied (explicit dependency invoked)
+\newcommand{\tagTA}{\prooftag{green!50!black}{TA}}
+
+% CS = Case Split (nontrivial split that changes the argument)
+\newcommand{\tagCS}{\prooftag{red!60!black}{CS}}
+
+% EX = Existence / witness choice (nontrivial "choose" step)
+\newcommand{\tagEX}{\prooftag{magenta!60!black}{EX}}
+
+% NEG = Negation unpacked (esp. contradiction/contrapositive, neg(Cauchy))
+\newcommand{\tagNEG}{\prooftag{black}{NEG}}
+
+% ------------------------------------------------------------
+% ε–N / tail-logic tags (Real Analysis workhorses)
+% ------------------------------------------------------------
+
+% EA = ε arbitrary (start of a universal ε argument)
+\newcommand{\tagEA}{\prooftag{black}{EA}}
+
+% NE = choose N = N(ε) (dependency discipline: N depends only on ε)
+\newcommand{\tagNE}{\prooftag{black}{NE}}
+
+% TN = take tail indices ≥ N (e.g., "let n ≥ N be arbitrary")
+\newcommand{\tagTN}{\prooftag{black}{TN}}
+
+% TR = triangle inequality / norm inequality (key structural bound step)
+\newcommand{\tagTR}{\prooftag{black}{TR}}
+
+% ------------------------------------------------------------
+% Completeness / extraction tags (bounds ↔ subsequences ↔ Cauchy)
+% ------------------------------------------------------------
+
+% LUB = least-upper-bound step (sup/completeness invoked)
+\newcommand{\tagLUB}{\prooftag{black}{LUB}}
+
+% GLB = greatest-lower-bound step (inf/completeness invoked)
+\newcommand{\tagGLB}{\prooftag{black}{GLB}}
+
+% SS = subsequence selection / extraction move (define n_k increasing, diagonal)
+\newcommand{\tagSS}{\prooftag{black}{SS}}
+
+% ------------------------------------------------------------
+% Induction tags (keep only if you actually do induction in RA notes)
+% ------------------------------------------------------------
+
+% IH = inductive hypothesis applied
+\newcommand{\tagIH}{\prooftag{purple!70!black}{IH}}
+
+% BC = base case
+\newcommand{\tagBC}{\prooftag{teal!70!black}{BC}}
+
+% IS = inductive step
+\newcommand{\tagIS}{\prooftag{teal!50!black}{IS}}
+
+% ------------------------------------------------------------
+% Removed on purpose (not in ideal minimal set)
+% ------------------------------------------------------------
+% AM (algebraic manipulation): too granular; prose should carry it.
+% UW (universal/witness intro): redundant with TN/EX in practice.
+% ------------------------------------------------------------
 
 % ============================================================
 % Math operators
@@ -336,27 +411,7 @@
 \input{volume-iii/index}
 \clearpage
 
-% ── Proof Completion Metrics ──────────────────────────────────────────────────
-\chapter*{Proof Completion Metrics}
-\addcontentsline{toc}{chapter}{Proof Completion Metrics}
 
-\begin{center}
-\begin{tabular}{lc}
-\toprule
-\textbf{Chapter} & \textbf{Completed} \\
-\midrule
-Propositional Logic (Bjørndahl, Suppes)             & 24 \\
-Predicate Logic (Suppes Ch.\ 6--8)                  & 12 \\
-Real Analysis (Abbott, Johar, Pons, Ross)            & 12 \\
-Algebraic Structures (groups, rings, fields)         & 8  \\
-Abstract Algebra (Gallian)                           & 9  \\
-Axiom Systems / Tao Ch.\ 2                           & 8  \\
-Linear Algebra (Axler)                              & 5  \\
-\midrule
-\textbf{Total}                                      & \textbf{78} \\
-\bottomrule
-\end{tabular}
-\end{center}
 
 % ── Glossary ──────────────────────────────────────────────────────────────────
 \input{glossary-foundations}
