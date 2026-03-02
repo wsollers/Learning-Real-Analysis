@@ -586,9 +586,9 @@ The file has exactly four parts, in this order:
 \subsection*{[Theorem name as it appears in notes]}
 \label{prf:root-identifier}
 
-\begin{remark}[Return]
+\begin{remark*}[Return]
 \hyperref[prop:root-identifier]{$\leftarrow$ Back to Proposition ([Name]) in Notes}
-\end{remark}
+\end{remark*}
 
 \begin{proof}
 \Claim [Full statement copied verbatim from notes.]
@@ -596,13 +596,13 @@ The file has exactly four parts, in this order:
 [Proof body — see §6.6 for format]
 \end{proof}
 
-\begin{remark}[Proof shape]
+\begin{remark*}[Proof shape]
 [One paragraph: which technique was used and why.]
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Dependencies]
+\begin{remark*}[Dependencies]
 [Which definitions, axioms, or prior results this proof requires, with \ref labels.]
-\end{remark}
+\end{remark*}
 ```
 
 Rules for the four parts:
@@ -1024,6 +1024,25 @@ description (e.g.\ "zero is a natural number"), use the **description**.
 
 This rule applies to the proof body and to all remarks in the proof file. Do
 not use codes in `[Proof shape]` or `[Dependencies]` remarks either.
+
+**Rule PB-3 — Use `\begin{remark*}` in proof files, never `\begin{remark}`.**
+
+`\begin{remark}` (unnumbered asterisk omitted) shares the global theorem counter
+with `proposition`, `lemma`, `corollary`, and every other numbered environment.
+Placing it in a proof file advances that counter and inserts a spurious numbered
+item into the document sequence.
+
+Every remark in a proof file — Return, Proof shape, Dependencies, Generalisation,
+Common error, or any other — must use the unnumbered starred form:
+
+```latex
+\begin{remark*}[Return]   ...   \end{remark*}
+\begin{remark*}[Proof shape]   ...   \end{remark*}
+\begin{remark*}[Dependencies]   ...   \end{remark*}
+```
+
+`\begin{remark*}` is defined in `main.tex` and produces the same italic
+"*Remark (label).*" heading without touching any counter.
 
 ---
 

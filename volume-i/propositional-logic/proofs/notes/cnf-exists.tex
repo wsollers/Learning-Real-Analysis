@@ -6,9 +6,9 @@
 \subsection*{Every Formula Has a CNF}
 \label{prf:cnf-exists}
 
-\begin{remark}[Return]
+\begin{remark*}[Return]
 \hyperref[prop:cnf-exists]{$\leftarrow$ Back to Proposition (Every Formula Has a CNF) in Notes}
-\end{remark}
+\end{remark*}
 
 \begin{proof}
 \Claim Every propositional formula is logically equivalent to a formula in conjunctive normal form (CNF).
@@ -118,7 +118,7 @@ NNF formula is equivalent to some CNF formula. Combined with Stage 1, every
 propositional formula is equivalent to some CNF formula. \AsReq
 \end{proof}
 
-\begin{remark}[Proof shape]
+\begin{remark*}[Proof shape]
 The proof is a \emph{two-stage reduction}. Stage 1 is a direct appeal to the
 already-proved NNF existence theorem: we do not reprove that result here, but
 inherit it. Stage 2 is a structural induction on NNF formulas. The base cases
@@ -127,18 +127,18 @@ lists); the hard case is disjunction, which requires distributing $\vee$ over
 $\wedge$ to flatten a disjunction of conjunctions into a conjunction of
 disjunctions. This distribution step is the logical core of the proof and is
 the step that can cause exponential blowup in formula size.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Why NNF is an intermediate step]
+\begin{remark*}[Why NNF is an intermediate step]
 The NNF stage eliminates $\rightarrow$ and $\leftrightarrow$ and pushes $\neg$
 to the leaves. This ensures that in Stage 2 the only connectives present are
 $\wedge$ and $\vee$ on compound subformulas, and $\neg$ only on variables.
 Without NNF as an intermediate form, the induction in Stage 2 would require
 handling all five connectives rather than just two, making the case analysis
 considerably more involved.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Exponential size blowup]
+\begin{remark*}[Exponential size blowup]
 The distribution step in Case 4 replaces a formula of size $m + n$ clauses with
 one of size $mn$ clauses. Repeated applications across a formula of depth $d$
 can yield a CNF with exponentially many clauses. This is not a defect in the
@@ -147,22 +147,22 @@ polynomial-size CNF equivalent (unless $\mathrm{P} = \mathrm{NP}$). The
 Tseitin transformation avoids this blowup by introducing auxiliary variables,
 but at the cost of producing a formula that is only \emph{equisatisfiable}
 rather than logically equivalent.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Common error]
+\begin{remark*}[Common error]
 A frequent mistake is to attempt to convert directly to CNF without first
 going through NNF. This fails because distributing $\vee$ over $\wedge$ in the
 presence of $\neg(\alpha \wedge \beta)$ or $\rightarrow$ produces intermediate
 forms that are neither CNF nor NNF, making the induction ill-defined. The NNF
 stage is not just convenient — it is what makes the induction in Stage 2 clean
 and well-founded.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Dependencies]
+\begin{remark*}[Dependencies]
 The proof depends on: the definition of CNF (\hyperref[def:cnf]{Def.\ CNF}),
 the definition of NNF (\hyperref[def:nnf]{Def.\ NNF}),
 \hyperref[prop:nnf-exists]{Every Formula Has an NNF},
 the distribution law ($P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee
 R)$), associativity of $\vee$ (to flatten clause disjunctions), and the
 principle of structural induction on propositional formulas.
-\end{remark}
+\end{remark*}
