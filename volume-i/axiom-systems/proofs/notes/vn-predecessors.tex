@@ -1,0 +1,67 @@
+% =========================================================
+% Proof: Each numeral is the set of its predecessors
+% Source: volume-i/axiom-systems/notes/von-neuman/von_neuman-numerals.tex
+% =========================================================
+
+\subsection*{Each Numeral is the Set of Its Predecessors}
+\label{prf:vn-predecessors}
+
+\begin{remark}[Return]
+\hyperref[cor:vn-predecessors]{$\leftarrow$ Back to Corollary (Each numeral is the set of its predecessors) in Notes}
+\end{remark}
+
+\begin{corollary}[Each numeral is the set of its predecessors]
+For every $n$,
+\[
+n_V = \{m_V : m < n\}.
+\]
+\end{corollary}
+
+\begin{proof}
+\Given The von Neumann numerals: $0_V = \varnothing$ and $(n+1)_V = n_V \cup
+\{n_V\}$ (\hyperref[def:vn-numerals]{Definition~(von Neumann numerals)}). Basic
+properties of union (\hyperref[prop:union-basics]{Basic properties of union}).
+
+\Goal To show $n_V = \{m_V : m < n\}$ for all $n$.
+
+\Strategy Induction on $n$.
+
+\medskip
+\noindent\textbf{Base case} ($n = 0$). $0_V = \varnothing$ and $\{m_V : m < 0\}
+= \varnothing$ (there are no natural numbers less than $0$). So $0_V = \{m_V :
+m < 0\}$. \checkbox
+
+\medskip
+\noindent\textbf{Inductive step.} Suppose $n_V = \{m_V : m < n\}$. We show
+$(n+1)_V = \{m_V : m < n+1\}$.
+
+We have $\{m_V : m < n+1\} = \{m_V : m < n\} \cup \{n_V\}$ (the set of
+predecessors of $n+1$ is the set of predecessors of $n$ together with $n$
+itself).
+
+By the induction hypothesis, $\{m_V : m < n\} = n_V$. Therefore:
+\[
+\{m_V : m < n+1\} = n_V \cup \{n_V\} = (n+1)_V.
+\]
+\checkbox
+
+By induction, $n_V = \{m_V : m < n\}$ for all $n$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+Straightforward induction. The key step is recognising that $\{m : m < n+1\} =
+\{m : m < n\} \cup \{n\}$, which makes the successor step align perfectly with
+the recursive definition $(n+1)_V = n_V \cup \{n_V\}$.
+\end{remark}
+
+\begin{remark}[Significance]
+This corollary gives a clean slogan for von Neumann numerals: ``$n$ is the set
+of all smaller numbers.'' This is the property that makes $m < n \Leftrightarrow
+m_V \in n_V$ immediate: membership in $n_V$ is exactly being a predecessor.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of von Neumann numerals
+(\hyperref[def:vn-numerals]{Definition~(von Neumann numerals)}) and
+\hyperref[prop:union-basics]{Basic properties of union}.
+\end{remark}

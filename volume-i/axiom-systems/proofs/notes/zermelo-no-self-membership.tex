@@ -1,0 +1,63 @@
+% =========================================================
+% Proof: No numeral contains itself
+% Source: volume-i/axiom-systems/notes/zermelo/zermelo-numerals.tex
+% =========================================================
+
+\subsection*{No Numeral Contains Itself}
+\label{prf:zermelo-no-self-membership}
+
+\begin{remark}[Return]
+\hyperref[cor:zermelo-no-self-membership]{$\leftarrow$ Back to Corollary (No numeral contains itself) in Notes}
+\end{remark}
+
+\begin{corollary}[No numeral contains itself]
+For every $n$, $n_Z \notin n_Z$.
+\end{corollary}
+
+\begin{proof}
+\Given The Zermelo numerals: $0_Z = \varnothing$ and $(n+1)_Z = \{n_Z\}$
+(\hyperref[def:zermelo-numerals]{Definition~(Zermelo numerals)}). Distinctness
+of Zermelo numerals (\hyperref[prop:zermelo-distinct]{Distinctness of Zermelo
+numerals}): $m \neq n \Rightarrow m_Z \neq n_Z$.
+
+\Goal To show $n_Z \notin n_Z$ for all $n$.
+
+\Strategy Induction on $n$.
+
+\medskip
+\noindent\textbf{Base case} ($n = 0$). $0_Z = \varnothing$ has no elements, so
+$0_Z \notin 0_Z = \varnothing$ trivially. \checkbox
+
+\medskip
+\noindent\textbf{Inductive step.} Suppose $n_Z \notin n_Z$. We show $(n+1)_Z
+\notin (n+1)_Z$.
+
+We have $(n+1)_Z = \{n_Z\}$. The only element of $\{n_Z\}$ is $n_Z$. So
+$(n+1)_Z \in (n+1)_Z$ would require $(n+1)_Z = n_Z$, i.e.\ $n_Z \in (n+1)_Z$
+and thus $\{n_Z\} = n_Z$. But by distinctness, $(n+1)_Z \neq n_Z$ (since $n+1
+\neq n$). Therefore $(n+1)_Z$ is not the unique element $n_Z$ of $(n+1)_Z$,
+so $(n+1)_Z \notin (n+1)_Z$. \checkbox
+
+By induction, $n_Z \notin n_Z$ for all $n$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof uses induction but the inductive hypothesis is not actually needed in
+the step: the conclusion $(n+1)_Z \notin (n+1)_Z$ follows directly from the
+distinctness of consecutive numerals ($(n+1)_Z \neq n_Z$) and the fact that
+$(n+1)_Z = \{n_Z\}$ has $n_Z$ as its only element. The base case uses the
+emptiness of $\varnothing$.
+\end{remark}
+
+\begin{remark}[Relation to Foundation]
+In ZFC, the Axiom of Foundation (Regularity) directly prohibits $x \in x$ for
+any set $x$. This proof establishes the same conclusion for Zermelo numerals
+specifically without invoking Foundation, relying instead on the explicit
+recursive structure and the distinctness result.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of Zermelo numerals
+(\hyperref[def:zermelo-numerals]{Definition~(Zermelo numerals)}) and
+\hyperref[prop:zermelo-distinct]{Distinctness of Zermelo numerals}.
+\end{remark}

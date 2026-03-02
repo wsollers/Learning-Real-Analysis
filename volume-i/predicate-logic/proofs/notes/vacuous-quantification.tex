@@ -1,0 +1,78 @@
+% =========================================================
+% Proof: Vacuous Quantification
+% Source: volume-i/predicate-logic/notes/quantifiers/notes-quantifier-laws.tex
+% =========================================================
+
+\subsection*{Vacuous Quantification}
+\label{prf:vacuous}
+
+\begin{remark}[Return]
+\hyperref[thm:vacuous]{$\leftarrow$ Back to Proposition (Vacuous Quantification) in Notes}
+\end{remark}
+
+\begin{proposition}[Vacuous Quantification]
+If $x$ does not occur free in $\varphi$, then:
+\begin{align*}
+\forall x\,\varphi &\;\equiv\; \varphi, \\
+\exists x\,\varphi &\;\equiv\; \varphi.
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+\Given The semantics of $\forall$ and $\exists$. The fact that if $x$ does not
+occur free in $\varphi$, then the truth value of $\varphi$ is independent of
+the value assigned to $x$: for any model $\mathfrak{M}$, domain $D$, and
+assignment $\sigma$, $\mathfrak{M}, \sigma \models \varphi$ iff $\mathfrak{M},
+\sigma[x \mapsto d] \models \varphi$ for any (hence every) $d \in D$.
+
+\Goal To show both equivalences hold in every nonempty model.
+
+\medskip
+\noindent\textbf{Universal case: $\forall x\,\varphi \equiv \varphi$.}
+
+Fix a model $\mathfrak{M}$ with nonempty domain $D$.
+
+($\Rightarrow$) Suppose $\mathfrak{M} \models \forall x\,\varphi$. Then
+$\varphi$ holds for every $d \in D$. Since $D$ is nonempty, pick any $d_0 \in
+D$. Then $\varphi[d_0/x]$ holds. Since $x \notin \mathrm{FV}(\varphi)$, the
+truth of $\varphi$ is independent of $x$'s value, so $\varphi$ holds.
+
+($\Leftarrow$) Suppose $\mathfrak{M} \models \varphi$. Since $x \notin
+\mathrm{FV}(\varphi)$, the truth value of $\varphi$ is unchanged when $x$ is
+assigned any value $d \in D$. Hence $\varphi$ holds under any assignment to
+$x$, so $\mathfrak{M} \models \forall x\,\varphi$.
+
+\medskip
+\noindent\textbf{Existential case: $\exists x\,\varphi \equiv \varphi$.}
+
+($\Rightarrow$) Suppose $\mathfrak{M} \models \exists x\,\varphi$. Then there
+is some $d \in D$ with $\varphi[d/x]$. Since $x \notin \mathrm{FV}(\varphi)$,
+this is the same as $\varphi$ holding, so $\mathfrak{M} \models \varphi$.
+
+($\Leftarrow$) Suppose $\mathfrak{M} \models \varphi$. Since $D$ is nonempty,
+pick any $d_0 \in D$. Since $x \notin \mathrm{FV}(\varphi)$, $\varphi$ holds
+under the assignment $x \mapsto d_0$. Hence $\mathfrak{M} \models \exists
+x\,\varphi$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+Both directions of both equivalences follow from one key semantic fact: if $x$
+is not free in $\varphi$, the truth of $\varphi$ is independent of what $x$ is
+assigned. The universal case uses nonemptiness of $D$ only in the
+$(\Rightarrow)$ direction (to pick a witness). The existential case uses it in
+the $(\Leftarrow)$ direction.
+\end{remark}
+
+\begin{remark}[Why nonemptiness matters]
+In first-order logic over an empty domain, $\forall x\,\varphi$ is vacuously
+true but $\exists x\,\varphi$ is false. Standard first-order logic requires
+nonempty domains, so both equivalences hold. In empty-domain logic, the
+universal equivalence would fail: $\forall x\,\varphi$ would be true but
+$\varphi$ might be false.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the semantics of $\forall$ and $\exists$, the definition
+of free variables ($\mathrm{FV}(\varphi)$), and the assumption that models have
+nonempty domains.
+\end{remark}

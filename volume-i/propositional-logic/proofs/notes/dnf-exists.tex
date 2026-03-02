@@ -1,0 +1,168 @@
+% =========================================================
+% Proof: Every Formula Has a DNF
+% Source: volume-i/propositional-logic/notes/semantics/notes-normal-forms.tex
+% =========================================================
+
+\subsection*{Every Formula Has a DNF}
+\label{prf:dnf-exists}
+
+\begin{remark}[Return]
+\hyperref[prop:dnf-exists]{$\leftarrow$ Back to Proposition (Every Formula Has a DNF) in Notes}
+\end{remark}
+
+\begin{proposition}[Every Formula Has a DNF]
+Every propositional formula is logically equivalent to a formula in disjunctive
+normal form (DNF).
+\end{proposition}
+
+\begin{proof}
+\Given The definition of DNF: a formula is in DNF if it is a disjunction of
+conjunctive clauses $\bigvee_i \bigwedge_j L_{ij}$, where each $L_{ij}$ is a
+literal. The definition of NNF: negations appear only on variables; connectives
+are restricted to $\neg$, $\wedge$, $\vee$. The dual distribution law:
+$P \wedge (Q \vee R) \;\equiv\; (P \wedge Q) \vee (P \wedge R)$, and its
+symmetric form $(P \vee Q) \wedge R \;\equiv\; (P \wedge R) \vee (Q \wedge R)$.
+The NNF existence result (\hyperref[prop:nnf-exists]{Every Formula Has an NNF}).
+
+\Goal To show that for every propositional formula $\varphi$ there exists a
+formula $\varphi'$ in DNF such that $\varphi \equiv \varphi'$.
+
+\Strategy The proof is the exact dual of the CNF existence proof
+(\hyperref[prop:cnf-exists]{Every Formula Has a CNF}), with $\wedge$ and $\vee$
+swapped throughout. It proceeds in two stages. \textbf{Stage 1:} apply the NNF
+existence theorem to obtain an NNF equivalent $\varphi_{\mathrm{NNF}}$ of
+$\varphi$. \textbf{Stage 2:} convert $\varphi_{\mathrm{NNF}}$ to DNF by
+structural induction, using the distribution law to push $\wedge$ inside $\vee$
+whenever a conjunction sits above a disjunction in the parse tree. Both stages
+preserve logical equivalence, so the final result is equivalent to $\varphi$.
+
+\medskip
+\noindent\textbf{Stage 1: Obtain an NNF equivalent.}
+
+By \hyperref[prop:nnf-exists]{Every Formula Has an NNF}, there exists a formula
+$\varphi_{\mathrm{NNF}}$ in NNF such that $\varphi \equiv
+\varphi_{\mathrm{NNF}}$. It suffices to show that $\varphi_{\mathrm{NNF}}$ is
+equivalent to some DNF formula; the full result then follows by transitivity of
+$\equiv$.
+
+\medskip
+\noindent\textbf{Stage 2: Convert the NNF formula to DNF.}
+
+We prove by structural induction on $\varphi_{\mathrm{NNF}}$ that every NNF
+formula is equivalent to some DNF formula.
+
+\medskip
+\noindent\textit{Base cases.}
+
+\medskip
+\textit{Case 1: $\varphi_{\mathrm{NNF}} = P$ (a propositional variable).}
+$P$ is a single positive literal. A single literal is a degenerate conjunctive
+clause ($k = 1$), and a single clause is a degenerate disjunction ($m = 1$).
+Hence $P$ is already in DNF.
+
+\medskip
+\textit{Case 2: $\varphi_{\mathrm{NNF}} = \neg P$ (negation of a variable).}
+$\neg P$ is a single negative literal, and the same reasoning as Case 1 applies.
+$\neg P$ is already in DNF.
+
+\medskip
+\noindent\textit{Inductive step.}
+
+Assume (induction hypothesis) that every NNF formula of strictly smaller
+complexity than $\varphi_{\mathrm{NNF}}$ is equivalent to some DNF formula. We
+consider the two compound cases that can arise in an NNF formula ($\rightarrow$
+and $\leftrightarrow$ are absent).
+
+\medskip
+\textit{Case 3: $\varphi_{\mathrm{NNF}} = \alpha \vee \beta$.}
+
+By the induction hypothesis, there exist DNF formulas $\alpha'$ and $\beta'$
+with $\alpha \equiv \alpha'$ and $\beta \equiv \beta'$. Write
+\[
+    \alpha' = T_1 \vee T_2 \vee \cdots \vee T_m, \qquad
+    \beta'  = U_1 \vee U_2 \vee \cdots \vee U_n,
+\]
+where each $T_i$ and $U_j$ is a conjunctive clause. Then
+\[
+    \alpha \vee \beta \;\equiv\; \alpha' \vee \beta'
+    \;=\; T_1 \vee \cdots \vee T_m \vee U_1 \vee \cdots \vee U_n.
+\]
+This is a disjunction of conjunctive clauses, hence in DNF. Take $\varphi' =
+T_1 \vee \cdots \vee T_m \vee U_1 \vee \cdots \vee U_n$.
+
+\medskip
+\textit{Case 4: $\varphi_{\mathrm{NNF}} = \alpha \wedge \beta$.}
+
+By the induction hypothesis, there exist DNF formulas $\alpha'$ and $\beta'$
+with $\alpha \equiv \alpha'$ and $\beta \equiv \beta'$. Write
+\[
+    \alpha' = T_1 \vee T_2 \vee \cdots \vee T_m, \qquad
+    \beta'  = U_1 \vee U_2 \vee \cdots \vee U_n,
+\]
+where each $T_i$ and $U_j$ is a conjunctive clause. Then
+\[
+    \alpha \wedge \beta \;\equiv\; \alpha' \wedge \beta'
+    \;=\; (T_1 \vee \cdots \vee T_m) \wedge (U_1 \vee \cdots \vee U_n).
+\]
+This is a conjunction of two disjunctions, which is not yet in DNF. We apply
+the dual distribution law repeatedly. Distributing $\wedge$ over $\vee$ across
+all pairs $(T_i, U_j)$ gives:
+\[
+    \alpha' \wedge \beta' \;\equiv\;
+    \bigvee_{i=1}^{m} \bigvee_{j=1}^{n} (T_i \wedge U_j).
+\]
+Each factor $T_i \wedge U_j$ is a conjunction of two conjunctive clauses, hence
+itself a conjunctive clause (conjunction is associative and flattens). The
+result is a disjunction of $mn$ conjunctive clauses, hence in DNF. Take
+$\varphi' = \bigvee_{i,j}(T_i \wedge U_j)$.
+
+\medskip
+In every case an equivalent DNF formula exists. By structural induction, every
+NNF formula is equivalent to some DNF formula. Combined with Stage 1, every
+propositional formula is equivalent to some DNF formula. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof is structurally identical to the CNF existence proof
+(\hyperref[prf:cnf-exists]{Every Formula Has a CNF}), with $\wedge$ and $\vee$
+— and conjunctive and disjunctive clauses — swapped throughout. This
+duality is not accidental: CNF and DNF are De Morgan duals of each other.
+The two-stage structure (NNF first, then distribute) is the same; only the
+direction of distribution differs. In CNF we push $\vee$ inside $\wedge$; in
+DNF we push $\wedge$ inside $\vee$.
+\end{remark}
+
+\begin{remark}[The duality with CNF made explicit]
+If $\varphi'$ is the CNF of $\varphi$, then $\neg\varphi'$ — obtained by
+applying De Morgan to every clause — is the DNF of $\neg\varphi$. This means
+that CNF and DNF are related by negation: computing one gives the other for
+free via De Morgan's laws. In practice this means that any algorithm for CNF
+conversion can be adapted to DNF conversion simply by dualising.
+\end{remark}
+
+\begin{remark}[Exponential size blowup]
+The distribution step in Case 4 replaces $m + n$ clauses with $mn$ clauses.
+As in the CNF case, repeated applications across a formula of depth $d$ can
+yield a DNF with exponentially many clauses. This blowup is unavoidable in the
+worst case for logical equivalence; compact representations (BDDs, decision
+trees) exist at the cost of a different normal form altogether.
+\end{remark}
+
+\begin{remark}[Common error]
+The most frequent mistake is conflating the conjunction and disjunction cases.
+In DNF, the top-level connective is $\vee$ (disjunction of terms), so the
+\emph{easy} case is $\alpha \vee \beta$ (concatenate term lists) and the
+\emph{hard} case is $\alpha \wedge \beta$ (distribute). This is the reverse of
+the CNF situation, where $\wedge$ is easy and $\vee$ is hard. Mixing up which
+case requires distribution is the most common source of error when working
+through both proofs in the same session.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the definition of DNF (\hyperref[def:dnf]{Def.\ DNF}),
+the definition of NNF (\hyperref[def:nnf]{Def.\ NNF}),
+\hyperref[prop:nnf-exists]{Every Formula Has an NNF},
+the dual distribution law ($P \wedge (Q \vee R) \equiv (P \wedge Q) \vee (P
+\wedge R)$), associativity of $\wedge$ (to flatten clause conjunctions), and
+the principle of structural induction on propositional formulas.
+\end{remark}

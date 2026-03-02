@@ -1,0 +1,66 @@
+% =========================================================
+% Proof: First few Zermelo numerals
+% Source: volume-i/axiom-systems/notes/zermelo/zermelo-numerals.tex
+% =========================================================
+
+\subsection*{First Few Zermelo Numerals}
+\label{prf:zermelo-first-few}
+
+\begin{remark}[Return]
+\hyperref[prop:zermelo-first-few]{$\leftarrow$ Back to Proposition (First few Zermelo numerals) in Notes}
+\end{remark}
+
+\begin{proposition}[First few Zermelo numerals]
+\[
+0_Z = \varnothing,\quad
+1_Z = \{\varnothing\},\quad
+2_Z = \{\{\varnothing\}\},\quad
+3_Z = \{\{\{\varnothing\}\}\}.
+\]
+\end{proposition}
+
+\begin{proof}
+\Given The Definition of Zermelo numerals
+(\hyperref[def:zermelo-numerals]{Definition~(Zermelo numerals)}):
+$0_Z := \varnothing$ and $(n+1)_Z := S_Z(n_Z) = \{n_Z\}$. The Definition of
+Zermelo successor (\hyperref[def:zermelo-successor]{Definition~(Zermelo
+successor)}): $S_Z(n) := \{n\}$.
+
+\Goal To compute $0_Z$, $1_Z$, $2_Z$, $3_Z$ explicitly.
+
+\Strategy Iterate the successor definition starting from $0_Z = \varnothing$.
+
+\medskip
+$0_Z = \varnothing$ by definition.
+
+$1_Z = S_Z(0_Z) = \{0_Z\} = \{\varnothing\}$.
+
+$2_Z = S_Z(1_Z) = \{1_Z\} = \{\{\varnothing\}\}$.
+
+$3_Z = S_Z(2_Z) = \{2_Z\} = \{\{\{\varnothing\}\}\}$.
+
+\medskip
+\noindent In general, $n_Z$ is a tower of $n$ nested singleton braces around
+$\varnothing$. Each numeral is a singleton set containing the previous numeral.
+\AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+This is a direct computation by iterated unfolding of the recursive definition.
+No induction is needed: we simply apply the successor map three times and
+substitute at each step.
+\end{remark}
+
+\begin{remark}[The tower structure]
+Each Zermelo numeral wraps the previous in one more layer of braces:
+$0_Z = \varnothing$, $1_Z = \{\varnothing\}$, $2_Z = \{\{\varnothing\}\}$, \ldots
+The numeral $n_Z$ encodes $n$ entirely through nesting depth. This contrasts
+with von Neumann numerals, where $n_V$ encodes $n$ through set size (cardinality).
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of Zermelo numerals
+(\hyperref[def:zermelo-numerals]{Definition~(Zermelo numerals)}) and the
+Definition of Zermelo successor
+(\hyperref[def:zermelo-successor]{Definition~(Zermelo successor)}).
+\end{remark}

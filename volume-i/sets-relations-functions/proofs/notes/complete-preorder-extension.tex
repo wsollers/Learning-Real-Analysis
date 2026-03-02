@@ -1,0 +1,87 @@
+% =========================================================
+% Proof: Complete preorder extension
+% Source: volume-i/sets-relations-functions/notes/order/notes-order-extensions.tex
+% =========================================================
+
+\subsection*{Complete Preorder Extension}
+\label{prf:complete-preorder-extension}
+
+\begin{remark}[Return]
+$\leftarrow$ Back to Corollary (Complete preorder extension) in Notes
+\end{remark}
+
+\begin{corollary}[Complete preorder extension]
+For any nonempty set $X$ and preorder $\succsim$ on $X$, there exists a
+complete preorder that is an extension of $\succsim$.
+\end{corollary}
+
+\begin{proof}
+\Given Szpilrajn's Theorem (\hyperref[thm:szpilrajn]{Theorem~(Szpilrajn,
+1930)}): every partial order on a nonempty set extends to a linear order.
+The definition of the symmetric part of $\succsim$: $x \sim y$ iff $x
+\succsim y$ and $y \succsim x$. The quotient construction: $\sim$ is an
+equivalence relation, and the strict part $\succ$ of $\succsim$ descends to a
+well-defined strict partial order on the quotient $X/{\sim}$.
+
+\Goal To construct a complete preorder on $X$ extending $\succsim$.
+
+\Strategy Pass to the quotient, apply Szpilrajn's Theorem, then pull back.
+
+\medskip
+\noindent\textbf{Step 1: The quotient.} Define $x \sim y$ iff $x \succsim y$
+and $y \succsim x$ (indifference). Since $\succsim$ is a preorder, $\sim$ is
+an equivalence relation. Let $[x]$ denote the equivalence class of $x$ and
+$X/{\sim}$ the quotient set.
+
+\medskip
+\noindent\textbf{Step 2: The induced order on the quotient.} Define $[x]
+\leq^* [y]$ iff $x \succsim y$ on $X/{\sim}$. This is well-defined (the
+relation $\succsim$ is constant on equivalence classes) and antisymmetric
+(if $[x] \leq^* [y]$ and $[y] \leq^* [x]$, then $x \succsim y$ and $y
+\succsim x$, so $x \sim y$, i.e.\ $[x] = [y]$). Since $\succsim$ is also
+reflexive and transitive, $\leq^*$ is a partial order on $X/{\sim}$.
+
+\medskip
+\noindent\textbf{Step 3: Apply Szpilrajn.} By Szpilrajn's Theorem, there
+exists a linear order $\leq^{**}$ on $X/{\sim}$ extending $\leq^*$.
+
+\medskip
+\noindent\textbf{Step 4: Pull back to $X$.} Define $x \succsim' y$ iff $[x]
+\leq^{**} [y]$. We verify:
+
+\textit{Complete preorder:} $\succsim'$ is reflexive (since $[x] \leq^{**}
+[x]$), transitive (since $\leq^{**}$ is), and complete (since $\leq^{**}$ is
+a linear order, any two classes are comparable, hence any two elements of $X$
+are comparable under $\succsim'$).
+
+\textit{Extension:} If $x \succsim y$, then $[x] \leq^* [y]$, so $[x]
+\leq^{**} [y]$ (since $\leq^{**}$ extends $\leq^*$), so $x \succsim' y$. If
+$x \succ y$ (i.e.\ $x \succsim y$ but not $y \succsim x$), then $[x] <^*
+[y]$ strictly, so $[x] <^{**} [y]$ strictly (since $\leq^{**}$ extends the
+strict part), so $x \succ' y$.
+
+Hence $\succsim'$ is a complete preorder extending $\succsim$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof is a \emph{quotient-then-extend-then-pull-back} construction. The
+difficulty with applying Szpilrajn directly to a preorder is that preorders are
+not antisymmetric (indifferent elements are not forced to be equal). The
+quotient removes this obstruction, turning the preorder into a genuine partial
+order. Szpilrajn then provides a linear extension. Pulling back along the
+quotient map reintroduces the indifference structure as a complete preorder.
+\end{remark}
+
+\begin{remark}[Dependence on the Axiom of Choice]
+Szpilrajn's Theorem relies on Zorn's Lemma (or equivalently, the Axiom of
+Choice). This corollary inherits that dependence. For finite sets, the Axiom
+of Choice is not needed: one can construct a linear extension algorithmically.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: \hyperref[thm:szpilrajn]{Szpilrajn's Theorem}, the
+definition of quotient by an equivalence relation, the definition of a complete
+preorder (\hyperref[def:preorder-ext]{Definition~(Preorder and Loset)}), and
+the definition of an extension of a preorder
+(\hyperref[def:preorder-extension]{Definition~(Extension of a Preorder)}).
+\end{remark}

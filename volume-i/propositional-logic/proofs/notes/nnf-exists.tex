@@ -1,0 +1,186 @@
+% =========================================================
+% Proof: Every Formula Has an NNF
+% Source: volume-i/propositional-logic/notes/semantics/notes-normal-forms.tex
+% =========================================================
+
+\subsection*{Every Formula Has an NNF}
+\label{prf:nnf-exists}
+
+\begin{remark}[Return]
+\hyperref[prop:nnf-exists]{$\leftarrow$ Back to Proposition (Every Formula Has an NNF) in Notes}
+\end{remark}
+
+\begin{proposition}[Every Formula Has an NNF]
+Every propositional formula is logically equivalent to a formula in negation
+normal form (NNF).
+\end{proposition}
+
+\begin{proof}
+\Given The definition of NNF: a formula is in NNF if (i) negation is applied
+only to propositional variables, and (ii) the only connectives present are
+$\neg$, $\wedge$, $\vee$. The standard logical equivalences: double negation
+($\neg\neg P \equiv P$), De Morgan's laws ($\neg(P \wedge Q) \equiv \neg P
+\vee \neg Q$, $\neg(P \vee Q) \equiv \neg P \wedge \neg Q$), and the
+eliminations $P \rightarrow Q \equiv \neg P \vee Q$ and $P \leftrightarrow Q
+\equiv (P \wedge Q) \vee (\neg P \wedge \neg Q)$.
+
+\Goal To show that for every propositional formula $\varphi$ there exists a
+formula $\varphi'$ in NNF such that $\varphi \equiv \varphi'$.
+
+\Strategy We proceed by structural induction on $\varphi$. The base cases
+cover atomic formulas (variables and their negations), which are already in
+NNF. The inductive step shows that if each subformula can be converted to NNF,
+then the whole formula can be converted, using the equivalences above to
+eliminate $\rightarrow$ and $\leftrightarrow$ and to push any remaining
+$\neg$ inward until it rests on variables alone.
+
+\medskip
+\noindent\textbf{Base cases.}
+
+\medskip
+\textit{Case 1: $\varphi = P$ (a propositional variable).}
+$P$ is a positive literal and therefore already in NNF. Take $\varphi' = P$.
+
+\medskip
+\textit{Case 2: $\varphi = \neg P$ (negation of a variable).}
+$\neg P$ is a negative literal and therefore already in NNF. Take $\varphi' = \neg P$.
+
+\medskip
+\noindent\textbf{Inductive step.}
+
+Suppose the claim holds for all proper subformulas of $\varphi$ (induction
+hypothesis): each subformula is equivalent to some NNF formula. We show
+$\varphi$ itself is equivalent to an NNF formula by cases on the outermost
+connective.
+
+\medskip
+\textit{Case 3: $\varphi = \alpha \wedge \beta$.}
+By the induction hypothesis, there exist NNF formulas $\alpha'$ and $\beta'$
+with $\alpha \equiv \alpha'$ and $\beta \equiv \beta'$. Then
+\[
+    \alpha \wedge \beta \;\equiv\; \alpha' \wedge \beta'.
+\]
+Since $\alpha'$ and $\beta'$ are in NNF and $\wedge$ is a permitted
+connective, $\alpha' \wedge \beta'$ is in NNF. Take $\varphi' = \alpha'
+\wedge \beta'$.
+
+\medskip
+\textit{Case 4: $\varphi = \alpha \vee \beta$.}
+Identical to Case 3 with $\vee$ in place of $\wedge$. Take $\varphi' =
+\alpha' \vee \beta'$.
+
+\medskip
+\textit{Case 5: $\varphi = \alpha \rightarrow \beta$.}
+Eliminate the implication:
+\[
+    \alpha \rightarrow \beta \;\equiv\; \neg\alpha \vee \beta.
+\]
+Now $\neg\alpha$ is a formula of strictly smaller complexity than $\varphi$,
+so by the induction hypothesis applied to $\neg\alpha$ and $\beta$, there
+exist NNF formulas $(\neg\alpha)'$ and $\beta'$ equivalent to them. Then
+\[
+    \alpha \rightarrow \beta \;\equiv\; (\neg\alpha)' \vee \beta',
+\]
+which is in NNF. (The inductive hypothesis applies to $\neg\alpha$ because
+the conversion of $\neg\alpha$ to NNF proceeds by the same structural
+induction — see Case 6.)
+
+\medskip
+\textit{Case 6: $\varphi = \neg\psi$ (negation of a compound formula).}
+We sub-case on the outermost connective of $\psi$.
+
+\begin{itemize}
+  \item \textit{$\psi = \neg\chi$ (double negation):}
+        $\neg\neg\chi \equiv \chi$. Apply the induction hypothesis to $\chi$
+        to get an NNF formula $\chi' \equiv \chi$. Take $\varphi' = \chi'$.
+
+  \item \textit{$\psi = \alpha \wedge \beta$:}
+        By De Morgan, $\neg(\alpha \wedge \beta) \equiv \neg\alpha \vee
+        \neg\beta$. Apply the induction hypothesis to $\neg\alpha$ and
+        $\neg\beta$ (both strictly smaller than $\varphi$) to get NNF
+        formulas $(\neg\alpha)' \equiv \neg\alpha$ and $(\neg\beta)' \equiv
+        \neg\beta$. Take $\varphi' = (\neg\alpha)' \vee (\neg\beta)'$.
+
+  \item \textit{$\psi = \alpha \vee \beta$:}
+        By De Morgan, $\neg(\alpha \vee \beta) \equiv \neg\alpha \wedge
+        \neg\beta$. Proceed as in the previous sub-case with $\wedge$ in
+        place of $\vee$.
+
+  \item \textit{$\psi = \alpha \rightarrow \beta$:}
+        $\neg(\alpha \rightarrow \beta) \equiv \neg(\neg\alpha \vee \beta)
+        \equiv \alpha \wedge \neg\beta$. Apply the induction hypothesis to
+        $\alpha$ and $\neg\beta$ to get NNF equivalents. Take $\varphi' =
+        \alpha' \wedge (\neg\beta)'$.
+
+  \item \textit{$\psi = \alpha \leftrightarrow \beta$:}
+        $\neg(\alpha \leftrightarrow \beta) \equiv \neg\bigl((P \wedge Q)
+        \vee (\neg P \wedge \neg Q)\bigr)$. Apply De Morgan and double
+        negation to reduce fully to $\neg$, $\wedge$, $\vee$ on subformulas
+        of strictly smaller complexity, then apply the induction hypothesis
+        to each.
+\end{itemize}
+
+\medskip
+\textit{Case 7: $\varphi = \alpha \leftrightarrow \beta$.}
+Eliminate the biconditional:
+\[
+    \alpha \leftrightarrow \beta \;\equiv\; (\alpha \wedge \beta) \vee
+    (\neg\alpha \wedge \neg\beta).
+\]
+Apply the induction hypothesis to $\alpha$, $\beta$, $\neg\alpha$,
+$\neg\beta$ to obtain NNF equivalents, combine with $\wedge$ and $\vee$
+(permitted connectives), and take the result as $\varphi'$.
+
+\medskip
+In every case, $\varphi'$ is in NNF and $\varphi \equiv \varphi'$. By
+structural induction, the claim holds for all propositional formulas. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof is by \emph{structural induction} on the formula $\varphi$. The
+base cases are the two kinds of literal (positive and negative), both of
+which are already in NNF. The inductive step handles each connective
+separately: $\wedge$ and $\vee$ are preserved directly; $\rightarrow$ and
+$\leftrightarrow$ are eliminated by standard equivalences; and $\neg$
+applied to a compound formula is pushed inward using De Morgan's laws and
+double-negation elimination until it reaches variables. The induction
+terminates because each rewriting step reduces formula complexity: De Morgan
+distributes $\neg$ to strictly smaller subformulas, double-negation
+elimination removes two layers of $\neg$, and implication/biconditional
+elimination replaces the formula with subformulas of smaller connective
+count.
+\end{remark}
+
+\begin{remark}[Why the induction is well-founded]
+Structural induction on propositional formulas is well-founded because the
+grammar is defined inductively: every compound formula is built from strictly
+shorter subformulas. There is no circular construction; the base cases
+(variables, their negations) have no subformulas, so the induction always
+reaches ground.
+\end{remark}
+
+\begin{remark}[The result is constructive]
+The proof does not merely assert that an NNF equivalent exists — it
+\emph{constructs} one by providing the explicit rewriting procedure: (1)
+eliminate $\rightarrow$ and $\leftrightarrow$; (2) push $\neg$ inward via De
+Morgan; (3) cancel double negations. Each step preserves logical equivalence,
+so the result is sound. The procedure terminates because every application of
+De Morgan strictly decreases the nesting depth of $\neg$.
+\end{remark}
+
+\begin{remark}[Common error]
+A frequent mistake is to attempt the proof by cases on the outermost
+connective without recognising that the $\neg$ case requires its own
+sub-induction on what is being negated. Treating $\neg\psi$ as a single case
+without splitting on the structure of $\psi$ leaves the double-negation and
+De Morgan steps unjustified.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the definition of NNF (\hyperref[def:nnf]{Def.\ NNF}),
+the principle of structural induction on propositional formulas, the
+double-negation law ($\neg\neg P \equiv P$), De Morgan's laws ($\neg(P
+\wedge Q) \equiv \neg P \vee \neg Q$ and $\neg(P \vee Q) \equiv \neg P
+\wedge \neg Q$), and the equivalences eliminating $\rightarrow$ and
+$\leftrightarrow$.
+\end{remark}

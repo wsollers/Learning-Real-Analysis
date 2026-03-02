@@ -1,0 +1,67 @@
+% =========================================================
+% Proof: Singleton is well-defined
+% Source: volume-i/axiom-systems/notes/zermelo/zermelo-numerals.tex
+% =========================================================
+
+\subsection*{Singleton is Well-Defined}
+\label{prf:singleton-well-defined}
+
+\begin{remark}[Return]
+\hyperref[prop:singleton-well-defined]{$\leftarrow$ Back to Proposition (Singleton is well-defined) in Notes}
+\end{remark}
+
+\begin{proposition}[Singleton is well-defined]
+For each set $a$ there exists a unique set whose only element is $a$, denoted
+$\{a\}$.
+\end{proposition}
+
+\begin{proof}
+\Given The Axiom of Pairing (\hyperref[ax:zf-pairing]{Axiom~(Pairing)}): for
+any sets $a, b$ there exists a set $P$ with $\forall x\,(x \in P \leftrightarrow
+(x = a \lor x = b))$. The Definition of Singleton
+(\hyperref[def:singleton]{Definition~(Singleton)}): $\{a\} := \{a, a\}$.
+
+\Goal To show that for each $a$, there exists a unique set $S$ such that
+$\forall x\,(x \in S \leftrightarrow x = a)$.
+
+\Strategy We prove existence and uniqueness separately.
+
+\medskip
+\noindent\textbf{Existence.} By the Axiom of Pairing applied to $a$ and $a$,
+there exists a set $P$ such that
+\[
+    \forall x\,(x \in P \leftrightarrow (x = a \lor x = a)).
+\]
+Since $x = a \lor x = a$ is logically equivalent to $x = a$, we have
+$\forall x\,(x \in P \leftrightarrow x = a)$. Take $\{a\} := P$.
+
+\medskip
+\noindent\textbf{Uniqueness.} Suppose $S$ and $S'$ both satisfy $\forall
+x\,(x \in S \leftrightarrow x = a)$ and $\forall x\,(x \in S' \leftrightarrow
+x = a)$. Then for any $x$:
+\[
+    x \in S \;\leftrightarrow\; x = a \;\leftrightarrow\; x \in S'.
+\]
+By Extensionality (\hyperref[ax:zf-extensionality]{Axiom~(Extensionality)}),
+$S = S'$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+This is a standard \emph{existence-and-uniqueness} argument. Existence comes
+from the Pairing Axiom with both arguments identical ($\{a,a\}$); the
+disjunction $x = a \lor x = a$ collapses to $x = a$. Uniqueness follows from
+Extensionality: any two sets with the same membership condition are equal.
+\end{remark}
+
+\begin{remark}[Why $\{a,a\}$ works]
+The Pairing Axiom provides a set containing $a$ and $b$ (both possibly equal).
+Setting $b = a$ yields a set containing $a$ and $a$, which means only $a$. This
+is the canonical trick for constructing singletons from pairing.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Axiom of Extensionality
+(\hyperref[ax:zf-extensionality]{Axiom~(Extensionality)}), the Axiom of Pairing
+(\hyperref[ax:zf-pairing]{Axiom~(Pairing)}), and the Definition of Singleton
+(\hyperref[def:singleton]{Definition~(Singleton)}).
+\end{remark}

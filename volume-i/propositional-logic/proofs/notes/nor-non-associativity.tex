@@ -1,0 +1,131 @@
+% =========================================================
+% Proof: Non-Associativity of NOR (Peirce Arrow)
+% Source: volume-i/propositional-logic/notes/syntax/notes-connectives.tex
+% =========================================================
+
+\subsection*{Non-Associativity of NOR}
+\label{prf:nor-non-associativity}
+
+\begin{remark}[Return]
+\hyperref[prop:nor-complete]{$\leftarrow$ Back to Proposition (Non-Associativity of NOR) in Notes}
+\end{remark}
+
+\begin{proposition}[Non-Associativity of NOR]
+NOR is not associative. That is,
+\[
+    (P \downarrow Q) \downarrow R \;\not\equiv\; P \downarrow (Q \downarrow R).
+\]
+\end{proposition}
+
+\begin{proof}
+\Given The definition $P \downarrow Q \;\equiv\; \neg(P \vee Q)$.
+\Goal To show that $(P \downarrow Q) \downarrow R \not\equiv P \downarrow (Q \downarrow R)$,
+i.e.\ that the two sides differ in truth value for at least one assignment.
+
+\Strategy We exhibit a counterexample: a single truth-value assignment to $P$, $Q$, $R$
+under which the left-hand side and right-hand side take opposite truth values.
+
+\medskip
+\textbf{Assignment.} Set $P := \mathsf{F}$, $Q := \mathsf{F}$, $R := \mathsf{T}$.
+
+\medskip
+\textbf{Left-hand side: $(P \downarrow Q) \downarrow R$.}
+
+\ByDef $P \downarrow Q \;\equiv\; \neg(P \vee Q)$.
+Since $P = Q = \mathsf{F}$, we have $P \vee Q = \mathsf{F}$, so
+\[
+    P \downarrow Q = \neg\mathsf{F} = \mathsf{T}.
+\]
+Now apply NOR to $(\mathsf{T})$ and $R = \mathsf{T}$:
+\[
+    (P \downarrow Q) \downarrow R = \mathsf{T} \downarrow \mathsf{T}
+    = \neg(\mathsf{T} \vee \mathsf{T}) = \neg\mathsf{T} = \mathsf{F}.
+\]
+
+\medskip
+\textbf{Right-hand side: $P \downarrow (Q \downarrow R)$.}
+
+\ByDef $Q \downarrow R \;\equiv\; \neg(Q \vee R)$.
+Since $Q = \mathsf{F}$ and $R = \mathsf{T}$, we have $Q \vee R = \mathsf{T}$, so
+\[
+    Q \downarrow R = \neg\mathsf{T} = \mathsf{F}.
+\]
+Now apply NOR to $P = \mathsf{F}$ and $(\mathsf{F})$:
+\[
+    P \downarrow (Q \downarrow R) = \mathsf{F} \downarrow \mathsf{F}
+    = \neg(\mathsf{F} \vee \mathsf{F}) = \neg\mathsf{F} = \mathsf{T}.
+\]
+
+\medskip
+\textbf{Comparison.}
+Under the assignment $P = \mathsf{F}$, $Q = \mathsf{F}$, $R = \mathsf{T}$:
+\[
+    (P \downarrow Q) \downarrow R = \mathsf{F}
+    \qquad\text{but}\qquad
+    P \downarrow (Q \downarrow R) = \mathsf{T}.
+\]
+The two formulas differ in truth value.
+
+\Hence $(P \downarrow Q) \downarrow R \not\equiv P \downarrow (Q \downarrow R)$,
+so NOR is not associative. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+This is a \emph{disproof by counterexample}. To refute a universal equivalence
+$A \equiv B$ it suffices to find one truth-value assignment under which $A$ and
+$B$ receive different truth values. One counterexample is logically sufficient;
+exhaustive case analysis is not required.
+\end{remark}
+
+\begin{remark}[Why all-false fails]
+Under $P = Q = R = \mathsf{F}$, both inner NORs yield $\mathsf{T}$, so both
+sides evaluate to $\neg(\mathsf{T} \vee \mathsf{F}) = \mathsf{F}$ on the left
+and $\neg(\mathsf{F} \vee \mathsf{T}) = \mathsf{F}$ on the right — they agree.
+All-false is therefore not a counterexample. This illustrates why one must try
+varied assignments rather than stopping at the first case checked. Because NOR
+produces $\mathsf{T}$ only when \emph{both} inputs are false, the most
+productive assignments are those where the inner NOR fires (producing
+$\mathsf{T}$), creating an asymmetry between the two groupings.
+\end{remark}
+
+\begin{remark}[Full truth-table survey]
+For completeness, the table below records all eight assignments.
+The columns LHS and RHS abbreviate $(P \downarrow Q) \downarrow R$ and
+$P \downarrow (Q \downarrow R)$, respectively.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|c|c||c|c||c|}
+\hline
+$P$ & $Q$ & $R$ & LHS & RHS & Equal? \\
+\hline
+T & T & T & F & F & \checkmark \\
+T & T & F & F & F & \checkmark \\
+T & F & T & F & F & \checkmark \\
+T & F & F & F & T & \texttimes \\
+F & T & T & F & F & \checkmark \\
+F & T & F & F & T & \texttimes \\
+F & F & T & F & T & \texttimes \\
+F & F & F & T & T & \checkmark \\
+\hline
+\end{tabular}
+\end{center}
+
+Three of the eight rows witness non-associativity. The five rows where LHS = RHS do
+not rescue associativity: a logical equivalence must hold on \emph{all} assignments.
+\end{remark}
+
+\begin{remark}[Duality with NAND]
+NOR is the De Morgan dual of NAND. The non-associativity of NOR mirrors that of NAND
+exactly: both fail associativity for the same structural reason — the inner
+connective can produce $\mathsf{T}$ in one grouping but not the other, and the outer
+connective then sees a different input. The counterexample assignments differ
+(NAND uses a mixed assignment with at least one $\mathsf{T}$ input; NOR uses a mostly
+$\mathsf{F}$ assignment) but the logical shape of the argument is identical.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof uses only the definition of NOR ($P \downarrow Q \equiv \neg(P \vee Q)$),
+the truth tables for $\vee$ and $\neg$, and the semantic criterion for logical
+equivalence (agreement on all truth-value assignments).
+\end{remark}

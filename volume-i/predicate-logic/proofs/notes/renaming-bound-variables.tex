@@ -1,0 +1,77 @@
+% =========================================================
+% Proof: Renaming Bound Variables
+% Source: volume-i/predicate-logic/notes/quantifiers/notes-quantifier-laws.tex
+% =========================================================
+
+\subsection*{Renaming Bound Variables}
+\label{prf:rename}
+
+\begin{remark}[Return]
+\hyperref[thm:rename]{$\leftarrow$ Back to Proposition (Renaming Bound Variables) in Notes}
+\end{remark}
+
+\begin{proposition}[Renaming Bound Variables]
+If $y$ does not occur in $\varphi$ (neither free nor bound), then:
+\begin{align*}
+\forall x\,\varphi &\;\equiv\; \forall y\,\varphi[y/x], \\
+\exists x\,\varphi &\;\equiv\; \exists y\,\varphi[y/x].
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+\Given The semantics of $\forall$: $\mathfrak{M} \models \forall x\,\varphi$
+iff $\varphi[d/x]$ holds for all $d \in D$. The semantics of substitution: if
+$y$ does not occur in $\varphi$, then $\varphi[y/x][d/y] = \varphi[d/x]$ for
+any $d \in D$ (substituting $y$ for $x$ and then $d$ for $y$ is the same as
+substituting $d$ for $x$ directly, since $y$ is fresh and causes no capture).
+
+\Goal To show $\forall x\,\varphi \equiv \forall y\,\varphi[y/x]$ and
+$\exists x\,\varphi \equiv \exists y\,\varphi[y/x]$.
+
+\medskip
+\noindent\textbf{Universal case.} Fix a model $\mathfrak{M}$ with domain $D$.
+
+$\mathfrak{M} \models \forall x\,\varphi$
+\quad iff \quad
+for all $d \in D$, $\mathfrak{M} \models \varphi[d/x]$
+\quad iff \quad
+for all $d \in D$, $\mathfrak{M} \models (\varphi[y/x])[d/y]$
+\quad iff \quad
+$\mathfrak{M} \models \forall y\,\varphi[y/x]$.
+
+The middle step uses the substitution identity $\varphi[d/x] = (\varphi[y/x])[d/y]$,
+which holds because $y$ is fresh in $\varphi$ so no variable capture occurs when
+replacing $x$ by $y$.
+
+\medskip
+\noindent\textbf{Existential case.} The same chain of equivalences with
+$\exists$ in place of $\forall$ and ``some $d \in D$'' in place of ``all $d
+\in D$.'' \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof is a one-step semantic chain in each direction, mediated by the
+substitution identity $\varphi[d/x] = (\varphi[y/x])[d/y]$. This identity is
+the core of the argument and holds precisely because $y$ is fresh (does not
+appear in $\varphi$), ensuring no capture occurs.
+\end{remark}
+
+\begin{remark}[The freshness condition is essential]
+If $y$ already occurs free in $\varphi$, the substitution $\varphi[y/x]$ may
+capture $y$. For example, $\forall x\,(x < y)$ and $\forall y\,(y < y)$ are
+not equivalent: the former asserts all elements are less than $y$ (a free
+variable), while the latter (after careless renaming) asserts all elements are
+less than themselves, which is false.
+\end{remark}
+
+\begin{remark}[Connection to alpha-equivalence]
+In type theory and lambda calculus, renaming bound variables is called
+\emph{alpha-equivalence}. This proposition is the first-order logic analogue:
+bound variables are placeholders, and their names carry no semantic content.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the semantics of $\forall$ and $\exists$, and the
+substitution identity $\varphi[d/x] = (\varphi[y/x])[d/y]$ when $y$ is fresh
+in $\varphi$.
+\end{remark}

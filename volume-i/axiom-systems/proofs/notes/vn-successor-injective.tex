@@ -1,0 +1,72 @@
+% =========================================================
+% Proof: Successor is injective (von Neumann)
+% Source: volume-i/axiom-systems/notes/von-neuman/von_neuman-numerals.tex
+% =========================================================
+
+\subsection*{Successor is Injective}
+\label{prf:vn-successor-injective}
+
+\begin{remark}[Return]
+\hyperref[prop:vn-successor-injective]{$\leftarrow$ Back to Proposition (Successor is injective) in Notes}
+\end{remark}
+
+\begin{proposition}[Successor is injective]
+For all sets $a, b$, $S_V(a) = S_V(b) \Rightarrow a = b$.
+\end{proposition}
+
+\begin{proof}
+\Given The von Neumann successor $S_V(n) = n \cup \{n\}$
+(\hyperref[def:vn-successor]{Definition~(von Neumann successor)}). Basic
+properties of union (\hyperref[prop:union-basics]{Basic properties of union}).
+The Axiom of Extensionality (\hyperref[ax:vn-extensionality]{Axiom~(Extensionality)}).
+
+\Goal To show: if $a \cup \{a\} = b \cup \{b\}$, then $a = b$.
+
+\Strategy Suppose $a \cup \{a\} = b \cup \{b\}$. We show $a \in b \cup \{b\}$
+and $b \in a \cup \{a\}$, and in each case extract $a = b$.
+
+Since $a \in \{a\} \subseteq a \cup \{a\} = b \cup \{b\}$, we have $a \in b
+\cup \{b\}$. By the union property, $a \in b$ or $a = b$.
+
+Similarly, $b \in \{b\} \subseteq b \cup \{b\} = a \cup \{a\}$, so $b \in a$
+or $b = a$.
+
+\medskip
+\textit{Case 1: $a = b$.} Done.
+
+\textit{Case 2: $a \in b$ and $b \in a$.} This means $a \in b$ and $b \in a$
+simultaneously. In the context of von Neumann numerals, the Axiom of Foundation
+(Regularity) prohibits membership cycles: there cannot be sets $a$ and $b$ with
+$a \in b \in a$. Therefore this case is ruled out by Foundation, and we
+conclude $a = b$.
+
+\textit{Case 3: $a \in b$ and $b = a$.} Then $a \in a$, contradicting
+Foundation. So this case is also impossible.
+
+\textit{Case 4: $a = b$ and $b \in a$ (i.e., $a = b$ and $b \in b$).}
+Contradicts Foundation ($b \in b$ is excluded). So this is impossible.
+
+In all reachable cases, $a = b$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The argument uses the union characterisation to extract that both $a$ and $b$
+belong to the respective successors, then cases on the resulting membership
+conditions. Cases involving membership cycles ($a \in b \in a$ or $a \in a$)
+are excluded by the Axiom of Foundation. As noted in the source, in a
+Foundation-free setting an extra assumption may be required.
+\end{remark}
+
+\begin{remark}[Contrast with Zermelo]
+For Zermelo successors $S_Z(n) = \{n\}$, injectivity was immediate because
+$\{a\} = \{b\}$ directly gives $a = b$ via singleton membership. For von
+Neumann successors $S_V(n) = n \cup \{n\}$, the set has multiple elements in
+general, making the argument more involved.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of von Neumann successor
+(\hyperref[def:vn-successor]{Definition~(von Neumann successor)}),
+\hyperref[prop:union-basics]{Basic properties of union}, and the Axiom of
+Foundation (Regularity) from ZFC.
+\end{remark}

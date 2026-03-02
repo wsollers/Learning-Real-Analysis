@@ -1,0 +1,76 @@
+% =========================================================
+% Proof: Principle of Set Duality
+% Source: volume-i/sets-relations-functions/notes/sets/notes-set-operations.tex
+% =========================================================
+
+\subsection*{Principle of Set Duality}
+\label{prf:set-duality}
+
+\begin{remark}[Return]
+\hyperref[cor:set-duality]{$\leftarrow$ Back to Corollary (Principle of Set Duality) in Notes}
+\end{remark}
+
+\begin{corollary}[Principle of Set Duality]
+Any identity involving $\cup$, $\cap$, $\varnothing$, and $U$ that holds for
+all subsets of a universe $U$ remains valid when each operation and constant is
+replaced by its dual: $\cup \leftrightarrow \cap$ and $\varnothing
+\leftrightarrow U$ (with complements unchanged).
+\end{corollary}
+
+\begin{proof}
+\Given De Morgan's laws (\hyperref[thm:de-morgan]{Theorem~(De Morgan's Laws)}):
+$(A \cup B)^c = A^c \cap B^c$ and $(A \cap B)^c = A^c \cup B^c$. The
+involution law: $(A^c)^c = A$ for all $A \subseteq U$. The boundary cases:
+$\varnothing^c = U$ and $U^c = \varnothing$.
+
+\Goal To show that if an identity $E = F$ holds for all subsets of $U$, then
+its dual identity $E^* = F^*$ also holds for all subsets of $U$, where the
+dual is obtained by swapping $\cup \leftrightarrow \cap$ and $\varnothing
+\leftrightarrow U$.
+
+\Strategy We show that if we take complements of both sides of $E = F$ and
+apply De Morgan, we obtain $E^* = F^*$.
+
+\medskip
+Given the identity $E = F$, take complements of both sides: $E^c = F^c$.
+
+Now apply De Morgan's laws to every occurrence of $\cup$ and $\cap$ in $E^c$
+and $F^c$. The key substitutions are:
+\begin{itemize}
+  \item $(A \cup B)^c = A^c \cap B^c$ — complement turns $\cup$ into $\cap$.
+  \item $(A \cap B)^c = A^c \cup B^c$ — complement turns $\cap$ into $\cup$.
+  \item $\varnothing^c = U$ and $U^c = \varnothing$ — the boundary constants
+        swap.
+  \item $(A^c)^c = A$ — double complements cancel, restoring the original
+        variables.
+\end{itemize}
+
+After applying these substitutions throughout $E^c$ and $F^c$, each variable
+$A$ appears without complement (the two complementations cancel), and every
+$\cup$ has become $\cap$ and vice versa. The constants $\varnothing$ and $U$
+have swapped. The result is precisely $E^* = F^*$.
+
+Since the identity $E = F$ holds for all subsets of $U$, so does $E^c = F^c$,
+and therefore $E^* = F^*$ holds for all subsets of $U$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The argument is a \emph{structural transformation}: complement both sides of the
+known identity, then use De Morgan to rewrite the complements of compound
+expressions. The double-complement law cleans up the variables, and the
+boundary swaps handle the constants. The result is the dual identity.
+\end{remark}
+
+\begin{remark}[This is a metatheorem]
+The Principle of Set Duality is a statement about \emph{all} set-theoretic
+identities, not about any particular one. It says we never need to prove both
+of a dual pair: one proof suffices and the other is free. For example,
+proving $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ immediately gives
+$A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$ by duality.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: \hyperref[thm:de-morgan]{De Morgan's Laws}, the involution
+of complement ($(A^c)^c = A$), and the boundary facts $\varnothing^c = U$ and
+$U^c = \varnothing$.
+\end{remark}

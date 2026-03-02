@@ -1,0 +1,63 @@
+% =========================================================
+% Proof: Distinctness of Zermelo numerals
+% Source: volume-i/axiom-systems/notes/zermelo/zermelo-numerals.tex
+% =========================================================
+
+\subsection*{Distinctness of Zermelo Numerals}
+\label{prf:zermelo-distinct}
+
+\begin{remark}[Return]
+\hyperref[prop:zermelo-distinct]{$\leftarrow$ Back to Proposition (Distinctness of Zermelo numerals) in Notes}
+\end{remark}
+
+\begin{proposition}[Distinctness of Zermelo numerals]
+If $m \neq n$ as natural numbers, then $m_Z \neq n_Z$ as sets. That is, the
+map $n \mapsto n_Z$ is injective.
+\end{proposition}
+
+\begin{proof}
+\Given The Zermelo numerals $0_Z = \varnothing$ and $(n+1)_Z = \{n_Z\}$
+(\hyperref[def:zermelo-numerals]{Definition~(Zermelo numerals)}). Injectivity of
+Zermelo successor
+(\hyperref[prop:zermelo-successor-injective]{Injectivity of Zermelo successor}):
+$\{a\} = \{b\} \Rightarrow a = b$.
+
+\Goal To show: $m_Z = n_Z \Rightarrow m = n$ (equivalently, $m \neq n
+\Rightarrow m_Z \neq n_Z$).
+
+\Strategy We prove the contrapositive by strong induction on $m + n$: if $m_Z =
+n_Z$ then $m = n$.
+
+\medskip
+\noindent\textbf{Base cases.} Suppose one of $m, n$ is $0$.
+
+If $m = 0$: then $m_Z = \varnothing$. Suppose $0_Z = n_Z$, i.e.\ $\varnothing =
+n_Z$. If $n \geq 1$, then $n_Z = \{(n-1)_Z\}$ is a singleton and hence
+nonempty, contradicting $\varnothing = n_Z$. So $n = 0 = m$. The case $n = 0$
+is symmetric.
+
+\medskip
+\noindent\textbf{Inductive step.} Suppose $m, n \geq 1$ and assume (induction
+hypothesis) that for all $m', n'$ with $m' + n' < m + n$, $m'_Z = n'_Z$
+implies $m' = n'$.
+
+If $m_Z = n_Z$, then $\{(m-1)_Z\} = \{(n-1)_Z\}$. By injectivity of Zermelo
+successor (\hyperref[prop:zermelo-successor-injective]{Injectivity of Zermelo
+successor}), $(m-1)_Z = (n-1)_Z$. Since $(m-1) + (n-1) = m + n - 2 < m + n$,
+the induction hypothesis applies: $m - 1 = n - 1$, so $m = n$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+This is a proof by \emph{strong induction} on $m + n$ with a base case
+covering the boundary where one index is $0$. The key step is that equal
+successors (singletons) must wrap equal sets, which reduces the problem to
+smaller indices where the induction hypothesis applies.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of Zermelo numerals
+(\hyperref[def:zermelo-numerals]{Definition~(Zermelo numerals)}),
+\hyperref[prop:zermelo-successor-injective]{Injectivity of Zermelo successor},
+and \hyperref[prop:empty-unique]{Uniqueness of the empty set} (implicitly: $\varnothing$ is
+a unique set with no elements, so $\varnothing \neq \{x\}$ for any $x$).
+\end{remark}

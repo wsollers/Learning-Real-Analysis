@@ -1,0 +1,171 @@
+% =========================================================
+% Proof: Every Formula Has a CNF
+% Source: volume-i/propositional-logic/notes/semantics/notes-normal-forms.tex
+% =========================================================
+
+\subsection*{Every Formula Has a CNF}
+\label{prf:cnf-exists}
+
+\begin{remark}[Return]
+\hyperref[prop:cnf-exists]{$\leftarrow$ Back to Proposition (Every Formula Has a CNF) in Notes}
+\end{remark}
+
+\begin{proposition}[Every Formula Has a CNF]
+Every propositional formula is logically equivalent to a formula in conjunctive
+normal form (CNF).
+\end{proposition}
+
+\begin{proof}
+\Given The definition of CNF: a formula is in CNF if it is a conjunction of
+disjunctive clauses $\bigwedge_i \bigvee_j L_{ij}$, where each $L_{ij}$ is a
+literal. The definition of NNF: negations appear only on variables; connectives
+are restricted to $\neg$, $\wedge$, $\vee$. The distribution law:
+$P \vee (Q \wedge R) \;\equiv\; (P \vee Q) \wedge (P \vee R)$, and its
+symmetric form $(P \wedge Q) \vee R \;\equiv\; (P \vee R) \wedge (Q \vee R)$.
+The NNF existence result (\hyperref[prop:nnf-exists]{Every Formula Has an NNF}).
+
+\Goal To show that for every propositional formula $\varphi$ there exists a
+formula $\varphi'$ in CNF such that $\varphi \equiv \varphi'$.
+
+\Strategy The proof proceeds in two stages. \textbf{Stage 1:} apply the NNF
+existence theorem to obtain an NNF equivalent $\varphi_{\mathrm{NNF}}$ of
+$\varphi$. \textbf{Stage 2:} convert $\varphi_{\mathrm{NNF}}$ to CNF by
+structural induction, using the distribution law to push $\vee$ inside $\wedge$
+whenever a disjunction sits above a conjunction in the parse tree. Since Stage 1
+preserves logical equivalence and Stage 2 preserves logical equivalence at every
+step, the final result is equivalent to $\varphi$.
+
+\medskip
+\noindent\textbf{Stage 1: Obtain an NNF equivalent.}
+
+By \hyperref[prop:nnf-exists]{Every Formula Has an NNF}, there exists a formula
+$\varphi_{\mathrm{NNF}}$ in NNF such that $\varphi \equiv
+\varphi_{\mathrm{NNF}}$. It suffices to show that $\varphi_{\mathrm{NNF}}$ is
+equivalent to some CNF formula; the full result then follows by transitivity of
+$\equiv$.
+
+\medskip
+\noindent\textbf{Stage 2: Convert the NNF formula to CNF.}
+
+We prove by structural induction on $\varphi_{\mathrm{NNF}}$ that every NNF
+formula is equivalent to some CNF formula.
+
+\medskip
+\noindent\textit{Base cases.}
+
+\medskip
+\textit{Case 1: $\varphi_{\mathrm{NNF}} = P$ (a propositional variable).}
+$P$ is a single positive literal. A single literal is a degenerate disjunctive
+clause ($k = 1$), and a single clause is a degenerate conjunction ($m = 1$).
+Hence $P$ is already in CNF.
+
+\medskip
+\textit{Case 2: $\varphi_{\mathrm{NNF}} = \neg P$ (negation of a variable).}
+$\neg P$ is a single negative literal, and the same reasoning as Case 1 applies.
+$\neg P$ is already in CNF.
+
+\medskip
+\noindent\textit{Inductive step.}
+
+Assume (induction hypothesis) that every NNF formula of strictly smaller
+complexity than $\varphi_{\mathrm{NNF}}$ is equivalent to some CNF formula. We
+consider the two compound cases that can arise in an NNF formula ($\rightarrow$
+and $\leftrightarrow$ are absent).
+
+\medskip
+\textit{Case 3: $\varphi_{\mathrm{NNF}} = \alpha \wedge \beta$.}
+
+By the induction hypothesis, there exist CNF formulas $\alpha'$ and $\beta'$
+with $\alpha \equiv \alpha'$ and $\beta \equiv \beta'$. Write
+\[
+    \alpha' = C_1 \wedge C_2 \wedge \cdots \wedge C_m, \qquad
+    \beta'  = D_1 \wedge D_2 \wedge \cdots \wedge D_n,
+\]
+where each $C_i$ and $D_j$ is a disjunctive clause. Then
+\[
+    \alpha \wedge \beta \;\equiv\; \alpha' \wedge \beta'
+    \;=\; C_1 \wedge \cdots \wedge C_m \wedge D_1 \wedge \cdots \wedge D_n.
+\]
+This is a conjunction of disjunctive clauses, hence in CNF. Take $\varphi' =
+C_1 \wedge \cdots \wedge C_m \wedge D_1 \wedge \cdots \wedge D_n$.
+
+\medskip
+\textit{Case 4: $\varphi_{\mathrm{NNF}} = \alpha \vee \beta$.}
+
+By the induction hypothesis, there exist CNF formulas $\alpha'$ and $\beta'$
+with $\alpha \equiv \alpha'$ and $\beta \equiv \beta'$. Write
+\[
+    \alpha' = C_1 \wedge C_2 \wedge \cdots \wedge C_m, \qquad
+    \beta'  = D_1 \wedge D_2 \wedge \cdots \wedge D_n.
+\]
+Then
+\[
+    \alpha \vee \beta \;\equiv\; \alpha' \vee \beta'
+    \;=\; (C_1 \wedge \cdots \wedge C_m) \vee (D_1 \wedge \cdots \wedge D_n).
+\]
+This is a disjunction of two conjunctions, which is not yet in CNF. We apply
+the distribution law repeatedly. For each pair $(C_i, D_j)$, distributing
+$\vee$ over $\wedge$ gives:
+\[
+    \alpha' \vee \beta' \;\equiv\;
+    \bigwedge_{i=1}^{m} \bigwedge_{j=1}^{n} (C_i \vee D_j).
+\]
+Each factor $C_i \vee D_j$ is a disjunction of two disjunctive clauses, hence
+itself a disjunctive clause (disjunction is associative and flattens). The
+result is a conjunction of $mn$ disjunctive clauses, hence in CNF. Take
+$\varphi' = \bigwedge_{i,j}(C_i \vee D_j)$.
+
+\medskip
+In every case an equivalent CNF formula exists. By structural induction, every
+NNF formula is equivalent to some CNF formula. Combined with Stage 1, every
+propositional formula is equivalent to some CNF formula. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof is a \emph{two-stage reduction}. Stage 1 is a direct appeal to the
+already-proved NNF existence theorem: we do not reprove that result here, but
+inherit it. Stage 2 is a structural induction on NNF formulas. The base cases
+(literals) are trivial; the conjunction case is immediate (concatenate clause
+lists); the hard case is disjunction, which requires distributing $\vee$ over
+$\wedge$ to flatten a disjunction of conjunctions into a conjunction of
+disjunctions. This distribution step is the logical core of the proof and is
+the step that can cause exponential blowup in formula size.
+\end{remark}
+
+\begin{remark}[Why NNF is an intermediate step]
+The NNF stage eliminates $\rightarrow$ and $\leftrightarrow$ and pushes $\neg$
+to the leaves. This ensures that in Stage 2 the only connectives present are
+$\wedge$ and $\vee$ on compound subformulas, and $\neg$ only on variables.
+Without NNF as an intermediate form, the induction in Stage 2 would require
+handling all five connectives rather than just two, making the case analysis
+considerably more involved.
+\end{remark}
+
+\begin{remark}[Exponential size blowup]
+The distribution step in Case 4 replaces a formula of size $m + n$ clauses with
+one of size $mn$ clauses. Repeated applications across a formula of depth $d$
+can yield a CNF with exponentially many clauses. This is not a defect in the
+proof but a genuine feature of the CNF representation: some formulas have no
+polynomial-size CNF equivalent (unless $\mathrm{P} = \mathrm{NP}$). The
+Tseitin transformation avoids this blowup by introducing auxiliary variables,
+but at the cost of producing a formula that is only \emph{equisatisfiable}
+rather than logically equivalent.
+\end{remark}
+
+\begin{remark}[Common error]
+A frequent mistake is to attempt to convert directly to CNF without first
+going through NNF. This fails because distributing $\vee$ over $\wedge$ in the
+presence of $\neg(\alpha \wedge \beta)$ or $\rightarrow$ produces intermediate
+forms that are neither CNF nor NNF, making the induction ill-defined. The NNF
+stage is not just convenient — it is what makes the induction in Stage 2 clean
+and well-founded.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the definition of CNF (\hyperref[def:cnf]{Def.\ CNF}),
+the definition of NNF (\hyperref[def:nnf]{Def.\ NNF}),
+\hyperref[prop:nnf-exists]{Every Formula Has an NNF},
+the distribution law ($P \vee (Q \wedge R) \equiv (P \vee Q) \wedge (P \vee
+R)$), associativity of $\vee$ (to flatten clause disjunctions), and the
+principle of structural induction on propositional formulas.
+\end{remark}

@@ -1,0 +1,70 @@
+% =========================================================
+% Proof: First few von Neumann numerals
+% Source: volume-i/axiom-systems/notes/von-neuman/von_neuman-numerals.tex
+% =========================================================
+
+\subsection*{First Few von Neumann Numerals}
+\label{prf:vn-first-few}
+
+\begin{remark}[Return]
+\hyperref[prop:vn-first-few]{$\leftarrow$ Back to Proposition (First few von Neumann numerals) in Notes}
+\end{remark}
+
+\begin{proposition}[First few von Neumann numerals]
+\[
+0_V = \varnothing,\quad
+1_V = \{\varnothing\},\quad
+2_V = \{\varnothing, \{\varnothing\}\},\quad
+3_V = \{\varnothing, \{\varnothing\}, \{\varnothing,\{\varnothing\}\}\}.
+\]
+More generally, $n_V = \{0_V, 1_V, \ldots, (n-1)_V\}$ for $n \geq 1$.
+\end{proposition}
+
+\begin{proof}
+\Given The von Neumann numerals: $0_V := \varnothing$ and $(n+1)_V := n_V \cup
+\{n_V\}$ (\hyperref[def:vn-numerals]{Definition~(von Neumann numerals)}).
+Basic properties of union
+(\hyperref[prop:union-basics]{Basic properties of union}): $x \in a \cup b
+\leftrightarrow (x \in a \lor x \in b)$.
+
+\Goal Compute $0_V, 1_V, 2_V, 3_V$ explicitly.
+
+\Strategy Iterate the successor definition and apply the union characterisation.
+
+\medskip
+$0_V = \varnothing$ by definition.
+
+$1_V = 0_V \cup \{0_V\} = \varnothing \cup \{\varnothing\}$.
+An element $x \in \varnothing \cup \{\varnothing\}$ iff $x \in \varnothing$ or
+$x \in \{\varnothing\}$, i.e.\ iff $x = \varnothing$. So $1_V = \{\varnothing\}
+= \{0_V\}$.
+
+$2_V = 1_V \cup \{1_V\} = \{\varnothing\} \cup \{\{\varnothing\}\}$.
+An element $x$ belongs iff $x = \varnothing$ or $x = \{\varnothing\}$. So
+$2_V = \{\varnothing, \{\varnothing\}\} = \{0_V, 1_V\}$.
+
+$3_V = 2_V \cup \{2_V\} = \{0_V, 1_V\} \cup \{2_V\} = \{0_V, 1_V, 2_V\}$.
+
+The pattern $n_V = \{0_V, 1_V, \ldots, (n-1)_V\}$ holds at each step: the
+successor appends the current numeral to the existing set. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+Direct computation by iterated unfolding, exactly as for Zermelo numerals.
+The key difference is that the von Neumann successor $n_V \cup \{n_V\}$
+\emph{accumulates} all predecessors, whereas the Zermelo successor $\{n_Z\}$
+discards all but the immediate predecessor.
+\end{remark}
+
+\begin{remark}[Cardinality encodes the number]
+Each von Neumann numeral $n_V$ has exactly $n$ elements: $n_V =
+\{0_V,\ldots,(n-1)_V\}$. This means $|n_V| = n$, so the cardinality of the
+set directly encodes the number. This is one reason von Neumann numerals are
+preferred in the standard development of ZFC.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of von Neumann numerals
+(\hyperref[def:vn-numerals]{Definition~(von Neumann numerals)}) and
+\hyperref[prop:union-basics]{Basic properties of union}.
+\end{remark}

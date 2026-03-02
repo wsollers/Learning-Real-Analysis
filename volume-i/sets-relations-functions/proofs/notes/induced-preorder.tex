@@ -1,0 +1,56 @@
+% =========================================================
+% Proof: ≤_f is always a preorder
+% Source: volume-i/sets-relations-functions/notes/order/notes-order-induced.tex
+% =========================================================
+
+\subsection*{$\leq_f$ is Always a Preorder}
+\label{prf:induced-preorder}
+
+\begin{remark}[Return]
+\hyperref[prop:induced-preorder]{$\leftarrow$ Back to Proposition ($\leq_f$ is always a preorder) in Notes}
+\end{remark}
+
+\begin{proposition}[$\leq_f$ is always a preorder]
+For any function $f : A \to B$ and partial order $(B, \leq')$, the induced
+relation $\leq_f$ on $A$ defined by $x \leq_f y \Leftrightarrow f(x) \leq'
+f(y)$ is a preorder: it is reflexive and transitive.
+\end{proposition}
+
+\begin{proof}
+\Given The induced order (\hyperref[def:induced-order]{Definition~(Induced Order)}):
+$x \leq_f y \Leftrightarrow f(x) \leq' f(y)$. The partial order $(B, \leq')$:
+$\leq'$ is reflexive, transitive, and antisymmetric.
+
+\Goal To verify reflexivity and transitivity of $\leq_f$ on $A$.
+
+\medskip
+\noindent\textbf{Reflexivity.} Let $x \in A$. Since $\leq'$ is reflexive,
+$f(x) \leq' f(x)$. By definition of $\leq_f$, $x \leq_f x$.
+
+\medskip
+\noindent\textbf{Transitivity.} Suppose $x \leq_f y$ and $y \leq_f z$. By
+definition, $f(x) \leq' f(y)$ and $f(y) \leq' f(z)$. Since $\leq'$ is
+transitive, $f(x) \leq' f(z)$. By definition, $x \leq_f z$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+Both properties are one-line pullbacks. Reflexivity at $x \in A$ pulls back
+reflexivity at $f(x) \in B$; transitivity along $(x, y, z)$ in $A$ pulls back
+transitivity along $(f(x), f(y), f(z))$ in $B$. The structure of the proof
+mirrors the structure of the definition: $\leq_f$ is defined by comparing
+$f$-images, so properties of $\leq'$ transfer immediately to $\leq_f$.
+\end{remark}
+
+\begin{remark}[Antisymmetry does not lift freely]
+Antisymmetry of $\leq'$ does not automatically give antisymmetry of $\leq_f$.
+If $f$ is not injective, there may exist $x \neq y$ in $A$ with $f(x) = f(y)$,
+giving $x \leq_f y$ and $y \leq_f x$ with $x \neq y$. This is why
+$\leq_f$ is only guaranteed to be a preorder, not a partial order.
+See \hyperref[prop:induced-poset]{$\leq_f$ is a partial order iff $f$ is injective}.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of induced order
+(\hyperref[def:induced-order]{Definition~(Induced Order)}) and reflexivity and
+transitivity of $(B, \leq')$.
+\end{remark}

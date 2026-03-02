@@ -1,0 +1,61 @@
+% =========================================================
+% Proof: Compactness for Logical Consequence
+% Source: volume-i/propositional-logic/notes/notes-compactness.tex
+% =========================================================
+
+\subsection*{Compactness for Logical Consequence}
+\label{prf:compactness-consequence-old}
+
+\begin{remark}[Return]
+$\leftarrow$ Back to Corollary (Compactness for Logical Consequence) in Notes
+\end{remark}
+
+\begin{corollary}[Compactness for Logical Consequence]
+If $\Gamma \models \varphi$, then there exists a finite subset $\Gamma_0
+\subseteq \Gamma$ such that $\Gamma_0 \models \varphi$.
+\end{corollary}
+
+\begin{proof}
+\Given The Compactness Theorem for Propositional Logic: a set $\Gamma$ is
+satisfiable if and only if every finite subset of $\Gamma$ is satisfiable.
+
+\Goal To show: if every truth assignment satisfying $\Gamma$ also satisfies
+$\varphi$, then some finite $\Gamma_0 \subseteq \Gamma$ has the same property.
+
+\Strategy We prove the contrapositive: if no finite subset of $\Gamma$
+entails $\varphi$, then $\Gamma$ does not entail $\varphi$.
+
+Suppose that for every finite $\Gamma_0 \subseteq \Gamma$, $\Gamma_0
+\not\models \varphi$. Then for each such $\Gamma_0$ there is a truth assignment
+$v_0$ with $v_0 \models \Gamma_0$ but $v_0 \not\models \varphi$.
+
+Consider the set $\Gamma' = \Gamma \cup \{\neg\varphi\}$. Every finite subset
+of $\Gamma'$ has the form $\Gamma_0 \cup \{\neg\varphi\}$ for some finite
+$\Gamma_0 \subseteq \Gamma$. By hypothesis, there exists $v_0$ satisfying
+$\Gamma_0$ but not $\varphi$; hence $v_0 \models \neg\varphi$. So $v_0$
+satisfies $\Gamma_0 \cup \{\neg\varphi\}$, making every finite subset of
+$\Gamma'$ satisfiable.
+
+By the Compactness Theorem, $\Gamma'$ is satisfiable: there is a truth
+assignment $v$ with $v \models \Gamma$ and $v \models \neg\varphi$, i.e.\ $v
+\not\models \varphi$. Hence $\Gamma \not\models \varphi$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+The proof is a \emph{contrapositive} reduction to the Compactness Theorem. The
+key move is augmenting $\Gamma$ with $\neg\varphi$ to turn a consequence
+question ($\Gamma \models \varphi$?) into a satisfiability question (is
+$\Gamma \cup \{\neg\varphi\}$ satisfiable?). Compactness then applies
+directly.
+\end{remark}
+
+\begin{remark}[Semantic content]
+The corollary says that logical consequence is \emph{compact}: you can never
+need infinitely many premises to derive a single conclusion. Any proof that uses
+$\Gamma$ implicitly uses only finitely many formulas from $\Gamma$.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Compactness Theorem for Propositional Logic and the
+definition of logical consequence ($\Gamma \models \varphi$).
+\end{remark}

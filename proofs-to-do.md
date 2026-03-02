@@ -26,25 +26,25 @@ Results are ordered from foundations upward — each entry depends only on resul
 | 1 | I | Tao 2.1.4 | `axiom-systems/notes/peano/notes-peano-numerals` | Easy | ✓ |
 | 2 | I | Tao 2.1.6 — 4 ≠ 0 | `axiom-systems/notes/peano/notes-peano-numerals` | Easy | ✓ |
 | 3 | I | Tao 2.1.8 — 6 ≠ 2 | `axiom-systems/notes/peano/notes-peano-numerals` | Easy | ✓ |
-| 4 | I | Uniqueness of the empty set | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
-| 5 | I | Singleton is well-defined | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
-| 6 | I | Basic properties of union | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
-| 7 | I | First few Zermelo numerals | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
-| 8 | I | First few von Neumann numerals | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
-| 9 | I | Injectivity of Zermelo successor | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
-| 10 | I | Distinctness of Zermelo numerals | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
+| 4 | I | Uniqueness of the empty set | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
+| 5 | I | Singleton is well-defined | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
+| 6 | I | Basic properties of union | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | ✓ |
+| 7 | I | First few Zermelo numerals | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
+| 8 | I | First few von Neumann numerals | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | ✓ |
+| 9 | I | Injectivity of Zermelo successor | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
+| 10 | I | Distinctness of Zermelo numerals | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
 | 11 | I | Membership pattern | `axiom-systems/notes/zermelo/zermelo-numerals` | Medium | · |
-| 12 | I | Each von Neumann numeral is transitive | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
-| 13 | I | Successor is injective | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
-| 14 | I | No numeral contains itself | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
+| 12 | I | Each von Neumann numeral is transitive | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | ✓ |
+| 13 | I | Successor is injective | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | ✓ |
+| 14 | I | No numeral contains itself | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
 | 15 | I | Order by membership | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Medium | · |
-| 16 | I | Strict chain under membership | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | · |
+| 16 | I | Strict chain under membership | `axiom-systems/notes/zermelo/zermelo-numerals` | Easy | ✓ |
 | 17 | I | Well-ordering by \in | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Medium | · |
-| 18 | I | Each numeral is the set of its predecessors | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
-| 19 | I | Monotonicity | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | · |
+| 18 | I | Each numeral is the set of its predecessors | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | ✓ |
+| 19 | I | Monotonicity | `axiom-systems/notes/von-neuman/von_neuman-numerals` | Easy | ✓ |
 | 20 | I | Unique Readability | `propositional-logic/notes/notes-syntax` | Hard | · |
 | 21 | I | Non-Associativity of NAND | `propositional-logic/notes/syntax/notes-connectives` | Easy | ✓ |
-| 22 | I | Non-Associativity of NOR | `propositional-logic/notes/syntax/notes-connectives` | Easy | · |
+| 22 | I | Non-Associativity of NOR | `propositional-logic/notes/syntax/notes-connectives` | Easy | ✓ |
 | 23 | I | XOR Equivalences | `propositional-logic/notes/notes-connectives` | Medium | · |
 | 24 | I | Properties of XOR | `propositional-logic/notes/notes-connectives` | Medium | · |
 | 25 | I | NAND Definition | `propositional-logic/notes/notes-connectives` | Medium | · |
@@ -59,18 +59,18 @@ Results are ordered from foundations upward — each entry depends only on resul
 | 34 | I | Idempotence | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 35 | I | Absorption | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 36 | I | Identity Laws | `propositional-logic/notes/notes-equivalences` | Medium | · |
-| 37 | I | Every Formula Has an NNF | `propositional-logic/notes/semantics/notes-normal-forms` | Easy | · |
+| 37 | I | Every Formula Has an NNF | `propositional-logic/notes/semantics/notes-normal-forms` | Easy | ✓ |
 | 38 | I | Domination Laws | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 39 | I | Negation Laws | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 40 | I | Material Implication | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 41 | I | Contraposition | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 42 | I | Exportation / Importation | `propositional-logic/notes/notes-equivalences` | Medium | · |
-| 43 | I | Every Formula Has a CNF | `propositional-logic/notes/semantics/notes-normal-forms` | Easy | · |
+| 43 | I | Every Formula Has a CNF | `propositional-logic/notes/semantics/notes-normal-forms` | Easy | ✓ |
 | 44 | I | Negation of Conditional | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 45 | I | Biconditional Expansion | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 46 | I | Biconditional as Disjunction | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 47 | I | Negation of Biconditional | `propositional-logic/notes/notes-equivalences` | Medium | · |
-| 48 | I | Every Formula Has a DNF | `propositional-logic/notes/semantics/notes-normal-forms` | Easy | · |
+| 48 | I | Every Formula Has a DNF | `propositional-logic/notes/semantics/notes-normal-forms` | Easy | ✓ |
 | 49 | I | Duality Principle | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 50 | I | Semantic Duality | `propositional-logic/notes/notes-equivalences` | Medium | · |
 | 51 | I | NNF Conversion | `propositional-logic/notes/notes-normal-forms` | Medium | · |
@@ -86,17 +86,17 @@ Results are ordered from foundations upward — each entry depends only on resul
 | 61 | I | Non-Adequate Sets | `propositional-logic/notes/notes-functional-completeness` | Medium | · |
 | 62 | I | Post's Theorem | `propositional-logic/notes/notes-functional-completeness` | Hard | · |
 | 63 | I | Compactness Theorem for Propositional Logic | `propositional-logic/notes/notes-compactness` | Hard | · |
-| 64 | I | Compactness for Logical Consequence | `propositional-logic/notes/notes-compactness` | Easy | · |
-| 65 | I | Compactness of Logical Consequence | `propositional-logic/notes/metatheory/notes-compactness` | Easy | · |
+| 64 | I | Compactness for Logical Consequence | `propositional-logic/notes/notes-compactness` | Easy | ✓ |
+| 65 | I | Compactness of Logical Consequence | `propositional-logic/notes/metatheory/notes-compactness` | Easy | ✓ |
 | 66 | I | Craig's Interpolation Theorem | `propositional-logic/notes/notes-interpolation` | Hard | · |
 | 67 | I | Substitution Lemma for Terms | `predicate-logic/notes/semantics/notes-predicates-lemmas` | Medium | · |
 | 68 | I | Substitution Lemma for Formulas | `predicate-logic/notes/semantics/notes-predicates-lemmas` | Medium | · |
-| 69 | I | Quantifier Negation Laws | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Easy | · |
+| 69 | I | Quantifier Negation Laws | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Easy | ✓ |
 | 70 | I | Quantifier Commutation | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Medium | · |
 | 71 | I | Quantifier Distribution | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Medium | · |
-| 72 | I | Vacuous Quantification | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Easy | · |
+| 72 | I | Vacuous Quantification | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Easy | ✓ |
 | 73 | I | Negation of Bounded Quantifiers | `predicate-logic/notes/quantifiers/notes-basic-quantifiers` | Medium | · |
-| 74 | I | Renaming Bound Variables | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Easy | · |
+| 74 | I | Renaming Bound Variables | `predicate-logic/notes/quantifiers/notes-quantifier-laws` | Easy | ✓ |
 | 75 | I | Soundness of First-Order Logic | `predicate-logic/notes/proof-theory/notes-soundness-completeness` | Medium | · |
 | 76 | I | Symmetry of Equality | `predicate-logic/notes/proof-theory/notes-equality` | Medium | · |
 | 77 | I | Transitivity of Equality | `predicate-logic/notes/proof-theory/notes-equality` | Medium | · |
@@ -107,7 +107,7 @@ Results are ordered from foundations upward — each entry depends only on resul
 | 82 | I | Distributive Laws | `sets-relations-functions/notes/sets/notes-set-algebra` | Medium | · |
 | 83 | I | Identity and Absorption Laws | `sets-relations-functions/notes/sets/notes-set-algebra` | Medium | · |
 | 84 | I | Involution of Complement | `sets-relations-functions/notes/sets/notes-set-algebra` | Medium | · |
-| 85 | I | Principle of Set Duality | `sets-relations-functions/notes/sets/notes-set-operations` | Easy | · |
+| 85 | I | Principle of Set Duality | `sets-relations-functions/notes/sets/notes-set-operations` | Easy | ✓ |
 | 86 | I | Uniqueness of Ordered Pairs | `sets-relations-functions/notes/relations/notes-relations` | Medium | · |
 | 87 | I | Associativity of Composition | `sets-relations-functions/notes/functions/notes-composition` | Medium | · |
 | 88 | I | Identity and Composition | `sets-relations-functions/notes/functions/notes-composition` | Medium | · |
@@ -119,9 +119,9 @@ Results are ordered from foundations upward — each entry depends only on resul
 | 94 | I | Images and Set Operations | `sets-relations-functions/notes/functions/notes-composition` | Medium | · |
 | 95 | I | Representative Independence Lemma | `sets-relations-functions/notes/equivalence/notes-equivalence` | Medium | · |
 | 96 | I | Equivalence Relations and Partitions | `sets-relations-functions/notes/equivalence/notes-equivalence` | Medium | · |
-| 97 | I | ≤q_f is always a preorder | `sets-relations-functions/notes/order/notes-order-induced` | Easy | · |
-| 98 | I | ≤q_f is a partial order iff f is injective | `sets-relations-functions/notes/order/notes-order-induced` | Easy | · |
-| 99 | I | Complete preorder extension | `sets-relations-functions/notes/order/notes-order-extensions` | Easy | · |
+| 97 | I | ≤q_f is always a preorder | `sets-relations-functions/notes/order/notes-order-induced` | Easy | ✓ |
+| 98 | I | ≤q_f is a partial order iff f is injective | `sets-relations-functions/notes/order/notes-order-induced` | Easy | ✓ |
+| 99 | I | Complete preorder extension | `sets-relations-functions/notes/order/notes-order-extensions` | Easy | ✓ |
 | 100 | I | Order embeddings are injective | `sets-relations-functions/notes/order/notes-order-induced` | Medium | · |
 | 101 | I | Order embedding is isomorphism onto image | `sets-relations-functions/notes/order/notes-order-induced` | Medium | · |
 | 102 | I | Equivalence of induction and well-ordering | `proof-techniques/notes/induction/notes-ind-wellordering` | Medium | · |

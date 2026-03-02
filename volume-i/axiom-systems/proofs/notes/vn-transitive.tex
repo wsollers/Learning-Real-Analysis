@@ -1,0 +1,70 @@
+% =========================================================
+% Proof: Each von Neumann numeral is transitive
+% Source: volume-i/axiom-systems/notes/von-neuman/von_neuman-numerals.tex
+% =========================================================
+
+\subsection*{Each von Neumann Numeral is Transitive}
+\label{prf:vn-transitive}
+
+\begin{remark}[Return]
+\hyperref[prop:vn-transitive]{$\leftarrow$ Back to Proposition (Each von Neumann numeral is transitive) in Notes}
+\end{remark}
+
+\begin{proposition}[Each von Neumann numeral is transitive]
+For every $n$, the set $n_V$ is transitive: if $x \in n_V$ then $x \subseteq n_V$.
+\end{proposition}
+
+\begin{proof}
+\Given The von Neumann numerals: $0_V = \varnothing$ and $(n+1)_V = n_V \cup
+\{n_V\}$ (\hyperref[def:vn-numerals]{Definition~(von Neumann numerals)}).
+The definition of transitivity (\hyperref[def:transitive-set]{Definition~(Transitive set)}):
+$A$ is transitive iff $x \in A \Rightarrow x \subseteq A$.
+Basic properties of union (\hyperref[prop:union-basics]{Basic properties of union}).
+
+\Goal To show $n_V$ is transitive for every $n$.
+
+\Strategy Induction on $n$.
+
+\medskip
+\noindent\textbf{Base case} ($n = 0$). $0_V = \varnothing$. There is no $x
+\in \varnothing$, so the transitivity condition holds vacuously. \checkbox
+
+\medskip
+\noindent\textbf{Inductive step.} Suppose $n_V$ is transitive. We show
+$(n+1)_V = n_V \cup \{n_V\}$ is transitive.
+
+Let $x \in n_V \cup \{n_V\}$. By the union property, either $x \in n_V$ or $x
+= n_V$.
+
+\textit{Case 1: $x \in n_V$.} By the induction hypothesis, $x \subseteq n_V$.
+Since $n_V \subseteq n_V \cup \{n_V\} = (n+1)_V$, we have $x \subseteq
+(n+1)_V$.
+
+\textit{Case 2: $x = n_V$.} We need $n_V \subseteq (n+1)_V = n_V \cup \{n_V\}$.
+For any $y \in n_V$, $y \in n_V \cup \{n_V\}$ by the union property. So $n_V
+\subseteq (n+1)_V$. \checkbox
+
+In both cases, $x \subseteq (n+1)_V$. By induction, $n_V$ is transitive for
+all $n$. \AsReq
+\end{proof}
+
+\begin{remark}[Proof shape]
+Standard induction with a two-case split in the inductive step: elements of
+$(n+1)_V = n_V \cup \{n_V\}$ are either elements of $n_V$ (handled by the IH)
+or equal to $n_V$ itself (handled by the subset relation $n_V \subseteq
+(n+1)_V$). Both cases reduce immediately to the definitions.
+\end{remark}
+
+\begin{remark}[Why transitivity matters]
+Transitivity of von Neumann numerals is what makes the ordering $m_V \in n_V
+\Leftrightarrow m < n$ work cleanly: if $k \in m_V$ and $m_V \in n_V$, then
+by transitivity of $n_V$, $k \in n_V$. This transitivity at the set level
+mirrors the transitivity of the usual ordering $<$ on natural numbers.
+\end{remark}
+
+\begin{remark}[Dependencies]
+The proof depends on: the Definition of von Neumann numerals
+(\hyperref[def:vn-numerals]{Definition~(von Neumann numerals)}), the Definition
+of transitive set (\hyperref[def:transitive-set]{Definition~(Transitive set)}),
+and \hyperref[prop:union-basics]{Basic properties of union}.
+\end{remark}
