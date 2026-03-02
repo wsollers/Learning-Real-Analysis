@@ -509,19 +509,48 @@ $3$ is a natural number.
 \end{proposition}
 ```
 
-**Step 2 — Add a forward nav remark in the notes file**
+**Step 2 — Make the theorem name itself the proof link**
 
-Immediately after `\end{proposition}` (or `\end{theorem}` etc.), add a
-`\begin{remark}[Proof]` block pointing to the proof:
+Replace the plain `[Name]` in the theorem's optional argument with a
+`\texorpdfstring{\hyperref[prf:...]{Name}}{Name}` pair.
+This makes the theorem name render as a clickable blue link directly in the
+proposition heading — no separate remark line, no visual clutter.
 
 ```latex
-\begin{remark}[Proof]
-See \hyperref[prf:tao-2-1-4]{Proof $\to$ Tao 2.1.4 --- $3$ is a natural number}.
-\end{remark}
+\begin{proposition}[\texorpdfstring{\hyperref[prf:root-id]{Name}}{Name}]
+\label{prop:root-id}
+Statement.
+\end{proposition}
 ```
 
-The remark goes **before** any existing `\begin{remark}[Intuition]` or other
-explanatory remarks so the link is the first thing after the statement.
+The PDF-string argument (second brace of `\texorpdfstring`) is the plain-text
+version written into PDF bookmarks — omit math and commands here.
+
+For names containing math (e.g. `$4 \neq 0$`), write the math in the first
+argument and a plain fallback in the second:
+
+```latex
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:tao-2-1-6]{Tao 2.1.6 --- $4 \neq 0$}%
+}{Tao 2.1.6 --- 4 neq 0}]
+\label{prop:tao-2-1-6}
+$4$ is not equal to $0$.
+\end{proposition}
+```
+
+**No separate `\begin{remark}[Proof]` block is needed.** The link lives in
+the heading. Existing explanatory remarks (`[Why ...]`, `[Intuition]`, etc.)
+follow `\end{proposition}` as before — they are unaffected.
+
+**Prerequisite in `main.tex`:** the following must appear once after
+`\hypersetup{...}` (already present in this project):
+```latex
+\pdfstringdefDisableCommands{%
+  \def\hyperref[#1]#2{#2}%
+}
+```
+This prevents hyperref from erroring when it writes theorem titles to PDF
+bookmarks.
 
 **Step 3 — Create the proof file**
 
@@ -783,13 +812,14 @@ explicitly requested.
    \end{proposition}
    ```
 
-3. **Add forward nav remark immediately after `\end{proposition}`** (§6.5 Step 2):
+3. **Make the theorem name the proof link** (§6.5 Step 2):
    ```latex
-   \begin{remark}[Proof]
-   See \hyperref[prf:root-id]{Proof $\to$ Name}.
-   \end{remark}
+   \begin{proposition}[\texorpdfstring{\hyperref[prf:root-id]{Name}}{Name}]
+   \label{prop:root-id}
+   Statement.
+   \end{proposition}
    ```
-   Insert this *before* any existing `[Intuition]` or `[Why ...]` remarks.
+   No separate `\begin{remark}[Proof]` block. The name in the heading IS the link.
 
 4. **Create the proof file** at `<chapter>/proofs/notes/<proof-id>.tex`
    using the four-part structure (§6.5 Step 3):
