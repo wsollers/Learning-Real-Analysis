@@ -590,11 +590,9 @@ The file has exactly four parts, in this order:
 \hyperref[prop:root-identifier]{$\leftarrow$ Back to Proposition ([Name]) in Notes}
 \end{remark}
 
-\begin{proposition}[[Name as in notes]]   % or theorem / lemma / corollary
-[Full statement, copied verbatim from notes]
-\end{proposition}
-
 \begin{proof}
+\Claim [Full statement copied verbatim from notes.]
+
 [Proof body — see §6.6 for format]
 \end{proof}
 
@@ -620,8 +618,11 @@ Rules for the four parts:
    `$\leftarrow$` for the arrow. Reference the environment type correctly
    (Proposition / Theorem / Lemma / Corollary).
 
-4. **Restated environment** — copy the statement from the notes verbatim so
-   the proof file is self-contained when read in isolation.
+4. **`\Claim` inside the proof body** — the first line of the proof body
+   states the claim using `\Claim [statement.]`. Copy the statement verbatim
+   from the notes so the proof file is self-contained when read in isolation.
+   Do **not** use `\begin{proposition}`, `\begin{corollary}`, or any other
+   theorem-like environment for this purpose (see Rule PB-1 in §7.5).
 
 5. **Proof body** — see §6.6 for normal vs. thorough mode.
 
@@ -846,7 +847,7 @@ explicitly requested.
    - Header comment (theorem name + source file path)
    - `\subsection*{...}\label{prf:root-id}`
    - `\begin{remark}[Return]` with `\hyperref[prop:root-id]` back-link
-   - Restated environment (proposition/theorem/lemma/corollary)
+   - `\Claim [statement.]` as the first line of the proof body
    - `\begin{proof}...\end{proof}` in **normal mode** (§6.6)
    - `\begin{remark}[Proof shape]` and `\begin{remark}[Dependencies]`
 
@@ -984,7 +985,49 @@ unresolved). Use it to flag interrupted work.
 
 ---
 
-### 7.5 The `\Claim` / `\begin{claim}` Distinction
+### 7.5 Proof File Rules — Prohibited Environments and Naming
+
+Two hard rules govern the content of every proof body.
+
+**Rule PB-1 — No theorem-like environments in a generated proof file.**
+
+The environments `\begin{proposition}`, `\begin{theorem}`, `\begin{lemma}`,
+`\begin{corollary}`, `\begin{definition}`, and `\begin{axiom}` must **never**
+appear in a proof file. Every such environment participates in the global counter
+for its type, so placing one inside a proof inserts a spurious numbered item into
+the document's theorem sequence.
+
+The claim being proved is stated using `\Claim` (inline bold marker) as the
+**first line of `\begin{proof}`**, with the statement copied verbatim from the
+notes. Use `\begin{claim}...\end{claim}` (auto-numbered, `\label`-able) for any
+formal sub-result within a multi-part proof. Never use `\begin{proposition}` or
+any sibling environment for either purpose.
+
+**Rule PB-2 — Use proper names, not shorthand codes, when citing axioms and
+theorems.**
+
+Inside a proof body, every citation of a prior result must use the result's
+**full descriptive name**, not a code like `P1`, `P2`, `ax:zf-pairing`,
+or any other symbol that is opaque without the surrounding document context.
+
+- **Wrong:** `\ByThm{P2} applied to $0$: $0\pp \in \mathbb{N}$.`
+- **Right:** `\ByThm{Closure under successor} applied to $0$: $0\pp \in \mathbb{N}$.`
+
+- **Wrong:** `By the Axiom of Pairing, \dots`
+- **Right:** `\ByThm{Pairing} \dots` with the full name "Pairing" matching the
+  axiom's heading.
+
+The name in `\ByThm{...}` must be the name as it appears in the notes
+(the heading of the definition, axiom, proposition, or theorem box). Do not
+invent abbreviations. If the notes give both a code (e.g.\ P1) and a
+description (e.g.\ "zero is a natural number"), use the **description**.
+
+This rule applies to the proof body and to all remarks in the proof file. Do
+not use codes in `[Proof shape]` or `[Dependencies]` remarks either.
+
+---
+
+### 7.6 The `\Claim` / `\begin{claim}` Distinction
 
 Two separate tools exist for claims:
 
