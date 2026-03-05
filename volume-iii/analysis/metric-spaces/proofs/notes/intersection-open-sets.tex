@@ -1,6 +1,6 @@
 % =========================================================
 % Proof: Finite Intersections of Open Sets are Open
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Finite Intersections of Open Sets are Open}
@@ -18,6 +18,37 @@ Then $\bigcap_{k=1}^{n} U_k$ is open.
 \Strategy Use the definition of open set:
 take an arbitrary point in the intersection and use the openness
 of each $U_k$ to construct a ball contained in all of them.
+
+\medskip
+
+Let $x \in U$ be arbitrary. Then $x \in U_k$ for each
+$k = 1,\dots,n$.
+
+Since each $U_k$ is open and $x \in U_k$, by the definition
+of open set there exists $r_k > 0$ such that
+\[
+B(x,r_k) \subseteq U_k .
+\]
+
+Define
+\[
+r := \min\{r_1,r_2,\dots,r_n\}.
+\]
+Since the set $\{r_1,\dots,r_n\}$ is finite and each $r_k>0$,
+we have $r>0$.
+
+Let $y \in B(x,r)$. Then $d(x,y) < r \le r_k$ for each
+$k = 1,\dots,n$. Hence $y \in B(x,r_k) \subseteq U_k$
+for every $k$.
+
+Therefore $y \in \bigcap_{k=1}^{n} U_k = U$.
+Thus
+\[
+B(x,r) \subseteq U .
+\]
+
+Since $x$ was arbitrary, every point of $U$ has an open ball
+contained in $U$. Therefore $U$ is open.
 \end{proof}
 
 \begin{remark*}[Dependencies]
@@ -27,3 +58,82 @@ of each $U_k$ to construct a ball contained in all of them.
   \item (Key idea) Use a minimum of finitely many radii.
 \end{itemize}
 \end{remark*}
+
+
+
+
+% =========================================================
+% TikZ: Finite Intersection of Open Sets is Open (U1, U2)
+% Matches the picture: two big overlapping sets + three concentric balls
+% "50% bigger" achieved via scale=1.5
+% =========================================================
+
+\begin{tikzpicture}[scale=1.5, line cap=round, line join=round]
+
+  %--- Colors (close to your screenshot)
+  \definecolor{Uone}{RGB}{58,103,190}   % blue stroke
+  \definecolor{Utwo}{RGB}{176,94,52}    % brown/orange stroke
+
+  %--- Centers/radii for the two sets (tweak overlap by changing their centers)
+  \coordinate (c1) at (-2.3,0.0);   % move right/left to adjust overlap
+\coordinate (c2) at ( 1.9,0.0);
+   % move left/right to adjust overlap
+  \def\Rset{2.25}
+
+  %--- Point x in the overlap
+  \coordinate (x) at (0.0,0.0);
+
+  %--- Radii for the balls around x
+  \def\rmin{1.05}   % r = min{r1,r2}
+  \def\rone{1.25}   % r1
+  \def\rtwo{1.70}   % r2
+
+  %--- Title
+  \node at (0,2.85) {$r=\min\{r_1,r_2\}$};
+
+  %--- Fill the open sets (light)
+  \fill[Uone!12] (c1) circle (\Rset);
+  \fill[Utwo!12] (c2) circle (\Rset);
+
+  %--- Boundaries of U1, U2
+  \draw[Uone, line width=0.9pt] (c1) circle (\Rset);
+  \draw[Utwo, line width=0.9pt] (c2) circle (\Rset);
+
+  %--- Labels for U1, U2
+  \node[Uone] at ($(c1)+(0,1.35)$) {$U_1$};
+  \node[Utwo] at ($(c2)+(0,1.35)$) {$U_2$};
+
+  %--- Balls around x
+  \draw[black, dashed, line width=0.7pt] (x) circle (\rtwo);
+  \draw[black, dashed, line width=0.7pt] (x) circle (\rone);
+  \draw[black, line width=0.8pt]         (x) circle (\rmin);
+
+  %--- Point x and a radius segment labeled r
+  \fill[black] (x) circle (1.2pt);
+  \node[above right] at (x) {$x$};
+
+  \draw[black, line width=0.5pt] (x) -- ++(25:\rmin);
+  \node at ($(x)+(25:0.62*\rmin)$) {\scriptsize $r$};
+
+  %--- Labels for the balls (positions chosen to mimic your screenshot)
+  \node at (-0.95, 0.20) {$B(x,r_1)$};
+  \node at ( 0.95,-0.15) {$B(x,r_2)$};
+  \node at ( 0.00,-1.15) {$B(x,r)$};
+
+  %--- Intersection label
+  \node at (0.00,-0.65) {$U_1\cap U_2$};
+
+\end{tikzpicture}
+
+
+
+
+
+
+
+
+
+
+
+
+
