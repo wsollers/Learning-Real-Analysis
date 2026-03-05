@@ -1,0 +1,74 @@
+% =========================================================
+% TikZ diagram: Open set definition
+% Place after the Open Set / Closed Set definition box.
+% Requires: \usepackage{tikz}  \usetikzlibrary{calc}
+%           \usepackage{caption}   (for \captionof)
+% =========================================================
+
+\begin{center}
+\begin{tikzpicture}[
+  dot/.style     = {circle, fill, inner sep=1.8pt},
+  lbl/.style     = {font=\small},
+  sublbl/.style  = {font=\scriptsize, text=gray!55!black}
+]
+
+% --- Open set S ---
+\fill[blue!10]
+  (0, -0.3)
+  .. controls ( 1.4,  0.2) and ( 2.2,  1.4) .. ( 1.8,  2.8)
+  .. controls ( 1.2,  4.0) and (-0.6,  4.4) .. (-1.8,  3.6)
+  .. controls (-3.2,  2.8) and (-3.4,  1.0) .. (-2.4,  0.0)
+  .. controls (-1.6, -0.8) and (-0.6, -0.6) .. ( 0,   -0.3)
+  -- cycle;
+
+\draw[blue!55!black, dashed, line width=0.9pt]
+  (0, -0.3)
+  .. controls ( 1.4,  0.2) and ( 2.2,  1.4) .. ( 1.8,  2.8)
+  .. controls ( 1.2,  4.0) and (-0.6,  4.4) .. (-1.8,  3.6)
+  .. controls (-3.2,  2.8) and (-3.4,  1.0) .. (-2.4,  0.0)
+  .. controls (-1.6, -0.8) and (-0.6, -0.6) .. ( 0,   -0.3)
+  -- cycle;
+
+\node[lbl, text=blue!60!black, font=\small\itshape] at (-1.5, 0.6) {$S$};
+\node[lbl, font=\small\itshape] at (-3.8, 4.2) {$X$};
+
+% --- Interior point x: ball fits ---
+\coordinate (x1) at (-0.8, 2.2);
+\draw[blue!70!black, dashed, line width=0.7pt] (x1) circle (0.85cm);
+\draw[gray!60, line width=0.6pt, ->] (x1) -- ++(0.85, 0);
+\node[sublbl, anchor=south] at ($(x1)+(0.42, 0.0)$) {$r$};
+\node[dot, fill=blue!70!black] at (x1) {};
+\node[lbl, anchor=south east] at ($(x1)+(-0.08, 0.10)$) {$x$};
+\node[sublbl, anchor=south, align=center] at ($(x1)+(0, 0.92)$)
+  {$B_r(x)\subseteq S$ \quad \textit{fits inside}};
+
+% --- Near-boundary point z: ball leaks ---
+\coordinate (z) at (1.35, 1.7);
+\draw[red!60!black, dashed, line width=0.7pt] (z) circle (0.52cm);
+\node[dot, fill=red!70!black] at (z) {};
+\node[lbl, anchor=north west] at ($(z)+(0.08,-0.10)$) {$z$};
+\coordinate (leak) at ($(z)+(0.46, 0.24)$);
+\draw[red!70, line width=1.3pt]
+  ($(leak)+(-0.09,-0.09)$) -- ($(leak)+(0.09, 0.09)$);
+\draw[red!70, line width=1.3pt]
+  ($(leak)+(-0.09, 0.09)$) -- ($(leak)+(0.09,-0.09)$);
+\node[sublbl, anchor=west, align=left] at ($(z)+(0.65, 0.15)$)
+  {$z\in S$, but every $B_r(z)$\\[1pt]meets $X\!\setminus\! S$};
+
+% --- Footer ---
+\node[lbl, align=center] at (-0.8, -1.15)
+  {$S$ is \textbf{open}
+   $\iff$
+   $\forall x \in S,\;
+    \exists r > 0,\;
+    B_r(x) \subseteq S$};
+
+\end{tikzpicture}
+\captionof{figure}{The open set condition in a metric space $(X,d)$.
+Interior point $x$: a ball $B_r(x)$ fits entirely inside $S$, witnessing
+openness at $x$.
+Near-boundary point $z$: every ball around $z$ leaks into $X\setminus S$,
+so if such a point existed in $S$ then $S$ would fail to be open.
+The dashed boundary of $S$ itself signals that $S$ is open (boundary excluded).}
+\label{fig:open-set}
+\end{center}

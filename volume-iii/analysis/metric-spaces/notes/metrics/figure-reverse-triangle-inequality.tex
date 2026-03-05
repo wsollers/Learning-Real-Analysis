@@ -1,0 +1,43 @@
+\begin{tikzpicture}[
+  dot/.style={circle,fill,inner sep=1.8pt},
+  lbl/.style={font=\small},
+  sublbl/.style={font=\scriptsize,text=gray!55!black}
+]
+\coordinate (x) at (0,0);
+\coordinate (y) at (1.6,0);
+\coordinate (z) at (4.8,0);
+
+% Fixed point z shown above; draw connecting lines
+\coordinate (zfixed) at (3.2,2.8);
+
+% Lines x->zfixed and y->zfixed
+\draw[blue!65!black, line width=1.2pt] (x) -- (zfixed);
+\draw[orange!75!black, line width=1.2pt] (y) -- (zfixed);
+
+% d(x,y) line
+\draw[gray!60, line width=1.0pt, <->] ($(x)+(0,-0.45)$) -- ($(y)+(0,-0.45)$);
+\node[sublbl,anchor=north] at ($(x)!0.5!(y)+(0,-0.5)$) {$d(x,y)$};
+
+% d(x,z) label
+\node[sublbl,text=blue!65!black,anchor=east,rotate=60]
+  at ($(x)!0.5!(zfixed)+(-0.18,0)$) {$d(x,z)$};
+
+% d(y,z) label
+\node[sublbl,text=orange!75!black,anchor=west,rotate=-48]
+  at ($(y)!0.5!(zfixed)+(0.15,0)$) {$d(y,z)$};
+
+% Points
+\node[dot] at (x) {};
+\node[dot] at (y) {};
+\node[dot,fill=gray!60] at (zfixed) {};
+
+\node[lbl,anchor=north] at ($(x)+(0,-0.08)$) {$x$};
+\node[lbl,anchor=north] at ($(y)+(0,-0.08)$) {$y$};
+\node[lbl,anchor=south,text=gray!60] at ($(zfixed)+(0,0.1)$) {$z$ (fixed)};
+
+% Annotation
+\node[lbl,align=center] at (2.4,-1.2)
+  {$|d(x,z) - d(y,z)| \;\le\; d(x,y)$\\[3pt]
+   {\scriptsize\color{gray!60!black}moving from $x$ to $y$ changes distance to $z$ by at most $d(x,y)$}};
+\end{tikzpicture}
+

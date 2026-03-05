@@ -1,0 +1,466 @@
+% =========================================================
+\subsubsection{Examples of Metric Spaces}
+\label{sec:examples-metric-spaces}
+% =========================================================
+
+The metric axioms are satisfied by many objects beyond $\mathbb{R}$ and
+$\mathbb{R}^n$. The following definitions introduce the standard sequence
+spaces and function spaces that appear throughout analysis.
+Each space is specified by its underlying set, its metric, and a
+characterisation of what convergence means in that metric.
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Examples of Metric Spaces --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Space} & \textbf{Metric} & \textbf{Complete?} \\
+\midrule
+D\ref{def:lp-rn}
+  & $(\mathbb{R}^n, d_p)$, $\ell^p$ norms on $\mathbb{R}^n$
+  & $\bigl(\sum_{k=1}^n|x_k-y_k|^p\bigr)^{1/p}$
+  & Yes \\
+D\ref{def:ell2}
+  & $(\ell^2, d_2)$, square-summable sequences
+  & $\bigl(\sum_{k=1}^\infty|x_k-y_k|^2\bigr)^{1/2}$
+  & Yes \\
+D\ref{def:ellinf}
+  & $(\ell^\infty, d_\infty)$, bounded sequences
+  & $\sup_{k\ge1}|x_k-y_k|$
+  & Yes \\
+D\ref{def:ell1}
+  & $(\ell^1, d_1)$, absolutely summable sequences
+  & $\sum_{k=1}^\infty|x_k-y_k|$
+  & Yes \\
+D\ref{def:cont-uniform}
+  & $(C([a,b]),d_\infty)$, uniform metric
+  & $\sup_{t\in[a,b]}|f(t)-g(t)|$
+  & Yes \\
+D\ref{def:cont-l1}
+  & $(C([a,b]),d_1)$, $L^1$ metric
+  & $\int_a^b|f(t)-g(t)|\,dt$
+  & No \\
+D\ref{def:poly-space}
+  & $(\mathcal{P}([a,b]),d_\infty)$, polynomial space
+  & Inherited from $C([a,b])$
+  & No \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% =========================================================
+% 1. R^n with ell^p metrics
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\ell^p$ Metric Spaces on $\mathbb{R}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[$\ell^p$ Metric on $\mathbb{R}^n$]
+\label{def:lp-rn}
+Let $n \ge 1$ and $1 \le p \le \infty$.
+The \emph{$\ell^p$ metric space on $\mathbb{R}^n$} is the pair
+$(\mathbb{R}^n, d_p)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}\quad
+$\mathbb{R}^n = \{\,(x_1,\ldots,x_n) : x_k \in \mathbb{R}\,\}$.
+
+\medskip
+\noindent\textbf{Metric.}\quad For $1 \le p < \infty$,
+\[
+d_p(x,y) \;:=\; \Bigl(\,\sum_{k=1}^n |x_k - y_k|^p\Bigr)^{1/p};
+\qquad
+d_\infty(x,y) \;:=\; \max_{1 \le k \le n}|x_k - y_k|.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+A sequence $(x^{(m)})_{m \ge 1}$ in $\mathbb{R}^n$ converges to $x$ in
+$(\mathbb{R}^n, d_p)$ if and only if it converges coordinatewise:
+\[
+d_p(x^{(m)}, x) \to 0
+\;\iff\;
+x^{(m)}_k \to x_k \text{ in } \mathbb{R}
+\quad \forall\, k = 1,\ldots, n.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+For $1 \le p < \infty$:
+\[
+\forall\, p \in [1,\infty),\;
+\forall\, x, y \in \mathbb{R}^n, \quad
+d_p(x,y) \;=\; \Bigl(\sum_{k=1}^n |x_k - y_k|^p \Bigr)^{1/p} \in [0,\infty).
+\]
+For $p = \infty$:
+\[
+\forall\, x, y \in \mathbb{R}^n, \quad
+d_\infty(x,y) \;=\; \max_{1 \le k \le n} |x_k - y_k| \in [0,\infty).
+\]
+\end{remark*}
+
+\begin{remark*}[All $\ell^p$ metrics on $\mathbb{R}^n$ are equivalent]
+For any $1 \le p, q \le \infty$ there exist constants $c, C > 0$
+depending only on $n$ such that
+$c\,d_p(x,y) \le d_q(x,y) \le C\,d_p(x,y)$ for all $x, y \in \mathbb{R}^n$.
+Equivalent metrics have identical open sets, convergent sequences, and
+compact sets, so for most analytic purposes the choice of $p$ is immaterial.
+The unit balls under these metrics are shown in Figure~\ref{fig:unit-balls}.
+\end{remark*}
+
+\begin{remark*}[Triangle inequality]
+The triangle inequality for $d_p$ ($1 \le p < \infty$) is
+\emph{Minkowski's inequality}:
+$\bigl(\sum_{k}|x_k+y_k|^p\bigr)^{1/p}
+\le \bigl(\sum_k|x_k|^p\bigr)^{1/p} + \bigl(\sum_k|y_k|^p\bigr)^{1/p}$.
+For $d_\infty$ it reduces to $\max_k|x_k+y_k|\le\max_k|x_k|+\max_k|y_k|$.
+\end{remark*}
+
+% =========================================================
+% 2. ell^2
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\ell^2$ — Square-Summable Sequence Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[$\ell^2$ Space]
+\label{def:ell2}
+The \emph{$\ell^2$ space} is the metric space $(\ell^2, d_2)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}
+\[
+\ell^2 \;:=\; \Bigl\{\,(x_k)_{k \ge 1} : x_k \in \mathbb{R},\;
+\sum_{k=1}^\infty x_k^2 < \infty\,\Bigr\}.
+\]
+
+\medskip
+\noindent\textbf{Metric.}
+\[
+d_2(x,y) \;:=\; \Bigl(\,\sum_{k=1}^\infty |x_k - y_k|^2\Bigr)^{1/2}.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$x^{(m)} \to x$ in $(\ell^2, d_2)$ if and only if:
+\[
+\forall\,\varepsilon > 0,\;\exists M \in \mathbb{N},\;
+\forall m \ge M:\quad
+\sum_{k=1}^\infty |x^{(m)}_k - x_k|^2 \;<\; \varepsilon^2.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\, x, y \in \ell^2, \quad
+d_2(x,y) \;=\; \Bigl(\sum_{k=1}^\infty |x_k - y_k|^2\Bigr)^{1/2} \in [0,\infty).
+\]
+That the sum converges: $\sum|x_k-y_k|^2 \le 2\sum x_k^2 + 2\sum y_k^2 < \infty$
+for $x, y \in \ell^2$ by the parallelogram identity.
+\end{remark*}
+
+\begin{remark*}[Convergence vs.\ coordinatewise convergence]
+$\ell^2$ convergence implies coordinatewise convergence but the converse
+fails. If $e^{(m)}$ is the sequence with $1$ in position $m$ and $0$
+elsewhere, then $e^{(m)}_k \to 0$ for each fixed $k$, yet
+$d_2(e^{(m)}, 0) = 1$ for all $m$.
+\end{remark*}
+
+\begin{remark*}[Hilbert space structure]
+$(\ell^2, d_2)$ is complete and is the prototypical infinite-dimensional
+\emph{Hilbert space}, carrying the inner product
+$\langle x, y \rangle := \sum_{k=1}^\infty x_k y_k$, from which the
+metric is recovered by $d_2(x,y) = \langle x-y,\, x-y\rangle^{1/2}$.
+\end{remark*}
+
+% =========================================================
+% 3. ell^inf
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\ell^\infty$ — Bounded Sequence Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[$\ell^\infty$ Space]
+\label{def:ellinf}
+The \emph{$\ell^\infty$ space} is the metric space $(\ell^\infty, d_\infty)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}
+\[
+\ell^\infty \;:=\; \bigl\{\,(x_k)_{k \ge 1} : x_k \in \mathbb{R},\;
+\sup_{k \ge 1}|x_k| < \infty\,\bigr\}.
+\]
+
+\medskip
+\noindent\textbf{Metric.}
+\[
+d_\infty(x,y) \;:=\; \sup_{k \ge 1}\, |x_k - y_k|.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$x^{(m)} \to x$ in $(\ell^\infty, d_\infty)$ if and only if
+the convergence is \emph{uniform across all coordinates}:
+\[
+\forall\,\varepsilon > 0,\;\exists M \in \mathbb{N},\;
+\forall m \ge M,\;\forall k \ge 1:\quad
+|x^{(m)}_k - x_k| \;<\; \varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\, x, y \in \ell^\infty, \quad
+d_\infty(x,y) \;=\; \sup_{k \ge 1}|x_k - y_k| \in [0,\infty).
+\]
+The triangle inequality: $\sup_k|x_k - z_k| \le \sup_k|x_k - y_k| + \sup_k|y_k - z_k|$.
+\end{remark*}
+
+\begin{remark*}[Containment of sequence spaces]
+$\ell^1 \subsetneq \ell^2 \subsetneq \ell^\infty$.
+The constant sequence $(1,1,1,\ldots)$ belongs to $\ell^\infty$ but not
+$\ell^2$; the sequence $(1/k)_{k\ge1}$ belongs to $\ell^2$ but not $\ell^1$
+(since $\sum 1/k$ diverges).
+On the common domain $\ell^1$, the metrics satisfy
+$d_\infty(x,y) \le d_2(x,y) \le d_1(x,y)$,
+so $\ell^1$ convergence is the strongest condition.
+\end{remark*}
+
+% =========================================================
+% 4. ell^1
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\ell^1$ — Absolutely Summable Sequence Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[$\ell^1$ Space]
+\label{def:ell1}
+The \emph{$\ell^1$ space} is the metric space $(\ell^1, d_1)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}
+\[
+\ell^1 \;:=\; \Bigl\{\,(x_k)_{k \ge 1} : x_k \in \mathbb{R},\;
+\sum_{k=1}^\infty |x_k| < \infty\,\Bigr\}.
+\]
+
+\medskip
+\noindent\textbf{Metric.}
+\[
+d_1(x,y) \;:=\; \sum_{k=1}^\infty |x_k - y_k|.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$x^{(m)} \to x$ in $(\ell^1, d_1)$ if and only if:
+\[
+\forall\,\varepsilon > 0,\;\exists M \in \mathbb{N},\;
+\forall m \ge M:\quad
+\sum_{k=1}^\infty |x^{(m)}_k - x_k| \;<\; \varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\, x, y \in \ell^1, \quad
+d_1(x,y) \;=\; \sum_{k=1}^\infty |x_k - y_k| \in [0,\infty).
+\]
+Finiteness: $|x_k - y_k| \le |x_k| + |y_k|$, so
+$d_1(x,y) \le \sum|x_k| + \sum|y_k| < \infty$ for $x, y \in \ell^1$.
+\end{remark*}
+
+% =========================================================
+% 5. C([a,b]) uniform metric
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($C([a,b])$ with the Uniform Metric)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[{$C([a,b])$ with Uniform Metric}]
+\label{def:cont-uniform}
+The \emph{space of continuous functions with the uniform metric} is the pair
+$(C([a,b]), d_\infty)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}
+\[
+C([a,b]) \;:=\; \bigl\{\,f : [a,b] \to \mathbb{R} \mid f \text{ is continuous}\,\bigr\}.
+\]
+
+\medskip
+\noindent\textbf{Metric.}
+\[
+d_\infty(f,g) \;:=\; \sup_{t \in [a,b]}|f(t) - g(t)| \;=\; \|f - g\|_\infty.
+\]
+Since $f - g$ is continuous on the compact interval $[a,b]$, it attains
+its supremum, so $d_\infty(f,g)$ is a finite non-negative real number.
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$f_n \to f$ in $(C([a,b]), d_\infty)$ if and only if $f_n \to f$
+\emph{uniformly} on $[a,b]$:
+\[
+\forall\,\varepsilon > 0,\;\exists N \in \mathbb{N},\;
+\forall n \ge N,\;\forall t \in [a,b]:\quad
+|f_n(t) - f(t)| \;<\; \varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\, f, g \in C([a,b]), \quad
+d_\infty(f,g) \;=\; \sup_{t \in [a,b]}|f(t) - g(t)| \in [0,\infty).
+\]
+Triangle inequality: for all $t$, $|f(t)-h(t)| \le |f(t)-g(t)| + |g(t)-h(t)|$;
+taking the supremum gives $d_\infty(f,h) \le d_\infty(f,g) + d_\infty(g,h)$.
+\end{remark*}
+
+\begin{remark*}[Completeness and Banach space]
+$(C([a,b]), d_\infty)$ is complete: a sequence $(f_n)$ that is Cauchy
+under $d_\infty$ is uniformly Cauchy, and uniform limits of continuous
+functions are continuous.
+The space is the prototypical infinite-dimensional \emph{Banach space}
+(a complete normed vector space).
+\end{remark*}
+
+\begin{remark*}[Uniform vs.\ pointwise convergence]
+Convergence in $d_\infty$ is strictly stronger than pointwise convergence.
+The sequence $f_n(t) = t^n$ on $[0,1]$ converges pointwise to the
+discontinuous function $\mathbf{1}_{t=1}$, but $d_\infty(f_n, 0) = 1$
+for all $n$, so $(f_n)$ does not converge to any continuous function
+under $d_\infty$.
+\end{remark*}
+
+% =========================================================
+% 6. C([a,b]) L^1 metric
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($C([a,b])$ with the $L^1$ Metric)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[{$C([a,b])$ with the $L^1$ Metric}]
+\label{def:cont-l1}
+The \emph{space of continuous functions with the $L^1$ metric} is the pair
+$(C([a,b]), d_1)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}\quad
+The same set $C([a,b])$ as in Definition~\ref{def:cont-uniform}.
+
+\medskip
+\noindent\textbf{Metric.}
+\[
+d_1(f,g) \;:=\; \int_a^b |f(t) - g(t)|\,dt.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$f_n \to f$ in $(C([a,b]), d_1)$ if and only if:
+\[
+\forall\,\varepsilon > 0,\;\exists N \in \mathbb{N},\;
+\forall n \ge N:\quad
+\int_a^b |f_n(t) - f(t)|\,dt \;<\; \varepsilon.
+\]
+This measures the total area between the graphs; a tall narrow spike
+of height $H$ and width $\delta$ contributes $H$ to $d_\infty(f_n, f)$
+but only $\approx H\delta$ to $d_1(f_n, f)$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\, f, g \in C([a,b]), \quad
+d_1(f,g) \;=\; \int_a^b |f(t) - g(t)|\,dt \in [0,\infty).
+\]
+Triangle inequality: $\int|f-h|\le\int|f-g|+\int|g-h|$ by linearity and
+monotonicity of the Riemann integral.
+\end{remark*}
+
+\begin{remark*}[Two metrics, two different senses of approximation]
+$(C([a,b]), d_1)$ and $(C([a,b]), d_\infty)$ share the same underlying set
+but are not equivalent metrics (Definition~\ref{def:equivalent-metrics}):
+$f_n(t) = t^n$ on $[0,1]$ satisfies $d_1(f_n, 0) = \frac{1}{n+1} \to 0$
+but $d_\infty(f_n, 0) = 1$ for all $n$.
+$(C([a,b]), d_1)$ is moreover \emph{not complete}: there exist Cauchy
+sequences of continuous functions whose $d_1$-limit is not continuous.
+Completing $(C([a,b]), d_1)$ yields the Lebesgue space $L^1([a,b])$.
+\end{remark*}
+
+% =========================================================
+% 7. Polynomial space
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Polynomial Space $\mathcal{P}([a,b])$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[{Polynomial Space $\mathcal{P}([a,b])$}]
+\label{def:poly-space}
+The \emph{polynomial metric space} is the pair
+$(\mathcal{P}([a,b]),\, d_\infty)$ where:
+
+\medskip
+\noindent\textbf{Underlying set.}
+\[
+\mathcal{P}([a,b]) \;:=\;
+\bigl\{\,p : [a,b] \to \mathbb{R} \mid
+p(t) = a_n t^n + \cdots + a_1 t + a_0
+\text{ for some } n \in \mathbb{N},\; a_k \in \mathbb{R}\,\bigr\}.
+\]
+Elements are polynomial functions of any finite degree; degree is unbounded.
+
+\medskip
+\noindent\textbf{Metric.}\quad
+The uniform metric inherited as a subspace of $C([a,b])$
+(Definition~\ref{def:subspace-metric}):
+\[
+d_\infty(p,q) \;:=\; \sup_{t \in [a,b]}|p(t) - q(t)|.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$p_n \to f$ in $(\mathcal{P}([a,b]), d_\infty)$ if and only if:
+\[
+\forall\,\varepsilon > 0,\;\exists N \in \mathbb{N},\;
+\forall n \ge N,\;\forall t \in [a,b]:\quad
+|p_n(t) - f(t)| \;<\; \varepsilon.
+\]
+The limit $f$ need not be a polynomial.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\, p, q \in \mathcal{P}([a,b]), \quad
+d_\infty(p,q) \;=\; \sup_{t \in [a,b]}|p(t) - q(t)| \in [0,\infty).
+\]
+\end{remark*}
+
+\begin{remark*}[Incompleteness and the Weierstrass Approximation Theorem]
+$(\mathcal{P}([a,b]), d_\infty)$ is \emph{not} complete.
+The \emph{Weierstrass Approximation Theorem} states:
+\[
+\forall\, f \in C([a,b]),\;
+\forall\,\varepsilon > 0,\;
+\exists\, p \in \mathcal{P}([a,b]):\quad
+d_\infty(p,f) < \varepsilon.
+\]
+Thus $\mathcal{P}([a,b])$ is dense in $(C([a,b]), d_\infty)$, and
+the completion of $(\mathcal{P}([a,b]), d_\infty)$ is exactly
+$(C([a,b]), d_\infty)$ --- precisely as $(\mathbb{Q},|\cdot|)$ completes
+to $(\mathbb{R},|\cdot|)$.
+\end{remark*}

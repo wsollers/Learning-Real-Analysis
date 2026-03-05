@@ -1,0 +1,114 @@
+\begin{tikzpicture}[
+  dot/.style={circle,fill,inner sep=1.9pt},
+  >=Stealth,
+  lbl/.style={font=\small},
+  slbl/.style={font=\scriptsize},
+]
+
+% ═══ Geometry (world coords) ══════════════════════════════════
+%   x   = (-1.4, 0)   — centre of B_r(x)
+%   x0  = ( 0.6, 0.7) — interior point; |x0-x|=(2.0,0.7) ≈ 2.12
+%   x1  = (-0.3, 1.4) — inside B_eps(x0); |x1-x0|=(0.9,0.7) ≈ 1.14 ≈ eps
+%   R   = 3.8          — outer radius   (|x0-x|+eps ≈ 2.12+1.15 = 3.27 < 3.8)
+%   eps = 1.15         — inner radius
+%
+%   x1 sits clearly to the UPPER-LEFT of x0, giving label space.
+%   The gap arrow goes UPPER-RIGHT (toward the outer boundary along x→x0 ray).
+
+\coordinate (x)  at (-1.4,  0.0);
+\coordinate (x0) at ( 0.6,  0.7);
+\coordinate (x1) at (-0.3,  1.6);
+
+\def\R{3.8}
+\def\eps{1.15}
+
+% ─── Filled regions ───────────────────────────────────────────
+\fill[blue!7]    (x)  circle (\R);
+\fill[orange!16] (x0) circle (\eps);
+
+% ─── Boundaries ───────────────────────────────────────────────
+\draw[blue!55!black,   line width=1.4pt, dashed] (x)  circle (\R);
+\draw[orange!60!black, line width=1.2pt]         (x0) circle (\eps);
+
+% ─── Points ───────────────────────────────────────────────────
+\node[dot, fill=blue!70!black]   at (x)  {};
+\node[dot, fill=orange!75!black] at (x0) {};
+\node[dot, fill=red!65!black]    at (x1) {};
+
+% ─── Point labels ─────────────────────────────────────────────
+\node[lbl, anchor=north]      at ($(x)  + (0,-0.14)$)   {$x$};
+\node[lbl, anchor=north west] at ($(x0) + (0.10,-0.12)$) {$x_0$};
+\node[lbl, anchor=south]      at ($(x1) + (0, 0.12)$)   {$x_1$};
+
+% ─── x → x0  blue solid ────────────────────────────────────
+\draw[blue!65!black, line width=1.0pt] (x) -- (x0);
+\node[slbl, text=blue!65!black, anchor=north]
+  at ($(x)!0.5!(x0) + (0,-0.10)$) {$d(x,x_0)$};
+
+% ─── x0 → x1  orange solid ─────────────────────────────────
+\draw[orange!75!black, line width=1.0pt] (x0) -- (x1);
+\node[slbl, text=orange!75!black, anchor=east]
+  at ($(x0)!0.5!(x1) + (-0.12, 0)$) {$d(x_0,x_1)$};
+
+% ─── x → x1  red dashed ────────────────────────────────────
+\draw[red!55!black, line width=0.9pt, dashed] (x) -- (x1);
+\node[slbl, text=red!50!black, anchor=east]
+  at ($(x)!0.45!(x1) + (-0.10, 0)$) {$d(x,x_1)$};
+
+% ─── Radius r  (rightward, below x) ─────────────────────────
+\draw[blue!50!black, line width=0.8pt, <->]
+  ($(x)+(0,-0.70)$) -- ++({\R},0)
+  node[midway, slbl, below, yshift=-3pt, text=blue!55!black] {$r$};
+
+% ─── Boundary point along x→x0 direction ─────────────────────
+% x0 relative to x = (0.6-(-1.4), 0.7-0.0) = (2.0, 0.7)
+\pgfmathsetmacro{\relx}{2.0}
+\pgfmathsetmacro{\rely}{0.7}
+\pgfmathsetmacro{\dxo}{sqrt(\relx*\relx+\rely*\rely)}
+\pgfmathsetmacro{\ux}{\relx/\dxo}
+\pgfmathsetmacro{\uy}{\rely/\dxo}
+\pgfmathsetmacro{\bwx}{-1.4 + \ux*\R}
+\pgfmathsetmacro{\bwy}{ 0.0 + \uy*\R}
+\node[dot, fill=blue!40!black, inner sep=1.0pt] at (\bwx,\bwy) {};
+
+% ─── Gap arrow x0 → boundary, label above ────────────────────
+\draw[gray!55, line width=0.78pt, <->] (x0) -- (\bwx,\bwy);
+% midpoint of gap segment, shift label above the line
+\node[slbl, text=gray!55!black, anchor=south west]
+  at ($(x0)!0.46!(\bwx,\bwy) + (0.0, 0.18)$) {$r - d(x,x_0)$};
+
+% ─── ε arrow downward from x0 ────────────────────────────────
+\draw[orange!60!black, line width=0.8pt, <->]
+  (x0) -- ++(0,-\eps)
+  node[midway, slbl, right, xshift=4pt, text=orange!70!black] {$\varepsilon$};
+
+% ─── Ball name labels ─────────────────────────────────────────
+% B_r(x): lower-left interior where there is clear space
+\node[lbl, text=blue!60!black, font=\small\itshape]
+  at ($(x) + (-2.4,-1.8)$) {$B_r(x)$};
+
+% B_eps(x0): lower-right of inner ball, outside it
+\node[lbl, text=orange!65!black, font=\small\itshape]
+  at ($(x0) + (1.05,-0.65)$) {$B_\varepsilon(x_0)$};
+
+% ─── Choice annotation ────────────────────────────────────────
+\node[slbl, text=gray!50!black, font=\scriptsize\itshape, anchor=north west]
+  at ($(x)+(-2.4,-2.25)$)
+  {choose $\varepsilon$ with $0 < \varepsilon < r - d(x,x_0)$};
+
+% ─── Callout box ──────────────────────────────────────────────
+\node[
+  draw=gray!40, fill=white, rounded corners=4pt,
+  font=\scriptsize, text width=7.0cm,
+  align=left, inner sep=8pt, anchor=north west
+] at ($(x)+(-2.4,-2.65)$) {
+  \textbf{Triangle inequality:}\\[5pt]
+  $d(x,x_1) \;\leq\; d(x,x_0) + d(x_0,x_1)$\\[3pt]
+  $\phantom{d(x,x_1)}\;< (r-\varepsilon)+\varepsilon$\\[3pt]
+  $\phantom{d(x,x_1)}\;= r$\\[5pt]
+  $\therefore$ $x_1\in B_r(x)$.
+  Since $x_1\in B_\varepsilon(x_0)$ was arbitrary,
+  $B_\varepsilon(x_0)\subseteq B_r(x)$.
+};
+
+\end{tikzpicture}

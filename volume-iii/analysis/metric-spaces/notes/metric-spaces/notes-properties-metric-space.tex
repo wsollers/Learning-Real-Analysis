@@ -1,0 +1,301 @@
+% =========================================================
+\subsubsection{Properties of Metric Spaces}
+\label{sec:properties-metric-spaces}
+% =========================================================
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Properties of Metric Spaces --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:diameter}
+  & $\operatorname{diam}(A) := \sup\{d(x,y):x,y\in A\}$
+  & Definition
+  & \hyperref[def:diameter]{$\downarrow$} \\
+D\ref{def:bounded-set}
+  & $A$ bounded $\iff$ $\operatorname{diam}(A) < \infty$
+  & Definition
+  & \hyperref[def:bounded-set]{$\downarrow$} \\
+T\ref{thm:monotonicity-of-diameter}
+  & $A \subseteq B \Rightarrow \operatorname{diam}(A) \le \operatorname{diam}(B)$
+  & Supremum over larger set
+  & \hyperref[thm:monotonicity-of-diameter]{$\downarrow$} \\
+D\ref{def:subspace-metric}
+  & $(A, d|_A)$ is a metric space for any $A \subseteq X$
+  & Definition
+  & \hyperref[def:subspace-metric]{$\downarrow$} \\
+D\ref{def:isolated-point-ms}
+  & $x$ isolated $\iff$ $\{x\}$ is open in $X$
+  & Definition
+  & \hyperref[def:isolated-point-ms]{$\downarrow$} \\
+D\ref{def:discrete-metric-space}
+  & Discrete $\iff$ every subset is open
+  & Definition
+  & \hyperref[def:discrete-metric-space]{$\downarrow$} \\
+P\ref{prop:discrete-metric}
+  & Discrete metric $d_{\mathrm{disc}}$ makes every point isolated
+  & Direct from definition
+  & \hyperref[prop:discrete-metric]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---- Diameter ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Diameter)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Diameter]
+\label{def:diameter}
+Let $(X,d)$ be a metric space and let $A \subseteq X$.
+The \emph{diameter} of $A$ is
+\[
+\operatorname{diam}(A)
+:=
+\sup\{\, d(x,y) : x,y \in A \,\}.
+\]
+When $A = \varnothing$ the convention is $\operatorname{diam}(\varnothing) := 0$.
+The \emph{diameter of $X$} itself is $\operatorname{diam}(X)$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\;
+\forall A \subseteq X,\quad
+\operatorname{diam}(A)
+\;=\;
+\sup\,\{\, r \in \mathbb{R} \mid
+  \exists\, x, y \in A,\; d(x,y) = r \,\}.
+\]
+\end{remark*}
+
+\input{volume-iii/analysis/metric-spaces/notes/metric-spaces/figure-diameter}
+
+\begin{remark*}[Intuition]
+The diameter is the supremum of all pairwise distances in $A$ ---
+the "widest" the set gets.
+In $\mathbb{R}$ with the standard metric, $\operatorname{diam}([a,b]) = b - a$.
+In $\mathbb{R}^2$, the diameter of a closed disc of radius $r$ is $2r$,
+achieved by any pair of antipodal boundary points.
+\end{remark*}
+
+% =========================================================
+% Antipodal Boundary Points (Metric Space Version)
+% =========================================================
+
+\begin{definition}[Antipodal Boundary Points]
+Let $(X,d)$ be a metric space and let $A \subseteq X$ be a nonempty subset.
+The \emph{diameter} of $A$ is
+\[
+\operatorname{diam}(A)
+:=
+\sup\{ d(x,y) : x,y \in A \}.
+\]
+
+Two points $p,q \in \partial A$ are called \emph{antipodal boundary points}
+if
+\[
+d(p,q) = \operatorname{diam}(A).
+\]
+\end{definition}
+
+\begin{remark*}[Common error --- ``upper bound for $A$'']
+It is tempting to say that $\operatorname{diam}(A)$ is an upper bound
+\emph{for $A$}, but this is a type error unless $X = \mathbb{R}$.
+The supremum in $\operatorname{diam}(A) = \sup\{\, d(x,y) \mid x, y \in A \,\}$
+is taken over the set of \emph{real numbers}
+$\{\, d(x,y) \mid x, y \in A \,\}$, not over the set of points $A \subseteq X$.
+An upper bound for $\operatorname{diam}(A)$ is a real number $M$ such that
+$d(x,y) \le M$ for all $x, y \in A$ --- it bounds the \emph{distances},
+not the points.
+The correct phrasing is always:
+``$M$ is an upper bound for $\{\, d(x,y) \mid x, y \in A \,\}$,''
+or equivalently, ``$d(x,y) \le M$ for all $x, y \in A$.''
+\end{remark*}
+
+\begin{example*}[Why ``upper bound for $A$'' fails in $\mathbb{R}^2$]
+Let $X = \mathbb{R}^2$ with the Euclidean metric and let
+$A = \{(1,0),(0,1)\} \subseteq \mathbb{R}^2$.
+The pairwise distances form the set
+$\{\, d(x,y) \mid x, y \in A \,\} = \{0, \sqrt{2}\}$,
+so $\operatorname{diam}(A) = \sqrt{2}$.
+Now consider what ``$\sqrt{2}$ is an upper bound for $A$'' would mean:
+we would need $(1,0) \le \sqrt{2}$ and $(0,1) \le \sqrt{2}$, but elements
+of $A$ are points in $\mathbb{R}^2$, not real numbers.
+The comparison is undefined --- $\mathbb{R}^2$ carries no total order
+compatible with the metric.
+What \emph{is} well-typed is: $\sqrt{2}$ is an upper bound for
+$\{0,\sqrt{2}\} \subseteq \mathbb{R}$, since $0 \le \sqrt{2}$ and
+$\sqrt{2} \le \sqrt{2}$.
+\end{example*}
+
+% ---- Bounded Set ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bounded Set)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Bounded Set]
+\label{def:bounded-set}
+Let $(X,d)$ be a metric space and let $A \subseteq X$.
+The set $A$ is called \emph{bounded} if $\operatorname{diam}(A) < \infty$,
+i.e.\ if there exists $M \in \mathbb{R}$ such that $d(x,y) \le M$ for all
+$x, y \in A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+A\ \text{is bounded}
+\iff
+\exists M \in \mathbb{R}^+,\;
+\forall x, y \in A,\;
+d(x,y) \le M.
+\]
+\end{remark*}
+
+\begin{remark*}[Equivalent characterisation]
+$A$ is bounded if and only if $A$ is contained in some open ball:
+$\exists x_0 \in X,\; \exists r > 0,\; A \subseteq B_r(x_0)$.
+The two conditions are equivalent by the triangle inequality.
+\end{remark*}
+
+% ---- Monotonicity of Diameter ----
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Monotonicity of Diameter)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:monotonicity-of-diameter]{Monotonicity of Diameter}%
+}{Monotonicity of Diameter}]
+\label{thm:monotonicity-of-diameter}
+Let $(X,d)$ be a metric space and let $A \subseteq B \subseteq X$.
+Then
+\[
+\operatorname{diam}(A) \le \operatorname{diam}(B).
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\;
+\forall A, B \subseteq X,\;
+A \subseteq B
+\;\Rightarrow\;
+\sup\{\,d(x,y):x,y\in A\,\}
+\;\le\;
+\sup\{\,d(x,y):x,y\in B\,\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Intuition]
+A subset can only be as wide as its superset.
+Any pair of points in $A$ is also a pair in $B$, so the supremum
+over $B$ is taken over a larger collection and cannot be smaller.
+\end{remark*}
+
+
+
+% ---- Isolated Point ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Isolated Point)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Isolated Point]
+\label{def:isolated-point-ms}
+Let $(X,d)$ be a metric space.
+A point $x \in X$ is called \emph{isolated} if the singleton set $\{x\}$
+is open in $X$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Equivalent formulations]
+The following are equivalent for $x \in X$:
+\begin{enumerate}[label=(\roman*)]
+  \item $\{x\}$ is open in $X$.
+  \item $\exists r > 0$ such that $B_r(x) = \{x\}$.
+  \item $x$ is not a limit point of $X$
+        (see Definition~\ref{def:limit-point}).
+\end{enumerate}
+The equivalence of (i) and (ii) is immediate from the definition of open set.
+\end{remark*}
+
+\begin{remark*}[Source note]
+This is the same concept as Definition~\ref{def:isolated-point} in the
+limit points section, stated there for subsets $E \subseteq X$.
+Here the definition applies to the ambient space $X$ itself,
+which is the natural context for discrete spaces.
+\end{remark*}
+
+% ---- Discrete Metric Space ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Discrete Metric Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Discrete Metric Space]
+\label{def:discrete-metric-space}
+Let $(X,d)$ be a metric space.
+The space is called \emph{discrete} if every subset of $X$ is open,
+or equivalently if every point of $X$ is isolated.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+(X,d)\ \text{discrete}
+\iff
+\forall x \in X,\;
+\exists r > 0,\;
+B_r(x) = \{x\}.
+\]
+\end{remark*}
+
+\input{volume-iii/analysis/metric-spaces/notes/metric-spaces/figure-discrete-metric}
+
+\begin{remark*}[Intuition]
+In a discrete space no point is a limit of a non-constant sequence from $X$.
+Every sequence that converges must eventually be constant.
+This makes discrete spaces the ``opposite'' of dense spaces.
+\end{remark*}
+
+% ---- Discrete Metric ----
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:discrete-metric]{Discrete Metric}%
+}{Discrete Metric}]
+\label{prop:discrete-metric}
+Let $X$ be any non-empty set and define
+\[
+d_{\mathrm{disc}}(x,y)
+:=
+\begin{cases}
+0 & \text{if } x = y, \\
+1 & \text{if } x \neq y.
+\end{cases}
+\]
+Then $(X, d_{\mathrm{disc}})$ is a metric space in which every point is
+isolated and every subset of $X$ is open.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall x \in X,\;
+B_{1/2}(x) = \{x\},
+\]
+so $\{x\}$ is open for every $x$, and any $S \subseteq X$ is a union
+of open singletons, hence open.
+\end{remark*}
+
+\begin{remark*}[Consequence]
+The discrete metric shows that discreteness is not vacuous:
+it is realised by a concrete metric on any set.
+It also shows that the topology of a metric space depends on the metric,
+not just the underlying set: $(\mathbb{R}, d_{\mathrm{disc}})$ and
+$(\mathbb{R}, |\cdot|)$ have the same points but entirely different
+open sets.
+\end{remark*}

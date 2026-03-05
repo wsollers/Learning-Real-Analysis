@@ -1,0 +1,305 @@
+% =========================================================
+\subsubsection{Limit Points}
+\label{sec:limit-points}
+% =========================================================
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Limit Points --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:limit-point}    & Limit point of $E$: every $B_r(x)$ meets $E\setminus\{x\}$        & Definition             & \hyperref[def:limit-point]{$\downarrow$} \\
+D\ref{def:derived-set}    & $E' :=$ set of all limit points of $E$                            & Definition             & \hyperref[def:derived-set]{$\downarrow$} \\
+D\ref{def:isolated-point} & $a\in E$ isolated iff $a\notin E'$                                & Definition             & \hyperref[def:isolated-point]{$\downarrow$} \\
+T\ref{thm:seq-char-limit} & $x\in E' \iff \exists(x_n)\subseteq E\setminus\{x\}$, $x_n\to x$ & Sequential, $\varepsilon$-$\delta$ & \hyperref[thm:seq-char-limit]{$\downarrow$} \\
+C\ref{cor:inf-nbhd}       & $x\in E' \iff$ every $B_r(x)\cap E$ is infinite                  & Seq.\ char.\ + construction & \hyperref[cor:inf-nbhd]{$\downarrow$} \\
+T\ref{thm:derived-closed} & $E'$ is closed                                                    & Sequential closure     & \hyperref[thm:derived-closed]{$\downarrow$} \\
+T\ref{thm:closed-derived} & $E$ closed $\iff E'\subseteq E$                                   & Sequential closure     & \hyperref[thm:closed-derived]{$\downarrow$} \\
+T\ref{thm:closure-formula}& $\overline{E} = E\cup E'$                                         & Definition of closure  & \hyperref[thm:closure-formula]{$\downarrow$} \\
+D\ref{def:perfect-set}    & $E$ perfect iff $E$ closed and $E=E'$                             & Definition             & \hyperref[def:perfect-set]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\medskip
+\begin{remark*}[Terminology note]
+The term \emph{limit point} is standard in Rudin and Abbott.
+Pugh uses \emph{cluster point} and \emph{accumulation point} as synonyms.
+Be aware that some authors (including Pugh) use ``limit of $S$'' more broadly,
+allowing the limit sequence to be constant; in that usage a finite set can have
+limits.
+The definition here follows Rudin: limit points require a \emph{distinct}
+sequence, so a finite set has no limit points.
+\end{remark*}
+
+% ---- Limit Point ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Limit Point)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Limit Point]
+\label{def:limit-point}
+Let $(X,d)$ be a metric space and let $E \subseteq X$.
+A point $x \in X$ is called a \emph{limit point} of $E$ if
+\[
+\forall r > 0,\quad B_r(x) \cap (E \setminus \{x\}) \neq \emptyset.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\
+\forall E \subseteq X,\
+\forall x \in X,
+\]
+\[
+x \text{ is a limit point of } E
+\iff
+\forall r \in \mathbb{R}^+,\
+\exists y \in E \setminus \{x\}
+\text{ such that } d(x,y) < r.
+\]
+\end{remark*}
+
+\input{volume-iii/analysis/metric-spaces/notes/limit-points/figure-limit-points}
+
+\begin{remark*}[Intuition]
+A limit point of $E$ is a point that $E$ crowds around, even if $x$ itself
+is not in $E$.
+Every punctured neighbourhood of $x$ must meet $E$.
+The exclusion of $x$ itself prevents isolated points from qualifying.
+\end{remark*}
+
+% ---- Derived Set ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Derived Set)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Derived Set]
+\label{def:derived-set}
+Let $(X,d)$ be a metric space and let $E \subseteq X$.
+The set of all limit points of $E$ is called the \emph{derived set} of $E$
+and is denoted $E'$:
+\[
+E' := \{x \in X : x \text{ is a limit point of } E \}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\
+\forall E \subseteq X,
+\]
+\[
+E' = \{\, x \in X :
+\forall r \in \mathbb{R}^+,\
+\exists y \in E \setminus \{x\}\ \text{such that}\ d(x,y) < r
+\,\}.
+\]
+\end{remark*}
+
+\input{volume-iii/analysis/metric-spaces/notes/limit-points/figure-limit-points}
+
+% ---- Isolated Point ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Isolated Point)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Isolated Point]
+\label{def:isolated-point}
+Let $(X,d)$ be a metric space and let $E \subseteq X$.
+A point $a \in E$ is called an \emph{isolated point} of $E$ if $a$ is not
+a limit point of $E$, i.e.\ $a \notin E'$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\
+\forall E \subseteq X,\
+\forall a \in E,
+\]
+\[
+a\ \text{is isolated}
+\iff
+\exists r \in \mathbb{R}^+\ \text{such that}\
+\forall y \in E,\ y \neq a \Rightarrow d(a,y) \geq r.
+\]
+\end{remark*}
+
+\begin{remark*}[Isolated vs.\ limit point]
+Isolated points are always \emph{elements} of $E$.
+Limit points of $E$ need not belong to $E$: consider $E = (0,1) \subset \mathbb{R}$,
+where $0$ and $1$ are limit points not in $E$.
+Every point of $E$ is either isolated or a limit point of $E$ --- and both can
+occur simultaneously in the same set (e.g.\ $E = \{0\} \cup (1,2)$).
+\end{remark*}
+
+% ---- Sequential Characterization ----
+\begin{theorem}[\texorpdfstring{\hyperref[prf:seq-char-limit]{Sequential Characterization of Limit Points}}{Sequential Characterization of Limit Points}]
+\label{thm:seq-char-limit}
+Let $(X,d)$ be a metric space, $E \subseteq X$, and $x \in X$.
+Then
+\[
+x \in E'
+\iff
+\exists (x_n) \subseteq E \text{ with all } x_n \neq x
+\text{ and } x_n \to x.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d),\ \forall E \subseteq X,\ \forall x \in X,
+\]
+\[
+x \in E'
+\iff
+\exists (x_n)_{n\in\mathbb{N}} \subseteq E
+\text{ such that }
+(\forall n,\ x_n \neq x)
+\land
+(\forall \varepsilon > 0,\ \exists N\ \forall n \ge N,\ d(x_n,x) < \varepsilon).
+\]
+\end{remark*}
+
+% ---- Infinite Neighbourhood Characterization ----
+\begin{corollary}[\texorpdfstring{\hyperref[prf:inf-nbhd]{Infinite Neighbourhood Characterization}}{Infinite Neighbourhood Characterization}]
+\label{cor:inf-nbhd}
+Let $(X,d)$ be a metric space and $E \subseteq X$.
+Then
+\[
+x \in E'
+\iff
+\forall r > 0,\ B_r(x) \cap E
+\text{ is infinite}.
+\]
+\end{corollary}
+
+\begin{remark*}[Fully quantified form]
+\[
+x \in E'
+\iff
+\forall r > 0,\
+\forall N \in \mathbb{N},\
+\exists y \in B_r(x) \cap E
+\text{ distinct from at least } N \text{ previously chosen points}.
+\]
+\end{remark*}
+
+\begin{remark*}[Consequence]
+This corollary rules out finite sets having limit points: if $E$ is finite
+then every ball contains at most $|E|$ points of $E$, so no point can be a
+limit point.
+\end{remark*}
+
+% ---- Derived Set is Closed ----
+\begin{theorem}[\texorpdfstring{\hyperref[prf:derived-closed]{Derived Set is Closed}}{Derived Set is Closed}]
+\label{thm:derived-closed}
+Let $(X,d)$ be a metric space and $E \subseteq X$.
+Then $E'$ is a closed subset of $X$.
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d),\ \forall E \subseteq X,\
+E' \text{ is closed}
+\iff
+\forall (x_n) \subseteq E',\ x_n \to x
+\Rightarrow x \in E'.
+\]
+\end{remark*}
+
+% ---- Closed Sets and Derived Sets ----
+\begin{theorem}[\texorpdfstring{\hyperref[prf:closed-derived]{Closed Sets and Derived Sets}}{Closed Sets and Derived Sets}]
+\label{thm:closed-derived}
+Let $(X,d)$ be a metric space and $E \subseteq X$.
+Then
+\[
+E \text{ is closed}
+\iff
+E' \subseteq E.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d),\ \forall E \subseteq X,
+\]
+\[
+\bigl(
+\forall (x_n) \subseteq E,\ x_n \to x \Rightarrow x \in E
+\bigr)
+\iff
+\bigl(
+\forall x \in X,\ x \in E' \Rightarrow x \in E
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Closedness means a set contains its own boundary crowding points.
+Containment of the derived set is precisely this: every point $E$ accumulates
+toward is already inside $E$.
+\end{remark*}
+
+% ---- Closure Formula ----
+\begin{theorem}[\texorpdfstring{\hyperref[prf:closure-formula]{Closure Formula}}{Closure Formula}]
+\label{thm:closure-formula}
+Let $(X,d)$ be a metric space and $E \subseteq X$.
+Then
+\[
+\overline{E} = E \cup E'.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall x \in X,\quad
+x \in \overline{E}
+\iff
+\bigl(x \in E\bigr)
+\lor
+\bigl(x \in E'\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Consequence]
+The closure adds exactly the missing limit points.
+Since $E'$ is closed (Theorem~\ref{thm:derived-closed}),
+$E \cup E'$ is the smallest closed set containing $E$,
+which is precisely the definition of $\overline{E}$.
+\end{remark*}
+
+% ---- Perfect Set ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Perfect Set)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Perfect Set]
+\label{def:perfect-set}
+Let $(X,d)$ be a metric space.
+A set $E \subseteq X$ is called \emph{perfect} if
+\[
+E \text{ is closed}
+\quad \text{and} \quad
+E = E'.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Intuition]
+A perfect set has no isolated points (every point is a limit point) and no
+missing limit points (closedness).
+The Cantor set is the canonical example:
+closed, nowhere dense, and every point is a limit point.
+\end{remark*}
+
+

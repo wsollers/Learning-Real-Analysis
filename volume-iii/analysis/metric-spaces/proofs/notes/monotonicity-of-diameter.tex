@@ -1,0 +1,66 @@
+% =========================================================
+% Proof: Monotonicity of Diameter
+% Source: volume-iii/analysis/intro-metric-spaces/notes/notes-metric-space.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Monotonicity of Diameter}
+\label{prf:monotonicity-of-diameter}
+
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:monotonicity-of-diameter]{Back to Theorem
+(Monotonicity of Diameter) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim Let $(X, d)$ be a metric space and let $A \subseteq B \subseteq X$.
+Then $\operatorname{diam}(A) \le \operatorname{diam}(B)$.
+
+\Given A metric space $(X, d)$ and subsets $A \subseteq B \subseteq X$.
+\Goal To show $\operatorname{diam}(A) \le \operatorname{diam}(B)$.
+\Strategy We proceed directly by unfolding the definition of diameter and
+using the fact that $A \subseteq B$ to bound the supremum over $A$ by
+the supremum over $B$.
+
+If $A = \varnothing$ then $\operatorname{diam}(A) = 0 \le \operatorname{diam}(B)$
+and the result holds trivially. Assume henceforth that $A \neq \varnothing$.
+
+\ByDef the diameter of a nonempty set $S \subseteq X$ is
+\[
+  \operatorname{diam}(S) \;=\; \sup\{\, d(x, y) \mid x, y \in S \,\}.
+\]
+
+\Let $x, y \in A$ be arbitrary.
+Since $A \subseteq B$, we have $x, y \in B$, so $d(x,y)$ belongs to the
+set $\{\, d(x,y) \mid x, y \in B \,\}$ over which $\operatorname{diam}(B)$
+is taken.
+\Therefore $d(x, y) \le \operatorname{diam}(B)$.
+
+Since $x, y \in A$ were arbitrary, $\operatorname{diam}(B)$ is an upper
+bound for $\{\, d(x,y) \mid x, y \in A \,\}$.
+\ByThm{The supremum is the least upper bound}
+$\operatorname{diam}(A) \le \operatorname{diam}(B)$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Direct, with a one-line dispatch of the empty case. The subset inclusion
+transfers pairs from $A$ into $B$, making $\operatorname{diam}(B)$ an upper
+bound on pairwise distances in $A$; the least-upper-bound property of the
+supremum then gives the inequality.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item Definition of diameter:
+        $\operatorname{diam}(S) = \sup\{d(x,y) \mid x, y \in S\}$
+        \quad \ref{def:diameter}
+  \item Convention: $\operatorname{diam}(\varnothing) = 0$
+        \quad \ref{def:diameter}
+  \item The supremum is the least upper bound: if $M$ is an upper bound
+        for a set $S$ then $\sup S \le M$
+        \quad \ref{thm:sup-least-upper-bound}
+  \item Definition of subset:
+        $A \subseteq B \Rightarrow (x \in A \Rightarrow x \in B)$
+        \quad \ref{def:subset}
+\end{itemize}
+\end{remark*}

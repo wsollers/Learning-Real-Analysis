@@ -1,0 +1,98 @@
+% =========================================================
+% TikZ diagram: Derived Set
+% Place immediately after the Derived Set definition box.
+% Requires in preamble: \usepackage{tikz}
+%                       \usetikzlibrary{calc}
+% =========================================================
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  dot/.style     = {circle, fill, inner sep=1.8pt},
+  opendot/.style = {circle, draw, fill=white, inner sep=1.8pt, line width=0.8pt},
+  lbl/.style     = {font=\small},
+  sublbl/.style  = {font=\scriptsize, text=gray!55!black}
+]
+
+% --- E (blue blob) ---
+\fill[blue!12, draw=blue!50, line width=0.9pt]
+  (-0.1, -0.5)
+  .. controls ( 0.6, -0.8) and ( 1.4,  0.0) .. ( 1.3,  1.0)
+  .. controls ( 1.2,  2.0) and ( 0.8,  3.0) .. (-0.2,  3.3)
+  .. controls (-1.0,  3.6) and (-2.6,  3.4) .. (-3.2,  2.4)
+  .. controls (-3.8,  1.4) and (-3.6,  0.2) .. (-2.8, -0.4)
+  .. controls (-2.0, -1.0) and (-0.8, -0.8) .. (-0.1, -0.5)
+  -- cycle;
+
+\node[lbl, text=blue!60!black] at (-1.6, 0.5) {$E$};
+
+% --- E' (orange dashed contour) ---
+% Right lune (x > 0.9) lies in E' but not E  → E' \ E
+% Top-left pocket (x < -2.5, y > 2.2) lies in E but not E' → E \ E'
+\draw[orange!75!black, dashed, line width=1.2pt]
+  ( 1.3,  0.0)
+  .. controls ( 2.0,  0.6) and ( 2.0,  2.6) .. ( 1.1,  3.5)
+  .. controls ( 0.2,  4.2) and (-1.4,  3.8) .. (-2.2,  3.0)
+  .. controls (-2.8,  2.4) and (-2.6,  1.0) .. (-2.2,  0.2)
+  .. controls (-1.8, -0.6) and ( 0.2, -0.8) .. ( 1.3,  0.0)
+  -- cycle;
+
+\node[lbl, text=orange!75!black] at (2.55, 1.8) {$E'$};
+
+% --- Ambient space ---
+\node[lbl, font=\small\itshape] at (-4.4, 3.8) {$X$};
+
+% --- Region labels ---
+\node[sublbl] at (-0.6, -0.1) {$E \cap E'$};
+\node[sublbl, align=center] at ( 1.8,  0.6) {$E'{\setminus}E$};
+
+% --- a in E ∩ E' : non-isolated interior point ---
+\node[dot, fill=blue!70!black] (A) at (-1.0, 1.6) {};
+\node[lbl, anchor=south west] at ($(A)+(0.10, 0.10)$) {$a$};
+\node[sublbl, anchor=north west] at ($(A)+(0.10,-0.10)$)
+  {$a\in E,\;a\in E'$};
+
+% --- b in E' \ E : limit point of E not in E ---
+\node[opendot, draw=orange!75!black] (B) at (1.05, 1.8) {};
+\node[lbl, anchor=south west] at ($(B)+(0.10, 0.10)$) {$b$};
+\node[sublbl, anchor=north west] at ($(B)+(0.10,-0.10)$)
+  {$b\notin E,\;b\in E'$};
+
+% --- c in E \ E' : isolated point of E ---
+\coordinate (C) at (-3.0, 2.6);
+\draw[gray!40, dotted, line width=0.8pt] (C) circle (0.48cm);
+\node[dot, fill=blue!70!black] at (C) {};
+\node[lbl, anchor=east] at ($(C)+(-0.55, 0.13)$) {$c$};
+\node[sublbl, anchor=north east, align=right] at ($(C)+(-0.55,-0.13)$)
+  {$c\in E,\;c\notin E'$\\[-1pt](isolated)};
+
+% --- Legend ---
+\begin{scope}[shift={(-2.6, -1.6)}]
+  \fill[blue!12, draw=blue!50, line width=0.7pt] (0,0) rectangle (0.48,0.30);
+  \node[lbl, anchor=west] at (0.62, 0.15) {$E$};
+
+  \draw[orange!75!black, dashed, line width=1.2pt]
+    (1.6, 0.15) -- (2.2, 0.15);
+  \node[lbl, anchor=west] at (2.35, 0.15) {boundary of $E'$};
+
+  \draw[gray!40, dotted, line width=0.8pt]
+    (5.4, 0.15) -- (6.0, 0.15);
+  \node[lbl, anchor=west] at (6.15, 0.15) {isolation ball around $c$};
+\end{scope}
+
+\end{tikzpicture}
+
+\smallskip
+{\small
+  $a \in E \cap E'$: a non-isolated point of $E$, and a limit point of $E$.
+  \quad
+  $b \in E' \setminus E$: a limit point of $E$ not belonging to $E$.
+  \quad
+  $c \in E \setminus E'$: an isolated point of $E$, so $c \notin E'$.
+}
+\caption{The derived set $E' = \{x \in X : x \text{ is a limit point of } E\}$
+relative to $E$.
+The three annotated points illustrate the meaningful membership
+combinations for points of~$X$.}
+\label{fig:derived-set}
+\end{figure}

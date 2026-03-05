@@ -1,0 +1,60 @@
+\begin{tikzpicture}[
+  dot/.style={circle,fill,inner sep=1.8pt},
+  lbl/.style={font=\small},
+  sublbl/.style={font=\scriptsize,text=gray!55!black}
+]
+% Scattered isolated points with isolation balls r=1/2
+\def\pts{
+  {0.0/0.0},
+  {2.2/0.3},
+  {4.1/0.1},
+  {1.0/1.8},
+  {3.3/1.6},
+  {0.5/3.2},
+  {2.8/3.0},
+  {4.5/2.2}
+}
+
+% Draw isolation balls first (behind dots)
+\foreach \xy in {
+  0.0/0.0, 2.2/0.3, 4.1/0.1,
+  1.0/1.8, 3.3/1.6,
+  0.5/3.2, 2.8/3.0, 4.5/2.2
+}{
+  \pgfmathsetmacro{\px}{0}  % dummy
+  \edef\pxy{\xy}
+}
+
+\foreach \px/\py in {
+  0.0/0.0, 2.2/0.3, 4.1/0.1,
+  1.0/1.8, 3.3/1.6,
+  0.5/3.2, 2.8/3.0, 4.5/2.2
+}{
+  \draw[gray!35, dotted, line width=0.8pt] (\px,\py) circle (0.52cm);
+}
+
+% Draw dots on top
+\foreach \px/\py in {
+  0.0/0.0, 2.2/0.3, 4.1/0.1,
+  1.0/1.8, 3.3/1.6,
+  0.5/3.2, 2.8/3.0, 4.5/2.2
+}{
+  \node[dot,fill=blue!70!black] at (\px,\py) {};
+}
+
+% Annotate one point explicitly
+\coordinate (ann) at (3.3,1.6);
+\draw[gray!60,->,line width=0.6pt] (ann) -- ++(0.52,0);
+\node[sublbl,anchor=west] at ($(ann)+(0.54,0)$) {$r = \tfrac{1}{2}$};
+\node[sublbl,anchor=north] at ($(ann)+(0,-0.56)$) {$B_{1/2}(x) = \{x\}$};
+
+% Border of ambient space
+\draw[gray!30, line width=0.6pt] (-0.8,-0.7) rectangle (5.4,3.9);
+\node[lbl,font=\small\itshape] at (-0.5,3.6) {$X$};
+
+% Footer
+\node[lbl,align=center] at (2.3,-1.15)
+  {$d_{\mathrm{disc}}(x,y) = \begin{cases}0 & x=y \\ 1 & x\neq y\end{cases}$
+   \quad $\Rightarrow$ \quad
+   every point is isolated};
+\end{tikzpicture}

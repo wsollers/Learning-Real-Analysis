@@ -1,0 +1,88 @@
+% =========================================================
+% TikZ diagram: Limit Point
+% Place immediately after the Limit Point definition box.
+% Requires: \usetikzlibrary{backgrounds, decorations.pathmorphing}
+% =========================================================
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  every label/.style = {font=\small},
+  dot/.style         = {circle, fill, inner sep=1.8pt},
+  opendot/.style     = {circle, draw, fill=white, inner sep=1.8pt, line width=0.8pt}
+]
+
+% --- Ambient space label ---
+\node[font=\small\itshape, anchor=north west] at (-4.2, 3.3) {$X$};
+
+% --- Set E (irregular blob, filled) ---
+\begin{scope}
+  \fill[blue!10, draw=blue!50, line width=0.8pt,
+        decorate,
+        decoration={random steps, segment length=6pt, amplitude=4pt}]
+    (0.6, 0.2)
+    .. controls (1.8, 2.2) and (0.2, 3.0) .. (-1.0, 2.8)
+    .. controls (-2.4, 2.6) and (-2.8, 1.2) .. (-2.0, 0.2)
+    .. controls (-1.2,-0.8) and ( 0.0,-0.6) .. ( 0.6, 0.2)
+    -- cycle;
+\end{scope}
+\node[font=\small\itshape, text=blue!60!black] at (-1.1, 1.4) {$E$};
+
+% --- Balls B_r(x) centred at x = (1.6, 1.0) ---
+% x sits just outside / on the fringe of E
+\coordinate (x) at (1.6, 1.0);
+
+\draw[gray!60, dashed, line width=0.6pt] (x) circle (2.2cm);
+\draw[gray!60, dashed, line width=0.6pt] (x) circle (1.4cm);
+\draw[gray!60, dashed, line width=0.6pt] (x) circle (0.7cm);
+
+% Ball labels (on the right arc of each circle)
+\node[font=\scriptsize, text=gray!70!black] at ($(x) + (1.556, 1.556)$) [right] {$B_{r_1}(x)$};
+\node[font=\scriptsize, text=gray!70!black] at ($(x) + (0.990, 0.990)$) [right] {$B_{r_2}(x)$};
+\node[font=\scriptsize, text=gray!70!black] at ($(x) + (0.495, 0.495)$) [right] {$B_{r_3}(x)$};
+
+% --- Points of E inside each punctured ball ---
+% One witness point per ball, each clearly in E \ {x}
+\node[dot, fill=blue!70!black, label={[blue!70!black]above left:\scriptsize$y_1$}]
+  at ($(x) + (-1.5, 1.0)$) {};   % inside B_{r1}, inside E
+
+\node[dot, fill=blue!70!black, label={[blue!70!black]above:\scriptsize$y_2$}]
+  at ($(x) + (-0.7, 0.9)$) {};   % inside B_{r2}, inside E
+
+\node[dot, fill=blue!70!black, label={[blue!70!black]above left:\scriptsize$y_3$}]
+  at ($(x) + (-0.35, 0.55)$) {}; % inside B_{r3}, inside E
+
+% --- The limit point x itself (open dot — not required to be in E) ---
+\node[opendot, label={[anchor=north west, font=\small]north west:$x$}] at (x) {};
+
+% --- Caption line beneath ---
+\end{tikzpicture}
+
+\smallskip
+{\small
+For every radius $r > 0$, the punctured ball $B_r(x) \cap (E \setminus \{x\})$ is
+non-empty: witness points $y_1, y_2, y_3 \in E \setminus \{x\}$ are shown for
+three nested balls.
+Hence $x \in E'$, even though $x \notin E$.
+}
+\caption{A limit point $x$ of the set $E$ in a metric space $(X,d)$.}
+\label{fig:limit-point}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,344 @@
+% =========================================================
+\subsubsection{Multiple Metrics on the Same Set}
+\label{sec:multiple-metrics}
+% =========================================================
+
+A metric is not a property of the underlying set --- it is an additional
+structure imposed on it.
+The same set $X$ can carry many different metrics simultaneously, each
+producing a different geometry, different unit balls, and potentially
+different notions of convergence.
+This section develops three related ideas:
+(1) the familiar plane $\mathbb{R}^2$ with three standard metrics;
+(2) the product metric, which builds a single metric on $X \times Y$ from
+separate metrics on $X$ and $Y$;
+(3) the interpretation of a product metric as assigning independent
+coordinate metrics to each axis.
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Multiple Metrics --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Object} & \textbf{Key fact} & \textbf{Detail} \\
+\midrule
+D\ref{def:r2-three-metrics}
+  & $(\mathbb{R}^2, d_1)$, $(\mathbb{R}^2, d_2)$, $(\mathbb{R}^2, d_\infty)$
+  & All equivalent; different unit balls
+  & \hyperref[def:r2-three-metrics]{$\downarrow$} \\
+D\ref{def:product-metric}
+  & Product metric $(X \times Y,\, d)$
+  & Three standard variants; all equivalent
+  & \hyperref[def:product-metric]{$\downarrow$} \\
+D\ref{def:product-coord-metrics}
+  & Coordinate metric spaces
+  & Independent metrics per axis
+  & \hyperref[def:product-coord-metrics]{$\downarrow$} \\
+P\ref{prop:product-convergence}
+  & Convergence in product metric
+  & $(x_n,y_n)\to(x,y)$ iff $x_n\to x$ and $y_n\to y$
+  & \hyperref[prop:product-convergence]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% =========================================================
+% 1.  R^2 with d1, d2, d_inf
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\mathbb{R}^2$ with Three Standard Metrics)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[$\mathbb{R}^2$ with Three Standard Metrics]
+\label{def:r2-three-metrics}
+Let $p = (x_1, x_2)$ and $q = (y_1, y_2)$ be points in $\mathbb{R}^2$.
+The three standard metrics on $\mathbb{R}^2$ are:
+
+\medskip
+\noindent\textbf{Taxicab metric} $d_1$:
+\[
+d_1(p,\,q) \;:=\; |x_1 - y_1| + |x_2 - y_2|.
+\]
+
+\noindent\textbf{Euclidean metric} $d_2$:
+\[
+d_2(p,\,q) \;:=\; \sqrt{(x_1-y_1)^2 + (x_2-y_2)^2}.
+\]
+
+\noindent\textbf{Maximum metric} $d_\infty$:
+\[
+d_\infty(p,\,q) \;:=\; \max\bigl(|x_1 - y_1|,\; |x_2 - y_2|\bigr).
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+A sequence $(p^{(n)}) = (x_1^{(n)}, x_2^{(n)})$ in $\mathbb{R}^2$
+converges to $p = (x_1, x_2)$ under any of these three metrics if and
+only if it converges coordinatewise:
+\[
+\forall\,\varepsilon > 0,\;\exists N \in \mathbb{N},\;
+\forall n \ge N:\quad
+\bigl|x_1^{(n)} - x_1\bigr| < \varepsilon
+\;\;\text{and}\;\;
+\bigl|x_2^{(n)} - x_2\bigr| < \varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+\forall\, p,q \in \mathbb{R}^2: \quad
+d_1(p,q) &\;=\; |x_1-y_1| + |x_2-y_2|, \\
+d_2(p,q) &\;=\; \bigl((x_1-y_1)^2 + (x_2-y_2)^2\bigr)^{1/2}, \\
+d_\infty(p,q) &\;=\; \max\bigl(|x_1-y_1|,\,|x_2-y_2|\bigr).
+\end{align*}
+Each satisfies all four metric axioms; the non-trivial one is the triangle
+inequality, which for $d_1$ follows from $|a+b| \le |a|+|b|$ applied
+coordinatewise, and for $d_2$ is Minkowski's inequality.
+\end{remark*}
+
+\begin{remark*}[Metric inequalities]
+For all $p, q \in \mathbb{R}^2$, the three metrics satisfy
+\[
+d_\infty(p,q)
+\;\le\;
+d_2(p,q)
+\;\le\;
+d_1(p,q)
+\;\le\;
+2\,d_\infty(p,q).
+\]
+This chain of inequalities shows the metrics are \emph{strongly equivalent}
+(Definition~\ref{def:equivalent-metrics}): they produce the same open sets,
+the same convergent sequences, and the same compact sets.
+The constant $2$ in the last inequality is sharp and depends on the
+dimension; in $\mathbb{R}^n$ it becomes $\sqrt{n}$ for the middle pair
+and $n$ for the outer pair.
+\end{remark*}
+
+\begin{remark*}[Unit ball geometry]
+Although the metrics are equivalent, their unit balls
+$B_1(0) = \{q \in \mathbb{R}^2 : d(0, q) < 1\}$ look very different:
+$d_1$ gives a diamond (rotated square),
+$d_2$ gives a disc,
+$d_\infty$ gives a square aligned with the axes.
+See Figure~\ref{fig:unit-balls} and Figure~\ref{fig:unit-balls-comparison}.
+\end{remark*}
+
+% =========================================================
+% 2.  Product metric
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Product Metric Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Product Metric]
+\label{def:product-metric}
+Let $(X, d_X)$ and $(Y, d_Y)$ be metric spaces.
+The \emph{product metric space} is the Cartesian product $X \times Y$
+equipped with one of the following equivalent metrics.
+For points $(x_1, y_1),\, (x_2, y_2) \in X \times Y$:
+
+\medskip
+\noindent\textbf{Sum metric} ($\ell^1$ product):
+\[
+d_{\mathrm{sum}}\bigl((x_1,y_1),(x_2,y_2)\bigr)
+\;:=\; d_X(x_1,x_2) \;+\; d_Y(y_1,y_2).
+\]
+
+\noindent\textbf{Max metric} ($\ell^\infty$ product):
+\[
+d_{\max}\bigl((x_1,y_1),(x_2,y_2)\bigr)
+\;:=\; \max\bigl(d_X(x_1,x_2),\; d_Y(y_1,y_2)\bigr).
+\]
+
+\noindent\textbf{Euclidean product metric} ($\ell^2$ product):
+\[
+d_{\mathrm{euc}}\bigl((x_1,y_1),(x_2,y_2)\bigr)
+\;:=\; \sqrt{d_X(x_1,x_2)^2 \;+\; d_Y(y_1,y_2)^2}.
+\]
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+A sequence $\bigl((x_n, y_n)\bigr)_{n \ge 1}$ in $X \times Y$ converges
+to $(x, y)$ under any product metric if and only if:
+\[
+\forall\,\varepsilon > 0,\;\exists N \in \mathbb{N},\;
+\forall n \ge N:\quad
+d_X(x_n, x) < \varepsilon
+\;\;\text{and}\;\;
+d_Y(y_n, y) < \varepsilon.
+\]
+The two coordinates converge \emph{independently} in their own metrics.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form --- sum metric]
+\[
+\forall\,(x_1,y_1),\,(x_2,y_2) \in X \times Y, \quad
+d_{\mathrm{sum}}\bigl((x_1,y_1),(x_2,y_2)\bigr)
+\;=\; d_X(x_1,x_2) + d_Y(y_1,y_2) \;\in\; [0,\infty).
+\]
+The four axioms follow directly from those of $d_X$ and $d_Y$; for the
+triangle inequality:
+\begin{align*}
+d_{\mathrm{sum}}\bigl((x_1,y_1),(x_3,y_3)\bigr)
+&= d_X(x_1,x_3) + d_Y(y_1,y_3) \\
+&\le \bigl(d_X(x_1,x_2) + d_X(x_2,x_3)\bigr)
+   + \bigl(d_Y(y_1,y_2) + d_Y(y_2,y_3)\bigr) \\
+&= d_{\mathrm{sum}}\bigl((x_1,y_1),(x_2,y_2)\bigr)
+ + d_{\mathrm{sum}}\bigl((x_2,y_2),(x_3,y_3)\bigr).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[All three product metrics are equivalent]
+For all $(x_1,y_1), (x_2,y_2) \in X \times Y$,
+\[
+d_{\max} \;\le\; d_{\mathrm{euc}} \;\le\; d_{\mathrm{sum}}
+\;\le\; 2\,d_{\max}.
+\]
+They therefore induce the same topology, the same convergent sequences,
+and the same Cauchy sequences on $X \times Y$.
+The choice is a matter of convenience; $d_{\max}$ is usually the simplest
+for proofs, $d_{\mathrm{euc}}$ is natural when $X = Y = \mathbb{R}$.
+\end{remark*}
+
+\begin{remark*}[Completeness is inherited]
+If $(X, d_X)$ and $(Y, d_Y)$ are both complete then $(X \times Y, d)$
+is complete under any product metric.
+This is because a Cauchy sequence in $X \times Y$ has Cauchy coordinate
+projections, which converge by completeness of $X$ and $Y$ separately.
+\end{remark*}
+
+% =========================================================
+% 3.  Coordinate metric spaces
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Coordinate Metric Spaces)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Coordinate Metric Spaces]
+\label{def:product-coord-metrics}
+Let $(X, d_X)$ and $(Y, d_Y)$ be metric spaces, and let
+$(X \times Y, d)$ be their product (Definition~\ref{def:product-metric}).
+We say that:
+\begin{itemize}
+  \item the \emph{$X$-coordinate} of a point $(x, y) \in X \times Y$ lives
+        in the metric space $(X, d_X)$;
+  \item the \emph{$Y$-coordinate} lives in $(Y, d_Y)$;
+  \item $(X, d_X)$ and $(Y, d_Y)$ are the \emph{coordinate metric spaces}
+        of the product.
+\end{itemize}
+When $X = Y = \mathbb{R}$, this means the $x$-axis and $y$-axis of
+$\mathbb{R}^2$ carry independent metrics $d_X$ and $d_Y$ which need not
+be the same.
+
+\medskip
+\noindent\textbf{Canonical example.}\quad
+Take $d_X(x_1,x_2) := |x_1 - x_2|$ (standard metric on $\mathbb{R}$) and
+$d_Y(y_1,y_2) := \mathbf{1}_{y_1 \neq y_2}$ (discrete metric on $\mathbb{R}$).
+The product space $(\mathbb{R} \times \mathbb{R},\, d_{\mathrm{sum}})$ has
+metric:
+\[
+d\bigl((x_1,y_1),(x_2,y_2)\bigr)
+\;:=\; |x_1 - x_2| \;+\; \mathbf{1}_{y_1 \neq y_2}.
+\]
+Horizontal distances are continuous; any nonzero vertical displacement costs
+exactly $1$, regardless of its size.
+
+\medskip
+\noindent\textbf{Convergence.}\quad
+$\bigl((x_n, y_n)\bigr) \to (x, y)$ in this space if and only if:
+\[
+|x_n - x| \to 0 \;\text{ in } \mathbb{R}
+\quad\text{and}\quad
+y_n = y \;\text{ for all sufficiently large } n.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form --- standard $\times$ discrete]
+\[
+\forall\,(x_1,y_1),(x_2,y_2) \in \mathbb{R}^2, \quad
+d\bigl((x_1,y_1),(x_2,y_2)\bigr)
+\;=\; |x_1 - x_2| + \mathbf{1}_{y_1 \neq y_2} \;\in\; [0,\infty).
+\]
+Positivity: $d = 0$ iff $|x_1-x_2| = 0$ and $\mathbf{1}_{y_1\neq y_2} = 0$
+iff $x_1 = x_2$ and $y_1 = y_2$. Symmetry and triangle inequality hold
+because both $|\cdot|$ and $\mathbf{1}_{\neq}$ individually satisfy them.
+\end{remark*}
+
+\begin{remark*}[Unit ball of the standard $\times$ discrete product]
+The unit ball around the origin is
+\[
+B_1\bigl((0,0)\bigr)
+= \bigl\{\,(x,y) \in \mathbb{R}^2 :
+|x| + \mathbf{1}_{y \neq 0} < 1\,\bigr\}.
+\]
+If $y = 0$: the condition is $|x| < 1$, giving the open interval $(-1,1)$
+on the $x$-axis.
+If $y \neq 0$: the condition is $|x| + 1 < 1$, i.e.\ $|x| < 0$, which is
+impossible.
+The unit ball is therefore exactly the open segment
+$\{(x,0) : |x| < 1\}$ --- a one-dimensional interval, not a
+two-dimensional region.
+See Figure~\ref{fig:unit-balls-comparison}.
+\end{remark*}
+
+\begin{remark*}[Why coordinate metrics need not agree]
+In the Euclidean plane, the $x$-axis and $y$-axis both carry the standard
+metric $|{\cdot}|$ and distances in both directions are interchangeable.
+The product construction shows this is a special case: there is no
+requirement that the two coordinate metrics be the same or even of the
+same type.
+Choosing different metrics per coordinate produces spaces with genuinely
+anisotropic geometry --- distances in one direction are measured on a
+completely different scale or topology than distances in another.
+\end{remark*}
+
+\begin{remark*}[Common error]
+It is tempting to say ``the $x$-axis has metric $d_X$'' as if the metric
+were a property of the axis itself.
+It is not: the metric is a property of the entire space $X \times Y$.
+The product construction \emph{assigns} a role to each coordinate, but
+the distance function $d$ is defined on the whole of
+$(X \times Y) \times (X \times Y)$, not separately on $X$ and $Y$.
+\end{remark*}
+
+% =========================================================
+% 4.  Proposition: convergence in product
+% =========================================================
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:product-convergence]{Convergence in the Product Metric}%
+}{Convergence in the Product Metric}]
+\label{prop:product-convergence}
+Let $(X, d_X)$ and $(Y, d_Y)$ be metric spaces with product metric $d$
+(any of the three variants).
+A sequence $\bigl((x_n, y_n)\bigr)_{n \ge 1}$ in $X \times Y$ satisfies
+\[
+d\bigl((x_n,y_n),(x,y)\bigr) \to 0
+\;\iff\;
+d_X(x_n,x) \to 0 \;\text{ and }\; d_Y(y_n,y) \to 0.
+\]
+\end{proposition}
+
+\begin{remark*}[Proof shape]
+For the sum metric: $d_{\mathrm{sum}} = d_X + d_Y \ge d_X$ and $\ge d_Y$,
+so $d_{\mathrm{sum}} \to 0$ forces both $d_X \to 0$ and $d_Y \to 0$.
+Conversely, if both tend to $0$ then so does their sum.
+For $d_{\max}$: identical argument with $\max$ in place of sum.
+For $d_{\mathrm{euc}}$: use $d_X, d_Y \le d_{\mathrm{euc}} \le d_X + d_Y$.
+\end{remark*}
+
+\begin{remark*}[Consequence]
+Convergence in the product decouples into independent convergence in each
+coordinate. This means all three product metrics produce identical convergent
+sequences, confirming their equivalence without requiring a direct norm comparison.
+\end{remark*}

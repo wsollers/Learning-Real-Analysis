@@ -1,0 +1,79 @@
+% =========================================================
+% TikZ diagram: Slack ball proof sketch for B_r(x) open
+% Place after Proposition (Balls are Open and Closed).
+% Requires: \usepackage{tikz}  \usetikzlibrary{calc}
+%           \usepackage{caption}   (for \captionof)
+% =========================================================
+
+\begin{center}
+\begin{tikzpicture}[
+  dot/.style     = {circle, fill, inner sep=1.8pt},
+  lbl/.style     = {font=\small},
+  sublbl/.style  = {font=\scriptsize, text=gray!55!black}
+]
+
+\def\R{3.0}
+\def\Dx{1.5}
+\def\Dy{0.9}
+\pgfmathsetmacro{\dxy}{sqrt(\Dx*\Dx+\Dy*\Dy)}
+\pgfmathsetmacro{\al}{\R - \dxy}
+
+% --- Outer ball B_r(x) ---
+\fill[blue!8] (0,0) circle (\R cm);
+\draw[blue!55!black, dashed, line width=1.0pt] (0,0) circle (\R cm);
+\node[lbl, anchor=south west, text=blue!55!black]
+  at ({-\R*0.707}, {\R*0.707}) {$B_r(x)$};
+
+% --- Centre x ---
+\node[dot, fill=black] at (0,0) {};
+\node[lbl, anchor=north east] at (-0.08,-0.12) {$x$};
+\draw[gray!60, ->, line width=0.6pt] (0,0) -- (0, \R);
+\node[lbl, anchor=west] at (0.06, \R/2) {$r$};
+
+% --- Point y ---
+\coordinate (y) at (\Dx, \Dy);
+\node[dot, fill=blue!70!black] at (y) {};
+\node[lbl, anchor=south west] at ($(y)+(0.08, 0.08)$) {$y$};
+
+% --- Slack ball B_alpha(y) ---
+\fill[blue!20, opacity=0.7] (y) circle (\al cm);
+\draw[blue!75!black, solid, line width=1.0pt] (y) circle (\al cm);
+\node[sublbl, anchor=north, align=center] at ($(y)+(0,-\al-0.15)$)
+  {$B_{\alpha}(y)$};
+
+% --- d(x,y) line ---
+\draw[gray!50, line width=0.5pt] (0,0) -- (y);
+\node[sublbl, anchor=north, rotate=30] at (0.72, 0.28) {$d(x,y)$};
+
+% --- alpha arrow ---
+\pgfmathsetmacro{\nx}{\Dx/\dxy}
+\pgfmathsetmacro{\ny}{\Dy/\dxy}
+\pgfmathsetmacro{\ex}{\Dx + \al*\nx}
+\pgfmathsetmacro{\ey}{\Dy + \al*\ny}
+\draw[gray!60, ->, line width=0.6pt] (y) -- (\ex, \ey);
+\node[sublbl, anchor=south west] at ($(\ex,\ey)+(0.06,0.06)$)
+  {$\alpha = r - d(x,y)$};
+\node[dot, fill=gray!50, inner sep=1.2pt] at (\ex, \ey) {};
+
+% --- Annotation ---
+\node[lbl, align=center] at ($(y)+(-1.8, -2.2)$)
+  {$B_\alpha(y) \subseteq B_r(x)$\\[2pt]
+   \textit{by the triangle inequality}};
+
+% --- Key equation ---
+\node[lbl, align=center] at (0, -3.6)
+  {Choose $\alpha := r - d(x,y) > 0$.
+   \quad
+   If $d(y,z) < \alpha$,
+   then
+   $d(x,z) \le d(x,y) + d(y,z) < d(x,y) + \alpha = r$.};
+
+\end{tikzpicture}
+\captionof{figure}{Proof sketch that $B_r(x)$ is open
+(Proposition~\ref{prop:balls-open-closed}(i)).
+Given $y \in B_r(x)$, the slack $\alpha := r - d(x,y) > 0$ is the distance
+from $y$ to the boundary of $B_r(x)$ along the ray through $x$ and $y$.
+The triangle inequality then shows $B_\alpha(y) \subseteq B_r(x)$,
+witnessing that $y$ is an interior point.}
+\label{fig:slack-ball}
+\end{center}

@@ -1,0 +1,287 @@
+% ============================================================
+% Convergence in Metric Spaces
+% ============================================================
+% =========================================================
+\subsubsection{Convergence in metric space}
+% =========================================================
+\begin{definition}[Convergence in a Metric Space]
+Let $(X,d)$ be a metric space and let $(x_n)$ be a sequence in $X$.
+We say that $(x_n)$ \emph{converges} to a point $x \in X$ if
+
+\[
+\forall \varepsilon > 0 \;\exists N \in \mathbb{N}
+\text{ such that }
+n \ge N \Rightarrow d(x_n, x) < \varepsilon.
+\]
+
+In this case we write
+\[
+x_n \to x.
+\]
+\end{definition}
+
+% ------------------------------------------------------------
+
+\begin{lemma}[Convergence is Preserved by Isometries]
+Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces, and let
+$f : X \to Y$ be an isometry.
+
+If $(x_n)$ is a sequence in $X$ and $x_n \to x$ in $X$,
+then
+\[
+f(x_n) \to f(x)
+\quad \text{in } Y.
+\]
+\end{lemma}
+
+
+
+% ============================================================
+% Closed Sets — Sequential Definition (Metric Version)
+% ============================================================
+
+\begin{definition}[Closed Set — Sequential Characterization]
+Let $(X,d)$ be a metric space and let $F \subseteq X$.
+The set $F$ is said to be \emph{closed} if whenever a sequence
+$(x_n)$ in $F$ converges to a point $x \in X$, then $x \in F$.
+
+Equivalently,
+\[
+\forall (x_n) \subseteq F,
+\quad
+x_n \to x \text{ in } X
+\;\Longrightarrow\;
+x \in F.
+\]
+
+In words: a closed set contains all limits of its convergent sequences.
+\end{definition}
+
+
+
+% ============================================================
+% Structural Core of a Metric Space (Pre-Topology)
+% ============================================================
+
+\subsection*{Structural Core of a Metric Space}
+
+Let $(X,d)$ be a metric space.
+
+All analytic structure in $X$ is built from the metric $d$
+via the following chain:
+
+\[
+\text{Metric}
+\;\Longrightarrow\;
+\text{Balls}
+\;\Longrightarrow\;
+\text{Convergence}
+\;\Longrightarrow\;
+\text{Closed Sets (Sequential Form)}.
+\]
+
+\paragraph{1. Metric $\Longrightarrow$ Balls}
+Given $x \in X$ and $r>0$, define the open ball
+\[
+B_r(x) := \{ y \in X : d(x,y) < r \}.
+\]
+Thus balls are determined entirely by the distance function.
+
+\paragraph{2. Balls $\Longrightarrow$ Convergence}
+A sequence $(x_n)$ converges to $x \in X$ if
+\[
+\forall \varepsilon > 0,\;
+\exists N \in \mathbb{N}
+\text{ such that }
+n \ge N \Rightarrow x_n \in B_\varepsilon(x).
+\]
+Thus convergence means eventual containment in every ball
+centered at the limit.
+
+\paragraph{3. Convergence $\Longrightarrow$ Closed Sets (Sequential Form)}
+A subset $F \subseteq X$ is called closed if
+whenever $(x_n) \subseteq F$ and $x_n \to x$ in $X$,
+then $x \in F$.
+
+Thus closed sets are exactly those sets that contain
+all limits of convergent sequences they contain.
+
+\bigskip
+
+\noindent
+\textbf{Summary.}
+\begin{itemize}
+\item The metric defines distance.
+\item Distance defines balls.
+\item Balls define convergence.
+\item Convergence determines closedness (in metric spaces).
+\end{itemize}
+
+All analytic notions in a metric space flow from the
+triangle inequality.
+
+
+\begin{remark}[Balls, Convergence, and Closed Sets]
+Let $(X,d)$ be a metric space.
+
+\begin{itemize}
+    \item \textbf{Balls measure convergence.}
+    A sequence $(x_n)$ converges to $x$ if and only if
+    for every $\varepsilon > 0$, all sufficiently large terms
+    of the sequence lie inside the ball $B_\varepsilon(x)$.
+    Thus convergence is entirely described in terms of
+    eventual containment in arbitrarily small balls.
+
+    \item \textbf{Closed sets contain limits.}
+    A subset $F \subseteq X$ is closed (sequentially) if
+    whenever $(x_n) \subseteq F$ and $x_n \to x$,
+    then the limit $x$ also lies in $F$.
+\end{itemize}
+
+\noindent
+In summary:
+\[
+\text{Balls describe how sequences approach a point;}
+\quad
+\text{closed sets describe where limits are allowed to remain.}
+\]
+\end{remark}
+
+\begin{theorem}[Sequential Characterization of Closure Points]
+Let $(X,d)$ be a metric space, let $A \subseteq X$,
+and let $x \in X$.
+
+There exists a sequence $(a_n)$ in $A$ such that
+$a_n \to x$ if and only if
+\[
+\forall r > 0,\quad B_r(x) \cap A \neq \varnothing.
+\]
+\end{theorem}
+
+
+
+
+
+\begin{theorem}[Closed Sets and Open Complements]
+Let $(X,d)$ be a metric space and let $F \subseteq X$.
+Then $F$ is closed if and only if its complement
+\[
+X \setminus F
+\]
+is open in $X$.
+\end{theorem}
+
+
+\begin{theorem}[Arbitrary Unions of Open Sets are Open]
+Let $(X,d)$ be a metric space and let $\{U_i\}_{i \in I}$
+be a collection of open subsets of $X$.
+Then
+\[
+\bigcup_{i \in I} U_i
+\]
+is open in $X$.
+\end{theorem}
+
+\begin{theorem}[Finite Intersections of Open Sets are Open]
+Let $(X,d)$ be a metric space and let $U_1,\dots,U_n$
+be open subsets of $X$.
+Then
+\[
+\bigcap_{k=1}^{n} U_k
+\]
+is open in $X$.
+\end{theorem}
+
+
+
+\begin{theorem}[Intersection of Closed Sets is Closed]
+Let $(X,d)$ be a metric space and let $\{F_i\}_{i \in I}$ be a collection of
+closed subsets of $X$. Then
+\[
+\bigcap_{i \in I} F_i
+\]
+is closed in $X$.
+\end{theorem}
+
+\begin{theorem}[Finite Union of Closed Sets is Closed]
+Let $(X,d)$ be a metric space and let $F_1,\dots,F_n \subseteq X$ be closed.
+Then
+\[
+\bigcup_{k=1}^n F_k
+\]
+is closed in $X$.
+\end{theorem}
+
+
+\begin{theorem}[Equivalent Characterizations of Closure]
+Let $(X,d)$ be a metric space, let $A \subseteq X$, and let $x \in X$.
+The following statements are equivalent:
+
+\begin{enumerate}
+    \item[(a)] $x \in \overline{A}$.
+    \item[(b)] For every $r > 0$,
+    \[
+    B_r(x) \cap A \neq \varnothing.
+    \]
+    \item[(c)] There exists a sequence $(a_n)$ in $A$ such that
+    \[
+    a_n \to x.
+    \]
+\end{enumerate}
+\end{theorem}
+
+
+\begin{definition}[Limit Point]
+Let $(X,d)$ be a metric space, let $A \subseteq X$, and let $x \in X$.
+We say that $x$ is a \emph{limit point} of $A$ if
+\[
+x \in \overline{A \setminus \{x\}}.
+\]
+\end{definition}
+
+\begin{remark}[Equivalent Characterization]
+A point $x$ is a limit point of $A$ if and only if
+\[
+\forall r > 0,\quad
+B_r(x) \cap (A \setminus \{x\}) \neq \varnothing.
+\]
+\end{remark}
+
+\begin{theorem}[Continuity of the Metric]
+Let $(X,d)$ be a metric space. 
+If $(x_n)$ and $(y_n)$ are sequences in $X$ such that
+\[
+x_n \to x
+\quad \text{and} \quad
+y_n \to y,
+\]
+then
+\[
+d(x_n, y_n) \to d(x,y).
+\]
+\end{theorem}
+
+\begin{theorem}[Continuity of the Metric]
+Let $(X,d)$ be a metric space. 
+If $(x_n)$ and $(y_n)$ are sequences in $X$ such that
+\[
+x_n \to x
+\quad \text{and} \quad
+y_n \to y,
+\]
+then
+\[
+d(x_n, y_n) \to d(x,y).
+\]
+\end{theorem}
+
+
+
+
+
+
+
+
+
+
+

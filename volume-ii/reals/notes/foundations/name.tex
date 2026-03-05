@@ -1,0 +1,142 @@
+\begin{theorem}[\texorpdfstring{\hyperref[prf:cantors-intersection-theorem]{Cantor's Intersection Theorem}}{Cantor's Intersection Theorem}]
+\label{thm:cantors-intersection-theorem}
+Let $(X, d)$ be a metric space and let
+\[
+  A_1 \supseteq A_2 \supseteq A_3 \supseteq \cdots
+\]
+be a nested sequence of nonempty compact subsets of $X$. Then
+\[
+  \bigcap_{n=1}^{\infty} A_n
+\]
+is compact and nonempty.
+\end{theorem}
+
+\begin{remark}[Fully quantified form]
+$\forall (X,d)$ metric space,
+$\forall (A_n)_{n \in \mathbb{N}}$ with each $A_n \subseteq X$ compact, $A_n \neq \emptyset$,
+and $A_{n+1} \subseteq A_n$:
+\[
+  \bigcap_{n=1}^{\infty} A_n \neq \emptyset
+  \quad\text{and}\quad
+  \bigcap_{n=1}^{\infty} A_n \text{ is compact.}
+\]
+\end{remark}
+
+\begin{remark}[Intuition]
+Every compact set is closed, so the intersection of any collection of compact sets
+is closed. Closedness alone does not prevent the intersection from being empty
+(nested open discs can vanish to nothing). Compactness adds the extra force:
+it guarantees that a sequence of witnesses — one chosen from each $A_n$ — cannot
+escape to infinity or disappear, and must cluster at a point that lands in every set.
+\end{remark}
+
+\begin{remark}[Consequence]
+The sharpened form (Corollary below) shows that if additionally
+$\operatorname{diam}(A_n) \to 0$, then the intersection is a single point.
+This is the engine behind the Baire Category Theorem and completeness arguments.
+\end{remark}
+
+\begin{remark}[Common error]
+The hypotheses cannot be weakened to closed sets alone. The nested open discs
+$A_n = \{\,z \in \mathbb{R}^2 : |z - (1/n, 0)| < 1/n\,\}$
+are nonempty, nested, and closed in themselves, but $\bigcap A_n = \emptyset$.
+Compactness is essential.
+\end{remark}
+
+
+
+
+\begin{proof}
+\Claim Let $(X,d)$ be a metric space and let $A_1 \supseteq A_2 \supseteq \cdots$
+be a nested sequence of nonempty compact subsets of $X$. Then
+$\bigcap_{n=1}^{\infty} A_n$ is compact and nonempty.
+
+\Given A metric space $(X,d)$ and a nested sequence of nonempty compact sets
+$(A_n)_{n \in \mathbb{N}}$ with $A_{n+1} \subseteq A_n$ for all $n$.
+
+\Goal To show that $A := \bigcap_{n=1}^{\infty} A_n$ is compact and nonempty.
+
+\medskip
+\noindent\textit{Part 1: $A$ is compact.}
+
+\Strategy We show $A$ is a closed subset of the compact set $A_1$, hence compact.
+
+\ByThm{Every compact set is closed} each $A_n$ is closed in $X$.
+\ByThm{Arbitrary intersections of closed sets are closed}
+$A = \bigcap_{n=1}^{\infty} A_n$ is closed in $X$.
+Since $A \subseteq A_1$ and $A_1$ is compact,
+\ByThm{Every closed subset of a compact set is compact}
+$A$ is compact. \checkbox
+
+\medskip
+\noindent\textit{Part 2: $A$ is nonempty.}
+
+\Strategy We construct a sequence with one point drawn from each $A_n$, extract
+a convergent subsequence using compactness of $A_1$, and show its limit lies in
+every $A_n$.
+
+Since each $A_n$ is nonempty, \Let $(a_n)_{n \in \mathbb{N}}$ be a sequence with
+$a_n \in A_n$ for every $n$.
+
+Because the sets are nested, $a_n \in A_n \subseteq A_1$ for all $n$,
+so the entire sequence $(a_n)$ lies in $A_1$.
+\ByDef{sequential compactness of $A_1$} there exists a subsequence
+$(a_{n_k})_{k \in \mathbb{N}}$ and a point $p \in A_1$ such that
+\[
+  a_{n_k} \to p \quad \text{in } (X,d).
+\]
+
+\Let $m \in \mathbb{N}$ be arbitrary. For all $k$ sufficiently large, $n_k \geq m$,
+so $a_{n_k} \in A_{n_k} \subseteq A_m$. \Therefore the tail of the subsequence
+$(a_{n_k})$ lies in $A_m$.
+\ByThm{Closed sets contain the limits of their convergent sequences}
+and since $A_m$ is compact (hence closed), we conclude $p \in A_m$.
+
+Since $m$ was arbitrary, $p \in A_m$ for every $m \in \mathbb{N}$,
+hence $p \in \bigcap_{n=1}^{\infty} A_n = A$. \checkbox
+
+\Hence $A$ is nonempty. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Two-part direct proof. Part 1 is short: the intersection of closed sets is closed,
+and a closed subset of a compact set is compact. Part 2 is the heart: pick one
+point from each $A_n$, forming a sequence in $A_1$; extract a convergent
+subsequence via compactness of $A_1$; argue that the limit lands in every $A_m$
+by the tail argument and closedness of each $A_m$. The nesting is used exactly
+at the step $A_{n_k} \subseteq A_m$ for large $k$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item Definition of sequential compactness: \ref{def:sequential-compactness}
+  \item Every compact set is closed: \ref{prop:compact-implies-closed}
+  \item Arbitrary intersections of closed sets are closed: \ref{thm:intersection-closed-sets-closed}
+  \item Every closed subset of a compact set is compact: \ref{prop:closed-subset-compact}
+  \item Closed sets contain limits of convergent sequences (sequential characterization): \ref{def:closed-set-sequential}
+\end{itemize}
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

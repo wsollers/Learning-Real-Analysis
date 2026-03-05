@@ -1,0 +1,124 @@
+% =========================================================
+% Proof: Balls are open and closed
+% Source: volume-iii/analysis/metric-spaces/notes/notes-balls.tex
+% =========================================================
+
+\subsection*{Balls are open and closed}
+\label{prf:balls-open-closed}
+
+\begin{remark}[Return]
+\hyperref[prop:balls-open-closed]{$\leftarrow$ Back to Proposition (Balls are open and closed) in Notes}
+\end{remark}
+
+\begin{proposition}[Balls are open and closed]
+Let $(X, d)$ be a metric space, $x \in X$, and $r > 0$.
+\begin{enumerate}[label=(\roman*)]
+  \item $B_r(x)$ is an open set.
+  \item $\overline{B}_r(x)$ is a closed set.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\Given A metric space $(X, d)$, a point $x \in X$, and a radius $r > 0$.
+\Goal To show (i) $B_r(x)$ is open, and (ii) $\overline{B}_r(x)$ is closed.
+
+\medskip
+\noindent\textit{Part (i): $B_r(x)$ is open.}
+
+\Strategy We show that every point of $B_r(x)$ has an open ball around it
+still contained in $B_r(x)$.
+
+Let $x_0 \in B_r(x)$.
+By definition of open ball in a metric space,
+\[
+d(x,x_0) < r.
+\]
+Choose $\varepsilon>0$ with $\varepsilon < r - d(x,x_0)$. 
+Claim $B_\varepsilon(x_0) \subseteq B_r(x)$.
+
+Let $x_1 \in B_\varepsilon(x_0)$ be arbitrary. Then
+\begin{align*}
+d(x_0,x_1) &< \varepsilon,\\
+d(x,x_1) &\le d(x,x_0) + d(x_0,x_1).
+\end{align*}
+Since $\varepsilon < r - d(x,x_0)$, we have $d(x,x_0) < r - \varepsilon$. Therefore,
+\begin{align*}
+d(x,x_1) 
+&\le d(x,x_0) + d(x_0,x_1)\\
+&< (r-\varepsilon) + \varepsilon\\
+&= r.
+\end{align*}
+Hence, $x_1 \in B_r(x)$, and thus $B_\varepsilon(x_0) \subseteq B_r(x)$.
+
+Since $x_1 \in B_\varepsilon(x_0)$ was arbitrary, it follows that
+\[
+B_\varepsilon(x_0) \subseteq B_r(x).
+\]
+Since $x_0 \in B_r(x)$ was arbitrary, every point of $B_r(x)$ admits an
+$\varepsilon$-ball contained in $B_r(x)$. Therefore $B_r(x)$ is open.
+
+\medskip
+\noindent\textit{Part (ii): $\overline{B}_r(x)$ is closed.}
+
+\Strategy We show that $X \setminus \overline{B}_r(x)$ is open, i.e.\ every
+point outside the closed ball has an open ball around it disjoint from
+$\overline{B}_r(x)$.
+
+Let $x_0 \in X \setminus \overline{B}_r(x)$ be arbitrary. Then $d(x,x_0) > r$.
+
+Choose $\varepsilon>0$ with $\varepsilon < d(x,x_0) - r$. 
+Claim $B_\varepsilon(x_0) \subseteq X \setminus \overline{B}_r(x)$.
+
+Let $x_1 \in B_\varepsilon(x_0)$ be arbitrary. Then
+\begin{align*}
+d(x_0,x_1) &< \varepsilon,\\
+d(x,x_0) &\le d(x,x_1) + d(x_1,x_0).
+\end{align*}
+
+Since $\varepsilon < d(x,x_0) - r$, we have $\varepsilon + r < d(x,x_0)$. Therefore,
+\begin{align*}
+\varepsilon + r < d(x,x_0)
+&\le d(x,x_1) + d(x_0,x_1)\\
+&< d(x,x_1) + \varepsilon,
+\end{align*}
+
+which implies
+\[
+r < d(x,x_1).
+\]
+
+Hence $x_1 \notin \overline{B}_r(x)$, so
+\[
+B_\varepsilon(x_0) \subseteq X \setminus \overline{B}_r(x).
+\]
+
+Since $x_0 \in X \setminus \overline{B}_r(x)$ was arbitrary,
+the complement of $\overline{B}_r(x)$ is open. Therefore
+$\overline{B}_r(x)$ is closed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{proof}
+
+\begin{remark}[Proof shape]
+% YOUR PROOF SHAPE HERE
+\end{remark}
+
+\begin{remark}[Dependencies]
+\begin{itemize}
+  \item Definition of open ball: \ref{def:open-ball}
+  \item Definition of closed ball: \ref{def:closed-ball}
+  \item Definition of open set: \ref{def:open-closed-set}
+  \item Triangle inequality (metric axiom M4)
+\end{itemize}
+\end{remark}

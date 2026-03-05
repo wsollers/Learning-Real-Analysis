@@ -187,9 +187,6 @@ Add these colours to `main.tex` alongside the existing `propbox`/`propborder`:
 
 ---
 
-
----
-
 ## 2b. Chapter Entry Pattern — Breadcrumb and Roadmap
 
 Every chapter that has a `notes.tex` (or where `notes/index.tex` serves as the
@@ -340,7 +337,16 @@ P2.2.4 & $n + m = m + n$          & Induction on $n$  & \hyperref[prop:add-comm]
 
 Each detailed entry below the toolkit is a bare `lemma` / `proposition` /
 `definition` environment with a `\label` matching the toolkit link,
-followed by the fully quantified statement, then remarks covering:
+followed by the statement body, then a **mandatory** `[Fully quantified form]`
+remark, then any further applicable remarks.
+
+The fully quantified form remark must appear immediately after every definition
+and every theorem-like environment (proposition, lemma, theorem, corollary).
+It is not optional — it is required for all new entries. The statement body
+uses natural language and prose-style quantification ("for all $n$…", "there
+exists $r > 0$…"); the remark gives the same content written out in full
+first-order logic notation ($\forall$, $\exists$, $\Rightarrow$, etc.) with
+all bound variables and their types made explicit.
 
 ```latex
 \begin{lemma}[Tao 2.2.2 — Zero on the right]
@@ -348,13 +354,13 @@ followed by the fully quantified statement, then remarks covering:
 For all $n \in \mathbb{N}$,\quad $n + 0 = n$.
 \end{lemma}
 
+\begin{remark}[Fully quantified form]
+$\forall n \in \mathbb{N},\ n + 0 = n$.
+\end{remark}
+
 \begin{remark}[Intuition]
 A1 gives $0 + m = m$ (zero on the left). This lemma gives $n + 0 = n$
 (zero on the right). They are different facts — commutativity is not yet proved.
-\end{remark}
-
-\begin{remark}[Fully quantified form]
-$\forall n \in \mathbb{N},\ n + 0 = n$.
 \end{remark}
 
 \begin{remark}[Proof strategy]
@@ -369,16 +375,21 @@ Together with L2.2.3 this enables the proof of commutativity (P2.2.4).
 
 ### Standard Remark Sequence After a Result
 
-Not every remark applies to every result. Use what is warranted:
+The `[Fully quantified form]` remark is **mandatory** for every definition and
+theorem-like environment. All other remarks are used when warranted:
 
-| Remark tag | Content |
-|------------|---------|
-| `[Intuition]` | Plain-English meaning; what the result is *doing* |
-| `[Fully quantified form]` | The statement written out with all quantifiers explicit |
-| `[Proof strategy]` | Which technique (induction on what variable, contradiction, construction) and why |
-| `[Consequence]` | What this result unlocks or is used to prove |
-| `[Common error]` | A mistake to avoid when applying this result |
-| `[Source note]` | How this result's name or numbering differs across sources |
+| Remark tag | Required? | Content |
+|------------|-----------|---------|
+| `[Fully quantified form]` | **Always** | The statement written out with all quantifiers explicit in first-order logic notation |
+| `[Intuition]` | When helpful | Plain-English meaning; what the result is *doing* |
+| `[Proof strategy]` | When helpful | Which technique (induction on what variable, contradiction, construction) and why |
+| `[Consequence]` | When helpful | What this result unlocks or is used to prove |
+| `[Common error]` | When helpful | A mistake to avoid when applying this result |
+| `[Source note]` | When helpful | How this result's name or numbering differs across sources |
+
+The `[Fully quantified form]` remark must appear **first** in the remark
+sequence, immediately after the closing `\end{...}` of the environment it
+annotates.
 
 ---
 
@@ -846,10 +857,10 @@ explicitly requested.
    using the four-part structure (§6.5 Step 3):
    - Header comment (theorem name + source file path)
    - `\subsection*{...}\label{prf:root-id}`
-   - `\begin{remark}[Return]` with `\hyperref[prop:root-id]` back-link
+   - `\begin{remark*}[Return]` with `\hyperref[prop:root-id]` back-link
    - `\Claim [statement.]` as the first line of the proof body
    - `\begin{proof}...\end{proof}` in **normal mode** (§6.6)
-   - `\begin{remark}[Proof shape]` and `\begin{remark}[Dependencies]`
+   - `\begin{remark*}[Proof shape]` and `\begin{remark*}[Dependencies]`
 
 5. **Update `<chapter>/proofs/notes/index.tex`** (§6.5 Step 4):
    Add `\input{<full-path-from-root>/<proof-id>}` in dependency order.
@@ -952,7 +963,7 @@ proof and wants to reclaim space in the compiled document.
    and the return remark unchanged — only the proof body changes.
 
 4. **Remove the Study Notes section** if present (it belongs to justified mode).
-   Keep `\begin{remark}[Proof shape]` and `\begin{remark}[Dependencies]`.
+   Keep `\begin{remark*}[Proof shape]` and `\begin{remark*}[Dependencies]`.
 
 5. **Update the header comment** from `% Mode: justified` to `% Mode: standard`.
 

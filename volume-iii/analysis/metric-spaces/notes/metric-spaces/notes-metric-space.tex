@@ -21,7 +21,17 @@ x, & x \ge 0,\\
 -x, & x < 0.
 \end{cases}
 \]
+
+
 \end{definition}
+The absolute value function gives rise to the triangle inequality
+\[
+|x + y| \le |x| + |y|
+\]
+Alternately, terms can be introduced
+\[
+|x - y| \le |x - z| + |z - y|
+\]
 
 \begin{definition}[Distance function / Metric]
 Let $X$ be a nonempty set. A function $d : X\times X \to \mathbb{R}$
@@ -64,9 +74,7 @@ Throughout these notes, $|\cdot|$ denotes absolute value on $\mathbb{R}$,
 while $\|\cdot\|_2$ denotes the Euclidean norm on $\mathbb{R}^n$.
 \end{remark}
 
-% =========================================================
-\subsubsection{Main Theorems}
-% =========================================================
+
 
 \begin{theorem}[Properties of the modulus]
 For all $x,y\in\mathbb{R}$:
@@ -104,7 +112,6 @@ d(x,y) :=
 1, & x\neq y.
 \end{cases}
 \]
-Then $d$ is a metric on $X$.
 \end{example}
 
 \begin{example}[Taxicab (Manhattan) metric]
@@ -124,7 +131,37 @@ d_L(x,y) :=
 0, & x = y.
 \end{cases}
 \]
-Then $d_L$ is a metric.
+\end{example}
+
+\begin{example}[Euclidean metric on $\mathbb{R}^n$]
+Let $X = \mathbb{R}^n$. For $x = (x_1,\dots,x_n)$ and 
+$y = (y_1,\dots,y_n)$ in $\mathbb{R}^n$, define
+\[
+d(x,y)
+:=
+\sqrt{(x_1 - y_1)^2 + \cdots + (x_n - y_n)^2}.
+\]
+Equivalently,
+\[
+d(x,y) = \left( \sum_{k=1}^n (x_k - y_k)^2 \right)^{1/2}.
+\]
+\end{example}
+
+\begin{example}[Euclidean metric on $\mathbb{R}^n$]
+Let $X = \mathbb{R}^n$. For $x,y \in \mathbb{R}^n$, define
+\[
+d(x,y) := \|x - y\|_2,
+\]
+where the Euclidean norm $\|\cdot\|_2$ is given by
+\[
+\|x\|_2 := \left( \sum_{k=1}^n x_k^2 \right)^{1/2}.
+\]
+Equivalently,
+\[
+d(x,y)
+=
+\left( \sum_{k=1}^n (x_k - y_k)^2 \right)^{1/2}.
+\]
 \end{example}
 
 % =========================================================
@@ -165,45 +202,54 @@ in metric spaces depends only on the metric axioms.
 \]
 \end{remark}
 
-% =========================================================
-\subsubsection{Geometric Illustration}
-% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/notes/metric-spaces/figure-unit-ball-different-metrics}
+
+
+
+
+
+
+% ============================================================
+% Phase I — Metric Structure Reading Plan
+% ============================================================
+
+\subsection*{Phase I — Metric Structure Reading Plan}
 
 \begin{center}
-\begin{tikzpicture}[scale=1.0, line width=0.9pt]
+\begin{tabular}{c l l l}
+\toprule
+\textbf{Done} & \textbf{Author} & \textbf{Chapter} & \textbf{Chapter Name} \\
+\midrule
+$\square$ & Abbott — \textit{Understanding Analysis} & Ch. 2 & Sequences and Limits \\
+$\square$ & Abbott — \textit{Understanding Analysis} & Ch. 3 & Basic Topology of $\mathbb{R}$ \\
+$\square$ & Andersson--Björn--Wiman — \textit{An Introduction to Metric Spaces} & Ch. 2 & Metric Spaces \\
+$\square$ & Kaplansky — \textit{Set Theory and Metric Spaces} & Ch. 5 & Metric Spaces \\
+$\square$ & Kaplansky — \textit{Set Theory and Metric Spaces} & Ch. 6 & Open and Closed Sets \\
+$\square$ & Kaplansky — \textit{Set Theory and Metric Spaces} & Ch. 7 & Limit Points and Closure \\
+$\square$ & Kolmogorov \& Fomin — \textit{Introductory Real Analysis} & Ch. I & Metric Spaces \\
+$\square$ & Kolmogorov \& Fomin — \textit{Introductory Real Analysis} & Ch. II & Topological Spaces \\
+$\square$ & MIT OCW 18.S190 (Paige Bright) & Lecture 1 & Metric Spaces and Examples \\
+$\square$ & MIT OCW 18.S190 (Paige Bright) & Lecture 2 & Open and Closed Sets in Metric Spaces \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\def\dx{3.2}
-\def\s{1}
+\vspace{1em}
 
-% L1
-\begin{scope}[shift={(0,0)}]
-  \draw (0,\s) -- (\s,0) -- (0,-\s) -- (-\s,0) -- cycle;
-  \fill (0,0) circle (1.3pt);
-  \node[below=6pt] at (0,-1.2) {\small Taxicab $\ell^1$};
-\end{scope}
+\subsection*{Minimal Core Path}
 
-% L2
-\begin{scope}[shift={(\dx,0)}]
-  \draw (0,0) circle (\s);
-  \fill (0,0) circle (1.3pt);
-  \node[below=6pt] at (0,-1.2) {\small Euclidean $\ell^2$};
-\end{scope}
-
-% L4
-\begin{scope}[shift={(2*\dx,0)}]
-  \draw plot[domain=0:360,samples=200]
-    ({\s*sign(cos(\x))*abs(cos(\x))^(1/2)},
-     {\s*sign(sin(\x))*abs(sin(\x))^(1/2)});
-  \fill (0,0) circle (1.3pt);
-  \node[below=6pt] at (0,-1.2) {\small $\ell^4$};
-\end{scope}
-
-% L∞
-\begin{scope}[shift={(3*\dx,0)}]
-  \draw (-\s,-\s) rectangle (\s,\s);
-  \fill (0,0) circle (1.3pt);
-  \node[below=6pt] at (0,-1.2) {\small Max $\ell^\infty$};
-\end{scope}
-
-\end{tikzpicture}
+\begin{center}
+\begin{tabular}{c l l}
+\toprule
+\textbf{Done} & \textbf{Topic} & \textbf{Primary Source} \\
+\midrule
+$\square$ & Metric Definition & Andersson, Ch. 2 \\
+$\square$ & Open Balls & Andersson, Ch. 2 \\
+$\square$ & Open Sets & Andersson, Ch. 2 \\
+$\square$ & Closed Sets & Kaplansky, Ch. 6 \\
+$\square$ & Closure / Interior & Kaplansky, Ch. 7 \\
+$\square$ & Sequential Closure & Andersson Ch. 2 + Abbott Ch. 3 \\
+\bottomrule
+\end{tabular}
 \end{center}

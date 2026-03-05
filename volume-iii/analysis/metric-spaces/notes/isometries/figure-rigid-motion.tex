@@ -1,0 +1,83 @@
+\begin{tikzpicture}[
+  dot/.style={circle,fill,inner sep=1.4pt},
+  lbl/.style={font=\small},
+  sublbl/.style={font=\scriptsize,text=gray!55!black}
+]
+
+% Base triangle vertices (used in all panels)
+% A=(0,0), B=(1.4,0), C=(0.5,1.1)
+\def\drawTriangle#1#2#3#4{  % Ax Ay Bx By Cx Cy + fill colour
+}
+
+% ---- Panel 1: Original ----
+\begin{scope}[shift={(0,0)}]
+  \coordinate (A) at (0,0);
+  \coordinate (B) at (1.4,0);
+  \coordinate (C) at (0.5,1.1);
+  \fill[blue!20] (A)--(B)--(C)--cycle;
+  \draw[blue!65!black,line width=1.1pt] (A)--(B)--(C)--cycle;
+  \node[dot,fill=blue!70!black] at (A) {};
+  \node[dot,fill=blue!70!black] at (B) {};
+  \node[dot,fill=blue!70!black] at (C) {};
+  \node[sublbl,anchor=north] at ($(A)+(0,-0.15)$) {$A$};
+  \node[sublbl,anchor=north] at ($(B)+(0,-0.15)$) {$B$};
+  \node[sublbl,anchor=south] at ($(C)+(0,0.12)$)  {$C$};
+  \node[lbl,font=\small\bfseries,anchor=north] at (0.7,-0.55) {Original};
+\end{scope}
+
+% ---- Panel 2: Rotation 45° ----
+\begin{scope}[shift={(3.2,0)}]
+  % Rotate 45°: (x,y) -> (x cos45 - y sin45, x sin45 + y cos45)
+  \pgfmathsetmacro{\cs}{cos(45)}
+  \pgfmathsetmacro{\sn}{sin(45)}
+  \coordinate (A) at (0,0);
+  \coordinate (B) at ({1.4*\cs},{1.4*\sn});
+  \coordinate (C) at ({0.5*\cs-1.1*\sn},{0.5*\sn+1.1*\cs});
+  \fill[green!15!blue!15] (A)--(B)--(C)--cycle;
+  \draw[green!50!blue!70,line width=1.1pt] (A)--(B)--(C)--cycle;
+  \node[dot,fill=green!50!blue!70] at (A) {};
+  \node[dot,fill=green!50!blue!70] at (B) {};
+  \node[dot,fill=green!50!blue!70] at (C) {};
+  % Rotation arc indicator
+  \draw[gray!55,->,line width=0.7pt] (0.9,0) arc(0:45:0.9);
+  \node[sublbl,anchor=west] at (0.95,0.45) {$45°$};
+  \node[lbl,font=\small\bfseries,anchor=north] at (0.5,-0.55) {Rotation};
+\end{scope}
+
+% ---- Panel 3: Translation ----
+\begin{scope}[shift={(6.1,0)}]
+  % Original (ghost)
+  \draw[blue!25,line width=0.7pt,dashed] (0,0)--(1.4,0)--(0.5,1.1)--cycle;
+  % Translated by (0.6,0.5)
+  \coordinate (A) at (0.6,0.5);
+  \coordinate (B) at (2.0,0.5);
+  \coordinate (C) at (1.1,1.6);
+  \fill[orange!20] (A)--(B)--(C)--cycle;
+  \draw[orange!70!black,line width=1.1pt] (A)--(B)--(C)--cycle;
+  \node[dot,fill=orange!70!black] at (A) {};
+  \node[dot,fill=orange!70!black] at (B) {};
+  \node[dot,fill=orange!70!black] at (C) {};
+  % Translation arrow
+  \draw[gray!55,->,line width=0.7pt] (0.1,0.1) -- (0.48,0.4);
+  \node[sublbl,anchor=east] at (0.1,0.25) {$+a$};
+  \node[lbl,font=\small\bfseries,anchor=north] at (1.0,-0.55) {Translation};
+\end{scope}
+
+% ---- Panel 4: Reflection across vertical axis ----
+\begin{scope}[shift={(9.2,0)}]
+  % Reflection: x -> -x+1.4 (flip around x=0.7)
+  \coordinate (A) at (1.4,0);
+  \coordinate (B) at (0.0,0);
+  \coordinate (C) at (0.9,1.1);
+  \fill[red!12] (A)--(B)--(C)--cycle;
+  \draw[red!60!black,line width=1.1pt] (A)--(B)--(C)--cycle;
+  \node[dot,fill=red!60!black] at (A) {};
+  \node[dot,fill=red!60!black] at (B) {};
+  \node[dot,fill=red!60!black] at (C) {};
+  % Mirror line
+  \draw[gray!45,line width=0.7pt,dashed] (0.7,-0.4) -- (0.7,1.5);
+  \node[sublbl,text=gray!50,anchor=south] at (0.7,1.52) {axis};
+  \node[lbl,font=\small\bfseries,anchor=north] at (0.7,-0.55) {Reflection};
+\end{scope}
+
+\end{tikzpicture}

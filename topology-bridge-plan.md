@@ -1,148 +1,108 @@
 # Topology Bridge Plan
 
-## From the Real Line to Compactness (Real Analysis I / Baby Rudin)
+## Metric (M) vs Topological (T) Classification
 
 ------------------------------------------------------------------------
 
-# �� Purpose
+# Purpose
 
-This is **not** a full topology course.
-
-This is a structural bridge from:
+Structural bridge from:
 
 -   ε--N convergence on ℝ\
--   completeness of ℝ\
+-   Completeness of ℝ\
 -   Bolzano--Weierstrass\
 -   Heine--Borel
 
-to:
+To:
 
--   metric spaces\
--   open/closed sets\
--   compactness\
--   continuity
+-   Metric spaces\
+-   Compactness\
+-   Continuity
 
-The goal is structural mastery for Real Analysis I.
-
-------------------------------------------------------------------------
-
-# �� Core Reading Stack
-
-## �� Primary Drivers
-
--   Magnus --- *Metric Spaces: A Companion to Analysis*\
--   Andersson--Björn--Wiman --- *An Introduction to Metric Spaces*\
--   Yandl & Bowers --- *Elementary Point-Set Topology*
-
-## �� Secondary Support
-
--   Sutherland --- *Introduction to Metric and Topological Spaces*\
--   Shirali & Vasudeva --- *Metric Spaces*\
--   Kaplansky --- *Set Theory and Metric Spaces*
+Goal: Structural mastery for Real Analysis I.
 
 ------------------------------------------------------------------------
 
-# �� Bridge Syllabus with Proof Checklists
+# Phase I --- Metric Structure
+
+## Topics
+
+-   Definition of a metric space (M)
+-   Open balls (M)
+-   Open sets via balls (M)
+-   Closed sets as complements (T)
+-   Interior / Closure / Boundary (T definitions built via metric)
+
+## Proof Checklist
+
+-   Open balls are open (M)
+-   Arbitrary unions of open sets are open (T)
+-   Finite intersections of open sets are open (T)
+-   Closed sets are complements of open sets (T)
+-   Closure equals intersection of all closed supersets (T)
+-   Characterization of closure via sequences (M)
 
 ------------------------------------------------------------------------
 
-## Phase I --- Metric Structure
+# Phase II --- Convergence & Completeness
 
-### Topics
+## Topics
 
--   [ ] Definition of a metric space\
--   [ ] Open balls\
--   [ ] Open sets\
--   [ ] Closed sets\
--   [ ] Interior / Closure / Boundary
+-   Convergence in metric spaces (M)
+-   Cauchy sequences (M)
+-   Complete metric spaces (M)
+-   ℝ complete, ℚ not complete (M)
 
-### Proof Checklist
+## Proof Checklist
 
-Be able to prove:
-
--   [ ] Open balls are open\
--   [ ] Arbitrary unions of open sets are open\
--   [ ] Finite intersections of open sets are open\
--   [ ] Closed sets are complements of open sets\
--   [ ] Closure equals intersection of all closed supersets\
--   [ ] Characterization of closure via sequences (metric spaces)
+-   Convergent ⇒ Cauchy (M)
+-   Cauchy + convergent subsequence ⇒ convergent (M)
+-   Closed subset of complete space is complete (M)
+-   Nested intervals theorem (M)
+-   Uniqueness of limits (M)
 
 ------------------------------------------------------------------------
 
-## Phase II --- Convergence & Completeness
+# Phase III --- Compactness
 
-### Topics
+## Topics
 
--   [ ] Convergence in metric spaces\
--   [ ] Cauchy sequences\
--   [ ] Complete metric spaces\
--   [ ] ℝ complete, ℚ not complete
+-   Open covers (T)
+-   Compactness definition (T)
+-   Sequential compactness (M)
+-   Heine--Borel in ℝ (M)
 
-### Proof Checklist
+## Proof Checklist
 
-Be able to prove:
-
--   [ ] Convergent ⇒ Cauchy\
--   [ ] Cauchy + convergent subsequence ⇒ convergent\
--   [ ] Closed subset of complete space is complete\
--   [ ] Nested intervals theorem\
--   [ ] Uniqueness of limits in metric spaces
-
-------------------------------------------------------------------------
-
-## Phase III --- Compactness
-
-### Topics
-
--   [ ] Open covers\
--   [ ] Compactness definition\
--   [ ] Sequential compactness\
--   [ ] Heine--Borel in ℝ
-
-### Proof Checklist
-
-Be able to prove:
-
--   [ ] Compact ⇒ sequentially compact (metric spaces)\
--   [ ] Sequentially compact ⇒ compact (metric spaces)\
--   [ ] Compact ⇒ closed\
--   [ ] Compact ⇒ bounded (in ℝ)\
--   [ ] Continuous image of compact set is compact\
--   [ ] Heine--Borel theorem
+-   Compact ⇒ sequentially compact (M)
+-   Sequentially compact ⇒ compact (M)
+-   Compact ⇒ closed (T)
+-   Compact ⇒ bounded in ℝ (M)
+-   Continuous image of compact set is compact (T)
+-   Heine--Borel theorem (M)
 
 ------------------------------------------------------------------------
 
-## Phase IV --- Continuity
+# Phase IV --- Continuity
 
-### Topics
+## Topics
 
--   [ ] ε--δ definition\
--   [ ] Sequential continuity\
--   [ ] Open-set definition\
--   [ ] Uniform continuity
+-   ε--δ definition (M)
+-   Sequential continuity (M)
+-   Open-set definition (T)
+-   Uniform continuity (M)
 
-### Proof Checklist
+## Proof Checklist
 
-Be able to prove:
-
--   [ ] ε--δ ⇔ sequential continuity (metric spaces)\
--   [ ] ε--δ ⇔ open-set definition\
--   [ ] Compact ⇒ uniformly continuous\
--   [ ] Uniform continuity preserves Cauchy sequences\
--   [ ] Continuous function preserves compactness
+-   ε--δ ⇔ sequential continuity (M)
+-   ε--δ ⇔ open-set definition (MT)
+-   Compact ⇒ uniformly continuous (M)
+-   Uniform continuity preserves Cauchy sequences (M)
+-   Continuous function preserves compactness (T)
 
 ------------------------------------------------------------------------
 
-# �� 4-Week Plan
-
-**Week 1** --- Metric structure + topology of metric spaces\
-**Week 2** --- Completeness\
-**Week 3** --- Compactness\
-**Week 4** --- Continuity + uniform continuity
-
-------------------------------------------------------------------------
-
-# �� Meta-Goal
+# Meta-Goal
 
 For every theorem:
 
@@ -152,4 +112,4 @@ For every theorem:
 -   Identify where completeness is used\
 -   Identify where compactness is used
 
-You are building structural vision --- not just theorem recall.
+Build structural vision --- not just theorem recall.
