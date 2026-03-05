@@ -1,0 +1,93 @@
+\begin{document}
+\begin{tikzpicture}
+
+\coordinate (x)  at (0,   0);
+\coordinate (x0) at (6.4, 2.7);   % raised ~1 inch above x
+
+\def\R{2.2}      % interpreted as cm when used in circle()
+\def\EPS{0.80}   % interpreted as cm when used in circle()
+
+% rpt: boundary of closed ball toward x0 (DISTANCE \R cm from x toward x0)
+\coordinate (rpt)      at ($(x)!\R cm!(x0)$);
+
+% nearEdge: boundary of eps-ball toward x (DISTANCE \EPS cm from x0 toward x)
+\coordinate (nearEdge) at ($(x0)!\EPS cm!(x)$);
+
+% x1: inside eps-ball
+\coordinate (x1)       at ($(x0)+(-0.30, 0.55)$);
+
+%--- filled regions ---
+\fill[blue!10]   (x)  circle (\R);
+\fill[orange!20] (x0) circle (\EPS);
+
+%--- boundaries ---
+\draw[blue!65!black, very thick]      (x)  circle (\R);
+\draw[orange!60!black, thick, dashed] (x0) circle (\EPS);
+
+%--- triangle lines: x->x1, x1->x0, x->x0 (faint) ---
+\draw[gray!50, thin] (x)  -- (x0);   % d(x,x0) reference
+\draw[gray!50, thin] (x)  -- (x1);   % d(x,x1)
+\draw[gray!50, thin] (x1) -- (x0);   % d(x1,x0) = d(x0,x1)
+
+%--- r segment with ticks ---
+\draw[blue!60!black, thick] (x) -- (rpt);
+
+% perpendicular ticks (rotate 90 around the segment direction)
+\pgfmathanglebetweenpoints{\pgfpointanchor{x}{center}}{\pgfpointanchor{x0}{center}}
+\let\ang\pgfmathresult
+
+\draw[blue!60!black, thick]
+    ($(x)+(\ang+90:0.13)$) -- ($(x)+(\ang-90:0.13)$);
+\draw[blue!60!black, thick]
+    ($(rpt)+(\ang+90:0.13)$) -- ($(rpt)+(\ang-90:0.13)$);
+
+\node[blue!60!black, font=\small, below=5pt] at ($0.5*(x)+0.5*(rpt)$) {$r$};
+
+%--- gap bracket along the x-x0 line, offset to the side ---
+% midpoint of gap
+\coordinate (gapMid) at ($0.5*(rpt)+0.5*(nearEdge)$);
+
+% offset perpendicular to x-x0 line (toward bottom-right)
+\coordinate (gapMidOff)   at ($(gapMid)+(\ang-90:0.45)$);
+\coordinate (rptOff)      at ($(rpt)+(\ang-90:0.45)$);
+\coordinate (nearEdgeOff) at ($(nearEdge)+(\ang-90:0.45)$);
+
+\draw[red!60!black, thin, dotted] (rpt)      -- (rptOff);
+\draw[red!60!black, thin, dotted] (nearEdge) -- (nearEdgeOff);
+
+\draw[red!60!black, thick, {Bar[width=6pt]}-{Bar[width=6pt]}]
+    (rptOff) -- (nearEdgeOff);
+
+\node[red!60!black, font=\small, below=4pt] at (gapMidOff)
+    {$d(x,x_0){-}r{-}\varepsilon > 0$};
+
+%--- d(x,x0) label above the midpoint of whole segment ---
+\node[gray!55, font=\footnotesize, above=3pt] at ($0.5*(x)+0.5*(x0)$)
+    {$d(x,x_0)$};
+
+%--- epsilon line inside eps-ball ---
+\draw[orange!60!black, thick] (x0) -- (x1);
+\node[orange!60!black, font=\small, left=2pt] at ($0.5*(x0)+0.5*(x1)$)
+    {$\varepsilon$};
+
+%--- points ---
+\filldraw[black]         (x)   circle (2.4pt) node[below left,  font=\small] {$x$};
+\filldraw[black]         (x0)  circle (2.4pt) node[right=4pt,   font=\small] {$x_0$};
+\filldraw[black]         (x1)  circle (2.0pt) node[above left,  font=\small] {$x_1$};
+\filldraw[blue!65!black] (rpt) circle (1.8pt);
+
+%--- ball labels ---
+\node[blue!65!black,   font=\small] at ($(x) +(135:\R *0.58)$)  {$\overline{B}_r(x)$};
+\node[orange!60!black, font=\small] at ($(x0)+(50:\EPS*1.85)$)  {$B_\varepsilon(x_0)$};
+
+%--- inequality box ---
+\node[draw=gray!40, fill=gray!5, rounded corners=5pt,
+      font=\footnotesize, align=left, inner sep=8pt]
+  at (2.2, -2.6) {%
+    $d(x_0,x_1) < \varepsilon$\\[3pt]
+    $d(x,x_0) \le d(x,x_1)+d(x_1,x_0)$\\[3pt]
+    $\varepsilon + r < d(x,x_0) \le d(x,x_1)+\varepsilon$\\[3pt]
+    $\therefore\ r < d(x,x_1)
+       \;\Rightarrow\; x_1 \notin \overline{B}_r(x)$};
+
+\end{tikzpicture}
