@@ -1,0 +1,270 @@
+% =========================================================
+% Distance Between Sets
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Dependencies:
+%   notes-metric-space.tex      — def:metric, def:open-ball
+%   notes-properties-metric-space.tex — def:diameter, def:bounded-set
+%   notes-limit-points.tex      — def:closure (for the closure characterization)
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Distance Between Sets}
+\label{sec:distance-between-sets}
+% ---------------------------------------------------------
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Distance Between Sets --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:dist-point-set}
+  & $d(x, A) := \inf\{d(x,a) : a \in A\}$
+  & Definition
+  & \hyperref[def:dist-point-set]{$\downarrow$} \\[4pt]
+D\ref{def:dist-sets}
+  & $d(A, B) := \inf\{d(a,b) : a \in A,\, b \in B\}$
+  & Definition
+  & \hyperref[def:dist-sets]{$\downarrow$} \\[4pt]
+P\ref{prop:dist-point-set-closure}
+  & $d(x, A) = 0 \iff x \in \overline{A}$
+  & Sequential char.\ of closure
+  & \hyperref[prop:dist-point-set-closure]{$\downarrow$} \\[4pt]
+P\ref{prop:dist-sets-not-metric}
+  & $d(A,B) = 0 \not\Rightarrow A \cap B \neq \varnothing$
+  & Counterexample
+  & \hyperref[prop:dist-sets-not-metric]{$\downarrow$} \\[4pt]
+P\ref{prop:dist-sets-symmetric}
+  & $d(A, B) = d(B, A)$
+  & Symmetry of $d$
+  & \hyperref[prop:dist-sets-symmetric]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+
+The diameter of a set measures its internal spread --- the largest distance
+\emph{within} a set.
+We now introduce a companion notion: the distance \emph{between} two sets,
+which measures how far apart they are from each other.
+
+% ---- Definition: Distance from a Point to a Set ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Distance from a Point to a Set)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Distance from a Point to a Set]
+\label{def:dist-point-set}
+Let $(X, d)$ be a metric space, let $A \subseteq X$ be non-empty,
+and let $x \in X$.
+The \emph{distance from $x$ to $A$} is
+\[
+d(x, A) \;:=\; \inf\{\, d(x, a) : a \in A \,\}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\,(X,d)\;\text{metric space},\;
+\forall\,A \subseteq X\;\text{non-empty},\;
+\forall\,x \in X,\quad
+d(x,A) := \inf\{\, d(x,a) : a \in A \,\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Intuition]
+$d(x, A)$ is the closest $A$ gets to $x$.
+It is the infimum --- not necessarily a minimum --- of all distances from $x$
+to points of $A$.
+The infimum may not be achieved: if $x \notin A$ and $A$ is open, there may
+be no $a \in A$ realising the infimum.
+In $\mathbb{R}$, for instance, $d(0, (0,1)) = 0$ but no point of $(0,1)$
+is at distance $0$ from $0$.
+\end{remark*}
+
+% ---- Definition: Distance Between Sets ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Distance Between Sets)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Distance Between Sets]
+\label{def:dist-sets}
+Let $(X,d)$ be a metric space and let $A, B \subseteq X$ be non-empty.
+The \emph{distance between $A$ and $B$} is
+\[
+d(A, B) \;:=\; \inf\{\, d(a, b) : a \in A,\; b \in B \,\}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall\,(X,d)\;\text{metric space},\;
+\forall\,A,B \subseteq X\;\text{non-empty},\quad
+d(A,B) := \inf\{\, d(a,b) : a \in A,\; b \in B \,\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Relation to point-to-set distance]
+The two definitions are related by
+\[
+d(A, B) \;=\; \inf_{a \in A}\, d(a, B) \;=\; \inf_{b \in B}\, d(b, A).
+\]
+The distance between sets is the infimum of all distances from points of
+one set to the other set.
+\end{remark*}
+
+% ---- Proposition: d(x,A) = 0 iff x in closure(A) ----
+
+\begin{proposition}[Distance zero to a set characterizes closure]
+\label{prop:dist-point-set-closure}
+Let $(X,d)$ be a metric space and let $A \subseteq X$ be non-empty.
+For any $x \in X$:
+\[
+d(x, A) = 0
+\;\iff\;
+x \in \overline{A}.
+\]
+\end{proposition}
+
+\begin{proof}
+Unfolding definitions:
+\begin{align*}
+d(x, A) = 0
+&\iff \inf\{\, d(x,a) : a \in A \,\} = 0 \\
+&\iff \forall\, r > 0,\; \exists\, a \in A \text{ with } d(x,a) < r \\
+&\iff \forall\, r > 0,\; B_r(x) \cap A \neq \varnothing \\
+&\iff x \in \overline{A},
+\end{align*}
+where the last equivalence is the geometric characterization of closure
+(Theorem~\ref{thm:closure-equivalences}).
+\end{proof}
+
+\begin{remark*}[Consequence: a fourth characterization of closure]
+Proposition~\ref{prop:dist-point-set-closure} adds a fourth language to
+the unifying closure theorem:
+\[
+x \in \overline{A}
+\;\iff\;
+\forall r>0,\; B_r(x) \cap A \neq \varnothing
+\;\iff\;
+\exists (a_n) \subseteq A,\; a_n \to x
+\;\iff\;
+d(x, A) = 0.
+\]
+The metric-valued characterization $d(x,A) = 0$ is often the most
+computationally convenient: checking $d(x,A) = 0$ reduces to an
+infimum calculation rather than an existential statement about sequences.
+\end{remark*}
+
+\begin{remark*}[Common error]
+$d(x, A) = 0$ does \emph{not} imply $x \in A$ unless $A$ is closed.
+The infimum of distances may equal zero because $x$ can be approximated
+arbitrarily closely by points of $A$, even if $A$ does not contain $x$ itself.
+This is precisely the distinction between $A$ and $\overline{A}$.
+\end{remark*}
+
+% ---- Proposition: d(A,B) = 0 does not imply A ∩ B ≠ ∅ ----
+
+\begin{proposition}[$d(A,B) = 0$ does not imply intersection]
+\label{prop:dist-sets-not-metric}
+In general, $d(A, B) = 0$ does not imply $A \cap B \neq \varnothing$.
+\end{proposition}
+
+\begin{example}[Disjoint sets at distance zero]
+\label{ex:dist-sets-zero-disjoint}
+In $(\mathbb{R}, |\cdot|)$, let $A = (0,1)$ and $B = (1,2)$.
+These sets are disjoint: $A \cap B = \varnothing$.
+Yet
+\[
+d(A, B) = \inf\{\, |a - b| : a \in (0,1),\; b \in (1,2) \,\} = 0,
+\]
+since the infimum is not achieved --- points in $A$ can get arbitrarily
+close to $1$, and points in $B$ can get arbitrarily close to $1$,
+but neither set contains $1$.
+\end{example}
+
+\begin{remark*}[Why $d(A,B)$ is not a metric on sets]
+The failure $d(A,B) = 0 \not\Rightarrow A = B$ (or even $A \cap B \neq \varnothing$)
+means that $d$ does not satisfy the identity axiom for a metric.
+The function $(A,B) \mapsto d(A,B)$ is therefore \emph{not} a metric on
+the collection of subsets of $X$.
+
+The correct replacement --- a genuine metric on the collection of non-empty
+compact subsets of a metric space --- is the \emph{Hausdorff metric}:
+\[
+d_H(A, B)
+:= \max\Bigl(
+  \sup_{a \in A} d(a, B),\;
+  \sup_{b \in B} d(b, A)
+\Bigr).
+\]
+The Hausdorff metric is a topic for later study (functional analysis or
+advanced topology).
+\end{remark*}
+
+% ---- Proposition: symmetry ----
+
+\begin{proposition}[Symmetry of set distance]
+\label{prop:dist-sets-symmetric}
+For non-empty $A, B \subseteq X$:
+\[
+d(A, B) = d(B, A).
+\]
+\end{proposition}
+
+\begin{proof}
+$d(A,B) = \inf\{d(a,b) : a \in A, b \in B\}
+= \inf\{d(b,a) : b \in B, a \in A\}
+= d(B,A)$,
+using symmetry of $d$ (axiom M3).
+\end{proof}
+
+% ---- Worked Example ----
+
+\begin{example}[Computing $d(x, A)$ and $d(A, B)$ in $\mathbb{R}$]
+\label{ex:dist-point-set-concrete}
+Work in $(\mathbb{R}, |\cdot|)$.
+
+\medskip
+\noindent\textbf{(a) $d(3, [0,1])$.}
+
+$d(3, [0,1]) = \inf\{|3 - a| : a \in [0,1]\}$.
+Since $3 > 1$, the infimum is achieved at $a = 1$:
+$d(3, [0,1]) = |3 - 1| = 2$.
+
+\medskip
+\noindent\textbf{(b) $d(0.5, [0,1])$.}
+
+$0.5 \in [0,1]$, so $d(0.5, [0,1]) = 0$.
+(The infimum is achieved at $a = 0.5$ itself.)
+
+\medskip
+\noindent\textbf{(c) $d([0,1], [3,4])$.}
+
+$d([0,1],[3,4]) = \inf\{|a - b| : a \in [0,1], b \in [3,4]\}$.
+The two sets are on opposite sides of the gap $(1,3)$.
+The infimum is achieved at $a = 1$, $b = 3$:
+$d([0,1],[3,4]) = |1 - 3| = 2$.
+
+\medskip
+\noindent\textbf{(d) $d((0,1), (1,2))$.}
+
+Both sets are open, sharing the boundary point $1$ that belongs to neither.
+$d((0,1),(1,2)) = 0$ (infimum not achieved; see Example~\ref{ex:dist-sets-zero-disjoint}).
+\end{example}
+
+\begin{remark*}[When is the infimum achieved?]
+$d(x, A)$ is achieved (i.e.\ is a minimum) when $A$ is closed and bounded
+in a complete metric space --- more precisely, when $A$ is compact.
+Similarly, $d(A, B)$ is achieved when both $A$ and $B$ are compact and disjoint.
+These results belong to the compactness chapter.
+For now, treat the infimum as genuinely possibly unachieved.
+\end{remark*}
