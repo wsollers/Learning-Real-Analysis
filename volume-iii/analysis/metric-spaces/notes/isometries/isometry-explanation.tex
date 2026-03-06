@@ -1,0 +1,324 @@
+% =========================================================
+% Isometry preserves diameter — explanation + diagram
+% =========================================================
+% Requires:
+% \usepackage{amsmath,amssymb}
+% \usepackage{tikz}
+% \usetikzlibrary{arrows.meta,calc,decorations.pathmorphing,positioning}
+
+\subsubsection*{Why it is OK that $A\subseteq X$ and $f(A)\subseteq Y$}
+Even though $A$ and $f(A)$ live in different metric spaces, the \emph{diameter}
+comparison does not require comparing points across spaces.  Instead, it compares
+two sets of \emph{real numbers} (distance values).
+
+Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let $f:X\to Y$ be an isometry, i.e.
+\[
+d_Y\bigl(f(x),f(y)\bigr)=d_X(x,y)\qquad\text{for all }x,y\in X.
+\]
+Fix $A\subseteq X$ and consider the corresponding \emph{distance sets}
+\[
+D_A := \{\, d_X(x,y) : x,y\in A \,\}\subseteq \mathbb{R},
+\qquad
+D_{f(A)} := \{\, d_Y(u,v) : u,v\in f(A) \,\}\subseteq \mathbb{R}.
+\]
+These two sets live in the \emph{same ambient space} $\mathbb{R}$, so it makes
+perfect sense to compare them. Moreover, by the definition of image,
+every $u\in f(A)$ has the form $u=f(x)$ for some $x\in A$, and similarly for $v$.
+Thus each distance in $D_{f(A)}$ can be written as $d_Y(f(x),f(y))$ with $x,y\in A$,
+and the isometry property gives
+\[
+d_Y\bigl(f(x),f(y)\bigr)=d_X(x,y).
+\]
+So the set of distances realized by pairs of points in $A$ is the same as the set of
+distances realized by pairs of points in $f(A)$; consequently their suprema agree:
+\[
+\operatorname{diam}(A)=\sup D_A,
+\qquad
+\operatorname{diam}(f(A))=\sup D_{f(A)}.
+\]
+In short: \emph{points live in $X$ and $Y$, but distance values live in $\mathbb{R}$.}
+
+% ---------------------------------------------------------
+% TikZ diagram: two metric spaces, subset A and f(A),
+% points x1,x2 and f(x1),f(x2), and distance values in R.
+% ---------------------------------------------------------
+
+\begin{center}
+\begin{tikzpicture}[
+  >=Latex,
+  every node/.style={font=\small},
+  blob/.style={draw, thick, rounded corners=20pt},
+  setfillA/.style={fill=red!6, draw=red!70!black, thick},
+  setfillB/.style={fill=blue!6, draw=blue!70!black, thick},
+  map/.style={->, thick, blue!70!black},
+  dist/.style={thick, teal!70!black},
+  pt/.style={circle, fill=black, inner sep=1.1pt}
+]
+
+% --- ambient "spaces" as blobs
+\draw[blob, red!55!black]  (-5.6,-1.9) rectangle (-1.4,1.9);
+\node[red!55!black] at (-3.5,1.65) {$X$};
+
+\draw[blob, blue!55!black] ( 1.4,-1.9) rectangle ( 5.6,1.9);
+\node[blue!55!black] at (3.5,1.65) {$Y$};
+
+% --- subset A inside X (a smaller blob)
+\draw[setfillA]
+  (-5.05,-0.95)
+  .. controls (-5.25,0.10) and (-4.55,0.95) .. (-3.60,0.90)
+  .. controls (-2.70,0.85) and (-2.20,0.20) .. (-2.25,-0.55)
+  .. controls (-2.30,-1.25) and (-3.50,-1.35) .. (-4.30,-1.10)
+  .. controls (-4.70,-0.98) and (-4.85,-1.05) .. (-5.05,-0.95)
+  -- cycle;
+\node[red!70!black] at (-3.75,1.05) {$A$};
+
+% --- subset f(A) inside Y (a smaller blob)
+\draw[setfillB]
+  (2.00,-0.95)
+  .. controls (1.80,0.10) and (2.50,0.95) .. (3.45,0.90)
+  .. controls (4.35,0.85) and (4.85,0.20) .. (4.80,-0.55)
+  .. controls (4.75,-1.25) and (3.55,-1.35) .. (2.75,-1.10)
+  .. controls (2.35,-0.98) and (2.20,-1.05) .. (2.00,-0.95)
+  -- cycle;
+\node[blue!70!black] at (3.55,1.05) {$f(A)$};
+
+% --- points in A
+\node[pt] (x1) at (-4.55,0.25) {};
+\node[pt] (x2) at (-3.05,-0.35) {};
+\node[above left=1pt of x1] {$x_1$};
+\node[below right=1pt of x2] {$x_2$};
+
+% --- points in f(A)
+\node[pt] (fx1) at (2.55,0.10) {};
+\node[pt] (fx2) at (4.10,-0.25) {};
+\node[above left=1pt of fx1] {$f(x_1)$};
+\node[below right=1pt of fx2] {$f(x_2)$};
+
+% --- distance segments
+\draw[dist] (x1) -- (x2);
+\node[teal!70!black] at ($(x1)!0.5!(x2)+(0.15,0.25)$)
+  {$d_X(x_1,x_2)$};
+
+\draw[dist] (fx1) -- (fx2);
+\node[teal!70!black] at ($(fx1)!0.5!(fx2)+(0.00,0.25)$)
+  {$d_Y(f(x_1),f(x_2))$};
+
+% --- map arrows from points
+\draw[map, bend left=15] (x1) to node[above, font=\scriptsize] {$f$} (fx1);
+\draw[map, bend left=10] (x2) to node[below, font=\scriptsize] {$f$} (fx2);
+
+% --- equality note (distance values live in R)
+\node[align=center, font=\small] (Rnote) at (0,-1.45)
+  {$d_Y(f(x_1),f(x_2))=d_X(x_1,x_2)\in\mathbb{R}$};
+
+% --- diameter note
+\node[align=center, font=\scriptsize] at (0,-2.25)
+  {$\operatorname{diam}(A)=\sup\{d_X(x,y):x,y\in A\}$,\quad
+   $\operatorname{diam}(f(A))=\sup\{d_Y(u,v):u,v\in f(A)\}$};
+
+\end{tikzpicture}
+\end{center}
+
+
+
+
+
+
+
+
+
+% =========================================================
+% Isometries Preserve Metric Structure
+% =========================================================
+
+\begin{theorem}[Isometries Preserve Metric Structure]
+Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let
+$f:X\to Y$ be an isometry, meaning
+\[
+d_Y(f(x),f(y)) = d_X(x,y)
+\quad
+\text{for all } x,y\in X.
+\]
+
+Then every property defined purely in terms of the metric
+is preserved under $f$. In particular:
+
+\begin{enumerate}
+
+\item Distances are preserved:
+\[
+d_Y(f(x),f(y)) = d_X(x,y).
+\]
+
+\item Diameter is preserved:
+\[
+\operatorname{diam}(f(A)) = \operatorname{diam}(A)
+\quad
+\text{for every } A\subseteq X.
+\]
+
+\item Bounded sets remain bounded.
+
+\item If $(x_n)$ is a Cauchy sequence in $X$, then
+$(f(x_n))$ is Cauchy in $Y$.
+
+\item If $x_n \to x$ in $X$, then
+\[
+f(x_n) \to f(x)
+\quad
+\text{in } Y.
+\]
+
+\end{enumerate}
+
+\end{theorem}
+
+
+% =========================================================
+% Proof: Isometries Preserve Metric Structure
+% =========================================================
+
+\subsection*{Isometries Preserve Metric Structure}
+
+\begin{proof}
+
+\Claim Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let
+$f:X\to Y$ be an isometry. Then every property defined purely
+in terms of the metric is preserved under $f$. In particular,
+for every $A\subseteq X$:
+
+\begin{enumerate}
+\item Distances are preserved.
+\item Diameter is preserved.
+\item Boundedness is preserved.
+\item Cauchy sequences are preserved.
+\item Convergence of sequences is preserved.
+\end{enumerate}
+
+\Given Metric spaces $(X,d_X)$ and $(Y,d_Y)$ and an isometry
+$f:X\to Y$ satisfying
+\[
+d_Y(f(x),f(y)) = d_X(x,y)
+\quad
+\text{for all } x,y\in X.
+\]
+
+\Goal To show that metric properties defined using distances
+are preserved under $f$.
+
+\Strategy Each property listed above is defined using only the
+metric. Since $f$ preserves all pairwise distances, the defining
+conditions remain unchanged when points are mapped by $f$.
+
+\medskip
+
+\textbf{(1) Distances.}
+
+By definition of isometry,
+\[
+d_Y(f(x),f(y)) = d_X(x,y)
+\quad
+\text{for all } x,y\in X.
+\]
+
+\medskip
+
+\textbf{(2) Diameter.}
+
+Recall
+\[
+\operatorname{diam}(A)
+=
+\sup\{d_X(x,y):x,y\in A\}.
+\]
+
+Since
+\[
+d_Y(f(x),f(y)) = d_X(x,y),
+\]
+
+we obtain
+\[
+\{d_Y(f(x),f(y)):x,y\in A\}
+=
+\{d_X(x,y):x,y\in A\}.
+\]
+
+Taking suprema yields
+\[
+\operatorname{diam}(f(A))=\operatorname{diam}(A).
+\]
+
+\medskip
+
+\textbf{(3) Boundedness.}
+
+A set $A$ is bounded if
+\[
+\sup\{d_X(x,y):x,y\in A\}<\infty.
+\]
+
+Since all distances are preserved by $f$, the same supremum
+bounds distances in $f(A)$, so $f(A)$ is bounded whenever $A$
+is bounded.
+
+\medskip
+
+\textbf{(4) Cauchy sequences.}
+
+Suppose $(x_n)$ is Cauchy in $X$. Then
+
+\[
+\forall \varepsilon>0\;\exists N\;
+\text{such that }
+d_X(x_m,x_n)<\varepsilon
+\quad
+\text{for all } m,n\ge N.
+\]
+
+Using the isometry property,
+
+\[
+d_Y(f(x_m),f(x_n))
+=
+d_X(x_m,x_n)
+<
+\varepsilon
+\]
+
+for all $m,n\ge N$, showing that $(f(x_n))$ is Cauchy in $Y$.
+
+\medskip
+
+\textbf{(5) Convergence.}
+
+Suppose $x_n\to x$ in $X$. Then
+
+\[
+d_X(x_n,x)\to 0.
+\]
+
+Using the isometry property,
+
+\[
+d_Y(f(x_n),f(x))
+=
+d_X(x_n,x).
+\]
+
+Hence
+
+\[
+d_Y(f(x_n),f(x))\to 0,
+\]
+
+which means
+
+\[
+f(x_n)\to f(x)
+\quad
+\text{in } Y.
+\]
+
+\end{proof}
+

@@ -1,0 +1,80 @@
+% figure-reverse-triangle-inequality.tex
+% Reverse triangle inequality: derivation steps as callouts
+% Requires:
+%   \usepackage{tikz}
+%   \usetikzlibrary{arrows.meta,positioning,calc}
+
+\begin{center}
+\begin{tikzpicture}[
+  dot/.style={circle,fill,inner sep=2.0pt},
+  lbl/.style={font=\small},
+  slbl/.style={font=\scriptsize},
+  >=stealth
+]
+
+% ---- Vertices (same scalene triangle) --------------------------------------------------
+\coordinate (X) at (0,   0);
+\coordinate (Y) at (4.2, 0);
+\coordinate (Z) at (1.3, 2.6);
+
+\fill[blue!6] (X) -- (Y) -- (Z) -- cycle;
+\draw[blue!55!black,   line width=1.1pt] (X) -- (Y);
+\draw[orange!65!black, line width=1.1pt] (X) -- (Z);
+\draw[red!55!black,    line width=1.1pt] (Y) -- (Z);
+
+\node[dot, fill=blue!65!black]   at (X) {};
+\node[dot, fill=orange!65!black] at (Z) {};
+\node[dot, fill=red!60!black]    at (Y) {};
+
+\node[lbl, anchor=north east] at ($(X)+(-0.05,-0.12)$) {$x$};
+\node[lbl, anchor=north west] at ($(Y)+( 0.05,-0.12)$) {$y$};
+\node[lbl, anchor=south]      at ($(Z)+( 0.00, 0.12)$) {$z$};
+
+\node[slbl, text=blue!60!black, anchor=north]
+  at ($(X)!0.5!(Y)+(0,-0.14)$) {$d(x,y)$};
+\node[slbl, text=orange!65!black, anchor=east]
+  at ($(X)!0.5!(Z)+(-0.16,0)$) {$d(x,z)$};
+\node[slbl, text=red!55!black, anchor=west]
+  at ($(Y)!0.5!(Z)+(0.16,0)$) {$d(y,z)$};
+
+% ---- Derivation steps as callouts ----------------------------------------------------------
+% Step 1: rearrange d(x,z) \le d(x,y)+d(y,z)
+\node[
+  draw=gray!40, fill=gray!5, rounded corners=3pt,
+  font=\scriptsize, text width=5.4cm, align=left, inner sep=5pt,
+  anchor=north west
+] at (5.0, 3.0) {
+  \textbf{Step 1.} Rearrange \eqref{tri:xz}:\\[3pt]
+  $d(x,z) \le d(x,y) + d(y,z)$\\[2pt]
+  $\Rightarrow\; d(x,z)-d(y,z) \le d(x,y)$
+};
+
+% Step 2: swap x \leftrightarrow y
+\node[
+  draw=gray!40, fill=gray!5, rounded corners=3pt,
+  font=\scriptsize, text width=5.4cm, align=left, inner sep=5pt,
+  anchor=north west
+] at (5.0, 1.55) {
+  \textbf{Step 2.} Swap $x\leftrightarrow y$ in \eqref{tri:xy}:\\[3pt]
+  $d(y,z) \le d(y,x) + d(x,z)$\\[2pt]
+  $\Rightarrow\; d(y,z)-d(x,z) \le d(x,y)$
+};
+
+% Step 3: combine
+\node[
+  draw=violet!40, fill=violet!5, rounded corners=3pt,
+  font=\scriptsize, text width=5.4cm, align=left, inner sep=5pt,
+  anchor=north west
+] at (5.0, 0.2) {
+  \textbf{Combine:}\\[3pt]
+  $\pm\bigl(d(x,z)-d(y,z)\bigr) \le d(x,y)$\\[2pt]
+  $\Rightarrow\; |d(x,z)-d(y,z)| \le d(x,y)$
+};
+
+% Arrow from triangle to Step 1
+\draw[gray!50, ->, thin] (4.0, 1.5) -- (5.0, 2.55);
+% Arrow from triangle to Step 2
+\draw[gray!50, ->, thin] (4.0, 1.5) -- (5.0, 1.28);
+
+\end{tikzpicture}
+\end{center}

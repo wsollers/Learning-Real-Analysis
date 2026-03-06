@@ -1,0 +1,76 @@
+% figure-radial-gap-interior-ball.tex
+% Radial gap: inner ball B_{r-d(x,y)}(y) inside B_r(x)
+% Requires:
+%   \usepackage{tikz}
+%   \usetikzlibrary{arrows.meta,positioning,calc}
+
+\begin{center}
+\begin{tikzpicture}[
+  dot/.style={circle,fill,inner sep=1.8pt},
+  >=stealth,
+  lbl/.style={font=\small},
+  slbl/.style={font=\scriptsize},
+]
+
+% ---- Coordinates ---------------------------------------------------------------
+\coordinate (x)  at (0, 0);
+\coordinate (y)  at (1.5, 0.5);
+
+\def\R{3.2}     % radius of B_r(x)
+% d(x,y) = sqrt(1.5^2 + 0.5^2) = sqrt(2.5) approx 1.58
+% inner radius = R - d(x,y) approx 1.62   (fits comfortably inside)
+\pgfmathsetmacro{\dxy}{sqrt(1.5*1.5+0.5*0.5)}   % approx 1.58
+\pgfmathsetmacro{\inner}{\R - \dxy}               % approx 1.62
+
+% ---- Outer ball B_r(x) ---------------------------------------------------------
+\fill[blue!7]  (x) circle (\R);
+\draw[blue!55!black, line width=1.3pt, dashed] (x) circle (\R);
+
+% ---- Inner ball B_{r-d(x,y)}(y) -----------------------------------------------
+\fill[orange!18] (y) circle (\inner);
+\draw[orange!65!black, line width=1.1pt] (y) circle (\inner);
+
+% ---- Points -------------------------------------------------------------------
+\node[dot, fill=blue!65!black]   at (x) {};
+\node[dot, fill=orange!70!black] at (y) {};
+
+% ---- Point labels -------------------------------------------------------------
+\node[lbl, anchor=north] at ($(x)+(0,-0.14)$) {$x$};
+\node[lbl, anchor=south] at ($(y)+(0,0.12)$)  {$y$};
+
+% ---- d(x,y) segment -----------------------------------------------------------
+\draw[blue!60!black, line width=0.9pt] (x) -- (y);
+\node[slbl, text=blue!60!black, anchor=north]
+  at ($(x)!0.5!(y)+(0,-0.12)$) {$d(x,y)$};
+
+% ---- Radius r (rightward) -----------------------------------------------------
+\draw[blue!50!black, line width=0.8pt, <->]
+  ($(x)+(0,-0.7)$) -- ++({\R},0)
+  node[midway, slbl, below, yshift=-3pt, text=blue!55!black] {$r$};
+
+% ---- Inner radius r-d(x,y) (upward from y) ------------------------------------
+\draw[orange!60!black, line width=0.8pt, <->]
+  (y) -- ++(0,{\inner})
+  node[midway, slbl, right, xshift=3pt, text=orange!70!black]
+  {$\delta = r - d(x,y)$};
+
+% ---- Boundary point along x->y ray --------------------------------------------
+\pgfmathsetmacro{\ux}{1.5/\dxy}
+\pgfmathsetmacro{\uy}{0.5/\dxy}
+\pgfmathsetmacro{\bx}{\ux*\R}
+\pgfmathsetmacro{\by}{\uy*\R}
+\node[dot, fill=blue!40!black, inner sep=1.0pt] at (\bx,\by) {};
+
+% ---- Ball labels ---------------------------------------------------------------
+\node[lbl, text=blue!60!black, font=\small\itshape]
+  at (-2.3, 2.1) {$B_r(x)$};
+\node[lbl, text=orange!65!black, font=\small\itshape]
+  at ($(y)+(1.1,-1.3)$) {$B_{r-d(x,y)}(y)$};
+
+% ---- Annotation ---------------------------------------------------------------
+\node[slbl, text=gray!55!black, font=\scriptsize\itshape, anchor=north]
+  at (0,-2.35)
+  {radial gap $\delta = r - d(x,y) > 0$: room for $B_\delta(y)$ inside $B_r(x)$};
+
+\end{tikzpicture}
+\end{center}

@@ -1,0 +1,366 @@
+% =========================================================
+% Section 3 — Sequential Characterizations (Bridge)
+%
+% Source: volume-iii/analysis/metric-spaces/notes/
+% Purpose: Bridge from metric geometry to topological behaviour
+%          via sequential characterizations of open and closed sets.
+%
+% Dependencies:
+%   open-closed-sets.tex     — def:open-closed-set (ball-based definition),
+%                              def:closure, def:adherent-point
+%   \usepackage{tikz}
+%   \usetikzlibrary{arrows.meta,positioning}
+%   \usepackage{booktabs}
+%   \usepackage{enumitem}
+% =========================================================
+
+\subsection{Sequential Characterizations of Open and Closed Sets}
+\label{sec:sequential-characterizations}
+
+In metric spaces, properties of sets can often be described
+in terms of the behaviour of sequences.
+In particular, the ball-based definitions of open and closed sets
+established in \hyperref[sec:open-closed-definitions]{\S\ref*{sec:open-closed-definitions}}
+admit equivalent sequential formulations that link metric geometry
+to topological structure.
+These are \emph{characterizations}, not new definitions: each statement
+below is provably equivalent to the ball-based definition.
+
+% ---------------------------------------------------------
+\subsubsection{Closed Sets via Sequences}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Sequential Characterization (Closed Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:closed-sequential}
+Let $(X,d)$ be a metric space and let $F \subseteq X$.
+
+\medskip
+$F$ is closed (i.e.\ $X \setminus F$ is open in the sense of
+\hyperref[def:open-closed-set]{Definition~\ref*{def:open-closed-set}})
+if and only if every convergent sequence of points of $F$ converges to a
+point of $F$.
+\end{tcolorbox}
+
+\paragraph{Compact form.}
+
+\[
+F \text{ is closed}
+\iff
+\forall (x_n)_{n\in\mathbb{N}} \subseteq F,
+\Bigl(
+  x_n \to x
+  \;\Rightarrow\;
+  x \in F
+\Bigr).
+\]
+
+\paragraph{Fully quantified form.}
+
+Expanding the definition of convergence in full:
+
+\[
+F \text{ is closed}
+\iff
+\forall (x_n)_{n\in\mathbb{N}} \subseteq F,\;
+\forall x \in X,\;
+\left(
+  \Bigl[
+    \forall \varepsilon>0\;
+    \exists N\in\mathbb{N}\;
+    \forall n\ge N,\;
+    d(x_n,x)<\varepsilon
+  \Bigr]
+  \Rightarrow
+  x\in F
+\right).
+\]
+
+\begin{remark*}
+This formulation captures the idea that closed sets
+\emph{contain all of their limit points}.
+Limits of sequences from the set cannot ``escape'' the set.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsubsection{Open Sets via Sequences}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Sequential Characterization (Open Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:open-sequential}
+Let $(X,d)$ be a metric space and let $U \subseteq X$.
+
+\medskip
+$U$ is open (i.e.\ satisfies \hyperref[def:open-closed-set]{Definition~\ref*{def:open-closed-set}})
+if and only if every sequence that converges to a point of $U$ eventually
+lies entirely in $U$.
+\end{tcolorbox}
+
+\paragraph{Compact form.}
+
+\[
+U \text{ is open}
+\iff
+\forall x\in U,\;
+\forall (x_n)_{n\in\mathbb{N}} \subseteq X,\;
+\Bigl(
+  x_n \to x
+  \;\Rightarrow\;
+  \exists N\in\mathbb{N}\;
+  \forall n\ge N,\;
+  x_n\in U
+\Bigr).
+\]
+
+\paragraph{Fully quantified form.}
+
+Expanding the convergence condition in full:
+
+\[
+U \text{ is open}
+\iff
+\forall x\in U,\;
+\forall (x_n)\subseteq X,\;
+\left(
+  \Bigl[
+    \forall \varepsilon>0\;
+    \exists N\in\mathbb{N}\;
+    \forall n\ge N,\;
+    d(x_n,x)<\varepsilon
+  \Bigr]
+  \Rightarrow
+  \exists N'\in\mathbb{N}\;
+  \forall n\ge N',\;
+  x_n\in U
+\right).
+\]
+
+\begin{remark*}
+This condition expresses the idea that points of an open set
+are \emph{stable under small perturbations}.
+If a sequence approaches a point inside the set, the sequence
+must eventually remain inside the set.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsubsection{Duality Between Open and Closed Sets}
+% ---------------------------------------------------------
+
+The sequential characterizations of open and closed sets
+are complementary.
+
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+\textbf{Closed Sets} & \textbf{Open Sets} \\
+\midrule
+Sequences inside the set & Sequences converging to a point \\
+keep their limits inside & of the set eventually enter it \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Symbolically,
+
+\[
+\textbf{Closed:}
+\qquad
+x_n \in F,\; x_n \to x
+\;\Rightarrow\;
+x\in F
+\]
+
+\[
+\textbf{Open:}
+\qquad
+x_n \to x \in U
+\;\Rightarrow\;
+x_n \in U
+\text{ eventually.}
+\]
+
+\begin{remark*}[Conceptual Summary]
+These two statements reflect a fundamental duality.
+\begin{itemize}
+\item Closed sets are \emph{stable under limits}.
+\item Open sets are \emph{stable under small perturbations}.
+\end{itemize}
+Both viewpoints rely on the structure of metric spaces,
+where sequences are powerful enough to detect topological properties.
+\end{remark*}
+
+\begin{remark*}[Why This Works in Metric Spaces]
+\label{rem:first-countable}
+The sequential characterizations above rely on the fact that metric
+spaces are \emph{first-countable}.
+In such spaces, convergence of sequences is sufficient to capture the
+topological notions of openness and closedness.
+In more general topological spaces, sequences are not always sufficient
+to detect these properties.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsubsection{Equivalent Characterizations of Closed Sets}
+% ---------------------------------------------------------
+
+\begin{theorem}[Equivalent Characterizations of Closed Sets]
+\label{thm:closed-equiv}
+Let $(X,d)$ be a metric space and let $F \subseteq X$.
+The following statements are equivalent.
+
+\begin{enumerate}[label=(\roman*)]
+\item $F$ is closed in the sense of
+      \hyperref[def:open-closed-set]{Definition~\ref*{def:open-closed-set}}:
+      $X \setminus F$ is open.
+
+\item $F$ contains all of its limit points.
+
+\item $F$ is sequentially closed: for every sequence
+      $(x_n) \subseteq F$,
+      \[
+        x_n \to x \quad\Rightarrow\quad x \in F.
+      \]
+\end{enumerate}
+\end{theorem}
+
+\begin{remark*}
+These equivalences rely on the structure of metric spaces.
+In general topological spaces, sequential closure and topological
+closure need not coincide.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The three conditions highlight different perspectives on the same property.
+\begin{itemize}
+  \item \textbf{Topological.} Closed sets are complements of open sets.
+  \item \textbf{Limit-point.} Closed sets contain all of their
+        accumulation points.
+  \item \textbf{Sequential.} Limits of sequences in the set remain
+        in the set.
+\end{itemize}
+Together these viewpoints provide a powerful toolkit for reasoning
+about closed sets in analysis.
+\end{remark*}
+
+% ---------------------------------------------------------
+% TikZ: Closed-set equivalence triangle
+% ---------------------------------------------------------
+
+\begin{center}
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=22mm,
+  box/.style={draw, rounded corners=3pt, align=center, inner sep=6pt},
+  lab/.style={font=\small},
+  eq/.style={<->, thick}
+]
+
+\node[box] (closed) {\textbf{Closed}\\[-1pt]\scriptsize $F$ is closed};
+
+\node[box, below left=of closed] (limitpt)
+  {\textbf{Limit-point}\\[-1pt]\scriptsize $F$ contains all\\[-1pt]\scriptsize limit points};
+
+\node[box, below right=of closed] (seq)
+  {\textbf{Sequential}\\[-1pt]\scriptsize $(x_n)\subseteq F,\ x_n\to x$\\[-1pt]\scriptsize $\Rightarrow\ x\in F$};
+
+\draw[eq] (closed)  -- node[lab, left]  {$\Longleftrightarrow$} (limitpt);
+\draw[eq] (closed)  -- node[lab, right] {$\Longleftrightarrow$} (seq);
+\draw[eq] (limitpt) -- node[lab, below] {$\Longleftrightarrow$} (seq);
+
+\node[lab, above=4mm of closed]
+  {Closed set characterizations (metric spaces)};
+
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------
+\subsubsection{Sequential Duality Proposition}
+% ---------------------------------------------------------
+
+\begin{proposition}[Sequential Duality of Open and Closed Sets]
+\label{prop:sequential-duality}
+Let $(X,d)$ be a metric space, let $U \subseteq X$, and let
+$F = X \setminus U$.
+Then
+
+\[
+x_n \in F,\; x_n \to x
+\;\Rightarrow\;
+x \in F
+\quad\Longleftrightarrow\quad
+x_n \to x \in U
+\;\Rightarrow\;
+x_n \in U \text{ eventually.}
+\]
+\end{proposition}
+
+\begin{remark*}
+The left-hand side expresses the defining sequential property of
+\emph{closed sets}: limits of sequences in $F$ remain in $F$.
+
+The right-hand side expresses the defining sequential property of
+\emph{open sets}: sequences converging to a point of $U$ must
+eventually lie entirely inside $U$.
+
+The biconditional follows by taking complements and applying De Morgan's
+laws:
+\[
+(A \cap B)^c = A^c \cup B^c,
+\qquad
+(A \cup B)^c = A^c \cap B^c.
+\]
+
+The compact summary is
+
+\[
+\boxed{\text{Closed = limit stability}}
+\qquad
+\boxed{\text{Open = neighborhood stability.}}
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% TikZ: Open/Closed sequential symmetry diagram
+% ---------------------------------------------------------
+
+\begin{center}
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=3.8cm,
+  box/.style={draw, rounded corners=3pt, align=center, inner sep=8pt},
+  lab/.style={font=\small}
+]
+
+\node[box] (closed) {
+  \textbf{Closed Sets}\\[4pt]
+  $(x_n)\subseteq F$\\
+  $x_n \to x$\\
+  $\Rightarrow x\in F$
+};
+
+\node[box, right of=closed] (open) {
+  \textbf{Open Sets}\\[4pt]
+  $x_n \to x\in U$\\
+  $\Rightarrow$ eventually\\
+  $x_n\in U$
+};
+
+\draw[<->, thick] (closed) -- node[lab, above] {complements / duality} (open);
+
+\node[lab, below=1.4cm of closed] {limits stay inside};
+
+\node[lab, below=1.4cm of open] {approaching sequences enter};
+
+\node[lab, below=0.4cm of open, xshift=-1.9cm]
+  {$\boxed{\text{Closed: stable under limits}}$};
+
+\node[lab, below=0.9cm of open, xshift=-1.9cm]
+  {$\boxed{\text{Open: stable under small perturbations}}$};
+
+\end{tikzpicture}
+\end{center}

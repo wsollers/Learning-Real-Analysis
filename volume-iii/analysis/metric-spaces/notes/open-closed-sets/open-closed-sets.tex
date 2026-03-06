@@ -1,0 +1,582 @@
+% =========================================================
+% Open Sets, Closed Sets, Interior, Exterior, Boundary
+% Source: volume-iii/analysis/metric-spaces/notes/open-closed-sets.tex
+%
+% Dependencies:
+%   notes-balls.tex          — def:open-ball, def:closed-ball,
+%                              rem:interior-ball-identity (radial gap)
+%   notes-working-with-balls.tex — prop:reverse-triangle
+% =========================================================
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Open Sets, Closed Sets, Interior, Exterior, Boundary --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:open-closed-set}
+  & $S$ open $\iff \forall x\in S,\;\exists r>0,\;B_r(x)\subseteq S$
+  & Definition
+  & \hyperref[def:open-closed-set]{$\downarrow$} \\[4pt]
+P\ref{prop:trivial-open-closed}
+  & $\varnothing$ and $X$ are open and closed
+  & Vacuous truth; complement
+  & \hyperref[prop:trivial-open-closed]{$\downarrow$} \\[4pt]
+P\ref{prop:balls-open-closed}
+  & $B_r(x)$ is open;\;\, $\overline{B}_r(x)$ is closed
+  & Radial gap + triangle inequality
+  & \hyperref[prop:balls-open-closed]{$\downarrow$} \\[4pt]
+D\ref{def:interior}
+  & $\operatorname{int}(A) = \{x\in A : \exists r>0,\;B_r(x)\subseteq A\}$
+  & Definition
+  & \hyperref[def:interior]{$\downarrow$} \\[4pt]
+D\ref{def:exterior}
+  & $\operatorname{ext}(A) = \operatorname{int}(X\setminus A)$
+  & Definition
+  & \hyperref[def:exterior]{$\downarrow$} \\[4pt]
+D\ref{def:boundary}
+  & $x\in\partial A \iff \forall r>0$: $B_r(x)$ meets both $A$ and $X\setminus A$
+  & Definition
+  & \hyperref[def:boundary]{$\downarrow$} \\[4pt]
+T\ref{thm:ibe-decomp}
+  & $X = \operatorname{int}(A)\;\dot\cup\;\partial A\;\dot\cup\;\operatorname{ext}(A)$
+  & Set inclusion both ways
+  & \hyperref[thm:ibe-decomp]{$\downarrow$} \\[4pt]
+T\ref{thm:boundary-closure}
+  & $\partial A = \overline{A}\cap\overline{(X\setminus A)}$;\quad $\overline{A}=A\cup\partial A$
+  & Closure and boundary definitions
+  & \hyperref[thm:boundary-closure]{$\downarrow$} \\[4pt]
+P\ref{prop:closed-owns-boundary}
+  & $F$ closed $\iff \partial F \subseteq F$
+  & Complement + boundary definition
+  & \hyperref[prop:closed-owns-boundary]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Definitions: Open Sets and Closed Sets}
+\label{sec:open-closed-definitions}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Open Set, Closed Set)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Open Set, Closed Set]
+\label{def:open-closed-set}
+Let $(X,d)$ be a metric space and let $S \subseteq X$.
+\begin{itemize}
+  \item $S$ is \emph{open} (in $X$) if for every $x \in S$ there exists
+        $r > 0$ such that $B_r(x) \subseteq S$.
+  \item $S$ is \emph{closed} (in $X$) if its complement $X \setminus S$
+        is open.
+\end{itemize}
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+S\ \text{open}
+  &\iff \forall x \in S,\;
+         \exists r \in \mathbb{R}^{+},\;
+         B_r(x) \subseteq S. \\[4pt]
+S\ \text{closed}
+  &\iff X \setminus S\ \text{is open} \\
+  &\iff \forall x \in X \setminus S,\;
+         \exists r \in \mathbb{R}^{+},\;
+         B_r(x) \subseteq X \setminus S.
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Every point of an open set has room around it: no point of $S$ is
+pressed against the edge of $S$.
+Closed sets are defined indirectly as complements of open sets; the
+intuition that closed sets contain their limits is a consequence,
+not the definition.
+See \hyperref[sec:sequential-characterizations]{\S\ref*{sec:sequential-characterizations}}.
+\end{remark*}
+
+\begin{remark*}[Common error]
+Open and closed are \emph{not} opposites.
+A set can be both open and closed (called \emph{clopen}), or neither.
+In $\mathbb{R}$: the sets $\mathbb{R}$ and $\varnothing$ are clopen;
+the half-open interval $[0,1)$ is neither open nor closed.
+\end{remark*}
+
+\input{volume-iii/analysis/metric-spaces/notes/balls/figure-open-set}
+
+% ---------------------------------------------------------
+\subsection{First Example: A Neither-Nor Set}
+\label{sec:neither-nor-example}
+% ---------------------------------------------------------
+
+\begin{example}
+Consider $A = [0,1) \subset \mathbb{R}$ with the standard metric.
+Every ball around $0$ contains negative numbers, so $A$ is not open.
+Every ball around $1$ contains points of $A$ just below $1$, so
+$X \setminus A$ is not open either, hence $A$ is not closed.
+The boundary is $\partial A = \{0, 1\}$; since $0 \in A$ but $1 \notin A$,
+the set contains part of its boundary but not all.
+Therefore $A$ is neither open nor closed.
+\end{example}
+
+\begin{remark*}[Openness and closedness are not about geometry]
+Openness and closedness describe how a set interacts with
+neighborhoods, not whether it has a visible boundary.
+A set may have a boundary and be open, have a boundary and be closed,
+or have a boundary and be neither.
+What matters is the set's relationship to \emph{every} ball around
+\emph{every} point.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{First Propositions: Trivial Sets and Balls}
+\label{sec:trivial-and-balls}
+% ---------------------------------------------------------
+
+\begin{proposition}[Trivial Open and Closed Sets]
+\label{prop:trivial-open-closed}
+Let $(X,d)$ be a metric space.
+The empty set $\varnothing$ and the whole space $X$ are both open and closed.
+\end{proposition}
+
+\begin{proof}
+$\varnothing$ is open because the defining condition
+$\forall x \in U,\;\exists r>0,\;B_r(x)\subseteq U$
+is vacuously true when $U = \varnothing$.
+
+$X$ is open because for any $x \in X$ and any $r > 0$, the ball
+$B_r(x) \subseteq X$ trivially.
+
+Since $X \setminus \varnothing = X$ and $X \setminus X = \varnothing$ are both
+open, both sets are also closed by definition.
+\end{proof}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+\varnothing\ \text{open}
+  &\iff \forall x \in \varnothing,\;
+         \exists r \in \mathbb{R}^{+},\;
+         B_r(x) \subseteq \varnothing
+  \quad\text{(vacuously true).} \\[4pt]
+X\ \text{open}
+  &\iff \forall x \in X,\;
+         \exists r \in \mathbb{R}^{+},\;
+         B_r(x) \subseteq X
+  \quad\text{(true for any $r$).} \\[4pt]
+\varnothing\ \text{closed}
+  &\iff X \setminus \varnothing = X\ \text{is open.} \\[4pt]
+X\ \text{closed}
+  &\iff X \setminus X = \varnothing\ \text{is open.}
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Consequence]
+The topology axioms for open sets follow from
+\hyperref[def:open-closed-set]{Definition~\ref*{def:open-closed-set}}:
+arbitrary unions of open sets are open; finite intersections of open sets
+are open.
+By De Morgan, arbitrary intersections of closed sets are closed and finite
+unions of closed sets are closed.
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:balls-open-closed]{Balls are Open and Closed}}{Balls are Open and Closed}]
+\label{prop:balls-open-closed}
+Let $(X,d)$ be a metric space, $x \in X$, and $r > 0$.
+\begin{enumerate}[label=(\roman*)]
+  \item $B_r(x)$ is an open set.
+  \item $\overline{B}_r(x)$ is a closed set.
+\end{enumerate}
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+&\forall (X,d)\ \text{metric space},\;
+ \forall x \in X,\;
+ \forall r \in \mathbb{R}^{+}: \\
+&\quad \text{(i)}\quad
+  \forall y \in B_r(x),\;
+  \exists \alpha \in \mathbb{R}^{+},\;
+  B_\alpha(y) \subseteq B_r(x). \\
+&\quad \text{(ii)}\quad
+  X \setminus \overline{B}_r(x)\ \text{is open, i.e.}\;
+  \forall y \notin \overline{B}_r(x),\;
+  \exists \alpha \in \mathbb{R}^{+},\;
+  B_\alpha(y) \cap \overline{B}_r(x) = \varnothing.
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Both parts use the radial gap from
+\hyperref[rem:interior-ball-identity]{\texttt{notes-balls.tex}}:
+
+\smallskip
+\begin{center}
+\begin{tabular}{l l}
+\toprule
+\textbf{Case} & \textbf{Gap and safe radius} \\
+\midrule
+$y \in B_r(x)$ (inside open ball)
+  & $\alpha := r - d(x,y) > 0$;\quad $B_\alpha(y) \subseteq B_r(x)$ \\[4pt]
+$y \notin \overline{B}_r(x)$ (outside closed ball)
+  & $\alpha := d(x,y) - r > 0$;\quad $B_\alpha(y) \cap \overline{B}_r(x) = \varnothing$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\smallskip\noindent
+In both cases the triangle inequality converts the gap into a ball
+containment.
+\end{remark*}
+
+\input{volume-iii/analysis/metric-spaces/notes/balls/figure-slack-ball}
+
+% ---------------------------------------------------------
+\subsection{Interior, Exterior, and Boundary}
+\label{sec:interior-exterior-boundary}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Interior)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Interior]
+\label{def:interior}
+Let $(X,d)$ be a metric space and let $A \subseteq X$.
+The \emph{interior} of $A$ is
+\[
+  \operatorname{int}(A)
+  \;:=\;
+  \bigl\{x \in A : \exists r > 0 \text{ such that } B_r(x) \subseteq A\bigr\}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\;
+\forall A \subseteq X,\;
+\forall x \in X:\quad
+x \in \operatorname{int}(A)
+\;\iff\;
+x \in A
+\;\land\;
+\exists r \in \mathbb{R}^{+},\;
+\forall y \in X,\;
+d(x,y) < r \Rightarrow y \in A.
+\]
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Exterior)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Exterior]
+\label{def:exterior}
+Let $(X,d)$ be a metric space and let $A \subseteq X$.
+The \emph{exterior} of $A$ is
+\[
+  \operatorname{ext}(A)
+  \;:=\;
+  \operatorname{int}(X \setminus A).
+\]
+Equivalently,
+\[
+  x \in \operatorname{ext}(A)
+  \;\iff\;
+  \exists r > 0 \text{ such that } B_r(x) \cap A = \varnothing.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\;
+\forall A \subseteq X,\;
+\forall x \in X:\quad
+x \in \operatorname{ext}(A)
+\;\iff\;
+\exists r \in \mathbb{R}^{+},\;
+\forall y \in X,\;
+d(x,y) < r \Rightarrow y \notin A.
+\]
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Boundary)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Boundary]
+\label{def:boundary}
+Let $(X,d)$ be a metric space and let $A \subseteq X$.
+The \emph{boundary} of $A$ is
+\[
+  \partial A
+  \;:=\;
+  \Bigl\{
+    x \in X :
+    \forall r > 0,\;
+    B_r(x) \cap A \neq \varnothing
+    \;\text{ and }\;
+    B_r(x) \cap (X \setminus A) \neq \varnothing
+  \Bigr\}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\;
+\forall A \subseteq X,\;
+\forall x \in X:\quad
+x \in \partial A
+\;\iff\;
+\forall r \in \mathbb{R}^{+},\;
+\bigl(\exists y \in A,\; d(x,y) < r\bigr)
+\;\land\;
+\bigl(\exists z \in X \setminus A,\; d(x,z) < r\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Intuition]
+The three sets classify every point of $X$ by how it sits relative to $A$:
+
+\smallskip
+\begin{center}
+\begin{tabular}{l l}
+\toprule
+\textbf{Region} & \textbf{Every sufficiently small ball \ldots} \\
+\midrule
+$\operatorname{int}(A)$ & lies entirely inside $A$ \\
+$\operatorname{ext}(A)$ & lies entirely outside $A$ \\
+$\partial A$            & straddles both $A$ and $X \setminus A$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{remark*}
+
+\begin{remark*}[Diagram]
+See the TikZ diagram in \texttt{diagrams.tex} for a visual illustration
+of an interior point, boundary point, and exterior point with their
+respective balls.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{The Decomposition Theorem}
+\label{sec:ibe-decomposition}
+% ---------------------------------------------------------
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:ibe-decomp]{Interior--Boundary--Exterior Decomposition}}{Interior-Boundary-Exterior Decomposition}]
+\label{thm:ibe-decomp}
+For any subset $A \subseteq X$,
+\[
+  X
+  \;=\;
+  \operatorname{int}(A)
+  \;\dot{\cup}\;
+  \partial A
+  \;\dot{\cup}\;
+  \operatorname{ext}(A),
+\]
+a disjoint union.
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+\forall (X,d)\ \text{metric space},\;
+\forall A \subseteq X,\;
+\forall x \in X:\quad
+&\bigl(x \in \operatorname{int}(A)\bigr)
+\;\lor\;
+\bigl(x \in \partial A\bigr)
+\;\lor\;
+\bigl(x \in \operatorname{ext}(A)\bigr), \\[4pt]
+\text{and these three cases are mutually exclusive:}\quad
+&\operatorname{int}(A) \cap \partial A = \varnothing, \\
+&\operatorname{int}(A) \cap \operatorname{ext}(A) = \varnothing, \\
+&\partial A \cap \operatorname{ext}(A) = \varnothing.
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Every point of the ambient space stands in exactly one of three
+relations to $A$: firmly inside, firmly outside, or on the fence.
+No point can belong to two regions: a ball around an interior point is
+wholly inside $A$, which rules out both boundary and exterior membership.
+\end{remark*}
+
+\begin{remark*}[Consequence]
+This decomposition immediately yields necessary and sufficient ball
+conditions for openness and closedness, and for boundary ownership
+(see below).
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Boundary and Closure}
+\label{sec:boundary-closure}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Adherent Point, Closure)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Adherent Point]
+\label{def:adherent-point}
+Let $(X,d)$ be a metric space and let $A \subseteq X$.
+A point $x \in X$ is an \emph{adherent point} (or \emph{closure point}) of $A$ if
+\[
+  \forall r > 0,\quad B_r(x) \cap A \neq \varnothing.
+\]
+\end{definition}
+
+\begin{definition}[Closure]
+\label{def:closure}
+The \emph{closure} of $A$, denoted $\overline{A}$, is the set of all adherent
+points of $A$:
+\[
+  \overline{A}
+  \;:=\;
+  \{x \in X : \forall r > 0,\; B_r(x) \cap A \neq \varnothing\}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Relationship to the boundary]
+An adherent point of $A$ is any point that every ball around it touches $A$
+--- it may lie inside $A$, or it may be a boundary point pressed up against $A$
+from the outside.
+Interior points and boundary points of $A$ are both adherent points;
+exterior points are not.
+\end{remark*}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:boundary-closure]{Boundary via Closure}}{Boundary via Closure}]
+\label{thm:boundary-closure}
+For any $A \subseteq X$,
+\[
+  \partial A
+  \;=\;
+  \overline{A} \cap \overline{(X \setminus A)},
+  \qquad\qquad
+  \overline{A} = A \cup \partial A.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+\forall (X,d)\ \text{metric space},\;
+\forall A \subseteq X,\;
+\forall x \in X:\quad
+x \in \partial A
+&\;\iff\;
+\Bigl(
+  \forall r \in \mathbb{R}^{+},\;
+  B_r(x) \cap A \neq \varnothing
+\Bigr)
+\;\land\;
+\Bigl(
+  \forall r \in \mathbb{R}^{+},\;
+  B_r(x) \cap (X \setminus A) \neq \varnothing
+\Bigr). \\[6pt]
+x \in \overline{A}
+&\;\iff\;
+x \in A \;\lor\; x \in \partial A \\
+&\;\iff\;
+\forall r \in \mathbb{R}^{+},\;
+B_r(x) \cap A \neq \varnothing.
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+The boundary is precisely where both $A$ and its complement accumulate.
+The closure sweeps up all of $A$ together with its boundary.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Openness and Closedness via the Boundary}
+\label{sec:open-closed-boundary}
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:closed-owns-boundary]{Closed Sets Contain Their Boundary}}{Closed Sets Contain Their Boundary}]
+\label{prop:closed-owns-boundary}
+Let $F \subseteq X$. Then
+\[
+  F \text{ is closed}
+  \;\iff\;
+  \partial F \subseteq F.
+\]
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+\forall (X,d)\ \text{metric space},\;
+\forall F \subseteq X:\quad
+F\ \text{closed}
+&\;\iff\;
+\forall x \in X,\;
+\Bigl(
+  \forall r \in \mathbb{R}^{+},\;
+  B_r(x) \cap F \neq \varnothing
+  \;\land\;
+  B_r(x) \cap (X \setminus F) \neq \varnothing
+\Bigr)
+\Rightarrow x \in F. \\[6pt]
+\forall (X,d)\ \text{metric space},\;
+\forall U \subseteq X:\quad
+U\ \text{open}
+&\;\iff\;
+\forall x \in U,\;
+\exists r \in \mathbb{R}^{+},\;
+B_r(x) \cap (X \setminus U) = \varnothing.
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Closed sets \emph{own their boundary}: no boundary point can escape.
+The dual statement is that $U$ is open if and only if
+$U \cap \partial U = \varnothing$ --- open sets contain none of their
+boundary. This follows directly from the decomposition theorem and the
+definition of interior.
+\end{remark*}
+
+\begin{remark*}[Common error]
+The converse inference ``sets that miss some boundary points are open''
+is \emph{not} valid. A set can contain some boundary points and exclude
+others, making it neither open nor closed.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Conceptual Summary}
+\label{sec:open-closed-summary}
+% ---------------------------------------------------------
+
+\begin{center}
+\[
+  \boxed{\text{Open sets: room around every point (no boundary)}}
+  \qquad
+  \boxed{\text{Closed sets: own their boundary}}
+\]
+\end{center}
+
+\begin{remark*}[Bounded sets]
+\label{rem:bounded-set}
+A set $A \subseteq X$ is \emph{bounded} if
+$\exists x_0 \in X,\; \exists R > 0,\; \forall a \in A,\; d(a, x_0) \le R$.
+Boundedness is independent of openness and closedness; a set may be any
+combination of bounded/unbounded and open/closed.
+\end{remark*}
+
+\begin{remark*}[Forward reference]
+The equivalent sequential characterisations --- closed sets are stable
+under limits of sequences; open sets are stable under small perturbations
+--- are developed in
+\hyperref[sec:sequential-characterizations]{\S\ref*{sec:sequential-characterizations}}.
+\end{remark*}

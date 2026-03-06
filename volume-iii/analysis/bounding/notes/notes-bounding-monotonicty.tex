@@ -1,0 +1,211 @@
+% =========================================================
+% Monotonicity of Supremum and Infimum
+% =========================================================
+
+\subsection{Order Preservation of Supremum and Infimum}
+
+\subsubsection{Theorem}
+
+\begin{theorem}[Monotonicity of Supremum and Infimum]
+Let $A,B \subseteq \mathbb{R}$ be nonempty.
+
+\begin{enumerate}
+\item \textbf{Supremum.}  
+If $A \subseteq B$ and both sets are bounded above, then
+\[
+\sup A \le \sup B .
+\]
+
+\item \textbf{Infimum.}  
+If $A \subseteq B$ and both sets are bounded below, then
+\[
+\inf A \ge \inf B .
+\]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+
+\textbf{Supremum case.}
+
+Assume $A \subseteq B$.
+
+Since $B$ is bounded above, $\sup B$ exists.
+
+By definition of supremum,
+\[
+\forall b \in B, \quad b \le \sup B .
+\]
+
+Because $A \subseteq B$, every $a \in A$ satisfies
+\[
+a \le \sup B .
+\]
+
+Thus $\sup B$ is an upper bound for $A$.
+
+Since $\sup A$ is the least upper bound of $A$,
+\[
+\sup A \le \sup B .
+\]
+
+\medskip
+
+\textbf{Infimum case.}
+
+Assume $A \subseteq B$.
+
+Since $B$ is bounded below, $\inf B$ exists.
+
+By definition of infimum,
+\[
+\forall b \in B, \quad \inf B \le b .
+\]
+
+Because $A \subseteq B$,
+\[
+\forall a \in A, \quad \inf B \le a .
+\]
+
+Thus $\inf B$ is a lower bound for $A$.
+
+Since $\inf A$ is the greatest lower bound of $A$,
+\[
+\inf B \le \inf A .
+\]
+
+Equivalently,
+\[
+\inf A \ge \inf B .
+\]
+
+\end{proof}
+
+% ---------------------------------------------------------
+
+\subsubsection{Functional Version}
+
+\begin{theorem}[Monotonicity for Functions]
+Let $f : X \to \mathbb{R}$ and let $A,B \subseteq X$ with $A \subseteq B$.
+
+\begin{enumerate}
+\item If $f$ is bounded above on $B$, then
+\[
+\sup_{x \in A} f(x)
+\le
+\sup_{x \in B} f(x).
+\]
+
+\item If $f$ is bounded below on $B$, then
+\[
+\inf_{x \in A} f(x)
+\ge
+\inf_{x \in B} f(x).
+\]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+
+Define
+\[
+f(A) = \{f(x) : x \in A\}, \qquad
+f(B) = \{f(x) : x \in B\}.
+\]
+
+Since $A \subseteq B$,
+\[
+f(A) \subseteq f(B).
+\]
+
+Applying the monotonicity results above,
+\[
+\sup f(A) \le \sup f(B),
+\qquad
+\inf f(A) \ge \inf f(B).
+\]
+
+Because
+\[
+\sup_{x\in A} f(x) = \sup f(A),
+\qquad
+\inf_{x\in A} f(x) = \inf f(A),
+\]
+
+the result follows.
+
+\end{proof}
+
+% ---------------------------------------------------------
+
+\subsubsection{Consequences}
+
+\begin{corollary}[Diameter Monotonicity]
+Let $(X,d)$ be a metric space and let $A \subseteq B \subseteq X$.
+Then
+\[
+\operatorname{diam}(A) \le \operatorname{diam}(B).
+\]
+\end{corollary}
+
+\begin{proof}
+
+Recall
+\[
+\operatorname{diam}(A)
+=
+\sup\{d(x,y): x,y \in A\}.
+\]
+
+If $A \subseteq B$, then
+\[
+\{d(x,y):x,y\in A\}
+\subseteq
+\{d(x,y):x,y\in B\}.
+\]
+
+Applying monotonicity of the supremum yields
+\[
+\operatorname{diam}(A) \le \operatorname{diam}(B).
+\]
+
+\end{proof}
+
+% ---------------------------------------------------------
+
+\begin{corollary}[Norm Bounds]
+Let $A,B \subseteq \mathbb{R}^n$ with $A \subseteq B$. Then
+\[
+\sup_{x\in A} \|x\|
+\le
+\sup_{x\in B} \|x\|.
+\]
+\end{corollary}
+
+\begin{proof}
+
+Define $f(x) = \|x\|$.  
+Apply the functional version of the monotonicity theorem.
+
+\end{proof}
+
+% ---------------------------------------------------------
+
+\begin{corollary}[Integral Bounds]
+Let $f : X \to \mathbb{R}$ be integrable and let $A \subseteq B$.
+Then
+\[
+\inf_{x\in B} f(x)
+\le
+\int_A f
+\le
+\sup_{x\in B} f(x).
+\]
+\end{corollary}
+
+\begin{remark}
+These monotonicity principles appear throughout analysis,
+especially in bounding diameters, norms, limits, and integrals.
+They follow directly from the least-upper-bound and
+greatest-lower-bound properties of the real numbers.
+\end{remark}

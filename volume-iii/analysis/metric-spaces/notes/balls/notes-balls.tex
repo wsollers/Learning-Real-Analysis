@@ -21,14 +21,7 @@ D\ref{def:closed-ball}
   & $\overline{B}_r(x) := \{\,y\in X : d(x,y) \le r\,\}$
   & Definition
   & \hyperref[def:closed-ball]{$\downarrow$} \\
-D\ref{def:open-closed-set}
-  & Open: $\forall x\in S,\;\exists r>0,\;B_r(x)\subseteq S$
-  & Definition
-  & \hyperref[def:open-closed-set]{$\downarrow$} \\
-P\ref{prop:balls-open-closed}
-  & $B_r(x)$ is open;\; $\overline{B}_r(x)$ is closed
-  & Triangle inequality
-  & \hyperref[prop:balls-open-closed]{$\downarrow$} \\
+% def:open-closed-set and prop:balls-open-closed live in open-closed-sets.tex
 \bottomrule
 \end{tabular}
 \end{tcolorbox}
@@ -143,136 +136,12 @@ to open and closed balls in metric spaces.
 
 
 
-% ---- Open Set and Closed Set ----
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Open Set, Closed Set)}},
-  fonttitle=\small\bfseries]
-\begin{definition}[Open Set, Closed Set]
-\label{def:open-closed-set}
-Let $(X, d)$ be a metric space and $S \subseteq X$.
-\begin{itemize}
-  \item $S$ is \emph{open} (in $X$) if for every $x \in S$ there exists
-        $r > 0$ such that $B_r(x) \subseteq S$.
-  \item $S$ is \emph{closed} (in $X$) if its complement $X \setminus S$
-        is open.
-\end{itemize}
-\end{definition}
-\end{tcolorbox}
-
-\begin{remark*}[Fully quantified form]
-\begin{align*}
-S\ \text{open}
-  &\iff \forall x \in S,\;
-         \exists r \in \mathbb{R}^{+},\;
-         B_r(x) \subseteq S. \\
-S\ \text{closed}
-  &\iff X \setminus S\ \text{is open} \\
-  &\iff \forall x \in X \setminus S,\;
-         \exists r \in \mathbb{R}^{+},\;
-         B_r(x) \subseteq X \setminus S.
-\end{align*}
+% ---- Forward reference ----
+\begin{remark*}[Forward reference: open and closed sets]
+The definitions of open sets and closed sets, together with the proofs
+that $B_r(x)$ is open and $\overline{B}_r(x)$ is closed, are developed
+in \texttt{open-closed-sets.tex}.
+The proofs use the radial gap identity established above:
+$\delta = r - d(x,y) > 0$ for interior points,
+$\delta = d(x,y) - r > 0$ for exterior points.
 \end{remark*}
-
-\begin{remark*}[Common error]
-Open and closed are \emph{not} opposites.
-A set can be both open and closed (e.g.\ $\emptyset$ and $X$ itself),
-or neither (e.g.\ the half-open interval $[0,1)$ in $\mathbb{R}$).
-\end{remark*}
-
-\input{volume-iii/analysis/metric-spaces/notes/balls/figure-open-set}
-
-% ---- Balls are open and closed ----
-\begin{proposition}[\texorpdfstring{\hyperref[prf:balls-open-closed]{Balls are Open and Closed}}{Balls are Open and Closed}]
-\label{prop:balls-open-closed}
-Let $(X, d)$ be a metric space, $x \in X$, and $r > 0$.
-\begin{enumerate}[label=(\roman*)]
-  \item $B_r(x)$ is an open set.
-  \item $\overline{B}_r(x)$ is a closed set.
-\end{enumerate}
-\end{proposition}
-
-\begin{remark*}[Fully quantified form]
-\begin{align*}
-&\forall (X,d)\ \text{metric space},\;
- \forall x \in X,\;
- \forall r \in \mathbb{R}^{+}: \\
-&\quad \text{(i)}\ \forall y \in B_r(x),\;
-       \exists \alpha \in \mathbb{R}^{+},\;
-       B_\alpha(y) \subseteq B_r(x). \\
-&\quad \text{(ii)}\ X \setminus \overline{B}_r(x)\ \text{is open},
-       \text{ i.e.}\ \forall y \notin \overline{B}_r(x),\;
-       \exists \alpha \in \mathbb{R}^{+},\;
-       B_\alpha(y) \cap \overline{B}_r(x) = \emptyset.
-\end{align*}
-\end{remark*}
-
-\begin{remark*}[Intuition]
-For~(i): given $y \in B_r(x)$, the slack $\alpha := r - d(x,y) > 0$ is
-the room left before the boundary of $B_r(x)$.
-The triangle inequality then guarantees $B_\alpha(y) \subseteq B_r(x)$.
-For~(ii): the same idea with $\alpha := d(x,y) - r > 0$ applied to a
-point outside the closed ball.
-\end{remark*}
-
-\input{volume-iii/analysis/metric-spaces/notes/balls/figure-slack-ball}
-
-\begin{proposition}[Trivial open and closed sets and balls]
-Let $(X,d)$ be a metric space.
-
-\begin{enumerate}
-\item The empty set $\varnothing$ and the whole space $X$ are open.
-\item The empty set $\varnothing$ and the whole space $X$ are closed.
-\item Every open ball $B_r(x)$ is an open set.
-\item Every closed ball $\overline{B}_r(x)=\{y\in X : d(x,y)\le r\}$ is a closed set.
-\end{enumerate}
-\end{proposition}
-
-\begin{proof}
-(1) The empty set is open because the defining condition for openness
-\[
-\forall x \in U,\;\exists \varepsilon>0 \text{ such that } B_\varepsilon(x)\subseteq U
-\]
-is vacuously true when $U=\varnothing$.
-
-The set $X$ is open because for any $x\in X$ and any $\varepsilon>0$,
-\[
-B_\varepsilon(x)\subseteq X.
-\]
-
-(2) A set is closed if its complement is open. Since
-\[
-X\setminus \varnothing = X
-\qquad\text{and}\qquad
-X\setminus X = \varnothing,
-\]
-and both sets are open by part (1), it follows that $\varnothing$ and $X$ are closed.
-
-(3) Let $x_0\in B_r(x)$. Then $d(x,x_0)<r$. Choose $\varepsilon>0$ such that
-\[
-\varepsilon < r-d(x,x_0).
-\]
-If $y\in B_\varepsilon(x_0)$ then $d(x_0,y)<\varepsilon$, and by the triangle
-inequality
-\[
-d(x,y)\le d(x,x_0)+d(x_0,y) < d(x,x_0)+\varepsilon < r.
-\]
-Thus $y\in B_r(x)$ and therefore $B_\varepsilon(x_0)\subseteq B_r(x)$.
-Hence $B_r(x)$ is open.
-
-(4) Let $y\notin \overline{B}_r(x)$. Then $d(x,y)>r$. Set
-\[
-\varepsilon = d(x,y)-r>0.
-\]
-If $z\in B_\varepsilon(y)$ then $d(y,z)<\varepsilon$, and the reverse triangle
-inequality gives
-\[
-d(x,z)\ge d(x,y)-d(y,z) > r.
-\]
-Thus $z\notin \overline{B}_r(x)$, so
-\[
-B_\varepsilon(y)\subseteq X\setminus \overline{B}_r(x).
-\]
-Hence the complement of $\overline{B}_r(x)$ is open, and therefore
-$\overline{B}_r(x)$ is closed.
-\end{proof}
