@@ -1,0 +1,249 @@
+% =========================================================
+% Product Metric Spaces
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Dependencies:
+%   notes-metric-space.tex           — def:metric
+%   notes-multiple-metrics.tex       — equivalent metrics
+%   notes-convergence.tex            — convergence in metric spaces
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Product Metric Spaces}
+\label{sec:product-metric}
+% ---------------------------------------------------------
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Product Metrics --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:product-metrics}
+  & Three standard metrics on $X \times Y$
+  & Definition
+  & \hyperref[def:product-metrics]{$\downarrow$} \\[4pt]
+P\ref{prop:product-metrics-equiv}
+  & $d_1, d_2, d_\infty$ on $X \times Y$ are equivalent
+  & Explicit inequalities
+  & \hyperref[prop:product-metrics-equiv]{$\downarrow$} \\[4pt]
+P\ref{prop:product-convergence}
+  & $(x_n, y_n) \to (x,y)$ iff $x_n \to x$ and $y_n \to y$
+  & Component-wise
+  & \hyperref[prop:product-convergence]{$\downarrow$} \\[4pt]
+P\ref{prop:Rn-as-product}
+  & $\mathbb{R}^n$ is a metric space via iterated products
+  & Induction
+  & \hyperref[prop:Rn-as-product]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\paragraph{Motivation.}
+So far every metric space we have encountered has been a single set
+with a single metric.
+But mathematics constantly asks us to work with pairs:
+a point in $\mathbb{R}^2$ is a pair $(x,y)$,
+a point in function space is a pair (input, output).
+The natural question is: if $(X, d_X)$ and $(Y, d_Y)$ are metric spaces,
+how do we measure distance between pairs $(x_1, y_1)$ and $(x_2, y_2)$?
+
+The answer is not unique, and that is a feature, not a bug.
+There are several natural choices, and they all produce the same
+topology (same convergent sequences, same open sets).
+The flexibility lets us pick whichever is most convenient for
+the problem at hand.
+
+% ---- Definition: Product metrics ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Product Metrics)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Product Metrics]
+\label{def:product-metrics}
+Let $(X, d_X)$ and $(Y, d_Y)$ be metric spaces.
+On the Cartesian product $X \times Y$, define three functions:
+\begin{align*}
+d_2\bigl((x_1,y_1),(x_2,y_2)\bigr)
+  &:= \sqrt{d_X(x_1,x_2)^2 + d_Y(y_1,y_2)^2}
+  \quad\text{(Euclidean product metric)},\\[4pt]
+d_1\bigl((x_1,y_1),(x_2,y_2)\bigr)
+  &:= d_X(x_1,x_2) + d_Y(y_1,y_2)
+  \quad\text{(taxicab product metric)},\\[4pt]
+d_\infty\bigl((x_1,y_1),(x_2,y_2)\bigr)
+  &:= \max\!\bigl(d_X(x_1,x_2),\, d_Y(y_1,y_2)\bigr)
+  \quad\text{(supremum product metric)}.
+\end{align*}
+Each of $d_2$, $d_1$, $d_\infty$ is a metric on $X \times Y$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Verifying the metric axioms]
+Non-negativity, identity of indiscernibles, and symmetry are immediate
+from the corresponding properties of $d_X$ and $d_Y$.
+The triangle inequality for $d_2$ follows from the Cauchy--Schwarz
+inequality applied to the two-component vector $(d_X, d_Y)$.
+For $d_1$ and $d_\infty$ the triangle inequality is a direct calculation:
+\begin{align*}
+d_1((x_1,y_1),(x_3,y_3))
+&= d_X(x_1,x_3) + d_Y(y_1,y_3) \\
+&\le \bigl(d_X(x_1,x_2) + d_X(x_2,x_3)\bigr) +
+     \bigl(d_Y(y_1,y_2) + d_Y(y_2,y_3)\bigr) \\
+&= d_1((x_1,y_1),(x_2,y_2)) + d_1((x_2,y_2),(x_3,y_3)).
+\end{align*}
+The $d_\infty$ case is similar.
+\end{remark*}
+
+\begin{remark*}[Intuition for the three metrics]
+In $\mathbb{R}^2$ these are the three metrics you already know:
+$d_2$ is the straight-line (Euclidean) distance,
+$d_1$ is the taxicab distance (walking along a grid),
+and $d_\infty$ is the Chebyshev distance (chessboard moves).
+The unit balls of each look different --- a circle, a diamond, a square ---
+but they all produce the same notion of ``nearby.''
+\end{remark*}
+
+% ---- Proposition: equivalence ----
+
+\begin{proposition}[The three product metrics are equivalent]
+\label{prop:product-metrics-equiv}
+For any $(x_1,y_1), (x_2,y_2) \in X \times Y$:
+\[
+d_\infty \;\le\; d_2 \;\le\; d_1 \;\le\; 2\, d_\infty.
+\]
+In particular, $d_1$, $d_2$, $d_\infty$ are equivalent metrics on $X \times Y$.
+\end{proposition}
+
+\begin{proof}
+Write $a = d_X(x_1,x_2)$ and $b = d_Y(y_1,y_2)$ for brevity.
+
+\medskip
+\noindent\textbf{$d_\infty \le d_2$:} \;
+$\max(a,b)^2 \le a^2 + b^2$, so $\max(a,b) \le \sqrt{a^2+b^2}$.
+
+\medskip
+\noindent\textbf{$d_2 \le d_1$:} \;
+$\sqrt{a^2+b^2} \le \sqrt{(a+b)^2} = a+b$
+(since $2ab \ge 0$, so $a^2+b^2 \le (a+b)^2$).
+
+\medskip
+\noindent\textbf{$d_1 \le 2\,d_\infty$:} \;
+$a + b \le \max(a,b) + \max(a,b) = 2\max(a,b)$.
+
+\medskip
+These inequalities show that $d_\infty, d_2, d_1$ all induce the same
+topology: a sequence is eventually in a $d_\infty$-ball iff it is
+eventually in a $d_1$-ball, and so on.
+\end{proof}
+
+\begin{remark*}[Consequence: choose whichever is convenient]
+Because all three metrics are equivalent, any statement about
+convergence, continuity, open/closed sets, or completeness is the
+same for all three.
+In practice:
+\begin{itemize}
+  \item $d_\infty$ is often easiest for existence proofs (it controls
+        each component independently).
+  \item $d_2$ is preferred when geometry matters (angles, inner products).
+  \item $d_1$ is natural in probability and measure theory.
+\end{itemize}
+\end{remark*}
+
+% ---- Proposition: component-wise convergence ----
+
+\begin{proposition}[Convergence in a product is component-wise]
+\label{prop:product-convergence}
+Let $(x_n, y_n)$ be a sequence in $X \times Y$ (with any of the equivalent
+product metrics) and let $(x, y) \in X \times Y$.
+Then
+\[
+(x_n, y_n) \to (x, y)
+\;\iff\;
+x_n \to x \text{ in } (X, d_X)
+\;\text{ and }\;
+y_n \to y \text{ in } (Y, d_Y).
+\]
+\end{proposition}
+
+\begin{proof}
+Work with $d_\infty$ for simplicity.
+
+$(\Rightarrow)$: Suppose $(x_n, y_n) \to (x, y)$ in $d_\infty$.
+Given $\varepsilon > 0$, choose $N$ so that for $n \ge N$:
+$\max(d_X(x_n,x), d_Y(y_n,y)) < \varepsilon$.
+Then $d_X(x_n,x) < \varepsilon$ and $d_Y(y_n,y) < \varepsilon$, so both
+component sequences converge.
+
+$(\Leftarrow)$: Suppose $x_n \to x$ and $y_n \to y$.
+Given $\varepsilon > 0$, choose $N_1$ so $d_X(x_n,x) < \varepsilon$ for
+$n \ge N_1$, and $N_2$ so $d_Y(y_n,y) < \varepsilon$ for $n \ge N_2$.
+For $n \ge \max(N_1, N_2)$:
+$d_\infty((x_n,y_n),(x,y)) = \max(d_X(x_n,x), d_Y(y_n,y)) < \varepsilon$.
+\end{proof}
+
+\begin{remark*}[This is not obvious in general topology]
+Component-wise convergence is a special feature of product metric spaces.
+In the general topological setting (the Tychonoff product), convergence
+of a sequence does \emph{not} reduce to component-wise convergence
+--- only nets behave correctly.
+The product metric is what makes sequences well-behaved here.
+\end{remark*}
+
+% ---- Rn as iterated product ----
+
+\begin{proposition}[$\mathbb{R}^n$ as an iterated product]
+\label{prop:Rn-as-product}
+The Euclidean space $(\mathbb{R}^n, d_2)$ is the iterated product metric
+space obtained by taking $\mathbb{R}$ with the standard metric $n$ times:
+\[
+\mathbb{R}^n = \underbrace{\mathbb{R} \times \mathbb{R} \times \cdots \times \mathbb{R}}_{n}
+\]
+with the Euclidean product metric
+$d_2(x,y) = \sqrt{\sum_{i=1}^n (x_i - y_i)^2}$.
+The taxicab metric $d_1(x,y) = \sum_{i=1}^n |x_i - y_i|$
+and the supremum metric $d_\infty(x,y) = \max_i |x_i - y_i|$
+are equivalent metrics on $\mathbb{R}^n$.
+\end{proposition}
+
+\begin{remark*}[Convergence in $\mathbb{R}^n$]
+By Proposition~\ref{prop:product-convergence} (applied iteratively),
+a sequence of vectors $(x_n^{(k)})$ in $\mathbb{R}^n$ converges iff
+each coordinate sequence $(x_n^{(k)})_i$ converges in $\mathbb{R}$.
+This reduces all analysis in $\mathbb{R}^n$ to $n$ separate problems
+in $\mathbb{R}$ --- one per coordinate.
+\end{remark*}
+
+\begin{example}[A sequence in $\mathbb{R}^2$]
+\label{ex:product-convergence-R2}
+Consider $(x_n, y_n) = (1/n,\, n/(n+1))$ in $\mathbb{R}^2$.
+
+$x_n = 1/n \to 0$ in $\mathbb{R}$.
+$y_n = n/(n+1) = 1 - 1/(n+1) \to 1$ in $\mathbb{R}$.
+
+By Proposition~\ref{prop:product-convergence},
+$(x_n, y_n) \to (0, 1)$ in $\mathbb{R}^2$
+with respect to any of the three product metrics.
+
+Explicitly in $d_2$:
+$d_2((x_n,y_n),(0,1)) = \sqrt{(1/n)^2 + (1/(n+1))^2} \to 0$.
+\end{example}
+
+\begin{remark*}[Infinite products]
+The product construction extends to countably infinite products:
+given metric spaces $(X_n, d_n)$ for $n \in \mathbb{N}$, the product
+$\prod_{n=1}^\infty X_n$ can be metrized by
+\[
+d(x, y) = \sum_{n=1}^\infty \frac{1}{2^n} \cdot
+           \frac{d_n(x_n, y_n)}{1 + d_n(x_n, y_n)}.
+\]
+This metric makes convergence component-wise on each $X_n$.
+The Hilbert cube $[0,1]^\infty$ is a standard example,
+metrized this way, and is a compact metric space.
+Infinite products belong to the topology chapter;
+we note them here for completeness of the picture.
+\end{remark*}

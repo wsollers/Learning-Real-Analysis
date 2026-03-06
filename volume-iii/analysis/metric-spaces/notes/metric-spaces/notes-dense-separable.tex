@@ -1,0 +1,288 @@
+% =========================================================
+% Dense Subsets and Separability
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Dependencies:
+%   notes-metric-space.tex       — def:metric, def:open-ball
+%   notes-limit-points.tex       — def:closure
+%   notes-completeness.tex       — completion idea
+%   notes-real-analysis-bridge.tex — P([a,b]) / C([a,b]) reference
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Dense Subsets and Separability}
+\label{sec:dense-separable}
+% ---------------------------------------------------------
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Dense Subsets and Separability --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:dense}
+  & $D$ dense in $X$ iff $\overline{D} = X$
+  & Definition
+  & \hyperref[def:dense]{$\downarrow$} \\[4pt]
+D\ref{def:separable}
+  & $(X,d)$ separable iff $\exists$ countable dense $D \subseteq X$
+  & Definition
+  & \hyperref[def:separable]{$\downarrow$} \\[4pt]
+P\ref{prop:dense-equiv}
+  & $\overline{D}=X \iff \forall x \in X,\, \forall r>0,\, B_r(x)\cap D \neq \varnothing$
+  & Closure characterization
+  & \hyperref[prop:dense-equiv]{$\downarrow$} \\[4pt]
+P\ref{prop:Q-dense-R}
+  & $\mathbb{Q}$ is dense in $\mathbb{R}$; $\mathbb{R}$ is separable
+  & Archimedean property
+  & \hyperref[prop:Q-dense-R]{$\downarrow$} \\[4pt]
+P\ref{prop:Rn-separable}
+  & $\mathbb{R}^n$ is separable (dense subset $\mathbb{Q}^n$)
+  & Component-wise
+  & \hyperref[prop:Rn-separable]{$\downarrow$} \\[4pt]
+P\ref{prop:discrete-not-sep}
+  & Uncountable discrete space is not separable
+  & Counterexample
+  & \hyperref[prop:discrete-not-sep]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\paragraph{Motivation.}
+When we said that the polynomials $\mathbb{P}([a,b])$ are ``completed'' to the
+continuous functions $C([a,b])$, we were using an idea that deserves to be
+stated explicitly: every continuous function can be \emph{approximated
+arbitrarily closely} by polynomials.
+That approximation statement is exactly what \emph{density} means.
+
+More broadly, density answers the question: can every point in a space be
+reached as a limit of points from some simpler, smaller subset?
+If yes, then to understand the whole space it can be enough to understand
+the dense subset --- convergence, limits, and completions all depend on
+this idea.
+
+% ---- Definition: Dense ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Dense Subset)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Dense Subset]
+\label{def:dense}
+Let $(X,d)$ be a metric space and $D \subseteq X$.
+We say $D$ is \emph{dense in $X$} if
+\[
+\overline{D} = X.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+D \text{ is dense in } X
+\;\iff\;
+\forall\, x \in X,\quad x \in \overline{D}.
+\]
+That is, every point of $X$ is either in $D$ or is a limit point of $D$.
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Think of $D$ as a set of ``approximations.''
+Saying $D$ is dense in $X$ means: no matter where you stand in $X$,
+you are either already in $D$, or you can be approached arbitrarily closely
+by points of $D$.
+There are no ``gaps'' in $X$ that $D$ cannot reach.
+
+The classic example is $\mathbb{Q}$ dense in $\mathbb{R}$: every real
+number, rational or irrational, can be approximated to any precision by
+rationals.
+\end{remark*}
+
+% ---- Proposition: equivalent characterization ----
+
+\begin{proposition}[Geometric characterization of density]
+\label{prop:dense-equiv}
+Let $(X,d)$ be a metric space and $D \subseteq X$. The following are equivalent:
+\begin{enumerate}[(i)]
+  \item $D$ is dense in $X$ (i.e.\ $\overline{D} = X$).
+  \item Every non-empty open ball in $X$ meets $D$:
+        $\forall\, x \in X,\; \forall\, r > 0,\; B_r(x) \cap D \neq \varnothing$.
+  \item Every non-empty open set $U \subseteq X$ meets $D$:
+        $\forall\, U \subseteq X$ open and non-empty, $U \cap D \neq \varnothing$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) $\Rightarrow$ (ii): Let $x \in X$ and $r > 0$.
+Since $\overline{D} = X$, we have $x \in \overline{D}$,
+so by the geometric characterization of closure,
+every ball $B_r(x)$ meets $D$.
+
+(ii) $\Rightarrow$ (iii): Every non-empty open set $U$ contains some ball
+$B_r(x) \subseteq U$, which by (ii) meets $D$.
+Hence $U \cap D \supseteq B_r(x) \cap D \neq \varnothing$.
+
+(iii) $\Rightarrow$ (i): Let $x \in X$.
+For any $r > 0$, the ball $B_r(x)$ is open and non-empty,
+so by (iii) it meets $D$.
+Hence $x \in \overline{D}$ by the geometric characterization of closure.
+Since $x$ was arbitrary, $\overline{D} = X$.
+\end{proof}
+
+\begin{remark*}[Why (iii) is the most useful form]
+Condition (iii) --- that $D$ meets every open set --- is the form
+most often used in proofs.
+It frees you from having to work with specific balls;
+any open neighborhood of any point in $X$ will do.
+\end{remark*}
+
+% ---- Examples ----
+
+\begin{proposition}[$\mathbb{Q}$ is dense in $\mathbb{R}$]
+\label{prop:Q-dense-R}
+The rationals $\mathbb{Q}$ are dense in $(\mathbb{R}, |\cdot|)$.
+Equivalently, $\mathbb{R}$ is the closure of $\mathbb{Q}$.
+\end{proposition}
+
+\begin{proof}
+Let $x \in \mathbb{R}$ and $r > 0$.
+By the Archimedean property, there exists a rational $q$ with
+$|q - x| < r$, i.e.\ $q \in B_r(x)$.
+So every open ball in $\mathbb{R}$ contains a rational, and
+$\overline{\mathbb{Q}} = \mathbb{R}$.
+\end{proof}
+
+\begin{remark*}[Consequence: the irrationals are also dense]
+The irrationals $\mathbb{R} \setminus \mathbb{Q}$ are equally dense in $\mathbb{R}$.
+For any $x \in \mathbb{R}$ and $r > 0$, the interval $(x - r, x + r)$
+is uncountable and its rational points are countable,
+so it must contain irrationals.
+Two disjoint sets can each be dense in the same space.
+\end{remark*}
+
+\begin{example}[Non-dense subset]
+\label{ex:not-dense}
+The integers $\mathbb{Z}$ are \emph{not} dense in $\mathbb{R}$.
+The ball $B_{1/4}(1/2)$ is the interval $(1/4, 3/4)$, which contains
+no integers.
+Equivalently, $\overline{\mathbb{Z}} = \mathbb{Z} \neq \mathbb{R}$
+(since $\mathbb{Z}$ is closed).
+\end{example}
+
+\begin{example}[Polynomials dense in $C([a,b])$]
+\label{ex:poly-dense}
+The Weierstrass Approximation Theorem states that $\mathbb{P}([a,b])$,
+the set of polynomial functions on $[a,b]$, is dense in
+$C([a,b])$ with the uniform metric $d(f,g) = \sup_{x \in [a,b]} |f(x) - g(x)|$.
+
+This means: for every continuous $f$ and every $\varepsilon > 0$,
+there is a polynomial $p$ with $d(f,p) < \varepsilon$.
+Every continuous function can be uniformly approximated by a polynomial.
+This is the precise statement behind the completion $\mathbb{P}([a,b]) \hookrightarrow C([a,b])$
+mentioned in the real analysis bridge.
+\end{example}
+
+% ---- Definition: Separable ----
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Separable Metric Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Separable Metric Space]
+\label{def:separable}
+A metric space $(X, d)$ is \emph{separable} if it contains a
+countable dense subset: there exists $D \subseteq X$ with
+$D$ countable and $\overline{D} = X$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+(X,d) \text{ separable}
+\;\iff\;
+\exists\, D \subseteq X : D \text{ is countable} \land \overline{D} = X.
+\]
+\end{remark*}
+
+\begin{remark*}[Why ``separable''?]
+The name is a historical accident and has nothing to do with
+``separation axioms'' in topology.
+Do not let the name mislead you.
+Think of it instead as: a separable space can be
+\emph{probed} or \emph{described} by a countable collection of points ---
+every point in the space is a limit of a sequence from this countable subset.
+\end{remark*}
+
+\begin{remark*}[Why separability matters]
+Separability is the correct notion of ``smallness'' or ``tractability''
+for infinite-dimensional spaces.
+Separable spaces are better behaved in analysis:
+\begin{itemize}
+  \item Every sequence has a subsequence whose indices we can name explicitly.
+  \item Continuous functions on separable spaces are determined by their
+        values on the dense subset.
+  \item Many theorems (e.g.\ about compactness, integration, spectral theory)
+        have cleaner statements or simpler proofs for separable spaces.
+\end{itemize}
+The spaces you encounter most in analysis --- $\mathbb{R}^n$,
+$C([a,b])$, $\ell^p$ for $1 \le p < \infty$ --- are all separable.
+Separability is what makes them ``manageable.''
+\end{remark*}
+
+\begin{proposition}[$\mathbb{R}^n$ is separable]
+\label{prop:Rn-separable}
+For each $n \ge 1$, the Euclidean space $(\mathbb{R}^n, d_2)$ is separable,
+with dense subset $\mathbb{Q}^n = \{(q_1, \ldots, q_n) : q_i \in \mathbb{Q}\}$.
+\end{proposition}
+
+\begin{proof}
+$\mathbb{Q}^n$ is countable (finite product of countable sets).
+Let $x = (x_1, \ldots, x_n) \in \mathbb{R}^n$ and $\varepsilon > 0$.
+For each coordinate $i$, choose $q_i \in \mathbb{Q}$ with
+$|q_i - x_i| < \varepsilon / \sqrt{n}$.
+Then $q = (q_1, \ldots, q_n) \in \mathbb{Q}^n$ satisfies
+\[
+d_2(q, x)
+= \sqrt{\sum_{i=1}^n (q_i - x_i)^2}
+< \sqrt{n \cdot \frac{\varepsilon^2}{n}}
+= \varepsilon.
+\]
+So $B_\varepsilon(x) \cap \mathbb{Q}^n \neq \varnothing$ for every $x$ and $\varepsilon$,
+giving $\overline{\mathbb{Q}^n} = \mathbb{R}^n$.
+\end{proof}
+
+\begin{proposition}[An uncountable discrete space is not separable]
+\label{prop:discrete-not-sep}
+Let $X$ be an uncountable set with the discrete metric.
+Then $(X, d_{\mathrm{disc}})$ is not separable.
+\end{proposition}
+
+\begin{proof}
+In the discrete metric, $B_{1/2}(x) = \{x\}$ for every $x \in X$.
+If $D \subseteq X$ is any dense subset, then for each $x \in X$
+the ball $B_{1/2}(x) = \{x\}$ must meet $D$, so $x \in D$.
+Hence $D = X$, which is uncountable.
+No countable dense subset exists.
+\end{proof}
+
+\begin{remark*}[Separability is a topological property]
+Whether a metric space is separable depends only on its topology
+(which sets are open), not on the specific distances.
+Two equivalent metrics on the same set give the same open sets and
+therefore agree on separability.
+\end{remark*}
+
+\begin{remark*}[Connection to the completion]
+When a non-complete metric space $(X,d)$ is completed to $(\hat{X}, \hat{d})$,
+the original space $X$ embeds as a dense subset of $\hat{X}$:
+$\overline{X} = \hat{X}$.
+This is exactly the density statement: every point in the completion
+is a limit of a sequence in $X$.
+The completion construction is the canonical way to ``fill in the gaps,''
+and the resulting dense embedding is precisely what the co-Cauchy
+equivalence classes represent.
+\end{remark*}

@@ -1,57 +1,239 @@
 % =========================================================
 % Metric Spaces — Notes Proofs Index
 % =========================================================
-% Dependency order:
 %
-% Level 0 — Pure metric (only metric axioms needed)
-%   monotonicity-of-diameter     (def:diameter, sup comparison)
-%   continuity-of-metric         (reverse triangle inequality)
-%   convergence_preserved        (def:isometry, def:convergence)
-%   preservation-of-diamter-in-isometry (def:isometry, def:diameter)
+% HOW TO USE THIS FILE
+% --------------------
+% Work through the levels in order. Every result at Level N
+% may use anything from Levels 0 through N-1 without further
+% justification. Do not skip ahead.
 %
-% Level 1 — Open sets (need balls + def:open-set)
-%   union-open-sets              (def:open-set)
-%   intersection-open-sets       (def:open-set, finiteness of min)
+% Difficulty key:
+%   Easy   — one or two ideas, direct application of definitions
+%   Medium — requires a non-trivial construction or case split
+%   Hard   — multi-step argument; return to this after lower levels
 %
-% Level 2 — Open/closed duality (need union-open, intersection-open)
-%   closed-open                  (def:closed-set, def:open-set)
-%   balls-open-closed            (radial gap, triangle inequality)
+% =========================================================
 %
-% Level 3 — Closed set operations (need closed-open + De Morgan)
-%   intersection-closed-set      (closed-open, union-open)
-%   finite-union-closed-sets     (closed-open, intersection-open)
+% DEPENDENCY MAP
 %
-% Level 4 — Closures and limit points
-%   sequential-characterization-closure  (def:convergence, Archimedean)
-%   proofs-limit-points                  (def:limit-point, sequential char)
-%   equivalent-characterization-closure  (closure, seq char, balls-open-closed)
+% Level 0 — Pure metric axioms (M1-M4 only)
+%   distance-to-itself          Easy   prop:distance-to-itself
+%   positivity                  Easy   prop:positivity
+%   triangle-three-forms        Easy   prop:triangle-three-forms
+%   reverse-triangle            Easy   prop:reverse-triangle
+%   generalised-triangle        Easy   prop:generalised-triangle
+%   monotonicity-of-diameter    Easy   thm:monotonicity-of-diameter
+%   continuity-of-metric        Easy   (reverse-triangle + convergence def)
+%   continuity-of-distance      Easy   prop:continuity-of-distance
 %
-% Conceptual notes (not proofs, but inserted here for study):
-%   openess   (conceptual distinction: openness vs completeness)
+% Level 1 — Balls
+%   open-as-union-closed        Easy   prop:open-as-union-closed
+%   closed-as-int-open          Easy   prop:closed-as-int-open
+%
+% Level 2 — Open and closed sets
+%   trivial-open-closed         Easy   prop:trivial-open-closed
+%   union-open-sets             Easy   (already complete)
+%   intersection-open-sets      Easy   (already complete)
+%   closed-open                 Easy   (already complete)
+%   balls-open-closed           Easy   (already complete)
+%
+% Level 3 — Closed set operations and boundary
+%   intersection-closed-set     Easy   (already complete)
+%   finite-union-closed-sets    Easy   (already complete)
+%   ibe-decomp                  Easy   thm:ibe-decomp
+%   boundary-closure            Medium thm:boundary-closure
+%   closed-owns-boundary        Medium prop:closed-owns-boundary
+%
+% Level 4 — Limit points and closure
+%   seq-char-limit              Medium thm:seq-char-limit
+%   inf-nbhd                    Easy   cor:inf-nbhd
+%   derived-closed              Medium thm:derived-closed
+%   closed-derived              Medium thm:closed-derived
+%   closure-formula             Medium thm:closure-formula
+%   sequential-characterization-closure  Medium  (already complete)
+%   proofs-limit-points         Medium (already complete)
+%   equivalent-characterization-closure  Medium  (already complete)
+%
+% Level 5 — Sequential characterizations
+%   closed-equiv                Medium thm:closed-equiv
+%   sequential-duality          Medium prop:sequential-duality
+%
+% Level 6 — Isometry structure
+%   convergence_preserved       Easy   (already complete)
+%   isometry-injective          Easy   prop:isometry-injective
+%   inverse-isometry            Easy   prop:inverse-isometry
+%   isometry-preserves-balls    Easy   prop:isometry-preserves-balls
+%   isometry-preserves-diameter Easy   prop:isometry-preserves-diameter
+%   preservation-of-diamter-in-isometry Easy (already complete)
+%   isometry-preserves-open     Easy   prop:isometry-preserves-open
+%   isometry-preserves-bounded  Easy   prop:isometry-preserves-bounded
+%   isometry-preserves-convergence Easy prop:isometry-preserves-convergence
+%   isometry-group              Medium prop:isometry-group
+%   rotations-are-isometries    Easy   prop:rotations-are-isometries
+%   translations-are-isometries Easy   prop:translations-are-isometries
+%   reflections-are-isometries  Easy   prop:reflections-are-isometries
+%   classification-rigid-motions Hard  thm:classification-rigid-motions
+%
+% Level 7 — Cauchy sequences
+%   convergent-implies-cauchy   Easy   prop:convergent-implies-cauchy
+%   cauchy-bounded              Easy   prop:cauchy-bounded
+%   cauchy-unique-limit         Easy   prop:cauchy-unique-limit
+%   cauchy-subsequence-cauchy   Easy   prop:cauchy-subsequence-cauchy
+%   cauchy-subsequence-converges Easy  prop:cauchy-subsequence
+%
+% Level 8 — Completeness
+%   closed-subspace-complete    Easy   prop:closed-subspace-complete
+%   complete-subspace-closed    Easy   prop:complete-subspace-closed
+%   co-cauchy-equivalence-relation Medium prop:co-cauchy-equivalence-relation
+%   completion                  Hard   thm:completion
+%
+% Level 9 — Dense subsets, separability, nowhere-dense
+%   dense-equiv                 Easy   prop:dense-equiv
+%   Q-dense-R                   Easy   prop:Q-dense-R
+%   Rn-separable                Easy   prop:Rn-separable
+%   discrete-not-sep            Easy   prop:discrete-not-sep
+%   nowhere-dense-equiv         Easy   prop:nowhere-dense-equiv
+%
+% Level 10 — Product metrics
+%   product-metrics-equiv       Easy   prop:product-metrics-equiv
+%   product-convergence         Easy   prop:product-convergence
+%
+% Level 11 — Distance between sets
+%   dist-point-set-closure      Medium prop:dist-point-set-closure
+%   dist-sets-symmetric         Easy   prop:dist-sets-symmetric
+%
+% Baire Category Theorem: proof deferred to compactness chapter.
+%
+% Conceptual notes (not proofs):
+%   openess
 % =========================================================
 
-% --- Level 0: Pure Metric ---
+
+% =========================================================
+% LEVEL 0 -- Pure Metric Axioms
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/distance-to-itself}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/positivity}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/triangle-three-forms}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/reverse-triangle}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/generalised-triangle}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/monotonicity-of-diameter}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/continuity-of-metric}
-\input{volume-iii/analysis/metric-spaces/proofs/notes/convergence_preserved}
-\input{volume-iii/analysis/metric-spaces/proofs/notes/preservation-of-diamter-in-isometry}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/continuity-of-distance}
 
-% --- Level 1: Open Sets ---
+% =========================================================
+% LEVEL 1 -- Balls
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/open-as-union-closed}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/closed-as-int-open}
+
+% =========================================================
+% LEVEL 2 -- Open and Closed Sets
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/trivial-open-closed}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/union-open-sets}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/intersection-open-sets}
-
-% --- Level 2: Open/Closed Duality ---
 \input{volume-iii/analysis/metric-spaces/proofs/notes/closed-open}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/balls-open-closed}
 
-% --- Level 3: Closed Set Operations ---
+% =========================================================
+% LEVEL 3 -- Closed Set Operations and Boundary
+% =========================================================
+
 \input{volume-iii/analysis/metric-spaces/proofs/notes/intersection-closed-set}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/finite-union-closed-sets}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/ibe-decomp}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/boundary-closure}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/closed-owns-boundary}
 
-% --- Level 4: Closures and Limit Points ---
+% =========================================================
+% LEVEL 4 -- Limit Points and Closure
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/seq-char-limit}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/inf-nbhd}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/derived-closed}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/closed-derived}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/closure-formula}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/sequential-characterization-closure}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/proofs-limit-points}
 \input{volume-iii/analysis/metric-spaces/proofs/notes/equivalent-characterization-closure}
 
-% --- Conceptual Note ---
+% =========================================================
+% LEVEL 5 -- Sequential Characterizations
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/closed-equiv}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/sequential-duality}
+
+% =========================================================
+% LEVEL 6 -- Isometry Structure
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/convergence_preserved}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-injective}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/inverse-isometry}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-preserves-balls}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-preserves-diameter}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/preservation-of-diamter-in-isometry}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-preserves-open}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-preserves-bounded}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-preserves-convergence}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/isometry-group}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/rotations-are-isometries}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/translations-are-isometries}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/reflections-are-isometries}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/classification-rigid-motions}
+
+% =========================================================
+% LEVEL 7 -- Cauchy Sequences
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/convergent-implies-cauchy}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/cauchy-bounded}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/cauchy-unique-limit}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/cauchy-subsequence-cauchy}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/cauchy-subsequence-converges}
+
+% =========================================================
+% LEVEL 8 -- Completeness
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/closed-subspace-complete}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/complete-subspace-closed}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/co-cauchy-equivalence-relation}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/completion}
+
+% =========================================================
+% LEVEL 9 -- Dense Subsets, Separability, Nowhere-Dense
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/dense-equiv}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/Q-dense-R}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/Rn-separable}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/discrete-not-sep}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/nowhere-dense-equiv}
+
+% =========================================================
+% LEVEL 10 -- Product Metrics
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/product-metrics-equiv}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/product-convergence}
+
+% =========================================================
+% LEVEL 11 -- Distance Between Sets
+% =========================================================
+
+\input{volume-iii/analysis/metric-spaces/proofs/notes/dist-point-set-closure}
+\input{volume-iii/analysis/metric-spaces/proofs/notes/dist-sets-symmetric}
+
+% =========================================================
+% CONCEPTUAL NOTE
+% =========================================================
+
 \input{volume-iii/analysis/metric-spaces/proofs/notes/openess}

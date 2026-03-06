@@ -1,0 +1,388 @@
+% =========================================================
+% Master Summary: Balls, Open Sets, Closed Sets
+% Source: volume-iii/analysis/metric-spaces/notes/open-closed-sets/
+%
+% Purpose: A single reference page collecting EVERY way a ball
+%          or set can be characterised as open or closed.
+%          No new material — pure synthesis.
+%
+% Dependencies (all results proved elsewhere in the chapter):
+%   def:open-ball, def:closed-ball            (notes-balls.tex)
+%   def:open-closed-set                       (open-closed-sets.tex)
+%   def:interior, def:exterior, def:boundary  (open-closed-sets.tex)
+%   def:closure, def:adherent-point           (open-closed-sets.tex)
+%   def:limit-point, def:derived-set          (notes-limit-points.tex)
+%   prop:balls-open-closed                    (open-closed-sets.tex)
+%   prop:open-as-union-closed                 (notes-working-with-balls.tex)
+%   prop:closed-as-int-open                   (notes-working-with-balls.tex)
+%   thm:ibe-decomp                            (open-closed-sets.tex)
+%   thm:boundary-closure                      (open-closed-sets.tex)
+%   prop:closed-owns-boundary                 (open-closed-sets.tex)
+%   thm:closed-equiv                          (notes-sequential-characterizations.tex)
+%   prop:sequential-duality                   (notes-sequential-characterizations.tex)
+%   thm:closure-three-way-unifying            (notes-sequential-characterizations.tex)
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Master Reference: Balls, Open Sets, Closed Sets}
+\label{sec:open-closed-master-summary}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{How to Use This Page}},
+  fonttitle=\small\bfseries]
+This page collects every characterisation of balls and open/closed sets
+from across the chapter into one place.
+Nothing here is new --- every row is proved elsewhere and
+linked back to its source.
+Use it to check at a glance which test applies to your proof,
+or to see how the various perspectives connect.
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART I: BALLS
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part I \enspace Balls}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{3.8cm} p{6.2cm} p{3.6cm}}
+\toprule
+\textbf{Object} & \textbf{Characterisation} & \textbf{Source} \\
+\midrule
+
+\textbf{Open ball} $B_r(x)$
+  & $B_r(x) = \{y \in X : d(x,y) < r\}$
+  & \hyperref[def:open-ball]{D\ref*{def:open-ball}} \\[2pt]
+
+\textbf{Closed ball} $\overline{B}_r(x)$
+  & $\overline{B}_r(x) = \{y \in X : d(x,y) \le r\}$
+  & \hyperref[def:closed-ball]{D\ref*{def:closed-ball}} \\[6pt]
+
+$B_r(x)$ \textbf{is open}
+  & Radial gap: $y \in B_r(x) \Rightarrow B_\delta(y) \subseteq B_r(x)$
+    where $\delta = r - d(x,y) > 0$
+  & \hyperref[prop:balls-open-closed]{P\ref*{prop:balls-open-closed}} \\[2pt]
+
+$\overline{B}_r(x)$ \textbf{is closed}
+  & Radial gap: $y \notin \overline{B}_r(x) \Rightarrow B_\delta(y) \cap \overline{B}_r(x) = \varnothing$
+    where $\delta = d(x,y) - r > 0$
+  & \hyperref[prop:balls-open-closed]{P\ref*{prop:balls-open-closed}} \\[6pt]
+
+\textbf{Open ball from closed}
+  & $B_r(x) = \bigcup_{0 < s < r} \overline{B}_s(x)$
+  & \hyperref[prop:open-as-union-closed]{P\ref*{prop:open-as-union-closed}} \\[2pt]
+
+\textbf{Closed ball from open}
+  & $\overline{B}_r(x) = \bigcap_{\varepsilon>0} B_{r+\varepsilon}(x)$
+  & \hyperref[prop:closed-as-int-open]{P\ref*{prop:closed-as-int-open}} \\[6pt]
+
+\textbf{Warning: }$B_r(x) \subsetneq \overline{B}_r(x)$ \textbf{in general}
+  & In the discrete metric: $B_1(x) = \{x\}$ but
+    $\overline{B}_1(x) = X$. The two balls can be very different.
+  & Example \\[2pt]
+
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART II: OPEN SETS — ALL CHARACTERISATIONS
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part II \enspace Open Sets — Every Characterisation}},
+  fonttitle=\small\bfseries]
+\small
+Let $(X,d)$ be a metric space and $U \subseteq X$.
+All of the following are equivalent.
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{2.0cm} p{6.4cm} p{3.8cm}}
+\toprule
+\textbf{Language} & \textbf{$U$ is open iff \ldots} & \textbf{Source} \\
+\midrule
+
+\textbf{Ball (def)}
+  & $\forall x \in U,\; \exists r > 0 : B_r(x) \subseteq U$
+  & \hyperref[def:open-closed-set]{D\ref*{def:open-closed-set}} \\[2pt]
+
+\textbf{Interior}
+  & $U = \operatorname{int}(U)$
+    \newline (every point of $U$ is an interior point)
+  & \hyperref[def:interior]{D\ref*{def:interior}} \\[2pt]
+
+\textbf{Boundary}
+  & $U \cap \partial U = \varnothing$
+    \newline (open sets contain none of their boundary)
+  & \hyperref[prop:closed-owns-boundary]{P\ref*{prop:closed-owns-boundary}} \\[2pt]
+
+\textbf{Complement}
+  & $X \setminus U$ is closed
+  & \hyperref[def:open-closed-set]{D\ref*{def:open-closed-set}} \\[2pt]
+
+\textbf{Sequential}
+  & $x_n \to x \in U \Rightarrow x_n \in U$ eventually
+    \newline (approaching sequences eventually enter $U$)
+  & \hyperref[prop:sequential-duality]{P\ref*{prop:sequential-duality}} \\[2pt]
+
+\textbf{IBE decomp}
+  & $U = \operatorname{int}(U) \sqcup \varnothing$:
+    every point of $U$ lies in $\operatorname{int}(U)$,
+    none in $\partial U$ or $\operatorname{ext}(U)$
+  & \hyperref[thm:ibe-decomp]{T\ref*{thm:ibe-decomp}} \\[2pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textbf{One-line summary:} \;
+$U$ open $\iff$ every point of $U$ has room around it $\iff$
+$U$ contains no boundary points $\iff$ limits approaching $U$ eventually enter $U$.
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART III: CLOSED SETS — ALL CHARACTERISATIONS
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part III \enspace Closed Sets — Every Characterisation}},
+  fonttitle=\small\bfseries]
+\small
+Let $(X,d)$ be a metric space and $F \subseteq X$.
+All of the following are equivalent.
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{2.0cm} p{6.4cm} p{3.8cm}}
+\toprule
+\textbf{Language} & \textbf{$F$ is closed iff \ldots} & \textbf{Source} \\
+\midrule
+
+\textbf{Complement (def)}
+  & $X \setminus F$ is open
+  & \hyperref[def:open-closed-set]{D\ref*{def:open-closed-set}} \\[2pt]
+
+\textbf{Sequences}
+  & $(x_n) \subseteq F,\; x_n \to x \Rightarrow x \in F$
+    \newline (limits of sequences in $F$ stay in $F$)
+  & \hyperref[thm:closed-equiv]{T\ref*{thm:closed-equiv}} \\[2pt]
+
+\textbf{Limit points}
+  & $F' \subseteq F$
+    \newline ($F$ contains all its limit points)
+  & \hyperref[thm:closed-equiv]{T\ref*{thm:closed-equiv}} \\[2pt]
+
+\textbf{Closure}
+  & $F = \overline{F}$
+    \newline ($F$ equals its own closure)
+  & \hyperref[def:closure]{D\ref*{def:closure}} \\[2pt]
+
+\textbf{Boundary}
+  & $\partial F \subseteq F$
+    \newline ($F$ contains all its boundary points)
+  & \hyperref[prop:closed-owns-boundary]{P\ref*{prop:closed-owns-boundary}} \\[2pt]
+
+\textbf{IBE decomp}
+  & $\operatorname{ext}(F) = X \setminus F$:
+    the exterior of $F$ is exactly the complement,
+    so $\partial F$ falls inside $F$
+  & \hyperref[thm:ibe-decomp]{T\ref*{thm:ibe-decomp}} \\[2pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textbf{One-line summary:} \;
+$F$ closed $\iff$ $F$ absorbs all its limits $\iff$
+$F$ contains all its limit points $\iff$
+$F$ owns its boundary $\iff$ $F$ equals its closure.
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART IV: CLOSURE — THREE LANGUAGES
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part IV \enspace Closure — Three Languages}},
+  fonttitle=\small\bfseries]
+\small
+Let $(X,d)$ be a metric space, $E \subseteq X$, $x \in X$.
+The following are equivalent \textnormal{(\hyperref[thm:closure-three-way-unifying]{Unifying Theorem})}.
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{2.2cm} p{4.8cm} p{5.4cm}}
+\toprule
+\textbf{Language} & \textbf{Statement} & \textbf{Meaning} \\
+\midrule
+
+\textbf{(T) Topological}
+  & $x \in \overline{E}$
+  & $x$ is an adherent point of $E$ \\[2pt]
+
+\textbf{(G) Geometric}
+  & $\forall r > 0,\; B_r(x) \cap E \neq \varnothing$
+  & every ball around $x$ hits $E$ \\[2pt]
+
+\textbf{(S) Sequential}
+  & $\exists\, (a_n) \subseteq E : a_n \to x$
+  & $x$ is a limit of a sequence in $E$ \\[2pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\begin{tabular}{p{6cm} p{6.5cm}}
+\toprule
+\textbf{What closure adds to $E$} & \textbf{Characterisation} \\
+\midrule
+$\overline{E} = E \cup E'$
+  & closure = the set plus all its limit points \\[2pt]
+$\overline{E} = E \cup \partial E$
+  & closure = the set plus its boundary \\[2pt]
+$E$ closed $\iff$ $E = \overline{E}$
+  & closed sets are their own closure \\[2pt]
+$\overline{E}$ is the smallest closed set containing $E$
+  & closure is the tight closed wrapper around $E$ \\[2pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART V: IBE DECOMPOSITION — POINT CLASSIFICATION TABLE
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part V \enspace Point Classification:
+         Interior / Boundary / Exterior}},
+  fonttitle=\small\bfseries]
+\small
+Every point $x \in X$ belongs to exactly one region relative to $A \subseteq X$.
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{2.2cm} p{4.4cm} p{2.0cm} p{3.6cm}}
+\toprule
+\textbf{Region} & \textbf{Ball condition} & \textbf{Is $x \in A$?} & \textbf{Is $x \in \overline{A}$?} \\
+\midrule
+
+$\operatorname{int}(A)$
+  & $\exists r > 0 : B_r(x) \subseteq A$
+  & Yes (always)
+  & Yes \\[2pt]
+
+$\partial A$
+  & $\forall r > 0 : B_r(x)$ meets both $A$ and $X \setminus A$
+  & Maybe
+  & Yes \\[2pt]
+
+$\operatorname{ext}(A)$
+  & $\exists r > 0 : B_r(x) \cap A = \varnothing$
+  & No (never)
+  & No \\[2pt]
+
+\midrule
+\multicolumn{4}{l}{$X = \operatorname{int}(A) \;\dot\cup\; \partial A \;\dot\cup\; \operatorname{ext}(A)$
+\quad (disjoint, exhaustive) \quad \hyperref[thm:ibe-decomp]{T\ref*{thm:ibe-decomp}}} \\[2pt]
+
+\midrule
+\multicolumn{4}{l}{
+  $A$ open $\iff$ $A \cap \partial A = \varnothing$ \qquad
+  $A$ closed $\iff$ $\partial A \subseteq A$
+} \\[2pt]
+
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART VI: TOPOLOGY AXIOMS — OPEN/CLOSED UNDER OPERATIONS
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part VI \enspace Topology Axioms:
+         Operations on Open and Closed Sets}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{3.4cm} p{3.6cm} p{4.8cm}}
+\toprule
+\textbf{Operation} & \textbf{Open sets} & \textbf{Closed sets} \\
+\midrule
+
+Arbitrary union
+  & $\bigcup_\alpha U_\alpha$ is open
+  & (arbitrary intersection is closed) \\[2pt]
+
+Finite intersection
+  & $U_1 \cap \cdots \cap U_n$ is open
+  & (finite union is closed) \\[2pt]
+
+$\varnothing$ and $X$
+  & both open
+  & both closed (clopen) \\[2pt]
+
+\midrule
+\multicolumn{3}{l}{\textbf{Warning:} infinite intersection of open sets need not be open
+  \quad e.g.\ $\bigcap_{n=1}^\infty (-1/n, 1/n) = \{0\}$ in $\mathbb{R}$} \\[2pt]
+\multicolumn{3}{l}{\textbf{Warning:} infinite union of closed sets need not be closed
+  \quad e.g.\ $\bigcup_{n=1}^\infty [1/n, 1] = (0, 1]$ in $\mathbb{R}$} \\[2pt]
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent Sources:
+\hyperref[prf:union-open-sets]{arbitrary unions of open sets};
+\hyperref[prf:intersection-open-sets]{finite intersections of open sets};
+\hyperref[prf:intersection-closed-set]{arbitrary intersections of closed sets};
+\hyperref[prf:finite-union-closed-sets]{finite unions of closed sets}.
+\end{tcolorbox}
+
+\bigskip
+
+% =========================================================
+% PART VII: THE FOUR POSSIBILITIES
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Part VII \enspace The Four Possibilities}},
+  fonttitle=\small\bfseries]
+\small
+Open and closed are \emph{independent} properties.
+A set in a metric space can be any combination:
+
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{2.4cm} p{2.6cm} p{6.4cm}}
+\toprule
+\textbf{Open?} & \textbf{Closed?} & \textbf{Example in $\mathbb{R}$} \\
+\midrule
+
+Yes & Yes   & $\varnothing$, $\mathbb{R}$ (clopen sets) \\[2pt]
+Yes & No    & $(0,1)$, any open interval \\[2pt]
+No  & Yes   & $[0,1]$, $\mathbb{Z}$, any closed interval \\[2pt]
+No  & No    & $[0,1)$, $\mathbb{Q}$ \\[2pt]
+
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\textbf{Key point:} ``not open'' does not mean closed, and
+``not closed'' does not mean open.
+The word ``clopen'' names sets that are both.
+\end{tcolorbox}

@@ -1,0 +1,96 @@
+% =========================================================
+% Proof: Completion Theorem
+% Source: notes/completeness/notes-completeness.tex
+% Difficulty: Hard — defer until comfortable with equivalence classes
+% =========================================================
+
+\subsection*{Completion Theorem}
+\label{prf:completion}
+
+% ⚠️  DIFFICULTY WARNING
+% This proof is long and structurally complex.
+% It requires:
+%   - Equivalence classes of Cauchy sequences (co-Cauchy relation)
+%   - Defining a metric on equivalence classes (well-definedness check)
+%   - Embedding the original space isometrically
+%   - Proving the completion is complete (diagonal argument on double sequences)
+%   - Proving the embedding is dense
+% Recommended: return to this proof after the compactness chapter,
+% when you are fluent with the co-Cauchy construction and diagonal arguments.
+
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:completion]{Back to Theorem in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim Every metric space $(X,d)$ has a completion: a complete metric space
+$(\hat{X}, \hat{d})$ together with an isometric embedding $\iota : X \to \hat{X}$
+such that $\iota(X)$ is dense in $\hat{X}$.
+Moreover, the completion is unique up to isometry.
+
+\Given A metric space $(X,d)$.
+
+\Goal To construct $(\hat{X}, \hat{d})$ and $\iota$, and verify:
+\begin{enumerate}[(i)]
+  \item $\hat{d}$ is a well-defined metric on $\hat{X}$.
+  \item $\iota$ is an isometric embedding.
+  \item $\iota(X)$ is dense in $\hat{X}$.
+  \item $(\hat{X}, \hat{d})$ is complete.
+\end{enumerate}
+
+\Strategy
+
+\noindent\textbf{Construction.}
+Let $\hat{X}$ be the set of equivalence classes of Cauchy sequences in $X$
+under the co-Cauchy relation $(x_n) \sim (y_n) \iff d(x_n, y_n) \to 0$
+(Proposition~\ref{prop:co-cauchy-equivalence-relation}).
+
+Define $\hat{d}([(x_n)], [(y_n)]) := \lim_{n \to \infty} d(x_n, y_n)$.
+
+\noindent\textbf{Step 1: Well-definedness of $\hat{d}$.}
+Show $\lim d(x_n, y_n)$ exists (the sequence is real and Cauchy by reverse
+triangle inequality) and is independent of the representatives chosen.
+
+\noindent\textbf{Step 2: $\hat{d}$ is a metric.}
+Verify M1--M4 for $\hat{d}$, using the corresponding properties of $d$
+and limit arithmetic.
+
+\noindent\textbf{Step 3: Embedding.}
+Define $\iota(x) = [(x, x, x, \ldots)]$ (constant sequence).
+Show $\hat{d}(\iota(x), \iota(y)) = d(x,y)$.
+
+\noindent\textbf{Step 4: Density.}
+Show every $[(x_n)] \in \hat{X}$ is the limit of $(\iota(x_n))_{n}$.
+Use $\hat{d}(\iota(x_n), [(x_k)]_k) = \lim_k d(x_n, x_k) \to 0$ as $n \to \infty$.
+
+\noindent\textbf{Step 5: Completeness.}
+Take a Cauchy sequence $([(x_n^{(j)})]_j)$ in $\hat{X}$;
+use density to pick representatives in $\iota(X)$;
+extract a diagonal Cauchy sequence in $X$;
+show its equivalence class is the limit.
+
+% -------------------------------------------------------
+% YOUR PROOF HERE (work through each step above)
+% -------------------------------------------------------
+
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Construction proof in five stages: define $\hat{X}$, verify $\hat{d}$ is
+well-defined and is a metric, embed $X$ isometrically, show the image is dense,
+prove completeness via a diagonal argument.
+Each step is independently checkable.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item Proposition~\ref{prop:co-cauchy-equivalence-relation}: co-Cauchy is an equivalence relation.
+  \item Proposition~\ref{prop:cauchy-bounded}: Cauchy sequences are bounded.
+  \item Proposition~\ref{prop:reverse-triangle}: reverse triangle inequality
+        (to show $d(x_n, y_n)$ is Cauchy in $\mathbb{R}$).
+  \item Proposition~\ref{prop:convergent-implies-cauchy}: convergent $\Rightarrow$ Cauchy
+        (for Step 4).
+  \item Completeness of $\mathbb{R}$ (limits of real Cauchy sequences exist).
+  \item Definition~\ref{def:isometry}: isometric embedding.
+\end{itemize}
+\end{remark*}

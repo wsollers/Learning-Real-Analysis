@@ -1,0 +1,302 @@
+% =========================================================
+% Nowhere-Dense Sets and a Preview of Baire's Theorem
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Dependencies:
+%   notes-metric-space.tex       — def:metric
+%   notes-open-closed-sets.tex   — def:open, def:closed, def:interior
+%   notes-dense-separable.tex    — def:dense
+%   notes-completeness.tex       — completeness
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Nowhere-Dense Sets and Baire's Theorem}
+\label{sec:nowhere-dense-baire}
+% ---------------------------------------------------------
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Nowhere-Dense Sets and Baire --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:nowhere-dense}
+  & $E$ nowhere-dense iff $\operatorname{int}(\overline{E}) = \varnothing$
+  & Definition
+  & \hyperref[def:nowhere-dense]{$\downarrow$} \\[4pt]
+D\ref{def:meager}
+  & Meager $=$ countable union of nowhere-dense sets
+  & Definition
+  & \hyperref[def:meager]{$\downarrow$} \\[4pt]
+P\ref{prop:nowhere-dense-equiv}
+  & $E$ nowhere-dense $\iff$ $X \setminus \overline{E}$ is dense
+  & Complement characterization
+  & \hyperref[prop:nowhere-dense-equiv]{$\downarrow$} \\[4pt]
+T\ref{thm:baire-preview}
+  & Baire: complete metric space is not meager in itself
+  & Statement only (proof deferred)
+  & \hyperref[thm:baire-preview]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\paragraph{Motivation.}
+Density gives us a notion of ``large'' subsets: a dense set reaches
+every corner of the space.
+But we also need a notion of ``small'' or ``thin'' subsets,
+one that captures sets which --- no matter how you zoom in ---
+never fill any open region.
+
+The integers $\mathbb{Z}$ in $\mathbb{R}$ are a perfect example.
+No matter which open interval you look at, $\mathbb{Z}$ does not
+fill it; $\mathbb{Z}$ has gaps everywhere.
+This is the idea behind \emph{nowhere-dense} sets.
+
+Understanding thin sets leads to one of the deepest structural results
+in metric space theory: Baire's theorem, which says that a complete
+metric space cannot be built from countably many thin pieces.
+We introduce the definitions here and state the theorem;
+the proof belongs to the compactness chapter where the key tools are available.
+
+% ---- Definition: Nowhere-Dense ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Nowhere-Dense)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Nowhere-Dense]
+\label{def:nowhere-dense}
+Let $(X,d)$ be a metric space and $E \subseteq X$.
+We say $E$ is \emph{nowhere-dense in $X$} if the interior of its closure
+is empty:
+\[
+\operatorname{int}(\overline{E}) = \varnothing.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+E \text{ is nowhere-dense}
+\;\iff\;
+\forall\, x \in \overline{E},\; \forall\, r > 0,\;
+B_r(x) \not\subseteq \overline{E}.
+\]
+No point of $\overline{E}$ has an open ball entirely inside $\overline{E}$.
+\end{remark*}
+
+\begin{remark*}[Intuition: nowhere-dense vs.\ not-dense]
+These sound similar but are very different.
+
+A set $E$ is \emph{not dense} if there is some open ball it misses entirely:
+$\exists\, B_r(x)$ with $B_r(x) \cap E = \varnothing$.
+
+A set $E$ is \emph{nowhere-dense} if \emph{every} open ball contains a
+sub-ball that $E$ misses entirely.
+Nowhere-dense is a much stronger condition --- it says $E$ fails to be
+dense even when restricted to any open region.
+
+Think of nowhere-dense as: ``thin no matter where you zoom in.''
+Not-dense just means ``thin somewhere.''
+\end{remark*}
+
+\begin{remark*}[Why close before taking interior?]
+We use $\operatorname{int}(\overline{E})$ rather than $\operatorname{int}(E)$
+because isolated points would otherwise cause confusion.
+A single point $\{p\}$ has empty interior but its closure is still $\{p\}$,
+which also has empty interior --- so $\{p\}$ is nowhere-dense, as it should be.
+The closure step ensures the definition behaves well for any set,
+not just closed ones.
+For closed sets $E$, the definition simplifies to
+$\operatorname{int}(E) = \varnothing$.
+\end{remark*}
+
+% ---- Proposition: equivalent characterization ----
+
+\begin{proposition}[Complement characterization of nowhere-dense]
+\label{prop:nowhere-dense-equiv}
+$E \subseteq X$ is nowhere-dense if and only if $X \setminus \overline{E}$
+is dense in $X$.
+\end{proposition}
+
+\begin{proof}
+By definition, $E$ is nowhere-dense iff $\operatorname{int}(\overline{E}) = \varnothing$.
+The interior of $\overline{E}$ is the largest open set contained in
+$\overline{E}$, so $\operatorname{int}(\overline{E}) = \varnothing$ iff no
+non-empty open set is contained in $\overline{E}$, iff every non-empty open
+set meets $X \setminus \overline{E}$.
+By Proposition~\ref{prop:dense-equiv}(iii), this is exactly
+$\overline{X \setminus \overline{E}} = X$, i.e.\ $X \setminus \overline{E}$
+is dense.
+\end{proof}
+
+\begin{remark*}[Reading the characterization]
+$X \setminus \overline{E}$ dense says: the complement of $\overline{E}$
+meets every open set.
+In other words, no matter where you look, you can find points
+that are not even close to $E$.
+This is the precise form of ``$E$ is thin everywhere.''
+\end{remark*}
+
+% ---- Examples ----
+
+\begin{example}[Nowhere-dense sets]
+\label{ex:nowhere-dense}
+\begin{enumerate}[(a)]
+  \item \textbf{Integers in $\mathbb{R}$.}
+        $\mathbb{Z}$ is closed, so $\overline{\mathbb{Z}} = \mathbb{Z}$.
+        The interior of $\mathbb{Z}$ is empty (no open interval is contained
+        in $\mathbb{Z}$). So $\mathbb{Z}$ is nowhere-dense.
+
+  \item \textbf{The Cantor set $C \subset [0,1]$.}
+        $C$ is closed and has empty interior (it contains no intervals).
+        So $C$ is nowhere-dense in $\mathbb{R}$,
+        despite being uncountable --- a striking demonstration that
+        nowhere-dense does not mean small in the sense of cardinality.
+
+  \item \textbf{A single point $\{p\}$.}
+        $\overline{\{p\}} = \{p\}$ and $\operatorname{int}(\{p\}) = \varnothing$.
+        So every singleton is nowhere-dense.
+
+  \item \textbf{A closed ball's boundary $\partial B_r(x)$ in $\mathbb{R}^n$.}
+        The boundary sphere is closed with empty interior, hence nowhere-dense.
+\end{enumerate}
+\end{example}
+
+\begin{example}[Sets that are NOT nowhere-dense]
+\label{ex:not-nowhere-dense}
+\begin{enumerate}[(a)]
+  \item \textbf{$\mathbb{Q}$ in $\mathbb{R}$.}
+        $\overline{\mathbb{Q}} = \mathbb{R}$, and
+        $\operatorname{int}(\mathbb{R}) = \mathbb{R} \neq \varnothing$.
+        So $\mathbb{Q}$ is \emph{not} nowhere-dense,
+        even though $\mathbb{Q}$ itself has empty interior.
+        (The closure step is essential.)
+
+  \item \textbf{Any open set $U \neq \varnothing$.}
+        $\operatorname{int}(\overline{U}) \supseteq \operatorname{int}(U) = U \neq \varnothing$.
+        No non-empty open set is nowhere-dense.
+\end{enumerate}
+\end{example}
+
+% ---- Definition: Meager ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Meager / First Category)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Meager Set]
+\label{def:meager}
+A subset $A \subseteq X$ is \emph{meager} (or \emph{of first category})
+if it can be written as a countable union of nowhere-dense sets:
+\[
+A = \bigcup_{n=1}^{\infty} E_n,
+\quad \text{where each } E_n \text{ is nowhere-dense.}
+\]
+A set that is not meager is called \emph{non-meager} (or
+\emph{of second category}).
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Intuition: meager as ``topologically small'']
+Meager sets are thin in every topological sense.
+A countable union of sets each of which is ``thin everywhere'' is
+still considered ``thin.''
+This gives us a topological analogue of measure-zero sets:
+\begin{center}
+\begin{tabular}{l l}
+\toprule
+\textbf{Measure theory} & \textbf{Baire category} \\
+\midrule
+Measure-zero set & Nowhere-dense set \\
+Null set (countable union of measure-zero) & Meager set \\
+Sets of positive measure & Non-meager (second category) sets \\
+\bottomrule
+\end{tabular}
+\end{center}
+The analogy is imperfect --- a set can be meager and have full measure,
+or be non-meager and have measure zero --- but the intuition of
+``negligible'' is the right one.
+\end{remark*}
+
+\begin{example}[$\mathbb{Q}$ is meager in $\mathbb{R}$]
+\label{ex:Q-meager}
+Write $\mathbb{Q} = \{q_1, q_2, q_3, \ldots\}$ (countable).
+Each singleton $\{q_n\}$ is nowhere-dense.
+So $\mathbb{Q} = \bigcup_{n=1}^\infty \{q_n\}$ is meager in $\mathbb{R}$.
+
+This says that the rationals, despite being dense, are
+\emph{topologically small}.
+Density and meagerness are not opposites: $\mathbb{Q}$ is simultaneously
+dense and meager in $\mathbb{R}$.
+\end{example}
+
+% ---- Baire's Theorem: Statement only ----
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Baire Category Theorem --- Abbott \S8.2,
+         Pugh Theorem 32)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Baire Category Theorem]
+\label{thm:baire-preview}
+Let $(X, d)$ be a complete metric space.
+Then $X$ is not meager in itself: $X$ cannot be written as a countable
+union of nowhere-dense sets.
+
+Equivalently, if $X = \bigcup_{n=1}^\infty E_n$ then at least one $E_n$
+has non-empty interior.
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Proof deferred]
+The standard proof uses a diagonal/nested-ball argument that requires
+completeness in an essential way.
+The structure is: choose points from a sequence of shrinking open balls,
+each forcing us deeper into an open dense set; completeness ensures the
+resulting Cauchy sequence converges to a point inside all of them.
+The proof will appear once the compactness tools are in place.
+\end{remark*}
+
+\begin{remark*}[What Baire's theorem says about $\mathbb{R}$]
+Since $\mathbb{R}$ is complete, it is non-meager: you cannot cover $\mathbb{R}$
+by countably many nowhere-dense sets.
+But we just showed $\mathbb{Q}$ is meager.
+Baire's theorem says the irrationals $\mathbb{R} \setminus \mathbb{Q}$
+cannot be meager: if they were, then
+$\mathbb{R} = \mathbb{Q} \cup (\mathbb{R} \setminus \mathbb{Q})$
+would be the union of two meager sets, hence meager, contradicting
+the theorem.
+
+This is a precise sense in which the irrationals are
+``much larger'' than the rationals, independent of cardinality:
+the irrationals are non-meager, the rationals are meager.
+\end{remark*}
+
+\begin{remark*}[Application: most continuous functions are
+  nowhere differentiable]
+One of the most striking consequences of Baire's theorem is the
+following result in $C([0,1])$ with the uniform metric.
+Let $D \subseteq C([0,1])$ be the set of functions that are
+differentiable at at least one point.
+One can show that $D$ is meager in $C([0,1])$.
+Since $C([0,1])$ is complete (and hence non-meager by Baire),
+$D$ does not cover $C([0,1])$.
+Therefore most continuous functions --- in the precise sense of
+non-meager complement --- are differentiable \emph{nowhere}.
+The differentiable functions, which seem like the ``usual'' ones
+from calculus, are in fact the exceptional case.
+\end{remark*}
+
+\begin{remark*}[Completeness is essential]
+The Baire Category Theorem is false for incomplete spaces.
+The rationals $\mathbb{Q}$ (with the usual metric, which is incomplete)
+\emph{can} be written as a countable union of singletons, each
+nowhere-dense in $\mathbb{Q}$.
+So $\mathbb{Q}$ is meager in itself.
+Completeness is not just a convenient hypothesis --- it is what prevents
+the space from being ``built from nothing.''
+\end{remark*}

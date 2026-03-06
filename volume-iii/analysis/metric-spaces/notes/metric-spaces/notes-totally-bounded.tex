@@ -1,0 +1,317 @@
+% =========================================================
+% Totally Bounded Sets
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Dependencies:
+%   notes-metric-space.tex           — def:metric, def:open-ball
+%   notes-properties-metric-space.tex — def:bounded-set, def:diameter
+%   notes-completeness.tex           — completeness (for Generalized Heine-Borel)
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Totally Bounded Sets}
+\label{sec:totally-bounded}
+% ---------------------------------------------------------
+
+% ---- Toolkit ----
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Totally Bounded Sets --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:totally-bounded}
+  & $A$ totally bounded: $\forall\varepsilon>0$, finitely many $\varepsilon$-balls cover $A$
+  & Definition
+  & \hyperref[def:totally-bounded]{$\downarrow$} \\[4pt]
+P\ref{prop:totally-bounded-implies-bounded}
+  & Totally bounded $\Rightarrow$ bounded
+  & One ball covers all
+  & \hyperref[prop:totally-bounded-implies-bounded]{$\downarrow$} \\[4pt]
+P\ref{prop:bounded-not-totally-bounded}
+  & Bounded $\not\Rightarrow$ totally bounded (infinite discrete)
+  & Counterexample
+  & \hyperref[prop:bounded-not-totally-bounded]{$\downarrow$} \\[4pt]
+P\ref{prop:totally-bounded-Rn}
+  & Bounded $\iff$ totally bounded in $\mathbb{R}^n$
+  & Finite grid
+  & \hyperref[prop:totally-bounded-Rn]{$\downarrow$} \\[4pt]
+P\ref{prop:totally-bounded-Cauchy}
+  & Every sequence in a totally bounded set has a Cauchy subsequence
+  & Diagonal argument
+  & \hyperref[prop:totally-bounded-Cauchy]{$\downarrow$} \\[4pt]
+T\ref{thm:gen-heine-borel}
+  & Compact $\iff$ complete $+$ totally bounded (Generalized Heine-Borel)
+  & Statement (proof in compactness chapter)
+  & \hyperref[thm:gen-heine-borel]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\paragraph{Motivation.}
+We know that \emph{bounded} sets are those contained in some ball of
+finite radius.
+But boundedness is a weak condition in general metric spaces.
+The unit ball in $\ell^2$ (the space of square-summable sequences)
+is bounded, but it is not compact --- you can find sequences
+in it with no convergent subsequence.
+Something extra is needed.
+
+The missing ingredient is \emph{total boundedness}: the requirement
+that, no matter how small you make $\varepsilon$, you can still cover
+the set with \emph{finitely many} $\varepsilon$-balls.
+In $\mathbb{R}^n$ this turns out to be equivalent to ordinary boundedness,
+which is why the distinction never appeared in single-variable calculus.
+In general metric spaces the two concepts diverge, and total boundedness
+is the correct one for the theory of compactness.
+
+% ---- Definition ----
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Totally Bounded Set)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Totally Bounded]
+\label{def:totally-bounded}
+Let $(X, d)$ be a metric space and $A \subseteq X$.
+We say $A$ is \emph{totally bounded} if for every $\varepsilon > 0$ there
+exist finitely many points $x_1, \ldots, x_n \in X$ such that
+\[
+A \;\subseteq\; \bigcup_{k=1}^n B_\varepsilon(x_k).
+\]
+The finite collection $\{x_1, \ldots, x_n\}$ is called an
+\emph{$\varepsilon$-net} for $A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+A \text{ totally bounded}
+\;\iff\;
+\forall\,\varepsilon > 0,\;
+\exists\, n \in \mathbb{N},\;
+\exists\, x_1, \ldots, x_n \in X,\quad
+A \subseteq \bigcup_{k=1}^n B_\varepsilon(x_k).
+\]
+\end{remark*}
+
+\begin{remark*}[Intuition: covering by smaller and smaller finite sets]
+Bounded says: $A$ fits inside \emph{one} ball of some fixed radius.
+Totally bounded says: for any $\varepsilon$ you name --- no matter how
+small --- $A$ fits inside \emph{finitely many} balls of radius $\varepsilon$.
+
+The key word is ``finitely many.''
+As $\varepsilon \to 0$, the balls shrink, but you must always be able to
+cover $A$ with a finite number of them.
+If $A$ is ``spread out'' in infinitely many directions that cannot be
+captured by a finite set of small balls, then $A$ is bounded but not
+totally bounded.
+\end{remark*}
+
+\begin{remark*}[Centers need not lie in $A$]
+The definition does not require $x_1, \ldots, x_n \in A$.
+But if you prefer, you can always choose centers in $A$:
+if $A \subseteq \bigcup_k B_\varepsilon(x_k)$, pick any $a_k \in A \cap B_\varepsilon(x_k)$;
+then $A \subseteq \bigcup_k B_{2\varepsilon}(a_k)$.
+So totally bounded is equivalent to: for every $\varepsilon > 0$ there
+is a finite $\varepsilon$-net \emph{inside} $A$ (up to doubling $\varepsilon$).
+\end{remark*}
+
+% ---- Totally bounded implies bounded ----
+
+\begin{proposition}[Totally bounded implies bounded]
+\label{prop:totally-bounded-implies-bounded}
+If $A \subseteq X$ is totally bounded, then $A$ is bounded.
+\end{proposition}
+
+\begin{proof}
+Apply total boundedness with $\varepsilon = 1$: there exist
+$x_1, \ldots, x_n$ with $A \subseteq \bigcup_k B_1(x_k)$.
+Fix any $p \in X$.
+For each $k$, pick any $a_k \in B_1(x_k)$ (if $B_1(x_k) \cap A \neq \varnothing$;
+ignore empty intersections).
+Let $R = \max_k d(p, x_k) + 1$.
+For any $a \in A$, there exists $k$ with $d(x_k, a) < 1$, so
+$d(p, a) \le d(p, x_k) + d(x_k, a) < R + 1$.
+Thus $A \subseteq B_{R+1}(p)$ and $A$ is bounded.
+\end{proof}
+
+% ---- Bounded does not imply totally bounded ----
+
+\begin{proposition}[Bounded does not imply totally bounded]
+\label{prop:bounded-not-totally-bounded}
+An infinite set with the discrete metric is bounded but not totally bounded.
+\end{proposition}
+
+\begin{proof}
+Let $X$ be infinite with the discrete metric $d(x,y) = 1$ for $x \neq y$.
+Then $X \subseteq B_2(x_0)$ for any fixed $x_0$, so $X$ is bounded.
+
+For $\varepsilon = 1/2$: each ball $B_{1/2}(x) = \{x\}$ contains only one point.
+To cover $X$ by $1/2$-balls, we need one ball per point --- infinitely many.
+So $X$ is not totally bounded.
+\end{proof}
+
+\begin{remark*}[Why the discrete metric is the key counterexample]
+In the discrete metric, every point is ``far from'' every other
+point in the sense that you need a separate ball to capture each one.
+No finite collection of small balls can reach all of them.
+This is the essence of why total boundedness fails: the space has
+``infinitely many independent directions.''
+\end{remark*}
+
+% ---- Rn: bounded iff totally bounded ----
+
+\begin{proposition}[Bounded and totally bounded coincide in $\mathbb{R}^n$]
+\label{prop:totally-bounded-Rn}
+A subset $A \subseteq \mathbb{R}^n$ is totally bounded if and only if
+it is bounded.
+\end{proposition}
+
+\begin{proof}
+($\Rightarrow$) Proposition~\ref{prop:totally-bounded-implies-bounded}.
+
+($\Leftarrow$) Suppose $A$ is bounded, so $A \subseteq [-M, M]^n$ for
+some $M > 0$.
+Let $\varepsilon > 0$.
+Partition $[-M, M]^n$ into a finite grid of cubes of side length
+$\varepsilon / \sqrt{n}$.
+The number of cubes is at most $(2M\sqrt{n}/\varepsilon + 1)^n$, which is finite.
+Each cube has diameter $\sqrt{n} \cdot (\varepsilon/\sqrt{n}) = \varepsilon$,
+so it is contained in an open ball of radius $\varepsilon$ centred at its midpoint.
+Hence finitely many $\varepsilon$-balls cover $[-M,M]^n \supseteq A$.
+\end{proof}
+
+\begin{remark*}[Why this fails in infinite dimensions]
+In $\ell^2$ (the space of square-summable sequences), the closed unit ball
+$\{x : \|x\|_2 \le 1\}$ is bounded but not totally bounded.
+Consider the sequence of standard basis vectors $e_n$
+(all coordinates $0$ except the $n$-th which is $1$).
+Each $e_n$ has norm $1$, but $\|e_m - e_n\|_2 = \sqrt{2}$ for all $m \neq n$.
+So the $e_n$ are pairwise at distance $\sqrt{2}$ apart.
+No $(\sqrt{2}/2)$-ball can contain more than one $e_n$,
+so infinitely many balls are needed to cover $\{e_n : n \in \mathbb{N}\}
+\subseteq B_1(0)$.
+Hence $B_1(0)$ is not totally bounded in $\ell^2$.
+
+This is why Heine-Borel fails in infinite dimensions: bounded $+$ closed
+is not enough to force compactness.
+Total boundedness is the missing condition.
+\end{remark*}
+
+% ---- Totally bounded gives Cauchy subsequences ----
+
+\begin{proposition}[Totally bounded sets have Cauchy subsequences]
+\label{prop:totally-bounded-Cauchy}
+If $A \subseteq X$ is totally bounded, then every sequence in $A$ has
+a Cauchy subsequence.
+\end{proposition}
+
+\begin{proof}
+Let $(a_n)$ be a sequence in $A$.
+We construct a Cauchy subsequence by a diagonal argument.
+
+\medskip
+\noindent\textbf{Step 1.}
+Apply total boundedness with $\varepsilon = 1$:
+cover $A$ with finitely many $1$-balls.
+By the pigeonhole principle, one of these balls ---
+call it $B_1$ --- contains $a_n$ for infinitely many $n$.
+Extract a subsequence $(a_n^{(1)})$ of $(a_n)$ lying entirely in $B_1$.
+All terms of $(a_n^{(1)})$ satisfy $d(a_m^{(1)}, a_k^{(1)}) < 2$.
+
+\medskip
+\noindent\textbf{Step 2.}
+Apply total boundedness with $\varepsilon = 1/2$:
+cover $A$ with finitely many $(1/2)$-balls.
+By pigeonhole, one --- call it $B_2$ --- contains $(a_n^{(1)})_n$
+for infinitely many $n$.
+Extract a subsequence $(a_n^{(2)})$ of $(a_n^{(1)})$ lying in $B_1 \cap B_2$.
+All terms satisfy $d(a_m^{(2)}, a_k^{(2)}) < 1$.
+
+\medskip
+\noindent\textbf{Continuing.}
+At step $j$, extract a subsequence $(a_n^{(j)})$ of $(a_n^{(j-1)})$
+lying in a $(1/j)$-ball, so all terms satisfy
+$d(a_m^{(j)}, a_k^{(j)}) < 2/j$.
+
+\medskip
+\noindent\textbf{Diagonal subsequence.}
+Define $b_j = a_j^{(j)}$ (the $j$-th term of the $j$-th subsequence).
+For $m, k \ge J$, both $b_m$ and $b_k$ are terms of $(a_n^{(J)})$
+(by construction: $(a_n^{(j)})$ is a subsequence of $(a_n^{(J)})$ for $j \ge J$),
+so $d(b_m, b_k) < 2/J$.
+Since $J$ can be taken as large as we like, $(b_j)$ is Cauchy.
+\end{proof}
+
+\begin{remark*}[This is the heart of sequential compactness]
+Proposition~\ref{prop:totally-bounded-Cauchy} says: totally bounded
+gives Cauchy subsequences.
+Completeness then turns those Cauchy subsequences into convergent ones.
+So totally bounded $+$ complete implies: every sequence has a convergent
+subsequence, which is exactly sequential compactness.
+This is the proof strategy behind the Generalized Heine-Borel theorem.
+\end{remark*}
+
+% ---- Generalized Heine-Borel ----
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Generalized Heine-Borel --- Pugh Theorem 65)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Generalized Heine-Borel]
+\label{thm:gen-heine-borel}
+Let $(X,d)$ be a complete metric space and $A \subseteq X$.
+Then $A$ is compact if and only if $A$ is closed and totally bounded.
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Proof strategy --- deferred to the compactness chapter]
+($\Rightarrow$) Every compact set is closed (as a complete metric space
+in its own right) and totally bounded (compactness gives a finite subcover
+for any open cover by $\varepsilon$-balls).
+
+($\Leftarrow$) Let $(a_n)$ be any sequence in $A$.
+By Proposition~\ref{prop:totally-bounded-Cauchy}, it has a Cauchy
+subsequence $(b_n)$.
+Since $X$ is complete, $(b_n)$ converges to some $p \in X$.
+Since $A$ is closed, $p \in A$.
+So every sequence in $A$ has a subsequence converging in $A$,
+which is sequential compactness, hence compactness.
+The full proof (including the equivalence of sequential and open-cover compactness)
+appears in the compactness chapter.
+\end{remark*}
+
+\begin{remark*}[Comparison with classical Heine-Borel]
+In $\mathbb{R}^n$, Proposition~\ref{prop:totally-bounded-Rn} shows
+that totally bounded is the same as bounded.
+So in $\mathbb{R}^n$, the Generalized Heine-Borel theorem reads:
+\emph{compact $\iff$ closed and bounded.}
+This is the classical Heine-Borel theorem.
+
+The generalized version reveals what the classical theorem is really saying:
+``bounded'' in $\mathbb{R}^n$ happens to coincide with
+``totally bounded,'' but it is total boundedness --- not mere boundedness ---
+that is the correct hypothesis for compactness in general metric spaces.
+\end{remark*}
+
+\begin{example}[Compact vs.\ merely closed-and-bounded in $C([0,1])$]
+\label{ex:ell2-not-totally-bounded}
+The closed unit ball $B = \{f \in C([0,1]) : \|f\|_\infty \le 1\}$ in
+$C([0,1])$ with the uniform metric is closed and bounded.
+
+However, $B$ is \emph{not} totally bounded.
+Consider the functions $f_n(x) = x^n$.
+Each $\|f_n\|_\infty = 1$, so $f_n \in B$.
+One can check that $\|f_m - f_n\|_\infty = 1$ for all $m \neq n$
+(since $f_m - f_n$ achieves the value $1/2$ near $x = 1$ for appropriate
+choice of $m, n$).
+So no finite collection of $(1/4)$-balls can cover $\{f_n\}$,
+and $B$ is not totally bounded, hence not compact.
+
+This confirms: in infinite-dimensional spaces, closed and bounded is not
+enough.
+\end{example}
