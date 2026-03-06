@@ -1,2 +1,405 @@
-\subsection{Sequential Characterizations of Open and Closed Sets}
-\label{sec:sequential-characterizations}
+% =========================================================
+% Cauchy Sequences in Metric Spaces
+% Source: volume-iii/analysis/metric-spaces/notes/cauchy-sequences.tex
+%
+% Dependencies:
+%   notes-sequences.tex        — def:convergent-sequence, prop:limit-unique
+%   notes-working-with-balls.tex — prop:reverse-triangle
+% =========================================================
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Cauchy Sequences --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:cauchy-sequence}
+  & $(x_n)$ Cauchy $\iff \forall\varepsilon>0,\;\exists N,\;m,n\ge N \Rightarrow d(x_m,x_n)<\varepsilon$
+  & Definition
+  & \hyperref[def:cauchy-sequence]{$\downarrow$} \\[4pt]
+P\ref{prop:convergent-implies-cauchy}
+  & Convergent $\Rightarrow$ Cauchy
+  & Triangle inequality
+  & \hyperref[prop:convergent-implies-cauchy]{$\downarrow$} \\[4pt]
+P\ref{prop:cauchy-bounded}
+  & Every Cauchy sequence is bounded
+  & Finite initial segment
+  & \hyperref[prop:cauchy-bounded]{$\downarrow$} \\[4pt]
+P\ref{prop:cauchy-subsequence}
+  & Cauchy $+$ convergent subsequence $\Rightarrow$ convergent
+  & Triangle inequality
+  & \hyperref[prop:cauchy-subsequence]{$\downarrow$} \\[4pt]
+P\ref{prop:cauchy-unique-limit}
+  & Cauchy sequence has at most one limit
+  & Uniqueness of limits
+  & \hyperref[prop:cauchy-unique-limit]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{The Cauchy Condition}
+\label{sec:cauchy-condition}
+% ---------------------------------------------------------
+
+Recall that a sequence $(x_n)$ in a metric space $(X,d)$ converges to a
+point $x \in X$ if for every $\varepsilon > 0$ there exists $N$ such that
+$n \ge N$ implies $d(x_n, x) < \varepsilon$.
+This is an \emph{external} condition: it tests the sequence against a
+specific candidate limit $x$.
+
+The Cauchy condition removes all reference to a limit.
+It asks only whether the terms of the sequence are eventually close to
+\emph{each other}.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Cauchy Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Cauchy Sequence]
+\label{def:cauchy-sequence}
+Let $(X,d)$ be a metric space.
+A sequence $(x_n)_{n\in\mathbb{N}}$ in $X$ is a \emph{Cauchy sequence} if
+\[
+  \forall \varepsilon > 0,\;
+  \exists N \in \mathbb{N},\;
+  \forall m,n \ge N,\quad
+  d(x_m, x_n) < \varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+(x_n)\ \text{Cauchy}
+\;\iff\;
+\forall \varepsilon \in \mathbb{R}^{+},\;
+\exists N \in \mathbb{N},\;
+\forall m \in \mathbb{N},\;
+\forall n \in \mathbb{N},\;
+\bigl(m \ge N \;\land\; n \ge N\bigr)
+\;\Rightarrow\;
+d(x_m, x_n) < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Intuition]
+The terms of a Cauchy sequence ``bunch together'' as $n \to \infty$.
+For any prescribed tolerance $\varepsilon$, all sufficiently late
+pairs of terms lie within $\varepsilon$ of each other.
+No external reference point is involved: the condition is entirely
+about the mutual spacing of the sequence's own terms.
+\end{remark*}
+
+\begin{remark*}[Comparison with convergence]
+\begin{center}
+\begin{tabular}{l l}
+\toprule
+\textbf{Concept} & \textbf{Condition} \\
+\midrule
+$(x_n) \to x$ (convergent)
+  & $\forall\varepsilon>0,\;\exists N,\;\forall n\ge N:\;
+    d(x_n,x) < \varepsilon$ \\[4pt]
+$(x_n)$ Cauchy
+  & $\forall\varepsilon>0,\;\exists N,\;\forall m,n\ge N:\;
+    d(x_m,x_n) < \varepsilon$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\smallskip\noindent
+Convergence involves one index ranging over a tail; the Cauchy condition
+involves \emph{two} independent indices both ranging over the same tail.
+\end{remark*}
+
+\begin{remark*}[Common error: consecutive spacing is not enough]
+The condition $d(x_{n+1}, x_n) \to 0$ --- that \emph{consecutive} terms
+approach each other --- is strictly weaker than the Cauchy condition.
+
+The harmonic series partial sums $s_n = \sum_{k=1}^n \frac{1}{k}$ in
+$\mathbb{R}$ satisfy $d(s_{n+1}, s_n) = \frac{1}{n+1} \to 0$, yet the
+sequence diverges, so it is not Cauchy.
+
+The Cauchy condition controls the distance between \emph{all} pairs
+$x_m, x_n$ with $m,n \ge N$, not just adjacent ones.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Basic Properties}
+\label{sec:cauchy-basic-properties}
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:convergent-implies-cauchy]{Convergent Implies Cauchy}}{Convergent Implies Cauchy}]
+\label{prop:convergent-implies-cauchy}
+Let $(X,d)$ be a metric space.
+Every convergent sequence in $X$ is a Cauchy sequence.
+\end{proposition}
+
+\begin{proof}
+Let $(x_n) \to x$ in $X$.
+Given $\varepsilon > 0$, choose $N \in \mathbb{N}$ so that for all
+$n \ge N$, $d(x_n, x) < \varepsilon/2$.
+For any $m, n \ge N$, the triangle inequality gives
+\[
+  d(x_m, x_n)
+  \;\le\;
+  d(x_m, x) + d(x, x_n)
+  \;<\;
+  \tfrac{\varepsilon}{2} + \tfrac{\varepsilon}{2}
+  \;=\;
+  \varepsilon. \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[The converse]
+The converse --- every Cauchy sequence converges --- fails in general
+metric spaces and is precisely the property of \emph{completeness}.
+See \hyperref[sec:complete-metric-spaces]{\S\ref*{sec:complete-metric-spaces}}.
+In $\mathbb{Q}$: the sequence of rational truncations
+$1,\; 1.4,\; 1.41,\; 1.414, \ldots$
+of $\sqrt{2}$ is Cauchy but has no limit in $\mathbb{Q}$.
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:cauchy-bounded]{Cauchy Sequences are Bounded}}{Cauchy Sequences are Bounded}]
+\label{prop:cauchy-bounded}
+Let $(X,d)$ be a metric space.
+Every Cauchy sequence in $X$ is bounded.
+\end{proposition}
+
+\begin{proof}
+Let $(x_n)$ be Cauchy.
+Apply the definition with $\varepsilon = 1$: there exists $N \in \mathbb{N}$
+such that for all $m,n \ge N$, $d(x_m,x_n) < 1$.
+In particular, $d(x_n, x_N) < 1$ for all $n \ge N$.
+
+The finite set of initial terms contributes at most
+\[
+  R
+  \;:=\;
+  \max\bigl\{
+    d(x_1, x_N),\;
+    d(x_2, x_N),\;
+    \ldots,\;
+    d(x_{N-1}, x_N),\;
+    1
+  \bigr\}.
+\]
+Then $d(x_n, x_N) \le R$ for all $n \in \mathbb{N}$, so every
+term lies in $\overline{B}_R(x_N)$.
+\end{proof}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{metric space},\;
+\forall (x_n)\ \text{Cauchy in } X:\quad
+\exists x_0 \in X,\;
+\exists R \in \mathbb{R}^{+},\;
+\forall n \in \mathbb{N},\;
+d(x_n, x_0) \le R.
+\]
+\end{remark*}
+
+\begin{remark*}[Consequence]
+Boundedness is a necessary condition for a sequence to be Cauchy.
+Any unbounded sequence is therefore not Cauchy, which gives a quick
+way to rule out the Cauchy property in examples.
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:cauchy-subsequence]{Cauchy with Convergent Subsequence Converges}}{Cauchy with Convergent Subsequence Converges}]
+\label{prop:cauchy-subsequence}
+Let $(X,d)$ be a metric space.
+If $(x_n)$ is a Cauchy sequence and $(x_{n_k})$ is a subsequence that
+converges to some $x \in X$, then $(x_n) \to x$.
+\end{proposition}
+
+\begin{proof}
+Given $\varepsilon > 0$:
+\begin{enumerate}[label=(\roman*), leftmargin=2em]
+  \item Since $(x_n)$ is Cauchy, choose $N_1$ so that
+        $m,n \ge N_1$ implies $d(x_m,x_n) < \varepsilon/2$.
+  \item Since $x_{n_k} \to x$, choose $K$ so that $k \ge K$ implies
+        $d(x_{n_k}, x) < \varepsilon/2$.
+\end{enumerate}
+Pick any index $k \ge K$ with $n_k \ge N_1$.
+For any $n \ge N_1$,
+\[
+  d(x_n, x)
+  \;\le\;
+  d(x_n, x_{n_k}) + d(x_{n_k}, x)
+  \;<\;
+  \tfrac{\varepsilon}{2} + \tfrac{\varepsilon}{2}
+  \;=\;
+  \varepsilon. \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Role of this proposition]
+This is the key technical bridge in most proofs that a specific space
+is complete.
+The strategy is:
+\begin{enumerate}[label=(\arabic*), leftmargin=2em]
+  \item Take an arbitrary Cauchy sequence $(x_n)$.
+  \item Use boundedness (Proposition~\ref{prop:cauchy-bounded}) together
+        with a selection theorem (e.g.\ Bolzano--Weierstrass in
+        $\mathbb{R}^n$) to extract a convergent subsequence.
+  \item Apply this proposition to conclude the full sequence converges.
+\end{enumerate}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:cauchy-unique-limit]{Cauchy Sequences Have at Most One Limit}}{Cauchy Sequences Have at Most One Limit}]
+\label{prop:cauchy-unique-limit}
+Let $(X,d)$ be a metric space.
+If $(x_n)$ is a Cauchy sequence that converges to both $x$ and $y$ in $X$,
+then $x = y$.
+\end{proposition}
+
+\begin{proof}
+This follows immediately from the uniqueness of limits in metric spaces.
+For completeness: given $\varepsilon > 0$, choose $N$ so that
+$n \ge N$ implies $d(x_n,x) < \varepsilon/2$ and $d(x_n,y) < \varepsilon/2$.
+Then
+\[
+  d(x,y) \;\le\; d(x, x_N) + d(x_N, y) \;<\; \varepsilon.
+\]
+Since $\varepsilon$ was arbitrary, $d(x,y) = 0$, hence $x = y$.
+\end{proof}
+
+% ---------------------------------------------------------
+\subsection{Examples and Non-Examples}
+\label{sec:cauchy-examples}
+% ---------------------------------------------------------
+
+\begin{example}[Cauchy in $\mathbb{R}$]
+The sequence $x_n = \frac{1}{n}$ is Cauchy in $\mathbb{R}$.
+Given $\varepsilon > 0$, choose $N > 2/\varepsilon$.
+For $m, n \ge N$:
+\[
+  d(x_m, x_n)
+  = \Bigl|\frac{1}{m} - \frac{1}{n}\Bigr|
+  \le \frac{1}{m} + \frac{1}{n}
+  \le \frac{2}{N}
+  < \varepsilon.
+\]
+This sequence converges to $0 \in \mathbb{R}$, confirming
+Proposition~\ref{prop:convergent-implies-cauchy}.
+\end{example}
+
+\begin{example}[Cauchy in $\mathbb{Q}$ without a rational limit]
+Let $x_n$ be the decimal truncation of $\sqrt{2}$ to $n$ decimal places:
+\[
+  x_1 = 1.4,\quad
+  x_2 = 1.41,\quad
+  x_3 = 1.414,\quad
+  x_4 = 1.4142,\quad \ldots
+\]
+For $m \ge n$, $|x_m - x_n| \le 10^{-n}$, so given $\varepsilon > 0$
+choose $N > -\log_{10}\varepsilon$.
+Then $m,n \ge N$ gives $|x_m - x_n| \le 10^{-N} < \varepsilon$.
+
+The sequence is Cauchy in $\mathbb{Q}$.
+In $\mathbb{R}$ it converges to $\sqrt{2}$, but $\sqrt{2} \notin \mathbb{Q}$,
+so this Cauchy sequence has no limit in $\mathbb{Q}$.
+This is the canonical example of an incomplete metric space.
+\end{example}
+
+\begin{example}[Not Cauchy: consecutive spacing decays but sequence diverges]
+In $\mathbb{R}$, let $x_n = \sum_{k=1}^{n} \frac{1}{k}$ (partial sums of the
+harmonic series).
+Then $d(x_{n+1}, x_n) = \frac{1}{n+1} \to 0$, yet for $m = 2n$:
+\[
+  d(x_{2n}, x_n)
+  = \sum_{k=n+1}^{2n} \frac{1}{k}
+  \ge \sum_{k=n+1}^{2n} \frac{1}{2n}
+  = \frac{1}{2}.
+\]
+No matter how large $N$ is, taking $n = N$ and $m = 2N$ gives a pair
+with $d(x_m, x_n) \ge 1/2$.
+So $(x_n)$ is not Cauchy, despite consecutive terms becoming arbitrarily
+close.
+\end{example}
+
+\begin{example}[Discrete metric: Cauchy sequences are eventually constant]
+In any metric space with the discrete metric
+$d(x,y) = \mathbf{1}[x \neq y]$,
+a sequence $(x_n)$ is Cauchy if and only if it is eventually constant.
+
+\emph{Proof.} Apply the definition with $\varepsilon = 1/2$: there
+exists $N$ such that for all $m,n \ge N$, $d(x_m, x_n) < 1/2$.
+Since the discrete metric takes values in $\{0,1\}$, this forces
+$d(x_m,x_n) = 0$, i.e.\ $x_m = x_n$ for all $m,n \ge N$.
+\end{example}
+
+% ---------------------------------------------------------
+\subsection{The Cauchy Condition and Subsequences}
+\label{sec:cauchy-subsequences}
+% ---------------------------------------------------------
+
+\begin{proposition}[Subsequences of Cauchy Sequences are Cauchy]
+\label{prop:cauchy-subsequence-cauchy}
+Let $(X,d)$ be a metric space.
+Every subsequence of a Cauchy sequence is Cauchy.
+\end{proposition}
+
+\begin{proof}
+Let $(x_n)$ be Cauchy and let $(x_{n_k})$ be a subsequence.
+Since $n_k \ge k$ for all $k$, given $\varepsilon > 0$ choose $N$ for the
+Cauchy condition of $(x_n)$.
+For $j, k \ge N$, we have $n_j, n_k \ge N$, so
+$d(x_{n_j}, x_{n_k}) < \varepsilon$.
+\end{proof}
+
+\begin{remark*}[Consequence for the completion construction]
+This proposition is used in the proof of the Completion Theorem: given a
+Cauchy sequence of equivalence classes in the completion, one selects
+convenient representatives by passing to subsequences.
+Since any subsequence of a Cauchy sequence is again Cauchy, the
+representatives remain in the right category.
+See \hyperref[sec:completion]{\S\ref*{sec:completion}}.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Conceptual Summary}
+\label{sec:cauchy-summary}
+% ---------------------------------------------------------
+
+\begin{center}
+\begin{tabular}{l l}
+\toprule
+\textbf{Property} & \textbf{Status} \\
+\midrule
+Convergent $\Rightarrow$ Cauchy & Always (Prop.~\ref{prop:convergent-implies-cauchy}) \\
+Cauchy $\Rightarrow$ Convergent & Only in complete spaces \\
+Cauchy $\Rightarrow$ Bounded    & Always (Prop.~\ref{prop:cauchy-bounded}) \\
+Cauchy $+$ convergent subsequence $\Rightarrow$ convergent
+  & Always (Prop.~\ref{prop:cauchy-subsequence}) \\
+Cauchy has at most one limit    & Always (Prop.~\ref{prop:cauchy-unique-limit}) \\
+Subsequence of Cauchy is Cauchy & Always (Prop.~\ref{prop:cauchy-subsequence-cauchy}) \\
+Consecutive spacing $\to 0$ $\Rightarrow$ Cauchy & \emph{False in general} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\[
+  \boxed{
+    \text{Cauchy} = \text{``terms are mutually close in the tail''}
+  }
+\]
+\[
+  \boxed{
+    \text{Whether Cauchy} \Rightarrow \text{convergent is the question of completeness.}
+  }
+\]
+\end{center}
+
+\begin{remark*}[Forward reference]
+Whether every Cauchy sequence in a given metric space converges --- the
+property of \emph{completeness} --- is the subject of
+\hyperref[sec:complete-metric-spaces]{\S\ref*{sec:complete-metric-spaces}}.
+\end{remark*}

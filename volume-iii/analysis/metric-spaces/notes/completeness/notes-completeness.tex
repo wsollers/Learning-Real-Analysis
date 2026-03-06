@@ -1,0 +1,393 @@
+% =========================================================
+% Completeness of Metric Spaces
+% Source: volume-iii/analysis/metric-spaces/notes/notes-completeness.tex
+%
+% Dependencies:
+%   notes-cauchy-sequences.tex — def:cauchy-sequence,
+%                                prop:convergent-implies-cauchy,
+%                                prop:cauchy-bounded,
+%                                prop:cauchy-subsequence
+%   sequential-characterizations.tex — sec:sequential-characterizations
+%   open-closed-sets.tex       — def:open-closed-set,
+%                                prop:closed-owns-boundary
+% =========================================================
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Completeness --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:complete-metric-space}
+  & $(X,d)$ complete $\iff$ every Cauchy sequence converges in $X$
+  & Definition
+  & \hyperref[def:complete-metric-space]{$\downarrow$} \\[4pt]
+P\ref{prop:closed-subspace-complete}
+  & Closed subspace of a complete space is complete
+  & Sequential closedness
+  & \hyperref[prop:closed-subspace-complete]{$\downarrow$} \\[4pt]
+P\ref{prop:complete-subspace-closed}
+  & Complete subspace of any metric space is closed
+  & Uniqueness of limits
+  & \hyperref[prop:complete-subspace-closed]{$\downarrow$} \\[4pt]
+T\ref{thm:completion}
+  & Every metric space has a completion, unique up to isometry
+  & Co-Cauchy equivalence classes
+  & \hyperref[thm:completion]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Complete Metric Spaces}
+\label{sec:complete-metric-spaces}
+% ---------------------------------------------------------
+
+In $\mathbb{R}$, the Cauchy criterion is an \emph{if and only if}: a
+sequence converges precisely when it is Cauchy.
+This equivalence is a consequence of the completeness of $\mathbb{R}$
+(the least upper bound property), and it fails in general metric spaces.
+The notion of completeness captures exactly this property --- that no
+Cauchy sequence is ``missing'' its limit.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Complete Metric Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Complete Metric Space]
+\label{def:complete-metric-space}
+A metric space $(X,d)$ is \emph{complete} (or \emph{Cauchy-complete})
+if every Cauchy sequence in $X$ converges to a point of $X$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+(X,d)\ \text{complete}
+&\;\iff\;
+\forall (x_n)_{n\in\mathbb{N}} \subseteq X, \\
+&\qquad\quad
+\Bigl[
+  \forall \varepsilon > 0,\;
+  \exists N \in \mathbb{N},\;
+  \forall m,n \ge N:\;
+  d(x_m,x_n) < \varepsilon
+\Bigr] \\
+&\qquad\Rightarrow
+\Bigl[
+  \exists x \in X,\;
+  \forall \varepsilon > 0,\;
+  \exists N' \in \mathbb{N},\;
+  \forall n \ge N':\;
+  d(x_n,x) < \varepsilon
+\Bigr].
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Why order cannot be used here]
+In $\mathbb{R}$, completeness is equivalent to the least upper bound
+property, which requires an ordering.
+General metric spaces (e.g.\ $\mathbb{R}^2$, spaces of functions) need
+not carry any compatible ordering, so the order-based formulation
+cannot be transported.
+The Cauchy condition provides an entirely intrinsic notion of
+completeness depending only on the metric.
+\end{remark*}
+
+\begin{remark*}[Completeness is metric-dependent, not topological]
+Completeness is a property of the \emph{metric}, not of the underlying
+topology.
+The open interval $(-1,1)$ is homeomorphic to $\mathbb{R}$ via the map
+$x \mapsto \tan(\pi x/2)$, yet $\mathbb{R}$ is complete while
+$(-1,1)$ with the inherited absolute-value metric is not: the sequence
+$x_n = 1 - 1/n$ is Cauchy in $(-1,1)$ but converges to $1 \notin (-1,1)$.
+
+Changing the metric on the same set can change completeness.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Examples}
+\label{sec:completeness-examples}
+% ---------------------------------------------------------
+
+\begin{example}[Complete: $\mathbb{R}$ and $\mathbb{R}^n$]
+$\mathbb{R}$ is complete: this is equivalent to the least upper bound
+property and is proved in Volume II.
+$\mathbb{R}^n$ with the Euclidean metric is complete by reduction to
+$\mathbb{R}$: if $(x^{(m)})$ is Cauchy in $\mathbb{R}^n$, each
+component sequence $(x^{(m)}_k)$ is Cauchy in $\mathbb{R}$ (since
+$|x^{(m)}_k - x^{(\ell)}_k| \le d(x^{(m)}, x^{(\ell)})$), hence
+converges, and the component-wise limits assemble to the limit in
+$\mathbb{R}^n$.
+\end{example}
+
+\begin{example}[Complete: $C([a,b],\mathbb{R})$ with the uniform metric]
+The space of continuous functions on a closed bounded interval, equipped
+with
+\[
+  d(f,g) := \sup_{x \in [a,b]} |f(x) - g(x)|,
+\]
+is complete.
+A Cauchy sequence $(f_n)$ in this metric converges uniformly, and the
+uniform limit of continuous functions is continuous.
+\end{example}
+
+\begin{example}[Complete: any discrete metric space]
+In any metric space with the discrete metric, a Cauchy sequence is
+eventually constant
+(see \texttt{notes-cauchy-sequences.tex}, Example),
+and an eventually constant sequence trivially converges to its eventual
+value.
+\end{example}
+
+\begin{example}[Incomplete: $\mathbb{Q}$]
+$\mathbb{Q}$ with the standard metric is not complete.
+The sequence of rational truncations of $\sqrt{2}$ is Cauchy in
+$\mathbb{Q}$, but its limit $\sqrt{2}$ is irrational, hence not in
+$\mathbb{Q}$.
+\end{example}
+
+\begin{example}[Incomplete: open interval $(0,1]$]
+The sequence $x_n = 1/n$ is Cauchy in $(0,1]$ (it is convergent in
+$\mathbb{R}$), but its limit $0$ does not belong to $(0,1]$.
+\end{example}
+
+\begin{example}[Incomplete: $C^1([0,1],\mathbb{R})$ under the uniform metric]
+Smooth functions can converge uniformly to a continuous but
+non-differentiable function.
+For instance, $f_n(x) = \sqrt{x^2 + 1/n}$ converges uniformly to
+$|x|$ on $[-1,1]$, and $|x|$ is not differentiable at $0$.
+So $C^1([0,1],\mathbb{R})$ is not closed in $C([0,1],\mathbb{R})$ under the
+uniform metric, and is therefore incomplete.
+\end{example}
+
+% ---------------------------------------------------------
+\subsection{Completeness and the Closed-Subspace Criterion}
+\label{sec:completeness-closed}
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:closed-subspace-complete]{Closed Subspace of a Complete Space is Complete}}{Closed Subspace of a Complete Space is Complete}]
+\label{prop:closed-subspace-complete}
+Let $(X,d)$ be a complete metric space and let $F \subseteq X$ be closed.
+Then $(F, d|_F)$ is a complete metric space.
+\end{proposition}
+
+\begin{proof}
+Let $(x_n)$ be a Cauchy sequence in $F$.
+Since $F \subseteq X$ and $d|_F$ agrees with $d$ on $F$, the sequence is
+also Cauchy in $X$.
+By completeness of $X$, there exists $x \in X$ with $x_n \to x$.
+Since $F$ is closed, the sequential characterization
+(\hyperref[sec:sequential-characterizations]{\S\ref*{sec:sequential-characterizations}})
+gives $x \in F$.
+Hence $(x_n)$ converges to a point of $F$, so $(F, d|_F)$ is complete.
+\end{proof}
+
+\begin{proposition}[\texorpdfstring{\hyperref[prf:complete-subspace-closed]{Complete Subspace is Closed}}{Complete Subspace is Closed}]
+\label{prop:complete-subspace-closed}
+Let $(X,d)$ be any metric space and let $F \subseteq X$.
+If $(F, d|_F)$ is complete, then $F$ is closed in $X$.
+\end{proposition}
+
+\begin{proof}
+Let $(x_n)$ be a sequence in $F$ with $x_n \to x$ in $X$.
+Every convergent sequence is Cauchy
+(\hyperref[prop:convergent-implies-cauchy]{Proposition~\ref*{prop:convergent-implies-cauchy}}),
+so $(x_n)$ is Cauchy in $F$.
+By completeness of $F$, there exists $y \in F$ with $x_n \to y$ in $F$,
+hence in $X$.
+Uniqueness of limits in $X$ gives $x = y \in F$.
+Since every sequence in $F$ converging in $X$ has its limit in $F$,
+$F$ is closed.
+\end{proof}
+
+\begin{remark*}[The closed--complete equivalence]
+Combining the two propositions in the setting of a complete ambient space:
+\[
+  \boxed{
+    F\ \text{closed in complete } (X,d)
+    \;\iff\;
+    (F, d|_F)\ \text{is complete.}
+  }
+\]
+This collapses two conditions into one.
+In practice it means: to certify that a subspace is complete, exhibit
+it as a closed subset of a known complete space (e.g.\ a closed subset
+of $\mathbb{R}^n$).
+To certify incompleteness, find a Cauchy sequence in the subspace with
+a limit outside it --- which witnesses that the subspace is not closed.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Completion of a Metric Space}
+\label{sec:completion}
+% ---------------------------------------------------------
+
+An incomplete metric space has ``missing'' limit points: Cauchy sequences
+that converge to points not present in the space.
+The completion fills in exactly those gaps and nothing more.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Completion)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Completion]
+\label{def:completion}
+Let $(X,d)$ be a metric space.
+A \emph{completion} of $(X,d)$ is a complete metric space
+$(\widetilde{X}, \widetilde{d})$ together with an isometric embedding
+$\iota : X \hookrightarrow \widetilde{X}$ such that $\iota(X)$ is dense
+in $\widetilde{X}$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[The three requirements unpacked]
+\begin{enumerate}[label=(\roman*), leftmargin=2em]
+  \item \textbf{Isometric:}
+        $\widetilde{d}(\iota(x), \iota(y)) = d(x,y)$ for all $x,y \in X$.
+        The embedding preserves all distances; no geometry is distorted.
+  \item \textbf{Dense:}
+        $\overline{\iota(X)} = \widetilde{X}$.
+        Every point of $\widetilde{X}$ is a limit of a sequence from
+        $\iota(X)$.
+        The completion adds only what is forced by limits already present
+        in $X$.
+  \item \textbf{Complete:}
+        $(\widetilde{X}, \widetilde{d})$ itself has no gaps.
+\end{enumerate}
+\end{remark*}
+
+\begin{remark*}[The co-Cauchy construction]
+\label{rem:co-cauchy}
+Two Cauchy sequences $(p_n)$ and $(q_n)$ in $X$ are \emph{co-Cauchy} if
+$d(p_n, q_n) \to 0$.
+Co-Cauchyness is an equivalence relation on the set of all Cauchy sequences
+in $X$.
+
+The completion $\widetilde{X}$ is defined as the collection of
+equivalence classes $[(p_n)]$, with metric
+\[
+  \widetilde{d}\bigl([(p_n)],\, [(q_n)]\bigr)
+  \;:=\;
+  \lim_{n\to\infty} d(p_n, q_n).
+\]
+That this limit exists follows from the four-point lemma:
+$|d(p_m,q_m) - d(p_n,q_n)| \le d(p_m,p_n) + d(q_m,q_n)$,
+which shows $(d(p_n,q_n))$ is Cauchy in $\mathbb{R}$, hence convergent.
+
+Each $x \in X$ embeds as the constant sequence $\iota(x) = [(x,x,x,\ldots)]$,
+and this embedding is isometric.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Completion Theorem)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[\texorpdfstring{\hyperref[prf:completion]{Completion Theorem}}{Completion Theorem}]
+\label{thm:completion}
+Every metric space $(X,d)$ has a completion.
+The completion is unique up to isometric isomorphism fixing $X$.
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Proof outline]
+The co-Cauchy construction gives existence in three steps.
+\begin{enumerate}[label=(\roman*), leftmargin=2em]
+  \item \textbf{$\widetilde{d}$ is a well-defined metric.}
+        The four-point lemma guarantees the limit defining $\widetilde{d}$
+        exists and is independent of the choice of representatives.
+  \item \textbf{$\iota(X)$ is dense in $\widetilde{X}$.}
+        The equivalence class $[(p_n)]$ is the $\widetilde{d}$-limit of
+        the sequence of constant classes $[(\iota(p_n))]$.
+  \item \textbf{$\widetilde{X}$ is complete.}
+        Given a Cauchy sequence $(P_k)$ of equivalence classes, one
+        selects representatives with terms mutually close, extracts a
+        diagonal sequence $(q_n)$ that is Cauchy in $X$, and shows
+        $[(q_n)]$ is the $\widetilde{d}$-limit of $(P_k)$.
+\end{enumerate}
+Uniqueness is proved by showing any two completions are connected by a
+unique isometric isomorphism fixing the image of $X$.
+\end{remark*}
+
+\begin{remark*}[Canonical example: $\mathbb{Q} \leadsto \mathbb{R}$]
+The completion of $\mathbb{Q}$ under the standard metric is isometrically
+isomorphic to $\mathbb{R}$.
+This gives an alternative construction of the real numbers from rational
+Cauchy sequences, without Dedekind cuts.
+Arithmetic on $\mathbb{R}$ is defined class-wise:
+$[(p_n)] + [(q_n)] = [(p_n + q_n)]$, and so on.
+\end{remark*}
+
+\begin{remark*}[Source note]
+The Completion Theorem is Theorem 2.80 in Pugh (\S10).
+The co-Cauchy construction follows Pugh's proof closely.
+An alternative embedding argument (embedding $X$ isometrically into the
+complete space $C^0_b(X,\mathbb{R})$ of bounded continuous functions)
+is sketched in Pugh Exercise 4.39.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Conceptual Summary}
+\label{sec:completeness-summary}
+% ---------------------------------------------------------
+
+\begin{center}
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=2.6cm,
+  box/.style={draw, rounded corners=3pt, align=center, inner sep=8pt},
+  lab/.style={font=\small},
+  impl/.style={->, thick},
+  noimpl/.style={->, thick, dashed}
+]
+
+\node[box] (conv)     {Convergent\\$(x_n)\to x\in X$};
+\node[box, right=3.8cm of conv] (cauchy)   {Cauchy\\$d(x_m,x_n)\to 0$};
+\node[box, below=2.2cm of cauchy]           (bounded)  {Bounded};
+\node[box, below=2.2cm of conv]             (complete) {$X$ complete};
+
+\draw[impl]   (conv)    -- node[lab, above]{always} (cauchy);
+\draw[noimpl] (cauchy)  -- node[lab, above]{only if $X$ complete} (conv);
+\draw[impl]   (cauchy)  -- node[lab, right]{always} (bounded);
+\draw[impl]   (cauchy)  edge[bend right=20]
+              node[lab, left]{in complete $X$} (conv);
+\draw[impl]   (complete.north) -- node[lab, right, xshift=3pt]{enables} (conv.south);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\[
+  \boxed{
+    \text{Complete} = \text{``every Cauchy sequence converges''}
+  }
+\]
+\[
+  \boxed{
+    \text{Every metric space embeds isometrically into a complete one.}
+  }
+\]
+\[
+  \boxed{
+    F\ \text{closed in complete } X
+    \;\iff\;
+    F\ \text{itself complete.}
+  }
+\]
+\end{center}
+
+\begin{remark*}[Forward reference]
+Completeness interacts with compactness: every compact metric space is
+complete, but the converse fails (e.g.\ $\mathbb{R}$ is complete but not
+compact).
+In $\mathbb{R}^n$, Heine--Borel identifies compact sets as precisely the
+closed and bounded ones, linking completeness, closure, and boundedness.
+These connections are developed in \texttt{notes-compactness.tex}.
+\end{remark*}
