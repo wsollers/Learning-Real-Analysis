@@ -1,0 +1,96 @@
+% =========================================================
+% Remark: Closure of Open Ball Need Not Equal Closed Ball
+% Source: volume-iii/analysis/metric-spaces/notes/balls/
+%
+% Place: after the Closed Ball definition (def:closed-ball)
+% =========================================================
+
+\subsubsection{A Subtlety: Closure of $B_r(x)$ vs.\ $\overline{B}_r(x)$}
+\label{sec:closure-vs-closed-ball}
+
+In $\mathbb{R}$ with the standard metric you know that
+$\overline{(a - r, a + r)} = [a - r, a + r]$,
+i.e.\ the closure of an open ball is the closed ball of the same radius.
+This is so familiar that it is tempting to think it is always true.
+
+\textbf{It is not.}
+
+\begin{remark*}[The closure of an open ball need not equal the closed ball]
+\label{rem:closure-vs-closed-ball}
+In a general metric space, $\overline{B_r(x)}$ (the topological closure of the open ball)
+and $\overline{B}_r(x)$ (the closed ball, i.e.\ $\{y : d(x,y) \le r\}$) can differ.
+We always have
+\[
+\overline{B_r(x)} \;\subseteq\; \overline{B}_r(x),
+\]
+but the reverse inclusion can fail.
+\end{remark*}
+
+\begin{example}[Discrete metric: closure of $B_1(x)$ is just $\{x\}$]
+\label{ex:closure-vs-closed-ball-discrete}
+Let $X$ be any set with at least two points, and take the discrete metric:
+\[
+d(x,y) = \begin{cases} 0 & x = y, \\ 1 & x \neq y. \end{cases}
+\]
+Fix any $x \in X$ and take $r = 1$.
+
+\medskip
+\noindent
+\textbf{The open ball:}
+$B_1(x) = \{y \in X : d(x,y) < 1\} = \{x\}$ (only $x$ itself has $d(x,x) = 0 < 1$).
+
+\medskip
+\noindent
+\textbf{The closed ball:}
+$\overline{B}_1(x) = \{y \in X : d(x,y) \le 1\} = X$ (every point satisfies $d(x,y) \le 1$).
+
+\medskip
+\noindent
+\textbf{The closure of the open ball:}
+In the discrete metric, every singleton $\{x\}$ is open (it equals $B_{1/2}(x)$).
+Therefore $\{x\}$ is already closed.
+The closure of a closed set is itself:
+\[
+\overline{B_1(x)} = \overline{\{x\}} = \{x\}.
+\]
+
+\medskip
+\noindent
+\textbf{Conclusion:}
+\[
+\overline{B_1(x)} = \{x\}
+\qquad\text{but}\qquad
+\overline{B}_1(x) = X.
+\]
+These are wildly different whenever $|X| > 1$.
+\end{example}
+
+\begin{remark*}[Why this happens]
+In $\mathbb{R}$, the closure of $B_r(x)$ picks up the boundary points
+$\{x-r, x+r\}$ because sequences \emph{approaching} $x \pm r$ from inside
+the ball exist: $y_n = x + r - \tfrac{1}{n} \to x + r$.
+
+In the discrete metric, there are no sequences in $\{x\}$
+that converge to any $y \neq x$: a sequence in $\{x\}$ is constant
+and stays at $x$.
+So the closure of $\{x\}$ gains no new points.
+
+\medskip
+\noindent
+The lesson: the closure of the open ball $B_r(x)$ is determined by
+\emph{which points can be approached by sequences from inside $B_r(x)$},
+not by the algebraic formula $d(x,y) \le r$.
+Those two notions agree in $\mathbb{R}^n$ but can diverge in abstract spaces.
+\end{remark*}
+
+\begin{remark*}[Notation caution]
+Because $\overline{B_r(x)}$ and $\overline{B}_r(x)$ can differ,
+the notations are intentionally distinct:
+\begin{itemize}
+  \item $B_r(x)$ = open ball (strict inequality $d(x,y) < r$).
+  \item $\overline{B}_r(x)$ = closed ball (non-strict $d(x,y) \le r$).
+  \item $\overline{B_r(x)}$ = topological closure of the open ball.
+\end{itemize}
+In $\mathbb{R}^n$ these last two agree, so the distinction rarely matters
+there. In abstract metric spaces, keep them separate.
+\end{remark*}

@@ -1,6 +1,6 @@
 % =========================================================
 % Proof: Arbitrary Unions of Open Sets are Open
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Arbitrary Unions of Open Sets are Open}
@@ -8,20 +8,39 @@
 
 \begin{proof}
 \Claim Let $(X,d)$ be a metric space and let $\{U_i\}_{i \in I}$
-be a collection of open subsets of $X$.
+be any collection of open subsets of $X$.
 Then $\bigcup_{i \in I} U_i$ is open.
 
-\Given A metric space $(X,d)$ and open sets $U_i \subseteq X$ for each $i \in I$.
+\Given Open sets $U_i \subseteq X$ for $i \in I$.
 
-\Goal To show that $U := \bigcup_{i \in I} U_i$ is open.
+\Goal To show $U := \bigcup_{i \in I} U_i$ is open: every point of $U$
+has an open ball around it contained in $U$.
 
-\Strategy Use the definition of open set: take an arbitrary
-point of $U$ and show there exists a ball around it contained in $U$.
+\Strategy An arbitrary point of $U$ must belong to at least one $U_i$.
+The openness of that $U_i$ immediately provides the needed ball.
+
+\medskip
+\Let $x \in U$.
+
+\ByDef of union: $\exists i_0 \in I$ such that $x \in U_{i_0}$.
+
+\ByAss $U_{i_0}$ is open and $x \in U_{i_0}$: $\exists r > 0$ such that $B_r(x) \subseteq U_{i_0}$.
+
+\ByDef of union: $U_{i_0} \subseteq U$.
+
+\Therefore $B_r(x) \subseteq U_{i_0} \subseteq U$.
+
+Since $x \in U$ was arbitrary, $U$ is open. \AsReq
 \end{proof}
+
+\begin{remark*}[Proof shape]
+One step: a ball that fits inside some $U_{i_0}$ automatically fits inside
+the union, since $U_{i_0} \subseteq \bigcup_i U_i$.
+The argument works for \emph{arbitrary} (possibly infinite or uncountable) unions.
+\end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of open ball.
-  \item Definition of open set.
+  \item Definition~\ref{def:open-closed-set}: $U$ is open iff $\forall x \in U, \exists r > 0, B_r(x) \subseteq U$.
 \end{itemize}
 \end{remark*}

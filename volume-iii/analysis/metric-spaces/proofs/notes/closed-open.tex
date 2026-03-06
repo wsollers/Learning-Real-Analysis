@@ -1,7 +1,6 @@
 % =========================================================
 % Proof: Closed iff Complement Open
-% Source: volume-iii/analysis/intro-metric-spaces/notes/notes-metric-space.tex
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Closed Sets and Open Complements}
@@ -13,46 +12,55 @@ $\leftarrow$ \hyperref[thm:closed-iff-complement-open]{Back to Theorem
 \end{remark*}
 
 \begin{proof}
-\Claim Let $(X,d)$ be a metric space and let $F \subseteq X$.
-Then $F$ is closed if and only if its complement $X \setminus F$
-is open.
+\Claim Let $(X,d)$ be a metric space and $F \subseteq X$.
+$F$ is closed (i.e.\ $F$ contains all limits of sequences in $F$)
+if and only if $X \setminus F$ is open.
 
-\Given A metric space $(X,d)$ and a subset $F \subseteq X$.
+\Given A metric space $(X,d)$ and $F \subseteq X$.
 
-\Goal To prove
-\[
-F \text{ is closed }
-\;\Longleftrightarrow\;
-X \setminus F \text{ is open.}
-\]
+\Goal To prove $F$ closed $\Longleftrightarrow$ $X \setminus F$ open.
 
-\Strategy Prove both directions:
+\Strategy Both directions proceed by contraposition at the level of points:
+a point outside a closed set has a ball keeping it outside;
+a sequence in $F$ heading for the exterior contradicts closedness.
 
 \medskip
+\noindent\textbf{($\Rightarrow$) $F$ closed $\Rightarrow$ $X \setminus F$ open.}
 
-\noindent
-(\(\Rightarrow\)) Assume $F$ is closed.
-Use the definition of closed (sequential or complement-based,
-depending on which definition is primary in this section)
-to show that for each point in $X \setminus F$,
-there exists a ball contained entirely in $X \setminus F$.
+\Let $y \in X \setminus F$. We must find $r > 0$ with $B_r(y) \subseteq X \setminus F$.
+
+Suppose for contradiction that no such $r$ exists. Then for each $n \ge 1$,
+$B_{1/n}(y)$ contains a point $x_n \in F$.
+The sequence $(x_n)$ lies in $F$ and $d(x_n, y) < 1/n \to 0$, so $x_n \to y$.
+
+\ByAss $F$ is closed: since $(x_n) \subseteq F$ and $x_n \to y$, we have $y \in F$.
+This contradicts $y \in X \setminus F$. \Therefore the $r$ exists and $X \setminus F$ is open.
 
 \medskip
+\noindent\textbf{($\Leftarrow$) $X \setminus F$ open $\Rightarrow$ $F$ closed.}
 
-\noindent
-(\(\Leftarrow\)) Assume $X \setminus F$ is open.
-Use the definition of open sets to show that any sequence in $F$
-cannot converge to a point outside $F$,
-or equivalently, that limits of sequences in $F$
-remain in $F$.
+\Let $(x_n) \subseteq F$ with $x_n \to x$.
 
+Suppose for contradiction that $x \notin F$, so $x \in X \setminus F$.
+
+\ByAss $X \setminus F$ is open: $\exists r > 0$ with $B_r(x) \subseteq X \setminus F$.
+
+\ByAss $x_n \to x$: $\exists N$ with $n \ge N \Rightarrow d(x_n, x) < r$, i.e.\ $x_n \in B_r(x) \subseteq X \setminus F$.
+
+But $x_n \in F$, so $x_n \in F \cap (X \setminus F) = \varnothing$. Contradiction.
+
+\Therefore $x \in F$. Since the sequence $(x_n) \subseteq F$ was arbitrary, $F$ is closed. \AsReq
 \end{proof}
+
+\begin{remark*}[Proof shape]
+Both directions use a sequence argument: build a sequence converging
+to the relevant point and derive a contradiction if the conclusion fails.
+\end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of open ball.
-  \item Definition of open set.
-  \item Definition of closed set.
-  \item Definition of convergence in a metric space (if using sequential form).
+  \item Definition~\ref{def:open-closed-set}: $F$ closed means $F$ is sequentially closed.
+  \item Definition~\ref{def:open-closed-set}: $U$ open means every point has a ball inside.
+  \item Archimedean property: $1/n \to 0$.
 \end{itemize}
 \end{remark*}

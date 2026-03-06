@@ -1,30 +1,47 @@
 % =========================================================
 % Proof: Finite Union of Closed Sets is Closed
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Finite Union of Closed Sets is Closed}
 \label{prf:finite-union-closed}
 
 \begin{proof}
-\Claim Let $(X,d)$ be a metric space and let $F_1,\dots,F_n \subseteq X$ be closed.
+\Claim Let $(X,d)$ be a metric space and let $F_1, \dots, F_n \subseteq X$ be closed.
 Then $\bigcup_{k=1}^n F_k$ is closed.
 
-\Given A metric space $(X,d)$ and closed sets $F_1,\dots,F_n \subseteq X$.
+\Given Closed sets $F_1, \dots, F_n \subseteq X$.
 
-\Goal To show that $F := \bigcup_{k=1}^n F_k$ is closed.
+\Goal To show $F := \bigcup_{k=1}^n F_k$ is closed, i.e.\ $X \setminus F$ is open.
 
-\Strategy Use your chosen definition of closed:
-either argue sequentially (a convergent sequence in the union must eventually
-lie in one of the finitely many closed sets), or use complements and De Morgan's laws.
+\Strategy Use the complement characterization and De Morgan's law.
+The complement of a finite union is a finite intersection of open sets,
+and finite intersections of open sets are open.
+
+\medskip
+\ByAss each $F_k$ is closed, so each $X \setminus F_k$ is open.
+
+\ByThm{De Morgan's law}:
+\[
+X \setminus F \;=\; X \setminus \bigcup_{k=1}^n F_k \;=\; \bigcap_{k=1}^n (X \setminus F_k).
+\]
+
+\ByThm{Proposition~\ref{prop:finite-intersection-open}} a finite intersection of open sets is open.
+
+\Therefore $X \setminus F$ is open, so $F$ is closed. \AsReq
 \end{proof}
+
+\begin{remark*}[Why finiteness is essential]
+An infinite union of closed sets need not be closed.
+For example in $\mathbb{R}$: $\{1/n\}$ is closed for each $n \ge 1$,
+but $\bigcup_{n=1}^\infty \{1/n\} = \{1, 1/2, 1/3, \ldots\}$
+is not closed: $0$ is a limit point not in the set.
+\end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of closed set (sequential or complement-open).
-  \item (Optional) De Morgan's law: $X \setminus \bigcup_{k=1}^n F_k = \bigcap_{k=1}^n (X \setminus F_k)$.
+  \item Definition~\ref{def:open-closed-set}: $F$ closed $\iff$ $X \setminus F$ open.
+  \item De Morgan's law: $X \setminus \bigcup_k F_k = \bigcap_k (X \setminus F_k)$.
+  \item Proposition~\ref{prop:finite-intersection-open}: finite intersections of open sets are open.
 \end{itemize}
 \end{remark*}
-
-
-

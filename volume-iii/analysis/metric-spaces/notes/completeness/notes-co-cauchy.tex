@@ -1,0 +1,131 @@
+% =========================================================
+% What Does Co-Cauchy Mean?
+% Source: volume-iii/analysis/metric-spaces/notes/completeness/
+%
+% Purpose: Give intuitive and formal explanation of the
+%          co-Cauchy equivalence relation used in the completion.
+% Dependencies: def:cauchy-sequence, def:complete-metric-space
+% =========================================================
+
+\subsubsection{Co-Cauchy Sequences: Two Sequences Heading for the Same Missing Point}
+\label{sec:co-cauchy-intuition}
+
+The completion construction takes an incomplete metric space $(X, d)$
+and ``fills in'' every missing limit.
+The key idea is to identify two Cauchy sequences that are heading
+toward the \emph{same} missing point, even if that point doesn't exist in $X$ yet.
+This is the notion of \emph{co-Cauchy sequences}.
+
+\begin{remark*}[The core intuition]
+\label{rem:co-cauchy-intuition}
+Imagine you are in $\mathbb{Q}$ and you have two sequences:
+\begin{align*}
+a_n &= 1.4,\; 1.41,\; 1.414,\; 1.4142,\; \ldots \\
+b_n &= 1.41,\; 1.414,\; 1.4142,\; 1.41421,\; \ldots
+\end{align*}
+Both are Cauchy sequences in $\mathbb{Q}$.
+Both are converging toward $\sqrt{2}$, which does not exist in $\mathbb{Q}$.
+
+Are $(a_n)$ and $(b_n)$ describing the same missing point, or different ones?
+Clearly the same one: $\sqrt{2}$.
+
+How do we know they are heading for the same point, \emph{without mentioning} $\sqrt{2}$?
+By checking whether $d(a_n, b_n) \to 0$ --- the distance between corresponding
+terms goes to zero.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Co-Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Co-Cauchy Sequences]
+\label{def:co-cauchy}
+Let $(X,d)$ be a metric space.
+Two Cauchy sequences $(p_n)$ and $(q_n)$ in $X$ are called
+\emph{co-Cauchy} (or \emph{equivalent}) if
+\[
+d(p_n, q_n) \;\to\; 0
+\quad\text{as } n \to \infty.
+\]
+We write $(p_n) \sim (q_n)$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+(p_n) \sim (q_n)
+\;\iff\;
+\forall \varepsilon > 0,\; \exists N \in \mathbb{N},\; \forall n \ge N,\; d(p_n, q_n) < \varepsilon.
+\]
+\end{remark*}
+
+\begin{proposition}[Co-Cauchy is an equivalence relation]
+\label{prop:co-cauchy-equivalence-relation}
+The relation $\sim$ on the set of all Cauchy sequences in $(X,d)$ is an equivalence relation:
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Reflexive:} $(p_n) \sim (p_n)$, since $d(p_n, p_n) = 0 \to 0$.
+  \item \textbf{Symmetric:} If $(p_n) \sim (q_n)$ then $d(p_n, q_n) \to 0$, and since
+        $d(q_n, p_n) = d(p_n, q_n)$ by symmetry, $(q_n) \sim (p_n)$.
+  \item \textbf{Transitive:} If $(p_n) \sim (q_n)$ and $(q_n) \sim (r_n)$, then
+        $d(p_n, r_n) \le d(p_n, q_n) + d(q_n, r_n) \to 0 + 0 = 0$, so $(p_n) \sim (r_n)$.
+\end{enumerate}
+\end{proposition}
+
+\begin{example}[Co-Cauchy in $\mathbb{Q}$: both sequences heading for $\sqrt{2}$]
+\label{ex:co-cauchy-sqrt2}
+In $\mathbb{Q}$, let
+\begin{align*}
+a_n &= \text{decimal truncation of } \sqrt{2} \text{ to } n \text{ places}, \\
+b_n &= a_n + \tfrac{1}{10^n}.
+\end{align*}
+Both $(a_n)$ and $(b_n)$ are Cauchy in $\mathbb{Q}$.
+Moreover,
+\[
+|a_n - b_n| = \tfrac{1}{10^n} \to 0,
+\]
+so $(a_n) \sim (b_n)$.
+They are co-Cauchy: both represent the same missing point $\sqrt{2}$.
+\end{example}
+
+\begin{example}[Not co-Cauchy: heading for different missing points]
+\label{ex:not-co-cauchy}
+In $\mathbb{Q}$, let $(a_n)$ be the decimal truncations of $\sqrt{2}$
+and $(b_n)$ be the decimal truncations of $\pi$.
+Both are Cauchy in $\mathbb{Q}$, but
+\[
+|a_n - b_n| \to |\sqrt{2} - \pi| \approx 1.72 \neq 0.
+\]
+So $(a_n) \not\sim (b_n)$: they are heading for different missing points.
+\end{example}
+
+\begin{remark*}[How the completion uses co-Cauchy sequences]
+The completion $\widetilde{X}$ is defined as the set of all equivalence classes
+$[(p_n)]$ of Cauchy sequences under $\sim$.
+Each equivalence class represents one ``missing point.''
+
+\begin{itemize}
+  \item If $x \in X$, the constant sequence $(x, x, x, \ldots)$ is Cauchy, and
+        its class $[(x,x,x,\ldots)]$ represents $x$ itself.
+        This is how $X$ embeds in $\widetilde{X}$.
+  \item If $(p_n)$ is Cauchy in $X$ with no limit in $X$, then
+        $[(p_n)]$ is a new point in $\widetilde{X}$: the missing limit.
+\end{itemize}
+
+The metric on $\widetilde{X}$ is defined by
+\[
+\widetilde{d}\bigl([(p_n)], [(q_n)]\bigr) := \lim_{n \to \infty} d(p_n, q_n).
+\]
+This limit exists because the sequence $d(p_n, q_n)$ is Cauchy in $\mathbb{R}$
+(a fact proved using the four-point inequality --- see Theorem~\ref{thm:completion}),
+and $\mathbb{R}$ is complete.
+\end{remark*}
+
+\begin{remark*}[Why this is natural]
+The completion of $\mathbb{Q}$ under this construction gives $\mathbb{R}$.
+This is an alternative to the Dedekind cut construction:
+instead of defining real numbers as sets of rationals,
+we define them as equivalence classes of rational Cauchy sequences.
+The number $\sqrt{2}$, for instance, is represented by the class
+$[(1.4, 1.41, 1.414, \ldots)]$.
+All Cauchy sequences converging to $\sqrt{2}$ fall in the same class.
+\end{remark*}

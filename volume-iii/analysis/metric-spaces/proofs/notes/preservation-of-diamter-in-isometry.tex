@@ -1,66 +1,60 @@
 % =========================================================
-% Proof: Preservation of Diameter (Isometries)
-% Mode: standard (stub)
+% Proof: Preservation of Diameter Under Isometries
+% Mode: standard
 % =========================================================
 
-\subsection*{Preservation of Diameter}
+\subsection*{Preservation of Diameter Under Isometries}
 \label{prf:preservation-of-diameter}
 
 \begin{proof}
-\Claim Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let
-$f:X\to Y$ be an isometry. Then for every $A\subseteq X$,
+\Claim Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let $f : X \to Y$
+be an isometry. Then for every $A \subseteq X$,
 \[
-\operatorname{diam}(f(A))=\operatorname{diam}(A).
+\operatorname{diam}(f(A)) = \operatorname{diam}(A).
 \]
 
-\Given Metric spaces $(X,d_X)$, $(Y,d_Y)$, an isometry $f:X\to Y$, and a subset $A\subseteq X$.
+\Given Metric spaces $(X,d_X)$, $(Y,d_Y)$, an isometry $f : X \to Y$, and $A \subseteq X$.
 
-\Goal To show $\operatorname{diam}(f(A))=\operatorname{diam}(A)$.
+\Goal To show $\operatorname{diam}(f(A)) = \operatorname{diam}(A)$.
 
-\Strategy Unfold the definition of diameter as a supremum of pairwise distances.
-Use the defining property of an isometry to relate distances in $A$ to distances in $f(A)$.
-Establish the needed set-inclusion(s) between the corresponding distance-sets and conclude equality of suprema.
+\Strategy Unfold both sides as suprema over pairwise distances, then use the
+isometry condition to show the two sets of distances are identical.
 
+\medskip
+\noindent\textbf{Case $A = \varnothing$:} $f(A) = f(\varnothing) = \varnothing$,
+so $\operatorname{diam}(f(A)) = 0 = \operatorname{diam}(A)$.
 
-Assume $f$ is an isometry, so
+\medskip
+\noindent\textbf{Case $A \neq \varnothing$:}
+
+\ByDef{isometry}: $d_Y(f(u), f(v)) = d_X(u, v)$ for all $u, v \in X$.
+
+\ByDef{image}: the elements of $f(A)$ are precisely $\{f(a) : a \in A\}$,
+so the pairwise distances in $f(A)$ are:
 \[
-d_Y\bigl(f(x),f(y)\bigr)=d_X(x,y)
-\quad
-\text{for all } x,y\in X.
+\bigl\{ d_Y(f(u), f(v)) : u, v \in A \bigr\}
+= \bigl\{ d_X(u, v) : u, v \in A \bigr\}.
 \]
+(The isometry condition turns every distance in $Y$ into the corresponding distance in $X$,
+and the surjectivity of $f|_A : A \to f(A)$ ensures the two sets are equal.)
 
-Let $x,y\in A$ be arbitrary.
-
-Then the distance between their images equals the original distance:
+\Therefore
 \[
-d_Y\bigl(f(x),f(y)\bigr)=d_X(x,y).
-\]
-
-\[
-\begin{aligned}
-\operatorname{diam}(A) &= \sup\{ d_X(x,y) : x,y \in A \} \\
-\operatorname{diam}(f(A)) &= \sup\{ d_Y(f(x), f(y)) : x,y \in A \}.
-\end{aligned}
-\]
-
-Since $d_Y(f(x),f(y)) = d_X(x,y)$ for all $x,y \in A$, we obtain
-\[
-\sup\{ d_Y(f(x), f(y)) : x,y \in A \}
-=
-\sup\{ d_X(x,y) : x,y \in A \}.
-\]
-
-Therefore
-\[
-\operatorname{diam}(f(A))=\operatorname{diam}(A).
+\operatorname{diam}(f(A))
+= \sup\bigl\{ d_Y(f(u), f(v)) : u, v \in A \bigr\}
+= \sup\bigl\{ d_X(u, v) : u, v \in A \bigr\}
+= \operatorname{diam}(A). \qquad \AsReq
 \]
 \end{proof}
 
+\begin{remark*}[Proof shape]
+The isometry condition $d_Y(f(u), f(v)) = d_X(u,v)$ directly identifies
+the two distance-sets, making the suprema equal.
+\end{remark*}
+
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of isometry: $d_Y(f(x),f(y))=d_X(x,y)$ for all $x,y\in X$.
-  \item Definition of image of a set: $f(A)=\{f(a):a\in A\}$.
-  \item Definition of diameter: $\operatorname{diam}(A)=\sup\{d_X(x,y):x,y\in A\}$.
-  \item Basic facts about $\sup$ and set inclusion (monotonicity of $\sup$).
+  \item Definition~\ref{def:isometry}: distance-preserving bijection.
+  \item Definition~\ref{def:diameter}: $\operatorname{diam}(S) = \sup\{d(u,v) : u,v \in S\}$.
 \end{itemize}
 \end{remark*}

@@ -1,0 +1,159 @@
+% =========================================================
+% Derived Set E' and its Connection to Closure
+% Source: volume-iii/analysis/metric-spaces/notes/limit-points/
+%
+% Purpose: Connect E' to closure explicitly with worked example
+%          computing E', cl(E), int(E), ext(E), boundary(E)
+%          for the concrete set E = (0,1) ∪ {2} in ℝ.
+% Dependencies: def:limit-point, def:derived-set, def:closure
+% =========================================================
+
+\subsubsection{The Derived Set and Closure: How They Fit Together}
+\label{sec:derived-set-closure-connection}
+
+The \emph{derived set} $E'$ collects all limit points of $E$.
+The \emph{closure} $\overline{E}$ is the smallest closed set containing $E$.
+These are closely related, and the connection is made precise by
+Theorem~\ref{thm:closure-formula}: $\overline{E} = E \cup E'$.
+
+Before proving anything, let us build intuition with a concrete example
+that we will compute from scratch.
+
+\begin{example}[Computing $E'$, $\overline{E}$, $\partial E$, $\operatorname{int}(E)$,
+$\operatorname{ext}(E)$ for $E = (0,1) \cup \{2\}$ in $\mathbb{R}$]
+\label{ex:derived-set-full-computation}
+
+Let $X = \mathbb{R}$ with the standard metric $d(x,y) = |x - y|$,
+and let
+\[
+E = (0,1) \cup \{2\}.
+\]
+
+\medskip
+\noindent\textbf{Step 1: Find the limit points $E'$.}
+
+A point $x \in \mathbb{R}$ is a limit point of $E$ if every punctured
+ball $B_r(x) \setminus \{x\}$ contains a point of $E$.
+
+\begin{itemize}
+  \item \textbf{If $x \in (0,1)$}: Take any $r > 0$.
+        Then $(x - r, x + r) \setminus \{x\}$ contains points of $(0,1)$
+        (since $(0,1)$ is an open interval with no isolated points).
+        So every $x \in (0,1)$ is a limit point.
+
+  \item \textbf{If $x = 0$}: Take any $r > 0$.
+        Then $B_r(0) \setminus \{0\} = (-r, r) \setminus \{0\}$,
+        which contains $(0, \min(r,1))$, a non-empty subset of $E$.
+        So $0 \in E'$.
+
+  \item \textbf{If $x = 1$}: Take any $r > 0$.
+        Then $B_r(1) \setminus \{1\} = (1-r, 1+r) \setminus \{1\}$,
+        which contains $(1-r, 1) \cap (0,1) \neq \emptyset$ for small $r$.
+        So $1 \in E'$.
+
+  \item \textbf{If $x = 2$}: Take $r = 1/2$.
+        Then $B_{1/2}(2) \setminus \{2\} = (3/2, 5/2) \setminus \{2\}$.
+        This interval contains no point of $E$:
+        $(0,1) \cup \{2\}$ has no point in $(3/2, 5/2) \setminus \{2\}$.
+        So $2 \notin E'$. \quad (The isolated point $2$ is not a limit point.)
+
+  \item \textbf{If $x < 0$ or $x > 2$ or $x \in (1,2)$}: Similar reasoning shows these
+        are not limit points (they are too far from $E$).
+\end{itemize}
+
+\noindent\textbf{Conclusion:} $E' = [0, 1]$.
+
+\medskip
+\noindent\textbf{Step 2: Closure $\overline{E} = E \cup E'$.}
+\[
+\overline{E} = (0,1) \cup \{2\} \cup [0,1] = [0,1] \cup \{2\}.
+\]
+This is the smallest closed set containing $E$.
+Note: $[0,1]$ is closed (it contains its limit points $0$ and $1$),
+and $\{2\}$ is closed (it has no limit points to miss).
+Their union is closed.
+
+\medskip
+\noindent\textbf{Step 3: Interior $\operatorname{int}(E)$.}
+
+A point $x \in E$ is interior if some $B_r(x) \subseteq E$.
+
+\begin{itemize}
+  \item For $x \in (0,1)$: take $r = \min(x, 1-x)/2 > 0$; then $B_r(x) \subseteq (0,1) \subseteq E$.
+        So $(0,1) \subseteq \operatorname{int}(E)$.
+  \item For $x = 2$: every $B_r(2)$ contains points outside $E$ (e.g.\ $2 + r/2$).
+        So $2 \notin \operatorname{int}(E)$.
+\end{itemize}
+
+\noindent\textbf{Conclusion:} $\operatorname{int}(E) = (0,1)$.
+
+\medskip
+\noindent\textbf{Step 4: Boundary $\partial E$.}
+
+$x \in \partial E$ iff every ball around $x$ meets both $E$ and $\mathbb{R} \setminus E$.
+
+\begin{itemize}
+  \item $x = 0$: every $B_r(0)$ contains points in $(0, r) \subseteq E$ and
+        points in $(-r, 0) \subseteq \mathbb{R} \setminus E$. So $0 \in \partial E$.
+  \item $x = 1$: every $B_r(1)$ contains $(1-r, 1) \subseteq E$ and $(1, 1+r) \subseteq \mathbb{R}\setminus E$.
+        So $1 \in \partial E$.
+  \item $x = 2$: every $B_r(2)$ contains $2 \in E$ and points in $(2-r, 2) \subseteq \mathbb{R} \setminus E$.
+        So $2 \in \partial E$.
+  \item $x \in (0,1)$: take $r = \min(x,1-x)/2$; then $B_r(x) \subseteq (0,1) \subseteq E$,
+        so $B_r(x)$ misses $\mathbb{R} \setminus E$. So interior points are not boundary points.
+\end{itemize}
+
+\noindent\textbf{Conclusion:} $\partial E = \{0, 1, 2\}$.
+
+\medskip
+\noindent\textbf{Step 5: Exterior $\operatorname{ext}(E) = \operatorname{int}(\mathbb{R} \setminus E)$.}
+\[
+\operatorname{ext}(E) = (-\infty, 0) \cup (1, 2) \cup (2, \infty).
+\]
+(These are the open regions outside $E$.)
+
+\medskip
+\noindent\textbf{Summary table:}
+\[
+\begin{array}{ll}
+E & = (0,1) \cup \{2\} \\
+E' & = [0,1] \\
+\overline{E} = E \cup E' & = [0,1] \cup \{2\} \\
+\operatorname{int}(E) & = (0,1) \\
+\partial E & = \{0, 1, 2\} \\
+\operatorname{ext}(E) & = (-\infty,0) \cup (1,2) \cup (2,\infty)
+\end{array}
+\]
+
+\noindent\textbf{Check: $\mathbb{R} = \operatorname{int}(E) \sqcup \partial E \sqcup \operatorname{ext}(E)$.}
+\[
+(0,1) \;\cup\; \{0,1,2\} \;\cup\; \bigl((-\infty,0)\cup(1,2)\cup(2,\infty)\bigr)
+= \mathbb{R}. \checkmark
+\]
+\end{example}
+
+\begin{remark*}[The isolated point $\{2\}$: not a limit point but still a boundary point]
+A common confusion: the isolated point $2$ is \emph{not} in $E'$ (it has no
+sequence in $E \setminus \{2\}$ converging to it), but it \emph{is} in $\partial E$
+(every ball around $2$ hits $E$ because $2 \in E$, and hits $\mathbb{R} \setminus E$
+because there are points near $2$ not in $E$).
+
+Closure picks up both limit points and isolated points through $\overline{E} = E \cup E'$:
+the isolated point $2$ comes from the $E$ part, not the $E'$ part.
+\end{remark*}
+
+\begin{remark*}[How $E'$ relates to $\overline{E}$ precisely]
+Theorem~\ref{thm:closure-formula} gives the exact relationship:
+\[
+\overline{E} = E \cup E'.
+\]
+This says:
+\begin{itemize}
+  \item Every point already in $E$ is in $\overline{E}$ (trivially).
+  \item Every limit point of $E$ is in $\overline{E}$, even if it is not in $E$.
+  \item Nothing else is in $\overline{E}$.
+\end{itemize}
+In the example above, $0$ and $1$ are in $\overline{E}$ via $E'$
+(they are limit points of $E$ not in $E$), while $2$ is in $\overline{E}$
+via the $E$ part (it is in $E$ but not in $E'$).
+\end{remark*}

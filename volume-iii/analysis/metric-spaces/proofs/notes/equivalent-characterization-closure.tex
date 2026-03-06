@@ -1,65 +1,68 @@
 % =========================================================
 % Proof: Equivalent Characterizations of Closure
-% Source: volume-iii/analysis/intro-metric-spaces/notes/notes-metric-space.tex
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Equivalent Characterizations of Closure}
 \label{prf:closure-equivalences}
 
 \begin{remark*}[Return]
-$\leftarrow$ \hyperref[thm:closure-equivalences]{Back to Theorem
-(Equivalent Characterizations of Closure) in Notes}
+$\leftarrow$ \hyperref[thm:closure-equivalences]{Back to Theorem in Notes}
 \end{remark*}
 
 \begin{proof}
-\Claim Let $(X,d)$ be a metric space, let $A \subseteq X$, and let $x \in X$.
+\Claim Let $(X,d)$ be a metric space, $A \subseteq X$, $x \in X$.
 The following are equivalent:
-
-\begin{enumerate}
-    \item[(a)] $x \in \overline{A}$.
-    \item[(b)] For every $r>0$, $B_r(x) \cap A \neq \varnothing$.
-    \item[(c)] There exists a sequence $(a_n)$ in $A$ such that $a_n \to x$.
+\begin{enumerate}[label=(\alph*)]
+  \item $x \in \overline{A}$.
+  \item $\forall r > 0,\; B_r(x) \cap A \neq \varnothing$.
+  \item $\exists (a_n) \subseteq A$ with $a_n \to x$.
 \end{enumerate}
 
-\Given A metric space $(X,d)$, a subset $A \subseteq X$, and a point $x \in X$.
+\Given $(X,d)$, $A \subseteq X$, $x \in X$.
 
-\Goal To prove the logical equivalence
-\[
-(a) \Longleftrightarrow (b) \Longleftrightarrow (c).
-\]
-
-\Strategy Prove the implications in a cycle:
+\Goal Prove (a) $\Leftrightarrow$ (b) $\Leftrightarrow$ (c).
 
 \medskip
+\noindent\textbf{(a) $\Rightarrow$ (b).}
 
-\noindent
-(a) $\Rightarrow$ (b).  
-Use the definition of closure to show that if $x \in \overline{A}$,
-then every ball centered at $x$ must intersect $A$.
-
-\medskip
-
-\noindent
-(b) $\Rightarrow$ (c).  
-Assume every ball around $x$ intersects $A$.
-Construct a sequence $(a_n)$ by selecting points from
-a shrinking family of balls and show it converges to $x$.
+\ByDef $\overline{A}$ is the smallest closed set containing $A$.
+Suppose for contradiction that $\exists r_0 > 0$ with $B_{r_0}(x) \cap A = \varnothing$.
+Then $A \subseteq X \setminus B_{r_0}(x)$.
+The set $X \setminus B_{r_0}(x)$ is closed (it is the complement of an open ball)
+and contains $A$.
+So $\overline{A} \subseteq X \setminus B_{r_0}(x)$, meaning $x \notin \overline{A}$.
+Contrapositive: $x \in \overline{A} \Rightarrow$ (b).
 
 \medskip
+\noindent\textbf{(b) $\Rightarrow$ (c).}
 
-\noindent
-(c) $\Rightarrow$ (a).  
-Assume there exists a sequence $(a_n) \subseteq A$ with $a_n \to x$.
-Use the definition of closure to conclude $x \in \overline{A}$.
+This is exactly the $(\Leftarrow)$ direction of
+Proposition~\ref{prf:sequential-characterization-closure}:
+for each $n$, pick $a_n \in B_{1/n}(x) \cap A$;
+then $d(a_n, x) < 1/n \to 0$, so $a_n \to x$.
 
+\medskip
+\noindent\textbf{(c) $\Rightarrow$ (a).}
+
+\Let $(a_n) \subseteq A$ with $a_n \to x$.
+\Let $F$ be any closed set with $A \subseteq F$.
+Then $(a_n) \subseteq F$ and $a_n \to x$, so $x \in F$
+(since $F$ is closed).
+Since $\overline{A}$ is one such closed set, $x \in \overline{A}$. \AsReq
 \end{proof}
+
+\begin{remark*}[Proof shape]
+The cycle (a) $\to$ (b) $\to$ (c) $\to$ (a) is classic.
+The key tool for (b) $\to$ (c) is the diagonal sequence construction;
+(c) $\to$ (a) uses only the definition of closure.
+\end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of closure.
-  \item Definition of open ball.
-  \item Definition of convergence in a metric space.
-  \item Sequential characterization of closure points (Theorem 32).
+  \item Proposition~\ref{prop:balls-open-closed}: open balls are open, closed balls are closed.
+  \item Definition~\ref{def:closure}: $\overline{A}$ = smallest closed superset.
+  \item Definition of closed set (sequential characterization).
+  \item Archimedean property: $1/n \to 0$.
 \end{itemize}
 \end{remark*}

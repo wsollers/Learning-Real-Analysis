@@ -1,0 +1,125 @@
+% =========================================================
+% Worked Example: Verifying Metric Axioms
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Also includes: remark on redundancy of non-negativity
+% =========================================================
+
+% ---------------------------------------------------------
+\subsubsection{Verifying the Metric Axioms: A Worked Example}
+\label{sec:metric-axiom-verification}
+% ---------------------------------------------------------
+
+The definition of a metric lists four axioms (M1)--(M4).
+A common early task is to \emph{verify} that a given function $d$ actually
+satisfies all four.
+We work through the taxicab metric on $\mathbb{R}^2$ in full detail,
+because this is the first non-trivial verification most learners encounter.
+
+\begin{example}[Verifying the taxicab metric on $\mathbb{R}^2$]
+\label{ex:verify-taxicab-metric}
+Let $X = \mathbb{R}^2$ and define
+\[
+d_1\bigl((x_1,x_2),(y_1,y_2)\bigr)
+\;:=\;
+|x_1 - y_1| + |x_2 - y_2|.
+\]
+We verify all four metric axioms.
+Write $p = (x_1, x_2)$ and $q = (y_1, y_2)$ and $r = (z_1, z_2)$ for points in $\mathbb{R}^2$.
+
+\medskip
+\noindent\textbf{(M1) Non-negativity: $d_1(p, q) \ge 0$.}
+
+Each term $|x_k - y_k|$ is a real absolute value, hence $\ge 0$.
+Their sum is therefore $\ge 0$.
+\checkmark
+
+\medskip
+\noindent\textbf{(M2) Identity of indiscernibles: $d_1(p, q) = 0 \iff p = q$.}
+
+$(\Leftarrow)$ If $p = q$ then $x_k = y_k$ for each $k$, so each $|x_k - y_k| = 0$, and
+$d_1(p, q) = 0 + 0 = 0$.
+
+$(\Rightarrow)$ If $d_1(p,q) = 0$ then $|x_1 - y_1| + |x_2 - y_2| = 0$.
+Since each term is $\ge 0$ and their sum is $0$, each term is $0$,
+so $x_1 = y_1$ and $x_2 = y_2$, giving $p = q$.
+\checkmark
+
+\medskip
+\noindent\textbf{(M3) Symmetry: $d_1(p, q) = d_1(q, p)$.}
+
+$d_1(p,q) = |x_1 - y_1| + |x_2 - y_2| = |y_1 - x_1| + |y_2 - x_2| = d_1(q,p)$,
+using $|a - b| = |b - a|$ for real numbers.
+\checkmark
+
+\medskip
+\noindent\textbf{(M4) Triangle inequality: $d_1(p, r) \le d_1(p, q) + d_1(q, r)$.}
+
+This is the only axiom that requires genuine work.
+We apply the triangle inequality for the real absolute value to each coordinate separately:
+\begin{align*}
+d_1(p, r)
+&= |x_1 - z_1| + |x_2 - z_2| \\
+&= |(x_1 - y_1) + (y_1 - z_1)| + |(x_2 - y_2) + (y_2 - z_2)| \\
+&\le |x_1 - y_1| + |y_1 - z_1| + |x_2 - y_2| + |y_2 - z_2|
+     \quad\text{(real triangle inequality, applied twice)} \\
+&= \bigl(|x_1 - y_1| + |x_2 - y_2|\bigr) + \bigl(|y_1 - z_1| + |y_2 - z_2|\bigr) \\
+&= d_1(p, q) + d_1(q, r).
+\end{align*}
+\checkmark
+
+Since all four axioms hold, $d_1$ is a metric on $\mathbb{R}^2$.
+\end{example}
+
+\begin{remark*}[Strategy for verifying a metric]
+The verification above illustrates the standard approach:
+\begin{enumerate}
+  \item (M1) and (M3) almost always follow immediately from the definition.
+  \item (M2) requires a two-part argument: the $(\Leftarrow)$ direction
+        shows $d(x,x) = 0$; the $(\Rightarrow)$ direction shows that
+        if $d(x,y) = 0$ then $x = y$.
+  \item (M4) is always the heart of the verification. The technique depends
+        on the metric: for $\ell^p$ norms it is Minkowski's inequality;
+        for the discrete metric it is an easy case split;
+        for the taxicab metric it is the coordinate-wise application of
+        $|a + b| \le |a| + |b|$.
+\end{enumerate}
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsubsection{Is Non-Negativity Independent?}
+\label{sec:nonneg-redundant}
+% ---------------------------------------------------------
+
+\begin{remark*}[Non-negativity follows from the other three axioms]
+\label{rem:nonneg-redundant}
+Axiom (M1) (non-negativity: $d(x,y) \ge 0$) is in fact a \emph{consequence}
+of the remaining three axioms.
+Here is the argument:
+
+By (M3), $d(x,y) = d(y,x)$.
+By (M4) with $z = x$:
+\[
+d(x, x) \;\le\; d(x, y) + d(y, x) \;=\; 2\,d(x, y).
+\]
+By (M2), $d(x, x) = 0$.
+Therefore $0 \le 2\,d(x,y)$, which gives $d(x,y) \ge 0$.
+
+\medskip\noindent
+So why do textbooks list (M1) as an axiom at all?
+Two reasons.
+
+\begin{enumerate}
+  \item \textbf{Clarity.} The definition is easier to understand
+        when non-negativity is stated explicitly, since it is the first
+        geometric property you expect from a ``distance.''
+  \item \textbf{Generalisations.} In some extended notions (pseudo-metrics,
+        quasi-metrics) some of the other axioms are dropped.
+        Keeping (M1) explicit makes the definition robust across
+        these variants.
+\end{enumerate}
+
+\noindent
+The moral: the four axioms are not all logically independent.
+But listing (M1) is conventional and harmless.
+\end{remark*}

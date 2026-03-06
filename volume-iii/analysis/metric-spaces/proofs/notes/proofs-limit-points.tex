@@ -1,7 +1,5 @@
 % =========================================================
 % Proof stubs: Limit Points
-% Source: volume-iii/analysis/point-set-topology/notes/limit-points/notes-limit-points.tex
-% =========================================================
 % Dependency order:
 %   1. seq-char-limit     (direct from definition)
 %   2. inf-nbhd           (uses seq-char-limit)
@@ -10,177 +8,207 @@
 %   5. closure-formula    (uses derived-closed + closed-derived)
 % =========================================================
 
-
 % ---------------------------------------------------------
 \subsection*{Sequential Characterization of Limit Points}
 \label{prf:seq-char-limit}
 % ---------------------------------------------------------
 
-\begin{remark}[Return]
-\hyperref[thm:seq-char-limit]{$\leftarrow$ Back to Theorem (Sequential Characterization of Limit Points) in Notes}
-\end{remark}
-
-\begin{theorem}[Sequential Characterization of Limit Points]
-Let $(X,d)$ be a metric space, $E \subseteq X$, and $x \in X$.
-Then
-\[
-x \in E'
-\iff
-\exists (x_n) \subseteq E \text{ with all } x_n \neq x
-\text{ and } x_n \to x.
-\]
-\end{theorem}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:seq-char-limit]{Back to Theorem in Notes}
+\end{remark*}
 
 \begin{proof}
-% TODO
+\Claim Let $(X,d)$ be a metric space, $E \subseteq X$, and $x \in X$.
+Then $x \in E'$ iff $\exists (x_n) \subseteq E$ with $x_n \neq x$ for all $n$ and $x_n \to x$.
+
+\Given $(X,d)$, $E \subseteq X$, $x \in X$.
+
+\Goal Prove $x \in E' \Longleftrightarrow \exists$ such a sequence.
+
+\medskip
+\noindent\textbf{($\Rightarrow$)} Assume $x \in E'$.
+
+\ByDef{limit point}: $\forall r > 0$, $B_r(x) \cap (E \setminus \{x\}) \neq \varnothing$.
+
+For each $n \ge 1$, pick $x_n \in B_{1/n}(x) \cap (E \setminus \{x\})$.
+Then $x_n \in E$, $x_n \neq x$, and $d(x_n, x) < 1/n \to 0$, so $x_n \to x$.
+
+\medskip
+\noindent\textbf{($\Leftarrow$)} Assume $(x_n) \subseteq E$ with $x_n \neq x$ and $x_n \to x$.
+
+\Let $r > 0$.
+
+\ByDef{convergence}: $\exists N$ with $n \ge N \Rightarrow d(x_n, x) < r$.
+So $x_N \in B_r(x) \cap (E \setminus \{x\})$, which is non-empty.
+
+Since $r > 0$ was arbitrary, $x \in E'$. \AsReq
 \end{proof}
 
-\begin{remark}[Proof shape]
-% TODO: Which direction is harder and why? What construction is the key step?
-\end{remark}
-
-\begin{remark}[Dependencies]
-% TODO: Definition~\ref{def:limit-point} (limit point), definition of
-% metric space convergence, and the Archimedean principle for choosing
-% radii $r = 1/n$.
-\end{remark}
-
-
 % ---------------------------------------------------------
-\subsection*{Infinite Neighbourhood Characterization}
+\subsection*{Every Ball of a Limit Point Meets $E$ in Infinitely Many Points}
 \label{prf:inf-nbhd}
 % ---------------------------------------------------------
 
-\begin{remark}[Return]
-\hyperref[cor:inf-nbhd]{$\leftarrow$ Back to Corollary (Infinite Neighbourhood Characterization) in Notes}
-\end{remark}
-
-\begin{corollary}[Infinite Neighbourhood Characterization]
-Let $(X,d)$ be a metric space and $E \subseteq X$.
-Then
-\[
-x \in E'
-\iff
-\forall r > 0,\ B_r(x) \cap E
-\text{ is infinite}.
-\]
-\end{corollary}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[cor:inf-nbhd]{Back to Corollary in Notes}
+\end{remark*}
 
 \begin{proof}
-% TODO
+\Claim $x \in E'$ iff every $B_r(x)$ contains infinitely many points of $E$.
+
+\Given $(X,d)$, $E \subseteq X$, $x \in X$.
+
+\medskip
+\noindent\textbf{($\Leftarrow$)} If every $B_r(x)$ contains infinitely many points of $E$,
+then in particular $B_r(x) \cap (E \setminus \{x\}) \neq \varnothing$ for every $r$
+(removing one point from an infinite set leaves an infinite set), so $x \in E'$.
+
+\medskip
+\noindent\textbf{($\Rightarrow$)} Suppose $x \in E'$
+but $B_{r_0}(x)$ contains only finitely many points of $E$ for some $r_0 > 0$.
+
+Since $B_{r_0}(x) \cap E$ is finite and $x$ is a limit point, $x \in E'$ gives
+a sequence $(x_n) \subseteq E \setminus \{x\}$ with $x_n \to x$.
+For large $n$, $x_n \in B_{r_0}(x)$.
+But then infinitely many $x_n$'s lie in the finite set $B_{r_0}(x) \cap E$,
+so some value in that set must repeat infinitely often.
+Say $x_n = p$ for infinitely many $n$, with $p \neq x$.
+Then $d(x_n, x) = d(p, x) > 0$ for those $n$, contradicting $x_n \to x$.
 \end{proof}
 
-\begin{remark}[Proof shape]
-% TODO: Both directions use the Sequential Characterization
-% (Theorem~\ref{thm:seq-char-limit}). Which direction needs an
-% additional counting argument?
-\end{remark}
-
-\begin{remark}[Dependencies]
-% TODO: Theorem~\ref{thm:seq-char-limit} (Sequential Characterization).
-% The $(\Rightarrow)$ direction also needs that a convergent sequence
-% of distinct points produces infinitely many distinct points in every ball.
-\end{remark}
-
-
 % ---------------------------------------------------------
-\subsection*{Derived Set is Closed}
+\subsection*{The Derived Set $E'$ is Closed}
 \label{prf:derived-closed}
 % ---------------------------------------------------------
 
-\begin{remark}[Return]
-\hyperref[thm:derived-closed]{$\leftarrow$ Back to Theorem (Derived Set is Closed) in Notes}
-\end{remark}
-
-\begin{theorem}[Derived Set is Closed]
-Let $(X,d)$ be a metric space and $E \subseteq X$.
-Then $E'$ is a closed subset of $X$.
-\end{theorem}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:derived-closed]{Back to Theorem in Notes}
+\end{remark*}
 
 \begin{proof}
-% TODO
+\Claim $E'$ is a closed set.
+
+\Strategy Show that every limit point of $E'$ is itself in $E'$:
+i.e.\ if $x$ is a limit point of $E'$, then $x$ is a limit point of $E$.
+
+\medskip
+\Let $x \in (E')'$ (a limit point of $E'$) and let $r > 0$.
+
+\ByDef: $B_r(x) \cap (E' \setminus \{x\}) \neq \varnothing$.
+Pick $y \in B_r(x) \cap E'$ with $y \neq x$.
+
+Let $\delta = r - d(x,y) > 0$ (the radial gap).
+
+\ByDef{limit point}: $y \in E'$ means $B_\delta(y) \cap (E \setminus \{y\}) \neq \varnothing$.
+Pick $z \in B_\delta(y) \cap (E \setminus \{y\})$.
+
+\ByThm{Triangle inequality}: $d(x,z) \le d(x,y) + d(y,z) < d(x,y) + \delta = r$.
+So $z \in B_r(x)$.
+
+If $z = x$: then $z = x \in E$, so $x \in E'$ follows from $y \neq x$ and another ball argument.
+(In fact, if $x \in E$ then every ball around $x$ hits $E \setminus \{x\}$ through $y$, done.)
+If $z \neq x$: then $z \in B_r(x) \cap (E \setminus \{x\})$.
+
+In either case $B_r(x) \cap (E \setminus \{x\}) \neq \varnothing$.
+Since $r > 0$ was arbitrary, $x \in E'$. \AsReq
 \end{proof}
 
-\begin{remark}[Proof shape]
-% TODO: Show $E'$ is closed by showing it is sequentially closed.
-% Take any $(x_n) \subseteq E'$ with $x_n \to x$ and show $x \in E'$.
-% The triangle inequality and a shrinking-radius argument are the key tools.
-\end{remark}
-
-\begin{remark}[Dependencies]
-% TODO: Definition~\ref{def:derived-set} (derived set),
-% Definition~\ref{def:limit-point} (limit point),
-% Theorem~\ref{thm:seq-char-limit} (Sequential Characterization),
-% triangle inequality for $d$.
-\end{remark}
-
+\begin{remark*}[Note on difficulty]
+The case split on $z = x$ is the slightly subtle moment.
+If you find this case analysis heavy, accept the result and return later
+after more practice with derived sets.
+\end{remark*}
 
 % ---------------------------------------------------------
-\subsection*{Closed Sets and Derived Sets}
+\subsection*{$E$ is Closed iff $E' \subseteq E$}
 \label{prf:closed-derived}
 % ---------------------------------------------------------
 
-\begin{remark}[Return]
-\hyperref[thm:closed-derived]{$\leftarrow$ Back to Theorem (Closed Sets and Derived Sets) in Notes}
-\end{remark}
-
-\begin{theorem}[Closed Sets and Derived Sets]
-Let $(X,d)$ be a metric space and $E \subseteq X$.
-Then
-\[
-E \text{ is closed}
-\iff
-E' \subseteq E.
-\]
-\end{theorem}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:closed-derived]{Back to Theorem in Notes}
+\end{remark*}
 
 \begin{proof}
-% TODO
+\Claim $E$ is closed iff $E' \subseteq E$.
+
+\medskip
+\noindent\textbf{($\Rightarrow$)} Assume $E$ is closed. \Let $x \in E'$.
+
+By the sequential characterization, $\exists (x_n) \subseteq E$ with $x_n \to x$.
+\ByAss $E$ is closed: since $(x_n) \subseteq E$ and $x_n \to x$, we get $x \in E$.
+So $E' \subseteq E$.
+
+\medskip
+\noindent\textbf{($\Leftarrow$)} Assume $E' \subseteq E$. Show $E$ is closed.
+
+\Let $(x_n) \subseteq E$ with $x_n \to x$.
+If $x_n = x$ for all large $n$, then $x \in E$ trivially (since $x_n \in E$).
+Otherwise, $x_n \neq x$ for infinitely many $n$, which gives a subsequence in
+$E \setminus \{x\}$ converging to $x$, so $x \in E'$.
+\ByAss $E' \subseteq E$: $x \in E$.
+Since $(x_n) \subseteq E$ was arbitrary, $E$ is closed. \AsReq
 \end{proof}
 
-\begin{remark}[Proof shape]
-% TODO: A biconditional proof. For each direction, unpack the relevant
-% sequential definition of closedness and show it is equivalent to
-% containment of limit points.
-\end{remark}
-
-\begin{remark}[Dependencies]
-% TODO: Definition of closed set (sequentially: limits of sequences
-% in $E$ remain in $E$), Definition~\ref{def:derived-set},
-% Theorem~\ref{thm:seq-char-limit} (Sequential Characterization).
-\end{remark}
-
-
 % ---------------------------------------------------------
-\subsection*{Closure Formula}
+\subsection*{$\overline{E} = E \cup E'$}
 \label{prf:closure-formula}
 % ---------------------------------------------------------
 
-\begin{remark}[Return]
-\hyperref[thm:closure-formula]{$\leftarrow$ Back to Theorem (Closure Formula) in Notes}
-\end{remark}
-
-\begin{theorem}[Closure Formula]
-Let $(X,d)$ be a metric space and $E \subseteq X$.
-Then
-\[
-\overline{E} = E \cup E'.
-\]
-\end{theorem}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:closure-formula]{Back to Theorem in Notes}
+\end{remark*}
 
 \begin{proof}
-% TODO
+\Claim $\overline{E} = E \cup E'$.
+
+\Strategy We show that $E \cup E'$ equals the closure of $E$ by verifying two things:
+(a) $E \cup E'$ is closed, and (b) $E \cup E'$ is contained in every closed superset of $E$.
+
+\medskip
+\noindent\textbf{Step 1: $E \cup E'$ is closed.}
+
+We show $(E \cup E')' \subseteq E \cup E'$.
+
+\Let $x \in (E \cup E')'$.  Then $x$ is a limit point of $E \cup E'$.
+
+By an argument similar to the proof that $E'$ is closed, every ball around $x$ meets $E$.
+(The details: every ball around $x$ meets $E \cup E'$; a point in the ball from $E'$
+has its own balls meeting $E$; the triangle inequality pulls a point of $E$ into the
+original ball.)
+
+So $x \in E'$, hence $x \in E \cup E'$.
+
+\medskip
+\noindent\textbf{Step 2: $E \cup E' \subseteq \overline{E}$.}
+
+\ByDef $\overline{E}$ is the smallest closed set containing $E$.
+Any closed set $F$ with $E \subseteq F$ satisfies $E' \subseteq F' \subseteq F$
+(limit points of a subset lie in the closed superset, by the sequential characterization).
+So $E \cup E' \subseteq F$.
+
+In particular (taking $F = \overline{E}$): $E \cup E' \subseteq \overline{E}$.
+
+Step 1 shows $E \cup E'$ is itself a closed set containing $E$, so $\overline{E} \subseteq E \cup E'$.
+
+\medskip
+\Therefore $\overline{E} = E \cup E'$. \AsReq
 \end{proof}
 
-\begin{remark}[Proof shape]
-% TODO: Show the two sets are equal by double containment.
-% Use Theorem~\ref{thm:derived-closed} (derived set is closed) to
-% establish that $E \cup E'$ is closed, then appeal to the minimality
-% characterisation of closure.
-\end{remark}
+\begin{remark*}[Note on difficulty]
+The proof that $E \cup E'$ is closed uses a nested ball argument very similar
+to the proof that $E'$ is closed. If you find either of these difficult,
+accept the $\overline{E} = E \cup E'$ formula as a theorem, use it freely,
+and return to the proof after more practice.
+\end{remark*}
 
-\begin{remark}[Dependencies]
-% TODO: Definition of closure $\overline{E}$ (smallest closed set
-% containing $E$), Theorem~\ref{thm:derived-closed} (derived set is
-% closed), Theorem~\ref{thm:closed-derived} (closed iff $E'\subseteq E$).
-\end{remark}
+\begin{remark*}[Dependencies]
+All five proofs above depend only on:
+\begin{itemize}
+  \item Definition~\ref{def:limit-point}: limit point definition.
+  \item Definition~\ref{def:derived-set}: $E'$ = set of limit points.
+  \item Definition of closed set (sequential characterization).
+  \item Definition of closure $\overline{E}$ as smallest closed superset.
+  \item Triangle inequality (M4).
+\end{itemize}
+No result after these is needed.
+\end{remark*}

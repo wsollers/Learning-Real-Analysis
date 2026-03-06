@@ -1,0 +1,112 @@
+% =========================================================
+% Completeness Under Equivalent Metrics
+% Source: volume-iii/analysis/metric-spaces/notes/metrics/
+%
+% Purpose: Show via concrete example that equivalent metrics
+%          can disagree on completeness.
+% Dependencies: def:equivalent-metrics, def:complete-metric-space
+% =========================================================
+
+\subsubsection{Completeness is Not a Topological Property}
+\label{sec:completeness-not-topological}
+
+Definition~\ref{def:equivalent-metrics} noted that equivalent metrics
+induce the same open sets, the same convergent sequences, and the same
+compact sets --- but they \emph{may disagree on completeness}.
+This subsection makes that concrete.
+
+\begin{remark*}[What ``equivalent'' preserves and what it does not]
+Two equivalent metrics $d_1 \sim d_2$ on $X$ agree on:
+\begin{itemize}
+  \item Which sets are open or closed.
+  \item Which sequences converge and to what limits.
+  \item Continuity of functions.
+  \item Compactness and connectedness.
+\end{itemize}
+They do \emph{not} necessarily agree on:
+\begin{itemize}
+  \item Which sequences are Cauchy (Cauchy depends on the specific distances,
+        not just on whether distances are small or large).
+  \item Whether every Cauchy sequence converges (completeness).
+  \item Uniform continuity of functions.
+\end{itemize}
+Completeness is a \emph{metric} property, not a \emph{topological} property.
+\end{remark*}
+
+\begin{example}[Two equivalent metrics on $(0,1)$: one complete, one not]
+\label{ex:completeness-metric-dependent}
+Let $X = (0,1)$.
+
+\medskip
+\noindent\textbf{Metric $d_1$: the inherited absolute-value metric.}
+\[
+d_1(x,y) = |x - y|.
+\]
+The sequence $x_n = \tfrac{1}{n}$ satisfies $d_1(x_m, x_n) = \bigl|\tfrac{1}{m} - \tfrac{1}{n}\bigr| \to 0$,
+so it is Cauchy in $(X, d_1)$.
+But $x_n \to 0 \notin (0,1)$, so it has no limit in $X$.
+Therefore $(X, d_1)$ is \textbf{not complete}.
+
+\medskip
+\noindent\textbf{Metric $d_2$: the transported metric from $\mathbb{R}$ via $\tan$.}
+
+The map $\varphi : (0,1) \to \mathbb{R}$ defined by
+\[
+\varphi(x) = \tan\!\left(\pi x - \tfrac{\pi}{2}\right)
+\]
+is a homeomorphism (a bicontinuous bijection) from $(0,1)$ onto $\mathbb{R}$.
+Define
+\[
+d_2(x, y) = |\varphi(x) - \varphi(y)|.
+\]
+Since $|\cdot|$ is a metric on $\mathbb{R}$ and $\varphi$ is a bijection,
+$d_2$ is a metric on $(0,1)$.
+
+\medskip
+A sequence is Cauchy in $(X, d_2)$ if and only if $(\varphi(x_n))$ is Cauchy in
+$(\mathbb{R}, |\cdot|)$, hence convergent in $\mathbb{R}$ (since $\mathbb{R}$ is complete).
+Since $\varphi$ is a bijection onto $\mathbb{R}$, the limit is $\varphi(x)$ for some
+$x \in (0,1)$, and $x_n \to x$ in $(X, d_2)$.
+So $(X, d_2)$ is \textbf{complete}.
+
+\medskip
+\noindent\textbf{The metrics are equivalent.}
+
+$\varphi$ is a homeomorphism, so $d_1$ and $d_2$ induce the same topology on $(0,1)$:
+a set is $d_1$-open if and only if it is $d_2$-open.
+They are therefore equivalent metrics (in the topological sense).
+
+\medskip
+\noindent\textbf{Summary.}
+\[
+d_1 \sim d_2
+\quad\text{(same topology on } (0,1)\text{)},
+\]
+but $(X, d_1)$ is incomplete while $(X, d_2)$ is complete.
+Changing the metric --- even to an equivalent one --- can create or
+destroy completeness.
+\end{example}
+
+\begin{remark*}[Intuition: what Cauchy ``means'' in each metric]
+Under $d_1$, the sequence $x_n = 1/n$ in $(0,1)$ is Cauchy because the
+terms are getting close to each other in the absolute-value sense.
+But the sequence is ``running off the edge'' of $(0,1)$ toward $0$.
+
+Under $d_2$, the same sequence \emph{also} has terms getting close to each other
+in the $d_2$ sense --- but the map $\varphi$ stretches $(0,1)$ near $0$ and $1$
+into the ends of $\mathbb{R}$.
+So the sequence $1/n$ corresponds to $\varphi(1/n) = \tan(\pi/n - \pi/2) \to -\infty$,
+which is not Cauchy in $(\mathbb{R}, |\cdot|)$ and therefore not Cauchy in $(X, d_2)$.
+
+This is the key insight: $d_2$ sees the approach to the boundary of $(0,1)$
+as ``going to infinity,'' whereas $d_1$ does not.
+\end{remark*}
+
+\begin{remark*}[Can every incomplete space be completed by re-metrising?]
+Yes --- the Completion Theorem (Theorem~\ref{thm:completion}) shows that
+every metric space $(X, d)$ can be isometrically embedded in a complete space
+$(\widetilde{X}, \widetilde{d})$.
+The metric $\widetilde{d}$ on $\widetilde{X}$ restricts to $d$ on $X$, so
+it is the \emph{same} metric (not an equivalent one) on the original space.
+The completion works by adding the missing limit points, not by changing the metric.
+\end{remark*}

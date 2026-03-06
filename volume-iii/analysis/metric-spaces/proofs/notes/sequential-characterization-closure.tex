@@ -1,56 +1,57 @@
 % =========================================================
 % Proof: Sequential Characterization of Closure Points
-% Source: volume-iii/analysis/intro-metric-spaces/notes/notes-metric-space.tex
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Sequential Characterization of Closure Points}
 \label{prf:sequential-characterization-closure}
 
 \begin{remark*}[Return]
-$\leftarrow$ \hyperref[thm:sequential-characterization-closure]{Back to Theorem
-(Sequential Characterization of Closure Points) in Notes}
+$\leftarrow$ \hyperref[thm:sequential-char-closure]{Back to Theorem in Notes}
 \end{remark*}
 
 \begin{proof}
-\Claim Let $(X,d)$ be a metric space, let $A \subseteq X$, and let $x \in X$.
-There exists a sequence $(a_n)$ in $A$ such that $a_n \to x$
-if and only if
-\[
-\forall r > 0,\quad B_r(x) \cap A \neq \varnothing.
-\]
-
-\Given A metric space $(X,d)$, a subset $A \subseteq X$, and a point $x \in X$.
-
-\Goal To prove the equivalence:
+\Claim Let $(X,d)$ be a metric space, $A \subseteq X$, and $x \in X$.
+Then
 \[
 \bigl(\exists (a_n) \subseteq A \text{ with } a_n \to x\bigr)
 \;\Longleftrightarrow\;
-\bigl(\forall r>0,\; B_r(x)\cap A\neq\varnothing\bigr).
+\bigl(\forall r > 0,\; B_r(x) \cap A \neq \varnothing\bigr).
 \]
 
-\Strategy Prove both directions separately:
+\Given A metric space $(X,d)$, $A \subseteq X$, $x \in X$.
+
+\Goal Prove both implications.
 
 \medskip
-
-\noindent
-(\(\Rightarrow\)) Assume there exists a sequence $(a_n)\subseteq A$
-with $a_n \to x$.
-Use the definition of convergence to show that every ball
-$B_r(x)$ must intersect $A$.
+\noindent\textbf{($\Rightarrow$)}
+Assume $(a_n) \subseteq A$ with $a_n \to x$.
+\Let $r > 0$.
+\ByDef{convergence}: $\exists N$ with $n \ge N \Rightarrow d(a_n, x) < r$.
+\Therefore $a_N \in B_r(x) \cap A$, so $B_r(x) \cap A \neq \varnothing$.
 
 \medskip
+\noindent\textbf{($\Leftarrow$)}
+Assume $B_r(x) \cap A \neq \varnothing$ for every $r > 0$.
 
-\noindent
-(\(\Leftarrow\)) Assume that every ball $B_r(x)$ intersects $A$.
-Construct explicitly a sequence $(a_n)$ in $A$
-using a shrinking family of radii and show that it converges to $x$.
+For each $n \ge 1$, take $r = 1/n$.
+Then $B_{1/n}(x) \cap A \neq \varnothing$, so $\exists a_n \in A$ with $d(a_n, x) < 1/n$.
 
+The sequence $(a_n)$ satisfies $(a_n) \subseteq A$ and $d(a_n, x) < 1/n \to 0$,
+so $a_n \to x$.
 \end{proof}
+
+\begin{remark*}[Proof shape]
+The $(\Rightarrow)$ direction is a single instantiation of the convergence
+definition at $\varepsilon = r$.
+The $(\Leftarrow)$ direction is a standard diagonal construction: pick one point
+from $B_{1/n}(x) \cap A$ for each $n$ to build a sequence converging to $x$.
+\end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of open ball.
-  \item Definition of convergence in a metric space.
+  \item Definition~\ref{def:convergence-metric}: convergence in a metric space.
+  \item Definition~\ref{def:open-ball}: $B_r(x) = \{y : d(x,y) < r\}$.
+  \item Archimedean property: $1/n \to 0$.
 \end{itemize}
 \end{remark*}

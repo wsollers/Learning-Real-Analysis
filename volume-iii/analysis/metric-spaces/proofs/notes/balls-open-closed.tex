@@ -1,124 +1,88 @@
 % =========================================================
-% Proof: Balls are open and closed
-% Source: volume-iii/analysis/metric-spaces/notes/notes-balls.tex
+% Proof: Balls are Open and Closed
+% Source: volume-iii/analysis/metric-spaces/notes/balls/notes-balls.tex
+% Mode: standard
 % =========================================================
 
-\subsection*{Balls are open and closed}
+\subsection*{Balls are Open and Closed}
 \label{prf:balls-open-closed}
 
-\begin{remark}[Return]
-\hyperref[prop:balls-open-closed]{$\leftarrow$ Back to Proposition (Balls are open and closed) in Notes}
-\end{remark}
-
-\begin{proposition}[Balls are open and closed]
-Let $(X, d)$ be a metric space, $x \in X$, and $r > 0$.
-\begin{enumerate}[label=(\roman*)]
-  \item $B_r(x)$ is an open set.
-  \item $\overline{B}_r(x)$ is a closed set.
-\end{enumerate}
-\end{proposition}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[prop:balls-open-closed]{Back to Proposition (Balls are open and closed) in Notes}
+\end{remark*}
 
 \begin{proof}
-\Given A metric space $(X, d)$, a point $x \in X$, and a radius $r > 0$.
-\Goal To show (i) $B_r(x)$ is open, and (ii) $\overline{B}_r(x)$ is closed.
+\Claim Let $(X,d)$ be a metric space, $x \in X$, and $r > 0$.
+(i) $B_r(x)$ is open. \quad (ii) $\overline{B}_r(x)$ is closed.
+
+\Given A metric space $(X,d)$, a centre $x \in X$, and radius $r > 0$.
+
+\Goal (i) Every point of $B_r(x)$ has an open ball around it contained in $B_r(x)$.
+(ii) $X \setminus \overline{B}_r(x)$ is open.
+
+\Strategy Both parts use the radial gap: the slack $\delta > 0$ left
+between a point and the boundary of its ball.
 
 \medskip
 \noindent\textit{Part (i): $B_r(x)$ is open.}
 
-\Strategy We show that every point of $B_r(x)$ has an open ball around it
-still contained in $B_r(x)$.
+\Let $y \in B_r(x)$.
 
-Let $x_0 \in B_r(x)$.
-By definition of open ball in a metric space,
+\ByDef $d(x, y) < r$.
+
+\Let $\delta := r - d(x, y) > 0$. (This is the radial gap of $y$ in $B_r(x)$.)
+
+\Goal Show $B_\delta(y) \subseteq B_r(x)$.
+
+\Let $z \in B_\delta(y)$, so $d(y, z) < \delta$.
+
+\ByThm{Triangle inequality (M4)}
 \[
-d(x,x_0) < r.
+d(x, z) \le d(x, y) + d(y, z) < d(x, y) + \delta = d(x,y) + r - d(x,y) = r.
 \]
-Choose $\varepsilon>0$ with $\varepsilon < r - d(x,x_0)$. 
-Claim $B_\varepsilon(x_0) \subseteq B_r(x)$.
 
-Let $x_1 \in B_\varepsilon(x_0)$ be arbitrary. Then
-\begin{align*}
-d(x_0,x_1) &< \varepsilon,\\
-d(x,x_1) &\le d(x,x_0) + d(x_0,x_1).
-\end{align*}
-Since $\varepsilon < r - d(x,x_0)$, we have $d(x,x_0) < r - \varepsilon$. Therefore,
-\begin{align*}
-d(x,x_1) 
-&\le d(x,x_0) + d(x_0,x_1)\\
-&< (r-\varepsilon) + \varepsilon\\
-&= r.
-\end{align*}
-Hence, $x_1 \in B_r(x)$, and thus $B_\varepsilon(x_0) \subseteq B_r(x)$.
+\Therefore $z \in B_r(x)$.
 
-Since $x_1 \in B_\varepsilon(x_0)$ was arbitrary, it follows that
-\[
-B_\varepsilon(x_0) \subseteq B_r(x).
-\]
-Since $x_0 \in B_r(x)$ was arbitrary, every point of $B_r(x)$ admits an
-$\varepsilon$-ball contained in $B_r(x)$. Therefore $B_r(x)$ is open.
+Since $z \in B_\delta(y)$ was arbitrary, $B_\delta(y) \subseteq B_r(x)$.
+Since $y \in B_r(x)$ was arbitrary, $B_r(x)$ is open. \AsReq
 
 \medskip
-\noindent\textit{Part (ii): $\overline{B}_r(x)$ is closed.}
+\noindent\textit{Part (ii): $\overline{B}_r(x)$ is closed, i.e.\ $U := X \setminus \overline{B}_r(x)$ is open.}
 
-\Strategy We show that $X \setminus \overline{B}_r(x)$ is open, i.e.\ every
-point outside the closed ball has an open ball around it disjoint from
-$\overline{B}_r(x)$.
+\Let $y \in U$, so $d(x, y) > r$.
 
-Let $x_0 \in X \setminus \overline{B}_r(x)$ be arbitrary. Then $d(x,x_0) > r$.
+\Let $\delta := d(x, y) - r > 0$.
 
-Choose $\varepsilon>0$ with $\varepsilon < d(x,x_0) - r$. 
-Claim $B_\varepsilon(x_0) \subseteq X \setminus \overline{B}_r(x)$.
+\Goal Show $B_\delta(y) \subseteq U$, i.e.\ $B_\delta(y) \cap \overline{B}_r(x) = \varnothing$.
 
-Let $x_1 \in B_\varepsilon(x_0)$ be arbitrary. Then
-\begin{align*}
-d(x_0,x_1) &< \varepsilon,\\
-d(x,x_0) &\le d(x,x_1) + d(x_1,x_0).
-\end{align*}
+\Let $z \in B_\delta(y)$, so $d(y, z) < \delta$.
 
-Since $\varepsilon < d(x,x_0) - r$, we have $\varepsilon + r < d(x,x_0)$. Therefore,
-\begin{align*}
-\varepsilon + r < d(x,x_0)
-&\le d(x,x_1) + d(x_0,x_1)\\
-&< d(x,x_1) + \varepsilon,
-\end{align*}
-
-which implies
+By the triangle inequality applied to $x, z, y$:
 \[
-r < d(x,x_1).
+d(x, y) \le d(x, z) + d(z, y),
+\]
+so
+\[
+d(x, z) \ge d(x, y) - d(z, y) > d(x, y) - \delta = r.
 \]
 
-Hence $x_1 \notin \overline{B}_r(x)$, so
-\[
-B_\varepsilon(x_0) \subseteq X \setminus \overline{B}_r(x).
-\]
+\Therefore $d(x, z) > r$, so $z \notin \overline{B}_r(x)$, so $z \in U$.
 
-Since $x_0 \in X \setminus \overline{B}_r(x)$ was arbitrary,
-the complement of $\overline{B}_r(x)$ is open. Therefore
-$\overline{B}_r(x)$ is closed.
-
-
-
-
-
-
-
-
-
-
-
-
-
+Since $z \in B_\delta(y)$ was arbitrary, $B_\delta(y) \subseteq U$.
+Since $y \in U$ was arbitrary, $U$ is open, so $\overline{B}_r(x)$ is closed. \AsReq
 \end{proof}
 
-\begin{remark}[Proof shape]
-% YOUR PROOF SHAPE HERE
-\end{remark}
+\begin{remark*}[Proof shape]
+Both parts are the same strategy: for a point inside/outside a ball,
+compute the radial gap $\delta$ (the slack in the relevant inequality)
+and use the triangle inequality to show a $\delta$-ball fits entirely
+inside/outside the original ball.
+\end{remark*}
 
-\begin{remark}[Dependencies]
+\begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of open ball: \ref{def:open-ball}
-  \item Definition of closed ball: \ref{def:closed-ball}
-  \item Definition of open set: \ref{def:open-closed-set}
-  \item Triangle inequality (metric axiom M4)
+  \item Definition~\ref{def:open-ball} and Definition~\ref{def:closed-ball}.
+  \item Definition~\ref{def:open-closed-set}: $U$ is open iff every point has a ball inside $U$.
+  \item Triangle inequality (M4) for the metric $d$.
 \end{itemize}
-\end{remark}
+\end{remark*}

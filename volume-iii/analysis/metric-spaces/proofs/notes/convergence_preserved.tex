@@ -1,6 +1,5 @@
 % =========================================================
 % Proof: Convergence is Preserved by Isometries
-% Source: volume-iii/analysis/intro-metric-spaces/notes/notes-metric-space.tex
 % Mode: standard
 % =========================================================
 
@@ -8,64 +7,44 @@
 \label{prf:convergence-preserved-by-isometry}
 
 \begin{remark*}[Return]
-$\leftarrow$ \hyperref[thm:convergence-preserved-by-isometry]{Back to Theorem
-(Convergence is Preserved by Isometries) in Notes}
+$\leftarrow$ \hyperref[lem:convergence-preserved]{Back to Lemma in Notes}
 \end{remark*}
 
 \begin{proof}
-\Claim Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let
-$f : X \to Y$ be an isometry.
-If $(x_n)$ is a sequence in $X$ with $x_n \to x$ in $X$,
-then $f(x_n) \to f(x)$ in $Y$.
+\Claim Let $(X,d_X)$ and $(Y,d_Y)$ be metric spaces and let $f : X \to Y$
+be an isometry. If $x_n \to x$ in $X$, then $f(x_n) \to f(x)$ in $Y$.
 
-\Given Metric spaces $(X,d_X)$ and $(Y,d_Y)$, an isometry
-$f : X \to Y$, and a sequence $(x_n)$ in $X$ such that
-$x_n \to x$.
+\Given Metric spaces $(X,d_X)$ and $(Y,d_Y)$, an isometry $f : X \to Y$,
+and a sequence $(x_n)$ in $X$ with $x_n \to x$.
 
-\Goal To show that $f(x_n) \to f(x)$ in $Y$.
+\Goal To show $d_Y(f(x_n), f(x)) \to 0$.
 
-\Strategy We proceed directly by unfolding the definition of convergence
-and using the defining property of an isometry.
+\Strategy Since $f$ is an isometry, $d_Y(f(x_n), f(x)) = d_X(x_n, x)$ for all $n$.
+Convergence $x_n \to x$ in $X$ says exactly that $d_X(x_n, x) \to 0$.
 
-Let $\varepsilon > 0$ be arbitrary. Since $x_n \to x$ in $X$,
-there exists $N \in \mathbb{N}$ such that for all $n \ge N$,
+\medskip
+\Let $\varepsilon > 0$.
+
+\ByAss $x_n \to x$ in $X$: $\exists N \in \mathbb{N}$ such that $n \ge N \Rightarrow d_X(x_n, x) < \varepsilon$.
+
+\ByDef{isometry} $d_Y(f(x_n), f(x)) = d_X(x_n, x)$ for all $n$.
+
+\Therefore for all $n \ge N$:
 \[
-d_X(x_n, x) < \varepsilon.
+d_Y(f(x_n), f(x)) = d_X(x_n, x) < \varepsilon.
 \]
 
-Since $f$ is an isometry, for all $n \in \mathbb{N}$ we have
-\[
-d_Y\bigl(f(x_n), f(x)\bigr) = d_X(x_n, x).
-\]
-
-Therefore, for all $n \ge N$,
-\[
-d_Y\bigl(f(x_n), f(x)\bigr) < \varepsilon.
-\]
-
-Hence $f(x_n) \to f(x)$ in $Y$. \AsReq
+Since $\varepsilon > 0$ was arbitrary, $f(x_n) \to f(x)$ in $Y$. \AsReq
 \end{proof}
 
 \begin{remark*}[Proof shape]
-Direct: fix $\varepsilon>0$, obtain $N$ from $x_n \to x$ in $(X,d_X)$, then
-use distance preservation $d_Y(f(x_n),f(x))=d_X(x_n,x)$ to reuse the same $N$.
+One line: the isometry condition $d_Y(f(x_n), f(x)) = d_X(x_n, x)$ converts
+the convergence statement in $Y$ directly into the given convergence statement in $X$.
 \end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of convergence of a sequence in a metric space.
-  \item Definition of isometry.
+  \item Definition~\ref{def:isometry}: $d_Y(f(u), f(v)) = d_X(u,v)$ for all $u,v$.
+  \item Definition~\ref{def:convergence-metric}: $x_n \to x$ iff $d_X(x_n,x) \to 0$.
 \end{itemize}
 \end{remark*}
-
-
-
-
-
-
-
-
-
-
-
-

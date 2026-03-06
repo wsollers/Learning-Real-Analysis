@@ -1,0 +1,122 @@
+% =========================================================
+% Bridge: From Real Analysis to Metric Spaces
+% Source: volume-iii/analysis/metric-spaces/notes/metric-spaces/
+%
+% Purpose: Make explicit which results from real analysis depend
+%          on |·| as a metric vs. on properties specific to ℝ.
+% =========================================================
+
+\subsubsection{Porting Results from $\mathbb{R}$ to Metric Spaces}
+\label{sec:real-analysis-bridge}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Why abstract this?}},
+  fonttitle=\small\bfseries]
+Real analysis proved many theorems about sequences and functions in
+$\mathbb{R}$ using $|x - y|$ to measure closeness.
+When you look back at those proofs carefully, you find two very different
+kinds of steps:
+
+\medskip
+\noindent
+\textbf{Steps that used only \emph{distance}:}
+``choose $N$ so that for all $n \ge N$, $|x_n - x| < \varepsilon$'' ---
+this is just asking that $d(x_n, x) < \varepsilon$.
+
+\medskip
+\noindent
+\textbf{Steps that used properties of $\mathbb{R}$ specifically:}
+``since $(x_n)$ is bounded and monotone, it converges'' --- this
+requires the Monotone Convergence Theorem, which uses the order structure
+of $\mathbb{R}$ and fails in $\mathbb{R}^2$.
+
+\medskip
+\noindent
+The theorems in the first category are exactly those that port
+to arbitrary metric spaces.
+The ones in the second category require extra structure (completeness, compactness, etc.)
+and either fail in general or need a new proof strategy.
+\end{tcolorbox}
+
+\bigskip
+
+\begin{center}
+\small
+\textbf{What Ports Directly vs.\ What Needs Extra Structure}
+\smallskip
+
+\begin{tabular}{p{5.2cm} p{4.4cm} p{4.4cm}}
+\toprule
+\textbf{Result from $\mathbb{R}$} & \textbf{Metric space version} & \textbf{What is needed} \\
+\midrule
+$x_n \to x$ means $|x_n - x| \to 0$ &
+$x_n \to x$ means $d(x_n, x) \to 0$ &
+Only the metric \\[6pt]
+
+Convergent sequences are Cauchy &
+Same: convergent $\Rightarrow$ Cauchy &
+Only triangle inequality \\[6pt]
+
+Cauchy sequences converge &
+\emph{Fails in general} (e.g.\ $\mathbb{Q}$) &
+Completeness \\[6pt]
+
+Bounded monotone sequences converge &
+No analogue &
+Order structure of $\mathbb{R}$; not portable \\[6pt]
+
+Convergent sequences are bounded &
+Same: convergent $\Rightarrow$ bounded &
+Only triangle inequality \\[6pt]
+
+Bolzano--Weierstrass: bounded sequences have convergent subsequences &
+\emph{Fails in general} ($\ell^2$ has bounded non-compact sets) &
+Compactness \\[6pt]
+
+Continuous functions on $[a,b]$ attain their extrema &
+\emph{Fails in general} &
+Compactness of domain \\[6pt]
+
+Closed and bounded $\Leftrightarrow$ compact &
+Only closed $\Leftarrow$ compact in general &
+Finite dimension ($\mathbb{R}^n$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark*}[How to read the proofs in this chapter]
+Whenever you see a proof that uses only the metric axioms (M1)--(M4)
+and no other structure of the space, that proof works in \emph{every}
+metric space automatically.
+Whenever you see a proof that assumes completeness or compactness,
+pause and ask: is this telling me something about $\mathbb{R}$ specifically,
+or about a class of metric spaces?
+This habit of mind is what abstract analysis is training you to develop.
+\end{remark*}
+
+\begin{example}[A proof that ports perfectly]
+\label{ex:convergent-implies-cauchy-port}
+In $\mathbb{R}$ the proof that convergent implies Cauchy went:
+
+\medskip
+Given $\varepsilon > 0$, choose $N$ so that $n \ge N \Rightarrow |x_n - L| < \varepsilon/2$.
+Then for $m, n \ge N$: $|x_m - x_n| \le |x_m - L| + |L - x_n| < \varepsilon/2 + \varepsilon/2 = \varepsilon$.
+
+\medskip
+\noindent
+Every step here uses only the triangle inequality for $|\cdot|$,
+which is precisely the triangle inequality (M4) for the metric $d(x,y) = |x-y|$.
+The proof in a general metric space is \emph{word for word} the same with $d$ in
+place of $|\cdot|$:
+
+\medskip
+Given $\varepsilon > 0$, choose $N$ so that $n \ge N \Rightarrow d(x_n, x) < \varepsilon/2$.
+Then for $m, n \ge N$: $d(x_m, x_n) \le d(x_m, x) + d(x, x_n) < \varepsilon$.
+
+\medskip
+\noindent
+This is why metric spaces exist: to identify exactly which results
+are consequences of \emph{having a distance} rather than of
+\emph{being the real line}.
+\end{example}

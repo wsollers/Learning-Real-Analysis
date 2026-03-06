@@ -1,40 +1,66 @@
 % =========================================================
 % Proof: Continuity of the Metric
-% Source: volume-iii/analysis/intro-metric-spaces/notes/notes-metric-space.tex
-% Mode: standard (stub)
+% Mode: standard
 % =========================================================
 
 \subsection*{Continuity of the Metric}
 \label{prf:continuity-of-the-metric}
 
 \begin{remark*}[Return]
-$\leftarrow$ \hyperref[thm:continuity-of-the-metric]{Back to Theorem
-(Continuity of the Metric) in Notes}
+$\leftarrow$ \hyperref[thm:continuity-of-metric]{Back to Theorem in Notes}
 \end{remark*}
 
 \begin{proof}
-\Claim Let $(X,d)$ be a metric space. If $(x_n)$ and $(y_n)$ are sequences in $X$
-such that $x_n \to x$ and $y_n \to y$, then
+\Claim Let $(X,d)$ be a metric space. If $x_n \to x$ and $y_n \to y$ in $X$, then
+$d(x_n, y_n) \to d(x, y)$ in $\mathbb{R}$.
+
+\Given $x_n \to x$ and $y_n \to y$ in $(X,d)$.
+
+\Goal To show $|d(x_n, y_n) - d(x, y)| \to 0$.
+
+\Strategy Apply the reverse triangle inequality twice to bound
+$|d(x_n, y_n) - d(x, y)|$ in terms of $d(x_n, x)$ and $d(y_n, y)$.
+
+\medskip
+\Strategy The key estimate: for all $n$,
+\begin{align*}
+|d(x_n, y_n) - d(x, y)|
+&\le |d(x_n, y_n) - d(x, y_n)| + |d(x, y_n) - d(x, y)| \\
+&\le d(x_n, x) + d(y_n, y).
+\end{align*}
+where the last step uses the reverse triangle inequality
+(Proposition~\ref{prop:reverse-triangle}) twice:
+\begin{align*}
+|d(x_n, y_n) - d(x, y_n)| &\le d(x_n, x),\\
+|d(x, y_n)  - d(x, y)|   &\le d(y_n, y).
+\end{align*}
+
+\medskip
+\Let $\varepsilon > 0$.
+
+\ByAss $x_n \to x$: $\exists N_1$ with $n \ge N_1 \Rightarrow d(x_n, x) < \varepsilon/2$.
+
+\ByAss $y_n \to y$: $\exists N_2$ with $n \ge N_2 \Rightarrow d(y_n, y) < \varepsilon/2$.
+
+\Let $N = \max(N_1, N_2)$.
+
+For $n \ge N$:
 \[
-d(x_n, y_n) \to d(x,y).
+|d(x_n, y_n) - d(x,y)| \le d(x_n, x) + d(y_n, y) < \tfrac{\varepsilon}{2} + \tfrac{\varepsilon}{2} = \varepsilon.
 \]
 
-\Given A metric space $(X,d)$ and sequences $(x_n)$, $(y_n)$ in $X$ with
-$x_n \to x$ and $y_n \to y$.
-
-\Goal To show that $d(x_n,y_n) \to d(x,y)$ as a real sequence.
-
-\Strategy Use the definition of convergence in $\mathbb{R}$ for the sequence
-$d(x_n,y_n)$, together with a bound obtained from the triangle inequality
-(or the reverse triangle inequality) relating $d(x_n,y_n)$ and $d(x,y)$
-to the quantities $d(x_n,x)$ and $d(y_n,y)$.
-
+Since $\varepsilon > 0$ was arbitrary, $d(x_n, y_n) \to d(x, y)$. \AsReq
 \end{proof}
+
+\begin{remark*}[Proof shape]
+Standard two-epsilon argument. The key tool is the reverse triangle inequality,
+applied once per variable to replace $d(x_n, y_n)$ step-by-step with $d(x, y)$.
+\end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item Definition of convergence in a metric space.
-  \item Triangle inequality (and/or reverse triangle inequality).
-  \item Definition of convergence of a real sequence.
+  \item Proposition~\ref{prop:reverse-triangle}: $|d(u,z) - d(v,z)| \le d(u,v)$.
+  \item Triangle inequality for $|\cdot|$ on $\mathbb{R}$.
+  \item Definition of convergence in $(X,d)$ and in $(\mathbb{R}, |\cdot|)$.
 \end{itemize}
 \end{remark*}
