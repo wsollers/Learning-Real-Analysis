@@ -13,28 +13,52 @@ Suppose that for every $n \in \mathbb{N}$:
 Then $P(n)$ holds for all $n \in \mathbb{N}$.
 \end{tcolorbox}
 
-\begin{remark}[The base case in strong induction]
-When $n = 0$, the hypothesis $\forall k < 0,\; P(k)$ is vacuously
-true (no $k < 0$ exists in $\mathbb{N}$). So the step for $n = 0$
-reduces to showing $P(0)$ unconditionally --- this is the base case,
-and it is implicit in the universal statement rather than listed
-separately. In practice, still write the base case explicitly.
+\begin{remark}[Strong and weak induction prove the same statements]
+Strong induction is sometimes described as ``more powerful'' than weak
+induction, but this is imprecise. Both principles are logically
+equivalent (they both follow from P5 and each implies the other).
+Strong induction is not more powerful in the sense of proving statements
+that weak induction cannot --- every statement provable by one is
+provable by the other.
+
+What strong induction offers is convenience: when the proof of $P(n+1)$
+genuinely requires knowing $P(k)$ for some $k < n$ that is not $n-1$,
+strong induction supplies that information directly. Rephrasing the proof
+as weak induction would require artificially strengthening $P(n)$ to
+``$P(k)$ for all $k \leq n$'', which is precisely the hypothesis that
+strong induction builds in automatically.
+
+Use strong induction when the step needs information from more than one
+earlier case. Use weak induction when $P(n)$ alone suffices.
 \end{remark}
 
-\begin{remark}[When to use strong induction]
-Use strong induction when the proof of $P(n+1)$ requires knowing
-$P(k)$ for some $k < n$ that is not specifically $k = n$.
+\begin{remark}[The base case in strong induction]
+When $n = 0$, the hypothesis $\forall k < 0,\; P(k)$ is vacuously
+true: there are no natural numbers less than $0$. So the step for
+$n = 0$ requires proving $P(0)$ with no inductive hypothesis at all
+--- this is the base case, and it must be proved directly.
 
-The diagnostic: in the inductive step, write
-$P(n+1) = f(P(?), P(?), \ldots)$ and ask what values of $?$ you need.
-If the answer includes anything other than $n$, use strong induction.
+In practice, always write the base case explicitly, even though it is
+implicit in the universal statement. Students who skip the base case in
+strong induction often write ``by the inductive hypothesis applied to
+$n-1$'' when $n = 0$, which is an error: $n - 1 = -1$ is not a natural
+number and has no inductive hypothesis.
+\end{remark}
 
-Canonical situations:
-\begin{itemize}
-  \item Recursive sequences: $a_{n+1} = a_n + a_{n-1}$ (need $n-1$).
-  \item Prime factorization: $n+1 = ab$ requires $P(a)$ and $P(b)$
-    where $a, b < n+1$ but are otherwise arbitrary.
-  \item Any argument that breaks $n+1$ into parts.
+\begin{remark}[When to use strong induction: the diagnostic]
+The diagnostic for strong induction is simple. Write out the inductive
+step: $P(n+1) = f(P(?), P(?), \ldots)$, and ask what earlier values
+of $P$ you need. If the answer includes anything other than exactly $P(n)$,
+use strong induction.
+
+Canonical situations where strong induction is needed:
+\begin{itemize}[itemsep=2pt]
+  \item Recursive sequences with two prior terms: $a_{n+1} = a_n + a_{n-1}$
+    requires both $P(n)$ and $P(n-1)$.
+  \item Prime factorization: writing $n = ab$ with $a, b < n$
+    requires $P(a)$ and $P(b)$ where $a$ and $b$ are arbitrary.
+  \item Any argument that splits $n+1$ into parts: you need $P$ at the
+    part values, which are not predetermined.
 \end{itemize}
 \end{remark}
 
@@ -46,7 +70,7 @@ Let $P(n)$ denote: [\emph{write it out}].
 
 \medskip
 \noindent\textbf{Base case} ($n = [\text{start}]$).
-[\emph{Verify directly.}]
+[\emph{Verify directly, with no inductive hypothesis.}]
 
 \medskip
 \noindent\textbf{Inductive step.}
@@ -55,7 +79,7 @@ $[\text{start}] \leq k < n$.
 \textit{(Strong inductive hypothesis.)}
 We show $P(n)$ holds.
 
-[\emph{Work. Use $P(k)$ for some specific $k < n$.}]
+[\emph{Use $P(k)$ for some specific $k < n$.}]
 
 Hence $P(n)$ holds.
 
@@ -64,32 +88,32 @@ By strong induction, $P(n)$ holds for all $n \geq [\text{start}]$. \qed
 
 \begin{example}[Every integer $n \geq 2$ has a prime factor]
 \textit{Proof.}
-Let $P(n)$: ``$n$ has a prime factor''.
+Let $P(n)$: ``$n$ has a prime factor.''
 
 \medskip
 \noindent\textbf{Base case} ($n = 2$).
-$2$ is prime, so $2$ is a prime factor of itself.
+$2$ is prime, so $2$ is a prime factor of itself. $P(2)$ holds.
 
 \medskip
 \noindent\textbf{Inductive step.}
 Let $n > 2$ and assume $P(k)$ holds for all $2 \leq k < n$.
 
-\textbf{Case 1}: $n$ is prime. Then $n$ is its own prime factor.
+\textbf{Case 1:} $n$ is prime. Then $n$ is its own prime factor,
+and $P(n)$ holds.
 
-\textbf{Case 2}: $n$ is composite. Then $n = ab$ for some
-$2 \leq a, b < n$.
-By the strong inductive hypothesis applied to $a$,
-$a$ has a prime factor $p$.
-Then $p \mid a$ and $a \mid n$, so $p \mid n$.
+\textbf{Case 2:} $n$ is composite. Write $n = ab$ with $2 \leq a, b < n$.
+By the strong inductive hypothesis applied to $a$, $a$ has a prime
+factor $p$. Then $p \mid a$ and $a \mid n$, so $p \mid n$.
+Hence $P(n)$ holds.
 
-In both cases $n$ has a prime factor. By strong induction,
-$P(n)$ holds for all $n \geq 2$. \qed
-\end{example}
+In both cases $P(n)$ holds. By strong induction, $P(n)$ holds for
+all $n \geq 2$. \qed
 
-\begin{remark}[Why weak induction cannot do this directly]
-In the prime factor proof, the composite case splits $n$ into $a < n$.
-We need $P(a)$, not $P(n-1)$. Weak induction only provides $P(n-1)$,
-which is useless if $a \neq n-1$.
-Strong induction provides $P(k)$ for all $k < n$,
+\medskip
+\noindent
+Why weak induction cannot work directly: in Case~2, the value $a$
+satisfies $2 \leq a < n$ but is otherwise arbitrary. It is not
+necessarily $n-1$. Weak induction supplies $P(n-1)$, which is useless
+when $a \neq n-1$. Strong induction supplies $P(k)$ for all $k < n$,
 covering whatever value $a$ takes.
-\end{remark}
+\end{example}

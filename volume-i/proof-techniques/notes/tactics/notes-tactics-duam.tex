@@ -3,54 +3,81 @@
 % =========================================================
 \paragraph{The DU/TA/AM Framework.}
 
-Every line of an algebraic proof is justified by exactly one
-of three sources. This framework formalizes the tagging system
-used throughout these notes.
+Every line of an algebraic proof is justified by exactly one of three
+sources. This framework makes that obligation explicit and provides
+the tagging system used throughout these notes.
 
-\begin{definition}[Proof line tags]
-Each step in a three-column proof carries one of three tags:
-\begin{itemize}
-  \item \tagDU\ \textbf{(Definition / Unpack)}.
-    The step applies a definition or unpacks a named concept
-    into its explicit conditions.
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Three Line Tags}}, fonttitle=\small\bfseries]
+\begin{itemize}[itemsep=4pt]
+  \item \tagDU\ \textbf{(Definition / Unpack).}
+    The step applies a definition or unpacks a named concept into its
+    explicit conditions.
     \textit{Example}: expanding ``$e$ is an identity'' into
     ``$ea = ae = a$ for all $a \in G$''.
 
-  \item \tagTA\ \textbf{(Theorem / Axiom)}.
+  \item \tagTA\ \textbf{(Theorem / Axiom).}
     The step cites a previously proved proposition or a structural
-    axiom of the system (group axiom, ring axiom, field axiom,
-    or Peano axiom).
-    \textit{Example}: citing G1 (associativity) to regroup
-    $(ab)c = a(bc)$.
+    axiom (group axiom, ring axiom, field axiom, Peano axiom).
+    \textit{Example}: citing G1 (associativity) to regroup $(ab)c = a(bc)$.
 
-  \item \tagAM\ \textbf{(Algebraic Manipulation)}.
-    The step performs a calculation whose justification is
-    itself a combination of DU and TA moves, compressed for
-    readability.
-    \textit{Example}: simplifying $a \cdot e = a$ in one step
-    after the identity axiom has already been cited.
+  \item \tagTA\ \textbf{(Algebraic Manipulation, abbreviated AM).}
+    The step performs a computation whose justification is itself a
+    combination of DU and TA moves, compressed for readability.
+    \textit{Example}: simplifying $a \cdot e = a$ in one step after
+    the identity axiom has already been cited.
 \end{itemize}
-\end{definition}
+\end{tcolorbox}
 
-\begin{remark}[Why tag every line?]
-The DU/TA/AM system enforces the most important discipline in
-proof writing: every step must be justified by something.
-A line with no tag is a line whose justification has not been
-identified. When a proof stalls, examining the tags reveals
-which definition has not been unpacked or which axiom has
-not been cited.
+\begin{remark}[Why the framework matters: finding where proofs break]
+The DU/TA/AM system serves a diagnostic purpose. Every unjustified step
+in a proof is either a DU step that has not been taken (some definition
+has not been unpacked) or a TA step that has not been cited (some axiom
+or theorem is being used silently).
 
-At the learning stage, every line should carry an explicit tag.
-As fluency increases, AM steps can absorb multiple tagged moves.
-But the underlying DU and TA structure is always present even
-when not written.
+When an algebraic proof stalls, the right question is: which definition
+have I not yet unpacked? Which axiom am I using but not citing? The
+tags make these omissions visible.
+
+In practice, stalling almost always traces to a definition that has
+been left in its named form (``$G$ is a group'') when it needed to be
+expanded into operative conditions (``associativity holds; an identity
+exists; every element has an inverse''). Expand the definition and
+the stuck proof typically becomes unstuck.
 \end{remark}
 
-\begin{remark}[The hierarchy of tags]
-DU and TA are the atomic justifications. AM is a shorthand for
-a sequence of DU and TA steps that have been verified and
-compressed. A fully formal proof contains only DU and TA steps.
-The three-column format used in these notes puts the statement
-in the middle column and the tag in the left column, forcing
-explicit justification of every line.
+\begin{remark}[The hierarchy: DU and TA are atomic; AM is shorthand]
+DU and TA are the atomic justifications. There is nothing more basic.
+AM is not a separate category of reasoning --- it is a compressed
+sequence of DU and TA steps that have been verified and labeled as
+a single unit for concision.
+
+A fully formal proof contains only DU and TA steps, explicitly tagged.
+The three-column proof format used in this project --- tag in the left
+column, statement in the middle, commentary in the right --- enforces
+explicit justification of every line and is the recommended format
+while you are learning.
+
+As fluency develops, AM steps can absorb more and more of the lower-level
+manipulations. But the underlying DU/TA structure is always present,
+even when not written. The ability to decompose any AM step into its
+DU and TA components is the hallmark of genuine understanding.
+\end{remark}
+
+\begin{remark}[A proof is a chain of citations]
+The deepest way to understand the DU/TA/AM system is this: a mathematical
+proof is a sequence of statements, each of which is justified by citing
+something that is already known (a definition, an axiom, or a previously
+proved theorem). The proof is valid if and only if every step has a valid
+citation.
+
+When you read a proof and feel uncertain whether it is correct, the
+right move is to label every step. If you can assign a DU or TA
+justification to every line, the proof is valid. If any line has no
+justification, there is a gap.
+
+This is not just a learning technique. Working mathematicians who find
+a suspicious step in a proof do exactly this: they ask ``what justifies
+this?'' and try to answer. If no answer is available, the step is an error.
 \end{remark}

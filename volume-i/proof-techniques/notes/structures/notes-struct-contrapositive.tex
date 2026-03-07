@@ -1,38 +1,63 @@
 % =========================================================
-% Contrapositive
+% Proof by Contrapositive
 % =========================================================
 \paragraph{Proof by Contrapositive.}
 
 The contrapositive of $P \Rightarrow Q$ is $\neg Q \Rightarrow \neg P$.
-These are logically equivalent. A proof by contrapositive proves
-$\neg Q \Rightarrow \neg P$ directly.
+These two statements are logically equivalent: one is true if and only
+if the other is. A proof by contrapositive establishes
+$\neg Q \Rightarrow \neg P$ by a direct argument, and since this is
+equivalent to $P \Rightarrow Q$, the original claim follows.
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Template: Contrapositive}}, fonttitle=\small\bfseries]
+  title={\small\textbf{Template: Proof by Contrapositive}},
+  fonttitle=\small\bfseries]
 \textbf{Goal.} $P \Rightarrow Q$.\\
 \textbf{Equivalent goal.} $\neg Q \Rightarrow \neg P$.\\[4pt]
 Assume $\neg Q$.\\
-$\vdots$ \quad [derive $\neg P$]\\
-Therefore $\neg P$.
+$\vdots$ \quad [derive $\neg P$ from $\neg Q$]\\
+Therefore $\neg P$.\\
 Hence $P \Rightarrow Q$. \qed
 \end{tcolorbox}
 
-\begin{remark}[When to use contrapositive]
-Use contrapositive when the negation of $Q$ is more informative
-or easier to manipulate than $P$ itself.
-Injectivity proofs are a canonical example: to prove
-$f(a) = f(b) \Rightarrow a = b$, it is often cleaner to prove
-the contrapositive $a \neq b \Rightarrow f(a) \neq f(b)$.
+\begin{remark}[When contrapositive is the right tool]
+Contrapositive is useful when the negation of the conclusion is more
+concrete and easier to work with than the hypothesis.
+
+The canonical example is injectivity. To prove $P \Rightarrow Q$ where
+$P$ says ``$f(a) = f(b)$'' and $Q$ says ``$a = b$'': the contrapositive
+is $a \neq b \Rightarrow f(a) \neq f(b)$, which may be directly
+accessible if the function is order-preserving or explicitly defined.
+
+Another signal: when $Q$ is the statement that some object exists or
+some set is non-empty. The negation $\neg Q$ says no such object
+exists, which may be a very restrictive and workable condition.
+
+The general diagnostic: after writing $\neg Q$, look at what it says.
+If it gives you a strong, concrete assumption --- something you can
+actually manipulate --- contrapositive is likely the right tool.
+If $\neg Q$ is vague or complicated, try a different approach.
 \end{remark}
 
-\begin{remark}[Contrapositive vs contradiction]
-Contrapositive: assume $\neg Q$, derive $\neg P$, done.
-Contradiction: assume both $P$ and $\neg Q$, derive any
-absurdity, done.
-Contrapositive is cleaner when it works because the assumption
-is $\neg Q$ alone, not $P \land \neg Q$.
-Try contrapositive before reaching for contradiction.
+\begin{remark}[Contrapositive versus contradiction: the essential difference]
+Students routinely conflate contrapositive and contradiction.
+They are not the same, and knowing the difference matters for clarity.
+
+In a \textbf{contrapositive} proof, you assume \emph{only} $\neg Q$
+and derive $\neg P$. The hypothesis $P$ is never mentioned.
+The logical engine is: you proved $\neg Q \Rightarrow \neg P$,
+which by equivalence gives $P \Rightarrow Q$.
+
+In a \textbf{contradiction} proof, you assume \emph{both} $P$ and $\neg Q$
+simultaneously and derive \emph{any} absurdity --- not necessarily $\neg P$.
+The logical engine is: the assumption $P \land \neg Q$ leads to a false
+statement, so $P \land \neg Q$ must itself be false, so $P \Rightarrow Q$.
+
+When contrapositive works, it is cleaner: you need one assumption, not two,
+and the conclusion you derive ($\neg P$) is specific rather than
+``any contradiction.'' Always try contrapositive before reaching
+for contradiction.
 \end{remark}
 
 \begin{example}[Contrapositive for divisibility]
@@ -40,10 +65,21 @@ Try contrapositive before reaching for contradiction.
 
 \medskip
 \noindent\textit{Proof (contrapositive).}
+We prove the contrapositive: if $n$ is odd then $n^2$ is odd.
+
 Assume $n$ is odd. Then $n = 2k+1$ for some $k \in \mathbb{Z}$.
 \[
 n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2+2k)+1,
 \]
-which is odd. Hence $n$ odd $\Rightarrow$ $n^2$ odd, i.e.,
+which has the form $2m + 1$ and is therefore odd.
+
+Hence $n$ odd $\Rightarrow$ $n^2$ odd, which is the contrapositive of
 $n^2$ even $\Rightarrow$ $n$ even. \qed
+
+\medskip
+\noindent
+Notice: the hypothesis ``$n^2$ is even'' was never used. We proved
+the contrapositive directly, and the original implication follows
+by logical equivalence. There is no need to loop back and mention
+the original statement; the contrapositive suffices.
 \end{example}

@@ -3,47 +3,109 @@
 % =========================================================
 \paragraph{Proof by Contradiction.}
 
-To prove $P$, assume $\neg P$ and derive a statement that
-contradicts a known truth: a hypothesis, an axiom, or a
-previously proved theorem.
+To prove $P$, assume $\neg P$ and derive a statement that contradicts
+a known truth: a hypothesis, an axiom, or a previously proved theorem.
+Since the assumption $\neg P$ led to a false statement, $\neg P$ is
+false, and therefore $P$ is true.
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Template: Contradiction}}, fonttitle=\small\bfseries]
+  title={\small\textbf{Template: Proof by Contradiction}},
+  fonttitle=\small\bfseries]
 \textbf{Goal.} $P$.\\[4pt]
 Suppose for contradiction that $\neg P$.\\
-$\vdots$ \quad [derive a contradiction]\\
+$\vdots$ \quad [derive consequences; identify the absurdity]\\
 This contradicts [name the violated fact].\\
 Therefore $P$. \qed
 \end{tcolorbox}
 
-\begin{remark}[When to use contradiction]
-Contradiction is best reserved for claims whose negation has
-strong consequences. It is the natural tool for:
-\begin{itemize}
-  \item Irrationality proofs ($\neg P$ gives a fraction in lowest
-    terms and leads to a parity contradiction).
-  \item Infinitude of primes ($\neg P$ gives a finite list;
-    constructing a number not on the list contradicts completeness).
-  \item Statements involving nonexistence.
-\end{itemize}
-Avoid using contradiction as a default. When a direct proof or
-contrapositive works, it is cleaner.
+\begin{remark}[The logic: why it works]
+Contradiction relies on the law of the excluded middle: every statement
+is either true or false. To prove $P$, it suffices to show $\neg P$
+is false. You show $\neg P$ is false by deriving from it a statement
+that is known to be false --- a contradiction.
+
+The contradiction can be anything: $0 = 1$, a set that is both empty
+and non-empty, a number that is simultaneously even and odd, an
+inequality $x < x$. The only requirement is that the contradicted fact
+was genuinely established before the current proof began.
+
+This is the move that students most often get wrong: they think they
+have derived a contradiction when they have merely derived something
+surprising. A statement being counterintuitive is not a contradiction.
+The contradicted fact must be something you can point to:
+a hypothesis, an axiom, a definition, or a theorem with a name.
 \end{remark}
 
-\begin{remark}[Name the contradiction explicitly]
-A well-written contradiction proof always names what is contradicted.
-``This contradicts [G2: identity axiom]'' is better than
-``contradiction.'' Naming the violated fact confirms that the
-contradiction is genuine and locates the logical break.
+\begin{remark}[When contradiction is the right tool]
+Contradiction is best reserved for claims whose negation is
+a strong, productive assumption. The archetypes where contradiction
+excels are:
+
+\medskip
+\noindent \textbf{Irrationality proofs.} Assuming $\sqrt{2} \in \mathbb{Q}$
+gives you a fraction in lowest terms; arithmetic then forces the
+numerator and denominator to be simultaneously even, contradicting
+the lowest-terms assumption.
+
+\noindent \textbf{Infinitude arguments.} Assuming there are finitely many
+primes lets you list them; constructing a number not divisible by any
+of them contradicts the assumption that the list was complete.
+
+\noindent \textbf{Nonexistence results.} If you want to show no object
+satisfies some property, assume one exists and derive an absurdity.
+
+\noindent \textbf{Uniqueness} (via assume-two-and-compare). Assuming two
+distinct objects both satisfy a uniqueness condition produces a
+contradiction from the definitions.
+
+\medskip
+\noindent
+Avoid contradiction as a default. When a direct proof or contrapositive
+works, prefer it: the argument is shorter and the logical structure is
+more transparent. Contradiction is a sign that the natural direction
+of inference does not work, and that you need to reason from an
+impossible assumption instead.
+\end{remark}
+
+\begin{remark}[Always name the contradiction explicitly]
+The closing line of a contradiction proof must name what has been
+contradicted. ``This is a contradiction'' with no further specification
+is a red flag: it suggests the student either does not know what was
+contradicted, or is hoping the reader will not check.
+
+Write: ``This contradicts the assumption that $\gcd(p,q) = 1$.''
+Write: ``This contradicts Theorem~X, which asserts $\ldots$''
+Write: ``This contradicts $m \in S$ being the least element.''
+
+Naming the violated fact performs two functions: it confirms that the
+contradiction is genuine, and it locates the logical break in the
+argument so that anyone reading the proof can verify it.
 \end{remark}
 
 \begin{example}[$\sqrt{2}$ is irrational]
 \textit{Proof.}
 Suppose for contradiction that $\sqrt{2} \in \mathbb{Q}$.
-Write $\sqrt{2} = p/q$ with $p, q \in \mathbb{Z}$, $q \neq 0$,
-and $\gcd(p,q) = 1$.
-Then $2q^2 = p^2$, so $p^2$ is even, so $p$ is even (write $p = 2k$).
-Then $2q^2 = 4k^2$, so $q^2 = 2k^2$, so $q$ is even.
-But then $\gcd(p,q) \geq 2$, contradicting $\gcd(p,q) = 1$. \qed
+Write $\sqrt{2} = p/q$ where $p, q \in \mathbb{Z}$, $q \neq 0$,
+and $\gcd(p,q) = 1$ (in lowest terms; this is possible by the
+definition of $\mathbb{Q}$).
+
+Squaring: $2q^2 = p^2$.
+So $p^2$ is even, which forces $p$ to be even (by the contrapositive
+example above). Write $p = 2k$.
+
+Then $2q^2 = (2k)^2 = 4k^2$, so $q^2 = 2k^2$.
+So $q^2$ is even, which forces $q$ to be even.
+
+But then both $p$ and $q$ are even, so $\gcd(p,q) \geq 2$.
+This contradicts $\gcd(p,q) = 1$.
+
+Therefore $\sqrt{2} \notin \mathbb{Q}$. \qed
+
+\medskip
+\noindent
+The structure is: assume $\neg P$ (i.e., $\sqrt{2} \in \mathbb{Q}$);
+extract information from this assumption (lowest-terms representation);
+derive a consequence (both $p$ and $q$ even); identify the contradiction
+(conflicts with lowest terms); conclude $P$.
 \end{example}

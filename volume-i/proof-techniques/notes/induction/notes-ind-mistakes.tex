@@ -4,66 +4,86 @@
 \paragraph{Common Induction Mistakes.}
 
 \begin{remark}[Mistake 1: Missing base case]
-A proof that establishes the inductive step but not the base case
-proves nothing. The inductive step alone says: \emph{if} $P(n)$
-holds for some $n$, then $P(n+1)$ holds. Without a base case,
-there is no $n$ for which $P(n)$ is known to hold, so the
-chain never starts.
+A proof that establishes the inductive step but not the base case proves
+nothing. The step says: \emph{if} $P(n)$ holds for some $n$, \emph{then}
+$P(n+1)$ holds. Without a base case, there is no $n$ for which $P(n)$
+is established, so the chain never starts.
 
-\textbf{Classic fake theorem}: ``All horses are the same colour.''
-\textit{Proof attempt}: Base case $n=1$: one horse is trivially
-the same colour as itself. Inductive step: [flawed argument].
-The flaw is in the inductive step, but the lesson is that
-even a correct base case does not rescue a bad step.
-Scrutinize both parts independently.
+The classic illustration: the false theorem ``all horses are the same
+colour.'' The base case for $n = 1$ is trivially true (one horse has
+one colour). The inductive step has a subtle flaw in the overlap argument.
+The lesson is that both parts are essential and independent. Always
+verify the base case, even when it seems trivial. A trivial base case
+takes one line; write the one line.
 \end{remark}
 
 \begin{remark}[Mistake 2: Circular inductive step]
-The inductive step must prove $P(n+1)$ using only $P(n)$ (or
-earlier cases in strong induction) and previously established
-facts. It is illegal to assume $P(n+1)$ anywhere in the proof
-of $P(n+1)$.
+The inductive step proves $P(n+1)$ using only $P(n)$ and previously
+established facts. It is a fatal error to assume $P(n+1)$ at any point
+in the proof of $P(n+1)$.
 
-This error is most common when the student ``derives'' both
-sides of an equation and meets in the middle, inadvertently
-assuming the conclusion. Always work in one direction: from
-$P(n)$, derive $P(n+1)$.
+This error most often appears when a student ``derives'' both sides of
+an equation and meets in the middle, inadvertently assuming what they
+are trying to prove. The symptom: the final few lines of the step are
+not deductions from $P(n)$ but rather manipulations of $P(n+1)$ itself.
+
+The cure: always work in one direction. Start with the left side of
+$P(n+1)$ (or whatever the goal is), apply the inductive hypothesis once,
+and algebraically arrive at the right side. Never write the target as
+an intermediate line and work toward it from both sides.
 \end{remark}
 
-\begin{remark}[Mistake 3: Wrong or missing inductive hypothesis]
-The most common error in practice is writing ``assume $P(n)$''
-without stating what $P(n)$ says. This is a sign that $P(n)$
-has not been written down as a full sentence. Write it out.
-If you cannot state $P(n)$ as a complete mathematical sentence,
-you do not yet know what you are inducting on.
+\begin{remark}[Mistake 3: Unstated inductive hypothesis]
+The most common error in practice is writing ``assume $P(n)$'' without
+saying what $P(n)$ actually says. This is a sign that $P(n)$ has not
+been written out as a full sentence.
+
+The effect is that the inductive step becomes vague at the crucial
+moment: the student needs to use the inductive hypothesis but cannot
+cite it precisely, so they either paraphrase it loosely (which may
+introduce errors) or implicitly use a stronger version than what was
+stated.
+
+Write $P(n)$ as a complete sentence at the top of the proof. Then
+write ``assume $P(n)$: $[\text{full sentence}]$.'' This forces precision
+and prevents the most common errors in the body of the proof.
 \end{remark}
 
-\begin{remark}[Mistake 4: Off-by-one base case]
-Induction proves $P(n)$ for all $n \geq n_0$, where $n_0$ is
-the base case. If the claim is only true for $n \geq 2$,
-the base case $n = 0$ may fail, and the proof should start at
-$n = 2$.
+\begin{remark}[Mistake 4: Wrong base case]
+Induction proves $P(n)$ for all $n \geq n_0$, where $n_0$ is whatever
+value you use as the base case. If the claim is only true for $n \geq 2$,
+the base case $n = 0$ will fail, and the proof is invalid.
 
-Check: what is the smallest $n$ for which the claim is true?
-That is your base case. Do not default to $n = 0$ or $n = 1$
-without verifying.
+Always check: what is the smallest $n$ for which the claim is true?
+That is your base case. Do not default to $n = 0$ or $n = 1$ without
+verifying that the claim holds there. For divisibility statements,
+$n = 0$ often gives $0 = 0 \cdot k$, which works. For growth bounds,
+$n = 1$ or $n = 2$ may be needed. For Fibonacci identities, specific
+small values may require individual checking.
 \end{remark}
 
-\begin{remark}[Mistake 5: Using strong induction when weak suffices]
-Strong induction is not more powerful than weak induction in the
-sense that they prove the same class of statements. But a proof
-that uses the full strength of the strong hypothesis when only
-$P(n)$ is needed is unnecessarily complicated. Use weak induction
-unless the step genuinely requires knowing $P(k)$ for some
-$k < n$ other than $k = n - 1$.
+\begin{remark}[Mistake 5: Using strong induction where weak suffices, and vice versa]
+Strong induction is not automatically better than weak. A proof that
+invokes the full strong hypothesis ``$P(k)$ for all $k < n$'' when
+only $P(n-1)$ is actually used is unnecessarily complicated and obscures
+the proof's logic.
+
+Conversely, a proof that tries to use weak induction on a recursion
+requiring two prior terms will stall at the step.
+
+The diagnostic: write the step and check explicitly which prior values
+you use. If only $P(n)$, use weak. If $P(k)$ for some $k < n$ that
+is not $n-1$, use strong.
 \end{remark}
 
 \begin{remark}[Mistake 6: Forgetting vacuity in strong induction]
-In strong induction, the case $n = 0$ has a vacuously true
-hypothesis $\forall k < 0,\; P(k)$, since no natural number
-is less than $0$. This means $P(0)$ must be proved directly,
-not derived from the inductive hypothesis. Many students
-write ``by the inductive hypothesis applied to $n-1$'' when
-$n = 0$ has no predecessor. The base case is always proved
-from scratch.
+In strong induction, the case $n = 0$ has a vacuously true hypothesis
+$\forall k < 0,\; P(k)$, since no natural number is less than $0$.
+This means $P(0)$ must be proved \emph{directly}, not from the inductive
+hypothesis. Many students write ``by the inductive hypothesis applied
+to $n - 1$'' for $n = 0$, which refers to $n - 1 = -1$, a non-existent
+value.
+
+The base case in strong induction is always proved from scratch.
+The strong hypothesis is only available for $n \geq 1$.
 \end{remark}

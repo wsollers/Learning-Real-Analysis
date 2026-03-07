@@ -1,59 +1,84 @@
 % =========================================================
-% Weak Induction
+% Weak (Standard) Induction
 % =========================================================
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem: Weak Induction}},
+  title={\small\textbf{Theorem: Weak (Standard) Induction}},
   fonttitle=\small\bfseries]
-Let $P(n)$ be a statement depending on $n \in \mathbb{N}$.
-Suppose:
-\begin{enumerate}
-  \item \textbf{Base case.} $P(0)$ is true.
-  \item \textbf{Inductive step.} For all $n \in \mathbb{N}$,
+Let $P(n)$ be a statement depending on $n \in \mathbb{N}$. Suppose:
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Base case.} $P(n_0)$ is true for some starting value $n_0$.
+  \item \textbf{Inductive step.} For all $n \geq n_0$,
     $P(n) \Rightarrow P(n+1)$.
 \end{enumerate}
-Then $P(n)$ is true for all $n \in \mathbb{N}$.
+Then $P(n)$ is true for all $n \geq n_0$.
 \end{tcolorbox}
 
 \begin{tcolorbox}[colback=gray!4, colframe=gray!35, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Template: Weak Induction Proof}},
   fonttitle=\small\bfseries]
-Let $P(n)$ denote the statement: [\emph{write it out explicitly}].
+Let $P(n)$ denote the statement: [\emph{write it out completely as a sentence}].
 
 \medskip
-\noindent\textbf{Base case} ($n = [\text{start}]$).
-[\emph{Verify $P(\text{start})$ directly.}]
-Hence $P(\text{start})$ holds.
+\noindent\textbf{Base case} ($n = [n_0]$).
+[\emph{Verify $P(n_0)$ directly.}]
+Hence $P(n_0)$ holds.
 
 \medskip
 \noindent\textbf{Inductive step.}
-Let $n \in \mathbb{N}$ and assume $P(n)$ holds.
-[\emph{This is the inductive hypothesis --- state it explicitly.}]
+Let $n \geq n_0$ and assume $P(n)$ holds. [\emph{State explicitly
+what $P(n)$ says.}]
 We show $P(n+1)$ holds.
 
-[\emph{Work. Use $P(n)$ at least once.}]
+[\emph{Rewrite $P(n+1)$ to expose $P(n)$ inside it.
+Substitute the inductive hypothesis. Simplify.}]
 
 Hence $P(n+1)$ holds.
 
 \medskip
-\noindent By induction, $P(n)$ holds for all $n \geq [\text{start}]$. \qed
+\noindent By induction, $P(n)$ holds for all $n \geq n_0$. \qed
 \end{tcolorbox}
 
-\begin{remark}[The base case is not trivial]
-The base case is logically necessary, not a formality.
-A proof that omits it is invalid, regardless of how clean the
-inductive step is. However, the base case is usually the easiest
-part. Do not spend more than a line or two on it.
+\begin{remark}[The most important discipline: write $P(n)$ as a sentence]
+The single most impactful habit in induction proofs is writing the
+inductive hypothesis as a \emph{complete mathematical sentence}
+before the inductive step begins.
+
+``Assume $P(n)$ holds'' is not sufficient if you have not first written
+out what $P(n)$ says. Write: ``Assume
+$\sum_{k=1}^n k = \frac{n(n+1)}{2}$.'' That sentence is your
+inductive hypothesis. It is the precise tool you have available in
+the inductive step.
+
+Without this sentence, students typically make one of two errors:
+they try to use $P(n)$ without knowing what it says, guessing at it
+from context; or they prove the inductive step using information
+beyond what $P(n)$ supplies, making the proof circular or invalid.
+Write the sentence. It takes five seconds and eliminates the
+most common induction error.
 \end{remark}
 
-\begin{remark}[State the inductive hypothesis explicitly]
-The single most important discipline in induction proofs is
-writing the inductive hypothesis as a full sentence before
-the inductive step begins. ``Assume $P(n)$ holds'' is not
-sufficient. Write: ``Assume $\sum_{k=1}^n k = \frac{n(n+1)}{2}$.''
-This forces you to know what you are allowed to use,
-and it is the step most students skip.
+\begin{remark}[The core skill of the inductive step]
+Every inductive step involves the same core action: \emph{rewrite
+$P(n+1)$ to expose $P(n)$ inside it, then substitute the inductive
+hypothesis.}
+
+For sum formulas, this means: split off the last term.
+\[
+\sum_{k=1}^{n+1} k = \left(\sum_{k=1}^n k\right) + (n+1).
+\]
+Now substitute $P(n)$: replace $\sum_{k=1}^n k$ with $\frac{n(n+1)}{2}$.
+Simplify to get the $P(n+1)$ form.
+
+For divisibility, this means: write $4^{n+1} - 1 = 4(4^n - 1) + 3$
+to expose $4^n - 1$ inside $4^{n+1} - 1$.
+
+In both cases, the step is: factor out the $P(n)$ term, substitute,
+and verify the arithmetic produces $P(n+1)$.
+
+When the rewriting step is not obvious, it usually means $P(n)$ needs
+to be strengthened (see Section~\ref{sec:choosing-pn}).
 \end{remark}
 
 \begin{example}[Sum formula]
@@ -63,12 +88,11 @@ $\displaystyle\sum_{k=1}^n k = \frac{n(n+1)}{2}$.
 
 \medskip
 \noindent\textit{Proof.}
-Let $P(n)$ denote the statement
-$\displaystyle\sum_{k=1}^n k = \frac{n(n+1)}{2}$.
+Let $P(n)$ denote: $\displaystyle\sum_{k=1}^n k = \frac{n(n+1)}{2}$.
 
 \medskip
 \noindent\textbf{Base case} ($n=1$).
-$\displaystyle\sum_{k=1}^1 k = 1 = \frac{1 \cdot 2}{2}$.
+$\sum_{k=1}^1 k = 1 = \frac{1 \cdot 2}{2}$.
 Hence $P(1)$ holds.
 
 \medskip
@@ -79,18 +103,17 @@ $\displaystyle\sum_{k=1}^n k = \frac{n(n+1)}{2}$. \quad
 
 We show $\displaystyle\sum_{k=1}^{n+1} k = \frac{(n+1)(n+2)}{2}$.
 
+Split off the last term:
 \begin{align*}
 \sum_{k=1}^{n+1} k
 &= \left(\sum_{k=1}^n k\right) + (n+1) \\
 &= \frac{n(n+1)}{2} + (n+1)
-  \tag{by inductive hypothesis} \\
+  \tag{inductive hypothesis} \\
 &= (n+1)\left(\frac{n}{2} + 1\right)
   = \frac{(n+1)(n+2)}{2}.
 \end{align*}
 
-Hence $P(n+1)$ holds.
-
-By induction, $P(n)$ holds for all $n \geq 1$. \qed
+Hence $P(n+1)$ holds. By induction, $P(n)$ holds for all $n \geq 1$. \qed
 \end{example}
 
 \begin{example}[Divisibility]
@@ -99,34 +122,31 @@ For all $n \geq 0$, $3 \mid (4^n - 1)$.
 
 \medskip
 \noindent\textit{Proof.}
-Let $P(n)$ denote ``$3 \mid (4^n - 1)$''.
+Let $P(n)$ denote: $3 \mid (4^n - 1)$.
 
 \medskip
 \noindent\textbf{Base case} ($n=0$).
-$4^0 - 1 = 0 = 3 \cdot 0$. Hence $3 \mid 0$, so $P(0)$ holds.
+$4^0 - 1 = 0 = 3 \cdot 0$. Hence $3 \mid 0$ and $P(0)$ holds.
 
 \medskip
 \noindent\textbf{Inductive step.}
-Assume $3 \mid (4^n - 1)$, i.e., $4^n - 1 = 3m$ for some
-$m \in \mathbb{Z}$.
+Assume $3 \mid (4^n - 1)$, i.e., $4^n - 1 = 3m$ for some $m \in \mathbb{Z}$.
 
-We compute:
+Expose $4^n - 1$ inside $4^{n+1} - 1$:
 \[
 4^{n+1} - 1 = 4 \cdot 4^n - 1
 = 4(4^n - 1) + 4 - 1
+= 4(4^n - 1) + 3
 = 4 \cdot 3m + 3
 = 3(4m + 1).
 \]
-Hence $3 \mid (4^{n+1}-1)$, so $P(n+1)$ holds.
+Hence $3 \mid (4^{n+1}-1)$ and $P(n+1)$ holds.
 
 By induction, $P(n)$ holds for all $n \geq 0$. \qed
-\end{example}
 
-\begin{remark}[Anatomy of both examples]
-In both examples, the inductive step follows a single pattern:
-\emph{rewrite $P(n+1)$ to expose $P(n)$ inside it, then substitute
-the inductive hypothesis.} This rewriting step is the core skill
-of weak induction. When it is not obvious how to expose $P(n)$,
-the statement $P(n)$ may need to be strengthened ---
-see Section~\ref{sec:choosing-pn}.
-\end{remark}
+\medskip
+\noindent
+The rewriting step $4^{n+1} - 1 = 4(4^n - 1) + 3$ is the key move:
+it exposes the inductive hypothesis $3 \mid (4^n - 1)$ inside
+the goal $3 \mid (4^{n+1} - 1)$.
+\end{example}
