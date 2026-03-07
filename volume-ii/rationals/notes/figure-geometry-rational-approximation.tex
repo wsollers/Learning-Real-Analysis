@@ -1,0 +1,192 @@
+% =========================================================
+% Geometry of Rational Approximation
+% =========================================================
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[x=1.25cm,y=1.15cm,>=stealth]
+
+% ---------------------------------------------------------
+% Title
+% ---------------------------------------------------------
+\node[font=\large\bfseries] at (4.5,3.8)
+{The Geometry of Rational Approximation};
+
+% ---------------------------------------------------------
+% Top number line: Farey neighbors and mediant
+% ---------------------------------------------------------
+\draw[thick] (0,3) -- (9,3);
+
+\node[below] at (0,3) {$0$};
+\node[below] at (9,3) {$1$};
+
+% Farey neighbors
+\draw[thick] (2,3.12) -- (2,2.88);
+\draw[thick] (7,3.12) -- (7,2.88);
+
+\node[above] at (2,3.15) {$\frac{a}{b}$};
+\node[above] at (7,3.15) {$\frac{c}{d}$};
+
+% Mediant
+\draw[thick,blue] (4.5,3.12) -- (4.5,2.88);
+\node[above,blue] at (4.5,3.15) {$\frac{a+c}{b+d}$};
+
+% Gap label
+\draw[<->] (2,2.55) -- (7,2.55);
+\node[below] at (4.5,2.55) {$\displaystyle \frac{c}{d}-\frac{a}{b}=\frac{1}{bd}$};
+
+% Mediant split arrows
+\draw[<->,blue] (2,3.45) -- (4.5,3.45);
+\draw[<->,blue] (4.5,3.45) -- (7,3.45);
+
+\node[above,blue] at (3.25,3.45)
+{$\displaystyle \frac{a+c}{b+d}-\frac{a}{b}=\frac{1}{b(b+d)}$};
+
+\node[above,blue] at (5.75,3.45)
+{$\displaystyle \frac{c}{d}-\frac{a+c}{b+d}=\frac{1}{d(b+d)}$};
+
+% ---------------------------------------------------------
+% Middle layer: Stern-Brocot refinement
+% ---------------------------------------------------------
+\node[font=\bfseries] at (4.5,1.95) {Stern--Brocot refinement};
+
+% Level 0
+\node at (0.8,1.35) {$\frac01$};
+\node at (4.5,1.35) {$\frac11$};
+\node at (8.2,1.35) {$\frac10$};
+
+% Level 1
+\node at (2.65,0.55) {$\frac12$};
+\node at (6.35,0.55) {$\frac21$};
+
+% Edges
+\draw (0.8,1.15) -- (2.65,0.73);
+\draw (4.5,1.15) -- (2.65,0.73);
+
+\draw (4.5,1.15) -- (6.35,0.73);
+\draw (8.2,1.15) -- (6.35,0.73);
+
+% Level 2
+\node at (1.7,-0.25) {$\frac13$};
+\node at (3.6,-0.25) {$\frac23$};
+\node at (5.4,-0.25) {$\frac32$};
+\node at (7.3,-0.25) {$\frac31$};
+
+\draw (0.8,1.15) -- (1.7,-0.07);
+\draw (2.65,0.37) -- (1.7,-0.07);
+
+\draw (2.65,0.37) -- (3.6,-0.07);
+\draw (4.5,1.15) -- (3.6,-0.07);
+
+\draw (4.5,1.15) -- (5.4,-0.07);
+\draw (6.35,0.37) -- (5.4,-0.07);
+
+\draw (6.35,0.37) -- (7.3,-0.07);
+\draw (8.2,1.15) -- (7.3,-0.07);
+
+% ---------------------------------------------------------
+% Bottom number line: Dirichlet-style approximation
+% ---------------------------------------------------------
+\draw[thick] (0,-1.4) -- (9,-1.4);
+\node[below] at (0,-1.4) {$0$};
+\node[below] at (9,-1.4) {$1$};
+
+% irrational x
+\draw[very thick,red] (5.15,-1.26) -- (5.15,-1.54);
+\node[above,red] at (5.15,-1.18) {$x$};
+
+% rational approximants
+\draw[thick] (4.4,-1.32) -- (4.4,-1.48);
+\draw[thick] (4.95,-1.32) -- (4.95,-1.48);
+\draw[thick] (5.28,-1.32) -- (5.28,-1.48);
+\draw[thick] (5.85,-1.32) -- (5.85,-1.48);
+
+\node[below] at (4.4,-1.52) {$\frac{p_1}{q_1}$};
+\node[below] at (4.95,-1.52) {$\frac{p_2}{q_2}$};
+\node[below] at (5.28,-1.52) {$\frac{p_3}{q_3}$};
+\node[below] at (5.85,-1.52) {$\frac{p_4}{q_4}$};
+
+% shrinking Dirichlet windows
+\draw[dashed] (4.65,-1.0) circle (0.55);
+\draw[dashed] (5.05,-1.0) circle (0.32);
+\draw[dashed] (5.18,-1.0) circle (0.18);
+
+\node[right] at (6.05,-0.55)
+{$\displaystyle \left|x-\frac{p}{q}\right|<\frac{1}{q^2}$};
+
+% arrows to x
+\draw[->] (4.4,-0.55) -- (5.1,-1.18);
+\draw[->] (4.95,-0.35) -- (5.1,-1.18);
+\draw[->] (5.28,-0.35) -- (5.18,-1.18);
+\draw[->] (5.85,-0.55) -- (5.2,-1.18);
+
+% ---------------------------------------------------------
+% Connecting annotations
+% ---------------------------------------------------------
+\node[align=center] at (1.35,-2.35)
+{\small Farey neighbors have\\ \small exact gap $\frac{1}{bd}$};
+
+\node[align=center] at (4.5,-2.35)
+{\small mediants refine intervals\\ \small by shrinking both subgaps};
+
+\node[align=center] at (7.6,-2.35)
+{\small repeated refinement yields\\ \small strong rational approximations};
+
+\end{tikzpicture}
+
+\caption{The geometry of rational approximation. 
+At the top, neighboring fractions in a Farey sequence are separated by the exact gap
+$\frac{1}{bd}$, and the mediant splits this interval into two smaller gaps.
+In the middle, repeated mediant insertion generates the Stern--Brocot tree.
+At the bottom, rational numbers with increasing denominators approximate a real number
+$x$ with rapidly shrinking error, reflecting Dirichlet-type bounds.}
+\label{fig:geometry-rational-approximation}
+\end{figure}
+
+
+\begin{remark}
+This figure summarizes several of the central geometric ideas governing
+the rational numbers.
+
+At the top, Farey neighbors
+\[
+\frac{a}{b} < \frac{c}{d}
+\]
+are separated by the exact distance
+\[
+\frac{c}{d}-\frac{a}{b}=\frac{1}{bd}.
+\]
+The mediant
+\[
+\frac{a+c}{b+d}
+\]
+lies between them and splits the original interval into two smaller
+intervals:
+\[
+\frac{a+c}{b+d}-\frac{a}{b}=\frac{1}{b(b+d)},
+\qquad
+\frac{c}{d}-\frac{a+c}{b+d}=\frac{1}{d(b+d)}.
+\]
+
+In the middle, repeated mediant insertion generates the Stern--Brocot
+tree, which contains every positive rational number exactly once.
+
+At the bottom, one sees the approximation viewpoint: rational numbers
+with growing denominators lie closer and closer to a real number $x$.
+Dirichlet's theorem shows that these approximations can often be made
+surprisingly sharp, with error on the order of $\frac{1}{q^2}$.
+
+Thus Farey sequences, mediants, Stern--Brocot refinement, and Dirichlet
+approximation are not isolated topics. They are different manifestations
+of the same hidden geometry of the rational numbers.
+\end{remark}
+
+
+
+
+
+
+
+
+
+
