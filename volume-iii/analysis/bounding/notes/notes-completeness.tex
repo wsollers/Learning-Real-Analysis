@@ -94,6 +94,37 @@ If additionally $b_n - a_n \to 0$, the intersection consists of exactly one
 point.
 \end{theorem}
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=0.95cm, y=0.9cm, >=Latex]
+  % Draw four nested intervals, each row shifted down
+  \foreach \row/\la/\rb/\label in {
+    0/0.0/10.0/{$[a_1, b_1]$},
+    1/1.2/8.5/{$[a_2, b_2]$},
+    2/2.0/7.0/{$[a_3, b_3]$},
+    3/2.6/5.8/{$[a_4, b_4]$}
+  }{
+    \draw[thick, blue!70!black] (\la, -\row*0.8) -- (\rb, -\row*0.8);
+    \fill[blue!70!black] (\la, -\row*0.8) circle (2.0pt);
+    \fill[blue!70!black] (\rb, -\row*0.8) circle (2.0pt);
+    \node[left] at (\la-0.1, -\row*0.8) {\small \label};
+  }
+  % Indicate left endpoints climbing
+  \draw[->, dashed, red!70!black, thick] (0.0,-0.0) -- (0.0,-3.2);
+  \node[right, red!70!black] at (0.05, -1.6) {\small $(a_n)\!\uparrow$};
+  % Indicate right endpoints falling
+  \draw[->, dashed, red!70!black, thick] (10.0,0.0) -- (10.0,-3.2);
+  \node[left, red!70!black] at (9.95, -1.6) {\small $(b_n)\!\downarrow$};
+  % Pinch point
+  \draw[dotted] (4.0, 0.4) -- (4.0, -3.3);
+  \node[above] at (4.0, 0.45) {\small $x \in \bigcap [a_n,b_n]$};
+\end{tikzpicture}
+\caption{Nested intervals $[a_1,b_1] \supseteq [a_2,b_2] \supseteq \cdots$ pinch toward a
+common point. The sequence of left endpoints is increasing and bounded above; its
+supremum $x$ lies in every interval.}
+\label{fig:nested-intervals}
+\end{figure}
+
 
 
 % =========================================================
@@ -101,6 +132,23 @@ point.
 % =========================================================
 
 \subsubsection{Archimedean Property}
+
+\begin{remark*}[Why this needs a proof]
+The Archimedean property asserts that the natural numbers are unbounded in $\mathbb{R}$.
+This might seem obvious --- after all, $1, 2, 3, \ldots$ keep growing --- but
+that intuition assumes we have already constructed $\mathbb{N}$ inside $\mathbb{R}$
+from first principles. Here we are working axiomatically, and the ordered-field
+axioms alone do not prevent $\mathbb{N}$ from being bounded. (Non-Archimedean
+ordered fields, such as fields of formal Laurent series, satisfy all ordered-field
+axioms yet have bounded $\mathbb{N}$.)
+
+The Completeness Axiom rules this out: if $\mathbb{N}$ were bounded above in
+$\mathbb{R}$, it would have a supremum $\alpha \in \mathbb{R}$ by the LUB
+property. But then $\alpha - 1$ is not an upper bound (by the
+$\varepsilon$-characterization with $\varepsilon = 1$), so some $n \in \mathbb{N}$
+satisfies $n > \alpha - 1$, giving $n + 1 > \alpha$ --- a natural number larger
+than the supposed supremum.
+\end{remark*}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -150,6 +198,23 @@ m \le x < m + 1.
 \]
 \end{lemma}
 
+\begin{remark*}[Worked example]
+Before proving the lemma, verify it on two concrete cases.
+
+\medskip
+\textbf{Case $x = 2.7$:} we seek $m \in \mathbb{Z}$ with $m \le 2.7 < m+1$.
+Taking $m = 2$ gives $2 \le 2.7 < 3$. \checkmark
+
+\medskip
+\textbf{Case $x = -1.3$:} we seek $m \le -1.3 < m+1$.
+One might guess $m = -1$, but $-1.3 < -1$, so $-1 \le -1.3$ fails.
+The correct choice is $m = -2$: $-2 \le -1.3 < -1$. \checkmark
+
+The key point for negative non-integers is that the floor rounds \emph{down}
+(toward $-\infty$), not toward zero.  The proof below constructs $m$ via the
+Archimedean property, which applies uniformly to positive and negative $x$.
+\end{remark*}
+
 
 
 % =========================================================
@@ -183,6 +248,22 @@ $\mathbb{Q}$ is dense in $\mathbb{R}$.
 \begin{corollary}[Irrationals Are Dense]
 Between any two distinct real numbers lies an irrational.
 \end{corollary}
+
+\begin{remark*}[Proof idea: scale to hunt for a rational, then multiply back]
+We want an irrational $t \in (a, b)$.
+Irrationals are harder to construct directly, so the strategy is:
+
+\medskip
+\textbf{Observation:} if $q$ is a nonzero rational and $\sqrt{2}$ is irrational,
+then $q\sqrt{2}$ is irrational.
+
+\medskip
+\textbf{Plan:} instead of hunting for an irrational in $(a, b)$, hunt for a
+rational $q \in (a/\sqrt{2},\, b/\sqrt{2})$ (possible by Density of $\mathbb{Q}$),
+then set $t = q\sqrt{2}$.
+Since $a/\sqrt{2} < q < b/\sqrt{2}$, multiplying through by $\sqrt{2} > 0$ gives
+$a < t < b$, and $t = q\sqrt{2}$ is irrational.
+\end{remark*}
 
 \begin{corollary}[Density of Irrationals]
 The irrationals are dense in $\mathbb{R}$.
@@ -239,3 +320,36 @@ Completeness yields, in logical order:
 Completeness is the property that prevents holes in $\mathbb{R}$. It is
 equivalent to the Cauchy Criterion and underlies every major limit theorem
 in real analysis.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=0.5cm and 0.6cm,
+  box/.style={draw, rounded corners=3pt, fill=gray!8, minimum width=3.1cm,
+               minimum height=0.65cm, align=center, font=\small},
+  axiombox/.style={draw, rounded corners=3pt, fill=axiombox,
+               draw=axiomborder, minimum width=3.1cm,
+               minimum height=0.65cm, align=center, font=\small},
+  arr/.style={->, thick, >=Latex}
+]
+  \node[axiombox] (comp) {Completeness Axiom};
+
+  \node[box, below left=0.9cm and 1.5cm of comp]  (nip)   {Nested Interval\\Property};
+  \node[box, below right=0.9cm and 1.5cm of comp] (sqrt)  {Existence of $\sqrt{a}$};
+
+  \node[box, below=0.9cm of nip]   (arch)  {Archimedean Property};
+  \node[box, below=0.9cm of arch]  (floor) {Floor Lemma};
+  \node[box, below=0.9cm of floor] (densQ) {Density of $\mathbb{Q}$};
+  \node[box, below=0.9cm of densQ] (densI) {Density of Irrationals};
+
+  \draw[arr] (comp) -- (nip);
+  \draw[arr] (comp) -- (sqrt);
+  \draw[arr] (nip)  -- (arch);
+  \draw[arr] (arch) -- (floor);
+  \draw[arr] (floor)-- (densQ);
+  \draw[arr] (densQ)-- (densI);
+\end{tikzpicture}
+\caption{Logical dependency chain from the Completeness Axiom.
+Every result in this chapter ultimately flows from the single axiom at the top.}
+\label{fig:completeness-chain}
+\end{figure}

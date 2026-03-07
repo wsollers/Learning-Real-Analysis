@@ -143,6 +143,37 @@ completeness.
 
 
 
+\begin{remark*}[Dependency map for the Cauchy Criterion]
+The Cauchy Criterion is the capstone of the sequences chapter.
+Its hard direction (Cauchy $\Rightarrow$ convergent) chains four
+non-trivial results.  Before beginning the proof, orient yourself:
+
+\medskip
+\begin{center}
+\begin{tikzpicture}[node distance=1.0cm and 1.5cm,
+  box/.style={draw, rounded corners=2pt, fill=gray!8, minimum width=3.8cm,
+    minimum height=0.6cm, align=center, font=\small},
+  arr/.style={->, thick, >=Latex}]
+\node[box] (cau) {$(a_n)$ is Cauchy};
+\node[box, below=of cau] (bdd) {$(a_n)$ is bounded};
+\node[box, below=of bdd] (bw) {$\exists$ convergent\\subsequence $(a_{n_k}) \to L$};
+\node[box, below=of bw] (conv) {$(a_n) \to L$};
+
+\draw[arr] (cau) -- (bdd) node[midway,right,font=\scriptsize]
+  {Cauchy sequences are bounded};
+\draw[arr] (bdd) -- (bw) node[midway,right,font=\scriptsize]
+  {Bolzano--Weierstrass};
+\draw[arr] (bw) -- (conv) node[midway,right,font=\scriptsize,align=left]
+  {Subseq inherits limit\\$+$ Cauchy forces\\full convergence};
+\end{tikzpicture}
+\end{center}
+
+\medskip
+The easy direction (convergent $\Rightarrow$ Cauchy) uses only the triangle
+inequality and does not depend on completeness.
+The hard direction is where completeness of $\mathbb{R}$ does the work.
+\end{remark*}
+
 \begin{theorem}[Cauchy Criterion in $\mathbb{R}$]
 A sequence $(a_n)$ of real numbers converges if and only if it is Cauchy.
 \end{theorem}

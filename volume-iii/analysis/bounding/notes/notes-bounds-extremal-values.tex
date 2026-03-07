@@ -237,6 +237,60 @@ following proposition gives an equivalent condition that is often easier
 to apply in practice, replacing the universal quantifier over upper bounds
 with a local $\varepsilon$-witness condition.
 
+\begin{remark*}[Why the $\varepsilon$-condition? A tightness test.]
+Verifying that $s = \sup A$ directly from the definition requires confirming
+that $s \le u$ for \emph{every} upper bound $u$ --- a universal quantifier
+ranging over all of $\mathbb{R}$.  That is globally hard to check.
+
+The $\varepsilon$-characterization replaces this with a \emph{local tightness
+test}: $s$ leaves no slack above $A$.  Formally, there is no gap between
+$s$ and the set $A$ that a real number could slip into undetected.  If
+any $\varepsilon > 0$ found no element of $A$ in $(s-\varepsilon, s]$,
+then $s - \varepsilon/2$ would be a smaller upper bound, contradicting
+$s$ being least.
+
+\medskip
+
+The diagram below makes this geometric:
+$\sup A$ sits exactly at the right edge of $A$, and for every
+$\varepsilon > 0$ the window $(s-\varepsilon, s]$ is non-empty.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1.0cm, y=1.0cm, >=Latex]
+  % Number line
+  \draw[->] (0,0) -- (11,0) node[right] {};
+
+  % Set A region
+  \draw[very thick, blue] (1.0,0) -- (6.0,0);
+  \node[above, blue] at (3.2, 0.08) {$A$};
+  \draw[blue, fill=blue] (1.0,0) circle (2.2pt);
+  % Open right end of A
+  \draw[blue] (6.0,0) circle (2.2pt);
+
+  % sup A marker
+  \draw[very thick] (6.0,-0.2) -- (6.0,0.5);
+  \node[above] at (6.0, 0.52) {$\sup A$};
+
+  % upper bounds region
+  \draw[very thick, red!60!black, dashed] (6.0,0) -- (10.5,0);
+  \node[above, red!60!black] at (8.5, 0.08) {upper bounds};
+
+  % epsilon window
+  \draw[<->, thick, violet] (4.5,-0.55) -- (6.0,-0.55);
+  \node[below, violet] at (5.25,-0.55) {$\varepsilon$};
+  \draw[dotted] (4.5,0.5) -- (4.5,-0.55);
+  \node[above] at (4.5, 0.5) {$s - \varepsilon$};
+
+  % annotation
+  \node[below] at (5.25, -0.95) {\small some $a \in A$ always found here};
+\end{tikzpicture}
+\caption{For any $\varepsilon > 0$, the window $(s-\varepsilon, s]$ contains an
+element of $A$ --- this is the tightness condition.}
+\label{fig:sup-eps-char}
+\end{figure}
+\end{remark*}
+
 \begin{proposition}[$\varepsilon$-Characterization of Supremum and Infimum]
 \label{prop:eps-char}
 Let $A \subseteq \mathbb{R}$ be nonempty. Both of the following hold.

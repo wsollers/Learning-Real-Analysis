@@ -124,6 +124,84 @@ $[a, b]$ has a convergent subsequence whose limit lies in $[a, b]$.
 
 % ---------------------------------------------------------
 
+\begin{remark*}[Motivation: the peak-index argument]
+Why should every sequence have a monotone subsequence?
+The key insight is a dichotomy based on \emph{peak indices}.
+
+\medskip
+Call index $n$ a \textbf{peak index} if $x_n \ge x_k$ for all $k \ge n$
+(the term at $n$ is at least as large as every subsequent term).
+
+\medskip
+\textbf{Case 1: infinitely many peak indices.}
+Label them $n_1 < n_2 < n_3 < \cdots$. Each $n_j$ is a peak, so
+$x_{n_j} \ge x_{n_{j+1}}$. The subsequence $(x_{n_j})$ is \emph{decreasing}.
+
+\medskip
+\textbf{Case 2: only finitely many peak indices.}
+Let $N$ be past the last peak. Since $n = N$ is not a peak, $\exists n_1 > N$
+with $x_{n_1} > x_N$. Since $n_1$ is not a peak, $\exists n_2 > n_1$ with
+$x_{n_2} > x_{n_1}$. Continuing this way produces an \emph{increasing}
+subsequence.
+
+\medskip
+Either way, a monotone subsequence exists. The proof below formalizes
+this exact dichotomy.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=0.7cm, y=0.7cm, >=Latex]
+% LEFT PANEL: infinitely many peaks → decreasing subsequence
+\begin{scope}
+\node[above] at (4, 5.5) {\small\textbf{Case 1: many peaks}};
+\draw[->] (0,0) -- (8.5,0) node[right] {\small $n$};
+\draw[->] (0,0) -- (0,5.5) node[above] {\small $x_n$};
+% terms
+\foreach \n/\v in {1/1.2, 2/3.5, 3/1.8, 4/4.8, 5/2.1, 6/4.0, 7/1.5, 8/3.2} {
+  \fill (\n,\v) circle (1.8pt);
+}
+% peak indices 2,4,6 highlighted
+\foreach \n/\v in {2/3.5, 4/4.8, 6/4.0} {
+  \fill[red!80!black] (\n,\v) circle (2.5pt);
+  \draw[dashed, red!70!black] (\n,0) -- (\n,\v);
+}
+% decreasing subsequence arrows
+\draw[->, thick, red!70!black] (2,3.5) -- (4,4.8) node[midway, above] {};
+\draw[->, thick, red!70!black] (4,4.8) -- (6,4.0);
+% label
+\node[below, red!70!black] at (4, -0.4) {\small peaks: decreasing subseq};
+\end{scope}
+
+% RIGHT PANEL: no peaks after N → increasing subsequence
+\begin{scope}[xshift=10cm]
+\node[above] at (4, 5.5) {\small\textbf{Case 2: peaks die out}};
+\draw[->] (0,0) -- (8.5,0) node[right] {\small $n$};
+\draw[->] (0,0) -- (0,5.5) node[above] {\small $x_n$};
+% terms
+\foreach \n/\v in {1/4.5, 2/3.8, 3/3.0, 4/1.5, 5/2.0, 6/3.0, 7/4.0, 8/4.5} {
+  \fill (\n,\v) circle (1.8pt);
+}
+% N marker
+\draw[dashed] (3.5,0) -- (3.5,3.2);
+\node[below] at (3.5, -0.1) {\small $N$};
+% selected increasing subseq
+\foreach \n/\v in {4/1.5, 5/2.0, 6/3.0, 7/4.0, 8/4.5} {
+  \fill[blue!80!black] (\n,\v) circle (2.5pt);
+}
+\draw[->, thick, blue!70!black] (4,1.5) -- (5,2.0);
+\draw[->, thick, blue!70!black] (5,2.0) -- (6,3.0);
+\draw[->, thick, blue!70!black] (6,3.0) -- (7,4.0);
+\draw[->, thick, blue!70!black] (7,4.0) -- (8,4.5);
+\node[below, blue!70!black] at (6, -0.4) {\small no peaks: increasing subseq};
+\end{scope}
+\end{tikzpicture}
+\caption{Peak-index construction. Left: infinitely many peaks (red) form a
+decreasing subsequence. Right: after the last peak at $N$, greedily selecting
+ascending terms gives an increasing subsequence (blue).}
+\label{fig:peak-index}
+\end{figure}
+\end{remark*}
+
 \begin{theorem}[Monotone Subsequence Theorem]
 Every sequence in $\mathbb{R}$ has a monotone subsequence.
 \end{theorem}
