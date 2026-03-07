@@ -3,942 +3,176 @@
 % =========================================================
 
 \subsection{Field and Order Axioms}
+\label{sec:field-order-axioms}
 
-% ---------------------------------------------------------
-% Teacher exposition
-% ---------------------------------------------------------
+\subsubsection{Definitions and Theorems}
 
-\begin{remark}[Teacher exposition]
-\label{rem:field-order-teacher}
+The rational numbers are not merely a collection of equivalence classes.  Once addition and
+multiplication are shown to be well-defined, $\mathbb{Q}$ becomes a field.  In addition, it carries a
+natural order relation compatible with the field operations.  Together these two structures make
+$\mathbb{Q}$ an \emph{ordered field}.
 
-The rational numbers form an algebraic structure with two operations,
-addition and multiplication, together with an order relation.
-
-Rather than studying the rationals purely through their construction,
-it is often useful to describe the properties that these operations
-satisfy.  These properties are captured by the \emph{field axioms} and
-the \emph{order axioms}.
-
-Many important number systems satisfy these same axioms, including the
-real numbers.  Thus the axiomatic viewpoint allows us to study these
-structures abstractly.
-
-\end{remark}
-
-% =========================================================
-% FIELD AXIOMS
-% =========================================================
-
-\subsubsection{Field Axioms}
-
-\begin{definition}[Field]
-\label{def:field}
-
-A \emph{field} is a set $F$ equipped with two operations
-
-\[
-+ : F \times F \to F
-\quad\text{and}\quad
-\cdot : F \times F \to F
-\]
-
-such that the following axioms hold.
-
-\end{definition}
-
-\begin{axiom}[Closure]
-\[
-a,b \in F \;\Rightarrow\; a+b \in F,\qquad ab \in F.
-\]
-\end{axiom}
-
-\begin{axiom}[Associativity]
-\[
-(a+b)+c = a+(b+c)
-\]
-
-\[
-(ab)c = a(bc)
-\]
-\end{axiom}
-
-\begin{axiom}[Commutativity]
-
-\[
-a+b=b+a
-\]
-
-\[
-ab=ba
-\]
-
-\end{axiom}
-
-\begin{axiom}[Additive identity]
-
-There exists an element $0\in F$ such that
-
-\[
-a+0=a.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Multiplicative identity]
-
-There exists an element $1\in F$ with $1\neq0$ such that
-
-\[
-a\cdot1=a.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Additive inverse]
-
-For every $a\in F$ there exists $-a\in F$ such that
-
-\[
-a+(-a)=0.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Multiplicative inverse]
-
-For every $a\neq0$ there exists $a^{-1}$ such that
-
-\[
-aa^{-1}=1.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Distributive law]
-
-\[
-a(b+c)=ab+ac.
-\]
-
-\end{axiom}
+\paragraph{Field axioms.}
+A field is a set $F$ with operations $+$ and $\cdot$ satisfying closure, associativity,
+commutativity, additive and multiplicative identities, additive inverses, multiplicative inverses for
+nonzero elements, and the distributive law.
 
 \begin{remark}
-
-The rational numbers $\mathbb{Q}$ form a field under the usual
-operations of addition and multiplication.
-
+The rational numbers satisfy these axioms under the usual operations inherited from their
+construction.
 \end{remark}
 
-% =========================================================
-% ORDER AXIOMS
-% =========================================================
-
-\subsubsection{Order Axioms}
-
-\begin{definition}[Ordered Field]
-\label{def:ordered-field}
-
-An \emph{ordered field} is a field $F$ together with a relation $<$ on
-$F$ satisfying the following properties.
-
-\end{definition}
-
-\begin{axiom}[Trichotomy]
-
-For any $a,b\in F$, exactly one of the following holds:
-
-\[
-a<b,\quad a=b,\quad a>b.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Transitivity]
-
-\[
-a<b \text{ and } b<c \;\Rightarrow\; a<c.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Compatibility with addition]
-
-\[
-a<b \Rightarrow a+c < b+c.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Compatibility with multiplication]
-
-If $0<c$ then
-
-\[
-a<b \Rightarrow ac < bc.
-\]
-
-\end{axiom}
+\paragraph{Order axioms.}
+An ordered field is a field together with a relation $<$ satisfying trichotomy, transitivity,
+compatibility with addition, and compatibility with multiplication by positive elements.
 
 \begin{remark}
-
-The rational numbers $\mathbb{Q}$ together with the usual ordering form
-an ordered field.
-
+For many proofs it is more efficient to define order using the set of positive elements rather than to
+take $<$ as primitive.
 \end{remark}
-
-% =========================================================
-% Conceptual remark
-% =========================================================
-
-\begin{remark}[Conceptual significance]
-
-The field axioms describe the algebraic structure of the rational
-numbers, while the order axioms describe their geometric structure on
-the number line.
-
-Together these axioms characterize the rational numbers as an
-\emph{ordered field}.
-
-Later we will see that the real numbers form a \emph{complete ordered
-field}.  The completeness property distinguishes the real numbers from
-the rationals and removes the gaps present in $\mathbb{Q}$.
-
-\end{remark}
-
-
-
-
-
-
-
-
-
-
-
-
-% =========================================================
-% Ordered Fields via the Positive Cone
-% =========================================================
-
-\subsubsection{Ordered Fields via the Positive Cone}
-
-% ---------------------------------------------------------
-% Teacher exposition
-% ---------------------------------------------------------
-
-\begin{remark}[Teacher exposition]
-\label{rem:positive-cone-teacher}
-
-An ordered field can be defined more elegantly by specifying the set
-of \emph{positive elements} rather than defining the relation $<$ directly.
-
-This approach emphasizes the compatibility between the order structure
-and the algebraic operations of the field.
-
-Once the set of positive elements is known, the ordering of the field
-can be reconstructed from it.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Definition
-% ---------------------------------------------------------
 
 \begin{definition}[Positive cone]
 \label{def:positive-cone}
-
-Let $F$ be a field.  A subset
-
+Let $F$ be a field.  A subset $P\subset F$ is called a \emph{positive cone} if it satisfies:
+\begin{enumerate}
+  \item if $a,b\in P$, then $a+b\in P$;
+  \item if $a,b\in P$, then $ab\in P$;
+  \item for every $a\in F$, exactly one of the following holds:
+  \[
+  a\in P,
+  \qquad
+  a=0,
+  \qquad
+  -a\in P.
+  \]
+\end{enumerate}
+Define the order relation by
 \[
-P \subset F
+a<b \iff b-a\in P.
 \]
-
-is called a \emph{positive cone} if it satisfies the following
-properties.
-
 \end{definition}
-
-% ---------------------------------------------------------
-% Axioms
-% ---------------------------------------------------------
-
-\begin{axiom}[Trichotomy of signs]
-
-For every $a\in F$, exactly one of the following holds:
-
-\[
-a \in P, \quad a=0, \quad -a \in P.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Closure under addition]
-
-If $a,b \in P$, then
-
-\[
-a+b \in P.
-\]
-
-\end{axiom}
-
-\begin{axiom}[Closure under multiplication]
-
-If $a,b \in P$, then
-
-\[
-ab \in P.
-\]
-
-\end{axiom}
-
-% ---------------------------------------------------------
-% Order definition
-% ---------------------------------------------------------
-
-\begin{definition}[Order relation]
-\label{def:order-from-positive}
-
-Given a positive cone $P$, define the order relation by
-
-\[
-a < b
-\quad\Longleftrightarrow\quad
-b-a \in P.
-\]
-
-\end{definition}
-
-% ---------------------------------------------------------
-% Remark
-% ---------------------------------------------------------
 
 \begin{remark}
-
-With this definition the relation $<$ satisfies the usual properties
-of an order relation.  Thus the field $F$ becomes an \emph{ordered
-field}.
-
+This viewpoint makes the interaction between algebra and order especially transparent.  Statements
+about inequalities can be translated into statements about positive elements and then handled
+algebraically.
 \end{remark}
-
-% ---------------------------------------------------------
-% Example
-% ---------------------------------------------------------
-
-\begin{remark}[Example]
-
-For the rational numbers $\mathbb{Q}$ we take
-
-\[
-P = \{ q \in \mathbb{Q} : q > 0 \}.
-\]
-
-This set satisfies the axioms above, and therefore determines the
-usual ordering of the rational numbers.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Conceptual significance
-% ---------------------------------------------------------
-
-\begin{remark}[Conceptual significance]
-
-The positive cone viewpoint shows that the order structure of a field
-is determined entirely by the behavior of its positive elements.
-
-Many important consequences follow immediately from these axioms, such
-as:
-
-\[
-a^2 \ge 0 \quad \text{for all } a \in F.
-\]
-
-This formulation is widely used in real analysis and abstract algebra
-because it integrates the order structure directly with the algebraic
-operations of the field.
-
-\end{remark}
-
-
-% =========================================================
-% Consequences of the Positive Cone Axioms
-% =========================================================
 
 \subsubsection{Immediate Consequences of the Positive Cone Axioms}
 
-\begin{remark}[Teacher exposition]
-\label{rem:positive-cone-consequences}
-
-Once an ordered field is defined using a positive cone $P$, many familiar
-properties of inequalities follow almost immediately.
-
-The key idea is that inequalities can be translated into statements
-about positive elements.  Recall that
-
-\[
-a < b
-\quad \Longleftrightarrow \quad
-b-a \in P.
-\]
-
-Thus proofs about inequalities can often be reduced to algebraic
-manipulations involving positive elements.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Squares are nonnegative
-% ---------------------------------------------------------
-
 \begin{theorem}
 \label{thm:squares-nonnegative}
-
-For every $a \in F$,
-
+For every $a\in F$,
 \[
-a^2 \ge 0.
+a^2\ge 0.
 \]
-
 \end{theorem}
 
-\begin{remark}[Explanation]
-
-By the trichotomy property of the positive cone, exactly one of the
-following holds:
-
+\begin{proof}
+By trichotomy, either $a\in P$, or $a=0$, or $-a\in P$.  In the first case $a^2\in P$ because
+$P$ is closed under multiplication.  In the second case $a^2=0$.  In the third case
 \[
-a \in P,\quad a=0,\quad -a \in P.
+(-a)(-a)=a^2\in P.
 \]
-
-If $a=0$ then $a^2=0$.
-
-If $a \in P$, then closure of $P$ under multiplication implies
-
-\[
-a\cdot a = a^2 \in P.
-\]
-
-If $-a \in P$, then
-
-\[
-(-a)(-a)=a^2 \in P.
-\]
-
-Thus in all cases $a^2$ is either positive or zero, so
-
-\[
-a^2 \ge 0.
-\]
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Inverse of a positive number
-% ---------------------------------------------------------
+Thus $a^2$ is positive or zero.
+\end{proof}
 
 \begin{theorem}
 \label{thm:inverse-positive}
-
-If $a>0$, then
-
-\[
-a^{-1} > 0.
-\]
-
+If $a>0$, then $a^{-1}>0$.
 \end{theorem}
 
-\begin{remark}[Explanation]
-
-Suppose $a>0$, so $a \in P$.
-
-If $a^{-1}$ were negative, then $-a^{-1} \in P$.
-
-Multiplying by the positive element $a$ gives
-
+\begin{proof}
+Suppose $a>0$.  If $a^{-1}<0$, then $-a^{-1}>0$.  Multiplying two positive elements gives
 \[
-a(-a^{-1}) = -1 \in P.
+a(-a^{-1})=-1>0.
 \]
-
-But then both $1$ and $-1$ would be positive, contradicting the
-trichotomy property.
-
-Thus $a^{-1}$ must be positive.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Multiplication by positive number
-% ---------------------------------------------------------
+If also $1>0$, then trichotomy fails; so the assumption $a^{-1}<0$ is impossible.  Therefore
+$a^{-1}>0$.
+\end{proof}
 
 \begin{theorem}
 \label{thm:multiply-positive}
-
 If $a<b$ and $c>0$, then
-
 \[
-ac < bc.
+ac<bc.
 \]
-
 \end{theorem}
 
-\begin{remark}[Explanation]
-
-The inequality $a<b$ means
-
+\begin{proof}
+From $a<b$ we have $b-a>0$.  Multiplying by $c>0$ gives
 \[
-b-a \in P.
+c(b-a)>0.
 \]
-
-Since $c>0$, we also have $c \in P$.
-
-By closure of $P$ under multiplication,
-
-\[
-c(b-a) \in P.
-\]
-
-But
-
-\[
-c(b-a) = bc-ac.
-\]
-
 Thus
-
 \[
-bc-ac \in P,
+bc-ac>0,
 \]
-
-which means
-
-\[
-ac < bc.
-\]
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Multiplication by negative number
-% ---------------------------------------------------------
+which is equivalent to $ac<bc$.
+\end{proof}
 
 \begin{theorem}
 \label{thm:multiply-negative}
-
 If $a<b$ and $c<0$, then
-
 \[
-ac > bc.
+ac>bc.
 \]
-
 \end{theorem}
 
-\begin{remark}[Explanation]
-
-If $c<0$, then $-c>0$.
-
-Multiplying the inequality $a<b$ by the positive number $-c$ gives
-
+\begin{proof}
+If $c<0$, then $-c>0$.  By the previous theorem,
 \[
-a(-c) < b(-c).
+a(-c)<b(-c).
 \]
-
-Rewriting,
-
+This is
 \[
--bc < -ac.
+-ac<-bc.
 \]
+Multiplying both sides by $-1$ reverses the inequality and yields $ac>bc$.
+\end{proof}
 
-Multiplying both sides by $-1$ reverses the inequality, yielding
-
-\[
-ac > bc.
-\]
-
-\end{remark}
-
-
-
-% =========================================================
-% Positivity of 1 and the Natural Numbers
-% =========================================================
-
-\subsubsection{Positivity of $1$ and the Natural Numbers}
-
-% ---------------------------------------------------------
-% Teacher exposition
-% ---------------------------------------------------------
-
-\begin{remark}[Teacher exposition]
-\label{rem:positivity-teacher}
-
-In an ordered field the element $1$ plays a special role because it
-generates the natural numbers through repeated addition:
-
-\[
-1,\quad 1+1,\quad 1+1+1,\dots
-\]
-
-To understand how the natural numbers behave inside an ordered field,
-we first establish that $1$ is positive.  Once this is known, the
-closure properties of the positive cone imply that every natural number
-is positive as well.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Theorem: 1 > 0
-% ---------------------------------------------------------
+\subsubsection{Positivity of $1$ and of the Natural Numbers}
 
 \begin{theorem}
 \label{thm:one-positive}
-
 In an ordered field,
-
 \[
-1 > 0.
+1>0.
 \]
-
 \end{theorem}
 
 \begin{proof}
-
-By the trichotomy property exactly one of the following holds:
-
+By trichotomy exactly one of the following holds:
 \[
-1 \in P, \quad 1=0, \quad -1 \in P.
+1>0,
+\qquad
+1=0,
+\qquad
+-1>0.
 \]
-
-The case $1=0$ is impossible in a field.
-
-Suppose instead that $-1 \in P$.  Since $P$ is closed under
-multiplication,
-
+The second case is impossible in a field.  If $-1>0$, then multiplying two positive elements gives
 \[
-(-1)(-1) = 1 \in P.
+(-1)(-1)=1>0.
 \]
-
-Thus both $1$ and $-1$ would be positive, contradicting trichotomy.
-
-Therefore $1 \in P$, which means
-
-\[
-1 > 0.
-\]
-
+Thus both $1$ and $-1$ would be positive, contradicting trichotomy.  Hence $1>0$.
 \end{proof}
 
-% ---------------------------------------------------------
-% Natural numbers positive
-% ---------------------------------------------------------
-
-\begin{theorem}
-\label{thm:n-positive}
-
+\begin{corollary}
+\label{cor:n-positive}
 For every natural number $n$,
-
 \[
-n > 0.
+n>0.
 \]
-
-\end{theorem}
+\end{corollary}
 
 \begin{proof}
-
-The natural numbers are defined by repeated addition of $1$:
-
-\[
-n = \underbrace{1 + 1 + \cdots + 1}_{n\text{ times}}.
-\]
-
-Since $1 > 0$ and the positive cone is closed under addition, every
-finite sum of positive elements is positive.  Hence
-
-\[
-n \in P.
-\]
-
-Therefore
-
-\[
-n > 0.
-\]
-
+Each natural number is a finite sum of copies of $1$.  Since $1>0$ and the positive cone is closed
+under addition, every such sum is positive.
 \end{proof}
 
-% ---------------------------------------------------------
-% Consequence
-% ---------------------------------------------------------
-
-\begin{remark}[Consequences]
-
-The positivity of the natural numbers implies several familiar facts:
-
-\begin{itemize}
-
-\item If $n \in \mathbb{N}$ and $a > 0$, then $na > 0$.
-
-\item The natural numbers grow without bound in an ordered field.
-
-\item These properties lead directly to the Archimedean property.
-
-\end{itemize}
-
+\begin{remark}[Archimedean property versus completeness]
+\label{rem:arch-v-complete}
+The positivity of $1$ anchors the order structure and leads naturally to the Archimedean property.
+The Archimedean property holds in both $\mathbb{Q}$ and $\mathbb{R}$.  Completeness does not.  That is
+why the rational numbers, although already an ordered field, still fail to capture all limits.
 \end{remark}
-
-% ---------------------------------------------------------
-% Conceptual significance
-% ---------------------------------------------------------
-
-\begin{remark}[Conceptual significance]
-
-The positivity of $1$ anchors the order structure of the field.  It
-ensures that the natural numbers inherit a consistent ordering within
-the field.
-
-This connection between the algebraic structure of the field and the
-order structure is essential for developing analysis, particularly in
-the study of limits, bounds, and completeness.
-
-\end{remark}
-
-
-\begin{remark}
-
-The Archimedean property holds in both the rational numbers
-$\mathbb{Q}$ and the real numbers $\mathbb{R}$.
-
-However, the rational numbers are not complete.  There exist
-Cauchy sequences of rational numbers that do not converge to a
-rational number.
-
-Thus the real numbers can be characterized as the
-\emph{complete Archimedean ordered field}.
-
-\end{remark}
-
-
-
-\begin{remark}[Archimedean property vs.\ completeness]
-
-The Archimedean property holds in both the rational numbers
-$\mathbb{Q}$ and the real numbers $\mathbb{R}$.
-
-However, the rational numbers are \emph{not complete}.  There exist
-Cauchy sequences of rational numbers that do not converge to a
-rational limit.  For example, the sequence of rational approximations
-
-\[
-1,\;1.4,\;1.41,\;1.414,\;1.4142,\dots
-\]
-
-is Cauchy in $\mathbb{Q}$ but converges to $\sqrt{2}$, which is not
-rational.
-
-The real numbers $\mathbb{R}$ are obtained by adjoining these missing
-limits.  Consequently, $\mathbb{R}$ satisfies the completeness
-property: every Cauchy sequence converges.
-
-A fundamental theorem of analysis states that the real numbers are
-the \emph{unique complete Archimedean ordered field}.
-
-\end{remark}
-
-
-
-% =========================================================
-% Mediant Property vs Archimedean Property
-% =========================================================
-
-\subsection{Mediant Property vs.\ Archimedean Property}
-
-% ---------------------------------------------------------
-% Teacher exposition
-% ---------------------------------------------------------
-
-\begin{remark}[Teacher exposition]
-\label{rem:mediant-archimedean-teacher}
-
-Two important structural properties of the rational numbers are the
-\emph{mediant property} and the \emph{Archimedean property}.  Although
-both describe fundamental features of $\mathbb{Q}$, they capture very
-different aspects of the number system.
-
-The mediant property concerns the refinement of rational intervals:
-given two rational numbers, it provides a constructive way to produce
-another rational number lying between them.
-
-The Archimedean property, in contrast, describes the large-scale
-behavior of the number system.  It states that the natural numbers
-grow beyond any fixed element of the field.
-
-Thus the mediant property describes the \emph{local structure} of
-rational numbers, while the Archimedean property describes their
-\emph{global growth behavior}.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Mediant property
-% ---------------------------------------------------------
-
-\begin{definition}[Mediant]
-\label{def:mediant}
-
-Let
-
-\[
-\frac{a}{b}, \frac{c}{d} \in \mathbb{Q},
-\qquad b,d>0.
-\]
-
-The \emph{mediant} of these fractions is
-
-\[
-\frac{a+c}{b+d}.
-\]
-
-\end{definition}
-
-\begin{theorem}[Mediant Inequality]
-\label{thm:mediant-inequality}
-
-If
-
-\[
-\frac{a}{b} < \frac{c}{d},
-\]
-
-then
-
-\[
-\frac{a}{b}
-<
-\frac{a+c}{b+d}
-<
-\frac{c}{d}.
-\]
-
-\end{theorem}
-
-\begin{remark}
-
-The mediant provides a constructive method for inserting a new
-rational number between two existing rational numbers.  Repeated
-application of the mediant operation produces infinitely many
-rational numbers inside any rational interval.
-
-Thus the mediant property illustrates the \emph{density} of the
-rational numbers.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Archimedean property
-% ---------------------------------------------------------
-
-\begin{definition}[Archimedean Property]
-\label{def:archimedean}
-
-An ordered field $F$ is said to satisfy the \emph{Archimedean property}
-if for every element $x \in F$ there exists a natural number $n$ such
-that
-
-\[
-n > x.
-\]
-
-\end{definition}
-
-\begin{remark}
-
-An equivalent formulation is the following: for every positive number
-$x$ there exists a natural number $n$ such that
-
-\[
-\frac{1}{n} < x.
-\]
-
-This version emphasizes that the reciprocals of natural numbers can
-be made arbitrarily small.
-
-\end{remark}
-
-\begin{remark}
-
-The rational numbers $\mathbb{Q}$ satisfy the Archimedean property.
-The real numbers $\mathbb{R}$ also satisfy this property.
-
-The Archimedean property rules out the existence of infinitely large
-numbers or infinitesimal elements within the field.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Conceptual comparison
-% ---------------------------------------------------------
-
-\begin{remark}[Conceptual comparison]
-
-The mediant property and the Archimedean property describe two
-different structural features of the rational numbers.
-
-\begin{center}
-\begin{tabular}{lll}
-\textbf{Property} & \textbf{Description} & \textbf{Scope} \\
-\toprule
-Mediant property & Inserts new rationals between two rationals & Local \\
-Archimedean property & Natural numbers exceed every element & Global
-\end{tabular}
-\end{center}
-
-The mediant property concerns the refinement of rational intervals,
-while the Archimedean property concerns the overall scale of the
-number system.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Final structural remark
-% ---------------------------------------------------------
-
-\begin{remark}
-
-The rational numbers possess both the mediant property and the
-Archimedean property.  Nevertheless, they still contain gaps.  For
-example,
-
-\[
-1.4 < 1.41 < 1.414 < \sqrt{2} < 1.415 < 1.42.
-\]
-
-Although rational numbers can approximate $\sqrt{2}$ arbitrarily
-closely, no rational number equals $\sqrt{2}$.
-
-This shows that $\mathbb{Q}$ is dense and Archimedean but not
-complete.  The real numbers $\mathbb{R}$ are obtained by adjoining
-the missing limits, producing a \emph{complete Archimedean ordered
-field}.
-
-\end{remark}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,281 +3,94 @@
 % =========================================================
 
 \subsection{Rational Cauchy Sequences}
+\label{sec:rational-cauchy}
 
-% ---------------------------------------------------------
-% Teacher exposition
-% ---------------------------------------------------------
+\subsubsection{Definitions and Theorems}
 
-\begin{remark}[Teacher exposition: Why we study Cauchy sequences]
-\label{rem:cauchy-teacher}
+The rational numbers form an ordered field and they approximate real numbers densely.  At this
+stage it is tempting to believe that they should already be adequate for analysis.  The first serious
+obstruction appears when one studies limits of rational sequences.
 
-Up to this point we have constructed the rational numbers
-\[
-\mathbb{Q}
-\]
-from the integers.  The rational numbers form a very rich number system:
-we can add, subtract, multiply, and divide.
-
-However, an important phenomenon appears when we study sequences of
-rational numbers.  Some sequences of rational numbers appear to
-approach a limit that is \emph{not rational}.
-
-For example, the sequence
-
-\[
-1,\;1.4,\;1.41,\;1.414,\;1.4142,\dots
-\]
-
-appears to approach the number $\sqrt{2}$, but $\sqrt{2}$ is not a
-rational number.
-
-Thus the rational numbers are missing some limits.  In order to
-understand this problem precisely, we introduce the concept of a
-\emph{Cauchy sequence}.  The key idea is to detect convergence by
-examining how the terms of the sequence behave relative to one another,
-rather than referring to a limit directly.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Definition
-% ---------------------------------------------------------
-
-\begin{definition}[Sequence of Rational Numbers]
+\begin{definition}[Sequence of rational numbers]
 \label{def:rational-sequence}
-
 A \emph{sequence of rational numbers} is a function
-
 \[
-x : \mathbb{N} \rightarrow \mathbb{Q}.
+x:\mathbb{N}\to\mathbb{Q}.
 \]
-
-It is usually written
-
-\[
-(x_n)_{n\in\mathbb{N}}
-\]
-
-or simply
-
-\[
-x_1,x_2,x_3,\dots
-\]
-
-where each $x_n \in \mathbb{Q}$.
-
+It is usually written $(x_n)_{n\in\mathbb{N}}$ or simply $x_1,x_2,x_3,\dots$.
 \end{definition}
 
-% ---------------------------------------------------------
-
-\begin{remark}[Teacher exposition: What a sequence really is]
-\label{rem:sequence-teacher}
-
-Although sequences are often written as lists, it is important to
-remember that a sequence is formally a function
-
-\[
-\mathbb{N} \to \mathbb{Q}.
-\]
-
-The natural number $n$ indicates the position in the sequence, and the
-value $x_n$ is the rational number appearing in that position.
-
-This functional viewpoint becomes important when we later manipulate
-sequences algebraically.
-
+\begin{remark}
+Thinking of a sequence as a function is useful because it emphasizes that a sequence is not merely a
+list but an indexed family of values.  Later this viewpoint makes it natural to add, subtract, and
+compare sequences term by term.
 \end{remark}
 
-% ---------------------------------------------------------
-% Definition
-% ---------------------------------------------------------
-
-\begin{definition}[Cauchy Sequence in $\mathbb{Q}$]
+\begin{definition}[Cauchy sequence in $\mathbb{Q}$]
 \label{def:cauchy-rational}
-
-A sequence $(x_n)$ of rational numbers is called a
-\emph{Cauchy sequence} if
-
+A sequence $(x_n)$ of rational numbers is called a \emph{Cauchy sequence} if
 \[
-\forall \varepsilon > 0 \;
-\exists N \in \mathbb{N}
-\quad
-\forall m,n \ge N
+\forall \varepsilon>0\ \exists N\in\mathbb{N}\ \forall m,n\ge N,
+\qquad
+|x_m-x_n|<\varepsilon.
 \]
-
-\[
-|x_m - x_n| < \varepsilon.
-\]
-
 \end{definition}
 
-% ---------------------------------------------------------
-% Intuition
-% ---------------------------------------------------------
-
-\begin{remark}[Intuition]
-\label{rem:cauchy-intuition}
-
-A Cauchy sequence is one whose terms become arbitrarily close to one
-another.
-
-In other words, the sequence eventually becomes tightly clustered
-together.
-
-The definition does not mention a limit; it only describes the
-internal behavior of the sequence.
-
+\begin{remark}
+A Cauchy sequence is one whose terms eventually cluster together as tightly as we wish.  Notice that
+this definition does not mention a limit at all; it speaks only about the internal behavior of the
+sequence.
 \end{remark}
-
-% ---------------------------------------------------------
-
-\begin{remark}[Teacher exposition: Why the definition works]
-\label{rem:cauchy-teacher-2}
-
-Suppose a sequence converges to a number $L$.  Then eventually all
-terms of the sequence must lie very close to $L$.  Consequently, two
-terms taken far enough out in the sequence must also lie very close to
-each other.
-
-The Cauchy condition captures exactly this idea: it says that the
-sequence becomes internally consistent, with later terms differing
-from each other by arbitrarily small amounts.
-
-The remarkable feature of this definition is that it does not require
-knowledge of the limit itself.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Examples
-% ---------------------------------------------------------
-
-\begin{remark}[Examples]
-
-\textbf{Example 1.}
-
-\[
-x_n = \frac{1}{n}
-\]
-
-is a Cauchy sequence in $\mathbb{Q}$ because its terms approach $0$.
-
-\medskip
-
-\textbf{Example 2.}
-
-The decimal approximations of $\sqrt{2}$ form a Cauchy sequence:
-
-\[
-1,\;
-1.4,\;
-1.41,\;
-1.414,\;
-1.4142,\;\dots
-\]
-
-Although $\sqrt{2}$ is not rational, the sequence of rational
-approximations becomes arbitrarily close together.
-
-\end{remark}
-
-% ---------------------------------------------------------
-% Key property
-% ---------------------------------------------------------
 
 \begin{theorem}
 \label{thm:convergent-implies-cauchy-q}
-
 Every convergent sequence in $\mathbb{Q}$ is a Cauchy sequence.
-
 \end{theorem}
 
-% ---------------------------------------------------------
+\begin{proof}
+Suppose $x_n\to x\in\mathbb{Q}$.  Let $\varepsilon>0$.  Choose $N$ such that
+\[
+n\ge N \Rightarrow |x_n-x|<\varepsilon/2.
+\]
+Then if $m,n\ge N$,
+\[
+|x_m-x_n|\le |x_m-x|+|x_n-x|<\varepsilon.
+\]
+Hence $(x_n)$ is Cauchy.
+\end{proof}
 
-\begin{remark}[Teacher exposition: One-way implication]
-\label{rem:cauchy-one-way}
-
-If a sequence converges, it must be Cauchy.  Intuitively, once the
-terms of a sequence are close to the limit, they must also be close to
-each other.
-
-However, the converse statement is not always true in $\mathbb{Q}$.
-This asymmetry is the key reason that the rational numbers are not a
-complete number system.
-
+\begin{remark}
+The converse is the issue.  In a complete space every Cauchy sequence converges.  The rational
+numbers are not complete, and so this converse can fail.
 \end{remark}
 
-% ---------------------------------------------------------
-
-\begin{remark}[Important Observation]
-\label{rem:cauchy-not-convergent}
-
-The converse is not always true in $\mathbb{Q}$.
-
-There exist Cauchy sequences of rational numbers that do not converge
-to a rational number.
-
-For example, the rational approximations to $\sqrt{2}$ form a Cauchy
-sequence in $\mathbb{Q}$ but do not converge to any rational number.
-
-This phenomenon reveals that the rational numbers are
-\emph{incomplete}.
-
+\begin{remark}[Examples]
+\begin{enumerate}
+  \item The sequence $x_n=1/n$ is Cauchy because it converges to $0$.
+  \item The decimal approximations
+  \[
+  1,\ 1.4,\ 1.41,\ 1.414,\ 1.4142,\dots
+  \]
+  form a Cauchy sequence in $\mathbb{Q}$.
+\end{enumerate}
 \end{remark}
 
-% ---------------------------------------------------------
-% Consequence
-% ---------------------------------------------------------
+\begin{theorem}
+\label{thm:cauchy-not-convergent-q}
+There exist Cauchy sequences in $\mathbb{Q}$ that do not converge to a rational number.
+\end{theorem}
 
-\begin{remark}[Motivation for the Real Numbers]
+\begin{remark}
+The second example above converges to $\sqrt{2}$ in $\mathbb{R}$, but $\sqrt{2}\notin\mathbb{Q}$.  Thus
+$\mathbb{Q}$ already contains enough arithmetic to define the sequence, but not enough numbers to
+contain its limit.
+\end{remark}
+
+\subsubsection{Consequences}
+
+\begin{remark}[Motivation for the real numbers]
 \label{rem:real-motivation}
-
-The incompleteness of $\mathbb{Q}$ motivates the construction of the
-real numbers.
-
-One standard construction defines the real numbers as equivalence
-classes of Cauchy sequences of rational numbers.
-
-Two sequences $(x_n)$ and $(y_n)$ are considered equivalent if
-
-\[
-\lim_{n\to\infty}(x_n - y_n) = 0.
-\]
-
-Symbolically,
-
-\[
-\mathbb{R}
-=
-\{\text{Cauchy sequences of rationals}\}/\sim .
-\]
-
-Thus the real numbers are obtained by formally adjoining the limits
-that are missing from $\mathbb{Q}$.
-
-\end{remark}
-
-% ---------------------------------------------------------
-
-\begin{remark}[Big Picture]
-\label{rem:completion-big-picture}
-
-The construction of the real numbers can be viewed as a process of
-\emph{completion}.
-
-\[
-\mathbb{Z}
-\quad \longrightarrow \quad
-\mathbb{Q}
-\quad \longrightarrow \quad
-\mathbb{R}
-\]
-
-The integers are extended to the rational numbers by introducing
-fractions.  The rational numbers are then extended to the real numbers
-by introducing limits of Cauchy sequences.
-
-In this sense the real numbers fill in the ``gaps'' that exist in
-$\mathbb{Q}$.
-
+One standard way to construct the real numbers is to take equivalence classes of rational Cauchy
+sequences, where two Cauchy sequences are considered equivalent if their difference tends to $0$.
+In this way the missing limits are formally adjoined to the rationals.
 \end{remark}
