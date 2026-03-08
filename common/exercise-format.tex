@@ -1,0 +1,329 @@
+
+% ============================================================
+% exercise-tags-and-stubs.tex
+% Include file for the Learning Abstract Mathematics project.
+%
+% PURPOSE
+%   - Defines searchable technique/dependency tag helpers.
+%   - Defines two exercise-record stubs:
+%       * exerciseconstruction  (Types 4, 5)
+%       * exerciseproofrecord   (Types 1, 2, 3, 6)
+%
+% DESIGN GOALS
+%   - No \usepackage calls here.
+%   - No theorem-environment redefinitions.
+%   - Safe to \input into main.tex after your existing preamble.
+%   - Uses only packages already present in your main.tex:
+%       xparse, etoolbox, expl3, tcolorbox, hyperref
+%
+% SEARCHABILITY
+%   Write literal tags in source, e.g.
+%       tech:triangle-inequality
+%       tech:epsilon-splitting
+%       def:metric
+%       thm:triangle-inequality
+%   so that grep/search works on the .tex source directly.
+%
+% OPTIONAL INDEXING
+%   If you later load makeidx/imakeidx and define \index,
+%   \TechniqueEntry{...} and \DependencyEntry{...} will add index entries.
+%   Otherwise they simply typeset the tag.
+% ============================================================
+
+\makeatletter
+
+% ------------------------------------------------------------
+% Optional index hooks
+% ------------------------------------------------------------
+\providecommand{\ExerciseTechniqueIndexName}{tech}
+\providecommand{\ExerciseDependencyIndexName}{dep}
+
+\newcommand{\exercise@maybeindex@tech}[1]{%
+  \@ifundefined{index}{}{%
+    \index[#1]{#1}%
+  }%
+}
+
+% Safer indexed versions using named indexes only if \index exists.
+% If the optional argument form is unsupported by the loaded indexing
+% package, remove the [tech]/[dep] pieces below.
+\newcommand{\exercise@maybeindextech}[1]{%
+  \@ifundefined{index}{}{%
+    \index[tech]{#1}%
+  }%
+}
+\newcommand{\exercise@maybeindexdep}[1]{%
+  \@ifundefined{index}{}{%
+    \index[dep]{#1}%
+  }%
+}
+
+% ------------------------------------------------------------
+% Tag entry macros
+%   IMPORTANT: pass the FULL literal tag string.
+%   Example:
+%     \TechniqueEntry{tech:triangle-inequality}
+%     \DependencyEntry{def:metric}
+% ------------------------------------------------------------
+\providecommand{\TechniqueEntry}[1]{%
+  \texttt{#1}%
+  \exercise@maybeindextech{#1}%
+}
+
+\providecommand{\DependencyEntry}[1]{%
+  \texttt{#1}%
+  \exercise@maybeindexdep{#1}%
+}
+
+% ------------------------------------------------------------
+% Convenience wrappers for common tag namespaces
+%   These DO NOT hide the literal tag in source if you do not want them to.
+%   They are here only as optional helpers.
+% ------------------------------------------------------------
+\providecommand{\tech}[1]{\TechniqueEntry{tech:#1}}
+\providecommand{\dep}[1]{\DependencyEntry{#1}}
+
+% ------------------------------------------------------------
+% Metadata storage
+% ------------------------------------------------------------
+\providecommand{\CurrentExerciseAuthor}{}
+\providecommand{\CurrentExerciseBook}{}
+\providecommand{\CurrentExerciseID}{}
+\providecommand{\CurrentExerciseType}{}
+\providecommand{\CurrentExerciseTechniques}{}
+\providecommand{\CurrentExerciseDependencies}{}
+
+% ------------------------------------------------------------
+% Per-author counters
+% ------------------------------------------------------------
+\newcounter{exerciseAbbott}
+\newcounter{exerciseTao}
+\newcounter{exerciseLebl}
+\newcounter{exerciseBruckner}
+\newcounter{exerciseBartleSherbert}
+\newcounter{exerciseGeneric}
+
+\newcommand{\exercise@stepauthorcounter}[1]{%
+  \ifdefstrequal{#1}{Abbott}{\stepcounter{exerciseAbbott}}{%
+  \ifdefstrequal{#1}{Tao}{\stepcounter{exerciseTao}}{%
+  \ifdefstrequal{#1}{Lebl}{\stepcounter{exerciseLebl}}{%
+  \ifdefstrequal{#1}{Bruckner}{\stepcounter{exerciseBruckner}}{%
+  \ifdefstrequal{#1}{Bartle \& Sherbert}{\stepcounter{exerciseBartleSherbert}}{%
+  \stepcounter{exerciseGeneric}}}}}}%
+}
+
+\newcommand{\exercise@authorcountvalue}[1]{%
+  \ifdefstrequal{#1}{Abbott}{\arabic{exerciseAbbott}}{%
+  \ifdefstrequal{#1}{Tao}{\arabic{exerciseTao}}{%
+  \ifdefstrequal{#1}{Lebl}{\arabic{exerciseLebl}}{%
+  \ifdefstrequal{#1}{Bruckner}{\arabic{exerciseBruckner}}{%
+  \ifdefstrequal{#1}{Bartle \& Sherbert}{\arabic{exerciseBartleSherbert}}{%
+  \arabic{exerciseGeneric}}}}}}%
+}
+
+% ------------------------------------------------------------
+% Metadata setter
+% ------------------------------------------------------------
+\NewDocumentCommand{\ExerciseMeta}{m m m m m m}{%
+  % #1 author
+  % #2 book
+  % #3 exercise id
+  % #4 type
+  % #5 techniques   (literal source-searchable tags)
+  % #6 dependencies (literal source-searchable tags)
+  \renewcommand{\CurrentExerciseAuthor}{#1}%
+  \renewcommand{\CurrentExerciseBook}{#2}%
+  \renewcommand{\CurrentExerciseID}{#3}%
+  \renewcommand{\CurrentExerciseType}{#4}%
+  \renewcommand{\CurrentExerciseTechniques}{#5}%
+  \renewcommand{\CurrentExerciseDependencies}{#6}%
+  \exercise@stepauthorcounter{#1}%
+}
+
+% ------------------------------------------------------------
+% Shared header
+% ------------------------------------------------------------
+\newcommand{\ExerciseRecordHeader}{%
+\begin{tcolorbox}[colback=gray!6,colframe=gray!40,arc=2pt,
+  left=6pt,right=6pt,top=4pt,bottom=4pt,
+  title={\small\textbf{Exercise Record}}]
+\small
+\textbf{Author index number. }
+\CurrentExerciseAuthor~\exercise@authorcountvalue{\CurrentExerciseAuthor}
+
+\medskip
+\textbf{Source. }
+\CurrentExerciseAuthor, \textit{\CurrentExerciseBook}, \CurrentExerciseID
+
+\medskip
+\textbf{Type. }
+\CurrentExerciseType
+
+\medskip
+\textbf{Technique tags. }
+\texttt{\CurrentExerciseTechniques}
+
+\medskip
+\textbf{Dependency tags. }
+\texttt{\CurrentExerciseDependencies}
+\end{tcolorbox}
+}
+
+% ------------------------------------------------------------
+% Stub A — Construction / Find / Compute
+% ------------------------------------------------------------
+\NewDocumentEnvironment{exerciseconstruction}{}{%
+  \subsection*{Exercise}
+  \ExerciseRecordHeader
+
+  % Suggested searchable metadata block:
+  % tech:...
+  % dep:...
+
+  \begin{remark*}[Return]
+  $\leftarrow$ Back-link to the relevant notes section.
+  \end{remark*}
+
+  \begin{remark*}[Task]
+  State the exercise verbatim here.
+  \end{remark*}
+
+  \begin{remark*}[Construction]
+  State the object or computed value explicitly before any justification.
+  \end{remark*}
+
+  \begin{proof}
+}{%
+  \end{proof}
+
+  \begin{remark*}[Dependencies]
+  Expand the dependency tags into prose if helpful.
+  \end{remark*}
+
+  \begin{remark*}[Proof shape]
+  Record the structural pattern used:
+  direct / contradiction / verification / construction / computation.
+  \end{remark*}
+
+  \begin{remark*}[Reflection]
+  Optional: explain why the construction works and what feature is essential.
+  \end{remark*}
+}
+
+% ------------------------------------------------------------
+% Stub B — Proof / Verify / Prove-or-Counterexample / Characterization
+% ------------------------------------------------------------
+\NewDocumentEnvironment{exerciseproofrecord}{}{%
+  \subsection*{Exercise}
+  \ExerciseRecordHeader
+
+  % Suggested searchable metadata block:
+  % tech:...
+  % dep:...
+
+  \begin{remark*}[Return]
+  $\leftarrow$ Back-link to the relevant notes section.
+  \end{remark*}
+
+  \begin{remark*}[Task]
+  State the exercise verbatim here.
+  \end{remark*}
+
+  \begin{remark*}[Strategy]
+  Briefly describe the proof plan.
+  \end{remark*}
+
+  \begin{proof}
+}{%
+  \end{proof}
+
+  \begin{remark*}[Dependencies]
+  Expand the dependency tags into prose if helpful.
+  \end{remark*}
+
+  \begin{remark*}[Proof shape]
+  Record the structural pattern:
+  direct / contradiction / case split / subsequence extraction / squeeze / iff.
+  \end{remark*}
+}
+
+% ------------------------------------------------------------
+% Controlled vocabularies
+% ------------------------------------------------------------
+
+% TECHNIQUE TAGS (recommended)
+% tech:unpack-definition
+% tech:triangle-inequality
+% tech:epsilon-splitting
+% tech:tail-argument
+% tech:choose-N
+% tech:case-splitting
+% tech:contradiction
+% tech:subsequence-extraction
+% tech:diagonal-argument
+% tech:squeeze
+% tech:monotone-bound
+% tech:supremum-characterization
+% tech:metric-verification
+% tech:ball-containment
+% tech:diameter-bound
+% tech:compactness-argument
+
+% DEPENDENCY TAGS (recommended)
+% def:metric
+% def:open-ball
+% def:bounded
+% def:diameter
+% def:convergence
+% def:cauchy-sequence
+% def:supremum
+% def:infimum
+% thm:triangle-inequality
+% thm:archimedean-property
+% thm:monotone-convergence
+% thm:bolzano-weierstrass
+% thm:squeeze-theorem
+
+% ------------------------------------------------------------
+% Example usage
+% ------------------------------------------------------------
+%
+% % =========================================================
+% % Exercise Metadata
+% % tech:triangle-inequality
+% % tech:epsilon-splitting
+% % dep:def:convergence
+% % dep:thm:triangle-inequality
+% % =========================================================
+%
+% \ExerciseMeta
+%   {Abbott}
+%   {Understanding Analysis}
+%   {Exercise 2.3.8}
+%   {PROOF}
+%   {tech:triangle-inequality, tech:epsilon-splitting}
+%   {def:convergence, thm:triangle-inequality}
+%
+% \begin{exerciseproofrecord}
+%
+% \begin{remark*}[Technique]
+% \TechniqueEntry{tech:triangle-inequality},
+% \TechniqueEntry{tech:epsilon-splitting}
+% \end{remark*}
+%
+% \begin{remark*}[Dependencies]
+% \DependencyEntry{def:convergence},
+% \DependencyEntry{thm:triangle-inequality}
+% \end{remark*}
+%
+% Let $\varepsilon > 0$. Since $x_n \to x$, there exists $N$ such that
+% $d(x_n,x)<\varepsilon/2$ for all $n\ge N$. If $m,n\ge N$, then
+% \[
+% d(x_m,x_n)\le d(x_m,x)+d(x,x_n)<\varepsilon.
+% \]
+%
+% \end{exerciseproofrecord}
+%
+% ------------------------------------------------------------
+
+\makeatother

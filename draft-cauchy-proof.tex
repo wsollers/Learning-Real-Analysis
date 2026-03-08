@@ -1,0 +1,449 @@
+% ============================================================
+% Cauchy Sequences — Canonical Proof Patterns
+% ============================================================
+
+\section{Canonical Cauchy Proof Patterns}
+
+Cauchy sequences are one of the central organizing ideas of analysis.
+A remarkable fact --- one that practicing analysts quickly internalize ---
+is that the majority of Cauchy arguments follow a small number of
+recognizable patterns.
+
+The goal of this section is not merely to present results, but to train
+the reader to recognize these recurring proof structures.
+
+Almost every Cauchy proof in metric spaces ultimately reduces to two ideas:
+
+\begin{center}
+\textbf{Triangle inequality + tail control}
+\end{center}
+
+Symbolically, we repeatedly exploit estimates of the form
+
+\[
+d(x_m,x_n)
+\le d(x_m,a)+d(a,x_n)
+\]
+
+for a carefully chosen \emph{anchor point} \(a\).
+
+\bigskip
+
+The following ten patterns occur again and again throughout analysis.
+
+% ============================================================
+\subsection*{Pattern 1 — Convergent $\Rightarrow$ Cauchy}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:triangle-inequality, tech:epsilon-splitting, tech:choose-N
+\end{remark*}
+
+\textbf{Claim.}
+If \(x_n \to x\) in a metric space, then \((x_n)\) is Cauchy.
+
+\begin{proof}
+
+Let \(\varepsilon>0\) be given.
+
+Because \(x_n\to x\), there exists \(N\) such that
+
+\[
+d(x_n,x) < \frac{\varepsilon}{2}
+\qquad n\ge N
+\]
+
+Now take \(m,n\ge N\). By the triangle inequality,
+
+\[
+d(x_m,x_n)
+\le d(x_m,x) + d(x,x_n).
+\]
+
+Each term is less than \(\varepsilon/2\), so
+
+\[
+d(x_m,x_n) < \varepsilon.
+\]
+
+Thus the sequence is Cauchy.
+\end{proof}
+
+\bigskip
+
+Professor's advice:
+
+\begin{quote}
+Whenever a limit is known, you should immediately think of the triangle
+inequality centered at the limit.
+\end{quote}
+
+\bigskip
+
+% ============================================================
+\subsection*{Pattern 2 — Cauchy $\Rightarrow$ Bounded}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:choose-N, tech:tail-argument, tech:ball-containment
+\end{remark*}
+
+\textbf{Idea.}
+
+A Cauchy sequence eventually lives inside a small ball.
+
+\textbf{Example.}
+
+Let \((x_n)\) be Cauchy.
+
+Choose \(N\) such that
+
+\[
+d(x_m,x_n) < 1
+\quad
+m,n\ge N.
+\]
+
+Fix \(n=N\). Then
+
+\[
+d(x_m,x_N)<1
+\quad m\ge N.
+\]
+
+Hence the tail lies in the ball
+
+\[
+B(x_N,1).
+\]
+
+The initial segment
+
+\[
+\{x_1,\dots,x_{N-1}\}
+\]
+
+is finite, so the sequence is bounded.
+
+\bigskip
+
+\begin{quote}
+A useful mental picture is that a Cauchy sequence eventually gets trapped
+inside smaller and smaller balls.
+\end{quote}
+
+% ============================================================
+\subsection*{Pattern 3 — Subsequences of Cauchy Sequences}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:subsequence-extraction, tech:tail-argument
+\end{remark*}
+
+If a sequence is Cauchy then any subsequence is also Cauchy.
+
+Indeed, if
+
+\[
+d(x_m,x_n) < \varepsilon
+\quad
+m,n\ge N
+\]
+
+then any subsequence indices \(n_k,n_\ell\) eventually satisfy
+
+\[
+n_k,n_\ell \ge N.
+\]
+
+Therefore
+
+\[
+d(x_{n_k},x_{n_\ell}) < \varepsilon.
+\]
+
+\bigskip
+
+This simple observation becomes extremely important in compactness and
+Bolzano--Weierstrass arguments.
+
+% ============================================================
+\subsection*{Pattern 4 — Cauchy + Convergent Subsequence}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:triangle-inequality, tech:subsequence-extraction
+\end{remark*}
+
+Suppose
+
+\[
+x_{n_k} \to L
+\]
+
+and \((x_n)\) is Cauchy.
+
+We estimate
+
+\[
+d(x_n,L)
+\le
+d(x_n,x_{n_k}) + d(x_{n_k},L).
+\]
+
+Choose \(k\) large so both terms are small.
+
+Thus \(x_n \to L\).
+
+\bigskip
+
+\begin{quote}
+This argument is the core mechanism behind many completeness proofs.
+\end{quote}
+
+% ============================================================
+\subsection*{Pattern 5 — Algebra of Cauchy Sequences}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:triangle-inequality
+\end{remark*}
+
+Example: sum of Cauchy sequences.
+
+\[
+|a_m+b_m-(a_n+b_n)|
+\le
+|a_m-a_n|+|b_m-b_n|
+\]
+
+Each term becomes small independently.
+
+Hence sums of Cauchy sequences are Cauchy.
+
+% ============================================================
+\subsection*{Pattern 6 — Metric Comparison}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:metric-verification
+\end{remark*}
+
+Suppose
+
+\[
+d_1(x,y) \le C\, d_2(x,y).
+\]
+
+Then any \(d_2\)-Cauchy sequence is also \(d_1\)-Cauchy.
+
+Such estimates appear frequently when comparing metrics.
+
+% ============================================================
+\subsection*{Pattern 7 — Telescoping Argument}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:tail-argument
+\end{remark*}
+
+If
+
+\[
+x_n = \sum_{k=1}^{n} a_k
+\]
+
+then
+
+\[
+x_m-x_n
+=
+\sum_{k=n+1}^{m} a_k.
+\]
+
+Bounding the tail sum proves the sequence is Cauchy.
+
+% ============================================================
+\subsection*{Pattern 8 — Completeness Mechanism}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:subsequence-extraction, tech:triangle-inequality
+\end{remark*}
+
+Typical completeness proof structure:
+
+\begin{enumerate}
+\item Start with a Cauchy sequence
+\item Prove it is bounded
+\item Apply Bolzano--Weierstrass
+\item Extract convergent subsequence
+\item Apply Pattern 4
+\end{enumerate}
+
+% ============================================================
+\subsection*{Pattern 9 — Non-completeness Counterexample}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:counterexample
+\end{remark*}
+
+Example in \(\mathbb{Q}\):
+
+Let \(x_n\) be decimal truncations of \(\sqrt{2}\).
+
+Then \(x_n\) is Cauchy in \(\mathbb{Q}\) but does not converge in
+\(\mathbb{Q}\).
+
+This demonstrates that \(\mathbb{Q}\) is not complete.
+
+% ============================================================
+\subsection*{Pattern 10 — Nested Interval Construction}
+% ============================================================
+
+\begin{remark*}[Techniques]
+tech:diameter-bound
+\end{remark*}
+
+Suppose
+
+\[
+I_1 \supset I_2 \supset I_3 \supset \cdots
+\]
+
+and
+
+\[
+\text{diam}(I_n) \to 0.
+\]
+
+Choose \(x_n \in I_n\).
+
+Then
+
+\[
+|x_m-x_n| \le \text{diam}(I_n)
+\]
+
+for \(m>n\), so the sequence is Cauchy.
+
+\bigskip
+
+% ============================================================
+\section{Seven Canonical Triangle-Inequality Manipulations}
+% ============================================================
+
+The triangle inequality is the single most important inequality in
+analysis.
+
+Experienced analysts use a small repertoire of standard manipulations.
+
+\bigskip
+
+\subsection*{1. Insert an Intermediate Point}
+
+\[
+d(x,y)
+\le
+d(x,a)+d(a,y)
+\]
+
+Used to compare two quantities via an anchor point.
+
+\bigskip
+
+\subsection*{2. $\varepsilon$-Splitting}
+
+\[
+\varepsilon
+=
+\frac{\varepsilon}{2}
++
+\frac{\varepsilon}{2}
+\]
+
+Used when two independent bounds must be controlled.
+
+\bigskip
+
+\subsection*{3. Three-Term Split}
+
+\[
+d(x,z)
+\le
+d(x,y)+d(y,w)+d(w,z)
+\]
+
+Useful in subsequence arguments.
+
+\bigskip
+
+\subsection*{4. Reverse Triangle Inequality}
+
+\[
+|\,|x|-|y|\,|
+\le
+|x-y|
+\]
+
+Often used to control absolute values.
+
+\bigskip
+
+\subsection*{5. Bounding a Difference by a Sum}
+
+\[
+|a-b|
+\le
+|a|+|b|
+\]
+
+Used constantly in algebraic estimates.
+
+\bigskip
+
+\subsection*{6. Telescoping Bound}
+
+\[
+|x_m-x_n|
+\le
+\sum_{k=n+1}^{m} |x_k-x_{k-1}|
+\]
+
+Key tool in series arguments.
+
+\bigskip
+
+\subsection*{7. Metric Ball Inclusion}
+
+If
+
+\[
+d(x,a)<r/2
+\quad\text{and}\quad
+d(a,y)<r/2
+\]
+
+then
+
+\[
+d(x,y)<r.
+\]
+
+This observation underlies many compactness arguments.
+
+\bigskip
+
+\begin{center}
+\textbf{Final Advice}
+\end{center}
+
+Most analysis proofs can be mentally reduced to the following question:
+
+\begin{quote}
+Where should I place the triangle inequality?
+\end{quote}
+
+Once the correct anchor point is chosen, the remainder of the argument
+typically follows automatically.
