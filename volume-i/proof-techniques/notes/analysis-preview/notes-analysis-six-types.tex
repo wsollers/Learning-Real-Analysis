@@ -1,0 +1,159 @@
+% =========================================================
+% The Six Exercise Types in Analysis
+% =========================================================
+\paragraph{The Six Exercise Types.}
+
+Every exercise in sequences and metric spaces belongs to one of six
+structural types. Identifying the type is the first step before
+writing anything. The type determines the shape of the solution ---
+not the details, but the overall structure.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Quick Reference: The Six Types}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{0.13\textwidth} p{0.28\textwidth} p{0.25\textwidth} p{0.20\textwidth}}
+\toprule
+\textbf{Type} & \textbf{Signal words} & \textbf{Shape} & \textbf{First move} \\
+\midrule
+Proof &
+  \textit{Prove, show, establish} &
+  Hypotheses to conclusion &
+  Unpack all definitions \\
+Verification &
+  \textit{Verify that \ldots is a metric, show \ldots satisfies} &
+  Check each condition &
+  List every condition \\
+Prove/Counterexample &
+  \textit{True? Prove or find a counterexample} &
+  Decide, then justify &
+  Decide first \\
+Construction &
+  \textit{Find, construct, exhibit, give an example of} &
+  Name the object; verify it &
+  Name the object \\
+Computation &
+  \textit{Compute, calculate, find the diameter of} &
+  Evaluate from a definition &
+  Write the definition \\
+Characterization &
+  \textit{If and only if, characterize all \ldots that} &
+  Two separate directions &
+  Split two directions \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[Type 1 (Proof): you are told the statement is true]
+In a proof exercise, the statement is true and your job is to trace
+the logical path from the hypotheses to the conclusion. There is no
+choice to make about truth value.
+
+The opening move is always the same: unpack every definition in the
+hypotheses and in the conclusion. The definitions turn abstract concepts
+into concrete quantifier-and-inequality statements that can be
+manipulated. Without this step, you have nothing to work with.
+
+\textbf{Example.} \textit{Prove that every convergent sequence is Cauchy.}
+Unpack ``convergent'': $\forall\,\varepsilon>0\;\exists\, N$ s.t.\
+$n \geq N \Rightarrow d(x_n, p) < \varepsilon$.
+Unpack ``Cauchy'': $\forall\,\varepsilon>0\;\exists\, M$ s.t.\
+$m,n \geq M \Rightarrow d(x_m, x_n) < \varepsilon$.
+Now the proof goal is visible: use the convergence condition (which
+controls $d(x_n, p)$) to establish the Cauchy condition (which asks
+for control over $d(x_m, x_n)$). The triangle inequality bridges them.
+\end{remark}
+
+\begin{remark}[Type 2 (Verification): check every condition]
+In a verification exercise, a specific named object is given and you
+must confirm it satisfies every condition of a definition. The definition
+has a finite list of conditions. Your job is to work through every one,
+explicitly and separately.
+
+The error students make: checking four out of five conditions and
+writing QED. A verification is complete only when every condition
+is checked. When you begin a verification, write the complete list of
+conditions first. Then work through them in order.
+
+\textbf{Example.} \textit{Verify that the discrete metric is a metric.}
+A metric has four conditions: non-negativity, identity of indiscernibles,
+symmetry, triangle inequality. List all four. Check each one.
+The triangle inequality requires a case split (on whether $x = z$ or
+$x \neq z$), which is itself a standard move in analysis.
+\end{remark}
+
+\begin{remark}[Type 3 (Prove or counterexample): decide before you argue]
+This is the most dangerous type for students who rush. The exercise
+gives you a statement and asks you to determine its truth value, then
+justify. If you skip the determination stage and try to prove a false
+statement, you will waste effort and grow confused.
+
+Stage~1 is always: decide. Test the statement on simple cases ---
+$\mathbb{R}$ with the standard metric first, then discrete spaces,
+then other special cases. One counterexample falsifies; failure to
+find a counterexample after testing several cases suggests the
+statement is true.
+
+Stage~2: justify. If true, write a proof. If false, exhibit a specific
+counterexample and verify it fails.
+
+\textbf{Example.} \textit{Is the open ball always equal to the closed ball?}
+Test in $\mathbb{R}$: $B(0,1) = (-1,1)$ and $C(0,1) = [-1,1]$.
+The point $-1$ is in $C(0,1)$ but not $B(0,1)$. False. Exhibit this
+specific counterexample in the solution, with the witness ($-1$) and
+the calculation ($d(-1,0) = 1$, so $-1 \in C(0,1)$ and $-1 \notin B(0,1)$).
+\end{remark}
+
+\begin{remark}[Type 4 (Construction): name first, verify second]
+A construction exercise asks you to produce an object with given
+properties. The solution has two parts: stating the object, and
+verifying it has every required property. Both parts are required.
+
+State the object completely and unambiguously before any verification.
+If you cannot state it clearly, you do not yet have a solution.
+Then verify every required property from scratch --- do not assume
+properties that were not established.
+
+\textbf{Example.} \textit{Find a metric on $\mathbb{N}$ such that
+$\mathbb{N}$ is bounded.} The idea: embed $\mathbb{N}$ into
+$(0,1] \subset \mathbb{R}$ via $n \mapsto 1/n$ and pull back the metric.
+Define $d(m,n) = |1/m - 1/n|$. Then verify: (i) it is a metric (four
+conditions), and (ii) it is bounded ($d(m,n) \leq 1$ for all $m,n$).
+\end{remark}
+
+\begin{remark}[Type 5 (Computation): the definition is the answer]
+In a computation exercise, a specific numerical or set-theoretic value
+is asked for. The answer always comes from writing out the relevant
+definition as a supremum, infimum, or set, and then evaluating it.
+
+Do not skip straight to the answer. Write the definition first.
+This is not just for clarity --- it prevents errors that arise from
+misremembering what is being computed.
+
+\textbf{Example.} \textit{Compute $\operatorname{diam}([a,b])$.}
+Write: $\operatorname{diam}([a,b]) = \sup\{|x-y| : x, y \in [a,b]\}$.
+Upper bound: $|x-y| \leq b-a$ for all $x,y \in [a,b]$.
+Attained: $|b - a| = b-a$. Therefore $\operatorname{diam}([a,b]) = b-a$.
+\end{remark}
+
+\begin{remark}[Type 6 (Characterization): two proofs, not one]
+A characterization exercise asks for an equivalence or an if-and-only-if.
+The solution is always two separate proofs, labeled $(\Rightarrow)$ and
+$(\Leftarrow)$. Label them before writing a single line.
+
+The two directions often require completely different techniques and
+different amounts of work. The $(\Rightarrow)$ direction may be three
+lines while the $(\Leftarrow)$ direction requires a sequence argument.
+Writing them separately prevents the error of running arguments in
+both directions simultaneously and losing track of which assumptions
+are in play.
+
+\textbf{Example.} \textit{Show that a sequence converges if and only if
+it is eventually constant (in the discrete metric).}
+$(\Leftarrow)$: Suppose eventually constant; then convergence holds trivially.
+$(\Rightarrow)$: Suppose it converges; apply the definition with
+$\varepsilon = 1/2$ and use the fact that distances in the discrete metric
+are either $0$ or $1$.
+\end{remark}

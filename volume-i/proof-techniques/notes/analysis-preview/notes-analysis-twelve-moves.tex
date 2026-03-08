@@ -1,0 +1,166 @@
+% =========================================================
+% The Twelve Canonical Proof Moves in Analysis
+% =========================================================
+\paragraph{The Twelve Canonical Proof Moves.}
+
+A \emph{proof move} is a recurring logical or computational technique
+that appears across many different proofs in analysis. Once you learn
+to name these moves, reading and writing proofs becomes a matter of
+recognizing which move applies --- not inventing an argument from scratch.
+
+The moves below are not tricks. Each one encodes a genuine mathematical
+idea. But once the idea is understood, the move can be deployed almost
+mechanically in the right situations.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Twelve Moves at a Glance}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{clll}
+\toprule
+\textbf{\#} & \textbf{Move} & \textbf{Use when \ldots} & \textbf{Level} \\
+\midrule
+1  & Unpack a definition & starting any proof & L1 \\
+2  & Triangle inequality & need to bound $d(x,z)$ via $y$ & L2 \\
+3  & $\varepsilon$-splitting & triangle ineq.\ produces a sum & L2 \\
+4  & Tail argument & combining two $N$'s & L3 \\
+5  & Case splitting & discrete or binary structure & L2 \\
+6  & Choose $N$ explicitly & $\varepsilon$-$N$ arguments & L3 \\
+7  & Contradiction & uniqueness or non-existence & L4 \\
+8  & Subsequence extraction & sequence misbehaves globally & L3 \\
+9  & Squeeze (sandwich) & bound $d(x_n,p)$ from above & L2 \\
+10 & Inherited metric / embedding & constructing a new metric & L4 \\
+11 & Open cover / finite subcover & compactness arguments & L4 \\
+12 & Diagonal argument & simultaneous subsequence conditions & L3/4 \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[Move 1: Unpack a definition]
+This is always the first move. Every analysis concept --- convergence,
+Cauchy, compactness, closure, diameter --- is a compressed form of
+a precise statement with quantifiers and inequalities. Unpacking the
+definition turns the abstract concept into something you can work with.
+
+Without this step, you have named objects but no machinery. With it,
+you have the raw material for every subsequent move.
+
+\textbf{Template.} Write out the definition of every term in the
+hypothesis and in the goal. The hypotheses become your assumptions;
+the goal becomes your target inequality or quantifier statement.
+\end{remark}
+
+\begin{remark}[Moves 2 and 3: Triangle inequality and $\varepsilon$-splitting]
+These two moves almost always appear together. The triangle inequality
+lets you insert an intermediate point $y$ and split $d(x,z)$ into
+$d(x,y) + d(y,z)$. $\varepsilon$-splitting means choosing the bounds
+on each piece so they add up to $\varepsilon$.
+
+The intermediate point $y$ is not arbitrary: it is chosen to be something
+you already have control over (a limit, a fixed center, a sequence element).
+The fractions $\varepsilon/2$, $\varepsilon/3$ are chosen \emph{before}
+picking $N$, so that the final bound comes out to $\varepsilon$ exactly.
+
+\textbf{Template.} When you need $d(x_m, x_n) < \varepsilon$ and you
+know each term is close to a limit $p$: insert $p$ via the triangle
+inequality, budget $\varepsilon/2$ for each piece, and choose $N$ so
+both pieces are bounded.
+\end{remark}
+
+\begin{remark}[Moves 4 and 6: Tail argument and choosing $N$]
+The $\varepsilon$-$N$ definition of convergence requires you to \emph{produce}
+an $N$. This is Move~6: work backwards from the target inequality to
+determine what $N$ must satisfy, then assert its existence
+(typically by the Archimedean property: for any $\varepsilon > 0$
+there is an integer greater than $1/\varepsilon$).
+
+Move~4 (the tail argument) handles the situation where two separate
+conditions each give their own $N_i$. The resolution: take
+$N = \max(N_1, N_2, \ldots)$. For $n \geq N$, all conditions hold
+simultaneously.
+
+These two moves are the engine of every $\varepsilon$-$N$ argument.
+They appear in virtually every proof about convergent sequences.
+\end{remark}
+
+\begin{remark}[Move 5: Case splitting in analysis]
+Case splitting is the same structural technique described in
+Section~\ref{sec:proof-structures}, now applied to the specific
+context of metric spaces. The most common case split in metric space
+proofs is: $x = y$ (distance is $0$) versus $x \neq y$ (distance
+is $1$ in the discrete metric, or some positive value in other spaces).
+
+Case splitting is particularly important in verification exercises:
+the triangle inequality almost always requires splitting on whether
+the two outer points coincide.
+\end{remark}
+
+\begin{remark}[Move 7: Contradiction in analysis]
+In analysis, contradiction is used most characteristically for
+\emph{uniqueness} results: suppose two limits exist; assume they are
+different; derive a contradiction from the triangle inequality and the
+convergence hypothesis.
+
+The template: suppose the goal fails (e.g., two limits exist with
+$d(x,y) > 0$). Choose $\varepsilon = d(x,y)/2$. Then for large enough
+$n$, both $d(x_n, x) < \varepsilon$ and $d(x_n, y) < \varepsilon$.
+The triangle inequality gives $d(x,y) \leq 2\varepsilon = d(x,y)$,
+a contradiction.
+
+Notice: contradiction here uses the triangle inequality (Move~2) and
+the tail argument (Move~4) internally. Proof moves nest and combine.
+\end{remark}
+
+\begin{remark}[Moves 8 and 12: Subsequence extraction and diagonal argument]
+Subsequence extraction is the operation of selecting indices
+$n_1 < n_2 < \cdots$ so that the restricted sequence
+$\{x_{n_k}\}$ has some desired property (being monotone, being
+close to a given point, etc.). It is a Level~3 operation: you are
+selecting from an infinite sequence, which requires genuine sequence
+machinery.
+
+The diagonal argument applies subsequence extraction infinitely many
+times and diagonalizes the result: the $k$-th term of the diagonal
+sequence is $x_k^{(k)}$, where $\{x_n^{(k)}\}$ is the $k$-th
+extracted subsequence. The diagonal sequence satisfies all conditions
+simultaneously. This is the technique behind Arzel\`a--Ascoli and
+related compactness results.
+\end{remark}
+
+\begin{remark}[Move 9: The squeeze (sandwich)]
+If you can show $0 \leq d(x_n, p) \leq c_n$ where $c_n \to 0$, then
+$x_n \to p$ follows immediately: any $\varepsilon$ that works for
+$c_n$ also works for $d(x_n, p)$.
+
+The squeeze is particularly useful when $d(x_n, p)$ is hard to bound
+directly but can be dominated by a simpler sequence whose convergence
+is known.
+\end{remark}
+
+\begin{remark}[Move 10: Inherited metric / embedding]
+To construct a metric on a new space $X$, it is often easiest to
+find an injective function $f : X \to Y$ into a space $Y$ whose metric
+is known, and define $d_X(x,z) := d_Y(f(x), f(z))$. All four metric
+axioms are then inherited from $d_Y$ via $f$. The only things to
+verify are injectivity of $f$ (to ensure the identity axiom) and
+whatever additional properties are required.
+
+This is a Level~4 move because it operates on the global structure
+of the space: you are choosing an ambient space and an embedding,
+not just manipulating inequalities.
+\end{remark}
+
+\begin{remark}[Move 11: Open cover / finite subcover]
+Compactness says: every open cover of a compact set $K$ has a finite
+subcover. The power of this is that it converts infinite problems into
+finite ones. If you need a single bound $\delta$ that works everywhere
+on $K$, you find a $\delta_x$ at each $x$ (infinitely many), then
+extract a finite subcover and take the minimum of finitely many $\delta_x$.
+A finite minimum exists; a minimum over infinitely many values might not.
+
+This move appears in all compactness arguments: uniform continuity on
+compact sets, compactness implies boundedness, compactness implies
+completeness in complete metric spaces.
+\end{remark}
