@@ -1,335 +1,381 @@
 % =========================================================
-% Bounds / Suprema / Infima — Review Exercises
-% Aggregated Across Core Analysis Texts
+% Generated Exercises
 % =========================================================
-
-\section*{Bounds, Suprema, and Infima — Exercise Review Set}
-
-These exercises train the foundational completeness machinery of the real
-numbers. Every problem in this collection focuses on one of the following
-techniques:
-
-\begin{center}
-\texttt{upper-bound argument \quad least-upper-bound property \quad epsilon-approximation}\\
-\texttt{supremum algebra \quad sequence bounds \quad diameter via supremum}
-\end{center}
-
-Mastery of these problems prepares the student for monotone convergence,
-Bolzano--Weierstrass, and compactness arguments.
-
-\bigskip
-
-% =========================================================
-% Exercise Stub Template
-% =========================================================
-
-\newcommand{\exstub}[4]{
-\subsection*{Exercise: #1}
-
-\textbf{Source:} #2
-
-\textbf{Technique:} #3
-
-\textbf{Task.} #4
-
-\begin{remark*}[Work Area]
-Write your proof or computation here.
-\end{remark*}
-
-\bigskip
-}
-
-% =========================================================
-% Abbott
-% =========================================================
-
-\section*{Exercises from Abbott}
-
-\exstub
-{Abbott 1.2.6}
-{Abbott, \textit{Understanding Analysis}}
-{least-upper-bound property}
-{Prove that the supremum of a set is unique.}
 % =========================================================
 % Exercise Metadata
 % tech:unpack-definition
-% dep:def:upper-bound
-% dep:def:supremum
+% tech:choose-N
+% tech:supremum-characterization
+% def:convergence
+% def:supremum
+% def:infimum
+% thm:archimedean-property
 % =========================================================
 
-\ExerciseMeta
-  {Abbott}
-  {Understanding Analysis}
-  {Exercise 1.2.6}
-  {PROOF}
-  {tech:unpack-definition}
-  {dep:def:upper-bound, dep:def:supremum}
+\GeneratedExerciseMeta
+  {EX-BOUNDS-CHATGPT-001}
+  {Bounds / Suprema / Infima}
+  {COMPUTATION}
+  {tech:unpack-definition, tech:choose-N, tech:supremum-characterization}
+  {def:convergence, def:supremum, def:infimum, thm:archimedean-property}
 
-\begin{exerciseproofrecord}
-
-\begin{remark*}[Technique]
-\TechniqueEntry{tech:unpack-definition}
-\end{remark*}
-
-\begin{remark*}[Dependencies]
-\DependencyEntry{dep:def:upper-bound},
-\DependencyEntry{dep:def:supremum}
-\end{remark*}
+\begin{generatedexerciseconstruction}
 
 \begin{remark*}[Task]
-Prove that the supremum of a set, if it exists, is unique.
+Let
+\[
+A=\left\{\frac{1}{n}:n\in\mathbb{N}\right\}.
+\]
+Determine \(\sup A\) and \(\inf A\).
 \end{remark*}
 
-\begin{remark*}[Strategy]
-Assume two suprema exist. Since each is the least upper bound, each must be
-less than or equal to the other. Then conclude equality.
+\begin{remark*}[Technique]
+\TechniqueEntry{tech:unpack-definition},
+\TechniqueEntry{tech:choose-N},
+\TechniqueEntry{tech:supremum-characterization}
+\end{remark*}
+
+\begin{remark*}[Construction]
+We claim that
+\[
+\sup A = 1
+\qquad\text{and}\qquad
+\inf A = 0.
+\]
 \end{remark*}
 
 \begin{proof}
-Assume \(S\subseteq \mathbb{R}\), and suppose \(s_0\) and \(s_1\) are both
-suprema of \(S\).
-
-\tagDU Since \(s_0=\sup S\), by definition \(s_0\) is an upper bound of \(S\),
-and \(s_0\) is less than or equal to every upper bound of \(S\).
-
-\tagDU Likewise, since \(s_1=\sup S\), \(s_1\) is an upper bound of \(S\),
-and \(s_1\) is less than or equal to every upper bound of \(S\).
-
-\tagDU Because \(s_1\) is an upper bound of \(S\), and \(s_0\) is the least
-upper bound, it follows that
+First we show that
 \[
-s_0 \le s_1.
+\lim_{n\to\infty}\frac{1}{n}=0.
 \]
 
-\tagDU Similarly, because \(s_0\) is an upper bound of \(S\), and \(s_1\) is
-the least upper bound, it follows that
+Let \(\varepsilon>0\) be arbitrary. By the Archimedean property, there exists
+\(N\in\mathbb{N}\) such that
 \[
-s_1 \le s_0.
+N>\frac{1}{\varepsilon}.
 \]
-
-Therefore,
+Then for every \(n\ge N\), we have
 \[
-s_0 \le s_1 \le s_0.
+n\ge N>\frac{1}{\varepsilon}.
 \]
-
-Hence \(s_0=s_1\).
-
-Thus the supremum of a set, if it exists, is unique.
-\end{proof}
-
-\begin{remark*}[Proof shape]
-Direct proof. Assume two candidates satisfy the defining property of supremum,
-then use the least-upper-bound property in both directions to obtain mutual
-inequalities and conclude equality.
-\end{remark*}
-
-\end{exerciseproofrecord}
-\exstub
-{Abbott 1.2.7}
-{Abbott, \textit{Understanding Analysis}}
-{epsilon-approximation}
-{Show that if $s = \sup A$, then for every $\varepsilon > 0$
-there exists $a \in A$ with $s - \varepsilon < a \le s$.}
-\begin{proof}
-Assume \(s=\sup A\).
-
-By definition of supremum, \(s\) is an upper bound for \(A\). Thus
+Taking reciprocals gives
 \[
-a \le s \qquad \text{for all } a\in A.
+\frac{1}{n}\le \frac{1}{N}<\varepsilon.
 \]
-
-Now let \(\varepsilon>0\) be arbitrary.
-
-Because \(s-\varepsilon < s\) and \(s\) is the \emph{least} upper bound of \(A\), the number
-\[
-s-\varepsilon
-\]
-cannot be an upper bound of \(A\).
-
-Therefore, by the negation of the definition of upper bound, there exists some \(a\in A\) such that
-\[
-a > s-\varepsilon.
-\]
-
-Since \(s\) is an upper bound for \(A\), we also have
-\[
-a \le s.
-\]
-
 Hence
 \[
-s-\varepsilon < a \le s.
+\left|\frac{1}{n}-0\right|=\frac{1}{n}<\varepsilon.
+\]
+Since this holds for every \(\varepsilon>0\), it follows that
+\[
+\frac{1}{n}\to 0 \qquad \text{as } n\to\infty.
 \]
 
-As \(\varepsilon>0\) was arbitrary, the result follows.
-\end{proof}
-\exstub
-{Abbott 1.2.8}
-{Abbott, \textit{Understanding Analysis}}
-{least-upper-bound property}
-{Let $A$ be bounded above. Show that $s=\sup A$ iff
-(i) $s$ is an upper bound and
-(ii) no smaller number is an upper bound.}
+Now
+\[
+A=\left\{1,\frac12,\frac13,\dots\right\}.
+\]
 
-\exstub
-{Abbott 2.3.1}
-{Abbott, \textit{Understanding Analysis}}
+Because \(1\in A\) and \(\frac1n\le 1\) for all \(n\in\mathbb{N}\), the set \(A\)
+has maximum \(1\). Therefore
+\[
+\sup A = 1.
+\]
+
+Also, for every \(n\in\mathbb{N}\),
+\[
+0<\frac1n,
+\]
+so \(0\) is a lower bound of \(A\).
+
+To show that \(0\) is the greatest lower bound, let \(\varepsilon>0\) be given.
+Since \(\frac1n\to 0\), there exists \(N\in\mathbb{N}\) such that
+\[
+\frac1N<\varepsilon.
+\]
+Then \(\frac1N\in A\) and
+\[
+0\le \frac1N < \varepsilon.
+\]
+Thus no positive number can be a lower bound of \(A\). Hence
+\[
+\inf A = 0.
+\]
+
+Therefore
+\[
+\sup A = 1
+\qquad\text{and}\qquad
+\inf A = 0.
+\]
+\end{proof}
+
+\begin{remark*}[Dependencies]
+We used the definition of convergence, the Archimedean property,
+the fact that a maximum is the supremum, and the definition of infimum.
+\end{remark*}
+
+\begin{remark*}[Proof shape]
+First prove \(\frac1n\to 0\) with an \(\varepsilon\)–\(N\) argument. Then identify
+the maximum of the set to get the supremum, and finally use the limit together
+with the definition of greatest lower bound to compute the infimum.
+\end{remark*}
+
+\begin{remark*}[Reflection]
+The key structural idea is that the supremum is easy because the set actually
+has a largest element, while the infimum is not attained and must instead be
+shown by approximation from above.
+\end{remark*}
+
+\end{generatedexerciseconstruction}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-002}
+{least-upper-bound property}
+{Let $A=(0,1)$. Show that $\sup A=1$ and $\inf A=0$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-003}
+{epsilon-approximation}
+{Let $s=\sup A$. Show that for every $\varepsilon>0$ there exists $a\in A$
+such that $s-\varepsilon<a$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-004}
+{supremum algebra}
+{If $A\subseteq B$, prove that $\sup A \le \sup B$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-005}
+{supremum algebra}
+{Let $A,B$ be bounded above. Show that $\sup(A\cup B)=\max(\sup A,\sup B)$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-006}
+{infimum characterization}
+{Show that $i=\inf A$ iff (i) $i$ is a lower bound and (ii) every larger number
+fails to be a lower bound.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-007}
+{supremum algebra}
+{Let $c\in\mathbb R$. Prove that $\sup(A+c)=\sup A+c$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-008}
+{supremum algebra}
+{Let $c>0$. Prove $\sup(cA)=c\sup A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-009}
+{supremum algebra}
+{Let $c<0$. Show that $\sup(cA)=c\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-010}
+{upper-bound argument}
+{If $A$ is finite, prove $\sup A = \max A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-011}
+{lower-bound argument}
+{If $A$ is finite, prove $\inf A = \min A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-012}
+{epsilon-approximation}
+{Let $s=\sup A$. Construct a sequence $(a_n)\subseteq A$ such that $a_n\to s$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-013}
 {sequence bounds}
+{Let $a_n=1/n$. Show $\sup\{a_n:n\in\mathbb N\}=1$ and $\inf\{a_n\}=0$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-014}
+{sequence bounds}
+{Let $a_n=(-1)^n$. Determine $\sup\{a_n\}$ and $\inf\{a_n\}$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-015}
+{sequence bounds}
+{Let $a_n=n$. Determine $\sup\{a_n\}$ and $\inf\{a_n\}$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-016}
+{boundedness}
 {Show that every convergent sequence is bounded.}
 
-\exstub
-{Abbott 2.3.3}
-{Abbott, \textit{Understanding Analysis}}
-{sequence bounds}
+\exstubgen
+{EX-BOUNDS-CHATGPT-017}
+{boundedness}
 {Give an example of a bounded sequence that does not converge.}
 
-% =========================================================
-% Bartle
-% =========================================================
-
-\section*{Exercises from Bartle \& Sherbert}
-
-\exstub
-{Bartle 1.2.5}
-{Bartle \& Sherbert, \textit{Introduction to Real Analysis}}
-{least-upper-bound property}
-{Prove that if $A$ is nonempty and bounded above,
-then $\sup A$ exists.}
-
-\exstub
-{Bartle 1.2.6}
-{Bartle \& Sherbert}
-{supremum algebra}
-{Show that $\sup(A+B) \le \sup A + \sup B$.}
-
-\exstub
-{Bartle 1.2.8}
-{Bartle \& Sherbert}
-{supremum algebra}
-{Let $c>0$. Prove $\sup(cA)=c\sup(A)$.}
-
-\exstub
-{Bartle 1.2.9}
-{Bartle \& Sherbert}
-{supremum algebra}
-{If $c<0$, prove $\sup(cA)=c\inf(A)$.}
-
-\exstub
-{Bartle 3.2.3}
-{Bartle \& Sherbert}
-{sequence bounds}
-{Show that every bounded monotone sequence converges.}
-
-% =========================================================
-% Bruckner
-% =========================================================
-
-\section*{Exercises from Bruckner}
-
-\exstub
-{Bruckner 1.4.1}
-{Bruckner, \textit{Real Analysis}}
+\exstubgen
+{EX-BOUNDS-CHATGPT-018}
 {upper-bound argument}
-{Show that every finite set of real numbers has a supremum
-and an infimum.}
+{Let $A=\{x\in\mathbb R: x^2<2\}$. Determine $\sup A$.}
 
-\exstub
-{Bruckner 1.4.3}
-{Bruckner}
+\exstubgen
+{EX-BOUNDS-CHATGPT-019}
+{infimum computation}
+{Let $A=\{x\in\mathbb R: x^2>2\}$. Determine $\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-020}
+{supremum algebra}
+{Show $\sup(A+B)\le \sup A + \sup B$ for bounded sets $A,B$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-021}
+{supremum algebra}
+{Show $\inf(A+B)\ge \inf A + \inf B$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-022}
+{supremum algebra}
+{Let $A,B$ be bounded. Show $\sup(A-B)\le \sup A - \inf B$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-023}
+{interval bounds}
+{Let $A=[a,b]$. Compute $\sup A$ and $\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-024}
+{interval bounds}
+{Let $A=(a,b)$. Determine $\sup A$ and $\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-025}
+{supremum algebra}
+{Let $A$ be bounded. Show $\sup(-A)=-\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-026}
+{supremum algebra}
+{Let $A$ be bounded. Show $\inf(-A)=-\sup A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-027}
+{upper-bound argument}
+{Show that if $A$ has a maximum then $\sup A=\max A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-028}
+{lower-bound argument}
+{Show that if $A$ has a minimum then $\inf A=\min A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-029}
+{supremum comparison}
+{If $A\subseteq B$, show $\inf B\le \inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-030}
+{supremum comparison}
+{If $A\subseteq B$, show $\sup A\le \sup B$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-031}
+{supremum algebra}
+{Let $A,B$ be bounded sets. Show $\sup(A\cap B)\le\min(\sup A,\sup B)$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-032}
+{supremum algebra}
+{Let $A,B$ be bounded sets. Show $\inf(A\cup B)=\min(\inf A,\inf B)$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-033}
 {epsilon-approximation}
-{Let $s=\sup A$. Construct a sequence $(a_n)$ in $A$
-such that $a_n \to s$.}
+{Let $i=\inf A$. Show that for every $\varepsilon>0$ there exists $a\in A$
+such that $a<i+\varepsilon$.}
 
-\exstub
-{Bruckner 1.4.5}
-{Bruckner}
-{sequence bounds}
-{Show that if $(a_n)$ is bounded then
-$\sup\{a_n : n \in \mathbb N\}$ exists.}
+\exstubgen
+{EX-BOUNDS-CHATGPT-034}
+{upper-bound contradiction}
+{Show that a set cannot have two different suprema.}
 
-\exstub
-{Bruckner 2.1.4}
-{Bruckner}
-{sequence bounds}
-{If $a_n \to a$, prove the sequence is bounded.}
+\exstubgen
+{EX-BOUNDS-CHATGPT-035}
+{lower-bound contradiction}
+{Show that a set cannot have two different infima.}
 
-\exstub
-{Bruckner 2.1.6}
-{Bruckner}
+\exstubgen
+{EX-BOUNDS-CHATGPT-036}
+{boundedness}
+{Let $A$ be bounded. Show that $|A|=\{|a|:a\in A\}$ is bounded.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-037}
 {supremum algebra}
-{Let $A,B$ be bounded sets.
-Prove $\sup(A+B) \le \sup A + \sup B$.}
+{Show $\sup|A|\le\max(|\sup A|,|\inf A|)$.}
 
-% =========================================================
-% Tao
-% =========================================================
+\exstubgen
+{EX-BOUNDS-CHATGPT-038}
+{supremum approximation}
+{Let $A$ be bounded above. Show there exists a sequence $(a_n)\subseteq A$
+with $a_n\to\sup A$.}
 
-\section*{Exercises from Tao}
-
-\exstub
-{Tao 6.3.1}
-{Tao, \textit{Analysis I}}
+\exstubgen
+{EX-BOUNDS-CHATGPT-039}
 {sequence bounds}
-{Let $a_n = 1/n$. Determine $\sup\{a_n\}$ and $\inf\{a_n\}$.}
+{Let $a_n=\sin n$. Show the sequence is bounded.}
 
-\exstub
-{Tao 6.3.2}
-{Tao}
+\exstubgen
+{EX-BOUNDS-CHATGPT-040}
 {sequence bounds}
-{Let $a_n=(-1)^n$. Find $\sup\{a_n\}$ and $\inf\{a_n\}$.}
+{Show every monotone bounded sequence has a supremum.}
 
-\exstub
-{Tao 6.3.3}
-{Tao}
-{sequence bounds}
-{Let $a_n=n$. Determine the supremum and infimum of the sequence.}
-
-% =========================================================
-% Lebl
-% =========================================================
-
-\section*{Exercises from Lebl}
-
-\exstub
-{Lebl 1.3.6}
-{Lebl, \textit{Basic Analysis I}}
+\exstubgen
+{EX-BOUNDS-CHATGPT-041}
 {supremum algebra}
-{Show that $\sup(x+A)=x+\sup(A)$.}
+{Let $A$ be bounded. Show $\sup(A^2)=\max((\sup A)^2,(\inf A)^2)$.}
 
-\exstub
-{Lebl 1.3.7}
-{Lebl}
+\exstubgen
+{EX-BOUNDS-CHATGPT-042}
+{interval bounds}
+{Let $A=(0,1/n)$ for $n\in\mathbb N$. Determine $\sup A$ and $\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-043}
+{supremum approximation}
+{Let $s=\sup A$. Show that there exists a sequence in $A$ approaching $s$
+from below.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-044}
+{supremum comparison}
+{If $\sup A < \sup B$, show there exists $b\in B$ exceeding every element of $A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-045}
+{boundedness}
+{Let $(a_n)$ be bounded. Show the set $\{a_n:n\in\mathbb N\}$ has a supremum.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-046}
+{infimum approximation}
+{Construct a sequence $(a_n)\subseteq A$ such that $a_n\to\inf A$.}
+
+\exstubgen
+{EX-BOUNDS-CHATGPT-047}
 {supremum algebra}
-{Show that $\inf(x+A)=x+\inf(A)$.}
+{Let $A,B$ be bounded sets. Show $\sup(A\cup B)=\max(\sup A,\sup B)$.}
 
-\exstub
-{Lebl 1.3.8}
-{Lebl}
+\exstubgen
+{EX-BOUNDS-CHATGPT-048}
 {supremum algebra}
-{Show that $\sup(xA)=x\sup(A)$ for $x>0$.}
+{Show $\inf(A\cap B)\ge\max(\inf A,\inf B)$.}
 
-% =========================================================
-% Metric-space bounds
-% =========================================================
+\exstubgen
+{EX-BOUNDS-CHATGPT-049}
+{supremum algebra}
+{Let $A\subset\mathbb R$ bounded. Show $\sup(A+A)=2\sup A$.}
 
-\section*{Metric Space Bounds}
-
-\exstub
-{Topology 4.6.13}
-{Point-Set Topology}
-{diameter via supremum}
-{Prove that $\operatorname{diam}(X)=\sup\{d(x,y):x,y\in X\}$.}
-
-\exstub
-{Topology 4.6.15}
-{Point-Set Topology}
-{sequence bounds}
-{If $x_n \to x$ in a metric space,
-show $\{x_n\}\cup\{x\}$ is bounded.}
-
-\exstub
-{Topology 4.6.12}
-{Point-Set Topology}
-{distance computation}
-{Compute the distance from a point to a subset in $\mathbb R^2$.}
-
+\exstubgen
+{EX-BOUNDS-CHATGPT-050}
+{supremum algebra}
+{Let $A$ be bounded. Show $\inf(A+A)=2\inf A$.}
