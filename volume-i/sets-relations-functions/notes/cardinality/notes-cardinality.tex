@@ -1,0 +1,404 @@
+% =========================================================
+% Cardinality and Infinite Sets
+% =========================================================
+
+\subsection{Cardinality and Infinite Sets}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Cardinality — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Same cardinality     & Bijection $f : A \to B$ exists; written $A \sim B$            & \hyperref[def:same-cardinality]{↓ Def} \\
+Finite set           & $A \sim \{1,\dots,n\}$ for some $n \in \mathbb{N}$, or $A = \varnothing$ & \hyperref[def:finite-infinite]{↓ Def} \\
+Countably infinite   & $A \sim \mathbb{N}$                                           & \hyperref[def:countable]{↓ Def} \\
+Countable            & Finite or countably infinite                                  & \hyperref[def:countable]{↓ Def} \\
+Uncountable          & Infinite but not countable                                    & \hyperref[def:countable]{↓ Def} \\
+$|A| \leq |B|$       & Injection $A \hookrightarrow B$ exists                        & \hyperref[def:cardinality-order]{↓ Def} \\
+$\mathbb{Q}$ countable & Diagonal enumeration                                       & \hyperref[thm:Q-countable]{↓ Thm} \\
+$\mathbb{R}$ uncountable & Cantor diagonal argument                                & \hyperref[thm:R-uncountable]{↓ Thm} \\
+Schröder--Bernstein  & $|A|\leq|B|$ and $|B|\leq|A|$ $\Rightarrow$ $A \sim B$      & \hyperref[thm:schroder-bernstein]{↓ Thm} \\
+Cantor's theorem     & $|A| < |\mathcal{P}(A)|$ for every set $A$                   & \hyperref[thm:cantor]{↓ Thm} \\
+Countable union      & Countable union of countable sets is countable                & \hyperref[thm:countable-union]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+The intuitive idea of ``size'' works perfectly for finite sets: $\{a,b,c\}$
+has three elements, $\{1,2,3,4\}$ has four, and any two finite sets can be
+compared by counting. For infinite sets, counting breaks down, and a
+different foundation is needed. The key insight, due to Cantor, is that two
+sets have the ``same size'' if and only if their elements can be matched
+perfectly — one-to-one and onto — without any element left over on either
+side. This single idea, made precise through the notion of a bijection, gives
+a theory of size that applies uniformly to both finite and infinite sets, and
+produces genuinely surprising results: the integers and the rationals turn out
+to have the same size as the natural numbers, while the real numbers are
+provably larger.
+
+% ---------------------------------------------------------
+% Same Cardinality
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Same Cardinality)}},
+  fonttitle=\small\bfseries]
+\label{def:same-cardinality}
+Two sets $A$ and $B$ have the \emph{same cardinality}, written $A \sim B$,
+if there exists a bijection $f : A \to B$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$A \sim B \;\leftrightarrow\; \exists f: A\to B,\; (\forall a_1,a_2\in A,\; f(a_1)=f(a_2)\to a_1=a_2) \wedge (\forall b\in B,\; \exists a\in A,\; f(a)=b)$.
+\end{remark*}
+
+
+\begin{remark}[Same cardinality is an equivalence relation]
+The relation $\sim$ is an equivalence relation on the class of all sets:
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Reflexive}: $A \sim A$ via $\id_A$.
+\item \emph{Symmetric}: if $f : A \to B$ is a bijection then $f^{-1} : B \to A$
+is a bijection, so $A \sim B$ implies $B \sim A$.
+\item \emph{Transitive}: if $f : A \to B$ and $g : B \to C$ are bijections then
+$g \circ f : A \to C$ is a bijection, so $A \sim B$ and $B \sim C$ imply $A \sim C$.
+\end{enumerate}
+This is a genuine equivalence relation, so all the theory of equivalence classes
+developed in the previous section applies. The equivalence class of $A$ under
+$\sim$ is called the \emph{cardinality} of $A$, written $|A|$.
+\end{remark}
+
+\begin{example}[Infinite sets can be equinumerous with proper subsets]
+\label{ex:N-even}
+Let $E = \{2, 4, 6, \dots\}$ be the set of positive even integers. The
+function $f : \mathbb{N} \to E$ defined by $f(n) = 2n$ is a bijection, so
+$\mathbb{N} \sim E$. This seems paradoxical: $E$ is a proper subset of
+$\mathbb{N}$, yet the two sets have the same cardinality. This is not a
+contradiction but rather one of the defining characteristics of infinite sets
+— a phenomenon that simply cannot occur for finite sets.
+\end{example}
+
+\begin{remark}[Dedekind's characterization of infinite sets]
+The phenomenon in Example~\ref{ex:N-even} is not an accident. An infinite set
+can always be matched bijectively with some proper subset of itself. This is
+sometimes taken as the \emph{definition} of an infinite set (Dedekind's
+definition): a set is infinite if and only if it is equinumerous with a proper
+subset of itself.
+\end{remark}
+
+% ---------------------------------------------------------
+% Finite, Countable, Uncountable
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Finite and Infinite Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:finite-infinite}
+A set $A$ is \emph{finite} if $A = \varnothing$ or $A \sim \{1, 2, \dots, n\}$
+for some $n \in \mathbb{N}$. A set is \emph{infinite} if it is not finite.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$A$ is finite $\;\leftrightarrow\; A = \varnothing \vee \exists n\in\mathbb{N},\; \exists f: A\to\{1,\dots,n\},\; f$ bijective. $A$ is infinite $\;\leftrightarrow\; \neg(A$ is finite$)$.
+\end{remark*}
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Countable and Uncountable Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:countable}
+A set $A$ is \emph{countably infinite} if $A \sim \mathbb{N}$. A set is
+\emph{countable} if it is finite or countably infinite. A set is
+\emph{uncountable} if it is infinite but not countable.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$A$ is countably infinite $\;\leftrightarrow\; \exists f: A\to\mathbb{N},\; f$ bijective. $A$ is countable $\;\leftrightarrow\; A$ finite $\vee$ $A\sim\mathbb{N}$. $A$ is uncountable $\;\leftrightarrow\; A$ infinite $\wedge \neg(A\sim\mathbb{N})$.
+\end{remark*}
+
+
+\begin{remark}[Countable means listable]
+A set $A$ is countably infinite if and only if its elements can be arranged
+into an infinite list $a_1, a_2, a_3, \dots$ with no repetitions and every
+element of $A$ appearing somewhere in the list. The bijection $f : \mathbb{N}
+\to A$ is precisely such a listing: $a_n = f(n)$. This is why countability is
+often informally described as ``can be listed.''
+\end{remark}
+
+% ---------------------------------------------------------
+% Ordering cardinalities
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Comparing Cardinalities)}},
+  fonttitle=\small\bfseries]
+\label{def:cardinality-order}
+Write $|A| \leq |B|$ if there exists an injection $f : A \hookrightarrow B$.
+Write $|A| < |B|$ if $|A| \leq |B|$ but $A \not\sim B$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$|A|\leq|B| \;\leftrightarrow\; \exists f: A\to B,\; \forall a_1,a_2\in A,\; f(a_1)=f(a_2)\to a_1=a_2$ (injection exists).
+\end{remark*}
+
+
+\begin{remark}[Why injections, not surjections]
+An injection $A \hookrightarrow B$ places a ``copy'' of $A$ inside $B$
+without overlap, which formalizes ``$A$ is no larger than $B$.'' The direction
+matters: an injection from $A$ to $B$ is not the same as an injection from
+$B$ to $A$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Q countable
+% ---------------------------------------------------------
+
+\begin{theorem}[$\mathbb{Q}$ is countable]\label{thm:Q-countable}
+The set $\mathbb{Q}$ of rational numbers is countable.
+\end{theorem}
+
+\begin{remark}[Proof strategy — diagonal enumeration]
+The argument arranges all positive rationals into an infinite two-dimensional
+array: place $p/q$ (in lowest terms, $p,q > 0$) in row $p$, column $q$. Then
+traverse the array along successive diagonals — the anti-diagonal $p + q = k$
+for $k = 2, 3, 4, \dots$ — skipping any fraction already seen. This produces
+an explicit list of all positive rationals, and one then interleaves the
+negative rationals and zero. The precise details are left as a guided proof
+exercise. The core idea is: a doubly infinite list can be converted into a
+singly infinite list by reading diagonals.
+\end{remark}
+
+\begin{remark}[What this means]
+$\mathbb{Q}$ is dense in $\mathbb{R}$ — between any two real numbers there
+is a rational — yet $\mathbb{Q}$ is countable. This means the rationals are
+in some precise sense ``thin'' even though they are everywhere. The uncountability
+of $\mathbb{R}$ that follows shows the reals are genuinely larger.
+\end{remark}
+
+\begin{theorem}[Countable union of countable sets is countable]
+\label{thm:countable-union}
+Let $\{A_n\}_{n \in \mathbb{N}}$ be a countable family of countable sets.
+Then $\bigcup_{n=1}^{\infty} A_n$ is countable.
+\end{theorem}
+
+\begin{remark}[Proof strategy]
+The argument again uses a diagonal enumeration. Arrange the elements of each
+$A_n$ as a row in an infinite array (padding with repetitions if $A_n$ is
+finite), then read the array along anti-diagonals. This produces a surjection
+from $\mathbb{N}$ onto $\bigcup A_n$, which is enough to establish
+countability. The formal proof is a standard exercise.
+\end{remark}
+
+\begin{remark}[Why this theorem matters downstream]
+This result is used constantly. In topology: a countable union of nowhere-dense
+sets is called a \emph{meager} set, and Baire's theorem says a complete metric
+space is not meager — the proof requires knowing that countable unions behave
+predictably. In measure theory: a countable union of sets of measure zero has
+measure zero, by countable additivity. Whenever an argument says ``take the
+union over all $n \in \mathbb{N}$'' and needs the result to remain manageable
+in size, this theorem is the justification.
+\end{remark}
+
+% ---------------------------------------------------------
+% R uncountable
+% ---------------------------------------------------------
+
+\begin{theorem}[$\mathbb{R}$ is uncountable]\label{thm:R-uncountable}
+The set $\mathbb{R}$ of real numbers is not countable.
+\end{theorem}
+
+\begin{remark}[Proof strategy — Cantor's diagonal argument]
+This is one of the most important proof techniques in all of mathematics.
+Suppose, for contradiction, that $\mathbb{R}$ were countable, so its elements
+could be listed: $r_1, r_2, r_3, \dots$. Write each $r_n$ in decimal
+expansion. Construct a new real number $x$ by choosing the $n$-th decimal
+digit of $x$ to differ from the $n$-th decimal digit of $r_n$ (and avoiding
+$9$ to prevent the $0.999\dots = 1$ ambiguity). Then $x \neq r_n$ for every
+$n$, because $x$ and $r_n$ differ in the $n$-th decimal place. So $x$ is not
+on the list — contradicting the assumption that the list contains every real
+number.
+
+The key move is the diagonal construction: to defeat every row $r_n$
+simultaneously, make $x$ disagree with row $n$ at position $n$. This
+``diagonal sweep'' is a technique that reappears in logic (Gödel's
+incompleteness theorem), computability theory (the halting problem), and the
+proof of Cantor's theorem below.
+\end{remark}
+
+\begin{remark}[Consequence]
+Since $\mathbb{Q}$ is countable and $\mathbb{R}$ is uncountable, the
+irrational numbers $\mathbb{R} \setminus \mathbb{Q}$ must be uncountable:
+if they were countable, then $\mathbb{R} = \mathbb{Q} \cup (\mathbb{R}
+\setminus \mathbb{Q})$ would be a countable union of countable sets, hence
+countable — contradiction.
+\end{remark}
+
+% ---------------------------------------------------------
+% Cantor's theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Cantor's Theorem]\label{thm:cantor}
+For any set $A$, there is no surjection $A \to \mathcal{P}(A)$. In
+particular, $|A| < |\mathcal{P}(A)|$.
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall A:\; \neg\exists f: A\to\mathcal{P}(A),\; \forall S\in\mathcal{P}(A),\; \exists a\in A,\; f(a)=S$. Equivalently: $\forall f: A\to\mathcal{P}(A),\; \exists D\in\mathcal{P}(A),\; \forall a\in A,\; f(a)\neq D$.
+\end{remark*}
+
+
+\begin{remark}[Proof strategy — the same diagonal idea]
+Suppose $f : A \to \mathcal{P}(A)$ is any function. Construct the set
+\[
+D \;=\; \{\, a \in A \mid a \notin f(a) \,\}.
+\]
+$D$ is a well-defined subset of $A$, so $D \in \mathcal{P}(A)$. Claim: $D$
+is not in the image of $f$. For suppose $D = f(a_0)$ for some $a_0 \in A$.
+Then:
+\begin{itemize}
+\item if $a_0 \in D$, then by definition $a_0 \notin f(a_0) = D$ — contradiction.
+\item if $a_0 \notin D$, then by definition $a_0 \in f(a_0) = D$ — contradiction.
+\end{itemize}
+Either case is impossible, so $D \neq f(a_0)$ for every $a_0 \in A$, and $f$
+is not surjective. Since $f$ was arbitrary, no surjection $A \to
+\mathcal{P}(A)$ exists.
+
+Notice the structure: $D$ is defined by ``$a \in D$ iff $a \notin f(a)$,''
+which is a diagonal construction — the membership of $a$ in $D$ is decided
+by looking at position $(a,a)$ in the ``membership table'' of $f$, and then
+disagreeing. This is the abstract form of the same move used in the proof
+that $\mathbb{R}$ is uncountable.
+\end{remark}
+
+\begin{remark}[A hierarchy of infinities]
+Cantor's theorem implies there is no largest cardinality: for any set $A$,
+the power set $\mathcal{P}(A)$ is strictly larger. Starting from $\mathbb{N}$,
+the sets
+\[
+\mathbb{N},\quad
+\mathcal{P}(\mathbb{N}),\quad
+\mathcal{P}(\mathcal{P}(\mathbb{N})),\quad \dots
+\]
+form a strictly increasing sequence of cardinalities. One can show
+$|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$ via the characteristic function
+bijection (described below), so the second level is already the cardinality
+of the continuum.
+\end{remark}
+
+% ---------------------------------------------------------
+% Characteristic functions and B^A
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Function Space $B^A$)}},
+  fonttitle=\small\bfseries]
+\label{def:function-space}
+For sets $A$ and $B$, the \emph{function space} $B^A$ denotes the set of
+all functions from $A$ to $B$:
+\[
+B^A \;:=\; \{\, f : A \to B \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Why the exponential notation]
+For finite sets with $|A| = m$ and $|B| = n$, the number of functions
+$A \to B$ is $n^m$ (there are $n$ choices for each of the $m$ inputs).
+The notation $B^A$ reflects this count. In particular, $|\{0,1\}^A| = 2^{|A|}$
+for finite $A$, which matches $|\mathcal{P}(A)| = 2^{|A|}$.
+\end{remark}
+
+\begin{remark}[The characteristic function bijection]
+\label{rem:characteristic-fn}
+For any set $A$, the power set $\mathcal{P}(A)$ and the function space
+$\{0,1\}^A$ have the same cardinality via the \emph{characteristic function}
+bijection:
+\[
+\mathcal{P}(A) \;\to\; \{0,1\}^A,
+\qquad
+S \;\mapsto\; \mathbf{1}_S,
+\]
+where $\mathbf{1}_S(a) = 1$ if $a \in S$ and $\mathbf{1}_S(a) = 0$ if
+$a \notin S$. This bijection is why Cantor's theorem is sometimes stated as:
+there is no surjection $A \to \{0,1\}^A$. The notation $2^A$ is used
+interchangeably with $\{0,1\}^A$, and $|\mathcal{P}(A)| = 2^{|A|}$ is
+the general statement.
+
+In functional analysis, spaces of the form $B^A$ — functions from $A$ to
+$B$ — are the central objects of study. Knowing they are sets (with a definite
+cardinality when $A$ and $B$ are concrete) is the set-theoretic foundation
+for everything that follows.
+\end{remark}
+
+% ---------------------------------------------------------
+% Schröder–Bernstein
+% ---------------------------------------------------------
+
+\begin{theorem}[Schröder--Bernstein Theorem]\label{thm:schroder-bernstein}
+If $|A| \leq |B|$ and $|B| \leq |A|$, then $A \sim B$.
+
+Equivalently: if there exist injections $f : A \hookrightarrow B$ and
+$g : B \hookrightarrow A$, then there exists a bijection $h : A \to B$.
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\bigl(\exists f: A\hookrightarrow B\bigr) \wedge \bigl(\exists g: B\hookrightarrow A\bigr) \;\to\; \exists h: A\to B,\; h$ bijective.
+\end{remark*}
+
+
+\begin{remark}[Why this theorem is indispensable]
+In practice, proving $A \sim B$ by exhibiting an explicit bijection can be
+very difficult. Schröder--Bernstein gives a two-injection strategy: find any
+injection each way, and the theorem guarantees a bijection exists (even if
+you cannot describe it explicitly). This is a powerful tool for cardinality
+computations. For example, to show $|(0,1)| = |\mathbb{R}|$, find an
+injection $(0,1) \hookrightarrow \mathbb{R}$ (inclusion) and an injection
+$\mathbb{R} \hookrightarrow (0,1)$ (e.g., $x \mapsto \frac{1}{\pi}
+\arctan(x) + \frac{1}{2}$); the theorem does the rest.
+\end{remark}
+
+\begin{remark}[Proof idea]
+The proof constructs $h$ by partitioning $A$ into two pieces: those elements
+whose ``ancestry'' under repeated application of $g \circ f$ is finite (they
+go through $f$), and those whose ancestry is infinite (they go through
+$g^{-1}$). The formal argument is a standard exercise; the key insight is that
+the two injections together cover $A$ in a structured enough way to stitch
+together a bijection.
+\end{remark}
+
+\begin{remark}[Sequences as functions]
+\label{rem:sequences-as-functions}
+A \emph{sequence} in a set $X$ is a function $f : \mathbb{N} \to X$. The
+element $f(n)$ is written $x_n$, and the sequence is written $(x_n)_{n \in
+\mathbb{N}}$ or simply $(x_n)$. This is not a new object: it is an element
+of the function space $X^{\mathbb{N}}$. When metric spaces and topology
+discuss convergence of sequences $x_1, x_2, x_3, \dots$ in an arbitrary space
+$X$, the formal object is always a function $\mathbb{N} \to X$, and all the
+function machinery — injectivity, composition, preimages — applies to it
+directly.
+\end{remark}
+
+\begin{remark}[Transition]
+Cardinality distinguishes between the countable (manageable, listable) and the
+uncountable (genuinely larger). This distinction organizes much of what
+follows. In metric spaces: separable spaces have countable dense subsets, and
+separability is a strong structural property. In measure theory: $\sigma$-algebras
+are closed under \emph{countable} unions — not arbitrary ones — precisely because
+countable operations preserve the kind of control that makes measure theory work.
+In functional analysis: $L^2$ spaces have countable orthonormal bases
+(Hilbert spaces are separable), while non-separable spaces behave very
+differently. The line between countable and uncountable is not a technicality;
+it is one of the organizing principles of analysis.
+\end{remark}

@@ -72,6 +72,11 @@ In an ordered set $(A,\leq)$, elements $a,b \in A$ are \emph{comparable} if
 $a \leq b$ or $b \leq a$; they are \emph{incomparable} if neither holds.
 \end{definition}
 
+\begin{remark*}[Fully quantified form]
+$a,b$ comparable $\;\leftrightarrow\; a \leq b \vee b \leq a$. \quad
+$a,b$ incomparable $\;\leftrightarrow\; \neg(a \leq b) \wedge \neg(b \leq a)$.
+\end{remark*}
+
 \begin{remark}[Incomparable elements]
 Incomparable elements can only occur in partial orders. In a total order,
 every pair is comparable by definition.
@@ -210,6 +215,11 @@ pair of elements in $C$ is comparable. It is an \emph{antichain} if no two
 distinct elements of $C$ are comparable.
 \end{definition}
 
+\begin{remark*}[Fully quantified form]
+$C$ is a chain $\;\leftrightarrow\; \forall a,b \in C,\; a \leq b \vee b \leq a$.\\
+$C$ is an antichain $\;\leftrightarrow\; \forall a,b \in C,\; a \neq b \to \neg(a \leq b) \wedge \neg(b \leq a)$.
+\end{remark*}
+
 \begin{definition}[Initial Segment]\label{def:initial-segment}
 A subset $I \subseteq A$ is an \emph{initial segment} of $(A,\leq)$ if
 \[
@@ -217,9 +227,79 @@ a \in I \text{ and } b \leq a \;\Rightarrow\; b \in I.
 \]
 \end{definition}
 
+\begin{remark*}[Fully quantified form]
+$I$ is an initial segment $\;\leftrightarrow\; \forall a \in I,\; \forall b \in A,\; b \leq a \to b \in I$.
+\end{remark*}
+
 \begin{remark}[Transition]
 Ordered sets provide the abstract framework for order structures on the real
 numbers, function spaces, and metric spaces. In later sections, order
 interacts with topology and analysis through intervals, monotone functions,
 and the completeness axiom for $\mathbb{R}$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Directed Sets and Nets
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Directed Set)}},
+  fonttitle=\small\bfseries]
+\label{def:directed-set}
+A preorder $(I, \leq)$ is \emph{directed} (or a \emph{directed set}) if every
+finite subset of $I$ has an upper bound in $I$: for all $i, j \in I$ there
+exists $k \in I$ with $i \leq k$ and $j \leq k$.
+\end{tcolorbox}
+
+\begin{remark}[What directed means]
+In a directed set, any two elements can always be ``dominated'' by a third.
+The condition does not require a maximum element to exist, only that no two
+elements are ever incomparable in a final way: there is always a common
+upper bound available. Every totally ordered set is directed (take $k =
+\max(i,j)$), but directed sets can be far more general.
+\end{remark}
+
+\begin{example}[Canonical directed sets]
+\begin{enumerate}[label=(\roman*)]
+\item $(\mathbb{N}, \leq)$ is directed: given $m, n \in \mathbb{N}$, take
+$k = \max(m,n)$.
+\item The collection of all finite subsets of a set $X$, ordered by inclusion,
+is directed: given finite sets $F_1, F_2 \subseteq X$, take $k = F_1 \cup
+F_2$.
+\item The set of all open neighborhoods of a point $x$ in a topological space,
+ordered by reverse inclusion ($U \leq V$ iff $U \supseteq V$), is directed:
+given neighborhoods $U$ and $V$ of $x$, take $k = U \cap V$, which is also
+a neighborhood of $x$.
+\item A partially ordered set is directed if and only if every finite subset
+has an upper bound. Partially ordered sets that are \emph{not} directed have
+``incomparable maximal elements'' — elements with no common upper bound.
+\end{enumerate}
+\end{example}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Net)}},
+  fonttitle=\small\bfseries]
+\label{def:net}
+Let $(I, \leq)$ be a directed set and $X$ a set. A \emph{net} in $X$ is a
+function $x : I \to X$. The value at $i \in I$ is written $x_i$, and the
+net is written $(x_i)_{i \in I}$.
+\end{tcolorbox}
+
+\begin{remark}[Nets generalize sequences]
+A sequence is a net with index set $(\mathbb{N}, \leq)$. Nets are the correct
+generalization of sequences to general topological spaces: in a metric space,
+sequences suffice to detect all topological properties (closure, continuity,
+compactness). In a general topological space, sequences can fail to detect
+these properties — one needs nets. Specifically, a subset $A$ of a
+topological space is closed if and only if every convergent net in $A$ has
+its limit in $A$; and a function is continuous if and only if it preserves
+limits of nets.
+
+The definition of net is placed here because it is purely order-theoretic:
+a directed index set and a function. The analytic content — what it means
+for a net to converge — belongs to topology and functional analysis. By
+establishing the set-theoretic definition now, those chapters can immediately
+state convergence conditions without set-theoretic digression.
 \end{remark}

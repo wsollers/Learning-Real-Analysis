@@ -54,7 +54,9 @@ h \circ (g \circ f) = (h \circ g) \circ f.
 \]
 \end{theorem}
 
-
+\begin{remark*}[Fully quantified form]
+$\forall a \in A:\; h(g(f(a))) = h(g(f(a)))$, i.e.\ $\forall f\!:\!A\!\to\!B,\; g\!:\!B\!\to\!C,\; h\!:\!C\!\to\!D,\; \forall a \in A:\; [h \circ (g \circ f)](a) = [(h \circ g) \circ f](a)$.
+\end{remark*}
 
 \begin{theorem}[Identity and Composition]\label{thm:comp-id}
 For any $f : A \to B$:
@@ -64,6 +66,10 @@ f \circ \id_A = f
 \id_B \circ f = f.
 \]
 \end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall f : A \to B,\; \forall a \in A:\; (f \circ \id_A)(a) = f(a)$ and $(\id_B \circ f)(a) = f(a)$.
+\end{remark*}
 
 \begin{theorem}[Injectivity and Surjectivity Under Composition]\label{thm:comp-inj-surj}
 Let $f : A \to B$ and $g : B \to C$.
@@ -75,7 +81,10 @@ Let $f : A \to B$ and $g : B \to C$.
 \end{enumerate}
 \end{theorem}
 
-\begin{remark}[Partial converses]
+\begin{remark*}[Fully quantified form]
+(i) $(\forall a_1,a_2 \in A,\; f(a_1)=f(a_2)\to a_1=a_2) \wedge (\forall b_1,b_2\in B,\; g(b_1)=g(b_2)\to b_1=b_2) \;\to\; \forall a_1,a_2\in A,\; g(f(a_1))=g(f(a_2))\to a_1=a_2$.\\
+(iii) $(\forall a_1,a_2\in A,\; g(f(a_1))=g(f(a_2))\to a_1=a_2) \;\to\; \forall a_1,a_2\in A,\; f(a_1)=f(a_2)\to a_1=a_2$.
+\end{remark*}
 In (iii), $g$ need not be injective. In (iv), $f$ need not be surjective.
 Bijectivity of $g \circ f$ does not imply bijectivity of either $f$ or $g$
 individually.
@@ -103,6 +112,11 @@ f \circ f^{-1} = \id_B.
 Conversely, a function admits an inverse iff it is bijective.
 \end{theorem}
 
+\begin{remark*}[Fully quantified form]
+$\forall a \in A:\; f^{-1}(f(a)) = a$ and $\forall b \in B:\; f(f^{-1}(b)) = b$.\\
+Converse: $(\exists g: B\to A,\; g\circ f = \id_A \wedge f\circ g = \id_B) \;\leftrightarrow\; f$ is bijective.
+\end{remark*}
+
 \begin{theorem}[Inverse of a Composition]\label{thm:inverse-comp}
 Let $f : A \to B$ and $g : B \to C$ be bijective. Then $g \circ f$ is
 bijective and
@@ -110,6 +124,10 @@ bijective and
 (g \circ f)^{-1} = f^{-1} \circ g^{-1}.
 \]
 \end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall c \in C:\; (g \circ f)^{-1}(c) = f^{-1}(g^{-1}(c))$.
+\end{remark*}
 
 % ---------------------------------------------------------
 % One-sided inverses
@@ -136,6 +154,11 @@ Let $f : A \to B$.
 and $f$ is bijective.
 \end{enumerate}
 \end{theorem}
+
+\begin{remark*}[Fully quantified form]
+(i) $(\exists g: B\to A,\; \forall a\in A,\; g(f(a))=a) \;\leftrightarrow\; \forall a_1,a_2\in A,\; f(a_1)=f(a_2)\to a_1=a_2$.\\
+(ii) $(\exists h: B\to A,\; \forall b\in B,\; f(h(b))=b) \;\leftrightarrow\; \forall b\in B,\; \exists a\in A,\; f(a)=b$.
+\end{remark*}
 
 \begin{remark}[Axiom of Choice]
 The existence of a right inverse for every surjective function is equivalent
@@ -179,11 +202,11 @@ Let $f : A \to B$ and $S, T \subseteq B$. Then
 \end{enumerate}
 \end{theorem}
 
-\begin{remark}[Why preimages are well-behaved]
-Preimages preserve all set-theoretic operations. This property makes preimages
-central in topology and measure theory, where properties such as continuity
-and measurability are defined via preimages.
-\end{remark}
+\begin{remark*}[Fully quantified form]
+(i) $\forall a \in A:\; a \in f^{-1}(S\cup T) \leftrightarrow (f(a)\in S \vee f(a)\in T)$.\\
+(ii) $\forall a \in A:\; a \in f^{-1}(S\cap T) \leftrightarrow (f(a)\in S \wedge f(a)\in T)$.\\
+(iv) $\forall a \in A:\; a \in f^{-1}(S^c) \leftrightarrow f(a)\notin S$.
+\end{remark*}
 
 \begin{theorem}[Images and Set Operations]\label{thm:image-ops}
 Let $f : A \to B$ and $S, T \subseteq A$. Then
@@ -194,6 +217,11 @@ Let $f : A \to B$ and $S, T \subseteq A$. Then
 \end{enumerate}
 Equality holds in (ii) and (iii) for all $S,T$ iff $f$ is injective.
 \end{theorem}
+
+\begin{remark*}[Fully quantified form]
+(i) $\forall b\in B:\; b \in f(S\cup T) \leftrightarrow (\exists a\in S,\; f(a)=b) \vee (\exists a\in T,\; f(a)=b)$.\\
+(ii) $\forall b\in B:\; (\exists a\in S\cap T,\; f(a)=b) \to (\exists a\in S,\; f(a)=b) \wedge (\exists a\in T,\; f(a)=b)$; equality iff $f$ injective.
+\end{remark*}
 
 \begin{remark}[Asymmetry between images and preimages]
 Forward images preserve unions but generally not intersections or complements.
