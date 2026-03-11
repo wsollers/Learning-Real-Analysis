@@ -1,0 +1,344 @@
+% =========================================================
+% Lattices and Complete Lattices
+% =========================================================
+
+\subsection{Lattices}\label{sec:lattices}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Lattices — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Lattice              & Poset with $\sup\{a,b\}$ and $\inf\{a,b\}$ for all $a,b$   & \hyperref[def:lattice]{↓ Def} \\
+Join / Meet          & $a \vee b = \sup\{a,b\}$; $a \wedge b = \inf\{a,b\}$        & \hyperref[def:lattice]{↓ Def} \\
+Complete lattice     & Every subset has sup and inf                                & \hyperref[def:complete-lattice]{↓ Def} \\
+Distributive lattice & $a \wedge (b \vee c) = (a \wedge b) \vee (a \wedge c)$      & \hyperref[def:distributive-lattice]{↓ Def} \\
+Boolean lattice      & Complemented distributive lattice                           & \hyperref[def:boolean-lattice]{↓ Def} \\
+$\mathcal{P}(X)$     & Complete Boolean lattice under $\subseteq$                  & \hyperref[ex:power-set-lattice]{↓ Ex} \\
+$\sigma$-algebras    & Sub-lattices of $\mathcal{P}(X)$ closed under countable ops  & \hyperref[rem:sigma-alg-lattice]{↓ Rem} \\
+Knaster--Tarski      & Every monotone map on a complete lattice has a fixed point   & \hyperref[thm:knaster-tarski]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Motivation
+% ---------------------------------------------------------
+
+The preceding section defined supremum and infimum for arbitrary subsets of a
+poset.  In many posets that appear in practice, every pair of elements already
+has a supremum and an infimum.  When this is the case, the binary operations
+$a \vee b = \sup\{a,b\}$ and $a \wedge b = \inf\{a,b\}$ are well-defined
+everywhere, giving the poset the algebraic structure of a \emph{lattice}.
+
+Lattices are ubiquitous:
+\begin{itemize}
+  \item The power set $\mathcal{P}(X)$ ordered by $\subseteq$ is a complete
+        lattice, with join = union and meet = intersection.
+  \item Every $\sigma$-algebra is a sub-lattice of $\mathcal{P}(X)$
+        that is additionally closed under countable joins and meets and under
+        complementation.
+  \item Every topology is a sub-structure of $\mathcal{P}(X)$ that is closed
+        under arbitrary joins and finite meets.
+  \item In functional analysis, the lattice of closed subspaces of a Hilbert
+        space is a complete lattice under inclusion.
+\end{itemize}
+Understanding lattices here means that when $\sigma$-algebras, topologies, and
+sub-$\sigma$-algebras are encountered downstream, their closure conditions
+will be recognisable instances of a single abstract pattern.
+
+% ---------------------------------------------------------
+% Lattice definition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Lattice)}},
+  fonttitle=\small\bfseries]
+\label{def:lattice}
+A \emph{lattice} is a poset $(L, \leq)$ in which every two-element subset
+$\{a, b\} \subseteq L$ has both a supremum and an infimum in $L$.
+
+The supremum $\sup\{a,b\}$ is called the \emph{join} of $a$ and $b$,
+written $a \vee b$.
+The infimum $\inf\{a,b\}$ is called the \emph{meet} of $a$ and $b$,
+written $a \wedge b$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$(L, \leq)$ is a lattice $\;\leftrightarrow\;$
+$\forall a, b \in L,\;\exists\, a \vee b \in L \;\text{and}\; \exists\, a \wedge b \in L$,
+where $a \vee b$ and $a \wedge b$ satisfy the sup and inf conditions of
+\hyperref[def:sup-inf]{Definition~(Supremum and Infimum)}.
+\end{remark*}
+
+\begin{remark}[Join and meet as operations]
+\label{rem:lattice-operations}
+In a lattice, $\vee$ and $\wedge$ are binary operations $L \times L \to L$.
+They satisfy, for all $a, b, c \in L$:
+\begin{enumerate}[label=(\roman*)]
+  \item \emph{Commutativity}: $a \vee b = b \vee a$ and $a \wedge b = b \wedge a$.
+  \item \emph{Associativity}: $(a \vee b) \vee c = a \vee (b \vee c)$ and
+        $(a \wedge b) \wedge c = a \wedge (b \wedge c)$.
+  \item \emph{Idempotency}: $a \vee a = a$ and $a \wedge a = a$.
+  \item \emph{Absorption}: $a \vee (a \wedge b) = a$ and
+        $a \wedge (a \vee b) = a$.
+\end{enumerate}
+Properties (i)--(iv) follow directly from the order-theoretic definitions of join
+and meet.  Conversely, any set with two binary operations satisfying (i)--(iv)
+can be given a partial order making it a lattice: define $a \leq b$ iff
+$a \wedge b = a$.  The two approaches — order-theoretic and algebraic — are
+equivalent.
+\end{remark}
+
+\begin{example}[Power set lattice]
+\label{ex:power-set-lattice}
+For any set $X$, the power set $(\mathcal{P}(X), \subseteq)$ is a lattice:
+$A \vee B = A \cup B$ and $A \wedge B = A \cap B$.  The algebraic laws
+of the Set Algebra section (commutativity, associativity, distributivity,
+absorption) are exactly the lattice laws in this example.  This is not a
+coincidence: Boolean algebra is a special kind of lattice.
+\end{example}
+
+\begin{example}[Divisibility lattice]
+\label{ex:div-lattice}
+The divisibility order on $\mathbb{N}^+ = \{1, 2, 3, \ldots\}$ makes it a
+lattice: $a \vee b = \mathrm{lcm}(a,b)$ and $a \wedge b = \gcd(a,b)$, as
+we noted in Example~\ref{ex:sup-divisibility}.
+\end{example}
+
+\begin{example}[Not every poset is a lattice]
+\label{ex:non-lattice}
+Consider the poset $(\{a,b,c,d\}, \leq)$ with $a < c$, $a < d$, $b < c$,
+$b < d$, and $a,b$ incomparable.  The subset $\{a,b\}$ has two minimal
+upper bounds, $c$ and $d$, which are incomparable.  Hence $\sup\{a,b\}$
+does not exist, and this poset is not a lattice.
+
+The power set $\mathcal{P}(\{1,2,3\})$ restricted to subsets of cardinality
+$\neq 1$ provides a cleaner example: $\{1,2\}$ and $\{1,3\}$ have no meet in
+this restricted collection.
+\end{example}
+
+% ---------------------------------------------------------
+% Complete Lattice
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Complete Lattice)}},
+  fonttitle=\small\bfseries]
+\label{def:complete-lattice}
+A lattice $(L, \leq)$ is a \emph{complete lattice} if every subset
+$S \subseteq L$ (including the empty set and $L$ itself) has both a
+supremum and an infimum in $L$:
+\[
+  \forall S \subseteq L,\quad \sup S \in L \;\text{ and }\; \inf S \in L.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$(L, \leq)$ is a complete lattice $\;\leftrightarrow\;$
+$\forall S \subseteq L,\;\exists u^* \in L,\;\exists \ell^* \in L$ satisfying
+the sup and inf conditions of \hyperref[def:sup-inf]{Definition~(Supremum and Infimum)}.
+\end{remark*}
+
+\begin{remark}[The empty set forces top and bottom]
+\label{rem:complete-top-bottom}
+When $S = \varnothing$, the sup condition says: $u^*$ is an upper bound of
+the empty set (which is vacuously satisfied by every element of $L$), and $u^*$
+is at most every other upper bound.  This forces $u^* = \inf L$, the
+\emph{bottom element} of $L$ (often written $\bot$).  Symmetrically,
+$\inf \varnothing = \sup L$, the \emph{top element} (often written $\top$).
+
+Concretely: in $(\mathcal{P}(X), \subseteq)$, we have $\sup \varnothing =
+\varnothing$ (the empty union) and $\inf \varnothing = X$ (the empty
+intersection equals the whole universe, by convention).  Every complete
+lattice therefore has a top element $\top = \sup L$ and a bottom element
+$\bot = \inf L$.
+\end{remark}
+
+\begin{example}[$\mathcal{P}(X)$ is a complete lattice]
+\label{ex:power-set-complete}
+For any set $X$, the power set $(\mathcal{P}(X), \subseteq)$ is a complete
+lattice: for any family $\{A_\alpha\}_{\alpha \in I} \subseteq \mathcal{P}(X)$,
+\[
+  \sup_{\alpha \in I} A_\alpha = \bigcup_{\alpha \in I} A_\alpha,
+  \qquad
+  \inf_{\alpha \in I} A_\alpha = \bigcap_{\alpha \in I} A_\alpha.
+\]
+The bottom element is $\varnothing$ and the top element is $X$.  This is the
+canonical example of a complete lattice, and every $\sigma$-algebra on $X$ is a
+complete sub-lattice of $(\mathcal{P}(X), \subseteq)$.
+\end{example}
+
+\begin{example}[$[0,\infty]$ is a complete lattice]
+\label{ex:extended-positive}
+The extended positive half-line $[0,\infty] = [0,\infty) \cup \{+\infty\}$
+with the usual order is a complete lattice.  Every nonempty subset has a
+supremum (which may be $+\infty$) and an infimum (which may be $0$).  This
+is the value space for measures: a measure assigns to each measurable set
+a value in $[0,\infty]$, and the key properties of measures (countable
+additivity, monotone convergence) are stated in terms of sups and infs in
+this complete lattice.
+\end{example}
+
+% ---------------------------------------------------------
+% Distributive and Boolean lattices
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Distributive Lattice)}},
+  fonttitle=\small\bfseries]
+\label{def:distributive-lattice}
+A lattice $(L, \leq)$ is \emph{distributive} if for all $a, b, c \in L$:
+\[
+  a \wedge (b \vee c) = (a \wedge b) \vee (a \wedge c).
+\]
+\end{tcolorbox}
+
+\begin{remark}[One law implies the other]
+\label{rem:dist-dual}
+By the duality principle for lattices, distributivity of $\wedge$ over $\vee$
+is equivalent to distributivity of $\vee$ over $\wedge$:
+$a \vee (b \wedge c) = (a \vee b) \wedge (a \vee c)$.
+Proving one gives the other for free.
+\end{remark}
+
+\begin{remark}[Why distributivity matters]
+\label{rem:dist-matters}
+The distributive law is what makes a lattice behave like set algebra.  In the
+power set $\mathcal{P}(X)$, the distributive laws are exactly the set
+identities $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ from
+Theorem~3.22.  Distributivity is the condition that separates lattices that
+``look like sets'' from those that do not (e.g., the lattice of closed
+subspaces of a Hilbert space is not distributive).
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Complement and Boolean Lattice)}},
+  fonttitle=\small\bfseries]
+\label{def:boolean-lattice}
+Let $(L, \leq)$ be a bounded distributive lattice with top element $\top$ and
+bottom element $\bot$.  An element $a' \in L$ is a \emph{complement} of
+$a \in L$ if
+\[
+  a \vee a' = \top \quad \text{and} \quad a \wedge a' = \bot.
+\]
+A \emph{Boolean lattice} (or \emph{Boolean algebra}) is a bounded distributive
+lattice in which every element has a complement.
+\end{tcolorbox}
+
+\begin{remark}[The power set is the canonical Boolean lattice]
+\label{rem:power-set-boolean}
+In $\mathcal{P}(X)$, the complement of a set $A$ is $A^c = X \setminus A$,
+since $A \cup A^c = X = \top$ and $A \cap A^c = \varnothing = \bot$.  The
+power set is therefore a complete Boolean lattice.  Every $\sigma$-algebra
+on $X$ is a Boolean sub-algebra of $\mathcal{P}(X)$: it is closed under
+complements (by definition) and under finite meets and joins (since every
+$\sigma$-algebra is an algebra).
+\end{remark}
+
+% ---------------------------------------------------------
+% Sub-lattices and sigma-algebras
+% ---------------------------------------------------------
+
+\begin{remark}[$\sigma$-algebras as sub-lattices]
+\label{rem:sigma-alg-lattice}
+A $\sigma$-algebra $\mathcal{M}$ on $X$ is, from the lattice-theoretic
+viewpoint, a sub-structure of $(\mathcal{P}(X), \subseteq)$ that is:
+\begin{itemize}
+  \item a complete sub-lattice (closed under all countable joins and meets);
+  \item a Boolean sub-algebra (closed under complementation).
+\end{itemize}
+The condition ``closed under countable joins'' is exactly the $\sigma$-algebra
+axiom that countable unions of measurable sets are measurable.  The condition
+``closed under meets'' for countable families follows from De Morgan together
+with closure under countable unions and complements.
+
+This perspective makes the definition of $\sigma$-algebra feel natural: it is
+exactly a complete Boolean sub-algebra of the power set lattice, where
+``complete'' is interpreted countably (countable joins and meets), not
+set-theoretically.
+\end{remark}
+
+\begin{remark}[Topologies as join-sub-structures]
+\label{rem:topology-lattice}
+A topology $\tau$ on $X$ is \emph{not} a sub-lattice of $\mathcal{P}(X)$ in
+general, because it is not closed under arbitrary meets (i.e., arbitrary
+intersections of open sets need not be open).  However, $\tau$ is closed under
+arbitrary joins (arbitrary unions of open sets are open) and finite meets
+(finite intersections of open sets are open).  This makes $\tau$ an
+\emph{inf-semilattice} for finite meets and a complete \emph{join-semilattice}.
+The failure of closure under infinite meets is fundamental: it is precisely
+what allows open sets to ``separate'' points, and it is the reason topology
+is structurally different from measure theory.
+\end{remark}
+
+% ---------------------------------------------------------
+% Knaster-Tarski
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Knaster--Tarski Fixed-Point Theorem)}},
+  fonttitle=\small\bfseries]
+\label{thm:knaster-tarski}
+Let $(L, \leq)$ be a complete lattice and $f : L \to L$ a monotone
+function (i.e., $a \leq b \Rightarrow f(a) \leq f(b)$).  Then $f$ has a
+least fixed point and a greatest fixed point in $L$.  Specifically:
+\[
+  \mathrm{lfp}(f) = \inf\{\, a \in L : f(a) \leq a \,\},
+  \qquad
+  \mathrm{gfp}(f) = \sup\{\, a \in L : a \leq f(a) \,\}.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\forall$ complete lattices $(L,\leq)$, $\forall$ monotone $f : L \to L$:
+$\exists p, q \in L$ such that $f(p) = p$, $f(q) = q$, and $\forall r \in L$
+with $f(r) = r$: $p \leq r \leq q$.
+\end{remark*}
+
+\begin{remark}[Why this theorem appears here]
+\label{rem:knaster-tarski-context}
+The Knaster--Tarski theorem is not needed for most of Volume~I, but it is
+placed here because its hypotheses — complete lattice, monotone function —
+are now in place and the statement is short.  Its significance reaches
+further:
+\begin{itemize}
+  \item In set theory, it is used to prove the Schröder--Bernstein theorem
+        without the Axiom of Choice (the monotone map sends $A \mapsto
+        X \setminus g(Y \setminus f(A))$ on $\mathcal{P}(X)$).
+  \item In measure theory, it is used to construct the smallest
+        $\sigma$-algebra containing a given class of sets (the
+        generated $\sigma$-algebra is a fixed point of the ``closure
+        under countable operations'' operator).
+  \item In theoretical computer science and domain theory, it is the
+        foundation for denotational semantics.
+\end{itemize}
+For now, note that $(\mathcal{P}(X), \subseteq)$ is a complete lattice and
+any set operation that is monotone (such as $A \mapsto \overline{A}$, closure
+in a topological space, or $A \mapsto \sigma(A)$, generated $\sigma$-algebra)
+has a fixed point by this theorem.
+\end{remark}
+
+\begin{remark}[Transition]
+\label{rem:transition-to-hasse}
+With the notion of lattice in hand, the Hasse diagram becomes a more powerful
+visualisation tool: the Hasse diagram of a lattice has a unique bottom element
+($\inf L$) and a unique top element ($\sup L$), and the join and meet of any
+two elements can be read off as the unique path structure in the diagram.
+The next section introduces Hasse diagrams, the duality principle, and the
+connection between duality and the passage from $\sup$ to $\inf$.
+\end{remark}
