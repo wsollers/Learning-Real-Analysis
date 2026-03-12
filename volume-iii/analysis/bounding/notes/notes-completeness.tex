@@ -11,10 +11,28 @@
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Completeness — Quick Reference}},
   fonttitle=\small\bfseries]
-\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
-\textbf{Core items} & Key definitions/results introduced in this file.\\
-\textbf{How to use} & Read the boxed items first; proofs and consequences follow.\\
-\textbf{Dependencies} & Refer back to earlier sections as needed.\\
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}p{0.30\textwidth} p{0.44\textwidth} p{0.18\textwidth}@{}}
+\textbf{Result} & \textbf{Statement} & \textbf{Proof} \\
+\midrule
+Completeness Axiom
+  & Every nonempty bounded-above $S \subseteq \mathbb{R}$ has $\sup S \in \mathbb{R}$
+  & axiom \\
+Nested Interval Property
+  & $\bigcap_{n=1}^\infty [a_n,b_n] \neq \varnothing$ for nested closed intervals
+  & \hyperref[prf:nested-interval-property]{Proof $\to$} \\
+Archimedean Property
+  & $\forall x \in \mathbb{R}\; \exists n \in \mathbb{N}\; (n > x)$
+  & \hyperref[prf:archimedean-property]{Proof $\to$} \\
+Floor Lemma
+  & $\forall x\; \exists!\, m \in \mathbb{Z}\; (m \le x < m+1)$
+  & \hyperref[prf:floor-lemma]{Proof $\to$} \\
+Density of $\mathbb{Q}$
+  & Between any two reals lies a rational
+  & \hyperref[prf:density-of-rationals]{Proof $\to$} \\
+Existence of $\sqrt{a}$
+  & $\forall a \ge 0\; \exists!\, x \ge 0\; (x^2 = a)$
+  & \hyperref[prf:existence-of-square-roots]{Proof $\to$} \\
 \end{tabular}
 \end{tcolorbox}
 
@@ -23,7 +41,7 @@
 \subsubsection{Completeness Axiom}
 % ---------------------------------------------------------
 
-\begin{remark}[Why completeness is needed]
+\begin{remark*}[Why completeness is needed]
 The ordered field axioms alone do not prevent ``holes'' in the number line.
 The rationals $\mathbb{Q}$ satisfy all field and order axioms, yet fail
 completeness. Consider the set
@@ -39,7 +57,7 @@ The Completeness Axiom asserts that $\mathbb{R}$ has no such holes:
 every nonempty bounded-above set has a supremum \emph{inside} $\mathbb{R}$.
 This single axiom is what distinguishes $\mathbb{R}$ from $\mathbb{Q}$,
 and it underlies every major theorem in analysis.
-\end{remark}
+\end{remark*}
 
 \begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -52,7 +70,7 @@ Equivalently: if $S \subseteq \mathbb{R}$ is nonempty and bounded above,
 then $\sup S$ exists as a real number.
 \end{tcolorbox}
 
-\begin{remark}[Logical form]
+\begin{remark*}[Logical form]
 \[
 \forall S\;\Bigl(
 (S \subseteq \mathbb{R} \wedge S \neq \varnothing \wedge
@@ -61,9 +79,9 @@ then $\sup S$ exists as a real number.
 \exists s \in \mathbb{R}\ (s = \sup S)
 \Bigr).
 \]
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Equivalent formulations]
+\begin{remark*}[Equivalent formulations]
 Over the ordered-field axioms, completeness is equivalent to each of the
 following:
 \begin{itemize}
@@ -72,7 +90,7 @@ following:
   \item \emph{(Nested Interval Property)} Every nested sequence of nonempty
         closed bounded intervals has nonempty intersection.
 \end{itemize}
-\end{remark}
+\end{remark*}
 
 % =========================================================
 % Nested Interval Property
@@ -80,7 +98,8 @@ following:
 
 \subsubsection{Nested Interval Property}
 
-\begin{theorem}[Nested Interval Property]
+\begin{theorem}[\texorpdfstring{\hyperref[prf:nested-interval-property]{Nested Interval Property}}{Nested Interval Property}]
+\label{thm:nested-interval-property}
 Let $\{[a_n, b_n]\}_{n \in \mathbb{N}}$ be nonempty closed intervals such that
 \[
 [a_{n+1}, b_{n+1}] \subseteq [a_n, b_n]
@@ -164,15 +183,16 @@ Equivalently:
 \]
 \end{tcolorbox}
 
-\begin{remark}[Logical form]
+\begin{remark*}[Logical form]
 \[
 \forall x\; \exists n\; (n > x).
 \qquad
 \forall x > 0\; \forall y\; \exists n\; (nx > y).
 \]
-\end{remark}
+\end{remark*}
 
-\begin{theorem}[Archimedean Property]
+\begin{theorem}[\texorpdfstring{\hyperref[prf:archimedean-property]{Archimedean Property}}{Archimedean Property}]
+\label{thm:archimedean-property}
 $\mathbb{R}$ satisfies the Archimedean property.
 \end{theorem}
 
@@ -191,7 +211,8 @@ $nx > y$.
 
 \subsubsection{Integer Part}
 
-\begin{lemma}[Floor lemma]
+\begin{lemma}[\texorpdfstring{\hyperref[prf:floor-lemma]{Floor Lemma}}{Floor Lemma}]
+\label{lem:floor-lemma}
 For every $x \in \mathbb{R}$ there exists a unique $m \in \mathbb{Z}$ such that
 \[
 m \le x < m + 1.
@@ -233,13 +254,14 @@ A subset $A$ of a linearly ordered set $X$ is \emph{dense in $X$} if
 \]
 \end{tcolorbox}
 
-\begin{remark}[Logical form for $\mathbb{Q}$ dense in $\mathbb{R}$]
+\begin{remark*}[Logical form for $\mathbb{Q}$ dense in $\mathbb{R}$]
 \[
 \forall a < b\; \exists q \in \mathbb{Q}\; (a < q < b).
 \]
-\end{remark}
+\end{remark*}
 
-\begin{theorem}[Density of $\mathbb{Q}$]
+\begin{theorem}[\texorpdfstring{\hyperref[prf:density-of-rationals]{Density of $\mathbb{Q}$}}{Density of Q}]
+\label{thm:density-of-rationals}
 $\mathbb{Q}$ is dense in $\mathbb{R}$.
 \end{theorem}
 
@@ -266,6 +288,7 @@ $a < t < b$, and $t = q\sqrt{2}$ is irrational.
 \end{remark*}
 
 \begin{corollary}[Density of Irrationals]
+\label{cor:density-of-irrationals}
 The irrationals are dense in $\mathbb{R}$.
 \end{corollary}
 
@@ -275,15 +298,16 @@ The irrationals are dense in $\mathbb{R}$.
 
 \subsubsection{Existence of Square Roots}
 
-\begin{theorem}[Existence of Square Roots]
+\begin{theorem}[\texorpdfstring{\hyperref[prf:existence-of-square-roots]{Existence of Square Roots}}{Existence of Square Roots}]
+\label{thm:existence-of-square-roots}
 For every $a \ge 0$ there exists a unique $x \ge 0$ such that $x^2 = a$.
 \end{theorem}
 
-\begin{remark}[Logical form]
+\begin{remark*}[Logical form]
 \[
 \forall a \ge 0\; \exists!\, x \ge 0\; (x^2 = a).
 \]
-\end{remark}
+\end{remark*}
 
 
 
@@ -353,3 +377,20 @@ in real analysis.
 Every result in this chapter ultimately flows from the single axiom at the top.}
 \label{fig:completeness-chain}
 \end{figure}
+
+\begin{remark*}[Connections forward]
+Completeness appears in every major limit theorem in the notes.
+The Monotone Convergence Theorem (convergence chapter) constructs the
+limit of a bounded monotone sequence as $\sup\{a_n : n \in \mathbb{N}\}$;
+existence of this supremum requires completeness.
+The Bolzano--Weierstrass Theorem applies the Nested Interval Property
+directly to extract a convergent subsequence from any bounded sequence.
+The Cauchy Criterion identifies convergent sequences purely in terms of
+their own spacing, without naming the limit in advance; its proof
+constructs the limit as a supremum and again requires completeness.
+In metric spaces (Distance chapter), completeness in the sense of
+Cauchy sequences is the natural generalisation of the same idea to
+abstract settings.
+Every $\varepsilon$-$\delta$ proof that locates a limit or extremum is
+drawing on this chapter's infrastructure.
+\end{remark*}

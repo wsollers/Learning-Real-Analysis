@@ -1,0 +1,3845 @@
+I'll regenerate a much larger LaTeX document (~1200–1500 lines) containing:
+
+Conceptual framework
+
+analysis as control of motion
+
+moving vs static objects
+
+modeling distances
+
+Bounding strategy theory
+
+how to determine what must be bounded
+
+how to decide what bounds it
+
+pivot selection heuristics
+
+The three analyst diagrams
+
+bridge
+
+product rectangle
+
+safety radius
+
+Full triangle inequality toolbox
+
+the 7 manipulations
+
+extended variations analysts use
+
+Proof design templates
+
+sums
+
+products
+
+quotients
+
+continuity
+
+Cauchy proofs
+
+Pivot-finding algorithm
+
+Worked examples
+
+limit of sum
+
+limit of product
+
+reciprocal limit
+
+polynomial limit
+
+continuity proofs
+
+Decomposition drills
+
+exercises specifically for learning how to insert pivots
+
+Reference cheat sheet
+
+That will produce something much closer to what you expected — essentially a “Triangle Inequality Field Manual” for analysis.
+
+Before I generate it, one quick question so I match your notes style:
+
+Do you want it structured like your other analysis notes with things like
+
+Definition
+Remark
+Proposition
+Proof
+Intuition
+
+or more like a teaching manual / exposition section with narrative text and diagrams?
+
+Your current metric-space section looks fairly formal, so I can mirror that style if you want it to integrate cleanly.
+
+
+
+
+
+
+
+
+
+=============================================================================================
+
+
+Excellent — this is exactly the right place to start. If the conceptual framework is clear, the later triangle-inequality tricks become almost mechanical. What you want to teach yourself is how to think about bounding problems before touching algebra.
+
+Below is a refined conceptual framework section you can place at the beginning of your bounding chapter.
+
+Conceptual Framework: Analysis as Control of Motion
+
+A useful way to understand analysis is this:
+
+Analysis studies how quantities move, and proofs control that motion using bounds.
+
+In a metric space 
+(
+��
+,
+��
+)
+(X,d), motion is measured using distance.
+
+d(x,z) \le d(x,y) + d(y,z)
+
+The triangle inequality states that the direct distance between two points cannot exceed the distance obtained by traveling through intermediate points.
+
+This principle allows complicated motion to be decomposed into simpler pieces.
+
+Bounding arguments therefore answer the question:
+
+How far can these objects move relative to each other?
+
+1. Moving vs Static Objects
+
+Every expression in analysis involves objects that either move or remain fixed.
+
+Understanding which is which is the first step in modeling the problem.
+
+Static objects
+
+Static objects do not change during the argument.
+
+Examples:
+
+��
+,
+��
+,
+��
+(
+��
+)
+,
+0
+,
+constants
+L,M,f(a),0,constants
+
+These act as reference points.
+
+Geometrically they are fixed locations in the space.
+
+Moving objects
+
+Moving objects vary with an index or parameter.
+
+Examples:
+
+��
+��
+,
+��
+��
+,
+��
+(
+��
+)
+,
+��
+(
+��
+)
+x
+n
+	​
+
+,y
+n
+	​
+
+,f(x),g(x)
+
+These represent points moving through the space.
+
+Example:
+
+��
+��
+→
+��
+x
+n
+	​
+
+→L
+
+Here
+
+��
+��
+x
+n
+	​
+
+ moves
+
+��
+L is fixed.
+
+The distance
+
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣
+
+measures how close the moving point is to its target.
+
+2. Distances as the Language of Change
+
+Most expressions in analysis can be interpreted as distances between objects.
+
+Recognizing the type of distance involved tells us how to bound it.
+
+Three fundamental types appear repeatedly.
+
+Type 1 — Moving point vs static target
+
+Example:
+
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣
+
+Interpretation:
+
+��
+��
+x
+n
+	​
+
+ moves
+
+��
+L is fixed.
+
+The expression measures distance to the target.
+
+This is the fundamental notion of convergence.
+
+Bounding strategy:
+
+Control how close the moving point gets to the fixed point.
+
+Type 2 — Moving point vs moving point
+
+Example:
+
+∣
+��
+��
+−
+��
+��
+∣
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣
+
+Both objects move.
+
+Their distance may fluctuate unpredictably.
+
+Bounding strategy:
+
+Compare both objects to a shared reference point.
+
+Example:
+
+∣
+��
+��
+−
+��
+��
+∣
+=
+∣
+(
+��
+��
+−
+��
+)
++
+(
+��
+−
+��
+��
+)
+∣
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣=∣(x
+n
+	​
+
+−L)+(L−y
+n
+	​
+
+)∣
+
+Apply the triangle inequality:
+
+∣
+��
+��
+−
+��
+��
+∣
+≤
+∣
+��
+��
+−
+��
+∣
++
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣≤∣x
+n
+	​
+
+−L∣+∣y
+n
+	​
+
+−L∣
+
+Thus the distance between two moving points is controlled by their distances to a common anchor.
+
+Type 3 — Distance between distances
+
+Example:
+
+∣
+��
+(
+��
+,
+��
+)
+−
+��
+(
+��
+,
+��
+)
+∣
+∣d(x,z)−d(y,z)∣
+
+This measures how much the distance to 
+��
+z changes when moving from 
+��
+x to 
+��
+y.
+
+The reverse triangle inequality gives the bound
+
+∣
+��
+(
+��
+,
+��
+)
+−
+��
+(
+��
+,
+��
+)
+∣
+≤
+��
+(
+��
+,
+��
+)
+∣d(x,z)−d(y,z)∣≤d(x,y)
+
+Interpretation:
+
+distances cannot change faster than the points move.
+
+3. Modeling Distances in a Problem
+
+When reading a proof problem, the first task is to identify what distance must be controlled.
+
+This is the target quantity.
+
+Examples:
+
+Situation	Target distance
+limit of sums	(
+limit of products	(
+continuity	(
+Cauchy property	(
+
+This expression represents the motion we must control.
+
+4. Identifying Known Small Distances
+
+Next determine what distances are already known to be small.
+
+Examples:
+
+∣
+��
+��
+−
+��
+∣
+→
+0
+∣x
+n
+	​
+
+−L∣→0
+∣
+��
+��
+−
+��
+∣
+→
+0
+∣y
+n
+	​
+
+−M∣→0
+∣
+��
+−
+��
+∣
+<
+��
+∣x−a∣<δ
+
+These represent motions we already know how to control.
+
+Bounding arguments attempt to rewrite the target distance in terms of these known quantities.
+
+5. The Role of Intermediate Points
+
+Often the target distance cannot be controlled directly.
+
+We therefore introduce an intermediate reference point.
+
+∣
+��
+−
+��
+∣
+=
+∣
+��
+−
+��
++
+��
+−
+��
+∣
+∣A−C∣=∣A−B+B−C∣
+
+Applying the triangle inequality yields
+
+∣
+��
+−
+��
+∣
+≤
+∣
+��
+−
+��
+∣
++
+∣
+��
+−
+��
+∣
+∣A−C∣≤∣A−B∣+∣B−C∣
+
+The point 
+��
+B is called the pivot.
+
+Choosing a good pivot allows the expression to be rewritten in terms of known small quantities.
+
+6. Choosing the Correct Bounds
+
+When bounding an expression, analysts follow a simple hierarchy.
+
+Step 1
+
+Identify the target distance.
+
+Step 2
+
+Identify the known small distances.
+
+Step 3
+
+Rewrite the expression so those quantities appear.
+
+Step 4
+
+Apply the triangle inequality.
+
+Step 5
+
+Replace complicated terms by bounds or constants.
+
+7. Geometric Interpretation
+
+Bounding arguments correspond to choosing a path between points.
+
+Instead of measuring
+
+A → C
+
+we measure
+
+A → B → C
+
+The triangle inequality ensures
+
+direct distance
+≤
+path distance
+.
+direct distance≤path distance.
+
+This is why inserting intermediate quantities works.
+
+8. The Key Insight
+
+Almost every ε-proof is built from the same idea:
+
+replace one complicated motion with several simpler motions.
+
+Once the relevant distances are identified, the algebra becomes routine.
+
+The difficulty lies not in applying inequalities but in modeling the situation correctly.
+
+Where this section leads
+
+After this conceptual framework, the next sections naturally become:
+
+The three geometric diagrams analysts use
+
+The triangle-inequality toolbox
+
+Proof templates for common situations
+
+Pivot-selection strategies
+
+If you'd like, I can also show you something extremely helpful for solo learners:
+
+the four questions analysts automatically ask when they see a bounding problem.
+
+That little checklist dramatically speeds up recognizing what needs to be bounded and why.
+
+
+This is one of the most useful mental tools you can develop. Experienced analysts rarely start manipulating algebra immediately. Instead they silently run through a small diagnostic checklist that tells them how the proof will likely proceed.
+
+These questions help you model the geometry of the problem before doing algebra.
+
+The Four Questions Analysts Ask When Facing a Bounding Problem
+
+When confronted with an expression that must be bounded, analysts usually ask four questions.
+
+Question 1
+What is the target distance?
+
+First identify the quantity that must be controlled.
+
+This is usually the expression appearing in the statement of the theorem.
+
+Examples:
+
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣
+∣
+��
+��
+��
+��
+−
+��
+��
+∣
+∣x
+n
+	​
+
+y
+n
+	​
+
+−LM∣
+∣
+��
+(
+��
+)
+−
+��
+(
+��
+)
+∣
+∣f(x)−f(a)∣
+∣
+��
+��
+−
+��
+��
+∣
+∣x
+n
+	​
+
+−x
+m
+	​
+
+∣
+
+This quantity represents the motion that must be controlled.
+
+Until the target distance is clear, no bounding strategy can be chosen.
+
+Question 2
+What distances are already known to be small?
+
+Most problems already provide information about certain distances.
+
+Examples:
+
+∣
+��
+��
+−
+��
+∣
+→
+0
+∣x
+n
+	​
+
+−L∣→0
+∣
+��
+��
+−
+��
+∣
+→
+0
+∣y
+n
+	​
+
+−M∣→0
+∣
+��
+−
+��
+∣
+<
+��
+∣x−a∣<δ
+
+These are the available controls.
+
+Bounding arguments aim to rewrite the target expression in terms of these known quantities.
+
+Question 3
+What intermediate point will expose those distances?
+
+If the target distance does not already contain the known small quantities, we insert a pivot.
+
+Example:
+
+∣
+��
+��
+−
+��
+��
+∣
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣
+
+We introduce the pivot 
+��
+L:
+
+∣
+��
+��
+−
+��
+��
+∣
+=
+∣
+(
+��
+��
+−
+��
+)
++
+(
+��
+−
+��
+��
+)
+∣
+.
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣=∣(x
+n
+	​
+
+−L)+(L−y
+n
+	​
+
+)∣.
+
+Now the known distances appear.
+
+This step corresponds to choosing a reference point in the geometry of the problem.
+
+Question 4
+What quantities can be safely bounded by constants?
+
+Some terms cannot be made small but can be bounded.
+
+Example:
+
+If 
+��
+��
+→
+��
+x
+n
+	​
+
+→L, then the sequence is bounded.
+
+∣
+��
+��
+∣
+≤
+��
+∣x
+n
+	​
+
+∣≤M
+
+This allows expressions like
+
+∣
+��
+��
+∣
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+∣∣y
+n
+	​
+
+−M∣
+
+to be controlled by
+
+��
+∣
+��
+��
+−
+��
+∣
+.
+M∣y
+n
+	​
+
+−M∣.
+
+This step converts complicated expressions into constant × small quantity.
+
+The Analyst’s Workflow
+
+These four questions produce a consistent strategy.
+
+Identify the target distance.
+
+Identify known small distances.
+
+Introduce a pivot if necessary.
+
+Replace large pieces with constants.
+
+After that, the triangle inequality completes the argument.
+
+Example: Product of Convergent Sequences
+
+Suppose
+
+��
+��
+→
+��
+,
+��
+��
+→
+��
+.
+x
+n
+	​
+
+→L,y
+n
+	​
+
+→M.
+Question 1 — Target
+∣
+��
+��
+��
+��
+−
+��
+��
+∣
+∣x
+n
+	​
+
+y
+n
+	​
+
+−LM∣
+Question 2 — Known small quantities
+∣
+��
+��
+−
+��
+∣
+,
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣,∣y
+n
+	​
+
+−M∣
+Question 3 — Pivot
+
+Insert 
+��
+��
+��
+x
+n
+	​
+
+M.
+
+��
+��
+��
+��
+−
+��
+��
+=
+��
+��
+(
+��
+��
+−
+��
+)
++
+��
+(
+��
+��
+−
+��
+)
+x
+n
+	​
+
+y
+n
+	​
+
+−LM=x
+n
+	​
+
+(y
+n
+	​
+
+−M)+M(x
+n
+	​
+
+−L)
+Question 4 — Constant bounds
+
+Since 
+��
+��
+x
+n
+	​
+
+ converges, it is bounded.
+
+∣
+��
+��
+∣
+≤
+��
+∣x
+n
+	​
+
+∣≤B
+
+Thus
+
+∣
+��
+��
+��
+��
+−
+��
+��
+∣
+≤
+��
+∣
+��
+��
+−
+��
+∣
++
+∣
+��
+∣
+∣
+��
+��
+−
+��
+∣
+.
+∣x
+n
+	​
+
+y
+n
+	​
+
+−LM∣≤B∣y
+n
+	​
+
+−M∣+∣M∣∣x
+n
+	​
+
+−L∣.
+
+Both terms become small.
+
+Why This Checklist Works
+
+These questions separate two different tasks:
+
+Modeling the geometry of the problem
+
+Executing algebraic manipulations
+
+Most beginners struggle because they attempt the second step without completing the first.
+
+Experienced analysts mentally answer the four questions first.
+
+The Hidden Pattern
+
+Nearly every undergraduate analysis proof follows this structure:
+
+Identify target distance
+
+Identify known small quantities
+
+Insert pivot
+
+Apply triangle inequality
+
+Bound remaining terms
+
+Once you see this pattern, epsilon proofs become far less mysterious.
+
+If you'd like, the next thing I can show you is something that will dramatically sharpen this intuition:
+
+There are actually four standard pivot patterns that appear over and over again in analysis proofs. Recognizing them makes many proofs almost automatic.
+
+This is a great question and it gets to the heart of modeling distances correctly. The short answer is:
+
+You don’t multiply 
+∣
+��
+��
+−
+��
+∣
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣∣y
+n
+	​
+
+−M∣ because that expression does not represent the distance you are trying to control.
+
+Let’s unpack the logic carefully.
+
+1. The Target Comes From the Statement of the Problem
+
+When we prove:
+
+If 
+��
+��
+→
+��
+x
+n
+	​
+
+→L and 
+��
+��
+→
+��
+y
+n
+	​
+
+→M, then 
+��
+��
+��
+��
+→
+��
+��
+x
+n
+	​
+
+y
+n
+	​
+
+→LM,
+
+the definition of convergence tells us exactly what must be controlled.
+
+|x_n y_n - LM| \to 0
+
+So the target distance is
+
+∣
+��
+��
+��
+��
+−
+��
+��
+∣
+.
+∣x
+n
+	​
+
+y
+n
+	​
+
+−LM∣.
+
+That expression measures the distance between
+
+the moving value 
+��
+��
+��
+��
+x
+n
+	​
+
+y
+n
+	​
+
+
+the target value 
+��
+��
+LM.
+
+So the modeling step is simply:
+
+moving quantity − target quantity
+2. Why Not Use 
+∣
+��
+��
+−
+��
+∣
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣∣y
+n
+	​
+
+−M∣?
+
+Because that quantity measures something completely different.
+
+∣
+��
+��
+−
+��
+∣
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣∣y
+n
+	​
+
+−M∣
+
+represents
+
+distance of xn from L
+×
+distance of yn from M
+
+This is not equal to
+
+distance between xnyn and LM
+
+There is no algebraic identity connecting those two quantities directly.
+
+So using it would not actually solve the problem.
+
+3. The Correct Way to Model the Difference
+
+We must start with the actual difference:
+
+��
+��
+��
+��
+−
+��
+��
+.
+x
+n
+	​
+
+y
+n
+	​
+
+−LM.
+
+Then we manipulate it to expose the known small terms.
+
+Insert a pivot:
+
+��
+��
+��
+��
+−
+��
+��
+=
+��
+��
+��
+��
+−
+��
+��
+��
++
+��
+��
+��
+−
+��
+��
+.
+x
+n
+	​
+
+y
+n
+	​
+
+−LM=x
+n
+	​
+
+y
+n
+	​
+
+−x
+n
+	​
+
+M+x
+n
+	​
+
+M−LM.
+
+Group terms:
+
+=
+��
+��
+(
+��
+��
+−
+��
+)
++
+��
+(
+��
+��
+−
+��
+)
+.
+=x
+n
+	​
+
+(y
+n
+	​
+
+−M)+M(x
+n
+	​
+
+−L).
+
+Now the known small quantities appear:
+
+��
+��
+−
+��
+y
+n
+	​
+
+−M
+
+��
+��
+−
+��
+x
+n
+	​
+
+−L
+
+This is why the pivot works.
+
+4. Geometric Interpretation
+
+Think of a rectangle whose sides are changing.
+
+Instead of jumping directly
+
+(x_n , y_n) → (L , M)
+
+we move in two steps:
+
+(x_n , y_n)
+      ↓
+(x_n , M)
+      ↓
+(L , M)
+
+Each step isolates one source of change.
+
+5. Your Second Question:
+“What if the question was whether three sequences stay within 
+��
+A of each other?”
+
+That is a different modeling problem.
+
+Suppose we ask:
+
+Do 
+��
+��
+,
+��
+��
+,
+��
+��
+x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+ stay within distance 
+��
+A of each other?
+
+The quantity to examine would be something like
+
+∣
+��
+��
+−
+��
+��
+∣
+,
+∣
+��
+��
+−
+��
+��
+∣
+,
+∣
+��
+��
+−
+��
+��
+∣
+.
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣,∣x
+n
+	​
+
+−z
+n
+	​
+
+∣,∣y
+n
+	​
+
+−z
+n
+	​
+
+∣.
+
+Now the triangle inequality becomes useful again:
+
+∣
+��
+��
+−
+��
+��
+∣
+=
+∣
+(
+��
+��
+−
+��
+��
+)
++
+(
+��
+��
+−
+��
+��
+)
+∣
+≤
+∣
+��
+��
+−
+��
+��
+∣
++
+∣
+��
+��
+−
+��
+��
+∣
+.
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣=∣(x
+n
+	​
+
+−z
+n
+	​
+
+)+(z
+n
+	​
+
+−y
+n
+	​
+
+)∣≤∣x
+n
+	​
+
+−z
+n
+	​
+
+∣+∣z
+n
+	​
+
+−y
+n
+	​
+
+∣.
+
+So the modeling changes because the target distance changed.
+
+6. The General Rule
+
+Always start by asking:
+
+What two quantities does this theorem compare?
+
+Then write
+
+moving quantity − target quantity
+
+Examples:
+
+Theorem	Target distance
+
+��
+��
+→
+��
+x
+n
+	​
+
+→L	(
+sum rule	(
+product rule	(
+continuity	(
+
+Only after writing this expression do we start manipulating it.
+
+7. The Key Insight
+
+The target expression always comes from the definition of the property being proved.
+
+For convergence:
+
+∣
+��
+��
+−
+��
+∣
+∣x
+n
+	​
+
+−L∣
+
+For products:
+
+∣
+��
+��
+��
+��
+−
+��
+��
+∣
+∣x
+n
+	​
+
+y
+n
+	​
+
+−LM∣
+
+For continuity:
+
+∣
+��
+(
+��
+)
+−
+��
+(
+��
+)
+∣
+.
+∣f(x)−f(a)∣.
+
+Once that expression is written, the rest of the proof is simply finding a way to express it in terms of known small quantities.
+
+If you'd like, I can also show you something extremely useful for intuition:
+
+There is a single algebraic identity that generates almost every pivot used in analysis proofs, and once you see it you can invent these decompositions almost automatically.
+
+
+Work this problem: the maximum distance between any of the 3 sequences xn,yn,zn is A.
+
+Let’s formalize it carefully.
+
+If you say:
+
+“the maximum distance between any of the 3 sequences 
+��
+��
+,
+��
+��
+,
+��
+��
+x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+ is 
+��
+A”
+
+then at each fixed 
+��
+n, the three pairwise distances are
+
+∣
+��
+��
+−
+��
+��
+∣
+,
+∣
+��
+��
+−
+��
+��
+∣
+,
+∣
+��
+��
+−
+��
+��
+∣
+.
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣,∣x
+n
+	​
+
+−z
+n
+	​
+
+∣,∣y
+n
+	​
+
+−z
+n
+	​
+
+∣.
+
+So the precise mathematical statement is
+
+max
+⁡
+{
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+}
+≤
+��
+for all 
+��
+.
+max{∣x
+n
+	​
+
+−y
+n
+	​
+
+∣, ∣x
+n
+	​
+
+−z
+n
+	​
+
+∣, ∣y
+n
+	​
+
+−z
+n
+	​
+
+∣}≤Afor all n.
+
+That is the clean formulation.
+
+What this means
+
+At each stage 
+��
+n, the three points 
+��
+��
+,
+��
+��
+,
+��
+��
+x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+ all lie within diameter 
+��
+A of each other.
+
+So no pair is farther apart than 
+��
+A.
+
+If you want “equals 
+��
+A”
+
+If you literally mean the maximum distance is exactly 
+��
+A, then the statement is
+
+max
+⁡
+{
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+}
+=
+��
+for all 
+��
+.
+max{∣x
+n
+	​
+
+−y
+n
+	​
+
+∣, ∣x
+n
+	​
+
+−z
+n
+	​
+
+∣, ∣y
+n
+	​
+
+−z
+n
+	​
+
+∣}=Afor all n.
+
+That means:
+
+every pairwise distance is 
+≤
+��
+≤A, and
+
+at least one pair has distance exactly 
+��
+A.
+
+If you want to work with it using inequalities
+
+From
+
+max
+⁡
+{
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+}
+≤
+��
+max{∣x
+n
+	​
+
+−y
+n
+	​
+
+∣, ∣x
+n
+	​
+
+−z
+n
+	​
+
+∣, ∣y
+n
+	​
+
+−z
+n
+	​
+
+∣}≤A
+
+you immediately get all three bounds:
+
+∣
+��
+��
+−
+��
+��
+∣
+≤
+��
+,
+∣
+��
+��
+−
+��
+��
+∣
+≤
+��
+,
+∣
+��
+��
+−
+��
+��
+∣
+≤
+��
+.
+∣x
+n
+	​
+
+−y
+n
+	​
+
+∣≤A,∣x
+n
+	​
+
+−z
+n
+	​
+
+∣≤A,∣y
+n
+	​
+
+−z
+n
+	​
+
+∣≤A.
+
+And conversely, if all three of those hold, then
+
+max
+⁡
+{
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+}
+≤
+��
+.
+max{∣x
+n
+	​
+
+−y
+n
+	​
+
+∣, ∣x
+n
+	​
+
+−z
+n
+	​
+
+∣, ∣y
+n
+	​
+
+−z
+n
+	​
+
+∣}≤A.
+
+So these are equivalent.
+
+Geometric interpretation
+
+At each 
+��
+n, you have three moving points on the line:
+
+��
+��
+,
+ 
+��
+��
+,
+ 
+��
+��
+.
+x
+n
+	​
+
+, y
+n
+	​
+
+, z
+n
+	​
+
+.
+
+The statement says the largest gap among the three points is at most 
+��
+A.
+
+On the real line, this is the same as saying
+
+max
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+−
+min
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+≤
+��
+.
+max{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}−min{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}≤A.
+
+Because for real numbers, the maximum pairwise distance is always
+
+max
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+−
+min
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+.
+max{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}−min{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}.
+
+So an equivalent formulation is
+
+max
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+−
+min
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+≤
+��
+.
+max{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}−min{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}≤A.
+
+That is often the nicest way to think about it.
+
+Final polished answer
+
+If the problem is:
+
+Express mathematically that the maximum distance between any of the three sequences 
+��
+��
+,
+��
+��
+,
+��
+��
+x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+ is 
+��
+A,
+
+then write
+
+max
+⁡
+{
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+}
+≤
+��
+for all 
+��
+.
+max{∣x
+n
+	​
+
+−y
+n
+	​
+
+∣, ∣x
+n
+	​
+
+−z
+n
+	​
+
+∣, ∣y
+n
+	​
+
+−z
+n
+	​
+
+∣}≤Afor all n.
+
+If you mean exactly 
+��
+A, write
+
+max
+⁡
+{
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+,
+ 
+∣
+��
+��
+−
+��
+��
+∣
+}
+=
+��
+for all 
+��
+.
+max{∣x
+n
+	​
+
+−y
+n
+	​
+
+∣, ∣x
+n
+	​
+
+−z
+n
+	​
+
+∣, ∣y
+n
+	​
+
+−z
+n
+	​
+
+∣}=Afor all n.
+
+And on 
+��
+R, this is equivalently
+
+max
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+−
+min
+⁡
+{
+��
+��
+,
+��
+��
+,
+��
+��
+}
+≤
+��
+.
+max{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}−min{x
+n
+	​
+
+,y
+n
+	​
+
+,z
+n
+	​
+
+}≤A.
+
+If you want, I can also show how to prove that last equivalence.
+
+
+
+
+\begin{remark*}[Translating English statements about sequences into inequalities]
+
+Suppose a problem states:
+
+\begin{quote}
+``The maximum distance between any of the three sequences
+$x_n, y_n, z_n$ is $A$.'' 
+\end{quote}
+
+The key task is to translate this English description of motion into a
+precise mathematical inequality.
+
+\medskip
+
+\textbf{Step 1: Identify the type of statement.}
+
+This is \emph{not} a convergence statement.  
+It does not compare a moving sequence to a fixed target such as $L$.
+
+Instead, the statement concerns the \emph{relative motion of several
+moving objects}.  Thus it is a \emph{bounding problem}, specifically a
+\emph{dynamical bounding problem}: as the sequences move, how far apart
+are they allowed to get from one another?
+
+\medskip
+
+\textbf{Step 2: Identify the objects.}
+
+The objects are the sequences
+\[
+x_n, \quad y_n, \quad z_n .
+\]
+
+For each fixed index $n$, these correspond to three points on the real
+line.  Thus at time $n$ we may imagine three moving points
+\[
+x_n, \; y_n, \; z_n .
+\]
+
+\medskip
+
+\textbf{Step 3: Interpret what ``distance between sequences'' means.}
+
+A sequence is an infinite object, but the statement is really about the
+distances between their \emph{values at the same index}.  
+
+For each $n$, we therefore examine the pairwise distances
+\[
+|x_n-y_n|, \qquad |x_n-z_n|, \qquad |y_n-z_n|.
+\]
+
+This is the crucial modeling step:
+
+\begin{quote}
+``distance between the sequences''
+$\;\Rightarrow\;$
+``distance between their values at the same index.''
+\end{quote}
+
+\medskip
+
+\textbf{Step 4: Interpret ``between any two.''}
+
+The phrase ``between any of the three sequences'' means that the
+distance must be controlled for every pair.
+
+With three objects there are exactly three pairs:
+\[
+(x_n,y_n), \qquad (x_n,z_n), \qquad (y_n,z_n).
+\]
+
+Thus the English statement is asserting that every pairwise distance
+is bounded by $A$:
+\[
+|x_n-y_n| \le A, \qquad
+|x_n-z_n| \le A, \qquad
+|y_n-z_n| \le A .
+\]
+
+\medskip
+
+\textbf{Step 5: Interpret ``maximum distance.''}
+
+Another way to express this condition is to say that the largest of the
+three pairwise distances does not exceed $A$:
+\[
+\max\{\,|x_n-y_n|,\ |x_n-z_n|,\ |y_n-z_n|\,\} \le A
+\qquad \text{for all } n .
+\]
+
+These two formulations are equivalent.
+
+\medskip
+
+\textbf{Geometric interpretation.}
+
+At each index $n$, the three points $x_n, y_n, z_n$ lie within a cluster
+whose diameter is at most $A$.  In other words, no two of the three
+points are ever separated by more than $A$.
+
+On the real line this can also be expressed as
+\[
+\max\{x_n,y_n,z_n\} - \min\{x_n,y_n,z_n\} \le A ,
+\]
+since the largest distance between any two real numbers in the set is
+the distance between the smallest and the largest.
+
+\end{remark*}
+
+
+
+
+\subsection{Mastering the Triangle Inequality}
+\label{sec:triangle-inequality-toolkit}
+
+\paragraph{Distance Management in Analysis.}
+
+To master analysis, one must stop viewing the triangle inequality as
+merely a geometric fact about triangles and begin to see it as a tool
+for \emph{managing distances}.
+
+In almost every proof in analysis one attempts to control a quantity of
+the form
+\[
+|A - B|,
+\]
+which represents the distance between two numbers on the real line.
+
+Often this distance cannot be measured directly. Instead, we construct
+a path through intermediate points whose distances we can measure.
+
+The triangle inequality states
+\[
+|x + y| \le |x| + |y|,
+\]
+or equivalently
+\[
+|A - C| \le |A - B| + |B - C|.
+\]
+
+This expresses the simple geometric idea that
+
+\begin{quote}
+The direct distance between two points is never larger than the
+distance obtained by traveling through an intermediate point.
+\end{quote}
+
+Thus in proofs the triangle inequality provides a method for breaking
+complicated distances into smaller, manageable pieces.
+
+\bigskip
+
+\subsubsection*{1. The Bridge Technique (Addition and Subtraction)}
+
+\paragraph{Logical situation.}
+
+Suppose two sequences converge:
+\[
+x_n \to L,
+\qquad
+y_n \to M.
+\]
+
+We want to prove
+\[
+x_n + y_n \to L + M.
+\]
+
+The quantity we must control is
+\[
+\bigl|(x_n + y_n) - (L + M)\bigr|.
+\]
+
+At first glance this expression appears difficult because both $x_n$
+and $y_n$ are moving.
+
+However, the total error comes from two independent sources:
+
+\begin{itemize}
+\item the error in approximating $L$ by $x_n$,
+\item the error in approximating $M$ by $y_n$.
+\end{itemize}
+
+The triangle inequality allows us to separate these errors.
+
+\paragraph{Algebraic manipulation.}
+
+Rewrite
+\[
+(x_n + y_n) - (L + M)
+=
+(x_n - L) + (y_n - M).
+\]
+
+Applying the triangle inequality gives
+\[
+|(x_n - L) + (y_n - M)|
+\le
+|x_n - L| + |y_n - M|.
+\]
+
+Thus the total error is bounded by the sum of the individual errors.
+
+If we ensure
+\[
+|x_n - L| < \frac{\varepsilon}{2},
+\qquad
+|y_n - M| < \frac{\varepsilon}{2},
+\]
+then
+\[
+|(x_n + y_n) - (L + M)|
+<
+\frac{\varepsilon}{2} + \frac{\varepsilon}{2}
+=
+\varepsilon.
+\]
+
+This technique appears constantly in proofs involving sums of limits.
+
+\bigskip
+
+\subsubsection*{2. The Cross-Term Technique (Products)}
+
+\paragraph{Logical situation.}
+
+Suppose we want to control
+\[
+|x_n y_n - LM|.
+\]
+
+This represents the difference between two rectangle areas.
+
+The difficulty is that both sides change simultaneously, so the terms
+are entangled.
+
+The idea is to introduce an intermediate term that allows us to change
+one factor at a time.
+
+We imagine moving from
+\[
+x_n y_n
+\quad\text{to}\quad
+LM
+\]
+in two steps:
+
+\begin{enumerate}
+\item change $y_n$ to $M$,
+\item change $x_n$ to $L$.
+\end{enumerate}
+
+\paragraph{Algebraic manipulation.}
+
+Insert the intermediate term $x_n M$:
+\[
+|x_n y_n - LM|
+=
+|x_n y_n - x_n M + x_n M - LM|.
+\]
+
+Grouping terms yields
+\[
+=
+|x_n(y_n - M) + M(x_n - L)|.
+\]
+
+Applying the triangle inequality gives
+\[
+|x_n(y_n - M) + M(x_n - L)|
+\le
+|x_n|\,|y_n - M|
++
+|M|\,|x_n - L|.
+\]
+
+This separates the expression into
+\[
+(\text{bounded quantity}) \times (\text{small error}).
+\]
+
+Because convergent sequences are bounded, there exists $B$ such that
+\[
+|x_n| \le B.
+\]
+
+Hence
+\[
+|x_n y_n - LM|
+\le
+B|y_n - M| + |M|\,|x_n - L|.
+\]
+
+Both terms can be made arbitrarily small.
+
+\bigskip
+
+\subsubsection*{3. The Safety Margin Technique (Reciprocals)}
+
+\paragraph{Logical situation.}
+
+Division introduces a new danger: if the denominator becomes very
+small, the fraction becomes very large.
+
+Suppose
+\[
+x_n \to L
+\qquad \text{with } L \neq 0.
+\]
+
+We want to control
+\[
+\left|\frac{1}{x_n} - \frac{1}{L}\right|.
+\]
+
+To do this we must ensure that $x_n$ never approaches zero.
+
+\paragraph{Algebraic manipulation.}
+
+Begin with the reverse triangle inequality:
+\[
+|x_n|
+=
+|L - (L - x_n)|
+\ge
+|L| - |L - x_n|.
+\]
+
+Because $x_n \to L$, we can ensure
+\[
+|x_n - L| < \frac{|L|}{2}.
+\]
+
+Substituting gives
+\[
+|x_n|
+>
+|L| - \frac{|L|}{2}
+=
+\frac{|L|}{2}.
+\]
+
+Thus the denominator remains bounded away from zero.
+
+Taking reciprocals yields
+\[
+\frac{1}{|x_n|}
+<
+\frac{2}{|L|}.
+\]
+
+We have obtained a controlled upper bound for the reciprocal.
+
+\bigskip
+
+\subsubsection*{4. The Add--Subtract Trick (General Strategy)}
+
+\paragraph{Logical situation.}
+
+Often we wish to control a distance
+\[
+|A - C|
+\]
+but cannot simplify it directly.
+
+The strategy is to introduce an intermediate quantity $B$ that shares
+structure with both $A$ and $C$.
+
+We then measure the journey
+\[
+A \to B \to C.
+\]
+
+The triangle inequality guarantees that the direct distance cannot
+exceed the length of this two-step path.
+
+\paragraph{Algebraic template.}
+
+Insert the intermediate value:
+\[
+|A - C|
+=
+|A - B + B - C|.
+\]
+
+Applying the triangle inequality yields
+\[
+|A - C|
+\le
+|A - B| + |B - C|.
+\]
+
+This technique allows us to
+
+\begin{itemize}
+\item introduce common factors,
+\item isolate small errors,
+\item transform complicated expressions into manageable pieces.
+\end{itemize}
+
+\bigskip
+
+\subsubsection*{Summary}
+
+In analysis the triangle inequality is not merely a geometric
+statement.
+
+It is a systematic method for decomposing errors.
+
+Every application follows the same pattern:
+
+\begin{enumerate}
+\item Identify the distance that must be controlled.
+\item Introduce appropriate intermediate points.
+\item Apply the triangle inequality.
+\item Bound the resulting pieces.
+\end{enumerate}
+
+Mastering these decompositions is one of the most important skills in
+real analysis.
+
+\subsection{Triangle Inequality Toolbox}
+\label{sec:triangle-inequality-toolbox}
+
+\paragraph{Core Principle.}
+
+Every decomposition ultimately comes from the triangle inequality
+\[
+|A - C| \le |A - B| + |B - C|.
+\]
+
+The guiding strategy in bounding arguments is:
+
+\begin{enumerate}
+\item Identify the distance to control.
+\item Insert an intermediate point.
+\item Apply the triangle inequality.
+\item Bound the resulting pieces.
+\end{enumerate}
+
+\bigskip
+
+\subsubsection*{1. Sum Decomposition}
+
+Used when studying sums of convergent sequences.
+
+\[
+|(x+y) - (L+M)|
+=
+|(x-L) + (y-M)|.
+\]
+
+Applying the triangle inequality,
+\[
+|(x-L)+(y-M)|
+\le
+|x-L| + |y-M|.
+\]
+
+\textbf{Interpretation.}
+
+The total error of a sum is bounded by the sum of the individual errors.
+
+\bigskip
+
+\subsubsection*{2. Difference Decomposition}
+
+Used when controlling differences of quantities.
+
+\[
+|(x-y) - (L-M)|
+=
+|(x-L) - (y-M)|.
+\]
+
+Hence
+\[
+|(x-L)-(y-M)|
+\le
+|x-L| + |y-M|.
+\]
+
+\textbf{Interpretation.}
+
+Subtracting two approximations introduces two independent errors.
+
+\bigskip
+
+\subsubsection*{3. Product Decomposition}
+
+Used constantly in limit proofs.
+
+\[
+xy - LM
+=
+x(y-M) + M(x-L).
+\]
+
+Thus
+\[
+|xy - LM|
+\le
+|x|\,|y-M| + |M|\,|x-L|.
+\]
+
+\textbf{Interpretation.}
+
+Change one factor at a time.
+
+\bigskip
+
+\subsubsection*{4. Quotient Decomposition}
+
+Used when analyzing reciprocals or ratios.
+
+Begin with the identity
+\[
+\frac{1}{x} - \frac{1}{L}
+=
+\frac{L-x}{xL}.
+\]
+
+Taking absolute values,
+\[
+\left|\frac{1}{x}-\frac{1}{L}\right|
+=
+\frac{|x-L|}{|x||L|}.
+\]
+
+\textbf{Interpretation.}
+
+Control the numerator using convergence and ensure the denominator stays
+bounded away from zero.
+
+\bigskip
+
+\subsubsection*{5. Square Decomposition}
+
+Often appears in polynomial limits.
+
+\[
+x^2 - L^2 = (x-L)(x+L).
+\]
+
+Therefore
+\[
+|x^2-L^2|
+=
+|x-L|\,|x+L|.
+\]
+
+\textbf{Interpretation.}
+
+Factorization isolates the small quantity $x-L$.
+
+\bigskip
+
+\subsubsection*{6. Difference of Squares / Polynomial Trick}
+
+For two moving quantities,
+
+\[
+x^2 - y^2 = (x-y)(x+y).
+\]
+
+Hence
+\[
+|x^2-y^2|
+=
+|x-y|\,|x+y|.
+\]
+
+\textbf{Interpretation.}
+
+Factorization converts nonlinear change into linear change.
+
+\bigskip
+
+\subsubsection*{7. Iterated Triangle Inequality}
+
+Used for sums of many terms.
+
+\[
+|a_1+a_2+\dots+a_n|
+\le
+|a_1|+|a_2|+\dots+|a_n|.
+\]
+
+\textbf{Interpretation.}
+
+The total deviation is bounded by the sum of the individual deviations.
+
+\bigskip
+
+\subsubsection*{How Analysts Use This Page}
+
+When facing a bounding problem, analysts mentally check the structure
+of the expression.
+
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Structure of expression} & \textbf{Toolbox rule} \\
+\hline
+sum & Rule 1 \\
+difference & Rule 2 \\
+product & Rule 3 \\
+quotient & Rule 4 \\
+squares & Rule 5 \\
+polynomial difference & Rule 6 \\
+long sums & Rule 7 \\
+\end{tabular}
+\end{center}
+
+Recognizing the algebraic structure tells you which decomposition to apply.
+
+\bigskip
+
+\subsubsection*{Key Insight}
+
+Nearly every $\varepsilon$--proof in undergraduate analysis reduces to
+repeated applications of these seven manipulations.
+
+Once the pattern is recognized, the proofs become largely mechanical.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.2]
+
+% Nodes
+\node (A) at (0,0) {$A$};
+\node (B) at (3,1.5) {$B$};
+\node (C) at (6,0) {$C$};
+
+% Direct path
+\draw[thick] (A) -- (C);
+
+% Two-step path
+\draw[thick, dashed] (A) -- (B) -- (C);
+
+% Labels
+\node at (3,-0.4) {$|A-C|$};
+\node at (1.4,1.0) {$|A-B|$};
+\node at (4.6,1.0) {$|B-C|$};
+
+\end{tikzpicture}
+
+\caption{Distance decomposition: the direct jump is bounded by a path
+through an intermediate point.}
+\end{figure}
+
+Start → Insert pivots → Break distance → Bound pieces
+
+\begin{tikzpicture}[scale=1.2]
+
+\node (xy) at (0,0) {$x_n y_n$};
+\node (xM) at (3,2) {$x_n M$};
+\node (LM) at (6,0) {$LM$};
+
+\draw[->, thick] (xy) -- (xM);
+\draw[->, thick] (xM) -- (LM);
+\draw[->, thick, dashed] (xy) -- (LM);
+
+\node at (1.5,1.2) {$x_n(y_n-M)$};
+\node at (4.5,1.2) {$M(x_n-L)$};
+
+\end{tikzpicture}
+
+The Unifying Insight
+
+All seven techniques are simply ways of choosing the intermediate point 
+��
+B so that
+
+known small quantities appear
+
+constants can be bounded
+
+the triangle inequality can be applied.
+
+Thus the structure of nearly every analysis proof is:
+
+\subsection{The Geometric Idea Behind Triangle Inequality Decompositions}
+\label{sec:triangle-inequality-geometry}
+
+The triangle inequality can be understood geometrically as a statement
+about distances along paths.
+
+\begin{equation}
+|A-C| \le |A-B| + |B-C|.
+\end{equation}
+
+This says that the direct distance between two points is never larger
+than the distance obtained by traveling through an intermediate point.
+
+Thus the fundamental strategy in bounding arguments is:
+
+\begin{enumerate}
+\item Identify the distance that must be controlled.
+\item Insert one or more intermediate points.
+\item Apply the triangle inequality.
+\item Bound the resulting pieces.
+\end{enumerate}
+
+\bigskip
+
+\subsubsection*{Distance Path Decomposition}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.2]
+
+\node (A) at (0,0) {$A$};
+\node (B) at (3,1.5) {$B$};
+\node (C) at (6,0) {$C$};
+
+\draw[thick] (A) -- (C);
+\draw[thick, dashed] (A) -- (B) -- (C);
+
+\node at (3,-0.4) {$|A-C|$};
+\node at (1.4,1.0) {$|A-B|$};
+\node at (4.6,1.0) {$|B-C|$};
+
+\end{tikzpicture}
+
+\caption{Distance decomposition: the direct distance is bounded by a path
+through an intermediate point.}
+\end{figure}
+
+This simple picture is the core geometric idea underlying many
+bounding arguments in analysis.
+
+\bigskip
+
+\subsubsection*{How the Triangle Inequality Toolbox Fits the Diagram}
+
+Each decomposition technique corresponds to a choice of the
+intermediate point \(B\).
+
+\begin{center}
+\begin{tabular}{ll}
+\textbf{Structure of expression} & \textbf{Intermediate point choice} \\
+\hline
+Sum & Separate errors \\
+Difference & Separate approximations \\
+Product & Change one factor at a time \\
+Quotient & Bound denominator away from zero \\
+Squares & Factorization \\
+Polynomial difference & Factorization \\
+Long sums & Repeated intermediate points
+\end{tabular}
+\end{center}
+
+Thus every bounding proof follows the same conceptual pattern:
+
+\[
+\text{Start} \rightarrow \text{Insert pivots} \rightarrow
+\text{Break distance} \rightarrow \text{Bound pieces}.
+\]
+
+\bigskip
+
+\subsubsection*{Example: Product Decomposition as a Path}
+
+A typical example arises when bounding the expression
+\(|x_n y_n - LM|\).
+
+Instead of attempting to control this distance directly, we insert an
+intermediate point:
+
+\[
+x_n y_n \rightarrow x_n M \rightarrow LM.
+\]
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.2]
+
+\node (xy) at (0,0) {$x_n y_n$};
+\node (xM) at (3,2) {$x_n M$};
+\node (LM) at (6,0) {$LM$};
+
+\draw[->, thick] (xy) -- (xM);
+\draw[->, thick] (xM) -- (LM);
+\draw[->, thick, dashed] (xy) -- (LM);
+
+\node at (1.5,1.2) {$x_n(y_n-M)$};
+\node at (4.5,1.2) {$M(x_n-L)$};
+
+\end{tikzpicture}
+
+\caption{Product decomposition visualized as a two-step path.}
+\end{figure}
+
+The triangle inequality then gives
+
+\[
+|x_n y_n - LM|
+\le
+|x_n(y_n-M)| + |M(x_n-L)|.
+\]
+
+Thus a complicated change is decomposed into two simpler ones.
+
+\bigskip
+
+\subsubsection*{Unifying Insight}
+
+All seven common triangle-inequality tricks are simply different ways
+of choosing the intermediate point \(B\) so that
+
+\begin{itemize}
+\item known small quantities appear,
+\item constants can be bounded,
+\item the triangle inequality becomes applicable.
+\end{itemize}
+
+Once this geometric viewpoint is understood, many
+$\varepsilon$--proofs in analysis become much easier to construct.
+Instead of mysterious algebraic manipulations, they are simply
+\emph{distance decompositions along paths}.
+
+
+
+\subsubsection*{How the Toolbox Fits the Diagram}
+
+Every decomposition trick corresponds to a particular choice of the
+intermediate point \(B\).
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Structure} & \textbf{Intermediate Point Choice} & \textbf{Result} \\
+\midrule
+Sum & separate errors &
+\((x-L)+(y-M)\) \\
+
+Difference & separate approximations &
+\((x-L)-(y-M)\) \\
+
+Product & change one factor &
+\(xM\) \\
+
+Quotient & control denominator &
+bound \(x\) away from \(0\) \\
+
+Squares & factorization &
+\(x+L\) \\
+
+Polynomial difference & factorization &
+\(x+y\) \\
+
+Long sums & repeated insertion &
+multiple intermediate steps \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tcolorbox}[colback=gray!6,colframe=gray!40,arc=2pt]
+\textbf{Bounding Pattern in Analysis.}
+
+Nearly every proof involving limits or inequalities follows the same
+conceptual structure:
+\[
+\text{Start}
+\;\longrightarrow\;
+\text{Insert pivots}
+\;\longrightarrow\;
+\text{Break the distance}
+\;\longrightarrow\;
+\text{Bound the pieces}.
+\]
+\end{tcolorbox}
+
+\subsubsection*{A Unified Diagram of the Triangle Inequality Toolbox}
+
+At the center of nearly every bounding proof is a target distance
+\[
+|A-C|.
+\]
+The various decomposition tricks can be viewed as different ways of
+resolving this central distance into manageable pieces.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  scale=1.1,
+  every node/.style={align=center},
+  center/.style={circle, draw, thick, minimum size=1.8cm, fill=gray!10},
+  outer/.style={rectangle, draw, rounded corners=3pt, thick, fill=blue!5,
+                minimum width=3.4cm, minimum height=1.1cm}
+]
+
+% Center
+\node[center] (core) at (0,0) {\(\lvert A-C\rvert\)\\[2pt]\small target distance};
+
+% Outer nodes
+\node[outer] (sum)    at (0,4.2)   {Sum\\\(\,(x-L)+(y-M)\,\)};
+\node[outer] (diff)   at (3.9,2.4) {Difference\\\(\,(x-L)-(y-M)\,\)};
+\node[outer] (prod)   at (3.9,-2.4){Product\\pivot: \(xM\)};
+\node[outer] (quot)   at (0,-4.2)  {Quotient\\keep denominator away from \(0\)};
+\node[outer] (sq)     at (-3.9,-2.4){Squares\\factor: \(x+L\)};
+\node[outer] (poly)   at (-3.9,2.4){Polynomial difference\\factor: \(x+y\)};
+\node[outer] (long)   at (0,2.2)   {};
+
+% Arrows
+\draw[->, thick] (core) -- (sum);
+\draw[->, thick] (core) -- (diff);
+\draw[->, thick] (core) -- (prod);
+\draw[->, thick] (core) -- (quot);
+\draw[->, thick] (core) -- (sq);
+\draw[->, thick] (core) -- (poly);
+
+% Labels near arrows
+\node at (1.6,1.0) {\small insert pivot};
+\node at (1.8,-1.0) {\small change one factor};
+\node at (0,-2.2) {\small control denominator};
+\node at (-1.7,-1.0) {\small factorization};
+\node at (-1.8,1.0) {\small compare to reference};
+
+% Extra long-sum branch
+\node[outer] (iter) at (5.8,0) {Long sums\\iterated triangle inequality};
+\draw[->, thick] (core) -- (iter);
+
+\end{tikzpicture}
+\caption{The seven standard decomposition tricks as different ways of resolving
+a single target distance.}
+\end{figure}
+
+\begin{remark*}[How to read the diagram]
+The central node \(\lvert A-C\rvert\) represents the distance one wants
+to control. Each outer node represents a standard decomposition pattern
+used to rewrite that distance in a form where the triangle inequality,
+factorization, or boundedness can be applied. The choice of branch is
+determined by the algebraic structure of the target expression:
+sums and differences separate errors, products insert a pivot that changes
+one factor at a time, quotients require protection of the denominator,
+squares and polynomial differences are handled by factorization, and long
+sums are treated by repeated insertion of intermediate steps.
+\end{remark*}
+
+\subsection{The Iterated Triangle Inequality}
+\label{sec:iterated-triangle-inequality}
+
+\subsubsection*{1. The Basic Triangle Inequality}
+
+The triangle inequality expresses a simple geometric fact: the direct
+distance between two points is never greater than the distance obtained
+by traveling through an intermediate point.
+
+\[
+|x+y| \le |x| + |y|.
+\]
+
+Equivalently,
+
+\[
+|A-C| \le |A-B| + |B-C|.
+\]
+
+This tells us that one distance can be bounded by two shorter distances.
+In analysis, this idea is used constantly to break complicated
+expressions into manageable pieces.
+
+\bigskip
+
+\subsubsection*{2. Extending the Triangle Inequality}
+
+Often we must control the magnitude of a sum involving many terms:
+
+\[
+a_1 + a_2 + a_3 + \dots + a_n.
+\]
+
+The triangle inequality can be applied repeatedly to obtain
+
+\[
+|a_1 + a_2 + \dots + a_n|
+\le
+|a_1| + |a_2| + \dots + |a_n|.
+\]
+
+This result is called the \emph{iterated triangle inequality}.  
+It is simply the triangle inequality applied multiple times.
+
+\bigskip
+
+\subsubsection*{3. Why the Inequality Is True}
+
+To understand the result, consider the case of three terms.
+
+Start with
+
+\[
+|a_1 + a_2 + a_3|.
+\]
+
+Group the first two terms:
+
+\[
+| (a_1 + a_2) + a_3 |.
+\]
+
+Applying the triangle inequality gives
+
+\[
+| (a_1 + a_2) + a_3 |
+\le
+|a_1 + a_2| + |a_3|.
+\]
+
+Now apply the triangle inequality again:
+
+\[
+|a_1 + a_2|
+\le
+|a_1| + |a_2|.
+\]
+
+Combining these results yields
+
+\[
+|a_1 + a_2 + a_3|
+\le
+|a_1| + |a_2| + |a_3|.
+\]
+
+Repeating this argument shows that the same inequality holds for any
+number of terms.
+
+\bigskip
+
+\subsubsection*{4. Geometric Interpretation}
+
+The iterated triangle inequality has a natural geometric meaning.
+
+Imagine walking along a path consisting of several segments.  
+The total displacement from the starting point to the ending point is
+never greater than the total length of the path.
+
+Thus
+
+\[
+\text{direct distance} \le \text{sum of path lengths}.
+\]
+
+Each term in the sum represents the length of one step along the path.
+
+\bigskip
+
+\subsubsection*{5. Why the Iterated Inequality Is So Useful}
+
+The iterated triangle inequality appears constantly in analysis because
+it allows complicated expressions to be bounded term by term.
+
+For example, suppose we want to bound
+
+\[
+|(x_n - L) + (y_n - M) + (z_n - N)|.
+\]
+
+The iterated triangle inequality gives
+
+\[
+|(x_n - L) + (y_n - M) + (z_n - N)|
+\le
+|x_n - L| + |y_n - M| + |z_n - N|.
+\]
+
+Each term can now be controlled separately.
+
+This is precisely the type of decomposition used in many
+$\varepsilon$--proofs.
+
+\bigskip
+
+\subsubsection*{6. Typical Uses in Analysis}
+
+The iterated triangle inequality appears in many contexts.
+
+\paragraph{Bounding sums of convergent sequences.}
+
+When proving
+
+\[
+x_n + y_n + z_n \to L + M + N
+\]
+
+the iterated triangle inequality separates the errors.
+
+\paragraph{Controlling series.}
+
+If
+
+\[
+S_n = a_1 + a_2 + \dots + a_n,
+\]
+
+then
+
+\[
+|S_n|
+\le
+|a_1| + |a_2| + \dots + |a_n|.
+\]
+
+This inequality is fundamental in the study of series.
+
+\paragraph{Bounding error terms.}
+
+Many estimates involve expressions such as
+
+\[
+|e_1 + e_2 + e_3|.
+\]
+
+The iterated triangle inequality allows the total error to be bounded by
+
+\[
+|e_1| + |e_2| + |e_3|.
+\]
+
+\bigskip
+
+\subsubsection*{7. Conceptual Insight}
+
+The iterated triangle inequality reveals an important principle:
+
+\[
+\text{Total deviation}
+\;\le\;
+\text{sum of individual deviations}.
+\]
+
+This idea lies at the heart of many arguments in real analysis.
+
+Instead of controlling a complicated quantity directly, we break it into
+pieces whose sizes we understand.
+
+\bigskip
+
+\subsubsection*{Key Intuition}
+
+Nearly every bounding argument in analysis follows the same pattern:
+
+\begin{enumerate}
+\item Express a complicated quantity as a sum of simpler pieces.
+\item Apply the iterated triangle inequality.
+\item Bound each piece individually.
+\end{enumerate}
+
+Once this strategy becomes familiar, many proofs in analysis become much
+easier to construct.
+
+\subsubsection*{A Chain Diagram for the Iterated Triangle Inequality}
+
+The iterated triangle inequality can be visualized by thinking of the
+sum
+\[
+a_1 + a_2 + \cdots + a_n
+\]
+as a sequence of successive steps on the real line.
+
+Define the partial sums
+\[
+s_0 := 0,
+\qquad
+s_1 := a_1,
+\qquad
+s_2 := a_1+a_2,
+\qquad
+\dots,
+\qquad
+s_n := a_1+\cdots+a_n.
+\]
+
+Then the quantity
+\[
+|a_1+a_2+\cdots+a_n| = |s_n-s_0|
+\]
+is the direct distance from the starting point \(s_0=0\) to the ending
+point \(s_n\), while
+\[
+|a_1|+|a_2|+\cdots+|a_n|
+=
+|s_1-s_0|+|s_2-s_1|+\cdots+|s_n-s_{n-1}|
+\]
+is the total length of the path obtained by traveling through all the
+intermediate partial sums.
+
+Thus the iterated triangle inequality says:
+\[
+|s_n-s_0|
+\le
+|s_1-s_0|+|s_2-s_1|+\cdots+|s_n-s_{n-1}|.
+\]
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.1]
+
+% baseline
+\draw[->] (-0.5,0) -- (9.2,0) node[right] {$\mathbb{R}$};
+
+% points
+\fill (0,0) circle (2pt) node[below] {$s_0=0$};
+\fill (1.6,0) circle (2pt) node[below] {$s_1$};
+\fill (3.4,0) circle (2pt) node[below] {$s_2$};
+\fill (5.2,0) circle (2pt) node[below] {$s_3$};
+\fill (7.8,0) circle (2pt) node[below] {$s_n$};
+
+% chain segments
+\draw[thick, blue] (0,0.18) -- (1.6,0.18);
+\draw[thick, blue] (1.6,0.18) -- (3.4,0.18);
+\draw[thick, blue] (3.4,0.18) -- (5.2,0.18);
+\draw[thick, blue, dashed] (5.2,0.18) -- (7.8,0.18);
+
+% labels for step lengths
+\node[above, blue] at (0.8,0.18) {\small $|a_1|$};
+\node[above, blue] at (2.5,0.18) {\small $|a_2|$};
+\node[above, blue] at (4.3,0.18) {\small $|a_3|$};
+\node[above, blue] at (6.5,0.18) {\small $\cdots + |a_n|$};
+
+% direct displacement arrow
+\draw[<->, thick, red] (0,-0.55) -- (7.8,-0.55);
+\node[below, red] at (3.9,-0.55) {\small $|a_1+a_2+\cdots+a_n|$};
+
+\end{tikzpicture}
+\caption{The sum as a path of successive steps on the real line. The direct
+displacement is at most the total path length.}
+\end{figure}
+
+\begin{remark*}[How to read the diagram]
+Each increment \(a_k\) moves the point from \(s_{k-1}\) to \(s_k\).
+The final sum \(a_1+\cdots+a_n\) is the net displacement from \(0\) to
+\(s_n\).
+The iterated triangle inequality states that the magnitude of this net
+displacement is no larger than the total length of all the individual
+steps.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+

@@ -3,34 +3,127 @@
 % =========================================================
 
 \subsection{Order Preservation of Supremum and Infimum}
+\label{sec:bound-monotone}
 
-\subsubsection{Theorem}
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Monotonicity — Quick Reference}},
+  fonttitle=\small\bfseries]
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}p{0.28\textwidth} p{0.44\textwidth} p{0.20\textwidth}@{}}
+\textbf{Result} & \textbf{Statement} & \textbf{Proof} \\
+\midrule
+Monotonicity of $\sup$
+  & $A \subseteq B \Rightarrow \sup A \le \sup B$
+  & \hyperref[prf:monotonicity-of-supremum]{Proof $\to$} \\
+Monotonicity of $\inf$
+  & $A \subseteq B \Rightarrow \inf B \le \inf A$
+  & \hyperref[prf:monotonicity-of-infimum]{Proof $\to$} \\
+Functional version
+  & $A \subseteq B \Rightarrow \sup_A f \le \sup_B f$
+  & immediate corollary \\
+Diameter monotonicity
+  & $A \subseteq B \Rightarrow \operatorname{diam}(A) \le \operatorname{diam}(B)$
+  & corollary \\
+\end{tabular}
+\end{tcolorbox}
 
-\begin{theorem}[Monotonicity of Supremum and Infimum]
+% ---------------------------------------------------------
+\subsubsection{The Core Theorem}
+% ---------------------------------------------------------
+
+\begin{remark*}[Geometric reading]
+The monotonicity result says: a smaller set cannot have a larger supremum.
+This is geometrically immediate.
+$\sup B$ is an upper bound for $B$.
+Every element of $A$ is also in $B$, so $\sup B$ bounds $A$ as well.
+Since $\sup A$ is the \emph{least} upper bound of $A$, it cannot exceed any
+upper bound of $A$, and in particular $\sup A \le \sup B$.
+
+The infimum direction is the mirror image: $\inf B$ is a lower bound for $B$,
+hence for any $A \subseteq B$, and since $\inf A$ is the greatest lower bound
+it satisfies $\inf A \ge \inf B$.
+
+The figure below makes both directions visible at once.
+\end{remark*}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=Stealth, thick, font=\small]
+  \draw[->] (-0.5,0) -- (11.5,0) node[right] {$\mathbb{R}$};
+
+  % Set B (larger, red)
+  \draw[red!70!black, line width=5pt, line cap=round] (1.0,0) -- (9.5,0);
+  \node[red!70!black, above] at (5.25,0.12) {$B$};
+  \draw[red!70!black, dashed, thin] (1.0,-0.35)--(1.0,0.75)
+    node[above]{\scriptsize $\inf B$};
+  \draw[red!70!black, dashed, thin] (9.5,-0.35)--(9.5,0.75)
+    node[above]{\scriptsize $\sup B$};
+
+  % Set A (smaller, blue), drawn slightly below so both are visible
+  \draw[blue!70!black, line width=5pt, line cap=round] (3.0,-0.18) -- (6.5,-0.18);
+  \node[blue!70!black, below] at (4.75,-0.22) {$A \subseteq B$};
+  \draw[blue!70!black, dashed, thin] (3.0,-0.55)--(3.0,0.35)
+    node[above]{\scriptsize $\inf A$};
+  \draw[blue!70!black, dashed, thin] (6.5,-0.55)--(6.5,0.35)
+    node[above]{\scriptsize $\sup A$};
+
+  % Inequality annotations
+  \draw[<->, gray!60, thin] (1.0,-0.85) -- (3.0,-0.85)
+    node[midway, below, font=\scriptsize, gray!80] {$\inf B \le \inf A$};
+  \draw[<->, gray!60, thin] (6.5,-0.85) -- (9.5,-0.85)
+    node[midway, below, font=\scriptsize, gray!80] {$\sup A \le \sup B$};
+\end{tikzpicture}
+\caption{$A \subseteq B$: the endpoints of $A$ lie inside $B$.
+The infimum of $A$ is pushed right of $\inf B$ and the supremum of $A$
+is pushed left of $\sup B$, so $\inf B \le \inf A \le \sup A \le \sup B$.}
+\label{fig:monotonicity-sets}
+\end{figure}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:monotonicity-of-supremum]{Monotonicity of Supremum and Infimum}}{Monotonicity of Supremum and Infimum}]
+\label{thm:monotonicity}
 Let $A,B \subseteq \mathbb{R}$ be nonempty.
 
 \begin{enumerate}
-\item \textbf{Supremum.}  
+\item \textbf{Supremum.}
 If $A \subseteq B$ and both sets are bounded above, then
 \[
-\sup A \le \sup B .
+\sup A \le \sup B.
 \]
 
-\item \textbf{Infimum.}  
+\item \textbf{Infimum.}
 If $A \subseteq B$ and both sets are bounded below, then
 \[
-\inf A \ge \inf B .
+\inf B \le \inf A.
 \]
 \end{enumerate}
 \end{theorem}
 
-% Proof removed — see proofs/notes/RA-ABB-P-monotonicity-sup-inf.tex
+\begin{remark*}[Fully quantified form]
+$\forall A, B \subseteq \mathbb{R}$ nonempty, bounded above:
+$A \subseteq B \Rightarrow \sup A \le \sup B$.
+$\forall A, B \subseteq \mathbb{R}$ nonempty, bounded below:
+$A \subseteq B \Rightarrow \inf B \le \inf A$.
+\end{remark*}
+
+\begin{remark*}[Proof shape]
+Both parts are one-line arguments.
+For (1): $\sup B$ is an upper bound of $B$, hence of $A$ (since $A \subseteq B$);
+$\sup A$ is the least upper bound of $A$, so $\sup A \le \sup B$.
+For (2): the identical argument with all inequalities reversed.
+No $\varepsilon$-argument is needed — the definition of supremum as
+\emph{least} upper bound does all the work directly.
+\end{remark*}
 
 % ---------------------------------------------------------
-
 \subsubsection{Functional Version}
+% ---------------------------------------------------------
 
-\begin{theorem}[Monotonicity for Functions]
+\begin{theorem}[\texorpdfstring{\hyperref[prf:monotonicity-of-supremum]{Monotonicity for Functions}}{Monotonicity for Functions}]
+\label{thm:monotonicity-functions}
 Let $f : X \to \mathbb{R}$ and let $A,B \subseteq X$ with $A \subseteq B$.
 
 \begin{enumerate}
@@ -50,13 +143,21 @@ Let $f : X \to \mathbb{R}$ and let $A,B \subseteq X$ with $A \subseteq B$.
 \end{enumerate}
 \end{theorem}
 
-% Proof removed — see proofs/notes/RA-ABB-P-monotonicity-functions.tex
+\begin{remark*}[Why this is just the set version]
+Apply Theorem~\ref{thm:monotonicity} to the image sets
+$f(A) = \{f(x) : x \in A\}$ and $f(B) = \{f(x) : x \in B\}$.
+Since $A \subseteq B$, every value $f(a)$ for $a \in A$ is also
+a value $f(b)$ for some $b \in B$, so $f(A) \subseteq f(B)$.
+Monotonicity of supremum then gives $\sup f(A) \le \sup f(B)$,
+which is the displayed inequality written in functional notation.
+\end{remark*}
 
 % ---------------------------------------------------------
-
 \subsubsection{Consequences}
+% ---------------------------------------------------------
 
-\begin{corollary}[Diameter Monotonicity]
+\begin{corollary}[\texorpdfstring{\hyperref[prf:monotonicity-of-supremum]{Diameter Monotonicity}}{Diameter Monotonicity}]
+\label{cor:diam-monotone}
 Let $(X,d)$ be a metric space and let $A \subseteq B \subseteq X$.
 Then
 \[
@@ -64,11 +165,15 @@ Then
 \]
 \end{corollary}
 
-% Proof removed — see proofs/notes/RA-ABB-P-diameter-monotonicity.tex
-
-% ---------------------------------------------------------
+\begin{remark*}[Why]
+$\operatorname{diam}(A) = \sup\{d(x,y) : x,y \in A\}$.
+The set of pairwise distances $\{d(x,y) : x,y \in A\}$ is a subset of
+$\{d(x,y) : x,y \in B\}$ because $A \subseteq B$.
+Monotonicity of supremum gives the result.
+\end{remark*}
 
 \begin{corollary}[Norm Bounds]
+\label{cor:norm-bounds}
 Let $A,B \subseteq \mathbb{R}^n$ with $A \subseteq B$. Then
 \[
 \sup_{x\in A} \|x\|
@@ -77,11 +182,8 @@ Let $A,B \subseteq \mathbb{R}^n$ with $A \subseteq B$. Then
 \]
 \end{corollary}
 
-% Proof removed — see proofs/notes/RA-ABB-P-norm-bounds.tex
-
-% ---------------------------------------------------------
-
 \begin{corollary}[Integral Bounds]
+\label{cor:integral-bounds}
 Let $f : X \to \mathbb{R}$ be integrable and let $A \subseteq B$.
 Then
 \[
@@ -93,9 +195,21 @@ Then
 \]
 \end{corollary}
 
-\begin{remark}
-These monotonicity principles appear throughout analysis,
-especially in bounding diameters, norms, limits, and integrals.
-They follow directly from the least-upper-bound and
-greatest-lower-bound properties of the real numbers.
-\end{remark}
+\begin{remark*}[Connections forward]
+Monotonicity of supremum and infimum appears in:
+\begin{itemize}
+  \item \emph{Bound arithmetic} (\S\ref{sec:bound-arithmetic}):
+        the additivity and difference identities all rely on identifying
+        a candidate bound and showing it is the least (or greatest) one;
+        monotonicity is the tool that rules out smaller upper bounds.
+  \item \emph{Darboux integration}: upper and lower sums satisfy
+        $L(f,P) \le L(f,Q)$ whenever $P \subseteq Q$ (refinement), a direct
+        application of infimum monotonicity to the set of lower sums.
+  \item \emph{Convergence}: if $\{a_n\}_{n \ge N}$ is a tail of a bounded
+        sequence then $\sup\{a_n : n \ge N\}$ is non-increasing in $N$
+        (the sets are nested), which is the basis for $\limsup$.
+  \item \emph{Diameter estimates} in metric spaces: the diameter corollary
+        above is used when showing that nested closed sets with diameters
+        tending to zero have a unique common point.
+\end{itemize}
+\end{remark*}
