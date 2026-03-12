@@ -7,3 +7,157 @@
 
 % TODO: Add definitions, theorems, and exposition here.
 
+% ==================================================
+% Motivation
+% Discrete Calculus
+% ==================================================
+
+\section*{Motivation}
+
+Classical calculus studies functions defined on continuous domains, typically
+functions \(f : \mathbb{R} \to \mathbb{R}\).
+Its central tools are the derivative and the integral:
+
+\begin{itemize}
+\item The derivative measures \emph{instantaneous change}.
+\item The integral accumulates \emph{total change}.
+\end{itemize}
+
+However, many important mathematical objects are inherently \emph{discrete}.
+Examples include
+
+\begin{itemize}
+\item sequences \(a_n\),
+\item recurrence relations,
+\item sums of integers or combinatorial quantities,
+\item discrete probability distributions,
+\item algorithms and computational processes.
+\end{itemize}
+
+In these contexts the domain is typically the natural numbers
+
+\[
+f : \mathbb{Z} \to \mathbb{R}
+\]
+
+rather than the real line.
+
+To study change in such settings, calculus is replaced by its discrete
+counterpart.
+
+\subsection*{Discrete Analogs of Calculus}
+
+The central idea of \emph{discrete calculus} is that the roles of derivative and
+integral are played by two simple operations.
+
+\begin{center}
+\begin{tabular}{c|c}
+Continuous Calculus & Discrete Calculus \\
+\hline
+Derivative \( \frac{d}{dx} f(x) \) & Forward difference \( \Delta f(n) \) \\
+Integral \( \int f(x)\,dx \) & Summation \( \sum f(n) \)
+\end{tabular}
+\end{center}
+
+The forward difference operator measures change between consecutive values of a
+function.
+
+\[
+\Delta f(n) = f(n+1) - f(n).
+\]
+
+This quantity plays the same role for sequences that the derivative plays for
+functions of a real variable.
+
+Likewise, summation serves as the discrete analogue of integration.
+
+\[
+\sum_{k=a}^{b} f(k)
+\]
+
+accumulates the values of a function across a finite discrete interval.
+
+\subsection*{Telescoping Phenomena}
+
+One of the most important identities in discrete mathematics arises when
+differences are summed.
+
+\[
+\sum_{k=a}^{b-1} \bigl(f(k+1)-f(k)\bigr)
+=
+f(b)-f(a).
+\]
+
+The intermediate terms cancel, leaving only the endpoints. Such sums are called
+\emph{telescoping sums}.
+
+This identity is the discrete counterpart of the
+\emph{Fundamental Theorem of Calculus}.
+
+\subsection*{Why Discrete Calculus Matters}
+
+Discrete calculus appears throughout mathematics:
+
+\begin{itemize}
+\item in combinatorics and enumerative formulas,
+\item in recurrence relations and generating functions,
+\item in probability theory and stochastic processes,
+\item in numerical analysis and finite difference methods,
+\item in computer science and algorithm analysis.
+\end{itemize}
+
+For students of analysis, discrete calculus is particularly valuable because it
+reveals the structural skeleton behind many identities involving sums and
+sequences.
+
+Many techniques used to estimate limits of sequences or series ultimately rely
+on discrete analogues of differential identities.
+
+\subsection*{A Structural View}
+
+Continuous calculus studies how functions change along the real line.
+
+Discrete calculus studies how functions change along the integers.
+
+Despite the difference in setting, the two theories mirror each other
+remarkably closely. Understanding this parallel provides powerful intuition and
+useful techniques for manipulating sums, sequences, and recurrence relations.
+
+In the sections that follow we develop the basic tools of discrete calculus,
+beginning with the forward difference operator and the algebra of finite
+differences.
+
+% ==================================================
+% Discrete vs Continuous Calculus Correspondence
+% ==================================================
+\begin{center}
+\textbf{Structural Correspondence Between Continuous and Discrete Calculus}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2.8cm,
+    every node/.style={rectangle,draw,rounded corners,align=center,minimum width=4.2cm,minimum height=1cm},
+    arrow/.style={->,thick}
+]
+
+% Continuous column
+\node (deriv) {$\displaystyle \frac{d}{dx} f(x)$\\Derivative};
+\node (int) [below of=deriv] {$\displaystyle \int f(x)\,dx$\\Integral};
+\node (power) [below of=int] {$\displaystyle \frac{d}{dx} x^n = n x^{n-1}$\\Power Rule};
+\node (ftc) [below of=power] {Fundamental Theorem\\of Calculus};
+
+% Discrete column
+\node (diff) [right=5cm of deriv] {$\Delta f(n)=f(n+1)-f(n)$\\Forward Difference};
+\node (sum) [below of=diff] {$\displaystyle \sum f(n)$\\Summation};
+\node (falling) [below of=sum] {$\Delta n^{\underline{k}} = k\, n^{\underline{k-1}}$\\Falling Factorial Rule};
+\node (telescoping) [below of=falling] {Telescoping Sum\\Identity};
+
+% arrows
+\draw[arrow] (deriv) -- (diff);
+\draw[arrow] (int) -- (sum);
+\draw[arrow] (power) -- (falling);
+\draw[arrow] (ftc) -- (telescoping);
+
+\end{tikzpicture}
+\end{center}
