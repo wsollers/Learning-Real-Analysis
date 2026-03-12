@@ -1,0 +1,139 @@
+%% Colour palette (matches project house style: muted, academic)
+\definecolor{colA}{RGB}{70,130,180}    % steel blue  — set A
+\definecolor{colB}{RGB}{200,80,60}     % brick red   — set B
+\definecolor{colC}{RGB}{80,160,100}    % sage green  — C = -B
+\definecolor{colD}{RGB}{130,80,180}    % purple      — A - B = A + C
+ 
+\begin{document}
+ 
+\begin{tikzpicture}[
+  >=Stealth,
+  thick,
+  font=\small,
+  every label/.style={font=\footnotesize},
+]
+ 
+%% ---------------------------------------------------------------
+%% Layout constants
+%% ---------------------------------------------------------------
+\def\rowA{0}      % y-coord of Row 1: sets A and B
+\def\rowB{-2.4}   % y-coord of Row 2: C = -B
+\def\rowC{-4.8}   % y-coord of Row 3: A - B = A + C
+ 
+%% ---------------------------------------------------------------
+%% ROW 1 — Sets A and B on the real line
+%% ---------------------------------------------------------------
+ 
+%% ---- Axis for row 1 ----
+\draw[->] (-0.5,\rowA) -- (10.5,\rowA) node[right] {$\mathbb{R}$};
+ 
+%% ---- Set A: interval [1.5, 4.0] ----
+\def\Alo{1.5}  \def\Ahi{4.0}
+\def\supA{4.0}
+\draw[colA, line width=4pt, line cap=round]
+  (\Alo,\rowA) -- (\Ahi,\rowA);
+\node[colA, above] at ({(\Alo+\Ahi)/2},\rowA+0.05) {$A$};
+% sup A marker
+\draw[colA, dashed, thin] (\supA,\rowA-0.25) -- (\supA,\rowA+0.55);
+\node[colA, above] at (\supA,\rowA+0.55) {$\sup A$};
+ 
+%% ---- Set B: interval [5.5, 8.0] ----
+\def\Blo{5.5}  \def\Bhi{8.0}
+\def\infB{5.5}
+\draw[colB, line width=4pt, line cap=round]
+  (\Blo,\rowA) -- (\Bhi,\rowA);
+\node[colB, above] at ({(\Blo+\Bhi)/2},\rowA+0.05) {$B$};
+% inf B marker
+\draw[colB, dashed, thin] (\infB,\rowA-0.25) -- (\infB,\rowA+0.55);
+\node[colB, above] at (\infB,\rowA+0.55) {$\inf B$};
+ 
+%% Row 1 label
+\node[left, align=right] at (-0.5,\rowA) {\textbf{Step 0}\\$A,B \subset \mathbb{R}$};
+ 
+%% ---------------------------------------------------------------
+%% ROW 2 — C = -B (reflection of B through 0)
+%%          We shift the axis so 0 lines up nicely.
+%%          B lives at [5.5, 8.0]; -B lives at [-8.0, -5.5].
+%%          We offset the display: map coordinate x -> x + 9 for row 2.
+%% ---------------------------------------------------------------
+\def\shift{9}   % display offset so -B appears in visible range
+ 
+\draw[->] (-0.5,\rowB) -- (10.5,\rowB) node[right] {$\mathbb{R}$};
+ 
+%% C = -B drawn at [9-8, 9-5.5] = [1, 3.5]
+\def\Clo{1.0}  \def\Chi{3.5}
+\def\supC{3.5}
+\draw[colC, line width=4pt, line cap=round]
+  (\Clo,\rowB) -- (\Chi,\rowB);
+\node[colC, above] at ({(\Clo+\Chi)/2},\rowB+0.05) {$C = {-B}$};
+% sup C = -inf B
+\draw[colC, dashed, thin] (\supC,\rowB-0.25) -- (\supC,\rowB+0.55);
+\node[colC, above] at (\supC,\rowB+0.55) {$\sup C = {-\inf B}$};
+ 
+%% Reflection arrow annotation
+\draw[->, colB!60!colC, thin, bend left=25]
+  (\Blo-0.1, \rowA-0.18)
+  to node[midway, right, font=\scriptsize, colB!60!colC]
+     {$b \mapsto -b$}
+  (\supC+0.1, \rowB+0.18);
+ 
+\node[left, align=right] at (-0.5,\rowB)
+  {\textbf{Step 1}\\$C = {-B}$};
+ 
+%% ---------------------------------------------------------------
+%% ROW 3 — A + C  (Minkowski sum: sup = sup A + sup C)
+%%
+%%  sup(A+C) = sup A + sup C = 4.0 + 3.5 = 7.5
+%%  The set A+C = [Alo+Clo, Ahi+Chi] = [2.5, 7.5]
+%%  Scale to fit: divide everything by ~1 (they fit already)
+%% ---------------------------------------------------------------
+\draw[->] (-0.5,\rowC) -- (10.5,\rowC) node[right] {$\mathbb{R}$};
+ 
+%% A + C = [1.5+1.0, 4.0+3.5] = [2.5, 7.5]
+\def\Dlo{2.5}  \def\Dhi{7.5}
+\def\supD{7.5}
+\draw[colD, line width=4pt, line cap=round]
+  (\Dlo,\rowC) -- (\Dhi,\rowC);
+\node[colD, above] at ({(\Dlo+\Dhi)/2},\rowC+0.05) {$A - B = A + C$};
+\draw[colD, dashed, thin] (\supD,\rowC-0.25) -- (\supD,\rowC+0.55);
+\node[colD, above] at (\supD,\rowC+0.55)
+  {$\sup(A{-}B) = \sup A - \inf B$};
+ 
+%% ---- Additive decomposition brace ----
+%% Show: the distance from Dlo to Dhi splits into (supA - Alo) and (Ahi - something)
+%% Better: show sup(A+C) = supA + supC with a small split bar at supA (=4.0)
+%% Mark sup A contribution and sup C contribution along row 3
+\def\splitpt{4.0}   % sup A value, and also A's contribution starts at Dlo
+%% Brace under [Dlo, splitpt]: "from A" part
+\draw[decorate, decoration={brace, amplitude=5pt, mirror},
+      colA, thin]
+  (\Dlo, \rowC-0.35) -- (\splitpt, \rowC-0.35)
+  node[midway, below=6pt, colA, font=\scriptsize]
+    {spread of $A$};
+ 
+%% Brace under [splitpt, Dhi]: "from C" part
+\draw[decorate, decoration={brace, amplitude=5pt, mirror},
+      colC, thin]
+  (\splitpt, \rowC-0.35) -- (\Dhi, \rowC-0.35)
+  node[midway, below=6pt, colC, font=\scriptsize]
+    {spread of $C$};
+ 
+\node[left, align=right] at (-0.5,\rowC)
+  {\textbf{Step 2}\\$A{+}C$};
+ 
+%% ---------------------------------------------------------------
+%% Vertical alignment guides: drop faint lines from sup A and inf B
+%% down through all rows to show how the values propagate.
+%% ---------------------------------------------------------------
+\draw[colA!40, very thin, dashed]
+  (\supA, \rowA-0.3) -- (\supA, \rowC+0.15);
+\draw[colB!40, very thin, dashed]
+  (\infB, \rowA-0.3) -- (\infB, \rowC+0.15);   % infB=5.5 passes through all rows
+ 
+%% ---------------------------------------------------------------
+%% Title
+%% ---------------------------------------------------------------
+\node[font=\normalsize\bfseries] at (5, 1.3)
+  {Geometry of $\sup(A - B) = \sup A - \inf B$};
+ 
+\end{tikzpicture}
