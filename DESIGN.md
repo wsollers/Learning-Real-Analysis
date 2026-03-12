@@ -1069,3 +1069,187 @@ Two separate tools exist for claims:
 Use `\begin{claim}` whenever the claim will be referred back to with `\cref`.
 Use `\Claim` for a one-off assertion that needs no back-reference.
 Never use `\begin{claim}` and `\Claim` for the same logical statement.
+---
+
+## 8. Exposition Voice and Register
+
+This section governs all prose written in notes files — remarks, intuition blocks,
+proof-strategy descriptions, dependency summaries, and any running text that is
+not a formal environment (definition box, theorem, lemma, proof).
+
+---
+
+### 8.1 Who These Notes Are For
+
+These notes are written by and for a single reader with the following profile:
+
+- Has studied propositional logic, predicate calculus, set theory, and the
+  formal construction of ℕ, ℤ, ℚ, and ℝ.
+- Reads primary sources in parallel (Tao, Abbott, Pugh, Rudin, Lebl, Mendelson).
+- Aims not just to follow arguments but to **master** them — to understand why
+  each piece of the machinery exists, what would break without it, and how the
+  same idea reappears at higher levels of abstraction.
+- Will return to these notes years later and expects them to be self-contained
+  and unambiguous.
+
+The notes are not a textbook for a general audience. They are a primary-source
+reference written by someone who has internalised the material and is writing
+it down for their own future use.
+
+---
+
+### 8.2 The Voice
+
+**First person is absent. Second person is absent.**
+
+Do not write:
+- "We will now show…"
+- "You should notice that…"
+- "The reader may wonder…"
+- "Let us recall…"
+
+Write instead as an authoritative record:
+- "The argument proceeds…"
+- "The critical observation is…"
+- "This identity follows from…"
+- "The standard error here is…"
+
+There is no teacher and no student in these notes. There is only the mathematics,
+stated at the level of someone who already knows it well and is writing it down
+precisely.
+
+---
+
+### 8.3 The Level of Explanation
+
+**Explain everything that is non-obvious. Explain nothing that is obvious.**
+
+The standard for "non-obvious" is this: would a careful reader with the stated
+background — formal logic, set theory, ℝ fully constructed — pause for more than
+a few seconds before seeing why? If yes, explain it. If no, state it and move on.
+
+Concretely:
+
+| Non-obvious — explain | Obvious — do not over-explain |
+|---|---|
+| Why a proof needs two parts (UB + least UB) | That a ≤ b and b ≤ c implies a ≤ c |
+| Why negation swaps sup with inf | That c > 0 preserves inequality direction |
+| Why the ε/2 split works in an additivity proof | That adding two inequalities gives an inequality |
+| Why completeness is needed for additivity but not for negation | Basic field arithmetic |
+| Why sup(A−B) ≠ sup A − sup B | Algebraic computation in a concrete example |
+
+The exposition in these notes treats the reader as someone who is strong at formal
+manipulation but is building geometric and structural intuition for analysis for the
+first time. Mechanical steps are not narrated. Non-mechanical insights always are.
+
+---
+
+### 8.4 What Every Exposition Block Must Carry
+
+Every notes subsection that introduces a cluster of results must contain:
+
+1. **The mathematical fact stated precisely.** Not paraphrased, not hedged.
+   The theorem box or the remark states it cleanly.
+
+2. **Why it is true — at the level of a proof sketch.**
+   Not a full formal proof (those live in `proofs/notes/`), but enough structure
+   that the shape of the proof is recoverable: what the two parts are, which
+   definition is the load-bearing one, which step requires completeness.
+
+3. **Why it matters — concretely.**
+   Where does this result appear downstream? What would break without it?
+   Forward connections to convergence, integration, continuity, and metric spaces
+   are expected wherever they exist.
+
+4. **What the standard error is.**
+   Every result with a non-trivial error pattern gets a `[Common error]` remark.
+   The remark names the error, states the wrong formula or wrong assumption, and
+   gives a concrete counterexample. One sentence of diagnosis follows: all three
+   errors in a cluster are usually variants of the same mistake.
+
+5. **A geometric or structural picture, when one exists.**
+   TikZ figures are preferred over verbal descriptions for order-theoretic and
+   metric-space arguments. The figure caption is as precise as the text: it names
+   what each object is, what each transformation does, and what the figure shows.
+
+---
+
+### 8.5 Figures and Diagrams
+
+Every figure must be accompanied by a caption that is fully self-contained.
+A reader arriving at the figure without reading the surrounding text must be able
+to reconstruct the claim from the caption alone.
+
+Caption structure:
+- Name every object in the figure.
+- State what each transformation or arrow represents.
+- State the conclusion the figure illustrates.
+
+Figures live in standalone `figure-<name>.tex` files and are `\input`'d. Never
+embed TikZ code directly in a notes file. Figure files have no `\documentclass`
+wrapper and no `\begin{document}`.
+
+Colour conventions in figures match the house palette:
+- Set A: `blue!70!black`
+- Set B: `red!70!black`
+- Transformed set (e.g. −B): `green!50!black`
+- Derived object (e.g. A+C): `violet!80!black`
+
+Do not use `\definecolor` inside figure files. Use only pgf mix expressions
+(`blue!70!black`, etc.) so that no colour names need to be pre-declared in the
+preamble.
+
+---
+
+### 8.6 Remark Register
+
+Remarks in notes files are primary-source prose, not commentary.
+They do not acknowledge difficulty, apologise for length, or manage expectations.
+
+**Write:**
+> The negation rule is completeness-free: it requires only that multiplication
+> by −1 reverses the order of ℝ, a consequence of the ordered field axioms alone.
+
+**Do not write:**
+> This might seem surprising, but the negation rule actually doesn't need the
+> Completeness Axiom — it only relies on order reversal under negation.
+
+The first version assumes the reader will follow the reasoning. The second
+version manages the reader's reaction. These notes do the former.
+
+The test: read the remark aloud. If it sounds like something a professor would
+say to a student, rewrite it as something the student would write in their own
+reference notes after having mastered the material.
+
+---
+
+### 8.7 What These Notes Are Not
+
+- **Not a textbook.** No chapter summaries, no learning objectives, no "by the
+  end of this section" framing.
+- **Not lecture notes.** No live commentary, no "recall from last time".
+- **Not a solutions manual.** Proofs in notes files are proof sketches or proof
+  strategy remarks; full formal proofs live in `proofs/notes/`.
+- **Not a tutorial.** No hand-holding, no worked step-by-step calculations that
+  a careful reader could perform independently.
+
+What these notes are: a **compressed, precise, structurally self-aware record**
+of the mathematics, written at the level of mastery, intended to survive years
+of use as a primary reference.
+
+---
+
+### 8.8 Summary Checklist
+
+Before committing a notes file or a remark, verify:
+
+- [ ] No first-person or second-person pronouns anywhere.
+- [ ] Every non-obvious step has an explanation. Every obvious step does not.
+- [ ] Each subsection has: precise statement, proof sketch, forward connections,
+      standard error (where applicable), and a figure (where one adds value).
+- [ ] Figure captions are self-contained.
+- [ ] No remark sounds like it is managing the reader's reaction.
+- [ ] The `[Common error]` remark names the wrong formula, gives a counterexample,
+      and closes with a one-sentence unifying diagnosis.
+- [ ] The `[Fully quantified form]` remark is present for every definition and
+      theorem-like environment.

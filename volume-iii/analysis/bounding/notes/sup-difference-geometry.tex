@@ -1,0 +1,73 @@
+%% Bare TikZ input file — no \documentclass wrapper.
+%% Usage: \input{sup-difference-geometry-input}  inside a figure environment.
+%% Requires in preamble: \usepackage{tikz}
+%%   \usetikzlibrary{arrows.meta,decorations.pathreplacing,calc}
+%% Colour definitions needed:
+%%   \definecolor{colA}{RGB}{70,130,180}
+%%   \definecolor{colB}{RGB}{200,80,60}
+%%   \definecolor{colC}{RGB}{80,160,100}
+%%   \definecolor{colD}{RGB}{130,80,180}
+
+\begin{tikzpicture}[
+  >=Stealth, thick, font=\small,
+  every label/.style={font=\footnotesize},
+]
+
+\def\rowA{0} \def\rowB{-2.4} \def\rowC{-4.8}
+
+%% ---- Row 0: A and B ----
+\draw[->] (-0.5,\rowA) -- (10.5,\rowA) node[right] {$\mathbb{R}$};
+\def\Alo{1.5} \def\Ahi{4.0}
+\draw[colA, line width=4pt, line cap=round] (\Alo,\rowA) -- (\Ahi,\rowA);
+\node[colA, above] at ({(\Alo+\Ahi)/2},\rowA+0.05) {$A$};
+\draw[colA, dashed, thin] (\Ahi,\rowA-0.25) -- (\Ahi,\rowA+0.55);
+\node[colA, above] at (\Ahi,\rowA+0.55) {$\sup A$};
+\def\Blo{5.5} \def\Bhi{8.0}
+\draw[colB, line width=4pt, line cap=round] (\Blo,\rowA) -- (\Bhi,\rowA);
+\node[colB, above] at ({(\Blo+\Bhi)/2},\rowA+0.05) {$B$};
+\draw[colB, dashed, thin] (\Blo,\rowA-0.25) -- (\Blo,\rowA+0.55);
+\node[colB, above] at (\Blo,\rowA+0.55) {$\inf B$};
+\node[left, align=right] at (-0.5,\rowA)
+  {\textbf{Step 0}\\$A,B \subset \mathbb{R}$};
+
+%% ---- Row 1: C = -B ----
+\draw[->] (-0.5,\rowB) -- (10.5,\rowB) node[right] {$\mathbb{R}$};
+\def\Clo{1.0} \def\Chi{3.5}
+\draw[colC, line width=4pt, line cap=round] (\Clo,\rowB) -- (\Chi,\rowB);
+\node[colC, above] at ({(\Clo+\Chi)/2},\rowB+0.05) {$C = {-B}$};
+\draw[colC, dashed, thin] (\Chi,\rowB-0.25) -- (\Chi,\rowB+0.55);
+\node[colC, above] at (\Chi,\rowB+0.55) {$\sup C = {-\inf B}$};
+\draw[->, colB!60!colC, thin, bend left=25]
+  (\Blo-0.1, \rowA-0.18)
+  to node[midway, right, font=\scriptsize, colB!60!colC] {$b \mapsto -b$}
+  (\Chi+0.1, \rowB+0.18);
+\node[left, align=right] at (-0.5,\rowB)
+  {\textbf{Step 1}\\$C = {-B}$};
+
+%% ---- Row 2: A + C ----
+\draw[->] (-0.5,\rowC) -- (10.5,\rowC) node[right] {$\mathbb{R}$};
+\def\Dlo{2.5} \def\Dhi{7.5}
+\draw[colD, line width=4pt, line cap=round] (\Dlo,\rowC) -- (\Dhi,\rowC);
+\node[colD, above] at ({(\Dlo+\Dhi)/2},\rowC+0.05) {$A - B = A + C$};
+\draw[colD, dashed, thin] (\Dhi,\rowC-0.25) -- (\Dhi,\rowC+0.55);
+\node[colD, above] at (\Dhi,\rowC+0.55)
+  {$\sup(A{-}B) = \sup A - \inf B$};
+\def\splitpt{4.0}
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, colA, thin]
+  (\Dlo, \rowC-0.35) -- (\splitpt, \rowC-0.35)
+  node[midway, below=6pt, colA, font=\scriptsize] {spread of $A$};
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, colC, thin]
+  (\splitpt, \rowC-0.35) -- (\Dhi, \rowC-0.35)
+  node[midway, below=6pt, colC, font=\scriptsize] {spread of $C$};
+\node[left, align=right] at (-0.5,\rowC)
+  {\textbf{Step 2}\\$A{+}C$};
+
+%% ---- Vertical alignment guides ----
+\draw[colA!40, very thin, dashed] (\Ahi, \rowA-0.3) -- (\Ahi, \rowC+0.15);
+\draw[colB!40, very thin, dashed] (\Blo, \rowA-0.3) -- (\Blo, \rowC+0.15);
+
+%% ---- Title ----
+\node[font=\normalsize\bfseries] at (5, 1.3)
+  {Geometry of $\sup(A - B) = \sup A - \inf B$};
+
+\end{tikzpicture}

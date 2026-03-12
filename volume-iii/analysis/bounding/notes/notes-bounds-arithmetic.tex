@@ -1,0 +1,613 @@
+% =========================================================
+% Bound Arithmetic
+% Source: volume-iii/analysis/bounding/notes/notes-bounds-arithmetic.tex
+% Slot: after notes-bounding-monotonicty.tex in notes/index.tex
+% =========================================================
+
+\subsection{Bound Arithmetic}
+\label{sec:bound-arithmetic}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Bound Arithmetic — Quick Reference}},
+  fonttitle=\small\bfseries]
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}p{0.22\textwidth} p{0.44\textwidth} p{0.26\textwidth}@{}}
+\textbf{Result} & \textbf{Identity} & \textbf{Proof} \\
+\midrule
+Additivity (sup)
+  & $\sup(A+B)=\sup A+\sup B$
+  & \hyperref[prf:additivity-of-supremums]{Proof $\to$} \\
+Additivity (inf)
+  & $\inf(A+B)=\inf A+\inf B$
+  & \hyperref[prf:additivity-of-infimums]{Proof $\to$} \\
+Negation
+  & $\sup(-A)=-\inf A,\quad\inf(-A)=-\sup A$
+  & \hyperref[prf:supremum-infimum-swap]{Proof $\to$} \\
+Scalar ($c>0$)
+  & $\sup(cA)=c\sup A,\quad\inf(cA)=c\inf A$
+  & \hyperref[prf:infimum-positive-scalar-multiple]{Proof $\to$} \\
+Scalar ($c<0$)
+  & $\sup(cA)=c\inf A,\quad\inf(cA)=c\sup A$
+  & \hyperref[prf:supremum-infimum-swap]{Proof $\to$} \\
+Difference (sup)
+  & $\sup(A-B)=\sup A-\inf B$
+  & \hyperref[prf:supremum-set-difference]{Proof $\to$} \\
+Difference (inf)
+  & $\inf(A-B)=\inf A-\sup B$
+  & \hyperref[prf:supremum-set-difference]{Proof $\to$} \\
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark*}
+The definitions of supremum and infimum apply to a single fixed set.
+When sets are combined — by addition, scaling, or subtraction — the
+supremum of the resulting set must be recomputed from scratch unless a
+reduction formula is available.
+Bound arithmetic is that collection of formulas: six identities that let
+bounds be manipulated the way numbers are.
+They appear constantly in real analysis — in $\varepsilon$-$\delta$ arguments,
+in integration, in convexity, in optimization.
+
+The entire arithmetic descends from two load-bearing facts:
+the \emph{additivity rule}
+(Theorem~\ref{thm:sup-add}: $\sup(A+B) = \sup A + \sup B$)
+and the \emph{negation rule}
+(Theorem~\ref{thm:neg-rule}: $\sup(-A) = -\inf A$).
+Every other identity reduces to applying these two in sequence.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Set arithmetic definitions
+% ---------------------------------------------------------
+\subsubsection{Set Arithmetic}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Set Arithmetic)}},
+  fonttitle=\small\bfseries]
+\label{def:set-arithmetic}
+Let $A, B \subseteq \mathbb{R}$ be nonempty and let $c \in \mathbb{R}$.
+\begin{align*}
+A + B &:= \{\, a + b \;:\; a \in A,\; b \in B \,\}
+         && \text{(Minkowski sum)} \\
+A - B &:= \{\, a - b \;:\; a \in A,\; b \in B \,\}
+         && \text{(arithmetic difference)} \\
+cA   &:= \{\, ca     \;:\; a \in A \,\}
+         && \text{(scalar multiple)} \\
+-A   &:= (-1)A = \{\, -a \;:\; a \in A \,\}
+         && \text{(negation)}
+\end{align*}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\begin{align*}
+x \in A+B  &\iff \exists\, a \in A\;\exists\, b \in B\;(x = a+b). \\
+x \in A-B  &\iff \exists\, a \in A\;\exists\, b \in B\;(x = a-b). \\
+x \in cA   &\iff \exists\, a \in A\;(x = ca). \\
+x \in {-A} &\iff \exists\, a \in A\;(x = -a).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Notation]
+The symbol $A - B$ is the \emph{arithmetic} difference — a new set whose
+elements are all pairwise differences $a - b$ for $a \in A$, $b \in B$.
+It is not the set-theoretic difference $\{x \in A : x \notin B\}$.
+In this chapter $A - B$ always means the arithmetic version.
+\end{remark*}
+
+\begin{remark*}[$A - B = A + (-B)$]
+\label{rem:diff-as-sum}
+The fundamental rewriting rule is
+\[
+  A - B \;=\; A + (-B).
+\]
+This is not merely notation — it is the proof strategy for every
+difference identity. Wherever $A - B$ appears, replace it with
+$A + (-B)$, apply the additivity rule to the sum, then apply the negation
+rule to $-B$. All difference identities cost no additional work.
+\end{remark*}
+
+\begin{remark*}[Concrete example]
+Let $A = [1,3]$ and $B = [2,5]$.
+\[
+  A + B = [3,8], \qquad
+  A - B = [-4,1], \qquad
+  2A = [2,6], \qquad
+  {-B} = [-5,-2].
+\]
+Reading off directly: $\sup(A+B) = 8 = 3 + 5 = \sup A + \sup B$.~$\checkmark$
+
+The identities below explain why every such computation works
+without enumerating the resulting set.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Master theorem
+% ---------------------------------------------------------
+\subsubsection{The Master Theorem}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem — Algebra of Suprema and Infima}},
+  fonttitle=\small\bfseries]
+\label{thm:bound-arithmetic-master}
+Let $A, B \subset \mathbb{R}$ be nonempty, bounded above and below.
+
+\medskip\noindent\textbf{Additivity.}
+\begin{align}
+\sup(A + B) &= \sup A + \sup B \label{eq:sup-add} \\
+\inf(A + B) &= \inf A + \inf B \label{eq:inf-add}
+\end{align}
+
+\noindent\textbf{Scalar multiplication.} For $c \neq 0$:
+\begin{align}
+\sup(cA) &=
+\begin{cases}
+c\sup A & c > 0 \\[2pt]
+c\inf A & c < 0
+\end{cases}
+\label{eq:sup-scale} \\[4pt]
+\inf(cA) &=
+\begin{cases}
+c\inf A & c > 0 \\[2pt]
+c\sup A & c < 0
+\end{cases}
+\label{eq:inf-scale}
+\end{align}
+
+\noindent\textbf{Differences.}
+\begin{align}
+\sup(A - B) &= \sup A - \inf B \label{eq:sup-diff} \\
+\inf(A - B) &= \inf A - \sup B \label{eq:inf-diff}
+\end{align}
+\end{tcolorbox}
+
+\begin{remark*}[Structure of the six identities]
+The six identities split into three natural pairs: sums, scalar multiples,
+differences. Within each pair the $\sup$ and $\inf$ statements mirror each
+other exactly. That symmetry is the algebraic shadow of the order-reversal
+caused by negation, examined carefully in the next section.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Geometric intuition
+% ---------------------------------------------------------
+\subsubsection{Geometric Intuition}
+
+\paragraph{Negation reverses order.}
+
+The simplest case: what does multiplying a set by $-1$ do to its bounds?
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:supremum-infimum-swap]{Negation Rule}}{Negation Rule}]
+\label{thm:neg-rule}
+Let $A \subseteq \mathbb{R}$ be nonempty and bounded. Then
+\[
+\sup(-A) = -\inf A, \qquad \inf(-A) = -\sup A.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall\, A \subseteq \mathbb{R}$ nonempty and bounded:
+$\sup\{-a : a \in A\} = -\inf A$
+and
+$\inf\{-a : a \in A\} = -\sup A$.
+\end{remark*}
+
+The picture is a reflection across $0$ on the number line.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=Stealth, thick, font=\small]
+  \draw[->] (-6.5,0) -- (6.5,0) node[right] {$\mathbb{R}$};
+  \draw (0,-0.18) -- (0,0.18) node[above]{\small $0$};
+
+  % Set A = [1.5, 4.0]
+  \draw[blue!70!black, line width=4pt, line cap=round] (1.5,0) -- (4.0,0);
+  \node[blue!70!black, above] at (2.75,0.10) {$A$};
+  \draw[blue!70!black, dashed, thin] (1.5,-0.38)--(1.5,0.68)
+    node[above]{\small $\inf A$};
+  \draw[blue!70!black, dashed, thin] (4.0,-0.38)--(4.0,0.68)
+    node[above]{\small $\sup A$};
+
+  % Set -A = [-4.0, -1.5]
+  \draw[red!70!black, line width=4pt, line cap=round] (-4.0,0) -- (-1.5,0);
+  \node[red!70!black, below] at (-2.75,-0.10) {$-A$};
+  \draw[red!70!black, dashed, thin] (-4.0, 0.38)--(-4.0,-0.68)
+    node[below]{\small $-\sup A = \inf(-A)$};
+  \draw[red!70!black, dashed, thin] (-1.5, 0.38)--(-1.5,-0.68)
+    node[below]{\small $-\inf A = \sup(-A)$};
+
+  % Reflection arrows
+  \draw[->, violet!70!black, bend right=30, thin]
+    (4.0, 0.30) to node[above,font=\scriptsize]{$x \mapsto -x$} (-4.0,0.30);
+  \draw[->, violet!70!black, bend right=30, thin]
+    (1.5, 0.30) to (-1.5,0.30);
+\end{tikzpicture}
+\caption{Reflecting $A$ across $0$ maps $[\inf A,\sup A]$ to
+$[-\sup A, -\inf A]$.
+The right endpoint $\sup A$ maps to $-\sup A$, which is the
+\emph{left} endpoint of $-A$ — hence $\inf(-A)$.
+The left endpoint $\inf A$ maps to $-\inf A$, which is the
+\emph{right} endpoint of $-A$ — hence $\sup(-A)$.}
+\label{fig:negation-reflection}
+\end{figure}
+
+The figure makes the rule visceral. $A = [\inf A, \sup A]$ reflects to
+$-A = [-\sup A, -\inf A]$: the interval flips entirely.
+The right endpoint of $A$ — which was $\sup A$ — maps to $-\sup A$,
+the \emph{left} endpoint of $-A$, and therefore becomes $\inf(-A)$.
+The left endpoint of $A$ — which was $\inf A$ — maps to $-\inf A$,
+the right endpoint of $-A$, and therefore becomes $\sup(-A)$.
+
+\medskip\noindent
+\textbf{Key take-away}: negation flips the sign \emph{and} swaps which
+bound is being computed.
+This is the engine behind every identity in this section.
+
+\paragraph{The $2\times 2$ symmetry diagram.}
+
+The negation rule compresses into the following diagram:
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=Stealth, node distance=1.8cm and 4.2cm,
+    every node/.style={font=\small}]
+  \node (supA)  {$\sup A$};
+  \node (infA)  [below of=supA] {$\inf A$};
+  \node (ninfA) [right of=supA] {$-\inf A = \sup(-A)$};
+  \node (nsupA) [right of=infA] {$-\sup A = \inf(-A)$};
+
+  \draw[->] (supA)  -- node[above]{\small $\times(-1)$} (ninfA);
+  \draw[->] (infA)  -- node[below]{\small $\times(-1)$} (nsupA);
+  \draw[<->] (supA) -- node[left]{\small swap} (infA);
+  \draw[<->] (ninfA)-- node[right]{\small swap} (nsupA);
+
+  \node[above=0.15cm of supA,  font=\footnotesize, gray] {on $A$};
+  \node[above=0.15cm of ninfA, font=\footnotesize, gray] {on $-A$};
+\end{tikzpicture}
+\caption{Horizontal arrows: multiply by $-1$.
+Vertical arrows: swap $\sup \leftrightarrow \inf$.
+The diagram commutes: go right then down, or go down then right —
+the same corner is reached either way.}
+\label{fig:negation-symmetry}
+\end{figure}
+
+The horizontal arrows represent multiplication by $-1$.
+The vertical movement represents switching between upper and lower bounds.
+Everything is consistent: go right, then down, or go down, then right —
+the same corner is reached either way.
+A negated bound cannot be written down without also swapping which bound
+is being computed.
+This diagram should remain visible when working through any of the proofs
+that follow.
+
+\paragraph{Geometry of the sum and difference.}
+
+The figure below illustrates the proof strategy for
+$\sup(A-B) = \sup A - \inf B$.
+Each row is a step in the argument.
+
+\begin{figure}[h]
+\centering
+\input{volume-iii/analysis/bounding/notes/figure-bounds-set-difference}
+\caption{%
+\textbf{Step~0.} The original sets $A$ (blue) and $B$ (red) on $\mathbb{R}$.
+Dashed vertical guides track $\sup A$ and $\inf B$ downward through all rows.
+\textbf{Step~1.} Form $C = -B$ (green). Reflection sends the left endpoint
+of $B$ (which is $\inf B$) to the right endpoint of $C$,
+so $\sup C = -\inf B$. The vertical guide confirms the alignment.
+\textbf{Step~2.} The Minkowski sum $A + C$ (purple) has
+$\sup(A+C) = \sup A + \sup C = \sup A - \inf B$.
+The underbrace decomposes the right endpoint: it splits into the
+contribution from $A$ and the contribution from $C$.}
+\label{fig:sup-diff-geometry}
+\end{figure}
+
+% ---------------------------------------------------------
+% Additivity
+% ---------------------------------------------------------
+\subsubsection{Additivity}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:additivity-of-supremums]{Additivity of Supremum}}{Additivity of Supremum}]
+\label{thm:sup-add}
+Let $A, B \subseteq \mathbb{R}$ be nonempty and bounded above. Then
+\[
+\sup(A+B) = \sup A + \sup B.
+\]
+\end{theorem}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:additivity-of-infimums]{Additivity of Infimum}}{Additivity of Infimum}]
+\label{thm:inf-add}
+Let $A, B \subseteq \mathbb{R}$ be nonempty and bounded below. Then
+\[
+\inf(A+B) = \inf A + \inf B.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall\, A, B \subseteq \mathbb{R}$ nonempty, bounded above:
+$\sup\{a + b : a \in A,\, b \in B\} = \sup A + \sup B$.
+\end{remark*}
+
+\begin{remark*}[Why the proof needs two parts]
+Every upper-bound proof requires two parts.
+\textbf{Part~1} shows the candidate is an upper bound.
+\textbf{Part~2} shows it is the \emph{least} one — that nothing smaller
+works. Omitting Part~2 establishes only
+$\sup(A+B) \le \sup A + \sup B$, which is strictly weaker than equality.
+
+For additivity: Part~1 is a single line
+($a + b \le \sup A + \sup B$ follows immediately from adding the two
+defining inequalities).
+Part~2 uses the $\varepsilon$-characterization
+(Proposition~\ref{prop:eps-char}):
+set $\varepsilon = (s + t - u)/2 > 0$ for any candidate $u < s + t$,
+extract $a \in A$ with $a > \sup A - \varepsilon$ and
+$b \in B$ with $b > \sup B - \varepsilon$, and add to get
+$a + b > s + t - 2\varepsilon = u$.
+So $u$ is not an upper bound, and $s + t = \sup(A+B)$.
+
+The infimum version is the identical argument with all inequalities reversed:
+wherever $a \le s$ appeared, use $a \ge \inf A$;
+where an element exceeding $u$ was found, find one below $u$.
+The logic is a mirror image.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Negation rule (proof structure remark belongs here)
+% ---------------------------------------------------------
+\begin{remark*}[Negation rule: why it is the key to everything]
+Once the negation rule is in hand, the scalar and difference identities
+cost almost nothing.
+Every one of them reduces to applying
+Theorem~\ref{thm:neg-rule} once and invoking additivity.
+The proof of the negation rule itself is a two-part upper-bound argument
+on $-A$: show $-\inf A$ is an upper bound, then show it is the least one
+by pushing any smaller candidate below $\inf A$.
+The second identity $\inf(-A) = -\sup A$ follows by applying the first
+to $-A$:
+$\sup(A) = \sup(-(-A)) = -\inf(-A)$, so $\inf(-A) = -\sup A$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Scalar multiplication
+% ---------------------------------------------------------
+\subsubsection{Scalar Multiplication}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:infimum-positive-scalar-multiple]{Scalar Multiplication ($c > 0$)}}{Scalar Multiplication (c > 0)}]
+\label{thm:scale-pos}
+Let $A \subseteq \mathbb{R}$ be nonempty and bounded, and let $c > 0$. Then
+\[
+\sup(cA) = c\sup A, \qquad \inf(cA) = c\inf A.
+\]
+\end{theorem}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:supremum-infimum-swap]{Scalar Multiplication ($c < 0$)}}{Scalar Multiplication (c < 0)}]
+\label{thm:scale-neg}
+Let $A \subseteq \mathbb{R}$ be nonempty and bounded, and let $c < 0$. Then
+\[
+\sup(cA) = c\inf A, \qquad \inf(cA) = c\sup A.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall\, c > 0$, $\forall\, A \subseteq \mathbb{R}$ nonempty, bounded above:
+$\sup\{ca : a \in A\} = c\sup A$.
+$\forall\, c < 0$, $\forall\, A \subseteq \mathbb{R}$ nonempty, bounded above:
+$\sup\{ca : a \in A\} = c\inf A$.
+\end{remark*}
+
+\begin{remark*}[Why the cases split]
+Multiplying by $c > 0$ stretches the set without reflection: the ordering
+of all elements is preserved, so the right endpoint stays the right
+endpoint and simply gets scaled.
+Multiplying by $c < 0$ reflects the set across $0$ and then stretches:
+the right endpoint of $A$ becomes the left endpoint of $cA$.
+So $\sup A$ maps to $c\sup A = \inf(cA)$ and $\inf A$ maps to
+$c\inf A = \sup(cA)$.
+
+For the proof: the $c < 0$ case is a one-line reduction.
+Write $c = -|c|$, so $cA = -(|c|A)$.
+Apply the $c > 0$ result to $|c|A$: $\sup(|c|A) = |c|\sup A$.
+Then apply the negation rule:
+$\sup(cA) = \sup(-(|c|A)) = -\inf(|c|A) = -|c|\inf A = c\inf A$.
+No new ideas are needed — only the two master facts chained.
+\end{remark*}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=Stealth, thick, font=\small]
+
+  %% Row 1: A (blue) and 2A (green)
+  \draw[->] (-0.3,1.6) -- (10.2,1.6);
+  \draw[blue!70!black, line width=4pt, line cap=round] (1,1.6) -- (3,1.6);
+  \node[blue!70!black, above] at (2,1.68) {$A$};
+  \draw[blue!70!black, dashed, thin] (1,1.3)--(1,2.35)
+    node[above]{\scriptsize $\inf A$};
+  \draw[blue!70!black, dashed, thin] (3,1.3)--(3,2.35)
+    node[above]{\scriptsize $\sup A$};
+  \draw[green!50!black, line width=4pt, line cap=round] (2,1.6) -- (6,1.6);
+  \node[green!50!black, above] at (4.2,1.68) {$2A$};
+  \draw[green!50!black, dashed, thin] (6,1.3)--(6,2.35)
+    node[above]{\scriptsize $2\sup A = \sup(2A)$};
+  \node[right, font=\footnotesize] at (10.2,1.6) {$c=2>0$: stretches};
+
+  %% Row 2: A (blue) and -2A (red)
+  \draw[->] (-7.5,0) -- (4.8,0);
+  \draw (0,-0.18)--(0,0.18) node[above]{\scriptsize $0$};
+  \draw[blue!70!black, line width=4pt, line cap=round] (1,0) -- (3,0);
+  \node[blue!70!black, above] at (2,0.08) {$A$};
+  \draw[blue!70!black, dashed, thin] (1,-0.42)--(1,0.58)
+    node[above]{\scriptsize $\inf A$};
+  \draw[blue!70!black, dashed, thin] (3,-0.42)--(3,0.58)
+    node[above]{\scriptsize $\sup A$};
+  \draw[red!70!black, line width=4pt, line cap=round] (-6,0) -- (-2,0);
+  \node[red!70!black, below] at (-4,-0.08) {$-2A$};
+  \draw[red!70!black, dashed, thin] (-2,-0.42)--(-2,0.58)
+    node[above]{\scriptsize $-2\inf A = \sup(-2A)$};
+  \draw[red!70!black, dashed, thin] (-6,-0.42)--(-6,0.58)
+    node[above]{\scriptsize $-2\sup A = \inf(-2A)$};
+  \draw[->, violet!70!black, bend right=28, thin]
+    (3,0.38) to node[above,font=\scriptsize]{$\times(-2)$} (-6,0.38);
+  \draw[->, violet!70!black, bend right=28, thin]
+    (1,0.38) to (-2,0.38);
+  \node[right, font=\footnotesize] at (4.8,0) {$c=-2<0$: reflects and stretches};
+
+\end{tikzpicture}
+\caption{Top: $c = 2 > 0$ stretches rightward; $\sup(2A) = 2\sup A$.
+Bottom: $c = -2 < 0$ reflects across $0$ and stretches;
+the old right endpoint $\sup A$ maps to the new left endpoint
+$-2\sup A = \inf(-2A)$,
+while the old left endpoint $\inf A$ maps to the new right endpoint
+$-2\inf A = \sup(-2A) = c\inf A$.}
+\label{fig:scalar-multiple}
+\end{figure}
+
+\begin{remark*}[Common error]
+For $c < 0$: $\sup(cA) = c\,\inf A$, not $c\,\sup A$.
+The sign change always comes with a bound-swap.
+Counterexample: $A = [1,2]$, $c = -1$.
+Then $-A = [-2,-1]$, so $\sup(-A) = -1 = (-1)\cdot\inf A$.
+The formula $c\sup A = (-1)(2) = -2$ gives the \emph{infimum}, not the supremum.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Set difference
+% ---------------------------------------------------------
+\subsubsection{Set Differences}
+
+\begin{theorem}[\texorpdfstring{\hyperref[prf:supremum-set-difference]{Supremum of a Difference}}{Supremum of a Difference}]
+\label{thm:sup-diff}
+Let $A, B \subseteq \mathbb{R}$ be nonempty, bounded above and below. Then
+\[
+\sup(A-B) = \sup A - \inf B, \qquad \inf(A-B) = \inf A - \sup B.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall\, A, B \subseteq \mathbb{R}$ nonempty and bounded:
+$\sup\{a - b : a \in A,\, b \in B\} = \sup A - \inf B$.
+\end{remark*}
+
+\begin{remark*}[Intuition]
+To maximise $a - b$: make $a$ as large as possible and $b$ as small as
+possible.
+So $\sup(A-B)$ is approached in the limit as $a \to \sup A$ and
+$b \to \inf B$, giving $\sup A - \inf B$.
+The formula $\sup(A-B) = \sup A - \sup B$ is the standard error:
+it conflates maximising a difference with subtracting two suprema.
+The geometry of Figure~\ref{fig:sup-diff-geometry} shows exactly why the
+correct formula involves $\inf B$, not $\sup B$.
+\end{remark*}
+
+\begin{remark*}[The derivation in one chain]
+The proof requires no new ideas. Every step applies a result already in hand:
+\[
+\sup(A-B)
+\;=\; \sup\bigl(A+(-B)\bigr)
+\;=\; \sup A + \sup(-B)
+\;=\; \sup A + (-\inf B)
+\;=\; \sup A - \inf B.
+\]
+Four equalities, three tools: rewrite as Minkowski sum
+(Remark~\ref{rem:diff-as-sum}),
+apply additivity \eqref{eq:sup-add},
+apply the negation rule (Theorem~\ref{thm:neg-rule}).
+If any step feels unearned, return to Figure~\ref{fig:sup-diff-geometry}:
+each equality corresponds to a visible transformation on the number line.
+
+For the infimum:
+\[
+\inf(A-B) = \inf A + \inf(-B) = \inf A + (-\sup B) = \inf A - \sup B.
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Unified summary
+% ---------------------------------------------------------
+\subsubsection{Unified Summary}
+
+\begin{remark*}[The dependency tree]
+Every identity ultimately rests on two roots:
+\begin{enumerate}
+  \item \textbf{Additivity}
+        (Theorem~\ref{thm:sup-add}):
+        $\sup(A+B) = \sup A + \sup B$.
+  \item \textbf{Negation rule}
+        (Theorem~\ref{thm:neg-rule}):
+        $\sup(-A) = -\inf A$.
+\end{enumerate}
+The negation rule is completeness-free — it uses only order-reversal under
+$\times(-1)$, which holds in any ordered set.
+The additivity rule uses completeness indirectly, through the
+$\varepsilon$-characterization (Proposition~\ref{prop:eps-char}).
+All scaling ($c < 0$) and difference identities reduce to chaining these two.
+\end{remark*}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{All identities and dependencies}},
+  fonttitle=\small\bfseries]
+\renewcommand{\arraystretch}{1.5}
+\small
+\begin{tabular}{@{}p{0.38\textwidth} p{0.22\textwidth} p{0.32\textwidth}@{}}
+\textbf{Identity} & \textbf{Condition} & \textbf{Depends on} \\
+\midrule
+$\sup(A+B)=\sup A+\sup B$  & $A,B$ bounded above & direct \\
+$\inf(A+B)=\inf A+\inf B$  & $A,B$ bounded below & direct (mirror) \\
+$\sup(-A)=-\inf A$         & $A$ bounded         & direct \\
+$\inf(-A)=-\sup A$         & $A$ bounded         & negation (sup) \\
+$\sup(cA)=c\sup A$         & $c>0$               & direct scaling \\
+$\inf(cA)=c\inf A$         & $c>0$               & direct scaling \\
+$\sup(cA)=c\inf A$         & $c<0$               & negation $+$ scaling \\
+$\inf(cA)=c\sup A$         & $c<0$               & negation $+$ scaling \\
+$\sup(A-B)=\sup A-\inf B$  & $A,B$ bounded       & additivity $+$ negation \\
+$\inf(A-B)=\inf A-\sup B$  & $A,B$ bounded       & additivity $+$ negation \\
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark*}[Common errors]
+\textbf{Wrong formula for $\sup(A-B)$.}
+The temptation is $\sup A - \sup B$ by analogy with scalar arithmetic.
+The correct formula is $\sup A - \inf B$.
+To maximise $a - b$, want $a$ as large as possible and $b$ as small as
+possible — hence $\sup A$ paired with $\inf B$, not $\sup B$.
+
+\medskip\noindent
+\textbf{Forgetting the bound-swap under negation.}
+Negating a set maps $\sup \to -\inf$ and $\inf \to -\sup$.
+Writing $\sup(-A) = -\sup A$ drops the swap.
+Figure~\ref{fig:negation-reflection} shows exactly why: the right endpoint
+of $A$ maps to the \emph{left} endpoint of $-A$.
+
+\medskip\noindent
+\textbf{Wrong bound in the negative-scalar rule.}
+For $c < 0$: $\sup(cA) = c\,\inf A$, not $c\,\sup A$.
+The sign change always comes with a bound-swap, for the same reason as
+negation.
+All three errors are variants of the same mistake: forgetting that
+negation swaps which bound is being computed.
+\end{remark*}
+
+\begin{remark*}[Connections forward]
+These identities appear throughout the rest of the notes:
+\begin{itemize}
+  \item \emph{Convergence}: bounding $|a_n + b_n|$ reduces to
+        $\sup|a_n| + \sup|b_n|$ via additivity.
+  \item \emph{Darboux integration}: $U(f+g,P) \le U(f,P) + U(g,P)$
+        follows from additivity applied pointwise to the image of $f+g$.
+  \item \emph{Oscillation}: $\operatorname{osc}(f,I) = \sup_I f - \inf_I f$
+        is the difference identity applied to the image of $f$ on $I$.
+  \item \emph{Metric spaces}: diameter estimates on $A - B$ use
+        $\sup(A-B) = \sup A - \inf B$; see the monotonicity corollaries
+        in Section~\ref{sec:bound-monotone}.
+\end{itemize}
+
+Once these patterns are fluent, many estimates in real analysis —
+bounding $|f(x) - g(x)|$, controlling the $\sup$ of a sequence of
+functions, estimating Darboux sums — reduce to one of these six identities.
+\end{remark*}
