@@ -3,7 +3,406 @@
 % Discrete Calculus Notes Stub
 % ==================================================
 
-\section*{Linearity}
+\subsection{Properties of the Difference Operator}
 
-% TODO: Add definitions, theorems, and exposition here.
+The forward difference operator satisfies several algebraic properties
+that closely resemble the familiar rules of differentiation in ordinary
+calculus.
+
+\subsection*{Linearity}
+
+\begin{proposition}[Linearity]
+For functions \(f,g : \mathbb{Z} \to \mathbb{R}\) and constants \(a,b\),
+
+\[
+\Delta (a f + b g)
+=
+a\,\Delta f + b\,\Delta g.
+\]
+\end{proposition}
+
+\begin{proof}
+By definition of the difference operator,
+
+\[
+\begin{aligned}
+\Delta (a f + b g)(n)
+&= (a f + b g)(n+1) - (a f + b g)(n) \\
+&= a f(n+1) + b g(n+1) - a f(n) - b g(n) \\
+&= a(f(n+1)-f(n)) + b(g(n+1)-g(n)) \\
+&= a\,\Delta f(n) + b\,\Delta g(n).
+\end{aligned}
+\]
+\end{proof}
+
+\subsection*{Constant Rule}
+
+\begin{proposition}
+If \(c\) is a constant function, then
+
+\[
+\Delta c = 0.
+\]
+\end{proposition}
+
+\begin{proof}
+\[
+\Delta c(n) = c - c = 0.
+\]
+\end{proof}
+
+\begin{remark}
+This mirrors the familiar rule from calculus:
+
+\[
+\frac{d}{dx} c = 0.
+\]
+\end{remark}
+
+\subsection*{The Shift Operator}
+
+\begin{definition}[Shift Operator]
+The \emph{shift operator} \(E\) is defined by
+
+\[
+E f(n) = f(n+1).
+\]
+\end{definition}
+
+\begin{remark}
+The shift operator moves the input of the function forward by one step.
+It plays a central role in the algebraic formulation of finite differences.
+\end{remark}
+
+\subsection*{Identity Operator}
+
+\begin{definition}
+The \emph{identity operator} \(I\) is defined by
+
+\[
+I f(n) = f(n).
+\]
+\end{definition}
+
+\subsection*{Relationship Between Operators}
+
+The difference operator can be expressed in terms of the shift operator.
+
+\begin{theorem}
+\[
+\Delta = E - I.
+\]
+\end{theorem}
+
+\begin{proof}
+Applying the operator \(E-I\) to a function \(f\) gives
+
+\[
+(E-I)f(n) = Ef(n) - If(n).
+\]
+
+Using the definitions of \(E\) and \(I\),
+
+\[
+(E-I)f(n) = f(n+1) - f(n) = \Delta f(n).
+\]
+
+Thus
+
+\[
+\Delta = E - I.
+\]
+\end{proof}
+
+\begin{remark}
+This identity reveals an important algebraic structure underlying
+discrete calculus.  Higher differences can now be expressed using the
+binomial theorem:
+
+\[
+\Delta^n = (E-I)^n.
+\]
+
+This explains why binomial coefficients naturally appear in formulas
+for higher finite differences.
+\end{remark}
+
+\begin{remark}
+Expressing the difference operator in the form
+
+\[
+\Delta = E - I
+\]
+
+reveals that finite differences possess a simple algebraic structure.
+The operator \(E\) shifts a function forward by one step,
+while \(I\) leaves it unchanged.  The forward difference therefore
+measures the discrepancy between a shifted function and the original one.
+
+This formulation allows higher differences to be computed using ordinary
+algebra.  Repeated application of the difference operator gives
+
+\[
+\Delta^n = (E-I)^n.
+\]
+
+Applying the binomial theorem to expand the right-hand side yields
+
+\[
+\Delta^n
+=
+\sum_{k=0}^{n}
+(-1)^{\,n-k}
+\binom{n}{k}
+E^{k}.
+\]
+
+When this operator acts on a function \(f\), the powers of the shift
+operator produce shifted values of the function:
+
+\[
+E^{k}f(n)=f(n+k).
+\]
+
+Consequently,
+
+\[
+\Delta^n f(n)
+=
+\sum_{k=0}^{n}
+(-1)^{\,n-k}
+\binom{n}{k}
+f(n+k).
+\]
+
+Thus the pattern of coefficients in higher finite differences is governed
+by the binomial coefficients.  This connection explains why Pascal's
+triangle appears naturally in difference tables and why binomial
+coefficients play a central role throughout discrete calculus.
+\end{remark}
+
+
+\subsection{Difference Tables and Polynomial Detection}
+
+One of the most useful tools in discrete calculus is the \emph{difference
+table}.  By repeatedly applying the difference operator to a sequence,
+one can detect whether the sequence arises from a polynomial function and
+determine its degree.
+
+\begin{definition}[Difference Table]
+Given a sequence \(f(0), f(1), f(2), \dots\), a \emph{difference table}
+is constructed by listing the successive values of the function and then
+computing their forward differences:
+
+\[
+\Delta f(n) = f(n+1)-f(n).
+\]
+
+The process may be repeated to obtain higher differences
+\(\Delta^2 f\), \(\Delta^3 f\), and so forth.
+\end{definition}
+
+\subsection*{Example}
+
+Consider the function
+
+\[
+f(n) = n^2.
+\]
+
+The values of the function and its successive differences are shown below.
+
+\[
+\begin{array}{c|c|c|c}
+n & f(n) & \Delta f(n) & \Delta^2 f(n) \\
+\hline
+0 & 0  &   &   \\
+1 & 1  & 1 &   \\
+2 & 4  & 3 & 2 \\
+3 & 9  & 5 & 2 \\
+4 & 16 & 7 & 2 \\
+5 & 25 & 9 & 2
+\end{array}
+\]
+
+The first differences form the sequence
+
+\[
+1,3,5,7,9,\dots
+\]
+
+and the second differences are constant:
+
+\[
+2,2,2,\dots
+\]
+
+\begin{remark}
+A constant second difference indicates that the original sequence is
+generated by a polynomial of degree \(2\).
+\end{remark}
+
+\subsection*{General Principle}
+
+\begin{theorem}[Polynomial Detection]
+Let \(f(n)\) be a sequence generated by a polynomial of degree \(d\).
+Then
+
+\[
+\Delta^d f(n)
+\]
+
+is constant, and
+
+\[
+\Delta^{d+1} f(n) = 0.
+\]
+\end{theorem}
+
+\begin{remark}
+This theorem is the discrete analogue of a familiar fact from calculus:
+the \(d\)-th derivative of a degree \(d\) polynomial is constant, and the
+next derivative is zero.
+\end{remark}
+
+\subsection*{Why This Matters}
+
+Difference tables provide a practical method for identifying polynomial
+sequences and determining their degree.  This observation leads to a
+natural basis for polynomial functions in discrete calculus, known as the
+\emph{falling factorial basis}.  In the next section we will see that these
+functions interact particularly well with the difference operator and form
+the foundation for Newton's discrete analogue of the Taylor expansion.
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    val/.style={},
+    lbl/.style={font=\bfseries}
+]
+
+% Row labels
+\node[lbl] at (-1.8, 0) {$f(n)$};
+\node[lbl] at (-1.8,-1) {$\Delta f$};
+\node[lbl] at (-1.8,-2) {$\Delta^2 f$};
+
+% Function values for f(n)=n^2
+\node[val] (f0) at (0,0) {$0$};
+\node[val] (f1) at (1.6,0) {$1$};
+\node[val] (f2) at (3.2,0) {$4$};
+\node[val] (f3) at (4.8,0) {$9$};
+\node[val] (f4) at (6.4,0) {$16$};
+\node[val] (f5) at (8.0,0) {$25$};
+
+% First differences
+\node[val] (d0) at (0.8,-1) {$1$};
+\node[val] (d1) at (2.4,-1) {$3$};
+\node[val] (d2) at (4.0,-1) {$5$};
+\node[val] (d3) at (5.6,-1) {$7$};
+\node[val] (d4) at (7.2,-1) {$9$};
+
+% Second differences
+\node[val] (dd0) at (1.6,-2) {$2$};
+\node[val] (dd1) at (3.2,-2) {$2$};
+\node[val] (dd2) at (4.8,-2) {$2$};
+\node[val] (dd3) at (6.4,-2) {$2$};
+
+% Arrows showing subtraction pattern
+\draw[->, thick] (f0) -- (d0);
+\draw[->, thick] (f1) -- (d0);
+
+\draw[->, thick] (f1) -- (d1);
+\draw[->, thick] (f2) -- (d1);
+
+\draw[->, thick] (f2) -- (d2);
+\draw[->, thick] (f3) -- (d2);
+
+\draw[->, thick] (f3) -- (d3);
+\draw[->, thick] (f4) -- (d3);
+
+\draw[->, thick] (f4) -- (d4);
+\draw[->, thick] (f5) -- (d4);
+
+\draw[->, thick] (d0) -- (dd0);
+\draw[->, thick] (d1) -- (dd0);
+
+\draw[->, thick] (d1) -- (dd1);
+\draw[->, thick] (d2) -- (dd1);
+
+\draw[->, thick] (d2) -- (dd2);
+\draw[->, thick] (d3) -- (dd2);
+
+\draw[->, thick] (d3) -- (dd3);
+\draw[->, thick] (d4) -- (dd3);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{remark}
+For the sequence \(f(n)=n^2\), the second differences are constant.
+This indicates that the original sequence is generated by a polynomial
+of degree \(2\). In general, if the \(k\)-th differences are constant,
+then the sequence comes from a polynomial of degree \(k\).
+\end{remark}
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    dot/.style={circle, fill=black, inner sep=1.2pt},
+    lbl/.style={font=\bfseries}
+]
+
+% Labels
+\node[lbl] at (-1.8, 0) {$f(n)$};
+\node[lbl] at (-1.8,-1.2) {$\Delta f$};
+\node[lbl] at (-1.8,-2.4) {$\Delta^2 f$};
+
+% Top row
+\node at (0,0) {$0$};
+\node at (1.8,0) {$1$};
+\node at (3.6,0) {$4$};
+\node at (5.4,0) {$9$};
+\node at (7.2,0) {$16$};
+\node at (9.0,0) {$25$};
+
+% First difference row
+\node at (0.9,-1.2) {$1$};
+\node at (2.7,-1.2) {$3$};
+\node at (4.5,-1.2) {$5$};
+\node at (6.3,-1.2) {$7$};
+\node at (8.1,-1.2) {$9$};
+
+% Second difference row
+\node at (1.8,-2.4) {$2$};
+\node at (3.6,-2.4) {$2$};
+\node at (5.4,-2.4) {$2$};
+\node at (7.2,-2.4) {$2$};
+
+% Guide lines
+\draw[gray] (0, -0.2) -- (0.9, -1.0);
+\draw[gray] (1.8, -0.2) -- (0.9, -1.0);
+\draw[gray] (1.8, -0.2) -- (2.7, -1.0);
+\draw[gray] (3.6, -0.2) -- (2.7, -1.0);
+\draw[gray] (3.6, -0.2) -- (4.5, -1.0);
+\draw[gray] (5.4, -0.2) -- (4.5, -1.0);
+\draw[gray] (5.4, -0.2) -- (6.3, -1.0);
+\draw[gray] (7.2, -0.2) -- (6.3, -1.0);
+\draw[gray] (7.2, -0.2) -- (8.1, -1.0);
+\draw[gray] (9.0, -0.2) -- (8.1, -1.0);
+
+\draw[gray] (0.9, -1.4) -- (1.8, -2.2);
+\draw[gray] (2.7, -1.4) -- (1.8, -2.2);
+\draw[gray] (2.7, -1.4) -- (3.6, -2.2);
+\draw[gray] (4.5, -1.4) -- (3.6, -2.2);
+\draw[gray] (4.5, -1.4) -- (5.4, -2.2);
+\draw[gray] (6.3, -1.4) -- (5.4, -2.2);
+\draw[gray] (6.3, -1.4) -- (7.2, -2.2);
+\draw[gray] (8.1, -1.4) -- (7.2, -2.2);
+
+\end{tikzpicture}
+\end{center}
+
+
+
+
 

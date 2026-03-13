@@ -3,7 +3,92 @@
 % Discrete Calculus Notes Stub
 % ==================================================
 
-\section*{Telescoping Identity}
+\subsection*{Telescoping Identity}
 
-% TODO: Add definitions, theorems, and exposition here.
+\begin{center}
+\begin{tikzpicture}[
+node distance=1.6cm,
+every node/.style={font=\small}
+]
 
+\node (t1) {$f(a+1)-f(a)$};
+
+\node (t2) [below of=t1] {$f(a+2)-f(a+1)$};
+
+\node (t3) [below of=t2] {$f(a+3)-f(a+2)$};
+
+\node (vdots) [below of=t3] {$\vdots$};
+
+\node (t4) [below of=vdots] {$f(b)-f(b-1)$};
+
+\node[right=3cm of t1] (c1) {$-f(a)$};
+\node[right=3cm of t2] (c2) {$\cancel{f(a+1)}-\cancel{f(a+1)}$};
+\node[right=3cm of t3] (c3) {$\cancel{f(a+2)}-\cancel{f(a+2)}$};
+\node[right=3cm of vdots] (c4) {$\vdots$};
+\node[right=3cm of t4] (c5) {$f(b)$};
+
+\end{tikzpicture}
+\end{center}
+
+\begin{remark}
+Each intermediate term appears twice in the expanded sum:
+once with a positive sign and once with a negative sign.
+These pairs cancel, leaving only the first and last terms.
+This cancellation pattern gives rise to the name
+\emph{telescoping sum}.
+\end{remark}
+
+
+\begin{theorem}
+For any function \(f\),
+
+\[
+\sum_{k=a}^{b-1} (f(k+1) - f(k)) = f(b) - f(a).
+\]
+\end{theorem}
+
+\begin{proof}
+Expanding the sum gives
+
+\[
+\begin{aligned}
+(f(a+1)-f(a)) &+ (f(a+2)-f(a+1)) \\
+&+ \cdots + (f(b)-f(b-1)).
+\end{aligned}
+\]
+
+Every intermediate term appears once with a positive sign and once with
+a negative sign, so they cancel.  The remaining terms are \(f(b)\) and
+\(-f(a)\), giving
+
+\[
+f(b)-f(a).
+\]
+\end{proof}
+
+\subsection*{Operator Form}
+
+Using the forward difference operator
+
+\[
+\Delta f(n) = f(n+1) - f(n),
+\]
+
+the telescoping identity may be written compactly as
+
+\[
+\sum_{k=a}^{b-1} \Delta f(k) = f(b) - f(a).
+\]
+
+\begin{remark}
+This identity is the discrete analogue of the
+\emph{Fundamental Theorem of Calculus},
+
+\[
+\int_a^b f'(x)\,dx = f(b)-f(a).
+\]
+
+It reveals a deep relationship between summation and the difference
+operator and forms the foundation for the concept of the
+\emph{discrete antiderivative}, which we introduce next.
+\end{remark}

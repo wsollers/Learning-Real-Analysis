@@ -1,0 +1,432 @@
+\section*{Algebra of Summations}
+\addcontentsline{toc}{section}{Algebra of Summations}
+
+The following rules describe the basic algebraic manipulations of summations.
+These identities allow sums to be combined, split, and reindexed while
+preserving their value.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Algebra Rule} & \textbf{Identity} \\
+\hline
+
+Linearity &
+\[
+\sum_{k=a}^{b} (a f(k) + b g(k))
+=
+a \sum_{k=a}^{b} f(k)
++
+b \sum_{k=a}^{b} g(k)
+\]
+\\
+\hline
+
+Splitting &
+\[
+\sum_{k=a}^{c} f(k)
+=
+\sum_{k=a}^{b} f(k)
++
+\sum_{k=b+1}^{c} f(k)
+\]
+\\
+\hline
+
+Index Rename &
+\[
+\sum_{k=a}^{b} f(k)
+=
+\sum_{i=a}^{b} f(i)
+\]
+\\
+\hline
+
+Index Shift &
+\[
+\sum_{k=a}^{b} f(k)
+=
+\sum_{k=a+1}^{b+1} f(k-1)
+\]
+\\
+\hline
+
+Constant Sum &
+\[
+\sum_{k=a}^{b} c
+=
+(b-a+1)c
+\]
+\\
+\hline
+
+Empty Sum &
+\[
+\sum_{k=a}^{b} f(k) = 0
+\qquad \text{if } a>b
+\]
+\\
+\hline
+
+Nested Sums &
+\[
+\sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}
+=
+\sum_{j=1}^{m}\sum_{i=1}^{n} a_{ij}
+\quad (\text{when the sums are independent})
+\]
+\\
+\hline
+
+\end{tabular}
+\end{center}
+
+\begin{remark}
+These rules form the basic algebraic toolkit for manipulating summations.
+They are used throughout discrete mathematics, combinatorics, and discrete
+calculus, particularly when working with telescoping sums, finite
+differences, and summation formulas.
+\end{remark}
+
+
+
+
+\section{Algebra of Summations}
+
+The following rules describe the basic algebraic manipulations of summations.
+They allow sums to be combined, split, and reindexed while preserving their value.
+These identities form the fundamental algebraic toolkit used throughout
+discrete mathematics and discrete calculus.
+
+\subsection*{Linearity}
+
+Summation is a linear operator.  For functions \(f\) and \(g\) and constants
+\(a\) and \(b\),
+
+\[
+\sum_{k=a}^{b} (a f(k) + b g(k))
+=
+a \sum_{k=a}^{b} f(k)
++
+b \sum_{k=a}^{b} g(k).
+\]
+
+\begin{remark}
+This property allows constants to be factored out of a sum and sums of
+expressions to be separated into multiple sums.
+\end{remark}
+
+\begin{example}
+\[
+\sum_{k=1}^{n} (2k + 3)
+=
+2\sum_{k=1}^{n} k
++
+3\sum_{k=1}^{n} 1.
+\]
+\end{example}
+
+\subsection*{Splitting a Sum}
+
+A sum over an interval may be divided into smaller pieces:
+
+\[
+\sum_{k=a}^{c} f(k)
+=
+\sum_{k=a}^{b} f(k)
++
+\sum_{k=b+1}^{c} f(k)
+\]
+
+whenever \(a \le b < c\).
+
+\begin{remark}
+This rule allows a long summation interval to be broken into parts.
+It is frequently used when working with telescoping sums.
+\end{remark}
+
+\begin{example}
+\[
+\sum_{k=1}^{10} f(k)
+=
+\sum_{k=1}^{5} f(k)
++
+\sum_{k=6}^{10} f(k).
+\]
+\end{example}
+
+\subsection*{Index Renaming}
+
+The index of summation is a \emph{dummy variable}. Its name does not affect
+the value of the sum.
+
+\[
+\sum_{k=a}^{b} f(k)
+=
+\sum_{i=a}^{b} f(i).
+\]
+
+\begin{remark}
+This rule is useful when manipulating expressions containing several sums,
+since the index variable can be renamed to avoid conflicts.
+\end{remark}
+
+\subsection*{Index Shifting}
+
+It is often convenient to shift the index of summation.
+
+\[
+\sum_{k=a}^{b} f(k)
+=
+\sum_{k=a+1}^{b+1} f(k-1).
+\]
+
+\begin{remark}
+Index shifting allows sums to be aligned so that terms cancel or combine
+properly. This technique appears frequently in proofs involving
+recurrence relations and discrete calculus identities.
+\end{remark}
+
+\begin{example}
+\[
+\sum_{k=0}^{n} f(k+1)
+=
+\sum_{k=1}^{n+1} f(k).
+\]
+\end{example}
+
+\subsection*{Constant Sum}
+
+If the summand does not depend on the index, the sum simply counts the
+number of terms:
+
+\[
+\sum_{k=a}^{b} c
+=
+(b-a+1)c.
+\]
+
+\begin{remark}
+The quantity \(b-a+1\) represents the number of integers between
+\(a\) and \(b\), inclusive.
+\end{remark}
+
+\begin{example}
+\[
+\sum_{k=3}^{7} 5 = 5+5+5+5+5 = 5(5) = 25.
+\]
+\end{example}
+
+\subsection*{Empty Sum}
+
+If the upper limit is smaller than the lower limit, the sum contains no
+terms. By convention,
+
+\[
+\sum_{k=a}^{b} f(k) = 0
+\qquad \text{whenever } a>b.
+\]
+
+\begin{remark}
+This convention simplifies many algebraic identities and allows formulas
+to remain valid without requiring special cases.
+\end{remark}
+
+\subsection*{Nested Sums}
+
+Summations may be nested in a manner similar to nested loops in
+programming:
+
+\[
+\sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}.
+\]
+
+The inner sum is evaluated first:
+
+\[
+\sum_{i=1}^{n} \left(a_{i1}+a_{i2}+\cdots+a_{im}\right).
+\]
+
+When the limits of summation are independent, the order of summation may
+be exchanged:
+
+\[
+\sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}
+=
+\sum_{j=1}^{m}\sum_{i=1}^{n} a_{ij}.
+\]
+
+\begin{remark}
+This property is analogous to exchanging the order of integration in
+double integrals.
+\end{remark}
+
+
+
+
+
+
+
+\section*{Summation Manipulation Flow Chart}
+
+\begin{center}
+\begin{tikzpicture}[
+node distance=3cm,
+box/.style={draw, rounded corners, align=center, minimum width=3cm, minimum height=1cm},
+arrow/.style={->, thick}
+]
+
+\node[box] (sum) {$\displaystyle \sum_{k=a}^{b} f(k)$};
+
+\node[box, above=of sum] (linear) {Linearity\\
+$\sum (af+bg)=a\sum f+b\sum g$};
+
+\node[box, left=of sum] (split) {Split Interval\\
+$\sum_a^c = \sum_a^b + \sum_{b+1}^c$};
+
+\node[box, right=of sum] (shift) {Index Shift\\
+$\sum f(k)=\sum f(k-1)$};
+
+\node[box, below=of sum] (rename) {Rename Index\\
+$\sum_k f(k)=\sum_i f(i)$};
+
+\node[box, below left=of sum] (constant) {Constant Sum\\
+$\sum c=(b-a+1)c$};
+
+\node[box, below right=of sum] (nested) {Nested Sums\\
+$\sum_i\sum_j a_{ij}=\sum_j\sum_i a_{ij}$};
+
+\draw[arrow] (sum) -- (linear);
+\draw[arrow] (sum) -- (split);
+\draw[arrow] (sum) -- (shift);
+\draw[arrow] (sum) -- (rename);
+\draw[arrow] (sum) -- (constant);
+\draw[arrow] (sum) -- (nested);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{remark}
+Each arrow represents a transformation that preserves the value of the
+summation.  These manipulation rules form the basic algebra of summations
+and are used constantly when simplifying expressions and proving
+identities in discrete mathematics and discrete calculus.
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Common Summation Identities}
+
+Many sums that appear in discrete mathematics and discrete calculus have
+closed-form expressions.  The following identities are among the most
+frequently used and are worth memorizing.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Summation} & \textbf{Closed Form} \\
+\hline
+
+Constant Sum &
+\[
+\sum_{k=1}^{n} 1
+=
+n
+\]
+\\
+\hline
+
+Sum of First Integers &
+\[
+\sum_{k=1}^{n} k
+=
+\frac{n(n+1)}{2}
+\]
+\\
+\hline
+
+Sum of Squares &
+\[
+\sum_{k=1}^{n} k^2
+=
+\frac{n(n+1)(2n+1)}{6}
+\]
+\\
+\hline
+
+Sum of Cubes &
+\[
+\sum_{k=1}^{n} k^3
+=
+\left(\frac{n(n+1)}{2}\right)^2
+\]
+\\
+\hline
+
+Arithmetic Series &
+\[
+\sum_{k=0}^{n} (a + kd)
+=
+(n+1)a + \frac{dn(n+1)}{2}
+\]
+\\
+\hline
+
+Geometric Series &
+\[
+\sum_{k=0}^{n} r^k
+=
+\frac{1-r^{n+1}}{1-r}
+\quad (r\neq 1)
+\]
+\\
+\hline
+
+Weighted Geometric Series &
+\[
+\sum_{k=0}^{n} k r^k
+=
+\frac{r\bigl(1-(n+1)r^n+nr^{n+1}\bigr)}{(1-r)^2}
+\quad (r\neq 1)
+\]
+\\
+\hline
+
+Binomial Identity &
+\[
+\sum_{k=0}^{n} \binom{n}{k}
+=
+2^n
+\]
+\\
+\hline
+
+\end{tabular}
+\end{center}
+
+\begin{remark}
+These identities appear frequently in discrete mathematics, combinatorics,
+and discrete calculus.  In particular, polynomial summation formulas play
+an important role when working with finite differences and Newton series,
+while geometric sums arise naturally in recurrence relations and generating
+functions.
+\end{remark}

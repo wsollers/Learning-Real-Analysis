@@ -3,7 +3,144 @@
 % Discrete Calculus Notes Stub
 % ==================================================
 
-\section*{Falling Factorial}
+\section{Polynomial Basis}
 
-% TODO: Add definitions, theorems, and exposition here.
+In ordinary calculus, polynomial functions are naturally expressed using
+the powers
 
+\[
+1, x, x^2, x^3, \dots
+\]
+
+because derivatives behave simply on these functions:
+
+\[
+\frac{d}{dx} x^n = n x^{n-1}.
+\]
+
+In discrete calculus, however, the difference operator does not behave as
+cleanly on ordinary powers.  For example,
+
+\[
+\Delta (n^2) = (n+1)^2 - n^2 = 2n + 1.
+\]
+
+Although the degree decreases, the result contains additional terms.
+For this reason it is convenient to introduce a different basis of
+polynomials that interacts more naturally with the difference operator.
+
+\subsection*{Falling Factorials}
+
+\begin{definition}[Falling Factorial]
+For a nonnegative integer \(k\), the \emph{falling factorial} is defined by
+
+\[
+x^{\underline{k}} = x(x-1)(x-2)\cdots(x-k+1).
+\]
+
+By convention,
+
+\[
+x^{\underline{0}} = 1.
+\]
+\end{definition}
+
+The first few falling factorials are
+
+\[
+\begin{aligned}
+x^{\underline{0}} &= 1, \\
+x^{\underline{1}} &= x, \\
+x^{\underline{2}} &= x(x-1), \\
+x^{\underline{3}} &= x(x-1)(x-2).
+\end{aligned}
+\]
+
+\subsection*{Difference of Falling Factorials}
+
+The falling factorials interact very cleanly with the difference operator.
+
+\begin{theorem}
+For \(k \ge 1\),
+
+\[
+\Delta x^{\underline{k}} = k\,x^{\underline{k-1}}.
+\]
+\end{theorem}
+
+\begin{proof}
+Observe that
+
+\[
+(x+1)^{\underline{k}} =
+(x+1)x(x-1)\cdots(x-k+2).
+\]
+
+Then
+
+\[
+\Delta x^{\underline{k}}
+=
+(x+1)^{\underline{k}} - x^{\underline{k}}.
+\]
+
+Factoring the common terms gives
+
+\[
+\Delta x^{\underline{k}}
+=
+x(x-1)\cdots(x-k+2)\left[(x+1)-(x-k+1)\right].
+\]
+
+Simplifying,
+
+\[
+(x+1)-(x-k+1)=k.
+\]
+
+Thus
+
+\[
+\Delta x^{\underline{k}} = k\,x^{\underline{k-1}}.
+\]
+\end{proof}
+
+\begin{remark}
+This formula closely resembles the familiar derivative rule
+
+\[
+\frac{d}{dx} x^k = kx^{k-1}.
+\]
+
+Because of this simple behavior under the difference operator,
+falling factorials form the natural polynomial basis for discrete calculus.
+\end{remark}
+
+\subsection*{Polynomial Representation}
+
+Every polynomial function can be written as a linear combination of
+falling factorials:
+
+\[
+f(x) =
+a_0
++
+a_1 x
++
+a_2 x^{\underline{2}}
++
+a_3 x^{\underline{3}}
++
+\cdots
++
+a_n x^{\underline{n}}.
+\]
+
+This representation plays the same role in discrete calculus that
+ordinary power series play in continuous calculus.
+
+\begin{remark}
+Using the falling factorial basis greatly simplifies computations
+involving finite differences and leads naturally to the
+\emph{Newton series}, the discrete analogue of the Taylor expansion.
+\end{remark}
