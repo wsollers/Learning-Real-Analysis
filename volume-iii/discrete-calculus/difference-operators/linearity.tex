@@ -1,19 +1,19 @@
 % ==================================================
-% Linearity
-% Discrete Calculus Notes Stub
+% Linearity and Operator Algebra
+% Discrete Calculus — Difference Operators
 % ==================================================
 
 \subsection{Properties of the Difference Operator}
+\label{subsec:difference-operator-properties}
 
-The forward difference operator satisfies several algebraic properties
-that closely resemble the familiar rules of differentiation in ordinary
-calculus.
+The forward difference operator satisfies algebraic properties that
+closely mirror the familiar rules of differentiation.
 
 \subsection*{Linearity}
 
-\begin{proposition}[Linearity]
-For functions \(f,g : \mathbb{Z} \to \mathbb{R}\) and constants \(a,b\),
-
+\begin{proposition}[Linearity of \(\Delta\)]
+\label{prop:delta-linearity}
+For functions \(f,g : \mathbb{Z} \to \mathbb{R}\) and constants \(a,b \in \mathbb{R}\),
 \[
 \Delta (a f + b g)
 =
@@ -21,133 +21,86 @@ a\,\Delta f + b\,\Delta g.
 \]
 \end{proposition}
 
+\begin{remark*}[Fully quantified form]
+\(\forall f,g : \mathbb{Z}\to\mathbb{R},\;
+\forall a,b \in \mathbb{R},\;
+\forall n \in \mathbb{Z}:\;
+\Delta(af+bg)(n) = a\,\Delta f(n) + b\,\Delta g(n)\).
+\end{remark*}
+
 \begin{proof}
 By definition of the difference operator,
-
 \[
 \begin{aligned}
 \Delta (a f + b g)(n)
 &= (a f + b g)(n+1) - (a f + b g)(n) \\
 &= a f(n+1) + b g(n+1) - a f(n) - b g(n) \\
 &= a(f(n+1)-f(n)) + b(g(n+1)-g(n)) \\
-&= a\,\Delta f(n) + b\,\Delta g(n).
+&= a\,\Delta f(n) + b\,\Delta g(n). \qedhere
 \end{aligned}
 \]
 \end{proof}
 
 \subsection*{Constant Rule}
 
-\begin{proposition}
-If \(c\) is a constant function, then
-
-\[
-\Delta c = 0.
-\]
+\begin{proposition}[Constant rule]
+\label{prop:delta-constant}
+If \(c\) is a constant function, then \(\Delta c = 0\).
 \end{proposition}
 
+\begin{remark*}[Fully quantified form]
+\(\forall c \in \mathbb{R},\; \forall n \in \mathbb{Z}:\; \Delta c(n) = 0\).
+\end{remark*}
+
 \begin{proof}
-\[
-\Delta c(n) = c - c = 0.
-\]
+\(\Delta c(n) = c - c = 0\).
 \end{proof}
 
-\begin{remark}
-This mirrors the familiar rule from calculus:
+\begin{remark*}[Analogy]
+This mirrors \(\tfrac{d}{dx} c = 0\) in continuous calculus.
+\end{remark*}
 
+\subsection*{The Shift Operator and Operator Algebra}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Shift Operator)}},
+  fonttitle=\small\bfseries, label=def:shift-operator]
+The \emph{shift operator} \(E\) and the \emph{identity operator} \(I\)
+are defined by
 \[
-\frac{d}{dx} c = 0.
+Ef(n) = f(n+1), \qquad If(n) = f(n).
 \]
-\end{remark}
+\end{tcolorbox}
 
-\subsection*{The Shift Operator}
+\begin{remark*}[Fully quantified form]
+\(\forall f : \mathbb{Z}\to\mathbb{R},\; \forall n \in \mathbb{Z}:\;
+Ef(n) = f(n+1)\) and \(If(n) = f(n)\).
+\end{remark*}
 
-\begin{definition}[Shift Operator]
-The \emph{shift operator} \(E\) is defined by
-
-\[
-E f(n) = f(n+1).
-\]
-\end{definition}
-
-\begin{remark}
-The shift operator moves the input of the function forward by one step.
-It plays a central role in the algebraic formulation of finite differences.
-\end{remark}
-
-\subsection*{Identity Operator}
-
-\begin{definition}
-The \emph{identity operator} \(I\) is defined by
-
-\[
-I f(n) = f(n).
-\]
-\end{definition}
-
-\subsection*{Relationship Between Operators}
-
-The difference operator can be expressed in terms of the shift operator.
-
-\begin{theorem}
+\begin{theorem}[\(\Delta = E - I\)]
+\label{thm:delta-E-minus-I}
 \[
 \Delta = E - I.
 \]
 \end{theorem}
 
+\begin{remark*}[Fully quantified form]
+\(\forall f : \mathbb{Z}\to\mathbb{R},\; \forall n \in \mathbb{Z}:\;
+\Delta f(n) = (E-I)f(n) = f(n+1) - f(n)\).
+\end{remark*}
+
 \begin{proof}
 Applying the operator \(E-I\) to a function \(f\) gives
-
 \[
-(E-I)f(n) = Ef(n) - If(n).
-\]
-
-Using the definitions of \(E\) and \(I\),
-
-\[
-(E-I)f(n) = f(n+1) - f(n) = \Delta f(n).
-\]
-
-Thus
-
-\[
-\Delta = E - I.
+(E-I)f(n) = Ef(n) - If(n) = f(n+1) - f(n) = \Delta f(n). \qedhere
 \]
 \end{proof}
 
-\begin{remark}
-This identity reveals an important algebraic structure underlying
-discrete calculus.  Higher differences can now be expressed using the
-binomial theorem:
-
-\[
-\Delta^n = (E-I)^n.
-\]
-
-This explains why binomial coefficients naturally appear in formulas
-for higher finite differences.
-\end{remark}
-
-\begin{remark}
-Expressing the difference operator in the form
-
-\[
-\Delta = E - I
-\]
-
-reveals that finite differences possess a simple algebraic structure.
-The operator \(E\) shifts a function forward by one step,
-while \(I\) leaves it unchanged.  The forward difference therefore
-measures the discrepancy between a shifted function and the original one.
-
-This formulation allows higher differences to be computed using ordinary
-algebra.  Repeated application of the difference operator gives
-
-\[
-\Delta^n = (E-I)^n.
-\]
-
-Applying the binomial theorem to expand the right-hand side yields
-
+\begin{remark*}[Higher differences via the binomial theorem]
+Expressing \(\Delta = E - I\) reveals that higher differences can be
+computed using ordinary algebra. Applying the binomial theorem to
+\(\Delta^n = (E-I)^n\) gives
 \[
 \Delta^n
 =
@@ -156,16 +109,7 @@ Applying the binomial theorem to expand the right-hand side yields
 \binom{n}{k}
 E^{k}.
 \]
-
-When this operator acts on a function \(f\), the powers of the shift
-operator produce shifted values of the function:
-
-\[
-E^{k}f(n)=f(n+k).
-\]
-
-Consequently,
-
+Since \(E^k f(n) = f(n+k)\), this yields
 \[
 \Delta^n f(n)
 =
@@ -174,235 +118,119 @@ Consequently,
 \binom{n}{k}
 f(n+k).
 \]
-
-Thus the pattern of coefficients in higher finite differences is governed
-by the binomial coefficients.  This connection explains why Pascal's
-triangle appears naturally in difference tables and why binomial
-coefficients play a central role throughout discrete calculus.
-\end{remark}
-
+This explains why binomial coefficients and Pascal's triangle appear
+naturally throughout discrete calculus: they are a direct consequence
+of the algebraic identity \(\Delta = E - I\).
+\end{remark*}
 
 \subsection{Difference Tables and Polynomial Detection}
+\label{subsec:difference-tables}
 
 One of the most useful tools in discrete calculus is the \emph{difference
-table}.  By repeatedly applying the difference operator to a sequence,
+table}. By repeatedly applying the difference operator to a sequence,
 one can detect whether the sequence arises from a polynomial function and
 determine its degree.
 
-\begin{definition}[Difference Table]
-Given a sequence \(f(0), f(1), f(2), \dots\), a \emph{difference table}
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Difference Table)}},
+  fonttitle=\small\bfseries, label=def:difference-table]
+Given a sequence \(f(0), f(1), f(2), \dots\), the \emph{difference table}
 is constructed by listing the successive values of the function and then
-computing their forward differences:
-
-\[
-\Delta f(n) = f(n+1)-f(n).
-\]
-
-The process may be repeated to obtain higher differences
-\(\Delta^2 f\), \(\Delta^3 f\), and so forth.
-\end{definition}
+computing their forward differences \(\Delta f(n) = f(n+1)-f(n)\),
+then \(\Delta^2 f\), \(\Delta^3 f\), and so on.
+\end{tcolorbox}
 
 \subsection*{Example}
 
-Consider the function
-
-\[
-f(n) = n^2.
-\]
-
-The values of the function and its successive differences are shown below.
+For \(f(n) = n^2\):
 
 \[
 \begin{array}{c|c|c|c}
 n & f(n) & \Delta f(n) & \Delta^2 f(n) \\
 \hline
-0 & 0  &   &   \\
-1 & 1  & 1 &   \\
-2 & 4  & 3 & 2 \\
-3 & 9  & 5 & 2 \\
-4 & 16 & 7 & 2 \\
-5 & 25 & 9 & 2
+0 & 0  & 1 &   \\
+1 & 1  & 3 & 2 \\
+2 & 4  & 5 & 2 \\
+3 & 9  & 7 & 2 \\
+4 & 16 & 9 & 2 \\
+5 & 25 &   &
 \end{array}
 \]
 
-The first differences form the sequence
-
-\[
-1,3,5,7,9,\dots
-\]
-
-and the second differences are constant:
-
-\[
-2,2,2,\dots
-\]
-
-\begin{remark}
-A constant second difference indicates that the original sequence is
-generated by a polynomial of degree \(2\).
-\end{remark}
-
-\subsection*{General Principle}
-
-\begin{theorem}[Polynomial Detection]
-Let \(f(n)\) be a sequence generated by a polynomial of degree \(d\).
-Then
-
-\[
-\Delta^d f(n)
-\]
-
-is constant, and
-
-\[
-\Delta^{d+1} f(n) = 0.
-\]
-\end{theorem}
-
-\begin{remark}
-This theorem is the discrete analogue of a familiar fact from calculus:
-the \(d\)-th derivative of a degree \(d\) polynomial is constant, and the
-next derivative is zero.
-\end{remark}
-
-\subsection*{Why This Matters}
-
-Difference tables provide a practical method for identifying polynomial
-sequences and determining their degree.  This observation leads to a
-natural basis for polynomial functions in discrete calculus, known as the
-\emph{falling factorial basis}.  In the next section we will see that these
-functions interact particularly well with the difference operator and form
-the foundation for Newton's discrete analogue of the Taylor expansion.
+The second differences are constant (all equal to \(2\)), and the third
+differences are zero.
 
 \begin{center}
 \begin{tikzpicture}[
     every node/.style={font=\small},
-    val/.style={},
     lbl/.style={font=\bfseries}
 ]
-
-% Row labels
-\node[lbl] at (-1.8, 0) {$f(n)$};
-\node[lbl] at (-1.8,-1) {$\Delta f$};
-\node[lbl] at (-1.8,-2) {$\Delta^2 f$};
-
-% Function values for f(n)=n^2
-\node[val] (f0) at (0,0) {$0$};
-\node[val] (f1) at (1.6,0) {$1$};
-\node[val] (f2) at (3.2,0) {$4$};
-\node[val] (f3) at (4.8,0) {$9$};
-\node[val] (f4) at (6.4,0) {$16$};
-\node[val] (f5) at (8.0,0) {$25$};
-
-% First differences
-\node[val] (d0) at (0.8,-1) {$1$};
-\node[val] (d1) at (2.4,-1) {$3$};
-\node[val] (d2) at (4.0,-1) {$5$};
-\node[val] (d3) at (5.6,-1) {$7$};
-\node[val] (d4) at (7.2,-1) {$9$};
-
-% Second differences
-\node[val] (dd0) at (1.6,-2) {$2$};
-\node[val] (dd1) at (3.2,-2) {$2$};
-\node[val] (dd2) at (4.8,-2) {$2$};
-\node[val] (dd3) at (6.4,-2) {$2$};
-
-% Arrows showing subtraction pattern
-\draw[->, thick] (f0) -- (d0);
-\draw[->, thick] (f1) -- (d0);
-
-\draw[->, thick] (f1) -- (d1);
-\draw[->, thick] (f2) -- (d1);
-
-\draw[->, thick] (f2) -- (d2);
-\draw[->, thick] (f3) -- (d2);
-
-\draw[->, thick] (f3) -- (d3);
-\draw[->, thick] (f4) -- (d3);
-
-\draw[->, thick] (f4) -- (d4);
-\draw[->, thick] (f5) -- (d4);
-
-\draw[->, thick] (d0) -- (dd0);
-\draw[->, thick] (d1) -- (dd0);
-
-\draw[->, thick] (d1) -- (dd1);
-\draw[->, thick] (d2) -- (dd1);
-
-\draw[->, thick] (d2) -- (dd2);
-\draw[->, thick] (d3) -- (dd2);
-
-\draw[->, thick] (d3) -- (dd3);
-\draw[->, thick] (d4) -- (dd3);
-
-\end{tikzpicture}
-\end{center}
-
-\begin{remark}
-For the sequence \(f(n)=n^2\), the second differences are constant.
-This indicates that the original sequence is generated by a polynomial
-of degree \(2\). In general, if the \(k\)-th differences are constant,
-then the sequence comes from a polynomial of degree \(k\).
-\end{remark}
-
-\begin{center}
-\begin{tikzpicture}[
-    every node/.style={font=\small},
-    dot/.style={circle, fill=black, inner sep=1.2pt},
-    lbl/.style={font=\bfseries}
-]
-
-% Labels
 \node[lbl] at (-1.8, 0) {$f(n)$};
 \node[lbl] at (-1.8,-1.2) {$\Delta f$};
 \node[lbl] at (-1.8,-2.4) {$\Delta^2 f$};
 
-% Top row
-\node at (0,0) {$0$};
-\node at (1.8,0) {$1$};
-\node at (3.6,0) {$4$};
-\node at (5.4,0) {$9$};
-\node at (7.2,0) {$16$};
-\node at (9.0,0) {$25$};
+\node at (0,0) {$0$}; \node at (1.8,0) {$1$};
+\node at (3.6,0) {$4$}; \node at (5.4,0) {$9$};
+\node at (7.2,0) {$16$}; \node at (9.0,0) {$25$};
 
-% First difference row
-\node at (0.9,-1.2) {$1$};
-\node at (2.7,-1.2) {$3$};
-\node at (4.5,-1.2) {$5$};
-\node at (6.3,-1.2) {$7$};
+\node at (0.9,-1.2) {$1$}; \node at (2.7,-1.2) {$3$};
+\node at (4.5,-1.2) {$5$}; \node at (6.3,-1.2) {$7$};
 \node at (8.1,-1.2) {$9$};
 
-% Second difference row
-\node at (1.8,-2.4) {$2$};
-\node at (3.6,-2.4) {$2$};
-\node at (5.4,-2.4) {$2$};
-\node at (7.2,-2.4) {$2$};
+\node at (1.8,-2.4) {$2$}; \node at (3.6,-2.4) {$2$};
+\node at (5.4,-2.4) {$2$}; \node at (7.2,-2.4) {$2$};
 
-% Guide lines
-\draw[gray] (0, -0.2) -- (0.9, -1.0);
-\draw[gray] (1.8, -0.2) -- (0.9, -1.0);
-\draw[gray] (1.8, -0.2) -- (2.7, -1.0);
-\draw[gray] (3.6, -0.2) -- (2.7, -1.0);
-\draw[gray] (3.6, -0.2) -- (4.5, -1.0);
-\draw[gray] (5.4, -0.2) -- (4.5, -1.0);
-\draw[gray] (5.4, -0.2) -- (6.3, -1.0);
-\draw[gray] (7.2, -0.2) -- (6.3, -1.0);
-\draw[gray] (7.2, -0.2) -- (8.1, -1.0);
-\draw[gray] (9.0, -0.2) -- (8.1, -1.0);
+\draw[gray] (0,-0.2) -- (0.9,-1.0); \draw[gray] (1.8,-0.2) -- (0.9,-1.0);
+\draw[gray] (1.8,-0.2) -- (2.7,-1.0); \draw[gray] (3.6,-0.2) -- (2.7,-1.0);
+\draw[gray] (3.6,-0.2) -- (4.5,-1.0); \draw[gray] (5.4,-0.2) -- (4.5,-1.0);
+\draw[gray] (5.4,-0.2) -- (6.3,-1.0); \draw[gray] (7.2,-0.2) -- (6.3,-1.0);
+\draw[gray] (7.2,-0.2) -- (8.1,-1.0); \draw[gray] (9.0,-0.2) -- (8.1,-1.0);
 
-\draw[gray] (0.9, -1.4) -- (1.8, -2.2);
-\draw[gray] (2.7, -1.4) -- (1.8, -2.2);
-\draw[gray] (2.7, -1.4) -- (3.6, -2.2);
-\draw[gray] (4.5, -1.4) -- (3.6, -2.2);
-\draw[gray] (4.5, -1.4) -- (5.4, -2.2);
-\draw[gray] (6.3, -1.4) -- (5.4, -2.2);
-\draw[gray] (6.3, -1.4) -- (7.2, -2.2);
-\draw[gray] (8.1, -1.4) -- (7.2, -2.2);
-
+\draw[gray] (0.9,-1.4) -- (1.8,-2.2); \draw[gray] (2.7,-1.4) -- (1.8,-2.2);
+\draw[gray] (2.7,-1.4) -- (3.6,-2.2); \draw[gray] (4.5,-1.4) -- (3.6,-2.2);
+\draw[gray] (4.5,-1.4) -- (5.4,-2.2); \draw[gray] (6.3,-1.4) -- (5.4,-2.2);
+\draw[gray] (6.3,-1.4) -- (7.2,-2.2); \draw[gray] (8.1,-1.4) -- (7.2,-2.2);
 \end{tikzpicture}
 \end{center}
 
+\begin{theorem}[Polynomial detection]
+\label{thm:polynomial-detection}
+Let \(f(n)\) be a sequence generated by a polynomial of degree \(d\). Then
+\(\Delta^d f(n)\) is constant, and \(\Delta^{d+1} f(n) = 0\).
+\end{theorem}
 
+\begin{proof}
+Write \(f(n) = a_d n^d + a_{d-1}n^{d-1} + \cdots + a_0\) with \(a_d \ne 0\).
+We show by induction on \(d\) that \(\Delta f\) is a polynomial of degree
+\(d-1\) with leading coefficient \(d\,a_d\).
 
+\emph{Base case} (\(d = 0\)): a constant polynomial has \(\Delta f = 0\). \(\checkmark\)
 
+\emph{Inductive step}: Assume the result holds for all polynomials of degree
+less than \(d\). Then
+\[
+\Delta f(n) = f(n+1)-f(n)
+= a_d\bigl((n+1)^d - n^d\bigr) + \text{(lower-degree terms)}.
+\]
+Expanding \((n+1)^d - n^d = d\,n^{d-1} + \binom{d}{2}n^{d-2} + \cdots\),
+the leading term is \(d\,a_d\,n^{d-1}\). Thus \(\Delta f\) is a polynomial
+of degree \(d-1\) with leading coefficient \(d\,a_d \ne 0\).
 
+By induction, applying \(\Delta\) a further \(d-1\) times yields the
+constant \(\Delta^d f(n) = d!\,a_d\), and one further application gives \(0\).
+\end{proof}
+
+\begin{remark*}[Fully quantified form]
+\(\forall d \in \mathbb{N},\; \forall f : \mathbb{Z}\to\mathbb{R}\) polynomial of degree \(d\):\\
+\(\exists c \in \mathbb{R}: \forall n \in \mathbb{Z},\; \Delta^d f(n) = c\),
+and \(\forall n \in \mathbb{Z},\; \Delta^{d+1}f(n) = 0\).
+\end{remark*}
+
+\begin{remark*}[Consequence]
+Difference tables provide a practical method for identifying polynomial
+sequences and determining their degree. This observation leads naturally to
+the \emph{falling factorial basis}: a family of polynomials that interact
+particularly cleanly with the difference operator, forming the foundation
+for Newton's discrete analogue of the Taylor expansion.
+\end{remark*}

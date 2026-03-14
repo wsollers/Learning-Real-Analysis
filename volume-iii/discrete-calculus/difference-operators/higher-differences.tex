@@ -1,41 +1,47 @@
 % ==================================================
 % Higher Differences
-% Discrete Calculus Notes Stub
+% Discrete Calculus — Difference Operators
 % ==================================================
 
-\section*{Higher Differences}
+\subsection{Higher Differences}
+\label{subsec:higher-differences}
 
-\begin{definition}[Higher Differences]
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Higher Differences)}},
+  fonttitle=\small\bfseries, label=def:higher-differences]
 The \emph{second difference} of \(f\) is defined by
-
 \[
 \Delta^2 f(n) = \Delta(\Delta f(n)).
 \]
-
-More generally,
-
+More generally, the \(k\)-th difference \(\Delta^k f(n)\) denotes the
+\(k\)-fold application of the difference operator, defined recursively by
 \[
-\Delta^k f(n)
+\Delta^0 f = f, \qquad \Delta^k f = \Delta(\Delta^{k-1} f).
 \]
+\end{tcolorbox}
 
-denotes the \(k\)-fold application of the difference operator.
-\end{definition}
+\begin{remark*}[Fully quantified form]
+\(\forall k \in \mathbb{N},\; \forall f : \mathbb{Z}\to\mathbb{R},\;
+\forall n \in \mathbb{Z}:\;
+\Delta^k f(n) := (\underbrace{\Delta \circ \cdots \circ \Delta}_{k})\,f(n)\).
+\end{remark*}
 
 \subsection*{Example}
 
-Let \(f(n) = n^2\).
-
+Let \(f(n) = n^2\). Then
 \[
 \begin{aligned}
 \Delta f(n) &= 2n + 1,\\
-\Delta^2 f(n) &= 2,\\
-\Delta^3 f(n) &= 0.
+\Delta^2 f(n) &= \Delta(2n+1) = 2(n+1)+1 - (2n+1) = 2,\\
+\Delta^3 f(n) &= \Delta(2) = 0.
 \end{aligned}
 \]
 
-\begin{remark}
-Higher differences behave similarly to higher derivatives.
+\begin{remark*}[Analogy with higher derivatives]
+Higher differences behave analogously to higher derivatives.
 For polynomial functions of degree \(d\), the \(d\)-th difference is
-constant and all higher differences are zero.
-\end{remark}
-
+constant and all higher differences are zero — just as the \(d\)-th
+derivative of a degree-\(d\) polynomial is constant and the next
+derivative vanishes.
+\end{remark*}

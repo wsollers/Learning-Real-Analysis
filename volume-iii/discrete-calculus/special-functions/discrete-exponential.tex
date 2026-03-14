@@ -1,9 +1,78 @@
 % ==================================================
 % Discrete Exponential
-% Discrete Calculus Notes Stub
+% Discrete Calculus — Special Functions
 % ==================================================
 
-\section*{Discrete Exponential}
+\section{Special Functions in Discrete Calculus}
+\label{sec:special-functions}
 
-% TODO: Add definitions, theorems, and exposition here.
+Just as continuous calculus has its distinguished special functions —
+the exponential \(e^{ax}\), the trigonometric functions, and the logarithm
+— discrete calculus has analogous functions that behave simply under the
+difference operator.
 
+\subsection*{The Discrete Exponential}
+
+In continuous calculus, the exponential function \(e^{ax}\) is its own
+derivative (up to a constant):
+\[
+\frac{d}{dx} e^{ax} = a\, e^{ax}.
+\]
+
+The analogous function in discrete calculus is the \emph{discrete
+exponential} \((1+a)^n\).
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Discrete Exponential)}},
+  fonttitle=\small\bfseries, label=def:discrete-exponential]
+For a constant \(a \ne -1\) and \(n \in \mathbb{Z}\), the
+\emph{discrete exponential} with base \((1+a)\) is the function
+\[
+E_a(n) = (1+a)^n.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\(\forall a \in \mathbb{R}\setminus\{-1\},\; \forall n \in \mathbb{Z}:\;
+E_a(n) := (1+a)^n\).
+\end{remark*}
+
+\begin{proposition}[Discrete exponential rule]
+\label{prop:discrete-exponential-rule}
+\[
+\Delta\,(1+a)^n = a\,(1+a)^n.
+\]
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\(\forall a \in \mathbb{R}\setminus\{-1\},\; \forall n \in \mathbb{Z}:\;
+(1+a)^{n+1} - (1+a)^n = a(1+a)^n\).
+\end{remark*}
+
+\begin{proof}
+\[
+\Delta\,(1+a)^n = (1+a)^{n+1} - (1+a)^n = (1+a)^n\bigl[(1+a)-1\bigr] = a(1+a)^n.
+\qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Analogy]
+The continuous exponential satisfies \(\tfrac{d}{dx}e^{ax} = ae^{ax}\).
+The discrete exponential satisfies \(\Delta(1+a)^n = a(1+a)^n\). The
+base \(e\) in continuous calculus is replaced by \((1+a)\) in discrete
+calculus. When \(a\) is small, \((1+a) \approx e^a\), recovering the
+continuous limit.
+\end{remark*}
+
+\begin{remark*}[Antiderivative]
+From the proposition, a discrete antiderivative of \(a(1+a)^n\) is
+\((1+a)^n\) itself. Equivalently, a discrete antiderivative of \((1+a)^n\)
+is \(\tfrac{(1+a)^n}{a}\). Combined with the Fundamental Theorem of Finite
+Calculus, this gives the geometric series formula:
+\[
+\sum_{k=0}^{n-1}(1+a)^k
+= \frac{(1+a)^n - 1}{a}
+\qquad (a \ne 0).
+\]
+\end{remark*}

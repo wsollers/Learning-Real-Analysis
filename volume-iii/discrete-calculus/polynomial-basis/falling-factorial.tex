@@ -1,52 +1,52 @@
 % ==================================================
-% Falling Factorial
-% Discrete Calculus Notes Stub
+% Falling Factorials
+% Discrete Calculus — Polynomial Basis
 % ==================================================
 
-\section{Polynomial Basis}
+\section{Polynomial Basis: Falling Factorials}
+\label{sec:falling-factorials}
 
 In ordinary calculus, polynomial functions are naturally expressed using
-the powers
+the monomial powers \(1, x, x^2, x^3, \dots\) because the derivative
+acts simply on them: \(\tfrac{d}{dx} x^n = n x^{n-1}\).
 
+In discrete calculus, however, the difference operator does not behave
+as cleanly on ordinary powers. For example,
 \[
-1, x, x^2, x^3, \dots
+\Delta(n^2) = (n+1)^2 - n^2 = 2n + 1.
 \]
+Although the degree decreases by one, the result contains an extra
+constant term. For this reason it is more natural to work with a
+different family of polynomials — the \emph{falling factorials} —
+which interact with \(\Delta\) exactly as monomials interact with
+\(\tfrac{d}{dx}\).
 
-because derivatives behave simply on these functions:
-
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Falling Factorial)}},
+  fonttitle=\small\bfseries, label=def:falling-factorial]
+For a nonnegative integer \(k\), the \emph{falling factorial} (or
+\emph{falling power}) is defined by
 \[
-\frac{d}{dx} x^n = n x^{n-1}.
+x^{\underline{k}} = x(x-1)(x-2)\cdots(x-k+1)
+\qquad (k \text{ factors}).
 \]
+By convention, \(x^{\underline{0}} = 1\).
+\end{tcolorbox}
 
-In discrete calculus, however, the difference operator does not behave as
-cleanly on ordinary powers.  For example,
+\begin{remark*}[Fully quantified form]
+\(\forall k \in \mathbb{N},\; \forall x \in \mathbb{R}:\;
+x^{\underline{k}} := \displaystyle\prod_{j=0}^{k-1}(x-j)\),
+with \(x^{\underline{0}} := 1\).
+\end{remark*}
 
-\[
-\Delta (n^2) = (n+1)^2 - n^2 = 2n + 1.
-\]
+\begin{remark*}[Relation to factorials]
+When \(x = n \in \mathbb{N}\) and \(k \le n\), the falling factorial
+equals \(\tfrac{n!}{(n-k)!}\). In particular, \(n^{\underline{n}} = n!\).
+Thus falling factorials generalise factorials to arbitrary inputs.
+\end{remark*}
 
-Although the degree decreases, the result contains additional terms.
-For this reason it is convenient to introduce a different basis of
-polynomials that interacts more naturally with the difference operator.
-
-\subsection*{Falling Factorials}
-
-\begin{definition}[Falling Factorial]
-For a nonnegative integer \(k\), the \emph{falling factorial} is defined by
-
-\[
-x^{\underline{k}} = x(x-1)(x-2)\cdots(x-k+1).
-\]
-
-By convention,
-
-\[
-x^{\underline{0}} = 1.
-\]
-\end{definition}
-
-The first few falling factorials are
-
+The first few falling factorials are:
 \[
 \begin{aligned}
 x^{\underline{0}} &= 1, \\
@@ -56,91 +56,96 @@ x^{\underline{3}} &= x(x-1)(x-2).
 \end{aligned}
 \]
 
-\subsection*{Difference of Falling Factorials}
+\subsection*{The Difference Rule for Falling Factorials}
 
-The falling factorials interact very cleanly with the difference operator.
-
-\begin{theorem}
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Difference Rule for Falling Factorials)}},
+  fonttitle=\small\bfseries, label=thm:falling-factorial-rule]
 For \(k \ge 1\),
-
 \[
-\Delta x^{\underline{k}} = k\,x^{\underline{k-1}}.
+\Delta\, x^{\underline{k}} = k\,x^{\underline{k-1}}.
 \]
-\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\(\forall k \in \mathbb{N},\; k \ge 1,\; \forall x \in \mathbb{R}:\;
+(x+1)^{\underline{k}} - x^{\underline{k}} = k\,x^{\underline{k-1}}\).
+\end{remark*}
 
 \begin{proof}
 Observe that
-
 \[
-(x+1)^{\underline{k}} =
-(x+1)x(x-1)\cdots(x-k+2).
+(x+1)^{\underline{k}} = (x+1)\,x\,(x-1)\cdots(x-k+2).
 \]
-
-Then
-
+Therefore
 \[
-\Delta x^{\underline{k}}
-=
-(x+1)^{\underline{k}} - x^{\underline{k}}.
+\Delta\, x^{\underline{k}}
+= (x+1)^{\underline{k}} - x^{\underline{k}}
+= x(x-1)\cdots(x-k+2)\bigl[(x+1)-(x-k+1)\bigr].
 \]
-
-Factoring the common terms gives
-
+The bracket simplifies:
 \[
-\Delta x^{\underline{k}}
-=
-x(x-1)\cdots(x-k+2)\left[(x+1)-(x-k+1)\right].
+(x+1)-(x-k+1) = k.
 \]
-
-Simplifying,
-
+The remaining product \(x(x-1)\cdots(x-k+2)\) is exactly
+\(x^{\underline{k-1}}\). Thus
 \[
-(x+1)-(x-k+1)=k.
-\]
-
-Thus
-
-\[
-\Delta x^{\underline{k}} = k\,x^{\underline{k-1}}.
+\Delta\, x^{\underline{k}} = k\,x^{\underline{k-1}}. \qedhere
 \]
 \end{proof}
 
-\begin{remark}
-This formula closely resembles the familiar derivative rule
+\begin{remark*}[Mirror of the power rule]
+This formula exactly mirrors the continuous power rule
+\(\tfrac{d}{dx}x^k = kx^{k-1}\). Because of this clean behaviour under
+\(\Delta\), falling factorials form the natural polynomial basis for
+discrete calculus.
+\end{remark*}
 
+\begin{remark*}[Antiderivative rule]
+The theorem also yields the discrete antiderivative rule: since
+\(\Delta\,x^{\underline{k}} = k\,x^{\underline{k-1}}\), we have
 \[
-\frac{d}{dx} x^k = kx^{k-1}.
+\Delta\!\left(\frac{x^{\underline{k+1}}}{k+1}\right) = x^{\underline{k}}.
+\]
+Thus \(\tfrac{x^{\underline{k+1}}}{k+1}\) is a discrete antiderivative
+of \(x^{\underline{k}}\), mirroring the continuous rule
+\(\int x^k\,dx = \tfrac{x^{k+1}}{k+1}\).
+\end{remark*}
+
+\subsection*{Summary Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{c|c}
+\(f(x)\) & \(\Delta f(x)\) \\
+\hline
+\(x^{\underline{1}} = x\) & \(1\) \\
+\(x^{\underline{2}} = x(x-1)\) & \(2x\) \\
+\(x^{\underline{3}} = x(x-1)(x-2)\) & \(3x(x-1)\) \\
+\(x^{\underline{4}} = x(x-1)(x-2)(x-3)\) & \(4x(x-1)(x-2)\)
+\end{tabular}
+\end{center}
+
+\subsection*{Polynomial Representation in the Falling Factorial Basis}
+
+Every polynomial can be written as a linear combination of falling
+factorials:
+\[
+f(x)
+=
+c_0
++ c_1\, x
++ c_2\, x^{\underline{2}}
++ c_3\, x^{\underline{3}}
++ \cdots
++ c_n\, x^{\underline{n}}.
 \]
 
-Because of this simple behavior under the difference operator,
-falling factorials form the natural polynomial basis for discrete calculus.
-\end{remark}
-
-\subsection*{Polynomial Representation}
-
-Every polynomial function can be written as a linear combination of
-falling factorials:
-
-\[
-f(x) =
-a_0
-+
-a_1 x
-+
-a_2 x^{\underline{2}}
-+
-a_3 x^{\underline{3}}
-+
-\cdots
-+
-a_n x^{\underline{n}}.
-\]
-
-This representation plays the same role in discrete calculus that
-ordinary power series play in continuous calculus.
-
-\begin{remark}
-Using the falling factorial basis greatly simplifies computations
-involving finite differences and leads naturally to the
-\emph{Newton series}, the discrete analogue of the Taylor expansion.
-\end{remark}
+\begin{remark*}[Role in Newton's expansion]
+This representation plays the same role in discrete calculus that the
+Taylor expansion plays in continuous calculus. The coefficients \(c_k\)
+are determined by the successive finite differences of \(f\) evaluated
+at \(0\): \(c_k = \Delta^k f(0) / k!\). This leads directly to Newton's
+forward difference expansion, developed in the Expansions section.
+\end{remark*}

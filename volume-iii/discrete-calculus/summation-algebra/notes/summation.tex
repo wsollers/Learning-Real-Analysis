@@ -1,432 +1,162 @@
-\section*{Algebra of Summations}
-\addcontentsline{toc}{section}{Algebra of Summations}
+% ==================================================
+% Algebra of Summations
+% Discrete Calculus
+% ==================================================
 
-The following rules describe the basic algebraic manipulations of summations.
+\section{Algebra of Summations}
+\label{sec:summation-algebra}
+
+Having established the difference operator and the telescoping identity,
+we now collect the basic algebraic rules for manipulating summations.
 These identities allow sums to be combined, split, and reindexed while
 preserving their value.
 
-\begin{center}
-\renewcommand{\arraystretch}{1.6}
-\begin{tabular}{|l|c|}
-\hline
-\textbf{Algebra Rule} & \textbf{Identity} \\
-\hline
-
-Linearity &
-\[
-\sum_{k=a}^{b} (a f(k) + b g(k))
-=
-a \sum_{k=a}^{b} f(k)
-+
-b \sum_{k=a}^{b} g(k)
-\]
-\\
-\hline
-
-Splitting &
-\[
-\sum_{k=a}^{c} f(k)
-=
-\sum_{k=a}^{b} f(k)
-+
-\sum_{k=b+1}^{c} f(k)
-\]
-\\
-\hline
-
-Index Rename &
-\[
-\sum_{k=a}^{b} f(k)
-=
-\sum_{i=a}^{b} f(i)
-\]
-\\
-\hline
-
-Index Shift &
-\[
-\sum_{k=a}^{b} f(k)
-=
-\sum_{k=a+1}^{b+1} f(k-1)
-\]
-\\
-\hline
-
-Constant Sum &
-\[
-\sum_{k=a}^{b} c
-=
-(b-a+1)c
-\]
-\\
-\hline
-
-Empty Sum &
-\[
-\sum_{k=a}^{b} f(k) = 0
-\qquad \text{if } a>b
-\]
-\\
-\hline
-
-Nested Sums &
-\[
-\sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}
-=
-\sum_{j=1}^{m}\sum_{i=1}^{n} a_{ij}
-\quad (\text{when the sums are independent})
-\]
-\\
-\hline
-
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Summation Algebra — Quick Reference}},
+  fonttitle=\small\bfseries]
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}ll@{}}
+\textbf{Linearity} & $\sum(af+bg) = a\sum f + b\sum g$ \\
+\textbf{Splitting} & $\sum_a^c = \sum_a^b + \sum_{b+1}^c$ \\
+\textbf{Index shift} & $\sum_{k=a}^{b} f(k) = \sum_{k=a+1}^{b+1} f(k-1)$ \\
+\textbf{Constant sum} & $\sum_{k=a}^{b} c = (b-a+1)c$ \\
+\textbf{Empty sum} & $\sum_{k=a}^{b} f(k) = 0$ when $a > b$ \\
+\textbf{Nested sums} & $\sum_i\sum_j a_{ij} = \sum_j\sum_i a_{ij}$ (independent limits) \\
 \end{tabular}
-\end{center}
-
-\begin{remark}
-These rules form the basic algebraic toolkit for manipulating summations.
-They are used throughout discrete mathematics, combinatorics, and discrete
-calculus, particularly when working with telescoping sums, finite
-differences, and summation formulas.
-\end{remark}
-
-
-
-
-\section{Algebra of Summations}
-
-The following rules describe the basic algebraic manipulations of summations.
-They allow sums to be combined, split, and reindexed while preserving their value.
-These identities form the fundamental algebraic toolkit used throughout
-discrete mathematics and discrete calculus.
+\end{tcolorbox}
 
 \subsection*{Linearity}
 
-Summation is a linear operator.  For functions \(f\) and \(g\) and constants
-\(a\) and \(b\),
-
+Summation is a linear operator. For functions \(f\) and \(g\) and
+constants \(a\) and \(b\),
 \[
-\sum_{k=a}^{b} (a f(k) + b g(k))
+\sum_{k=m}^{n} (a\,f(k) + b\,g(k))
 =
-a \sum_{k=a}^{b} f(k)
+a \sum_{k=m}^{n} f(k)
 +
-b \sum_{k=a}^{b} g(k).
+b \sum_{k=m}^{n} g(k).
 \]
+This allows constants to be factored out of a sum and sums of expressions
+to be separated.
 
-\begin{remark}
-This property allows constants to be factored out of a sum and sums of
-expressions to be separated into multiple sums.
-\end{remark}
-
-\begin{example}
-\[
-\sum_{k=1}^{n} (2k + 3)
-=
-2\sum_{k=1}^{n} k
-+
-3\sum_{k=1}^{n} 1.
-\]
-\end{example}
+\begin{example*}
+\(\displaystyle\sum_{k=1}^{n} (2k + 3)
+= 2\sum_{k=1}^{n} k + 3\sum_{k=1}^{n} 1.\)
+\end{example*}
 
 \subsection*{Splitting a Sum}
 
-A sum over an interval may be divided into smaller pieces:
-
+A sum over an interval may be divided into pieces:
 \[
 \sum_{k=a}^{c} f(k)
 =
 \sum_{k=a}^{b} f(k)
 +
 \sum_{k=b+1}^{c} f(k)
+\qquad \text{whenever } a \le b < c.
 \]
 
-whenever \(a \le b < c\).
-
-\begin{remark}
-This rule allows a long summation interval to be broken into parts.
-It is frequently used when working with telescoping sums.
-\end{remark}
-
-\begin{example}
-\[
-\sum_{k=1}^{10} f(k)
-=
-\sum_{k=1}^{5} f(k)
-+
-\sum_{k=6}^{10} f(k).
-\]
-\end{example}
+\begin{example*}
+\(\displaystyle\sum_{k=1}^{10} f(k)
+= \sum_{k=1}^{5} f(k) + \sum_{k=6}^{10} f(k).\)
+\end{example*}
 
 \subsection*{Index Renaming}
 
-The index of summation is a \emph{dummy variable}. Its name does not affect
-the value of the sum.
-
+The index of summation is a \emph{dummy variable}:
 \[
 \sum_{k=a}^{b} f(k)
 =
 \sum_{i=a}^{b} f(i).
 \]
-
-\begin{remark}
-This rule is useful when manipulating expressions containing several sums,
+This is useful when manipulating expressions containing several sums,
 since the index variable can be renamed to avoid conflicts.
-\end{remark}
 
 \subsection*{Index Shifting}
 
-It is often convenient to shift the index of summation.
-
+It is often convenient to shift the summation index:
 \[
 \sum_{k=a}^{b} f(k)
 =
 \sum_{k=a+1}^{b+1} f(k-1).
 \]
-
-\begin{remark}
-Index shifting allows sums to be aligned so that terms cancel or combine
-properly. This technique appears frequently in proofs involving
+Index shifting allows sums to be aligned so that terms cancel or
+combine properly. It appears frequently in proofs involving
 recurrence relations and discrete calculus identities.
-\end{remark}
 
-\begin{example}
-\[
-\sum_{k=0}^{n} f(k+1)
-=
-\sum_{k=1}^{n+1} f(k).
-\]
-\end{example}
+\begin{example*}
+\(\displaystyle\sum_{k=0}^{n} f(k+1) = \sum_{k=1}^{n+1} f(k).\)
+\end{example*}
 
 \subsection*{Constant Sum}
 
-If the summand does not depend on the index, the sum simply counts the
-number of terms:
-
+If the summand does not depend on the index, the sum counts terms:
 \[
-\sum_{k=a}^{b} c
-=
-(b-a+1)c.
+\sum_{k=a}^{b} c = (b-a+1)\,c.
 \]
+The quantity \(b-a+1\) is the number of integers between \(a\) and \(b\),
+inclusive.
 
-\begin{remark}
-The quantity \(b-a+1\) represents the number of integers between
-\(a\) and \(b\), inclusive.
-\end{remark}
-
-\begin{example}
-\[
-\sum_{k=3}^{7} 5 = 5+5+5+5+5 = 5(5) = 25.
-\]
-\end{example}
+\begin{example*}
+\(\displaystyle\sum_{k=3}^{7} 5 = 5 \cdot 5 = 25.\)
+\end{example*}
 
 \subsection*{Empty Sum}
 
 If the upper limit is smaller than the lower limit, the sum contains no
 terms. By convention,
-
 \[
-\sum_{k=a}^{b} f(k) = 0
-\qquad \text{whenever } a>b.
+\sum_{k=a}^{b} f(k) = 0 \qquad \text{whenever } a>b.
 \]
-
-\begin{remark}
 This convention simplifies many algebraic identities and allows formulas
-to remain valid without requiring special cases.
-\end{remark}
+to remain valid without special cases.
 
 \subsection*{Nested Sums}
 
-Summations may be nested in a manner similar to nested loops in
-programming:
-
+Summations may be nested:
 \[
-\sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}.
+\sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}
+= \sum_{i=1}^{n} \Bigl(a_{i1}+a_{i2}+\cdots+a_{im}\Bigr).
 \]
-
-The inner sum is evaluated first:
-
-\[
-\sum_{i=1}^{n} \left(a_{i1}+a_{i2}+\cdots+a_{im}\right).
-\]
-
-When the limits of summation are independent, the order of summation may
-be exchanged:
-
+When the limits are independent, the order may be exchanged:
 \[
 \sum_{i=1}^{n}\sum_{j=1}^{m} a_{ij}
 =
 \sum_{j=1}^{m}\sum_{i=1}^{n} a_{ij}.
 \]
 
-\begin{remark}
-This property is analogous to exchanging the order of integration in
-double integrals.
-\end{remark}
-
-
-
-
-
-
-
-\section*{Summation Manipulation Flow Chart}
-
-\begin{center}
-\begin{tikzpicture}[
-node distance=3cm,
-box/.style={draw, rounded corners, align=center, minimum width=3cm, minimum height=1cm},
-arrow/.style={->, thick}
-]
-
-\node[box] (sum) {$\displaystyle \sum_{k=a}^{b} f(k)$};
-
-\node[box, above=of sum] (linear) {Linearity\\
-$\sum (af+bg)=a\sum f+b\sum g$};
-
-\node[box, left=of sum] (split) {Split Interval\\
-$\sum_a^c = \sum_a^b + \sum_{b+1}^c$};
-
-\node[box, right=of sum] (shift) {Index Shift\\
-$\sum f(k)=\sum f(k-1)$};
-
-\node[box, below=of sum] (rename) {Rename Index\\
-$\sum_k f(k)=\sum_i f(i)$};
-
-\node[box, below left=of sum] (constant) {Constant Sum\\
-$\sum c=(b-a+1)c$};
-
-\node[box, below right=of sum] (nested) {Nested Sums\\
-$\sum_i\sum_j a_{ij}=\sum_j\sum_i a_{ij}$};
-
-\draw[arrow] (sum) -- (linear);
-\draw[arrow] (sum) -- (split);
-\draw[arrow] (sum) -- (shift);
-\draw[arrow] (sum) -- (rename);
-\draw[arrow] (sum) -- (constant);
-\draw[arrow] (sum) -- (nested);
-
-\end{tikzpicture}
-\end{center}
-
-\begin{remark}
-Each arrow represents a transformation that preserves the value of the
-summation.  These manipulation rules form the basic algebra of summations
-and are used constantly when simplifying expressions and proving
-identities in discrete mathematics and discrete calculus.
-\end{remark}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\begin{remark*}[Analogy with double integrals]
+Exchanging summation order is the discrete analogue of Fubini's theorem
+for iterated integrals.
+\end{remark*}
 
 \section{Common Summation Identities}
+\label{sec:common-summation-identities}
 
 Many sums that appear in discrete mathematics and discrete calculus have
-closed-form expressions.  The following identities are among the most
-frequently used and are worth memorizing.
+closed-form expressions. The following identities are among the most
+frequently encountered.
 
-\begin{center}
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Common Summation Identities}},
+  fonttitle=\small\bfseries]
 \renewcommand{\arraystretch}{1.7}
-\begin{tabular}{|l|c|}
-\hline
-\textbf{Summation} & \textbf{Closed Form} \\
-\hline
-
-Constant Sum &
-\[
-\sum_{k=1}^{n} 1
-=
-n
-\]
-\\
-\hline
-
-Sum of First Integers &
-\[
-\sum_{k=1}^{n} k
-=
-\frac{n(n+1)}{2}
-\]
-\\
-\hline
-
-Sum of Squares &
-\[
-\sum_{k=1}^{n} k^2
-=
-\frac{n(n+1)(2n+1)}{6}
-\]
-\\
-\hline
-
-Sum of Cubes &
-\[
-\sum_{k=1}^{n} k^3
-=
-\left(\frac{n(n+1)}{2}\right)^2
-\]
-\\
-\hline
-
-Arithmetic Series &
-\[
-\sum_{k=0}^{n} (a + kd)
-=
-(n+1)a + \frac{dn(n+1)}{2}
-\]
-\\
-\hline
-
-Geometric Series &
-\[
-\sum_{k=0}^{n} r^k
-=
-\frac{1-r^{n+1}}{1-r}
-\quad (r\neq 1)
-\]
-\\
-\hline
-
-Weighted Geometric Series &
-\[
-\sum_{k=0}^{n} k r^k
-=
-\frac{r\bigl(1-(n+1)r^n+nr^{n+1}\bigr)}{(1-r)^2}
-\quad (r\neq 1)
-\]
-\\
-\hline
-
-Binomial Identity &
-\[
-\sum_{k=0}^{n} \binom{n}{k}
-=
-2^n
-\]
-\\
-\hline
-
+\begin{tabular}{@{}ll@{}}
+$\displaystyle\sum_{k=1}^{n} 1 = n$ &
+$\displaystyle\sum_{k=1}^{n} k = \dfrac{n(n+1)}{2}$ \\[10pt]
+$\displaystyle\sum_{k=1}^{n} k^2 = \dfrac{n(n+1)(2n+1)}{6}$ &
+$\displaystyle\sum_{k=1}^{n} k^3 = \left(\dfrac{n(n+1)}{2}\right)^2$ \\[10pt]
+$\displaystyle\sum_{k=0}^{n} r^k = \dfrac{1-r^{n+1}}{1-r}\;\;(r\neq 1)$ &
+$\displaystyle\sum_{k=0}^{n}\binom{n}{k} = 2^n$
 \end{tabular}
-\end{center}
+\end{tcolorbox}
 
-\begin{remark}
-These identities appear frequently in discrete mathematics, combinatorics,
-and discrete calculus.  In particular, polynomial summation formulas play
-an important role when working with finite differences and Newton series,
-while geometric sums arise naturally in recurrence relations and generating
-functions.
-\end{remark}
+\begin{remark*}[Role in discrete calculus]
+Polynomial summation formulas play an important role when working with
+finite differences and Newton series, while geometric sums arise naturally
+in recurrence relations and generating functions. Many of these identities
+can be derived systematically using the falling factorial basis and
+the Fundamental Theorem of Finite Calculus introduced later in this chapter.
+\end{remark*}

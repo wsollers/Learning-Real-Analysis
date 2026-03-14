@@ -1,94 +1,82 @@
 % ==================================================
 % Telescoping Identity
-% Discrete Calculus Notes Stub
+% Discrete Calculus
 % ==================================================
 
-\subsection*{Telescoping Identity}
+\subsection*{The Telescoping Identity}
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Telescoping Identity)}},
+  fonttitle=\small\bfseries, label=thm:telescoping]
+For any function \(f : \mathbb{Z} \to \mathbb{R}\) and integers \(a \le b\),
+\[
+\sum_{k=a}^{b-1} (f(k+1) - f(k)) = f(b) - f(a).
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\(\forall f : \mathbb{Z}\to\mathbb{R},\; \forall a,b \in \mathbb{Z},\; a \le b:\;
+\displaystyle\sum_{k=a}^{b-1}(f(k+1)-f(k)) = f(b)-f(a)\).
+\end{remark*}
+
+\begin{proof}
+Expanding the sum gives
+\[
+\begin{aligned}
+(f(a+1)-f(a)) &+ (f(a+2)-f(a+1)) \\
+              &+ \cdots + (f(b)-f(b-1)).
+\end{aligned}
+\]
+Every intermediate term \(f(a+1), f(a+2), \dots, f(b-1)\) appears once
+with a positive sign and once with a negative sign, so they all cancel.
+The remaining terms are \(f(b)\) and \(-f(a)\), giving \(f(b)-f(a)\).
+\end{proof}
+
+\subsection*{Cancellation Pattern}
+
+The cancellation can be seen explicitly:
 \begin{center}
 \begin{tikzpicture}[
 node distance=1.6cm,
 every node/.style={font=\small}
 ]
-
 \node (t1) {$f(a+1)-f(a)$};
-
 \node (t2) [below of=t1] {$f(a+2)-f(a+1)$};
-
 \node (t3) [below of=t2] {$f(a+3)-f(a+2)$};
-
 \node (vdots) [below of=t3] {$\vdots$};
-
 \node (t4) [below of=vdots] {$f(b)-f(b-1)$};
 
-\node[right=3cm of t1] (c1) {$-f(a)$};
-\node[right=3cm of t2] (c2) {$\cancel{f(a+1)}-\cancel{f(a+1)}$};
-\node[right=3cm of t3] (c3) {$\cancel{f(a+2)}-\cancel{f(a+2)}$};
-\node[right=3cm of vdots] (c4) {$\vdots$};
-\node[right=3cm of t4] (c5) {$f(b)$};
-
+\node[right=3.2cm of t1] {$-f(a)$};
+\node[right=3.2cm of t2] {$\cancel{f(a+1)}-\cancel{f(a+1)}$};
+\node[right=3.2cm of t3] {$\cancel{f(a+2)}-\cancel{f(a+2)}$};
+\node[right=3.2cm of vdots] {$\vdots$};
+\node[right=3.2cm of t4] {$f(b)$};
 \end{tikzpicture}
 \end{center}
 
-\begin{remark}
-Each intermediate term appears twice in the expanded sum:
-once with a positive sign and once with a negative sign.
-These pairs cancel, leaving only the first and last terms.
-This cancellation pattern gives rise to the name
-\emph{telescoping sum}.
-\end{remark}
-
-
-\begin{theorem}
-For any function \(f\),
-
-\[
-\sum_{k=a}^{b-1} (f(k+1) - f(k)) = f(b) - f(a).
-\]
-\end{theorem}
-
-\begin{proof}
-Expanding the sum gives
-
-\[
-\begin{aligned}
-(f(a+1)-f(a)) &+ (f(a+2)-f(a+1)) \\
-&+ \cdots + (f(b)-f(b-1)).
-\end{aligned}
-\]
-
-Every intermediate term appears once with a positive sign and once with
-a negative sign, so they cancel.  The remaining terms are \(f(b)\) and
-\(-f(a)\), giving
-
-\[
-f(b)-f(a).
-\]
-\end{proof}
+\begin{remark*}[Intuition]
+Each intermediate term appears twice in the expanded sum: once with a
+positive sign and once with a negative sign. These pairs cancel, leaving
+only the first and last terms.
+\end{remark*}
 
 \subsection*{Operator Form}
 
-Using the forward difference operator
-
-\[
-\Delta f(n) = f(n+1) - f(n),
-\]
-
-the telescoping identity may be written compactly as
-
+Using the forward difference operator \(\Delta f(n) = f(n+1) - f(n)\),
+the telescoping identity takes the compact form
 \[
 \sum_{k=a}^{b-1} \Delta f(k) = f(b) - f(a).
 \]
 
-\begin{remark}
-This identity is the discrete analogue of the
-\emph{Fundamental Theorem of Calculus},
-
+\begin{remark*}[Discrete Fundamental Theorem of Calculus]
+This identity is the discrete analogue of the Fundamental Theorem of
+Calculus:
 \[
 \int_a^b f'(x)\,dx = f(b)-f(a).
 \]
-
-It reveals a deep relationship between summation and the difference
-operator and forms the foundation for the concept of the
-\emph{discrete antiderivative}, which we introduce next.
-\end{remark}
+It reveals a deep relationship between the difference operator and
+summation: summation is the inverse of differencing, just as integration
+is the inverse of differentiation. This connection is made precise in the
+next section through the concept of the \emph{discrete antiderivative}.
+\end{remark*}
