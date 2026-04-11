@@ -2,7 +2,7 @@
 #include "AnalysisPanel.hpp"
 #include <imgui.h>
 
-namespace ndde::app {
+namespace ndde {
 
 void AnalysisPanel::draw(const HoverResult& hover, ImFont* math_font) {
     draw_control_panel(hover);

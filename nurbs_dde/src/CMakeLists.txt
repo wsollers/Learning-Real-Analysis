@@ -14,6 +14,16 @@ set(APP_SOURCES
         app/AnalysisPanel.hpp
         app/AnalysisPanel.cpp
         app/HoverResult.hpp
+        geometry/ICurve.hpp
+        core/Types.hpp
+        core/EngineContext.hpp
+        app/AppConfig.hpp
+        core/EngineContext.cpp
+        renderer/VulkanRenderer.hpp
+        renderer/VulkanRenderer.cpp
+        core/BufferManager.hpp
+        core/BufferManager.cpp
+        geometry/ICurve.cpp
 )
 
 add_executable(nurbs_dde ${APP_SOURCES})

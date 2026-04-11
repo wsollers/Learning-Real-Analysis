@@ -1,5 +1,6 @@
 // renderer/VulkanContext.cpp
-#include "VulkanContext.hpp"
+#include "VulkanContext.hpp"  // volk.h comes in via this
+#include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
 
@@ -66,6 +67,7 @@ void VulkanContext::init(GLFWwindow* window) {
 
     vkb::Instance vkb_inst = inst_ret.value();
     m_instance       = vkb_inst.instance;
+    volkLoadInstance(m_instance);
     m_debug_messenger = vkb_inst.debug_messenger;
 
     // Surface ──────────────────────────────────────────────────────────────────

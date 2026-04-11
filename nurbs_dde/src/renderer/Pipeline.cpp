@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "volk.h"
+
 namespace ndde::renderer {
 
 // ── Destructor ─────────────────────────────────────────────────────────────────

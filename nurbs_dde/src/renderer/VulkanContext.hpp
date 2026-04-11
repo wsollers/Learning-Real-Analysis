@@ -2,8 +2,9 @@
 // renderer/VulkanContext.hpp
 // Owns instance, device, queues — built with vk-bootstrap.
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+// DO NOT use GLFW_INCLUDE_VULKAN — volk owns the Vulkan headers
+#include <volk.h>
+#include <GLFW/glfw3.h>   // after volk, without GLFW_INCLUDE_VULKAN
 #include <VkBootstrap.h>
 #include <cstdint>
 

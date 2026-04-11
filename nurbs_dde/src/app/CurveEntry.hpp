@@ -10,8 +10,7 @@
 
 #include "HoverResult.hpp"
 
-namespace ndde::app {
-
+namespace ndde {
 enum class CurveType { Parabola, Hyperbola };
 
 struct CurveEntry {

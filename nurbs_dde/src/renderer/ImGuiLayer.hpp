@@ -7,7 +7,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <string>
 #include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
+#include <volk.h>
 #include "imgui.h"
 
 namespace ndde::renderer {

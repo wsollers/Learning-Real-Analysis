@@ -1,0 +1,50 @@
+% =========================================================
+% Figure 1: Secant converging to tangent line
+% Path: volume-iii/analysis/differentiation/notes/figure-1.tex
+% =========================================================
+% Usage: \input{figure-1.tex} from notes-geometric.tex
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=1.5]
+  % Axes
+  \draw[->] (-0.5,0) -- (3,0) node[right] {$x$};
+  \draw[->] (0,-0.5) -- (0,3) node[above] {$f(x)$};
+
+  % Curve f(x) = 0.4x^2 + 0.2
+  \draw[thick, blue!70!black]
+    plot [domain=0.2:2.5, smooth] (\x, {0.4*\x*\x + 0.2});
+
+  % Points c and x on curve
+  \coordinate (C) at (0.8, {0.4*0.8*0.8 + 0.2});
+  \coordinate (X) at (2.2, {0.4*2.2*2.2 + 0.2});
+
+  % Secant line through C and X (slope = (2.136-0.456)/(2.2-0.8) = 1.68/1.4 = 1.2)
+  \draw[red!70!black, thick] (0.1, {0.456 - 1.2*0.7}) -- (2.8, {0.456 + 1.2*2.0})
+    node[right] {secant};
+
+  % Tangent at c (slope = 0.8*0.8 = 0.64, value at c = 0.456)
+  \draw[green!50!black, thick]
+    (0.1, {0.456 - 0.64*0.7}) -- (2.4, {0.456 + 0.64*1.6})
+    node[right] {tangent at $c$};
+
+  % Vertical dashed projections
+  \draw[dashed] (0.8, 0) node[below] {$c$} -- (C);
+  \draw[dashed] (2.2, 0) node[below] {$x$} -- (X);
+  \draw[dashed] (C) -- (0, {0.4*0.8*0.8 + 0.2}) node[left] {$f(c)$};
+  \draw[dashed] (X) -- (0, {0.4*2.2*2.2 + 0.2}) node[left] {$f(x)$};
+
+  % Delta markers
+  \draw[|<->|] (0.8,-0.35) -- node[below] {$\Delta x$} (2.2,-0.35);
+  \draw[|<->|] (2.7, {0.4*0.8*0.8+0.2}) --
+    node[right] {$\Delta y$} (2.7, {0.4*2.2*2.2+0.2});
+
+  % Filled points
+  \fill (C) circle (1.5pt) node[above left] {$(c,f(c))$};
+  \fill (X) circle (1.5pt) node[above left] {$(x,f(x))$};
+\end{tikzpicture}
+\caption{The secant line through $(c,f(c))$ and $(x,f(x))$ has slope
+  $\Delta y/\Delta x$. As $x \to c$, the secant line rotates toward the
+  tangent line at $(c,f(c))$, whose slope is $f'(c)$.}
+\label{fig:secant-tangent}
+\end{figure}

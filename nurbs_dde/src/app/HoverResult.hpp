@@ -5,7 +5,7 @@
 #ifndef NURBS_DDE_HOVERRESULT_HPP
 #define NURBS_DDE_HOVERRESULT_HPP
 
-namespace ndde::app {
+namespace ndde {
 
     struct HoverResult {
         bool  hit       = false;

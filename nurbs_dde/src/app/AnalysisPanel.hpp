@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include "app/HoverResult.hpp"
 
-namespace ndde::app {
+namespace ndde {
 
     class AnalysisPanel {
     public:

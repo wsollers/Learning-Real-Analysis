@@ -33,6 +33,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(vk_bootstrap)
 
+# Volk (must match your Vulkan SDK / vk-bootstrap version)
+FetchContent_Declare(
+        volk
+        GIT_REPOSITORY https://github.com/zeux/volk.git
+        GIT_TAG        1.3.295
+)
+FetchContent_MakeAvailable(volk)
+
 # GLFW
 FetchContent_Declare(
         glfw
@@ -93,7 +101,8 @@ target_include_directories(imgui PUBLIC
 # imgui's Vulkan backend needs the Vulkan headers and GLFW headers.
 # Link glfw so the GLFW backend can find glfw3.h without an explicit -I.
 find_package(Vulkan REQUIRED)
-target_link_libraries(imgui PUBLIC Vulkan::Vulkan glfw)
+target_compile_definitions(imgui PUBLIC IMGUI_IMPL_VULKAN_USE_VOLK)
+target_link_libraries(imgui PUBLIC Vulkan::Vulkan volk glfw)
 
 # imgui_impl_vulkan.h uses dynamic dispatch by default (loads vkGetInstanceProcAddr
 # at runtime).  Define IMGUI_IMPL_VULKAN_NO_PROTOTYPES only if you want to load
@@ -105,6 +114,11 @@ target_link_libraries(imgui PUBLIC Vulkan::Vulkan glfw)
 
 # ── Shader compilation ─────────────────────────────────────────────────────────
 include(CompileShaders)
+
+# Volk is a meta-loader for Vulkan function pointers.  It requires the caller to
+# define VK_NO_PROTOTYPES before including the Vulkan headers, so that it can load
+# all function pointers at runtime instead of relying on static linking.
+add_compile_definitions(VK_NO_PROTOTYPES)
 
 # ── Sub-targets ───────────────────────────────────────────────────────────────
 add_subdirectory(src)
