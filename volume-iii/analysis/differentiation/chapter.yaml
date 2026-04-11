@@ -11,5 +11,178 @@ volume: volume-iii
 path: volume-iii/analysis/differentiation
 
 entries:
-  # Add entries here as notes are written.
-  # Schema: see DESIGN.md §10-yaml
+
+  # =======================================================
+  # Section: Derivative Definition
+  # source: notes/derivative-definition/notes-derivative-definition.tex
+  # =======================================================
+
+  def:derivative-at-point:
+    name: Derivative at a Point
+    type: definition
+    section: Derivative Definition
+    source: notes/derivative-definition/notes-derivative-definition.tex
+
+    q: "What is the derivative of $f$ at a point $c$?"
+    a: >
+      $f'(c) = \lim_{x \to c} \dfrac{f(x) - f(c)}{x - c}$,
+      provided this limit exists as a finite real number.
+      Equivalently, $f'(c) = \lim_{h \to 0} \dfrac{f(c+h) - f(c)}{h}$.
+    hint: >
+      The difference quotient is the slope of the secant line through
+      $(c, f(c))$ and $(x, f(x))$. The derivative is the limit of
+      those slopes as $x \to c$ — the slope of the tangent line.
+    neg: >
+      $f(x) = |x|$ is not differentiable at $0$: the left difference
+      quotient limits to $-1$ and the right to $+1$, so no limit exists.
+
+    fqf: >
+      $f$ is differentiable at $c$ with derivative $L$ if and only if
+      there exists $L \in \mathbb{R}$ such that for every $\varepsilon > 0$
+      there exists $\delta > 0$ such that for every $x \in I$ with
+      $0 < |x - c| < \delta$, one has
+      $\left|\frac{f(x)-f(c)}{x-c} - L\right| < \varepsilon$.
+    predicate: "DerivativeAt(f, c, L) :iff FunctionLimit(lambda x. (f(x)-f(c))/(x-c), c, L)"
+    neg_formal: >
+      \forall L \in \mathbb{R},\; \exists \varepsilon > 0,\;
+      \forall \delta > 0,\; \exists x \in I,\;
+      0 < |x-c| < \delta
+      \;\land\;
+      \left|\frac{f(x)-f(c)}{x-c} - L\right| \ge \varepsilon.
+    contra: ~
+
+    depends_on: [def:function-limit]
+    implies:
+      - def:differentiable-on-interval
+      - thm:differentiable-implies-continuous
+      - thm:caratheodory-factorization
+    equivalent_to: []
+
+    tags: [differentiation, limit, secant-tangent, difference-quotient]
+    category: differentiation
+    aliases: [derivative, instantaneous rate of change, tangent slope]
+    proof_type: definition
+    method: ~
+
+
+  def:differentiable-on-interval:
+    name: Differentiable on an Interval
+    type: definition
+    section: Derivative Definition
+    source: notes/derivative-definition/notes-derivative-definition.tex
+
+    q: "What does it mean for $f$ to be differentiable on an interval?"
+    a: >
+      On an open interval $(a,b)$: $f$ is differentiable at every point.
+      On a closed interval $[a,b]$: differentiable on $(a,b)$, plus the
+      right derivative at $a$ and left derivative at $b$ both exist.
+    hint: >
+      Open interval — no endpoint conditions.
+      Closed interval — one-sided derivatives required at the endpoints.
+    neg: >
+      $f(x) = |x|$ is differentiable on $(0,\infty)$ and on $(-\infty,0)$
+      but not on any open interval containing $0$.
+
+    fqf: >
+      $f$ is differentiable on $(a,b)$ if and only if for every $c \in (a,b)$,
+      $\operatorname{DerivativeAt}(f, c, f'(c))$ holds.
+    predicate: "DifferentiableAt(f, c) :iff exists L in R, DerivativeAt(f, c, L)"
+    neg_formal: >
+      \exists c \in I,\; \lnot\operatorname{DifferentiableAt}(f, c).
+    contra: ~
+
+    depends_on: [def:derivative-at-point]
+    implies: []
+    equivalent_to: []
+
+    tags: [differentiation, interval]
+    category: differentiation
+    aliases: [differentiable function]
+    proof_type: definition
+    method: ~
+
+
+  thm:differentiable-implies-continuous:
+    name: Differentiable Implies Continuous
+    type: theorem
+    section: Derivative Definition
+    source: notes/derivative-definition/notes-derivative-definition.tex
+
+    q: "What does differentiability at $c$ guarantee about continuity?"
+    a: >
+      If $f$ is differentiable at $c$, then $f$ is continuous at $c$.
+    hint: >
+      Write $f(x) - f(c) = \frac{f(x)-f(c)}{x-c} \cdot (x-c)$.
+      As $x \to c$: first factor $\to f'(c)$, second factor $\to 0$.
+      Product $\to 0$, so $f(x) \to f(c)$.
+    neg: >
+      Continuity does not imply differentiability: $|x|$ is continuous
+      at $0$ but not differentiable there. The Weierstrass function is
+      continuous everywhere and differentiable nowhere.
+
+    fqf: >
+      For every open interval $I$ and every $c \in I$: if $f$ is
+      differentiable at $c$ then $\lim_{x \to c} f(x) = f(c)$.
+    predicate: "DifferentiableAt(f, c) => ContinuousAt(f, c)"
+    neg_formal: >
+      \operatorname{ContinuousAt}(f, c)
+      \;\land\; \lnot\operatorname{DifferentiableAt}(f, c).
+    contra: >
+      If $f$ is not continuous at $c$, then $f$ is not differentiable at $c$.
+
+    depends_on: [def:derivative-at-point, def:continuous-at]
+    implies: []
+    equivalent_to: []
+
+    tags: [differentiation, continuity, implication]
+    category: differentiation
+    aliases: []
+    proof_type: direct
+    method: difference-quotient
+
+
+  thm:caratheodory-factorization:
+    name: Carathéodory Factorization
+    type: theorem
+    section: Derivative Definition
+    source: notes/derivative-definition/notes-derivative-definition.tex
+
+    q: "State the Carathéodory factorization of the derivative."
+    a: >
+      $f$ is differentiable at $c$ with $f'(c) = L$ if and only if
+      there exists $\varphi : I \to \mathbb{R}$, continuous at $c$
+      with $\varphi(c) = L$, such that
+      $f(x) - f(c) = \varphi(x)(x - c)$ for all $x \in I$.
+    hint: >
+      $\varphi$ is just the difference quotient extended continuously:
+      $\varphi(x) = \frac{f(x)-f(c)}{x-c}$ for $x \neq c$, $\varphi(c) = L$.
+      No division by zero — the limit condition becomes a continuity condition.
+    neg: >
+      If no continuous extension of the difference quotient to $c$ exists,
+      then $f$ is not differentiable at $c$.
+
+    fqf: >
+      $f$ is differentiable at $c$ with derivative $L$ if and only if
+      there exists $\varphi : I \to \mathbb{R}$, continuous at $c$ with
+      $\varphi(c) = L$, such that $f(x) - f(c) = \varphi(x)(x-c)$
+      for all $x \in I$.
+    predicate: >
+      DerivativeAt(f, c, L) iff
+      exists phi : I -> R, (ContinuousAt(phi, c) land phi(c) = L
+      land forall x in I, f(x) - f(c) = phi(x)*(x-c))
+    neg_formal: >
+      \forall \varphi : I \to \mathbb{R},\;
+      \lnot\bigl(\operatorname{ContinuousAt}(\varphi,c)
+      \land \varphi(c) = L
+      \land \forall x \in I,\; f(x)-f(c)=\varphi(x)(x-c)\bigr).
+    contra: ~
+
+    depends_on: [def:derivative-at-point, def:continuous-at]
+    implies: []
+    equivalent_to: [def:derivative-at-point]
+
+    tags: [differentiation, caratheodory-factorization, chain-rule, product-rule]
+    category: differentiation
+    aliases: [Carathéodory criterion, multiplicative factorization of derivative]
+    proof_type: direct iff proof
+    method: caratheodory-factorization
