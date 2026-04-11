@@ -1,0 +1,232 @@
+version: 1
+profile: lra-real-analysis-v1
+
+# ========================================
+# CORE SET / ORDER / BOUNDS
+# ========================================
+
+- id: pred:nonempty-set
+  name: NonemptySet
+  arity: 1
+  arguments: [S]
+  formal: "S \\neq \\varnothing"
+
+- id: pred:subset
+  name: Subset
+  arity: 2
+  arguments: [A, S]
+  formal: "A \\subseteq S"
+
+- id: pred:upper-bound
+  name: UpperBound
+  arity: 2
+  arguments: [u, A]
+  formal: "\\forall x \\in A \\; (x \\le u)"
+
+- id: pred:lower-bound
+  name: LowerBound
+  arity: 2
+  arguments: [l, A]
+  formal: "\\forall x \\in A \\; (l \\le x)"
+
+- id: pred:bounded-above
+  name: BoundedAbove
+  arity: 1
+  arguments: [A]
+  formal: "\\exists u \\; UpperBound(u, A)"
+
+- id: pred:bounded-below
+  name: BoundedBelow
+  arity: 1
+  arguments: [A]
+  formal: "\\exists l \\; LowerBound(l, A)"
+
+- id: pred:bounded-set
+  name: BoundedSet
+  arity: 1
+  arguments: [A]
+  formal: "BoundedAbove(A) \\land BoundedBelow(A)"
+
+- id: pred:supremum
+  name: Supremum
+  arity: 2
+  arguments: [s, A]
+  formal: "UpperBound(s,A) \\land \\forall u (UpperBound(u,A) \\rightarrow s \\le u)"
+
+- id: pred:infimum
+  name: Infimum
+  arity: 2
+  arguments: [t, A]
+  formal: "LowerBound(t,A) \\land \\forall l (LowerBound(l,A) \\rightarrow l \\le t)"
+
+- id: pred:lub-property
+  name: LeastUpperBoundProperty
+  arity: 0
+  arguments: []
+  formal: "Every nonempty subset of \\mathbb{R} bounded above has a supremum"
+
+---
+
+# ========================================
+# SEQUENCES (POLYMORPHIC)
+# ========================================
+
+- id: pred:sequence
+  name: Sequence
+  arity: 1
+  arguments: [x_n]
+
+- id: pred:subsequence
+  name: Subsequence
+  arity: 2
+  arguments: [x_{n_k}, x_n]
+
+- id: pred:convergent-sequence
+  name: ConvergentSequence
+  arity: 2
+  arguments: [x_n, L]
+  formal: "\\forall \\varepsilon > 0 \\; \\exists N \\in \\mathbb{N} \\; \\forall n \\ge N \\; (|x_n - L| < \\varepsilon)"
+
+- id: pred:bounded-sequence
+  name: BoundedSequence
+  arity: 1
+  arguments: [x_n]
+  formal: "\\exists M > 0 \\; \\forall n \\in \\mathbb{N} \\; (|x_n| \\le M)"
+
+- id: pred:cauchy-sequence
+  name: CauchySequence
+  arity: 1
+  arguments: [x_n]
+  formal: "\\forall \\varepsilon > 0 \\; \\exists N \\in \\mathbb{N} \\; \\forall m,n \\ge N \\; (|x_n - x_m| < \\varepsilon)"
+
+- id: pred:monotone-increasing
+  name: MonotoneIncreasingSequence
+  arity: 1
+  arguments: [x_n]
+  formal: "\\forall n \\in \\mathbb{N} \\; (x_n \\le x_{n+1})"
+
+- id: pred:monotone-decreasing
+  name: MonotoneDecreasingSequence
+  arity: 1
+  arguments: [x_n]
+  formal: "\\forall n \\in \\mathbb{N} \\; (x_{n+1} \\le x_n)"
+
+- id: pred:eventually
+  name: Eventually
+  arity: 2
+  arguments: [x_n, P]
+  formal: "\\exists N \\in \\mathbb{N} \\; \\forall n \\ge N \\; P(n)"
+
+- id: pred:has-convergent-subsequence
+  name: HasConvergentSubsequence
+  arity: 1
+  arguments: [x_n]
+
+---
+
+# ========================================
+# FUNCTIONS
+# ========================================
+
+- id: pred:function-limit
+  name: FunctionLimit
+  arity: 3
+  arguments: [f, c, L]
+  formal: "\\forall \\varepsilon > 0 \\; \\exists \\delta > 0 \\; \\forall x (0 < |x-c| < \\delta \\rightarrow |f(x)-L| < \\varepsilon)"
+
+- id: pred:continuous-at
+  name: ContinuousAt
+  arity: 2
+  arguments: [f, c]
+  formal: "FunctionLimit(f,c,f(c))"
+
+- id: pred:continuous-on
+  name: ContinuousOn
+  arity: 2
+  arguments: [f, A]
+  formal: "\\forall c \\in A \\; ContinuousAt(f,c)"
+
+- id: pred:uniformly-continuous
+  name: UniformlyContinuous
+  arity: 2
+  arguments: [f, A]
+  formal: "\\forall \\varepsilon > 0 \\; \\exists \\delta > 0 \\; \\forall x,y \\in A \\; (|x-y|<\\delta \\rightarrow |f(x)-f(y)|<\\varepsilon)"
+
+- id: pred:bounded-on
+  name: BoundedOn
+  arity: 2
+  arguments: [f, A]
+
+---
+
+# ========================================
+# METRIC SPACES (POLYMORPHIC)
+# ========================================
+
+- id: pred:metric-space
+  name: MetricSpace
+  arity: 2
+  arguments: [M, d]
+
+- id: pred:open-set
+  name: OpenSet
+  arity: 1
+  arguments: [U]
+
+- id: pred:closed-set
+  name: ClosedSet
+  arity: 1
+  arguments: [F]
+
+- id: pred:limit-point
+  name: LimitPoint
+  arity: 2
+  arguments: [x, A]
+
+- id: pred:complete
+  name: Complete
+  arity: 1
+  arguments: [M]
+
+- id: pred:totally-bounded
+  name: TotallyBounded
+  arity: 1
+  arguments: [M]
+
+---
+
+# ========================================
+# DIFFERENTIATION
+# ========================================
+
+- id: pred:differentiable-at
+  name: DifferentiableAt
+  arity: 2
+  arguments: [f, c]
+
+- id: pred:derivative-at
+  name: DerivativeAt
+  arity: 3
+  arguments: [f, c, L]
+
+- id: pred:local-maximum
+  name: LocalMaximum
+  arity: 2
+  arguments: [f, c]
+
+- id: pred:local-minimum
+  name: LocalMinimum
+  arity: 2
+  arguments: [f, c]
+
+---
+
+# ========================================
+# DESIGN RULES
+# ========================================
+
+rules:
+  polymorphic_predicates: true
+  no_duplicate_semantics: true
+  canonical_names_required: true
+  context_in_arguments: true

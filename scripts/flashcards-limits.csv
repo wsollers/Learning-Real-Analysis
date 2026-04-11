@@ -1,0 +1,133 @@
+Label,Chapter,Question,Answer,Hint,Counter-example/Negation,Tags
+thm:limit-function-quotient,Limits,How do you prove algebra of limits for functions?,"Use the Sequential Criterion: reduce to sequence limits, apply algebra there, then lift back.",Never do $\varepsilon$-$\delta$ directly unless required.,,LRA::Limits
+prop:limit-divergence-sequential,Limits,State the divergence criteria (Bartle 4.1.9).,"(a) $\lim f \neq L$ iff $\exists (x_n)\subseteq
+  A\setminus\{c\}$ with $x_n\to c$ and $f(x_n)\not\to L$.
+  (b) $\lim f$ does not exist iff $\exists (x_n)\subseteq
+  A\setminus\{c\}$ with $x_n\to c$ and $(f(x_n))$ diverges
+  in $\mathbb{R}$.","(a) is the negation of the sequential criterion for
+  a fixed $L$. (b) says no candidate $L$ works at all.
+  Both are used to disprove limits by exhibiting sequences.","Two sequences suffice for (b): $x_n\to 0$ via
+  $1/(2n\pi)$ gives $\sin(1/x_n)=0$; via $1/(\pi/2+2n\pi)$
+  gives $\sin(1/x_n)=1$. Different limits, so no limit exists.",LRA::Limits
+def:limit-divergence-types,Limits,What is the $\varepsilon$--$\delta$ definition of divergence?,"It is the negation of convergence: $\forall L\in\mathbb{R}$,
+$\exists \varepsilon>0$ such that $\forall \delta>0$,
+$\exists x$ with $0<|x-c|<\delta$ and $|f(x)-L|\ge\varepsilon$.","Negate: $\forall \varepsilon \exists \delta \forall x$
+becomes $\exists \varepsilon \forall \delta \exists x$.","You do NOT fix $\varepsilon$ arbitrarily; you produce one
+that breaks the limit.",LRA::Limits
+def:vertical-asymptote,Limits,Define vertical asymptote.,"$x = x_0$ is a vertical asymptote if any one of
+$\lim_{x\to x_0}f(x)$, $\lim_{x\to x_0^\pm}f(x)$ is $\pm\infty$.","Vertical asymptotes describe blow-up at a finite input.
+Only one one-sided limit needs to be infinite.","Both one-sided limits need not be infinite --- one suffices.
+$f(x)=1/x$ has $\lim_{x\to 0^+}=+\infty$ and $\lim_{x\to 0^-}=-\infty$,
+both infinite but with opposite signs.",LRA::Limits
+def:true-near-extended,Limits,What does ``$P(f(x))$ is true near $+\infty$'' mean?,There exists $A$ such that $P(f(x))$ holds for all $x > A$.,"It is the ``sufficiently large $x$'' analogue of the
+punctured $\delta$-ball condition for finite $x_0$.",,LRA::Limits
+def:horizontal-asymptote,Limits,Define horizontal asymptote.,"$y = y_0$ is a horizontal asymptote of $f$ if
+$\lim_{x\to+\infty}f(x)=y_0$ or $\lim_{x\to-\infty}f(x)=y_0$.","Horizontal asymptotes describe end behaviour;
+vertical asymptotes describe blow-up at a point.","A function can cross its horizontal asymptote.
+Asymptotes describe limits, not barriers.",LRA::Limits
+def:indeterminate-forms,Limits,Name the seven indeterminate forms.,"$0/0$, $\infty/\infty$, $0\cdot\infty$, $\infty-\infty$,
+$0^0$, $1^\infty$, $\infty^0$.","The exponential forms ($0^0$, $1^\infty$, $\infty^0$) are
+handled by writing $f^g = e^{g\ln f}$ and reducing to $0\cdot\infty$.","$0/\infty = 0$ is NOT indeterminate. $\infty/0 = \infty$
+is not indeterminate (assuming $f/g>0$ near $x_0$). Only the seven
+listed forms are genuinely indeterminate.",LRA::Limits
+thm:algebra-of-infinite-limits,Limits,"What is $\lim(f/g)$ when $\lim f \in \mathbb{R}$ and
+$\lim g = \pm\infty$?",$0$. Finite divided by infinite goes to zero.,"$f$ is bounded near $x_0$; $g$ grows without bound;
+the ratio is squeezed to $0$.","$\infty/\infty$ is indeterminate --- this case is NOT
+covered by the theorem. Only finite$/\infty = 0$ is determined.",LRA::Limits
+def:limsup-liminf-function,Limits,Define $\limsup_{x\to x_0} f(x)$.,"$\inf_{\delta>0}\sup\{f(x) : 0 < |x-x_0| < \delta\}$.
+The infimum of suprema over shrinking punctured balls.","Shrink the ball: the supremum can only decrease or
+stay the same. The infimum of a decreasing quantity is its limit.","$\limsup \neq \sup f$ globally. $\limsup$ is local:
+it concerns only what $f$ does near $x_0$, not everywhere.",LRA::Limits
+def:eps-close-function,Limits,Define: $f : X \to \mathbb{R}$ is $\varepsilon$-close to $L$.,"$|f(x) - L| \leq \varepsilon$ for all $x \in X$.
+  Every output is within $\varepsilon$ of $L$. Global condition.","Tao scaffolding only. Not used by Bartle or Lebl.
+  Contrast with $\delta$-closeness which is local.",,LRA::Limits
+def:delta-close-function,Limits,Define: $f$ is $\delta$-close to $L$ at $x_0$.,"$\forall x \in X$, $|x-x_0|<\delta \Rightarrow
+  |f(x)-L|\leq\varepsilon$. Local condition: outputs near $x_0$
+  are within $\varepsilon$ of $L$.","Tao scaffolding only. The $\delta$-ball around $x_0$
+  restricts inputs; the $\varepsilon$-ball around $L$ is the
+  output target. Together these give the limit definition.",,LRA::Limits
+def:limit-function,Limits,"State the $\varepsilon$-$\delta$ definition of
+  $\lim_{x \to c} f(x) = L$.","$\forall\varepsilon>0,\,\exists\delta>0,\,\forall x\in A:\,
+  0<|x-c|<\delta \Rightarrow |f(x)-L|<\varepsilon$.","$\varepsilon$ = output precision demanded;
+  $\delta$ = input tolerance that delivers it.
+  $\delta$ may depend on $\varepsilon$ and $c$.","$f(x)=\sin(1/x)$ at $c=0$: no $\delta$ works for
+  $\varepsilon < 1$ since $f$ oscillates between $\pm 1$ in
+  every punctured neighbourhood of $0$.",LRA::Limits
+def:limit-function-sequential,Limits,"State the sequential definition of
+  $\lim_{x \to c} f(x) = L$.","For every sequence $(x_n) \subseteq A \setminus \{c\}$
+  with $x_n \to c$, the sequence $f(x_n) \to L$.","Equivalent to the $\varepsilon$-$\delta$ definition
+  by the Sequential Criterion. The condition $x_n \neq c$ mirrors
+  the $0 <$ in $0 < |x_n - c| < \delta$.","The sequence must lie in $A \setminus \{c\}$:
+  a constant sequence $x_n = c$ is excluded, just as
+  $x = c$ is excluded in the $\varepsilon$-$\delta$ form.",LRA::Limits
+prop:limit-neighbourhood-equiv,Limits,State the neighbourhood form of $\lim_{x\to c}f(x)=L$.,"For every $V_\varepsilon(L)$ there exists $V_\delta(c)$
+  such that $x\in V_\delta(c)\cap A$, $x\neq c$ implies
+  $f(x)\in V_\varepsilon(L)$.","Pure notation: $V_\delta(c) = (c-\delta, c+\delta)$,
+  so $x\in V_\delta(c)$ and $x\neq c$ is exactly
+  $0<|x-c|<\delta$. The two forms are identical.",,LRA::Limits
+thm:limit-unique,Limits,Why can a function have at most one limit at a cluster point?,"Assume $\lim f = L$ and $\lim f = L'$. Set
+  $\varepsilon = |L-L'|/2$. Invoke each limit definition to get
+  $\delta_1$, $\delta_2$; take $\delta = \min(\delta_1,\delta_2)$.
+  Triangle inequality gives $|L-L'| < |L-L'|$, contradiction.","The key pattern: invoke the limit definition twice,
+  once for each candidate, then reconcile with
+  $\delta=\min(\delta_1,\delta_2)$.","Without the cluster point condition the limit can be
+  vacuously satisfied by every $L$ (isolated point).",LRA::Limits
+prop:sequential-criterion-limits,Limits,State the sequential criterion for function limits.,"$\lim_{x\to c}f(x)=L$ iff for every sequence
+  $(x_n)\subseteq A\setminus\{c\}$ with $x_n\to c$,
+  we have $f(x_n)\to L$.","$(a)\Rightarrow(b)$: use $\delta$ from the limit
+  definition once $x_n$ is close enough.
+  $(b)\Rightarrow(a)$: contrapositive --- if limit fails,
+  build a sequence witnessing failure.","$f(x)=\sin(1/x)$: take $x_n=1/(2n\pi)\to 0$
+  giving $f(x_n)=0$, and $y_n=1/(\pi/2+2n\pi)\to 0$
+  giving $f(y_n)=1$. Two sequences, two limits: diverges.",LRA::Limits
+def:bounded-neighborhood,Limits,What does it mean for a function to be bounded near a point $c$?,"$\exists \delta > 0,\exists M > 0$ such that
+$|f(x)| \le M$ for all $x$ with $0 < |x-c| < \delta$.",Local bound on a punctured neighborhood.,Do not require boundedness on all of $A$—only near $c$.,LRA::Limits
+thm:limit-implies-local-bounding,Limits,What local boundedness property follows from a finite function limit?,"If $\lim_{x \to c} f(x)=L \in \mathbb{R}$, then $f$ is bounded on some punctured neighborhood of $c$.",Choose $\varepsilon=1$ and use $|f(x)| \le |f(x)-L| + |L|$.,"This gives only local boundedness near $c$, not boundedness on all of the domain.",LRA::Limits
+thm:bounded-limits,Limits,What does a two-sided bound on $f(x)$ near $c$ imply about $\lim_{x \to c} f(x)$?,"If $a \le f(x) \le b$ for all $x \in A$, $x \ne c$, and $\lim_{x \to c} f(x)$ exists, then
+$a \le \lim_{x \to c} f(x) \le b$.","Trap every nearby value of $f$ between $a$ and $b$, then trap the limit there too.",,LRA::Limits
+thm:limits-bounded-away-from-zero,Limits,What happens near $c$ if $\lim_{x\to c} f(x)=L\neq 0$?,"There exist $\delta>0$ and $m>0$ such that
+$|f(x)|\ge m$ whenever $0<|x-c|<\delta$.",Choose $\varepsilon=|L|/2$.,,LRA::Limits
+thm:limits-are-local,Limits,What does it mean to say that limits are local?,"Replacing the domain set $E$ by $E\cap (x_0-\delta,x_0+\delta)$ does not change the limit at $x_0$.",A limit only depends on behavior arbitrarily near the point.,,LRA::Limits
+def:function-sup-inf,Limits,What do $\sup_A f$ and $\inf_A f$ mean?,"$\sup_A f = \sup\{f(x):x\in A\}$ and
+$\inf_A f = \inf\{f(x):x\in A\}$.",They are the supremum and infimum of the range $f(A)$.,,LRA::Limits
+def:function-boundedness,Limits,What does it mean for a function $f:A\to\mathbb{R}$ to be bounded?,"$f$ is bounded if both $\sup_A f$ and $\inf_A f$ are finite; equivalently, if there exists $M\ge 0$ such that $|f(x)|\le M$ for all $x\in A$.",Bounded = bounded above and bounded below.,,LRA::Limits
+prop:limit-absolute-value,Limits,"If $\lim_{x\to c} f(x) = L$, what is $\lim_{x\to c}|f(x)|$?",$\lim_{x\to c}|f(x)| = |L|$.,Reverse triangle inequality: $\bigl||f(x)|-|L|\bigr| \leq |f(x)-L|$.,"Converse fails: $|f(x)|\to|L|$ does not imply $f(x)\to L$.
+  Counterexample: $\operatorname{sgn}(x)$ at $0$.",LRA::Limits
+thm:composition-of-limits,Limits,State the composition of limits theorem.,"If $f(x)\to c_2$ as $x\to c_1$ and $g(y)\to L$ as $y\to c_2$,
+  and $g(c_2)=L$ whenever $c_2\in B$, then $g(f(x))\to L$ as
+  $x\to c_1$.","The hypothesis $g(c_2)=L$ handles the case $f(x)=c_2$
+  which the punctured-neighbourhood condition on $g$ does not cover.","Without $g(c_2)=L$: take $f\equiv c_2$ and $g(c_2)\neq L$.
+  Then $g(f(x))=g(c_2)\neq L$ for all $x$.",LRA::Limits
+thm:monotone-limit-theorem,Limits,What does the Monotone Limit Theorem guarantee?,"A bounded monotone function on $(a,b)$ has both one-sided
+  limits at every interior point. For increasing $f$: $f(x_0^-) =
+  \sup\{f(x):x<x_0\}$ and $f(x_0^+) = \inf\{f(x):x>x_0\}$.","Boundedness supplies sup/inf. Monotonicity forces the
+  function toward those values from each side.","Boundedness alone is not enough: $\sin(1/x)$ is bounded
+  but has no one-sided limit at $0$. Monotonicity is essential.",LRA::Limits
+prop:restriction-locality,Limits,When does restricting the domain preserve the limit?,"When $A$ and $S$ agree near $c$: $(A\setminus\{c\})\cap
+  B_\alpha(c) = (S\setminus\{c\})\cap B_\alpha(c)$ for some
+  $\alpha>0$. Then $\lim_{x\to c}f(x)=L \iff \lim_{x\to
+  c}f|_A(x)=L$.","Agreement near $c$ means the two domains have the same
+  witnesses for any $\delta < \alpha$.","One-sided limits violate this: $A=(c,\infty)$ and
+  $S=\mathbb{R}$ do not agree near $c$ since the left side is
+  missing from $A$.",LRA::Limits
+prop:change-of-variables-limit,Limits,State the change of variables rule for limits.,"If $\varphi(t)\to c$ as $t\to t_0$ and $f(x)\to L$ as $x\to c$,
+and $\varphi(t)\neq c$ near $t_0$ (or $f(c)=L$), then
+$f(\varphi(t))\to L$ as $t\to t_0$.","This is just composition of limits. The hypothesis prevents
+the pathology: $f$ might not have $f(c)=L$, and $\varphi$ might sit
+exactly at $c$ for many $t$.","Without the hypothesis: take $f(x)=0$ for $x\neq 0$, $f(0)=1$,
+$\varphi(t)=0$ for all $t$. Then $f(x)\to 0$ as $x\to 0$ but
+$f(\varphi(t))=1\not\to 0$.",LRA::Limits
+prop:cauchy-criterion-limits,Limits,State the Cauchy criterion for function limits.,"$\lim_{x\to c}f(x)$ exists iff: $\forall\varepsilon>0\;\exists\delta>0$
+such that $0<|x-c|,|y-c|<\delta \Rightarrow |f(x)-f(y)|<\varepsilon$.","No limit value appears. The criterion says the outputs cluster,
+not that they cluster around anything specific.","$f(x) = \sin(1/x)$ fails: nearby inputs give outputs differing
+by up to $2$, so no $\delta$ works for $\varepsilon < 2$.",LRA::Limits
+prop:distance-function-continuous,Limits,"Why is $d(x,C)$ always continuous?","Because $|d(x,C)-d(y,C)|\leq|x-y|$: the distance function
+is Lipschitz with constant $1$.","The triangle inequality for $|x-y|$ controls how fast the
+distance can change as $x$ moves.","$\chi_C$ is not continuous on the Cantor set. The distance
+function and the indicator function of the same set behave completely
+differently.",LRA::Limits
+prop:char-cantor,Limits,At which points does $\chi_K$ have a limit?,"At every $x_0 \notin K$ (limit $= 0$). At every $x_0 \in K$
+the limit fails to exist.","$K$ is perfect (every point is a limit of others in $K$)
+and $K^c$ is dense: both witnesses are always present near any $x_0\in K$.","$\chi_K$ is \emph{not} the same as $d(\cdot,K) = 0$.
+The distance function is continuous everywhere; the characteristic
+function is not.",LRA::Limits

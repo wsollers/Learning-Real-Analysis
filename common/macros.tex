@@ -1,0 +1,250 @@
+% ============================================================
+% Proof-writing macros
+% ============================================================
+\newcommand{\Given}{\par\noindent\textbf{Given. }\ignorespaces}
+\newcommand{\Goal}{\par\noindent\textbf{Goal. }\ignorespaces}
+\newcommand{\Strategy}{\par\noindent\textbf{Strategy. }\ignorespaces}
+\newcommand{\ProofPlan} {\textbf{Plan.}\ }
+\newcommand{\Recall}    {\textbf{Recall.}\ }
+\newcommand{\Claim}     {\textbf{Claim.}\ }   % inline bold marker; \begin{claim} = numbered environment
+\newcommand{\Wlog}      {\textit{Without loss of generality}}
+\newcommand{\Fix}       {\textbf{Fix.}\ }
+\newcommand{\Let}       {\textbf{Let.}\ }
+\newcommand{\Choose}    {\textbf{Choose.}\ }
+\newcommand{\Take}      {\textbf{Take.}\ }
+\newcommand{\Note}      {\textbf{Note.}\ }
+\newcommand{\ByDef}     {\textbf{By definition,}\ }
+\newcommand{\ByAss}     {\textbf{By assumption,}\ }
+\newcommand{\ByThm}[1]  {\textbf{By #1,}\ }
+\newcommand{\Thus}      {\textbf{Thus,}\ }
+\newcommand{\Hence}     {\textbf{Hence,}\ }
+\newcommand{\Therefore} {\textbf{Therefore,}\ }
+\newcommand{\AsReq}     {\textbf{as required.}}
+\newcommand{\checkbox}  {$\square$\ }
+\newcommand{\pp}        {\texttt{++}}
+
+% ============================================================
+% Nested numbered claims (reset per proof)
+%   Claim 1, Claim 2, ...
+%   Subclaim 1.1, 1.2, ...
+% ============================================================
+\newcounter{claim}
+\newcounter{subclaim}[claim]
+
+\renewcommand{\theclaim}{\arabic{claim}}
+\renewcommand{\thesubclaim}{\theclaim.\arabic{subclaim}}
+
+\AtBeginEnvironment{proof}{%
+  \setcounter{claim}{0}%
+  \setcounter{subclaim}{0}%
+}
+
+\newenvironment{claim}{%
+  \refstepcounter{claim}%
+  \par\medskip
+  \noindent\textbf{Claim \theclaim.}\ \itshape
+}{%
+  \par\medskip
+}
+
+\newenvironment{subclaim}{%
+  \refstepcounter{subclaim}%
+  \par\medskip
+  \noindent\textbf{Subclaim \thesubclaim.}\ \itshape
+}{%
+  \par\medskip
+}
+
+\newcommand{\ProofStep}[2]{\medskip\noindent\textbf{Step #1\,—\,#2}\quad}
+% ============================================================
+% Proof annotation tags — FIXED VERSION
+% ============================================================
+%
+% Problem: \marginpar is forbidden inside tabular, tcolorbox, theorem
+% environments, and other restricted modes. Calling \prooftag in those
+% contexts raises the @marbox / \@marbox undefined error.
+%
+% Solution: Two separate primitives.
+%
+%   \prooftag{color}{label}   — margin version (use in proof body prose)
+%   \inlinetag{color}{label}  — inline colored badge (use inside tabular T column,
+%                               tcolorbox, definition, theorem environments)
+%
+% All named tag macros (e.g. \tagDU) produce the MARGIN version by default.
+% Inside a tabular or box, call the \itag* inline variants instead.
+% ============================================================
+
+% ---- Base primitives ----------------------------------------
+
+% Proof tag: inline colored badge.
+% Originally used \marginpar but replaced with inline to avoid
+% "Floats lost" errors at \clearpage in long documents.
+\newcommand{\prooftag}[2]{%
+  \textbf{\textcolor{#1}{\scriptsize #2}}%
+}
+
+% Inline tag: colored bold badge, zero extra vertical space.
+% Safe everywhere: tabular, tcolorbox, theorem bodies, definition boxes.
+\newcommand{\inlinetag}[2]{%
+  \textbf{\textcolor{#1}{\scriptsize #2}}%
+}
+
+% ---- Core structural tags -----------------------------------
+%   \tagXX    = margin version  (default, proof prose)
+%   \itagXX   = inline version  (tabular T column, boxes)
+
+% DU = Definition Unpacked
+\newcommand{\tagDU} {\prooftag{blue!70!black}{DU}}
+\newcommand{\itagDU}{\inlinetag{blue!70!black}{DU}}
+
+% TA = Theorem / Axiom Applied
+\newcommand{\tagTA} {\prooftag{green!50!black}{TA}}
+\newcommand{\itagTA}{\inlinetag{green!50!black}{TA}}
+
+% CS = Case Split
+\newcommand{\tagCS} {\prooftag{red!60!black}{CS}}
+\newcommand{\itagCS}{\inlinetag{red!60!black}{CS}}
+
+% EX = Existence / witness choice
+\newcommand{\tagEX} {\prooftag{magenta!60!black}{EX}}
+\newcommand{\itagEX}{\inlinetag{magenta!60!black}{EX}}
+
+% NEG = Negation unpacked (contradiction / contrapositive)
+\newcommand{\tagNEG} {\prooftag{black}{NEG}}
+\newcommand{\itagNEG}{\inlinetag{black}{NEG}}
+
+% ---- ε–N / tail-logic tags ----------------------------------
+
+% AM = Algebraic Manipulation
+\newcommand{\tagAM} {\prooftag{black}{AM}}
+\newcommand{\itagAM}{\inlinetag{black}{AM}}
+
+% EA = ε arbitrary (start of universal ε argument)
+\newcommand{\tagEA} {\prooftag{black}{EA}}
+\newcommand{\itagEA}{\inlinetag{black}{EA}}
+
+% NE = choose N = N(ε)
+\newcommand{\tagNE} {\prooftag{black}{NE}}
+\newcommand{\itagNE}{\inlinetag{black}{NE}}
+
+% TN = take tail indices ≥ N
+\newcommand{\tagTN} {\prooftag{black}{TN}}
+\newcommand{\itagTN}{\inlinetag{black}{TN}}
+
+% TR = triangle inequality / norm inequality
+\newcommand{\tagTR} {\prooftag{black}{TR}}
+\newcommand{\itagTR}{\inlinetag{black}{TR}}
+
+% ---- Completeness / extraction tags -------------------------
+
+% LUB = least-upper-bound / sup step
+\newcommand{\tagLUB} {\prooftag{black}{LUB}}
+\newcommand{\itagLUB}{\inlinetag{black}{LUB}}
+
+% GLB = greatest-lower-bound / inf step
+\newcommand{\tagGLB} {\prooftag{black}{GLB}}
+\newcommand{\itagGLB}{\inlinetag{black}{GLB}}
+
+% SS = subsequence selection / extraction
+\newcommand{\tagSS} {\prooftag{black}{SS}}
+\newcommand{\itagSS}{\inlinetag{black}{SS}}
+
+% ---- Induction tags -----------------------------------------
+
+% IH = inductive hypothesis applied
+\newcommand{\tagIH} {\prooftag{purple!70!black}{IH}}
+\newcommand{\itagIH}{\inlinetag{purple!70!black}{IH}}
+
+% BC = base case
+\newcommand{\tagBC} {\prooftag{teal!70!black}{BC}}
+\newcommand{\itagBC}{\inlinetag{teal!70!black}{BC}}
+
+% IS = inductive step
+\newcommand{\tagIS} {\prooftag{teal!50!black}{IS}}
+\newcommand{\itagIS}{\inlinetag{teal!50!black}{IS}}
+
+% ------------------------------------------------------------
+% Removed on purpose (not in ideal minimal set)
+% ------------------------------------------------------------
+% AM (algebraic manipulation): too granular; prose should carry it.
+% UW (universal/witness intro): redundant with TN/EX in practice.
+% ------------------------------------------------------------
+
+% ============================================================
+% Math operators
+% ============================================================
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cod}{cod}
+\DeclareMathOperator{\im}{im}
+
+% ============================================================
+% Citation macros
+% ============================================================
+\newcommand{\srccite}[1]{%
+  \textsc{\citeauthor{#1}}%
+}
+\newcommand{\srcciteauthor}[1]{%
+  \textsc{\citeauthor{#1}}%
+}
+\newcommand{\srccitesection}[2]{%
+  \textsc{\citeauthor{#1}}, \textit{#2} [\citeyear{#1}]%
+}
+
+
+% ------------------------------------------------------------
+%  Completeness web -- shorthand macros
+%  Add to preamble (e.g. macros.tex or main preamble)
+% ------------------------------------------------------------
+
+% Plain smallcaps label (matches body text weight)
+
+\newcommand{\AoC}{\hyperref[sec:completeness-web]{\textsc{aoc}}}
+\newcommand{\NIP}{\hyperref[sec:nip-proofs]{\textsc{nip}}}
+\newcommand{\MCT}{\hyperref[sec:mct-proofs]{\textsc{mct}}}
+\newcommand{\BW}{\hyperref[sec:bw-proofs]{\textsc{bw}}}
+\newcommand{\CC}{\hyperref[sec:cauchy-proofs]{\textsc{cc}}}
+
+% ============================================================
+% Flash macros — all no-ops; produce no PDF output
+% Used by scripts/extract-cards.py (and future graph extractors)
+% to generate flashcards, theorem-definition explorer nodes,
+% logical forms, and dependency metadata.
+% ============================================================
+
+% --- Existing core flashcard fields ---
+\newcommand{\FlashQ}[1]{}
+\newcommand{\FlashA}[1]{}
+\newcommand{\FlashHint}[1]{}
+\newcommand{\FlashNeg}[1]{}
+\newcommand{\FlashImplies}[1]{}
+\newcommand{\FlashProof}[1]{}
+\newcommand{\FlashUses}[1]{}
+\newcommand{\FlashIgnore}{}
+
+% --- New formal / explorer fields ---
+\newcommand{\FlashProp}[1]{}        % propositional-style name/form, e.g. ContinuousAt(f,c)
+\newcommand{\FlashFormal}[1]{}      % fully formal statement, usually quantified
+\newcommand{\FlashNegFormal}[1]{}   % formal negation of the statement/definition
+\newcommand{\FlashContra}[1]{}      % contrapositive, when appropriate
+
+% --- New graph / dependency fields ---
+\newcommand{\FlashDependsOn}[1]{}   % comma-separated label ids this node depends on
+\newcommand{\FlashUsedBy}[1]{}      % comma-separated label ids that consume this node
+\newcommand{\FlashPrereq}[1]{}      % softer prerequisite list (can differ from strict proof dependency)
+\newcommand{\FlashEquivalentTo}[1]{}% comma-separated equivalent labels / formulations
+
+% --- New classification / search fields ---
+\newcommand{\FlashAliases}[1]{}     % alternate names / phrasings
+\newcommand{\FlashTags}[1]{}        % comma-separated topical tags
+\newcommand{\FlashSymbol}[1]{}      % key symbol or notation introduced by a definition
+\newcommand{\FlashCategory}[1]{}    % optional higher grouping: sequences, continuity, compactness, etc.
+
+% --- Optional proof-structure enrichment ---
+\newcommand{\FlashProofIdea}[1]{}   % one-line proof idea
+\newcommand{\FlashProofType}[1]{}   % contradiction / contrapositive / induction / epsilon-delta / sequential / etc.
+\newcommand{\FlashMethod}[1]{}      % named technique(s): squeeze, LUB, BW, MCT, triangle inequality, etc.
+
+% --- Optional note / source enrichment ---
+\newcommand{\FlashSourceText}[1]{}  % short bibliographic source text if you want it local to the note
+\newcommand{\FlashSection}[1]{}     % local section/subsection string if desired
