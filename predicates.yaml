@@ -1,0 +1,909 @@
+version: 4
+profile: lra-real-analysis-v2
+design:
+  polymorphic_predicates: true
+  no_duplicate_semantics: true
+  canonical_names_required: true
+  context_in_arguments: true
+  optional_parameter_convention: true
+  optional_parameter_examples:
+  - CauchySequence(x_n [, d])
+  - ConvergentSequence(x_n, L [, d])
+  - FunctionLimit(f, c, L [, d_dom, d_cod])
+  - ContinuousAt(f, c [, d_dom, d_cod])
+  - LimitPoint(x, A [, M, d])
+predicates:
+
+# =========================================================
+# Order / Set Structure
+# =========================================================
+
+- id: pred:nonempty-set
+  name: NonemptySet
+  category: order
+  arity: 1
+  arguments: [S]
+  optional_arguments: []
+  formal: S \neq \varnothing
+
+- id: pred:subset
+  name: Subset
+  category: order
+  arity: 2
+  arguments: [A, S]
+  optional_arguments: []
+  formal: A \subseteq S
+
+# =========================================================
+# Intervals
+# =========================================================
+
+- id: pred:closed-interval
+  name: ClosedInterval
+  category: order
+  arity: 2
+  arguments: [a, b]
+  optional_arguments: []
+  formal: \{x \in \mathbb{R} : a \le x \le b\}
+  note: The closed interval [a,b] as a set predicate.
+
+- id: pred:open-interval
+  name: OpenInterval
+  category: order
+  arity: 2
+  arguments: [a, b]
+  optional_arguments: []
+  formal: \{x \in \mathbb{R} : a < x < b\}
+
+# =========================================================
+# Bounding
+# =========================================================
+
+- id: pred:upper-bound
+  name: UpperBound
+  category: bounding
+  arity: 2
+  arguments: [u, A]
+  optional_arguments: []
+  formal: \forall x \in A \; (x \le u)
+
+- id: pred:lower-bound
+  name: LowerBound
+  category: bounding
+  arity: 2
+  arguments: [l, A]
+  optional_arguments: []
+  formal: \forall x \in A \; (l \le x)
+
+- id: pred:bounded-above
+  name: BoundedAbove
+  category: bounding
+  arity: 1
+  arguments: [A]
+  optional_arguments: []
+  formal: \exists u \; UpperBound(u, A)
+
+- id: pred:bounded-below
+  name: BoundedBelow
+  category: bounding
+  arity: 1
+  arguments: [A]
+  optional_arguments: []
+  formal: \exists l \; LowerBound(l, A)
+
+- id: pred:bounded-set
+  name: BoundedSet
+  category: bounding
+  arity: 1
+  arguments: [A]
+  optional_arguments: []
+  formal: BoundedAbove(A) \land BoundedBelow(A)
+
+- id: pred:maximum
+  name: Maximum
+  category: bounding
+  arity: 2
+  arguments: [m, A]
+  optional_arguments: []
+  formal: (m \in A) \land \forall x \in A \; (x \le m)
+
+- id: pred:minimum
+  name: Minimum
+  category: bounding
+  arity: 2
+  arguments: [m, A]
+  optional_arguments: []
+  formal: (m \in A) \land \forall x \in A \; (m \le x)
+
+- id: pred:supremum
+  name: Supremum
+  category: completeness
+  arity: 2
+  arguments: [s, A]
+  optional_arguments: []
+  formal: UpperBound(s,A) \land \forall u \; (UpperBound(u,A) \rightarrow s \le u)
+
+- id: pred:infimum
+  name: Infimum
+  category: completeness
+  arity: 2
+  arguments: [t, A]
+  optional_arguments: []
+  formal: LowerBound(t,A) \land \forall l \; (LowerBound(l,A) \rightarrow l \le t)
+
+# =========================================================
+# Completeness
+# =========================================================
+
+- id: pred:least-upper-bound-property
+  name: LeastUpperBoundProperty
+  category: completeness
+  arity: 0
+  arguments: []
+  optional_arguments: []
+  formal: \forall A \subseteq \mathbb{R} \; ((NonemptySet(A) \land BoundedAbove(A)) \rightarrow \exists s \; Supremum(s,A))
+
+- id: pred:archimedean-property
+  name: ArchimedeanProperty
+  category: completeness
+  arity: 0
+  arguments: []
+  optional_arguments: []
+  formal: \forall x \in \mathbb{R} \; \exists n \in \mathbb{N} \; (n > x)
+
+- id: pred:dense-subset
+  name: DenseSubset
+  category: dense
+  arity: 2
+  arguments: [D, S]
+  optional_arguments: []
+  formal: \forall x \in S \; \forall \varepsilon > 0 \; \exists d \in D \; (d(x,d) < \varepsilon)
+
+- id: pred:well-ordering-principle
+  name: WellOrderingPrinciple
+  category: order
+  arity: 0
+  arguments: []
+  optional_arguments: []
+  formal: \forall A\;((A \subseteq \mathbb{N} \land \exists a\,(a \in A)) \Rightarrow \exists m\,(m \in A \land \forall a\,(a \in A \Rightarrow m \le a)))
+
+# =========================================================
+# Sequences
+# =========================================================
+
+- id: pred:strictly-increasing-function
+  name: StrictlyIncreasing
+  category: sequence
+  arity: 1
+  arguments: [\sigma]
+  optional_arguments: []
+  formal: \forall k, \ell \in \mathbb{N} \; (k < \ell \rightarrow \sigma(k) < \sigma(\ell))
+  note: Used for index maps in subsequence definitions.
+
+- id: pred:sequence
+  name: Sequence
+  category: sequence
+  arity: 2
+  arguments: [x_n, X]
+  optional_arguments: []
+  formal: x : \mathbb{N} \to X
+  note: >
+    Canonical form requires ambient space X.
+    Do NOT use bare Sequence(x_n) without space context.
+
+- id: pred:subsequence
+  name: Subsequence
+  category: subsequence
+  arity: 2
+  arguments: [x_{n_k}, x_n]
+  optional_arguments: []
+  formal: \exists \sigma \; (StrictlyIncreasing(\sigma) \land \forall k \in \mathbb{N} \; (x_{n_k} = x_{\sigma(k)}))
+
+- id: pred:convergent-sequence
+  name: ConvergentSequence
+  category: sequence
+  arity: 2
+  arguments: [x_n, L]
+  optional_arguments: [d]
+  signature: ConvergentSequence(x_n, L [, d])
+  formal: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; (|x_n - L| < \varepsilon)
+
+- id: pred:divergent-sequence
+  name: DivergentSequence
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: [d]
+  signature: DivergentSequence(x_n [, d])
+
+- id: pred:bounded-sequence
+  name: BoundedSequence
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \exists M > 0 \; \forall n \in \mathbb{N} \; (|x_n| \le M)
+
+- id: pred:cauchy-sequence
+  name: CauchySequence
+  category: cauchy
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: [d]
+  signature: CauchySequence(x_n [, d])
+  formal: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall m,n \ge N \; (|x_n - x_m| < \varepsilon)
+
+- id: pred:monotone-increasing-sequence
+  name: MonotoneIncreasingSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  aliases: [NondecreasingSequence]
+  formal: \forall n \in \mathbb{N} \; (x_n \le x_{n+1})
+
+- id: pred:monotone-decreasing-sequence
+  name: MonotoneDecreasingSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  aliases: [NonincreasingSequence]
+  formal: \forall n \in \mathbb{N} \; (x_{n+1} \le x_n)
+
+- id: pred:eventually
+  name: Eventually
+  category: sequence
+  arity: 2
+  arguments: [x_n, P]
+  optional_arguments: []
+  formal: \exists N \in \mathbb{N} \; \forall n \ge N \; P(n)
+
+- id: pred:frequently
+  name: Frequently
+  category: sequence
+  arity: 2
+  arguments: [x_n, P]
+  optional_arguments: []
+  formal: \forall N \in \mathbb{N} \; \exists n \ge N \; P(n)
+
+- id: pred:has-convergent-subsequence
+  name: HasConvergentSubsequence
+  category: subsequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: [d]
+
+- id: pred:limsup-sequence
+  name: LimsupSequence
+  category: asymptotics
+  arity: 2
+  arguments: [x_n, L]
+  optional_arguments: []
+
+- id: pred:liminf-sequence
+  name: LiminfSequence
+  category: asymptotics
+  arity: 2
+  arguments: [x_n, L]
+  optional_arguments: []
+
+# =========================================================
+# Series
+# =========================================================
+
+- id: pred:series
+  name: Series
+  category: series
+  arity: 1
+  arguments: [a_n]
+  optional_arguments: []
+
+- id: pred:convergent-series
+  name: ConvergentSeries
+  category: series
+  arity: 1
+  arguments: [a_n]
+  optional_arguments: []
+
+- id: pred:absolute-convergence
+  name: AbsoluteConvergence
+  category: series
+  arity: 1
+  arguments: [a_n]
+  optional_arguments: []
+
+- id: pred:cauchy-criterion-for-series
+  name: CauchyCriterionForSeries
+  category: series
+  arity: 1
+  arguments: [a_n]
+  optional_arguments: []
+
+- id: pred:ratio-test-convergent
+  name: RatioTestConvergent
+  category: series
+  arity: 1
+  arguments: [a_n]
+  optional_arguments: []
+
+- id: pred:root-test-convergent
+  name: RootTestConvergent
+  category: series
+  arity: 1
+  arguments: [a_n]
+  optional_arguments: []
+
+- id: pred:power-series
+  name: PowerSeries
+  category: series
+  arity: 3
+  arguments: [a_n, c, x]
+  optional_arguments: [R]
+
+# =========================================================
+# Functions
+# =========================================================
+
+- id: pred:function
+  name: Function
+  category: function
+  arity: 3
+  arguments: [f, A, \mathbb{R}]
+  optional_arguments: []
+
+- id: pred:injective
+  name: Injective
+  category: function-structure
+  arity: 1
+  arguments: [f]
+  optional_arguments: []
+  aliases: [OneToOne]
+  formal: \forall x,y\; (f(x)=f(y) \rightarrow x=y)
+
+- id: pred:surjective
+  name: Surjective
+  category: function-structure
+  arity: 1
+  arguments: [f]
+  optional_arguments: [B]
+  aliases: [Onto]
+  formal: \forall y \in B \; \exists x \; (f(x)=y)
+
+- id: pred:bijective
+  name: Bijective
+  category: function-structure
+  arity: 1
+  arguments: [f]
+  optional_arguments: [B]
+  formal: Injective(f) \land Surjective(f,B)
+
+- id: pred:inverse-function
+  name: InverseFunction
+  category: inverse-functions
+  arity: 2
+  arguments: [f, g]
+  optional_arguments: []
+  formal: g\circ f = \operatorname{id} \land f\circ g = \operatorname{id}
+
+- id: pred:monotone-function
+  name: MonotoneFunction
+  category: function
+  arity: 2
+  arguments: [f, A]
+  optional_arguments: []
+
+- id: pred:bounded-on
+  name: BoundedOn
+  category: function
+  arity: 2
+  arguments: [f, A]
+  optional_arguments: []
+
+- id: pred:bounded-near
+  name: BoundedNear
+  category: function
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:bounded-away-from-zero-near
+  name: BoundedAwayFromZeroNear
+  category: function
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+# =========================================================
+# Limits
+# =========================================================
+
+- id: pred:function-limit
+  name: FunctionLimit
+  category: limit
+  arity: 3
+  arguments: [f, c, L]
+  optional_arguments: [d_dom, d_cod]
+  signature: FunctionLimit(f, c, L [, d_dom, d_cod])
+  formal: \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x \; (0 < |x-c| < \delta \rightarrow |f(x)-L| < \varepsilon)
+
+- id: pred:left-limit
+  name: LeftLimit
+  category: limit
+  arity: 3
+  arguments: [f, c, L]
+  optional_arguments: []
+
+- id: pred:right-limit
+  name: RightLimit
+  category: limit
+  arity: 3
+  arguments: [f, c, L]
+  optional_arguments: []
+
+- id: pred:infinite-limit-at-point
+  name: InfiniteLimitAtPoint
+  category: limit
+  arity: 3
+  arguments: [f, c, sign]
+  optional_arguments: []
+
+- id: pred:limit-at-infinity
+  name: LimitAtInfinity
+  category: limit
+  arity: 3
+  arguments: [f, direction, L]
+  optional_arguments: []
+
+# =========================================================
+# Continuity
+# =========================================================
+
+- id: pred:continuous-at
+  name: ContinuousAt
+  category: continuity
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: [d_dom, d_cod]
+  signature: ContinuousAt(f, c [, d_dom, d_cod])
+  formal: FunctionLimit(f,c,f(c))
+
+- id: pred:continuous-on
+  name: ContinuousOn
+  category: continuity
+  arity: 2
+  arguments: [f, A]
+  optional_arguments: [d_dom, d_cod]
+  signature: ContinuousOn(f, A [, d_dom, d_cod])
+  formal: \forall c \in A \; ContinuousAt(f,c)
+
+- id: pred:uniformly-continuous
+  name: UniformlyContinuous
+  category: uniform-continuity
+  arity: 2
+  arguments: [f, A]
+  optional_arguments: [d_dom, d_cod]
+  signature: UniformlyContinuous(f, A [, d_dom, d_cod])
+  formal: \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,y \in A \; (|x-y|<\delta \rightarrow |f(x)-f(y)|<\varepsilon)
+
+- id: pred:lipschitz
+  name: Lipschitz
+  category: continuity
+  arity: 3
+  arguments: [f, A, K]
+  optional_arguments: [d_dom, d_cod]
+  signature: Lipschitz(f, A, K [, d_dom, d_cod])
+  formal: \forall x,y \in A \; (d(f(x),f(y)) \le K \, d(x,y))
+
+- id: pred:bilipschitz
+  name: BiLipschitz
+  category: continuity
+  arity: 4
+  arguments: [f, A, c, K]
+  optional_arguments: [d_dom, d_cod]
+
+# =========================================================
+# Discontinuity / Oscillation
+# =========================================================
+
+- id: pred:discontinuous-at
+  name: DiscontinuousAt
+  category: discontinuity
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: [d_dom, d_cod]
+
+- id: pred:removable-discontinuity
+  name: RemovableDiscontinuity
+  category: discontinuity
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:jump-discontinuity
+  name: JumpDiscontinuity
+  category: discontinuity
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:infinite-discontinuity
+  name: InfiniteDiscontinuity
+  category: discontinuity
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:oscillation-at
+  name: OscillationAt
+  category: oscillation
+  arity: 3
+  arguments: [f, c, omega]
+  optional_arguments: []
+
+- id: pred:oscillation-on
+  name: OscillationOn
+  category: oscillation
+  arity: 3
+  arguments: [f, A, omega]
+  optional_arguments: []
+
+# =========================================================
+# Metric Spaces / Topology
+# =========================================================
+
+- id: pred:metric-space
+  name: MetricSpace
+  category: metric
+  arity: 2
+  arguments: [M, d]
+  optional_arguments: []
+
+- id: pred:open-ball
+  name: OpenBall
+  category: balls
+  arity: 3
+  arguments: [x, r, B_r(x)]
+  optional_arguments: [M, d]
+
+- id: pred:closed-ball
+  name: ClosedBall
+  category: balls
+  arity: 3
+  arguments: [x, r, \overline{B}_r(x)]
+  optional_arguments: [M, d]
+
+- id: pred:open-set
+  name: OpenSet
+  category: open-closed
+  arity: 1
+  arguments: [U]
+  optional_arguments: [M, d]
+
+- id: pred:closed-set
+  name: ClosedSet
+  category: open-closed
+  arity: 1
+  arguments: [F]
+  optional_arguments: [M, d]
+
+- id: pred:interior-point
+  name: InteriorPoint
+  category: topology
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [M, d]
+
+- id: pred:exterior-point
+  name: ExteriorPoint
+  category: topology
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [M, d]
+
+- id: pred:adherent-point
+  name: AdherentPoint
+  category: topology
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [M, d]
+
+- id: pred:boundary-point
+  name: BoundaryPoint
+  category: topology
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [M, d]
+
+- id: pred:limit-point
+  name: LimitPoint
+  category: topology
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [M, d]
+
+- id: pred:cluster-point
+  name: ClusterPoint
+  category: topology
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [M, d]
+
+- id: pred:closure
+  name: Closure
+  category: topology
+  arity: 2
+  arguments: [A, clA]
+  optional_arguments: [M, d]
+
+- id: pred:interior
+  name: Interior
+  category: topology
+  arity: 2
+  arguments: [A, intA]
+  optional_arguments: [M, d]
+
+- id: pred:derived-set
+  name: DerivedSet
+  category: topology
+  arity: 2
+  arguments: [A, Aprime]
+  optional_arguments: [M, d]
+
+- id: pred:dense-in
+  name: DenseIn
+  category: dense
+  arity: 2
+  arguments: [D, M]
+  optional_arguments: [d]
+
+- id: pred:separable
+  name: Separable
+  category: dense
+  arity: 1
+  arguments: [M]
+  optional_arguments: [d]
+
+- id: pred:cauchy-in-space
+  name: CauchyInSpace
+  category: cauchy
+  arity: 2
+  arguments: [x_n, M]
+  optional_arguments: [d]
+
+- id: pred:complete
+  name: Complete
+  category: completeness
+  arity: 1
+  arguments: [M]
+  optional_arguments: [d]
+
+- id: pred:totally-bounded
+  name: TotallyBounded
+  category: compactness
+  arity: 1
+  arguments: [M]
+  optional_arguments: [d]
+
+- id: pred:compact
+  name: Compact
+  category: compactness
+  arity: 1
+  arguments: [A]
+  optional_arguments: [M, d]
+
+- id: pred:sequentially-compact
+  name: SequentiallyCompact
+  category: compactness
+  arity: 1
+  arguments: [A]
+  optional_arguments: [M, d]
+
+- id: pred:connected
+  name: Connected
+  category: connectedness
+  arity: 1
+  arguments: [A]
+  optional_arguments: [M, d]
+
+- id: pred:isometry
+  name: Isometry
+  category: isometry
+  arity: 1
+  arguments: [f]
+  optional_arguments: [d_dom, d_cod]
+
+- id: pred:distance-to-set
+  name: DistanceToSet
+  category: metric
+  arity: 2
+  arguments: [x, A]
+  optional_arguments: [d]
+
+# =========================================================
+# Differentiation
+# =========================================================
+
+- id: pred:differentiable-at
+  name: DifferentiableAt
+  category: differentiation
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:derivative-at
+  name: DerivativeAt
+  category: differentiation
+  arity: 3
+  arguments: [f, c, L]
+  optional_arguments: []
+
+- id: pred:left-derivative-at
+  name: LeftDerivativeAt
+  category: one-sided-derivatives
+  arity: 3
+  arguments: [f, c, L]
+  optional_arguments: []
+
+- id: pred:right-derivative-at
+  name: RightDerivativeAt
+  category: one-sided-derivatives
+  arity: 3
+  arguments: [f, c, L]
+  optional_arguments: []
+
+- id: pred:local-maximum
+  name: LocalMaximum
+  category: differentiation
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:local-minimum
+  name: LocalMinimum
+  category: differentiation
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:local-extremum
+  name: LocalExtremum
+  category: differentiation
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:secant-line
+  name: SecantLine
+  category: secant-tangent
+  arity: 3
+  arguments: [f, a, b]
+  optional_arguments: []
+
+- id: pred:linear-approximation-at
+  name: LinearApproximationAt
+  category: secant-tangent
+  arity: 2
+  arguments: [f, c]
+  optional_arguments: []
+
+- id: pred:invertible-on
+  name: InvertibleOn
+  category: inverse-functions
+  arity: 2
+  arguments: [f, A]
+  optional_arguments: []
+
+# =========================================================
+# Riemann Integration
+# =========================================================
+
+- id: pred:riemann-integrable-on
+  name: RiemannIntegrableOn
+  category: riemann-integration
+  arity: 2
+  arguments: [f, I]
+  optional_arguments: []
+
+- id: pred:riemann-integral-value
+  name: RiemannIntegralValue
+  category: riemann-integration
+  arity: 3
+  arguments: [f, I, L]
+  optional_arguments: []
+
+- id: pred:partition-of-interval
+  name: PartitionOfInterval
+  category: riemann-integration
+  arity: 2
+  arguments: [P, I]
+  optional_arguments: []
+
+- id: pred:tagged-partition
+  name: TaggedPartition
+  category: riemann-integration
+  arity: 2
+  arguments: [(P,T), I]
+  optional_arguments: []
+
+- id: pred:refinement
+  name: Refinement
+  category: riemann-integration
+  arity: 2
+  arguments: [Q, P]
+  optional_arguments: []
+
+- id: pred:norm-of-partition
+  name: NormOfPartition
+  category: riemann-integration
+  arity: 2
+  arguments: [P, m]
+  optional_arguments: []
+  aliases: [Mesh]
+
+- id: pred:upper-sum
+  name: UpperSum
+  category: riemann-integration
+  arity: 3
+  arguments: [f, P, U]
+  optional_arguments: []
+
+- id: pred:lower-sum
+  name: LowerSum
+  category: riemann-integration
+  arity: 3
+  arguments: [f, P, L]
+  optional_arguments: []
+
+# =========================================================
+# Function Sequences
+# =========================================================
+
+- id: pred:function-sequence
+  name: FunctionSequence
+  category: function-sequence
+  arity: 1
+  arguments: [f_n]
+  optional_arguments: []
+
+- id: pred:pointwise-converges-to
+  name: PointwiseConvergesTo
+  category: function-sequence
+  arity: 3
+  arguments: [f_n, f, A]
+  optional_arguments: []
+
+- id: pred:converges-uniformly
+  name: ConvergesUniformly
+  category: function-sequence
+  arity: 3
+  arguments: [f_n, f, A]
+  optional_arguments: []
+
+- id: pred:uniformly-cauchy-on
+  name: UniformlyCauchyOn
+  category: function-sequence
+  arity: 2
+  arguments: [f_n, A]
+  optional_arguments: []
+
+- id: pred:equicontinuous-on
+  name: EquicontinuousOn
+  category: function-sequence
+  arity: 2
+  arguments: [F, A]
+  optional_arguments: []
+
+- id: pred:differentiates-termwise-on
+  name: DifferentiatesTermwiseOn
+  category: function-sequence
+  arity: 2
+  arguments: [f_n, A]
+  optional_arguments: []
+
+- id: pred:integrates-termwise-on
+  name: IntegratesTermwiseOn
+  category: function-sequence
+  arity: 2
+  arguments: [f_n, A]
+  optional_arguments: []

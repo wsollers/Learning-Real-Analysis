@@ -1,0 +1,210 @@
+version: 2
+profile: lra-real-analysis-v2
+
+edge_kinds:
+  - implies
+  - equivalent_to
+  - specializes
+  - uses
+  - defines
+
+relations:
+
+# =========================================================
+# Bounding
+# =========================================================
+
+  - from: UpperBound
+    to: BoundedAbove
+    kind: defines
+    note: "BoundedAbove(A) is defined via existence of an upper bound."
+
+  - from: LowerBound
+    to: BoundedBelow
+    kind: defines
+    note: "BoundedBelow(A) is defined via existence of a lower bound."
+
+  - from: BoundedAbove
+    to: BoundedSet
+    kind: defines
+
+  - from: BoundedBelow
+    to: BoundedSet
+    kind: defines
+
+  - from: UpperBound
+    to: Supremum
+    kind: defines
+
+  - from: LowerBound
+    to: Infimum
+    kind: defines
+
+  - from: NonemptySet
+    to: LeastUpperBoundProperty
+    kind: uses
+
+  - from: BoundedAbove
+    to: LeastUpperBoundProperty
+    kind: uses
+
+  - from: Supremum
+    to: LeastUpperBoundProperty
+    kind: uses
+
+# =========================================================
+# Sequences
+# =========================================================
+
+  - from: ConvergentSequence
+    to: CauchySequence
+    kind: implies
+    note: "In every metric space, convergence implies the Cauchy property."
+
+  - from: ConvergentSequence
+    to: BoundedSequence
+    kind: implies
+    note: "For real sequences, every convergent sequence is bounded."
+
+  - from: Subsequence
+    to: HasConvergentSubsequence
+    kind: defines
+
+  - from: ConvergentSequence
+    to: HasConvergentSubsequence
+    kind: implies
+    note: "A convergent sequence has a convergent subsequence."
+
+  - from: MonotoneIncreasingSequence
+    to: ConvergentSequence
+    kind: implies
+    context: "with boundedness in \mathbb{R}"
+    note: "A bounded monotone increasing real sequence converges."
+
+  - from: MonotoneDecreasingSequence
+    to: ConvergentSequence
+    kind: implies
+    context: "with boundedness in \mathbb{R}"
+    note: "A bounded monotone decreasing real sequence converges."
+
+  - from: Eventually
+    to: ConvergentSequence
+    kind: uses
+    note: "Tail formulations of convergence are naturally expressed through Eventually."
+
+  - from: Eventually
+    to: CauchySequence
+    kind: uses
+    note: "Tail formulations of the Cauchy property are naturally expressed through Eventually."
+
+  - from: CauchySequence
+    to: ConvergentSequence
+    kind: equivalent_to
+    context: "\mathbb{R}"
+    note: "In \mathbb{R}, a sequence is Cauchy iff it converges."
+
+  - from: CauchySequence
+    to: CauchySequence
+    kind: specializes
+    specialization: "CauchySequence(x_n) -> CauchySequence(x_n, d)"
+    note: "The unparameterized predicate is the default real-metric instance of the polymorphic version."
+
+  - from: ConvergentSequence
+    to: ConvergentSequence
+    kind: specializes
+    specialization: "ConvergentSequence(x_n, L) -> ConvergentSequence(x_n, L, d)"
+    note: "The unparameterized predicate is the default real-metric instance of the polymorphic version."
+
+# =========================================================
+# Continuity
+# =========================================================
+
+  - from: FunctionLimit
+    to: ContinuousAt
+    kind: defines
+    note: "ContinuousAt(f,c) is defined by FunctionLimit(f,c,f(c))."
+
+  - from: ContinuousAt
+    to: ContinuousOn
+    kind: defines
+    note: "ContinuousOn(f,A) is defined pointwise via ContinuousAt."
+
+  - from: ContinuousOn
+    to: UniformlyContinuous
+    kind: implies
+    context: "compact domain"
+    note: "On compact sets, continuity implies uniform continuity."
+
+  - from: FunctionLimit
+    to: LeftLimit
+    kind: specializes
+
+  - from: FunctionLimit
+    to: RightLimit
+    kind: specializes
+
+# =========================================================
+# Metric / Topology
+# =========================================================
+
+  - from: MetricSpace
+    to: OpenSet
+    kind: uses
+
+  - from: MetricSpace
+    to: ClosedSet
+    kind: uses
+
+  - from: OpenSet
+    to: InteriorPoint
+    kind: defines
+
+  - from: ClosedSet
+    to: AdherentPoint
+    kind: uses
+
+  - from: InteriorPoint
+    to: BoundaryPoint
+    kind: uses
+
+  - from: ExteriorPoint
+    to: BoundaryPoint
+    kind: uses
+
+  - from: LimitPoint
+    to: ClosedSet
+    kind: implies
+    note: "A set containing all of its limit points is closed."
+
+  - from: Complete
+    to: CauchySequence
+    kind: uses
+    note: "Completeness is formulated in terms of Cauchy sequences."
+
+  - from: TotallyBounded
+    to: Complete
+    kind: uses
+    context: "compactness characterizations"
+
+# =========================================================
+# Differentiation
+# =========================================================
+
+  - from: DerivativeAt
+    to: DifferentiableAt
+    kind: defines
+
+  - from: DifferentiableAt
+    to: ContinuousAt
+    kind: implies
+    note: "Differentiability at a point implies continuity at that point."
+
+  - from: LocalMaximum
+    to: DerivativeAt
+    kind: uses
+    context: "Fermat-type theorem"
+
+  - from: LocalMinimum
+    to: DerivativeAt
+    kind: uses
+    context: "Fermat-type theorem"

@@ -1,0 +1,206 @@
+profile: lra-real-analysis-v2
+version: 4
+design:
+  polymorphic_predicates: true
+  optional_parameter_convention: true
+  default_context:
+    scalar_field: \mathbb{R}
+    metric_space: \mathbb{R}
+    metric: usual-metric
+    topology: euclidean-topology
+  parameter_rules:
+  - Predicates may accept optional context parameters in bracket notation, e.g. CauchySequence(x_n [, d]).
+  - When the optional context is omitted, interpret the predicate in the default real-analysis context.
+  - Do not create separate predicate names solely to encode context.
+  - Prefer CauchySequence(x_n [, d]) over CauchySequenceInMetric(x_n, M, d).
+  - Prefer ContinuousAt(f, c [, d_dom, d_cod]) over ContinuousAtInMetric(...).
+  - Prefer FunctionLimit(f, c, L [, d_dom, d_cod]) over metric-specific duplicate names.
+  - Prefer LimitPoint(x, A [, M, d]) over LimitPointInMetric(x, A, M, d).
+sets:
+  ambient: S
+  subset: A
+  second_subset: B
+  element: x
+  second_element: y
+  index_set: I
+metric:
+  space: M
+  second_space: N
+  metric: d
+  second_metric: rho
+  distance: d(x,y)
+  open_ball: B_r(x)
+  closed_ball: \overline{B}_r(x)
+  radius: r
+topology:
+  space: X
+  second_space: Y
+  topology: tau
+bounds:
+  upper_bound: u
+  lower_bound: l
+  supremum: s
+  infimum: t
+  maximum: m
+  minimum: m
+  bound_constant: M
+  positive_constant: c
+  lipschitz_constant: K
+sequences:
+  sequence: x_n
+  second_sequence: y_n
+  subsequence: x_{n_k}
+  subsequence_index: n_k
+  limit: L
+  second_limit: K
+functions:
+  function: f
+  second_function: g
+  third_function: h
+  domain_set: A
+  codomain: \mathbb{R}
+  point: c
+  second_point: a
+  third_point: b
+  limit_value: L
+  derivative_value: L
+  injective_witness_left: x
+  injective_witness_right: y
+intervals:
+  closed: '[a,b]'
+  open: (a,b)
+  half_open_left: '[a,b)'
+  half_open_right: (a,b]
+  ray_right_closed: '[a,\infty)'
+  ray_right_open: (a,\infty)
+  ray_left_closed: (-\infty,b]
+  ray_left_open: (-\infty,b)
+series:
+  term: a_n
+  second_term: b_n
+  partial_sum: s_n
+  power_series_variable: x
+  center: c
+  radius_of_convergence: R
+  majorant_term: M_n
+integration:
+  interval: I
+  partition: P
+  refinement: Q
+  tagged_partition: (P,T)
+  mesh: \|P\|
+  upper_sum: U(f,P)
+  lower_sum: L(f,P)
+  integral_value: L
+  antiderivative: F
+function_sequences:
+  function_sequence: f_n
+  limit_function: f
+  family: F
+quantifiers:
+  epsilon_delta: \forall \varepsilon > 0 \; \exists \delta > 0
+  sequence_convergence: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N
+  cauchy: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall m,n \ge N
+  uniform_continuity: \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,y \in A
+  derivative: \exists L \in \mathbb{R} \; \forall \varepsilon > 0 \; \exists \delta > 0
+  integrability_darboux: \forall \varepsilon > 0 \; \exists P \; (U(f,P)-L(f,P) < \varepsilon)
+  uniform_convergence: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; \forall x \in A
+rules:
+  no_strict_inequality_for_indices: true
+  enforce_geq: true
+  standardize_epsilon: \varepsilon
+  standardize_delta: \delta
+  no_duplicate_semantics: true
+  category_required_for_predicates: true
+  relation_registry_externalized: true
+  theorem_title_wrappers_nonsemantic: true
+  texorpdfstring_title_rule: Use the second argument of \texorpdfstring{A}{B} as the canonical plain title.
+  hyperref_title_rule: Treat \hyperref[label]{Text} as a display/proof-link wrapper; canonical title is Text.
+  formal_precedence:
+  - FlashFormal
+  - Fully quantified form remark
+  - theorem/definition body
+  - title never as formal statement
+controlled_vocabularies:
+  categories:
+  - order
+  - bounding
+  - completeness
+  - sequence
+  - subsequence
+  - cauchy
+  - monotone
+  - series
+  - asymptotics
+  - recurrence
+  - function
+  - function-structure
+  - limit
+  - continuity
+  - uniform-continuity
+  - discontinuity
+  - oscillation
+  - approximation
+  - metric
+  - topology
+  - balls
+  - open-closed
+  - compactness
+  - connectedness
+  - dense
+  - separable
+  - isometry
+  - differentiation
+  - one-sided-derivatives
+  - inverse-functions
+  - secant-tangent
+  - elementary-functions
+  - trigonometric
+  - hyperbolic
+  - logarithmic
+  - power-exponential
+  - riemann-integration
+  - function-sequence
+  proof_types:
+  - direct
+  - contradiction
+  - contrapositive
+  - induction
+  - epsilon-delta
+  - sequential
+  - order-theoretic
+  - completeness
+  - compactness
+  - algebraic
+  - geometric
+  - darboux
+  methods:
+  - triangle-inequality
+  - reverse-triangle-inequality
+  - squeeze
+  - algebra-of-limits
+  - tail-control
+  - subsequence-extraction
+  - bolzano-weierstrass
+  - monotone-convergence
+  - monotone-subsequence
+  - least-upper-bound
+  - nested-interval
+  - archimedean
+  - density-of-rationals
+  - sequential-criterion
+  - epsilon-delta
+  - extreme-value
+  - ivt
+  - oscillation
+  - difference-quotient
+  - chain-rule
+  - product-rule
+  - quotient-rule
+  - caratheodory-factorization
+  - isometry
+  - upper-lower-sums
+  - mesh-control
+  - weierstrass-m-test
+  - termwise-differentiation
+  - termwise-integration

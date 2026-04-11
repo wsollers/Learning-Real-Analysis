@@ -1,120 +1,34 @@
-\documentclass[11pt]{report}
+% =========================================================
+% main.tex — Root compiler
+% Learning Real Analysis
+% =========================================================
+% Rule: this file may contain only the items listed below.
+% No package imports, colour definitions, command definitions,
+% tcolorbox styles, or mathematical content. See DESIGN.md §9.6.
+% =========================================================
 
-% ============================================================
-% Shared infrastructure
-% ============================================================
+\documentclass[12pt, a4paper]{article}
+
 \input{common/preamble}
-\input{common/boxes}
 \input{common/colors}
 \input{common/environments}
 \input{common/macros}
-
-% ============================================================
-% Hyperlinks and cross-references
-% ============================================================
-\usepackage{hyperref}
-\usepackage[nameinlink,capitalize,noabbrev]{cleveref}
-\usepackage{bookmark}
-
-% ============================================================
-% cleveref configuration
-% ============================================================
-\crefname{theorem}{Theorem}{Theorems}
-\Crefname{theorem}{Theorem}{Theorems}
-\crefname{claim}{Claim}{Claims}
-\Crefname{claim}{Claim}{Claims}
-\crefname{subclaim}{Subclaim}{Subclaims}
-\Crefname{subclaim}{Subclaim}{Subclaims}
+\input{common/boxes}
 
 \hypersetup{
-  colorlinks = true,
-  linkcolor  = blue!60!black,
-  citecolor  = blue!60!black,
-  urlcolor   = blue!60!black,
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=green!50!black,
+  urlcolor=blue!70!black,
+  pdftitle={Learning Real Analysis},
+  pdfauthor={William},
 }
 
-% Allow \hyperref inside theorem optional arguments.
-\pdfstringdefDisableCommands{%
-  \def\hyperref[#1]#2{#2}%
-}
-
-% ============================================================
-% Index
-% ============================================================
-\usepackage{imakeidx}
-\makeindex[name=tech,title={Technique Index}]
-\makeindex[name=dep,title={Dependency Index}]
-
-% ============================================================
-% Numbering and TOC depth
-% ============================================================
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{3}
-
-% ============================================================
-% Document
-% ============================================================
 \begin{document}
-\ExplSyntaxOff
 
-% ── Cover page ──────────────────────────────────────────────
-\begin{titlepage}
-  \centering
-  \vspace*{2.5cm}
-  {\Huge\bfseries Learning Abstract Mathematics\par}
-  \vspace{1.5cm}
-  {\Large A Structured Journey Through Logic, Sets, Algebra, and Analysis\par}
-  \vspace{2.5cm}
-  {\Large William E. Sollers III\par}
-  \vspace{1cm}
-  {\large \today\par}
-  \vfill
-  {\large ``Proof is the price of admission.''\par}
-\end{titlepage}
-\clearpage
-
-\input{cantor-quote}
-
-% ── Front matter ────────────────────────────────────────────
-\tableofcontents
-\clearpage
-
-% ── Road Map ────────────────────────────────────────────────
-\input{map}
-
-% ── Volume I: Mathematical Logic ────────────────────────────
 \input{volume-i/index}
-\clearpage
-
-% ── Volume II: Foundations of Formal Number Systems ─────────
 \input{volume-ii/index}
-\clearpage
-
-% ── Volume III: Abstract Mathematics ────────────────────────
 \input{volume-iii/index}
-\clearpage
-
-% ── Volume IV: Applied and Computational Mathematics ────────
-\input{volume-iv/index}
-% \clearpage
-
-% ── Glossary ────────────────────────────────────────────────
-\input{glossary-foundations}
-
-% ── Appendices ──────────────────────────────────────────────
-\appendix
-\clearpage \input{appendices/logical-fallacies}
-\clearpage \input{appendices/proof-techniques}
-\clearpage \input{appendices/rules-to-remember}
-\clearpage \input{appendices/propositional-logic-rules}
-\clearpage \input{appendices/proof-style-guide}
-\clearpage \input{appendices/tips}
-
-\PrintExerciseTagIndexes
-
-% ── Bibliography ────────────────────────────────────────────
-\clearpage
-\bibliographystyle{plainnat}
-\bibliography{bibliography/analysis}
+% \input{volume-iv/index}   % excluded from flashcard extraction by default
 
 \end{document}
