@@ -14,21 +14,89 @@
 \input{common/environments}
 \input{common/macros}
 \input{common/boxes}
+% ============================================================
+% Hyperlinks and cross-references
+% ============================================================
+\usepackage{hyperref}
+\usepackage[nameinlink,capitalize,noabbrev]{cleveref}
+\usepackage{bookmark}
+
+% ============================================================
+% cleveref configuration
+% ============================================================
+\crefname{theorem}{Theorem}{Theorems}
+\Crefname{theorem}{Theorem}{Theorems}
+\crefname{claim}{Claim}{Claims}
+\Crefname{claim}{Claim}{Claims}
+\crefname{subclaim}{Subclaim}{Subclaims}
+\Crefname{subclaim}{Subclaim}{Subclaims}
 
 \hypersetup{
-  colorlinks=true,
-  linkcolor=blue!60!black,
-  citecolor=green!50!black,
-  urlcolor=blue!70!black,
+  colorlinks = true,
+  linkcolor  = blue!60!black,
+  citecolor  = blue!60!black,
+  urlcolor   = blue!60!black,
   pdftitle={Learning Real Analysis},
-  pdfauthor={William},
+  pdfauthor={William}
 }
 
+% Allow \hyperref inside theorem optional arguments.
+\pdfstringdefDisableCommands{%
+  \def\hyperref[#1]#2{#2}%
+}
+
+% ============================================================
+% Index
+% ============================================================
+\usepackage{imakeidx}
+\makeindex[name=tech,title={Technique Index}]
+\makeindex[name=dep,title={Dependency Index}]
+
+% ============================================================
+% Numbering and TOC depth
+% ============================================================
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+
 \begin{document}
+\ExplSyntaxOff
+
+% ── Cover page ──────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{2.5cm}
+  {\Huge\bfseries Learning Abstract Mathematics\par}
+  \vspace{1.5cm}
+  {\Large A Structured Journey Through Logic, Sets, Algebra, and Analysis\par}
+  \vspace{2.5cm}
+  {\Large William E. Sollers III\par}
+  \vspace{1cm}
+  {\large \today\par}
+  \vfill
+  {\large ``Proof is the price of admission.''\par}
+\end{titlepage}
+\clearpage
+
+\input{cantor-quote}
+
+% ── Front matter ────────────────────────────────────────────
+\tableofcontents
+\clearpage
 
 \input{volume-i/index}
 \input{volume-ii/index}
 \input{volume-iii/index}
-% \input{volume-iv/index}   % excluded from flashcard extraction by default
+\input{volume-iv/index}   % excluded from flashcard extraction by default
+
+
+
+
+% ── Bibliography ────────────────────────────────────────────
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{bibliography/analysis}
+
 
 \end{document}
+
