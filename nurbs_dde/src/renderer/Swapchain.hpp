@@ -1,46 +1,44 @@
 #pragma once
 // renderer/Swapchain.hpp
-// Manages the Vulkan swapchain using vk-bootstrap.
+// Manages the Vulkan swapchain. Canonical format: VK_FORMAT_B8G8R8A8_UNORM.
+// Read-only after init(). Mutation requires vkDeviceWaitIdle from caller.
+
 #include <volk.h>
-#include "VulkanContext.hpp"
 #include <VkBootstrap.h>
+#include "platform/VulkanContext.hpp"
+#include "math/Types.hpp"
 #include <vector>
-#include <cstdint>
 
 namespace ndde::renderer {
 
 class Swapchain {
 public:
-    Swapchain() = default;
+    Swapchain()  = default;
     ~Swapchain();
 
-    Swapchain(const Swapchain&) = delete;
+    Swapchain(const Swapchain&)            = delete;
     Swapchain& operator=(const Swapchain&) = delete;
 
-    void init(const VulkanContext& ctx, int width, int height);
-    void recreate(const VulkanContext& ctx, int width, int height);
-    void destroy(VkDevice device);
+    void init(const platform::VulkanContext& ctx, u32 width, u32 height);
+    void recreate(const platform::VulkanContext& ctx, u32 width, u32 height);
+    void destroy();
 
-    [[nodiscard]] VkSwapchainKHR           swapchain()   const { return m_swapchain; }
-    [[nodiscard]] VkFormat                 format()      const { return m_format; }
-    [[nodiscard]] VkExtent2D               extent()      const { return m_extent; }
-    [[nodiscard]] const std::vector<VkImage>&     images()     const { return m_images; }
-    [[nodiscard]] const std::vector<VkImageView>& image_views() const { return m_image_views; }
-    [[nodiscard]] std::uint32_t            image_count() const {
-        return static_cast<std::uint32_t>(m_images.size());
-    }
+    [[nodiscard]] VkSwapchainKHR                 swapchain()   const noexcept { return m_swapchain;   }
+    [[nodiscard]] VkFormat                        format()      const noexcept { return m_format;      }
+    [[nodiscard]] VkExtent2D                      extent()      const noexcept { return m_extent;      }
+    [[nodiscard]] const std::vector<VkImage>&     images()      const noexcept { return m_images;      }
+    [[nodiscard]] const std::vector<VkImageView>& image_views() const noexcept { return m_image_views; }
+    [[nodiscard]] u32 image_count() const noexcept { return static_cast<u32>(m_images.size()); }
 
 private:
-    VkDevice         m_device    = VK_NULL_HANDLE;
-    VkSwapchainKHR   m_swapchain = VK_NULL_HANDLE;
-    VkFormat         m_format    = VK_FORMAT_UNDEFINED;
-    VkExtent2D       m_extent    = {};
-
-    std::vector<VkImage>     m_images;
+    VkDevice               m_device    = VK_NULL_HANDLE;
+    VkSwapchainKHR         m_swapchain = VK_NULL_HANDLE;
+    VkFormat               m_format    = VK_FORMAT_UNDEFINED;
+    VkExtent2D             m_extent    = {};
+    std::vector<VkImage>   m_images;
     std::vector<VkImageView> m_image_views;
 
-    void create_image_views(VkDevice device);
-    void destroy_image_views(VkDevice device);
+    void destroy_image_views();
 };
 
 } // namespace ndde::renderer

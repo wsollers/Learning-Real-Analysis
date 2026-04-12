@@ -1,56 +1,49 @@
 #pragma once
 // renderer/ImGuiLayer.hpp
-// Thin wrapper around Dear ImGui's GLFW + Vulkan backend.
-// Owns the descriptor pool ImGui requires; everything else is handled
-// by imgui_impl_glfw and imgui_impl_vulkan.
+// Owns ImGui's descriptor pool and GLFW+Vulkan backends.
+// All methods must be called from the render thread.
 
-#define GLFW_INCLUDE_VULKAN
-#include <string>
-#include <GLFW/glfw3.h>
 #include <volk.h>
-#include "imgui.h"
+#include <imgui.h>
+#include "math/Types.hpp"
+#include <string>
+
+struct GLFWwindow;
+namespace ndde::platform { class VulkanContext; }
+namespace ndde::renderer { class Swapchain; }
 
 namespace ndde::renderer {
 
-class VulkanContext;
-class Swapchain;
-
 class ImGuiLayer {
 public:
-    ImGuiLayer() = default;
+    ImGuiLayer()  = default;
     ~ImGuiLayer();
 
-    ImGuiLayer(const ImGuiLayer&) = delete;
+    ImGuiLayer(const ImGuiLayer&)            = delete;
     ImGuiLayer& operator=(const ImGuiLayer&) = delete;
 
-    void init(GLFWwindow* window,
-              const VulkanContext& ctx,
-              const Swapchain& swapchain,
-              const std::string& assets_dir);
-
-    ImFont* font_math_body()  const { return m_font_math_body; }
-    ImFont* font_math_small() const { return m_font_math_small; }
+    void init(GLFWwindow*                    window,
+              const platform::VulkanContext& ctx,
+              const Swapchain&               swapchain,
+              const std::string&             assets_dir);
 
     void destroy();
-
-    /// Begin a new ImGui frame. Call once per frame before building UI.
     void new_frame();
-
-    /// Record ImGui draw commands into cmd.
-    /// Must be called inside an active vkCmdBeginRendering block.
     void render(VkCommandBuffer cmd);
+    void on_swapchain_recreated(const Swapchain& swapchain);
 
-    /// Call after swapchain recreation so ImGui knows the new image count / format.
-    void on_resize(const Swapchain& swapchain);
+    [[nodiscard]] ImFont* font_math_body()  const noexcept { return m_font_math_body;  }
+    [[nodiscard]] ImFont* font_math_small() const noexcept { return m_font_math_small; }
+    [[nodiscard]] bool    valid()           const noexcept { return m_initialised;      }
 
 private:
-    VkDescriptorPool m_pool        = VK_NULL_HANDLE;
     VkDevice         m_device      = VK_NULL_HANDLE;
+    VkDescriptorPool m_pool        = VK_NULL_HANDLE;
     bool             m_initialised = false;
+    ImFont*          m_font_math_body  = nullptr;
+    ImFont*          m_font_math_small = nullptr;
 
-    ImFont* m_font_math_body  = nullptr;
-    ImFont* m_font_math_small = nullptr;
-
+    void load_fonts(const std::string& assets_dir);
 };
 
 } // namespace ndde::renderer

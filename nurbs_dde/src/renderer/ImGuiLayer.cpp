@@ -1,39 +1,41 @@
 // renderer/ImGuiLayer.cpp
-#include "ImGuiLayer.hpp"
-#include "VulkanContext.hpp"
-#include "Swapchain.hpp"
+#include "renderer/ImGuiLayer.hpp"
+#include "renderer/Swapchain.hpp"
+#include "platform/VulkanContext.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_vulkan.h>
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <stdexcept>
+#include <iostream>
 
 namespace ndde::renderer {
 
 ImGuiLayer::~ImGuiLayer() { destroy(); }
 
 void ImGuiLayer::init(GLFWwindow* window,
-                      const VulkanContext& ctx,
+                      const platform::VulkanContext& ctx,
                       const Swapchain& swapchain,
                       const std::string& assets_dir)
 {
     m_device = ctx.device();
 
-    // ── Descriptor pool ────────────────────────────────────────────────────────
     VkDescriptorPoolSize pool_sizes[] = {
-        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 16 },
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32 }
     };
-    VkDescriptorPoolCreateInfo pool_info{};
-    pool_info.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    pool_info.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    pool_info.maxSets       = 16;
-    pool_info.poolSizeCount = 1;
-    pool_info.pPoolSizes    = pool_sizes;
-
+    VkDescriptorPoolCreateInfo pool_info{
+        .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+        .flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+        .maxSets       = 32,
+        .poolSizeCount = 1,
+        .pPoolSizes    = pool_sizes
+    };
     if (vkCreateDescriptorPool(m_device, &pool_info, nullptr, &m_pool) != VK_SUCCESS)
-        throw std::runtime_error("ImGuiLayer: failed to create descriptor pool");
+        throw std::runtime_error("[ImGuiLayer] vkCreateDescriptorPool failed");
 
-    // ── ImGui context ──────────────────────────────────────────────────────────
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -41,58 +43,54 @@ void ImGuiLayer::init(GLFWwindow* window,
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     ImGui::StyleColorsDark();
 
-    // ── GLFW backend ──────────────────────────────────────────────────────────
-    ImGui_ImplGlfw_InitForVulkan(window, /*install_callbacks=*/true);
+    ImGuiStyle& style  = ImGui::GetStyle();
+    style.WindowRounding = 4.f;
+    style.FrameRounding  = 3.f;
+    style.GrabRounding   = 3.f;
+    style.WindowBorderSize = 1.f;
+    style.FramePadding   = ImVec2(6.f, 4.f);
 
-    // ── Vulkan backend ────────────────────────────────────────────────────────
+    ImGui_ImplGlfw_InitForVulkan(window, true);
+
     VkFormat fmt = swapchain.format();
-
     ImGui_ImplVulkan_InitInfo init_info{};
-    init_info.Instance        = ctx.instance();
-    init_info.PhysicalDevice  = ctx.physical_device();
-    init_info.Device          = ctx.device();
-    init_info.QueueFamily     = ctx.queue_families().graphics;
-    init_info.Queue           = ctx.graphics_queue();
-    init_info.DescriptorPool  = m_pool;
-    init_info.MinImageCount   = 2;
-    init_info.ImageCount      = swapchain.image_count();
+    init_info.Instance       = ctx.instance();
+    init_info.PhysicalDevice = ctx.physical_device();
+    init_info.Device         = ctx.device();
+    init_info.QueueFamily    = ctx.queue_families().graphics;
+    init_info.Queue          = ctx.graphics_queue();
+    init_info.DescriptorPool = m_pool;
+    init_info.MinImageCount  = 2;
+    init_info.ImageCount     = swapchain.image_count();
     init_info.UseDynamicRendering = true;
     init_info.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-    init_info.PipelineInfoMain.PipelineRenderingCreateInfo.sType =
-        VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
-    init_info.PipelineInfoMain.PipelineRenderingCreateInfo.colorAttachmentCount    = 1;
-    init_info.PipelineInfoMain.PipelineRenderingCreateInfo.pColorAttachmentFormats = &fmt;
-
-    ImGui_ImplVulkan_Init(&init_info);
-
-    // ── Fonts (after both backends initialised) ────────────────────────────────
-
-
-    static const ImWchar math_ranges[] = {
-        0x0020, 0x00FF,
-        0x0370, 0x03FF,
-        0x2200, 0x22FF,
-        0x2100, 0x214F,
-        0
+    init_info.PipelineInfoMain.PipelineRenderingCreateInfo = {
+        .sType                   = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR,
+        .colorAttachmentCount    = 1,
+        .pColorAttachmentFormats = &fmt
     };
 
+    ImGui_ImplVulkan_Init(&init_info);
+    load_fonts(assets_dir);
+    m_initialised = true;
+    std::cout << "[ImGuiLayer] Initialised\n";
+}
+
+void ImGuiLayer::load_fonts(const std::string& assets_dir) {
+    ImGuiIO& io = ImGui::GetIO();
+    static const ImWchar math_ranges[] = {
+        0x0020, 0x00FF, 0x0370, 0x03FF, 0x2100, 0x214F, 0x2200, 0x22FF, 0
+    };
     ImFontConfig cfg;
     cfg.OversampleH = 3;
     cfg.OversampleV = 2;
-
-    const std::string math_ttf = assets_dir + "/fonts/STIXTwoText-Italic-VariableFont_wght.ttf";
-    fprintf(stderr, "[ImGui] Loading math font from: %s\n", math_ttf.c_str());
-
-    m_font_math_body = io.Fonts->AddFontFromFileTTF(
-        math_ttf.c_str(), 22.f, &cfg, math_ranges);
-
-    m_font_math_small = io.Fonts->AddFontFromFileTTF(
-        math_ttf.c_str(), 15.f, &cfg, math_ranges);
-
+    //TODO
+    //const std::string ttf = assets_dir + "/fonts/STIXTwoText-Italic-VariableFont_wght.ttf";
+    const std::string ttf = "F:/repos/Learning-Real-Analysis/nurbs_dde/assets/fonts/STIXTwoText-Italic-VariableFont_wght.ttf";
+    m_font_math_body  = io.Fonts->AddFontFromFileTTF(ttf.c_str(), 22.f, &cfg, math_ranges);
+    m_font_math_small = io.Fonts->AddFontFromFileTTF(ttf.c_str(), 15.f, &cfg, math_ranges);
     if (!m_font_math_body || !m_font_math_small)
-        fprintf(stderr, "[ImGui] Warning: math font failed to load\n");
-
-    m_initialised = true;
+        std::cerr << "[ImGuiLayer] Warning: font not found at " << ttf << "\n";
 }
 
 void ImGuiLayer::destroy() {
@@ -102,8 +100,8 @@ void ImGuiLayer::destroy() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     vkDestroyDescriptorPool(m_device, m_pool, nullptr);
-    m_pool        = VK_NULL_HANDLE;
-    m_device      = VK_NULL_HANDLE;
+    m_pool = VK_NULL_HANDLE;
+    m_device = VK_NULL_HANDLE;
     m_initialised = false;
 }
 
@@ -116,16 +114,12 @@ void ImGuiLayer::new_frame() {
 void ImGuiLayer::render(VkCommandBuffer cmd) {
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
-
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
 }
 
-void ImGuiLayer::on_resize(const Swapchain& /*swapchain*/) {
-    // SetMinImageCount unsupported in docking branch with dynamic rendering
-}
+void ImGuiLayer::on_swapchain_recreated(const Swapchain&) {}
 
 } // namespace ndde::renderer

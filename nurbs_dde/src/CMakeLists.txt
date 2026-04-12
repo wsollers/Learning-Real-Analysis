@@ -1,61 +1,95 @@
-set(APP_SOURCES
-    app/main.cpp
-    app/Application.cpp
-    renderer/VulkanContext.cpp
+# src/CMakeLists.txt
+
+# ── ndde_math ─────────────────────────────────────────────────────────────────
+# Pure mathematics: no Vulkan runtime, no GLFW, no ImGui.
+# Types.hpp includes volk.h for VkBuffer / VkVertexInput* handle types,
+# so we need the Vulkan SDK headers. We use Vulkan::Headers (include-only
+# imported target provided by find_package(Vulkan)) so we get the SDK
+# include path without linking vulkan-1.lib into the math layer.
+add_library(ndde_math STATIC
+    math/Conics.cpp
+    math/Axes.cpp
+)
+target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(ndde_math PUBLIC VK_NO_PROTOTYPES)
+# volk headers — needed for VkBuffer etc in Types.hpp / ArenaSlice.hpp
+target_include_directories(ndde_math PUBLIC ${volk_SOURCE_DIR})
+# Vulkan SDK headers — volk.h includes vulkan/vulkan.h from the SDK
+target_link_libraries(ndde_math PUBLIC glm::glm Vulkan::Headers)
+
+# ── ndde_memory ───────────────────────────────────────────────────────────────
+add_library(ndde_memory STATIC
+    memory/BufferManager.cpp
+)
+target_include_directories(ndde_memory PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_memory PUBLIC ndde_math volk)
+
+# ── ndde_platform ─────────────────────────────────────────────────────────────
+add_library(ndde_platform STATIC
+    platform/GlfwContext.cpp
+    platform/VulkanContext.cpp
+)
+target_include_directories(ndde_platform PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_platform PUBLIC ndde_math volk vk-bootstrap::vk-bootstrap glfw)
+
+# ── ndde_renderer ─────────────────────────────────────────────────────────────
+add_library(ndde_renderer STATIC
     renderer/Swapchain.cpp
     renderer/Pipeline.cpp
     renderer/ImGuiLayer.cpp
-    geometry/Curve.cpp
-    geometry/Parabola.cpp
-    geometry/Hyperbola.cpp
-    geometry/Axes2D.cpp
-    math/Vec3.cpp
-        app/AnalysisPanel.hpp
-        app/AnalysisPanel.cpp
-        app/HoverResult.hpp
-        geometry/ICurve.hpp
-        core/Types.hpp
-        core/EngineContext.hpp
-        app/AppConfig.hpp
-        core/EngineContext.cpp
-        renderer/VulkanRenderer.hpp
-        renderer/VulkanRenderer.cpp
-        core/BufferManager.hpp
-        core/BufferManager.cpp
-        geometry/ICurve.cpp
+    renderer/Renderer.cpp
+)
+target_include_directories(ndde_renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_renderer PUBLIC
+    ndde_platform
+    ndde_memory
+    imgui
+    Vulkan::Vulkan
 )
 
-add_executable(nurbs_dde ${APP_SOURCES})
-
-target_include_directories(nurbs_dde PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_libraries(nurbs_dde
-    PRIVATE
-        vk-bootstrap::vk-bootstrap
-        Vulkan::Vulkan
-        glfw
-        glm::glm
-        imgui
+# ── ndde_engine ───────────────────────────────────────────────────────────────
+add_library(ndde_engine STATIC
+    engine/AppConfig.cpp
+    engine/Engine.cpp
+)
+target_include_directories(ndde_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_engine PUBLIC
+    ndde_renderer
+    ndde_memory
+    ndde_platform
+    ndde_math
+    nlohmann_json::nlohmann_json
 )
 
-if(MSVC)
-    target_compile_options(nurbs_dde PRIVATE
-        /W4 /WX- /wd4100 /permissive- /utf-8
-        $<$<CONFIG:Debug>:/Od /Zi /RTC1>
-        $<$<CONFIG:Release>:/O2 /DNDEBUG>
-    )
-else()
-    target_compile_options(nurbs_dde PRIVATE
-        -Wall -Wextra -Wpedantic -Wno-unused-parameter
-        $<$<CONFIG:Debug>:-g -O0>
-        $<$<CONFIG:Release>:-O3 -march=native>
-        $<$<AND:$<CONFIG:Debug>,$<BOOL:${ENABLE_SANITIZERS}>>:-fsanitize=address,undefined>
-    )
-    target_link_options(nurbs_dde PRIVATE
-        $<$<AND:$<CONFIG:Debug>,$<BOOL:${ENABLE_SANITIZERS}>>:-fsanitize=address,undefined>
-    )
-endif()
+# ── nurbs_dde executable ──────────────────────────────────────────────────────
+add_executable(nurbs_dde
+    app/main.cpp
+    app/Scene.cpp
+    app/AnalysisPanel.cpp
+)
+target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(nurbs_dde PRIVATE ndde_engine imgui)
 
+# ── Compiler flags ────────────────────────────────────────────────────────────
+set(NDDE_TARGETS ndde_math ndde_memory ndde_platform ndde_renderer ndde_engine nurbs_dde)
+
+foreach(tgt IN LISTS NDDE_TARGETS)
+    if(MSVC)
+        target_compile_options(${tgt} PRIVATE
+            /W4 /WX- /wd4100 /permissive- /utf-8
+            $<$<CONFIG:Debug>:/Od /Zi /RTC1>
+            $<$<CONFIG:Release>:/O2 /DNDEBUG>
+        )
+    else()
+        target_compile_options(${tgt} PRIVATE
+            -Wall -Wextra -Wpedantic -Wno-unused-parameter
+            $<$<CONFIG:Debug>:-g -O0>
+            $<$<CONFIG:Release>:-O3 -march=native>
+        )
+    endif()
+endforeach()
+
+# ── Shaders ───────────────────────────────────────────────────────────────────
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/shaders")
 compile_shaders(
     TARGET     nurbs_dde
@@ -65,16 +99,23 @@ compile_shaders(
         "${SHADER_SOURCE_DIR}/curve.frag"
 )
 
-set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
+target_compile_definitions(nurbs_dde  PRIVATE SHADER_DIR="${CMAKE_BINARY_DIR}/shaders")
+target_compile_definitions(ndde_engine PRIVATE SHADER_DIR="${CMAKE_BINARY_DIR}/shaders")
 
+# ── Assets ────────────────────────────────────────────────────────────────────
+set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
 add_custom_target(nurbs_dde_assets ALL
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "${ASSETS_OUTPUT_DIR}"
-        COMMENT "Copying assets to build directory"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets" "${ASSETS_OUTPUT_DIR}"
+    COMMENT "Copying assets to build directory"
 )
 add_dependencies(nurbs_dde nurbs_dde_assets)
 
-target_compile_definitions(nurbs_dde PRIVATE
-        ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+# ── engine_config.json ────────────────────────────────────────────────────────
+add_custom_target(nurbs_dde_config ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/engine_config.json"
+        "${CMAKE_BINARY_DIR}/engine_config.json"
+    COMMENT "Copying engine_config.json to build directory"
 )
+add_dependencies(nurbs_dde nurbs_dde_config)

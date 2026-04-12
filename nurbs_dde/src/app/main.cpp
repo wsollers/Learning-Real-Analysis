@@ -1,35 +1,16 @@
 // app/main.cpp
-#include "core/EngineContext.hpp"
-#include "app/Application.hpp"
+// Entry point. All startup logic lives in Engine::start().
+#include "engine/Engine.hpp"
 #include <iostream>
-#include <memory>
-
-#define VOLK_IMPLEMENTATION
-#include <volk.h>
 
 int main() {
     try {
-        // 0 - Initialize VOLK
-        if (volkInitialize() != VK_SUCCESS) {
-            throw std::runtime_error("Failed to initialize Volk");
-        }
-        ndde::AppConfig config;
-        // ... setup config ...
-
-        // Create the context first
-        auto context = std::make_unique<ndde::EngineContext>(config);
-
-        // Pass the context into Application
-        ndde::Application app(std::move(context));
-        app.run();
-
-
+        ndde::Engine engine;
+        engine.start();   // loads engine_config.json (or uses defaults)
+        engine.run();     // blocks until window close
     } catch (const std::exception& e) {
-        // In a high-performance simulation, we must catch startup
-        // failures (like Vulkan device loss) immediately.
-        std::cerr << "Fatal Error during Engine Execution: " << e.what() << std::endl;
+        std::cerr << "[Fatal] " << e.what() << "\n";
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
