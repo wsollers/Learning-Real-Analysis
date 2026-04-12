@@ -2,10 +2,16 @@
 #include "app/Scene.hpp"
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 #include <format>
 #include <stdexcept>
+#include <cmath>
+#include <numbers>
+#include <limits>
 
 namespace ndde {
+
+// ── ConicEntry::rebuild ───────────────────────────────────────────────────────
 
 void ConicEntry::rebuild() {
     needs_rebuild = false;
@@ -17,7 +23,22 @@ void ConicEntry::rebuild() {
             : math::HyperbolaAxis::Vertical;
         conic = std::make_unique<math::Hyperbola>(hyp_a, hyp_b, hyp_h, hyp_k, axis, hyp_range);
     }
+    // Rebuild the CPU-side vertex cache used for hover snap
+    snap_cache.clear();
+    if (conic) {
+        const u32 n = tessellation;
+        snap_cache.resize(n + 1u);
+        const float t0   = conic->t_min();
+        const float step = (conic->t_max() - t0) / static_cast<float>(n);
+        for (u32 i = 0; i <= n; ++i) {
+            const float t = t0 + static_cast<float>(i) * step;
+            const auto p = conic->evaluate(t);
+            snap_cache[i] = { p.x, p.y };
+        }
+    }
 }
+
+// ── Scene ctor ────────────────────────────────────────────────────────────────
 
 Scene::Scene(EngineAPI api) : m_api(std::move(api)) {
     add_parabola();
@@ -44,19 +65,162 @@ void Scene::add_hyperbola() {
     m_conics.push_back(std::move(e));
 }
 
+// ── on_frame ──────────────────────────────────────────────────────────────────
+
 void Scene::on_frame() {
+    update_hover();     // 1. mouse → world, snap to nearest curve point
+
     draw_main_panel();
     m_analysis_panel.draw(m_hover, m_api.math_font_body());
 
     submit_grid();
     submit_axes();
     submit_conics();
+    submit_epsilon_ball(); // 2. draw the ball if snap hit and toggle is on
 }
 
+// ── ortho_mvp ─────────────────────────────────────────────────────────────────
+
 Mat4 Scene::ortho_mvp() const noexcept {
+    /*
     const float e = m_axes_cfg.extent * 1.2f;
     return glm::ortho(-e, e, -e, e, -10.f, 10.f);
+    */
+    const float e = m_axes_cfg.extent * 1.2f;
+
+    // Get actual window dimensions from the API/Config
+    float width  = static_cast<float>(m_api.config().window.width);
+    float height = static_cast<float>(m_api.config().window.height);
+    float aspect = width / height;
+
+    // OLD: return glm::ortho(-e, e, -e, e, -10.f, 10.f);
+    // NEW: Scale the X bounds by the aspect ratio
+    return glm::ortho(-e * aspect, e * aspect, -e, e, -10.f, 10.f);
 }
+
+// ── update_hover ──────────────────────────────────────────────────────────────
+// Converts the ImGui mouse position to world space, then snaps to the nearest
+// tessellated curve point within the epsilon ball radius.
+
+void Scene::update_hover() {
+    m_hover = HoverResult{};  // reset each frame
+
+    // Only hit-test when the mouse is over the viewport, not over an ImGui window
+    if (ImGui::GetIO().WantCaptureMouse) return;
+
+    const ImVec2 mouse_px = ImGui::GetMousePos();
+    const ImVec2 display  = ImGui::GetIO().DisplaySize;
+    if (display.x <= 0.f || display.y <= 0.f) return;
+
+    // Normalised Device Coordinates: [-1, 1]
+    const float ndc_x = (mouse_px.x / display.x) * 2.f - 1.f;
+    const float ndc_y = 1.f - (mouse_px.y / display.y) * 2.f; // Y flipped
+
+    // Invert the orthographic MVP to get world-space mouse position.
+    // glm::ortho produces a matrix whose inverse maps NDC -> world.
+    const Mat4 mvp     = ortho_mvp();
+    const Mat4 inv_mvp = glm::inverse(mvp);
+    const Vec4 world4  = inv_mvp * Vec4{ ndc_x, ndc_y, 0.f, 1.f };
+    const float mx = world4.x;
+    const float my = world4.y;
+
+    const float snap_radius = m_analysis_panel.get_epsilon_ball_radius();
+    const float snap_r2     = snap_radius * snap_radius;
+
+    float   best_dist2  = std::numeric_limits<float>::max();
+    int     best_curve  = -1;
+    int     best_idx    = -1;
+    float   best_x      = 0.f;
+    float   best_y      = 0.f;
+
+    for (int ci = 0; ci < static_cast<int>(m_conics.size()); ++ci) {
+        const auto& entry = m_conics[ci];
+        if (!entry.enabled || entry.snap_cache.empty()) continue;
+
+        for (int si = 0; si < static_cast<int>(entry.snap_cache.size()); ++si) {
+            const auto& [px, py] = entry.snap_cache[si];
+            const float dx = px - mx;
+            const float dy = py - my;
+            const float d2 = dx * dx + dy * dy;
+            if (d2 < best_dist2) {
+                best_dist2 = d2;
+                best_curve = ci;
+                best_idx   = si;
+                best_x     = px;
+                best_y     = py;
+            }
+        }
+    }
+
+    if (best_curve >= 0 && best_dist2 <= snap_r2) {
+        m_hover.hit       = true;
+        m_hover.world_x   = best_x;
+        m_hover.world_y   = best_y;
+        m_hover.curve_idx = best_curve;
+        m_hover.snap_idx  = best_idx;
+
+        // Secant: use the adjacent tessellation point
+        const auto& cache = m_conics[best_curve].snap_cache;
+        const int n = static_cast<int>(cache.size());
+        if (best_idx + 1 < n) {
+            m_hover.has_secant  = true;
+            m_hover.secant_x0   = best_x;
+            m_hover.secant_y0   = best_y;
+            m_hover.secant_x1   = cache[best_idx + 1].first;
+            m_hover.secant_y1   = cache[best_idx + 1].second;
+            const float dx = m_hover.secant_x1 - m_hover.secant_x0;
+            const float dy = m_hover.secant_y1 - m_hover.secant_y0;
+            m_hover.slope     = (std::abs(dx) > 1e-8f) ? dy / dx : 0.f;
+            m_hover.intercept = m_hover.secant_y0 - m_hover.slope * m_hover.secant_x0;
+        }
+
+        // Tangent: use the analytic derivative from the conic
+        if (m_conics[best_curve].conic) {
+            const auto& conic = *m_conics[best_curve].conic;
+            const float t0    = conic.t_min();
+            const float tspan = conic.t_max() - t0;
+            const float t     = t0 + (static_cast<float>(best_idx) /
+                                      static_cast<float>(cache.size() - 1)) * tspan;
+            const Vec3 d = conic.derivative(t);
+            m_hover.has_tangent   = true;
+            m_hover.tangent_slope = (std::abs(d.x) > 1e-8f) ? d.y / d.x : 0.f;
+        }
+    }
+}
+
+// ── submit_epsilon_ball ───────────────────────────────────────────────────────
+// Tessellates a circle of radius epsilon around the snapped point.
+// Uses LineStrip with the last vertex equal to the first to close the loop.
+
+void Scene::submit_epsilon_ball() {
+    if (!m_hover.hit)                           return;
+    if (!m_analysis_panel.show_epsilon_ball())  return;
+
+    constexpr u32 segments = 64;
+    constexpr u32 count    = segments + 1;  // +1 to close the loop
+
+    const float r   = m_analysis_panel.get_epsilon_ball_radius();
+    const float cx  = m_hover.world_x;
+    const float cy  = m_hover.world_y;
+    const Vec4  col = { 0.9f, 0.9f, 0.2f, 0.85f }; // bright yellow
+
+    auto slice = m_api.acquire(count);
+    Vertex* v  = slice.vertices();
+
+    for (u32 i = 0; i < segments; ++i) {
+        const float theta = (static_cast<float>(i) / static_cast<float>(segments))
+                            * 2.f * std::numbers::pi_v<float>;
+        v[i] = Vertex{ Vec3{ cx + r * std::cos(theta),
+                              cy + r * std::sin(theta),
+                              0.f },
+                       col };
+    }
+    v[segments] = v[0]; // close
+
+    m_api.submit(slice, Topology::LineStrip, DrawMode::VertexColor, col, ortho_mvp());
+}
+
+// ── submit_grid / submit_axes / submit_conics ─────────────────────────────────
 
 void Scene::submit_grid() {
     const u32 count = math::grid_vertex_count(m_axes_cfg);
@@ -95,6 +259,8 @@ void Scene::submit_conics() {
     }
 }
 
+// ── draw_main_panel ───────────────────────────────────────────────────────────
+
 void Scene::draw_main_panel() {
     ImGui::SetNextWindowPos(ImVec2(20.f, 20.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300.f, 0.f), ImGuiCond_FirstUseEver);
@@ -125,6 +291,8 @@ void Scene::draw_main_panel() {
 
     ImGui::End();
 }
+
+// ── draw_conic_panel ──────────────────────────────────────────────────────────
 
 void Scene::draw_conic_panel(ConicEntry& e, int /*idx*/) {
     ImGui::Indent();

@@ -15,6 +15,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <utility>   // std::pair
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace ndde {
@@ -36,6 +37,11 @@ struct ConicEntry {
 
     bool needs_rebuild = true;
     void mark_dirty()  { needs_rebuild = true; }
+
+    /// CPU-side XY cache for hover snap. Rebuilt alongside the GPU buffer.
+    /// Each entry is the (x, y) position of the corresponding tessellation point.
+    std::vector<std::pair<float, float>> snap_cache;
+
     void rebuild();
 };
 
@@ -53,13 +59,21 @@ private:
     HoverResult           m_hover;
     std::vector<ConicEntry> m_conics;
 
+    // ── UI panels ─────────────────────────────────────────────────────────────
     void draw_main_panel();
     void draw_conic_panel(ConicEntry& entry, int idx);
 
+    // ── Geometry submission ───────────────────────────────────────────────────
     void submit_axes();
     void submit_grid();
     void submit_conics();
+    void submit_epsilon_ball();   ///< Circle drawn at the snapped hover point
 
+    // ── Hover / hit-test ──────────────────────────────────────────────────────
+    /// Convert mouse position → world space → snap to nearest curve point.
+    void update_hover();
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
     [[nodiscard]] Mat4 ortho_mvp() const noexcept;
 
     void add_parabola();
