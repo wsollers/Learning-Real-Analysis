@@ -13,19 +13,16 @@ int main() {
         if (volkInitialize() != VK_SUCCESS) {
             throw std::runtime_error("Failed to initialize Volk");
         }
-        // --- 1. Initialize the Service Locator ---
-        // This creates our AppConfig (2D/3D flag), Renderer, and BufferManager.
-        // By using unique_ptr, we guarantee destruction order when main() exits.
-        auto context = std::make_unique<ndde::EngineContext>();
+        ndde::AppConfig config;
+        // ... setup config ...
 
-        // --- 2. Initialize the Application ---
-        // We move ownership of the context to the application.
-        // The Application will now own the "Heart" of the simulation.
+        // Create the context first
+        auto context = std::make_unique<ndde::EngineContext>(config);
+
+        // Pass the context into Application
         ndde::Application app(std::move(context));
-
-        // --- 3. Run the Simulation Loop ---
-        // This is where the DDE pursuit logic and Vulkan draw calls live.
         app.run();
+
 
     } catch (const std::exception& e) {
         // In a high-performance simulation, we must catch startup

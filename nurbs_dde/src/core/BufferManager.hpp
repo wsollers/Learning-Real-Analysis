@@ -1,32 +1,41 @@
-//
-// Created by wsoll on 4/11/2026.
-//
 #pragma once
-
-#ifndef NURBS_DDE_BUFFERMANAGER_HPP
-#define NURBS_DDE_BUFFERMANAGER_HPP
-
-#include "core/Types.hpp"
-#include <vector>
 #include <volk.h>
+#include <atomic>
+#include "core/Types.hpp"
 
 namespace ndde {
+
+    // The "receipt" handed to the Math engine
+    struct ArenaSlice {
+        VkBuffer buffer;
+        void* data;          // CPU-writable pointer
+        uint32_t offset;     // GPU-readable offset
+        uint32_t vertexCount;
+    };
+
+    struct ArenaPool {
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+        void* mappedBase = nullptr;
+        VkDeviceSize totalSize = 0;
+        std::atomic<VkDeviceSize> currentOffset{0};
+    };
+
     class BufferManager {
     public:
-        // Uploads a vector of vertices to the GPU
-        void upload_curve_data(const std::vector<Vertex>& vertices, VkDevice device, VkPhysicalDevice physicalDevice);
-
-        VkBuffer get_buffer() const { return m_vertexBuffer; }
-        u32 get_vertex_count() const { return static_cast<u32>(m_vertices.size()); }
-
+        BufferManager(VkDevice device, VkPhysicalDevice physDevice);
         ~BufferManager();
 
-    private:
-        VkBuffer m_vertexBuffer = VK_NULL_HANDLE;
-        VkDeviceMemory m_vertexBufferMemory = VK_NULL_HANDLE;
-        std::vector<Vertex> m_vertices;
+        // The thread-safe "Pop"
+        ArenaSlice acquire_large_slice(uint32_t vertexCount);
+        void reset_pools();
 
-        void create_buffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory, VkDevice device, VkPhysicalDevice physicalDevice);
+    private:
+        VkDevice m_device;
+        ArenaPool m_large_pool;
+
+        void create_pool(VkDeviceSize size, ArenaPool& pool, VkPhysicalDevice physDevice);
+        uint32_t find_memory_type(VkPhysicalDevice phys, uint32_t typeFilter, VkMemoryPropertyFlags properties);
     };
-}
-#endif //NURBS_DDE_BUFFERMANAGER_HPP
+
+} // namespace ndde

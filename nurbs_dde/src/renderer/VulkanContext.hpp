@@ -38,7 +38,7 @@ public:
     [[nodiscard]] VkQueue            present_queue()   const { return m_present_queue; }
     [[nodiscard]] QueueFamilies      queue_families()  const { return m_queue_families; }
     [[nodiscard]] vkb::Device        vkb_device()      const { return m_vkb_device; }
-
+    [[nodiscard]] VkFormat swapchain_format() const { return m_swapchain_format; }
 private:
     VkInstance       m_instance        = VK_NULL_HANDLE;
     VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
@@ -49,7 +49,7 @@ private:
     VkQueue          m_present_queue   = VK_NULL_HANDLE;
     QueueFamilies    m_queue_families  = {};
     vkb::Device      m_vkb_device      = {};
-
+    VkFormat m_swapchain_format = VK_FORMAT_B8G8R8A8_SRGB;
     bool m_initialised = false;
 };
 

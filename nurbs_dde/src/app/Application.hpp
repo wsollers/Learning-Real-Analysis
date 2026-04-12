@@ -6,7 +6,6 @@
 
 #include "renderer/VulkanContext.hpp"
 #include "renderer/Swapchain.hpp"
-#include "renderer/Renderer.hpp"
 #include "app/CurveEntry.hpp"
 #include "app/AnalysisPanel.hpp"
 #include "math/Vec3.hpp"
@@ -30,9 +29,8 @@ namespace ndde {
 
     private:
         void update();
-        void render();
 
-        std::unique_ptr<EngineContext> m_ctx;
+        std::unique_ptr<EngineContext> m_context;
         double m_last_time = 0.0;
     };
 }

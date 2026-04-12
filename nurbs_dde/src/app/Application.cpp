@@ -6,44 +6,34 @@
 namespace ndde {
 
     Application::Application(std::unique_ptr<EngineContext> context)
-        : m_ctx(std::move(context))
+       : m_context(std::move(context))
     {
-        m_last_time = glfwGetTime();
-        // init_curves logic will eventually move to a GeometryManager
-        // or be handled in update() based on the config.
-    }
-
-    Application::~Application() {
-        // Context handles cleanup of renderer/window/vulkan automatically
+        // Constructor body can be empty now
     }
 
     void Application::run() {
-        // Instead of m_window, we ask the renderer if we should close
-        while (!m_ctx->renderer->should_close()) {
-            m_ctx->renderer->poll_events();
+        if (!m_context) return;
 
-            update();
-            render();
+        while (m_context->is_running()) {
+            m_context->new_frame();
+
+            // 1. Get the slice (the metadata)
+            auto slice = m_context->acquire_geometry_slice(3);
+
+            // 2. Get the actual memory pointer and tell the compiler it's a Vertex array
+            Vertex* vram = static_cast<Vertex*>(slice.data);
+
+            // 3. Write to the pointer, NOT the slice object
+            vram[0] = { {  0.0f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }; // Red top
+            vram[1] = { {  0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }; // Green right
+            vram[2] = { { -0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }; // Blue left
+            m_context->draw_geometry(slice);
+            m_context->submit_frame();
         }
     }
 
-    void Application::update() {
-        double current_time = glfwGetTime();
-        double delta_time = current_time - m_last_time;
-        m_last_time = current_time;
-
-        // Any DDE simulation logic goes here, using m_ctx->config
-
+    Application::~Application() {
+        // You can leave this empty.
+        // The unique_ptr<EngineContext> will clean itself up automatically!
     }
-
-    void Application::render() {
-        // The Renderer handles the frame lifecycle
-        m_ctx->renderer->begin_frame();
-
-        // Pass the config so the renderer knows about 2D/3D toggle, zoom, etc.
-        m_ctx->renderer->draw_geometry(*m_ctx->config);
-
-        m_ctx->renderer->end_frame();
-    }
-
 } // namespace ndde

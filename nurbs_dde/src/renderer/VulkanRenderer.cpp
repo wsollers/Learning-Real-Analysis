@@ -5,7 +5,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
 
+#include "core/BufferManager.hpp"
+
 namespace ndde {
+    struct FrameData {
+        VkSemaphore present_semaphore;
+        VkSemaphore render_semaphore;
+        VkFence render_fence;
+    };
+    FrameData frames[2]; // Double buffering
+
 
     VulkanRenderer::VulkanRenderer(const AppConfig& config) {
         init_window();
@@ -32,6 +41,9 @@ namespace ndde {
         vkAllocateCommandBuffers(m_context.device(), &alloc_info, &m_command_buffer);
 
         create_sync_objects();
+
+
+        init_pipelines();
     }
 
     void VulkanRenderer::init_window() {
@@ -53,6 +65,14 @@ namespace ndde {
     }
 
     void VulkanRenderer::begin_frame() {
+        // This forces the CPU to wait until the GPU is totally idle.
+        // It kills performance but stops the validation errors immediately.
+        vkDeviceWaitIdle(m_context.device());
+
+
+
+
+
         VkDevice dev = m_context.device();
 
         vkWaitForFences(dev, 1, &m_render_fence, VK_TRUE, UINT64_MAX);
@@ -156,6 +176,7 @@ namespace ndde {
                 vkDestroyImageView(dev, view, nullptr);
             vkDestroySwapchainKHR(dev, m_swapchain, nullptr);
         }
+
         // m_context destructor handles device, surface, messenger, instance
         glfwDestroyWindow(m_window);
         glfwTerminate();
@@ -167,6 +188,62 @@ namespace ndde {
 
     void VulkanRenderer::poll_events() {
         glfwPollEvents();
+    }
+    void VulkanRenderer::record_draw(const ArenaSlice& slice) {
+        // 1. BIND PIPELINE FIRST
+        // This tells Vulkan which "program" and "layout" we are using
+        vkCmdBindPipeline(m_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_line_pipeline.pipeline());
+
+        // 2. SET DYNAMIC STATE
+        VkViewport viewport{0.0f, 0.0f, (float)m_width, (float)m_height, 0.0f, 1.0f};
+        vkCmdSetViewport(m_command_buffer, 0, 1, &viewport);
+
+        VkRect2D scissor{{0, 0}, {m_width, m_height}};
+        vkCmdSetScissor(m_command_buffer, 0, 1, &scissor);
+
+        // 3. PUSH CONSTANTS
+        // Now that the pipeline is bound, we push the data to its layout
+        struct PushConstants {
+            glm::mat4 mvp;
+            int mode;
+            float color[3];
+        } constants;
+
+        constants.mvp = glm::mat4(1.0f);
+        constants.mode = 0;
+        // (Optional) constants.color initialization if mode != 0
+
+        vkCmdPushConstants(
+            m_command_buffer,
+            m_line_pipeline.layout(), // CRITICAL: This must match the layout used to create the pipeline
+            VK_SHADER_STAGE_VERTEX_BIT,
+            0,
+            sizeof(PushConstants),
+            &constants
+        );
+
+        // 4. BIND VERTICES & DRAW
+        VkDeviceSize offset = slice.offset;
+        vkCmdBindVertexBuffers(m_command_buffer, 0, 1, &slice.buffer, &offset);
+
+        vkCmdDraw(m_command_buffer, slice.vertexCount, 1, 0, 0);
+    }
+
+    void VulkanRenderer::init_pipelines() {
+        // 1. Get the device from the context
+        VkDevice device = m_context.device();
+
+        // 2. Get the format from the context
+        // (Ensure m_context has a swapchain_format() getter!)
+        VkFormat format = m_context.swapchain_format();
+
+        m_line_pipeline.init(
+            device,
+            format,
+            SHADER_DIR "/curve.vert.spv",
+            SHADER_DIR "/curve.frag.spv",
+            VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
+        );
     }
 
 } // namespace ndde

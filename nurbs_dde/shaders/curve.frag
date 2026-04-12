@@ -1,10 +1,8 @@
 #version 450
-// shaders/curve.frag
-// Outputs the interpolated colour from the vertex shader.
 
-layout(location = 0) in  vec3 frag_color;
-layout(location = 0) out vec4 out_color;
+layout(location = 0) in vec4 frag_color; // Must match vertex output exactly
+layout(location = 0) out vec4 out_color; // Final screen color must be location 0
 
 void main() {
-    out_color = vec4(frag_color, 1.0);
+    out_color = frag_color;
 }

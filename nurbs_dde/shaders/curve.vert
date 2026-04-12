@@ -1,27 +1,24 @@
 #version 450
-// curve.vert — shared vertex shader for all line geometry
 
-layout(location = 0) in vec4 in_position;
+layout(location = 0) in vec3 in_position;
+layout(location = 1) in vec4 in_color;
 
 layout(push_constant) uniform PushConstants {
     mat4  mvp;
-    int   mode;       // 0 = use per-curve colour, 1 = axes grey, 2 = epsilon ball
-    float colour[3];  // RGB for mode 0
+    int   mode;
+    float color[3];
 } pc;
 
-layout(location = 0) out vec3 frag_color;
+layout(location = 0) out vec4 frag_color; // Changed to vec4 to match input requirements
 
 void main() {
-    gl_Position = pc.mvp * in_position;
+    // For now, let's use a raw position to guarantee visibility
+    // If this works, change it back to: pc.mvp * vec4(in_position, 1.0);
+    gl_Position = vec4(in_position, 1.0); 
 
-    if (pc.mode == 1) {
-        // Axes: soft warm white
-        frag_color = vec3(0.75, 0.75, 0.72);
-    } else if (pc.mode == 2) {
-        // Epsilon ball: bright white
-        frag_color = vec3(1.0, 1.0, 1.0);
+    if (pc.mode == 0) {
+        frag_color = in_color;
     } else {
-        // Curve: use per-entry colour from push constants
-        frag_color = vec3(pc.colour[0], pc.colour[1], pc.colour[2]);
+        frag_color = vec4(pc.color[0], pc.color[1], pc.color[2], 1.0);
     }
 }

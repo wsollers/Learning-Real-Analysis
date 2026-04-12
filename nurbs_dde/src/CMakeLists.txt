@@ -4,7 +4,6 @@ set(APP_SOURCES
     renderer/VulkanContext.cpp
     renderer/Swapchain.cpp
     renderer/Pipeline.cpp
-    renderer/Renderer.cpp
     renderer/ImGuiLayer.cpp
     geometry/Curve.cpp
     geometry/Parabola.cpp

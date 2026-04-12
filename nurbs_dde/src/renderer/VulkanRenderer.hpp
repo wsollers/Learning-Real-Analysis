@@ -6,6 +6,9 @@
 #include "renderer/VulkanContext.hpp"
 #include <vector>
 
+#include "Pipeline.hpp"
+#include "core/BufferManager.hpp"
+
 struct GLFWwindow;
 
 namespace ndde {
@@ -25,18 +28,21 @@ namespace ndde {
 
         VkDevice         get_device()          const { return m_context.device(); }
         VkPhysicalDevice get_physical_device() const { return m_context.physical_device(); }
+        void record_draw(const ArenaSlice& slice);
 
     private:
         void init_window();
         void create_sync_objects();
         void transition_image(VkCommandBuffer cmd, VkImage image, VkImageLayout from, VkImageLayout to);
+        void init_pipelines();
+
 
         GLFWwindow* m_window = nullptr;
         u32 m_width  = 1280;
         u32 m_height = 720;
 
         renderer::VulkanContext m_context;
-
+        Pipeline m_line_pipeline;
         VkSwapchainKHR           m_swapchain             = VK_NULL_HANDLE;
         std::vector<VkImage>     m_swapchain_images;
         std::vector<VkImageView> m_swapchain_image_views;

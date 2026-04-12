@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace ndde::renderer {
+namespace ndde {
 
 class Pipeline {
 public:
