@@ -1,20 +1,13 @@
 # src/CMakeLists.txt
 
 # ── ndde_math ─────────────────────────────────────────────────────────────────
-# Pure mathematics: no Vulkan runtime, no GLFW, no ImGui.
-# Types.hpp includes volk.h for VkBuffer / VkVertexInput* handle types,
-# so we need the Vulkan SDK headers. We use Vulkan::Headers (include-only
-# imported target provided by find_package(Vulkan)) so we get the SDK
-# include path without linking vulkan-1.lib into the math layer.
 add_library(ndde_math STATIC
     math/Conics.cpp
     math/Axes.cpp
 )
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(ndde_math PUBLIC VK_NO_PROTOTYPES)
-# volk headers — needed for VkBuffer etc in Types.hpp / ArenaSlice.hpp
 target_include_directories(ndde_math PUBLIC ${volk_SOURCE_DIR})
-# Vulkan SDK headers — volk.h includes vulkan/vulkan.h from the SDK
 target_link_libraries(ndde_math PUBLIC glm::glm Vulkan::Headers)
 
 # ── ndde_memory ───────────────────────────────────────────────────────────────
@@ -99,11 +92,20 @@ compile_shaders(
         "${SHADER_SOURCE_DIR}/curve.frag"
 )
 
-target_compile_definitions(nurbs_dde  PRIVATE SHADER_DIR="${CMAKE_BINARY_DIR}/shaders")
-target_compile_definitions(ndde_engine PRIVATE SHADER_DIR="${CMAKE_BINARY_DIR}/shaders")
-
-# ── Assets ────────────────────────────────────────────────────────────────────
+# SHADER_DIR and ASSETS_DIR are injected as absolute paths at compile time
+# so the exe works regardless of the working directory (CWD) it is launched from.
 set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
+
+target_compile_definitions(nurbs_dde  PRIVATE
+    SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
+    ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+)
+target_compile_definitions(ndde_engine PRIVATE
+    SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
+    ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+)
+
+# ── Assets copy ───────────────────────────────────────────────────────────────
 add_custom_target(nurbs_dde_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets" "${ASSETS_OUTPUT_DIR}"
@@ -111,7 +113,7 @@ add_custom_target(nurbs_dde_assets ALL
 )
 add_dependencies(nurbs_dde nurbs_dde_assets)
 
-# ── engine_config.json ────────────────────────────────────────────────────────
+# ── engine_config.json copy ───────────────────────────────────────────────────
 add_custom_target(nurbs_dde_config ALL
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_SOURCE_DIR}/engine_config.json"

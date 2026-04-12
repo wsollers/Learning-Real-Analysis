@@ -40,15 +40,18 @@ void ImGuiLayer::init(GLFWwindow* window,
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    // NOTE: ViewportsEnable is intentionally NOT set.
+    // With viewports, MousePos is in absolute screen coords which breaks
+    // our pixel_to_world conversion (it expects window-relative coords).
+    // We don't need floating ImGui windows outside the main window.
     ImGui::StyleColorsDark();
 
     ImGuiStyle& style  = ImGui::GetStyle();
-    style.WindowRounding = 4.f;
-    style.FrameRounding  = 3.f;
-    style.GrabRounding   = 3.f;
+    style.WindowRounding   = 4.f;
+    style.FrameRounding    = 3.f;
+    style.GrabRounding     = 3.f;
     style.WindowBorderSize = 1.f;
-    style.FramePadding   = ImVec2(6.f, 4.f);
+    style.FramePadding     = ImVec2(6.f, 4.f);
 
     ImGui_ImplGlfw_InitForVulkan(window, true);
 
@@ -84,9 +87,7 @@ void ImGuiLayer::load_fonts(const std::string& assets_dir) {
     ImFontConfig cfg;
     cfg.OversampleH = 3;
     cfg.OversampleV = 2;
-    //TODO
-    //const std::string ttf = assets_dir + "/fonts/STIXTwoText-Italic-VariableFont_wght.ttf";
-    const std::string ttf = "F:/repos/Learning-Real-Analysis/nurbs_dde/assets/fonts/STIXTwoText-Italic-VariableFont_wght.ttf";
+    const std::string ttf = assets_dir + "/fonts/STIXTwoText-Italic-VariableFont_wght.ttf";
     m_font_math_body  = io.Fonts->AddFontFromFileTTF(ttf.c_str(), 22.f, &cfg, math_ranges);
     m_font_math_small = io.Fonts->AddFontFromFileTTF(ttf.c_str(), 15.f, &cfg, math_ranges);
     if (!m_font_math_body || !m_font_math_small)
@@ -100,8 +101,8 @@ void ImGuiLayer::destroy() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     vkDestroyDescriptorPool(m_device, m_pool, nullptr);
-    m_pool = VK_NULL_HANDLE;
-    m_device = VK_NULL_HANDLE;
+    m_pool        = VK_NULL_HANDLE;
+    m_device      = VK_NULL_HANDLE;
     m_initialised = false;
 }
 
@@ -114,10 +115,7 @@ void ImGuiLayer::new_frame() {
 void ImGuiLayer::render(VkCommandBuffer cmd) {
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
-    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-    }
+    // No UpdatePlatformWindows — viewports are disabled
 }
 
 void ImGuiLayer::on_swapchain_recreated(const Swapchain&) {}

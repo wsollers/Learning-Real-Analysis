@@ -1,8 +1,9 @@
 #pragma once
 // math/Axes.hpp
 // Generates vertex data for coordinate axes and grid lines.
-// build_axes() and build_grid() write into caller-supplied spans so the
-// math layer never allocates GPU memory.
+// Two grid functions:
+//   build_grid()          — legacy, bounded by AxesConfig::extent
+//   build_grid_viewport() — covers the visible view exactly; use this for 2D
 
 #include "math/Types.hpp"
 #include <span>
@@ -14,8 +15,8 @@ namespace colors {
     inline constexpr Vec4 X_AXIS    { 1.00f, 0.22f, 0.22f, 1.00f };
     inline constexpr Vec4 Y_AXIS    { 0.22f, 1.00f, 0.22f, 1.00f };
     inline constexpr Vec4 Z_AXIS    { 0.22f, 0.22f, 1.00f, 1.00f };
-    inline constexpr Vec4 GRID_MAJOR{ 0.30f, 0.30f, 0.30f, 1.00f };
-    inline constexpr Vec4 GRID_MINOR{ 0.12f, 0.12f, 0.12f, 1.00f };
+    inline constexpr Vec4 GRID_MAJOR{ 0.28f, 0.28f, 0.28f, 1.00f };
+    inline constexpr Vec4 GRID_MINOR{ 0.11f, 0.11f, 0.11f, 1.00f };
 } // namespace colors
 
 struct AxesConfig {
@@ -25,10 +26,25 @@ struct AxesConfig {
     bool  is_3d      = false;
 };
 
+// ── Legacy fixed-extent grid ──────────────────────────────────────────────────
+
 [[nodiscard]] u32 grid_vertex_count(const AxesConfig& cfg) noexcept;
 [[nodiscard]] u32 axes_vertex_count(const AxesConfig& cfg) noexcept;
 
 void build_grid(std::span<Vertex> out, const AxesConfig& cfg);
 void build_axes(std::span<Vertex> out, const AxesConfig& cfg);
+
+// ── Viewport-aware infinite grid ─────────────────────────────────────────────
+// Generates only the grid lines that are actually visible in the view.
+// Grid extends from [vl, vr] x [vb, vt] (world-space view bounds).
+// Lines at multiples of minor_step; brighter at multiples of major_step.
+// Returns the number of vertices written (always even; max = grid_vp_max_vertices).
+
+[[nodiscard]] u32 grid_vp_max_vertices(float vl, float vr, float vb, float vt,
+                                        float minor_step) noexcept;
+
+u32 build_grid_viewport(std::span<Vertex> out,
+                         float vl, float vr, float vb, float vt,
+                         float minor_step, float major_step);
 
 } // namespace ndde::math

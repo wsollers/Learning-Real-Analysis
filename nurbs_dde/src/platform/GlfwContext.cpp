@@ -18,10 +18,15 @@ void GlfwContext::init(u32 width, u32 height, const std::string& title) {
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE,  GLFW_TRUE);
+    glfwWindowHint(GLFW_DECORATED,  GLFW_TRUE);   // normal title bar + borders
+    glfwWindowHint(GLFW_MAXIMIZED,  GLFW_TRUE);   // start maximised (windowed, not exclusive)
 
-    m_window = glfwCreateWindow(
-        static_cast<int>(width), static_cast<int>(height),
-        title.c_str(), nullptr, nullptr);
+    // Use config width/height as the window's logical size.
+    // GLFW will maximise on startup so the actual framebuffer will be the
+    // desktop size, but the window remains an ordinary resizable window.
+    m_window = glfwCreateWindow(static_cast<int>(width),
+                                static_cast<int>(height),
+                                title.c_str(), nullptr, nullptr);
 
     if (!m_window) {
         glfwTerminate();
@@ -31,11 +36,15 @@ void GlfwContext::init(u32 width, u32 height, const std::string& title) {
     glfwSetWindowUserPointer(m_window, this);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_resize_callback);
 
-    m_width.store(width,  std::memory_order_relaxed);
-    m_height.store(height, std::memory_order_relaxed);
+    // Read the actual framebuffer size post-maximise
+    int fb_w = 0, fb_h = 0;
+    glfwGetFramebufferSize(m_window, &fb_w, &fb_h);
+    m_width.store(static_cast<u32>(fb_w),  std::memory_order_relaxed);
+    m_height.store(static_cast<u32>(fb_h), std::memory_order_relaxed);
     m_initialised = true;
 
-    std::cout << std::format("[GLFW] Window {}x{}: {}\n", width, height, title);
+    std::cout << std::format("[GLFW] Window {}x{} (maximised): {}\n",
+                             fb_w, fb_h, title);
 }
 
 void GlfwContext::destroy() {

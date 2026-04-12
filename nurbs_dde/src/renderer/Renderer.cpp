@@ -96,11 +96,37 @@ bool Renderer::begin_frame(const Swapchain& swapchain) {
     };
     vkCmdBeginRendering(m_cmd, &render_info);
 
+    // ── Vulkan Y-flip correction ───────────────────────────────────────────
+    // By default Vulkan NDC has Y increasing downward (opposite of OpenGL).
+    // glm::ortho() generates an OpenGL-convention matrix where Y increases
+    // upward (world +Y → NDC +Y → screen top).
+    //
+    // The VK_KHR_maintenance1 negative-height viewport trick flips Vulkan's
+    // Y axis to match OpenGL convention:
+    //   .y      = static_cast<f32>(ext.height)   ← start at bottom
+    //   .height = -static_cast<f32>(ext.height)  ← go upward (negative)
+    //
+    // This makes:
+    //   NDC Y = +1  →  pixel Y = 0        (screen top)    ✓
+    //   NDC Y = -1  →  pixel Y = height   (screen bottom) ✓
+    //
+    // glm::ortho(L, R, B, T) now maps world T to screen top and world B to
+    // screen bottom, matching pixel_to_world() which maps pixel Y=0 to
+    // world top and pixel Y=dp_h to world bottom.
+    //
+    // This also fixes the epsilon-ball tracking inversion: cursor moving UP
+    // (decreasing pixel Y) now correctly maps to increasing world Y, and the
+    // nearest snap cache point (which also increases in Y) renders at the TOP
+    // of the screen — consistent with where the cursor is.
+    const float w = static_cast<f32>(ext.width);
+    const float h = static_cast<f32>(ext.height);
     VkViewport viewport{
-        .x = 0.f, .y = 0.f,
-        .width    = static_cast<f32>(ext.width),
-        .height   = static_cast<f32>(ext.height),
-        .minDepth = 0.f, .maxDepth = 1.f
+        .x        = 0.f,
+        .y        = h,       // start at pixel bottom
+        .width    = w,
+        .height   = -h,      // negative height flips Y to match glm::ortho convention
+        .minDepth = 0.f,
+        .maxDepth = 1.f
     };
     vkCmdSetViewport(m_cmd, 0, 1, &viewport);
 
