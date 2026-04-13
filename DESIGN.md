@@ -239,11 +239,24 @@ Local deviation from canonical notation is permitted only when necessary. Such d
 
 The symbols used in prose, logical blocks, and predicate blocks must agree with the canonical notation layer.
 
-### 3.7 Completeness Vocabulary Rule
+## Rule — Canonical Predicate, Relation, and Notation Sources
 
-Use `LeastUpperBoundProperty(S)` for order-theoretic completeness of an ordered system \(S\). Reserve `Complete(...)` for metric completeness. Define order completeness first over \(S\), then state separately that \(\mathbb{R}\) satisfies the Least Upper Bound Property.
+All predicate names, relation names, and canonical notation names used in theorem statements, predicate readings, negation readings, failure-mode decompositions, and other formal logical displays must come from the project’s canonical source files. This file is stored in project memory.
 
----
+The canonical sources are:
+
+- `predicates.yaml`
+- `relations.yaml`
+- `notation.yaml`
+
+No ad hoc predicate, relation, or notation name may be invented locally inside a notes file, theorem file, proof file, or remark block.
+
+If a formal name is needed and it is not already present in the canonical source files, that is a hard audit failure. The name must first be added to the appropriate canonical source file before it is used anywhere in the notes.
+
+All rendered formal names in logical displays must be written in their canonical form using operator-style typesetting:
+
+```latex
+\operatorname{Name}(\cdots)
 
 ## 4. Box Vocabulary
 
