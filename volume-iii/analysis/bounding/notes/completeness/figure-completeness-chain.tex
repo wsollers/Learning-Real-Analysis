@@ -1,0 +1,59 @@
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  depbox/.style={
+    draw,
+    rounded corners=3pt,
+    fill=gray!8,
+    draw=gray!65,
+    minimum width=4.2cm,
+    minimum height=0.82cm,
+    align=center,
+    font=\small
+  },
+  axbox/.style={
+    draw,
+    rounded corners=3pt,
+    fill=axiombox,
+    draw=axiomborder,
+    minimum width=4.2cm,
+    minimum height=0.82cm,
+    align=center,
+    font=\small
+  },
+  uses/.style={->, thick, yellow!60!black},
+  implies/.style={->, thick, blue!70!black},
+  defines/.style={->, thick, green!50!black},
+  edgelab/.style={
+    font=\scriptsize,
+    fill=white,
+    inner sep=1pt,
+    text=black
+  }
+]
+
+% Nodes
+\node[axbox] (comp) at (0,0) {Completeness Axiom};
+
+\node[depbox] (nip)   at (-2.9,-1.7) {Nested Interval\\Property};
+\node[depbox] (sqrt)  at ( 3.4,-1.7) {Existence of $\sqrt{a}$};
+
+\node[depbox] (arch)  at (-2.9,-3.3) {Archimedean Property};
+\node[depbox] (floor) at (-2.9,-4.9) {Floor Lemma};
+\node[depbox] (densQ) at (-2.9,-6.5) {Density of $\mathbb{Q}$};
+\node[depbox] (densI) at (-2.9,-8.1) {Density of the\\Irrationals in $\mathbb{R}$};
+
+% Edges
+\draw[implies] (comp) -- node[edgelab, pos=0.55, left] {implies} (nip);
+\draw[implies] (comp) -- node[edgelab, pos=0.55, right] {implies} (sqrt);
+
+\draw[implies] (nip) -- node[edgelab, pos=0.5, right] {implies} (arch);
+\draw[implies] (arch) -- node[edgelab, pos=0.5, right] {implies} (floor);
+\draw[implies] (floor) -- node[edgelab, pos=0.5, right] {implies} (densQ);
+\draw[implies] (densQ) -- node[edgelab, pos=0.5, right] {implies} (densI);
+
+\end{tikzpicture}
+\caption{Logical dependency chain for the completeness results in this chapter. Blue edges indicate implication-style dependence. The Completeness Axiom yields the Nested Interval Property and the existence of $\sqrt{a}$; the Nested Interval Property then supports the Archimedean Property, the Floor Lemma, and the density results for $\mathbb{Q}$ and for the irrational numbers.}
+\label{fig:completeness-chain}
+\end{figure}

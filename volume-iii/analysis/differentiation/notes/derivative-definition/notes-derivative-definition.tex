@@ -1,102 +1,117 @@
-% =========================================================
-% Derivative Definition
-% Chapter: Differentiation — Volume III
-% =========================================================
-
-\section{The Derivative}
-
-% ---------------------------------------------------------
-% Toolkit
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Derivative Definition — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l l}
-\toprule
-\textbf{Label} & \textbf{Statement} & \textbf{Method} & \textbf{Detail} \\
-\midrule
-D\ref{def:derivative-at-point}
-  & $f'(c) = \lim_{x\to c}\frac{f(x)-f(c)}{x-c}$
-  & Definition
-  & \hyperref[def:derivative-at-point]{$\downarrow$} \\
-D\ref{def:differentiable-on-interval}
-  & $f$ differentiable on $I$
-  & Definition
-  & \hyperref[def:differentiable-on-interval]{$\downarrow$} \\
-T\ref{thm:differentiable-implies-continuous}
-  & Differentiable $\Rightarrow$ continuous
-  & Direct
-  & \hyperref[thm:differentiable-implies-continuous]{$\downarrow$} \\
-T\ref{thm:caratheodory-factorization}
-  & Carathéodory factorization
-  & Direct
-  & \hyperref[thm:caratheodory-factorization]{$\downarrow$} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
-
-% ---------------------------------------------------------
-\subsection{The Derivative at a Point}
-% ---------------------------------------------------------
-
-\begin{remark}[Motivation]
-The derivative captures the instantaneous rate of change of $f$ at $c$.
-The difference quotient
+\begin{definition}[Derivative at a Point]
+Let $f: D \to \mathbb{R}$ be a real-valued function and $c \in \text{int}(D)$. We say $f$ is differentiable at $c$ with derivative $L = f'(c)$ if and only if:
 \[
-\frac{f(x) - f(c)}{x - c}
+\forall \epsilon \in \mathbb{R} \left( \epsilon > 0 \implies \exists \delta \in \mathbb{R} \left( \delta > 0 \land \forall x \in D \left( 0 < |x - c| < \delta \implies \left| \frac{f(x) - f(c)}{x - c} - L \right| < \epsilon \right) \right) \right)
 \]
-is the slope of the secant line through $(c, f(c))$ and $(x, f(x))$.
-As $x \to c$, if this ratio converges to a finite limit, that limit is
-the slope of the tangent line at $c$ --- the derivative $f'(c)$.
+\end{definition}
 
-Two equivalent formulations appear in the literature.
-The \emph{limit-at-$c$} form uses $x \to c$ as the primary variable.
-The \emph{increment} form substitutes $h = x - c$ and lets $h \to 0$.
-Both express the same limit; the increment form is more convenient
-for algebraic manipulations, the limit-at-$c$ form for continuity arguments.
+
+
+\begin{definition}[Topological Definition of Derivative at a Point]
+Let $f: D \to \mathbb{R}$ and $c \in \text{int}(D)$. $f$ is differentiable at $c$ with derivative $L$ if for every neighborhood $V$ of $L$, there exists a neighborhood $U$ of $c$ such that for all $x \in (U \setminus \{c\}) \cap D$:
+\[
+\frac{f(x) - f(c)}{x - c} \in V
+\]
+\end{definition}
+
+
+
+
+\begin{definition}[Sequential Definition of Derivative at a Point]
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. We say that $f$ is differentiable at $c$ with derivative $L$ if
+\[
+\forall (x_n) \subseteq A \setminus \{c\}\;
+\Big(
+x_n \to c
+\;\Rightarrow\;
+\frac{f(x_n) - f(c)}{x_n - c} \to L
+\Big).
+\]
+
+\end{definition}
+
+
+
+
+
+\begin{theorem}[Equivalence of Definitions of the Derivative at a Point]
+\label{thm:derivative-equivalence}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. Let $L \in \mathbb{R}$. The following are equivalent:
+
+\begin{enumerate}[label=(\roman*)]
+
+\item \textbf{(Epsilon--Delta Definition)}
+\[
+\forall \epsilon > 0\;\exists \delta > 0\;\forall x \in A\;
+\Big(
+0 < |x - c| < \delta
+\;\Rightarrow\;
+\left|
+\frac{f(x) - f(c)}{x - c} - L
+\right| < \epsilon
+\Big).
+\]
+
+\item \textbf{(Neighborhood Definition)}
+For every $\epsilon > 0$, there exists a neighborhood $V$ of $c$ such that
+\[
+x \in (A \cap V) \setminus \{c\}
+\;\Rightarrow\;
+\left|
+\frac{f(x) - f(c)}{x - c} - L
+\right| < \epsilon.
+\]
+
+\item \textbf{(Sequential Definition)}
+\[
+\forall (x_n) \subseteq A \setminus \{c\}\;
+\Big(
+x_n \to c
+\;\Rightarrow\;
+\frac{f(x_n) - f(c)}{x_n - c} \to L
+\Big).
+\]
+
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}[The Principle of Controlled Approximation]
+Across all three definitions, the underlying logical structure is the \textbf{control of the difference quotient}.
+
+\begin{itemize}
+    \item \textbf{Metric Control ($\varepsilon$--$\delta$):}
+    Precision of the difference quotient relative to $L$ is regulated by the radius $\delta$ of the punctured domain.
+
+    \item \textbf{Topological Control (Neighborhoods):}
+    Containment of the difference quotient within a target set $V$ is guaranteed by the existence of a sufficiently small neighborhood $U$ of $c$.
+
+    \item \textbf{Sequential Control (Sequences):}
+    Any probe sequence $(x_n)$ converging to $c$ forces the induced sequence of difference quotients to converge to $L$.
+\end{itemize}
+
+\medskip
+
+In applied settings (e.g., numerical simulation), this expresses a stability principle: if the input resolution (such as a time-step $\Delta t$) is sufficiently controlled, then the resulting approximation error in the difference quotient remains uniformly bounded. This provides a formal mathematical constraint underlying numerical stability.
 \end{remark}
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (\texorpdfstring{%
-    \hyperref[prf:derivative-at-point]{Derivative at a Point}}{Derivative at a Point})}},
-  fonttitle=\small\bfseries]
-\begin{definition}[\texorpdfstring{%
-  \hyperref[prf:derivative-at-point]{Derivative at a Point}}{Derivative at a Point}]
-\label{def:derivative-at-point}
-Let $I \subseteq \mathbb{R}$ be an open interval and $f : I \to \mathbb{R}$.
-Let $c \in I$.
-The \emph{derivative of $f$ at $c$} is
-\[
-f'(c) \;:=\; \lim_{x \to c} \frac{f(x) - f(c)}{x - c},
-\]
-provided this limit exists as a finite real number.
-Equivalently, setting $h = x - c$:
-\[
-f'(c) \;=\; \lim_{h \to 0} \frac{f(c + h) - f(c)}{h}.
-\]
-When $f'(c)$ exists, $f$ is said to be \emph{differentiable at $c$}.
-\end{definition}
-\end{tcolorbox}
+\begin{proposition}[Derivative: $h$-Form Equivalence]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. The following are equivalent:
 
-\begin{remark*}[Fully quantified form]
-$f$ is differentiable at $c$ with derivative $L$ if and only if there exists
-$L \in \mathbb{R}$ such that for every $\varepsilon > 0$ there exists $\delta > 0$
-such that for every $x \in I$ with $0 < |x - c| < \delta$,
-\[
-\left|\frac{f(x) - f(c)}{x - c} - L\right| < \varepsilon.
-\]
-\end{remark*}
+\begin{enumerate}
+\item $f$ is differentiable at $c$.
 
-\begin{remark*}[Predicate statement]
+\item The limit
 \[
-\operatorname{DerivativeAt}(f,\,c,\,L)
-\;:\iff\;
-\operatorname{FunctionLimit}\!\left(\lambda x.\,\frac{f(x)-f(c)}{x-c},\;c,\;L\right).
+\lim_{h \to 0} \frac{f(c + h) - f(c)}{h}
 \]
-\end{remark*}
+exists.
+\end{enumerate}
+
+In this case,
+\[
+f'(c) = \lim_{h \to 0} \frac{f(c + h) - f(c)}{h}.
+\]
+\end{proposition}
 
 \begin{remark}[The two formulations are equivalent]
 Setting $h = x - c$ converts one form to the other bijectively.
@@ -133,74 +148,35 @@ The one-sided limits disagree, so $f'(0)$ does not exist.
 This is the canonical example that continuity does not imply differentiability.
 \end{remark}
 
-% ---------------------------------------------------------
-\subsection{Differentiability on an Interval}
-% ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (\texorpdfstring{%
-    \hyperref[prf:differentiable-on-interval]{Differentiable on an Interval}}{Differentiable on an Interval})}},
-  fonttitle=\small\bfseries]
-\begin{definition}[\texorpdfstring{%
-  \hyperref[prf:differentiable-on-interval]{Differentiable on an Interval}}{Differentiable on an Interval}]
-\label{def:differentiable-on-interval}
-Let $I \subseteq \mathbb{R}$ be an interval and $f : I \to \mathbb{R}$.
-\begin{itemize}
-  \item $f$ is \emph{differentiable on the open interval $(a,b)$} if $f$ is
-        differentiable at every $c \in (a,b)$.
-  \item $f$ is \emph{differentiable on the closed interval $[a,b]$} if $f$ is
-        differentiable on $(a,b)$, the right derivative at $a$ exists, and the
-        left derivative at $b$ exists.
-\end{itemize}
-The \emph{derivative function} $f' : I \to \mathbb{R}$ assigns to each
-differentiable point its derivative value.
-\end{definition}
-\end{tcolorbox}
 
-\begin{remark*}[Fully quantified form]
-$f$ is differentiable on $(a,b)$ if and only if for every $c \in (a,b)$,
-$\operatorname{DerivativeAt}(f,\,c,\,f'(c))$ holds.
-\end{remark*}
 
-\begin{remark*}[Predicate statement]
-\[
-\operatorname{DifferentiableAt}(f,\,c)
-\;:\iff\;
-\exists L \in \mathbb{R},\;\operatorname{DerivativeAt}(f,\,c,\,L).
-\]
-\end{remark*}
 
-% ---------------------------------------------------------
-\subsection{Differentiable Implies Continuous}
-% ---------------------------------------------------------
 
-\begin{theorem}[\texorpdfstring{%
-  \hyperref[prf:differentiable-implies-continuous]{Differentiable Implies Continuous}}{Differentiable Implies Continuous}]
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{theorem}[Differentiable Implies Continuous]
 \label{thm:differentiable-implies-continuous}
-Let $f : I \to \mathbb{R}$ and $c \in I$.
-If $f$ is differentiable at $c$, then $f$ is continuous at $c$.
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If there exists $L \in \mathbb{R}$ such that $f'(c)=L$, then
+\[
+\lim_{x \to c} f(x) = f(c).
+\]
+Hence $f$ is continuous at $c$.
 \end{theorem}
 
-\begin{remark*}[Fully quantified form]
-For every open interval $I$ and every $c \in I$, if $f$ is differentiable at $c$
-then $\lim_{x \to c} f(x) = f(c)$.
-\end{remark*}
 
-\begin{remark*}[Predicate statement]
-\[
-\operatorname{DifferentiableAt}(f,\,c)
-\;\Rightarrow\;
-\operatorname{ContinuousAt}(f,\,c).
-\]
-\end{remark*}
 
-\begin{remark}[Proof idea]
-Write $f(x) - f(c) = \dfrac{f(x)-f(c)}{x-c} \cdot (x-c)$.
-As $x \to c$: the difference quotient converges to $f'(c)$,
-and $(x-c) \to 0$. Their product therefore converges to $f'(c) \cdot 0 = 0$,
-giving $f(x) \to f(c)$.
-\end{remark}
+
 
 \begin{remark}[Converse fails]
 Continuity does not imply differentiability.
@@ -221,74 +197,52 @@ Every assumption of differentiability is strictly stronger than an
 assumption of continuity alone.
 \end{remark}
 
-% ---------------------------------------------------------
-\subsection{Carathéodory Factorization}
-% ---------------------------------------------------------
 
-\begin{theorem}[\texorpdfstring{%
-  \hyperref[prf:caratheodory-factorization]{Carathéodory Factorization}}{Caratheodory Factorization}]
-\label{thm:caratheodory-factorization}
-Let $f : I \to \mathbb{R}$ and $c \in I$.
-Then $f$ is differentiable at $c$ with $f'(c) = L$ if and only if there
-exists a function $\varphi : I \to \mathbb{R}$ such that
-\begin{enumerate}
-  \item $\varphi$ is continuous at $c$,
-  \item $\varphi(c) = L$, and
-  \item $f(x) - f(c) = \varphi(x)(x - c)$ for all $x \in I$.
-\end{enumerate}
+
+
+
+
+
+\begin{theorem}[Uniqueness of the Derivative]
+\label{thm:uniqueness-of-the-derivative}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If $f$ is differentiable at $c$, then the derivative of $f$ at $c$ is unique.
+
+Equivalently, if $L,M \in \mathbb{R}$ satisfy
+\[
+\forall \epsilon > 0\;\exists \delta > 0\;\forall x \in A\;
+\Big(
+0 < |x-c| < \delta
+\;\Rightarrow\;
+\left|
+\frac{f(x)-f(c)}{x-c} - L
+\right| < \epsilon
+\Big),
+\]
+and
+\[
+\forall \epsilon > 0\;\exists \delta > 0\;\forall x \in A\;
+\Big(
+0 < |x-c| < \delta
+\;\Rightarrow\;
+\left|
+\frac{f(x)-f(c)}{x-c} - M
+\right| < \epsilon
+\Big),
+\]
+then
+\[
+L=M.
+\]
 \end{theorem}
 
-\begin{remark*}[Fully quantified form]
-$f$ is differentiable at $c$ with derivative $L$ if and only if there exists
-$\varphi : I \to \mathbb{R}$, continuous at $c$ with $\varphi(c) = L$,
-such that $f(x) - f(c) = \varphi(x)(x-c)$ for all $x \in I$.
-\end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{proposition}[Derivative of the Identity]
+Let $I \subseteq \mathbb{R}$ be an open interval, and let $\operatorname{id}_I : I \to \mathbb{R}$ be the identity function defined by
 \[
-\operatorname{DerivativeAt}(f,\,c,\,L)
-\;\iff\;
-\exists\,\varphi : I \to \mathbb{R},\;
-\bigl(
-\operatorname{ContinuousAt}(\varphi,\,c)
-\;\land\;
-\varphi(c) = L
-\;\land\;
-\forall x \in I,\; f(x) - f(c) = \varphi(x)(x-c)
-\bigr).
+\operatorname{id}_I(x) := x.
 \]
-\end{remark*}
-
-\begin{remark}[The explicit factorizing function]
-The unique $\varphi$ satisfying the identity is
+Then $\operatorname{id}_I$ is differentiable at every $c \in I$, and
 \[
-\varphi(x) =
-\begin{cases}
-\dfrac{f(x) - f(c)}{x - c} & x \neq c, \\[6pt]
-L & x = c.
-\end{cases}
+\operatorname{id}_I'(c) = 1.
 \]
-Differentiability of $f$ at $c$ is precisely the statement that this
-piecewise-defined function is continuous at $c$.
-The factorization eliminates the division-by-zero that makes the
-limit definition awkward in algebraic arguments.
-\end{remark}
-
-\begin{remark}[Chain rule via Carathéodory]
-If $f$ is differentiable at $c$ with factor $\varphi$, and $g$ is
-differentiable at $f(c)$ with factor $\psi$, then
-\begin{align*}
-g(f(x)) - g(f(c))
-  &= \psi(f(x))\cdot(f(x) - f(c)) \\
-  &= \psi(f(x))\cdot\varphi(x)\cdot(x - c).
-\end{align*}
-The function $x \mapsto \psi(f(x))\cdot\varphi(x)$ is continuous at $c$
-and evaluates there to $g'(f(c))\cdot f'(c)$.
-This gives the chain rule with no limit computation.
-\end{remark}
-
-\begin{remark}[Why this matters]
-The Carathéodory form is the preferred tool for proving the product rule,
-quotient rule, and chain rule cleanly. It converts limit arguments into
-continuity arguments, which are often simpler to chain together.
-\end{remark}
+\end{proposition}

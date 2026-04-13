@@ -1,0 +1,390 @@
+\begin{definition}[Derivative at a Point]
+Let $f: D \to \mathbb{R}$ be a real-valued function and $c \in \text{int}(D)$. We say $f$ is differentiable at $c$ with derivative $L = f'(c)$ if and only if:
+\[
+\forall \epsilon \in \mathbb{R} \left( \epsilon > 0 \implies \exists \delta \in \mathbb{R} \left( \delta > 0 \land \forall x \in D \left( 0 < |x - c| < \delta \implies \left| \frac{f(x) - f(c)}{x - c} - L \right| < \epsilon \right) \right) \right)
+\]
+\end{definition}
+
+\begin{remark}[Breakdown of the Logic]
+The predicate logic definition of the derivative can be understood through the following geometric and logical components:
+\begin{itemize}
+    \item \textbf{$\forall \epsilon > 0$}: Represents an arbitrary degree of precision for the derivative's value. Geometrically, this defines a vertical strip of height $2\epsilon$ centered at $L$ on the $y$-axis.
+    \item \textbf{$\exists \delta > 0$}: Asserts the existence of a specific horizontal distance around the point $c$ that satisfies our precision requirement.
+    \item \textbf{$0 < |x - c| < \delta$}: Restricts our attention to a punctured neighborhood of $c$. We exclude $x = c$ specifically to avoid the indeterminate form $0/0$ in the difference quotient.
+    \item \textbf{$\left| \frac{f(x) - f(c)}{x - c} - L \right| < \epsilon$}: States that the slope of the secant line passing through $(c, f(c))$ and $(x, f(x))$ must lie within $\epsilon$ distance of the tangent slope $L$.
+\end{itemize}
+\end{remark}
+
+\begin{definition}[Predicate-Logic Derivative]
+We define the derivative of $f$ at $c$ using specific predicates for domain and image constraints:
+\begin{itemize}
+    \item \textbf{WithinRadius}$(x, c, \delta) \iff 0 < |x - c| < \delta$
+    \item \textbf{WithinTolerance}$(v, L, \epsilon) \iff |v - L| < \epsilon$
+\end{itemize}
+Then $f'(c) = L$ is defined as:
+\[
+\forall \epsilon > 0, \exists \delta > 0, \forall x \in D \Big( \text{WithinRadius}(x, c, \delta) \implies \text{WithinTolerance}\left( \frac{f(x) - f(c)}{x - c}, L, \epsilon \right) \Big)
+\]
+\end{definition}
+
+\begin{definition}[Semantic Predicate Derivative]
+We define the derivative $f'(c) = L$ using functional logical roles:
+\begin{itemize}
+    \item $\text{tol} \in \mathbb{R}^+$ : The \textbf{Given Tolerance} for the slope.
+    \item $\text{rad} \in \mathbb{R}^+$ : The \textbf{Required Radius} around the point $c$.
+    \item $\text{Slope}_f(x, c)$ : The Newton Quotient $\frac{f(x)-f(c)}{x-c}$.
+\end{itemize}
+$f'(c) = L$ is defined as:
+\[
+\forall \text{tol} > 0, \exists \text{rad} > 0, \forall x \Big( (\text{InDomain}(x) \land \text{WithinRadius}(x, c, \text{rad})) \implies \text{WithinTolerance}(\text{Slope}_f(x, c), L, \text{tol}) \Big)
+\]
+\end{definition}
+
+\begin{definition}[Pure Predicate Derivative]
+Let $f$ be a function. We define differentiability at $c$ with value $L$ using a purely relational structure:
+\begin{itemize}
+    \item \textbf{InDomain}$(x)$: True if $x$ is in the domain of $f$.
+    \item \textbf{WithinRadius}$(x, c, \delta)$: $0 < |x - c| < \delta$.
+    \item \textbf{WithinTolerance}$(v, L, \epsilon)$: $|v - L| < \epsilon$.
+\end{itemize}
+$f'(c) = L$ is defined as:
+\[
+\forall \epsilon > 0, \exists \delta > 0, \forall x \Big( (\text{InDomain}(x) \land \text{WithinRadius}(x, c, \delta)) \implies \text{WithinTolerance}\left( \frac{f(x) - f(c)}{x - c}, L, \epsilon \right) \Big)
+\]
+\end{definition}
+
+
+
+
+
+
+
+
+
+\begin{definition}[Topological Derivative]
+Let $f: D \to \mathbb{R}$ and $c \in \text{int}(D)$. $f$ is differentiable at $c$ with derivative $L$ if for every neighborhood $V$ of $L$, there exists a neighborhood $U$ of $c$ such that for all $x \in (U \setminus \{c\}) \cap D$:
+\[
+\frac{f(x) - f(c)}{x - c} \in V
+\]
+\end{definition}
+
+\begin{remark}[Breakdown of the Logic]
+The neighborhood-based definition of the derivative abstracts the metric properties of $\mathbb{R}$ into set-theoretic containment:
+\begin{itemize}
+    \item \textbf{$V \in \mathcal{N}(L)$}: Represents an arbitrary neighborhood of the limit $L$. In the standard metric on $\mathbb{R}$, this is the open interval $(L - \epsilon, L + \epsilon)$.
+    \item \textbf{$\exists U \in \mathcal{N}(c)$}: Asserts that there exists some open set $U$ containing $c$ that acts as our "input" constraint.
+    \item \textbf{$x \in (U \setminus \{c\})$}: Restricts the domain to the punctured neighborhood. This ensures the difference quotient is well-defined by preventing the denominator from vanishing.
+    \item \textbf{$\frac{f(x) - f(c)}{x - c} \in V$}: States that the slope of the secant line is "captured" by the neighborhood $V$. This views the difference quotient as a function $g(x)$ and requires $g(U \setminus \{c\}) \subseteq V$.
+\end{itemize}
+\end{remark}
+
+
+\begin{definition}[Control--Tolerance Schema]
+A statement is said to follow the \emph{control--tolerance schema} if it has the logical form
+\[
+\forall \tau > 0\;\exists \kappa > 0\;\forall p\;
+\big( \mathrm{Guard}(p,\kappa) \;\Rightarrow\; \mathrm{Target}(p,\tau) \big).
+\]
+\begin{itemize}
+    \item $\tau$ (\textbf{tolerance}): desired output precision
+    \item $\kappa$ (\textbf{control}): input restriction ensuring the tolerance
+    \item $p$ (\textbf{probe}): variable(s) being tested
+    \item $\mathrm{Guard}(p,\kappa)$: condition restricting admissible probes
+    \item $\mathrm{Target}(p,\tau)$: condition enforcing the desired outcome
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Difference Quotient]
+Let $f : D \to \mathbb{R}$ and $c \in D$. The \emph{difference quotient} of $f$ at $c$ is the function
+\[
+\mathrm{DifferenceQuotient}(f,c)(x)
+:=
+\frac{f(x) - f(c)}{x - c},
+\qquad x \in D \setminus \{c\}.
+\]
+\end{definition}
+
+
+\begin{definition}[Derivative at a Point (Control--Tolerance Form)]
+Let $f : D \to \mathbb{R}$ and let $c \in \operatorname{int}(D)$. We say that $f$ is differentiable at $c$ with derivative $L$ if
+\[
+\forall \epsilon > 0\;\exists \delta > 0\;\forall x \in D\;
+\Big(
+0 < |x - c| < \delta
+\;\Rightarrow\;
+\big|
+\mathrm{DifferenceQuotient}(f,c)(x) - L
+\big| < \epsilon
+\Big).
+\]
+
+\begin{itemize}
+    \item \textbf{Probe:} $x \in D$
+    \item \textbf{Control:} $\delta > 0$ (radius around $c$)
+    \item \textbf{Tolerance:} $\epsilon > 0$ (accuracy of quotient)
+    \item \textbf{Guard:} $0 < |x - c| < \delta$
+    \item \textbf{Target:} $\big|\mathrm{DifferenceQuotient}(f,c)(x) - L\big| < \epsilon$
+\end{itemize}
+
+Equivalently, $L$ is the limit of the difference quotient as $x \to c$, and serves as the coefficient of the best local linear approximation of $f$ at $c$.
+\end{definition}
+
+
+
+
+\begin{definition}[Convergent Sequence (Control--Tolerance Form)]
+Let $(x_n)$ be a sequence in $\mathbb{R}$. We say $(x_n)$ converges to $L$ if
+\[
+\forall \epsilon > 0\;\exists N \in \mathbb{N}\;\forall n \in \mathbb{N}\;
+\Big(
+n \geq N
+\;\Rightarrow\;
+|x_n - L| < \epsilon
+\Big).
+\]
+
+\begin{itemize}
+    \item \textbf{Probe:} $n \in \mathbb{N}$
+    \item \textbf{Control:} $N$ (tail index)
+    \item \textbf{Tolerance:} $\epsilon > 0$
+    \item \textbf{Guard:} $n \geq N$
+    \item \textbf{Target:} $|x_n - L| < \epsilon$
+\end{itemize}
+\end{definition}
+
+
+
+
+
+\begin{definition}[Convergent Sequence (Control--Tolerance Form)]
+Let $(x_n)$ be a sequence in $\mathbb{R}$. We say $(x_n)$ converges to $L$ if
+\[
+\forall \epsilon > 0\;\exists N \in \mathbb{N}\;\forall n \in \mathbb{N}\;
+\Big(
+n \geq N
+\;\Rightarrow\;
+|x_n - L| < \epsilon
+\Big).
+\]
+
+\begin{itemize}
+    \item \textbf{Probe:} $n \in \mathbb{N}$
+    \item \textbf{Control:} $N$ (tail index)
+    \item \textbf{Tolerance:} $\epsilon > 0$
+    \item \textbf{Guard:} $n \geq N$
+    \item \textbf{Target:} $|x_n - L| < \epsilon$
+\end{itemize}
+\end{definition}
+
+
+
+\begin{definition}[Cauchy Sequence (Control--Tolerance Form)]
+Let $(x_n)$ be a sequence in $\mathbb{R}$. We say $(x_n)$ is Cauchy if
+\[
+\forall \epsilon > 0\;\exists N \in \mathbb{N}\;\forall m,n \in \mathbb{N}\;
+\Big(
+m,n \geq N
+\;\Rightarrow\;
+|x_n - x_m| < \epsilon
+\Big).
+\]
+
+\begin{itemize}
+    \item \textbf{Probe:} $(m,n) \in \mathbb{N}^2$
+    \item \textbf{Control:} $N$
+    \item \textbf{Tolerance:} $\epsilon > 0$
+    \item \textbf{Guard:} $m,n \geq N$
+    \item \textbf{Target:} $|x_n - x_m| < \epsilon$
+\end{itemize}
+
+This expresses that the sequence becomes arbitrarily self-consistent in its tail.
+\end{definition}
+
+
+
+\begin{definition}[Lipschitz Continuous]
+Let $f : D \to \mathbb{R}$. We say $f$ is Lipschitz continuous if there exists $K > 0$ such that
+\[
+\forall x,y \in D\;
+\big(
+|f(x) - f(y)| \leq K |x - y|
+\big).
+\]
+
+\begin{itemize}
+    \item \textbf{Probe:} $(x,y) \in D^2$
+    \item \textbf{Global Control:} $K$
+    \item \textbf{Guard:} none (all pairs allowed)
+    \item \textbf{Target:} linear bound on output difference
+\end{itemize}
+
+This imposes a uniform linear constraint on the behavior of $f$ across its domain.
+\end{definition}
+
+
+
+
+\begin{definition}[Uniform Continuity (Control--Tolerance Form)]
+Let $f : D \to \mathbb{R}$. We say $f$ is uniformly continuous on $D$ if
+\[
+\forall \epsilon > 0\;\exists \delta > 0\;\forall x,y \in D\;
+\Big(
+|x - y| < \delta
+\;\Rightarrow\;
+|f(x) - f(y)| < \epsilon
+\Big).
+\]
+
+\begin{itemize}
+    \item \textbf{Probe:} $(x,y) \in D^2$
+    \item \textbf{Control:} $\delta$
+    \item \textbf{Tolerance:} $\epsilon$
+    \item \textbf{Guard:} $|x - y| < \delta$
+    \item \textbf{Target:} $|f(x) - f(y)| < \epsilon$
+\end{itemize}
+
+The control $\delta$ depends only on $\epsilon$, not on location in the domain.
+\end{definition}
+
+
+\begin{definition}[Derivative at a Point (Control--Tolerance Form)]
+Let $f : D \to \mathbb{R}$ and let $c \in \operatorname{int}(D)$. We say that $f$ is differentiable at $c$ with derivative $L$ if
+\[
+\ForAnyTolerance\;\ExistsControl\;\forall x \in D\;
+\Big(
+0 < |x - c| < \delta
+\;\Rightarrow\;
+\big|
+\mathrm{DifferenceQuotient}(f,c)(x) - L
+\big| < \epsilon
+\Big).
+\]
+
+\begin{remark*}[Interpretation]
+For any desired tolerance $\epsilon$, we can choose a radius $\delta$ so that every probe $x$ sufficiently close to $c$ (but not equal to $c$) produces a difference quotient within $\epsilon$ of $L$.
+\end{remark*}
+\end{definition}
+
+
+\begin{definition}[Convergent Sequence (Control--Tolerance Form)]
+Let $(x_n)$ be a sequence in $\mathbb{R}$. We say $(x_n)$ converges to $L$ if
+\[
+\ForAnyTolerance\;\exists N \in \mathbb{N}\;\forall n \in \mathbb{N}\;
+\Big(
+n \geq N
+\;\Rightarrow\;
+|x_n - L| < \epsilon
+\Big).
+\]
+
+\begin{remark*}[Interpretation]
+For any tolerance $\epsilon$, we can choose a tail index $N$ so that all probes $n \geq N$ lie within $\epsilon$ of $L$.
+\end{remark*}
+\end{definition}
+
+
+
+\begin{definition}[Cauchy Sequence (Control--Tolerance Form)]
+Let $(x_n)$ be a sequence in $\mathbb{R}$. We say $(x_n)$ is Cauchy if
+\[
+\ForAnyTolerance\;\exists N \in \mathbb{N}\;\forall m,n \in \mathbb{N}\;
+\Big(
+m,n \geq N
+\;\Rightarrow\;
+|x_n - x_m| < \epsilon
+\Big).
+\]
+
+\begin{remark*}[Interpretation]
+For any tolerance $\epsilon$, we can choose a tail index $N$ so that all probes $(m,n)$ in the tail are mutually within $\epsilon$.
+\end{remark*}
+\end{definition}
+
+
+\begin{definition}[Uniform Continuity (Control--Tolerance Form)]
+Let $f : D \to \mathbb{R}$. We say $f$ is uniformly continuous if
+\[
+\ForAnyTolerance\;\ExistsControl\;\forall x,y \in D\;
+\Big(
+|x - y| < \delta
+\;\Rightarrow\;
+|f(x) - f(y)| < \epsilon
+\Big).
+\]
+
+\begin{remark*}[Interpretation]
+For any tolerance $\epsilon$, we can choose a single control $\delta$ that works uniformly for all probes $(x,y)$ in the domain.
+\end{remark*}
+\end{definition}
+
+
+\begin{definition}[Lipschitz Continuous]
+Let $f : D \to \mathbb{R}$. We say $f$ is Lipschitz continuous if there exists $K > 0$ such that
+\[
+\forall x,y \in D\;
+\big(
+|f(x) - f(y)| \leq K |x - y|
+\big).
+\]
+
+\begin{remark*}[Interpretation]
+A single global constant $K$ controls all probes. This is stronger than uniform continuity and bypasses the tolerance–control exchange.
+\end{remark*}
+\end{definition}
+
+\begin{definition}[Continuity at a Point (Control--Tolerance Form)]
+Let $f : D \to \mathbb{R}$ and $c \in D$. $f$ is continuous at $c$ if 
+\[
+\ForAnyTolerance \epsilon > 0 \; \ExistsControl \delta > 0 \; \forall x \in D \; 
+\Big( |x - c| < \delta \;\Rightarrow\; |f(x) - f(c)| < \epsilon \Big).
+\]
+\begin{itemize}
+    \item \textbf{Probe:} $x \in D$
+    \item \textbf{Control:} $\delta$ (local radius)
+    \item \textbf{Guard:} $|x - c| < \delta$ (Includes $c$, unlike the Derivative)
+    \item \textbf{Target:} $|f(x) - f(c)| < \epsilon$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Semantic Predicate Derivative]
+Let $f$ be a real-valued function, $c$ be an interior point of its domain, and $L \in \mathbb{R}$. We say $f$ is differentiable at $c$ with derivative $L$ if:
+\[
+\text{ForAllTolerance}(\text{tol}) \implies \text{ExistsRequiredRadius}(\text{rad}) \text{ s.t. } \forall x 
+\]
+\[
+\Big( (\text{InDomain}(x) \land \text{WithinRadius}(x, c, \text{rad})) \implies \text{WithinTolerance}(\text{Slope}_f(x, c), L, \text{tol}) \Big)
+\]
+
+\begin{itemize}
+    \item \textbf{InDomain}$(x)$: Asserts $x$ is in the set of points where $f$ is defined.
+    \item \textbf{WithinRadius}$(x, c, \text{rad})$: The "Guard" condition $0 < |x - c| < \text{rad}$.
+    \item \textbf{WithinTolerance}$(v, L, \text{tol})$: The "Target" condition $|v - L| < \text{tol}$.
+    \item \textbf{Slope}$_f(x, c)$: The "Probe" value $\frac{f(x) - f(c)}{x - c}$.
+\end{itemize}
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,302 @@
+% =========================================================
+% Density
+% =========================================================
+
+\subsection{Density}
+
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Dense Subset)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:dense-subset}
+Let $D \subseteq S \subseteq \mathbb{R}$. The set $D$ is said to be
+\emph{dense in $S$} if for every $x \in S$ and every $\varepsilon > 0$
+there exists $d \in D$ such that
+\[
+|x-d|<\varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&D \text{ is dense in } S
+\\
+&\qquad\Longleftrightarrow\qquad
+\forall x \in S \; \forall \varepsilon > 0 \; \exists d \in D \;
+\bigl(|x-d|<\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+DenseSubset(D,S).
+\]
+Equivalently,
+\[
+\forall x \in S \; \forall \varepsilon > 0 \; \exists d \in D \;
+\bigl(d(x,d)<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&D \text{ is not dense in } S
+\\
+&\qquad\Longleftrightarrow\qquad
+\exists x \in S \; \exists \varepsilon_0 > 0 \; \forall d \in D \;
+\bigl(|x-d| \ge \varepsilon_0\bigr).
+\end{aligned}
+\]
+This means there exists a point of $S$ together with a positive radius
+$\varepsilon_0$ such that the entire $\varepsilon_0$-neighborhood of that
+point misses $D$. The failure of density is witnessed by an open gap around
+some point of $S$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Density is an approximation property inside the ambient set $S$. The statement
+does not require that a point of $S$ already lies in $D$; it requires only that
+every point of $S$ can be approached arbitrarily closely by points of $D$.
+Equivalently, no matter how small a positive radius $\varepsilon$ is chosen
+around a point $x \in S$, the corresponding $\varepsilon$-neighborhood of $x$
+contains at least one point of $D$.
+
+The important structural point is that $D$ leaves no open gap inside $S$. A set
+may therefore be dense in $S$ without being equal to $S$.
+\end{remark*}
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Order Dense Subset)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:order-dense-subset}
+Let $A \subseteq X$, where $X$ is a linearly ordered set. The subset $A$ is said to be
+\emph{order dense in $X$} if every nonempty open interval in $X$ contains a point of $A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&A \text{ is order dense in } X
+\\
+&\qquad\Longleftrightarrow\qquad
+\forall a,b \in X\;
+\bigl(
+a<b \rightarrow \exists c \in A\; (a<c<b)
+\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+XXX A canonical predicate statement for order density is not yet available in the current
+predicate library. If approved, this block should be rewritten using a new canonical predicate
+such as \(OrderDenseSubset(A,X)\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&A \text{ is not order dense in } X
+\\
+&\qquad\Longleftrightarrow\qquad
+\exists a,b \in X\;
+\bigl(
+a<b \land \forall c \in A\; (c \le a \lor b \le c)
+\bigr).
+\end{aligned}
+\]
+This means there exists a nonempty open interval in $X$ that contains no point of $A$.
+The failure of order density is witnessed by an interval gap in the ambient ordered set.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Order density says that the subset $A$ leaves no interval gap inside the ambient ordered set
+$X$. Whenever two elements of $X$ are distinct, there is an element of $A$ strictly between
+them.
+
+The emphasis is on order, not distance. The definition does not say that points of $A$ lie
+arbitrarily close to every point in a metric sense; it says that no nonempty open interval of
+$X$ is missed entirely by $A$.
+\end{remark*}
+
+\begin{theorem}[Density of the Rational Numbers in $\mathbb{R}$]
+\label{thm:density-of-rationals-in-reals}
+For every $a,b \in \mathbb{R}$ with $a<b$, there exists $q \in \mathbb{Q}$ such that
+\[
+a<q<b.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b \in \mathbb{R}\;
+\bigl(
+a<b \rightarrow \exists q \in \mathbb{Q}\; (a<q<b)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+DenseSubset(\mathbb{Q},\mathbb{R}).
+\]
+Equivalently,
+\[
+\forall a,b \in \mathbb{R}\;
+\bigl(
+a<b \rightarrow \exists q \in \mathbb{Q}\; (a<q<b)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\exists a,b \in \mathbb{R}\;
+\bigl(
+a<b \land \forall q \in \mathbb{Q}\; (q \le a \lor b \le q)
+\bigr).
+\]
+This means there exists a nonempty open interval in $\mathbb{R}$ that contains no rational
+number. The failure of rational density would be witnessed by an interval gap containing only
+irrational points.
+\end{remark*}
+
+
+\begin{theorem}[Density of the Irrational Numbers in $\mathbb{R}$]
+\label{thm:density-of-irrationals-in-reals}
+For every $a,b \in \mathbb{R}$ with $a<b$, there exists $s \in \mathbb{R}\setminus\mathbb{Q}$
+such that
+\[
+a<s<b.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b \in \mathbb{R}\;
+\bigl(
+a<b \rightarrow \exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+DenseSubset(\mathbb{R}\setminus\mathbb{Q},\mathbb{R}).
+\]
+Equivalently,
+\[
+\forall a,b \in \mathbb{R}\;
+\bigl(
+a<b \rightarrow \exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\exists a,b \in \mathbb{R}\;
+\bigl(
+a<b \land \forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)
+\bigr).
+\]
+This means there exists a nonempty open interval in $\mathbb{R}$ that contains no irrational
+number. The failure of irrational density would be witnessed by an interval gap containing only
+rational points.
+\end{remark*}
+
+
+
+
+\begin{corollary}
+\label{cor:every-open-interval-contains-rational-and-irrational}
+Every open interval in $\mathbb{R}$ contains both a rational number and an irrational number.
+\end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b \in \mathbb{R}\;
+\Bigl[
+a<b \rightarrow
+\bigl(
+\exists q \in \mathbb{Q}\; (a<q<b)
+\land
+\exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
+\bigr)
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+DenseSubset(\mathbb{Q},\mathbb{R})
+\land
+DenseSubset(\mathbb{R}\setminus\mathbb{Q},\mathbb{R}).
+\]
+Equivalently,
+\[
+\forall a,b \in \mathbb{R}\;
+\Bigl[
+a<b \rightarrow
+\bigl(
+\exists q \in \mathbb{Q}\; (a<q<b)
+\land
+\exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
+\bigr)
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\exists a,b \in \mathbb{R}\;
+\Bigl[
+a<b \land
+\Bigl(
+\forall q \in \mathbb{Q}\; (q \le a \lor b \le q)
+\;\lor\;
+\forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)
+\Bigr)
+\Bigr].
+\]
+This means there exists a nonempty open interval in $\mathbb{R}$ that is missing at least one
+of the two kinds of points: either it contains no rational number or it contains no irrational
+number. The corollary asserts that neither kind of gap can occur.
+\end{remark*}
+
+
+
+
+
+
+
+\input{volume-iii/analysis/bounding/notes/completeness/figure-completeness-chain}
+
+\begin{remark*}[Connections forward]
+Completeness appears in every major limit theorem in the notes.
+The Monotone Convergence Theorem (convergence chapter) constructs the
+limit of a bounded monotone sequence as $\sup\{a_n : n \in \mathbb{N}\}$;
+existence of this supremum requires completeness.
+The Bolzano--Weierstrass Theorem applies the Nested Interval Property
+directly to extract a convergent subsequence from any bounded sequence.
+The Cauchy Criterion identifies convergent sequences purely in terms of
+their own spacing, without naming the limit in advance; its proof
+constructs the limit as a supremum and again requires completeness.
+In metric spaces (Distance chapter), completeness in the sense of
+Cauchy sequences is the natural generalisation of the same idea to
+abstract settings.
+Every $\varepsilon$-$\delta$ proof that locates a limit or extremum is
+drawing on this chapter's infrastructure.
+\end{remark*}

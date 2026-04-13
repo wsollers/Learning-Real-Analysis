@@ -1,0 +1,79 @@
+% =========================================================
+% Nested Interval Property
+% =========================================================
+
+\subsection{Nested Interval Property}
+
+
+\begin{theorem}
+\label{thm:nested-interval-property}
+Let $(I_n)$ be a sequence of closed intervals in $\mathbb{R}$. If $(I_n)$ is a nested
+interval sequence, then the intersection of the intervals is nonempty.
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (a_n) \subseteq \mathbb{R}\; \forall (b_n) \subseteq \mathbb{R}\;
+\Biggl[
+\Bigl(\forall n \in \mathbb{N}\; (a_n \le b_n)\Bigr)
+\\
+&\qquad\land
+\Bigl(\forall n \in \mathbb{N}\; (I_n = [a_n,b_n])\Bigr)
+\\
+&\qquad\land
+\Bigl(\forall n \in \mathbb{N}\; (I_{n+1} \subseteq I_n)\Bigr)
+\\
+&\qquad\rightarrow
+\exists x \in \mathbb{R}\; \forall n \in \mathbb{N}\; (x \in I_n)
+\Biggr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+\forall (I_n)\;
+\Bigl[
+NestedIntervalSequence(I_n)
+\rightarrow
+NonemptySet\!\left(\bigcap_{n=1}^{\infty} I_n\right)
+\Bigr].
+\]
+In this theorem, each $I_n$ is additionally assumed to be a closed interval in $\mathbb{R}$.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\exists (a_n) \subseteq \mathbb{R}\; \exists (b_n) \subseteq \mathbb{R}\;
+\Biggl[
+\Bigl(\forall n \in \mathbb{N}\; (a_n \le b_n)\Bigr)
+\\
+&\qquad\land
+\Bigl(\forall n \in \mathbb{N}\; (I_n = [a_n,b_n])\Bigr)
+\\
+&\qquad\land
+\Bigl(\forall n \in \mathbb{N}\; (I_{n+1} \subseteq I_n)\Bigr)
+\\
+&\qquad\land
+\forall x \in \mathbb{R}\; \exists n \in \mathbb{N}\; (x \notin I_n)
+\Biggr].
+\end{aligned}
+\]
+This means there exists a nested sequence of closed intervals in $\mathbb{R}$ whose total
+intersection is empty. Such a failure would indicate a defect in the ambient system, not in
+the nesting construction itself.
+\end{remark*}
+
+\input{volume-iii/analysis/bounding/notes/completeness/figure-nested-intervals}
+
+\begin{remark*}[Interpretation]
+The Nested Interval Property says that a decreasing sequence of closed intervals in
+$\mathbb{R}$ cannot shrink in such a way that every point is eventually lost. If each interval
+lies inside the previous one, then at least one real number remains in all of them.
+
+The important point is that nesting prevents the intervals from wandering apart, while
+closedness prevents the limiting point from dropping out. The theorem says that this process
+of repeated containment still leaves a common point in the end.
+\end{remark*}
