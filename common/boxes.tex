@@ -132,3 +132,138 @@
   \hfill
   \begin{minipage}[t]{0.49\linewidth}\scriptsize #2\end{minipage}%
 }
+
+% =========================================================
+% Dependency Figure Styles
+% Add to common/boxes.tex
+% =========================================================
+
+% Requires TikZ libraries:
+% \usetikzlibrary{arrows.meta,positioning,calc}
+
+\tikzset{
+  depaxiom/.style={
+    draw,
+    rounded corners=3pt,
+    fill=axiombox,
+    draw=axiomborder,
+    minimum width=4.2cm,
+    minimum height=0.82cm,
+    align=center,
+    font=\small
+  },
+  depdefinition/.style={
+    draw,
+    rounded corners=3pt,
+    fill=propbox,
+    draw=propborder,
+    minimum width=4.2cm,
+    minimum height=0.82cm,
+    align=center,
+    font=\small
+  },
+  deptheorem/.style={
+    draw,
+    rounded corners=3pt,
+    fill=thmbox,
+    draw=thmborder,
+    minimum width=4.2cm,
+    minimum height=0.82cm,
+    align=center,
+    font=\small
+  },
+  depneutral/.style={
+    draw,
+    rounded corners=3pt,
+    fill=gray!8,
+    draw=gray!65,
+    minimum width=4.2cm,
+    minimum height=0.82cm,
+    align=center,
+    font=\small
+  },
+  depimplies/.style={->, thick, blue!70!black, >=Latex},
+  depuses/.style={->, thick, yellow!60!black, >=Latex},
+  depdefines/.style={->, thick, green!50!black, >=Latex},
+depedgelab/.style={
+  font=\tiny,
+  fill=white,
+  inner sep=0.5pt,
+  text=black
+},
+  deplegendbox/.style={
+    draw,
+    rounded corners=3pt,
+    fill=white,
+    draw=gray!55,
+    inner sep=5pt
+  }
+}
+
+\newcommand{\DependencyLegend}{%
+\begin{tikzpicture}[baseline=(current bounding box.north)]
+\node[deplegendbox, anchor=north east] (L) {
+\begin{tabular}{@{}ll@{}}
+\multicolumn{2}{@{}l@{}}{\textbf{\small Legend}}\\[0.2em]
+\tikz{\node[depaxiom, minimum width=0.7cm, minimum height=0.28cm] {};} & \scriptsize Axiom\\
+\tikz{\node[depdefinition, minimum width=0.9cm, minimum height=0.35cm] {};} & \scriptsize Definition\\
+\tikz{\node[deptheorem, minimum width=0.9cm, minimum height=0.35cm] {};} & \scriptsize Theorem / Proposition / Corollary\\
+\tikz{\draw[depimplies] (0,0) -- (0.8,0);} & \scriptsize implies\\
+\tikz{\draw[depuses] (0,0) -- (0.8,0);} & \scriptsize uses\\
+\tikz{\draw[depdefines] (0,0) -- (0.8,0);} & \scriptsize defines
+\end{tabular}
+};
+\end{tikzpicture}%
+}
+% =========================================================
+% Dependency Figure Legend
+% Standard bottom placement legend for dependency maps
+% =========================================================
+
+\newcommand{\DependencyFigureLegend}{%
+\begin{tikzpicture}[baseline=(current bounding box.center), >=Latex]
+  % Row 1: node legend
+  \node[depaxiom, minimum width=0.9cm, minimum height=0.32cm] (ax) at (0,0) {};
+  \node[right=0.15cm of ax] (axlab) {\scriptsize Axiom};
+
+  \node[depdefinition, minimum width=0.9cm, minimum height=0.32cm, right=0.9cm of axlab] (df) {};
+  \node[right=0.15cm of df] (dflab) {\scriptsize Definition};
+
+  \node[deptheorem, minimum width=0.9cm, minimum height=0.32cm, right=0.9cm of dflab] (th) {};
+  \node[right=0.15cm of th] (thlab) {\scriptsize Theorem / Proposition / Corollary};
+
+  % Row 2: edge legend
+  \draw[depimplies] ($(ax.south)+(0,-0.9)$) -- ++(0.9,0)
+    node[right, text=black] {\scriptsize implies};
+
+  \draw[depuses] ($(df.south)+(0,-0.9)$) -- ++(0.9,0)
+    node[right, text=black] {\scriptsize uses};
+
+  \draw[depdefines] ($(th.south)+(0,-0.9)$) -- ++(0.9,0)
+    node[right, text=black] {\scriptsize defines};
+\end{tikzpicture}%
+}
+% ---------------------------------------------------------
+% Minimal template for a dependency figure file
+% Save as figure-<n>.tex and \input it from the notes.
+% ---------------------------------------------------------
+%
+% \begin{center}
+% \textbf{<Subchapter or Chapter Title> Dependency Map}
+% \end{center}
+%
+% \begin{tikzpicture}[>=Latex]
+%   % Nodes
+%   \node[depaxiom]      (a1) at (0,0) {Completeness Axiom};
+%   \node[deptheorem]    (t1) at (-3,-1.7) {Nested Interval\\Property};
+%   \node[deptheorem]    (t2) at ( 3,-1.7) {Existence of $\sqrt{a}$};
+%   \node[deptheorem]    (t3) at (-3,-3.4) {Archimedean Property};
+%
+%   % Edges
+%   \draw[depimplies] (a1) -- node[depedgelab, pos=0.55, left] {implies} (t1);
+%   \draw[depimplies] (a1) -- node[depedgelab, pos=0.55, right] {implies} (t2);
+%   \draw[depuses]    (t1) -- node[depedgelab, pos=0.50, right] {uses} (t3);
+%
+%   % Legend (place manually where it fits)
+%   \node[anchor=north east] at (6.0,0.2) {\DependencyLegend};
+% \end{tikzpicture}
