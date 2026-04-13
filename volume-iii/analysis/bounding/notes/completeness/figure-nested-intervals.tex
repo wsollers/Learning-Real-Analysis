@@ -1,0 +1,30 @@
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=0.95cm, y=0.9cm, >=Latex]
+  % Draw four nested intervals, each row shifted down
+  \foreach \row/\la/\rb/\label in {
+    0/0.0/10.0/{$[a_1, b_1]$},
+    1/1.2/8.5/{$[a_2, b_2]$},
+    2/2.0/7.0/{$[a_3, b_3]$},
+    3/2.6/5.8/{$[a_4, b_4]$}
+  }{
+    \draw[thick, blue!70!black] (\la, -\row*0.8) -- (\rb, -\row*0.8);
+    \fill[blue!70!black] (\la, -\row*0.8) circle (2.0pt);
+    \fill[blue!70!black] (\rb, -\row*0.8) circle (2.0pt);
+    \node[left] at (\la-0.1, -\row*0.8) {\small \label};
+  }
+  % Indicate left endpoints climbing
+  \draw[->, dashed, red!70!black, thick] (0.0,-0.0) -- (0.0,-3.2);
+  \node[right, red!70!black] at (0.05, -1.6) {\small $(a_n)\!\uparrow$};
+  % Indicate right endpoints falling
+  \draw[->, dashed, red!70!black, thick] (10.0,0.0) -- (10.0,-3.2);
+  \node[left, red!70!black] at (9.95, -1.6) {\small $(b_n)\!\downarrow$};
+  % Pinch point
+  \draw[dotted] (4.0, 0.4) -- (4.0, -3.3);
+  \node[above] at (4.0, 0.45) {\small $x \in \bigcap [a_n,b_n]$};
+\end{tikzpicture}
+\caption{Nested intervals $[a_1,b_1] \supseteq [a_2,b_2] \supseteq \cdots$ pinch toward a
+common point. The sequence of left endpoints is increasing and bounded above; its
+supremum $x$ lies in every interval.}
+\label{fig:nested-intervals}
+\end{figure}

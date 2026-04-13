@@ -59,6 +59,20 @@ predicates:
 # Bounding
 # =========================================================
 
+- id: pred:least-upper-bound-property-in
+  name: LeastUpperBoundProperty
+  category: completeness
+  arity: 1
+  arguments: [S]
+  optional_arguments: []
+  formal: \forall A \; ((A \subseteq S \land NonemptySet(A) \land BoundedAbove(A)) \rightarrow \exists s \in S \; Supremum(s,A))
+  note: >
+    General ambient-set version of the least upper bound property.
+    This is order-theoretic completeness for an ambient ordered system S.
+    Use this predicate for statements such as LeastUpperBoundProperty(S).
+    Keep the existing 0-ary LeastUpperBoundProperty for the specialized assertion
+    that the default real-analysis ambient system \mathbb{R} has the least upper bound property.
+
 - id: pred:upper-bound
   name: UpperBound
   category: bounding
@@ -698,6 +712,32 @@ predicates:
   arity: 1
   arguments: [A]
   optional_arguments: [M, d]
+
+# =========================================================
+# Nested Intervals / Intersection Properties
+# =========================================================
+
+- id: pred:nested-interval-sequence
+  name: NestedIntervalSequence
+  category: compactness
+  arity: 1
+  arguments: [I_n]
+  optional_arguments: []
+  formal: \forall n \in \mathbb{N} \; (I_{n+1} \subseteq I_n)
+  note: >
+    Used for sequences of intervals, typically closed intervals in \mathbb{R}.
+    The interval structure itself should be stated in the surrounding theorem or definition
+    unless a more specialized predicate is later introduced.
+
+- id: pred:nonempty-intersection
+  name: NonemptyIntersection
+  category: compactness
+  arity: 1
+  arguments: [I_n]
+  optional_arguments: []
+  formal: \exists x \; \forall n \in \mathbb{N} \; (x \in I_n)
+  note: >
+    Canonical conclusion predicate for families or sequences of sets with nonempty total intersection.
 
 - id: pred:connected
   name: Connected

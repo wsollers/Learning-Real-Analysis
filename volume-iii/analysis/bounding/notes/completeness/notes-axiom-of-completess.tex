@@ -1,0 +1,203 @@
+% ---------------------------------------------------------
+\subsection{Axiom of Completeness}
+% ---------------------------------------------------------
+
+
+\begin{remark*}[Why completeness is needed]
+The ordered field axioms alone do not prevent ``holes'' in the number line.
+The rationals $\mathbb{Q}$ satisfy all field and order axioms, yet fail
+completeness. Consider the set
+\[
+S = \{x \in \mathbb{Q} : x^2 < 2\}.
+\]
+This set is nonempty (e.g.\ $1 \in S$) and bounded above in $\mathbb{Q}$
+(e.g.\ $2$ is an upper bound). Yet $\sup S$ does not exist as a rational
+number: the candidate $\sqrt{2}$ is irrational. The set $S$ has no least
+upper bound in $\mathbb{Q}$ --- a hole sits exactly where $\sqrt{2}$ should be.
+
+The Completeness Axiom asserts that $\mathbb{R}$ has no such holes:
+every nonempty bounded-above set has a supremum \emph{inside} $\mathbb{R}$.
+This single axiom is what distinguishes $\mathbb{R}$ from $\mathbb{Q}$,
+and it underlies every major theorem in analysis.
+\end{remark*}
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Least Upper Bound Property)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:least-upper-bound-property}
+Let $S$ be a partially ordered set. The set $S$ is said to have the
+\emph{Least Upper Bound Property} if every nonempty subset of $S$ that is bounded
+above in $S$ has a least upper bound in $S$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&S \text{ has the Least Upper Bound Property}
+\\
+&\qquad\Longleftrightarrow\qquad
+\forall A \subseteq S\;
+\Bigl[
+(A \neq \varnothing \land \exists u \in S\;\forall x \in A\;(x \le u))
+\\
+&\qquad\qquad\rightarrow
+\exists s \in S\;
+\Bigl(
+(\forall x \in A\;(x \le s))
+\land
+(\forall u \in S\;((\forall x \in A\;(x \le u)) \rightarrow s \le u))
+\Bigr)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+LeastUpperBoundProperty(S).
+\]
+Equivalently,
+\[
+\begin{aligned}
+&\forall A\;
+\Bigl[
+(Subset(A,S) \land NonemptySet(A) \land BoundedAbove(A))
+\\
+&\qquad\rightarrow
+\exists s \in S\; Supremum(s,A)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&S \text{ does not have the Least Upper Bound Property}
+\\
+&\qquad\Longleftrightarrow\qquad
+\exists A \subseteq S\;
+\Bigl[
+(A \neq \varnothing \land \exists u \in S\;\forall x \in A\;(x \le u))
+\\
+&\qquad\qquad\land
+\forall s \in S\;
+\Bigl(
+(\exists x \in A\;(x > s))
+\lor
+(\exists v \in S\;((\forall x \in A\;(x \le v)) \land v < s))
+\Bigr)
+\Bigr].
+\end{aligned}
+\]
+This means there exists a nonempty subset of $S$ that is bounded above in $S$ but has no
+least upper bound in $S$. The failure is not in the subset alone, but in the ambient ordered
+system $S$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Least Upper Bound Property says that whenever a nonempty subset of $S$ is bounded
+above, it has a smallest upper bound in $S$.
+
+The important point is that the issue is not in the subset alone. A bounded set can fail to
+have a least upper bound only because $S$ is missing the element that should serve as that
+bound.
+\end{remark*}
+
+
+
+\begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Axiom (Completeness of $\mathbb{R}$)}},
+  fonttitle=\small\bfseries]
+\begin{axiom}
+\label{ax:completeness-of-reals}
+The ordered field $\mathbb{R}$ has the Least Upper Bound Property.
+\end{axiom}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\mathbb{R} \text{ has the Least Upper Bound Property}
+\\
+&\qquad\Longleftrightarrow\qquad
+\forall A \subseteq \mathbb{R}\;
+\Bigl[
+(A \neq \varnothing \land \exists u \in \mathbb{R}\;\forall x \in A\;(x \le u))
+\\
+&\qquad\qquad\rightarrow
+\exists s \in \mathbb{R}\;
+\Bigl(
+(\forall x \in A\;(x \le s))
+\land
+(\forall u \in \mathbb{R}\;((\forall x \in A\;(x \le u)) \rightarrow s \le u))
+\Bigr)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+LeastUpperBoundProperty(\mathbb{R}).
+\]
+Equivalently,
+\[
+\begin{aligned}
+&\forall A\;
+\Bigl[
+(Subset(A,\mathbb{R}) \land NonemptySet(A) \land BoundedAbove(A))
+\\
+&\qquad\rightarrow
+\exists s \in \mathbb{R}\; Supremum(s,A)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\mathbb{R} \text{ does not have the Least Upper Bound Property}
+\\
+&\qquad\Longleftrightarrow\qquad
+\exists A \subseteq \mathbb{R}\;
+\Bigl[
+(A \neq \varnothing \land \exists u \in \mathbb{R}\;\forall x \in A\;(x \le u))
+\\
+&\qquad\qquad\land
+\forall s \in \mathbb{R}\;
+\Bigl(
+(\exists x \in A\;(x > s))
+\lor
+(\exists v \in \mathbb{R}\;((\forall x \in A\;(x \le v)) \land v < s))
+\Bigr)
+\Bigr].
+\end{aligned}
+\]
+This is the hypothetical failure of completeness: it asserts that there exists a nonempty subset
+of $\mathbb{R}$ that is bounded above but has no least upper bound in $\mathbb{R}$. The failure
+would lie not in the subset alone, but in the ambient ordered field.
+
+A standard example is the set
+\[
+A=\{q \in \mathbb{Q} : q^2 < 2\}.
+\]
+This set is nonempty and bounded above in $\mathbb{Q}$, but it has no supremum in $\mathbb{Q}$; the missing least upper bound is $\sqrt{2}$, so the failure lies in the field $\mathbb{Q}$, not in the set itself.
+\end{remark*}
+
+\begin{remark*}[Equivalent formulations]
+Over the ordered-field axioms, completeness is equivalent to each of the
+following:
+\begin{itemize}
+  \item Every nonempty set bounded below has an infimum.
+  \item Every Cauchy sequence in $\mathbb{R}$ converges.
+  \item \emph{(Nested Interval Property)} Every nested sequence of nonempty
+        closed bounded intervals has nonempty intersection.
+\end{itemize}
+\end{remark*}

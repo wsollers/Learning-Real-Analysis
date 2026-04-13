@@ -1,0 +1,508 @@
+% =========================================================
+% Bounds, Suprema, Infima + Table + Figure
+% =========================================================
+
+\section{Bounds and Extremal Values}
+
+\begin{remark*}[Predicate vs.\ Existence: Structural Template]
+Each bound-type concept (maximum, minimum, upper bound, supremum, etc.) is
+defined by a predicate relative to an ambient ordered set $S$. Given
+$A \subseteq S$, let $P_A(x)$ denote such a predicate.
+
+\medskip
+\noindent\textbf{Predicate form.}
+The statement ``$x$ is a $P$-object of $A$'' means that $P_A(x)$ holds for a
+specific identified element $x \in S$. To prove this, one exhibits the element
+and verifies each condition in $P_A(x)$.
+
+\medskip
+\noindent\textbf{Existence form.}
+The statement ``$A$ has a $P$-object'' means that
+\[
+\exists x \in S \; P_A(x).
+\]
+Once established, one may fix such an $x$ and reason with the fact that
+$P_A(x)$ holds.
+
+\medskip
+\noindent\textbf{Notational glosses.}
+\begin{itemize}
+  \item ``$x$ is a $P$-object of $A$'' abbreviates $P_A(x)$.
+  \item ``$A$ has a $P$-object'' abbreviates $\exists x \in S \; P_A(x)$.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Proof strategy summary.}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{} p{4cm} p{3cm} p{6cm} @{}}
+\hline
+\textbf{Goal} & \textbf{Form} & \textbf{Strategy} \\
+\hline
+$P_A(x)$ & Predicate & Exhibit $x$ and verify $P_A(x)$ directly. \\
+\noalign{\vskip 0.3em}
+$\exists x \in S \; P_A(x)$ & Existence & Construct or identify a candidate and verify $P_A(x)$. \\
+\noalign{\vskip 0.3em}
+\textit{Hypothesis:} $\exists x \in S \; P_A(x)$ & --- & Fix such an $x$ and use the fact that $P_A(x)$ holds. \\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent\emph{Note.}
+The hypothesis row is not a proof goal. It records the standard move of fixing
+an existential witness once existence has been established.
+\end{remark*}
+
+\begin{center}
+\input{volume-iii/analysis/bounding/notes/bounds-extremals/figure-bounds}
+\end{center}
+
+\begin{center}
+\small
+\textbf{Bounds, Extrema, Infimum, and Supremum for Subsets of $S$}
+\end{center}
+
+\medskip
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{@{} p{2.4cm} p{6.2cm} p{3.0cm} p{3.2cm} @{}}
+\hline
+\textbf{Concept} & \textbf{Predicate $P_A(x)$} & \textbf{Predicate Form} & \textbf{Existence Form} \\
+\hline
+Upper bound
+&
+$\forall a \in A \; (a \le x)$
+&
+$x$ is an upper bound of $A$
+&
+$A$ is bounded above$
+$
+\\[0.2em]
+
+Lower bound
+&
+$\forall a \in A \; (x \le a)$
+&
+$x$ is a lower bound of $A$
+&
+$A$ is bounded below
+$
+$
+\\
+\hline
+
+Maximum
+&
+$(x \in A) \land \forall a \in A \; (a \le x)$
+&
+$x$ is a maximum of $A$
+&
+$A$ has a maximum
+$
+$
+\\[0.2em]
+
+Minimum
+&
+$(x \in A) \land \forall a \in A \; (x \le a)$
+&
+$x$ is a minimum of $A$
+&
+$A$ has a minimum
+$
+$
+\\
+\hline
+
+Supremum
+&
+$UpperBound(x,A)
+\land
+\forall u \in S \; (UpperBound(u,A) \rightarrow x \le u)$
+&
+$x$ is the supremum of $A$
+&
+$A$ has a supremum
+$
+$
+\\[0.2em]
+
+Infimum
+&
+$LowerBound(x,A)
+\land
+\forall \ell \in S \; (LowerBound(\ell,A) \rightarrow \ell \le x)$
+&
+$x$ is the infimum of $A$
+&
+$A$ has an infimum
+$
+$
+\\
+\hline
+\end{tabular}
+\end{center}
+
+\medskip
+
+\begin{remark*}[Reading the summary table]
+The predicate column gives the condition that must hold for a specific
+identified element $x \in S$. The existence column records the corresponding
+existential statement. The rows are grouped by logical complexity: bounds use a
+single universal condition, extrema add membership, and suprema and infima add
+the least or greatest comparison against all competing bounds.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+% =========================================================
+% Bounding Definitions
+% House format
+% =========================================================
+
+\subsection*{Bounds and Extremal Elements}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Lower Bound)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:lower-bound}
+Let $A \subseteq S$ and let $l \in S$. The element $l$ is called a
+\emph{lower bound} of $A$ if
+\[
+l \le x
+\qquad \text{for every } x \in A.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+l \text{ is a lower bound of } A
+\quad\Longleftrightarrow\quad
+\forall x \in A \; (l \le x).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+LowerBound(l,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+l \text{ is not a lower bound of } A
+\quad\Longleftrightarrow\quad
+\exists x \in A \; (x < l).
+\]
+This means there exists an element of $A$ lying strictly below $l$, so $l$ fails to bound $A$
+from below.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Upper Bound)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:upper-bound}
+Let $A \subseteq S$ and let $u \in S$. The element $u$ is called an
+\emph{upper bound} of $A$ if
+\[
+x \le u
+\qquad \text{for every } x \in A.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+u \text{ is an upper bound of } A
+\quad\Longleftrightarrow\quad
+\forall x \in A \; (x \le u).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+UpperBound(u,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+u \text{ is not an upper bound of } A
+\quad\Longleftrightarrow\quad
+\exists x \in A \; (u < x).
+\]
+This means there exists an element of $A$ lying strictly above $u$, so $u$ fails to bound $A$
+from above.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Minimum)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:minimum}
+Let $A \subseteq S$ and let $m \in S$. The element $m$ is called a
+\emph{minimum} of $A$, denoted $m = \min A$, if $m \in A$ and
+\[
+m \le x
+\qquad \text{for every } x \in A.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+m = \min A
+\quad\Longleftrightarrow\quad
+(m \in A) \land \forall x \in A \; (m \le x).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+Minimum(m,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+m \neq \min A
+\quad\Longleftrightarrow\quad
+(m \notin A) \lor \exists x \in A \; (x < m).
+\]
+This means either $m$ is not an element of $A$, or else some element of $A$ lies strictly
+below $m$, so $m$ cannot be the least element of $A$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Maximum)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:maximum}
+Let $A \subseteq S$ and let $m \in S$. The element $m$ is called a
+\emph{maximum} of $A$, denoted $m = \max A$, if $m \in A$ and
+\[
+x \le m
+\qquad \text{for every } x \in A.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+m = \max A
+\quad\Longleftrightarrow\quad
+(m \in A) \land \forall x \in A \; (x \le m).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+Maximum(m,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+m \neq \max A
+\quad\Longleftrightarrow\quad
+(m \notin A) \lor \exists x \in A \; (m < x).
+\]
+This means either $m$ is not an element of $A$, or else some element of $A$ lies strictly
+above $m$, so $m$ cannot be the greatest element of $A$.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Supremum)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:supremum}
+Let $A \subseteq S$ and let $s \in S$. The element $s$ is called the
+\emph{supremum} of $A$, denoted $s = \sup A$, if $s$ is an upper bound of $A$
+and $s$ is less than or equal to every upper bound of $A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+s = \sup A
+\quad\Longleftrightarrow\quad
+\bigl(\forall x \in A \; (x \le s)\bigr)
+\land
+\bigl(\forall u \in S \; ((\forall x \in A \; (x \le u)) \rightarrow s \le u)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+Supremum(s,A)
+\quad\Longleftrightarrow\quad
+\underbrace{UpperBound(s,A)}_{\text{$s$ is an upper bound of $A$}}
+\land
+\underbrace{\forall u \in S \; (UpperBound(u,A) \rightarrow s \le u)}_{\text{$s$ lies below every upper bound of $A$}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+s \neq \sup A
+\quad\Longleftrightarrow\quad
+\bigl(\exists x \in A \; (s < x)\bigr)
+\lor
+\bigl(\exists u \in S \; ((\forall x \in A \; (x \le u)) \land u < s)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+s \ne \sup A
+\quad\Longleftrightarrow\quad
+\underbrace{\exists x \in A \; (s < x)}_{\text{$s$ fails to be an upper bound}}
+\;\lor\;
+\underbrace{\exists u \in S \; \bigl((\forall x \in A \; (x \le u)) \land u < s\bigr)}_{\text{$s$ fails to be the least upper bound}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg Supremum(s,A)
+\quad\Longleftrightarrow\quad
+\underbrace{\neg UpperBound(s,A)}_{\text{$s$ is not an upper bound}}
+\lor
+\underbrace{\exists u \in S \; (UpperBound(u,A) \land u < s)}_{\text{there is a smaller upper bound}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure to be an upper bound.} There exists an element of $A$ strictly larger than $s$, so $s$ does not bound $A$ from above at all.
+  \item \textbf{Failure to be the least upper bound.} The element $s$ may still be an upper bound, but there exists a smaller upper bound $u < s$, so $s$ is not the least one.
+\end{itemize}
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Infimum)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:infimum}
+Let $A \subseteq S$ and let $t \in S$. The element $t$ is called the
+\emph{infimum} of $A$, denoted $t = \inf A$, if $t$ is a lower bound of $A$
+and every lower bound of $A$ is less than or equal to $t$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+t = \inf A
+\quad\Longleftrightarrow\quad
+\bigl(\forall x \in A \; (t \le x)\bigr)
+\land
+\bigl(\forall l \in S \; ((\forall x \in A \; (l \le x)) \rightarrow l \le t)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+Infimum(t,A).
+\]
+Equivalently,
+\[
+LowerBound(t,A)
+\land
+\forall l \in S \; (LowerBound(l,A) \rightarrow l \le t).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+t \neq \inf A
+\quad\Longleftrightarrow\quad
+\bigl(\exists x \in A \; (x < t)\bigr)
+\lor
+\bigl(\exists l \in S \; ((\forall x \in A \; (l \le x)) \land t < l)\bigr).
+\]
+This means either $t$ fails to be a lower bound of $A$, or $t$ is a lower bound but not the
+greatest one.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+% ---------------------------------------------------------
+\subsection{Consequences}
+
+\begin{remark*}[Logical structure]
+Bounds, extrema, and least/greatest bounds form a hierarchy of increasing
+logical complexity.
+Upper and lower bounds are defined by a universal quantifier alone.
+Maximum and minimum add a membership condition: the extremum must belong
+to the set.
+Supremum and infimum relax membership but add a minimality (or maximality)
+condition: the bound must be the \emph{least} (or \emph{greatest}) among
+all bounds.
+Maximum implies supremum --- when $\max A$ exists, it equals $\sup A$
+(Proposition~\ref{prop:sup-unique} and the proof at
+\hyperref[prf:max-is-sup]{max-is-sup}) --- but the converse fails:
+$(0,1)$ has $\sup = 1$ but no maximum.
+\end{remark*}
+
+\begin{remark*}[Connections forward]
+The $\varepsilon$-characterization (Proposition~\ref{prop:eps-char}) is the
+workhorse tool of the bounding chapter.
+Every proof in the Bound Arithmetic section
+(\S\ref{sec:bound-arithmetic}) invokes it to verify that a candidate value
+is the least upper bound, not merely an upper bound.
+The Monotone Convergence Theorem (convergence chapter) uses the same
+mechanism: the limit of a bounded monotone sequence is identified as
+$\sup\{a_n\}$, and the $\varepsilon$-characterization produces the required
+$N$.
+\end{remark*}
+
+
+

@@ -1,0 +1,476 @@
+\begin{definition}[Point-Slope Form]
+Let $M = \mathbb{R}^2$ be the Euclidean plane. Given a fixed point $c = (x_1, y_1) \in A$ and a constant slope $m \in \mathbb{R}$, the \textbf{Point-Slope Form} of the line is the set of all points $(x, y)$ satisfying:
+\[ y - y_1 = m(x - x_1) \]
+\end{definition}
+
+\begin{remark}[Derivation of Point-Slope Form]
+The derivation follows from the geometric property of constant slope:
+\begin{enumerate}
+    \item Let $P_1 = (x_1, y_1)$ be a fixed element of the set $A$.
+    \item Let $P = (x, y)$ be an arbitrary point such that $x \neq x_1$.
+    \item By the definition of a line in $\mathbb{R}^2$, the slope $m$ between any two distinct points is invariant:
+    \[ m = \frac{y - y_1}{x - x_1} \]
+    \item To ensure the equation is defined for all $x$ (including $x = x_1$), we apply the algebraic transformation:
+    \[ m(x - x_1) = y - y_1 \]
+    \item Thus, $y - y_1 = m(x - x_1)$.
+\end{enumerate}
+\end{remark}
+
+
+\begin{definition}[Two-Point Form]
+Given two distinct points $x, y \in S$ where $x = (x_1, y_1)$ and $y = (x_2, y_2)$ with $x_1 \neq x_2$, the equation of the line passing through both points is:
+\[ y - y_1 = \left( \frac{y_2 - y_1}{x_2 - x_1} \right)(x - x_1) \]
+\end{definition}
+
+
+\begin{definition}[General Linear Form]
+The \textbf{General Form} (or Implicit Form) of a line in $\mathbb{R}^2$ is defined by the locus of points $(x, y)$ satisfying the linear equation:
+\[ Ax + By + C = 0 \]
+where $A, B, C \in \mathbb{R}$ and the condition $A^2 + B^2 \neq 0$ ensures the existence of a non-degenerate line.
+\end{definition}
+
+\begin{remark}[Geometric Interpretation of Coefficients]
+In the context of vector geometry and Vulkan rendering:
+\begin{itemize}
+    \item The vector $\mathbf{n} = [A, B]^\top$ is the \textbf{normal vector} to the line.
+    \item This form is $C^0$ continuous across all possible rotations, including vertical orientations where $B=0$, making it computationally superior to slope-intercept forms for collision detection.
+\end{itemize}
+\end{remark}
+
+
+\begin{definition}[Vector Parametric Form]
+A line is defined as the image of a mapping $\mathbf{r}: \mathbb{R} \to \mathbb{R}^2$ given by:
+\[ \mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v} \]
+where $\mathbf{r}_0$ is a position vector and $\mathbf{v}$ is a direction vector.
+\end{definition}
+
+\begin{remark}[Application to Torus Manifolds]
+When simulating Brownian motion on a torus $T^2$, the parametric form is typically used with a modulo operator to handle the boundary conditions:
+\[ \mathbf{r}(t) = (\mathbf{r}_0 + t\mathbf{v}) \pmod L \]
+where $L$ is the periodicity of the torus.
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+\begin{definition}[Intercept Form]
+Given a line that intersects the $x$-axis at $(a, 0)$ and the $y$-axis at $(0, b)$, where $a, b \neq 0$, the \textbf{Intercept Form} is defined as:
+\[ \frac{x}{a} + \frac{y}{b} = 1 \]
+\end{definition}
+
+\begin{remark}[Derivation of Intercept Form]
+The derivation utilizes the Two-Point Form with specific intercepts:
+\begin{enumerate}
+    \item Let the two points be $P_1 = (a, 0)$ and $P_2 = (0, b)$.
+    \item Calculate the slope $m$:
+    \[ m = \frac{b - 0}{0 - a} = -\frac{b}{a} \]
+    \item Substitute into the Point-Slope Form using $(a, 0)$:
+    \[ y - 0 = -\frac{b}{a}(x - a) \]
+    \item Distribute and rearrange the terms:
+    \[ y = -\frac{b}{a}x + b \implies \frac{b}{a}x + y = b \]
+    \item Divide the entire equation by $b$ to reach the normalized form:
+    \[ \frac{x}{a} + \frac{y}{b} = 1 \]
+\end{enumerate}
+\end{remark}
+
+
+
+
+\begin{remark}[Generalization to $\mathbb{R}^n$ via Affine Combinations]
+In an arbitrary $n$-dimensional Euclidean space $\mathbb{R}^n$, a line is not represented by a single equation (unless $n=2$), but rather as an \textbf{affine hull} of two distinct points.
+
+\begin{enumerate}
+    \item Let $\mathbf{x_1}, \mathbf{x_2} \in \mathbb{R}^n$ be two distinct vectors representing fixed points in space.
+    \item The direction of the line is given by the displacement vector $\mathbf{v} = \mathbf{x_2} - \mathbf{x_1}$.
+    \item The "Two-Point Form" in $\mathbb{R}^n$ is expressed parametrically as:
+    \[ \mathbf{x}(t) = \mathbf{x_1} + t(\mathbf{x_2} - \mathbf{x_1}) \quad \text{for } t \in \mathbb{R} \]
+    \item This can be rewritten in the form of a \textbf{convex/affine combination}:
+    \[ \mathbf{x}(t) = (1 - t)\mathbf{x_1} + t\mathbf{x_2} \]
+    \item \textbf{Geometric Physicality:} 
+    \begin{itemize}
+        \item When $t=0$, the "particle" is at $\mathbf{x_1}$.
+        \item When $t=1$, the "particle" is at $\mathbf{x_2}$.
+        \item For $t \in (0, 1)$, the point lies on the \textbf{line segment} between them. This is the foundation for linear interpolation (LERP) used constantly in shader programming and Vulkan vertex processing.
+    \end{itemize}
+    \item \textbf{Analytic Requirement:} In $\mathbb{R}^n$, to describe this line implicitly (without a parameter $t$), you would need a system of $n-1$ independent linear equations, which represents the line as the intersection of $n-1$ hyperplanes.
+\end{enumerate}
+\end{remark}
+
+
+
+
+
+
+
+
+
+\begin{definition}[Normal Form / Hesse Normal Form]
+A line in $\mathbb{R}^2$ is defined by the length of the perpendicular segment from the origin to the line, $p$, and the angle $\alpha$ that this segment makes with the positive $x$-axis:
+\[ x \cos \alpha + y \sin \alpha - p = 0 \]
+where $p \ge 0$ is the distance from the origin.
+\end{definition}
+
+\begin{remark}[Relation to Vulkan and Distance Functions]
+In the context of Signed Distance Fields (SDFs), the expression $f(x,y) = x \cos \alpha + y \sin \alpha - p$ yields the \textbf{signed distance} from any point $(x,y)$ to the line. This is a direct application of the \texttt{Lipschitz} property where the Lipschitz constant $K=1$, making it ideal for GPU-based proximity queries in your pursuit simulation.
+\end{remark}
+
+\begin{definition}[Symmetric Form]
+Given a point $(x_1, y_1)$ and direction cosines $(\cos \theta, \sin \theta)$, the \textbf{Symmetric Form} is:
+\[ \frac{x - x_1}{\cos \theta} = \frac{y - y_1}{\sin \theta} = r \]
+where $r$ represents the signed distance from the point $(x_1, y_1)$ to an arbitrary point $(x, y)$ on the line.
+\end{definition}
+
+
+% =========================================================
+% Proof: Differentiability Implies Continuity
+% Source: [path to notes file relative to project root]
+% Mode: standard
+% =========================================================
+
+\clearpage
+\subsection*{Differentiability Implies Continuity}
+\label{prf:differentiability-implies-continuity}
+
+\begin{remark*}[Return]
+\hyperref[thm:differentiability-implies-continuity]{$\leftarrow$ Back to Theorem (Differentiability Implies Continuity) in Notes}
+\end{remark*}
+
+\begin{remark*}[Claim]
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$.
+Assume that $f$ is differentiable at $c$. Then $f$ is continuous at $c$.
+\end{remark*}
+
+\subsubsection*{Professional Standard Proof}
+
+\begin{proof}
+Since $f$ is differentiable at $c$, the limit
+\[
+\lim_{x \to c} \frac{f(x)-f(c)}{x-c}
+\]
+exists. Let
+\[
+L:=f'(c).
+\]
+For $x \in A$ with $x \neq c$,
+\[
+f(x)-f(c)=\frac{f(x)-f(c)}{x-c}\,(x-c).
+\]
+As $x \to c$, the first factor tends to $L$, and the second factor tends to $0$. Therefore, by the Product Rule for Limits,
+\[
+\lim_{x \to c} \bigl(f(x)-f(c)\bigr)=L\cdot 0=0.
+\]
+Hence
+\[
+\lim_{x \to c} f(x)=f(c).
+\]
+Therefore $f$ is continuous at $c$.
+\end{proof}
+
+\subsubsection*{Detailed Learning Proof}
+
+\begin{proof}
+\textbf{Step 1. Record exactly what differentiability gives.}
+
+Differentiability at $c$ means that the difference quotient has a finite limit:
+\[
+\lim_{x \to c} \frac{f(x)-f(c)}{x-c}=f'(c).
+\]
+Set
+\[
+L:=f'(c).
+\]
+This is the crucial starting point. Differentiability gives more than continuity: it gives control of the \emph{ratio}
+\[
+\frac{f(x)-f(c)}{x-c}.
+\]
+The proof will recover continuity by multiplying this controlled ratio by the small quantity $(x-c)$.
+
+\medskip
+
+\textbf{Step 2. Rewrite the vertical difference in a useful form.}
+
+For every $x \in A$ with $x \neq c$,
+\[
+f(x)-f(c)=\frac{f(x)-f(c)}{x-c}\,(x-c).
+\]
+This identity is purely algebraic: the factor $(x-c)$ is inserted and canceled. The point of the rewrite is structural. Continuity concerns the quantity
+\[
+f(x)-f(c),
+\]
+while differentiability concerns the quotient
+\[
+\frac{f(x)-f(c)}{x-c}.
+\]
+This factorization is the bridge between the two notions.
+
+\medskip
+
+\textbf{Step 3. Identify the limit of each factor.}
+
+From Step 1,
+\[
+\lim_{x \to c} \frac{f(x)-f(c)}{x-c}=L.
+\]
+Also,
+\[
+\lim_{x \to c} (x-c)=0.
+\]
+The second limit is immediate because subtracting the constant $c$ shifts the variable $x$ but does not change the fact that $x \to c$.
+
+\medskip
+
+\textbf{Step 4. Pass to the limit in the product.}
+
+Using the factorization from Step 2 and the two limits from Step 3, the Product Rule for Limits gives
+\[
+\lim_{x \to c} \bigl(f(x)-f(c)\bigr)
+=
+\left(\lim_{x \to c} \frac{f(x)-f(c)}{x-c}\right)
+\left(\lim_{x \to c} (x-c)\right)
+=
+L \cdot 0
+=
+0.
+\]
+This is the decisive step. The derivative may converge to any real number $L$, but the factor $(x-c)$ tends to $0$, so the whole product tends to $0$. Thus the vertical change
+\[
+f(x)-f(c)
+\]
+vanishes as $x \to c$.
+
+\medskip
+
+\textbf{Step 5. Convert the limit of the difference into continuity.}
+
+The statement
+\[
+\lim_{x \to c} \bigl(f(x)-f(c)\bigr)=0
+\]
+is equivalent to
+\[
+\lim_{x \to c} f(x)=f(c).
+\]
+But this is exactly the definition of continuity of $f$ at $c$. Therefore $f$ is continuous at $c$.
+
+\medskip
+
+\textbf{Conclusion.}
+Differentiability at $c$ forces the difference quotient to have a finite limit. Factoring
+\[
+f(x)-f(c)
+=
+\frac{f(x)-f(c)}{x-c}\,(x-c)
+\]
+then shows that the function value difference tends to $0$ as $x \to c$. Hence
+\[
+\lim_{x \to c} f(x)=f(c),
+\]
+so $f$ is continuous at $c$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The argument is a direct factorization proof. Differentiability controls the quotient
+\[
+\frac{f(x)-f(c)}{x-c},
+\]
+while continuity requires control of the difference
+\[
+f(x)-f(c).
+\]
+The proof inserts the factor $(x-c)$ to convert the derivative datum into the continuity datum. Structurally, the theorem says that differentiability is stronger than continuity because the derivative already contains the continuity estimate in factored form.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition of derivative at a point}: used to obtain the limit of the difference quotient.
+  \item \hyperref[def:continuous-at-a-point]{Definition of continuity at a point}: used in the final step to identify the conclusion.
+  \item \hyperref[thm:product-rule-for-limits-functions]{Product Rule for Limits}: used to pass from the limits of the two factors to the limit of their product.
+  \item \hyperref[thm:algebra-of-limits-functions]{Algebra of Limits for Functions}: used implicitly in passing from
+  \(\lim_{x\to c}(f(x)-f(c))=0\) to \(\lim_{x\to c}f(x)=f(c)\), if that equivalence has already been isolated as a theorem.
+\end{itemize}
+\end{remark*}
+
+
+
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Differentiation}},
+  fonttitle=\small\bfseries]
+
+\begin{center}
+\small
+\begin{tabular}{c}
+Real Line Foundations $\;\to\;$ Sequences $\;\to\;$ Metric Spaces \\[2pt]
+$\to\;$ Limits of Functions $\;\to\;$ Continuity $\;\to\;$ \textbf{Differentiation}
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{How we got here.}
+The derivative is defined as a limit of a quotient, so the chapter depends
+directly on the limit theory of functions and on the pointwise notion of
+continuity. The earlier chapters establish the real-number structure,
+sequential and metric control, and the algebra of function limits needed to
+make difference quotients precise.
+
+\medskip
+\noindent\textbf{What this chapter builds.}
+This chapter develops differentiation as the first local linear invariant of a
+real-valued function. It begins with the definition of the derivative at a
+point, establishes that differentiability is stronger than continuity, proves
+the basic differentiation rules, and then develops the structural consequences:
+local extrema criteria, Rolle's Theorem, the Mean Value Theorem, monotonicity,
+and the first global information extracted from local rate of change.
+
+\medskip
+\noindent\textbf{Where this leads.}
+Differentiation opens the path to the integral, Taylor expansion, and the
+analysis of function behavior through approximation by linear and higher-order
+models. The Mean Value Theorem, in particular, becomes the bridge from local
+derivative information to global control on intervals, and it will later
+interact with integration through the Fundamental Theorem of Calculus.
+
+\end{tcolorbox}
+
+
+
+% =========================================================
+% Definition: Supremum
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Supremum)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:supremum}
+Let $A \subseteq \mathbb{R}$ and let $s \in \mathbb{R}$. The number $s$ is called the
+\emph{supremum} of $A$ if $s$ is an upper bound of $A$ and $s$ is less than or equal to
+every upper bound of $A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+s = \sup A
+\quad\Longleftrightarrow\quad
+\bigl(\forall x \in A \; (x \le s)\bigr)
+\land
+\bigl(\forall u \in \mathbb{R}\; ((\forall x \in A \; (x \le u)) \rightarrow s \le u)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+Supremum(s,A)
+\quad\Longleftrightarrow\quad
+UpperBound(s,A)
+\land
+\forall u \in \mathbb{R}\; (UpperBound(u,A) \rightarrow s \le u).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+s \neq \sup A
+\quad\Longleftrightarrow\quad
+\neg\Bigl[
+\bigl(\forall x \in A \; (x \le s)\bigr)
+\land
+\bigl(\forall u \in \mathbb{R}\; ((\forall x \in A \; (x \le u)) \rightarrow s \le u)\bigr)
+\Bigr].
+\]
+Equivalently,
+\[
+\bigl(\exists x \in A \; (x > s)\bigr)
+\lor
+\bigl(\exists u \in \mathbb{R}\; ((\forall x \in A \; (x \le u)) \land u < s)\bigr).
+\]
+\end{remark*}
+
+
+
+
+
+% =========================================================
+% Theorem: Every Convergent Sequence Is Bounded
+% =========================================================
+
+\begin{theorem}
+\label{thm:every-convergent-sequence-is-bounded}
+Let $(x_n)$ be a sequence in $\mathbb{R}$ and let $L \in \mathbb{R}$. If $(x_n)$ converges
+to $L$, then $(x_n)$ is bounded.
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x_n \; \forall L \in \mathbb{R}\;
+\Biggl[
+\Bigl(
+\forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N \;
+(|x_n - L| < \varepsilon)
+\Bigr)
+\rightarrow
+\Bigl(
+\exists M > 0 \; \forall n \in \mathbb{N} \; (|x_n| \le M)
+\Bigr)
+\Biggr].
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate statement]
+\[
+\forall L \in \mathbb{R}\;
+\bigl(
+ConvergentSequence(x_n,L) \rightarrow BoundedSequence(x_n)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\exists x_n \; \exists L \in \mathbb{R}\;
+\Biggl[
+\Bigl(
+\forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N \;
+(|x_n - L| < \varepsilon)
+\Bigr)
+\land
+\Bigl(
+\forall M > 0 \; \exists n \in \mathbb{N} \; (|x_n| > M)
+\Bigr)
+\Biggr].
+\]
+
+This means there exists a sequence that converges to $L$ but escapes every bound: for every
+$M > 0$, one can find a term of the sequence with $|x_n| > M$. In other words, the sequence
+is unbounded despite converging.
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\forall x_n \; \forall L \in \mathbb{R}\;
+\Biggl[
+\Bigl(
+\forall M > 0 \; \exists n \in \mathbb{N} \; (|x_n| > M)
+\Bigr)
+\rightarrow
+\Bigl(
+\exists \varepsilon_0 > 0 \; \forall N \in \mathbb{N} \; \exists n \ge N \;
+(|x_n - L| \ge \varepsilon_0)
+\Bigr)
+\Biggr].
+\]
+
+This means that if a sequence is unbounded, then it cannot converge: there is a fixed
+$\varepsilon_0 > 0$ such that no matter how far out in the sequence one goes, some term
+remains at least $\varepsilon_0$ away from $L$.
+\end{remark*}
