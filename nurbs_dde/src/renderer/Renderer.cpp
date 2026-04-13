@@ -66,6 +66,9 @@ bool Renderer::begin_frame(const Swapchain& swapchain) {
     vkResetFences(m_device, 1, &m_render_fence);
     vkResetCommandBuffer(m_cmd, 0);
 
+    // Reset per-frame draw call counter
+    m_draw_calls_current = 0;
+
     VkCommandBufferBeginInfo begin_info{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
@@ -96,37 +99,15 @@ bool Renderer::begin_frame(const Swapchain& swapchain) {
     };
     vkCmdBeginRendering(m_cmd, &render_info);
 
-    // ── Vulkan Y-flip correction ───────────────────────────────────────────
-    // By default Vulkan NDC has Y increasing downward (opposite of OpenGL).
-    // glm::ortho() generates an OpenGL-convention matrix where Y increases
-    // upward (world +Y → NDC +Y → screen top).
-    //
-    // The VK_KHR_maintenance1 negative-height viewport trick flips Vulkan's
-    // Y axis to match OpenGL convention:
-    //   .y      = static_cast<f32>(ext.height)   ← start at bottom
-    //   .height = -static_cast<f32>(ext.height)  ← go upward (negative)
-    //
-    // This makes:
-    //   NDC Y = +1  →  pixel Y = 0        (screen top)    ✓
-    //   NDC Y = -1  →  pixel Y = height   (screen bottom) ✓
-    //
-    // glm::ortho(L, R, B, T) now maps world T to screen top and world B to
-    // screen bottom, matching pixel_to_world() which maps pixel Y=0 to
-    // world top and pixel Y=dp_h to world bottom.
-    //
-    // This also fixes the epsilon-ball tracking inversion: cursor moving UP
-    // (decreasing pixel Y) now correctly maps to increasing world Y, and the
-    // nearest snap cache point (which also increases in Y) renders at the TOP
-    // of the screen — consistent with where the cursor is.
+    // Negative-height VkViewport: aligns Vulkan NDC Y with glm::ortho convention.
+    // NDC Y=+1 → screen top,  NDC Y=-1 → screen bottom.
+    // This makes world +Y render at the screen top and fixes the epsilon-ball
+    // tracking inversion described in docs/COORDINATE_SYSTEMS.md.
     const float w = static_cast<f32>(ext.width);
     const float h = static_cast<f32>(ext.height);
     VkViewport viewport{
-        .x        = 0.f,
-        .y        = h,       // start at pixel bottom
-        .width    = w,
-        .height   = -h,      // negative height flips Y to match glm::ortho convention
-        .minDepth = 0.f,
-        .maxDepth = 1.f
+        .x = 0.f, .y = h, .width = w, .height = -h,
+        .minDepth = 0.f, .maxDepth = 1.f
     };
     vkCmdSetViewport(m_cmd, 0, 1, &viewport);
 
@@ -157,9 +138,14 @@ void Renderer::draw(const DrawCall& dc) {
     VkDeviceSize offset = static_cast<VkDeviceSize>(dc.slice.byte_offset);
     vkCmdBindVertexBuffers(m_cmd, 0, 1, &dc.slice.buffer, &offset);
     vkCmdDraw(m_cmd, dc.slice.vertex_count, 1, 0, 0);
+
+    ++m_draw_calls_current;
 }
 
 bool Renderer::end_frame(const Swapchain& swapchain) {
+    // Latch completed frame's draw call count before presenting
+    m_draw_calls_last = m_draw_calls_current;
+
     vkCmdEndRendering(m_cmd);
 
     transition_image(swapchain.images()[m_image_index],

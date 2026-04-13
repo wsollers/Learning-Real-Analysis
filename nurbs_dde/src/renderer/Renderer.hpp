@@ -1,8 +1,5 @@
 #pragma once
 // renderer/Renderer.hpp
-// Owns the Vulkan frame loop: command pool, sync objects, pipelines, ImGui.
-// Frame order per Engine::run_frame():
-//   begin_frame() -> [draw() x N] -> imgui_new_frame/imgui_render -> end_frame()
 
 #include <volk.h>
 #include "platform/VulkanContext.hpp"
@@ -52,6 +49,11 @@ public:
     [[nodiscard]] ImFont* font_math_body()  const noexcept { return m_imgui.font_math_body();  }
     [[nodiscard]] ImFont* font_math_small() const noexcept { return m_imgui.font_math_small(); }
 
+    // ── Stats ─────────────────────────────────────────────────────────────────
+    // draw_call_count() returns the count from the *previous* completed frame.
+    // The current in-progress frame count is in m_draw_calls_current.
+    [[nodiscard]] u32 draw_call_count() const noexcept { return m_draw_calls_last; }
+
 private:
     VkDevice        m_device         = VK_NULL_HANDLE;
     VkQueue         m_graphics_queue = VK_NULL_HANDLE;
@@ -63,6 +65,10 @@ private:
     VkSemaphore     m_render_finished = VK_NULL_HANDLE;
     u32             m_image_index    = 0;
     bool            m_frame_open     = false;
+
+    // Draw call counters: current frame accumulates; last frame is readable.
+    u32 m_draw_calls_current = 0;
+    u32 m_draw_calls_last    = 0;
 
     Pipeline   m_pipeline_line_list;
     Pipeline   m_pipeline_line_strip;
