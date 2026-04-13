@@ -20,9 +20,14 @@ $\mathbb{N}$.
 \end{remark*}
 
 
+
+
 \begin{theorem}[Archimedean Property]
 \label{thm:archimedean-property}
-For every real number $x$, there exists a natural number $n$ such that $n > x$.
+For every real number $x$, there exists a natural number $n$ such that
+\[
+n > x.
+\]
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
@@ -31,7 +36,7 @@ For every real number $x$, there exists a natural number $n$ such that $n > x$.
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Theorem predicate reading]
 \[
 ArchimedeanProperty.
 \]
@@ -41,15 +46,60 @@ ArchimedeanProperty.
 \[
 \exists x \in \mathbb{R}\; \forall n \in \mathbb{N}\; (n \le x).
 \]
-This means there exists a real number that is an upper bound for all natural numbers. Such a number would place all of $\mathbb{N}$ below a single point of $\mathbb{R}$, which is exactly what the Archimedean Property rules out.
 \end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg ArchimedeanProperty
+\quad\Longleftrightarrow\quad
+\underbrace{\exists x \in \mathbb{R}\; \forall n \in \mathbb{N}\; (n \le x)}_{\text{the natural numbers are bounded above in }\mathbb{R}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg ArchimedeanProperty
+\quad\Longleftrightarrow\quad
+\exists x \in \mathbb{R}\; \forall n \in \mathbb{N}\; (n \le x).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of unboundedness.} There exists a real number $x$ that bounds every natural number from above.
+  \item \textbf{Failure of Archimedean behavior.} The copy of $\mathbb{N}$ inside $\mathbb{R}$ would stop growing past a fixed real number.
+\end{itemize}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Archimedean Property says that the natural numbers are unbounded in $\mathbb{R}$.
+No matter which real number is chosen, some natural number lies beyond it.
+
+The point is that this is not a formal consequence of the ordered-field axioms alone.
+It is a completeness consequence: the real line contains no infinitely large upper bound
+for $\mathbb{N}$.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 \begin{corollary}[Archimedean Corollary]
 \label{cor:archimedean-corollary}
 For every $x > 0$ and every $y \in \mathbb{R}$ there exists $n \in \mathbb{N}$ such that
-$nx > y$.
+\[
+nx > y.
+\]
 \end{corollary}
 
 \begin{remark*}[Standard quantified statement]
@@ -68,60 +118,37 @@ x > 0 \rightarrow \exists n \in \mathbb{N}\; (nx > y)
 x > 0 \land \forall n \in \mathbb{N}\; (nx \le y)
 \bigr).
 \]
-This means there exist a positive real number $x$ and a real number $y$ such that every
-natural multiple of $x$ stays below $y$. In other words, the sequence $(nx)$ would be bounded
-above despite $x$ being positive.
 \end{remark*}
 
-\begin{remark*}[Contrapositive quantified statement]
+\begin{remark*}[Failure mode decomposition]
 \[
+\neg\Bigl(
 \forall x \in \mathbb{R}\; \forall y \in \mathbb{R}\;
 \bigl(
-\forall n \in \mathbb{N}\; (nx \le y)
-\rightarrow
-x \le 0
-\bigr).
+x > 0 \rightarrow \exists n \in \mathbb{N}\; (nx > y)
+\bigr)
+\Bigr)
 \]
-This says that if all natural multiples of a real number $x$ remain below a fixed real number
-$y$, then $x$ cannot be positive.
-\end{remark*}
-
-\begin{lemma}[Integer Part Lemma]
-\label{lem:integer-part}
-For every real number $x$ there exists a unique integer $m$ such that
 \[
-m \le x < m+1.
-\]
-\end{lemma}
-
-\begin{remark*}[Standard quantified statement]
-\[
-\forall x \in \mathbb{R}\;
-\exists m \in \mathbb{Z}\;
-\Bigl[
-(m \le x < m+1)
-\land
-\forall k \in \mathbb{Z}\; \bigl((k \le x < k+1) \rightarrow k=m\bigr)
-\Bigr].
+\Longleftrightarrow\quad
+\underbrace{\exists x \in \mathbb{R}\; \exists y \in \mathbb{R}\;
+\bigl(
+x > 0 \land \forall n \in \mathbb{N}\; (nx \le y)
+\bigr)}_{\text{a positive real number has all of its natural multiples bounded above}}.
 \]
 \end{remark*}
 
-
-\begin{remark*}[Negated quantified statement]
-\[
-\exists x \in \mathbb{R}\;
-\Bigl[
-\forall m \in \mathbb{Z}\; (m > x \lor x \ge m+1)
-\;\lor\;
-\exists m \in \mathbb{Z}\; \exists k \in \mathbb{Z}\;
-\bigl(m \ne k \land m \le x < m+1 \land k \le x < k+1\bigr)
-\Bigr].
-\]
-This means there exists a real number $x$ for which no integer captures $x$ in a half-open
-unit interval of the form $[m,m+1)$, or else more than one integer does so. The failure would
-lie in the inability to place every real number into a unique adjacent-integer interval.
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of growth under repeated addition.} There exists a positive real number $x$ whose natural multiples never exceed some fixed real number $y$.
+  \item \textbf{Failure of Archimedean behavior.} Repeatedly adding a positive amount would not eventually pass every prescribed real threshold.
+\end{itemize}
 \end{remark*}
 
+\begin{remark*}[Interpretation]
+This corollary says that every positive real number, no matter how small, eventually exceeds
+any prescribed real number when multiplied by a sufficiently large natural number.
 
-
-
+The point is that positivity alone forces unbounded growth under repeated addition. A fixed
+positive step size cannot remain trapped below a real bound forever.
+\end{remark*}

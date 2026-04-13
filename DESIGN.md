@@ -747,3 +747,210 @@ When a proof is requested with no qualification, the default output is:
 - no forbidden macros.
 
 Only an explicit request suppresses the explanatory layer.
+
+
+---
+
+## Rule — Long logical displays must use aligned
+
+When a quantified or predicate display is too long for a single readable line, it must be broken using an `aligned` environment inside display math.
+
+### Preferred breakpoints
+
+Break lines at major logical structure:
+
+- implications  
+- conjunctions  
+- disjunctions  
+
+### Purpose
+
+This keeps logical blocks readable, prevents overflow into the margins, and makes the structure of the statement visible to the eye.
+
+### Preferred pattern
+
+```latex
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&s \text{ satisfies the epsilon characterization of } \sup A \\
+&\quad\Longleftrightarrow\quad
+ \bigl(\forall x \in A \;(x \le s)\bigr) \\
+&\qquad\qquad\land\;
+ \bigl(\forall \varepsilon > 0 \;\exists a \in A \;(s - \varepsilon < a)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+```
+
+### Consequence
+
+A long one-line logical display should not be left flat when its structure can be made clear.
+
+
+---
+
+## Rule — Theorem/Proof Separation
+
+Every theorem-like environment must have its statement defined in the notes layer and its proof defined in a separate proof file.
+
+- Statements live in:
+  `notes/...`
+- Proofs live in:
+  `proofs/notes/...`
+
+No inline proofs inside notes unless explicitly designated as an example.
+
+---
+
+## Rule — Proof Stub Requirement
+
+All generated proofs must initially be stubs.
+
+### Required form
+
+```latex
+\begin{proof}
+TODO
+\end{proof}
+```
+
+### Constraints
+
+- No additional text inside the proof
+- No strategy, hints, or partial structure
+- No comments
+- No placeholder mathematics
+
+---
+
+## Rule — Proof Replacement Lifecycle
+
+Proof stubs are placeholders for user-authored proofs.
+
+- User writes proof externally (handwritten or draft)
+- Assistant reviews/grades
+- Upon acceptance:
+  - Replace stub with full formal proof
+  - Maintain house style
+  - Preserve theorem linkage
+
+---
+
+## Rule — One Proof Per File
+
+Each theorem must have exactly one proof file.
+
+- File naming:
+  `prf:<theorem-label>.tex`
+
+---
+
+## Rule — Proof Navigation Linking
+
+Every proof must include navigation linking back to its theorem.
+
+Example:
+
+```latex
+\begin{remark*}[Return]
+\hyperref[thm:...]{Return to Theorem}
+\end{remark*}
+```
+
+---
+
+## Rule — No Premature Proof Generation
+
+The assistant must not generate full proofs unless explicitly requested after the user has completed their own proof.
+
+---
+
+## Rule — Proof Status Tracking (Recommended)
+
+Maintain a lightweight status marker for each proof:
+
+- TODO
+- IN_PROGRESS
+- COMPLETE
+- VERIFIED
+
+This may be tracked externally (e.g., in a tracking markdown file).
+
+
+---
+
+## Rule — Theorem and Proof Navigation Links Are Required
+
+Every theorem-like statement in the notes layer must include an explicit navigation link to its proof file, and every proof file must include an explicit navigation link back to its statement.
+
+### Theorem-side requirement
+
+A theorem-like environment must contain an explicit `\hyperref[...]` link pointing to the corresponding proof label.
+
+Preferred pattern:
+
+```latex
+\begin{theorem}[...]
+\label{thm:...}
+
+...
+
+\smallskip
+\noindent
+\hyperref[prf:...]{\textit{Go to proof.}}
+
+\end{theorem}
+```
+
+### Proof-side requirement
+
+A proof file must include an explicit return link pointing back to the theorem label.
+
+Preferred pattern:
+
+```latex
+\begin{proof}
+\label{prf:...}
+TODO
+\end{proof}
+
+\begin{remark*}[Return]
+\hyperref[thm:...]{Return to Theorem}
+\end{remark*}
+```
+
+### Consequence
+
+Navigation between statement and proof is mandatory and must be present in both directions.
+
+---
+
+## Rule — Predicate Readings Must Use Operator Names
+
+In predicate-reading remarks and other logical displays that present formal predicate language, predicate names must be typeset using textual operator-style names rather than symbolic macros whenever readability would otherwise suffer.
+
+### Required style
+
+Use `\operatorname{...}` for predicate names.
+
+Preferred examples:
+
+```latex
+\operatorname{Subset}(A,S)
+\operatorname{NonemptySet}(A)
+\operatorname{BoundedAbove}(A)
+\operatorname{Supremum}(s,A)
+```
+
+### Forbidden style when it harms readability
+
+Do not use symbolic predicate macros such as `\Subset` in predicate-reading displays when they collide with parentheses, arguments, or neighboring logical structure.
+
+### Purpose
+
+This keeps predicate-reading remarks visually stable, avoids symbol collisions, and makes the formal language easier to scan.
+
+### Consequence
+
+Predicate-reading remarks should present formal predicates as textual operators unless a symbolic form is clearly readable and intentionally standardized.

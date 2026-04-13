@@ -58,17 +58,17 @@ above in $S$ has a least upper bound in $S$.
 
 \begin{remark*}[Predicate statement]
 \[
-LeastUpperBoundProperty(S).
+\operatorname{LeastUpperBoundProperty}(S).
 \]
 Equivalently,
 \[
 \begin{aligned}
 &\forall A\;
 \Bigl[
-(Subset(A,S) \land NonemptySet(A) \land BoundedAbove(A))
+(\operatorname{Subset}(A,S) \land \operatorname{NonemptySet}(A) \land \operatorname{BoundedAbove}(A))
 \\
 &\qquad\rightarrow
-\exists s \in S\; Supremum(s,A)
+\exists s \in S\; \operatorname{Supremum}(s,A)
 \Bigr].
 \end{aligned}
 \]
@@ -110,6 +110,8 @@ bound.
 
 
 
+
+
 \begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Axiom (Completeness of $\mathbb{R}$)}},
@@ -122,15 +124,16 @@ The ordered field $\mathbb{R}$ has the Least Upper Bound Property.
 
 \begin{remark*}[Standard quantified statement]
 \[
+\operatorname{LeastUpperBoundProperty}(\mathbb{R}).
+\]
+Equivalently,
+\[
 \begin{aligned}
-&\mathbb{R} \text{ has the Least Upper Bound Property}
-\\
-&\qquad\Longleftrightarrow\qquad
-\forall A \subseteq \mathbb{R}\;
+&\forall A \subseteq \mathbb{R}\;
 \Bigl[
 (A \neq \varnothing \land \exists u \in \mathbb{R}\;\forall x \in A\;(x \le u))
 \\
-&\qquad\qquad\rightarrow
+&\qquad\rightarrow
 \exists s \in \mathbb{R}\;
 \Bigl(
 (\forall x \in A\;(x \le s))
@@ -142,56 +145,106 @@ The ordered field $\mathbb{R}$ has the Least Upper Bound Property.
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Axiom predicate reading]
 \[
-LeastUpperBoundProperty(\mathbb{R}).
-\]
-Equivalently,
-\[
-\begin{aligned}
-&\forall A\;
-\Bigl[
-(Subset(A,\mathbb{R}) \land NonemptySet(A) \land BoundedAbove(A))
-\\
-&\qquad\rightarrow
-\exists s \in \mathbb{R}\; Supremum(s,A)
-\Bigr].
-\end{aligned}
+\operatorname{LeastUpperBoundProperty}(\mathbb{R}).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
+\neg \operatorname{LeastUpperBoundProperty}(\mathbb{R}).
+\]
+Equivalently,
+\[
 \begin{aligned}
-&\mathbb{R} \text{ does not have the Least Upper Bound Property}
-\\
-&\qquad\Longleftrightarrow\qquad
-\exists A \subseteq \mathbb{R}\;
+&\exists A \subseteq \mathbb{R}\;
 \Bigl[
 (A \neq \varnothing \land \exists u \in \mathbb{R}\;\forall x \in A\;(x \le u))
 \\
-&\qquad\qquad\land
+&\qquad\land
 \forall s \in \mathbb{R}\;
-\Bigl(
-(\exists x \in A\;(x > s))
-\lor
-(\exists v \in \mathbb{R}\;((\forall x \in A\;(x \le v)) \land v < s))
+\neg\Bigl(
+(\forall x \in A\;(x \le s))
+\land
+(\forall u \in \mathbb{R}\;((\forall x \in A\;(x \le u)) \rightarrow s \le u))
 \Bigr)
 \Bigr].
 \end{aligned}
 \]
-This is the hypothetical failure of completeness: it asserts that there exists a nonempty subset
-of $\mathbb{R}$ that is bounded above but has no least upper bound in $\mathbb{R}$. The failure
-would lie not in the subset alone, but in the ambient ordered field.
+\end{remark*}
 
-A standard example is the set
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\neg \operatorname{LeastUpperBoundProperty}(\mathbb{R})
+\\
+&\qquad\Longleftrightarrow\qquad
+\exists A \subseteq \mathbb{R}\;
+\Bigl[
+(A \neq \varnothing \land \operatorname{BoundedAbove}(A))
+\\
+&\qquad\qquad\land
+\forall s \in \mathbb{R}\;
+\Bigl(
+\underbrace{\exists x \in A\;(s < x)}_{\text{$s$ fails to be an upper bound}}
+\;\lor\;
+\underbrace{\exists v \in \mathbb{R}\;(\operatorname{UpperBound}(v,A) \land v < s)}_{\text{$s$ fails to be the least upper bound}}
+\Bigr)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\begin{aligned}
+&\neg \operatorname{LeastUpperBoundProperty}(\mathbb{R})
+\\
+&\qquad\Longleftrightarrow\qquad
+\exists A\;
+\Bigl[
+\operatorname{Subset}(A,\mathbb{R})
+\land
+\operatorname{NonemptySet}(A)
+\land
+\operatorname{BoundedAbove}(A)
+\\
+&\qquad\qquad\land
+\forall s \in \mathbb{R}\; \neg \operatorname{Supremum}(s,A)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of existence.} There exists a nonempty subset of $\mathbb{R}$ that is bounded above but has no supremum in $\mathbb{R}$.
+  \item \textbf{Failure of the field.} The problem is not in the subset alone. The failure is that $\mathbb{R}$ would be missing the element that should serve as the least upper bound.
+\end{itemize}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This axiom asserts that the real numbers satisfy the general completeness condition already
+captured by the Least Upper Bound Property.
+
+A standard contrast is the set
 \[
 A=\{q \in \mathbb{Q} : q^2 < 2\}.
 \]
-This set is nonempty and bounded above in $\mathbb{Q}$, but it has no supremum in $\mathbb{Q}$; the missing least upper bound is $\sqrt{2}$, so the failure lies in the field $\mathbb{Q}$, not in the set itself.
+This set is nonempty and bounded above in $\mathbb{Q}$, but it has no supremum in $\mathbb{Q}$.
+The missing least upper bound is $\sqrt{2}$, so the failure lies in the field, not in the set.
 \end{remark*}
 
-\begin{remark*}[Equivalent formulations]
+
+
+
+
+
+
+
+
+\begin{remark*}[Equivalent formulations]~\\
 Over the ordered-field axioms, completeness is equivalent to each of the
 following:
 \begin{itemize}
@@ -200,4 +253,26 @@ following:
   \item \emph{(Nested Interval Property)} Every nested sequence of nonempty
         closed bounded intervals has nonempty intersection.
 \end{itemize}
+\end{remark*}
+
+
+
+
+\input{volume-iii/analysis/bounding/notes/completeness/figure-completeness-chain}
+
+\begin{remark*}[Connections forward]
+Completeness appears in every major limit theorem in the notes.
+The Monotone Convergence Theorem (convergence chapter) constructs the
+limit of a bounded monotone sequence as $\sup\{a_n : n \in \mathbb{N}\}$;
+existence of this supremum requires completeness.
+The Bolzano--Weierstrass Theorem applies the Nested Interval Property
+directly to extract a convergent subsequence from any bounded sequence.
+The Cauchy Criterion identifies convergent sequences purely in terms of
+their own spacing, without naming the limit in advance; its proof
+constructs the limit as a supremum and again requires completeness.
+In metric spaces (Distance chapter), completeness in the sense of
+Cauchy sequences is the natural generalisation of the same idea to
+abstract settings.
+Every $\varepsilon$-$\delta$ proof that locates a limit or extremum is
+drawing on this chapter's infrastructure.
 \end{remark*}

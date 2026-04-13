@@ -1,0 +1,61 @@
+\begin{figure}[H]
+\centering
+
+\begin{center}
+\textbf{Density Dependency Map}
+\end{center}
+
+\begin{tikzpicture}[
+    >=Latex,
+    node distance=1.5cm and 0.6cm, % Increased vertical distance for clarity
+    every node/.style={align=center}
+]
+
+% =====================================================
+% Main density theorems (Level 2)
+% =====================================================
+\node[deptheorem] (densQ) {Density of the Rational\\Numbers in $\mathbb{R}$};
+\node[deptheorem] (densI) [right=1.2cm of densQ] {Density of the Irrational\\Numbers in $\mathbb{R}$};
+
+% =====================================================
+% Upstream support (Level 0)
+% =====================================================
+\node[deptheorem] (archcor) [above=2.5cm of densQ.center, xshift=-0.5cm] {Archimedean\\Corollary};
+\node[deptheorem] (floor)   [above=2.5cm of densI.center, xshift=0.5cm] {Floor Lemma};
+
+% =====================================================
+% Local concept (Level 1) - Positioned to avoid cross-lines
+% =====================================================
+\node[depdefinition] (dense) [above=1.0cm of $(densQ.north)!0.5!(densI.north)$] {Dense Subset};
+
+% =====================================================
+% Combined corollary (Level 3)
+% =====================================================
+\node[deptheorem] (both) [below=1.5cm of $(densQ.south)!0.5!(densI.south)$]
+{Every Open Interval Contains\\Rational and Irrational Points};
+
+% =====================================================
+% Edges
+% =====================================================
+% Standard logic flow from upstream
+\draw[depuses]    (archcor) -- (densQ);
+\draw[depuses]    (floor)   -- (densQ);
+
+% Definition anchors the category
+\draw[depdefines] (dense) -- (densQ);
+\draw[depdefines] (dense) -- (densI);
+
+% Logical derivation chain
+\draw[depuses]    (densQ) -- (densI);
+\draw[depimplies] (densQ) -- (both);
+\draw[depimplies] (densI) -- (both);
+
+\end{tikzpicture}
+
+\begin{center}
+\DependencyFigureLegend
+\end{center}
+
+\caption{Dependency map for the density subchapter. The Floor Lemma and the Archimedean Corollary support the proof of the density of the rational numbers in $\mathbb{R}$. The irrational density theorem is then derived from the rational density result, and the final corollary combines both density theorems into a single interval statement. The definition records the local vocabulary of the subchapter.}
+\label{fig:density-dependency-map}
+\end{figure}

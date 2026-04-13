@@ -24,19 +24,16 @@ there exists $d \in D$ such that
 
 \begin{remark*}[Standard quantified statement]
 \[
-\begin{aligned}
-&D \text{ is dense in } S
-\\
-&\qquad\Longleftrightarrow\qquad
+D \text{ is dense in } S
+\quad\Longleftrightarrow\quad
 \forall x \in S \; \forall \varepsilon > 0 \; \exists d \in D \;
 \bigl(|x-d|<\varepsilon\bigr).
-\end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Definition predicate reading]
 \[
-DenseSubset(D,S).
+\operatorname{DenseSubset}(D,S).
 \]
 Equivalently,
 \[
@@ -47,31 +44,49 @@ Equivalently,
 
 \begin{remark*}[Negated quantified statement]
 \[
-\begin{aligned}
-&D \text{ is not dense in } S
-\\
-&\qquad\Longleftrightarrow\qquad
+D \text{ is not dense in } S
+\quad\Longleftrightarrow\quad
 \exists x \in S \; \exists \varepsilon_0 > 0 \; \forall d \in D \;
 \bigl(|x-d| \ge \varepsilon_0\bigr).
-\end{aligned}
 \]
-This means there exists a point of $S$ together with a positive radius
-$\varepsilon_0$ such that the entire $\varepsilon_0$-neighborhood of that
-point misses $D$. The failure of density is witnessed by an open gap around
-some point of $S$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+D \text{ is not dense in } S
+\quad\Longleftrightarrow\quad
+\underbrace{\exists x \in S \; \exists \varepsilon_0 > 0 \; \forall d \in D \;
+\bigl(|x-d| \ge \varepsilon_0\bigr)}_{\text{some point of $S$ has an open neighborhood missing $D$ entirely}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{DenseSubset}(D,S)
+\quad\Longleftrightarrow\quad
+\exists x \in S \; \exists \varepsilon_0 > 0 \; \forall d \in D \;
+\bigl(d(x,d)\ge \varepsilon_0\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of approximation.} There exists a point of $S$ that cannot be approximated arbitrarily closely by points of $D$.
+  \item \textbf{Failure of local presence.} There exists a positive radius around some point of $S$ whose entire neighborhood misses $D$.
+\end{itemize}
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Density is an approximation property inside the ambient set $S$. The statement
-does not require that a point of $S$ already lies in $D$; it requires only that
-every point of $S$ can be approached arbitrarily closely by points of $D$.
-Equivalently, no matter how small a positive radius $\varepsilon$ is chosen
-around a point $x \in S$, the corresponding $\varepsilon$-neighborhood of $x$
-contains at least one point of $D$.
+Density is an approximation property inside $S$. The definition does not require that a point
+of $S$ already lie in $D$; it requires only that every point of $S$ can be approached
+arbitrarily closely by points of $D$.
 
-The important structural point is that $D$ leaves no open gap inside $S$. A set
-may therefore be dense in $S$ without being equal to $S$.
+Equivalently, no matter how small a positive radius is chosen around a point of $S$, that
+neighborhood contains at least one point of $D$. A dense subset may therefore be much smaller
+than $S$ while still leaving no open gap inside it.
 \end{remark*}
+
+
 
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
@@ -87,49 +102,68 @@ Let $A \subseteq X$, where $X$ is a linearly ordered set. The subset $A$ is said
 
 \begin{remark*}[Standard quantified statement]
 \[
-\begin{aligned}
-&A \text{ is order dense in } X
-\\
-&\qquad\Longleftrightarrow\qquad
+A \text{ is order dense in } X
+\quad\Longleftrightarrow\quad
 \forall a,b \in X\;
 \bigl(
 a<b \rightarrow \exists c \in A\; (a<c<b)
 \bigr).
-\end{aligned}
 \]
-\end{remark*}
-
-\begin{remark*}[Predicate statement]
-XXX A canonical predicate statement for order density is not yet available in the current
-predicate library. If approved, this block should be rewritten using a new canonical predicate
-such as \(OrderDenseSubset(A,X)\).
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-\begin{aligned}
-&A \text{ is not order dense in } X
-\\
-&\qquad\Longleftrightarrow\qquad
+A \text{ is not order dense in } X
+\quad\Longleftrightarrow\quad
 \exists a,b \in X\;
 \bigl(
 a<b \land \forall c \in A\; (c \le a \lor b \le c)
 \bigr).
-\end{aligned}
 \]
-This means there exists a nonempty open interval in $X$ that contains no point of $A$.
-The failure of order density is witnessed by an interval gap in the ambient ordered set.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+A \text{ is not order dense in } X
+\quad\Longleftrightarrow\quad
+\underbrace{\exists a,b \in X\;
+\bigl(
+a<b \land \forall c \in A\; (c \le a \lor b \le c)
+\bigr)}_{\text{there is a nonempty open interval in $X$ containing no point of $A$}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of interval penetration.} There exists a pair of points $a<b$ in $X$ such that no element of $A$ lies strictly between them.
+  \item \textbf{Failure of order presence.} There exists a nonempty open interval in $X$ that is missed entirely by $A$.
+\end{itemize}
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Order density says that the subset $A$ leaves no interval gap inside the ambient ordered set
-$X$. Whenever two elements of $X$ are distinct, there is an element of $A$ strictly between
-them.
+Order density says that the subset $A$ leaves no interval gap in $X$. Whenever two elements
+of $X$ satisfy $a<b$, there is an element of $A$ strictly between them.
 
-The emphasis is on order, not distance. The definition does not say that points of $A$ lie
+The emphasis is on order, not on distance. The definition does not say that points of $A$ lie
 arbitrarily close to every point in a metric sense; it says that no nonempty open interval of
 $X$ is missed entirely by $A$.
 \end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \begin{theorem}[Density of the Rational Numbers in $\mathbb{R}$]
 \label{thm:density-of-rationals-in-reals}
@@ -148,16 +182,14 @@ a<b \rightarrow \exists q \in \mathbb{Q}\; (a<q<b)
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Theorem predicate reading]
 \[
-DenseSubset(\mathbb{Q},\mathbb{R}).
-\]
-Equivalently,
-\[
-\forall a,b \in \mathbb{R}\;
+\underbrace{\operatorname{DenseSubset}(\mathbb{Q},\mathbb{R})}_{\text{the rational numbers are dense in the real line}}
+\quad\Longleftrightarrow\quad
+\underbrace{\forall a,b \in \mathbb{R}\;
 \bigl(
 a<b \rightarrow \exists q \in \mathbb{Q}\; (a<q<b)
-\bigr).
+\bigr)}_{\text{every nonempty open interval in $\mathbb{R}$ contains a rational number}}.
 \]
 \end{remark*}
 
@@ -168,16 +200,55 @@ a<b \rightarrow \exists q \in \mathbb{Q}\; (a<q<b)
 a<b \land \forall q \in \mathbb{Q}\; (q \le a \lor b \le q)
 \bigr).
 \]
-This means there exists a nonempty open interval in $\mathbb{R}$ that contains no rational
-number. The failure of rational density would be witnessed by an interval gap containing only
-irrational points.
 \end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\exists a,b \in \mathbb{R}\;
+\underbrace{\bigl(
+a<b \land \forall q \in \mathbb{Q}\; (q \le a \lor b \le q)
+\bigr)}_{\text{there is a nonempty open interval in $\mathbb{R}$ containing no rational number}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{DenseSubset}(\mathbb{Q},\mathbb{R})
+\quad\Longleftrightarrow\quad
+\exists a,b \in \mathbb{R}\;
+\bigl(
+a<b \land \forall q \in \mathbb{Q}\; (q \le a \lor b \le q)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of interval penetration.} There exists a pair of real numbers $a<b$ such that no rational number lies strictly between them.
+  \item \textbf{Failure of density.} There exists a nonempty open interval in $\mathbb{R}$ that is missed entirely by $\mathbb{Q}$.
+\end{itemize}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem says that rational numbers are spread throughout the real line with no interval
+gap. Whenever two distinct real numbers are given, at least one rational number lies between
+them.
+
+The point is not that $\mathbb{Q}=\mathbb{R}$, but that $\mathbb{Q}$ is present everywhere in
+$\mathbb{R}$ at arbitrarily small interval scales. Every nonempty open interval in $\mathbb{R}$
+contains rational points.
+\end{remark*}
+
+
+
+
+
 
 
 \begin{theorem}[Density of the Irrational Numbers in $\mathbb{R}$]
 \label{thm:density-of-irrationals-in-reals}
-For every $a,b \in \mathbb{R}$ with $a<b$, there exists $s \in \mathbb{R}\setminus\mathbb{Q}$
-such that
+For every $a,b \in \mathbb{R}$ with $a<b$, there exists
+$s \in \mathbb{R}\setminus\mathbb{Q}$ such that
 \[
 a<s<b.
 \]
@@ -192,16 +263,14 @@ a<b \rightarrow \exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Theorem predicate reading]
 \[
-DenseSubset(\mathbb{R}\setminus\mathbb{Q},\mathbb{R}).
-\]
-Equivalently,
-\[
-\forall a,b \in \mathbb{R}\;
+\underbrace{\operatorname{DenseSubset}(\mathbb{R}\setminus\mathbb{Q},\mathbb{R})}_{\text{the irrational numbers are dense in the real line}}
+\quad\Longleftrightarrow\quad
+\underbrace{\forall a,b \in \mathbb{R}\;
 \bigl(
 a<b \rightarrow \exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
-\bigr).
+\bigr)}_{\text{every nonempty open interval in $\mathbb{R}$ contains an irrational number}}.
 \]
 \end{remark*}
 
@@ -212,9 +281,43 @@ a<b \rightarrow \exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
 a<b \land \forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)
 \bigr).
 \]
-This means there exists a nonempty open interval in $\mathbb{R}$ that contains no irrational
-number. The failure of irrational density would be witnessed by an interval gap containing only
-rational points.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\exists a,b \in \mathbb{R}\;
+\underbrace{\bigl(
+a<b \land \forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)
+\bigr)}_{\text{there is a nonempty open interval in $\mathbb{R}$ containing no irrational number}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{DenseSubset}(\mathbb{R}\setminus\mathbb{Q},\mathbb{R})
+\quad\Longleftrightarrow\quad
+\exists a,b \in \mathbb{R}\;
+\bigl(
+a<b \land \forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of interval penetration.} There exists a pair of real numbers $a<b$ such that no irrational number lies strictly between them.
+  \item \textbf{Failure of density.} There exists a nonempty open interval in $\mathbb{R}$ that is missed entirely by $\mathbb{R}\setminus\mathbb{Q}$.
+\end{itemize}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem says that irrational numbers are spread throughout the real line with no interval
+gap. Whenever two distinct real numbers are given, at least one irrational number lies between
+them.
+
+The point is not merely that irrational numbers exist, but that they occur everywhere in
+$\mathbb{R}$ at arbitrarily small interval scales. Every nonempty open interval in $\mathbb{R}$
+contains irrational points.
 \end{remark*}
 
 
@@ -239,15 +342,15 @@ a<b \rightarrow
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Theorem predicate reading]
 \[
-DenseSubset(\mathbb{Q},\mathbb{R})
+\underbrace{\operatorname{DenseSubset}(\mathbb{Q},\mathbb{R})}_{\text{the rational numbers are dense in }\mathbb{R}}
 \land
-DenseSubset(\mathbb{R}\setminus\mathbb{Q},\mathbb{R}).
+\underbrace{\operatorname{DenseSubset}(\mathbb{R}\setminus\mathbb{Q},\mathbb{R})}_{\text{the irrational numbers are dense in }\mathbb{R}}.
 \]
 Equivalently,
 \[
-\forall a,b \in \mathbb{R}\;
+\underbrace{\forall a,b \in \mathbb{R}\;
 \Bigl[
 a<b \rightarrow
 \bigl(
@@ -255,7 +358,7 @@ a<b \rightarrow
 \land
 \exists s \in \mathbb{R}\setminus\mathbb{Q}\; (a<s<b)
 \bigr)
-\Bigr].
+\Bigr]}_{\text{every nonempty open interval in $\mathbb{R}$ contains both kinds of points}}.
 \]
 \end{remark*}
 
@@ -271,32 +374,102 @@ a<b \land
 \Bigr)
 \Bigr].
 \]
-This means there exists a nonempty open interval in $\mathbb{R}$ that is missing at least one
-of the two kinds of points: either it contains no rational number or it contains no irrational
-number. The corollary asserts that neither kind of gap can occur.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\exists a,b \in \mathbb{R}\;
+\Bigl[
+a<b \land
+\Bigl(
+\underbrace{\forall q \in \mathbb{Q}\; (q \le a \lor b \le q)}_{\text{the interval contains no rational number}}
+\;\lor\;
+\underbrace{\forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)}_{\text{the interval contains no irrational number}}
+\Bigr)
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\Bigl(
+\operatorname{DenseSubset}(\mathbb{Q},\mathbb{R})
+\land
+\operatorname{DenseSubset}(\mathbb{R}\setminus\mathbb{Q},\mathbb{R})
+\Bigr)
+\]
+\[
+\Longleftrightarrow\quad
+\exists a,b \in \mathbb{R}\;
+\Bigl[
+a<b \land
+\Bigl(
+\forall q \in \mathbb{Q}\; (q \le a \lor b \le q)
+\;\lor\;
+\forall s \in \mathbb{R}\setminus\mathbb{Q}\; (s \le a \lor b \le s)
+\Bigr)
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of rational presence.} There exists a nonempty open interval in $\mathbb{R}$ containing no rational number.
+  \item \textbf{Failure of irrational presence.} There exists a nonempty open interval in $\mathbb{R}$ containing no irrational number.
+\end{itemize}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This corollary combines the two density theorems into a single local statement about the real
+line. No nonempty open interval contains only rational points, and no nonempty open interval
+contains only irrational points.
+
+The point is that both kinds of numbers occur everywhere in $\mathbb{R}$. Every open interval,
+no matter how small, contains representatives of both $\mathbb{Q}$ and
+$\mathbb{R}\setminus\mathbb{Q}$.
 \end{remark*}
 
 
 
 
+\input{volume-iii/analysis/bounding/notes/completeness/figure-zoom-invariance}
 
 
+\begin{remark*}[Zoom invariance and structural consequences]~\\
+Density in $\mathbb{R}$ has a scale-invariant consequence: no matter how small a nonempty
+open interval becomes, it still contains both rational and irrational points. The interleaving
+of $\mathbb{Q}$ and $\mathbb{R}\setminus\mathbb{Q}$ is therefore not a large-scale phenomenon.
+It persists at every interval scale.
 
-\input{volume-iii/analysis/bounding/notes/completeness/figure-completeness-chain}
+This has three important consequences. First, the continuum does not become locally discrete
+under magnification. For every nonempty open interval $(a,b)$, both
+\[
+\mathbb{Q}\cap(a,b)
+\qquad\text{and}\qquad
+(\mathbb{R}\setminus\mathbb{Q})\cap(a,b)
+\]
+remain nonempty, and in fact infinite. Density is therefore stable under repeated restriction
+to smaller intervals.
 
-\begin{remark*}[Connections forward]
-Completeness appears in every major limit theorem in the notes.
-The Monotone Convergence Theorem (convergence chapter) constructs the
-limit of a bounded monotone sequence as $\sup\{a_n : n \in \mathbb{N}\}$;
-existence of this supremum requires completeness.
-The Bolzano--Weierstrass Theorem applies the Nested Interval Property
-directly to extract a convergent subsequence from any bounded sequence.
-The Cauchy Criterion identifies convergent sequences purely in terms of
-their own spacing, without naming the limit in advance; its proof
-constructs the limit as a supremum and again requires completeness.
-In metric spaces (Distance chapter), completeness in the sense of
-Cauchy sequences is the natural generalisation of the same idea to
-abstract settings.
-Every $\varepsilon$-$\delta$ proof that locates a limit or extremum is
-drawing on this chapter's infrastructure.
+Second, this behavior sharply distinguishes the real line from discrete numerical models.
+Floating-point systems form a discrete set of representable values, so repeated magnification
+eventually reaches a scale at which adjacent representable numbers leave no further point
+strictly between them. At that stage, interval penetration fails in the discrete model even
+though it continues to hold in $\mathbb{R}$.
+
+Third, the Archimedean Property supplies the scale mechanism behind this behavior. Given any
+positive scale $\varepsilon$, there exists $n\in\mathbb{N}$ with
+\[
+\frac{1}{n}<\varepsilon.
+\]
+This makes it possible to construct rational approximations at arbitrarily small interval
+scales, which is one of the basic engines behind density arguments.
+
+The resulting contrast is structural. Smooth mathematical models are built in a setting where
+interval penetration persists at every scale, whereas finite computational models eventually
+encounter a smallest representable separation. The transition from continuum behavior to
+discrete behavior occurs exactly where nonempty intervals in the numerical model cease to
+contain further \\representable points.
 \end{remark*}
+
+\input{volume-iii/analysis/bounding/notes/completeness/figure-density-chain}

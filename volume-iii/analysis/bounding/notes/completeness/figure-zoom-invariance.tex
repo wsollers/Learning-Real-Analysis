@@ -1,0 +1,64 @@
+
+% Define colors for your repository style
+\definecolor{rational}{RGB}{0, 102, 204}    % Blue for Q
+\definecolor{irrational}{RGB}{204, 0, 0}    % Red for R \ Q
+\definecolor{zoomline}{RGB}{100, 100, 100}  % Grey for zoom guides
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.5, thick]
+
+    % --- Level 1: Macro Scale [0, 1] ---
+    \draw[->] (-0.5, 0) -- (4.5, 0) node[right] {$\mathbb{R}$};
+    \draw (0, 0.1) -- (0, -0.1) node[below] {$0$};
+    \draw (4, 0.1) -- (4, -0.1) node[below] {$1$};
+
+    % Representing Rational points at this scale
+    \foreach \x in {0, 0.5, ..., 4} {
+        \fill[rational] (\x, 0) circle (1.5pt);
+    }
+    % Representing Irrational points at this scale (abstractly)
+    \foreach \x in {0.7, 1.4, 2.2, 3.14, 3.8} {
+        \fill[irrational] (\x, 0) circle (1.5pt);
+    }
+
+    % Zoom Box on Level 1 (Interval [0.4, 0.6] equivalent)
+    \draw[zoomline, dashed] (1.5, -0.3) rectangle (2.5, 0.3);
+    
+    % --- Zoom Guides ---
+    \draw[zoomline, dashed] (1.5, -0.3) -- (0, -2);
+    \draw[zoomline, dashed] (2.5, -0.3) -- (4, -2);
+
+    % --- Level 2: Micro Scale (Zoomed In) ---
+    \begin{scope}[yshift=-2.5cm]
+        \draw[->] (-0.5, 0) -- (4.5, 0) node[right] {$\mathbb{R}$ (Zoomed)};
+        
+        % The boundaries of our previous box
+        \draw (0, 0.1) -- (0, -0.1) node[below] {$x_a$};
+        \draw (4, 0.1) -- (4, -0.1) node[below] {$x_b$};
+
+        % The "Zoom Invariance": We see the same pattern of interleaving
+        % Rational numbers Q
+        \foreach \x in {0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0} {
+            \fill[rational] (\x, 0) circle (1.2pt);
+        }
+        
+        % Irrational numbers R \ Q
+        \foreach \x in {0.25, 0.62, 1.11, 1.54, 1.9, 2.7, 3.3, 3.75} {
+            \fill[irrational] (\x, 0) circle (1.2pt);
+        }
+
+        % Annotations for your notes
+        \node[rational, anchor=west] at (0, 0.6) {\small $q \in \mathbb{Q}$};
+        \node[irrational, anchor=west] at (0, 1.0) {\small $s \in \mathbb{R} \setminus \mathbb{Q}$};
+        
+        % Showing "Order Density" (point between any two)
+        \draw[<->, >=Stealth, zoomline] (1.6, 0.2) -- (2.4, 0.2);
+        \node[above, scale=0.7] at (2.0, 0.2) {Interval $(a,b)$};
+        \fill[rational] (2.1, 0) circle (1.5pt);
+        \draw[<-] (2.1, -0.1) -- (2.1, -0.5) node[below, scale=0.7] {$\exists q \in \mathbb{Q}$};
+    \end{scope}
+
+\end{tikzpicture}
+\caption{Visualization of the Density of $\mathbb{Q}$ and $\mathbb{R} \setminus \mathbb{Q}$ in $\mathbb{R}$. Zooming into any interval reveals that both sets are always present.}
+\end{figure}

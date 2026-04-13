@@ -173,44 +173,12 @@ the least or greatest comparison against all competing bounds.
 
 \subsection*{Bounds and Extremal Elements}
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Lower Bound)}},
-  fonttitle=\small\bfseries]
-\begin{definition}
-\label{def:lower-bound}
-Let $A \subseteq S$ and let $l \in S$. The element $l$ is called a
-\emph{lower bound} of $A$ if
-\[
-l \le x
-\qquad \text{for every } x \in A.
-\]
-\end{definition}
-\end{tcolorbox}
+% =========================================================
+% Bounds and Extremal Elements
+% House style
+% =========================================================
 
-\begin{remark*}[Standard quantified statement]
-\[
-l \text{ is a lower bound of } A
-\quad\Longleftrightarrow\quad
-\forall x \in A \; (l \le x).
-\]
-\end{remark*}
-
-\begin{remark*}[Predicate statement]
-\[
-LowerBound(l,A).
-\]
-\end{remark*}
-
-\begin{remark*}[Negated quantified statement]
-\[
-l \text{ is not a lower bound of } A
-\quad\Longleftrightarrow\quad
-\exists x \in A \; (x < l).
-\]
-This means there exists an element of $A$ lying strictly below $l$, so $l$ fails to bound $A$
-from below.
-\end{remark*}
+\subsection*{Bounds and Extremal Elements}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -235,7 +203,7 @@ u \text{ is an upper bound of } A
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Definition predicate reading]
 \[
 UpperBound(u,A).
 \]
@@ -247,8 +215,89 @@ u \text{ is not an upper bound of } A
 \quad\Longleftrightarrow\quad
 \exists x \in A \; (u < x).
 \]
-This means there exists an element of $A$ lying strictly above $u$, so $u$ fails to bound $A$
-from above.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+u \text{ is not an upper bound of } A
+\quad\Longleftrightarrow\quad
+\underbrace{\exists x \in A \; (u < x)}_{\text{there is an element of $A$ above $u$}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg UpperBound(u,A)
+\quad\Longleftrightarrow\quad
+\exists x \in A \; (u < x).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of upper control.} There exists an element of $A$ strictly larger than $u$.
+  \item \textbf{Failure of bounding from above.} The element $u$ does not sit above all elements of $A$.
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Lower Bound)}},
+  fonttitle=\small\bfseries]
+\begin{definition}
+\label{def:lower-bound}
+Let $A \subseteq S$ and let $\ell \in S$. The element $\ell$ is called a
+\emph{lower bound} of $A$ if
+\[
+\ell \le x
+\qquad \text{for every } x \in A.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\ell \text{ is a lower bound of } A
+\quad\Longleftrightarrow\quad
+\forall x \in A \; (\ell \le x).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+LowerBound(\ell,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\ell \text{ is not a lower bound of } A
+\quad\Longleftrightarrow\quad
+\exists x \in A \; (x < \ell).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\ell \text{ is not a lower bound of } A
+\quad\Longleftrightarrow\quad
+\underbrace{\exists x \in A \; (x < \ell)}_{\text{there is an element of $A$ below $\ell$}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg LowerBound(\ell,A)
+\quad\Longleftrightarrow\quad
+\exists x \in A \; (x < \ell).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of lower control.} There exists an element of $A$ strictly smaller than $\ell$.
+  \item \textbf{Failure of bounding from below.} The element $\ell$ does not sit below all elements of $A$.
+\end{itemize}
 \end{remark*}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
@@ -274,9 +323,13 @@ m = \min A
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Definition predicate reading]
 \[
-Minimum(m,A).
+Minimum(m,A)
+\quad\Longleftrightarrow\quad
+\underbrace{m \in A}_{\text{$m$ belongs to $A$}}
+\land
+\underbrace{\forall x \in A \; (m \le x)}_{\text{$m$ lies below every element of $A$}}.
 \]
 \end{remark*}
 
@@ -286,8 +339,33 @@ m \neq \min A
 \quad\Longleftrightarrow\quad
 (m \notin A) \lor \exists x \in A \; (x < m).
 \]
-This means either $m$ is not an element of $A$, or else some element of $A$ lies strictly
-below $m$, so $m$ cannot be the least element of $A$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+m \neq \min A
+\quad\Longleftrightarrow\quad
+\underbrace{m \notin A}_{\text{$m$ is not in the set}}
+\;\lor\;
+\underbrace{\exists x \in A \; (x < m)}_{\text{$m$ is not the least element}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg Minimum(m,A)
+\quad\Longleftrightarrow\quad
+\neg(m \in A)
+\lor
+\exists x \in A \; (x < m).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of membership.} The candidate $m$ is not an element of $A$.
+  \item \textbf{Failure of leastness.} There exists an element of $A$ strictly smaller than $m$.
+\end{itemize}
 \end{remark*}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
@@ -313,9 +391,13 @@ m = \max A
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Definition predicate reading]
 \[
-Maximum(m,A).
+Maximum(m,A)
+\quad\Longleftrightarrow\quad
+\underbrace{m \in A}_{\text{$m$ belongs to $A$}}
+\land
+\underbrace{\forall x \in A \; (x \le m)}_{\text{$m$ lies above every element of $A$}}.
 \]
 \end{remark*}
 
@@ -325,17 +407,34 @@ m \neq \max A
 \quad\Longleftrightarrow\quad
 (m \notin A) \lor \exists x \in A \; (m < x).
 \]
-This means either $m$ is not an element of $A$, or else some element of $A$ lies strictly
-above $m$, so $m$ cannot be the greatest element of $A$.
 \end{remark*}
 
+\begin{remark*}[Failure mode decomposition]
+\[
+m \neq \max A
+\quad\Longleftrightarrow\quad
+\underbrace{m \notin A}_{\text{$m$ is not in the set}}
+\;\lor\;
+\underbrace{\exists x \in A \; (m < x)}_{\text{$m$ is not the greatest element}}.
+\]
+\end{remark*}
 
+\begin{remark*}[Negation predicate reading]
+\[
+\neg Maximum(m,A)
+\quad\Longleftrightarrow\quad
+\neg(m \in A)
+\lor
+\exists x \in A \; (m < x).
+\]
+\end{remark*}
 
-
-
-
-
-
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure of membership.} The candidate $m$ is not an element of $A$.
+  \item \textbf{Failure of greatestness.} There exists an element of $A$ strictly larger than $m$.
+\end{itemize}
+\end{remark*}
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -381,11 +480,11 @@ s \neq \sup A
 
 \begin{remark*}[Failure mode decomposition]
 \[
-s \ne \sup A
+s \neq \sup A
 \quad\Longleftrightarrow\quad
 \underbrace{\exists x \in A \; (s < x)}_{\text{$s$ fails to be an upper bound}}
 \;\lor\;
-\underbrace{\exists u \in S \; \bigl((\forall x \in A \; (x \le u)) \land u < s\bigr)}_{\text{$s$ fails to be the least upper bound}}.
+\underbrace{\exists u \in S \; ((\forall x \in A \; (x \le u)) \land u < s)}_{\text{$s$ fails to be the least upper bound}}.
 \]
 \end{remark*}
 
@@ -406,19 +505,6 @@ s \ne \sup A
 \end{itemize}
 \end{remark*}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Definition (Infimum)}},
@@ -437,19 +523,17 @@ t = \inf A
 \quad\Longleftrightarrow\quad
 \bigl(\forall x \in A \; (t \le x)\bigr)
 \land
-\bigl(\forall l \in S \; ((\forall x \in A \; (l \le x)) \rightarrow l \le t)\bigr).
+\bigl(\forall \ell \in S \; ((\forall x \in A \; (\ell \le x)) \rightarrow \ell \le t)\bigr).
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Definition predicate reading]
 \[
-Infimum(t,A).
-\]
-Equivalently,
-\[
-LowerBound(t,A)
+Infimum(t,A)
+\quad\Longleftrightarrow\quad
+\underbrace{LowerBound(t,A)}_{\text{$t$ is a lower bound of $A$}}
 \land
-\forall l \in S \; (LowerBound(l,A) \rightarrow l \le t).
+\underbrace{\forall \ell \in S \; (LowerBound(\ell,A) \rightarrow \ell \le t)}_{\text{$t$ lies above every lower bound of $A$}}.
 \]
 \end{remark*}
 
@@ -459,11 +543,163 @@ t \neq \inf A
 \quad\Longleftrightarrow\quad
 \bigl(\exists x \in A \; (x < t)\bigr)
 \lor
-\bigl(\exists l \in S \; ((\forall x \in A \; (l \le x)) \land t < l)\bigr).
+\bigl(\exists \ell \in S \; ((\forall x \in A \; (\ell \le x)) \land t < \ell)\bigr).
 \]
-This means either $t$ fails to be a lower bound of $A$, or $t$ is a lower bound but not the
-greatest one.
 \end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+t \neq \inf A
+\quad\Longleftrightarrow\quad
+\underbrace{\exists x \in A \; (x < t)}_{\text{$t$ fails to be a lower bound}}
+\;\lor\;
+\underbrace{\exists \ell \in S \; ((\forall x \in A \; (\ell \le x)) \land t < \ell)}_{\text{$t$ fails to be the greatest lower bound}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg Infimum(t,A)
+\quad\Longleftrightarrow\quad
+\underbrace{\neg LowerBound(t,A)}_{\text{$t$ is not a lower bound}}
+\lor
+\underbrace{\exists \ell \in S \; (LowerBound(\ell,A) \land t < \ell)}_{\text{there is a greater lower bound}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item \textbf{Failure to be a lower bound.} There exists an element of $A$ strictly smaller than $t$, so $t$ does not bound $A$ from below at all.
+  \item \textbf{Failure to be the greatest lower bound.} The element $t$ may still be a lower bound, but there exists a greater lower bound $\ell > t$, so $t$ is not the greatest one.
+\end{itemize}
+\end{remark*}
+
+\input{volume-iii/analysis/bounding/notes/bounds-extremals/figure-bounds2}
+
+\medskip
+\noindent\textbf{Contrast: Maximum vs.\ Supremum.}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{} p{3.2cm} p{5.2cm} p{5.2cm} @{}}
+\hline
+\textbf{Property} & \textbf{Maximum $m=\max A$} & \textbf{Supremum $s=\sup A$} \\
+\hline
+Must belong to $A$?
+&
+Yes. $m \in A$ is required.
+&
+No. $s$ may or may not belong to $A$.
+\\
+\noalign{\vskip 0.3em}
+
+Must be an upper bound?
+&
+Yes. $\forall x \in A \; (x \le m)$.
+&
+Yes. $\forall x \in A \; (x \le s)$.
+\\
+\noalign{\vskip 0.3em}
+
+Must be the least upper bound?
+&
+Not stated separately, but membership together with the upper-bound condition forces it.
+&
+Yes. This is required explicitly.
+\\
+\noalign{\vskip 0.3em}
+
+Existence guaranteed?
+&
+Only when the set attains its supremum.
+&
+For nonempty sets bounded above in $\mathbb{R}$, yes, by the Completeness Axiom.
+\\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent\emph{Note.}
+A maximum is an element of the set, whereas a supremum is an extremal upper bound that may lie
+outside the set. The two coincide exactly when the supremum belongs to the set.
+
+
+
+
+
+
+
+\begin{theorem}[Least Upper Bound Property Implies Existence of Suprema]
+\label{thm:lub-property-implies-existence-of-suprema}
+
+Let $S$ be a partially ordered set. If $S$ has the Least Upper Bound Property, then every nonempty subset of $S$ that is bounded above in $S$ has a supremum in $S$.
+
+\smallskip
+\noindent
+\hyperref[prf:lub-property-implies-existence-of-suprema]{\textit{Go to proof.}}
+
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\operatorname{LeastUpperBoundProperty}(S) \\
+&\quad\Longrightarrow\quad
+\forall A \subseteq S \Bigl(
+   \bigl(A \neq \varnothing \land \exists u \in S \;\forall x \in A \;(x \le u)\bigr) \\
+&\qquad\qquad\qquad\qquad\Longrightarrow
+   \exists s \in S \Bigl(
+      \forall x \in A \;(x \le s)
+      \;\land\;
+      \forall u \in S \bigl((\forall x \in A \;(x \le u)) \rightarrow s \le u\bigr)
+   \Bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\forall A \Bigl(
+   \bigl(
+      \operatorname{Subset}(A,S)
+      \land
+      \operatorname{NonemptySet}(A)
+      \land
+      \operatorname{BoundedAbove}(A)
+   \bigr)
+   \rightarrow
+   \exists s \in S \;\operatorname{Supremum}(s,A)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem is the operational form of the Least Upper Bound Property. It says that once the ambient ordered system $S$ is assumed to satisfy that property, every nonempty subset of $S$ that is bounded above actually has a least upper bound inside $S$. In other words, the theorem converts the abstract completeness condition into an existence statement for suprema of admissible subsets.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
