@@ -1,0 +1,56 @@
+% =========================================================
+% Proof: Inverse Function Theorem (Monotone Version)
+% Source: volume-iii/analysis/differentiation/notes/notes-inverse-function.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Inverse Function Theorem (Monotone Version)}
+\label{prf:inverse-function-theorem-monotone}
+
+\begin{remark*}[Return]
+\hyperref[thm:inverse-function-theorem-monotone]{$\leftarrow$ Back to Theorem (Inverse Function Theorem, Monotone Version) in Notes}
+\end{remark*}
+
+\begin{proof}
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$
+be strictly monotone and continuous on $I$, set $J := f(I)$, and let
+$g : J \to \mathbb{R}$ be the inverse of $f$. Assume $f$ is differentiable
+at $c \in I$ with $f'(c) \neq 0$, and assume $g$ is differentiable at
+$d := f(c)$. The claim is that $g'(d) = 1/f'(c)$.
+
+Since $g = f^{-1}$, the composition satisfies $g(f(x)) = x$ for all $x \in I$.
+Differentiating both sides at $c$ by \ByThm{Chain Rule} gives
+\[
+  g'(f(c)) \cdot f'(c) = 1,
+\]
+where the right-hand side is the derivative of the identity function
+$x \mapsto x$ at $c$, which equals $1$ by \ByThm{Derivative of the Identity}.
+Since $f'(c) \neq 0$ by hypothesis, division yields
+\[
+  g'(d) = g'(f(c)) = \frac{1}{f'(c)}.
+\]
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Differentiating the identity $g \circ f = \mathrm{id}$ via the Chain Rule
+produces $g'(f(c)) \cdot f'(c) = 1$; the condition $f'(c) \neq 0$ makes
+division valid. The proof assumes $g$ is differentiable at $d$ as a
+hypothesis — establishing that differentiability independently requires the
+full Inverse Function Theorem argument (via Carathéodory or a direct
+difference-quotient estimate).
+
+\FlashProof{1. Differentiate the identity $g(f(x)) = x$ at $c$ via the
+  Chain Rule: $g'(f(c)) \cdot f'(c) = 1$.
+  2. Divide by $f'(c) \neq 0$ to obtain $g'(d) = 1/f'(c)$.}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:chain-rule]{Chain Rule}: Differentiates $g \circ f$
+    at $c$ to yield $g'(f(c)) \cdot f'(c)$.
+  \item \hyperref[prop:derivative-identity]{Derivative of the Identity}:
+    Supplies $(g \circ f)'(c) = 1$ from the identity $g(f(x)) = x$.
+\end{itemize}
+
+\FlashUses{thm:chain-rule, prop:derivative-identity}
+\end{remark*}

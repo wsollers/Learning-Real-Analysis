@@ -233,7 +233,7 @@ and not alternate local variants such as \(n > N\) when the house convention is 
 
 ### 3.5 Local Deviation Rule
 
-Local deviation from canonical notation is permitted only when necessary. Such deviation must be explicit, brief, and justified by a genuine role conflict or mathematical necessity.
+Local deviation from canonical notation is permitted only by getting permission.
 
 ### 3.6 Predicate–Prose Agreement Rule
 
@@ -241,7 +241,7 @@ The symbols used in prose, logical blocks, and predicate blocks must agree with 
 
 ## Rule — Canonical Predicate, Relation, and Notation Sources
 
-All predicate names, relation names, and canonical notation names used in theorem statements, predicate readings, negation readings, failure-mode decompositions, and other formal logical displays must come from the project’s canonical source files. This file is stored in project memory.
+All predicate names, relation names, and canonical notation names used in theorem statements, predicate readings, negation readings, failure-mode decompositions, and other formal logical displays must come from the project’s canonical source files. This file is stored in the root of the repository or in project memory in ChatGPT.
 
 The canonical sources are:
 
@@ -435,6 +435,8 @@ Unlabeled theorem-like environments are forbidden in notes files.
 
 The label appears inside the environment immediately after it begins.
 
+Exception: For proof files governed by Rule 9.5.1, the label must appear at the top of the file, outside and prior to any environments, to ensure proper anchor placement for \phantomsection.
+
 ### 8.4 Naming Rule
 
 Labels are lowercase, semantic, hyphen-separated, and globally unique.
@@ -495,16 +497,68 @@ Proof filenames are lowercase, hyphen-separated, ASCII only, and free of LaTeX m
 
 Every notes proof file begins on a new page.
 
-### 9.5 Proof File Layers
+### Rule 9.5 — Proof File Architecture
+Every proof file must follow a standardized structure to ensure consistency across the digital library, proper hyperlinking, and a dual-layered pedagogical approach. The content must be ordered as follows:
 
-A standard notes proof file contains:
+Canonical Header:
 
-1. a return hyperlink,
-2. the full claim,
-3. a Professional Standard Proof,
-4. a Detailed Learning Proof,
-5. a proof-structure remark,
-6. a dependencies remark.
+\newpage
+
+\phantomsection
+
+The proof-level label: \label{prf:theorem-id}
+
+Return Block: A remark* environment containing: \hyperref[thm:theorem-id]{Return to Theorem}
+
+Theorem Restatement: The theorem or proposition statement wrapped in an unnumbered environment (e.g., \begin{theorem*} ... \end{theorem*}).
+
+The Professional Standard Proof: A proof environment containing the compact, rigorous mathematical argument, beginning with the bold header Professional Standard Proof..
+
+The Detailed Learning Proof: A second proof environment beginning with the bold header Detailed Learning Proof. This section uses bold inline step headings (e.g., Step 1.) to decompose the logic for the reader.
+
+Proof Structure Remark: A remark* titled Proof structure summarizing the high-level strategy (e.g., direct, contradiction, induction).
+
+Dependencies Remark: A remark* titled Dependencies containing a list of \hyperref links to all definitions, axioms, or lemmas utilized in the proof.
+
+Canonical Template for Proof Files
+Code snippet
+\newpage
+\phantomsection
+\label{prf:theorem-id}
+
+\begin{remark*}[Return]
+\hyperref[thm:theorem-id]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Theorem Name]
+Statement of the theorem goes here.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Text of the compact, rigorous proof.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} First logical milestone.
+Detailed explanation...
+
+\textbf{Step 2.} Second logical milestone.
+Detailed explanation...
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Description of the overall strategy.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:source1]{Definition of X}
+  \item \hyperref[thm:source2]{Theorem Y}
+\end{itemize}
+\end{remark*}
 
 ### 9.6 Macro Restriction Rule
 
@@ -534,7 +588,45 @@ Explanationless proof mode is opt-in only. It occurs only when explicitly reques
 
 Even when explanation is omitted, the proof still obeys house notation, label conventions, proof architecture, macro restrictions, and voice rules.
 
----
+
+
+### 9.11 — Proof Files Must Use Unnumbered Theorem Environments
+
+    In proof files (files whose purpose is to contain proofs, e.g. under `proofs/`), any restatement of a theorem must use the unnumbered environment:
+    
+    \begin{theorem*} ... \end{theorem*}
+    
+    and must NOT use a numbered `theorem` environment.
+    
+    #### Requirements
+    
+    - The proof file version of a theorem is a **restatement**, not a new theorem.
+    - Therefore it must:
+      - use `\begin{theorem*}` (unnumbered)
+      - retain the original theorem name
+      - NOT introduce numbering or new theorem identities
+    
+    #### Label Restriction (Strict)
+    
+    - Proof files must **never contain `\label{...}` inside theorem environments**.
+    - Labels belong only to the canonical theorem in the notes file.
+    
+    #### Rationale
+    
+    - Prevents duplicate numbering across notes and proofs.
+    - Enforces that the canonical statement lives in the notes, not the proof file.
+    - Prevents cross-reference collisions and accidental label shadowing.
+    - Keeps proofs as secondary artifacts attached to primary theorem declarations.
+    
+    #### Example
+    
+    ❌ Incorrect (creates duplicate numbering and label collision)
+    ```latex
+    \begin{theorem}[Least Upper Bound Property Implies Existence of Suprema]
+    \label{prf:lub-property-implies-existence-of-suprema}
+    ...
+    \end{theorem}
+    ---
 
 ## 10. Logical Form Blocks
 
@@ -967,3 +1059,16 @@ This keeps predicate-reading remarks visually stable, avoids symbol collisions, 
 ### Consequence
 
 Predicate-reading remarks should present formal predicates as textual operators unless a symbolic form is clearly readable and intentionally standardized.
+
+
+###  rule 15. Priority and Stability of Formal Outputs
+### 15.1 Atomic File Rule: 
+When generating a proof, the assistant must treat the output as the final contents of a single .tex file. It must not include conversational filler, meta-commentary, or introductory prose outside of the LaTeX source unless explicitly asked.
+### 15.2 Structural Immutability: 
+ The vertical sequence defined in Rule 9.5.1 (Header $\to$ Return $\to$ Label $\to$ Claim $\to$ Professional Proof $\to$ Learning Proof $\to$ Remarks) is non-negotiable. The assistant is prohibited from collapsing these into fewer environments or reordering them to "save space".
+ 
+ ### 15.3 Default High-Fidelity Mode: 
+ In the absence of "compact" or "professional-only" keywords, the assistant must automatically generate all 12+ mandatory logical blocks for notes and all 6 layers for proof files.
+ 
+ ### 15.4 Context Continuity: 
+ The assistant must refer to notation.yaml and predicates.yaml before every formal display to ensure role-specific variable and operator consistency.

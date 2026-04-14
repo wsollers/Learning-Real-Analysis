@@ -1,0 +1,99 @@
+% =========================================================
+% Proof: Quotient Rule
+% Source: volume-iii/analysis/differentiation/notes/notes-algebra.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Quotient Rule}
+\label{prf:quotient-rule}
+
+\begin{remark*}[Return]
+\hyperref[thm:quotient-rule]{$\leftarrow$ Back to Theorem (Quotient Rule) in Notes}
+\end{remark*}
+
+\begin{proof}
+Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, and let
+$f, g : I \to \mathbb{R}$ be differentiable at $c$ with $g(c) \neq 0$. Set
+$h := f/g$. The claim is that $h$ is differentiable at $c$ and
+\[
+  h'(c) = \frac{f'(c)g(c) - f(c)g'(c)}{(g(c))^2}.
+\]
+Since $g$ is differentiable at $c$, it is continuous at $c$ by
+\ByThm{Differentiability Implies Continuity}, so $\lim_{x \to c} g(x) = g(c)
+\neq 0$. By \ByThm{Non-vanishing Limit}, $g(x) \neq 0$ for all $x$ in some
+deleted neighbourhood of $c$, so $h = f/g$ is defined near $c$.
+
+\ProofStep{1}{Form the difference quotient of $h$ and find a common denominator.}
+For $x \in I$ with $x \neq c$ and $g(x) \neq 0$:
+\[
+  \frac{h(x) - h(c)}{x - c}
+  = \frac{\dfrac{f(x)}{g(x)} - \dfrac{f(c)}{g(c)}}{x - c}
+  = \frac{f(x)g(c) - f(c)g(x)}{g(x)g(c)(x - c)}.
+\]
+
+\ProofStep{2}{Insert the auxiliary term $f(c)g(c)$.}
+Add and subtract $f(c)g(c)$ in the numerator:
+\[
+  \frac{f(x)g(c) - f(c)g(c) + f(c)g(c) - f(c)g(x)}{g(x)g(c)(x - c)}.
+\]
+Factor each pair and separate over the denominator:
+\[
+  = \frac{1}{g(x)g(c)}
+    \left[
+      g(c) \cdot \frac{f(x) - f(c)}{x - c}
+      - f(c) \cdot \frac{g(x) - g(c)}{x - c}
+    \right].
+\]
+
+\ProofStep{3}{Pass to the limit.}
+By \ByThm{Sum Rule for Limits}, \ByThm{Product Rule for Limits}, and
+\ByThm{Quotient Rule for Limits}:
+\[
+  \lim_{x \to c} \frac{h(x) - h(c)}{x - c}
+  = \frac{1}{g(c) \cdot g(c)}
+    \left[
+      g(c) \cdot f'(c) - f(c) \cdot g'(c)
+    \right],
+\]
+where $\lim_{x \to c} g(x) = g(c)$ by continuity of $g$, and the difference
+quotient limits equal $f'(c)$ and $g'(c)$ by \ByDef{Differentiability at a
+Point}. Therefore
+\[
+  h'(c) = \frac{g(c)f'(c) - f(c)g'(c)}{(g(c))^2}.
+\]
+\end{proof}
+
+\begin{remark*}[Proof shape]
+The proof mirrors the Product Rule: after combining fractions in the difference
+quotient of $f/g$, the add-and-subtract trick $\pm f(c)g(c)$ decouples the
+increments of $f$ and $g$ in the numerator, isolating the individual difference
+quotients. Continuity of $g$ at $c$ supplies both $\lim g(x) = g(c)$ in the
+denominator and — via the non-vanishing limit theorem — the guarantee that
+$g(x) \neq 0$ near $c$ so the quotient is defined throughout.
+
+\FlashProof{1. Combine the difference quotient of $f/g$ over a common
+  denominator $g(x)g(c)(x-c)$.
+  2. Insert $\pm f(c)g(c)$ in the numerator to isolate the difference
+  quotients of $f$ and $g$.
+  3. Apply limit laws; continuity of $g$ gives $\lim g(x) = g(c)$;
+  differentiability gives $f'(c)$ and $g'(c)$.}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-point]{Definition of Differentiability at a Point}:
+    Identifies the difference quotient limits of $f$ and $g$ as $f'(c)$
+    and $g'(c)$.
+  \item \hyperref[thm:diff-implies-cont]{Differentiability Implies Continuity}:
+    Supplies continuity of $g$ at $c$, giving $\lim_{x \to c} g(x) = g(c)$.
+  \item \hyperref[thm:limit-nonvanishing]{Non-vanishing Limit}:
+    Guarantees $g(x) \neq 0$ near $c$ so $f/g$ is defined in a neighbourhood
+    of $c$.
+  \item \hyperref[thm:limit-sum]{Sum Rule for Limits},
+    \hyperref[thm:limit-product]{Product Rule for Limits},
+    \hyperref[thm:limit-quotient]{Quotient Rule for Limits}:
+    Distribute the limit across the algebraic expression in Step 3.
+\end{itemize}
+
+\FlashUses{def:derivative-at-point, thm:diff-implies-cont, thm:limit-nonvanishing, thm:limit-sum, thm:limit-product, thm:limit-quotient}
+\end{remark*}
