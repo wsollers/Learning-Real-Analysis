@@ -42,10 +42,9 @@ float IConic::curvature(float t) const {
 }
 
 float IConic::torsion(float t) const {
-    // τ = (p' × p'') · p''' / |p' × p''|²
-    const Vec3  d1   = derivative(t);
-    const Vec3  d2   = second_derivative(t);
-    const Vec3  d3   = third_derivative(t);
+    const Vec3  d1    = derivative(t);
+    const Vec3  d2    = second_derivative(t);
+    const Vec3  d3    = third_derivative(t);
     const Vec3  cross = glm::cross(d1, d2);
     const float denom = glm::dot(cross, cross);
     if (denom < 1e-12f) return 0.f;
@@ -60,14 +59,11 @@ Vec3 IConic::unit_tangent(float t) const {
 }
 
 Vec3 IConic::unit_normal(float t) const {
-    // N = (T' / |T'|) — the principal normal points toward the centre of curvature.
-    // Computed via the curvature formula: N = (p'' - (p''·T)T) / |...|
     const Vec3  T    = unit_tangent(t);
     const Vec3  d2   = second_derivative(t);
-    const Vec3  proj = d2 - glm::dot(d2, T) * T;  // component perpendicular to T
+    const Vec3  proj = d2 - glm::dot(d2, T) * T;
     const float len  = glm::length(proj);
     if (len < 1e-8f) {
-        // Degenerate: construct any perpendicular
         Vec3 perp = glm::cross(T, Vec3{0.f, 0.f, 1.f});
         if (glm::length(perp) < 1e-8f) perp = glm::cross(T, Vec3{0.f, 1.f, 0.f});
         return glm::normalize(perp);
@@ -165,53 +161,79 @@ void Hyperbola::tessellate_two_branch(std::span<Vertex> out, u32 n, Vec4 color) 
 }
 
 // ── Helix ─────────────────────────────────────────────────────────────────────
-// p(t) = (r·cos t,  r·sin t,  b·t)    where b = pitch/(2π)
-//
-// Frenet–Serret:
-//   p'(t)  = (-r·sin t,  r·cos t,  b)
-//   p''(t) = (-r·cos t, -r·sin t,  0)
-//   p'''(t)= ( r·sin t, -r·cos t,  0)
-//
-//   |p'| = √(r²+b²)  (constant speed — arc-length proportional to t)
-//
-//   κ = r / (r²+b²)           (constant curvature)
-//   τ = b / (r²+b²)           (constant torsion)
-//
-// These constants are the heart of the characterisation theorem:
-//   A curve has constant κ>0 and constant τ iff it is a circular helix.
 
 Helix::Helix(float r, float pitch, float tmin, float tmax)
     : m_r(r), m_pitch(pitch), m_b(pitch / (2.f * std::numbers::pi_v<float>)),
       m_tmin(tmin), m_tmax(tmax)
 {
-    if (r <= 0.f) throw std::invalid_argument("[Helix] radius must be > 0");
-    if (tmin >= tmax) throw std::invalid_argument("[Helix] t_min must be < t_max");
+    if (r <= 0.f)      throw std::invalid_argument("[Helix] radius must be > 0");
+    if (tmin >= tmax)  throw std::invalid_argument("[Helix] t_min must be < t_max");
 }
 
-Vec3 Helix::evaluate(float t) const {
-    return Vec3{ m_r * std::cos(t), m_r * std::sin(t), m_b * t };
+Vec3  Helix::evaluate(float t)          const { return Vec3{ m_r*std::cos(t), m_r*std::sin(t), m_b*t }; }
+Vec3  Helix::derivative(float t)         const { return Vec3{ -m_r*std::sin(t), m_r*std::cos(t), m_b }; }
+Vec3  Helix::second_derivative(float t)  const { return Vec3{ -m_r*std::cos(t), -m_r*std::sin(t), 0.f }; }
+Vec3  Helix::third_derivative(float t)   const { return Vec3{ m_r*std::sin(t), -m_r*std::cos(t), 0.f }; }
+float Helix::curvature(float /*t*/)      const { return m_r / (m_r*m_r + m_b*m_b); }
+float Helix::torsion(float /*t*/)        const { return m_b / (m_r*m_r + m_b*m_b); }
+
+// ── ParaboloidCurve ───────────────────────────────────────────────────────────
+// p(t) = (t·cosθ,  t·sinθ,  a·t²)
+//
+// This is the meridional curve of the paraboloid z = a(x²+y²) at angle θ.
+// It is the intersection of the paraboloid with the vertical plane
+//   { y/x = tanθ, x ≥ 0 }  — a literal parabola lying on the surface.
+//
+// Derivatives (all exact):
+//   p'(t)  = (cosθ,  sinθ,  2at)
+//   p''(t) = (0,     0,     2a )
+//   p'''(t)= (0,     0,     0  )
+//
+// Since p''' = 0, torsion τ = 0 for all t. The curve is planar.
+// Its curvature κ = 2|a| / (1 + 4a²t²)^(3/2) equals κ₁(u=t) of the paraboloid,
+// confirming it is a principal curvature line in the meridional direction.
+
+ParaboloidCurve::ParaboloidCurve(float a, float theta, float tmin, float tmax)
+    : m_a(a), m_theta(theta),
+      m_ct(std::cos(theta)), m_st(std::sin(theta)),
+      m_tmin(tmin), m_tmax(tmax)
+{
+    if (tmin >= tmax) throw std::invalid_argument("[ParaboloidCurve] t_min must be < t_max");
 }
 
-Vec3 Helix::derivative(float t) const {
-    return Vec3{ -m_r * std::sin(t), m_r * std::cos(t), m_b };
+Vec3 ParaboloidCurve::evaluate(float t) const {
+    return Vec3{ t * m_ct,  t * m_st,  m_a * t * t };
 }
 
-Vec3 Helix::second_derivative(float t) const {
-    return Vec3{ -m_r * std::cos(t), -m_r * std::sin(t), 0.f };
+Vec3 ParaboloidCurve::derivative(float t) const {
+    return Vec3{ m_ct,  m_st,  2.f * m_a * t };
 }
 
-Vec3 Helix::third_derivative(float t) const {
-    return Vec3{ m_r * std::sin(t), -m_r * std::cos(t), 0.f };
+Vec3 ParaboloidCurve::second_derivative(float /*t*/) const {
+    return Vec3{ 0.f,  0.f,  2.f * m_a };
 }
 
-float Helix::curvature(float /*t*/) const {
-    // κ = r / (r² + b²)  — constant for all t
-    return m_r / (m_r * m_r + m_b * m_b);
+Vec3 ParaboloidCurve::third_derivative(float /*t*/) const {
+    return Vec3{ 0.f, 0.f, 0.f };
 }
 
-float Helix::torsion(float /*t*/) const {
-    // τ = b / (r² + b²)  — constant for all t
-    return m_b / (m_r * m_r + m_b * m_b);
+float ParaboloidCurve::curvature(float t) const {
+    // κ = |p' × p''| / |p'|³
+    //
+    // p' = (cosθ, sinθ, 2at)    |p'|² = 1 + 4a²t²
+    // p'' = (0, 0, 2a)
+    //
+    // p' × p'' = | i         j        k   |
+    //            | cosθ      sinθ      2at |
+    //            | 0         0         2a  |
+    //          = (sinθ·2a - 0, 0 - cosθ·2a, 0)
+    //          = (2a·sinθ, -2a·cosθ, 0)
+    //
+    // |p' × p''| = 2|a|  (since sin²θ + cos²θ = 1)
+    //
+    // κ = 2|a| / (1 + 4a²t²)^(3/2)
+    const float s = 1.f + 4.f * m_a * m_a * t * t;
+    return 2.f * std::abs(m_a) / std::pow(s, 1.5f);
 }
 
 } // namespace ndde::math

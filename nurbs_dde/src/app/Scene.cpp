@@ -1,4 +1,11 @@
 // app/Scene.cpp
+// NOTE: All ImGui text strings use plain ASCII only.
+// MSVC C2022: hex escape sequences like \xc2\xb2 are parsed as a single
+// multi-byte escape (0xc2b2 = 50354) which exceeds char range, even with
+// /utf-8.  UTF-8 characters used elsewhere in the codebase (delta, epsilon,
+// Greek letters for labels) are in separate string literals where the
+// escape is the entire content — those are safe.  Panel description strings
+// use ASCII math notation instead.
 #include "app/Scene.hpp"
 #include <imgui.h>
 #include <format>
@@ -27,13 +34,16 @@ void ConicEntry::rebuild() {
         conic = std::make_unique<math::Hyperbola>(hyp_a, hyp_b, hyp_h, hyp_k, axis, hyp_range);
     } else if (type == 2) {
         conic = std::make_unique<math::Helix>(hel_radius, hel_pitch, hel_tmin, hel_tmax);
+    } else if (type == 3) {
+        conic = std::make_unique<math::ParaboloidCurve>(pc_a, pc_theta, pc_tmin, pc_tmax);
     }
 
     snap_cache.clear();
     snap_cache3d.clear();
     if (!conic) return;
 
-    if (type == 2) {
+    // Types 2 (Helix) and 3 (ParaboloidCurve) are 3D — use snap_cache3d
+    if (type == 2 || type == 3) {
         const float t0   = conic->t_min();
         const float step = (conic->t_max() - t0) / static_cast<float>(tessellation);
         snap_cache3d.reserve((tessellation + 1u) * 3u);
@@ -68,6 +78,17 @@ void ConicEntry::rebuild() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// SurfaceEntry
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void SurfaceEntry::rebuild() {
+    needs_rebuild = false;
+    if (type == 0) {
+        surface = std::make_unique<math::Paraboloid>(par_a, par_umax);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // Scene
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -76,6 +97,7 @@ Scene::Scene(EngineAPI api) : m_api(std::move(api)) {
     add_parabola();
     add_hyperbola();
     add_helix();
+    add_paraboloid();  // adds paraboloid surface + its meridional curve together
 }
 
 void Scene::add_parabola() {
@@ -116,6 +138,36 @@ void Scene::add_helix() {
     m_conics.push_back(std::move(e));
 }
 
+void Scene::add_paraboloid() {
+    SurfaceEntry s;
+    s.name     = std::format("Paraboloid {}", m_surfaces.size());
+    s.type     = 0;
+    s.par_a    = 1.f;
+    s.par_umax = 1.5f;
+    s.u_lines  = 14;
+    s.v_lines  = 20;
+    s.color    = { 0.35f, 0.55f, 0.85f, 0.45f };
+    s.enabled  = false;
+    s.rebuild();
+    m_surfaces.push_back(std::move(s));
+    add_paraboloid_curve();
+}
+
+void Scene::add_paraboloid_curve() {
+    ConicEntry e;
+    e.name         = std::format("ParaboloidCurve {}", m_conics.size());
+    e.type         = 3;
+    e.color        = { 1.0f, 0.55f, 0.1f, 1.0f };
+    e.tessellation = m_api.config().simulation.tessellation;
+    e.pc_a         = 1.f;
+    e.pc_theta     = 0.f;
+    e.pc_tmin      = 0.f;
+    e.pc_tmax      = 1.5f;
+    e.enabled      = false;
+    e.rebuild();
+    m_conics.push_back(std::move(e));
+}
+
 // ── on_frame ──────────────────────────────────────────────────────────────────
 
 void Scene::on_frame() {
@@ -139,16 +191,15 @@ void Scene::on_frame() {
 
     m_coord_debug.update(m_vp, m_hover, m_conics, m_api.viewport_size());
 
-    // ── ImGui panels (must all happen in the same ImGui frame pass) ───────────
     draw_main_panel();
     m_analysis_panel.draw(m_hover, m_api.math_font_body());
     m_coord_debug.draw();
-    m_perf_panel.draw(m_api.debug_stats());  // draws + advances ring buffer
-    submit_interval_labels();                 // floating label windows
+    m_perf_panel.draw(m_api.debug_stats());
+    submit_interval_labels();
 
-    // ── Vulkan geometry ───────────────────────────────────────────────────────
     submit_grid();
     submit_axes();
+    submit_surfaces();
     submit_conics();
 
     if (m_axes_cfg.is_3d) {
@@ -221,7 +272,7 @@ void Scene::update_hover() {
 
     for (int ci = 0; ci < static_cast<int>(m_conics.size()); ++ci) {
         const auto& entry = m_conics[ci];
-        if (!entry.enabled || entry.type == 2) continue;
+        if (!entry.enabled || entry.type == 2 || entry.type == 3) continue;
         if (entry.snap_cache.empty()) continue;
         for (int si = 0; si < static_cast<int>(entry.snap_cache.size()); ++si) {
             const auto [px, py] = entry.snap_cache[si];
@@ -283,7 +334,6 @@ void Scene::update_hover() {
         const Vec3  N  = c.unit_normal(snap_t);
         const Vec3  B  = c.unit_binormal(snap_t);
         const Vec3  d1 = c.derivative(snap_t);
-
         m_hover.has_tangent   = true;
         m_hover.tangent_slope = (std::abs(T.x) > 1e-9f) ? T.y / T.x : 0.f;
         m_hover.T[0] = T.x; m_hover.T[1] = T.y; m_hover.T[2] = T.z;
@@ -315,7 +365,7 @@ void Scene::update_hover_3d() {
     for (int ci = 0; ci < static_cast<int>(m_conics.size()); ++ci) {
         const auto& entry = m_conics[ci];
         if (!entry.enabled) continue;
-        if (entry.type == 2 && !entry.snap_cache3d.empty()) {
+        if ((entry.type == 2 || entry.type == 3) && !entry.snap_cache3d.empty()) {
             const int n = static_cast<int>(entry.snap_cache3d.size()) / 3;
             for (int si = 0; si < n; ++si) {
                 const float px = entry.snap_cache3d[si*3+0];
@@ -357,7 +407,6 @@ void Scene::update_hover_3d() {
         const Vec3  N  = c.unit_normal(snap_t);
         const Vec3  B  = c.unit_binormal(snap_t);
         const Vec3  d1 = c.derivative(snap_t);
-
         m_hover.has_tangent   = true;
         m_hover.tangent_slope = 0.f;
         m_hover.T[0] = T.x; m_hover.T[1] = T.y; m_hover.T[2] = T.z;
@@ -367,6 +416,25 @@ void Scene::update_hover_3d() {
         m_hover.tau        = c.torsion(snap_t);
         m_hover.speed      = glm::length(d1);
         m_hover.osc_radius = (m_hover.kappa > 1e-8f) ? 1.f / m_hover.kappa : 0.f;
+    }
+}
+
+// ── submit_surfaces ───────────────────────────────────────────────────────────
+
+void Scene::submit_surfaces() {
+    if (!m_axes_cfg.is_3d) return;
+    const Mat4 mvp = m_vp.perspective_mvp();
+
+    for (auto& entry : m_surfaces) {
+        if (!entry.enabled) continue;
+        if (entry.needs_rebuild) entry.rebuild();
+        if (!entry.surface) continue;
+
+        const u32   n     = entry.surface->wireframe_vertex_count(entry.u_lines, entry.v_lines);
+        auto        slice = m_api.acquire(n);
+        entry.surface->tessellate_wireframe({ slice.vertices(), n },
+                                             entry.u_lines, entry.v_lines, entry.color);
+        m_api.submit(slice, Topology::LineList, DrawMode::VertexColor, entry.color, mvp);
     }
 }
 
@@ -466,12 +534,10 @@ void Scene::submit_osc_circle() {
     const Vec3  N{ m_hover.N[0], m_hover.N[1], m_hover.N[2] };
     const Vec3  T{ m_hover.T[0], m_hover.T[1], m_hover.T[2] };
     const Vec3  centre = o + R * N;
-
     constexpr u32 seg = 64;
     const float* rgb = m_analysis_panel.osc_colour();
     const Vec4   col{ rgb[0], rgb[1], rgb[2], 0.85f };
     const Mat4   mvp = m_axes_cfg.is_3d ? m_vp.perspective_mvp() : m_vp.ortho_mvp();
-
     auto    slice = m_api.acquire(seg + 1);
     Vertex* v     = slice.vertices();
     for (u32 i = 0; i <= seg; ++i) {
@@ -553,6 +619,10 @@ void Scene::submit_interval_labels() {
         ImGui::End();
     };
 
+    // Greek letters used as sole content of a string literal are safe:
+    // \xce\xb4 = δ (delta), \xce\xb5 = ε (epsilon) — each is the only
+    // content in its string, so MSVC doesn't concatenate hex digits across
+    // adjacent characters.
     draw_label(cx-eps, 0.f, 0.f, x_dy, "c-\xce\xb4");
     draw_label(cx,     0.f, 0.f, x_dy, "c");
     draw_label(cx+eps, 0.f, 0.f, x_dy, "c+\xce\xb4");
@@ -649,7 +719,7 @@ void Scene::submit_conics() {
         if (!entry.enabled) continue;
         if (entry.needs_rebuild) entry.rebuild();
         if (!entry.conic) continue;
-        if (entry.type == 2 && !m_axes_cfg.is_3d) continue;
+        if ((entry.type == 2 || entry.type == 3) && !m_axes_cfg.is_3d) continue;
         if (entry.type == 1 && entry.hyp_two_branch) {
             auto* hyp   = static_cast<math::Hyperbola*>(entry.conic.get());
             const u32 n = hyp->two_branch_vertex_count(entry.tessellation);
@@ -693,7 +763,6 @@ void Scene::draw_main_panel() {
     ImGui::SeparatorText("Debug");
     if (ImGui::Button("Coord Debug")) m_coord_debug.visible() = !m_coord_debug.visible();
     ImGui::SameLine();
-    // Toggle button for the performance window — colour changes when active
     if (m_perf_panel.visible()) {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f,0.5f,0.2f,1.f));
         if (ImGui::Button("Perf Stats")) m_perf_panel.visible() = !m_perf_panel.visible();
@@ -701,21 +770,29 @@ void Scene::draw_main_panel() {
     } else {
         if (ImGui::Button("Perf Stats")) m_perf_panel.visible() = !m_perf_panel.visible();
     }
-
-    // Live one-liner even when panel is closed — so you can glance at FPS
-    // without opening the full stats window
     {
         const auto& s = m_api.debug_stats();
-        const ImVec4 fps_col = (s.fps >= 55.f)
-            ? ImVec4(0.4f,1.f,0.4f,1.f)
+        const ImVec4 fps_col = (s.fps >= 55.f) ? ImVec4(0.4f,1.f,0.4f,1.f)
             : (s.fps >= 30.f ? ImVec4(1.f,0.8f,0.f,1.f) : ImVec4(1.f,0.3f,0.3f,1.f));
         ImGui::SameLine();
         ImGui::TextColored(fps_col, "%.0f fps", s.fps);
         ImGui::TextDisabled("  Arena: %.1f%%  %llu verts  %u DC",
-            s.arena_utilisation * 100.f,
-            static_cast<unsigned long long>(s.arena_vertex_count),
-            s.draw_calls);
+            s.arena_utilisation*100.f,
+            static_cast<unsigned long long>(s.arena_vertex_count), s.draw_calls);
     }
+
+    ImGui::Separator();
+    ImGui::SeparatorText("Surfaces");
+    for (int i = 0; i < static_cast<int>(m_surfaces.size()); ++i) {
+        ImGui::PushID(100 + i);
+        auto& e = m_surfaces[i];
+        ImGui::Checkbox("##en", &e.enabled);
+        ImGui::SameLine();
+        if (ImGui::CollapsingHeader(e.name.c_str()))
+            draw_surface_panel(e, i);
+        ImGui::PopID();
+    }
+    if (ImGui::Button("+ Paraboloid", ImVec2(-1.f,0.f))) add_paraboloid();
 
     ImGui::Separator();
     ImGui::SeparatorText("Curves");
@@ -729,11 +806,57 @@ void Scene::draw_main_panel() {
         ImGui::PopID();
     }
     ImGui::Separator();
-    if (ImGui::Button("+ Parabola",  ImVec2(-1.f,0.f))) add_parabola();
-    if (ImGui::Button("+ Hyperbola", ImVec2(-1.f,0.f))) add_hyperbola();
-    if (ImGui::Button("+ Helix",     ImVec2(-1.f,0.f))) add_helix();
+    if (ImGui::Button("+ Parabola",        ImVec2(-1.f,0.f))) add_parabola();
+    if (ImGui::Button("+ Hyperbola",       ImVec2(-1.f,0.f))) add_hyperbola();
+    if (ImGui::Button("+ Helix",           ImVec2(-1.f,0.f))) add_helix();
+    if (ImGui::Button("+ Paraboloid Curve",ImVec2(-1.f,0.f))) add_paraboloid_curve();
 
     ImGui::End();
+}
+
+// ── draw_surface_panel ────────────────────────────────────────────────────────
+
+void Scene::draw_surface_panel(SurfaceEntry& e, int /*idx*/) {
+    ImGui::Indent();
+    float col[4] = { e.color.r, e.color.g, e.color.b, e.color.a };
+    if (ImGui::ColorEdit4("Color##s", col))
+        e.color = Vec4{col[0],col[1],col[2],col[3]};
+
+    ImGui::Separator();
+    if (e.type == 0) {
+        // ASCII-only: MSVC C2022 fires on multi-byte \x escapes mixed with
+        // adjacent hex chars in the same string literal.
+        ImGui::TextDisabled("z = a(x^2 + y^2)   p(u,v) = (u*cos(v), u*sin(v), a*u^2)");
+
+        bool d = false;
+        d |= ImGui::SliderFloat("a##s",     &e.par_a,    0.1f, 4.f, "%.3f");
+        d |= ImGui::SliderFloat("u max##s", &e.par_umax, 0.3f, 3.f, "%.2f");
+
+        int ul = static_cast<int>(e.u_lines);
+        int vl = static_cast<int>(e.v_lines);
+        if (ImGui::SliderInt("u lines##s", &ul, 4, 32)) { e.u_lines = static_cast<u32>(ul); }
+        if (ImGui::SliderInt("v lines##s", &vl, 4, 48)) { e.v_lines = static_cast<u32>(vl); }
+
+        if (ImGui::Button("Reset##s")) {
+            e.par_a = 1.f; e.par_umax = 1.5f;
+            e.u_lines = 14; e.v_lines = 20; d = true;
+        }
+        if (d) e.mark_dirty();
+
+        if (e.surface) {
+            const auto* p = static_cast<math::Paraboloid*>(e.surface.get());
+            ImGui::TextColored(ImVec4(0.7f,0.9f,1.f,1.f),
+                "K(apex)=%.4f  K(u=%.1f)=%.4f",
+                p->gaussian_curvature(0.f, 0.f),
+                e.par_umax * 0.5f,
+                p->gaussian_curvature(e.par_umax * 0.5f, 0.f));
+            ImGui::TextColored(ImVec4(0.7f,0.9f,1.f,1.f),
+                "H(apex)=%.4f  k1=%.4f  k2=%.4f",
+                p->mean_curvature(0.f, 0.f),
+                p->kappa1(0.f), p->kappa2(0.f));
+        }
+    }
+    ImGui::Unindent();
 }
 
 // ── draw_conic_panel ──────────────────────────────────────────────────────────
@@ -799,6 +922,33 @@ void Scene::draw_conic_panel(ConicEntry& e, int /*idx*/) {
             ImGui::TextColored(ImVec4(0.8f,0.9f,1.f,1.f),
                 "k=%.5f  R=%.4f  t=%.5f", kappa,
                 kappa>1e-8f ? 1.f/kappa : 0.f, tau);
+        }
+
+    } else if (e.type == 3) {
+        // All description strings are ASCII-only to avoid MSVC C2022.
+        // The equation is: p(t) = (t*cos(theta), t*sin(theta), a*t^2)
+        ImGui::TextDisabled("p(t) = (t*cos(theta),  t*sin(theta),  a*t^2)");
+        ImGui::TextDisabled("Meridional parabola on  z = a(x^2 + y^2)");
+        bool d = false;
+        d |= ImGui::SliderFloat("a##pc",     &e.pc_a,      0.1f, 4.f, "%.3f");
+        float deg = e.pc_theta * (180.f / std::numbers::pi_v<float>);
+        if (ImGui::SliderFloat("theta (deg)##pc", &deg, -180.f, 180.f, "%.1f")) {
+            e.pc_theta = deg * (std::numbers::pi_v<float> / 180.f);
+            d = true;
+        }
+        d |= ImGui::SliderFloat("t min##pc", &e.pc_tmin, 0.f,  2.f, "%.3f");
+        d |= ImGui::SliderFloat("t max##pc", &e.pc_tmax, 0.1f, 3.f, "%.3f");
+        if (ImGui::Button("Reset##pc")) {
+            e.pc_a=1.f; e.pc_theta=0.f; e.pc_tmin=0.f; e.pc_tmax=1.5f; d=true;
+        }
+        if (d) e.mark_dirty();
+        if (e.conic) {
+            const float tmid  = (e.pc_tmin + e.pc_tmax) * 0.5f;
+            const float kappa = e.conic->curvature(tmid);
+            ImGui::TextColored(ImVec4(1.f,0.7f,0.3f,1.f),
+                "k(t=%.2f)=%.5f  R=%.4f  tau=%.3f",
+                tmid, kappa, kappa>1e-8f ? 1.f/kappa : 0.f, e.conic->torsion(tmid));
+            ImGui::TextDisabled("k = kappa1 of paraboloid  |  torsion = 0 (planar)");
         }
     }
     ImGui::Unindent();

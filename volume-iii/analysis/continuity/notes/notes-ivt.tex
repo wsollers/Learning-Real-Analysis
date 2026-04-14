@@ -1,0 +1,396 @@
+% =========================================================
+% Intermediate Value Theorem — Canonical Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\section{Intermediate Value Theorem}
+\label{sec:ivt}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit — Intermediate Value Theorem}]
+\begin{itemize}
+  \item Boundedness Theorem: continuous on $[a,b]$ $\Rightarrow$ bounded.
+  \item Maximum--Minimum Theorem (EVT): continuous on $[a,b]$ $\Rightarrow$ attains absolute max and min.
+  \item Location of Roots: sign change forces a zero.
+  \item Bolzano IVT: continuous on an interval, $f(a) < k < f(b)$ $\Rightarrow$ $\exists c$ with $f(c) = k$.
+  \item Image of $[a,b]$: continuous image of a closed bounded interval is a closed bounded interval.
+  \item Preservation of Intervals: continuous image of any interval is an interval.
+  \item Darboux Property: continuous nonvanishing function on $[a,b]$ has constant sign.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Bounded on a Set
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Bounded on a Set}]
+\begin{definition}[Bounded on a Set]
+\label{def:bounded-on-a-set}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$. The
+function $f$ is \textbf{bounded on $A$} if there exists $M > 0$ such
+that
+\[
+  |f(x)| \leq M \quad \text{for all } x \in A.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{BoundedOn}(f, A)
+  \;\colonequiv\;
+  \exists M > 0,\;
+  \forall x \in A :\;
+  |f(x)| \leq M.
+\]
+\end{remark*>
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{BoundedOn}(f, A)
+  \;\colonequiv\;
+  \forall M > 0,\;
+  \exists x \in A :\;
+  |f(x)| > M.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Boundedness on $A$ means the image $f(A)$ fits inside a finite
+interval $[-M, M]$. A single global constant controls all function
+values simultaneously. This is weaker than having an attained maximum:
+a function may be bounded without its supremum being achieved.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Boundedness Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Boundedness Theorem]
+\label{thm:boundedness-theorem}
+Let $I = [a, b]$ be a closed bounded interval and let
+$f : I \to \mathbb{R}$ be continuous on $I$. Then $f$ is bounded
+on $I$.
+
+\smallskip
+\noindent
+\hyperref[prf:boundedness-theorem]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a \leq b,\;
+  \operatorname{ContinuousOn}(f, [a,b])
+  \;\Rightarrow\;
+  \exists M > 0,\;
+  \forall x \in [a,b] :\;
+  |f(x)| \leq M.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the first compactness consequence for continuous functions on
+closed bounded intervals: the image is trapped in a finite interval.
+Continuity alone on an open or unbounded domain does not suffice:
+$f(x) = 1/x$ is continuous on $(0,1)$ but unbounded. The closed
+bounded hypothesis is essential at both ends.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Absolute Maximum and Minimum
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Absolute Extrema}]
+\begin{definition}[Absolute Maximum and Absolute Minimum]
+\label{def:absolute-extrema}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$.
+
+The function $f$ has an \textbf{absolute maximum on $A$} if there
+exists $x^{*} \in A$ such that $f(x^{*}) \geq f(x)$ for all $x \in A$.
+
+The function $f$ has an \textbf{absolute minimum on $A$} if there
+exists $x_{*} \in A$ such that $f(x_{*}) \leq f(x)$ for all $x \in A$.
+
+The points $x^{*}$ and $x_{*}$ are called \textbf{absolute maximum
+point} and \textbf{absolute minimum point}, respectively.
+\end{definition}
+\end{tcolorbox>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{AbsMax}(f, A)
+  \;\colonequiv\;
+  \exists x^{*} \in A,\;
+  \forall x \in A :\;
+  f(x^{*}) \geq f(x).
+\]
+\[
+  \operatorname{AbsMin}(f, A)
+  \;\colonequiv\;
+  \exists x_{*} \in A,\;
+  \forall x \in A :\;
+  f(x_{*}) \leq f(x).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+A function may be bounded above without having an absolute maximum:
+$f(x) = x$ on $(0,1)$ has $\sup = 1$ but never attains it. An
+absolute maximum requires a point in the domain where the supremum
+is achieved. The two conditions — being bounded and having an
+attained extremum — are distinct.
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+An absolute extremum is a global extremum over the entire domain, not
+merely a local one. The defining condition is existence of a point in
+$A$ where the extreme value is \emph{attained}. A supremum that is
+not achieved does not constitute an absolute maximum.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Maximum--Minimum Theorem (Extreme Value Theorem)
+% ---------------------------------------------------------
+
+\begin{theorem}[Maximum--Minimum Theorem]
+\label{thm:maximum-minimum-theorem}
+Let $I = [a, b]$ be a closed bounded interval and let
+$f : I \to \mathbb{R}$ be continuous on $I$. Then $f$ has an absolute
+maximum and an absolute minimum on $I$.
+
+\smallskip
+\noindent
+\hyperref[prf:evt-maximum-minimum]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+\operatorname{ContinuousOn}(f, [a,b])
+&\;\Rightarrow\;
+\Bigl(\exists x^{*} \in [a,b],\;
+\forall x \in [a,b] :\; f(x^{*}) \geq f(x)\Bigr) \\
+&\qquad\wedge\;
+\Bigl(\exists x_{*} \in [a,b],\;
+\forall x \in [a,b] :\; f(x_{*}) \leq f(x)\Bigr).
+\end{aligned}
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+This theorem upgrades the Boundedness Theorem: not only is the image
+bounded, but the extreme values are \emph{attained}. The Boundedness
+Theorem guarantees $\sup f([a,b]) < \infty$; the Maximum--Minimum
+Theorem guarantees $\sup f([a,b]) = f(x^{*})$ for some $x^{*}$ in
+the domain. The proof uses Bolzano--Weierstrass to extract a
+convergent subsequence of a maximizing sequence, then closedness of
+$[a,b]$ to keep the limit in the domain.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Location of Roots
+% ---------------------------------------------------------
+
+\begin{theorem}[Location of Roots Theorem]
+\label{thm:location-of-roots}
+Let $I = [a, b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
+If $f(a) < 0 < f(b)$ or $f(a) > 0 > f(b)$, then there exists
+$c \in (a, b)$ such that $f(c) = 0$.
+
+\smallskip
+\noindent
+\hyperref[prf:locations-of-roots]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f, [a,b])
+  \;\wedge\;
+  \bigl(f(a) < 0 < f(b) \;\vee\; f(a) > 0 > f(b)\bigr)
+  \;\Rightarrow\;
+  \exists c \in (a,b) :\; f(c) = 0.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+A continuous path from negative to positive must cross zero. This
+is the root-finding form of the intermediate value principle,
+isolating the simplest case $k = 0$. The general IVT follows by
+replacing $f$ with $f - k$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Bolzano's Intermediate Value Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Bolzano's Intermediate Value Theorem]
+\label{thm:bolzano-intermediate-value}
+Let $I$ be an interval and let $f : I \to \mathbb{R}$ be continuous
+on $I$. If $a, b \in I$ and $k \in \mathbb{R}$ satisfies
+$f(a) < k < f(b)$, then there exists $c \in I$ strictly between $a$
+and $b$ such that $f(c) = k$.
+
+\smallskip
+\noindent
+\hyperref[prf:bolzano-ivt]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\operatorname{ContinuousOn}(f, I)
+\;\wedge\;
+a, b \in I
+\;\wedge\;
+f(a) < k < f(b) \\
+&\qquad\Rightarrow\;
+\exists c \in I :\;
+\min\{a,b\} < c < \max\{a,b\}
+\;\wedge\;
+f(c) = k.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuous functions on intervals cannot skip intermediate values.
+A continuous path between two output values must pass through every
+value between them. The theorem is proved by applying the Location
+of Roots theorem to $g = f - k$: sign change at $a$ and $b$ forces
+a root of $g$ in between.
+
+This is the central structural result of the section. The remaining
+theorems identify its consequences for images of intervals.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Corollary — Every Value Between inf and sup Is Attained
+% ---------------------------------------------------------
+
+\begin{corollary}[Every Value Between $\inf f(I)$ and $\sup f(I)$ Is Attained]
+\label{cor:ivt-between-inf-and-sup}
+Let $I = [a, b]$ be a closed bounded interval and let
+$f : I \to \mathbb{R}$ be continuous on $I$. If
+$\inf f(I) \leq k \leq \sup f(I)$, then there exists $c \in I$
+with $f(c) = k$.
+\end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f, [a,b])
+  \;\wedge\;
+  \inf f([a,b]) \leq k \leq \sup f([a,b])
+  \;\Rightarrow\;
+  \exists c \in [a,b] :\; f(c) = k.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+The Maximum--Minimum Theorem identifies points where the extreme
+values are attained; Bolzano's IVT then fills in every value between
+those attained extremes. The image of $[a,b]$ contains all values
+between its infimum and supremum, and those extremes are attained —
+so the image is precisely the closed interval $[\min f, \max f]$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Image of a Closed Bounded Interval
+% ---------------------------------------------------------
+
+\begin{theorem}[Image of a Closed Bounded Interval]
+\label{thm:image-of-closed-bounded-interval}
+Let $I$ be a closed bounded interval and let $f : I \to \mathbb{R}$
+be continuous on $I$. Then $f(I)$ is a closed bounded interval.
+
+\smallskip
+\noindent
+\hyperref[prf:image-of-closed-bounded-interval-is-interval]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f, [a,b])
+  \;\Rightarrow\;
+  f([a,b]) = [\min f([a,b]),\; \max f([a,b])].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem synthesizes the three preceding results. The image is
+bounded (Boundedness Theorem), has attained endpoints (Maximum--Minimum
+Theorem), and contains every value between those endpoints (IVT).
+The image is therefore a closed bounded interval with no gaps.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Preservation of Intervals
+% ---------------------------------------------------------
+
+\begin{theorem}[Preservation of Intervals Theorem]
+\label{thm:preservation-of-intervals}
+Let $I$ be an interval and let $f : I \to \mathbb{R}$ be continuous
+on $I$. Then $f(I)$ is an interval.
+
+\smallskip
+\noindent
+\hyperref[prf:preservation-of-intervals]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  I \text{ an interval},\;
+  \operatorname{ContinuousOn}(f, I)
+  \;\Rightarrow\;
+  f(I) \text{ is an interval}.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+The geometric content of IVT: continuous functions do not create gaps
+in images of intervals. This holds for arbitrary intervals —
+open, closed, bounded, unbounded — without requiring the image to be
+compact. Continuity preserves the connected order structure of $\mathbb{R}$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Darboux Property
+% ---------------------------------------------------------
+
+\begin{theorem}[Darboux Property]
+\label{thm:darboux-property}
+Let $f$ be continuous on $[a, b]$ and let $c \in \mathbb{R}$. If
+$f(x) \neq c$ for all $x \in [a, b]$, then either $f(x) > c$ for
+all $x \in [a, b]$, or $f(x) < c$ for all $x \in [a, b]$.
+
+\smallskip
+\noindent
+\hyperref[prf:darboux-property]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\operatorname{ContinuousOn}(f, [a,b])
+\;\wedge\;
+\forall x \in [a,b],\; f(x) \neq c \\
+&\qquad\Rightarrow\;
+\bigl(\forall x \in [a,b],\; f(x) > c\bigr)
+\;\vee\;
+\bigl(\forall x \in [a,b],\; f(x) < c\bigr).
+\end{aligned}
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+A continuous function that avoids the value $c$ on a closed bounded
+interval must lie entirely above or entirely below $c$. The proof
+is immediate from IVT: if $f$ took values on both sides of $c$
+without equaling $c$, IVT would force a point where $f = c$, a
+contradiction. This property is useful in sign arguments and in
+proving that the image of $[a,b]$ under a nonvanishing continuous
+function is bounded away from zero.
+\end{remark*>

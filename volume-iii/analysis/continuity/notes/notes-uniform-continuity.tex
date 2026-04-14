@@ -1,0 +1,829 @@
+% =========================================================
+% Uniform Continuity — Canonical Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\section{Uniform Continuity}
+\label{sec:uniform-continuity}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit — Uniform Continuity}]
+\begin{itemize}
+  \item Key distinction: $\delta = \delta(\varepsilon)$ only, not $\delta(\varepsilon, c)$.
+  \item Implication chain: Lipschitz $\Rightarrow$ uniformly continuous $\Rightarrow$ continuous.
+  \item Both implications are strict.
+  \item Heine--Cantor: continuous on $[a,b]$ $\Rightarrow$ uniformly continuous.
+  \item Failure criterion: sequences $(x_n)$, $(u_n)$ with $x_n - u_n \to 0$ but $|f(x_n) - f(u_n)| \geq \varepsilon_0$.
+  \item Algebra: $f+g$, $f-g$, $cf$ are always UC; products require bounded domain or bounded functions.
+  \item Lipschitz constant $K$: $\delta = \varepsilon/K$ in the UC proof.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Uniform Continuity}]
+\begin{definition}[Uniform Continuity]
+\label{def:uniform-continuity}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$. The
+function $f$ is \textbf{uniformly continuous} on $A$ if for every
+$\varepsilon > 0$ there exists $\delta > 0$ such that for all
+$x, u \in A$,
+\[
+  |x - u| < \delta
+  \;\Rightarrow\;
+  |f(x) - f(u)| < \varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f, A)
+  \;\colonequiv\;
+  \forall \varepsilon > 0,\;
+  \exists \delta > 0,\;
+  \forall x, u \in A :\;
+  |x - u| < \delta \Rightarrow |f(x) - f(u)| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{UniformlyContinuous}(f, A)
+  \;\colonequiv\;
+  \exists \varepsilon_0 > 0,\;
+  \forall \delta > 0,\;
+  \exists x, u \in A :\;
+  |x - u| < \delta
+  \;\wedge\;
+  |f(x) - f(u)| \geq \varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Contrast with pointwise continuity]
+In pointwise continuity, $\delta = \delta(\varepsilon, c)$ depends on
+both the tolerance $\varepsilon$ and the base point $c$. In uniform
+continuity, $\delta = \delta(\varepsilon)$ depends only on $\varepsilon$:
+the same $\delta$ must work simultaneously for all pairs of points in
+$A$. Uniform continuity is a global condition; pointwise continuity
+is a local one.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Uniform Continuity (General Domain)
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Uniform Continuity on a General Domain]
+\label{thm:algebra-of-uniform-continuity-general}
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$ be
+uniformly continuous on $A$, and let $c \in \mathbb{R}$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item The functions $f + g$, $f - g$, and $cf$ are uniformly
+    continuous on $A$.
+  \item The product $fg$ need not be uniformly continuous on $A$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f, A)
+  \;\wedge\;
+  \operatorname{UniformlyContinuous}(g, A)
+  \;\Rightarrow\;
+  \operatorname{UniformlyContinuous}(f + g,\, A).
+\]
+For sums and differences: $\delta = \min(\delta_f, \delta_g)$ works.
+For $cf$: $\delta = \delta_f$ applied to $f$ with input
+$\varepsilon/(|c|+1)$.
+\end{remark*}
+
+\begin{remark*}[Why products fail]
+$f(x) = g(x) = x$ on $\mathbb{R}$ are both Lipschitz (hence UC), but
+$fg(x) = x^2$ is not UC on $\mathbb{R}$: take $x_n = n + 1/n$,
+$u_n = n$; then $x_n - u_n = 1/n \to 0$ but
+$|(fg)(x_n) - (fg)(u_n)| = 2 + 1/n^2 \not\to 0$.
+The product identity
+$|(fg)(x) - (fg)(u)| \leq |f(x)||g(x) - g(u)| + |g(u)||f(x) - f(u)|$
+produces unbounded coefficients $|f(x)|$ and $|g(u)|$ when $f$ and $g$
+are unbounded, preventing a uniform Lipschitz constant for the product.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Uniform Continuity (Bounded Domain)
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Uniform Continuity on a Bounded Domain]
+\label{thm:algebra-of-uniform-continuity-bounded}
+Let $A \subseteq \mathbb{R}$ be bounded, let $f, g : A \to \mathbb{R}$
+be uniformly continuous on $A$, and let $c \in \mathbb{R}$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item The functions $f + g$, $f - g$, $cf$, and $fg$ are uniformly
+    continuous on $A$.
+  \item If there exists $k > 0$ such that $|g(x)| \geq k$ for all
+    $x \in A$, then $f/g$ is uniformly continuous on $A$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  A \text{ bounded},\;
+  \operatorname{UniformlyContinuous}(f, A),\;
+  \operatorname{UniformlyContinuous}(g, A)
+  \;\Rightarrow\;
+  \operatorname{UniformlyContinuous}(fg,\, A).
+\]
+\end{remark*>
+
+\begin{remark*}[Why boundedness of domain fixes products]
+Since $A$ is bounded and $f$, $g$ are UC, both are bounded on $A$.
+Let $|f| \leq M_f$ and $|g| \leq M_g$. Then:
+\[
+  |(fg)(x) - (fg)(u)|
+  \leq M_f |g(x) - g(u)| + M_g |f(x) - f(u)|.
+\]
+Both terms are controlled by the UC conditions on $f$ and $g$,
+with $\delta = \min(\delta_f(\varepsilon/(2M_f+1)),\;
+\delta_g(\varepsilon/(2M_g+1)))$.
+
+For quotients: $|1/g(x) - 1/g(u)| = |g(x) - g(u)|/(|g(x)||g(u)|)
+\leq |g(x) - g(u)|/k^2$, so $1/g$ is UC; then $f/g = f \cdot (1/g)$
+is UC by part (a).
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Space of UC Functions Is Convex
+% ---------------------------------------------------------
+
+\begin{theorem}[The Space of Uniformly Continuous Functions Is Convex]
+\label{thm:uc-space-is-convex}
+Let $A \subseteq \mathbb{R}$, let $f_1, f_2 : A \to \mathbb{R}$ be
+uniformly continuous on $A$, and let $t \in [0,1]$. Then the convex
+combination $f_t := (1-t)f_1 + tf_2$ is uniformly continuous on $A$.
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f_1, A)
+  \;\wedge\;
+  \operatorname{UniformlyContinuous}(f_2, A)
+  \;\wedge\;
+  t \in [0,1]
+  \;\Rightarrow\;
+  \operatorname{UniformlyContinuous}((1-t)f_1 + tf_2,\, A).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+The set $C_{\mathrm{UC}}(A)$ of uniformly continuous functions on
+$A$ is a convex subset of the vector space of all real-valued
+functions on $A$: the line segment between any two elements lies
+entirely in the set. The proof is a one-line consequence of the
+algebra theorem: $(1-t)f_1 + tf_2$ is a linear combination of UC
+functions. Equipped with the uniform metric
+$d_\infty(f,g) = \sup_{x \in A}|f(x)-g(x)|$, the midpoint
+$f_{1/2}$ satisfies
+$d_\infty(f_1, f_{1/2}) = d_\infty(f_{1/2}, f_2) =
+\frac{1}{2}d_\infty(f_1, f_2)$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Definition — Equivalent Sequences
+% ---------------------------------------------------------
+
+\begin{definition}[Equivalent Sequences]
+\label{def:equivalent-sequences}
+Let $(a_n)_{n=m}^{\infty}$ and $(b_n)_{n=m}^{\infty}$ be two
+sequences of real numbers. The sequences are \textbf{equivalent},
+written $(a_n) \sim (b_n)$, if
+\[
+  \lim_{n \to \infty} (a_n - b_n) = 0.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  (a_n) \sim (b_n)
+  \;\colonequiv\;
+  \forall \varepsilon > 0,\;
+  \exists N \in \mathbb{N},\;
+  \forall n \geq N :\;
+  |a_n - b_n| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Two sequences are equivalent if they eventually track each other to
+within any prescribed tolerance, without either needing to converge
+individually. Convergence of $a_n \to L$ is the special case where
+$(b_n) = (L, L, L, \ldots)$ is constant.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Proposition — Sequential Characterization of Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{proposition}[Sequential Characterization of Uniform Continuity]
+\label{prop:sequential-uniform-continuity}
+Let $X \subseteq \mathbb{R}$ and let $f : X \to \mathbb{R}$. The
+following are equivalent:
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item $f$ is uniformly continuous on $X$.
+  \item Whenever $(x_n) \sim (y_n)$ in $X$, the sequences
+    $(f(x_n))$ and $(f(y_n))$ are also equivalent.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:sequential-uniform-continuity]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f, X)
+  \;\iff\;
+  \forall (x_n), (y_n) \subseteq X :\;
+  (x_n - y_n) \to 0 \Rightarrow (f(x_n) - f(y_n)) \to 0.
+\]
+\end{remark*>
+
+\begin{remark*}[Comparison with pointwise sequential continuity]
+Pointwise continuity at $c$ requires: for every $(x_n)$ with
+$x_n \to c$, $f(x_n) \to f(c)$ — one sequence moves toward a fixed
+point. Uniform continuity requires: whenever two sequences track each
+other ($x_n - y_n \to 0$), their images track each other. The
+condition is symmetric and global: neither sequence need converge.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Proposition — Non-Uniform Continuity Criteria
+% ---------------------------------------------------------
+
+\begin{proposition}[Non-Uniform Continuity Criteria]
+\label{prop:non-uniform-continuity-criteria}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$. The
+following are equivalent:
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item $f$ is not uniformly continuous on $A$.
+  \item There exists $\varepsilon_0 > 0$ such that for every $\delta > 0$
+    there exist $x_\delta, u_\delta \in A$ with
+    $|x_\delta - u_\delta| < \delta$ and
+    $|f(x_\delta) - f(u_\delta)| \geq \varepsilon_0$.
+  \item There exists $\varepsilon_0 > 0$ and two sequences $(x_n)$,
+    $(u_n)$ in $A$ such that $\lim(x_n - u_n) = 0$ and
+    $|f(x_n) - f(u_n)| \geq \varepsilon_0$ for all $n$.
+\end{enumerate}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \neg\,\operatorname{UniformlyContinuous}(f, A)
+  \;\iff\;
+  \exists \varepsilon_0 > 0,\;
+  \exists (x_n), (u_n) \subseteq A :\;
+  (x_n - u_n) \to 0
+  \;\wedge\;
+  \forall n,\; |f(x_n) - f(u_n)| \geq \varepsilon_0.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Condition (iii) is exactly what the contradiction argument in the
+Heine--Cantor proof constructs: negating uniform continuity produces
+two sequences with inputs converging together but outputs staying
+$\varepsilon_0$-apart. The criteria here make that construction
+explicit as a standalone characterization. The canonical non-UC
+example $f(x) = x^2$ on $\mathbb{R}$ is witnessed by
+$x_n = n + 1/n$, $u_n = n$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Heine--Cantor
+% ---------------------------------------------------------
+
+\begin{theorem}[Heine--Cantor Theorem]
+\label{thm:heine-cantor}
+Let $I = [a, b]$ be a closed bounded interval and let
+$f : I \to \mathbb{R}$ be continuous on $I$. Then $f$ is uniformly
+continuous on $I$.
+
+\smallskip
+\noindent
+\hyperref[prf:heine-cantor]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f, [a,b])
+  \;\Rightarrow\;
+  \operatorname{UniformlyContinuous}(f, [a,b]).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+The compact domain $[a,b]$ promotes pointwise continuity to uniform
+continuity. The proof proceeds by contradiction: negate uniform
+continuity to get sequences $(x_n)$, $(u_n)$ with inputs converging
+and outputs separated. Bolzano--Weierstrass extracts a convergent
+subsequence; closedness keeps the limit in $[a,b]$; continuity at
+the limit collapses the output gap — contradiction.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Proposition — Uniform Continuity Preserves Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{proposition}[Uniform Continuity Preserves Cauchy Sequences]
+\label{prop:uniform-continuity-cauchy}
+If $f : S \to \mathbb{R}$ is uniformly continuous on $S$ and
+$(x_n)$ is a Cauchy sequence in $S$, then $(f(x_n))$ is a Cauchy
+sequence in $\mathbb{R}$.
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-sequences-preserved]{\textit{Go to proof.}}
+\end{proposition>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f, S)
+  \;\wedge\;
+  (x_n) \text{ Cauchy in } S
+  \;\Rightarrow\;
+  (f(x_n)) \text{ Cauchy in } \mathbb{R}.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+One $\varepsilon$ drives both steps: uniform continuity converts
+$\varepsilon$ to $\delta$; the Cauchy condition converts $\delta$ to
+$N$. This property is the key lemma behind the Continuous Extension
+Theorem: a uniformly continuous function on $(a,b)$ maps Cauchy
+sequences to Cauchy sequences, enabling extension to the endpoints.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Corollary — Uniform Continuity Implies Limit at Adherent Point
+% ---------------------------------------------------------
+
+\begin{corollary}[Uniform Continuity Implies Limit at Adherent Point]
+\label{cor:uniform-continuity-limit-at-adherent}
+Let $X \subseteq \mathbb{R}$, let $f : X \to \mathbb{R}$ be uniformly
+continuous, and let $x_0$ be an adherent point of $X$. Then
+$\lim_{x \to x_0;\, x \in X} f(x)$ exists.
+\end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f, X)
+  \;\wedge\;
+  x_0 \text{ adherent to } X
+  \;\Rightarrow\;
+  \lim_{\substack{x \to x_0 \\ x \in X}} f(x) \in \mathbb{R}.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Any sequence $(x_n) \subseteq X$ with $x_n \to x_0$ is Cauchy. By
+Cauchy sequences preserved, $(f(x_n))$ is Cauchy, hence convergent.
+Any two such sequences give the same limit by the sequential
+criterion. Hence the limit exists. This is the key lemma behind the
+Continuous Extension Theorem.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Proposition — Uniform Continuity on Bounded Set Implies Bounded Image
+% ---------------------------------------------------------
+
+\begin{proposition}[Uniform Continuity on a Bounded Set Implies Bounded Image]
+\label{prop:uniform-continuity-bounded-image}
+Let $X \subseteq \mathbb{R}$ be bounded and let $f : X \to \mathbb{R}$
+be uniformly continuous. Then $f(X)$ is bounded.
+\end{proposition>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  X \text{ bounded},\;
+  \operatorname{UniformlyContinuous}(f, X)
+  \;\Rightarrow\;
+  \exists M > 0,\;
+  \forall x \in X :\; |f(x)| \leq M.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Uniform continuity prevents unbounded growth near boundary points of
+$X$. Since $X$ is bounded, a single $\delta$ covers all of $X$ with
+finitely many $\delta$-patches. On each patch, $f$ varies by less
+than $\varepsilon = 1$, and there are finitely many patches, so
+$f(X)$ is bounded by the maximum of finitely many finite values.
+
+Contrast with mere continuity: $f(x) = 1/x$ is continuous on $(0,1)$,
+which is bounded, but $f(0,1) = (1,\infty)$ is unbounded. Uniform
+continuity rules this out.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — UC on a Bounded Interval Implies Bounded
+% ---------------------------------------------------------
+
+\begin{theorem}[Uniform Continuity on a Bounded Interval Implies Bounded]
+\label{thm:uc-bounded-interval-implies-bounded}
+If $f$ is uniformly continuous on a bounded interval $I$, then $f$
+is bounded on $I$.
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  I \text{ bounded interval},\;
+  \operatorname{UniformlyContinuous}(f, I)
+  \;\Rightarrow\;
+  \operatorname{BoundedOn}(f, I).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+This is the interval specialization of the bounded image proposition.
+The interval need not be closed: the result applies to open and
+half-open bounded intervals as well. This contrasts with the
+Boundedness Theorem, which requires $I = [a,b]$ but only needs
+continuity. Here the stronger hypothesis (UC) compensates for the
+weaker domain assumption.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Definition — Lipschitz Condition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Lipschitz Condition}]
+\begin{definition}[Lipschitz Condition]
+\label{def:lipschitz-condition}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$. The
+function $f$ is \textbf{Lipschitz} on $A$ if there exists a constant
+$K > 0$ such that
+\[
+  |f(x) - f(u)| \leq K|x - u|
+  \quad \text{for all } x, u \in A.
+\]
+The constant $K$ is called a \textbf{Lipschitz constant} for $f$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{Lipschitz}(f, A)
+  \;\colonequiv\;
+  \exists K > 0,\;
+  \forall x, u \in A :\;
+  |f(x) - f(u)| \leq K|x - u|.
+\]
+\end{remark*>
+
+\begin{remark*}[Geometric interpretation]
+For $x \neq u$: $\left|\dfrac{f(x) - f(u)}{x - u}\right| \leq K$.
+Every secant line of the graph of $f$ has slope bounded in absolute
+value by $K$. A Lipschitz function cannot have arbitrarily steep
+secants. The canonical non-Lipschitz but UC example is $\sqrt{x}$
+on $[0,1]$: the secant through $(0,0)$ has slope $1/\sqrt{x} \to
+\infty$ as $x \to 0^+$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Proposition — Lipschitz Implies Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{proposition}[Lipschitz Implies Uniform Continuity]
+\label{prop:lipschitz-implies-uc}
+If $f : A \to \mathbb{R}$ is Lipschitz on $A$, then $f$ is uniformly
+continuous on $A$.
+
+\smallskip
+\noindent
+\hyperref[prf:lipschitz-implies-uniform-continuous]{\textit{Go to proof.}}
+\end{proposition>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{Lipschitz}(f, A)
+  \;\Rightarrow\;
+  \operatorname{UniformlyContinuous}(f, A).
+\]
+\end{remark*>
+
+\begin{remark*}[Strict hierarchy]
+The implications are strict at each step:
+\[
+  \text{Lipschitz}
+  \;\Rightarrow\;
+  \text{Uniformly continuous}
+  \;\Rightarrow\;
+  \text{Continuous}.
+\]
+$\sqrt{x}$ on $[0,1]$: uniformly continuous (by Heine--Cantor) but
+not Lipschitz (slope unbounded at $0$). $f(x) = x^2$ on
+$\mathbb{R}$: continuous but not uniformly continuous.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Lipschitz Functions
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Lipschitz Functions]
+\label{thm:algebra-of-lipschitz-functions}
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$ be
+Lipschitz on $A$ with constants $K_f$ and $K_g$, and let
+$c \in \mathbb{R}$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item $cf$ is Lipschitz with constant $|c|K_f$.
+  \item $f + g$ and $f - g$ are Lipschitz with constant $K_f + K_g$.
+  \item \textup{(Composition)} If $h : B \to \mathbb{R}$ is Lipschitz
+    with constant $K_h$ and $f(A) \subseteq B$, then $h \circ f$ is
+    Lipschitz on $A$ with constant $K_h K_f$.
+  \item \textup{(Products, bounded case)} If $|f| \leq M_f$ and
+    $|g| \leq M_g$ on $A$, then $fg$ is Lipschitz with constant
+    $M_g K_f + M_f K_g$.
+  \item \textup{(Quotients)} If $|f| \leq M_f$ and $|g(x)| \geq k > 0$
+    for all $x \in A$, then $f/g$ is Lipschitz with constant
+    $K_f/k + M_f K_g/k^2$.
+\end{enumerate}
+Parts \textup{(a)--(c)} hold on any domain. Parts \textup{(d)--(e)}
+require the stated boundedness hypotheses.
+
+\smallskip
+\noindent
+\hyperref[prf:algebra-of-lipschitz-functions]{\textit{Go to proof.}}
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(c)&\quad |h(f(x)) - h(f(u))| \leq K_h|f(x)-f(u)| \leq K_h K_f|x-u|. \\
+(d)&\quad |(fg)(x)-(fg)(u)| \leq (M_g K_f + M_f K_g)|x-u|.
+\end{aligned}
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Composition is the cleanest case: the Lipschitz constant multiplies,
+$K_{h \circ f} = K_h K_f$, with no side conditions. This is the
+Lipschitz analogue of the chain rule and the reason Lipschitz maps
+compose so well in metric space theory. Products need the
+add-and-subtract identity
+$(fg)(x) - (fg)(u) = f(x)(g(x)-g(u)) + g(u)(f(x)-f(u))$,
+which introduces $|f(x)|$ and $|g(u)|$ as coefficients; without
+boundedness these coefficients can grow without bound.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Proposition — Special Lipschitz Functions
+% ---------------------------------------------------------
+
+\begin{proposition}[Special Lipschitz Functions]
+\label{prop:lipschitz-special-functions}
+The following functions are Lipschitz on their natural domains:
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item $x \mapsto |x|$ is Lipschitz-$1$ on $\mathbb{R}$.
+  \item If $f : A \to \mathbb{R}$ is Lipschitz-$K$, then $|f|$ is
+    Lipschitz-$K$ on $A$.
+  \item If $f, g$ are Lipschitz with constants $K_f$, $K_g$, then
+    $\max(f,g)$ and $\min(f,g)$ are Lipschitz with constant
+    $\max(K_f, K_g)$.
+  \item $x \mapsto \max(x, 0) = x^+$ is Lipschitz-$1$ on
+    $\mathbb{R}$.
+  \item If $f : A \to \mathbb{R}$ is Lipschitz-$K$ and $f(x) \geq
+    c > 0$ for all $x \in A$, then $\sqrt{f}$ is Lipschitz with
+    constant $K/(2\sqrt{c})$.
+  \item $\sin$ and $\cos$ are Lipschitz-$1$ on $\mathbb{R}$.
+  \item $x \mapsto x^n$ is Lipschitz on $[a,b]$ with constant
+    $n \cdot \max(|a|,|b|)^{n-1}$.
+\end{enumerate}
+\end{proposition>
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(a)&\quad \bigl||x| - |u|\bigr| \leq |x-u|. \\
+(e)&\quad |\sqrt{f(x)} - \sqrt{f(u)}|
+         = \tfrac{|f(x)-f(u)|}{\sqrt{f(x)}+\sqrt{f(u)}}
+         \leq \tfrac{K}{2\sqrt{c}}|x-u|.
+\end{aligned}
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Parts (b)--(d) show that the Lipschitz class is a lattice: closed
+under $|\cdot|$, $\max$, and $\min$. Part (d) is the ReLU function
+$x^+ = \max(x,0)$, which is $1$-Lipschitz with sharp constant.
+Part (e) explains why $\sqrt{x}$ on $[0,1]$ is UC but not Lipschitz:
+the Lipschitz condition fails precisely at the zero of $f$ where the
+denominator $\sqrt{f(x)} + \sqrt{f(u)} \to 0$.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Definition — Bi-Lipschitz Map
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Bi-Lipschitz Map}]
+\begin{definition}[Bi-Lipschitz Map]
+\label{def:bi-lipschitz}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$. The
+function $f$ is \textbf{bi-Lipschitz} on $A$ if there exist constants
+$0 < \alpha \leq K$ such that
+\[
+  \alpha |x - u| \leq |f(x) - f(u)| \leq K|x - u|
+  \quad \text{for all } x, u \in A.
+\]
+The constant $\alpha$ is the \textbf{lower Lipschitz bound} and $K$
+is the \textbf{upper Lipschitz bound}.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{BiLipschitz}(f, A)
+  \;\colonequiv\;
+  \exists\, 0 < \alpha \leq K,\;
+  \forall x, u \in A :\;
+  \alpha|x-u| \leq |f(x)-f(u)| \leq K|x-u|.
+\]
+\end{remark*>
+
+\begin{remark*}[Geometric interpretation]
+The upper bound says $f$ cannot stretch distances by more than $K$.
+The lower bound says $f$ cannot compress distances by more than
+$1/\alpha$. Together they bound the metric distortion in both
+directions. The lower bound also forces injectivity: distinct points
+cannot map to the same image.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Inverse of a Bi-Lipschitz Map Is Lipschitz
+% ---------------------------------------------------------
+
+\begin{theorem}[Inverse of a Bi-Lipschitz Map Is Lipschitz]
+\label{thm:bilipschitz-inverse-is-lipschitz}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to f(A)$ be bi-Lipschitz
+with bounds $\alpha$ and $K$. Then:
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item $f$ is injective and $f^{-1} : f(A) \to A$ exists.
+  \item $f^{-1}$ is Lipschitz with constant $1/\alpha$.
+  \item $f^{-1}$ is bi-Lipschitz with bounds $1/K$ and $1/\alpha$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:bilipschitz-inverse-is-lipschitz]{\textit{Go to proof.}}
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \alpha|x-u| \leq |f(x)-f(u)| \leq K|x-u|
+  \;\Rightarrow\;
+  \tfrac{1}{K}|y-v| \leq |f^{-1}(y)-f^{-1}(v)| \leq \tfrac{1}{\alpha}|y-v|
+\]
+for all $y, v \in f(A)$.
+\end{remark*>
+
+\begin{remark*}[Why Lipschitz alone does not suffice]
+$f(x) = x^3$ on $[-1,1]$ is Lipschitz (constant $K=3$) and
+bijective, but $f^{-1}(y) = y^{1/3}$ has derivative $(1/3)y^{-2/3}
+\to \infty$ as $y \to 0$ — not Lipschitz. The failure is at
+$f'(0) = 0$, exactly where the lower bound collapses.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Step Function Approximation
+% ---------------------------------------------------------
+
+\begin{theorem}[Step Function Approximation]
+\label{thm:step-function-approximation}
+Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
+For every $\varepsilon > 0$ there exists a step function
+$s_\varepsilon : I \to \mathbb{R}$ such that
+\[
+  |f(x) - s_\varepsilon(x)| < \varepsilon
+  \quad \text{for all } x \in I.
+\]
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b]),\;
+  \varepsilon > 0
+  \;\Rightarrow\;
+  \exists \text{ step function } s_\varepsilon :\;
+  \sup_{x \in [a,b]} |f(x) - s_\varepsilon(x)| < \varepsilon.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Heine--Cantor provides a single $\delta$ valid across $[a,b]$.
+Partitioning $[a,b]$ into subintervals of width less than $\delta$
+and defining $s_\varepsilon$ to be the value of $f$ at the left
+endpoint of each subinterval gives the step approximation.
+This is the first of three approximation theorems for continuous
+functions on $[a,b]$, used directly in the theory of Riemann
+integration.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Piecewise Linear Approximation
+% ---------------------------------------------------------
+
+\begin{theorem}[Piecewise Linear Approximation]
+\label{thm:piecewise-linear-approximation}
+Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
+For every $\varepsilon > 0$ there exists a piecewise linear function
+$\ell_\varepsilon : I \to \mathbb{R}$ such that
+\[
+  |f(x) - \ell_\varepsilon(x)| < \varepsilon
+  \quad \text{for all } x \in I.
+\]
+\end{theorem>
+
+\begin{remark*}[Interpretation]
+The construction is similar to step function approximation: partition
+$[a,b]$ into subintervals of width less than $\delta$ (from
+Heine--Cantor), then connect adjacent graph values by straight line
+segments. Each segment is a convex combination of $f$-values at
+nodes within distance $\delta$, so by IVT it stays within
+$\varepsilon$ of $f$. Piecewise linear functions sit in the
+approximation hierarchy between step functions and polynomials:
+\[
+  \text{step} \subset \text{piecewise linear} \subset \text{polynomials.}
+\]
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Global Continuity Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Global Continuity Theorem]
+\label{thm:global-continuity-theorem}
+Let $f : \mathbb{R} \to \mathbb{R}$. The following are equivalent:
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item $f$ is continuous on $\mathbb{R}$.
+  \item For every closed set $F \subseteq \mathbb{R}$, the preimage
+    $f^{-1}(F)$ is closed in $\mathbb{R}$.
+  \item For every open set $G \subseteq \mathbb{R}$, the preimage
+    $f^{-1}(G)$ is open in $\mathbb{R}$.
+\end{enumerate}
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  f \text{ continuous on } \mathbb{R}
+  \;\iff\;
+  \forall F \text{ closed} :\; f^{-1}(F) \text{ closed}
+  \;\iff\;
+  \forall G \text{ open} :\; f^{-1}(G) \text{ open}.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+This is the topological definition of continuity: preimages of open
+sets are open. In metric spaces and general topological spaces, this
+becomes the standard definition. The result connects the analytic
+$\varepsilon$-$\delta$ definition to the structural language of open
+and closed sets. In metric spaces, the same equivalence holds:
+$f : (M,d) \to (M',d')$ is continuous iff preimages of open sets
+are open.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Bernstein Approximation Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Bernstein Approximation Theorem]
+\label{thm:bernstein-approximation}
+Let $f : [0,1] \to \mathbb{R}$ be continuous and let $\varepsilon > 0$.
+There exists $n_\varepsilon \in \mathbb{N}$ such that for all
+$n \geq n_\varepsilon$,
+\[
+  |f(x) - B_n(x)| < \varepsilon
+  \quad \text{for all } x \in [0,1],
+\]
+where
+\[
+  B_n(x)
+  = \sum_{k=0}^{n}
+    f\!\left(\tfrac{k}{n}\right)
+    \tbinom{n}{k} x^k (1-x)^{n-k}
+\]
+is the $n$-th Bernstein polynomial for $f$.
+\end{theorem>
+
+\begin{remark*}[Interpretation]
+The Bernstein polynomials give a constructive proof of the Weierstrass
+Approximation Theorem: every continuous function on a closed bounded
+interval is a uniform limit of polynomials. Each coefficient
+$f(k/n)$ is the value of $f$ at one of the $n+1$ equally spaced
+nodes, and the Bernstein basis polynomials $\binom{n}{k}x^k(1-x)^{n-k}$
+are probability weights (they sum to $1$ for each $x$). The
+approximation is therefore a weighted average of $f$-values.
+\end{remark*>

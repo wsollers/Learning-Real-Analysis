@@ -1,0 +1,247 @@
+% =========================================================
+% Approximation Theorems — Canonical Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\section{Approximation of Continuous Functions}
+\label{sec:approximation}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit — Approximation}]
+\begin{itemize}
+  \item Hierarchy: step functions $\subset$ piecewise linear $\subset$ polynomials.
+  \item All three classes are dense in $C([a,b])$ under the uniform norm.
+  \item Key engine: Heine--Cantor provides a single global $\delta$.
+  \item Weierstrass: every continuous $f$ on $[a,b]$ is a uniform limit of polynomials.
+  \item Bernstein: constructive version of Weierstrass via $B_n(x) = \sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Theorem — Step Function Approximation
+% ---------------------------------------------------------
+
+\begin{theorem}[Step Function Approximation]
+\label{thm:step-function-approx}
+Let $I = [a,b]$ be a closed bounded interval and let
+$f : I \to \mathbb{R}$ be continuous on $I$. For every $\varepsilon > 0$
+there exists a step function $s_{\varepsilon} : I \to \mathbb{R}$
+such that
+\[
+  |f(x) - s_{\varepsilon}(x)| < \varepsilon
+  \quad \text{for all } x \in I.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f, [a,b]),\;
+  \varepsilon > 0
+  \;\Rightarrow\;
+  \exists \text{ step function } s_\varepsilon :\;
+  \sup_{x \in [a,b]} |f(x) - s_\varepsilon(x)| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Heine--Cantor provides $\delta > 0$ such that $|f(x) - f(u)| <
+\varepsilon$ whenever $|x-u| < \delta$. Divide $[a,b]$ into $m$
+equal subintervals of width $h := (b-a)/m < \delta$ and define
+$s_\varepsilon$ to be $f$ at the left endpoint of each subinterval.
+Uniform continuity then keeps $|f(x) - s_\varepsilon(x)| < \varepsilon$
+on each piece.
+
+This result is used directly in the theory of Riemann integration:
+step function approximation shows that a continuous function can be
+sandwiched between step functions to within any prescribed tolerance,
+implying Riemann integrability.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Corollary — Uniform Partition Step Approximation
+% ---------------------------------------------------------
+
+\begin{corollary}[Uniform Partition Step Approximation]
+\label{cor:uniform-partition-step-approx}
+Let $I := [a,b]$ and let $f : I \to \mathbb{R}$ be continuous.
+For every $\varepsilon > 0$ there exists $m \in \mathbb{N}$ such
+that if $I$ is divided into $m$ equal subintervals $I_k$ of length
+$h := (b-a)/m$, then the step function defined by
+\[
+  s_\varepsilon(x) := f(x_{k-1}) \quad \text{for } x \in I_k
+\]
+satisfies $|f(x) - s_\varepsilon(x)| < \varepsilon$ for all $x \in I$.
+\end{corollary>
+
+\begin{remark*}[Interpretation]
+This makes the partition explicit: choose $m$ large enough that
+$h = (b-a)/m$ is less than the $\delta$ from Heine--Cantor for
+$\varepsilon$. The step function uses left-endpoint values, but any
+sample point from each subinterval works equally well.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Piecewise Linear Function
+% ---------------------------------------------------------
+
+\begin{definition}[Piecewise Linear Function]
+\label{def:piecewise-linear-function}
+Let $I := [a,b]$ be an interval. A function $g : I \to \mathbb{R}$
+is \textbf{piecewise linear} on $I$ if $I$ is the union of finitely
+many disjoint subintervals $I_1, \ldots, I_m$ such that the
+restriction of $g$ to each $I_k$ is a linear (affine) function.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A piecewise linear function is a step up from a step function: rather
+than being constant on each subinterval, it is a straight line
+segment. The graph is a connected polygonal path with vertices at
+the node values.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Piecewise Linear Approximation
+% ---------------------------------------------------------
+
+\begin{theorem}[Piecewise Linear Approximation]
+\label{thm:piecewise-linear-approx}
+Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
+For every $\varepsilon > 0$ there exists a continuous piecewise
+linear function $g_{\varepsilon} : I \to \mathbb{R}$ such that
+\[
+  |f(x) - g_{\varepsilon}(x)| < \varepsilon
+  \quad \text{for all } x \in I.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b]),\;
+  \varepsilon > 0
+  \;\Rightarrow\;
+  \exists g_\varepsilon \text{ piecewise linear} :\;
+  \sup_{x \in [a,b]} |f(x) - g_\varepsilon(x)| < \varepsilon.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+The construction: Heine--Cantor gives $\delta$; partition $[a,b]$
+into nodes $x_0 < x_1 < \cdots < x_n$ with max spacing less than
+$\delta$; define $g_\varepsilon$ by connecting $(x_{j-1}, f(x_{j-1}))$
+to $(x_j, f(x_j))$ with a straight line on $[x_{j-1}, x_j]$.
+For any $x \in [x_{j-1}, x_j]$, the value $g_\varepsilon(x)$ is a
+convex combination of $f(x_{j-1})$ and $f(x_j)$. Since both nodes
+are within distance $\delta$ of $x$, uniform continuity forces
+$|f(x) - g_\varepsilon(x)| < \varepsilon$.
+
+Position in the approximation hierarchy:
+\[
+  \text{step} \;\subset\; \text{piecewise linear} \;\subset\; \text{polynomials}.
+\]
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Weierstrass Approximation Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Weierstrass Approximation Theorem]
+\label{thm:weierstrass-approximation}
+Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous. For
+every $\varepsilon > 0$ there exists a polynomial function
+$p_{\varepsilon}$ such that
+\[
+  |f(x) - p_{\varepsilon}(x)| < \varepsilon
+  \quad \text{for all } x \in I.
+\]
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b]),\;
+  \varepsilon > 0
+  \;\Rightarrow\;
+  \exists \text{ polynomial } p_\varepsilon :\;
+  \|f - p_\varepsilon\|_\infty < \varepsilon.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Every continuous function on a closed bounded interval is a uniform
+limit of polynomials. This is a major result connecting continuity,
+algebra, and analysis: the polynomial functions, which are the most
+elementary analytic objects, are dense in $C([a,b])$ under the
+uniform norm. Proof deferred to approximation theory; the Bernstein
+construction below provides a constructive proof.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Definition — Bernstein Polynomial
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Bernstein Polynomial}]
+\begin{definition}[Bernstein Polynomial]
+\label{def:bernstein-polynomial}
+Let $f : [0,1] \to \mathbb{R}$. The \textbf{$n$-th Bernstein
+polynomial} for $f$ is
+\[
+  B_n(x)
+  \;:=\;
+  \sum_{k=0}^{n}
+  f\!\left(\tfrac{k}{n}\right)
+  \binom{n}{k} x^k (1-x)^{n-k}.
+\]
+It is a polynomial of degree at most $n$ whose coefficients depend
+on the values of $f$ at the $n+1$ equally spaced points
+$0, 1/n, 2/n, \ldots, 1$.
+\end{definition}
+\end{tcolorbox>
+
+\begin{remark*}[Interpretation]
+The Bernstein basis polynomials $\binom{n}{k}x^k(1-x)^{n-k}$ are
+the probability masses of the Binomial$(n, x)$ distribution.
+Since they sum to $1$ for each $x \in [0,1]$, the value $B_n(x)$
+is a weighted average of the function values $f(k/n)$ — an expected
+value interpretation. This probabilistic structure is what drives
+the convergence proof.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Bernstein's Approximation Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Bernstein's Approximation Theorem]
+\label{thm:bernstein-approximation-theorem}
+Let $f : [0,1] \to \mathbb{R}$ be continuous and let $\varepsilon > 0$.
+There exists $n_\varepsilon \in \mathbb{N}$ such that for all
+$n \geq n_\varepsilon$,
+\[
+  |f(x) - B_n(x)| < \varepsilon
+  \quad \text{for all } x \in [0,1].
+\]
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[0,1]),\;
+  \varepsilon > 0
+  \;\Rightarrow\;
+  \exists n_\varepsilon \in \mathbb{N},\;
+  \forall n \geq n_\varepsilon :\;
+  \sup_{x \in [0,1]} |f(x) - B_n(x)| < \varepsilon.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Bernstein's theorem gives a constructive proof of the Weierstrass
+Approximation Theorem: the sequence $(B_n)$ converges uniformly to
+$f$ on $[0,1]$. The convergence proof uses the law of large numbers
+interpretation: for each fixed $x$, $B_n(x)$ is the expected value
+of $f$ at the sample mean of $n$ Bernoulli$(x)$ trials, which
+concentrates near $x$ as $n \to \infty$, forcing $B_n(x) \to f(x)$
+by continuity. Uniformity follows from uniform continuity of $f$
+on $[0,1]$.
+\end{remark*>

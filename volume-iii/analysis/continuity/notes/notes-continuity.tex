@@ -1,0 +1,715 @@
+% =========================================================
+% Continuity — Canonical Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\section{Continuity}
+\label{sec:continuity}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit — Continuity}]
+\begin{itemize}
+  \item Three equivalent forms: $\varepsilon$-$\delta$, neighbourhood, sequential.
+  \item At a cluster point $c$: continuity $\iff$ $\lim_{x \to c} f(x) = f(c)$.
+  \item At an isolated point: continuity holds vacuously.
+  \item Algebra of continuous functions: sums, products, scalar multiples, quotients (denominator nonzero), compositions.
+  \item $C^{0}(X)$ denotes the vector space of all continuous real-valued functions on $X$.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Relative Neighborhood
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Relative Neighborhood}]
+\begin{definition}[Relative Neighborhood]
+\label{def:relative-neighborhood}
+Let $E \subseteq \mathbb{R}$ and let $a \in E$. A \textbf{neighborhood
+of $a$ in $E$}, denoted $U_{E}(a)$, is a set of the form
+\[
+  U_{E}(a) \;:=\; E \cap U(a),
+\]
+where $U(a)$ is a neighborhood of $a$ in $\mathbb{R}$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  U_{E}(a) = E \cap (a - \delta,\, a + \delta)
+  \quad \text{for some } \delta > 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A relative neighborhood is the portion of the domain $E$ that lies
+inside a full $\delta$-ball around $a$. The construction restricts
+the ambient neighborhood to the domain, enabling local properties
+to be stated on arbitrary subsets of $\mathbb{R}$ without
+presupposing that a full ball around $a$ lies in $E$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Continuity at a Point (ε-δ form)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Continuity at a Point}]
+\begin{definition}[Continuity at a Point]
+\label{def:continuous-at-point}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
+$c \in A$. The function $f$ is \textbf{continuous at $c$} if for every
+$\varepsilon > 0$ there exists $\delta > 0$ such that for every $x \in A$,
+\[
+  |x - c| < \delta \;\Rightarrow\; |f(x) - f(c)| < \varepsilon.
+\]
+If $f$ is not continuous at $c$, then $f$ is \textbf{discontinuous at
+$c$}.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousAt}(f, c)
+  \;\colonequiv\;
+  \forall \varepsilon > 0,\;
+  \exists \delta > 0,\;
+  \forall x \in A :\;
+  |x - c| < \delta \;\Rightarrow\; |f(x) - f(c)| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{ContinuousAt}(f, c)
+  \;\colonequiv\;
+  \exists \varepsilon > 0,\;
+  \forall \delta > 0,\;
+  \exists x \in A :\;
+  |x - c| < \delta \;\wedge\; |f(x) - f(c)| \geq \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+Discontinuity at $c$ means some fixed output gap $\varepsilon_0 > 0$
+survives every shrinking of the input window. Three canonical failure
+modes:
+\begin{itemize}
+  \item \textbf{Jump:} both one-sided limits exist but differ from $f(c)$.
+  \item \textbf{Removable:} two-sided limit exists but $\lim_{x \to c} f(x) \neq f(c)$.
+  \item \textbf{Essential:} at least one one-sided limit fails to exist.
+\end{itemize}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Two structural differences from the limit definition distinguish
+continuity. First, $x = c$ is permitted — the domain condition is
+$|x - c| < \delta$, not $0 < |x - c| < \delta$. Second, the target
+value is $f(c)$ itself, not a separate $L$. At a cluster point $c$,
+continuity is therefore exactly the condition $\lim_{x \to c} f(x) = f(c)$.
+At an isolated point, every $\delta$-ball meets $A$ only at $c$, so
+the implication holds vacuously for every $\varepsilon > 0$.
+
+\smallskip
+\noindent
+\hyperref[prf:equivalent-forms-continuity]{\textit{Go to proof (Three Equivalent Forms).}}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Continuity at a Point (neighbourhood form)
+% ---------------------------------------------------------
+
+\begin{definition}[Continuity at a Point — Neighbourhood Form]
+\label{def:continuous-at-point-nbhd}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
+$c \in A$. The function $f$ is \textbf{continuous at $c$} (neighbourhood
+form) if for every $\varepsilon$-neighbourhood $V_{\varepsilon}(f(c))$
+of $f(c)$ there exists a $\delta$-neighbourhood $V_{\delta}(c)$ of $c$
+such that
+\[
+  f\!\bigl(A \cap V_{\delta}(c)\bigr) \subseteq V_{\varepsilon}(f(c)).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall \varepsilon > 0,\;
+  \exists \delta > 0 :\;
+  \forall x \in A \cap V_{\delta}(c),\;
+  f(x) \in V_{\varepsilon}(f(c)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The neighbourhood form replaces absolute values with set-membership.
+The image of the full $\delta$-slice of $A$ must land inside the
+$\varepsilon$-ball around $f(c)$. This differs from the limit
+neighbourhood form in one place: the full neighbourhood
+$V_{\delta}(c)$ replaces the punctured neighbourhood
+$V^{*}_{\delta}(c)$, consistent with $x = c$ being permitted.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Continuity at a Point (sequential form)
+% ---------------------------------------------------------
+
+\begin{definition}[Continuity at a Point — Sequential Form]
+\label{def:continuous-at-point-seq}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
+$c \in A$. The function $f$ is \textbf{continuous at $c$} (sequential
+form) if for every sequence $(x_{n}) \subseteq A$ with $x_{n} \to c$,
+\[
+  f(x_{n}) \to f(c).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall (x_{n}) \subseteq A,\;
+  x_{n} \to c
+  \;\Rightarrow\;
+  f(x_{n}) \to f(c).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The sequential form permits $x_{n} = c$, in contrast to the sequential
+criterion for function limits, which required $x_{n} \neq c$.
+Continuity transports every convergent sequence in $A$ to a convergent
+sequence in $\mathbb{R}$; the limit of the transported sequence is the
+value of $f$ at the limit of the original.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Three Equivalent Forms of Continuity
+% ---------------------------------------------------------
+
+\begin{theorem}[Three Equivalent Forms of Continuity]
+\label{thm:continuity-three-equiv}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
+$c \in A$. The following are equivalent:
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item $\forall \varepsilon > 0,\;\exists \delta > 0,\;\forall x \in A:\;
+    |x - c| < \delta \Rightarrow |f(x) - f(c)| < \varepsilon$.
+    \hfill ($\varepsilon$-$\delta$)
+  \item $\forall V_{\varepsilon}(f(c)),\;\exists V_{\delta}(c):\;
+    f(A \cap V_{\delta}(c)) \subseteq V_{\varepsilon}(f(c))$.
+    \hfill (neighbourhood)
+  \item $\forall (x_{n}) \subseteq A,\;
+    x_{n} \to c \Rightarrow f(x_{n}) \to f(c)$.
+    \hfill (sequential)
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:equivalent-forms-continuity]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(i)   &\quad \forall \varepsilon > 0,\;
+             \exists \delta > 0,\;
+             \forall x \in A:\;
+             |x - c| < \delta \Rightarrow |f(x) - f(c)| < \varepsilon \\
+(ii)  &\quad \forall \varepsilon > 0,\;
+             \exists \delta > 0:\;
+             f(A \cap V_{\delta}(c)) \subseteq V_{\varepsilon}(f(c)) \\
+(iii) &\quad \forall (x_{n}) \subseteq A,\;
+             x_{n} \to c \Rightarrow f(x_{n}) \to f(c)
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+$(i) \iff (ii)$ is a notation translation: $|x - c| < \delta$ means
+$x \in V_{\delta}(c)$ and $|f(x) - f(c)| < \varepsilon$ means
+$f(x) \in V_{\varepsilon}(f(c))$. $(i) \iff (iii)$ mirrors the
+sequential criterion for limits: the forward direction feeds $\delta$
+to the convergence of $(x_{n})$; the backward direction is contrapositive
+with the $1/n$ trick to construct a bad sequence from failure of
+$\varepsilon$-$\delta$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Discontinuity Criterion
+% ---------------------------------------------------------
+
+\begin{definition}[Discontinuity Criterion]
+\label{def:discontinuity-criterion}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
+$c \in A$. The function $f$ is \textbf{discontinuous at $c$} if and
+only if there exists a sequence $(x_{n}) \subseteq A$ such that
+$x_{n} \to c$ but $f(x_{n}) \not\to f(c)$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \neg\,\operatorname{ContinuousAt}(f, c)
+  \;\iff\;
+  \exists (x_{n}) \subseteq A :\;
+  x_{n} \to c
+  \;\wedge\;
+  f(x_{n}) \not\to f(c).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+One witness sequence suffices to establish discontinuity. The sequence
+must converge; its image under $f$ must fail to converge to $f(c)$.
+Continuity, by contrast, demands that every such sequence have image
+converging to $f(c)$ — a universal condition.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Continuity on a Set
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Continuity on a Set}]
+\begin{definition}[Continuity on a Set]
+\label{def:continuity-on-set}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
+$B \subseteq A$. The function $f$ is \textbf{continuous on $B$} if
+$f$ is continuous at every point of $B$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f, B)
+  \;\colonequiv\;
+  \forall c \in B,\;
+  \forall \varepsilon > 0,\;
+  \exists \delta > 0,\;
+  \forall x \in A :\;
+  |x - c| < \delta \Rightarrow |f(x) - f(c)| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuity on a set is a pointwise condition: $\delta$ may depend on
+both $\varepsilon$ and the base point $c$. This is the key distinction
+from uniform continuity, where $\delta$ depends only on $\varepsilon$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Continuity at a Point
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Continuity at a Point]
+\label{thm:continuity-algebra-at-a-point}
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, let
+$b \in \mathbb{R}$, and let $c \in A$. Assume $f$ and $g$ are
+continuous at $c$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item The functions $f + g$, $f - g$, $fg$, and $bf$ are continuous
+    at $c$.
+  \item If $h : A \to \mathbb{R}$ is continuous at $c$ and $h(x) \neq 0$
+    for all $x \in A$, then $f/h$ is continuous at $c$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:algebra-of-continuity-at-a-point]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(a)\quad &
+\bigl(\operatorname{ContinuousAt}(f,c)
+\;\wedge\;
+\operatorname{ContinuousAt}(g,c)\bigr)
+\;\Rightarrow\;
+\operatorname{ContinuousAt}(f+g,\,c)
+\;\wedge\;
+\operatorname{ContinuousAt}(fg,\,c). \\[4pt]
+(b)\quad &
+\bigl(\operatorname{ContinuousAt}(f,c)
+\;\wedge\;
+\operatorname{ContinuousAt}(h,c)
+\;\wedge\;
+\forall x \in A,\; h(x) \neq 0\bigr)
+\;\Rightarrow\;
+\operatorname{ContinuousAt}(f/h,\,c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The algebra of continuity reduces to the algebra of limits at a point.
+Each operation on continuous functions produces a continuous function,
+provided the operation is defined. The denominator condition in (b)
+is global on $A$, not merely local at $c$, because $f/h$ must be
+defined everywhere on $A$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Continuity on a Set
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Continuity on a Set]
+\label{thm:continuity-algebra-on-a-set}
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, and let
+$b \in \mathbb{R}$. Assume $f$ and $g$ are continuous on $A$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item The functions $f + g$, $f - g$, $fg$, and $bf$ are continuous
+    on $A$.
+  \item If $h : A \to \mathbb{R}$ is continuous on $A$ and $h(x) \neq 0$
+    for all $x \in A$, then $f/h$ is continuous on $A$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:algebra-of-continuity-on-a-set]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,A)
+  \;\wedge\;
+  \operatorname{ContinuousOn}(g,A)
+  \;\Rightarrow\;
+  \operatorname{ContinuousOn}(f+g,\,A)
+  \;\wedge\;
+  \operatorname{ContinuousOn}(fg,\,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the pointwise algebra theorem applied uniformly at every
+$c \in A$. No new argument is needed beyond the at-a-point version.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Composition of Continuous Functions
+% ---------------------------------------------------------
+
+\begin{theorem}[Composition of Continuous Functions]
+\label{thm:composition-of-continuous-functions}
+Let $X, Y \subseteq \mathbb{R}$, let $f : X \to \mathbb{R}$ and
+$g : Y \to \mathbb{R}$ with $f(X) \subseteq Y$. If $f$ is continuous
+at $x_{0} \in X$ and $g$ is continuous at $f(x_{0}) \in Y$, then
+the composition $h = g \circ f : X \to \mathbb{R}$ is continuous at
+$x_{0}$.
+
+\smallskip
+\noindent
+\hyperref[prf:composition-is-continuous]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousAt}(f,\,x_{0})
+  \;\wedge\;
+  \operatorname{ContinuousAt}(g,\,f(x_{0}))
+  \;\Rightarrow\;
+  \operatorname{ContinuousAt}(g \circ f,\,x_{0}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuity is preserved under composition. The proof is a two-step
+$\varepsilon$-$\delta$ argument: choose $\delta_{1}$ from continuity
+of $g$ at $f(x_{0})$ for input $\varepsilon$, then choose $\delta$
+from continuity of $f$ at $x_{0}$ for input $\delta_{1}$. The chain
+$|x - x_{0}| < \delta \Rightarrow |f(x) - f(x_{0})| < \delta_{1}
+\Rightarrow |g(f(x)) - g(f(x_{0}))| < \varepsilon$ closes the
+argument.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Local Properties of Continuous Functions
+% ---------------------------------------------------------
+
+\begin{theorem}[Local Properties of Continuous Functions]
+\label{thm:local-properties-of-continuous-functions}
+Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$ be
+continuous at $a \in E$. Then:
+\begin{enumerate}[label=\arabic*$^{\circ}$]
+  \item \textbf{Local boundedness.} $f$ is bounded in some
+    neighborhood $U_{E}(a)$.
+  \item \textbf{Local sign stability.} If $f(a) \neq 0$, then all
+    values of $f$ in some neighborhood $U_{E}(a)$ have the same sign
+    as $f(a)$.
+  \item \textbf{Algebra at a point.} Sums, differences, and scalar
+    multiples of functions continuous at $a$ are continuous at $a$;
+    quotients are continuous at $a$ when the denominator is nonzero
+    there.
+  \item \textbf{Composition.} If $g : Y \to \mathbb{R}$ is continuous
+    at $b \in Y$ and $f : E \to Y$ satisfies $f(a) = b$, then
+    $g \circ f$ is continuous at $a$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:local-properties-of-continuous-functions]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Interpretation]
+This theorem packages four separate local results into a single
+statement following Zorich. Parts 3 and 4 restate the Algebra and
+Composition theorems in local form. Part 2 is Sign Preservation
+(\hyperref[prop:sign-preservation]{Proposition}). Part 1 is the
+pointwise precursor to the global Boundedness Theorem: continuity
+at a single point forces local finiteness of the function values.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Lemma — Power Function Is Continuous
+% ---------------------------------------------------------
+
+\begin{lemma}[Power Function Is Continuous]
+\label{lem:power-function-continuous}
+Let $n \in \mathbb{N}$. The function $f : \mathbb{R} \to \mathbb{R}$
+defined by $f(x) = x^{n}$ is continuous.
+
+\smallskip
+\noindent
+\hyperref[prf:power-function-is-continuous]{\textit{Go to proof.}}
+\end{lemma}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall n \in \mathbb{N},\;
+  \forall x_{0} \in \mathbb{R},\;
+  \forall \varepsilon > 0,\;
+  \exists \delta > 0,\;
+  \forall x \in \mathbb{R} :\;
+  |x - x_{0}| < \delta \Rightarrow |x^{n} - x_{0}^{n}| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every monomial is continuous on $\mathbb{R}$. The proof factors
+$x^{n} - x_{0}^{n} = (x - x_{0})(x^{n-1} + x^{n-2}x_{0} + \cdots
++ x_{0}^{n-1})$ and estimates the second factor on a bounded
+neighborhood of $x_{0}$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Polynomials Are Continuous
+% ---------------------------------------------------------
+
+\begin{theorem}[Any Real Polynomial Is a Continuous Function]
+\label{thm:polynomials-are-continuous}
+Let $P(x) = a_{0} + a_{1}x + \cdots + a_{n}x^{n}$ be a real
+polynomial. Then $P$ is continuous on $\mathbb{R}$.
+
+\smallskip
+\noindent
+\hyperref[prf:polynomials-are-continuous]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall n \in \mathbb{N},\;
+  \forall a_{0}, \ldots, a_{n} \in \mathbb{R},\;
+  \operatorname{ContinuousOn}(P, \mathbb{R}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuity of polynomials follows by finitely many applications of
+the Algebra of Continuity theorem: each monomial $x^{k}$ is
+continuous, and continuity is preserved under addition and scalar
+multiplication.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Rational Functions Are Continuous on Their Domain
+% ---------------------------------------------------------
+
+\begin{proposition}[Rational Functions Are Continuous on Their Domain]
+\label{prop:rational-functions-continuous}
+Let $P$ and $Q$ be real polynomials and let
+$D = \{x \in \mathbb{R} : Q(x) \neq 0\}$.
+Then the rational function $R(x) = P(x)/Q(x)$ is continuous on $D$.
+
+\smallskip
+\noindent
+\hyperref[prf:rational-function-continuous-on-domain]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x_{0} \in D,\;
+  \operatorname{ContinuousAt}(R, x_{0}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Polynomials are continuous everywhere; the quotient rule for continuous
+functions applies at every point where the denominator is nonzero.
+The domain $D$ is the natural domain of $R$ — no continuity claim is
+made at zeros of $Q$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Square Root Preserves Continuity
+% ---------------------------------------------------------
+
+\begin{theorem}[Square Root Preserves Continuity]
+\label{thm:square-root-preserves-continuity}
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$ with
+$f(x) \geq 0$ for all $x \in A$, and define $(\sqrt{f})(x) :=
+\sqrt{f(x)}$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item If $f$ is continuous at $c \in A$, then $\sqrt{f}$ is
+    continuous at $c$.
+  \item If $f$ is continuous on $A$, then $\sqrt{f}$ is continuous
+    on $A$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:square-root-preserves-continuity]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Interpretation]
+The square-root operation preserves continuity on nonnegative-valued
+functions. Part (b) follows immediately by applying part (a) at each
+point of $A$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Exponentiation Is Continuous, I
+% ---------------------------------------------------------
+
+\begin{proposition}[Exponentiation Is Continuous, I]
+\label{prop:exponentiation-continuous-base}
+Let $a > 0$. The function $f : \mathbb{R} \to \mathbb{R}$ defined by
+$f(x) := a^{x}$ is continuous.
+
+\smallskip
+\noindent
+\hyperref[prf:exponentiation-is-continuous-1]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a > 0,\;
+  \operatorname{ContinuousOn}(x \mapsto a^{x},\, \mathbb{R}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+For a fixed positive base, exponentiation in the exponent is continuous
+on all of $\mathbb{R}$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Exponentiation Is Continuous, II
+% ---------------------------------------------------------
+
+\begin{proposition}[Exponentiation Is Continuous, II]
+\label{prop:exponentiation-continuous-exponent}
+Let $p \in \mathbb{R}$. The function $f : (0, \infty) \to \mathbb{R}$
+defined by $f(x) := x^{p}$ is continuous.
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall p \in \mathbb{R},\;
+  \operatorname{ContinuousOn}(x \mapsto x^{p},\, (0,\infty)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+For a fixed real exponent, the power function in the base is
+continuous on the positive reals.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Sign Preservation
+% ---------------------------------------------------------
+
+\begin{proposition}[Sign Preservation]
+\label{prop:sign-preservation}
+Let $f : E \to \mathbb{R}$ be continuous at $x_{0} \in E$.
+\begin{itemize}
+  \item If $f(x_{0}) > 0$, there exists $\delta > 0$ such that
+    $f(x) > 0$ for all $x \in E$ with $|x - x_{0}| < \delta$.
+  \item If $f(x_{0}) < 0$, there exists $\delta > 0$ such that
+    $f(x) < 0$ for all $x \in E$ with $|x - x_{0}| < \delta$.
+\end{itemize}
+
+\smallskip
+\noindent
+\hyperref[prf:sign-preservation]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousAt}(f, x_{0})
+  \;\wedge\;
+  f(x_{0}) > 0
+  \;\Rightarrow\;
+  \exists \delta > 0,\;
+  \forall x \in E :\;
+  |x - x_{0}| < \delta \Rightarrow f(x) > 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuity at a point with nonzero value forces sign stability on a
+neighborhood. The standard proof applies the $\varepsilon$-$\delta$
+definition with $\varepsilon = |f(x_{0})|/2$; the resulting
+$\delta$-neighborhood keeps $f$ bounded away from zero on the same
+side as $f(x_{0})$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Continuous Extension to a Closed Interval
+% ---------------------------------------------------------
+
+\begin{proposition}[Continuous Extension to a Closed Interval]
+\label{prop:continuous-extension-closed-interval}
+Let $f : (a, b] \to \mathbb{R}$ be continuous and suppose
+$\lim_{x \to a^{+}} f(x)$ exists. Define
+\[
+  \widetilde{f}(x) :=
+  \begin{cases}
+    \displaystyle\lim_{x \to a^{+}} f(x), & x = a, \\[4pt]
+    f(x), & x \in (a, b].
+  \end{cases}
+\]
+Then $\widetilde{f} : [a, b] \to \mathbb{R}$ is continuous.
+
+\smallskip
+\noindent
+\hyperref[prf:continuous-extension-to-closed-interval]{\textit{Go to proof.}}
+\end{proposition>
+
+\begin{remark*}[Interpretation]
+If a one-sided limit exists at the missing endpoint, the function can
+be continuously filled in there. Continuity away from $a$ is inherited
+from $f$; continuity at $a$ uses the definition of $\widetilde{f}(a)$
+together with one-sided continuity.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Space of Continuous Functions
+% ---------------------------------------------------------
+
+\begin{definition}[Space of Continuous Functions]
+\label{def:space-of-continuous-functions}
+Let $X \subseteq \mathbb{R}$. The \textbf{space of continuous
+real-valued functions on $X$} is
+\[
+  C^{0}(X;\mathbb{R})
+  \;:=\;
+  \{\, f : X \to \mathbb{R} : f \text{ is continuous on } X \,\}.
+\]
+When the codomain is clear, this space is denoted $C^{0}(X)$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+The set $C^{0}(X;\mathbb{R})$ is closed under addition and scalar
+multiplication, forming a real vector space. It is the natural
+algebraic setting for studying global properties of continuous
+functions and for defining function norms such as the uniform norm
+$\|f\|_{\infty} = \sup_{x \in X} |f(x)|$.
+\end{remark*}

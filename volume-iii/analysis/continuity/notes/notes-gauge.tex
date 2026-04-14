@@ -1,0 +1,229 @@
+% =========================================================
+% Gauges and Tagged Partitions — Canonical Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\subsection{Gauges and Tagged Partitions}
+\label{sec:gauges-tagged-partitions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit — Gauges and Tagged Partitions}]
+\begin{itemize}
+  \item A gauge is a strictly positive function $\delta : I \to (0, \infty)$
+    — a variable tolerance that can adapt to the behavior of $f$ at
+    each point.
+  \item A tagged partition is $\delta$-fine if every subinterval is contained
+    in the $\delta(t_i)$-neighborhood of its tag.
+  \item Cousin's Theorem: every gauge on $[a,b]$ admits a $\delta$-fine partition.
+  \item Gauge proofs unify Boundedness, EVT, Location of Roots, and Heine--Cantor
+    via a single construction.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Partition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Partition}]
+\begin{definition}[Partition]
+\label{def:partition}
+Let $I = [a,b]$ be a closed bounded interval. A \textbf{partition}
+of $I$ is a finite ordered set $P = \{x_0, x_1, \ldots, x_n\}$
+satisfying
+\[
+  a = x_0 < x_1 < \cdots < x_n = b.
+\]
+The partition divides $I$ into $n$ nonoverlapping subintervals
+$[x_{i-1}, x_i]$ for $i = 1, \ldots, n$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+A partition is a finite dissection of the interval. The partition
+points $x_0, \ldots, x_n$ are the endpoints of the subintervals.
+No information about sample points within each subinterval is
+encoded in a partition alone; that is the role of tags.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Tagged Partition
+% ---------------------------------------------------------
+
+\begin{definition}[Tagged Partition]
+\label{def:tagged-partition}
+A \textbf{tagged partition} of $I = [a,b]$ is a partition
+$P = \{x_0, x_1, \ldots, x_n\}$ together with a set of
+\textbf{tags} $T = \{t_1, t_2, \ldots, t_n\}$ satisfying
+\[
+  t_i \in [x_{i-1}, x_i] \quad \text{for each } i = 1, \ldots, n.
+\]
+A tagged partition is denoted
+$\dot{P} = \{([x_{i-1}, x_i],\, t_i)\}_{i=1}^n$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A tagged partition assigns to each subinterval a representative
+point (its tag). Tags appear in Riemann sum constructions, where
+$f(t_i)$ is the function value used to represent $f$ on the
+subinterval $[x_{i-1}, x_i]$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Gauge
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Gauge}]
+\begin{definition}[Gauge]
+\label{def:gauge}
+A \textbf{gauge} on $I$ is a strictly positive function
+$\delta : I \to (0, \infty)$.
+\end{definition}
+\end{tcolorbox>
+
+\begin{remark*}[Interpretation]
+A gauge is a variable tolerance. Unlike a single global $\delta > 0$,
+a gauge $\delta(t)$ can assign a different tolerance to each point
+$t \in I$, allowing finer control near points where $f$ is
+irregular. The gauge generalizes both uniform continuity
+(where a single $\delta$ suffices) and mere continuity (where
+$\delta$ varies point by point).
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — δ-fine Partition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — $\delta$-Fine Partition}]
+\begin{definition}[$\delta$-Fine Partition]
+\label{def:delta-fine-partition}
+Let $\delta$ be a gauge on $I$. A tagged partition
+$\dot{\mathcal{P}} = \{([x_{i-1}, x_i], t_i)\}$ is
+\textbf{$\delta$-fine} if
+\[
+  t_i \in [x_{i-1}, x_i]
+  \subseteq [t_i - \delta(t_i),\; t_i + \delta(t_i)]
+  \quad \text{for } i = 1, \ldots, n.
+\]
+\end{definition}
+\end{tcolorbox>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \dot{\mathcal{P}} \text{ is } \delta\text{-fine}
+  \;\colonequiv\;
+  \forall i :\;
+  [x_{i-1}, x_i] \subseteq (t_i - \delta(t_i),\; t_i + \delta(t_i)).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+A $\delta$-fine partition ensures that every subinterval is contained
+within the $\delta(t_i)$-neighborhood of its tag $t_i$. The tag
+controls the mesh size locally: at points where $f$ is irregular,
+a small value of $\delta(t)$ forces the subinterval containing $t$
+to be narrow, capturing local behavior precisely.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Lemma — Every Point Is Near a Tag
+% ---------------------------------------------------------
+
+\begin{lemma}[Every Point Is Near a Tag]
+\label{lem:every-point-near-tag}
+If $\dot{\mathcal{P}}$ is a $\delta$-fine partition of $I = [a,b]$
+and $x \in I$, then there exists a tag $t_i$ in $\dot{\mathcal{P}}$
+such that $|x - t_i| \leq \delta(t_i)$.
+\end{lemma>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \dot{\mathcal{P}} \text{ is } \delta\text{-fine},\;
+  x \in [a,b]
+  \;\Rightarrow\;
+  \exists i :\; |x - t_i| \leq \delta(t_i).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+Since the subintervals cover $[a,b]$, every $x$ lies in some
+$[x_{i-1}, x_i]$. The $\delta$-fineness condition then places
+$x$ within the $\delta(t_i)$-neighborhood of the corresponding
+tag $t_i$. This lemma is the linchpin of all gauge-based proofs:
+it converts global coverage of $[a,b]$ by a $\delta$-fine partition
+into a local proximity statement at every point.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Theorem — Cousin's Theorem (Existence of δ-fine Partitions)
+% ---------------------------------------------------------
+
+\begin{theorem}[Cousin's Theorem]
+\label{thm:cousin}
+If $\delta$ is a gauge on $[a,b]$, then there exists a $\delta$-fine
+partition of $[a,b]$.
+\end{theorem>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \delta : [a,b] \to (0,\infty)
+  \;\Rightarrow\;
+  \exists \dot{\mathcal{P}} \text{ tagged partition of } [a,b] :\;
+  \dot{\mathcal{P}} \text{ is } \delta\text{-fine}.
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+This is the foundational existence theorem for gauge integration.
+A gauge can prescribe arbitrarily small tolerance at each point,
+yet a finite tagged partition still exists that respects all these
+constraints simultaneously. The proof uses bisection: if no
+$\delta$-fine partition of $[a,b]$ exists, bisect; at least one
+half has no $\delta$-fine partition; continue bisecting; the
+resulting nested sequence of intervals converges to a point $c$
+where $\delta(c) > 0$ eventually accommodates the tail subinterval
+— a contradiction.
+\end{remark*>
+
+% ---------------------------------------------------------
+% Alternate Proofs via Gauges
+% ---------------------------------------------------------
+
+\begin{remark*}[Gauge proofs of the main theorems]
+The four core theorems of the chapter — Boundedness, Maximum--Minimum,
+Location of Roots, and Heine--Cantor — admit alternate proofs via
+the gauge machinery. In each case, a gauge is constructed from the
+hypothesis of the theorem (continuity at each point), and Cousin's
+Theorem provides a $\delta$-fine partition. The lemma (every point is
+near a tag) then connects arbitrary points of $[a,b]$ to the finitely
+many function values at the tags. These proofs are concise and share
+a unified structure.
+
+\textbf{Boundedness.} Define $\delta(t)$ so that $|f(x) - f(t)| \leq 1$
+for $|x-t| \leq \delta(t)$. Let $K = \max_i |f(t_i)|$. For any
+$x \in [a,b]$, the lemma gives $|x-t_i| \leq \delta(t_i)$, so
+$|f(x)| \leq |f(x)-f(t_i)| + |f(t_i)| \leq 1 + K$.
+
+\textbf{Maximum--Minimum.} Suppose $f(x) < M := \sup f$ for all $x$.
+Define $\delta(t)$ so that $f(x) < \frac{1}{2}(M+f(t))$ for
+$|x-t| \leq \delta(t)$. The partition gives a finite upper bound
+$\tilde{M} < M$ for $f$ on all of $[a,b]$, contradicting the
+definition of $M$.
+
+\textbf{Location of Roots.} Suppose $f(t) \neq 0$ for all $t$.
+Sign preservation (continuity at each point) gives a gauge such that
+$f$ has constant sign on each subinterval. The sign propagates from
+$f(a) < 0$ through the chain of subintervals to $f(b)$, forcing
+$f(b) < 0$, contradicting $f(b) > 0$.
+
+\textbf{Heine--Cantor (UC).} Given $\varepsilon > 0$, define
+$\delta(t)$ so that $|f(x)-f(t)| < \varepsilon/2$ for
+$|x-t| \leq 2\delta(t)$. Let $\delta_\varepsilon = \min_i \delta(t_i)$.
+For any $x, u$ with $|x-u| \leq \delta_\varepsilon$, the lemma gives
+a tag $t_i$ with $|x-t_i| \leq \delta(t_i)$, and then
+$|u-t_i| \leq |u-x| + |x-t_i| \leq 2\delta(t_i)$, so
+$|f(x)-f(u)| \leq |f(x)-f(t_i)| + |f(t_i)-f(u)| < \varepsilon$.
+\end{remark*>

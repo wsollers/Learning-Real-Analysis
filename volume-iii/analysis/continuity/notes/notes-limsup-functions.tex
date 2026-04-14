@@ -1,0 +1,139 @@
+% =========================================================
+% Limits Superior and Inferior of Functions — Canonical Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\section{Limits Superior and Inferior of Functions}
+\label{sec:limsup-liminf-functions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit — Limits Superior and Inferior of Functions}]
+\begin{itemize}
+  \item $\limsup_{x \to x_0} f(x) = \inf_{\delta>0} \sup\{f(x) : 0 < |x-x_0| < \delta,\; x \in E\}$.
+  \item $\liminf_{x \to x_0} f(x) = \sup_{\delta>0} \inf\{f(x) : 0 < |x-x_0| < \delta,\; x \in E\}$.
+  \item Both always exist in $[-\infty, +\infty]$.
+  \item $\limsup \geq \liminf$ always.
+  \item $\lim_{x \to x_0} f(x)$ exists $\iff$ $\limsup = \liminf \in \mathbb{R}$.
+  \item Direct analogue of the sequence versions: replace tails with punctured neighborhoods.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Lim Sup and Lim Inf of a Function
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition — Limits Superior and Inferior of a Function}]
+\begin{definition}[Limits Superior and Inferior of a Function]
+\label{def:limsup-liminf-function}
+Let $f : E \to \mathbb{R}$ and let $x_0$ be a point of accumulation
+of $E$. Define
+\[
+  \limsup_{x \to x_0} f(x)
+  \;:=\;
+  \inf_{\delta > 0}
+  \sup\bigl\{\,f(x) : x \in E,\; 0 < |x - x_0| < \delta\,\bigr\}
+\]
+and
+\[
+  \liminf_{x \to x_0} f(x)
+  \;:=\;
+  \sup_{\delta > 0}
+  \inf\bigl\{\,f(x) : x \in E,\; 0 < |x - x_0| < \delta\,\bigr\}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \limsup_{x \to x_0} f(x)
+  = \inf_{\delta > 0}
+    \sup\{f(x) : x \in E \cap (V_\delta(x_0) \setminus \{x_0\})\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Why the inf of sup]
+As $\delta$ decreases, the set over which the sup is taken shrinks,
+so the sup is nonincreasing in $\delta$. The $\limsup$ is the
+infimum of this nonincreasing function as $\delta \to 0^+$, i.e.,
+the limit. The $\liminf$ is dual: the sup of a nondecreasing
+infimum.
+\end{remark*}
+
+\begin{remark*}[Connection to sequence limsup and liminf]
+The sequence version: $\limsup_{n \to \infty} a_n =
+\inf_N \sup_{n \geq N} a_n$. The function version is identical
+in spirit: replace the tail $\{a_n : n \geq N\}$ with the
+punctured neighborhood $\{f(x) : 0 < |x - x_0| < \delta\}$.
+The analogy is exact.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Both $\limsup$ and $\liminf$ always exist in $[-\infty, +\infty]$.
+They measure, respectively, the largest and smallest cluster values
+of $f(x)$ as $x \to x_0$. If $\limsup = \liminf$, the function
+has a well-defined limit; if they differ, the function oscillates
+between distinct accumulation values. The canonical example is
+$f(x) = \sin(1/x)$ at $x_0 = 0$: $\limsup = 1$ and $\liminf = -1$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Lim Sup Is At Least Lim Inf
+% ---------------------------------------------------------
+
+\begin{proposition}[Lim Sup Is At Least Lim Inf]
+\label{prop:limsup-geq-liminf-function}
+For any $f : E \to \mathbb{R}$ and any accumulation point $x_0$ of
+$E$,
+\[
+  \limsup_{x \to x_0} f(x) \;\geq\; \liminf_{x \to x_0} f(x).
+\]
+\end{proposition>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall f : E \to \mathbb{R},\;
+  \forall x_0 \text{ accumulation point of } E :\;
+  \limsup_{x \to x_0} f(x) \geq \liminf_{x \to x_0} f(x).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+For any fixed $\delta > 0$, $\sup \geq \inf$ on the punctured
+neighborhood. Taking the infimum over $\delta$ on the left and
+the supremum over $\delta$ on the right preserves the inequality.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Limit Exists iff Lim Sup Equals Lim Inf
+% ---------------------------------------------------------
+
+\begin{proposition}[Limit Exists iff Lim Sup Equals Lim Inf]
+\label{prop:limsup-liminf-limit-criterion}
+Let $f : E \to \mathbb{R}$ and let $x_0$ be an accumulation point
+of $E$. Then $\lim_{x \to x_0} f(x)$ exists as a finite real number
+if and only if
+\[
+  \limsup_{x \to x_0} f(x) = \liminf_{x \to x_0} f(x) \in \mathbb{R}.
+\]
+In that case, all three quantities are equal.
+\end{proposition>
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \lim_{x \to x_0} f(x) = L \in \mathbb{R}
+  \;\iff\;
+  \limsup_{x \to x_0} f(x) = L = \liminf_{x \to x_0} f(x).
+\]
+\end{remark*>
+
+\begin{remark*}[Interpretation]
+The exact analogue of the sequence criterion: $\lim_{n \to \infty}
+a_n$ exists iff $\limsup a_n = \liminf a_n$. The limit exists when
+the upper and lower envelopes collapse to the same finite value.
+If they disagree — as with $\sin(1/x)$ at $0$ where $\limsup = 1
+\neq -1 = \liminf$ — no limit exists.
+\end{remark*>

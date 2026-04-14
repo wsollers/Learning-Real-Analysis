@@ -3,6 +3,7 @@
 # ── ndde_math ─────────────────────────────────────────────────────────────────
 add_library(ndde_math STATIC
     math/Conics.cpp
+    math/Surfaces.cpp
     math/Axes.cpp
 )
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -92,8 +93,6 @@ compile_shaders(
         "${SHADER_SOURCE_DIR}/curve.frag"
 )
 
-# SHADER_DIR and ASSETS_DIR are injected as absolute paths at compile time
-# so the exe works regardless of the working directory (CWD) it is launched from.
 set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
 
 target_compile_definitions(nurbs_dde  PRIVATE

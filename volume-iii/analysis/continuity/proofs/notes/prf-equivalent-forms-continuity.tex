@@ -1,0 +1,103 @@
+\newpage
+\phantomsection
+\label{prf:equivalent-forms-continuity}
+
+\begin{remark*}[Return]
+\hyperref[thm:continuity-three-equiv]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Three Equivalent Forms of Continuity]
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$.
+The $\varepsilon$-$\delta$, neighbourhood, and sequential definitions of
+continuity at $c$ are mutually equivalent.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+
+The cycle $(i) \Rightarrow (ii) \Rightarrow (iii) \Rightarrow (i)$ is established.
+
+\medskip
+\noindent$(i) \Rightarrow (ii)$. Fix $\varepsilon_0 > 0$. By $(i)$, there
+exists $\delta_0 > 0$ such that $|x - c| < \delta_0 \Rightarrow
+|f(x) - f(c)| < \varepsilon_0$. For any $x \in A \cap V_{\delta_0}(c)$,
+$|x - c| < \delta_0$, so $f(x) \in V_{\varepsilon_0}(f(c))$. Hence
+$f(A \cap V_{\delta_0}(c)) \subseteq V_{\varepsilon_0}(f(c))$.
+
+\medskip
+\noindent$(ii) \Rightarrow (iii)$. Fix $\varepsilon > 0$. By $(ii)$, there
+exists $\delta > 0$ with $f(A \cap V_\delta(c)) \subseteq
+V_\varepsilon(f(c))$. Let $(x_n) \subseteq A$ with $x_n \to c$. Then
+there exists $N$ such that $n \geq N \Rightarrow x_n \in V_\delta(c)$,
+so $f(x_n) \in V_\varepsilon(f(c))$ for all $n \geq N$. Since
+$\varepsilon$ was arbitrary, $f(x_n) \to f(c)$.
+
+\medskip
+\noindent$(iii) \Rightarrow (i)$. Contrapositive. Suppose $(i)$ fails:
+there exists $\varepsilon_0 > 0$ such that for every $n \in \mathbb{N}$
+there exists $x_n \in A$ with $|x_n - c| < 1/n$ but $|f(x_n) - f(c)|
+\geq \varepsilon_0$. Then $x_n \to c$ but $f(x_n) \not\to f(c)$,
+contradicting $(iii)$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Setup.} The proof establishes the cycle $(i) \Rightarrow
+(ii) \Rightarrow (iii) \Rightarrow (i)$. Each implication uses a
+different technique: $(i) \Rightarrow (ii)$ is notation translation;
+$(ii) \Rightarrow (iii)$ threads the neighbourhood condition through
+the sequential limit; $(iii) \Rightarrow (i)$ is a contrapositive
+using the $1/n$ trick to construct a bad sequence.
+
+\textbf{Step 2. $(i) \Rightarrow (ii)$: notation translation.}
+Fix $\varepsilon_0 > 0$. By hypothesis $(i)$, there exists $\delta_0 > 0$
+such that $\forall x \in A$: $|x - c| < \delta_0 \Rightarrow |f(x) -
+f(c)| < \varepsilon_0$. The condition $|x - c| < \delta_0$ is exactly
+$x \in V_{\delta_0}(c)$, and $|f(x) - f(c)| < \varepsilon_0$ is exactly
+$f(x) \in V_{\varepsilon_0}(f(c))$. So for any $x \in A \cap
+V_{\delta_0}(c)$, $f(x) \in V_{\varepsilon_0}(f(c))$. Since $x$ was
+arbitrary, $f(A \cap V_{\delta_0}(c)) \subseteq V_{\varepsilon_0}(f(c))$.
+
+\textbf{Step 3. $(ii) \Rightarrow (iii)$: sequential criterion.}
+Fix $\varepsilon > 0$. By hypothesis $(ii)$, there exists $\delta > 0$
+such that $f(A \cap V_\delta(c)) \subseteq V_\varepsilon(f(c))$. Let
+$(x_n) \subseteq A$ with $x_n \to c$. By the definition of sequence
+convergence, there exists $N \in \mathbb{N}$ such that $n \geq N
+\Rightarrow |x_n - c| < \delta$, i.e., $x_n \in A \cap V_\delta(c)$.
+The neighbourhood condition then gives $f(x_n) \in V_\varepsilon(f(c))$
+for all $n \geq N$, i.e., $|f(x_n) - f(c)| < \varepsilon$. Since
+$\varepsilon$ was arbitrary, $f(x_n) \to f(c)$.
+
+\textbf{Step 4. $(iii) \Rightarrow (i)$: contrapositive.}
+Suppose hypothesis $(i)$ fails. Then there exists $\varepsilon_0 > 0$
+such that for every $\delta > 0$ there exists $x \in A$ with $|x - c|
+< \delta$ but $|f(x) - f(c)| \geq \varepsilon_0$. Apply this with
+$\delta = 1/n$ for each $n \in \mathbb{N}$ to obtain a sequence
+$(x_n) \subseteq A$ satisfying $|x_n - c| < 1/n$ and $|f(x_n) -
+f(c)| \geq \varepsilon_0$ for all $n$. The squeeze theorem gives
+$x_n \to c$. But $f(x_n) \not\to f(c)$ since $|f(x_n) - f(c)| \geq
+\varepsilon_0 > 0$ for all $n$. This contradicts hypothesis $(iii)$.
+
+\textbf{Step 5. Conclusion.} The cycle $(i) \Rightarrow (ii) \Rightarrow
+(iii) \Rightarrow (i)$ is complete, so all three formulations are equivalent.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Cyclic equivalence via three implications. The first implication is
+notation translation (no genuine mathematics). The second threads
+a neighbourhood condition through the definition of sequence convergence.
+The third is a contrapositive argument: failure of $\varepsilon$-$\delta$
+is converted into a specific sequence via the $1/n$ trick; that sequence
+converges but its image does not, contradicting the sequential hypothesis.
+Completeness of $\mathbb{R}$ is not needed; the contradiction is direct.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:continuous-at-point]{Definition of continuity at a point ($\varepsilon$-$\delta$)}
+  \item \hyperref[def:continuous-at-point-nbhd]{Definition of continuity at a point (neighbourhood form)}
+  \item \hyperref[def:continuous-at-point-seq]{Definition of continuity at a point (sequential form)}
+  \item \hyperref[thm:squeeze]{Squeeze theorem for sequences}
+\end{itemize}
+\end{remark*}

@@ -124,9 +124,6 @@ private:
 
 class Helix final : public IConic {
 public:
-    /// r     = radius of the circle in the xy-plane
-    /// pitch = vertical rise per full revolution (2π in t)
-    /// tmin, tmax = parameter range (in radians)
     explicit Helix(float r     = 1.f,
                    float pitch = 0.5f,
                    float tmin  = 0.f,
@@ -144,12 +141,81 @@ public:
 
     [[nodiscard]] float radius() const noexcept { return m_r; }
     [[nodiscard]] float pitch()  const noexcept { return m_pitch; }
-
-    // b = pitch / (2π): the z-rise per radian
-    [[nodiscard]] float b() const noexcept { return m_b; }
+    [[nodiscard]] float b()      const noexcept { return m_b; }
 
 private:
     float m_r, m_pitch, m_b, m_tmin, m_tmax;
+};
+
+// ── ParaboloidCurve ───────────────────────────────────────────────────────────
+// A curve that lies on the paraboloid  z = a(x² + y²),  parameterised by
+// radial distance t along a fixed azimuthal angle θ₀:
+//
+//   p(t) = (t·cos θ₀,  t·sin θ₀,  a·t²)     t ∈ [0, t_max]
+//
+// Geometric interpretation:
+//   This is the intersection of the paraboloid with the vertical half-plane
+//   { (x,y,z) : y/x = tan θ₀,  x ≥ 0 }.  The intersection is a parabola
+//   lying exactly on the surface — a concrete example of a 1-manifold
+//   embedded in a 2-manifold embedded in R³.
+//
+//   In a coordinate chart on the paraboloid this is a "meridional" curve —
+//   the v = const curves of the UV parameterisation (u,v) → (u·cosv, u·sinv, au²).
+//
+// Analytic derivatives:
+//   p'(t)   = (cos θ₀,  sin θ₀,  2at)
+//   p''(t)  = (0,       0,        2a)
+//   p'''(t) = (0,       0,        0)
+//
+// Analytic Frenet frame:
+//   |p'| = √(1 + 4a²t²)                (speed — varies with t)
+//   T = p' / |p'|
+//   N = (p'' - (p''·T)T) / |...|       (points toward the paraboloid axis)
+//   B = T × N
+//
+// Analytic curvature:
+//   κ = |p' × p''| / |p'|³
+//     = 2|a| / (1 + 4a²t²)^(3/2)
+//
+//   This is identical to κ₁(u=t) of the paraboloid — the principal curvature
+//   in the meridional direction. This confirms the curve is a principal
+//   curvature line of the surface.
+//
+// Torsion:
+//   τ = 0  for all t  (the curve lies in a plane)
+//   The plane is spanned by the direction (cosθ₀, sinθ₀, 0) and (0, 0, 1).
+//
+// Relationship to the surface normal:
+//   The unit normal of the paraboloid at p(t) lies in the osculating plane
+//   of this curve (since τ=0 and the curve is a geodesic of sorts).
+
+class ParaboloidCurve final : public IConic {
+public:
+    /// a      = paraboloid curvature scale  (must match the Paraboloid you are rendering)
+    /// theta  = azimuthal angle θ₀ (radians) — selects which meridian
+    /// tmin   = minimum radial distance from the apex (usually 0)
+    /// tmax   = maximum radial distance
+    explicit ParaboloidCurve(float a     = 1.f,
+                              float theta = 0.f,
+                              float tmin  = 0.f,
+                              float tmax  = 1.5f);
+
+    [[nodiscard]] Vec3  evaluate(float t)          const override;
+    [[nodiscard]] Vec3  derivative(float t)         const override;
+    [[nodiscard]] Vec3  second_derivative(float t)  const override;
+    [[nodiscard]] Vec3  third_derivative(float t)   const override;
+    [[nodiscard]] float curvature(float t)           const override;
+    [[nodiscard]] float torsion(float /*t*/)         const override { return 0.f; }
+
+    [[nodiscard]] float t_min() const override { return m_tmin; }
+    [[nodiscard]] float t_max() const override { return m_tmax; }
+
+    [[nodiscard]] float a()     const noexcept { return m_a; }
+    [[nodiscard]] float theta() const noexcept { return m_theta; }
+
+private:
+    float m_a, m_theta, m_ct, m_st;  // cosθ, sinθ precomputed
+    float m_tmin, m_tmax;
 };
 
 } // namespace ndde::math
