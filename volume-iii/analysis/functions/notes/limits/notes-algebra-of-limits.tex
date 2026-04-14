@@ -1,0 +1,107 @@
+% =========================================================
+% Algebra of Limits of Functions — Notes
+% Chapter: functions
+% Section: algebra-of-limits-functions
+% Volume III · Analysis
+% =========================================================
+
+\section{Algebra of Limits}
+\label{sec:algebra-of-limits-functions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Algebra of Limits}]
+\begin{itemize}
+  \item All five rules follow from the Sequential Criterion plus the
+    corresponding algebra of sequence limits. No new
+    $\varepsilon$-$\delta$ arguments are needed.
+  \item Bridge: $(x_n) \subseteq A\setminus\{c\}$, $x_n \to c$
+    $\Rightarrow$ $f(x_n) \to L$ and $g(x_n) \to M$
+    $\Rightarrow$ apply sequence algebra $\Rightarrow$ lift back by
+    Sequential Criterion.
+  \item Quotient rule: $M \neq 0$ forces $g(x) \neq 0$ near $c$
+    (by local non-vanishing), making $f/g$ well-defined on a
+    punctured neighbourhood.
+  \item Consequences: polynomials satisfy $\lim_{x \to c} p(x) =
+    p(c)$; rational functions satisfy the same wherever the
+    denominator is nonzero.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Limits
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Limits of Functions]
+\label{thm:limit-algebra}
+Let $f, g : A \to \mathbb{R}$, let $c$ be a cluster point of $A$,
+and assume $\lim_{x \to c} f(x) = L$ and $\lim_{x \to c} g(x) = M$.
+Then:
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Sum.}
+    $\displaystyle\lim_{x \to c} (f + g)(x) = L + M.$
+
+  \item \textbf{Difference.}
+    $\displaystyle\lim_{x \to c} (f - g)(x) = L - M.$
+
+  \item \textbf{Scalar multiple.}
+    $\displaystyle\lim_{x \to c} (\alpha f)(x) = \alpha L$
+    for all $\alpha \in \mathbb{R}$.
+
+  \item \textbf{Product.}
+    $\displaystyle\lim_{x \to c} (fg)(x) = LM.$
+
+  \item \textbf{Quotient.}
+    If $M \neq 0$, then $g(x) \neq 0$ for all $x$ in some punctured
+    neighbourhood of $c$, and
+    $\displaystyle\lim_{x \to c} \frac{f(x)}{g(x)} = \frac{L}{M}.$
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:limit-algebra]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement — sum rule]
+\[
+\begin{aligned}
+  &\Bigl(\forall\varepsilon>0,\;
+    \exists\delta_1>0,\;
+    0<|x-c|<\delta_1 \Rightarrow |f(x)-L|<\tfrac{\varepsilon}{2}\Bigr) \\
+  &\wedge
+  \Bigl(\forall\varepsilon>0,\;
+    \exists\delta_2>0,\;
+    0<|x-c|<\delta_2 \Rightarrow |g(x)-M|<\tfrac{\varepsilon}{2}\Bigr) \\
+  &\Rightarrow\;
+  \Bigl(\forall\varepsilon>0,\;
+    \exists\delta>0,\;
+    0<|x-c|<\delta \Rightarrow |(f+g)(x)-(L+M)|<\varepsilon\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Proof strategy]
+Fix any sequence $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$.
+By the Sequential Criterion, $f(x_n) \to L$ and $g(x_n) \to M$.
+Apply the algebra of sequence limits:
+$(f+g)(x_n) \to L+M$, $(fg)(x_n) \to LM$, etc.
+By the Sequential Criterion, $\lim_{x \to c}(f+g)(x) = L+M$, etc.
+This is the bridge principle in action: all five rules cost one line
+each once the Sequential Criterion is in hand.
+\end{remark*}
+
+\begin{remark*}[Consequences]
+\begin{itemize}
+  \item \textbf{Linear combinations:}
+    $\lim_{x \to c}(\alpha f + \beta g)(x) = \alpha L + \beta M$.
+  \item \textbf{Polynomials:}
+    $\lim_{x \to c} p(x) = p(c)$ for any polynomial $p$, since
+    $\lim_{x \to c} x = c$ and the algebra rules extend to finite
+    products and sums.
+  \item \textbf{Rational functions:}
+    $\lim_{x \to c} P(x)/Q(x) = P(c)/Q(c)$ whenever $Q(c) \neq 0$.
+\end{itemize}
+\end{remark*}

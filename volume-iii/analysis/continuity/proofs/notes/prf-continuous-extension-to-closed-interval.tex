@@ -1,0 +1,60 @@
+\newpage
+\phantomsection
+\label{prf:continuous-extension-to-closed-interval}
+
+\begin{remark*}[Return]
+\hyperref[prop:continuous-extension-closed-interval]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Continuous Extension to a Closed Interval]
+Let $f:(a,b]\to\mathbb{R}$ be a continuous function such that
+\[
+  \lim_{x\to a^+} f(x)
+\]
+exists.
+Define $\widetilde{f}:[a,b]\to\mathbb{R}$ by
+\[
+  \widetilde{f}(x)=
+  \begin{cases}
+    \lim_{x\to a^+} f(x), & \text{if } x=a,\\[4pt]
+    f(x), & \text{if } x\in(a,b].
+  \end{cases}
+\]
+Then $\widetilde{f}$ is continuous on $[a,b]$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Set $L := \lim_{x\to a^+} f(x)$, so that $\widetilde{f}(a) = L$. For any $x_0 \in [a,b]$, consider two cases.
+
+If $x_0 \in (a,b]$, then $\widetilde{f}(x) = f(x)$ for all $x \in (a,b]$, and since $f$ is continuous at $x_0$, the function $\widetilde{f}$ is continuous at $x_0$.
+
+If $x_0 = a$, let $\varepsilon > 0$. Since $\lim_{x\to a^+} f(x) = L$, there exists $\delta > 0$ such that for all $x \in (a,b]$ with $0 < x - a < \delta$, we have $|f(x) - L| < \varepsilon$. For any $x \in [a,b]$ with $|x - a| < \delta$, either $x = a$ (giving $|\widetilde{f}(x) - \widetilde{f}(a)| = 0 < \varepsilon$) or $x \in (a,b]$ with $0 < x - a < \delta$ (giving $|\widetilde{f}(x) - \widetilde{f}(a)| = |f(x) - L| < \varepsilon$). Hence $\widetilde{f}$ is continuous at $a$.
+
+Since $\widetilde{f}$ is continuous at every point of $[a,b]$, the function $\widetilde{f}$ is continuous on $[a,b]$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Set $L := \lim_{x\to a^+} f(x)$ and note that $\widetilde{f}(a) = L$. To show $\widetilde{f}$ is continuous on $[a,b]$, it suffices to prove continuity at every point $x_0 \in [a,b]$.
+
+\textbf{Step 2.} Consider the case $x_0 \in (a,b]$. For any $x$ in a neighborhood of $x_0$ contained in $(a,b]$, we have $\widetilde{f}(x) = f(x)$. Since $f$ is continuous at $x_0$, and $\widetilde{f}$ agrees with $f$ in this neighborhood, $\widetilde{f}$ is continuous at $x_0$.
+
+\textbf{Step 3.} Consider the case $x_0 = a$. Let $\varepsilon > 0$. By the definition of the right-hand limit, since $\lim_{x\to a^+} f(x) = L$, there exists $\delta > 0$ such that for all $x \in (a,b]$ satisfying $0 < x - a < \delta$, we have $|f(x) - L| < \varepsilon$.
+
+\textbf{Step 4.} Let $x \in [a,b]$ with $|x - a| < \delta$. We consider two sub-cases. If $x = a$, then $|\widetilde{f}(x) - \widetilde{f}(a)| = |L - L| = 0 < \varepsilon$. If $x \in (a,b]$, then $0 < x - a < \delta$, which gives $|\widetilde{f}(x) - \widetilde{f}(a)| = |f(x) - L| < \varepsilon$ by the choice of $\delta$.
+
+\textbf{Step 5.} Since both sub-cases yield $|\widetilde{f}(x) - \widetilde{f}(a)| < \varepsilon$ whenever $|x - a| < \delta$, the function $\widetilde{f}$ is continuous at $a$. Combined with continuity at interior points, $\widetilde{f}$ is continuous on $[a,b]$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses case analysis on the point where continuity is checked. For interior points, the result is immediate since $\widetilde{f}$ equals $f$ there and $f$ is continuous. For the endpoint $a$, the existence of the right-hand limit directly provides the $\varepsilon$-$\delta$ condition needed for continuity: the limit condition translates exactly to the continuity requirement at the boundary point.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:continuity-at-a-point]{Definition of continuity at a point}
+  \item \hyperref[def:one-sided-limits]{Right-hand limit definition}
+\end{itemize}
+\end{remark*}

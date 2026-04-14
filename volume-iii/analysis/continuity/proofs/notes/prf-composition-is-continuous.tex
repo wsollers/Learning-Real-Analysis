@@ -1,0 +1,57 @@
+\newpage
+\phantomsection
+\label{prf:composition-is-continuous}
+
+\begin{remark*}[Return]
+\hyperref[thm:composition-of-continuous-functions]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Composition of Continuous Functions]
+Let $X \subseteq \mathbb{R}$ and let $Y \subseteq \mathbb{R}$.
+Let $f : X \to \mathbb{R}$ and $g : Y \to \mathbb{R}$ with $f(X)\subseteq Y$.
+If $f$ is continuous at $x_0 \in X$ and $g$ is continuous at $f(x_0)\in Y$,
+then the composition
+\[
+  h = g \circ f : X \to \mathbb{R}
+\]
+is continuous at $x_0$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let $\varepsilon > 0$. Since $g$ is continuous at $f(x_0)$, there exists $\delta_1 > 0$ such that for all $y \in Y$, $|y - f(x_0)| < \delta_1$ implies $|g(y) - g(f(x_0))| < \varepsilon$. Since $f$ is continuous at $x_0$, applying continuity with tolerance $\delta_1$, there exists $\delta_0 > 0$ such that for all $x \in X$, $|x - x_0| < \delta_0$ implies $|f(x) - f(x_0)| < \delta_1$. Chaining these implications: for all $x \in X$, $|x - x_0| < \delta_0$ implies $|f(x) - f(x_0)| < \delta_1$, which implies $|g(f(x)) - g(f(x_0))| < \varepsilon$. Since $h(x) = g(f(x))$ and $h(x_0) = g(f(x_0))$, this gives $|h(x) - h(x_0)| < \varepsilon$ whenever $|x - x_0| < \delta_0$. Hence $h$ is continuous at $x_0$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Fix $\varepsilon > 0$ and apply continuity of $g$ at $f(x_0)$. Since $g$ is continuous at $f(x_0) \in Y$, there exists $\delta_1 > 0$ such that for all $y \in Y$,
+\[
+  |y - f(x_0)| < \delta_1 \;\Rightarrow\; |g(y) - g(f(x_0))| < \varepsilon.
+\]
+This establishes the outer layer of the composition: once the input to $g$ is within $\delta_1$ of $f(x_0)$, the output will be within $\varepsilon$ of $g(f(x_0))$.
+
+\textbf{Step 2.} Apply continuity of $f$ at $x_0$ using $\delta_1$ as the tolerance. Since $f$ is continuous at $x_0 \in X$, setting $\varepsilon_0 := \delta_1$, there exists $\delta_0 > 0$ such that for all $x \in X$,
+\[
+  |x - x_0| < \delta_0 \;\Rightarrow\; |f(x) - f(x_0)| < \delta_1.
+\]
+This ensures that when $x$ is within $\delta_0$ of $x_0$, the value $f(x)$ will be within $\delta_1$ of $f(x_0)$, which is precisely the condition needed for Step 1.
+
+\textbf{Step 3.} Chain the implications to establish continuity of the composition. For all $x \in X$:
+\[
+  |x - x_0| < \delta_0
+  \;\Rightarrow\; |f(x) - f(x_0)| < \delta_1
+  \;\Rightarrow\; |g(f(x)) - g(f(x_0))| < \varepsilon.
+\]
+Since $h(x) = g(f(x))$ and $h(x_0) = g(f(x_0))$, this gives $|h(x) - h(x_0)| < \varepsilon$ whenever $|x - x_0| < \delta_0$. Therefore $h$ is continuous at $x_0$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof using the epsilon-delta definition of continuity. The key insight is to work backwards: first apply the continuity of the outer function $g$ to find what tolerance is needed for its input, then use that tolerance as the target for the continuity of the inner function $f$. The two continuity statements chain perfectly because the output condition of $f$'s continuity matches the input condition for $g$'s continuity.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:continuity-at-a-point]{Definition of continuity at a point}
+\end{itemize}
+\end{remark*}

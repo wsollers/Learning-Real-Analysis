@@ -1,0 +1,57 @@
+\newpage
+\phantomsection
+\label{prf:discontinuity-equivalence}
+
+\begin{remark*}[Return]
+\hyperref[lem:equivalent-discontinuity-at-a-point]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Equivalent Formulations of Discontinuity at a Point]
+Let $E \subseteq \mathbb{R}$, $f : E \to \mathbb{R}$, $x_0 \in E$. The $\varepsilon$-$\delta$, sequential, and neighbourhood formulations of discontinuity at $x_0$ are mutually equivalent.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let $E \subseteq \mathbb{R}$, $f : E \to \mathbb{R}$, and $x_0 \in E$. The three formulations are:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item $\varepsilon$-$\delta$ discontinuity: $\exists \varepsilon_0>0\;\forall \delta>0\;\exists x\in E: |x-x_0|<\delta \wedge |f(x)-f(x_0)|\ge \varepsilon_0$
+\item Sequential discontinuity: $\exists (x_n) \subseteq E: x_n\to x_0 \wedge f(x_n)\not\to f(x_0)$
+\item Neighbourhood discontinuity: $\exists V$ neighbourhood of $f(x_0)\;\forall U$ neighbourhood of $x_0\;\exists x\in U\cap E: f(x)\notin V$
+\end{enumerate}
+
+For (i)$\Rightarrow$(ii): Given $\varepsilon_0>0$ from (i), construct $x_n$ by choosing $\delta=1/n$ and selecting $x_n \in E$ with $|x_n-x_0|<1/n$ and $|f(x_n)-f(x_0)|\ge \varepsilon_0$. Then $x_n\to x_0$ but $f(x_n)\not\to f(x_0)$ since $|f(x_n)-f(x_0)|\ge \varepsilon_0$.
+
+For (ii)$\Rightarrow$(i): Given sequence $(x_n) \subseteq E$ with $x_n\to x_0$ and $f(x_n)\not\to f(x_0)$, there exists $\varepsilon_0>0$ and subsequence with $|f(x_{n_k})-f(x_0)|\ge \varepsilon_0$. For any $\delta>0$, choose $k$ large enough so $|x_{n_k}-x_0|<\delta$. Then $x_{n_k}$ witnesses the $\varepsilon$-$\delta$ discontinuity condition.
+
+For (i)$\Leftrightarrow$(iii): Set $V=(f(x_0)-\varepsilon_0, f(x_0)+\varepsilon_0)$ and $U=(x_0-\delta, x_0+\delta)$. The condition $|f(x)-f(x_0)|\ge \varepsilon_0$ is equivalent to $f(x)\notin V$, establishing the equivalence.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the three equivalent formulations of discontinuity at $x_0$.
+The $\varepsilon$-$\delta$ formulation states there exists a fixed $\varepsilon_0>0$ such that for every $\delta>0$, some point $x \in E$ within distance $\delta$ of $x_0$ has $|f(x)-f(x_0)|\ge \varepsilon_0$. The sequential formulation requires a sequence in $E$ converging to $x_0$ whose image under $f$ fails to converge to $f(x_0)$. The neighbourhood formulation uses open sets: there exists a neighbourhood $V$ of $f(x_0)$ such that every neighbourhood $U$ of $x_0$ contains a point $x \in E$ with $f(x)\notin V$.
+
+\textbf{Step 2.} Prove (i)$\Rightarrow$(ii) by constructing a bad sequence.
+Assume $\varepsilon$-$\delta$ discontinuity with witness $\varepsilon_0>0$. For each $n \in \mathbb{N}$, apply the discontinuity condition with $\delta=1/n$ to obtain $x_n \in E$ such that $|x_n-x_0|<1/n$ and $|f(x_n)-f(x_0)|\ge \varepsilon_0$. The first inequality gives $x_n\to x_0$, while the second prevents $f(x_n)\to f(x_0)$ since the sequence $(f(x_n))$ cannot approach $f(x_0)$ when each term remains at least distance $\varepsilon_0$ away.
+
+\textbf{Step 3.} Prove (ii)$\Rightarrow$(i) using the negation of convergence.
+Assume sequential discontinuity with sequence $(x_n) \subseteq E$ where $x_n\to x_0$ but $f(x_n)\not\to f(x_0)$. The non-convergence of $f(x_n)$ means there exists $\varepsilon_0>0$ and infinitely many indices with $|f(x_n)-f(x_0)|\ge \varepsilon_0$. Given any $\delta>0$, the convergence $x_n\to x_0$ ensures some $x_n$ satisfies $|x_n-x_0|<\delta$. Choose such an $x_n$ that also satisfies $|f(x_n)-f(x_0)|\ge \varepsilon_0$. This $x_n$ witnesses the $\varepsilon$-$\delta$ discontinuity condition.
+
+\textbf{Step 4.} Establish (i)$\Leftrightarrow$(iii) by translating between metric and neighbourhood language.
+The $\varepsilon$-$\delta$ condition uses the neighbourhood $V=(f(x_0)-\varepsilon_0, f(x_0)+\varepsilon_0)$ of $f(x_0)$ and arbitrary neighbourhoods $U=(x_0-\delta, x_0+\delta)$ of $x_0$. The condition $|f(x)-f(x_0)|\ge \varepsilon_0$ is precisely equivalent to $f(x)\notin V$, and $|x-x_0|<\delta$ means $x \in U$. Since every neighbourhood of $x_0$ contains some interval $(x_0-\delta, x_0+\delta)$ and every neighbourhood of $f(x_0)$ contains some interval $(f(x_0)-\varepsilon, f(x_0)+\varepsilon)$, the two formulations are equivalent.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This equivalence proof uses the standard technique of cyclic implications between three conditions. The connection between $\varepsilon$-$\delta$ and sequential formulations relies on the fundamental construction of bad sequences using $\delta=1/n$ and the characterization of non-convergence through eventual bounds. The neighbourhood formulation is simply a topological restatement of the metric condition using open intervals, demonstrating how continuity concepts translate between metric and topological settings.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:epsilon-delta-discontinuity-at-a-point]{Definition of Epsilon-Delta Discontinuity at a Point}
+  \item \hyperref[def:sequential-discontinuity-at-a-point]{Definition of Sequential Discontinuity at a Point}
+  \item \hyperref[def:neighborhood-discontinuity-at-a-point]{Definition of Neighbourhood Discontinuity at a Point}
+  \item Definition of convergence of a sequence
+  \item Negation of convergence of a sequence
+\end{itemize}
+\end{remark*}

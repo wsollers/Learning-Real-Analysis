@@ -1,0 +1,48 @@
+\newpage
+\phantomsection
+\label{prf:monotone-one-sided-limits}
+
+\begin{remark*}[Return]
+\hyperref[thm:monotone-one-sided-limits]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[One-Sided Limits of Monotone Functions]
+Let $f : I \to \mathbb{R}$ be monotone increasing on the interval $I$, and let $c \in I$ be an interior point. Then both one-sided limits of $f$ at $c$ exist and are given by
+\[
+  \lim_{x \to c^{-}} f(x) = \sup\{f(x) : x < c,\, x \in I\}
+  \qquad \text{and} \qquad
+  \lim_{x \to c^{+}} f(x) = \inf\{f(x) : x > c,\, x \in I\}.
+\]
+Moreover, $f(c^{-}) \leq f(c) \leq f(c^{+})$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Define $S \coloneqq \{f(x) : x \in I,\, x < c\}$ and $J \coloneqq \{f(x) : x \in I,\, x > c\}$. Since $c$ is interior, there exist $a, b \in I$ with $a < c < b$. Monotonicity implies $S \subseteq (-\infty, f(b)]$ and $J \subseteq [f(a), +\infty)$, so $s \coloneqq \sup S$ and $j \coloneqq \inf J$ exist. For the left limit: given $\varepsilon > 0$, since $s - \varepsilon$ is not an upper bound of $S$, there exists $x_0 < c$ with $f(x_0) > s - \varepsilon$. Set $\delta \coloneqq c - x_0 > 0$. For $x \in (c - \delta, c) \cap I$, monotonicity gives $s - \varepsilon < f(x_0) \leq f(x) \leq s$, hence $|f(x) - s| < \varepsilon$. For the right limit: given $\varepsilon > 0$, there exists $x_1 > c$ with $f(x_1) < j + \varepsilon$. Set $\delta \coloneqq x_1 - c > 0$. For $x \in (c, c + \delta) \cap I$, monotonicity gives $j \leq f(x) \leq f(x_1) < j + \varepsilon$, hence $|f(x) - j| < \varepsilon$. The ordering follows since $f(c)$ is an upper bound of $S$ and a lower bound of $J$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Define the sets $S \coloneqq \{f(x) : x \in I,\, x < c\}$ and $J \coloneqq \{f(x) : x \in I,\, x > c\}$. Since $c$ is an interior point of $I$, there exist points $a, b \in I$ with $a < c < b$. The monotonicity of $f$ ensures that every element of $S$ satisfies $f(x) \leq f(b)$ and every element of $J$ satisfies $f(x) \geq f(a)$. Therefore both sets are bounded, and the supremum $s \coloneqq \sup S$ and infimum $j \coloneqq \inf J$ exist in $\mathbb{R}$.
+
+\textbf{Step 2.} Establish the left-hand limit $\lim_{x \to c^{-}} f(x) = s$. Let $\varepsilon > 0$ be given. Since $s$ is the supremum of $S$, the value $s - \varepsilon$ fails to be an upper bound of $S$. Therefore there exists some $x_0 \in I$ with $x_0 < c$ and $f(x_0) > s - \varepsilon$. Define $\delta \coloneqq c - x_0 > 0$. For any $x \in I$ satisfying $c - \delta < x < c$, equivalently $x_0 < x < c$, the monotonicity of $f$ gives $f(x_0) \leq f(x)$, so $f(x) > s - \varepsilon$. Since $f(x) \in S$, the definition of supremum ensures $f(x) \leq s$. Combined, this gives $|f(x) - s| < \varepsilon$.
+
+\textbf{Step 3.} Establish the right-hand limit $\lim_{x \to c^{+}} f(x) = j$. Let $\varepsilon > 0$ be given. Since $j$ is the infimum of $J$, the value $j + \varepsilon$ fails to be a lower bound of $J$. Therefore there exists some $x_1 \in I$ with $x_1 > c$ and $f(x_1) < j + \varepsilon$. Define $\delta \coloneqq x_1 - c > 0$. For any $x \in I$ satisfying $c < x < c + \delta$, equivalently $c < x < x_1$, the monotonicity of $f$ gives $f(x) \leq f(x_1)$, so $f(x) < j + \varepsilon$. Since $f(x) \in J$, the definition of infimum ensures $f(x) \geq j$. Combined, this gives $|f(x) - j| < \varepsilon$.
+
+\textbf{Step 4.} Verify the ordering $f(c^{-}) \leq f(c) \leq f(c^{+})$. For every $x \in I$ with $x < c$, monotonicity gives $f(x) \leq f(c)$, making $f(c)$ an upper bound of the set $S$. Since $s = \sup S$ is the least upper bound, this forces $s \leq f(c)$. Similarly, for every $x \in I$ with $x > c$, monotonicity gives $f(x) \geq f(c)$, making $f(c)$ a lower bound of the set $J$. Since $j = \inf J$ is the greatest lower bound, this forces $f(c) \leq j$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The argument is a direct $\varepsilon$-$\delta$ proof driven by the supremum and infimum characterizations of the one-sided limits. For the left-hand limit, the supremum $s$ defines the target value; the defining property that $s - \varepsilon$ is not an upper bound supplies the witness point $x_0$; setting $\delta = c - x_0$ ensures that every $x$ in the punctured left neighborhood lies above $x_0$, whereupon monotonicity squeezes $f(x)$ into the interval $(s - \varepsilon, s]$. The right-hand argument mirrors this construction using the infimum. The final ordering relationship follows immediately from applying monotonicity to characterize $f(c)$ as both an upper bound for the left set and a lower bound for the right set.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[ax:completeness]{Completeness of $\mathbb{R}$}
+  \item \hyperref[def:supremum]{Definition of supremum}
+  \item \hyperref[def:infimum]{Definition of infimum}
+  \item \hyperref[def:monotone-function]{Definition of monotone function}
+  \item \hyperref[def:one-sided-limit]{Definition of one-sided limit}
+\end{itemize}
+\end{remark*}

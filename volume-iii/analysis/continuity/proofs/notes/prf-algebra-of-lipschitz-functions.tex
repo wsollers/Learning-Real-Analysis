@@ -1,0 +1,72 @@
+\newpage
+\phantomsection
+\label{prf:algebra-of-lipschitz-functions}
+
+\begin{remark*}[Return]
+\hyperref[thm:algebra-of-lipschitz-functions]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Algebra of Lipschitz Functions]
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$ be Lipschitz on $A$ with constants $K_f$ and $K_g$ respectively, and let $c \in \mathbb{R}$. Then:
+\begin{enumerate}
+\item[(a)] $cf$ is Lipschitz with constant $|c|K_f$
+\item[(b)] $f + g$ and $f - g$ are Lipschitz with constant $K_f + K_g$
+\item[(c)] If $h : B \to \mathbb{R}$ is Lipschitz on $B$ with constant $K_h$ and $f(A) \subseteq B$, then $h \circ f$ is Lipschitz on $A$ with constant $K_h K_f$
+\item[(d)] If $|f| \leq M_f$ and $|g| \leq M_g$ on $A$, then $fg$ is Lipschitz with constant $M_g K_f + M_f K_g$
+\item[(e)] If $|f| \leq M_f$ and $|g(x)| \geq k > 0$ for all $x \in A$, then $f/g$ is Lipschitz with constant $K_f/k + M_f K_g/k^2$
+\end{enumerate}
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+(a) For $x, u \in A$: $|cf(x) - cf(u)| = |c|\,|f(x) - f(u)| \leq |c| K_f |x - u|$.
+
+(b) Triangle inequality gives $|(f + g)(x) - (f + g)(u)| \leq |f(x) - f(u)| + |g(x) - g(u)| \leq (K_f + K_g)|x - u|$. Same bound for $f - g$.
+
+(c) Chain inequalities: $|h(f(x)) - h(f(u))| \leq K_h |f(x) - f(u)| \leq K_h K_f |x - u|$.
+
+(d) Add-subtract identity: $(fg)(x) - (fg)(u) = f(x)(g(x) - g(u)) + g(u)(f(x) - f(u))$. Then $|(fg)(x) - (fg)(u)| \leq |f(x)|\,|g(x) - g(u)| + |g(u)|\,|f(x) - f(u)| \leq M_f K_g |x - u| + M_g K_f |x - u|$.
+
+(e) First show $1/g$ is Lipschitz with constant $K_g/k^2$: $|1/g(x) - 1/g(u)| = |g(x) - g(u)|/|g(x)g(u)| \leq K_g|x - u|/k^2$. Then apply (d) to $f \cdot (1/g)$ with $M_{1/g} = 1/k$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the scalar multiple property.
+For any $x, u \in A$, the definition of scalar multiplication gives
+\[|cf(x) - cf(u)| = |c|\,|f(x) - f(u)|.\]
+Since $f$ is Lipschitz with constant $K_f$, one has $|f(x) - f(u)| \leq K_f |x - u|$. Substituting yields $|cf(x) - cf(u)| \leq |c| K_f |x - u|$, establishing that $cf$ is Lipschitz with constant $|c|K_f$.
+
+\textbf{Step 2.} Prove the sum and difference properties.
+The Lipschitz conditions on $f$ and $g$ give $|f(x) - f(u)| \leq K_f|x - u|$ and $|g(x) - g(u)| \leq K_g|x - u|$ for all $x, u \in A$. The triangle inequality applied to the sum yields
+\[|(f + g)(x) - (f + g)(u)| \leq |f(x) - f(u)| + |g(x) - g(u)| \leq (K_f + K_g)|x - u|.\]
+For the difference, since $|{-}(g(x) - g(u))| = |g(x) - g(u)|$, the same bound $(K_f + K_g)|x - u|$ applies.
+
+\textbf{Step 3.} Establish the composition property.
+For the composite function $h \circ f$, one applies the Lipschitz condition for $h$ first, then for $f$:
+\[|h(f(x)) - h(f(u))| \leq K_h |f(x) - f(u)| \leq K_h K_f |x - u|.\]
+This establishes that $h \circ f$ is Lipschitz with constant $K_h K_f$.
+
+\textbf{Step 4.} Prove the product property for bounded functions.
+The key insight is the add-subtract identity: $(fg)(x) - (fg)(u) = f(x)(g(x) - g(u)) + g(u)(f(x) - f(u))$. Taking absolute values and applying the triangle inequality:
+\[|(fg)(x) - (fg)(u)| \leq |f(x)|\,|g(x) - g(u)| + |g(u)|\,|f(x) - f(u)|.\]
+The boundedness conditions $|f| \leq M_f$ and $|g| \leq M_g$ together with the Lipschitz conditions yield
+\[|(fg)(x) - (fg)(u)| \leq M_f K_g |x - u| + M_g K_f |x - u| = (M_g K_f + M_f K_g)|x - u|.\]
+
+\textbf{Step 5.} Establish the quotient property.
+First, establish that $1/g$ is Lipschitz. For the difference quotient:
+\[\left|\frac{1}{g(x)} - \frac{1}{g(u)}\right| = \frac{|g(x) - g(u)|}{|g(x)g(u)|} \leq \frac{K_g |x - u|}{k^2},\]
+using $|g(x)|, |g(u)| \geq k$. Thus $1/g$ is Lipschitz with constant $K_g/k^2$. Since $f/g = f \cdot (1/g)$ and $|1/g| \leq 1/k$, applying the product rule from Step 4 gives the Lipschitz constant $K_f/k + M_f K_g/k^2$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof employs direct verification of the Lipschitz condition for each operation. Parts (a) and (b) use elementary properties of absolute values and the triangle inequality. Part (c) chains two Lipschitz inequalities in succession. Part (d) relies on an algebraic identity to separate the product into manageable terms that can be bounded using the given conditions. Part (e) reduces to part (d) by first establishing that the reciprocal of a bounded-away-from-zero Lipschitz function is itself Lipschitz.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:lipschitz-continuity]{Definition of Lipschitz continuity}
+  \item Triangle inequality for $|\cdot|$ on $\mathbb{R}$
+\end{itemize}
+\end{remark*}

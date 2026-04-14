@@ -1,0 +1,200 @@
+% =========================================================
+% Hyperbolic Functions — Notes
+% Chapter: elementary-functions
+% Section: hyperbolic
+% Volume III · Analysis
+% =========================================================
+
+\section{Hyperbolic Functions}
+\label{sec:hyperbolic}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Hyperbolic Functions}]
+\begin{itemize}
+  \item $\cosh x = (e^x + e^{-x})/2$: even part of $e^x$;\;
+    $\cosh x \geq 1$;\; $\cosh 0 = 1$.
+  \item $\sinh x = (e^x - e^{-x})/2$: odd part of $e^x$;\;
+    bijective $\mathbb{R} \to \mathbb{R}$.
+  \item $e^x = \cosh x + \sinh x$ for all $x$.
+  \item Hyperbolic Pythagorean: $\cosh^2 x - \sinh^2 x = 1$
+    (note the minus sign, not plus).
+  \item $(\sinh x)' = \cosh x$;\; $(\cosh x)' = \sinh x$
+    (no sign change, unlike trigonometric).
+  \item $\tanh x \in (-1,1)$ for all $x$;\;
+    $\tanh x \to \pm 1$ as $x \to \pm\infty$.
+  \item Inverse hyperbolic functions have explicit logarithmic formulas.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Hyperbolic Functions
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Hyperbolic Functions}]
+\begin{definition}[Hyperbolic Functions]
+\label{def:hyperbolic}
+For all $x \in \mathbb{R}$:
+\[
+  \cosh x \;:=\; \frac{e^x + e^{-x}}{2},
+  \qquad
+  \sinh x \;:=\; \frac{e^x - e^{-x}}{2},
+  \qquad
+  \tanh x \;:=\; \frac{\sinh x}{\cosh x}.
+\]
+Additional: $\operatorname{sech} x := 1/\cosh x$,\;
+$\operatorname{csch} x := 1/\sinh x$,\;
+$\coth x := \cosh x / \sinh x$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in \mathbb{R} :\;
+  \cosh x = \frac{e^x + e^{-x}}{2} \geq 1,\;
+  \sinh x = \frac{e^x - e^{-x}}{2} \in \mathbb{R},\;
+  e^x = \cosh x + \sinh x.
+\]
+\end{remark*}
+
+\begin{remark*}[Contrast with trigonometric functions]
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\textbf{Trigonometric} & \textbf{Hyperbolic} \\
+$\cos^2 x + \sin^2 x = 1$ & $\cosh^2 x - \sinh^2 x = 1$ \\
+$(\cos x)' = -\sin x$ & $(\cosh x)' = \sinh x$ \\
+$(\sin x)' = \cos x$ & $(\sinh x)' = \cosh x$ \\
+$e^{ix} = \cos x + i\sin x$ & $e^x = \cosh x + \sinh x$ \\
+Parametrises unit circle & Parametrises unit hyperbola \\
+\end{tabular}
+\end{center}
+The minus sign in $\cosh^2 - \sinh^2 = 1$ versus $\cos^2 + \sin^2 =
+1$ reflects the substitution $x \mapsto ix$ in Euler's formula.
+The derivative formulas have no sign alternation for hyperbolic
+functions: both $\cosh$ and $\sinh$ differentiate to each other
+without minus signs.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Hyperbolic Pythagorean Identity
+% ---------------------------------------------------------
+
+\begin{proposition}[Hyperbolic Pythagorean Identity]
+\label{prop:hyperbolic-pythagorean}
+For all $x \in \mathbb{R}$:
+\[
+  \cosh^2 x - \sinh^2 x = 1.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:hyperbolic-pythagorean]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof]
+Direct computation:
+\[
+  \cosh^2 x - \sinh^2 x
+  = \frac{(e^x+e^{-x})^2}{4} - \frac{(e^x-e^{-x})^2}{4}
+  = \frac{(e^{2x}+2+e^{-2x}) - (e^{2x}-2+e^{-2x})}{4}
+  = \frac{4}{4} = 1.
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Addition Formulas
+% ---------------------------------------------------------
+
+\begin{proposition}[Addition Formulas for Hyperbolic Functions]
+\label{prop:hyperbolic-addition}
+For all $x, y \in \mathbb{R}$:
+\[
+  \sinh(x+y) = \sinh x \cosh y + \cosh x \sinh y,
+  \qquad
+  \cosh(x+y) = \cosh x \cosh y + \sinh x \sinh y.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:hyperbolic-addition]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof strategy]
+Substitute the definitions and expand, or note the formulas follow
+from $e^{x+y} = e^x e^y$ by taking even and odd parts.
+\end{remark*}
+
+\begin{remark*}[Comparison with trigonometric addition formulas]
+The $\sinh$ formula matches $\sin(x+y)$ exactly. The $\cosh$ formula
+differs from $\cos(x+y)$ in the sign of the last term: $+\sinh x
+\sinh y$ versus $-\sin x \sin y$. The sign difference is a direct
+consequence of $\cosh^2 - \sinh^2 = 1$ versus $\cos^2 + \sin^2 = 1$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Limits of tanh
+% ---------------------------------------------------------
+
+\begin{proposition}[Limits of $\tanh$]
+\label{prop:tanh-limits}
+\[
+  \lim_{x \to +\infty} \tanh x = 1,
+  \qquad
+  \lim_{x \to -\infty} \tanh x = -1.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:tanh-limits]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof strategy]
+Write $\tanh x = (1 - e^{-2x})/(1 + e^{-2x})$. As $x \to +\infty$,
+$e^{-2x} \to 0$, giving $\tanh x \to 1$. The limit at $-\infty$
+follows by oddness: $\tanh(-x) = -\tanh(x)$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Inverse Hyperbolic Functions
+% ---------------------------------------------------------
+
+\begin{definition}[Inverse Hyperbolic Functions]
+\label{def:inverse-hyperbolic}
+Since $\sinh$ is strictly increasing and bijective $\mathbb{R} \to
+\mathbb{R}$, its inverse $\operatorname{arcsinh}$ is defined on all
+of $\mathbb{R}$. Since $\cosh$ is strictly increasing on
+$[0,\infty)$ with range $[1,\infty)$, its inverse
+$\operatorname{arccosh}$ is defined on $[1,\infty)$. Since $\tanh$
+is strictly increasing with range $(-1,1)$, $\operatorname{arctanh}$
+is defined on $(-1,1)$.
+
+Explicit logarithmic formulas:
+\begin{align*}
+  \operatorname{arcsinh} x
+  &= \ln\!\left(x + \sqrt{x^2+1}\right),
+  \quad x \in \mathbb{R}. \\
+  \operatorname{arccosh} x
+  &= \ln\!\left(x + \sqrt{x^2-1}\right),
+  \quad x \geq 1. \\
+  \operatorname{arctanh} x
+  &= \tfrac{1}{2}\ln\!\left(\frac{1+x}{1-x}\right),
+  \quad |x| < 1.
+\end{align*}
+\end{definition}
+
+\begin{remark*}[Derivation of $\operatorname{arcsinh}$]
+Set $y = \sinh x = (e^x - e^{-x})/2$ and let $u = e^x > 0$. Then
+$y = (u - 1/u)/2$, so $u^2 - 2yu - 1 = 0$. The positive root of
+the quadratic is $u = y + \sqrt{y^2+1}$, giving $x = \ln(y +
+\sqrt{y^2+1})$.
+\end{remark*}
+
+\begin{remark*}[Derivatives]
+$(\operatorname{arcsinh} x)' = 1/\sqrt{x^2+1}$;\;
+$(\operatorname{arccosh} x)' = 1/\sqrt{x^2-1}$ for $x > 1$;\;
+$(\operatorname{arctanh} x)' = 1/(1-x^2)$ for $|x| < 1$.
+These follow from the inverse function theorem applied to $\sinh$,
+$\cosh$, and $\tanh$ respectively.
+\end{remark*}

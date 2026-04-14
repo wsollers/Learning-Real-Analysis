@@ -1,0 +1,55 @@
+\newpage
+\phantomsection
+\label{prf:image-of-closed-bounded-interval-is-interval}
+
+\begin{remark*}[Return]
+\hyperref[thm:image-of-closed-bounded-interval]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Image of a Closed Bounded Interval Is a Closed Bounded Interval]
+Let $f : [a,b] \to \mathbb{R}$ be continuous on the closed bounded interval $[a,b]$. Then $f([a,b]) = [m, M]$, where $m = \inf f([a,b])$ and $M = \sup f([a,b])$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Since $[a,b]$ is closed and bounded and $f$ is continuous, the Extreme Value Theorem guarantees the existence of points $x_m, x_M \in [a,b]$ such that $f(x_m) = m := \min f([a,b])$ and $f(x_M) = M := \max f([a,b])$. Every value of $f$ lies in $[m, M]$, so $f([a,b]) \subseteq [m, M]$.
+
+For the reverse inclusion, let $k \in [m,M]$. If $k = m$, then $f(x_m) = k$, so $k \in f([a,b])$. If $k = M$, then $f(x_M) = k$, so $k \in f([a,b])$. If $m < k < M$, then $f(x_m) = m < k < M = f(x_M)$, and the Intermediate Value Theorem applied to $f$ on the subinterval $[\min(x_m, x_M), \max(x_m, x_M)] \subseteq [a,b]$ produces $c$ between $x_m$ and $x_M$ with $f(c) = k$. Therefore $[m,M] \subseteq f([a,b])$, and hence $f([a,b]) = [m, M]$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Apply the Extreme Value Theorem to establish endpoints.
+
+Since $f$ is continuous on the closed bounded interval $[a,b]$, the Extreme Value Theorem guarantees that $f$ attains its minimum and maximum values. Therefore there exist points $x_m, x_M \in [a,b]$ such that $f(x_m) = m := \min f([a,b])$ and $f(x_M) = M := \max f([a,b])$. By definition of minimum and maximum, every value $f(x)$ for $x \in [a,b]$ satisfies $m \leq f(x) \leq M$, which establishes $f([a,b]) \subseteq [m, M]$.
+
+\textbf{Step 2.} Prove the reverse inclusion by exhaustive case analysis.
+
+To show $[m,M] \subseteq f([a,b])$, consider any $k \in [m,M]$ and establish that $k \in f([a,b])$. There are three exhaustive cases: $k = m$, $k = M$, or $m < k < M$.
+
+\textbf{Step 3.} Handle the boundary cases using EVT witnesses.
+
+If $k = m$, then $k = f(x_m)$ by the choice of $x_m$, so $k \in f([a,b])$. If $k = M$, then $k = f(x_M)$ by the choice of $x_M$, so $k \in f([a,b])$. The Extreme Value Theorem witnesses directly provide these boundary values.
+
+\textbf{Step 4.} Handle the strict interior case using the Intermediate Value Theorem.
+
+If $m < k < M$, then $f(x_m) = m < k < M = f(x_M)$. The interval $[\min(x_m, x_M), \max(x_m, x_M)]$ is a subinterval of $[a,b]$ on which $f$ remains continuous. Since $f$ takes values $m$ and $M$ at the endpoints of this subinterval and $k$ lies strictly between these values, the Intermediate Value Theorem guarantees the existence of some $c$ in this subinterval with $f(c) = k$. Therefore $k \in f([a,b])$.
+
+\textbf{Step 5.} Conclude the equality of sets.
+
+Since every $k \in [m,M]$ belongs to $f([a,b])$ by the case analysis in Steps 3-4, the inclusion $[m,M] \subseteq f([a,b])$ holds. Combined with the reverse inclusion from Step 1, this establishes $f([a,b]) = [m,M]$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This proof employs a direct approach using two set containments. The inclusion $f([a,b]) \subseteq [m,M]$ follows immediately from the definition of minimum and maximum values guaranteed by the Extreme Value Theorem. The reverse inclusion $[m,M] \subseteq f([a,b])$ requires exhaustive case analysis: the boundary cases $k = m$ and $k = M$ are handled by the EVT witnesses directly, while the strict interior case $m < k < M$ invokes the Intermediate Value Theorem on an appropriate subinterval. This partition cleanly separates the roles of EVT and IVT.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:extreme-value-theorem]{Extreme Value Theorem}
+  \item \hyperref[thm:intermediate-value-theorem]{Intermediate Value Theorem}
+  \item \hyperref[def:continuous-function]{Definition of Continuous Function}
+  \item \hyperref[def:closed-bounded-interval]{Definition of Closed Bounded Interval}
+\end{itemize}
+\end{remark*}

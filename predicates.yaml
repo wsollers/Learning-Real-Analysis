@@ -146,6 +146,77 @@ predicates:
   formal: LowerBound(t,A) \land \forall l \; (LowerBound(l,A) \rightarrow l \le t)
 
 # =========================================================
+# Tolerance / Proximity
+# =========================================================
+#
+# These three predicates are the primitive metric ingredients
+# of every epsilon-delta argument. They compose to give the
+# standard readings for limits, continuity, and uniform
+# continuity without repeating the raw inequality syntax.
+#
+#   Within(x, c, r)         -- x lies within radius r of c
+#                              (the ball condition, input or output)
+#
+#   InputTolerance(x, c, delta)  -- x is a valid input:
+#                              strictly within delta of c,
+#                              but x != c  (the punctured condition)
+#
+#   OutputTolerance(y, L, eps)   -- y is an acceptable output:
+#                              within eps of the target L
+#
+# Usage pattern (function limit):
+#
+#   FunctionLimit(f, c, L)
+#   :=  forall eps > 0,
+#       exists delta > 0,
+#       forall x in A :
+#       InputTolerance(x, c, delta)  ->  OutputTolerance(f(x), L, eps)
+#
+# =========================================================
+
+- id: pred:within
+  name: Within
+  category: tolerance
+  arity: 3
+  arguments: [x, c, r]
+  optional_arguments: []
+  formal: |x - c| < r
+  note: >
+    General proximity predicate. x lies strictly within radius r of
+    center c. Used for both input and output conditions when the
+    punctured (x != c) distinction is not required. In metric space
+    contexts, replace |x - c| with d(x, c).
+
+- id: pred:input-tolerance
+  name: InputTolerance
+  category: tolerance
+  arity: 3
+  arguments: [x, c, \delta]
+  optional_arguments: []
+  formal: 0 < |x - c| < \delta
+  note: >
+    Punctured proximity predicate for limit arguments. Asserts that
+    x is within delta of c but is not equal to c. This is the
+    standard input condition in epsilon-delta definitions of function
+    limits. Contrast with Within(x, c, delta) which permits x = c
+    and is the correct input condition for continuity (where x = c
+    is allowed).
+
+- id: pred:output-tolerance
+  name: OutputTolerance
+  category: tolerance
+  arity: 3
+  arguments: [y, L, \varepsilon]
+  optional_arguments: []
+  formal: |y - L| < \varepsilon
+  note: >
+    Output approximation predicate. Asserts that y is within
+    varepsilon of the target value L. This is the standard output
+    condition in all epsilon-delta arguments. When y = f(x), the
+    reading is: the output f(x) is within the prescribed tolerance
+    varepsilon of the limit L.
+
+# =========================================================
 # Completeness
 # =========================================================
 
@@ -446,7 +517,18 @@ predicates:
   arguments: [f, c, L]
   optional_arguments: [d_dom, d_cod]
   signature: FunctionLimit(f, c, L [, d_dom, d_cod])
-  formal: \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x \; (0 < |x-c| < \delta \rightarrow |f(x)-L| < \varepsilon)
+  formal: >
+    \forall\,\operatorname{OutputTolerance}(\varepsilon),\;
+    \exists\,\operatorname{InputTolerance}(\delta),\;
+    \forall x \in A :\;
+    \operatorname{InputTolerance}(x, c, \delta)
+    \;\Rightarrow\;
+    \operatorname{OutputTolerance}(f(x), L, \varepsilon)
+  note: >
+    Quantifiers are typed: OutputTolerance(eps) names the demanded
+    precision; InputTolerance(delta) names the responding tolerance.
+    The input condition is punctured (0 < |x-c| < delta), distinguishing
+    this from ContinuousAt where Within(x, c, delta) permits x = c.
 
 - id: pred:left-limit
   name: LeftLimit
@@ -487,7 +569,18 @@ predicates:
   arguments: [f, c]
   optional_arguments: [d_dom, d_cod]
   signature: ContinuousAt(f, c [, d_dom, d_cod])
-  formal: FunctionLimit(f,c,f(c))
+  formal: >
+    \forall\,\operatorname{OutputTolerance}(\varepsilon),\;
+    \exists\,\operatorname{InputTolerance}(\delta),\;
+    \forall x \in A :\;
+    \operatorname{Within}(x, c, \delta)
+    \;\Rightarrow\;
+    \operatorname{OutputTolerance}(f(x), f(c), \varepsilon)
+  note: >
+    Input condition is Within (not InputTolerance): x = c is permitted.
+    This is the key structural difference from FunctionLimit, where
+    the input condition is punctured. ContinuousAt = FunctionLimit
+    with target f(c) and unpunctured input condition.
 
 - id: pred:continuous-on
   name: ContinuousOn
@@ -505,7 +598,18 @@ predicates:
   arguments: [f, A]
   optional_arguments: [d_dom, d_cod]
   signature: UniformlyContinuous(f, A [, d_dom, d_cod])
-  formal: \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,y \in A \; (|x-y|<\delta \rightarrow |f(x)-f(y)|<\varepsilon)
+  formal: >
+    \forall\,\operatorname{OutputTolerance}(\varepsilon),\;
+    \exists\,\operatorname{InputTolerance}(\delta),\;
+    \forall x, u \in A :\;
+    \operatorname{Within}(x, u, \delta)
+    \;\Rightarrow\;
+    \operatorname{OutputTolerance}(f(x), f(u), \varepsilon)
+  note: >
+    Both x and u range over A with Within (unpunctured): no base point,
+    no exclusion of x = u. The single delta responds to eps across all
+    pairs simultaneously — this is the global-vs-pointwise distinction
+    from ContinuousOn, where delta may depend on c.
 
 - id: pred:lipschitz
   name: Lipschitz

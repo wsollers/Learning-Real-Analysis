@@ -1,0 +1,47 @@
+\newpage
+\phantomsection
+\label{prf:image-is-closed-and-bounded}
+
+\begin{remark*}[Return]
+\hyperref[lem:image-closed-bounded-closed-bounded]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Image on Closed Bounded Interval Is Closed and Bounded]
+Let $f : [a,b] \to \mathbb{R}$ be continuous on the closed bounded interval $[a,b]$. Then $f([a,b])$ is closed and bounded.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+The two conclusions are established independently.
+
+\textit{Boundedness.} For each $x \in [a,b]$, continuity provides $\delta_x > 0$ such that $|f(t) - f(x)| < 1$ for $|t - x| < \delta_x$. The open cover $(x - \delta_x, x + \delta_x)_{x \in [a,b]}$ of $[a,b]$ admits a finite subcover by Heine--Borel. Thus there exist $x_1, \ldots, x_n \in [a,b]$ such that $[a,b] \subseteq \bigcup_{i=1}^{n} (x_i - \delta_{x_i}, x_i + \delta_{x_i})$. For any $t \in [a,b]$, some interval contains $t$, giving $|f(t)| \leq |f(t) - f(x_i)| + |f(x_i)| < 1 + |f(x_i)|$. Setting $M := 1 + \max_{1 \leq i \leq n} |f(x_i)|$ yields $|f(t)| < M$ for all $t \in [a,b]$.
+
+\textit{Closedness.} Let $(y_n)$ be a sequence in $f([a,b])$ converging to $y \in \mathbb{R}$. For each $n$, choose $x_n \in [a,b]$ with $f(x_n) = y_n$. Since $(x_n)$ is bounded, Bolzano--Weierstrass provides a convergent subsequence $x_{n_k} \to c$. Since $[a,b]$ is closed and $x_{n_k} \in [a,b]$, the limit $c \in [a,b]$. Continuity at $c$ gives $f(x_{n_k}) \to f(c)$. Since $f(x_{n_k}) = y_{n_k}$ and $y_{n_k} \to y$, uniqueness of limits yields $f(c) = y$. Thus $y \in f([a,b])$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish boundedness using finite subcover technique. Since $f$ is continuous at each $x \in [a,b]$, for $\varepsilon = 1$ there exists $\delta_x > 0$ such that $|t - x| < \delta_x$ implies $|f(t) - f(x)| < 1$. The collection of open intervals $(x - \delta_x, x + \delta_x)$ for $x \in [a,b]$ forms an open cover of $[a,b]$. Since $[a,b]$ is compact, the Heine--Borel Theorem guarantees the existence of finitely many points $x_1, \ldots, x_n \in [a,b]$ such that $[a,b] \subseteq \bigcup_{i=1}^{n} (x_i - \delta_{x_i}, x_i + \delta_{x_i})$.
+
+\textbf{Step 2.} Show function values are uniformly bounded. For any $t \in [a,b]$, the point $t$ belongs to some interval $(x_i - \delta_{x_i}, x_i + \delta_{x_i})$, which gives $|f(t) - f(x_i)| < 1$. By the triangle inequality, $|f(t)| \leq |f(t) - f(x_i)| + |f(x_i)| < 1 + |f(x_i)|$. Define $M := 1 + \max_{1 \leq i \leq n} |f(x_i)|$, which is finite since it involves only finitely many values. Then $|f(t)| < M$ for all $t \in [a,b]$, proving $f([a,b])$ is bounded.
+
+\textbf{Step 3.} Establish closedness using sequential characterization. Let $(y_n)$ be any sequence in $f([a,b])$ converging to some $y \in \mathbb{R}$. Since each $y_n \in f([a,b])$, there exists $x_n \in [a,b]$ such that $f(x_n) = y_n$. The sequence $(x_n)$ is bounded since $a \leq x_n \leq b$ for all $n$.
+
+\textbf{Step 4.} Extract convergent subsequence and identify limit. By the Bolzano--Weierstrass Theorem, the bounded sequence $(x_n)$ has a convergent subsequence $(x_{n_k})$ with limit $c \in \mathbb{R}$. Since $[a,b]$ is closed and each $x_{n_k} \in [a,b]$, the limit $c$ must belong to $[a,b]$.
+
+\textbf{Step 5.} Apply continuity to complete the argument. Since $f$ is continuous at $c$, the sequential characterization of continuity gives $f(x_{n_k}) \to f(c)$. Since $f(x_{n_k}) = y_{n_k}$ and $(y_{n_k})$ is a subsequence of the convergent sequence $(y_n)$, it follows that $y_{n_k} \to y$. By uniqueness of limits, $f(c) = y$, which shows $y = f(c) \in f([a,b])$. Since every convergent sequence in $f([a,b])$ has its limit in $f([a,b])$, the set $f([a,b])$ is closed.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof proceeds by two independent arguments that share no common machinery. For boundedness, the strategy is to exploit compactness: cover $[a,b]$ with continuity neighborhoods where function values are controlled, extract a finite subcover by Heine--Borel, then take the maximum over finitely many function values at the centers. For closedness, the approach uses the sequential characterization of closed sets: lift any convergent sequence $(y_n)$ in the image to preimage points $(x_n)$ in $[a,b]$, extract a convergent subsequence by Bolzano--Weierstrass, retain the limit in $[a,b]$ by closedness of the domain, then push forward by continuity to show the original limit belongs to the image.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:heine-borel]{Heine--Borel Theorem}
+  \item \hyperref[thm:bolzano-weierstrass]{Bolzano--Weierstrass Theorem}
+  \item \hyperref[thm:continuity-three-equiv]{Sequential characterization of continuity}
+  \item \hyperref[thm:uniqueness-of-limits]{Uniqueness of limits}
+\end{itemize}
+\end{remark*}

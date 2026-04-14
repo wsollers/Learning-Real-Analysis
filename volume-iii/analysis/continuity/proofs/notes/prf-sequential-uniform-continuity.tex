@@ -1,0 +1,51 @@
+\newpage
+\phantomsection
+\label{prf:sequential-uniform-continuity}
+
+\begin{remark*}[Return]
+\hyperref[prop:sequential-uniform-continuity]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Sequential Characterization of Uniform Continuity]
+Let $X \subseteq \mathbb{R}$ and $f : X \to \mathbb{R}$.
+Then $f$ is uniformly continuous on $X$ if and only if
+for every pair of sequences $(x_n)$, $(y_n)$ in $X$ with
+$|x_n - y_n| \to 0$, we have $|f(x_n) - f(y_n)| \to 0$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+$(\Rightarrow)$ Assume $f$ is uniformly continuous on $X$. Let $(x_n)$ and $(y_n)$ be sequences in $X$ with $|x_n - y_n| \to 0$. Fix $\varepsilon > 0$. By uniform continuity, there exists $\delta > 0$ such that for all $x, y \in X$, $|x - y| < \delta$ implies $|f(x) - f(y)| < \varepsilon$. Since $|x_n - y_n| \to 0$, there exists $N \in \mathbb{N}$ such that $|x_n - y_n| < \delta$ for all $n > N$. Applying the uniform continuity condition gives $|f(x_n) - f(y_n)| < \varepsilon$ for all $n > N$. Since $\varepsilon > 0$ was arbitrary, $|f(x_n) - f(y_n)| \to 0$.
+
+$(\Leftarrow)$ Suppose $f$ is not uniformly continuous on $X$. By the Non-Uniform Continuity Criteria, there exist $\varepsilon_0 > 0$ and sequences $(x_n)$, $(y_n)$ in $X$ such that $|x_n - y_n| \to 0$ and $|f(x_n) - f(y_n)| \geq \varepsilon_0$ for all $n \in \mathbb{N}$. But then $|f(x_n) - f(y_n)| \not\to 0$, contradicting the hypothesis. Therefore $f$ is uniformly continuous on $X$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the forward implication by $\varepsilon$-$\delta$ convergence control.
+Assume $f$ is uniformly continuous on $X$, and let $(x_n)$, $(y_n)$ be sequences in $X$ with $|x_n - y_n| \to 0$. To show $|f(x_n) - f(y_n)| \to 0$, fix arbitrary $\varepsilon > 0$. The uniform continuity of $f$ provides $\delta > 0$ such that whenever $x, y \in X$ satisfy $|x - y| < \delta$, then $|f(x) - f(y)| < \varepsilon$. This uniform bound applies to all pairs in $X$, not just those near a specific point.
+
+\textbf{Step 2.} Apply convergence hypothesis to obtain eventual proximity of sequence terms.
+Since $|x_n - y_n| \to 0$, the convergence definition provides $N \in \mathbb{N}$ such that $|x_n - y_n| < \delta$ for all $n > N$. This bridges the gap between the convergence assumption and the uniform continuity condition by ensuring that for sufficiently large indices, the sequence terms $(x_n, y_n)$ satisfy the distance requirement for the uniform bound.
+
+\textbf{Step 3.} Conclude convergence of function value differences.
+For all $n > N$, the uniform continuity condition applies to give $|f(x_n) - f(y_n)| < \varepsilon$. Since $\varepsilon > 0$ was arbitrary, this establishes $|f(x_n) - f(y_n)| \to 0$, completing the forward direction.
+
+\textbf{Step 4.} Establish the reverse implication by contrapositive using the Non-Uniform Continuity Criteria.
+Assume the sequential condition holds: for every pair of sequences $(x_n)$, $(y_n)$ in $X$ with $|x_n - y_n| \to 0$, we have $|f(x_n) - f(y_n)| \to 0$. Suppose toward contradiction that $f$ is not uniformly continuous on $X$. The Non-Uniform Continuity Criteria characterizes this failure: there exist $\varepsilon_0 > 0$ and sequences $(x_n)$, $(y_n)$ in $X$ such that $|x_n - y_n| \to 0$ but $|f(x_n) - f(y_n)| \geq \varepsilon_0$ for all $n \in \mathbb{N}$.
+
+\textbf{Step 5.} Derive contradiction and conclude uniform continuity.
+The sequences $(x_n)$, $(y_n)$ from the Non-Uniform Continuity Criteria satisfy $|x_n - y_n| \to 0$, so by the hypothesis, $|f(x_n) - f(y_n)| \to 0$. But this contradicts $|f(x_n) - f(y_n)| \geq \varepsilon_0 > 0$ for all $n$. Therefore $f$ must be uniformly continuous on $X$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Bidirectional equivalence proved by direct implication and contrapositive. The forward direction employs a standard $\varepsilon$-$\delta$ argument where uniform continuity provides the distance tolerance $\delta$, convergence $|x_n - y_n| \to 0$ ensures eventual satisfaction of this tolerance, and the uniform bound controls the function value differences. The reverse direction uses contrapositive reasoning: failure of uniform continuity is characterized sequentially by the Non-Uniform Continuity Criteria, and this characterization directly contradicts the sequential hypothesis.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:uniform-continuity]{Definition of uniform continuity}
+  \item \hyperref[prop:non-uniform-continuity-criteria]{Non-Uniform Continuity Criteria}
+\end{itemize}
+\end{remark*}

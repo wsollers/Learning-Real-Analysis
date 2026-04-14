@@ -1,0 +1,43 @@
+\newpage
+\phantomsection
+\label{prf:non-uniform-continuity-criteria}
+
+\begin{remark*}[Return]
+\hyperref[prop:non-uniform-continuity-criteria]{Return to Proposition}
+\end{remark*}
+
+\begin{theorem*}[Non-Uniform Continuity Criteria]
+Let $A \subseteq \mathbb{R}$ and $f : A \to \mathbb{R}$. Then $f$ is not uniformly continuous on $A$ if and only if there exist $\varepsilon_0 > 0$ and sequences $(x_n)$, $(u_n)$ in $A$ such that $\lim(x_n - u_n) = 0$ and $|f(x_n) - f(u_n)| \geq \varepsilon_0$ for all $n \in \mathbb{N}$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+$(\Rightarrow)$ If $f$ is not uniformly continuous, then there exists $\varepsilon_0 > 0$ such that for every $\delta > 0$, there exist $x, u \in A$ with $|x - u| < \delta$ and $|f(x) - f(u)| \geq \varepsilon_0$. For each $n \in \mathbb{N}$, choose $\delta = 1/n$ to obtain $x_n, u_n \in A$ with $|x_n - u_n| < 1/n$ and $|f(x_n) - f(u_n)| \geq \varepsilon_0$. The Squeeze Theorem gives $\lim(x_n - u_n) = 0$.
+
+$(\Leftarrow)$ Suppose such sequences exist and $f$ is uniformly continuous. Then for this $\varepsilon_0 > 0$, there exists $\delta > 0$ such that $|x - u| < \delta$ implies $|f(x) - f(u)| < \varepsilon_0$ for all $x, u \in A$. Since $\lim(x_n - u_n) = 0$, there exists $N$ with $|x_N - u_N| < \delta$, giving $|f(x_N) - f(u_N)| < \varepsilon_0$. This contradicts $|f(x_n) - f(u_n)| \geq \varepsilon_0$ for all $n$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the forward direction. Assume $f$ is not uniformly continuous on $A$. By negating the definition of uniform continuity, there exists some $\varepsilon_0 > 0$ such that for every $\delta > 0$, no matter how small, there exist points $x, u \in A$ with $|x - u| < \delta$ but $|f(x) - f(u)| \geq \varepsilon_0$. This means the uniform bound fails at arbitrarily small scales.
+
+\textbf{Step 2.} Construct the required sequences. For each positive integer $n$, apply the negation from Step 1 with $\delta = 1/n$. This produces pairs $x_n, u_n \in A$ satisfying $|x_n - u_n| < 1/n$ and $|f(x_n) - f(u_n)| \geq \varepsilon_0$. The sequences $(x_n)$ and $(u_n)$ are well-defined since each choice is guaranteed by the failure of uniform continuity.
+
+\textbf{Step 3.} Verify the convergence condition. Since $0 \leq |x_n - u_n| < 1/n$ for all $n$, and $\lim_{n \to \infty} 1/n = 0$, the Squeeze Theorem gives $\lim_{n \to \infty} |x_n - u_n| = 0$. This implies $\lim_{n \to \infty} (x_n - u_n) = 0$, establishing the required convergence property.
+
+\textbf{Step 4.} Establish the reverse direction by contradiction. Assume there exist $\varepsilon_0 > 0$ and sequences $(x_n)$, $(u_n)$ in $A$ with $\lim(x_n - u_n) = 0$ and $|f(x_n) - f(u_n)| \geq \varepsilon_0$ for all $n$. Suppose for contradiction that $f$ is uniformly continuous on $A$.
+
+\textbf{Step 5.} Apply uniform continuity to obtain a contradiction. Since $f$ is uniformly continuous, for the given $\varepsilon_0 > 0$, there exists $\delta > 0$ such that whenever $x, u \in A$ satisfy $|x - u| < \delta$, then $|f(x) - f(u)| < \varepsilon_0$. Since $\lim(x_n - u_n) = 0$, there exists $N \in \mathbb{N}$ such that $|x_N - u_N| < \delta$. By uniform continuity, this forces $|f(x_N) - f(u_N)| < \varepsilon_0$, contradicting the hypothesis that $|f(x_n) - f(u_n)| \geq \varepsilon_0$ for all $n$, including $n = N$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a bidirectional proof establishing a logical equivalence. The forward direction uses sequential instantiation of the negated uniform continuity definition: by setting $\delta = 1/n$, the failure of uniform continuity produces sequences whose input gap shrinks to zero while maintaining a fixed output separation. The reverse direction employs proof by contradiction: assuming uniform continuity provides a threshold $\delta$, but the convergence of input differences eventually forces an index where this threshold is breached, leading to a contradiction with the persistent output separation.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:uniform-continuity]{Definition of uniform continuity}
+  \item \hyperref[thm:squeeze-theorem-sequences]{Squeeze Theorem for sequences}
+\end{itemize}
+\end{remark*}

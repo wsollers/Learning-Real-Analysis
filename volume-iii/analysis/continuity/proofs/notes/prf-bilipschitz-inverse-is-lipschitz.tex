@@ -1,0 +1,46 @@
+\newpage
+\phantomsection
+\label{prf:bilipschitz-inverse-is-lipschitz}
+
+\begin{remark*}[Return]
+\hyperref[thm:bilipschitz-inverse-is-lipschitz]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Inverse of a Bi-Lipschitz Map Is Lipschitz]
+Let $A \subseteq \mathbb{R}$ and let $f : A \to f(A)$ be bi-Lipschitz with bounds $\alpha$ and $K$, meaning
+\[
+  \alpha|x - u| \leq |f(x) - f(u)| \leq K|x - u|
+  \quad \text{for all } x, u \in A.
+\]
+Then (a)~$f$ is injective, so $f^{-1} : f(A) \to A$ exists; (b)~$f^{-1}$ is Lipschitz with constant $1/\alpha$; (c)~$f^{-1}$ is bi-Lipschitz with bounds $1/K$ and $1/\alpha$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Part (a): If $x \neq u$ then $|x - u| > 0$, so the lower bound gives $|f(x) - f(u)| \geq \alpha|x - u| > 0$, hence $f(x) \neq f(u)$. Thus $f$ is injective and $f^{-1}$ exists.
+
+Part (b): Let $y, v \in f(A)$ with $y = f(x)$ and $v = f(u)$ for unique $x, u \in A$. The lower bound gives $\alpha|f^{-1}(y) - f^{-1}(v)| = \alpha|x - u| \leq |f(x) - f(u)| = |y - v|$. Dividing by $\alpha > 0$ yields $|f^{-1}(y) - f^{-1}(v)| \leq \frac{1}{\alpha}|y - v|$.
+
+Part (c): The upper bound gives $|y - v| = |f(x) - f(u)| \leq K|x - u| = K|f^{-1}(y) - f^{-1}(v)|$. Dividing by $K > 0$ yields $\frac{1}{K}|y - v| \leq |f^{-1}(y) - f^{-1}(v)|$. Combined with part (b), this establishes the bi-Lipschitz bounds.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish injectivity of $f$. Suppose $x, u \in A$ with $x \neq u$. Then $|x - u| > 0$. The lower bi-Lipschitz bound gives $|f(x) - f(u)| \geq \alpha|x - u| > 0$ since $\alpha > 0$. Therefore $f(x) \neq f(u)$, proving $f$ is injective. Since $f : A \to f(A)$ is surjective by definition, the inverse function $f^{-1} : f(A) \to A$ exists and is well-defined.
+
+\textbf{Step 2.} Prove $f^{-1}$ is Lipschitz with constant $1/\alpha$. Let $y, v \in f(A)$ be arbitrary. Since $f$ is surjective onto $f(A)$, there exist unique $x, u \in A$ such that $y = f(x)$ and $v = f(u)$. This means $f^{-1}(y) = x$ and $f^{-1}(v) = u$. Applying the lower bi-Lipschitz bound to $f$: $\alpha|x - u| \leq |f(x) - f(u)|$. Substituting our expressions: $\alpha|f^{-1}(y) - f^{-1}(v)| \leq |y - v|$. Since $\alpha > 0$, dividing both sides by $\alpha$ gives $|f^{-1}(y) - f^{-1}(v)| \leq \frac{1}{\alpha}|y - v|$. This establishes that $f^{-1}$ is Lipschitz with constant $1/\alpha$.
+
+\textbf{Step 3.} Establish the lower bi-Lipschitz bound for $f^{-1}$. Using the same $y, v \in f(A)$ and $x = f^{-1}(y)$, $u = f^{-1}(v)$, apply the upper bi-Lipschitz bound to $f$: $|f(x) - f(u)| \leq K|x - u|$. Substituting: $|y - v| \leq K|f^{-1}(y) - f^{-1}(v)|$. Since $K > 0$, dividing both sides by $K$ gives $\frac{1}{K}|y - v| \leq |f^{-1}(y) - f^{-1}(v)|$. Combined with the upper bound from Step 2, this shows $f^{-1}$ is bi-Lipschitz with bounds $1/K$ and $1/\alpha$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses a direct approach based on variable substitution. The key insight is that the bi-Lipschitz bounds on $f$ translate into bi-Lipschitz bounds on $f^{-1}$ by exchanging the roles of domain and codomain through the substitution $y = f(x)$, $v = f(u)$. The lower bound on $f$ becomes the upper bound on $f^{-1}$, and vice versa, with the constants reciprocated.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:bi-lipschitz]{Definition of bi-Lipschitz map}
+  \item \hyperref[def:lipschitz-continuity]{Definition of Lipschitz continuity}
+\end{itemize}
+\end{remark*}

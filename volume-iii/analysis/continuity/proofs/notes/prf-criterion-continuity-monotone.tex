@@ -1,0 +1,41 @@
+\newpage
+\phantomsection
+\label{prf:criterion-continuity-monotone}
+
+\begin{remark*}[Return]
+\hyperref[prop:criterion-continuity-monotone]{Return to Proposition}
+\end{remark*}
+
+\begin{theorem*}[Criterion for Continuity of a Monotone Function]
+Let $f : I \to \mathbb{R}$ be monotone and let $c \in I$ be an interior point. Then $f$ is continuous at $c$ if and only if $f(c)$ does not lie in the interior of any jump interval of $f$; equivalently, $f$ is continuous at $c$ if and only if $f(c^{-}) = f(c) = f(c^{+})$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let $D \coloneqq \{x \in I : f \text{ is discontinuous at } x\}$ and let $\{J_n\}$ be the collection of jump intervals $J_n \coloneqq (f(x_n^{-}), f(x_n^{+}))$ for $x_n \in D$.
+
+$(\Rightarrow)$ If $f$ is continuous at $c$, then by the Continuity Criterion for Monotone Functions, $f(c^{-}) = f(c) = f(c^{+})$. If $f(c) \in J_n = (f(x_n^{-}), f(x_n^{+}))$ for some $n$, then $f(c^{-}) < f(c^{+})$, contradicting $f(c^{-}) = f(c^{+})$. Hence $f(c) \notin \bigcup_n J_n$.
+
+$(\Leftarrow)$ If $f(c^{-}) = f(c) = f(c^{+})$, then by the Continuity Criterion for Monotone Functions, both one-sided limits exist and equal $f(c)$, so $\lim_{x \to c} f(x) = f(c)$, giving continuity at $c$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the notation and framework for the equivalence. Define the set of discontinuities $D \coloneqq \{x \in I : f \text{ is discontinuous at } x\}$ and the collection of jump intervals $\{J_n\}$ where $J_n \coloneqq (f(x_n^{-}), f(x_n^{+}))$ for each $x_n \in D$. Each jump interval represents the gap in the image of $f$ at a point of discontinuity, since monotone functions have discontinuities of the first kind only.
+
+\textbf{Step 2.} Prove the forward direction: continuity implies $f(c)$ avoids jump intervals. Assume $f$ is continuous at $c$. By the Continuity Criterion for Monotone Functions, this is equivalent to $f(c^{-}) = f(c) = f(c^{+})$. Suppose for contradiction that $f(c) \in J_n = (f(x_n^{-}), f(x_n^{+}))$ for some $n$. Then $f(x_n^{-}) < f(c) < f(x_n^{+})$, which would require $f(c^{-}) < f(c^{+})$ by the monotonicity of $f$. This contradicts $f(c^{-}) = f(c^{+})$, so $f(c) \notin \bigcup_n J_n$.
+
+\textbf{Step 3.} Prove the reverse direction: avoiding jump intervals implies continuity. Assume $f(c^{-}) = f(c) = f(c^{+})$. By the Continuity Criterion for Monotone Functions, this triple equality is precisely the condition for continuity at $c$. The one-sided limits exist and equal $f(c)$, so $\lim_{x \to c} f(x) = f(c)$, establishing continuity at $c$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof using equivalences. Both directions reduce immediately to the Continuity Criterion for Monotone Functions: continuity at $c$ is equivalent to $f(c^{-}) = f(c) = f(c^{+})$, and this triple equality is equivalent to $f(c)$ not belonging to any open jump interval, since each jump interval is precisely the gap where $f(c^{-}) < f(c^{+})$. The proposition reformulates the continuity criterion in terms of the image of $f$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[cor:monotone-continuity-criterion]{Continuity Criterion for Monotone Functions}
+  \item \hyperref[prop:monotone-discontinuities-first-kind]{Discontinuities of a Monotone Function Are of the First Kind}
+\end{itemize}
+\end{remark*}

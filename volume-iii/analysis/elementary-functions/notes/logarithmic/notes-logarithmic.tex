@@ -1,0 +1,167 @@
+% =========================================================
+% The Logarithm — Notes
+% Chapter: elementary-functions
+% Section: logarithmic
+% Volume III · Analysis
+% =========================================================
+
+\section{The Logarithm}
+\label{sec:logarithmic}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Logarithmic Functions}]
+\begin{itemize}
+  \item $\ln : (0,\infty) \to \mathbb{R}$: inverse of $e^x$.
+    Equivalently, $\ln x = \int_1^x 1/t\, dt$.
+  \item Functional equation: $\ln(xy) = \ln x + \ln y$.
+    Converts products to sums.
+  \item $(\ln x)' = 1/x$;\; $\ln 1 = 0$;\; $\ln e = 1$.
+  \item Change of base: $\log_a x = \ln x / \ln a$.
+  \item Fundamental logarithmic limit:
+    $\lim_{x \to 0}\ln(1+x)/x = 1$.
+  \item Growth dominance: for all $r > 0$,
+    $(\ln x)/x^r \to 0$ as $x \to \infty$ and
+    $x^r \ln x \to 0$ as $x \to 0^+$.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Natural Logarithm
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Natural Logarithm}]
+\begin{definition}[Natural Logarithm]
+\label{def:natural-logarithm}
+The \textbf{natural logarithm} $\ln : (0,\infty) \to \mathbb{R}$ is
+the inverse of the exponential function: for $x > 0$,
+\[
+  \ln x \;:=\; \text{the unique } y \in \mathbb{R}
+  \text{ such that } e^y = x.
+\]
+Equivalently, $\ln x$ is defined by the integral
+\[
+  \ln x \;:=\; \int_1^x \frac{1}{t}\, dt.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x > 0 :\; e^{\ln x} = x.
+  \qquad
+  \forall y \in \mathbb{R} :\; \ln(e^y) = y.
+\]
+\end{remark*}
+
+\begin{remark*}[Two definitions, same function]
+The inverse-of-exponential definition requires $e^x$ to be
+established first. The integral definition is self-contained and
+is preferred when building analysis from scratch. Both yield the
+same function; the choice depends on what has been proved at the
+time of introduction.
+\end{remark*}
+
+\begin{remark*}[Key properties]
+\begin{enumerate}[label=(\roman*)]
+  \item $\ln 1 = 0$;\; $\ln e = 1$.
+  \item \textbf{Functional equation:} $\ln(xy) = \ln x + \ln y$
+    for all $x, y > 0$.
+  \item $\ln(x/y) = \ln x - \ln y$;\;
+    $\ln(x^r) = r\ln x$ for $r \in \mathbb{R}$.
+  \item $\ln$ is strictly increasing on $(0,\infty)$.
+  \item $\ln x \to +\infty$ as $x \to \infty$;\;
+    $\ln x \to -\infty$ as $x \to 0^+$.
+  \item $(\ln x)' = 1/x$ for all $x > 0$.
+\end{enumerate}
+\end{remark*}
+
+\begin{remark*}[General logarithm]
+For $a > 0$, $a \neq 1$, the \textbf{logarithm base $a$} is
+$\log_a x := \ln x / \ln a$. Then $\log_a(a^x) = x$ and
+$a^{\log_a x} = x$. The common logarithm is $\log_{10}$; the
+binary logarithm is $\log_2$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Fundamental Logarithmic Limit
+% ---------------------------------------------------------
+
+\begin{proposition}[Fundamental Logarithmic Limit]
+\label{prop:limit-logarithm-fundamental}
+\[
+  \lim_{x \to 0} \frac{\ln(1+x)}{x} = 1.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:limit-logarithm-fundamental]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall\varepsilon > 0,\;
+  \exists\delta > 0 :\;
+  0 < |x| < \delta \Rightarrow
+  \left|\frac{\ln(1+x)}{x} - 1\right| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Equivalence with exponential limit]
+The fundamental exponential limit $\lim(e^x-1)/x = 1$ and the
+fundamental logarithmic limit $\lim\ln(1+x)/x = 1$ are equivalent:
+each follows from the other via the substitution $x \leftrightarrow
+e^x - 1$ (which maps $x \to 0$ to $x \to 0$). Both express the
+first-order Taylor approximation of the respective function at $0$.
+\end{remark*}
+
+\begin{remark*}[Proof strategy]
+From the series: $\ln(1+x) = x - x^2/2 + x^3/3 - \cdots$ (valid for
+$|x| < 1$). Dividing by $x$ gives $1 - x/2 + x^2/3 - \cdots \to 1$
+as $x \to 0$ by continuity of power series.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Every Power Dominates the Logarithm
+% ---------------------------------------------------------
+
+\begin{proposition}[Every Power Dominates the Logarithm]
+\label{prop:power-dominates-log}
+For every $r > 0$:
+\[
+  \lim_{x \to \infty} \frac{\ln x}{x^r} = 0
+  \qquad\text{and}\qquad
+  \lim_{x \to 0^+} x^r \ln x = 0.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:power-dominates-log]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall r > 0 :\;
+  \lim_{x \to \infty} x^{-r} \ln x = 0
+  \;\wedge\;
+  \lim_{x \to 0^+} x^r \ln x = 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Proof strategy]
+For the first: substitute $x = e^t$ to get $t/e^{rt} \to 0$ by
+exponential dominance. For the second: substitute $x = 1/t$ and
+reduce to the first limit: $x^r \ln x = (-\ln t)/t^r \to 0$.
+\end{remark*}
+
+\begin{remark*}[Significance]
+These limits establish the position of $\ln x$ in the growth
+hierarchy: $\ln x$ is dominated by every positive power. Combined
+with the exponential dominance result, the full ordering is
+$\ln x \ll x^r \ll e^x$ as $x \to \infty$ for any $r > 0$.
+The second limit says that near $0^+$, the positive power $x^r$
+wins over the logarithmic blow-up $|\ln x| \to \infty$. This is
+used in integrability arguments near $0$.
+\end{remark*}

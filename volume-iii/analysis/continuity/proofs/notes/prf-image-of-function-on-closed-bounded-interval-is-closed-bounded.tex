@@ -1,0 +1,46 @@
+\newpage
+\phantomsection
+\label{prf:image-of-function-on-closed-bounded-interval-is-closed-bounded}
+
+\begin{remark*}[Return]
+\hyperref[thm:image-of-function-on-closed-bounded-interval-is-closed-bounded]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Continuous Image of Closed Bounded Interval]
+Let $f \colon [a,b] \to \mathbb{R}$ be continuous on the closed bounded interval $[a,b]$. Then $f([a,b])$ is closed and bounded.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+The boundedness and closedness are established separately. For boundedness, the Boundedness Theorem implies there exists $M > 0$ such that $|f(x)| \leq M$ for all $x \in [a,b]$, so $f([a,b]) \subseteq [-M, M]$ is bounded.
+
+For closedness, let $(y_n)$ be a sequence in $f([a,b])$ converging to $y \in \mathbb{R}$. For each $n$, choose $x_n \in [a,b]$ such that $f(x_n) = y_n$. Since $(x_n)$ is bounded, the Bolzano--Weierstrass Theorem provides a subsequence $(x_{n_k})$ converging to some $c \in [a,b]$. By continuity of $f$ at $c$, $f(x_{n_k}) \to f(c)$. Since $f(x_{n_k}) = y_{n_k}$ and $y_{n_k} \to y$, uniqueness of limits gives $f(c) = y$. Therefore $y \in f([a,b])$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish boundedness of $f([a,b])$. Since $f$ is continuous on the closed bounded interval $[a,b]$, the Boundedness Theorem guarantees that $f$ is bounded on $[a,b]$. This means there exists $M > 0$ such that $|f(x)| \leq M$ for all $x \in [a,b]$. Therefore $f([a,b]) \subseteq [-M, M]$, establishing that $f([a,b])$ is bounded.
+
+\textbf{Step 2.} Establish closedness using the sequential characterization. To prove $f([a,b])$ is closed, it suffices to show that every convergent sequence in $f([a,b])$ has its limit in $f([a,b])$. Let $(y_n)$ be a sequence in $f([a,b])$ such that $y_n \to y$ for some $y \in \mathbb{R}$.
+
+\textbf{Step 3.} Construct preimage sequence and extract convergent subsequence. For each $n$, since $y_n \in f([a,b])$, there exists $x_n \in [a,b]$ such that $f(x_n) = y_n$. The sequence $(x_n)$ lies in the bounded set $[a,b]$, so by the Bolzano--Weierstrass Theorem, there exists a subsequence $(x_{n_k})$ converging to some limit $c \in \mathbb{R}$.
+
+\textbf{Step 4.} Show the subsequential limit lies in the domain. Since $[a,b]$ is closed and $(x_{n_k})$ is a sequence in $[a,b]$ converging to $c$, the closedness of $[a,b]$ ensures that $c \in [a,b]$.
+
+\textbf{Step 5.} Apply continuity to identify the original limit. Since $f$ is continuous at $c \in [a,b]$, the sequential characterization of continuity gives $f(x_{n_k}) \to f(c)$. But $f(x_{n_k}) = y_{n_k}$, and $(y_{n_k})$ is a subsequence of the convergent sequence $(y_n)$, so $y_{n_k} \to y$. By uniqueness of limits in metric spaces, $f(c) = y$. Therefore $y = f(c) \in f([a,b])$, proving that $f([a,b])$ is closed.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof divides into two independent arguments. Boundedness follows immediately from the Boundedness Theorem for continuous functions on closed bounded intervals. Closedness uses the sequential criterion: for any convergent sequence in the image, pull back to preimage points in the domain, extract a convergent subsequence via Bolzano--Weierstrass, use closedness of the domain to retain the limit, then push forward through continuity to identify the limit as belonging to the image.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:boundedness-theorem]{Boundedness Theorem}
+  \item \hyperref[thm:bolzano-weierstrass]{Bolzano--Weierstrass Theorem}
+  \item \hyperref[def:continuous-function]{Sequential characterization of continuity}
+  \item \hyperref[thm:closed-interval-is-closed]{Closedness of intervals}
+  \item \hyperref[thm:uniqueness-of-limits]{Uniqueness of limits}
+\end{itemize}
+\end{remark*}

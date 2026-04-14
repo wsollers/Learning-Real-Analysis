@@ -1,0 +1,168 @@
+% =========================================================
+% Algebra of Functions — Notes
+% Chapter: functions
+% Section: algebra-of-functions
+% Volume III · Analysis
+% =========================================================
+
+\section{Algebra of Functions}
+\label{sec:algebra-of-functions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Algebra of Functions}]
+\begin{itemize}
+  \item All results here are set-theoretic: no limits, no topology.
+  \item Composition of injections is injective; composition of
+    surjections is surjective.
+  \item The inverse of a bijection is a bijection.
+  \item Preimage distributes over $\cup$ and $\cap$ exactly:
+    $f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B)$ and
+    $f^{-1}(A \cap B) = f^{-1}(A) \cap f^{-1}(B)$.
+  \item Image distributes over $\cup$ but only $\subseteq$ over $\cap$:
+    $f(A \cup B) = f(A) \cup f(B)$ but $f(A \cap B) \subseteq
+    f(A) \cap f(B)$ in general.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Reference — Intervals
+% ---------------------------------------------------------
+
+\begin{remark*}[Intervals on $\mathbb{R}$]
+The standard interval types are defined in Volume II. The facts
+used here: every open interval $(a,b)$ consists entirely of cluster
+points; $[a,b]$ is closed and bounded (the setting for the Extreme
+Value Theorem and Heine--Cantor); the natural domain of a
+real-valued function is typically an interval or a union of
+intervals.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Composition of injections
+% ---------------------------------------------------------
+
+\begin{proposition}[Composition of Injections Is Injective]
+\label{prop:composition-injective}
+Let $f : A \to B$ and $g : B \to C$. If $f$ and $g$ are both
+injective, then $g \circ f : A \to C$ is injective.
+
+\smallskip
+\noindent
+\hyperref[prf:composition-injective]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \bigl(f \text{ injective}\bigr) \wedge \bigl(g \text{ injective}\bigr)
+  \;\Rightarrow\;
+  \forall a_1, a_2 \in A :\;
+  g(f(a_1)) = g(f(a_2)) \Rightarrow a_1 = a_2.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The proof is a direct unwinding: $g(f(a_1)) = g(f(a_2))$ implies
+$f(a_1) = f(a_2)$ by injectivity of $g$, which implies $a_1 = a_2$
+by injectivity of $f$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Composition of surjections
+% ---------------------------------------------------------
+
+\begin{proposition}[Composition of Surjections Is Surjective]
+\label{prop:composition-surjective}
+Let $f : A \to B$ and $g : B \to C$. If $f$ and $g$ are both
+surjective, then $g \circ f : A \to C$ is surjective.
+
+\smallskip
+\noindent
+\hyperref[prf:composition-surjective]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \bigl(f \text{ surjective}\bigr) \wedge \bigl(g \text{ surjective}\bigr)
+  \;\Rightarrow\;
+  \forall c \in C,\; \exists a \in A :\; g(f(a)) = c.
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Corollary — Composition of bijections
+% ---------------------------------------------------------
+
+\begin{corollary}[Composition of Bijections Is Bijective]
+\label{cor:composition-bijective}
+If $f : A \to B$ and $g : B \to C$ are both bijective, then
+$g \circ f : A \to C$ is bijective.
+\end{corollary}
+
+% ---------------------------------------------------------
+% Proposition — Inverse of bijection
+% ---------------------------------------------------------
+
+\begin{proposition}[Inverse of a Bijection Is a Bijection]
+\label{prop:inverse-bijection}
+Let $f : A \to B$ be a bijection. Then $f^{-1} : B \to A$ is a
+bijection.
+
+\smallskip
+\noindent
+\hyperref[prf:inverse-bijection]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  f \text{ bijective}
+  \;\Rightarrow\;
+  f^{-1} \text{ bijective},\quad
+  f^{-1} \circ f = \mathrm{id}_A,\quad
+  f \circ f^{-1} = \mathrm{id}_B.
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Preimage distributes over union and intersection
+% ---------------------------------------------------------
+
+\begin{proposition}[Preimage Distributes over Union and Intersection]
+\label{prop:preimage-union-intersection}
+Let $f : A \to B$ and let $S, T \subseteq B$. Then:
+\begin{enumerate}[label=(\roman*)]
+  \item $f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T)$.
+  \item $f^{-1}(S \cap T) = f^{-1}(S) \cap f^{-1}(T)$.
+  \item $f^{-1}(S^c) = (f^{-1}(S))^c$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:preimage-union-intersection]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(i) &\quad x \in f^{-1}(S \cup T)
+     \;\iff\; f(x) \in S \cup T
+     \;\iff\; f(x) \in S \vee f(x) \in T
+     \;\iff\; x \in f^{-1}(S) \cup f^{-1}(T). \\
+(ii) &\quad x \in f^{-1}(S \cap T)
+     \;\iff\; f(x) \in S \wedge f(x) \in T
+     \;\iff\; x \in f^{-1}(S) \cap f^{-1}(T).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Preimage is a complete lattice homomorphism: it preserves all set
+operations including complement. This contrasts sharply with the
+image: $f(A \cap B) \subseteq f(A) \cap f(B)$ with strict
+containment possible when $f$ is not injective. The preimage
+identities are used constantly in topology and measure theory to
+verify that preimages of open or measurable sets are open or
+measurable.
+\end{remark*}

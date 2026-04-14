@@ -1,0 +1,46 @@
+\newpage
+\phantomsection
+\label{prf:continuous-injective-is-strictly-monotone}
+
+\begin{remark*}[Return]
+\hyperref[thm:cont-inj-monotone]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Continuous Injective Functions are Strictly Monotone]
+Let $f: [a,b] \to \mathbb{R}$ be continuous and injective. Then $f$ is strictly monotone.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Suppose for contradiction that $f$ is not strictly monotone. Without loss of generality, assume $f(a) < f(b)$. Then there exist points $x < y < z$ in $[a,b]$ such that $f(y) > \max\{f(x), f(z)\}$ or $f(y) < \min\{f(x), f(z)\}$. Consider the first case. Choose $k$ such that $\max\{f(x), f(z)\} < k < f(y)$. By the Intermediate Value Theorem, there exists $c_1 \in (x, y)$ with $f(c_1) = k$ and $c_2 \in (y, z)$ with $f(c_2) = k$. Thus $c_1 \neq c_2$ but $f(c_1) = f(c_2)$, contradicting injectivity. The second case follows similarly.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Assume for contradiction that $f$ is continuous, injective, but not strictly monotone. Without loss of generality, suppose $f(a) < f(b)$. The assumption that $f$ is not strictly monotone means there exist domain points whose relative ordering is not preserved by $f$.
+
+\textbf{Step 2.} Since $f$ is not strictly monotone, there exist points $x < y < z$ in $[a,b]$ such that the ordering of function values does not match the ordering of domain points. This means either $f(y) > \max\{f(x), f(z)\}$ (creating a local maximum) or $f(y) < \min\{f(x), f(z)\}$ (creating a local minimum).
+
+\textbf{Step 3.} Consider the case where $f(y) > \max\{f(x), f(z)\}$. Choose a value $k$ such that $\max\{f(x), f(z)\} < k < f(y)$. This intermediate value $k$ lies strictly between the maximum of the endpoint values and the peak value at $y$.
+
+\textbf{Step 4.} Apply the Intermediate Value Theorem to the continuous function $f$ on the interval $[x, y]$. Since $f(x) < k < f(y)$ and $f$ is continuous, there exists $c_1 \in (x, y)$ such that $f(c_1) = k$.
+
+\textbf{Step 5.} Similarly, apply the Intermediate Value Theorem to $f$ on the interval $[y, z]$. Since $f(z) < k < f(y)$ and $f$ is continuous, there exists $c_2 \in (y, z)$ such that $f(c_2) = k$.
+
+\textbf{Step 6.} From the construction, $c_1 \in (x, y)$ and $c_2 \in (y, z)$, so $c_1 < y < c_2$, which implies $c_1 \neq c_2$. However, $f(c_1) = f(c_2) = k$, which contradicts the assumption that $f$ is injective.
+
+\textbf{Step 7.} The case where $f(y) < \min\{f(x), f(z)\}$ follows by identical reasoning, finding two distinct points that map to the same intermediate value below the minimum. Therefore, $f$ must be strictly monotone.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This proof uses contradiction combined with the Intermediate Value Theorem. The strategy exploits the fact that any non-monotonic behavior creates local extrema, and the continuity property forces horizontal lines through these extrema to intersect the graph at multiple points, violating injectivity.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:ivt]{Intermediate Value Theorem}
+  \item \hyperref[def:injectivity]{Definition of Injectivity}
+  \item \hyperref[def:strict-monotone]{Definition of Strictly Monotone}
+\end{itemize}
+\end{remark*}

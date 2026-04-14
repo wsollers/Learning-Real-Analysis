@@ -1,0 +1,44 @@
+\newpage
+\phantomsection
+\label{prf:heine-cantor}
+
+\begin{remark*}[Return]
+\hyperref[thm:heine-cantor]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Heine-Cantor Theorem]
+Every function continuous on a closed bounded interval $[a,b]$ is uniformly continuous on $[a,b]$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+The argument proceeds by contradiction. Suppose $f \colon [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ but not uniformly continuous. Then there exists $\varepsilon_{0} > 0$ such that for every $\delta > 0$ there exist points $x, y \in [a,b]$ with $|x - y| < \delta$ and $|f(x) - f(y)| \geq \varepsilon_{0}$. Applying this to $\delta = 1/n$ yields sequences $(x_{n})$ and $(y_{n})$ in $[a,b]$ satisfying $|x_{n} - y_{n}| < 1/n$ and $|f(x_{n}) - f(y_{n})| \geq \varepsilon_{0}$ for all $n \in \mathbb{N}$. The Bolzano--Weierstrass theorem produces a subsequence $(x_{n_{k}})$ converging to some $c \in [a,b]$. The triangle inequality gives $|y_{n_{k}} - c| \leq |y_{n_{k}} - x_{n_{k}}| + |x_{n_{k}} - c| < 1/n_{k} + |x_{n_{k}} - c|$, so $y_{n_{k}} \to c$. Since $f$ is continuous at $c$, both $f(x_{n_{k}}) \to f(c)$ and $f(y_{n_{k}}) \to f(c)$, hence $|f(x_{n_{k}}) - f(y_{n_{k}})| \to 0$. This contradicts $|f(x_{n_{k}}) - f(y_{n_{k}})| \geq \varepsilon_{0} > 0$ for all $k$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Assume for contradiction that $f \colon [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ but not uniformly continuous. By negating the definition of uniform continuity, there exists $\varepsilon_{0} > 0$ such that for every $\delta > 0$ there exist points $x, y \in [a,b]$ with $|x - y| < \delta$ and $|f(x) - f(y)| \geq \varepsilon_{0}$. This gives us a way to construct problematic pairs of points.
+
+\textbf{Step 2.} Construct two sequences by applying the negated uniform continuity to $\delta = 1/n$ for each $n \in \mathbb{N}$. This produces sequences $(x_{n})$ and $(y_{n})$ in $[a,b]$ satisfying $|x_{n} - y_{n}| < 1/n$ and $|f(x_{n}) - f(y_{n})| \geq \varepsilon_{0}$ for all $n$. The sequences have inputs that get arbitrarily close while their outputs remain separated by at least $\varepsilon_{0}$.
+
+\textbf{Step 3.} Apply the Bolzano--Weierstrass theorem to extract convergence. Since $(x_{n})$ is bounded in $[a,b]$, it has a convergent subsequence $(x_{n_{k}})$ with limit $c \in \mathbb{R}$. Since $[a,b]$ is closed, the limit point $c$ belongs to $[a,b]$.
+
+\textbf{Step 4.} Show that $(y_{n_{k}})$ converges to the same limit $c$. By the triangle inequality, $|y_{n_{k}} - c| \leq |y_{n_{k}} - x_{n_{k}}| + |x_{n_{k}} - c| < 1/n_{k} + |x_{n_{k}} - c|$. As $k \to \infty$, both $1/n_{k} \to 0$ and $|x_{n_{k}} - c| \to 0$, so $y_{n_{k}} \to c$.
+
+\textbf{Step 5.} Apply continuity of $f$ at $c$ to derive the contradiction. Since $f$ is continuous at $c$ and both subsequences converge to $c$, the sequential characterization of continuity gives $f(x_{n_{k}}) \to f(c)$ and $f(y_{n_{k}}) \to f(c)$. Therefore $|f(x_{n_{k}}) - f(y_{n_{k}})| \to 0$. But this contradicts $|f(x_{n_{k}}) - f(y_{n_{k}})| \geq \varepsilon_{0} > 0$ for all $k$, since limits preserve non-strict inequalities. The assumption fails, proving uniform continuity.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses contradiction by negating uniform continuity to construct two sequences whose inputs converge to the same point while their outputs remain separated by a fixed positive distance. The Bolzano--Weierstrass theorem provides convergent subsequences, and continuity forces the output gap to collapse to zero, yielding the required contradiction.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:uniform-continuity]{Definition of Uniform Continuity}
+  \item \hyperref[def:continuity]{Definition of Continuity}
+  \item \hyperref[thm:bolzano-weierstrass]{Bolzano--Weierstrass Theorem}
+  \item \hyperref[thm:sequential-continuity]{Sequential Characterization of Continuity}
+  \item \hyperref[thm:limits-preserve-inequalities]{Limits Preserve Non-Strict Inequalities}
+\end{itemize}
+\end{remark*}

@@ -1,0 +1,211 @@
+% =========================================================
+% Real-Valued Functions — Notes
+% Chapter: functions
+% Section: real-valued-functions
+% Volume III · Analysis
+% =========================================================
+
+\section{Real-Valued Functions}
+\label{sec:real-valued-functions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Real-Valued Functions}]
+\begin{itemize}
+  \item Pointwise operations on $f, g : X \to \mathbb{R}$: sum,
+    difference, product, quotient (where $g \neq 0$), scalar
+    multiple, absolute value, max, min. Each is purely algebraic —
+    no limits involved.
+  \item $fg$ denotes pointwise product $(fg)(x) := f(x)g(x)$, not
+    composition $f \circ g$.
+  \item Bounded above: $\exists M, \forall x, f(x) \leq M$.
+    Bounded: $\exists B > 0, \forall x, |f(x)| \leq B$.
+  \item Increasing: $x_1 < x_2 \Rightarrow f(x_1) \leq f(x_2)$.
+    Strictly increasing: $x_1 < x_2 \Rightarrow f(x_1) < f(x_2)$.
+  \item Maximum attained at $x^*$: $f(x^*) = \sup f(A)$ with $x^* \in A$.
+    Supremum need not be attained.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Pointwise Arithmetic Operations
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Pointwise Arithmetic Operations}]
+\begin{definition}[Pointwise Arithmetic Operations on Real-Valued Functions]
+\label{def:pointwise-ops-R}
+Let $X \subseteq \mathbb{R}$ and let $f, g : X \to \mathbb{R}$.
+The following real-valued functions on $X$ are defined pointwise:
+\begin{align*}
+  (f + g)(x)      &:= f(x) + g(x)                         & &\text{sum} \\
+  (f - g)(x)      &:= f(x) - g(x)                         & &\text{difference} \\
+  (fg)(x)         &:= f(x) \cdot g(x)                     & &\text{product} \\
+  (cf)(x)         &:= c \cdot f(x),\quad c \in \mathbb{R} & &\text{scalar multiple} \\
+  \max(f,g)(x)    &:= \max(f(x), g(x))                    & &\text{pointwise maximum} \\
+  \min(f,g)(x)    &:= \min(f(x), g(x))                    & &\text{pointwise minimum} \\
+  |f|(x)          &:= |f(x)|                               & &\text{absolute value}
+\end{align*}
+If additionally $g(x) \neq 0$ for all $x \in X$:
+\[
+  (f/g)(x) := f(x)/g(x). \qquad\text{quotient}
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in X :\; (f+g)(x) = f(x) + g(x).
+\]
+Each operation is pointwise: the value at $x$ depends only on $f(x)$
+and $g(x)$, not on values at nearby points.
+\end{remark*}
+
+\begin{remark*}[Product vs.\ composition]
+$fg : X \to \mathbb{R}$ maps $x \mapsto f(x)g(x)$. This is the
+pointwise product, not the composition $f \circ g$ which maps $x
+\mapsto f(g(x))$ and requires $g : X \to X$. For $f(x) = x^2$ and
+$g(x) = 2x$: $(fg)(x) = 2x^3$ but $(f \circ g)(x) = 4x^2$.
+\end{remark*}
+
+\begin{remark*}[Algebraic structure]
+The set $\mathbb{R}^X := \{f : X \to \mathbb{R}\}$ forms a
+commutative ring under pointwise addition and multiplication, with
+zero function $\mathbf{0}(x) := 0$ and identity $\mathbf{1}(x) :=
+1$. Scalar multiplication makes it an $\mathbb{R}$-algebra.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Bounded Functions
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Boundedness of Functions}]
+\begin{definition}[Bounded Above, Bounded Below, Bounded]
+\label{def:function-boundedness}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$.
+\begin{itemize}
+  \item $f$ is \textbf{bounded above} on $A$ if $\exists M \in
+    \mathbb{R},\; \forall x \in A :\; f(x) \leq M$.
+  \item $f$ is \textbf{bounded below} on $A$ if $\exists m \in
+    \mathbb{R},\; \forall x \in A :\; f(x) \geq m$.
+  \item $f$ is \textbf{bounded} on $A$ if $\exists B > 0,\;
+    \forall x \in A :\; |f(x)| \leq B$.
+\end{itemize}
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  f \text{ bounded on } A
+  \;\iff\;
+  \exists B > 0,\;
+  \forall x \in A :\; |f(x)| \leq B
+  \;\iff\;
+  f(A) \subseteq [-B, B].
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  f \text{ unbounded on } A
+  \;\iff\;
+  \forall B > 0,\;
+  \exists x \in A :\; |f(x)| > B.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bounded means the image $f(A)$ fits inside some finite interval
+$[-B, B]$. Bounded above alone does not imply bounded: $f(x) := -x$
+on $\mathbb{R}$ is bounded above by $0$ but unbounded below.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Supremum, Infimum, Maximum, Minimum
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Extremal Values of Functions}]
+\begin{definition}[Supremum, Infimum, Maximum, Minimum of a Function]
+\label{def:function-sup-inf-max-min}
+Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$.
+\begin{itemize}
+  \item The \textbf{supremum} of $f$ on $A$ is $\sup_{x \in A}
+    f(x) := \sup f(A)$.
+  \item The \textbf{infimum} of $f$ on $A$ is $\inf_{x \in A}
+    f(x) := \inf f(A)$.
+  \item $f$ \textbf{attains a maximum} at $x^* \in A$ if
+    $f(x^*) = \sup_{x \in A} f(x)$.
+  \item $f$ \textbf{attains a minimum} at $x_* \in A$ if
+    $f(x_*) = \inf_{x \in A} f(x)$.
+\end{itemize}
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+  f \text{ has max at } x^*
+  &\;\iff\;
+  x^* \in A \;\wedge\; \forall x \in A :\; f(x) \leq f(x^*). \\
+  f \text{ has min at } x_*
+  &\;\iff\;
+  x_* \in A \;\wedge\; \forall x \in A :\; f(x) \geq f(x_*).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The supremum of $f$ on $A$ always exists when $f$ is bounded above
+(by completeness), but need not be attained. A maximum is a
+supremum that is achieved at some point of the domain. The function
+$f(x) = x$ on $(0,1)$ has supremum $1$ but no maximum: no $x \in
+(0,1)$ achieves $f(x) = 1$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Monotone Functions
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Monotonicity}]
+\begin{definition}[Increasing, Decreasing, Monotone, Constant]
+\label{def:function-monotonicity}
+Let $f : A \to \mathbb{R}$ on a nonempty $A \subseteq \mathbb{R}$.
+\begin{itemize}
+  \item $f$ is \textbf{increasing} on $A$ if $x_1 < x_2 \Rightarrow
+    f(x_1) \leq f(x_2)$.
+  \item $f$ is \textbf{strictly increasing} on $A$ if $x_1 < x_2
+    \Rightarrow f(x_1) < f(x_2)$.
+  \item $f$ is \textbf{decreasing} on $A$ if $x_1 < x_2 \Rightarrow
+    f(x_1) \geq f(x_2)$.
+  \item $f$ is \textbf{strictly decreasing} on $A$ if $x_1 < x_2
+    \Rightarrow f(x_1) > f(x_2)$.
+  \item $f$ is \textbf{monotone} if it is increasing or decreasing.
+  \item $f$ is \textbf{constant} if $f(x_1) = f(x_2)$ for all
+    $x_1, x_2 \in A$.
+\end{itemize}
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+  f \text{ increasing}
+  &:\; \forall x_1, x_2 \in A,\; x_1 < x_2 \Rightarrow f(x_1) \leq f(x_2). \\
+  f \text{ strictly increasing}
+  &:\; \forall x_1, x_2 \in A,\; x_1 < x_2 \Rightarrow f(x_1) < f(x_2).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The word \emph{strictly} tightens $\leq$ to $<$. A constant function
+is both increasing and decreasing but neither strictly increasing nor
+strictly decreasing. A strictly increasing function is injective:
+$f(x_1) = f(x_2) \Rightarrow x_1 = x_2$ (by contrapositive of the
+strict condition).
+
+Terminology is not uniform across sources. These notes follow Bartle
+and Sohrab: \emph{increasing} means non-decreasing; \emph{strictly
+increasing} means the strict inequality holds.
+\end{remark*}

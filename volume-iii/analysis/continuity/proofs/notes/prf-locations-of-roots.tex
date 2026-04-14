@@ -1,0 +1,49 @@
+\newpage
+\phantomsection
+\label{prf:locations-of-roots}
+
+\begin{remark*}[Return]
+\hyperref[thm:intermediate-value-theorem]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Location of Roots Theorem]
+Let $f : [a,b] \to \mathbb{R}$ be continuous on $[a,b]$. If $f(a) < 0 < f(b)$ or $f(a) > 0 > f(b)$, then there exists $c \in (a,b)$ such that $f(c) = 0$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Without loss of generality assume $f(a) < 0 < f(b)$. Define $S := \{ x \in [a,b] \mid f(x) < 0 \}$. Since $f(a) < 0$, the set $S$ is nonempty and bounded above by $b$. By the Completeness Axiom, $s := \sup S$ exists and satisfies $s \in [a,b]$.
+
+If $f(s) > 0$, then Sign Preservation provides $\varepsilon > 0$ such that $f(x) > 0$ for all $x \in (s - \varepsilon, s + \varepsilon) \cap [a,b]$. In particular, $f(x) > 0$ on $(s - \varepsilon, s]$, so $s - \varepsilon$ is an upper bound for $S$, contradicting $s = \sup S$.
+
+If $f(s) < 0$, then Sign Preservation provides $\varepsilon > 0$ such that $f(x) < 0$ for all $x \in (s - \varepsilon, s + \varepsilon) \cap [a,b]$. Since $s < b$ (otherwise $f(b) < 0$ contradicts $f(b) > 0$), the point $s + \varepsilon/2$ lies in this interval for sufficiently small $\varepsilon$. Thus $s + \varepsilon/2 \in S$ and $s + \varepsilon/2 > s$, contradicting $s$ being an upper bound for $S$.
+
+Therefore $f(s) = 0$. Since $f(a) \neq 0$ and $f(b) \neq 0$, the point $c := s$ lies in $(a,b)$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Without loss of generality, assume $f(a) < 0 < f(b)$. The case $f(a) > 0 > f(b)$ follows by considering $-f$. Define $S := \{ x \in [a,b] \mid f(x) < 0 \}$. Since $f(a) < 0$, the element $a$ belongs to $S$, so $S$ is nonempty. Since $S \subseteq [a,b]$, the set $S$ is bounded above by $b$.
+
+\textbf{Step 2.} By the Completeness Axiom, the supremum $s := \sup S$ exists and satisfies $s \in [a,b]$. The goal is to establish that $f(s) = 0$ by ruling out the alternatives $f(s) > 0$ and $f(s) < 0$.
+
+\textbf{Step 3.} Suppose $f(s) > 0$. Since $f$ is continuous at $s$, the Sign Preservation theorem provides $\varepsilon > 0$ such that $f(x) > 0$ for all $x \in (s - \varepsilon, s + \varepsilon) \cap [a,b]$. In particular, $f(x) > 0$ for all $x \in (s - \varepsilon, s]$. This means no point of the interval $(s - \varepsilon, s]$ belongs to $S$, so $s - \varepsilon$ is an upper bound for $S$. Since $s - \varepsilon < s = \sup S$, this contradicts the definition of supremum as the least upper bound.
+
+\textbf{Step 4.} Suppose $f(s) < 0$. Since $f$ is continuous at $s$, the Sign Preservation theorem provides $\varepsilon > 0$ such that $f(x) < 0$ for all $x \in (s - \varepsilon, s + \varepsilon) \cap [a,b]$. If $s = b$, then $f(b) < 0$, contradicting the hypothesis $f(b) > 0$. Therefore $s < b$. For sufficiently small $\varepsilon$, the point $s + \varepsilon/2$ satisfies $s < s + \varepsilon/2 < b$, so $s + \varepsilon/2 \in [a,b]$ and lies in the neighborhood where $f(x) < 0$. Thus $s + \varepsilon/2 \in S$ and $s + \varepsilon/2 > s$, contradicting $s$ being an upper bound for $S$.
+
+\textbf{Step 5.} Since neither $f(s) > 0$ nor $f(s) < 0$ is possible, it follows that $f(s) = 0$. Finally, $s \neq a$ because $f(a) < 0 \neq 0 = f(s)$, and $s \neq b$ because $f(b) > 0 \neq 0 = f(s)$. Therefore $c := s \in (a,b)$ and $f(c) = 0$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a proof by contradiction using the supremum construction. The strategy defines $S$ as the negative region of $f$ and considers $s = \sup S$. Continuity at $s$ combined with Sign Preservation rules out both $f(s) > 0$ (which would push the supremum strictly leftward) and $f(s) < 0$ (which would push the supremum strictly rightward), leaving only $f(s) = 0$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:continuity]{Definition of Continuity}
+  \item \hyperref[def:supremum]{Definition of Supremum}
+  \item \hyperref[thm:completeness-axiom]{Completeness Axiom}
+  \item \hyperref[thm:sign-preservation]{Sign Preservation Theorem}
+\end{itemize}
+\end{remark*}

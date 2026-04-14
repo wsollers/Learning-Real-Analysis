@@ -1,0 +1,232 @@
+% =========================================================
+% Power Functions and the Exponential — Notes
+% Chapter: elementary-functions
+% Section: power-exponential
+% Volume III · Analysis
+% =========================================================
+
+\section{Power Functions and the Exponential}
+\label{sec:power-exponential}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Power and Exponential Functions}]
+\begin{itemize}
+  \item $e^x := \sum_{n=0}^\infty x^n/n!$: absolutely convergent for
+    all $x \in \mathbb{R}$; functional equation $e^{x+y} = e^x e^y$;
+    self-derivative $(e^x)' = e^x$.
+  \item $e := \sum_{n=0}^\infty 1/n! = \lim_{n\to\infty}(1+1/n)^n$.
+  \item Real power: $x^r := e^{r\ln x}$ for $x > 0$, $r \in \mathbb{R}$.
+    Unifies integer, rational, and irrational exponents.
+  \item Growth hierarchy: $\ln x \ll x^r \ll e^x$ as $x \to \infty$
+    for any $r > 0$.
+  \item Fundamental exponential limit: $\lim_{x \to 0}(e^x-1)/x = 1$.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Power Function
+% ---------------------------------------------------------
+
+\begin{definition}[Power Function]
+\label{def:power-function}
+Let $n \in \mathbb{N}$. The \textbf{integer power function} is
+$f : \mathbb{R} \to \mathbb{R}$, $f(x) := x^n$. For $r \in \mathbb{R}$
+and $x > 0$, the \textbf{real power} is defined by
+\[
+  x^r \;:=\; e^{r \ln x}.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall r \in \mathbb{R},\; \forall x > 0 :\; x^r = e^{r\ln x}.
+\]
+For $r \in \mathbb{N}$ this reduces to the $r$-fold product $x \cdot
+x \cdots x$.
+\end{remark*}
+
+\begin{remark*}[Laws of exponents]
+For $x, y > 0$ and $r, s \in \mathbb{R}$:
+\[
+  x^r \cdot x^s = x^{r+s}, \quad
+  (x^r)^s = x^{rs}, \quad
+  (xy)^r = x^r y^r, \quad
+  x^0 = 1, \quad
+  x^1 = x.
+\]
+Each follows from the corresponding property of the exponential via
+the definition $x^r = e^{r\ln x}$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Defining $x^r := e^{r\ln x}$ unifies all three cases — integer,
+rational, irrational exponents — into a single formula and makes
+differentiability of $x^r$ immediate from that of $e^x$ and $\ln x$
+via the chain rule: $(x^r)' = rx^{r-1}$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — The Number e
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- The Number $e$}]
+\begin{definition}[The Number $e$]
+\label{def:number-e}
+The \textbf{Euler number} is
+\[
+  e \;:=\; \sum_{n=0}^{\infty} \frac{1}{n!}
+  \;=\; \lim_{n \to \infty} \!\left(1 + \frac{1}{n}\right)^{\!n}
+  \;\approx\; 2.71828\ldots
+\]
+Both expressions define the same real number.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+The series $\sum 1/n!$ converges rapidly by comparison with a
+geometric series; its sum is $e$. The limit $(1+1/n)^n$ arises from
+continuous compound interest and is proved equal to the series sum
+via the fundamental logarithmic limit. Both representations are in
+common use.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Exponential Function
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- The Exponential Function}]
+\begin{definition}[Exponential Function]
+\label{def:exponential}
+The \textbf{exponential function} $\exp : \mathbb{R} \to (0,\infty)$
+is defined by the absolutely convergent power series
+\[
+  e^x \;:=\; \exp(x) \;:=\; \sum_{n=0}^{\infty} \frac{x^n}{n!},
+  \qquad x \in \mathbb{R}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in \mathbb{R} :\;
+  e^x = \sum_{n=0}^\infty \frac{x^n}{n!},
+  \quad \text{convergent absolutely since }
+  \sum \frac{|x|^n}{n!} < \infty.
+\]
+\end{remark*}
+
+\begin{remark*}[Key properties]
+\begin{enumerate}[label=(\roman*)]
+  \item $e^0 = 1$;\; $e^1 = e$.
+  \item \textbf{Functional equation:} $e^{x+y} = e^x \cdot e^y$
+    for all $x, y \in \mathbb{R}$.
+  \item $e^x > 0$ for all $x$;\; $e^{-x} = 1/e^x$.
+  \item $e^x$ is strictly increasing and bijective
+    $\mathbb{R} \to (0,\infty)$.
+  \item $(e^x)' = e^x$ — the exponential is its own derivative.
+\end{enumerate}
+The functional equation follows from the Cauchy product of two
+absolutely convergent series; the self-derivative property follows
+from the fundamental exponential limit.
+\end{remark*}
+
+\begin{remark*}[General exponential]
+For $a > 0$, $a \neq 1$: $a^x := e^{x\ln a}$. Strictly increasing
+if $a > 1$, strictly decreasing if $0 < a < 1$. $(a^x)' = a^x \ln a$.
+Only $e^x$ is its own derivative.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Fundamental Exponential Limit
+% ---------------------------------------------------------
+
+\begin{proposition}[Fundamental Exponential Limit]
+\label{prop:limit-exponential-fundamental}
+\[
+  \lim_{x \to 0} \frac{e^x - 1}{x} = 1.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:limit-exponential-fundamental]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall\varepsilon > 0,\;
+  \exists\delta > 0 :\;
+  0 < |x| < \delta \Rightarrow
+  \left|\frac{e^x - 1}{x} - 1\right| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the statement $(e^x)'\big|_{x=0} = 1$. The series gives
+$(e^x - 1)/x = 1 + x/2! + x^2/3! + \cdots \to 1$ as $x \to 0$
+by continuity of power series at their center. Combined with the
+functional equation, this implies $(e^x)' = e^x$ everywhere.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Compound Interest Limit
+% ---------------------------------------------------------
+
+\begin{proposition}[Compound Interest Limit]
+\label{prop:limit-compound-interest}
+\[
+  \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:limit-compound-interest]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof strategy]
+Write $(1+1/x)^x = e^{x\ln(1+1/x)}$. Set $t = 1/x \to 0^+$ and use
+the fundamental logarithmic limit $\ln(1+t)/t \to 1$. Then
+$x\ln(1+1/x) = \ln(1+t)/t \to 1$, so $(1+1/x)^x = e^{x\ln(1+1/x)}
+\to e^1 = e$ by continuity of the exponential.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Exponential Dominates Every Power
+% ---------------------------------------------------------
+
+\begin{proposition}[Exponential Dominates Every Power]
+\label{prop:exponential-dominates-power}
+For every $r > 0$:
+\[
+  \lim_{x \to \infty} \frac{x^r}{e^x} = 0.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:exponential-dominates-power]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall r > 0 :\; \lim_{x \to \infty} x^r e^{-x} = 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Proof strategy]
+Pick integer $n > r$. The series bound $e^x \geq x^n/n!$ gives
+$x^r/e^x \leq n!\, x^{r-n} \to 0$ since $r - n < 0$.
+\end{remark*}
+
+\begin{remark*}[Growth hierarchy]
+For any $r > 0$:
+\[
+  \ln x \;\ll\; x^r \;\ll\; e^x
+  \qquad \text{as } x \to \infty.
+\]
+The exponential eventually dominates every polynomial and every
+power function. This ordering is used constantly in estimates,
+dominated convergence arguments, and comparison tests in series and
+integration.
+\end{remark*}

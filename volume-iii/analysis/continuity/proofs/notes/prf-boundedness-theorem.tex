@@ -1,0 +1,44 @@
+\newpage
+\phantomsection
+\label{prf:boundedness-theorem}
+
+\begin{remark*}[Return]
+\hyperref[thm:boundedness-theorem]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Boundedness Theorem]
+Every function continuous on a closed bounded interval $[a,b]$ is bounded on $[a,b]$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let $I = [a,b]$ be a closed bounded interval and let $f : I \to \mathbb{R}$ be continuous on $I$. Suppose for contradiction that $f$ is not bounded on $I$. For each $n \in \mathbb{N}$, choose $x_n \in I$ such that $|f(x_n)| > n$. The sequence $(x_n) \subseteq [a,b]$ is bounded, so by the Bolzano--Weierstrass Theorem, it has a convergent subsequence $x_{n_k} \to x^*$ for some $x^* \in \mathbb{R}$. Since $I$ is closed and each $x_{n_k} \in I$, we have $x^* \in I$. By continuity of $f$ at $x^*$, we have $f(x_{n_k}) \to f(x^*)$, so $(f(x_{n_k}))$ is bounded. But $|f(x_{n_k})| > n_k \geq k$ for all $k \in \mathbb{N}$, so $(f(x_{n_k}))$ is unbounded. This contradiction establishes that $f$ is bounded on $I$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Assume for contradiction that $f$ is unbounded on $I = [a,b]$. This means that for each positive integer $n$, the set $\{x \in I : |f(x)| > n\}$ is nonempty. Therefore, for each $n \in \mathbb{N}$, there exists $x_n \in I$ such that $|f(x_n)| > n$. This constructs a sequence $(x_n)$ in $I$ with the property that the function values $f(x_n)$ grow without bound.
+
+\textbf{Step 2.} Apply the Bolzano--Weierstrass Theorem to extract a convergent subsequence. Since $(x_n) \subseteq [a,b]$ and $[a,b]$ is bounded, the sequence $(x_n)$ is bounded. By the Bolzano--Weierstrass Theorem, every bounded sequence in $\mathbb{R}$ has a convergent subsequence. Therefore, there exists a subsequence $x_{n_k} \to x^*$ for some $x^* \in \mathbb{R}$.
+
+\textbf{Step 3.} Show that the limit point belongs to the interval. Since $I = [a,b]$ is closed and each term $x_{n_k}$ belongs to $I$, the limit $x^*$ must also belong to $I$. This uses the fundamental property that closed sets contain the limits of all their convergent sequences.
+
+\textbf{Step 4.} Apply continuity to obtain convergence in the image. Since $f$ is continuous at $x^* \in I$ and $x_{n_k} \to x^*$, the definition of continuity implies that $f(x_{n_k}) \to f(x^*)$. Therefore, the sequence $(f(x_{n_k}))$ converges to the finite value $f(x^*)$.
+
+\textbf{Step 5.} Derive the contradiction. Every convergent sequence is bounded, so $(f(x_{n_k}))$ is bounded. However, from our construction in Step 1, we have $|f(x_{n_k})| > n_k$ for all $k$. Since $n_k$ is a subsequence of natural numbers, $n_k \geq k$, which means $|f(x_{n_k})| > k$ for all $k \in \mathbb{N}$. This shows that $(f(x_{n_k}))$ is unbounded, contradicting the fact that it is bounded. Therefore, our assumption that $f$ is unbounded must be false, and $f$ is bounded on $I$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof proceeds by contradiction, assuming $f$ is unbounded and deriving a contradiction through a three-stage argument: image to domain to image. First, unboundedness in the image allows construction of a sequence $(x_n)$ with $|f(x_n)| > n$. Second, the Bolzano--Weierstrass Theorem operates on this sequence in the domain $[a,b]$ to extract a convergent subsequence whose limit remains in the closed interval. Third, continuity pulls the convergent subsequence back to the image, where convergence implies boundedness, contradicting the constructed unboundedness. The compactness of $[a,b]$ (closed and bounded) is essential: boundedness enables Bolzano--Weierstrass, and closedness ensures the limit stays in the domain.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:bounded-on-a-set]{Definition of bounded on a set}
+  \item \hyperref[def:continuity-on-a-set]{Definition of continuity on a set}
+  \item \hyperref[thm:bolzano-weierstrass]{Bolzano--Weierstrass Theorem}
+  \item \hyperref[thm:convergent-implies-bounded]{Convergent sequences are bounded}
+  \item \hyperref[prop:closed-sets-contain-limits]{Closed sets contain limits of convergent sequences}
+\end{itemize}
+\end{remark*}

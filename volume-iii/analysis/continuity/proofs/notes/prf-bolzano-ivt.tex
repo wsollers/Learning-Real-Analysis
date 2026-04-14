@@ -1,0 +1,42 @@
+\newpage
+\phantomsection
+\label{prf:bolzano-ivt}
+
+\begin{remark*}[Return]
+\hyperref[thm:bolzano-intermediate-value]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Bolzano's Intermediate Value Theorem]
+Let $I$ be an interval, let $f : I \to \mathbb{R}$ be continuous on $I$, let $a, b \in I$, and let $k \in \mathbb{R}$. If $f(a) < k < f(b)$ or $f(a) > k > f(b)$, then there exists $c$ between $a$ and $b$ such that $f(c) = k$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Without loss of generality assume $f(a) < k < f(b)$; the case $f(a) > k > f(b)$ follows by applying the same argument to $-f$, which is continuous whenever $f$ is. Define $g : I \to \mathbb{R}$ by $g(x) := f(x) - k$. Since $f$ is continuous on $I$ and $k$ is constant, the algebra of continuous functions gives that $g$ is continuous on $I$. Observe $g(a) = f(a) - k < 0$ and $g(b) = f(b) - k > 0$. Since $g$ is continuous on $I$ and $g(a) < 0 < g(b)$, the Location of Roots Theorem produces a point $c$ strictly between $a$ and $b$ such that $g(c) = 0$. Therefore $f(c) - k = 0$, which gives $f(c) = k$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Reduce to the case $f(a) < k < f(b)$. If instead $f(a) > k > f(b)$, apply the argument to the function $-f$. Since $f$ is continuous on $I$, the function $-f$ is also continuous on $I$. Moreover, $(-f)(a) = -f(a) < -k$ and $(-f)(b) = -f(b) > -k$, so $(-f)(a) < -k < (-f)(b)$. If the theorem holds for this case, then there exists $c$ between $a$ and $b$ such that $(-f)(c) = -k$, which means $f(c) = k$.
+
+\textbf{Step 2.} Transform the problem into a root-finding problem. Define $g : I \to \mathbb{R}$ by $g(x) = f(x) - k$. The function $g$ is continuous on $I$ because it is the difference of the continuous function $f$ and the constant function $k$, and the algebra of continuous functions guarantees that such differences are continuous.
+
+\textbf{Step 3.} Verify the sign conditions for the Location of Roots Theorem. By construction, $g(a) = f(a) - k < 0$ since $f(a) < k$. Similarly, $g(b) = f(b) - k > 0$ since $f(b) > k$. Therefore $g(a) < 0 < g(b)$.
+
+\textbf{Step 4.} Apply the Location of Roots Theorem. Since $g$ is continuous on the interval $I$, $a, b \in I$, and $g(a) < 0 < g(b)$, the Location of Roots Theorem guarantees the existence of a point $c$ strictly between $a$ and $b$ such that $g(c) = 0$.
+
+\textbf{Step 5.} Translate back to the original function. The condition $g(c) = 0$ means $f(c) - k = 0$, which gives $f(c) = k$. This completes the proof.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof that reduces the intermediate value problem to a root-finding problem. The key insight is to translate the function $f$ vertically by $-k$ to create a new function $g = f - k$ that crosses zero precisely when $f$ achieves the value $k$. The continuity of $g$ follows from the algebra of continuous functions, and the Location of Roots Theorem provides the desired point. The symmetry between the two cases ($f(a) < k < f(b)$ and $f(a) > k > f(b)$) is handled cleanly by observing that $-f$ inherits continuity from $f$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:continuous-function]{Definition of Continuous Function}
+  \item \hyperref[thm:algebra-continuous-functions]{Algebra of Continuous Functions}
+  \item \hyperref[thm:location-roots]{Location of Roots Theorem}
+\end{itemize}
+\end{remark*}

@@ -1,0 +1,42 @@
+\newpage
+\phantomsection
+\label{prf:square-root-preserves-continuity}
+
+\begin{remark*}[Return]
+\hyperref[thm:square-root-preserves-continuity]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Square Root Preserves Continuity]
+Let $A \subseteq \mathbb{R}$ and let $f \colon A \to \mathbb{R}$ satisfy $f(x) > 0$ for all $x \in A$. If $f$ is continuous at $c \in A$, then $\sqrt{f}$ is continuous at $c$. Moreover, if $f$ is continuous on $A$, then $\sqrt{f}$ is continuous on $A$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+It suffices to prove continuity at an arbitrary point $c \in A$. Let $\varepsilon > 0$ be given. The key identity for $u, v \geq 0$ is $|\sqrt{u} - \sqrt{v}| = \frac{|u - v|}{\sqrt{u} + \sqrt{v}}$. Applying this with $u = f(x)$ and $v = f(c)$ gives $|\sqrt{f(x)} - \sqrt{f(c)}| = \frac{|f(x) - f(c)|}{\sqrt{f(x)} + \sqrt{f(c)}}$. Since $f(c) > 0$, the denominator satisfies $\sqrt{f(x)} + \sqrt{f(c)} \geq \sqrt{f(c)} > 0$, so $|\sqrt{f(x)} - \sqrt{f(c)}| \leq \frac{|f(x) - f(c)|}{\sqrt{f(c)}}$. By continuity of $f$ at $c$, there exists $\delta > 0$ such that $x \in A$ and $|x - c| < \delta$ imply $|f(x) - f(c)| < \varepsilon\sqrt{f(c)}$. For any such $x$, $|\sqrt{f(x)} - \sqrt{f(c)}| \leq \frac{|f(x) - f(c)|}{\sqrt{f(c)}} < \varepsilon$. Since $c$ was arbitrary, continuity on $A$ follows.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the algebraic identity. For $u, v \geq 0$, the identity $|u - v| = |\sqrt{u} - \sqrt{v}|\,|\sqrt{u} + \sqrt{v}|$ holds by factoring the difference of squares. Rearranging gives $|\sqrt{u} - \sqrt{v}| = \frac{|u - v|}{\sqrt{u} + \sqrt{v}}$.
+
+\textbf{Step 2.} Apply the identity to the functions. With $u = f(x)$ and $v = f(c)$, the identity becomes $|\sqrt{f(x)} - \sqrt{f(c)}| = \frac{|f(x) - f(c)|}{\sqrt{f(x)} + \sqrt{f(c)}}$. This converts the problem from estimating square root differences to estimating function differences.
+
+\textbf{Step 3.} Bound the denominator. Since $f(c) > 0$ by hypothesis, the denominator satisfies $\sqrt{f(x)} + \sqrt{f(c)} \geq \sqrt{f(c)} > 0$. Therefore $|\sqrt{f(x)} - \sqrt{f(c)}| \leq \frac{|f(x) - f(c)|}{\sqrt{f(c)}}$. The positivity of $f(c)$ is essential to ensure the denominator is bounded away from zero.
+
+\textbf{Step 4.} Apply continuity of $f$. Let $\varepsilon > 0$ be given. Since $f$ is continuous at $c$, there exists $\delta > 0$ such that $x \in A$ and $|x - c| < \delta$ imply $|f(x) - f(c)| < \varepsilon\sqrt{f(c)}$. This choice of tolerance is designed to yield the desired bound.
+
+\textbf{Step 5.} Complete the estimate. For any $x \in A$ with $|x - c| < \delta$, $|\sqrt{f(x)} - \sqrt{f(c)}| \leq \frac{|f(x) - f(c)|}{\sqrt{f(c)}} < \frac{\varepsilon\sqrt{f(c)}}{\sqrt{f(c)}} = \varepsilon$. This establishes continuity of $\sqrt{f}$ at $c$. Since $c$ was arbitrary, continuity on $A$ follows.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof using the $\varepsilon$-$\delta$ definition of continuity. The key insight is the algebraic identity $|\sqrt{u} - \sqrt{v}| = |u-v|/(\sqrt{u}+\sqrt{v})$ which converts a bound on function differences into a bound on square root differences. The positivity hypothesis ensures the denominator remains bounded away from zero, making the estimate clean and avoiding the degenerate behavior near zero where the square root has unbounded derivative.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:continuity-at-point]{Definition of Continuity at a Point}
+  \item \hyperref[def:continuity-on-set]{Definition of Continuity on a Set}
+  \item Algebraic identity: $|u - v| = |\sqrt{u} - \sqrt{v}||\sqrt{u} + \sqrt{v}|$ for $u, v \geq 0$
+\end{itemize}
+\end{remark*}

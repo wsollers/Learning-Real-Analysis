@@ -1,0 +1,252 @@
+% =========================================================
+% Trigonometric Functions — Notes
+% Chapter: elementary-functions
+% Section: trigonometric
+% Volume III · Analysis
+% =========================================================
+
+\section{Trigonometric Functions}
+\label{sec:trigonometric}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Trigonometric Functions}]
+\begin{itemize}
+  \item $\sin x$ and $\cos x$ are defined by absolutely convergent
+    power series; properties are derived analytically, not from
+    geometry.
+  \item Pythagorean identity: $\sin^2 x + \cos^2 x = 1$. Proof:
+    the derivative of the left side is $0$ and its value at $0$
+    is $1$.
+  \item Addition formulas follow from $e^{i(x+y)} = e^{ix}e^{iy}$.
+  \item Fundamental trigonometric limit: $\lim_{x \to 0}\sin x/x = 1$.
+  \item Second fundamental limit: $\lim_{x\to 0}(1-\cos x)/x^2 = 1/2$.
+  \item Inverse functions $\arcsin$, $\arccos$, $\arctan$ are defined
+    by restricting $\sin$, $\cos$, $\tan$ to monotone subdomains.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Sine and Cosine
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Sine and Cosine}]
+\begin{definition}[Sine and Cosine via Power Series]
+\label{def:sine-cosine}
+The \textbf{sine} and \textbf{cosine} functions are defined for all
+$x \in \mathbb{R}$ by the absolutely convergent power series
+\[
+  \sin x \;:=\;
+  \sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{(2n+1)!}
+  \;=\; x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots
+\]
+\[
+  \cos x \;:=\;
+  \sum_{n=0}^{\infty} \frac{(-1)^n x^{2n}}{(2n)!}
+  \;=\; 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in \mathbb{R} :\;
+  \sin x = \sum_{n=0}^\infty \frac{(-1)^n x^{2n+1}}{(2n+1)!},
+  \quad
+  \cos x = \sum_{n=0}^\infty \frac{(-1)^n x^{2n}}{(2n)!},
+\]
+both absolutely convergent by the ratio test.
+\end{remark*}
+
+\begin{remark*}[Key properties]
+\begin{enumerate}[label=(\roman*)]
+  \item $\sin 0 = 0$;\; $\cos 0 = 1$.
+  \item $\sin(-x) = -\sin x$ (odd);\; $\cos(-x) = \cos x$ (even).
+  \item $(\sin x)' = \cos x$;\; $(\cos x)' = -\sin x$.
+  \item $|\sin x| \leq 1$;\; $|\cos x| \leq 1$ for all $x$.
+  \item $\sin^2 x + \cos^2 x = 1$ (Pythagorean identity).
+  \item Periodic: $\sin(x+2\pi) = \sin x$;\;
+    $\cos(x+2\pi) = \cos x$.
+\end{enumerate}
+\end{remark*}
+
+\begin{remark*}[Relationship to $e^{ix}$]
+Euler's formula: $e^{ix} = \cos x + i\sin x$, where $e^{ix}$ is
+defined by the complex exponential series. This gives $\cos x =
+\operatorname{Re}(e^{ix})$ and $\sin x = \operatorname{Im}(e^{ix})$,
+connecting trigonometric and exponential functions at the deepest
+level. Euler's identity $e^{i\pi} + 1 = 0$ follows immediately.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Pythagorean Identity
+% ---------------------------------------------------------
+
+\begin{proposition}[Pythagorean Identity]
+\label{prop:pythagorean-identity}
+For all $x \in \mathbb{R}$:
+\[
+  \sin^2 x + \cos^2 x = 1.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:pythagorean-identity]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof strategy]
+Define $f(x) := \sin^2 x + \cos^2 x$. Then $f'(x) = 2\sin x \cos x
++ 2\cos x(-\sin x) = 0$, so $f$ is constant. Since $f(0) = 0 + 1 =
+1$, the identity follows.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Addition Formulas
+% ---------------------------------------------------------
+
+\begin{proposition}[Addition Formulas]
+\label{prop:trig-addition-formulas}
+For all $x, y \in \mathbb{R}$:
+\[
+  \sin(x+y) = \sin x \cos y + \cos x \sin y,
+  \qquad
+  \cos(x+y) = \cos x \cos y - \sin x \sin y.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:trig-addition-formulas]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof strategy]
+From the Cauchy product: $e^{i(x+y)} = e^{ix}e^{iy}$. Taking real
+and imaginary parts yields both addition formulas simultaneously.
+\end{remark*}
+
+\begin{remark*}[Derived identities]
+\begin{align*}
+  \sin(2x) &= 2\sin x \cos x \\
+  \cos(2x) &= \cos^2 x - \sin^2 x = 1 - 2\sin^2 x = 2\cos^2 x - 1 \\
+  \sin^2 x &= \tfrac{1}{2}(1 - \cos 2x) \\
+  \cos^2 x &= \tfrac{1}{2}(1 + \cos 2x)
+\end{align*}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Tangent and other trig functions
+% ---------------------------------------------------------
+
+\begin{definition}[Tangent, Cotangent, Secant, Cosecant]
+\label{def:other-trig}
+\[
+  \tan x := \frac{\sin x}{\cos x},\quad
+  \cot x := \frac{\cos x}{\sin x},\quad
+  \sec x := \frac{1}{\cos x},\quad
+  \csc x := \frac{1}{\sin x}.
+\]
+$\tan x$ and $\sec x$ are defined where $\cos x \neq 0$, i.e.,
+$x \neq \pi/2 + k\pi$ for $k \in \mathbb{Z}$.
+\end{definition}
+
+\begin{remark*}[Pythagorean identities for $\tan$]
+Dividing $\sin^2 x + \cos^2 x = 1$ by $\cos^2 x$:
+$1 + \tan^2 x = \sec^2 x$.
+Dividing by $\sin^2 x$: $\cot^2 x + 1 = \csc^2 x$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Inverse Trigonometric Functions
+% ---------------------------------------------------------
+
+\begin{definition}[Inverse Trigonometric Functions]
+\label{def:inverse-trig}
+\begin{itemize}
+  \item $\arcsin : [-1,1] \to [-\pi/2, \pi/2]$ is the inverse of
+    $\sin\big|_{[-\pi/2,\pi/2]}$.
+  \item $\arccos : [-1,1] \to [0,\pi]$ is the inverse of
+    $\cos\big|_{[0,\pi]}$.
+  \item $\arctan : \mathbb{R} \to (-\pi/2, \pi/2)$ is the inverse
+    of $\tan\big|_{(-\pi/2,\pi/2)}$.
+\end{itemize}
+\end{definition}
+
+\begin{remark*}[Key limits of $\arctan$]
+\[
+  \lim_{x \to +\infty} \arctan x = \frac{\pi}{2},
+  \qquad
+  \lim_{x \to -\infty} \arctan x = -\frac{\pi}{2}.
+\]
+$\arctan$ is bounded, strictly increasing, and continuous on
+$\mathbb{R}$; the Monotone Limit Theorem gives the limits as the
+supremum and infimum of its range.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Fundamental Trigonometric Limit
+% ---------------------------------------------------------
+
+\begin{theorem}[Fundamental Trigonometric Limit]
+\label{thm:fundamental-trig-limit}
+\[
+  \lim_{x \to 0} \frac{\sin x}{x} = 1.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:fundamental-trig-limit]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall\varepsilon > 0,\;
+  \exists\delta > 0 :\;
+  0 < |x| < \delta \Rightarrow
+  \left|\frac{\sin x}{x} - 1\right| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Proof strategy — series]
+From the series: $\sin x / x = 1 - x^2/3! + x^4/5! - \cdots \to 1$
+as $x \to 0$ by continuity of power series at their center.
+\end{remark*}
+
+\begin{remark*}[Proof strategy — geometric squeeze]
+For $0 < x < \pi/2$, the area comparison of two triangles and a
+circular sector gives $\cos x \leq \sin x / x \leq 1$. Since $\cos
+x \to 1$ as $x \to 0^+$, the Squeeze Theorem gives $\sin x / x \to
+1$. The even symmetry of $\sin x / x$ extends this to $x \to 0^-$.
+\end{remark*}
+
+\begin{remark*}[Significance]
+This is the statement $(\sin x)'\big|_{x=0} = 1$, which implies
+$(\sin x)' = \cos x$ everywhere. It underlies all trigonometric
+differentiation and is used in the proof of the addition formulas
+via the limit approach.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Second Fundamental Trigonometric Limit
+% ---------------------------------------------------------
+
+\begin{proposition}[Second Fundamental Trigonometric Limit]
+\label{prop:limit-one-minus-cos}
+\[
+  \lim_{x \to 0} \frac{1 - \cos x}{x^2} = \frac{1}{2}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:limit-one-minus-cos]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Proof strategy]
+Use the half-angle identity $1 - \cos x = 2\sin^2(x/2)$:
+\[
+  \frac{1 - \cos x}{x^2}
+  = \frac{2\sin^2(x/2)}{x^2}
+  = \frac{1}{2}\left(\frac{\sin(x/2)}{x/2}\right)^2
+  \to \frac{1}{2} \cdot 1^2 = \frac{1}{2}.
+\]
+\end{remark*}

@@ -1,0 +1,42 @@
+\newpage
+\phantomsection
+\label{prf:every-value-attained}
+
+\begin{remark*}[Return]
+\hyperref[cor:ivt-between-inf-and-sup]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Every Value Between inf and sup Is Attained]
+Let $f : [a,b] \to \mathbb{R}$ be continuous. For every $k$ with $\inf f([a,b]) \leq k \leq \sup f([a,b])$, there exists $c \in [a,b]$ such that $f(c) = k$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+The Extreme Value Theorem provides points $x_m, x_M \in [a,b]$ such that $f(x_m) = m := \inf f([a,b])$ and $f(x_M) = M := \sup f([a,b])$. For given $k$ with $m \leq k \leq M$, define $g(x) := f(x) - k$. Then $g$ is continuous on $J := [\min(x_m, x_M), \max(x_m, x_M)] \subseteq [a,b]$ with $g(x_m) = m - k \leq 0$ and $g(x_M) = M - k \geq 0$. If $g(x_m) = 0$, set $c := x_m$. If $g(x_M) = 0$, set $c := x_M$. If $g(x_m) < 0 < g(x_M)$, the Location of Roots Theorem applied to $g$ on $J$ produces $c$ with $g(c) = 0$. In all cases, $f(c) = k$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Apply the Extreme Value Theorem to obtain extrema witnesses. Since $[a,b]$ is a closed bounded interval and $f$ is continuous on $[a,b]$, the Extreme Value Theorem guarantees the existence of points $x_m, x_M \in [a,b]$ such that $f(x_m) = m := \inf f([a,b])$ and $f(x_M) = M := \sup f([a,b])$. These points witness where $f$ attains its minimum and maximum values on the interval.
+
+\textbf{Step 2.} Transform the value-attainment problem into a root-finding problem. Let $k$ satisfy $m \leq k \leq M$. Define $g : [a,b] \to \mathbb{R}$ by $g(x) := f(x) - k$. Since $f$ is continuous on $[a,b]$ and $k$ is constant, $g$ is continuous on $[a,b]$ by the algebra of continuous functions. The function $g$ is zero precisely where $f$ equals $k$.
+
+\textbf{Step 3.} Restrict attention to the connecting interval. The function $g$ is continuous on the subinterval $J := [\min(x_m, x_M), \max(x_m, x_M)] \subseteq [a,b]$. This interval connects the extrema points and provides the domain where the root-finding analysis will occur.
+
+\textbf{Step 4.} Evaluate $g$ at the extrema points. At the extrema points: $g(x_m) = f(x_m) - k = m - k \leq 0$ and $g(x_M) = f(x_M) - k = M - k \geq 0$. These inequalities follow from the constraint $m \leq k \leq M$.
+
+\textbf{Step 5.} Handle the three cases systematically. If $g(x_m) = 0$, then $f(x_m) = k$, so set $c := x_m$. If $g(x_M) = 0$, then $f(x_M) = k$, so set $c := x_M$. If $g(x_m) < 0 < g(x_M)$, then the Location of Roots Theorem applied to the continuous function $g$ on the interval $J$ produces a point $c$ strictly between $x_m$ and $x_M$ with $g(c) = 0$, hence $f(c) = k$. In all cases, $c \in [a,b]$ and $f(c) = k$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a constructive existence proof using the Extreme Value Theorem and Location of Roots. The strategy transforms the value-attainment problem into a root-finding problem by shifting $f$ by the target value $k$. The three-case analysis is essential because the Location of Roots Theorem requires strict inequality at the endpoints, while the boundary cases $k = m$ and $k = M$ are resolved directly by the extrema witnesses from EVT.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:extreme-value-theorem]{Extreme Value Theorem}
+  \item \hyperref[thm:algebra-continuous-functions]{Algebra of Continuous Functions}
+  \item \hyperref[thm:location-of-roots]{Location of Roots Theorem}
+\end{itemize}
+\end{remark*}

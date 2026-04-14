@@ -1,0 +1,506 @@
+% =========================================================
+% Limits of Functions — Notes
+% Chapter: functions
+% Section: limits
+% Volume III · Analysis
+% =========================================================
+
+\section{Limits of Functions}
+\label{sec:limits-of-functions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Toolkit --- Limits of Functions}]
+\begin{itemize}
+  \item $\lim_{x \to c} f(x) = L$ requires $c$ to be a cluster point
+    of $\operatorname{dom}(f)$. The value $f(c)$ is irrelevant;
+    $f$ need not even be defined at $c$.
+  \item Three equivalent forms: $\varepsilon$-$\delta$, neighbourhood,
+    sequential. The Sequential Criterion is the primary working tool.
+  \item Uniqueness: a function has at most one limit at any cluster point.
+  \item Bridge principle: algebra of sequence limits transfers to function
+    limits via the Sequential Criterion.
+  \item A finite limit implies local boundedness: $f$ is bounded on some
+    punctured neighbourhood of $c$.
+  \item Limits are local: replacing the domain by any subset agreeing
+    near $c$ does not change the limit.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Tao scaffolding definitions
+% ---------------------------------------------------------
+
+\begin{definition}[$\varepsilon$-Closeness of a Function to a Value]
+\label{def:eps-close-function}
+Let $X \subseteq \mathbb{R}$, let $f : X \to \mathbb{R}$, let
+$L \in \mathbb{R}$, and let $\varepsilon > 0$. The function $f$ is
+\textbf{$\varepsilon$-close to $L$} if $|f(x) - L| \leq \varepsilon$
+for all $x \in X$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  f \;\varepsilon\text{-close to } L
+  \;\iff\;
+  \forall x \in X :\; |f(x) - L| \leq \varepsilon.
+\]
+This is a global condition. It is Tao's scaffolding toward the limit
+definition and is not used in subsequent proofs.
+\end{remark*}
+
+\begin{definition}[Local $\delta$-Closeness of a Function Near a Point]
+\label{def:delta-close-function}
+Let $f : X \to \mathbb{R}$, let $L \in \mathbb{R}$, let $x_0$ be
+adherent to $X$, and let $\varepsilon, \delta > 0$. The function $f$
+is \textbf{$\varepsilon$-close to $L$ near $x_0$ within distance
+$\delta$} if
+\[
+  \forall x \in X :\; |x - x_0| < \delta \Rightarrow |f(x) - L|
+  \leq \varepsilon.
+\]
+\end{definition}
+
+\begin{remark*}[Interpretation]
+This is a local condition: only outputs within distance $\delta$ of
+$x_0$ must be within $\varepsilon$ of $L$. The limit definition is
+the assertion that for every $\varepsilon > 0$ there exists such a
+$\delta$, with $x \neq x_0$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Limit of a Function
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Limit of a Function}]
+\begin{definition}[Limit of a Function]
+\label{def:limit-function}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+A real number $L$ is the \textbf{limit of $f$ at $c$}, written
+$\lim_{x \to c} f(x) = L$, if
+\[
+  \forall\varepsilon > 0,\;
+  \exists\delta > 0,\;
+  \forall x \in A :\;
+  0 < |x - c| < \delta \;\Rightarrow\; |f(x) - L| < \varepsilon.
+\]
+If no such $L$ exists, $f$ \textbf{diverges} at $c$.
+
+\smallskip
+\noindent
+\hyperref[prf:limit-unique]{\textit{Go to uniqueness proof.}}
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \lim_{x \to c} f(x) = L
+  \;\iff\;
+  \forall\varepsilon > 0,\;
+  \exists\delta > 0,\;
+  \forall x \in A :\;
+  0 < |x - c| < \delta \;\Rightarrow\; |f(x) - L| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \lim_{x \to c} f(x) \neq L
+  \;\iff\;
+  \exists\varepsilon_0 > 0,\;
+  \forall\delta > 0,\;
+  \exists x \in A :\;
+  0 < |x - c| < \delta \;\wedge\; |f(x) - L| \geq \varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Four critical features]
+(i) $f$ need not be defined at $c$ — only near $c$.
+(ii) $c$ must be a cluster point of $A$ — else the condition is vacuous.
+(iii) The $0 <$ in $0 < |x-c| < \delta$ explicitly excludes $x = c$.
+(iv) $\delta$ may depend on $\varepsilon$; write $\delta(\varepsilon)$
+to emphasize this.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The limit captures the behavior of $f$ arbitrarily close to $c$,
+ignoring what happens at $c$ itself. Given any output precision
+$\varepsilon$, the limit asserts the existence of an input tolerance
+$\delta$ that delivers it: all inputs within $\delta$ of $c$ (except
+$c$ itself) produce outputs within $\varepsilon$ of $L$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Sequential Limit
+% ---------------------------------------------------------
+
+\begin{definition}[Sequential Definition of Limit]
+\label{def:limit-function-sequential}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+The limit $\lim_{x \to c} f(x) = L$ \emph{in the sequential sense}
+holds if for every sequence $(x_n) \subseteq A \setminus \{c\}$ with
+$x_n \to c$, the sequence $(f(x_n))$ converges to $L$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \lim_{x \to c} f(x) = L \text{ (sequential)}
+  \;\iff\;
+  \forall (x_n) \subseteq A \setminus \{c\} :\;
+  x_n \to c \;\Rightarrow\; f(x_n) \to L.
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Neighbourhood Form
+% ---------------------------------------------------------
+
+\begin{proposition}[Neighbourhood Form of the Limit]
+\label{prop:limit-neighbourhood-equiv}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+  \item $\lim_{x \to c} f(x) = L$.
+  \item For every $V_\varepsilon(L)$ there exists $V_\delta(c)$ such
+    that $x \in V_\delta^*(c) \cap A \Rightarrow f(x) \in
+    V_\varepsilon(L)$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:limit-neighbourhood-equiv]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Interpretation]
+The equivalence is notational: $V_\delta(c) \cap A$ with $x \neq c$
+is the same as $\{x \in A : 0 < |x-c| < \delta\}$. The neighbourhood
+form makes the geometric picture explicit — the image of the punctured
+$\delta$-neighbourhood must land inside the $\varepsilon$-ball around
+$L$ — and is the form closest to the topological definition of
+continuity.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Uniqueness
+% ---------------------------------------------------------
+
+\begin{theorem}[Uniqueness of Limits of Functions]
+\label{thm:limit-unique}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+Then $f$ has at most one limit at $c$.
+
+\smallskip
+\noindent
+\hyperref[prf:limit-unique]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \lim_{x \to c} f(x) = L
+  \;\wedge\;
+  \lim_{x \to c} f(x) = L'
+  \;\Rightarrow\; L = L'.
+\]
+\end{remark*}
+
+\begin{remark*}[Proof sketch]
+Assume $L \neq L'$ and set $\varepsilon = |L - L'|/2 > 0$. Invoke
+each limit definition to get $\delta_1, \delta_2$; take $\delta =
+\min(\delta_1, \delta_2)$. Since $c$ is a cluster point, pick $x \in
+A$ with $0 < |x-c| < \delta$. Then $|L - L'| \leq |L - f(x)| +
+|f(x) - L'| < \varepsilon + \varepsilon = |L - L'|$, a contradiction.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Sequential Criterion
+% ---------------------------------------------------------
+
+\begin{proposition}[Sequential Criterion for Function Limits]
+\label{prop:sequential-criterion-limits}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+The following are equivalent:
+\begin{enumerate}[label=(\alph*)]
+  \item $\lim_{x \to c} f(x) = L$.
+  \item For every $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$,
+    $f(x_n) \to L$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:sequential-criterion-limits]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(a)\quad &\forall\varepsilon>0,\;
+           \exists\delta>0,\;
+           \forall x\in A :\;
+           0<|x-c|<\delta \Rightarrow |f(x)-L|<\varepsilon. \\
+(b)\quad &\forall (x_n)\subseteq A\setminus\{c\},\;
+           x_n\to c \;\Rightarrow\; f(x_n)\to L.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[The bridge principle]
+Once proved, all results from the sequences chapter transfer to
+function limits automatically:
+\[
+  \text{Algebra of sequence limits}
+  \;\xRightarrow{\text{Sequential Criterion}}\;
+  \text{Algebra of function limits.}
+\]
+The negation is equally powerful: to show $\lim_{x\to c} f(x)$ does
+not exist, exhibit two sequences $x_n \to c$ and $y_n \to c$ in $A
+\setminus \{c\}$ with $f(x_n)$ and $f(y_n)$ converging to different
+values.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Corollary — Three Equivalent Forms
+% ---------------------------------------------------------
+
+\begin{corollary}[Three Equivalent Forms of the Function Limit]
+\label{cor:limit-three-equiv}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+  \item $\lim_{x \to c} f(x) = L$. \hfill ($\varepsilon$-$\delta$)
+  \item $\forall V_\varepsilon(L),\; \exists V_\delta(c) :\; x \in
+    V_\delta^*(c) \cap A \Rightarrow f(x) \in V_\varepsilon(L)$.
+    \hfill (neighbourhood)
+  \item $\forall (x_n) \subseteq A\setminus\{c\},\; x_n \to c
+    \Rightarrow f(x_n) \to L$. \hfill (sequential)
+\end{enumerate}
+\end{corollary}
+
+% ---------------------------------------------------------
+% Theorem — Limit Implies Local Boundedness
+% ---------------------------------------------------------
+
+\begin{theorem}[Limit Implies Local Boundedness]
+\label{thm:limit-implies-local-bounding}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+If $\lim_{x \to c} f(x) = L \in \mathbb{R}$, then $f$ is bounded on
+some punctured neighbourhood of $c$: there exist $\delta, M > 0$
+such that $|f(x)| \leq M$ for all $x \in A$ with $0 < |x-c| < \delta$.
+
+\smallskip
+\noindent
+\hyperref[prf:limit-implies-local-bounding]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \lim_{x \to c} f(x) = L
+  \;\Rightarrow\;
+  \exists\delta > 0,\; \exists M > 0,\;
+  \forall x \in A :\;
+  0 < |x-c| < \delta \Rightarrow |f(x)| \leq M.
+\]
+\end{remark*}
+
+\begin{remark*}[Proof sketch]
+Take $\varepsilon = 1$ in the limit definition; get $\delta$ with
+$|f(x) - L| < 1$ on the punctured $\delta$-neighbourhood. By the
+triangle inequality $|f(x)| \leq |f(x) - L| + |L| < 1 + |L|$.
+Set $M = 1 + |L|$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Bounded Limits
+% ---------------------------------------------------------
+
+\begin{theorem}[Bounded Limits]
+\label{thm:bounded-limits}
+Let $f : A \to \mathbb{R}$, let $c$ be a cluster point of $A$, and
+let $a, b \in \mathbb{R}$. If $a \leq f(x) \leq b$ for all $x \in A$
+with $x \neq c$, and $\lim_{x \to c} f(x) = L$ exists, then
+$a \leq L \leq b$.
+
+\smallskip
+\noindent
+\hyperref[prf:bounded-limits]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Interpretation]
+If every nearby value of $f$ is trapped in $[a,b]$, the limit cannot
+escape outside $[a,b]$. The proof applies the Sequential Criterion
+and the corresponding result for sequences (limits preserve
+non-strict inequalities).
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Squeeze Theorem for Function Limits
+% ---------------------------------------------------------
+
+\begin{theorem}[Squeeze Theorem for Function Limits]
+\label{thm:squeeze-function-limits}
+Let $f, g, h : A \to \mathbb{R}$ and let $c$ be a cluster point of
+$A$. Suppose $\lim_{x \to c} f(x) = L = \lim_{x \to c} g(x)$, and
+suppose there exists $\delta_0 > 0$ such that
+\[
+  \forall x \in A,\; 0 < |x-c| < \delta_0 \Rightarrow
+  f(x) \leq h(x) \leq g(x).
+\]
+Then $\lim_{x \to c} h(x) = L$.
+
+\smallskip
+\noindent
+\hyperref[prf:squeeze-function-limits]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Interpretation]
+The proof routes entirely through the Sequential Criterion: translate
+to sequences, apply the sequential squeeze theorem, translate back.
+No new $\varepsilon$-$\delta$ work is needed.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Limits Are Local
+% ---------------------------------------------------------
+
+\begin{theorem}[Limits Are Local]
+\label{thm:limits-are-local}
+Let $E \subseteq X \subseteq \mathbb{R}$, let $x_0$ be a cluster
+point of $E$, let $f : X \to \mathbb{R}$, and let $\delta > 0$.
+Then
+\[
+  \lim_{x \to x_0;\, x \in E} f(x) = L
+  \;\iff\;
+  \lim_{x \to x_0;\, x \in E \cap (x_0 - \delta, x_0 + \delta)}
+  f(x) = L.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:limits-are-local]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Interpretation]
+The existence and value of a limit depend only on the behavior of
+$f$ arbitrarily close to $x_0$. Trimming the domain to any smaller
+neighbourhood does not change the limit — points far from $x_0$
+are irrelevant.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Limit of Absolute Value
+% ---------------------------------------------------------
+
+\begin{proposition}[Limit of Absolute Value]
+\label{prop:limit-absolute-value}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+If $\lim_{x \to c} f(x) = L$, then $\lim_{x \to c} |f(x)| = |L|$.
+
+\smallskip
+\noindent
+\hyperref[prf:limit-absolute-value]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \lim_{x \to c} f(x) = L
+  \;\Rightarrow\;
+  \lim_{x \to c} |f(x)| = |L|.
+\]
+The converse fails: $f(x) = \operatorname{sgn}(x)$ at $c = 0$ has
+$|f(x)| \equiv 1$ so $\lim|f(x)| = 1$ exists, but $\lim f(x)$ does not.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Composition of Limits
+% ---------------------------------------------------------
+
+\begin{theorem}[Composition of Limits]
+\label{thm:composition-of-limits}
+Let $f : A \to B$, let $g : B \to \mathbb{R}$, let $c_1$ be a
+cluster point of $A$, and let $c_2 \in \mathbb{R}$ be a cluster
+point of $B$. Suppose $\lim_{x \to c_1} f(x) = c_2$ and
+$\lim_{y \to c_2} g(y) = L$. If $c_2 \in B$, assume also that
+$g(c_2) = L$. Then
+\[
+  \lim_{x \to c_1} g(f(x)) = L.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:composition-of-limits]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Why the hypothesis $g(c_2) = L$ is necessary]
+$f(x)$ may equal $c_2$ for points near $c_1$. The punctured
+neighbourhood condition on $g$ only controls $y \neq c_2$; the
+hypothesis $g(c_2) = L$ plugs this gap. Without it, take $f \equiv
+c_2$ and $g(c_2) \neq L$: then $g(f(x)) = g(c_2) \neq L$ for all $x$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Monotone Limit Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Monotone Limit Theorem]
+\label{thm:monotone-limit-theorem}
+Let $a < b$ and let $f : (a,b) \to \mathbb{R}$ be monotone and
+bounded. Then both one-sided limits exist at every interior point.
+For increasing $f$ and every $x_0 \in (a,b)$:
+\[
+  f(x_0^-) = \sup\{\,f(x) : a < x < x_0\,\},
+  \qquad
+  f(x_0^+) = \inf\{\,f(x) : x_0 < x < b\,\}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:monotone-limit-theorem]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  f \text{ increasing and bounded on } (a,b)
+  \;\Rightarrow\;
+  \forall x_0 \in (a,b) :\;
+  f(x_0^-) \text{ and } f(x_0^+) \text{ both exist in } \mathbb{R}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Boundedness supplies the supremum and infimum; monotonicity forces
+convergence toward them from each side. The theorem justifies the
+study of one-sided limits for monotone functions and establishes that
+monotone functions can only have jump discontinuities, never
+oscillatory ones.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Cauchy Criterion for Function Limits
+% ---------------------------------------------------------
+
+\begin{proposition}[Cauchy Criterion for Function Limits]
+\label{prop:cauchy-criterion-limits}
+Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
+Then $\lim_{x \to c} f(x)$ exists (finitely) if and only if
+\[
+  \forall\varepsilon > 0,\;
+  \exists\delta > 0,\;
+  \forall x, y \in A :\;
+  0 < |x-c| < \delta \;\wedge\; 0 < |y-c| < \delta
+  \;\Rightarrow\; |f(x) - f(y)| < \varepsilon.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-criterion-limits]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Interpretation]
+The Cauchy criterion tests limit existence without knowing the limit
+value. It asserts that the outputs cluster — two outputs from any
+sufficiently small punctured ball must be within $\varepsilon$ of
+each other. This is the function-limit analogue of the Cauchy
+completeness criterion for sequences. It is particularly useful when
+the limit is hard to guess but the oscillation is controllable.
+\end{remark*}
