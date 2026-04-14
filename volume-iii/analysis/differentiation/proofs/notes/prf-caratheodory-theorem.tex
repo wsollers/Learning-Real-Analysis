@@ -1,0 +1,257 @@
+% =========================================================
+% Proof: Carathéodory's Theorem
+% Source: volume-iii/analysis/differentiation/notes/notes-caratheodory.tex
+% Mode: dual
+% =========================================================
+
+\subsection*{Carathéodory's Theorem}
+\label{prf:caratheodory}
+
+\begin{remark*}[Return]
+\hyperref[thm:caratheodory]{$\leftarrow$ Back to Theorem (Carathéodory's Theorem) in Notes}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proof I — Learning Version
+% ---------------------------------------------------------
+\subsubsection*{Proof I \textemdash\ Learning Version (Bidirectional)}
+\label{prf:caratheodory-naive}
+
+\begin{proof}
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$,
+and let $c \in I$. The claim is that $f$ is differentiable at $c$ if and only
+if there exists a function $\varphi : I \to \mathbb{R}$, continuous at $c$,
+satisfying $f(x) - f(c) = \varphi(x)(x - c)$ for all $x \in I$, in which
+case $\varphi(c) = f'(c)$.
+
+$(\Rightarrow)$ \textit{Assume $f$ is differentiable at $c$.}
+
+\ProofStep{1}{Define $\varphi$.}
+Construct $\varphi : I \to \mathbb{R}$ to represent the difference quotient:
+\[
+  \varphi(x) :=
+  \begin{cases}
+    \dfrac{f(x) - f(c)}{x - c} & x \neq c, \\[6pt]
+    f'(c)                       & x = c.
+  \end{cases}
+\]
+
+\ProofStep{2}{Verify the identity.}
+For $x \neq c$, multiplying by $(x - c)$ gives $f(x) - f(c) = \varphi(x)(x-c)$
+directly. For $x = c$, both sides equal $0$. The identity holds on all of $I$.
+
+\ProofStep{3}{Show continuity at $c$.}
+Taking the limit of $\varphi$ as $x \to c$:
+\[
+  \lim_{x \to c} \varphi(x)
+  = \lim_{x \to c} \frac{f(x) - f(c)}{x - c}
+  = f'(c)
+  = \varphi(c).
+\]
+Since $\lim_{x \to c} \varphi(x) = \varphi(c)$, $\varphi$ is continuous at
+$c$ by \ByDef{Continuity at a Point}.
+
+$(\Leftarrow)$ \textit{Assume there exists $\varphi$ continuous at $c$ with
+$f(x) - f(c) = \varphi(x)(x-c)$ for all $x \in I$.}
+
+\ProofStep{4}{Set up the difference quotient.}
+For $x \neq c$, divide the identity by $(x - c)$:
+\[
+  \frac{f(x) - f(c)}{x - c} = \varphi(x).
+\]
+
+\ProofStep{5}{Take the limit.}
+Since $\varphi$ is continuous at $c$, $\lim_{x \to c} \varphi(x) = \varphi(c)$
+by \ByDef{Continuity at a Point}. Therefore:
+\[
+  \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \varphi(c).
+\]
+
+\ProofStep{6}{Conclude.}
+The limit of the difference quotient exists and equals $\varphi(c)$. By
+\ByDef{Differentiability at a Point}, $f$ is differentiable at $c$ and
+$f'(c) = \varphi(c)$.
+\end{proof}
+
+% ---------------------------------------------------------
+% Proof II — Professional Standard
+% ---------------------------------------------------------
+\subsubsection*{Proof II \textemdash\ Professional Standard (Bidirectional)}
+\label{prf:caratheodory-direct}
+
+\begin{proof}
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$,
+and let $c \in I$. The claim is that $f$ is differentiable at $c$ if and only
+if there exists a function $\varphi : I \to \mathbb{R}$, continuous at $c$,
+satisfying $f(x) - f(c) = \varphi(x)(x - c)$ for all $x \in I$, in which
+case $\varphi(c) = f'(c)$.
+
+$(\Rightarrow)$ \textit{Assume $f$ is differentiable at $c$; construct
+$\varphi$ continuous at $c$ satisfying the factorization.}
+
+\ProofStep{1}{Construct $\varphi$.}
+Define $\varphi : I \to \mathbb{R}$ by
+\[
+  \varphi(x) :=
+  \begin{cases}
+    \dfrac{f(x) - f(c)}{x - c} & x \neq c, \\[6pt]
+    f'(c)                       & x = c.
+  \end{cases}
+\]
+
+\ProofStep{2}{Verify the identity.}
+For $x \neq c$, multiplying $\varphi(x) = \frac{f(x)-f(c)}{x-c}$ by $(x-c)$
+gives $f(x) - f(c) = \varphi(x)(x-c)$ directly. For $x = c$, both sides
+equal $0$. The identity holds on all of $I$.
+
+\ProofStep{3}{Show $\varphi$ is continuous at $c$.}
+By \ByDef{Differentiability at a Point},
+\[
+  \lim_{x \to c} \varphi(x)
+  = \lim_{x \to c} \frac{f(x) - f(c)}{x - c}
+  = f'(c)
+  = \varphi(c).
+\]
+Since $\lim_{x \to c} \varphi(x) = \varphi(c)$, $\varphi$ is continuous at
+$c$ by \ByDef{Continuity at a Point}.
+
+$(\Leftarrow)$ \textit{Assume there exists $\varphi : I \to \mathbb{R}$,
+continuous at $c$, with $f(x) - f(c) = \varphi(x)(x-c)$ for all $x \in I$;
+deduce that $f$ is differentiable at $c$.}
+
+\ProofStep{4}{Recover the difference quotient.}
+For $x \neq c$, dividing the identity $f(x) - f(c) = \varphi(x)(x-c)$ by
+$(x - c)$ gives
+\[
+  \frac{f(x) - f(c)}{x - c} = \varphi(x).
+\]
+
+\ProofStep{5}{Pass to the limit.}
+By \ByDef{Continuity at a Point} applied to $\varphi$ at $c$,
+$\lim_{x \to c} \varphi(x) = \varphi(c)$. Therefore
+\[
+  \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \varphi(c).
+\]
+
+\ProofStep{6}{Conclude differentiability.}
+The limit of the difference quotient exists and equals $\varphi(c)$. By
+\ByDef{Differentiability at a Point}, $f$ is differentiable at $c$ and
+$f'(c) = \varphi(c)$.
+\end{proof}
+
+% ---------------------------------------------------------
+% Shared remark blocks
+% ---------------------------------------------------------
+\begin{remark*}[Proof shape]
+The forward direction constructs $\varphi$ explicitly as the difference
+quotient extended to $x = c$ by assigning the value $f'(c)$; continuity of
+$\varphi$ at $c$ is then immediate from the definition of the derivative.
+The converse is a single line: dividing the factorization identity by $(x-c)$
+exhibits the difference quotient as $\varphi(x)$, and continuity of $\varphi$
+at $c$ supplies the limit.
+
+\FlashProof{1. ($\Rightarrow$) Define $\varphi$ as the difference quotient
+  extended by $\varphi(c) = f'(c)$. 2. Verify the identity holds on all of
+  $I$. 3. Differentiability gives $\lim_{x\to c}\varphi(x) = \varphi(c)$,
+  so $\varphi$ is continuous. 4. ($\Leftarrow$) Divide the identity by
+  $(x-c)$ to recover the difference quotient as $\varphi(x)$. 5. Continuity
+  of $\varphi$ at $c$ gives the limit $\varphi(c)$. 6. Limit exists, so $f$
+  is differentiable with $f'(c) = \varphi(c)$.}
+\end{remark*}
+
+\begin{remark*}[Self-assessment of Proof I]
+Proof I is correct and the structure is sound. Both directions are properly
+set up, citations are present, and the two-case identity verification
+(separately for $x \neq c$ and $x = c$) is complete. The following notes
+identify the specific differences between the two versions.
+
+\textbf{The two proofs are structurally identical — this is a good sign.}
+For Carathéodory's theorem the Learning Version and the Professional Standard
+are the same six-step argument. There is no indirect strategy to replace with
+a direct one, no unnecessary theorem to eliminate. A student who found this
+proof independently has found the professional proof. This will not always
+be the case — recognising when it is tells you that your proof instincts on
+this kind of construction argument are well-calibrated.
+
+\textbf{Step naming: goal description vs.\ object-and-property.}
+Proof I names Step 3 "Show continuity at $c$" — describing the goal as an
+action. Proof II names it "Show $\varphi$ is continuous at $c$" — naming the
+object ($\varphi$) and its property (continuity at $c$) explicitly. The
+second form is preferable: when scanning a proof, the reader should be able
+to identify what object is being controlled in each step without reading the
+body. Adopt the habit of naming the object first.
+
+\textbf{Step 3: missing citation before the computation.}
+Proof I takes the limit $\lim_{x\to c}\varphi(x) = f'(c)$ without naming
+the result that licenses this identification. The limit equals $f'(c)$
+because that is exactly what \ByDef{Differentiability at a Point} says —
+the derivative is defined as that limit. This is a definition invocation and
+should be cited before the computation, not left implicit. Proof II adds the
+citation explicitly. The rule: every named result used in a computation
+appears as a \ByThm or \ByDef citation at the point of use.
+
+\textbf{What Proof I does well.}
+The piecewise construction is correct and complete. The $x = c$ case in the
+identity verification is correctly checked — this is easy to forget and many
+first proofs omit it. The converse direction is concise and correctly
+structured. The conclusion in Step 6 cites the right definition. These all
+carry forward unchanged into Proof II.
+\end{remark*}
+
+\begin{remark*}[Commentary]
+\textbf{(a) Why is $\varphi$ defined piecewise?}
+The difference quotient $\frac{f(x)-f(c)}{x-c}$ is undefined at $x = c$
+since division by zero is not defined. But the theorem requires a function
+$\varphi$ defined on all of $I$, including at $c$. The piecewise definition
+assigns the only value that can make $\varphi$ continuous: the limit of the
+difference quotient as $x \to c$, which is $f'(c)$ by hypothesis.
+There is no choice — $\varphi(c) = f'(c)$ is forced by the continuity
+requirement.
+
+\textbf{(b) Why check the identity separately at $x = c$?}
+For $x \neq c$ the identity holds by algebra. At $x = c$, the right side is
+$\varphi(c) \cdot 0 = 0$ and the left side is $f(c) - f(c) = 0$. Both sides
+vanish independently of the value of $\varphi(c)$, so the identity holds at
+$c$ for free — but it still must be verified explicitly, because the theorem
+asserts the identity for all $x \in I$, and $c \in I$.
+
+\textbf{(c) What does the continuity condition actually say?}
+Continuity of $\varphi$ at $c$ means $\lim_{x \to c} \varphi(x) = \varphi(c)$.
+For $x \neq c$, $\varphi(x)$ is the difference quotient, so
+$\lim_{x \to c}\varphi(x)$ is the derivative $f'(c)$ by definition. And
+$\varphi(c) = f'(c)$ by construction. The continuity condition and the
+differentiability condition are two descriptions of the same limit. This is
+why the theorem is an equivalence: neither side adds content that the other
+lacks — they are the same statement in different language.
+
+\textbf{(d) Why does the converse divide by $(x-c)$?}
+The hypothesis gives $f(x) - f(c) = \varphi(x)(x-c)$ for all $x \in I$.
+Dividing by $(x-c)$ for $x \neq c$ produces the difference quotient exactly.
+This is pure algebra, not an approximation. The limit is taken separately in
+Step 5, where continuity of $\varphi$ supplies the value.
+
+\textbf{(e) Why is continuity of $\varphi$ sufficient to conclude
+differentiability?}
+After Step 4, the difference quotient equals $\varphi(x)$ for all $x \neq c$.
+So $\lim_{x\to c}\frac{f(x)-f(c)}{x-c} = \lim_{x\to c}\varphi(x) = \varphi(c)$
+by continuity. The derivative is defined as this limit, so it exists and
+equals $\varphi(c)$. The theorem's value is precisely this: it replaces the
+problem of showing a limit exists (differentiability) with the problem of
+showing a function is continuous at a point (continuity of $\varphi$).
+Continuity is often easier to verify algebraically, especially in composed
+settings like the Chain Rule.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-point]{Definition of Differentiability
+    at a Point}: Used in Step 3 (Proof II) to identify
+    $\lim_{x\to c}\varphi(x)$ as $f'(c)$, and in Step 6 (both proofs) to
+    conclude $f$ is differentiable.
+  \item \hyperref[def:continuity]{Definition of Continuity at a Point}:
+    Used in Step 3 (both proofs) to conclude $\varphi$ is continuous at $c$,
+    and in Step 5 (both proofs) to pass the limit through $\varphi$.
+\end{itemize>
+
+\FlashUses{def:derivative-at-point, def:continuity}
+\end{remark*}

@@ -1,0 +1,292 @@
+% =========================================================
+% Proof: Chain Rule (via Carathéodory's Theorem)
+% Source: volume-iii/analysis/differentiation/notes/notes-caratheodory.tex
+% Mode: dual
+% =========================================================
+
+\subsection*{Chain Rule}
+\label{prf:chain-rule}
+
+\begin{remark*}[Return]
+\hyperref[thm:chain-rule]{$\leftarrow$ Back to Theorem (Chain Rule) in Notes}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proof I — Learning Version
+% ---------------------------------------------------------
+\subsubsection*{Proof I \textemdash\ Learning Version (Carathéodory, unnamed $\Phi$)}
+\label{prf:chain-rule-naive}
+
+\begin{proof}
+Let $J, I \subseteq \mathbb{R}$ be open intervals, let $f : J \to \mathbb{R}$
+and $g : I \to \mathbb{R}$ be functions with $f(J) \subseteq I$, and let
+$c \in J$. Assume $f$ is differentiable at $c$ and $g$ is differentiable at
+$d := f(c)$. The claim is that $g \circ f$ is differentiable at $c$ and
+$(g \circ f)'(c) = g'(f(c)) \cdot f'(c)$.
+
+\ProofStep{1}{Linearize $f$ at $c$.}
+Since $f$ is differentiable at $c$, by \ByThm{Carathéodory's Theorem} there
+exists $\varphi : J \to \mathbb{R}$, continuous at $c$, such that
+\[
+  f(x) - f(c) = \varphi(x)(x - c)
+  \quad \text{for all } x \in J, \qquad \varphi(c) = f'(c).
+\]
+
+\ProofStep{2}{Linearize $g$ at $f(c)$.}
+Let $d = f(c)$. Since $g$ is differentiable at $d$, by
+\ByThm{Carathéodory's Theorem} there exists $\psi : I \to \mathbb{R}$,
+continuous at $d$, such that
+\[
+  g(y) - g(d) = \psi(y)(y - d)
+  \quad \text{for all } y \in I, \qquad \psi(d) = g'(d).
+\]
+
+\ProofStep{3}{Compose the identities.}
+Substitute $y = f(x)$ into the identity for $g$:
+\[
+  g(f(x)) - g(f(c)) = \psi(f(x))\bigl[f(x) - f(c)\bigr].
+\]
+Now substitute the identity for $f(x) - f(c)$ from Step 1:
+\[
+  g(f(x)) - g(f(c)) = \psi(f(x)) \cdot \varphi(x) \cdot (x - c).
+\]
+
+\ProofStep{4}{Take the limit.}
+Since $f$ is continuous at $c$ (by \ByThm{Differentiability Implies
+Continuity}) and $\psi$ is continuous at $f(c)$, the composition
+$\psi \circ f$ is continuous at $c$ by \ByThm{Continuity of Composite
+Functions}. Since $\varphi$ is continuous at $c$ from Step 1, the product
+$\psi(f(x)) \cdot \varphi(x)$ is continuous at $c$ by \ByThm{Product Rule
+for Continuous Functions}. Therefore:
+\[
+  \lim_{x \to c} \psi(f(x)) \cdot \varphi(x)
+  = \psi(f(c)) \cdot \varphi(c)
+  = g'(f(c)) \cdot f'(c).
+\]
+
+\ProofStep{5}{Conclude.}
+For $x \neq c$, divide Step 3's identity by $(x - c)$:
+\[
+  \frac{(g \circ f)(x) - (g \circ f)(c)}{x - c}
+  = \psi(f(x)) \cdot \varphi(x).
+\]
+Taking the limit as $x \to c$ gives $(g \circ f)'(c) = g'(f(c)) \cdot f'(c)$.
+\end{proof}
+
+% ---------------------------------------------------------
+% Proof II — Professional Standard
+% ---------------------------------------------------------
+\subsubsection*{Proof II \textemdash\ Professional Standard (Carathéodory, named $\Phi$)}
+\label{prf:chain-rule-direct}
+
+\begin{proof}
+Let $J, I \subseteq \mathbb{R}$ be open intervals, let $f : J \to \mathbb{R}$
+and $g : I \to \mathbb{R}$ be functions with $f(J) \subseteq I$, and let
+$c \in J$. Assume $f$ is differentiable at $c$ and $g$ is differentiable at
+$d := f(c)$. The claim is that $g \circ f$ is differentiable at $c$ and
+$(g \circ f)'(c) = g'(f(c)) \cdot f'(c)$.
+
+\ProofStep{1}{Apply Carathéodory's theorem to $f$ at $c$.}
+By \ByThm{Carathéodory's Theorem}, there exists $\varphi : J \to \mathbb{R}$,
+continuous at $c$, such that
+\[
+  f(x) - f(c) = \varphi(x)(x - c)
+  \quad \text{for all } x \in J, \qquad \varphi(c) = f'(c).
+\]
+
+\ProofStep{2}{Apply Carathéodory's theorem to $g$ at $d$.}
+By \ByThm{Carathéodory's Theorem}, there exists $\psi : I \to \mathbb{R}$,
+continuous at $d = f(c)$, such that
+\[
+  g(y) - g(d) = \psi(y)(y - d)
+  \quad \text{for all } y \in I, \qquad \psi(d) = g'(d).
+\]
+
+\ProofStep{3}{Compose the two factorizations.}
+Substitute $y = f(x)$ into the identity for $g$, using $d = f(c)$:
+\[
+  g(f(x)) - g(f(c)) = \psi(f(x))\bigl[f(x) - f(c)\bigr].
+\]
+Substitute the identity for $f(x) - f(c)$ from Step 1:
+\[
+  g(f(x)) - g(f(c)) = \psi(f(x)) \cdot \varphi(x) \cdot (x - c).
+\]
+
+\ProofStep{4}{Read off the Carathéodory function for $g \circ f$.}
+Define $\Phi : J \to \mathbb{R}$ by $\Phi(x) := \psi(f(x)) \cdot \varphi(x)$.
+The identity from Step 3 reads
+\[
+  (g \circ f)(x) - (g \circ f)(c) = \Phi(x)(x - c)
+  \quad \text{for all } x \in J.
+\]
+By \ByThm{Carathéodory's Theorem}, $g \circ f$ is differentiable at $c$ if
+and only if $\Phi$ is continuous at $c$.
+
+\ProofStep{5}{Verify continuity of $\Phi$ at $c$.}
+Differentiability of $f$ at $c$ implies continuity of $f$ at $c$ by
+\ByThm{Differentiability Implies Continuity}. Since $\psi$ is continuous at
+$d = f(c)$ and $f$ is continuous at $c$, the composition $\psi \circ f$ is
+continuous at $c$ by \ByThm{Continuity of Composite Functions}. Since
+$\varphi$ is continuous at $c$ by Step 1, the product $\Phi = (\psi \circ f)
+\cdot \varphi$ is continuous at $c$ by \ByThm{Product Rule for Continuous
+Functions}.
+
+\ProofStep{6}{Conclude and compute the derivative.}
+By \ByThm{Carathéodory's Theorem}, $g \circ f$ is differentiable at $c$ and
+$(g \circ f)'(c) = \Phi(c)$. Evaluating:
+\[
+  (g \circ f)'(c)
+  = \Phi(c)
+  = \psi(f(c)) \cdot \varphi(c)
+  = g'(f(c)) \cdot f'(c). \qedhere
+\]
+\end{proof}
+
+% ---------------------------------------------------------
+% Shared remark blocks
+% ---------------------------------------------------------
+\begin{remark*}[Proof shape]
+Both $f$ and $g$ are linearized via Carathéodory's theorem, yielding
+Carathéodory functions $\varphi$ and $\psi$. Composing the two factorizations
+produces a single Carathéodory factorization $\Phi = (\psi \circ f) \cdot
+\varphi$ for $g \circ f$. Continuity of $\Phi$ at $c$ — established by
+combining continuity of $\psi \circ f$ (via differentiability of $f$ and
+continuity of $\psi$) with continuity of $\varphi$ — is then exactly the
+Carathéodory criterion for differentiability of $g \circ f$. The derivative
+formula falls out by evaluating $\Phi$ at $c$.
+
+\FlashProof{1. Carathéodory on $f$ at $c$: get $\varphi$ continuous,
+  $f(x)-f(c)=\varphi(x)(x-c)$, $\varphi(c)=f'(c)$.
+  2. Carathéodory on $g$ at $f(c)$: get $\psi$ continuous,
+  $g(y)-g(f(c))=\psi(y)(y-f(c))$, $\psi(f(c))=g'(f(c))$.
+  3. Compose: $g(f(x))-g(f(c)) = \psi(f(x))\cdot\varphi(x)\cdot(x-c)$.
+  4. Set $\Phi = (\psi\circ f)\cdot\varphi$; this is the Carathéodory
+  function for $g\circ f$.
+  5. $\Phi$ is continuous at $c$: diff implies cont for $f$, compose
+  with $\psi$, multiply by $\varphi$.
+  6. $(g\circ f)'(c) = \Phi(c) = g'(f(c))\cdot f'(c)$.}
+\end{remark*}
+
+\begin{remark*}[Self-assessment of Proof I]
+Proof I is correct. The Carathéodory strategy is the right one, both
+factorizations are correctly applied, the continuity chain is assembled, and
+the limit is correctly computed. The following notes identify the structural
+differences that separate a good proof from a professional one.
+
+\textbf{The core gap: not naming the Carathéodory function for $g \circ f$.}
+In Proof I, Steps 3 and 4 are merged into a single step that factors the
+increment and then immediately passes to the limit. The product
+$\psi(f(x)) \cdot \varphi(x)$ is treated as an expression to evaluate rather
+than as an object to name and study. Proof II names this product $\Phi$ and
+identifies it explicitly as the Carathéodory function for $g \circ f$. This
+is not cosmetic. Naming $\Phi$ makes the proof's logical structure visible:
+the question is whether $\Phi$ is continuous at $c$, which is exactly the
+Carathéodory criterion applied to $g \circ f$. Without the name, the
+continuity argument in Step 5 appears as a free-standing calculation; with
+the name, it is clearly answering a specific question posed in Step 4.
+
+\textbf{Step ordering: limit before difference quotient.}
+Proof I takes the limit in Step 4 and then divides by $(x-c)$ in Step 5 to
+exhibit the difference quotient. Proof II reverses this: Step 4 identifies
+$\Phi$ as the Carathéodory function (which implicitly gives the difference
+quotient), Step 5 establishes continuity of $\Phi$, and Step 6 applies the
+theorem to conclude differentiability and read off the derivative. Proof II's
+order is more logical: first identify what needs to be shown (continuity of
+$\Phi$), then show it, then conclude. Proof I's order is more computational:
+arrive at the answer, then justify it. The logical order is preferable because
+it makes the proof's goal at each step clear before the work begins.
+
+\textbf{Missed reuse of Carathéodory's theorem.}
+Proof I applies Carathéodory in Steps 1 and 2 to linearize $f$ and $g$, but
+never explicitly invokes it in the reverse direction to conclude
+differentiability of $g \circ f$. The conclusion in Step 5 passes directly
+from "the limit equals $g'(f(c)) \cdot f'(c)$" to "$(g \circ f)'(c) =
+g'(f(c)) \cdot f'(c)$" by the definition of the derivative. This is correct
+but misses an opportunity: Carathéodory's theorem was the tool that set up
+the proof, and it is also the tool that closes it. Proof II explicitly
+invokes it a third time in Step 6: "By Carathéodory's Theorem, $g \circ f$
+is differentiable at $c$ and $(g \circ f)'(c) = \Phi(c)$." Symmetry of
+structure — open with Carathéodory, close with Carathéodory — is a mark of
+a well-organised proof.
+
+\textbf{What Proof I does well.}
+The Carathéodory strategy is independently chosen and correctly executed.
+The substitution of $y = f(x)$ in Step 3 is done correctly. The continuity
+chain — differentiability implies continuity of $f$, composition with $\psi$,
+product with $\varphi$ — is assembled in the right order and with the right
+theorem citations. The final evaluation $\psi(f(c)) \cdot \varphi(c) =
+g'(f(c)) \cdot f'(c)$ is correct. All of this carries forward.
+\end{remark*}
+
+\begin{remark*}[Commentary]
+\textbf{(a) Why use Carathéodory's theorem rather than the difference
+quotient directly?}
+The naive approach to the Chain Rule is to write the difference quotient of
+$g \circ f$ as
+\[
+  \frac{g(f(x))-g(f(c))}{x-c}
+  = \frac{g(f(x))-g(f(c))}{f(x)-f(c)} \cdot \frac{f(x)-f(c)}{x-c}
+\]
+and take limits separately. This fails when $f(x) = f(c)$ for $x \neq c$,
+because the first factor becomes $0/0$. Carathéodory's theorem avoids
+division entirely: the factorizations replace the quotients with continuous
+functions, so the product $\psi(f(x)) \cdot \varphi(x)$ is well-defined
+even when $f(x) = f(c)$.
+
+\textbf{(b) Why apply Carathéodory to $g$ at $f(c)$, not at $c$?}
+The function $g$ is differentiable at $d = f(c)$, not necessarily at $c$.
+The Carathéodory function $\psi$ is therefore built around the point $d$:
+it factorizes the increment $g(y) - g(f(c))$ by $(y - f(c))$. When $y = f(x)$,
+this becomes $g(f(x)) - g(f(c))$ factorized by $f(x) - f(c)$, which is then
+further factorized by $(x - c)$ via $\varphi$.
+
+\textbf{(c) Why name $\Phi$?}
+Naming $\Phi(x) := \psi(f(x)) \cdot \varphi(x)$ converts the factorization
+\[
+  (g \circ f)(x) - (g \circ f)(c) = \Phi(x)(x-c)
+\]
+into exactly the form that Carathéodory's theorem recognises. With $\Phi$
+named, the entire remainder of the proof has a single question to answer: is
+$\Phi$ continuous at $c$? Without the name, the continuity argument and the
+conclusion are tangled together, making it harder to see what is being shown
+and why.
+
+\textbf{(d) Why does the continuity of $\Phi$ require three theorems?}
+$\Phi = (\psi \circ f) \cdot \varphi$ is a product of two functions. Each
+factor must be shown continuous at $c$ separately before their product can be
+declared continuous. The factor $\psi \circ f$ is a composition: $\psi$ is
+continuous at $f(c)$ (from Carathéodory applied to $g$), and $f$ is
+continuous at $c$ (from differentiability of $f$), so their composition is
+continuous at $c$ by the Continuity of Composite Functions theorem. The
+factor $\varphi$ is continuous at $c$ directly from Carathéodory applied to
+$f$. The Product Rule for Continuous Functions then combines the two. Each
+theorem is doing a specific and necessary job.
+
+\textbf{(e) Why does the derivative formula fall out at the end?}
+Once $\Phi$ is shown to be continuous at $c$, Carathéodory's theorem gives
+$(g \circ f)'(c) = \Phi(c)$. Evaluating:
+$\Phi(c) = \psi(f(c)) \cdot \varphi(c) = g'(f(c)) \cdot f'(c)$.
+The values $\psi(f(c)) = g'(f(c))$ and $\varphi(c) = f'(c)$ were recorded
+at the end of Steps 2 and 1 respectively — they are the values of the
+Carathéodory functions at the linearization points. The formula is not
+derived; it is read off from what was already established.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:caratheodory]{Carathéodory's Theorem}: Applied to $f$
+    at $c$ (Step 1), to $g$ at $f(c)$ (Step 2), and invoked in reverse to
+    conclude differentiability of $g \circ f$ and read off the derivative
+    (Step 6, Proof II).
+  \item \hyperref[thm:diff-implies-cont]{Differentiability Implies
+    Continuity}: Supplies continuity of $f$ at $c$ in Step 5, enabling the
+    composition argument for $\psi \circ f$.
+  \item \hyperref[thm:continuity-composition]{Continuity of Composite
+    Functions}: Concludes $\psi \circ f$ is continuous at $c$ in Step 5.
+  \item \hyperref[thm:continuity-product]{Product Rule for Continuous
+    Functions}: Concludes $\Phi = (\psi \circ f) \cdot \varphi$ is
+    continuous at $c$ in Step 5.
+\end{itemize}
+
+\FlashUses{thm:caratheodory, thm:diff-implies-cont, thm:continuity-composition, thm:continuity-product}
+\end{remark*}

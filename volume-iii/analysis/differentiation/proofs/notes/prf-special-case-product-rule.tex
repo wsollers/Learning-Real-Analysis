@@ -1,0 +1,94 @@
+% =========================================================
+% Proof: Power Rule (Special Case of Extended Product Rule)
+% Source: volume-iii/analysis/differentiation/notes/notes-algebra.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Power Rule (Special Case)}
+\label{prf:power-rule-special-case}
+
+\begin{remark*}[Return]
+\hyperref[cor:power-rule-special-case]{$\leftarrow$ Back to Corollary (Power Rule, Special Case) in Notes}
+\end{remark*}
+
+\begin{proof}
+Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, let
+$f : I \to \mathbb{R}$ be differentiable at $c$, and let $n \in \mathbb{N}$.
+The claim is that $f^n$ is differentiable at $c$ and
+$(f^n)'(c) = n(f(c))^{n-1}f'(c)$.
+
+\ProofStep{1}{Apply the Extended Product Rule with all factors equal to $f$.}
+Set $f_1 = f_2 = \cdots = f_n = f$. By \ByThm{Extended Product Rule},
+\[
+  (f^n)'(c)
+  = (f_1 f_2 \cdots f_n)'(c)
+  = \sum_{k=1}^{n} f_k'(c) \prod_{\substack{i=1\\i\neq k}}^{n} f_i(c).
+\]
+
+\ProofStep{2}{Simplify each term.}
+Since $f_k = f$ for every $k$, each factor $f_k'(c) = f'(c)$. The
+remaining product contains $n-1$ factors each equal to $f(c)$:
+\[
+  \prod_{\substack{i=1\\i\neq k}}^{n} f_i(c)
+  = (f(c))^{n-1}.
+\]
+Each term in the sum is therefore $f'(c) \cdot (f(c))^{n-1}$,
+independently of $k$.
+
+\ProofStep{3}{Evaluate the sum.}
+Since the summand is constant in $k$, summing over $k = 1, \ldots, n$
+gives a factor of $n$:
+\[
+  (f^n)'(c)
+  = \sum_{k=1}^{n} f'(c)(f(c))^{n-1}
+  = n \cdot f'(c) \cdot (f(c))^{n-1}
+  = n(f(c))^{n-1}f'(c).
+\]
+\end{proof}
+
+\begin{remark*}[Proof shape]
+The argument is a direct specialisation of the Extended Product Rule:
+set all $n$ factors equal to $f$, observe that every term in the sum
+collapses to the same value $f'(c)(f(c))^{n-1}$, and count the $n$
+identical terms. No induction is needed beyond what is already encoded
+in the Extended Product Rule.
+
+\FlashProof{1. Set $f_1=\cdots=f_n=f$ in the Extended Product Rule.
+  2. Each term collapses to $f'(c)(f(c))^{n-1}$ since all factors are
+  equal. 3. Sum of $n$ identical terms gives $n(f(c))^{n-1}f'(c)$.}
+\end{remark*}
+
+\begin{remark*}[Commentary]
+\textbf{(a) Why does each product term equal $(f(c))^{n-1}$?}
+In the Extended Product Rule, the $k$-th term differentiates factor
+$f_k$ and evaluates all remaining $n-1$ factors at $c$. Since every
+factor is $f$, the remaining product is $f(c)$ multiplied by itself
+$n-1$ times, which is $(f(c))^{n-1}$. The index $k$ identifies which
+factor is differentiated, but since they are all the same function,
+the choice of $k$ does not change the result.
+
+\textbf{(b) Why is summing $n$ identical terms valid here?}
+The summand $f'(c)(f(c))^{n-1}$ depends on neither $k$ nor any
+running variable — it is a fixed real number determined entirely by
+$f$, $c$, and $n$. A sum of $n$ copies of a constant equals $n$
+times that constant. This is not an approximation; it is exact
+arithmetic.
+
+\textbf{(c) What does this prove that the basic Product Rule does not?}
+The basic Product Rule handles $n = 2$. The Extended Product Rule
+extends this to arbitrary finite $n$ by induction. The Power Rule
+Special Case then uses the Extended Product Rule to handle the
+specific pattern where all $n$ factors are the same function, yielding
+the clean formula $n(f(c))^{n-1}f'(c)$. Each result builds on the
+previous one in a strict dependency chain.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[cor:extended-product-rule]{Extended Product Rule}:
+    The single result applied in Step 1. All remaining steps are
+    arithmetic specialisation.
+\end{itemize}
+
+\FlashUses{cor:extended-product-rule}
+\end{remark*}
