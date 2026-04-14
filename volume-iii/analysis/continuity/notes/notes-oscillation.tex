@@ -1,6 +1,7 @@
 % =========================================================
-% Oscillation — Canonical Notes
+% Oscillation — Notes
 % Chapter: continuity
+% Section: oscillation
 % Volume III · Analysis
 % =========================================================
 
@@ -13,11 +14,15 @@
 
 \begin{tcolorbox}[title={Toolkit — Oscillation}]
 \begin{itemize}
-  \item $\omega(f; E) = \sup_{x_1, x_2 \in E} |f(x_1) - f(x_2)| = \operatorname{diam}(f(E))$.
-  \item $\omega(f; x_0) = \lim_{\delta \to 0^+} \omega(f; U_\delta(x_0) \cap E)$.
-  \item The limit defining $\omega(f; x_0)$ exists because the neighborhood oscillation is monotone nonincreasing in $\delta$.
-  \item $f$ continuous at $x_0$ $\iff$ $\omega(f; x_0) = 0$.
-  \item Discontinuity set: $D(f) = \{x \in E : \omega(f; x) > 0\} = \bigcup_{n=1}^{\infty}\{x \in E : \omega(f; x) \geq 1/n\}$.
+  \item $\omega(f;E) = \sup_{x_1,x_2 \in E} |f(x_1) - f(x_2)|$ is
+    the diameter of the image $f(E)$.
+  \item $\omega(f;x_0) = \lim_{\delta \to 0^+} \omega(f; U_\delta(x_0)
+    \cap E)$ measures residual local spread.
+  \item Continuity at $x_0$ if and only if $\omega(f;x_0) = 0$.
+  \item Discontinuity set: $D(f) = \{x \in E : \omega(f;x) > 0\} =
+    \bigcup_{n=1}^{\infty} \{x \in E : \omega(f;x) \geq 1/n\}$.
+  \item Each threshold set $\{x : \omega(f;x) \geq 1/n\}$ is closed,
+    so $D(f)$ is an $F_\sigma$ set.
 \end{itemize}
 \end{tcolorbox}
 
@@ -25,13 +30,13 @@
 % Definition — Oscillation on a Set
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition — Oscillation on a Set}]
+\begin{tcolorbox}[title={Definition --- Oscillation on a Set}]
 \begin{definition}[Oscillation on a Set]
 \label{def:oscillation-on-a-set}
 Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$. The
 \textbf{oscillation of $f$ on $E$} is
 \[
-  \omega(f; E)
+  \omega(f;\, E)
   \;:=\;
   \sup_{x_1, x_2 \in E} |f(x_1) - f(x_2)|
   \;=\;
@@ -42,43 +47,47 @@ Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$. The
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \omega(f; E)
+  \omega(f;\,E)
   \;=\;
   \sup\bigl\{\, |f(x_1) - f(x_2)| : x_1, x_2 \in E \,\bigr\}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The oscillation on $E$ measures the diameter of the image $f(E)$: the
-largest separation between any two function values on the set. It does
-not record where the extreme values occur, only how widely the image
-spreads. Oscillation zero means $f$ is constant on $E$.
+The oscillation on a set records only the spread of the image, not
+the location of its values. A small oscillation means all values of
+$f$ on $E$ lie close together. Zero oscillation means $f$ is
+constant on $E$. The equivalence $\omega(f;E) = \operatorname{diam}(f(E))$
+makes the geometric content transparent: oscillation on $E$ is the
+diameter of the image of $E$.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Oscillation at a Point
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition — Oscillation at a Point}]
+\begin{tcolorbox}[title={Definition --- Oscillation at a Point}]
 \begin{definition}[Oscillation at a Point]
 \label{def:oscillation-at-a-point}
 Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
 $x_0 \in E$. The \textbf{oscillation of $f$ at $x_0$} is
 \[
-  \omega(f; x_0)
+  \omega(f;\, x_0)
   \;:=\;
-  \lim_{\delta \to 0^+} \omega\bigl(f;\, U_\delta(x_0) \cap E\bigr),
+  \lim_{\delta \to 0^+}
+  \omega\bigl(f;\, U_\delta(x_0) \cap E\bigr),
 \]
-where $U_\delta(x_0) = \{x \in \mathbb{R} : |x - x_0| < \delta\}$.
+where $U_\delta(x_0) = \{\, x \in \mathbb{R} : |x - x_0| < \delta \,\}$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \omega(f; x_0)
+  \omega(f;\, x_0)
   \;=\;
   \lim_{\delta \to 0^+}
-  \sup\bigl\{\, |f(x_1) - f(x_2)| : x_1, x_2 \in U_\delta(x_0) \cap E \,\bigr\}.
+  \sup\bigl\{\, |f(x_1) - f(x_2)|
+    : x_1, x_2 \in U_\delta(x_0) \cap E \,\bigr\}.
 \]
 \end{remark*}
 
@@ -91,17 +100,18 @@ forces
   \;\leq\;
   \omega\bigl(f;\, U_{\delta_2}(x_0) \cap E\bigr).
 \]
-The function $\delta \mapsto \omega(f; U_\delta(x_0) \cap E)$ is
+The function $\delta \mapsto \omega(f;\, U_\delta(x_0) \cap E)$ is
 therefore monotone nonincreasing as $\delta \to 0^+$ and bounded
-below by $0$. The limit exists.
+below by $0$, so the limit defining $\omega(f;\, x_0)$ exists.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The pointwise oscillation measures the residual spread of nearby
-function values as the neighborhood shrinks to zero. If the nearby
-values of $f$ collapse to a single cluster, $\omega(f; x_0) = 0$.
-If a positive amount of spread persists no matter how tightly the
-neighborhood is drawn, $\omega(f; x_0) > 0$.
+The oscillation at $x_0$ measures the residual spread of nearby
+function values as the neighborhood shrinks to the point. If $f$
+collapses to a single cluster near $x_0$, the oscillation is $0$.
+If a positive spread persists no matter how small the neighborhood,
+the oscillation is positive — and the function is discontinuous at
+$x_0$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -115,45 +125,37 @@ $x_0 \in E$. Then
 \[
   f \text{ is continuous at } x_0
   \;\iff\;
-  \omega(f; x_0) = 0.
+  \omega(f;\, x_0) = 0.
 \]
+
+\smallskip
+\noindent
+\hyperref[prf:continuity-iff-zero-oscillation]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\Bigl(\forall \varepsilon > 0,\;
-\exists \delta > 0,\;
-\forall x \in E :\;
-|x - x_0| < \delta \Rightarrow |f(x) - f(x_0)| < \varepsilon\Bigr) \\
-&\qquad\iff\qquad
-\lim_{\delta \to 0^+}
-\omega\bigl(f;\, U_\delta(x_0) \cap E\bigr) = 0.
+  &\Bigl(\forall \varepsilon > 0,\;
+    \exists \delta > 0,\;
+    \forall x \in E:\;
+    |x - x_0| < \delta \Rightarrow |f(x) - f(x_0)| < \varepsilon\Bigr) \\
+  &\quad\iff\quad
+  \lim_{\delta \to 0^+}
+  \omega\bigl(f;\, U_\delta(x_0) \cap E\bigr) = 0.
 \end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Negated quantified statement]
-\[
-  f \text{ discontinuous at } x_0
-  \;\iff\;
-  \omega(f; x_0) > 0.
-\]
-\end{remark*}
-
 \begin{remark*}[Interpretation]
-Continuity at $x_0$ is equivalent to the local spread of $f$
-collapsing to zero. The forward direction follows because, if $f$
-is continuous at $x_0$, every nearby value $f(x)$ is close to
-$f(x_0)$, hence any two nearby values are close to each other.
-The backward direction reverses this: if $\omega(f; x_0) = 0$, then
-on sufficiently small neighborhoods all function values are confined
-to an arbitrarily short interval containing $f(x_0)$.
-
-This criterion replaces the $\varepsilon$-$\delta$ alternation with
-a single local invariant. Continuity becomes a local rigidity
-statement: no oscillation survives arbitrarily close to the point.
-\end{remark*>
+The $\varepsilon$-$\delta$ definition requires controlling all nearby
+values relative to $f(x_0)$. The oscillation formulation is
+symmetric: it controls the spread between any two nearby values,
+without singling out $f(x_0)$. The equivalence holds because once
+all nearby values are close to each other, and $x_0$ is one of those
+nearby points, all nearby values must be close to $f(x_0)$.
+Continuity collapses to the vanishing of a single local invariant.
+\end{remark*}
 
 % ---------------------------------------------------------
 % Proposition — Discontinuity Set via Oscillation
@@ -166,33 +168,37 @@ discontinuity set of $f$ satisfies
 \[
   D(f)
   \;=\;
-  \{x \in E : \omega(f; x) > 0\}
+  \{\, x \in E : \omega(f;\, x) > 0 \,\}
   \;=\;
   \bigcup_{n=1}^{\infty}
-  \left\{x \in E : \omega(f; x) \geq \tfrac{1}{n}\right\}.
+  \Bigl\{\, x \in E : \omega(f;\, x) \geq \tfrac{1}{n} \Bigr\}.
 \]
+
+\smallskip
+\noindent
+\hyperref[prf:discontinuity-set-via-oscillation]{\textit{Go to proof.}}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall x \in E :\;
+  \forall x \in E:\;
   x \in D(f)
   \;\iff\;
-  \omega(f; x) > 0.
+  \omega(f;\, x) > 0
+  \;\iff\;
+  \exists n \in \mathbb{N}:\;
+  \omega(f;\, x) \geq \tfrac{1}{n}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The continuity characterisation by oscillation identifies
-$D(f)$ with the set where $\omega(f; \cdot)$ is strictly positive.
-The Archimedean step $r > 0 \iff \exists n \in \mathbb{N},\; r \geq 1/n$
-then yields the union decomposition.
-
-Each threshold set $\{x \in E : \omega(f; x) \geq 1/n\}$ is
-closed in $E$. Consequently $D(f)$ is an $F_\sigma$ set — a
-countable union of closed sets — which governs the topological
-structure of discontinuities and the Riemann integrability criterion.
-For bounded functions, Riemann integrability is equivalent to
-$D(f)$ having Lebesgue measure zero. Oscillation is the quantity
-that makes this criterion transparent.
-\end{remark*>
+The decomposition of $D(f)$ into threshold layers
+$\{x : \omega(f;x) \geq 1/n\}$ is fundamental. Each layer
+corresponds to a definite minimum amount of surviving oscillation.
+These threshold sets are closed, so $D(f)$ is an $F_\sigma$ set —
+a countable union of closed sets. This topological classification of
+the discontinuity set is the starting point for both Baire category
+arguments and the Riemann integrability criterion: a bounded function
+is Riemann integrable if and only if its discontinuity set has
+Lebesgue measure zero.
+\end{remark*}

@@ -1,6 +1,7 @@
 % =========================================================
-% Limits Superior and Inferior of Functions — Canonical Notes
+% Limits Superior and Inferior of Functions — Notes
 % Chapter: continuity
+% Section: limsup-liminf-functions
 % Volume III · Analysis
 % =========================================================
 
@@ -11,116 +12,138 @@
 % Toolkit
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Toolkit — Limits Superior and Inferior of Functions}]
+\begin{tcolorbox}[title={Toolkit --- Limits Superior and Inferior of Functions}]
 \begin{itemize}
-  \item $\limsup_{x \to x_0} f(x) = \inf_{\delta>0} \sup\{f(x) : 0 < |x-x_0| < \delta,\; x \in E\}$.
-  \item $\liminf_{x \to x_0} f(x) = \sup_{\delta>0} \inf\{f(x) : 0 < |x-x_0| < \delta,\; x \in E\}$.
-  \item Both always exist in $[-\infty, +\infty]$.
+  \item $\limsup_{x \to x_0} f(x) = \inf_{\delta>0}
+    \sup\{f(x) : 0 < |x-x_0| < \delta,\, x \in E\}$.
+  \item Both $\limsup$ and $\liminf$ always exist in
+    $[-\infty, +\infty]$.
   \item $\limsup \geq \liminf$ always.
-  \item $\lim_{x \to x_0} f(x)$ exists $\iff$ $\limsup = \liminf \in \mathbb{R}$.
-  \item Direct analogue of the sequence versions: replace tails with punctured neighborhoods.
+  \item $\lim_{x \to x_0} f(x)$ exists $\iff$ $\limsup =
+    \liminf \in \mathbb{R}$.
+  \item Direct analogue of the sequence $\limsup$/$\liminf$:
+    replace tail $\{a_n : n \geq N\}$ with punctured neighbourhood
+    $\{f(x) : 0 < |x-x_0| < \delta\}$.
 \end{itemize}
 \end{tcolorbox}
 
 % ---------------------------------------------------------
-% Definition — Lim Sup and Lim Inf of a Function
+% Definition — Limits Superior and Inferior of a Function
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition — Limits Superior and Inferior of a Function}]
+\begin{tcolorbox}[title={Definition --- Limits Superior and Inferior of a Function}]
 \begin{definition}[Limits Superior and Inferior of a Function]
 \label{def:limsup-liminf-function}
-Let $f : E \to \mathbb{R}$ and let $x_0$ be a point of accumulation
+Let $f : E \to \mathbb{R}$ and let $x_0$ be an accumulation point
 of $E$. Define
 \[
   \limsup_{x \to x_0} f(x)
   \;:=\;
   \inf_{\delta > 0}
-  \sup\bigl\{\,f(x) : x \in E,\; 0 < |x - x_0| < \delta\,\bigr\}
+  \sup\bigl\{\, f(x) : x \in E,\; 0 < |x - x_0| < \delta \,\bigr\}
 \]
 and
 \[
   \liminf_{x \to x_0} f(x)
   \;:=\;
   \sup_{\delta > 0}
-  \inf\bigl\{\,f(x) : x \in E,\; 0 < |x - x_0| < \delta\,\bigr\}.
+  \inf\bigl\{\, f(x) : x \in E,\; 0 < |x - x_0| < \delta \,\bigr\}.
 \]
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
+\begin{aligned}
   \limsup_{x \to x_0} f(x)
-  = \inf_{\delta > 0}
-    \sup\{f(x) : x \in E \cap (V_\delta(x_0) \setminus \{x_0\})\}.
+  &= \inf_{\delta > 0}
+     \sup\{f(x) : x \in E \cap (x_0 - \delta, x_0 + \delta)
+     \setminus \{x_0\}\}. \\
+  \liminf_{x \to x_0} f(x)
+  &= \sup_{\delta > 0}
+     \inf\{f(x) : x \in E \cap (x_0 - \delta, x_0 + \delta)
+     \setminus \{x_0\}\}.
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Why the inf of sup]
-As $\delta$ decreases, the set over which the sup is taken shrinks,
-so the sup is nonincreasing in $\delta$. The $\limsup$ is the
-infimum of this nonincreasing function as $\delta \to 0^+$, i.e.,
-the limit. The $\liminf$ is dual: the sup of a nondecreasing
-infimum.
+As $\delta$ decreases, the set over which the $\sup$ is taken
+shrinks, so the $\sup$ is nonincreasing in $\delta$. The $\limsup$
+is the infimum of this nonincreasing function of $\delta$ as
+$\delta \to 0^+$, equivalently its limit. The $\liminf$ is dual:
+the $\sup$ of a nondecreasing infimum. Both quantities exist in
+$[-\infty, +\infty]$ for any $f$.
 \end{remark*}
 
-\begin{remark*}[Connection to sequence limsup and liminf]
+\begin{remark*}[Analogy with sequence $\limsup$/$\liminf$]
 The sequence version: $\limsup_{n \to \infty} a_n =
-\inf_N \sup_{n \geq N} a_n$. The function version is identical
-in spirit: replace the tail $\{a_n : n \geq N\}$ with the
-punctured neighborhood $\{f(x) : 0 < |x - x_0| < \delta\}$.
-The analogy is exact.
+\inf_N \sup_{n \geq N} a_n$. The function version replaces the
+tail $\{a_n : n \geq N\}$ with the punctured neighbourhood
+$\{f(x) : 0 < |x-x_0| < \delta\}$. The structure is identical;
+only the indexing set changes.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Both $\limsup$ and $\liminf$ always exist in $[-\infty, +\infty]$.
-They measure, respectively, the largest and smallest cluster values
-of $f(x)$ as $x \to x_0$. If $\limsup = \liminf$, the function
-has a well-defined limit; if they differ, the function oscillates
-between distinct accumulation values. The canonical example is
-$f(x) = \sin(1/x)$ at $x_0 = 0$: $\limsup = 1$ and $\liminf = -1$.
+The $\limsup$ records the largest value that $f$ comes arbitrarily
+close to as $x \to x_0$: it is the supremum of all subsequential
+limits of $f(x_n)$ over all sequences $x_n \to x_0$. The $\liminf$
+is the infimum of all such subsequential limits. If these coincide,
+the limit exists; if they differ, the function oscillates near $x_0$.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Proposition — Lim Sup Is At Least Lim Inf
+% Proposition — limsup >= liminf
 % ---------------------------------------------------------
 
-\begin{proposition}[Lim Sup Is At Least Lim Inf]
+\begin{proposition}[$\limsup$ Is At Least $\liminf$]
 \label{prop:limsup-geq-liminf-function}
-For any $f : E \to \mathbb{R}$ and any accumulation point $x_0$ of
-$E$,
+For any $f : E \to \mathbb{R}$ and any accumulation point $x_0$
+of $E$,
 \[
   \limsup_{x \to x_0} f(x) \;\geq\; \liminf_{x \to x_0} f(x).
 \]
-\end{proposition>
+
+\smallskip
+\noindent
+\hyperref[prf:limsup-geq-liminf-function]{\textit{Go to proof.}}
+\end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
   \forall f : E \to \mathbb{R},\;
-  \forall x_0 \text{ accumulation point of } E :\;
+  \forall x_0 \text{ accum. point of } E:\;
   \limsup_{x \to x_0} f(x) \geq \liminf_{x \to x_0} f(x).
 \]
-\end{remark*>
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-For any fixed $\delta > 0$, $\sup \geq \inf$ on the punctured
-neighborhood. Taking the infimum over $\delta$ on the left and
-the supremum over $\delta$ on the right preserves the inequality.
+On any fixed punctured neighbourhood, $\sup \geq \inf$. Taking the
+infimum in $\delta$ for the $\limsup$ and the supremum in $\delta$
+for the $\liminf$ preserves this inequality.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Proposition — Limit Exists iff Lim Sup Equals Lim Inf
+% Proposition — Limit Exists iff limsup = liminf
 % ---------------------------------------------------------
 
-\begin{proposition}[Limit Exists iff Lim Sup Equals Lim Inf]
+\begin{proposition}[Limit Exists if and only if $\limsup$ Equals $\liminf$]
 \label{prop:limsup-liminf-limit-criterion}
 Let $f : E \to \mathbb{R}$ and let $x_0$ be an accumulation point
 of $E$. Then $\lim_{x \to x_0} f(x)$ exists as a finite real number
 if and only if
 \[
-  \limsup_{x \to x_0} f(x) = \liminf_{x \to x_0} f(x) \in \mathbb{R}.
+  \limsup_{x \to x_0} f(x)
+  \;=\;
+  \liminf_{x \to x_0} f(x)
+  \;\in\; \mathbb{R}.
 \]
-In that case, all three quantities are equal.
-\end{proposition>
+In that case all three quantities are equal.
+
+\smallskip
+\noindent
+\hyperref[prf:limsup-liminf-limit-criterion]{\textit{Go to proof.}}
+\end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -128,12 +151,21 @@ In that case, all three quantities are equal.
   \;\iff\;
   \limsup_{x \to x_0} f(x) = L = \liminf_{x \to x_0} f(x).
 \]
-\end{remark*>
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \limsup_{x \to x_0} f(x) > \liminf_{x \to x_0} f(x)
+  \;\Rightarrow\;
+  \lim_{x \to x_0} f(x) \text{ does not exist.}
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-The exact analogue of the sequence criterion: $\lim_{n \to \infty}
-a_n$ exists iff $\limsup a_n = \liminf a_n$. The limit exists when
-the upper and lower envelopes collapse to the same finite value.
-If they disagree — as with $\sin(1/x)$ at $0$ where $\limsup = 1
-\neq -1 = \liminf$ — no limit exists.
-\end{remark*>
+The criterion is the exact analogue of the sequence criterion:
+$\lim_{n \to \infty} a_n$ exists iff $\limsup a_n = \liminf a_n$.
+When the upper and lower envelopes collapse to the same finite
+value, the function has no room to oscillate near $x_0$ and the
+limit exists. The canonical example of failure is $f(x) = \sin(1/x)$
+at $x_0 = 0$: $\limsup = 1$ and $\liminf = -1$, so no limit exists.
+\end{remark*}
