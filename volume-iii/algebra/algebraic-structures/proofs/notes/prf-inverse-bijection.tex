@@ -1,0 +1,66 @@
+% =========================================================
+% Proof: Inverse of a Bijection is a Bijection
+% Source: volume-iii/algebra/algebraic-structures/notes/rfo/notes-alg-functions.tex
+% Mode: standard
+% =========================================================
+\subsection*{Inverse of a Bijection is a Bijection}
+\label{prf:inverse-bijection}
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[prop:inverse-bijection]{Back to Inverse of a Bijection is a Bijection in Notes}
+\end{remark*}
+\begin{proof}
+\Claim Let $f : A \to B$ be a bijection. Then $f^{-1} : B \to A$ is a bijection.
+
+Since $f$ is a bijection, define
+\[
+  f^{-1} := \{(b, a) \mid b \in B,\; a \in A,\; f(a) = b\}.
+\]
+Because $f$ is both injective and surjective, every $b \in B$ has a unique
+$a \in A$ with $f(a) = b$, so $f^{-1}$ is well-defined as a function
+$f^{-1} : B \to A$.
+
+\medskip
+\textit{$f^{-1}$ is injective.}
+Let $b_1, b_2 \in B$ and suppose $f^{-1}(b_1) = f^{-1}(b_2)$. Applying $f$
+to both sides:
+\[
+  f(f^{-1}(b_1)) = f(f^{-1}(b_2)).
+\]
+Since $f$ is surjective, $f \circ f^{-1} = \mathrm{id}_B$; that is,
+$f(f^{-1}(b)) = b$ for all $b \in B$. Therefore $b_1 = b_2$, and
+$f^{-1}$ is injective.
+
+\medskip
+\textit{$f^{-1}$ is surjective.}
+Let $a \in A$ be arbitrary. Since $f : A \to B$, we have $f(a) \in B$.
+Set $b := f(a)$. Since $f$ is injective, $f^{-1} \circ f = \mathrm{id}_A$,
+so
+\[
+  f^{-1}(b) = f^{-1}(f(a)) = a.
+\]
+Since $a$ was arbitrary, every element of $A$ is hit by $f^{-1}$, so
+$f^{-1}$ is surjective.
+
+\medskip
+Since $f^{-1}$ is injective and surjective, $f^{-1}$ is bijective.
+\end{proof}
+\begin{remark*}[Proof shape]
+Construct $f^{-1}$ explicitly as a relation; well-definedness consumed both
+injectivity and surjectivity of $f$. Split into two sub-goals.\\
+Injectivity: assume $f^{-1}(b_1) = f^{-1}(b_2)$, apply $f$, use
+$f \circ f^{-1} = \mathrm{id}_B$ (surjectivity of $f$) to conclude $b_1 = b_2$.\\
+Surjectivity: for arbitrary $a \in A$, exhibit $b = f(a)$ and use
+$f^{-1} \circ f = \mathrm{id}_A$ (injectivity of $f$) to recover $a$.
+\FlashProof{%
+  1. Construct $f^{-1}$ as a relation; well-defined because $f$ is bijective. \\
+  2. Injectivity: $f^{-1}(b_1)=f^{-1}(b_2) \Rightarrow$ apply $f$ $\Rightarrow$ $b_1=b_2$ via $f\circ f^{-1}=\mathrm{id}_B$. \\
+  3. Surjectivity: given $a\in A$, set $b=f(a)$; then $f^{-1}(b)=a$ via $f^{-1}\circ f=\mathrm{id}_A$.}
+\end{remark*}
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:alg-bijective]{Definition of bijection (injective $+$ surjective)}
+  \item $f \circ f^{-1} = \mathrm{id}_B$ follows from surjectivity of $f$
+  \item $f^{-1} \circ f = \mathrm{id}_A$ follows from injectivity of $f$
+\end{itemize}
+\FlashUses{def:alg-bijective}
+\end{remark*}

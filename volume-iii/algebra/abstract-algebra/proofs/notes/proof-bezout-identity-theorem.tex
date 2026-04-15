@@ -1,0 +1,103 @@
+% =========================================================
+% Proof: Bézout's Identity
+% Source: volume-iii/algebra/abstract-algebra/notes/notes-integers.tex
+% =========================================================
+
+\subsection*{Bézout's Identity}
+\label{prf:bezout-identity}
+
+\begin{remark*}[Return]
+\hyperref[thm:bezout-identity]{$\leftarrow$ Back to Theorem (Bézout's Identity) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim Let $a, b \in \mathbb{Z}$, not both zero. Then $\gcd(a,b)$ is an integer
+linear combination of $a$ and $b$: there exist $m, n \in \mathbb{Z}$ such that
+$\gcd(a,b) = ma + nb$.
+
+\medskip
+\noindent\textit{Base case.}
+If $a = b = 0$, then $\gcd(a,b) = 0$ and any $m, n \in \mathbb{Z}$ satisfy
+$ma + nb = 0$, so the result holds trivially.
+
+\medskip
+\noindent\textit{Main case.}
+\Given $a \neq 0$ or $b \neq 0$.
+\Strategy Define
+\[
+    S := \{\, ma + nb \mid m, n \in \mathbb{Z},\ ma + nb > 0 \,\}.
+\]
+$S$ is nonempty: taking $m = a$ and $n = b$ gives $a^2 + b^2 > 0$ (since $a$
+and $b$ are not both zero), so $a^2 + b^2 \in S$.
+\ByThm{Well-Ordering Principle}, $S$ has a least element; call it $d$,
+achieved at some $m_0, n_0 \in \mathbb{Z}$:
+\[
+    d = m_0 a + n_0 b.
+\]
+
+\medskip
+\noindent\textit{Step 1: $d \mid a$ and $d \mid b$.}
+
+\ByThm{Division Algorithm}, write
+\[
+    a = dq + r, \qquad 0 \leq r < d.
+\]
+Then
+\[
+    r = a - dq
+      = a - q(m_0 a + n_0 b)
+      = a(1 - qm_0) + b(-qn_0),
+\]
+so $r$ is an integer linear combination of $a$ and $b$.
+If $r > 0$ then $r \in S$ with $r < d$, contradicting the minimality of $d$.
+\Therefore $r = 0$, so $d \mid a$.
+The identical argument applied to $b$ yields $d \mid b$.
+
+\medskip
+\noindent\textit{Step 2: $d$ is the greatest common divisor.}
+
+\Let $c \in \mathbb{Z}$ with $c \mid a$ and $c \mid b$.
+Write $a = m'c$ and $b = n'c$ for some $m', n' \in \mathbb{Z}$. Then
+\[
+    d = m_0 a + n_0 b
+      = m_0 m' c + n_0 n' c
+      = (m_0 m' + n_0 n')\,c,
+\]
+so $c \mid d$.
+\ByDef{Greatest Common Divisor}, since every common divisor of $a$ and $b$
+divides $d$, and $d$ is itself a common divisor (Step 1), we conclude
+$d = \gcd(a,b)$.
+
+\Hence $\gcd(a,b) = m_0 a + n_0 b$ is an integer linear combination of $a$
+and $b$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Three-engine direct proof, following the Euclidean-domain template.
+\textbf{(1) Well-Ordering:} The set $S$ of positive integer linear combinations
+of $a$ and $b$ is nonempty, so by the Well-Ordering Principle it has a least
+element $d$.
+\textbf{(2) Division Algorithm:} Minimality of $d$ is converted into divisibility
+— if any remainder $r > 0$ appeared, it would be a smaller element of $S$,
+a contradiction.
+\textbf{(3) Greatest-ness:} Any common divisor $c$ divides the linear combination
+$d = m_0 a + n_0 b$, so $c \mid d$, establishing $d$ as the \emph{greatest}
+common divisor in the divisibility order.
+
+\FlashProof{Three-engine direct proof, following the Euclidean-domain template. \textbf{(1) Well-Ordering:} The set $S$ of positive integer linear combinations of $a$ and $b$ is nonempty, so by the Well-Ordering Principle it has a least element $d$. \textbf{(2) Division Algorithm:} Minimality of $d$ is converted into divisibility — if any remainder $r > 0$ appeared, it would be a smaller element of $S$, a contradiction. \textbf{(3) Greatest-ness:} Any common divisor $c$ divides the linear combination $d = m_0 a + n_0 b$, so $c \mid d$, establishing $d$ as the \emph{greatest} common divisor in the divisibility order.}
+\FlashUses{\begin{itemize} \item \hyperref[thm:wop]{Well-Ordering Principle} — to guarantee $S$ has a least element. \item \hyperref[thm:division-algorithm]{Division Algorithm} — to write $a = dq + r$ and extract the remainder $r$ as a linear combination. \item \hyperref[def:gcd]{Definition (Greatest Common Divisor)} — the universal-divisor characterisation used in Step 2. \item \hyperref[lem:div-linear-combo]{Lemma (Divisibility of Linear Combinations)} — implicit in Step 2: $c \mid a$ and $c \mid b$ implies $c \mid (m_0 a + n_0 b)$. \end{itemize}}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+    \item \hyperref[thm:wop]{Well-Ordering Principle} — to guarantee $S$ has a
+          least element.
+    \item \hyperref[thm:division-algorithm]{Division Algorithm} — to write
+          $a = dq + r$ and extract the remainder $r$ as a linear combination.
+    \item \hyperref[def:gcd]{Definition (Greatest Common Divisor)} — the
+          universal-divisor characterisation used in Step 2.
+    \item \hyperref[lem:div-linear-combo]{Lemma (Divisibility of Linear
+          Combinations)} — implicit in Step 2: $c \mid a$ and $c \mid b$
+          implies $c \mid (m_0 a + n_0 b)$.
+\end{itemize}
+\end{remark*}

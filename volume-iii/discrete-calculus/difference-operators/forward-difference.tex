@@ -1,0 +1,74 @@
+% ==================================================
+% Forward Difference
+% Discrete Calculus — Difference Operators
+% ==================================================
+
+\section{Difference Operators}
+\label{sec:difference-operators}
+
+Discrete calculus studies functions defined on the integers and the way
+their values change from one integer to the next. The central tool for
+measuring this change is the \emph{difference operator}, which plays a role
+analogous to the derivative in continuous calculus.
+
+\section*{Motivation}
+
+In ordinary calculus the derivative measures the rate of change of a function:
+\[
+f'(x) = \lim_{h\to 0} \frac{f(x+h)-f(x)}{h}.
+\]
+In the discrete setting the independent variable changes in steps of size
+\(1\). Instead of taking a limit, we measure the difference between
+successive values of the function directly.
+
+\section*{Forward Difference}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Forward Difference Operator)}},
+  fonttitle=\small\bfseries]
+Let \(f : \mathbb{Z} \to \mathbb{R}\).
+The \emph{forward difference operator} \(\Delta\) is defined by
+\[
+\Delta f(n) = f(n+1) - f(n).
+\]
+The function \(\Delta f\) measures the change in \(f\) when the input
+increases by one unit.
+\end{tcolorbox}
+\label{def:forward-difference}
+
+\begin{remark*}[Fully quantified form]
+\(\forall f : \mathbb{Z}\to\mathbb{R},\; \forall n \in \mathbb{Z}:\;
+\Delta f(n) := f(n+1) - f(n)\).
+\end{remark*}
+
+\begin{remark*}[Analogy with differentiation]
+The operator \(\Delta\) is the discrete analogue of the derivative.
+While the derivative measures infinitesimal change through a limit,
+the forward difference measures change between successive integer inputs
+exactly, with no limit required.
+\end{remark*}
+
+\section*{Example}
+
+Consider the function \(f(n) = n^2\). Applying the difference operator gives
+\[
+\begin{aligned}
+\Delta f(n)
+&= f(n+1) - f(n) \\
+&= (n+1)^2 - n^2 \\
+&= 2n + 1.
+\end{aligned}
+\]
+Thus the forward difference of the quadratic function \(n^2\) is the linear
+function \(2n+1\).
+
+\begin{remark*}[Degree reduction]
+This mirrors a familiar fact from ordinary calculus: \(\tfrac{d}{dx} x^2 = 2x\).
+Just as derivatives reduce the degree of a polynomial by one,
+finite differences also lower the degree of polynomial sequences.
+Note, however, that \(\Delta(n^2) = 2n+1\) rather than \(2n\); ordinary
+powers do not behave as cleanly under \(\Delta\) as they do under
+differentiation. This motivates introducing the \emph{falling factorial}
+basis later in this chapter.
+\end{remark*}

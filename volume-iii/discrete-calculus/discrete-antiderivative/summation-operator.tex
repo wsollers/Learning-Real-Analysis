@@ -1,0 +1,87 @@
+% ==================================================
+% Summation Operator / Discrete Antiderivative
+% Discrete Calculus
+% ==================================================
+
+\section{Discrete Antiderivatives}
+\label{sec:discrete-antiderivative}
+
+The telescoping identity established in the previous section,
+\[
+\sum_{k=a}^{b-1} \Delta f(k) = f(b) - f(a),
+\]
+reveals that summation acts as an inverse operation to the difference
+operator, much like integration acts as an inverse to differentiation
+in ordinary calculus. This motivates the following definition.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Discrete Antiderivative)}},
+  fonttitle=\small\bfseries]
+Let \(f : \mathbb{Z} \to \mathbb{R}\) be a discrete function.
+A function \(F : \mathbb{Z} \to \mathbb{R}\) is called a
+\emph{discrete antiderivative} (or \emph{discrete indefinite sum}) of \(f\) if
+\[
+\Delta F(n) = f(n),
+\]
+that is, \(F(n+1) - F(n) = f(n)\) for all \(n \in \mathbb{Z}\).
+\end{tcolorbox}
+\label{def:discrete-antiderivative}
+
+\begin{remark*}[Fully quantified form]
+\(\forall f,F : \mathbb{Z}\to\mathbb{R}:\;
+F \text{ is a discrete antiderivative of } f
+\iff
+\forall n \in \mathbb{Z},\; F(n+1) - F(n) = f(n)\).
+\end{remark*}
+
+\begin{remark*}[Analogy]
+A discrete antiderivative plays the same role in discrete calculus that an
+antiderivative plays in ordinary calculus: it reverses the fundamental
+differentiation-like operator of the theory. Instead of reversing
+differentiation, it reverses the forward difference \(\Delta\).
+\end{remark*}
+
+\section*{Examples}
+
+\textbf{Example 1.} Let \(f(n) = 1\). Take \(F(n) = n\). Then
+\[
+\Delta F(n) = (n+1) - n = 1 = f(n). \checkmark
+\]
+
+\textbf{Example 2.} Let \(f(n) = n\). Take \(F(n) = \tfrac{n(n-1)}{2}\). Then
+\[
+\Delta F(n)
+= \frac{(n+1)n}{2} - \frac{n(n-1)}{2}
+= \frac{n(n+1-n+1)}{2}
+= n = f(n). \checkmark
+\]
+
+\begin{remark*}[Connection to falling factorials]
+Both examples above are instances of a general pattern: the discrete
+antiderivative of the falling factorial \(n^{\underline{k}}\) is
+\(\tfrac{1}{k+1}n^{\underline{k+1}}\), exactly mirroring the antiderivative
+rule for ordinary powers. This is developed in the Polynomial Basis section.
+\end{remark*}
+
+\section*{Constant of Integration}
+
+Discrete antiderivatives are not unique.
+
+\begin{proposition}[Constant of integration]
+\label{prop:constant-of-integration}
+If \(F\) is a discrete antiderivative of \(f\), then so is \(F + C\)
+for any constant \(C \in \mathbb{R}\).
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\(\forall C \in \mathbb{R}:\;
+\Delta F = f \Rightarrow \Delta(F+C) = f\).
+\end{remark*}
+
+\begin{proof}
+\[
+\Delta(F+C)(n) = (F+C)(n+1) - (F+C)(n)
+= F(n+1)-F(n) = \Delta F(n) = f(n). \qedhere
+\]
+\end{proof}

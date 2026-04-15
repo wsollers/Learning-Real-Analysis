@@ -1,0 +1,90 @@
+% =========================================================
+% Computational Linear Algebra — The Matrix of a Linear Transformation
+% (Strang §8.2 / Johnston §1.4 / Ashraf §3.5–3.6)
+% =========================================================
+
+\section{The Matrix of a Linear Transformation}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Standard Matrix --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.30\textwidth}p{0.63\textwidth}@{}}
+\textbf{Standard matrix}      & $[T] = [T(\mathbf{e}_1)\mid T(\mathbf{e}_2)\mid\cdots\mid T(\mathbf{e}_n)] \in \mathbb{R}^{m\times n}$. \\[4pt]
+\textbf{How to build it}       & Evaluate $T$ on each standard basis vector; place results as columns. \\[4pt]
+\textbf{Uniqueness}            & $[T]$ is the \emph{unique} matrix with $T(\mathbf{v}) = [T]\mathbf{v}$ for all $\mathbf{v}$. \\[4pt]
+\textbf{Composition}           & $[S \circ T] = [S][T]$. \\[4pt]
+\textbf{Change of basis}       & Same $T$, different bases $\Rightarrow$ different matrix; related by $B = P^{-1}AP$. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{The Standard Matrix}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Standard Matrix of a Linear Transformation)}},
+  fonttitle=\small\bfseries]
+A function $T : \mathbb{R}^n \to \mathbb{R}^m$ is a linear transformation if and only if
+there exists a unique matrix $[T] \in \mathbb{R}^{m \times n}$ such that
+\[
+  T(\mathbf{v}) = [T]\mathbf{v} \quad \text{for all } \mathbf{v} \in \mathbb{R}^n.
+\]
+The \emph{standard matrix} $[T]$ is constructed by placing the images of
+the standard basis vectors as columns:
+\[
+  [T] = \bigl[\, T(\mathbf{e}_1) \;\mid\; T(\mathbf{e}_2) \;\mid\; \cdots \;\mid\; T(\mathbf{e}_n) \,\bigr].
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Why this works]
+Since every $\mathbf{v} = v_1\mathbf{e}_1 + \cdots + v_n\mathbf{e}_n$,
+linearity gives
+\[
+  T(\mathbf{v}) = v_1 T(\mathbf{e}_1) + \cdots + v_n T(\mathbf{e}_n) = [T]\mathbf{v}.
+\]
+Knowing $T$ on the basis vectors determines $T$ on the entire space.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Matrix Under Change of Basis}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Matrix Relative to a Basis)}},
+  fonttitle=\small\bfseries]
+Let $T : \mathbb{R}^n \to \mathbb{R}^n$ be a linear transformation and let
+$\mathcal{B} = \{\mathbf{b}_1, \ldots, \mathbf{b}_n\}$ be an ordered basis.
+The \emph{matrix of $T$ relative to $\mathcal{B}$}, denoted $[T]_\mathcal{B}$,
+has as its $j$-th column the coordinates of $T(\mathbf{b}_j)$ expressed in the
+basis $\mathcal{B}$.
+
+If $P$ is the transition matrix whose columns are $\mathbf{b}_1, \ldots, \mathbf{b}_n$
+expressed in the standard basis, then
+\[
+  [T]_\mathcal{B} = P^{-1} [T] P.
+\]
+Two matrices related by $B = P^{-1}AP$ are called \emph{similar}.
+\end{tcolorbox}
+
+\begin{remark*}[NURBS connection: Bézier curve in matrix form]
+The Bézier curve has the matrix representation
+\[
+  C(u) = [u^i]^T M [P_i],
+\]
+where:
+\begin{itemize}
+  \item $[u^i]^T = (1, u, u^2, \ldots, u^n)$ is the monomial basis vector,
+  \item $[P_i]$ is the column vector of control points,
+  \item $M$ is the $(n+1)\times(n+1)$ matrix that encodes the Bernstein polynomials
+        in the monomial basis.
+\end{itemize}
+The matrix $M$ is the standard matrix of the linear transformation
+that converts from Bernstein basis coordinates to monomial basis coordinates.
+Setting $[\mathbf{a}_i] = M[P_i]$ gives the power basis representation of the
+same curve (so the Bézier coefficients $[P_i]$ are the coordinates of the
+curve in the Bernstein basis, and $[\mathbf{a}_i]$ are the coordinates in the
+monomial basis).
+Converting between the two is exactly the change-of-basis operation $P^{-1}AP$
+applied to the coefficient vectors.
+\end{remark*}

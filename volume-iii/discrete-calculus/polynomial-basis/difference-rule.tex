@@ -1,0 +1,90 @@
+% ==================================================
+% Difference Rule — Consequences and Examples
+% Discrete Calculus — Polynomial Basis
+% ==================================================
+
+\section*{Consequences of the Difference Rule}
+
+The difference rule \(\Delta\,x^{\underline{k}} = k\,x^{\underline{k-1}}\)
+(Theorem~\ref{thm:falling-factorial-rule}) has several important consequences.
+
+\section*{Higher Differences of Falling Factorials}
+
+Applying the rule repeatedly gives:
+\[
+\Delta^m\, x^{\underline{k}}
+=
+\begin{cases}
+\dfrac{k!}{(k-m)!}\, x^{\underline{k-m}} & \text{if } m \le k, \\[6pt]
+0 & \text{if } m > k.
+\end{cases}
+\]
+In particular, evaluating at \(x = 0\):
+\[
+\Delta^m\, x^{\underline{k}}\big|_{x=0}
+=
+\begin{cases}
+k! & \text{if } m = k, \\
+0 & \text{if } m \ne k.
+\end{cases}
+\]
+
+\begin{remark*}[Basis orthogonality]
+This vanishing property means the falling factorials behave like a
+``triangular'' basis: \(\Delta^m\) kills all \(x^{\underline{k}}\) with
+\(k < m\), and returns a scalar multiple for \(k = m\). This is what
+makes the coefficient extraction in Newton's expansion work cleanly.
+\end{remark*}
+
+\section*{Connection to Binomial Coefficients}
+
+The higher difference formula from the Binomial Theorem section
+(Proposition~\ref{prop:higher-diff-formula}),
+\[
+\Delta^n f(x) = \sum_{k=0}^{n}(-1)^{n-k}\binom{n}{k}f(x+k),
+\]
+together with the difference rule, gives an explicit formula for the
+coefficients of the falling factorial expansion:
+\[
+c_k = \frac{\Delta^k f(0)}{k!}.
+\]
+
+\begin{remark*}[Pascal's triangle revisited]
+The coefficients appearing in higher finite differences follow exactly
+the pattern of Pascal's triangle — a direct consequence of the
+algebraic identity \(\Delta = E - I\) and the binomial theorem.
+\end{remark*}
+
+\section*{Worked Example: Expanding \(n^2\)}
+
+We find the falling factorial expansion of \(f(n) = n^2\).
+
+Computing the difference table at \(n = 0\):
+\[
+f(0) = 0, \quad
+\Delta f(0) = 1, \quad
+\Delta^2 f(0) = 2, \quad
+\Delta^3 f(0) = 0.
+\]
+
+The coefficients are \(c_k = \Delta^k f(0)/k!\):
+\[
+c_0 = 0, \quad c_1 = 1, \quad c_2 = \frac{2}{2!} = 1, \quad c_3 = 0.
+\]
+
+Therefore:
+\[
+n^2 = 0 + n^{\underline{1}} + n^{\underline{2}}
+= n + n(n-1)
+= n^2 - n + n
+= n^2. \checkmark
+\]
+
+\begin{remark*}[Practical value]
+Once a function is expressed in the falling factorial basis, both
+differencing and antidifferencing become purely mechanical, following the
+rule \(\Delta\,x^{\underline{k}} = k\,x^{\underline{k-1}}\) and its
+inverse. This makes the Fundamental Theorem of Finite Calculus
+immediately applicable to compute sums like \(\sum_{k=0}^{n-1} k^2\)
+without clever tricks.
+\end{remark*}

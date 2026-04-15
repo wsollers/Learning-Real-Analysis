@@ -1,0 +1,65 @@
+% ==================================================
+% Product Rule and Calculus Rules
+% Discrete Calculus
+% ==================================================
+
+\section{Calculus Rules}
+\label{sec:calculus-rules}
+
+With the difference operator and the polynomial basis in place, we can
+now develop the full suite of differentiation-like rules for discrete
+calculus. The linearity of \(\Delta\) was established in the Difference
+Operators section (Proposition~\ref{prop:delta-linearity}). Here we add
+the \emph{product rule} — the discrete counterpart of the Leibniz rule
+\((fg)' = f'g + fg'\).
+
+\section*{Product Rule}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Discrete Product Rule)}},
+  fonttitle=\small\bfseries]
+For functions \(f, g : \mathbb{Z} \to \mathbb{R}\),
+\[
+\Delta(fg)(n)
+=
+f(n)\,\Delta g(n) + g(n+1)\,\Delta f(n).
+\]
+\end{tcolorbox}
+\label{thm:product-rule}
+
+\begin{remark*}[Fully quantified form]
+\(\forall f,g : \mathbb{Z}\to\mathbb{R},\; \forall n \in \mathbb{Z}:\;
+(f(n+1)g(n+1)) - (f(n)g(n))
+= f(n)(g(n+1)-g(n)) + g(n+1)(f(n+1)-f(n))\).
+\end{remark*}
+
+\begin{proof}
+By definition of \(\Delta\),
+\[
+\Delta(fg)(n) = f(n+1)g(n+1) - f(n)g(n).
+\]
+Add and subtract \(f(n)g(n+1)\):
+\[
+= f(n+1)g(n+1) - f(n)g(n+1) + f(n)g(n+1) - f(n)g(n).
+\]
+Grouping the first two and last two terms:
+\[
+= g(n+1)\bigl(f(n+1)-f(n)\bigr) + f(n)\bigl(g(n+1)-g(n)\bigr)
+= g(n+1)\,\Delta f(n) + f(n)\,\Delta g(n). \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Comparison with the continuous product rule]
+In continuous calculus, \((fg)' = f'g + fg'\) is symmetric in \(f\)
+and \(g\). In discrete calculus the rule is slightly asymmetric: one
+factor is evaluated at \(n\) and the other at \(n+1\). This asymmetry
+is unavoidable and is a characteristic feature of the discrete setting.
+\end{remark*}
+
+\begin{remark*}[Consequence — summation by parts]
+The product rule leads directly to the summation by parts formula:
+summing both sides of \(\Delta(fg) = f\,\Delta g + g(E)\,\Delta f\)
+over \(k = a\) to \(b-1\) and applying the Fundamental Theorem gives
+the formula in the next section.
+\end{remark*}

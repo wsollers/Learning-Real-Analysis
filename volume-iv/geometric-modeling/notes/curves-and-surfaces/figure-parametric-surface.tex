@@ -1,0 +1,126 @@
+\begin{tikzpicture}[
+  >=Stealth,
+  dot/.style={circle, fill, inner sep=1.8pt},
+  lbl/.style={font=\small},
+  slbl/.style={font=\scriptsize},
+  vec/.style={->, line width=1.1pt},
+  thinvec/.style={->, line width=0.7pt, gray!60},
+]
+
+% ---------------------------------------------------------------
+% Coordinate helpers
+% We draw a surface patch as a shaded quadrilateral in 3D
+% using a mild oblique projection.
+% Projection: (x,y,z) -> (x + 0.35*y, z + 0.20*y)
+% ---------------------------------------------------------------
+
+% Corner control points of the surface patch (in projection)
+% uv-domain [0,1]x[0,1]; corners map to 3D:
+%   (0,0)->P00, (1,0)->P10, (0,1)->P01, (1,1)->P11
+
+\coordinate (P00) at (0.00, 0.00);   % u=0,v=0  (front-left)
+\coordinate (P10) at (3.20, 0.30);   % u=1,v=0  (front-right)
+\coordinate (P01) at (0.90, 2.60);   % u=0,v=1  (back-left)
+\coordinate (P11) at (4.10, 2.85);   % u=1,v=1  (back-right)
+
+% Surface point S(u0,v0) — interior evaluation point
+% roughly u0=0.45, v0=0.50
+\coordinate (Suv) at (2.05, 1.38);
+
+% ── Shaded surface patch ────────────────────────────────────
+\fill[blue!8]
+  (P00) .. controls (1.0, -0.20) and (2.2, 0.10) .. (P10)
+        .. controls (3.8,  1.20) and (4.3, 1.90) .. (P11)
+        .. controls (2.7,  2.70) and (1.6, 2.65) .. (P01)
+        .. controls (0.3,  1.50) and (-0.1,0.80) .. cycle;
+
+\draw[blue!45!black, line width=1.0pt]
+  (P00) .. controls (1.0, -0.20) and (2.2, 0.10) .. (P10)
+        .. controls (3.8,  1.20) and (4.3, 1.90) .. (P11)
+        .. controls (2.7,  2.70) and (1.6, 2.65) .. (P01)
+        .. controls (0.3,  1.50) and (-0.1,0.80) .. cycle;
+
+% ── Isoparametric u-curve through S(u0,v0) ──────────────────
+% v = v0 ≈ 0.50: curve from left edge to right edge
+\draw[red!60!black, line width=1.0pt, dashed]
+  (0.45, 1.30) .. controls (1.2, 1.10) and (1.6, 1.30) ..
+  (Suv) .. controls (2.5, 1.45) and (3.2, 1.50) .. (3.65, 1.60);
+\node[slbl, text=red!60!black, anchor=north] at (3.65, 1.52)
+  {$u$-curve};
+
+% ── Isoparametric v-curve through S(u0,v0) ──────────────────
+% u = u0 ≈ 0.45: curve from bottom edge to top edge
+\draw[green!45!black, line width=1.0pt, dashed]
+  (1.85, 0.14) .. controls (1.90, 0.65) and (2.00, 1.00) ..
+  (Suv) .. controls (2.10, 1.75) and (2.20, 2.25) .. (2.30, 2.72);
+\node[slbl, text=green!40!black, anchor=west] at (2.32, 2.72)
+  {$v$-curve};
+
+% ── Surface point S(u0,v0) ───────────────────────────────────
+\node[dot, fill=black] at (Suv) {};
+\node[lbl, anchor=north east] at ($(Suv) + (-0.10, -0.08)$)
+  {$S(u_0,v_0)$};
+
+% ── Tangent vector S_u (red, along u-curve direction) ────────
+\coordinate (Su) at ($(Suv) + (1.55, 0.18)$);
+\draw[vec, red!65!black] (Suv) -- (Su);
+\node[lbl, text=red!65!black, anchor=west] at ($(Su) + (0.05, 0.0)$)
+  {$S_u$};
+
+% ── Tangent vector S_v (green, along v-curve direction) ──────
+\coordinate (Sv) at ($(Suv) + (0.24, 1.45)$);
+\draw[vec, green!50!black] (Suv) -- (Sv);
+\node[lbl, text=green!45!black, anchor=south] at ($(Sv) + (0.08, 0.05)$)
+  {$S_v$};
+
+% ── Normal vector N = S_u x S_v (blue, out of surface) ───────
+% Normal points up and slightly left out of the tangent plane
+\coordinate (Nvec) at ($(Suv) + (-0.55, 2.10)$);
+\draw[vec, blue!65!black, line width=1.4pt] (Suv) -- (Nvec);
+\node[lbl, text=blue!65!black, anchor=south east]
+  at ($(Nvec) + (-0.05, 0.05)$) {$N = \dfrac{S_u \times S_v}{\|S_u \times S_v\|}$};
+
+% ── Tangent plane (shaded parallelogram) ─────────────────────
+% Span S_u and S_v at the base point
+\coordinate (TPa) at ($(Suv) + (1.55, 0.18) + (0.24, 1.45)$);  % Su + Sv
+\fill[orange!10, opacity=0.70]
+  (Suv) -- (Su) -- (TPa) -- (Sv) -- cycle;
+\draw[orange!50!black, line width=0.6pt, dashed]
+  (Suv) -- (Su) -- (TPa) -- (Sv) -- cycle;
+\node[slbl, text=orange!55!black] at ($(Suv)!0.5!(TPa) + (0.15, -0.15)$)
+  {tangent plane};
+
+% ── Parameter domain box (lower-left inset) ──────────────────
+\begin{scope}[shift={(-0.3, -2.8)}]
+  % uv box
+  \draw[gray!50, line width=0.8pt]
+    (0,0) rectangle (1.8, 1.4);
+  \node[slbl, text=gray!50!black] at (0.9, -0.22) {parameter domain};
+
+  % axes labels
+  \node[slbl] at (1.95, 0)    {$u$};
+  \node[slbl] at (-0.12, 1.4) {$v$};
+  \draw[thinvec] (0,0) -- (2.05,0);
+  \draw[thinvec] (0,0) -- (0,1.55);
+
+  % mark (u0,v0) in domain
+  \node[dot, fill=black, inner sep=1.3pt] at (0.81, 0.70) {};
+  \node[slbl, anchor=north west] at (0.84, 0.68) {$(u_0,v_0)$};
+
+  % tick marks at 0 and 1
+  \draw (0, 0.03) -- (0,-0.06) node[slbl, below] {$0$};
+  \draw (1.8, 0.03) -- (1.8,-0.06) node[slbl, below] {$1$};
+  \draw (0.03, 0) -- (-0.06, 0) node[slbl, left] {$0$};
+  \draw (0.03,1.4) -- (-0.06,1.4) node[slbl, left] {$1$};
+\end{scope}
+
+% ── Arrow: domain -> surface ─────────────────────────────────
+\draw[->, gray!55, line width=0.9pt]
+  (1.25, -1.90) .. controls (1.50, -0.90) and (1.60, -0.20) .. (Suv);
+\node[slbl, text=gray!55!black] at (1.85, -1.25) {$S(u,v)$};
+
+% ── Surface label ─────────────────────────────────────────────
+\node[lbl, text=blue!55!black, font=\small\itshape]
+  at (3.70, 2.80) {$S$};
+
+\end{tikzpicture}

@@ -1,0 +1,103 @@
+% =========================================================
+% Computational Linear Algebra — Vectors and Linear Combinations
+% (Strang §1.1 / Johnston §1.1)
+% =========================================================
+
+\section{Vectors and Linear Combinations}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Vectors and Linear Combinations --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.65\textwidth}@{}}
+\textbf{Vector in $\mathbb{R}^n$}     & An ordered list $(v_1, v_2, \ldots, v_n)$ of $n$ real numbers. \\[4pt]
+\textbf{Addition}                      & $(v_1,\ldots,v_n)+(w_1,\ldots,w_n) = (v_1+w_1,\ldots,v_n+w_n)$. \\[4pt]
+\textbf{Scalar multiplication}         & $c(v_1,\ldots,v_n) = (cv_1,\ldots,cv_n)$. \\[4pt]
+\textbf{Linear combination}            & $c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k$; scalars times vectors, summed. \\[4pt]
+\textbf{Convex combination}            & Linear combination with $c_i \geq 0$ and $\sum c_i = 1$; result lies inside the convex hull. \\[4pt]
+\textbf{Standard basis vectors}        & $\mathbf{e}_j \in \mathbb{R}^n$: all zeros except a $1$ in position $j$. Every vector is a linear combination of $\mathbf{e}_1,\ldots,\mathbf{e}_n$. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Vectors}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Vector in $\mathbb{R}^n$)}},
+  fonttitle=\small\bfseries]
+A \emph{vector} in $\mathbb{R}^n$ is an ordered list of $n$ real numbers,
+written $\mathbf{v} = (v_1, v_2, \ldots, v_n)$.
+The number $n$ is the \emph{dimension} of the vector.
+
+\medskip
+\textbf{Vector addition:}
+\[
+  \mathbf{v} + \mathbf{w} = (v_1 + w_1,\; v_2 + w_2,\; \ldots,\; v_n + w_n).
+\]
+\textbf{Scalar multiplication:}
+\[
+  c\mathbf{v} = (cv_1,\; cv_2,\; \ldots,\; cv_n), \quad c \in \mathbb{R}.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Geometric meaning]
+In $\mathbb{R}^2$ and $\mathbb{R}^3$, a vector is an arrow indicating displacement.
+Its entries specify length and direction, but \emph{not} location —
+the same vector can be placed anywhere in space.
+Addition corresponds to following one displacement and then another (head-to-tail rule).
+Scalar multiplication stretches or shrinks the arrow; negative scalars reverse its direction.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Properties of Vector Operations)}},
+  fonttitle=\small\bfseries]
+For all $\mathbf{v}, \mathbf{w}, \mathbf{x} \in \mathbb{R}^n$ and $c, d \in \mathbb{R}$:
+\begin{enumerate}
+  \item $\mathbf{v} + \mathbf{w} = \mathbf{w} + \mathbf{v}$ \hfill (commutativity)
+  \item $(\mathbf{v} + \mathbf{w}) + \mathbf{x} = \mathbf{v} + (\mathbf{w} + \mathbf{x})$ \hfill (associativity)
+  \item $c(\mathbf{v} + \mathbf{w}) = c\mathbf{v} + c\mathbf{w}$ \hfill (distributivity over vector addition)
+  \item $(c + d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}$ \hfill (distributivity over scalar addition)
+  \item $c(d\mathbf{v}) = (cd)\mathbf{v}$ \hfill (compatibility)
+\end{enumerate}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Linear Combinations}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Linear Combination)}},
+  fonttitle=\small\bfseries]
+A \emph{linear combination} of vectors $\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_k \in \mathbb{R}^n$
+is any vector of the form
+\[
+  c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k,
+\]
+where $c_1, c_2, \ldots, c_k \in \mathbb{R}$ are called the \emph{coefficients}.
+
+A \emph{convex combination} is a linear combination in which $c_i \geq 0$
+for all $i$ and $\sum_{i=1}^k c_i = 1$.
+\end{tcolorbox}
+
+\begin{remark*}[Why convex combinations matter for NURBS]
+Every point on a Bézier or B-spline curve is a convex combination of control points.
+The Bernstein basis functions $B_{i,n}(u)$ are non-negative and sum to 1,
+so $C(u) = \sum_{i=0}^n B_{i,n}(u) P_i$ is a convex combination of the control
+points $\{P_i\}$ at every parameter value $u$.
+This is the \emph{convex hull property}: the curve lies entirely within the convex hull
+of its control polygon.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Standard Basis Vectors)}},
+  fonttitle=\small\bfseries]
+For $j = 1, 2, \ldots, n$, the \emph{$j$-th standard basis vector} $\mathbf{e}_j \in \mathbb{R}^n$
+has a $1$ in position $j$ and $0$s everywhere else.
+Every vector $\mathbf{v} = (v_1, \ldots, v_n) \in \mathbb{R}^n$ can be written as
+\[
+  \mathbf{v} = v_1 \mathbf{e}_1 + v_2 \mathbf{e}_2 + \cdots + v_n \mathbf{e}_n.
+\]
+\end{tcolorbox}

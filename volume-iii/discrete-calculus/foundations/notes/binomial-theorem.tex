@@ -1,0 +1,118 @@
+% ==================================================
+% The Binomial Theorem
+% Discrete Calculus — Foundations
+% ==================================================
+
+\section{The Binomial Theorem}
+\label{sec:binomial-theorem}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Binomial Theorem)}},
+  fonttitle=\small\bfseries]
+For any integer \(n \ge 0\) and real numbers \(x,y\),
+\[
+(x+y)^n
+=
+\sum_{k=0}^{n} \binom{n}{k} x^{\,n-k} y^{\,k},
+\]
+where the \emph{binomial coefficients} are
+\[
+\binom{n}{k}
+=
+\frac{n!}{k!(n-k)!}.
+\]
+\end{tcolorbox}
+\label{thm:binomial}
+
+\begin{remark*}[Fully quantified form]
+\(\forall n \in \mathbb{N},\; \forall x,y \in \mathbb{R}: \displaystyle(x+y)^n = \sum_{k=0}^{n}\binom{n}{k}x^{n-k}y^{k}\).
+\end{remark*}
+
+\begin{remark*}[Combinatorial meaning]
+The binomial coefficients count the number of ways to choose \(k\) factors of
+\(y\) from the \(n\) factors in the product \((x+y)(x+y)\cdots(x+y)\).
+Thus \(\binom{n}{k}\) is the number of ways to select \(k\) objects from a
+set of \(n\), and the theorem describes how a power of a sum expands into
+a sum of products.
+\end{remark*}
+
+\section*{Basic Properties of Binomial Coefficients}
+
+\begin{align*}
+\binom{n}{0} &= 1, &
+\binom{n}{n} &= 1, &
+\binom{n}{k} &= \binom{n}{n-k}.
+\end{align*}
+
+They also satisfy the \emph{Pascal recursion}:
+\[
+\binom{n+1}{k}
+=
+\binom{n}{k}+\binom{n}{k-1}.
+\]
+This recursion produces Pascal's triangle, in which each entry is the
+sum of the two entries directly above it.
+
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\foreach \n in {0,...,5}
+{
+  \foreach \k in {0,...,\n}
+  {
+    \node at (\k-\n/2,-\n) {$\binom{\n}{\k}$};
+  }
+}
+\end{tikzpicture}
+\end{center}
+
+\begin{remark*}[Pascal's triangle]
+Each entry \(\binom{n}{k}\) is obtained from the sum of the two entries
+above it: \(\binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}\).
+These coefficients appear throughout discrete calculus, especially in
+formulas for higher finite differences and in Newton's forward difference
+expansion.
+\end{remark*}
+
+\section*{Connection with Discrete Calculus}
+
+The binomial theorem plays a central role in discrete calculus because
+difference operators naturally produce binomial coefficients.
+
+\begin{proposition}[Higher difference formula]
+\label{prop:higher-diff-formula}
+For any function \(f\),
+\[
+\Delta^n f(x)
+=
+\sum_{k=0}^{n} (-1)^{\,n-k}
+\binom{n}{k}
+f(x+k).
+\]
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\(\forall n \in \mathbb{N},\; \forall f : \mathbb{Z}\to\mathbb{R},\; \forall x \in \mathbb{Z}:\;
+\Delta^n f(x) = \displaystyle\sum_{k=0}^{n}(-1)^{n-k}\binom{n}{k}f(x+k)\).
+\end{remark*}
+
+\begin{remark*}[Proof idea]
+Applying the difference operator \(\Delta = E - I\) (where \(E\) is the shift
+operator) repeatedly gives \(\Delta^n = (E-I)^n\). Expanding by the binomial
+theorem yields the coefficients \((-1)^{n-k}\binom{n}{k}\), and \(E^k f(x) = f(x+k)\).
+This derivation is carried out in full in the Difference Operators section.
+\end{remark*}
+
+\section*{Explicit Examples}
+
+Applying the difference operator repeatedly to a function \(f\) yields
+\[
+\begin{aligned}
+\Delta f(x) &= f(x+1)-f(x), \\
+\Delta^2 f(x) &= f(x+2)-2f(x+1)+f(x), \\
+\Delta^3 f(x) &= f(x+3)-3f(x+2)+3f(x+1)-f(x).
+\end{aligned}
+\]
+The coefficients \(1, 2, 1\) and \(1, 3, 3, 1\) are precisely the rows of
+Pascal's triangle, confirming that binomial coefficients determine the pattern
+of coefficients in higher-order finite differences.

@@ -1,0 +1,103 @@
+% =========================================================
+% Computational Linear Algebra — The Idea of a Linear Transformation
+% (Strang §8.1 / Johnston §1.4 / Strang LAIA §2.6)
+% =========================================================
+
+\section{The Idea of a Linear Transformation}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Linear Transformations --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.30\textwidth}p{0.63\textwidth}@{}}
+\textbf{Definition}        & $T(c\mathbf{v} + d\mathbf{w}) = cT(\mathbf{v}) + dT(\mathbf{w})$ for all $\mathbf{v},\mathbf{w}$ and scalars $c,d$. \\[4pt]
+\textbf{Origin fixed}      & Always $T(\mathbf{0}) = \mathbf{0}$; translation is \emph{not} linear. \\[4pt]
+\textbf{Standard matrix}   & $[T] = [T(\mathbf{e}_1)\mid\cdots\mid T(\mathbf{e}_n)]$; then $T(\mathbf{v}) = [T]\mathbf{v}$. \\[4pt]
+\textbf{Composition}       & $S \circ T$ has matrix $[S][T]$. \\[4pt]
+\textbf{Affine map}        & $\Phi(\mathbf{r}) = A\mathbf{r} + \mathbf{v}$: linear part $A$ plus translation $\mathbf{v}$. \\[4pt]
+\textbf{Invariance}        & B-spline curves: apply affine map to control points only. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Definition}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Linear Transformation)}},
+  fonttitle=\small\bfseries]
+A function $T : \mathbb{R}^n \to \mathbb{R}^m$ is a \emph{linear transformation} if
+\[
+  T(c\mathbf{v} + d\mathbf{w}) = cT(\mathbf{v}) + dT(\mathbf{w})
+\]
+for all $\mathbf{v}, \mathbf{w} \in \mathbb{R}^n$ and all $c, d \in \mathbb{R}$.
+
+Equivalently, $T$ must satisfy both:
+\begin{enumerate}
+  \item $T(\mathbf{v} + \mathbf{w}) = T(\mathbf{v}) + T(\mathbf{w})$ \quad (preserves addition), and
+  \item $T(c\mathbf{v}) = cT(\mathbf{v})$ \quad (preserves scalar multiplication).
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark*}[The origin is always fixed]
+Every linear transformation satisfies $T(\mathbf{0}) = \mathbf{0}$.
+Therefore, \emph{translation} (shifting by a nonzero vector) is not linear.
+The four geometric operations that \emph{are} linear: rotation about the origin,
+scaling, reflection, and projection.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Geometric Catalog in $\mathbb{R}^2$}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Standard Planar Transformations}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.66\textwidth}@{}}
+\textbf{Scaling}           & $\begin{pmatrix} c_1 & 0 \\ 0 & c_2 \end{pmatrix}$: scales $x$ by $c_1$, $y$ by $c_2$. \\[8pt]
+\textbf{Rotation by $\theta$} & $\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}$: rotates counter-clockwise. \\[8pt]
+\textbf{Reflection ($y=x$)} & $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$: swaps $x$ and $y$ coordinates. \\[8pt]
+\textbf{Projection ($x$-axis)} & $\begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}$: drops the $y$ component. \\
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark*}[Composition is matrix multiplication]
+Applying $T_1$ then $T_2$ has matrix $[T_2][T_1]$.
+A sequence of geometric operations on a model (scale, then rotate, then translate)
+corresponds to multiplying their matrices together in that order.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Affine Transformations}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Affine Transformation)}},
+  fonttitle=\small\bfseries]
+An \emph{affine transformation} $\Phi : \mathbb{R}^n \to \mathbb{R}^n$ has the form
+\[
+  \Phi(\mathbf{r}) = A\mathbf{r} + \mathbf{v},
+\]
+where $A \in \mathbb{R}^{n \times n}$ is the linear part and $\mathbf{v} \in \mathbb{R}^n$
+is a translation vector.
+An affine transformation is a linear transformation when $\mathbf{v} = \mathbf{0}$.
+\end{tcolorbox}
+
+\begin{remark*}[Affine invariance of B-spline curves — NURBS Property P3.4]
+An affine transformation $\Phi(\mathbf{r}) = A\mathbf{r} + \mathbf{v}$ applied to
+a B-spline curve $C(u) = \sum_{i=0}^n N_{i,p}(u) P_i$ gives
+\[
+  \Phi(C(u)) = \sum_{i=0}^n N_{i,p}(u)\,\Phi(P_i).
+\]
+The transformation can be applied to the curve by applying it to each
+control point individually.
+This works because the basis functions sum to 1 (partition of unity):
+\[
+  \Phi(C(u)) = A\!\left(\sum N_{i,p} P_i\right) + \mathbf{v}
+             = \sum N_{i,p} (AP_i) + \underbrace{\left(\sum N_{i,p}\right)}_{=1}\mathbf{v}
+             = \sum N_{i,p}(AP_i + \mathbf{v}).
+\]
+This means rotating, translating, or scaling a B-spline curve costs only
+$n+1$ affine operations on control points, regardless of how many points
+are evaluated on the curve.
+\end{remark*}

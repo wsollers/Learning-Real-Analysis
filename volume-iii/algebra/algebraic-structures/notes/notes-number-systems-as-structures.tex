@@ -1,0 +1,186 @@
+% =========================================================
+% Notes: Number Systems as L-Structures
+% File: volume-iii/algebra/algebraic-structures/notes/notes-number-systems-as-structures.tex
+%
+% Purpose: Reframes N, Z, Q, R as concrete models of progressively
+% richer signatures. Links the concrete axiom table in Volume II to
+% the abstract blueprint hierarchy in this chapter.
+% =========================================================
+
+\section{The Number Systems as $\mathcal{L}$-Structures}
+\label{sec:number-systems-as-structures}
+
+% ---------------------------------------------------------
+\subsection{The Arithmetic Signature}
+
+The number systems $\mathbb{N}, \mathbb{Z}, \mathbb{Q}, \mathbb{R}$
+all live in the same signature — they differ in which axiom
+\emph{sentences} they satisfy, not in which symbols they carry.
+
+\begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Arithmetic Signature $\mathcal{L}_{\mathrm{arith}}$}},
+  fonttitle=\small\bfseries]
+
+\[
+\mathcal{L}_{\mathrm{arith}}
+\;=\;
+\bigl\{\;
+  \underbrace{+,\;\cdot}_{\text{arity 2}},\quad
+  \underbrace{-,\;(\cdot)^{-1}}_{\text{arity 1}},\quad
+  \underbrace{0,\;1}_{\text{constants}},\quad
+  \underbrace{{\leq}}_{\text{relation, arity 2}}
+\;\bigr\}.
+\]
+
+\medskip
+\begin{tabular}{@{} l l l @{}}
+\toprule
+\textbf{Symbol} & \textbf{Arity} & \textbf{Intended interpretation} \\
+\midrule
+$+$        & 2 (function) & addition \\
+$\cdot$    & 2 (function) & multiplication \\
+$-$        & 1 (function) & additive inverse / negation \\
+$(\cdot)^{-1}$ & 1 (function) & multiplicative inverse \\
+$0$        & 0 (constant) & additive identity \\
+$1$        & 0 (constant) & multiplicative identity \\
+${\leq}$   & 2 (relation) & order \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}
+Every number system is an $\mathcal{L}_{\mathrm{arith}}$-structure:
+it carries all these symbols.
+What distinguishes $\mathbb{N}$ from $\mathbb{Z}$ from $\mathbb{R}$
+is not the signature but the \emph{theory} — the set of first-order
+sentences in $\mathcal{L}_{\mathrm{arith}}$ that hold in each model.
+
+In particular, $(\cdot)^{-1}$ is a symbol in the signature of
+$\mathbb{Z}$, but the sentence
+\[
+\forall x\;(x \neq 0 \Rightarrow x \cdot x^{-1} = 1)
+\]
+is \emph{false} in $\mathbb{Z}$.
+The symbol is interpreted as a total function on $\mathbb{Z}$
+(defined arbitrarily on $0$ and on nonzero elements where the true
+inverse does not exist), but the field axiom it satisfies in
+$\mathbb{Q}$ and $\mathbb{R}$ fails.
+This is the model-theoretic way of saying: $\mathbb{Z}$ is not a field.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Each Number System as a Model}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Number Systems as Models of
+         $\mathcal{L}_{\mathrm{arith}}$}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{@{} l l l @{}}
+\toprule
+\textbf{Structure} & \textbf{Carrier} & \textbf{Theory (axiom sentences satisfied)} \\
+\midrule
+$\mathcal{N} = (\mathbb{N}, +, \cdot, -, (\cdot)^{-1}, 0, 1, \leq)$
+  & $\mathbb{N}$
+  & Semiring axioms + well-ordering.
+    $-$ and $(\cdot)^{-1}$ defined but inverse axioms fail. \\[4pt]
+$\mathcal{Z} = (\mathbb{Z}, +, \cdot, -, (\cdot)^{-1}, 0, 1, \leq)$
+  & $\mathbb{Z}$
+  & Commutative ordered ring axioms.
+    Additive inverse axiom holds; multiplicative inverse axiom fails. \\[4pt]
+$\mathcal{Q} = (\mathbb{Q}, +, \cdot, -, (\cdot)^{-1}, 0, 1, \leq)$
+  & $\mathbb{Q}$
+  & Ordered field axioms.
+    Both inverse axioms hold; least upper bound axiom fails. \\[4pt]
+$\mathcal{R} = (\mathbb{R}, +, \cdot, -, (\cdot)^{-1}, 0, 1, \leq)$
+  & $\mathbb{R}$
+  & Complete ordered field axioms.
+    All axioms hold; $\mathbb{R}$ is the unique (up to isomorphism)
+    complete ordered field. \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[The abstract algebra framing of the extension hierarchy]
+From the blueprint hierarchy in this chapter:
+\[
+\underbrace{\mathbb{N}}_{\text{semiring}}
+\;\subset\;
+\underbrace{\mathbb{Z}}_{\text{comm.\ ring}}
+\;\subset\;
+\underbrace{\mathbb{Q}}_{\text{ordered field}}
+\;\subset\;
+\underbrace{\mathbb{R}}_{\text{complete ordered field}}.
+\]
+Each inclusion is a \emph{substructure embedding}: the smaller system
+embeds into the larger as an $\mathcal{L}_{\mathrm{arith}}$-substructure
+(operations and constants are preserved, but more sentences become true
+in the larger model).
+
+More precisely:
+$\mathbb{N} \hookrightarrow \mathbb{Z}$ adds the solution $-n$ to every
+equation $n + x = 0$.
+$\mathbb{Z} \hookrightarrow \mathbb{Q}$ adds the solution $p/q$ to every
+equation $qx = p$ with $q \neq 0$.
+$\mathbb{Q} \hookrightarrow \mathbb{R}$ adds a limit point to every
+bounded increasing sequence — it is a \emph{completion}, not a purely
+algebraic extension.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{The Blueprint Position of Each Number System}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Number Systems in the Blueprint Hierarchy}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{} l l l @{}}
+\toprule
+\textbf{System} & \textbf{Blueprint level} & \textbf{What it adds} \\
+\midrule
+$\mathbb{N}$
+  & Commutative semiring
+  & Two operations, distributivity, no additive inverses. \\
+$\mathbb{Z}$
+  & Commutative ordered ring
+  & Additive inverses (Blueprint 8 = Ring, commutative). \\
+$\mathbb{Q}$
+  & Ordered field
+  & Multiplicative inverses (Blueprint 9 = Field). \\
+$\mathbb{R}$
+  & Complete ordered field
+  & Least upper bound property (analytic, not purely algebraic). \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[Where completeness lives]
+The least upper bound property is \emph{not} expressible as a single
+first-order sentence in $\mathcal{L}_{\mathrm{arith}}$ — it is a
+second-order axiom schema (quantifying over subsets).
+This is why $\mathbb{R}$ cannot be characterised up to isomorphism
+by any first-order theory: by the compactness theorem, any first-order
+theory satisfied by $\mathbb{R}$ also has non-standard models
+(the hyperreals).
+The categorical characterisation — $\mathbb{R}$ is the unique complete
+ordered field up to isomorphism — requires the full second-order
+least upper bound axiom.
+This is the boundary between algebra and analysis.
+\end{remark}
+
+\begin{remark}[Derived properties are sentences, not axioms]
+Properties like $a \cdot 0 = 0$, $(-a)b = -(ab)$, and
+$ab = 0 \Rightarrow a = 0 \lor b = 0$ (no zero divisors in $\mathbb{Z}$)
+are \emph{theorems}: first-order sentences derivable from the ring axioms.
+They hold in every model of those axioms, not just in $\mathbb{Z}$.
+From the model-theoretic perspective, the ring axioms are a theory $T$,
+and these properties are elements of the \emph{deductive closure}
+$\mathrm{Th}(T)$ — they are true in every model of $T$.
+See Volume II \S\ref{sec:number-systems-axioms} for the concrete
+derivations.
+\end{remark}

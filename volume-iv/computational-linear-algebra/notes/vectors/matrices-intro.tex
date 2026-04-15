@@ -1,0 +1,107 @@
+% =========================================================
+% Computational Linear Algebra — Introduction to Matrices
+% (Strang §1.3 / Johnston §1.3)
+% =========================================================
+
+\section{Introduction to Matrices}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Matrices --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.65\textwidth}@{}}
+\textbf{Matrix}            & Rectangular array of numbers; $A \in \mathbb{R}^{m \times n}$ has $m$ rows, $n$ columns. \\[4pt]
+\textbf{Matrix--vector}    & $(A\mathbf{x})_i = \sum_j A_{ij} x_j$; $A\mathbf{x}$ is a linear combination of columns of $A$. \\[4pt]
+\textbf{Matrix--matrix}    & $(AB)_{ij} = \sum_k A_{ik} B_{kj}$; requires inner dimensions to match. \\[4pt]
+\textbf{Transpose}         & $(A^T)_{ij} = A_{ji}$; rows become columns. \\[4pt]
+\textbf{Identity}          & $I_n$: ones on diagonal, zeros elsewhere; $IA = AI = A$. \\[4pt]
+\textbf{Column view}       & $A\mathbf{x} = x_1\mathbf{a}_1 + x_2\mathbf{a}_2 + \cdots + x_n\mathbf{a}_n$ where $\mathbf{a}_j$ are the columns of $A$. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Matrices and Matrix--Vector Multiplication}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Matrix)}},
+  fonttitle=\small\bfseries]
+An $m \times n$ \emph{matrix} $A$ is a rectangular array of real numbers with
+$m$ rows and $n$ columns:
+\[
+  A = \begin{pmatrix}
+    A_{11} & A_{12} & \cdots & A_{1n} \\
+    A_{21} & A_{22} & \cdots & A_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    A_{m1} & A_{m2} & \cdots & A_{mn}
+  \end{pmatrix}.
+\]
+The entry in row $i$, column $j$ is denoted $A_{ij}$ or $[A]_{ij}$.
+We write $A \in \mathbb{R}^{m \times n}$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Matrix--Vector and Matrix--Matrix Multiplication)}},
+  fonttitle=\small\bfseries]
+If $A \in \mathbb{R}^{m \times n}$ and $\mathbf{x} \in \mathbb{R}^n$, then
+$A\mathbf{x} \in \mathbb{R}^m$ is defined by
+\[
+  (A\mathbf{x})_i = \sum_{j=1}^n A_{ij} x_j, \qquad i = 1, \ldots, m.
+\]
+Equivalently, $A\mathbf{x}$ is the linear combination of the columns of $A$
+with coefficients from $\mathbf{x}$:
+\[
+  A\mathbf{x} = x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \cdots + x_n \mathbf{a}_n.
+\]
+If $A \in \mathbb{R}^{m \times n}$ and $B \in \mathbb{R}^{n \times p}$, their product
+$AB \in \mathbb{R}^{m \times p}$ has entries
+\[
+  (AB)_{ij} = \sum_{k=1}^n A_{ik} B_{kj}.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Matrix multiplication is not commutative]
+In general $AB \neq BA$, even when both products are defined.
+Order matters: applying transformation $B$ first, then $A$, is written $AB$.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{The Transpose}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Transpose)}},
+  fonttitle=\small\bfseries]
+The \emph{transpose} of $A \in \mathbb{R}^{m \times n}$ is the matrix
+$A^T \in \mathbb{R}^{n \times m}$ defined by $(A^T)_{ij} = A_{ji}$.
+Rows of $A$ become columns of $A^T$.
+Key properties:
+\begin{itemize}
+  \item $(A^T)^T = A$
+  \item $(AB)^T = B^T A^T$
+  \item $\mathbf{v} \cdot \mathbf{w} = \mathbf{v}^T \mathbf{w}$ (dot product as matrix multiplication)
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Matrix Form of a Curve}
+
+\begin{remark*}[NURBS connection: matrix form of curves and surfaces]
+The power basis curve $C(u) = \sum_{i=0}^n \mathbf{a}_i u^i$ can be written as
+\[
+  C(u) = [\mathbf{a}_0 \;\; \mathbf{a}_1 \;\; \cdots \;\; \mathbf{a}_n]
+  \begin{pmatrix} 1 \\ u \\ \vdots \\ u^n \end{pmatrix}
+  = A \,\mathbf{u}(u),
+\]
+where $A$ is the matrix of coefficient vectors and $\mathbf{u}(u)$ is the monomial
+vector.
+A Bézier curve has the equivalent matrix form $C(u) = [u^i]^T M [P_i]$,
+where $M$ is the $(n+1)\times(n+1)$ change-of-basis matrix converting
+Bernstein basis to power basis.
+A tensor product surface takes the form
+$S(u,v) = [f_i(u)]^T [b_{i,j}] [g_j(v)]$,
+a matrix sandwiched between two basis-function vectors.
+All of these representations rely on matrix--vector multiplication as
+defined above.
+\end{remark*}

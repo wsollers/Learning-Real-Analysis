@@ -1,0 +1,87 @@
+% =========================================================
+% Computational Linear Algebra — Inverse Matrices
+% (Strang §2.5 / Johnston §2.2)
+% =========================================================
+
+\section{Inverse Matrices}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Inverse Matrices --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.30\textwidth}p{0.63\textwidth}@{}}
+\textbf{Inverse}          & $A^{-1}$: the unique matrix with $AA^{-1} = A^{-1}A = I$. \\[4pt]
+\textbf{Existence}        & $A^{-1}$ exists iff $A$ is square and $\det(A) \neq 0$ (nonsingular). \\[4pt]
+\textbf{$2\times 2$ formula} & $\begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1} = \dfrac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$. \\[8pt]
+\textbf{Product rule}     & $(AB)^{-1} = B^{-1}A^{-1}$ (order reverses). \\[4pt]
+\textbf{Transpose rule}   & $(A^T)^{-1} = (A^{-1})^T$. \\[4pt]
+\textbf{Change of basis}  & If $M$ converts basis $B_1$ to $B_2$, then $M^{-1}$ converts $B_2$ to $B_1$. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Definition and Properties}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Invertible Matrix)}},
+  fonttitle=\small\bfseries]
+A square matrix $A \in \mathbb{R}^{n \times n}$ is \emph{invertible}
+(or \emph{nonsingular}) if there exists a matrix $A^{-1} \in \mathbb{R}^{n \times n}$
+such that
+\[
+  AA^{-1} = A^{-1}A = I_n.
+\]
+The matrix $A^{-1}$ is the \emph{inverse} of $A$ and is unique.
+A matrix with no inverse is called \emph{singular}.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Properties of Inverses)}},
+  fonttitle=\small\bfseries]
+When $A$ and $B$ are invertible $n \times n$ matrices:
+\begin{enumerate}
+  \item $(A^{-1})^{-1} = A$
+  \item $(AB)^{-1} = B^{-1}A^{-1}$ \quad (order reverses)
+  \item $(A^T)^{-1} = (A^{-1})^T$
+  \item $(cA)^{-1} = \tfrac{1}{c} A^{-1}$ for $c \neq 0$
+\end{enumerate}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{The $2 \times 2$ Case}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Formula ($2 \times 2$ Inverse)}},
+  fonttitle=\small\bfseries]
+\[
+  \begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1}
+  = \frac{1}{ad - bc} \begin{pmatrix} d & -b \\ -c & a \end{pmatrix},
+  \qquad ad - bc \neq 0.
+\]
+The quantity $ad - bc$ is the determinant. The matrix is singular when $ad = bc$.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Change of Basis via Inverse}
+
+\begin{remark*}[NURBS connection: converting between Bernstein and power basis]
+In Piegl \& Tiller Exercise 1.14, the Bernstein basis functions of degree $n$
+can be written as $[B_{0,n}(u), \ldots, B_{n,n}(u)] = [1, u, \ldots, u^n] M$,
+where $M$ is an $(n+1) \times (n+1)$ matrix.
+This means a Bézier curve has the matrix form
+\[
+  C(u) = [u^i]^T M [P_i],
+\]
+where $[u^i]^T$ is the monomial row vector, $[P_i]$ is the column of control points,
+and $M$ encodes the change from power basis to Bernstein basis.
+
+The inverse $M^{-1}$ converts the other direction: if you have a curve in
+power basis form with coefficients $[\mathbf{a}_i]$, then the equivalent
+Bézier control points are $[P_i] = M^{-1}[\mathbf{a}_i]$.
+
+This is a direct application of the matrix inverse: $M$ converts one basis
+to another, and $M^{-1}$ inverts the conversion.
+\end{remark*}

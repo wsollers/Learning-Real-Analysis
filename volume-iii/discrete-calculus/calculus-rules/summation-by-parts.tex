@@ -1,0 +1,83 @@
+% ==================================================
+% Summation by Parts
+% Discrete Calculus
+% ==================================================
+
+\section*{Summation by Parts}
+
+Summation by parts is the discrete analogue of integration by parts.
+It is derived from the product rule exactly as the continuous version
+is derived from the Leibniz rule.
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Summation by Parts)}},
+  fonttitle=\small\bfseries]
+For functions \(f, g : \mathbb{Z} \to \mathbb{R}\) and integers \(a \le b\),
+\[
+\sum_{k=a}^{b-1} f(k)\,\Delta g(k)
+=
+\Bigl[f(k)g(k)\Bigr]_{k=a}^{k=b}
+-
+\sum_{k=a}^{b-1} g(k+1)\,\Delta f(k).
+\]
+That is,
+\[
+\sum_{k=a}^{b-1} f(k)\,\Delta g(k)
+=
+f(b)g(b)-f(a)g(a)
+-
+\sum_{k=a}^{b-1} g(k+1)\,\Delta f(k).
+\]
+\end{tcolorbox}
+\label{thm:summation-by-parts}
+
+\begin{remark*}[Fully quantified form]
+\(\forall f,g : \mathbb{Z}\to\mathbb{R},\; \forall a,b\in\mathbb{Z},\; a\le b:\;
+\displaystyle\sum_{k=a}^{b-1}f(k)\Delta g(k)
+= f(b)g(b) - f(a)g(a) - \sum_{k=a}^{b-1}g(k+1)\Delta f(k)\).
+\end{remark*}
+
+\begin{proof}
+By the Discrete Product Rule (Theorem~\ref{thm:product-rule}),
+\[
+\Delta(fg)(k) = f(k)\,\Delta g(k) + g(k+1)\,\Delta f(k).
+\]
+Rearranging,
+\[
+f(k)\,\Delta g(k) = \Delta(fg)(k) - g(k+1)\,\Delta f(k).
+\]
+Sum both sides from \(k = a\) to \(k = b-1\):
+\[
+\sum_{k=a}^{b-1} f(k)\,\Delta g(k)
+=
+\sum_{k=a}^{b-1} \Delta(fg)(k)
+-
+\sum_{k=a}^{b-1} g(k+1)\,\Delta f(k).
+\]
+Applying the Fundamental Theorem of Finite Calculus
+(Theorem~\ref{thm:ftfc}) to the first sum on the right gives
+\[
+\sum_{k=a}^{b-1} \Delta(fg)(k) = f(b)g(b) - f(a)g(a),
+\]
+which completes the proof.
+\end{proof}
+
+\begin{remark*}[Analogy with integration by parts]
+The continuous integration by parts formula,
+\[
+\int_a^b f\,dg = \bigl[fg\bigr]_a^b - \int_a^b g\,df,
+\]
+is recovered from summation by parts by replacing \(\sum\) with
+\(\int\) and \(\Delta\) with \(d\). The asymmetry in the discrete
+formula — \(g(k+1)\) rather than \(g(k)\) in the remaining sum —
+reflects the shift inherent in the product rule.
+\end{remark*}
+
+\begin{remark*}[Applications]
+Summation by parts is useful for evaluating sums involving products,
+particularly when one factor is easy to sum (as a falling factorial)
+and the other is easy to difference. Classic applications include
+evaluating \(\sum k r^k\) (where \(f(k) = k\), \(\Delta g(k) = r^k\)
+leads to a geometric-type sum) and establishing Abel's summation formula.
+\end{remark*}

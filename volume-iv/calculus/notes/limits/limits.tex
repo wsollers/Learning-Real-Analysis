@@ -1,0 +1,203 @@
+% =========================================================
+% Calculus — Limits
+% =========================================================
+
+\section{Limits of Functions}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Limits --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.68\textwidth}@{}}
+\textbf{Limit of a function} & $\lim_{x \to a} f(x) = L$: for every $\varepsilon > 0$ there exists $\delta > 0$ such that $0 < |x-a| < \delta \implies |f(x) - L| < \varepsilon$. \\[4pt]
+\textbf{One-sided limits}    & $\lim_{x \to a^+} f(x)$: approach from the right; $\lim_{x \to a^-} f(x)$: approach from the left. \\[4pt]
+\textbf{Limit exists}        & $\lim_{x \to a} f(x) = L$ iff $\lim_{x \to a^+} f(x) = \lim_{x \to a^-} f(x) = L$. \\[4pt]
+\textbf{Key point}           & $f(a)$ need not be defined; the limit concerns behaviour \emph{near} $a$, not \emph{at} $a$. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{The Definition}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Limit of a Function)}},
+  fonttitle=\small\bfseries]
+Let $f$ be defined near $a$, except possibly at $a$ itself.
+The \emph{limit of $f(x)$ as $x$ approaches $a$} is $L$, written
+\[
+  \lim_{x \to a} f(x) = L,
+\]
+if for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+\[
+  0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Intuition]
+$f(x)$ can be made arbitrarily close to $L$ by taking $x$
+sufficiently close to $a$ from either side, without $x$ reaching $a$.
+The $\varepsilon$ names the required closeness of the output;
+the $\delta$ responds with the required closeness of the input.
+\end{remark*}
+
+\begin{remark*}
+The value $f(a)$ plays no role. The limit of $f(x) = \dfrac{x^2 - 1}{x - 1}$
+as $x \to 1$ is $2$, even though the function is undefined at $x = 1$,
+because $\dfrac{x^2-1}{x-1} = x + 1$ for all $x \neq 1$.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+\subsection{Indeterminate Forms and Algebraic Techniques}
+
+Direct substitution fails when it produces $\tfrac{0}{0}$ or
+$\tfrac{\infty}{\infty}$. The standard remedies are factoring,
+rationalising, and cancellation.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example: Factoring}},
+  fonttitle=\small\bfseries]
+\[
+  \lim_{x \to 1} \frac{x^2 - 1}{x - 1}
+  = \lim_{x \to 1} \frac{(x-1)(x+1)}{x-1}
+  = \lim_{x \to 1} (x + 1)
+  = 2.
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Example: Rationalising}},
+  fonttitle=\small\bfseries]
+\[
+  \lim_{x \to 0} \frac{\sqrt{x+1} - 1}{x}
+  = \lim_{x \to 0} \frac{(\sqrt{x+1} - 1)(\sqrt{x+1} + 1)}{x(\sqrt{x+1}+1)}
+  = \lim_{x \to 0} \frac{x}{x(\sqrt{x+1}+1)}
+  = \frac{1}{2}.
+\]
+\end{tcolorbox}
+
+
+% ---------------------------------------------------------
+\subsection{The Squeeze Theorem}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Squeeze Theorem)}},
+  fonttitle=\small\bfseries]
+Let $f$, $g$, and $h$ be functions on an open interval $I$
+containing $c$ such that for all $x$ in $I$,
+\[
+  f(x) \leq g(x) \leq h(x).
+\]
+If
+\[
+  \lim_{x \to c} f(x) = L = \lim_{x \to c} h(x),
+\]
+then
+\[
+  \lim_{x \to c} g(x) = L.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Intuition]
+$g$ is trapped between $f$ and $h$.
+If both outer functions converge to the same value $L$, the
+middle function has nowhere else to go.
+\end{remark*}
+
+\begin{remark*}[Canonical application]
+The standard use is $\lim_{x \to 0} \dfrac{\sin x}{x} = 1$,
+established by bounding $\sin x / x$ between $\cos x$ and $1$
+and applying the theorem as $x \to 0$.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Limits of Functions Equal at All But One Point}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Limits of Functions Equal at All But One Point)}},
+  fonttitle=\small\bfseries]
+Let $g(x) = f(x)$ for all $x$ in an open interval containing $c$,
+except possibly at $c$ itself, and let $\lim_{x \to c} g(x) = L$.
+Then
+\[
+  \lim_{x \to c} f(x) = L.
+\]
+\end{tcolorbox}
+
+\begin{remark*}
+This theorem licenses the standard algebraic technique of
+cancelling a common factor that vanishes at $c$ --- such as
+the $(x-1)$ factor in $\dfrac{x^2-1}{x-1}$ --- and then
+evaluating the simplified expression.
+The original function and the simplified function agree
+everywhere except at $c$, so they share the same limit there.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{One-Sided Limits}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (One-Sided Limits)}},
+  fonttitle=\small\bfseries]
+\textbf{Left-hand limit.}
+Let $f$ be defined on $(a, c)$ for some $a < c$.
+The \emph{left-hand limit} of $f$ at $c$ is $L$, written
+\[
+  \lim_{x \to c^-} f(x) = L,
+\]
+if for any $\varepsilon > 0$ there exists $\delta > 0$ such that
+for all $x \in (a, c)$, if $|x - c| < \delta$ then $|f(x) - L| < \varepsilon$.
+
+\medskip
+\textbf{Right-hand limit.}
+Let $f$ be defined on $(c, b)$ for some $b > c$.
+The \emph{right-hand limit} of $f$ at $c$ is $L$, written
+\[
+  \lim_{x \to c^+} f(x) = L,
+\]
+if for any $\varepsilon > 0$ there exists $\delta > 0$ such that
+for all $x \in (c, b)$, if $|x - c| < \delta$ then $|f(x) - L| < \varepsilon$.
+\end{tcolorbox}
+
+\begin{remark*}
+The only difference from the two-sided definition is the
+restriction of $x$ to one side of $c$.
+One-sided limits are the natural tool for piecewise-defined
+functions, where the formula changes at $c$.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Limits and One-Sided Limits}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Limits and One-Sided Limits)}},
+  fonttitle=\small\bfseries]
+Let $f$ be defined on an open interval $I$ containing $c$,
+except possibly at $c$. Then
+\[
+  \lim_{x \to c} f(x) = L
+\]
+if, and only if,
+\[
+  \lim_{x \to c^-} f(x) = L \quad \text{and} \quad
+  \lim_{x \to c^+} f(x) = L.
+\]
+\end{tcolorbox}
+
+\begin{remark*}
+This theorem is the standard test for non-existence of a limit:
+if the left- and right-hand limits exist but differ, the
+two-sided limit does not exist.
+The canonical example is $f(x) = |x|/x$ at $x = 0$, where
+$\lim_{x \to 0^-} = -1$ and $\lim_{x \to 0^+} = 1$.
+\end{remark*}

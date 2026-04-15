@@ -1,0 +1,58 @@
+% =========================================================
+% Proof: Euclid's Lemma (Coprimality Form)
+% Source: volume-iii/algebra/abstract-algebra/notes/notes-integers.tex
+% =========================================================
+
+\subsection*{Euclid's Lemma (Coprimality Form)}
+\label{prf:euclids-lemma-coprimality}
+
+\begin{remark*}[Return]
+\hyperref[cor:euclids-lemma-coprimality]{$\leftarrow$ Back to Corollary
+(Euclid's Lemma --- Coprimality Form) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim Let $a, b, c \in \mathbb{Z}$. If $a \mid bc$ and $\gcd(a,b) = 1$,
+then $a \mid c$.
+
+\Given $a \mid bc$ and $\gcd(a,b) = 1$.
+\Goal To show $a \mid c$.
+
+\ByThm{Bézout's Lemma}, since $\gcd(a,b) = 1$, there exist $m, n \in \mathbb{Z}$
+such that
+\[
+    1 = ma + nb.
+\]
+Multiplying both sides by $c$:
+\[
+    c = mac + nbc.
+\]
+Since $a \mid a$, we have $a \mid mac$.
+Since $a \mid bc$ by hypothesis, we have $a \mid nbc$.
+\ByThm{Divisibility of Linear Combinations}, $a \mid mac + nbc = c$.
+
+\Hence $a \mid c$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Direct proof via Bézout's Lemma. The key move is multiplying the
+Bézout relation $1 = ma + nb$ through by $c$, which writes $c$ itself
+as a linear combination $mac + nbc$. The two hypotheses — $a \mid a$
+(trivially) and $a \mid bc$ (given) — then each handle one term,
+and divisibility of linear combinations closes the argument.
+This is the standard ``Bézout trick'': turn a coprimality condition
+into a linear combination, then scale to reach the desired conclusion.
+
+\FlashProof{Direct proof via Bézout's Lemma. The key move is multiplying the Bézout relation $1 = ma + nb$ through by $c$, which writes $c$ itself as a linear combination $mac + nbc$. The two hypotheses — $a \mid a$ (trivially) and $a \mid bc$ (given) — then each handle one term, and divisibility of linear combinations closes the argument. This is the standard ``Bézout trick'': turn a coprimality condition into a linear combination, then scale to reach the desired conclusion.}
+\FlashUses{\begin{itemize} \item \hyperref[cor:bezout-lemma]{Bézout's Lemma} — to obtain the linear combination $1 = ma + nb$ from $\gcd(a,b) = 1$. \item \hyperref[lem:div-linear-combo]{Lemma (Divisibility of Linear Combinations)} — since $a$ divides both terms, it divides their sum $c$. \end{itemize}}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+    \item \hyperref[cor:bezout-lemma]{Bézout's Lemma} — to obtain the
+          linear combination $1 = ma + nb$ from $\gcd(a,b) = 1$.
+    \item \hyperref[lem:div-linear-combo]{Lemma (Divisibility of Linear
+          Combinations)} — since $a$ divides both terms, it divides
+          their sum $c$.
+\end{itemize}
+\end{remark*}

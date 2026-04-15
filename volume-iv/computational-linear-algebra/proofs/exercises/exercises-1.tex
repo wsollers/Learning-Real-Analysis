@@ -1,0 +1,205 @@
+% =========================================================
+% Computational Linear Algebra — Exercises
+% Focus: NURBS/Bézier readiness — computational, no proofs
+% =========================================================
+
+\subsection*{Exercises: Computational Linear Algebra}
+
+% ---------------------------------------------------------
+\subsubsection*{Vectors and Linear Combinations}
+
+\begin{enumerate}
+
+\item Compute the following:
+\begin{enumerate}
+  \item $(2, -1, 3) + (-1, 4, -2)$
+  \item $3(1, 0, -2) - 2(-1, 1, 1)$
+  \item $\|(3, -4)\|$, $\|(1, 2, 2)\|$, and $\|(0, 0, 0, 5)\|$
+\end{enumerate}
+
+\item Write $(5, -3, 7)$ as a linear combination of the standard basis
+vectors $\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3 \in \mathbb{R}^3$.
+
+\item Determine whether $(1, 2, 3)$ is a linear combination of
+$(1, 1, 0)$ and $(0, 1, 1)$.
+If yes, find the coefficients. If no, explain why not.
+
+\item The control points of a quadratic Bézier curve are
+$P_0 = (0,0)$, $P_1 = (1,2)$, $P_2 = (3,0)$.
+The curve is $C(u) = (1-u)^2 P_0 + 2u(1-u)P_1 + u^2 P_2$.
+\begin{enumerate}
+  \item Compute $C(0)$, $C(1/2)$, and $C(1)$.
+  \item Verify that $C(1/2)$ is a convex combination of $P_0, P_1, P_2$
+        (check that the weights are non-negative and sum to 1).
+  \item Verify that $C(1/2)$ lies inside the triangle formed by the control points.
+\end{enumerate}
+
+\item Let $P_0 = (0,0)$, $P_1 = (2,3)$, $P_2 = (4,0)$ be control points.
+The de Casteljau algorithm at $u = 1/3$ computes:
+\[
+  P_0^1 = (1-u)P_0 + uP_1, \quad P_1^1 = (1-u)P_1 + uP_2, \quad
+  C(u) = (1-u)P_0^1 + uP_1^1.
+\]
+Carry out this computation and find $C(1/3)$.
+
+% ---------------------------------------------------------
+\subsubsection*{Dot Products and Lengths}
+
+\item Compute the dot product and the angle between the following pairs of vectors.
+State whether they are orthogonal, acute, or obtuse.
+\begin{enumerate}
+  \item $\mathbf{v} = (1,0,0)$ and $\mathbf{w} = (0,1,0)$
+  \item $\mathbf{v} = (1,2,3)$ and $\mathbf{w} = (4,-2,0)$
+  \item $\mathbf{v} = (1,1)$ and $\mathbf{w} = (1,-1)$
+\end{enumerate}
+
+\item Find the unit vector in the direction of $(3, -4, 0)$.
+Then find the unit vector in the direction of $(1, 1, 1)$.
+
+\item The tangent vector to the quadratic Bézier curve at $u=0$ is
+$C'(0) = 2(P_1 - P_0)$, and at $u=1$ is $C'(1) = 2(P_2 - P_1)$.
+Using the control points $P_0 = (0,0)$, $P_1 = (2,1)$, $P_2 = (4,0)$:
+\begin{enumerate}
+  \item Compute $C'(0)$ and $C'(1)$.
+  \item Find the angle between the two endpoint tangent vectors.
+  \item Find the unit tangent vectors at each endpoint.
+\end{enumerate}
+
+% ---------------------------------------------------------
+\subsubsection*{Matrices and Matrix Operations}
+
+\item Compute the following matrix products, or state why they are not defined.
+\begin{enumerate}
+  \item $\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}
+         \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$
+
+  \item $\begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & -1 \end{pmatrix}
+         \begin{pmatrix} 2 \\ -1 \\ 3 \end{pmatrix}$
+
+  \item $\begin{pmatrix} 2 \\ -1 \\ 3 \end{pmatrix}
+         \begin{pmatrix} 1 & 0 & -1 \end{pmatrix}$
+\end{enumerate}
+
+\item The quadratic Bézier curve $C(u) = \sum_{i=0}^2 B_{i,2}(u) P_i$ can be
+written in matrix form as
+\[
+  C(u) = \begin{pmatrix} 1 & u & u^2 \end{pmatrix}
+         \begin{pmatrix} 1 & 0 & 0 \\ -2 & 2 & 0 \\ 1 & -2 & 1 \end{pmatrix}
+         \begin{pmatrix} P_0 \\ P_1 \\ P_2 \end{pmatrix}.
+\]
+Using $P_0 = (0,0)$, $P_1 = (1,2)$, $P_2 = (2,0)$, compute $C(1/2)$
+by carrying out the matrix products in order from right to left.
+
+\item Let
+$A = \begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}$
+and
+$B = \begin{pmatrix} 1 & -1 \\ 2 & 0 \end{pmatrix}$.
+Compute $AB$, $BA$, and confirm that $AB \neq BA$.
+Also compute $(AB)^T$ and $B^T A^T$, and confirm they are equal.
+
+% ---------------------------------------------------------
+\subsubsection*{Inverse Matrices and Change of Basis}
+
+\item Find the inverse of each matrix, or state that it is singular.
+\begin{enumerate}
+  \item $\begin{pmatrix} 3 & 1 \\ 2 & 1 \end{pmatrix}$
+
+  \item $\begin{pmatrix} 2 & 4 \\ 1 & 2 \end{pmatrix}$
+
+  \item $\begin{pmatrix} 1 & 0 & 2 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}$
+\end{enumerate}
+
+\item For the linear Bézier case ($n=1$), the conversion matrix between the
+Bernstein basis $\{1-u, u\}$ and the monomial basis $\{1, u\}$ is
+\[
+  M = \begin{pmatrix} 1 & 0 \\ -1 & 1 \end{pmatrix}.
+\]
+\begin{enumerate}
+  \item Verify that $[B_{0,1}(u),\, B_{1,1}(u)] = [1, u]\, M$, i.e., that
+        $(1-u) = 1 \cdot 1 + u \cdot (-1)$ and $u = 1 \cdot 0 + u \cdot 1$.
+  \item Find $M^{-1}$.
+  \item The power basis curve $C(u) = \mathbf{a}_0 + \mathbf{a}_1 u$ has $\mathbf{a}_0 = (1,0)$,
+        $\mathbf{a}_1 = (2,1)$.
+        Using $[P_i] = M^{-1}[\mathbf{a}_i]$, find the equivalent Bézier control points.
+\end{enumerate}
+
+% ---------------------------------------------------------
+\subsubsection*{Independence and Basis}
+
+\item Determine whether each set of vectors is linearly independent.
+If dependent, express one vector as a combination of the others.
+\begin{enumerate}
+  \item $\{(1, 2), (3, 6)\}$
+  \item $\{(1,0,1), (0,1,1), (1,1,0)\}$
+  \item $\{(1,1,0), (0,1,1), (1,0,-1)\}$
+\end{enumerate}
+
+\item The Bernstein polynomials of degree 2 are
+$B_{0,2}(u) = (1-u)^2$, $B_{1,2}(u) = 2u(1-u)$, $B_{2,2}(u) = u^2$.
+\begin{enumerate}
+  \item Write each as a linear combination of $\{1, u, u^2\}$.
+  \item Verify that $B_{0,2} + B_{1,2} + B_{2,2} = 1$ (partition of unity).
+  \item Write the $3 \times 3$ matrix $M$ whose rows are the monomial
+        coefficients of $B_{0,2}$, $B_{1,2}$, $B_{2,2}$.
+\end{enumerate}
+
+% ---------------------------------------------------------
+\subsubsection*{Cross Product and Surface Normals}
+
+\item Compute the cross product $\mathbf{v} \times \mathbf{w}$ and verify orthogonality
+by checking $\mathbf{v} \cdot (\mathbf{v} \times \mathbf{w}) = 0$.
+\begin{enumerate}
+  \item $\mathbf{v} = (1, 0, 0)$, $\mathbf{w} = (0, 1, 0)$
+  \item $\mathbf{v} = (1, 2, 3)$, $\mathbf{w} = (-1, 0, 1)$
+  \item $\mathbf{v} = (2, -1, 0)$, $\mathbf{w} = (0, 3, -1)$
+\end{enumerate}
+
+\item A parametric surface patch has $S_u = (1, 0, 2)$ and $S_v = (0, 1, -1)$
+at a point.
+\begin{enumerate}
+  \item Compute $S_u \times S_v$.
+  \item Find the unit normal vector $N = (S_u \times S_v)/\|S_u \times S_v\|$.
+  \item Find the area of the parallelogram spanned by $S_u$ and $S_v$.
+\end{enumerate}
+
+% ---------------------------------------------------------
+\subsubsection*{Linear and Affine Transformations}
+
+\item For each matrix $A$, describe the geometric effect of the transformation
+$T(\mathbf{x}) = A\mathbf{x}$ on $\mathbb{R}^2$, and compute $T(1, 0)$ and $T(0, 1)$.
+\begin{enumerate}
+  \item $A = \begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$
+
+  \item $A = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$
+
+  \item $A = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$
+\end{enumerate}
+
+\item Find the standard matrix of the linear transformation $T : \mathbb{R}^2 \to \mathbb{R}^2$
+that rotates vectors counter-clockwise by $45°$.
+\emph{Hint: find $T(\mathbf{e}_1)$ and $T(\mathbf{e}_2)$ using trigonometry.}
+
+\item The affine transformation $\Phi(\mathbf{r}) = A\mathbf{r} + \mathbf{v}$ has
+\[
+  A = \begin{pmatrix} \cos 30° & -\sin 30° \\ \sin 30° & \cos 30° \end{pmatrix},
+  \qquad
+  \mathbf{v} = \begin{pmatrix} 3 \\ 1 \end{pmatrix}.
+\]
+The quadratic Bézier curve has control points $P_0 = (0,0)$, $P_1 = (1,1)$, $P_2 = (2,0)$.
+By affine invariance, the transformed curve has control points
+$\Phi(P_0)$, $\Phi(P_1)$, $\Phi(P_2)$.
+Compute the three new control points.
+
+\item A $3$-point homogeneous control point is $\tilde{P} = (w \cdot x, w \cdot y, w)$.
+\begin{enumerate}
+  \item For $P = (2, 3)$ with weight $w = 2$, write the homogeneous point $\tilde{P}$.
+  \item Apply the perspective map $H$ to recover $P$ from $\tilde{P}$.
+  \item For $\tilde{P}_0 = (1,0,1)$, $\tilde{P}_1 = (1,1,1)$, $\tilde{P}_2 = (0,2,2)$
+        (the homogeneous circular arc from Piegl \& Tiller Example 1.13),
+        compute the de Casteljau midpoint
+        $\tilde{C}^w(1/2)$ using the formula
+        $\tilde{C}^w = (1-u)^2\tilde{P}_0 + 2u(1-u)\tilde{P}_1 + u^2\tilde{P}_2$
+        at $u = 1/2$, then project via $H$ to find $C(1/2)$.
+\end{enumerate}
+
+\end{enumerate}

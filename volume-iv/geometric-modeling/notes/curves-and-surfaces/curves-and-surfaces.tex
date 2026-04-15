@@ -1,0 +1,228 @@
+% =========================================================
+% Geometric Modeling — Parametric Curves and Surfaces
+% =========================================================
+
+\section{Parametric Curves and Surfaces}
+
+% ---------------------------------------------------------
+% Toolkit
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Parametric Curves and Surfaces --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.28\textwidth}p{0.65\textwidth}@{}}
+\textbf{Curve}               & $C(u):\,[a,b]\to\mathbb{R}^n$; vector-valued, one parameter. \\[4pt]
+\textbf{Velocity}            & $C'(u)$; tangent direction and speed of traversal. \\[4pt]
+\textbf{Unit tangent}        & $\hat{T}(u) = C'(u)/\|C'(u)\|$ at a regular point. \\[4pt]
+\textbf{Surface}             & $S(u,v):\,R\to\mathbb{R}^3$; vector-valued, two parameters. \\[4pt]
+\textbf{Partial derivatives} & $S_u = \partial S/\partial u$,\; $S_v = \partial S/\partial v$; tangent to isoparametric lines. \\[4pt]
+\textbf{Unit normal}         & $N = (S_u\times S_v)/\|S_u\times S_v\|$ at a regular point. \\[4pt]
+\textbf{Tangent plane}       & Spanned by $S_u$ and $S_v$ at the base point. \\[4pt]
+\textbf{Directional deriv.}  & $D_{\mathbf{v}}S = \nabla S \cdot \hat{\mathbf{v}}$; rate of change in direction $\mathbf{v}$. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Parametric Curves}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Parametric Curve)}},
+  fonttitle=\small\bfseries]
+A \emph{parametric curve} in $\mathbb{R}^n$ is a vector-valued function
+\[
+  C\,:\,[a,b]\;\to\;\mathbb{R}^n, \qquad
+  C(u) = \bigl(x_1(u),\,x_2(u),\,\ldots,\,x_n(u)\bigr),
+\]
+where each coordinate function $x_i(u)$ is a real-valued function
+of the scalar parameter $u$.
+The interval $[a,b]$ is typically normalised to $[0,1]$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Velocity, Regularity, Unit Tangent)}},
+  fonttitle=\small\bfseries]
+The \emph{velocity vector} (or \emph{tangent vector}) at $u$ is the derivative
+\[
+  C'(u) = \bigl(x_1'(u),\,x_2'(u),\,\ldots,\,x_n'(u)\bigr).
+\]
+The curve is \emph{regular} at $u$ if $C'(u) \neq \mathbf{0}$.
+At a regular point, the \emph{unit tangent vector} is
+\[
+  \hat{T}(u) = \frac{C'(u)}{\|C'(u)\|}.
+\]
+The scalar $\|C'(u)\|$ is the \emph{speed} of traversal.
+\end{tcolorbox}
+
+\begin{remark*}[Properties of parametric curves]
+Parametric curves carry structure that implicit curves do not:
+\begin{itemize}
+  \item \textbf{Direction.}
+        The parameter increases from $a$ to $b$, giving the curve
+        a natural orientation.
+        Reversing the parametrisation reverses the direction.
+  \item \textbf{Velocity and speed.}
+        $C'(u)$ measures both the direction of motion and how fast
+        the curve is being traversed.
+        A curve can be \emph{reparametrised} (change of variable
+        $u = \phi(t)$) without changing its shape;
+        the velocity changes but the trace does not.
+  \item \textbf{Endpoint interpolation.}
+        The start and end points are $C(a)$ and $C(b)$, accessible directly.
+  \item \textbf{Boundedness.}
+        The curve is defined on a closed interval, so it represents
+        a bounded segment, not an infinite line.
+  \item \textbf{Cusps.}
+        Where $C'(u) = \mathbf{0}$, the curve may have a cusp
+        (velocity drops to zero, direction may reverse).
+        These are degenerate points excluded by the regularity condition.
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Parametric Surfaces}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Parametric Surface)}},
+  fonttitle=\small\bfseries]
+A \emph{parametric surface} in $\mathbb{R}^3$ is a vector-valued function
+of two parameters,
+\[
+  S\,:\,R\;\longrightarrow\;\mathbb{R}^3, \qquad
+  S(u,v) = \bigl(x(u,v),\;y(u,v),\;z(u,v)\bigr),
+\]
+where $R\subseteq\mathbb{R}^2$ is the \emph{parameter domain}
+(typically the unit square $[0,1]^2$).
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Partial Derivatives and Isoparametric Curves}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partial Derivative Vectors)}},
+  fonttitle=\small\bfseries]
+The \emph{partial derivative vectors} of $S$ at $(u,v)$ are
+\[
+  S_u(u,v) = \frac{\partial S}{\partial u}
+  = \left(\frac{\partial x}{\partial u},\;
+          \frac{\partial y}{\partial u},\;
+          \frac{\partial z}{\partial u}\right),
+  \qquad
+  S_v(u,v) = \frac{\partial S}{\partial v}
+  = \left(\frac{\partial x}{\partial v},\;
+          \frac{\partial y}{\partial v},\;
+          \frac{\partial z}{\partial v}\right).
+\]
+$S_u$ is the tangent vector to the surface in the $u$-direction:
+it is the velocity of the curve obtained by fixing $v$ and varying $u$.
+$S_v$ is the corresponding tangent vector in the $v$-direction.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Isoparametric Curves)}},
+  fonttitle=\small\bfseries]
+Fixing one parameter on $S(u,v)$ produces a curve on the surface:
+\begin{itemize}
+  \item \emph{$u$-curve} at $v = v_0$:\quad
+        $C_{v_0}(u) = S(u,\,v_0)$,\quad tangent $= S_u(u,v_0)$.
+  \item \emph{$v$-curve} at $u = u_0$:\quad
+        $C_{u_0}(v) = S(u_0,\,v)$,\quad tangent $= S_v(u_0,v)$.
+\end{itemize}
+These \emph{isoparametric curves} (isocurves) sweep the surface and
+form its parameter grid.
+The two families intersect at every surface point $S(u_0,v_0)$.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Directional Derivative}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Directional Derivative on a Surface)}},
+  fonttitle=\small\bfseries]
+The \emph{directional derivative} of $S$ at $(u_0,v_0)$ in the
+direction $\mathbf{d} = (d_u, d_v)$ (a unit vector in parameter space) is
+\[
+  D_{\mathbf{d}}\,S = d_u\,S_u(u_0,v_0) + d_v\,S_v(u_0,v_0).
+\]
+It measures the rate of change of position on the surface as the
+parameter moves in direction $\mathbf{d}$ in the $uv$-plane.
+Every tangent vector to the surface at $(u_0,v_0)$ is a directional
+derivative for some choice of $\mathbf{d}$.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Unit Normal and Tangent Plane}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Regularity, Unit Normal, Tangent Plane)}},
+  fonttitle=\small\bfseries]
+The surface is \emph{regular} at $(u_0,v_0)$ if
+$S_u \times S_v \neq \mathbf{0}$ there.
+
+At a regular point, the \emph{unit normal vector} is
+\[
+  N(u_0,v_0)
+  = \frac{S_u(u_0,v_0)\;\times\; S_v(u_0,v_0)}
+         {\|S_u(u_0,v_0)\;\times\; S_v(u_0,v_0)\|}\,.
+\]
+
+The \emph{tangent plane} at $S(u_0,v_0)$ is the plane through
+$S(u_0,v_0)$ spanned by $S_u$ and $S_v$:
+\[
+  \Pi\;=\;\bigl\{\,S(u_0,v_0) + \alpha\,S_u + \beta\,S_v
+               \;\bigm|\; \alpha,\beta\in\mathbb{R}\,\bigr\}.
+\]
+Its equation in terms of position $\mathbf{p}$ is
+\[
+  N\cdot\bigl(\mathbf{p} - S(u_0,v_0)\bigr) = 0.
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Geometric meaning of $S_u \times S_v$]
+The magnitude $\|S_u \times S_v\|$ equals the area of the
+parallelogram spanned by $S_u$ and $S_v$, which is the
+\emph{local area element} of the surface.
+Where $\|S_u \times S_v\| = 0$ the surface is degenerate
+(the two tangent directions are parallel or one vanishes),
+and the normal is not defined.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Figure
+% ---------------------------------------------------------
+\vspace{1em}
+\begin{center}
+\input{volume-iv/geometric-modeling/notes/curves-and-surfaces/figure-parametric-surface}
+\end{center}
+
+\begin{center}
+\small\itshape
+Figure: A parametric surface patch $S(u,v)$ with its parameter domain (lower left).
+At the point $S(u_0,v_0)$, the partial derivative vectors $S_u$ (red) and $S_v$ (green)
+are tangent to the isoparametric curves; together they span the tangent plane (orange).
+The unit normal $N = S_u \times S_v\,/\,\|S_u \times S_v\|$ (blue) is perpendicular
+to the tangent plane.
+\end{center}
+
+% ---------------------------------------------------------
+% Status
+% ---------------------------------------------------------
+\vspace{1em}
+\begin{tcolorbox}[
+  colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Status: Active}},
+  fonttitle=\small\bfseries
+]
+\noindent This section is actively expanding alongside work in Piegl \& Tiller,
+\textit{The NURBS Book}.
+Subsequent sections on Bézier curves, B-splines, NURBS, and continuity
+conditions follow.
+\end{tcolorbox}

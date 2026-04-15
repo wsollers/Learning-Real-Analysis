@@ -1,0 +1,190 @@
+% ==================================================
+% 2^n and Its Role in Discrete Calculus
+% Discrete Calculus — Special Functions
+% ==================================================
+
+\section{The Function \(2^n\) in Discrete Calculus}
+\label{subsec:two-to-the-n}
+
+Among all discrete exponentials, the case \(a = 1\) — giving \((1+1)^n = 2^n\)
+— is perhaps the most important. It appears in combinatorics as the count
+of subsets, in probability as the sample space of fair coin sequences, in
+computer science as the natural measure of binary information, and in discrete
+calculus as a canonical test function. This section develops its properties
+systematically.
+
+\section*{Differencing \(2^n\)}
+
+Setting \(a = 1\) in the discrete exponential rule
+(Proposition~\ref{prop:discrete-exponential-rule}) gives immediately:
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Proposition (\(\Delta 2^n = 2^n\))}},
+  fonttitle=\small\bfseries]
+\[
+\Delta\, 2^n = 2^n.
+\]
+\end{tcolorbox}
+\label{prop:delta-two-n}
+
+\begin{remark*}[Fully quantified form]
+\(\forall n \in \mathbb{Z}:\; 2^{n+1} - 2^n = 2^n\).
+\end{remark*}
+
+\begin{proof}
+\[
+\Delta\, 2^n = 2^{n+1} - 2^n = 2\cdot 2^n - 2^n = (2-1)\cdot 2^n = 2^n. \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Self-similarity]
+This says that \(2^n\) is its own forward difference. In continuous calculus,
+the analogous property is \(\tfrac{d}{dx}e^x = e^x\): the exponential is its
+own derivative. The function \(2^n\) is the discrete analogue of \(e^x\)
+in the sense that \(\Delta(2^n) = 2^n\). More precisely, \(2^n = e^{n \ln 2}\),
+and the relationship \(\Delta(2^n) = 2^n\) corresponds to the special case
+\(a = 1\) of \(\Delta(1+a)^n = a(1+a)^n\).
+\end{remark*}
+
+\section*{Antiderivative and Geometric Sum}
+
+Since \(\Delta(2^n) = 2^n\), a discrete antiderivative of \(2^n\) is \(2^n\)
+itself (up to a constant).
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Proposition (Antiderivative of \(2^n\))}},
+  fonttitle=\small\bfseries]
+A discrete antiderivative of \(2^n\) is \(2^n\) itself:
+\[
+\Delta(2^n) = 2^n
+\qquad \text{so} \qquad
+\sum_{k=0}^{n-1} 2^k = 2^n - 1.
+\]
+\end{tcolorbox}
+\label{prop:antideriv-two-n}
+
+\begin{remark*}[Fully quantified form]
+\(\forall n \in \mathbb{N}:\;
+\displaystyle\sum_{k=0}^{n-1} 2^k = 2^n - 1\).
+\end{remark*}
+
+\begin{proof}
+Applying the Fundamental Theorem of Finite Calculus
+(Theorem~\ref{thm:ftfc}) with \(F(k) = 2^k\) and \(f(k) = \Delta F(k) = 2^k\):
+\[
+\sum_{k=0}^{n-1} 2^k = F(n) - F(0) = 2^n - 2^0 = 2^n - 1. \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Verification by expansion]
+Expanding: \(1 + 2 + 4 + 8 + \cdots + 2^{n-1}\). Multiply the partial sum
+\(S = \sum_{k=0}^{n-1}2^k\) by \(2\) to get \(2S = \sum_{k=1}^{n}2^k\).
+Subtracting: \(2S - S = 2^n - 1\), so \(S = 2^n - 1\). This is the
+classical derivation of the geometric series formula; the discrete calculus
+approach via antidifferentiation gives the same result mechanically.
+\end{remark*}
+
+\section*{Higher Differences of \(2^n\)}
+
+\begin{proposition}[Higher differences of \(2^n\)]
+\label{prop:higher-diff-two-n}
+For all \(k \ge 0\),
+\[
+\Delta^k\, 2^n = 2^n.
+\]
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\(\forall k \in \mathbb{N},\; \forall n \in \mathbb{Z}:\; \Delta^k(2^n) = 2^n\).
+\end{remark*}
+
+\begin{proof}
+By induction. The base case \(k = 0\) is \(\Delta^0(2^n) = 2^n\) by
+definition. For the inductive step, assume \(\Delta^k(2^n) = 2^n\). Then
+\[
+\Delta^{k+1}(2^n) = \Delta(\Delta^k(2^n)) = \Delta(2^n) = 2^n. \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Consequence for difference tables]
+Since every finite difference of \(2^n\) is \(2^n\) again, the difference
+table of \(2^n\) consists entirely of the sequence \(2^n\) at every level.
+This is the discrete analogue of the fact that the Taylor series of \(e^x\)
+has the same coefficient pattern at every derivative level. In particular,
+\(2^n\) is \emph{not} a polynomial — a polynomial of degree \(d\) would
+reach \(0\) at the \((d+1)\)-th difference row. The non-termination of
+the difference table is the signature of a genuinely transcendental discrete
+function.
+\end{remark*}
+
+\section*{\(2^n\) in Combinatorics and the Newton Expansion}
+
+The Binomial Theorem (Theorem~\ref{thm:binomial}) gives a direct connection:
+setting \(x = y = 1\) yields
+\[
+\sum_{k=0}^{n} \binom{n}{k} = 2^n.
+\]
+This counts the total number of subsets of an \(n\)-element set: there are
+\(\binom{n}{k}\) subsets of size \(k\), and the sum over all \(k\) gives
+\(2^n\).
+
+More deeply, the Newton expansion (Theorem~\ref{thm:newton-expansion}) of \(2^n\)
+in the falling factorial basis is:
+\[
+2^n = \sum_{k=0}^{n} \binom{n}{k} = \sum_{k=0}^{n} \frac{n^{\underline{k}}}{k!},
+\]
+since \(\Delta^k(2^n)\big|_{n=0} = 2^0 = 1\) for every \(k\). This expresses
+\(2^n\) as the sum of all normalised falling factorials up to degree \(n\),
+and reveals why binomial coefficients count subsets: they are the coefficients
+of \(2^n\) in its own Newton expansion.
+
+\begin{remark*}[Analogy with \(e^x\)]
+In continuous calculus, \(e^x = \sum_{k=0}^{\infty} x^k/k!\). The Newton
+expansion gives \(2^n = \sum_{k=0}^{n} n^{\underline{k}}/k!\). Both express
+a canonical exponential as a sum of normalised basis functions, with all
+coefficients equal to \(1\). The analogy is exact: ordinary powers replace
+falling factorials, and the infinite series terminates at degree \(n\) in
+the discrete case because \(2^n\) has degree exactly \(n\) in the falling
+factorial basis.
+\end{remark*}
+
+\section*{Discrete Differential Equation}
+
+In continuous calculus, the equation \(f' = f\) (with \(f(0) = 1\)) has the
+unique solution \(f(x) = e^x\). In discrete calculus, the analogous
+\emph{difference equation} is:
+\[
+\Delta F(n) = F(n), \qquad F(0) = 1.
+\]
+That is, \(F(n+1) - F(n) = F(n)\), so \(F(n+1) = 2F(n)\). The unique solution
+to this initial value problem is \(F(n) = 2^n\).
+
+\begin{proposition}[Discrete IVP]
+\label{prop:discrete-ivp}
+The unique function \(F : \mathbb{N} \to \mathbb{R}\) satisfying
+\[
+F(n+1) = 2\,F(n), \qquad F(0) = 1
+\]
+is \(F(n) = 2^n\).
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+\(\forall n \in \mathbb{N}:\;
+(F(n+1) = 2F(n)\text{ and }F(0)=1) \Rightarrow F(n) = 2^n\).
+\end{remark*}
+
+\begin{proof}
+Uniqueness: if \(G\) is another solution, then \(G(0) = 1 = F(0)\), and
+inductively \(G(n+1) = 2G(n) = 2F(n) = F(n+1)\), so \(G = F\).
+Existence: verify directly that \(2^{n+1} = 2\cdot 2^n\) and \(2^0 = 1\).
+\end{proof}
+
+\begin{remark*}[Significance]
+This characterises \(2^n\) as the unique fixed point of ``multiply by 2''
+starting from \(1\). The analogous characterisation of \(e^x\) is: unique
+solution to \(f' = f\), \(f(0) = 1\). Both are initial-value problems in
+their respective calculi, and both have closed-form solutions that serve as
+the canonical exponential of that calculus.
+\end{remark*}

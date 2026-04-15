@@ -1,0 +1,557 @@
+% =========================================================
+% Algebraic Structures — Operations and Their Laws
+% =========================================================
+% Dependency chain: sets → functions → operations (this file).
+% An n-ary operation is a function whose codomain is the same set
+% as its domain factors. Closure is built into the definition.
+% Order: general definition → nullary → unary → binary → laws → distinguished elements.
+
+\section{Operations}
+
+% ---------------------------------------------------------
+% TOOLKIT — Operations
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Operations — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Definition} & \textbf{Detail} \\
+\midrule
+$n$-ary operation  & $\omega : A^n \to A$                           & \hyperref[def:nary-op]{↓} \\
+Nullary operation  & $\omega : A^0 \to A$; selects an element of $A$         & \hyperref[def:nullary-op]{↓} \\
+Unary operation    & $f : A \to A$                                  & \hyperref[def:unary-op]{↓} \\
+Binary operation   & $\star : A \times A \to A$                     & \hyperref[def:binary-op]{↓} \\
+Closure            & Consequence of $\omega : A^n \to A$; outputs stay in $A$ & \hyperref[def:binary-op]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% n-ary operation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($n$-ary Operation)}},
+  fonttitle=\small\bfseries]
+\label{def:nary-op}
+Let $A$ be a set and $n \in \mathbb{N}$.
+An \emph{$n$-ary operation} on $A$ is a function
+\[
+  \omega : A^n \to A.
+\]
+We call $A$ the \emph{underlying set} and $n$ the \emph{arity} of $\omega$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$\omega$ is an $n$-ary operation on $A$
+$\;\iff\;$
+$(\forall a_1, \ldots, a_n \in A)\;
+(\exists!\, b \in A)\;
+\omega(a_1, \ldots, a_n) = b$.
+\end{remark}
+
+\begin{remark}[Operations are special functions]
+An $n$-ary operation is a function $\omega : A^n \to A$ with one
+distinguishing feature: the codomain is the \emph{same set} as the
+domain factors.
+This is what separates operations from arbitrary functions.
+A function $f : A \to B$ with $B \neq A$ moves elements out of $A$;
+an operation $\omega : A^n \to A$ stays within $A$.
+\end{remark}
+
+\begin{remark}[Closure is definitional]
+The condition that $\omega(a_1, \ldots, a_n) \in A$ for all
+$a_i \in A$ is not a property to be checked — it is built into the
+type signature $\omega : A^n \to A$.
+In older presentations, closure is listed as an axiom for groups and rings.
+Here it is absorbed into the definition of operation itself.
+\end{remark}
+
+\begin{remark}[Examples beyond arithmetic]
+Operations need not involve numbers.
+On the set of plane symmetries of a square, composition of symmetries is a
+binary operation.
+On the set of strings over an alphabet, concatenation is a binary operation.
+On the power set $\mathcal{P}(A)$, union and intersection are binary
+operations.
+On a vector space, scalar multiplication
+$\mathbb{F} \times V \to V$ is a binary operation with a mixed domain
+— a generalisation of the above that some authors call an \emph{external} operation.
+\end{remark}
+
+% ---------------------------------------------------------
+% Nullary operation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Nullary Operation / Distinguished Element)}},
+  fonttitle=\small\bfseries]
+\label{def:nullary-op}
+A \emph{nullary operation} on $A$ is a function $\omega : A^0 \to A$,
+where $A^0 = \{\emptyset\}$ is the one-element set (the empty Cartesian
+product).
+Such an operation selects exactly one element $e = \omega(\emptyset) \in A$,
+called a \emph{distinguished element} or \emph{constant} of $A$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+A nullary operation on $A$ is exactly a choice of a single element
+$e \in A$.
+The function perspective: $\omega : \{\emptyset\} \to A$,
+$\omega(\emptyset) = e$.
+\end{remark}
+
+\begin{remark}[Why nullary operations matter]
+In model-theoretic signatures, identity elements, zero elements, and
+other distinguished constants are nullary operations — they are part of the
+signature, not derived objects.
+Writing ``the group $(G, \cdot, e, {}^{-1})$'' names a binary operation
+$\cdot$, a nullary operation $e$ (the identity), and a unary operation
+${}^{-1}$ (the inverse map).
+This is why the identity is built into the signature rather than
+existentially quantified in an axiom: it makes the structure a function
+symbol, not a property.
+\end{remark}
+
+% ---------------------------------------------------------
+% Unary operation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Unary Operation)}},
+  fonttitle=\small\bfseries]
+\label{def:unary-op}
+A \emph{unary operation} on $A$ is a function
+\[
+  f : A \to A.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$f$ is a unary operation on $A$
+$\;\iff\;$
+$(\forall a \in A)\;(\exists!\, b \in A)\; f(a) = b$.
+\end{remark}
+
+\begin{remark}[Examples]
+Negation $a \mapsto -a$ on $\mathbb{Z}$ is a unary operation.
+Multiplicative inverse $a \mapsto a^{-1}$ on $\mathbb{R} \setminus \{0\}$
+is a unary operation.
+Complex conjugation $z \mapsto \bar{z}$ on $\mathbb{C}$ is a unary operation.
+In each case the output is a new element of the \emph{same} set.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Properties of Unary Operations)}},
+  fonttitle=\small\bfseries]
+\label{def:unary-laws}
+Let $f : A \to A$ be a unary operation.
+\begin{enumerate}[label=(\roman*)]
+  \item $f$ is \emph{idempotent} if applying $f$ twice gives the same
+        result as applying it once:
+        \[
+          \forall a \in A,\quad f(f(a)) = f(a).
+        \]
+  \item $f$ is an \emph{involution} if applying $f$ twice returns the
+        original element:
+        \[
+          \forall a \in A,\quad f(f(a)) = a.
+        \]
+  \item $a \in A$ is a \emph{fixed point} of $f$ if
+        \[
+          f(a) = a.
+        \]
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Idempotent: $(\forall a \in A)\; f(f(a)) = f(a)$.
+\quad
+Involution: $(\forall a \in A)\; f(f(a)) = a$.
+\quad
+Fixed point of $f$: a particular $a$ with $f(a) = a$.
+\end{remark}
+
+\begin{remark}[Involution is a strong form of bijectivity]
+Every involution is a bijection: its own inverse.
+$f \circ f = \mathrm{id}_A$ means $f^{-1} = f$.
+Complex conjugation and negation on $\mathbb{Z}$ are both involutions.
+An idempotent that is also a bijection must be the identity:
+if $f \circ f = f$ and $f$ is invertible, compose both sides on the right
+by $f^{-1}$ to get $f = \mathrm{id}_A$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Binary operation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Binary Operation)}},
+  fonttitle=\small\bfseries]
+\label{def:binary-op}
+A \emph{binary operation} on $A$ is a function
+\[
+  \star : A \times A \to A.
+\]
+For $a, b \in A$ we write $a \star b$ for the image of $(a, b)$ under
+$\star$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$\star$ is a binary operation on $A$
+$\;\iff\;$
+$(\forall a, b \in A)\;(\exists!\, c \in A)\; a \star b = c$.
+\end{remark}
+
+\begin{remark}[Closure is definitional]
+The codomain of $\star$ is $A$ itself, so $a \star b \in A$ for all
+$a, b \in A$.
+This is closure, and it is not an axiom — it is the meaning of
+``$\star$ is a function $A \times A \to A$''.
+\end{remark}
+
+% ---------------------------------------------------------
+% Laws of binary operations
+% ---------------------------------------------------------
+
+\subsection{Laws of Binary Operations}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Laws of Binary Operations — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Law} & \textbf{Condition} & \textbf{Detail} \\
+\midrule
+Associativity    & $(a \star b) \star c = a \star (b \star c)$         & \hyperref[def:associativity]{↓} \\
+Commutativity    & $a \star b = b \star a$                             & \hyperref[def:commutativity]{↓} \\
+Distributivity   & $a \star (b \diamond c) = (a \star b) \diamond (a \star c)$ & \hyperref[def:distributivity]{↓} \\
+Cancellation (L) & $a \star b = a \star c \Rightarrow b = c$           & \hyperref[def:cancellation]{↓} \\
+Cancellation (R) & $b \star a = c \star a \Rightarrow b = c$           & \hyperref[def:cancellation]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Associativity)}},
+  fonttitle=\small\bfseries]
+\label{def:associativity}
+A binary operation $\star$ on $A$ is \emph{associative} if
+\[
+  \forall a, b, c \in A,\quad (a \star b) \star c = a \star (b \star c).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall a, b, c \in A)\;(a \star b) \star c = a \star (b \star c)$.
+\end{remark}
+
+\begin{remark}[Algebraic meaning]
+Associativity says that bracketing does not matter in any product of three
+elements.
+By induction this extends: any well-formed bracketing of a finite product
+$a_1 \star a_2 \star \cdots \star a_n$ gives the same result.
+This is the property that makes a finite sequence of elements have an
+unambiguous product — and is therefore the minimum condition for defining
+$a^n$ or $na$ meaningfully.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Commutativity)}},
+  fonttitle=\small\bfseries]
+\label{def:commutativity}
+A binary operation $\star$ on $A$ is \emph{commutative} if
+\[
+  \forall a, b \in A,\quad a \star b = b \star a.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall a, b \in A)\; a \star b = b \star a$.
+\end{remark}
+
+\begin{remark}[Independence from associativity]
+Associativity and commutativity are logically independent.
+Addition and multiplication on $\mathbb{Z}$ are both.
+Matrix multiplication is associative but not commutative.
+Subtraction on $\mathbb{Z}$ is neither.
+Rock-paper-scissors (``beats'') is neither.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Distributivity)}},
+  fonttitle=\small\bfseries]
+\label{def:distributivity}
+Let $\star$ and $\diamond$ be two binary operations on $A$.
+\begin{enumerate}[label=(\roman*)]
+  \item $\star$ \emph{distributes over} $\diamond$ \emph{on the left} if
+        \[
+          \forall a, b, c \in A,\quad
+          a \star (b \,\diamond\, c)
+          = (a \star b) \,\diamond\, (a \star c).
+        \]
+  \item $\star$ \emph{distributes over} $\diamond$ \emph{on the right} if
+        \[
+          \forall a, b, c \in A,\quad
+          (b \,\diamond\, c) \star a
+          = (b \star a) \,\diamond\, (c \star a).
+        \]
+  \item $\star$ \emph{distributes over} $\diamond$ if it distributes on
+        both the left and the right.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Left: $(\forall a,b,c \in A)\;
+a \star (b \diamond c) = (a \star b) \diamond (a \star c)$.
+Right: $(\forall a,b,c \in A)\;
+(b \diamond c) \star a = (b \star a) \diamond (c \star a)$.
+\end{remark}
+
+\begin{remark}[Two operations required]
+Distributivity is a relationship \emph{between} two operations on the same
+set — it cannot be stated for a single operation alone.
+When $\star$ is commutative, left and right distributivity are equivalent.
+The paradigm example is multiplication distributing over addition on
+$\mathbb{Z}$: $a(b + c) = ab + ac$.
+This is the defining interaction between the two operations of a ring.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Cancellation Laws)}},
+  fonttitle=\small\bfseries]
+\label{def:cancellation}
+A binary operation $\star$ on $A$ satisfies the
+\begin{enumerate}[label=(\roman*)]
+  \item \emph{left cancellation law} if:
+        \[
+          \forall a, b, c \in A,\quad
+          a \star b = a \star c \;\Rightarrow\; b = c,
+        \]
+  \item \emph{right cancellation law} if:
+        \[
+          \forall a, b, c \in A,\quad
+          b \star a = c \star a \;\Rightarrow\; b = c.
+        \]
+\end{enumerate}
+$\star$ satisfies the \emph{cancellation laws} if it satisfies both.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Left: $(\forall a,b,c \in A)\;[a \star b = a \star c \Rightarrow b = c]$.
+Right: $(\forall a,b,c \in A)\;[b \star a = c \star a \Rightarrow b = c]$.
+\end{remark}
+
+\begin{remark}[Cancellation and injectivity]
+Left cancellation of $\star$ says: for each fixed $a \in A$, the map
+$L_a : A \to A$ defined by $L_a(x) = a \star x$ is injective.
+Right cancellation says the same for $R_a(x) = x \star a$.
+In a group, cancellation follows from the existence of inverses.
+In a finite cancellative structure, cancellation implies the existence of
+inverses (Latin square property).
+\end{remark}
+
+% ---------------------------------------------------------
+% Distinguished elements
+% ---------------------------------------------------------
+
+\subsection{Distinguished Elements}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Distinguished Elements — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Element} & \textbf{Condition} & \textbf{Detail} \\
+\midrule
+Left identity     & $e \star a = a$ for all $a$                     & \hyperref[def:identity-element]{↓} \\
+Right identity    & $a \star e = a$ for all $a$                     & \hyperref[def:identity-element]{↓} \\
+Identity element  & Both left and right identity                    & \hyperref[def:identity-element]{↓} \\
+Left inverse of $a$   & $b \star a = e$                             & \hyperref[def:inverse-element]{↓} \\
+Right inverse of $a$  & $a \star b = e$                             & \hyperref[def:inverse-element]{↓} \\
+Inverse of $a$        & Both: $b \star a = a \star b = e$           & \hyperref[def:inverse-element]{↓} \\
+Idempotent element    & $a \star a = a$                             & \hyperref[def:idempotent-element]{↓} \\
+Absorbing element     & $a \star z = z \star a = z$ for all $a$     & \hyperref[def:absorbing-element]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Identity Element)}},
+  fonttitle=\small\bfseries]
+\label{def:identity-element}
+Let $\star$ be a binary operation on $A$ and $e \in A$.
+\begin{enumerate}[label=(\roman*)]
+  \item $e$ is a \emph{left identity} for $\star$ if
+        $\forall a \in A,\quad e \star a = a$.
+  \item $e$ is a \emph{right identity} for $\star$ if
+        $\forall a \in A,\quad a \star e = a$.
+  \item $e$ is an \emph{identity element} for $\star$ if it is both a
+        left identity and a right identity.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Left identity: $(\forall a \in A)\; e \star a = a$.
+Right identity: $(\forall a \in A)\; a \star e = a$.
+Identity: both hold for the same $e$.
+\end{remark}
+
+\begin{remark}[Uniqueness of the identity]
+If an identity element exists, it is unique.
+Proof: suppose $e$ and $e'$ are both identities.
+Then $e = e \star e' = e'$, where the first equality uses that $e'$ is a
+right identity and the second uses that $e$ is a left identity.
+\end{remark}
+
+\begin{remark}[Left-only vs.\ two-sided]
+A left identity and a right identity that are both present must be equal
+(same argument as uniqueness).
+A left identity alone need not equal a right identity alone —
+but if both exist, they coincide, yielding the unique two-sided identity.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Inverse Element)}},
+  fonttitle=\small\bfseries]
+\label{def:inverse-element}
+Let $\star$ be a binary operation on $A$ with identity element $e$,
+and let $a \in A$.
+\begin{enumerate}[label=(\roman*)]
+  \item $b \in A$ is a \emph{left inverse} of $a$ if
+        $b \star a = e$.
+  \item $b \in A$ is a \emph{right inverse} of $a$ if
+        $a \star b = e$.
+  \item $b \in A$ is an \emph{inverse} of $a$ if
+        $b \star a = a \star b = e$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Left inverse of $a$: $b \star a = e$.
+Right inverse of $a$: $a \star b = e$.
+Inverse of $a$: $b \star a = e$ and $a \star b = e$.
+\end{remark}
+
+\begin{remark}[Uniqueness in associative structures]
+In an associative operation with an identity, if $a$ has both a left
+inverse $b$ and a right inverse $c$, then $b = c$.
+Proof: $b = b \star e = b \star (a \star c) = (b \star a) \star c = e \star c = c$.
+Hence in a group, inverses are unique.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Idempotent Element)}},
+  fonttitle=\small\bfseries]
+\label{def:idempotent-element}
+Let $\star$ be a binary operation on $A$.
+An element $a \in A$ is \emph{idempotent} (with respect to $\star$) if
+\[
+  a \star a = a.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$a$ is idempotent $\;\iff\; a \star a = a$.
+\end{remark}
+
+\begin{remark}[Examples]
+In any structure with an identity $e$: $e \star e = e$, so the identity
+is always idempotent.
+In a Boolean algebra, every element is idempotent under both $\land$ and $\lor$.
+In a ring, an idempotent $e$ satisfying $e^2 = e$ is called an
+\emph{idempotent element} and plays a central role in decomposing the ring
+into direct summands.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Absorbing Element)}},
+  fonttitle=\small\bfseries]
+\label{def:absorbing-element}
+Let $\star$ be a binary operation on $A$.
+An element $z \in A$ is \emph{absorbing} (or a \emph{zero element})
+for $\star$ if
+\[
+  \forall a \in A,\quad a \star z = z \star a = z.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$z$ is absorbing for $\star$
+$\;\iff\;$
+$(\forall a \in A)\;[a \star z = z \;\land\; z \star a = z]$.
+\end{remark}
+
+\begin{remark}[Uniqueness and the identity]
+If an absorbing element exists, it is unique (same argument as for the
+identity).
+In a ring $(R, +, \cdot)$, the additive identity $0$ is absorbing for
+multiplication: $a \cdot 0 = 0$ for all $a$.
+An absorbing element and an identity element coincide only in the trivial
+one-element structure: if $e$ is the identity and $z$ is absorbing,
+then $e = e \star z = z$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Compatibility of relations and operations
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Compatibility of a Relation with an Operation)}},
+  fonttitle=\small\bfseries]
+\label{def:compatibility}
+Let $\star$ be a binary operation on $A$ and $R$ a binary relation on $A$.
+We say $R$ is \emph{compatible with $\star$} if
+\[
+  a_1 \mathrel{R} a_2 \;\land\; b_1 \mathrel{R} b_2
+  \;\Rightarrow\;
+  (a_1 \star b_1) \mathrel{R} (a_2 \star b_2)
+\]
+for all $a_1, a_2, b_1, b_2 \in A$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall a_1, a_2, b_1, b_2 \in A)\;
+[a_1 \mathrel{R} a_2 \land b_1 \mathrel{R} b_2
+\Rightarrow (a_1 \star b_1) \mathrel{R} (a_2 \star b_2)]$.
+\end{remark}
+
+\begin{remark}[What compatibility seeds]
+Compatibility is the condition that connects the relational and operational
+layers of algebraic structure.
+When the relation is an equivalence relation, compatibility means the
+operation descends to the quotient set — the equivalence relation is then
+called a \emph{congruence relation}, and the quotient inherits the operation.
+When the relation is an order, compatibility means the operation preserves
+the order in both arguments — the condition defining ordered groups,
+ordered fields, and lattices.
+These structures are not named here; they are the subject of abstract algebra.
+What is recorded is the single condition that makes them possible.
+\end{remark}

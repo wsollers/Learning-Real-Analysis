@@ -1,0 +1,96 @@
+% =========================================================
+% Computational Linear Algebra — Independence, Basis, Dimension
+% (Strang §3.4 / Johnston §2.3 / Ashraf §2.2)
+% =========================================================
+
+\section{Independence, Basis, and Dimension}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Basis and Dimension --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\begin{tabular}{@{}p{0.30\textwidth}p{0.63\textwidth}@{}}
+\textbf{Linearly independent} & No vector is a linear combination of the others; only $\mathbf{0} = c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k$ has $c_i = 0$ for all $i$. \\[4pt]
+\textbf{Span}                 & $\operatorname{span}\{\mathbf{v}_1,\ldots,\mathbf{v}_k\}$: all linear combinations of $\mathbf{v}_1,\ldots,\mathbf{v}_k$. \\[4pt]
+\textbf{Basis}                & A linearly independent set that spans the space. \\[4pt]
+\textbf{Dimension}            & Number of vectors in any basis; all bases have the same size. \\[4pt]
+\textbf{Change of basis}      & Transition matrix $P$: columns are the new basis vectors in terms of the old basis. \\
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Linear Independence}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Linear Independence)}},
+  fonttitle=\small\bfseries]
+Vectors $\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_k \in \mathbb{R}^n$ are
+\emph{linearly independent} if the only solution to
+\[
+  c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_k\mathbf{v}_k = \mathbf{0}
+\]
+is $c_1 = c_2 = \cdots = c_k = 0$.
+Otherwise they are \emph{linearly dependent}: at least one vector is
+a linear combination of the others.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+\subsection{Basis and Dimension}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Basis)}},
+  fonttitle=\small\bfseries]
+A \emph{basis} for a subspace $V \subseteq \mathbb{R}^n$ is a set of vectors
+$\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$ that is:
+\begin{enumerate}
+  \item linearly independent, and
+  \item spans $V$ (every vector in $V$ is a linear combination of $\mathbf{v}_1,\ldots,\mathbf{v}_k$).
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Dimension is Well-Defined)}},
+  fonttitle=\small\bfseries]
+Any two bases for the same subspace $V$ have the same number of vectors.
+This common number is called the \emph{dimension} of $V$, written $\dim V$.
+\end{tcolorbox}
+
+\begin{remark*}
+The standard basis $\{\mathbf{e}_1, \ldots, \mathbf{e}_n\}$ is a basis for $\mathbb{R}^n$,
+so $\dim \mathbb{R}^n = n$.
+The key insight: every set of $n$ linearly independent vectors in $\mathbb{R}^n$ is
+automatically a basis.
+\end{remark*}
+
+% ---------------------------------------------------------
+\subsection{Change of Basis}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Transition Matrix)}},
+  fonttitle=\small\bfseries]
+Let $\mathcal{B}_1 = \{\mathbf{u}_1, \ldots, \mathbf{u}_n\}$ and
+$\mathcal{B}_2 = \{\mathbf{v}_1, \ldots, \mathbf{v}_n\}$ be two ordered bases for $\mathbb{R}^n$.
+The \emph{transition matrix} $P$ from $\mathcal{B}_1$ to $\mathcal{B}_2$ has
+as its $i$-th column the coordinates of $\mathbf{u}_i$ expressed in the basis $\mathcal{B}_2$.
+If $[\mathbf{x}]_{\mathcal{B}_1}$ denotes the coordinate vector of $\mathbf{x}$ in basis $\mathcal{B}_1$, then
+\[
+  [\mathbf{x}]_{\mathcal{B}_2} = P \,[\mathbf{x}]_{\mathcal{B}_1}.
+\]
+The inverse $P^{-1}$ converts in the opposite direction.
+\end{tcolorbox}
+
+\begin{remark*}[NURBS connection: Bernstein basis as a basis for polynomials]
+The Bernstein polynomials $\{B_{0,n}(u), B_{1,n}(u), \ldots, B_{n,n}(u)\}$ form a
+basis for the vector space of polynomials of degree $\leq n$.
+So does the monomial (power) basis $\{1, u, u^2, \ldots, u^n\}$.
+The matrix $M$ from Piegl \& Tiller Exercise 1.14 is precisely the transition
+matrix converting coordinates in the monomial basis to coordinates in the Bernstein basis.
+$M^{-1}$ converts the other direction.
+This is why the Bézier curve $C(u) = [u^i]^T M [P_i]$ can be read as:
+``express the Bernstein basis functions in the monomial basis via $M$, then
+multiply by the control points.''
+\end{remark*}

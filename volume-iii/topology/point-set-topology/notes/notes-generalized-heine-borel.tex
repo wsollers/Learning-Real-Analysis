@@ -1,0 +1,127 @@
+% =========================================================
+% Generalized Heine-Borel Theorem
+% Source: volume-iii/topology/point-set-topology/notes/
+%
+% Dependencies:
+%   notes-metric-spaces (completeness, totally bounded)
+%   notes-topology (compactness via open covers)
+%   notes-sequential-characterizations (sequential compactness)
+% =========================================================
+
+% ---------------------------------------------------------
+\section{Generalized Heine-Borel Theorem}
+\label{sec:generalized-heine-borel}
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Generalized Heine-Borel --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+T\ref{thm:gen-heine-borel}
+  & Compact $\iff$ complete $+$ totally bounded
+  & Sequential compactness
+  & \hyperref[thm:gen-heine-borel]{$\downarrow$} \\[4pt]
+C\ref{cor:classical-heine-borel}
+  & In $\mathbb{R}^n$: compact $\iff$ closed $+$ bounded
+  & Totally bounded $\iff$ bounded in $\mathbb{R}^n$
+  & \hyperref[cor:classical-heine-borel]{$\downarrow$} \\[4pt]
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\paragraph{Motivation.}
+The classical Heine-Borel theorem says compact subsets of $\mathbb{R}^n$ are
+exactly the closed and bounded ones.
+Once you know what compactness and total boundedness mean in general metric
+spaces, a natural question arises: which condition is really doing the work?
+The answer is total boundedness, not mere boundedness.
+The Generalized Heine-Borel theorem isolates the two ingredients ---
+completeness and total boundedness --- that together force every sequence
+to have a convergent subsequence.
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Generalized Heine-Borel --- Pugh Theorem 65)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Generalized Heine-Borel]
+\label{thm:gen-heine-borel}
+Let $(X,d)$ be a complete metric space and $A \subseteq X$.
+Then $A$ is compact if and only if $A$ is closed and totally bounded.
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\[
+\forall (X,d)\ \text{complete metric space},\;
+\forall A \subseteq X:\quad
+A\ \text{compact}
+\iff
+\bigl(A\ \text{closed}\bigr)
+\land
+\bigl(\forall\,\varepsilon>0,\;
+\exists\, n\in\mathbb{N},\;
+\exists\, x_1,\ldots,x_n \in X,\;
+A \subseteq \bigcup_{k=1}^n B_\varepsilon(x_k)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Proof strategy]
+($\Rightarrow$) Every compact set is closed (as a closed subspace of a complete
+space it is complete in its own right) and totally bounded (the open cover by
+$\varepsilon$-balls has a finite subcover).
+
+($\Leftarrow$) Let $(a_n)$ be any sequence in $A$.
+Since $A$ is totally bounded, Proposition~\ref{prop:totally-bounded-Cauchy}
+(in the metric-spaces chapter) produces a Cauchy subsequence $(b_n)$.
+Since $X$ is complete, $(b_n)$ converges to some $p \in X$.
+Since $A$ is closed, $p \in A$.
+So every sequence in $A$ has a subsequence converging in $A$ ---
+which is sequential compactness, hence compactness.
+The equivalence of sequential compactness and open-cover compactness
+in metric spaces is established in the compactness chapter.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Classical Heine-Borel in $\mathbb{R}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{corollary}[Classical Heine-Borel]
+\label{cor:classical-heine-borel}
+A subset $K \subseteq \mathbb{R}^n$ is compact if and only if
+$K$ is closed and bounded.
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Why classical and generalized coincide in $\mathbb{R}^n$]
+In $\mathbb{R}^n$, bounded and totally bounded are equivalent
+(Proposition~\ref{prop:totally-bounded-Rn} in the metric-spaces chapter).
+So in $\mathbb{R}^n$, the Generalized Heine-Borel theorem reads exactly as
+the classical one: compact $\iff$ closed $+$ bounded.
+The generalized version reveals that it is total boundedness, not bare
+boundedness, that is the correct condition in general metric spaces.
+\end{remark*}
+
+\begin{remark*}[Why Heine-Borel fails in infinite dimensions]
+In $\ell^2$ (the space of square-summable sequences), the closed unit ball
+$B = \{x : \|x\|_2 \le 1\}$ is closed and bounded but not compact.
+The standard basis vectors $e_n$ satisfy $\|e_m - e_n\|_2 = \sqrt{2}$ for
+$m \ne n$, so no subsequence is Cauchy, and $B$ is not sequentially compact.
+The unit ball in $\ell^2$ is bounded but not totally bounded, which is the
+correct diagnosis: total boundedness, not boundedness, is what fails.
+
+This failure is fundamental to infinite-dimensional analysis and motivates
+the study of compact operators in functional analysis.
+\end{remark*}
+
+\begin{remark*}[The role of completeness]
+The hypothesis that $X$ is complete is essential.
+A totally bounded but incomplete space can fail to be compact:
+the open interval $(0,1)$ with the usual metric is totally bounded
+(it sits inside $[0,1]$ which is compact) but is not complete,
+and it is not compact (the sequence $1/n$ has no limit in $(0,1)$).
+\end{remark*}

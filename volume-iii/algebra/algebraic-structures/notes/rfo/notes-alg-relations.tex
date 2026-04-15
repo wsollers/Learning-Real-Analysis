@@ -1,0 +1,419 @@
+% =========================================================
+% Algebraic Structures — Relations
+% =========================================================
+% This file treats relations as algebraic objects carrying
+% behaviours (properties, closure conditions, composition).
+% Set-theoretic foundations (ordered pairs, Cartesian product,
+% subset) are assumed from Volume I, Sets–Relations–Functions.
+% The focus here is on what relations *do*, not what they *are*.
+
+\section{Relations as Algebraic Objects}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Relations — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept / Property} & \textbf{Definition / Condition} & \textbf{Detail} \\
+\midrule
+Unary relation     & Predicate $P$ on elements of $A$; subset $S \subseteq A$            & \hyperref[def:unary-relation]{↓} \\
+$n$-ary relation   & Predicate on $n$-tuples; subset of $A^n$                            & \hyperref[def:nary-relation]{↓} \\
+Binary relation    & Predicate on pairs; $R \subseteq A \times A$                        & \hyperref[def:binary-relation]{↓} \\
+\midrule
+Reflexive      & $\forall a \in A,\quad a \mathrel{R} a$                                  & \hyperref[def:rel-reflexive]{↓} \\
+Irreflexive    & $\forall a \in A,\quad \lnot(a \mathrel{R} a)$                           & \hyperref[def:rel-irreflexive]{↓} \\
+Symmetric      & $a \mathrel{R} b \Rightarrow b \mathrel{R} a$                             & \hyperref[def:rel-symmetric]{↓} \\
+Antisymmetric  & $a \mathrel{R} b \land b \mathrel{R} a \Rightarrow a = b$                 & \hyperref[def:rel-antisymmetric]{↓} \\
+Asymmetric     & $a \mathrel{R} b \Rightarrow \lnot(b \mathrel{R} a)$                      & \hyperref[def:rel-asymmetric]{↓} \\
+Transitive     & $a \mathrel{R} b \land b \mathrel{R} c \Rightarrow a \mathrel{R} c$       & \hyperref[def:rel-transitive]{↓} \\
+Total          & $\forall a,b \in A,\quad a \mathrel{R} b \lor b \mathrel{R} a$            & \hyperref[def:rel-total]{↓} \\
+\midrule
+Composition    & $(S \circ R)(a,c) \iff \exists b,\ a\mathrel{R}b \land b\mathrel{S}c$    & \hyperref[def:rel-composition]{↓} \\
+\midrule
+Equivalence relation & Reflexive + Symmetric + Transitive                                & \hyperref[def:equiv-relation]{↓} \\
+Partial order        & Reflexive + Antisymmetric + Transitive                            & \hyperref[def:partial-order]{↓} \\
+Strict partial order & Irreflexive + Asymmetric + Transitive                             & \hyperref[def:strict-partial-order]{↓} \\
+Total order          & Partial order + Total                                             & \hyperref[def:total-order]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Unary relation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Unary Relation on a Set)}},
+  fonttitle=\small\bfseries]
+\label{def:unary-relation}
+Let $A$ be a set.
+A \emph{unary relation on $A$} is a predicate $P$ that determines,
+for each element $a \in A$, whether $a$ has the property $P$.
+We write $P(a)$ when the property holds.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$P$ is a unary relation on $A$
+$\;\iff\;$
+$(\forall a \in A)\;[\,P(a) \text{ is either true or false}\,]$.
+\end{remark}
+
+\begin{remark}[Unary relations are subsets]
+A unary relation on $A$ corresponds exactly to a subset $S \subseteq A$:
+the elements for which $P$ holds.
+Equivalently, $P$ is the characteristic predicate of $S$.
+Examples: ``is even'' on $\mathbb{Z}$; ``is invertible'' in a ring;
+``is prime'' on $\mathbb{N}$.
+Unary relations carry no properties like associativity or commutativity —
+those belong to operations.
+\end{remark}
+
+% ---------------------------------------------------------
+% n-ary relation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($n$-ary Relation on a Set)}},
+  fonttitle=\small\bfseries]
+\label{def:nary-relation}
+Let $A$ be a set and $n \in \mathbb{N}$.
+An \emph{$n$-ary relation on $A$} is a predicate $R$ on $n$-tuples from $A$:
+it determines, for each $(a_1, \ldots, a_n) \in A^n$, whether the tuple
+satisfies $R$.
+We write $R(a_1, \ldots, a_n)$ when it does.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$R$ is an $n$-ary relation on $A$
+$\;\iff\;$
+$(\forall (a_1, \ldots, a_n) \in A^n)\;
+[\,R(a_1, \ldots, a_n) \text{ is either true or false}\,]$.
+\end{remark}
+
+\begin{remark}[Special cases]
+A unary relation ($n = 1$) is a property of individual elements.
+A binary relation ($n = 2$) is a relationship between pairs — the case
+carrying the richest algebraic structure (reflexivity, symmetry, transitivity, etc.).
+A ternary relation ($n = 3$) arises in geometry (betweenness), algebra
+(the relation $a + b = c$ on $\mathbb{Z}$), and logic.
+The $n$-ary framework is the common abstraction.
+\end{remark}
+
+% ---------------------------------------------------------
+% Binary relation on a set (algebraic restatement)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Binary Relation on a Set)}},
+  fonttitle=\small\bfseries]
+\label{def:binary-relation}
+Let $A$ be a set.
+A \emph{binary relation on $A$} is a rule $R$ that determines,
+for each ordered pair $(a, b)$ with $a, b \in A$, whether
+$a$ and $b$ stand in the relation.
+We write $a \mathrel{R} b$ when the relation holds, and
+$\lnot(a \mathrel{R} b)$ when it does not.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$R$ is a binary relation on $A$
+$\;\iff\;$
+$(\forall a \in A)(\forall b \in A)\;
+[\,a \mathrel{R} b \;\text{ is either true or false}\,]$.
+\end{remark}
+
+\begin{remark}[Set-theoretic grounding]
+In Volume I we identified a binary relation on $A$ with a subset
+$R \subseteq A \times A$, writing $(a,b) \in R$ in place of
+$a \mathrel{R} b$.
+The infix notation $a \mathrel{R} b$ adopted here suppresses that
+representation and treats the relation as a primitive predicate on
+pairs — the algebraic point of view.
+Familiar examples: $=$, $\leq$, $\mid$ (divides), $\subseteq$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Element-level properties
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Reflexive / Irreflexive)}},
+  fonttitle=\small\bfseries]
+\label{def:rel-reflexive}
+\label{def:rel-irreflexive}
+Let $R$ be a binary relation on $A$.
+\begin{enumerate}[label=(\roman*)]
+  \item $R$ is \emph{reflexive} if every element of $A$ is related to itself:
+        \[
+          \forall a \in A,\quad a \mathrel{R} a.
+        \]
+  \item $R$ is \emph{irreflexive} if no element of $A$ is related to itself:
+        \[
+          \forall a \in A,\quad \lnot(a \mathrel{R} a).
+        \]
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Reflexive: $(\forall a \in A)\; a \mathrel{R} a$.
+\quad
+Irreflexive: $(\forall a \in A)\; \lnot(a \mathrel{R} a)$.
+\end{remark}
+
+\begin{remark}[Independence]
+Reflexive and irreflexive are \emph{not} negations of each other.
+A relation on a nonempty set cannot be both reflexive and irreflexive.
+A relation on the empty set is vacuously both.
+The relation $\{(1,2)\}$ on $\{1,2\}$ is neither.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Symmetric / Antisymmetric / Asymmetric)}},
+  fonttitle=\small\bfseries]
+\label{def:rel-symmetric}
+\label{def:rel-antisymmetric}
+\label{def:rel-asymmetric}
+Let $R$ be a binary relation on $A$.
+\begin{enumerate}[label=(\roman*)]
+  \item $R$ is \emph{symmetric} if relatedness in one direction implies
+        relatedness in both:
+        \[
+          \forall a,b \in A,\quad a \mathrel{R} b \;\Rightarrow\; b \mathrel{R} a.
+        \]
+  \item $R$ is \emph{antisymmetric} if relatedness in both directions
+        forces equality:
+        \[
+          \forall a,b \in A,\quad
+          a \mathrel{R} b \;\land\; b \mathrel{R} a \;\Rightarrow\; a = b.
+        \]
+  \item $R$ is \emph{asymmetric} if relatedness in one direction forbids
+        it in the other:
+        \[
+          \forall a,b \in A,\quad
+          a \mathrel{R} b \;\Rightarrow\; \lnot(b \mathrel{R} a).
+        \]
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+Symmetric: $(\forall a,b \in A)\;[a \mathrel{R} b \Rightarrow b \mathrel{R} a]$.
+Antisymmetric: $(\forall a,b \in A)\;
+[a \mathrel{R} b \land b \mathrel{R} a \Rightarrow a = b]$.
+Asymmetric: $(\forall a,b \in A)\;
+[a \mathrel{R} b \Rightarrow \lnot(b \mathrel{R} a)]$.
+\end{remark}
+
+\begin{remark}[Asymmetric implies irreflexive]
+Every asymmetric relation is irreflexive.
+If $a \mathrel{R} a$ held, asymmetry would require $\lnot(a \mathrel{R} a)$ —
+a contradiction.
+Strict inequality $<$ on $\mathbb{Z}$ is asymmetric (hence irreflexive);
+$\leq$ on $\mathbb{Z}$ is antisymmetric but not asymmetric.
+\end{remark}
+
+\begin{remark}[Symmetric vs.\ antisymmetric]
+These are independent.
+Equality $=$ is both symmetric and antisymmetric.
+The universal relation $A \times A$ (for $|A| > 1$) is symmetric but
+not antisymmetric.
+Divisibility $\mid$ on $\mathbb{N}$ is antisymmetric but not symmetric.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Transitive)}},
+  fonttitle=\small\bfseries]
+\label{def:rel-transitive}
+$R$ is \emph{transitive} if related pairs can be chained:
+\[
+  \forall a,b,c \in A,\quad
+  a \mathrel{R} b \;\land\; b \mathrel{R} c \;\Rightarrow\; a \mathrel{R} c.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall a,b,c \in A)\;
+[a \mathrel{R} b \land b \mathrel{R} c \Rightarrow a \mathrel{R} c]$.
+\end{remark}
+
+\begin{remark}[Intuition]
+Transitivity says the relation has no ``gaps'' in chains.
+It is the property that makes $\leq$ and $\mid$ well-behaved for reasoning.
+Friendship is the canonical example of a symmetric, non-transitive relation.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Total / Connected)}},
+  fonttitle=\small\bfseries]
+\label{def:rel-total}
+$R$ is \emph{total} (also called \emph{connected} or \emph{trichotomous})
+if every pair of distinct elements is related in at least one direction:
+\[
+  \forall a,b \in A,\quad
+  a \mathrel{R} b \;\lor\; b \mathrel{R} a.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall a,b \in A)\;[a \mathrel{R} b \lor b \mathrel{R} a]$.
+Note the disjunction includes $a = b$; if $R$ is also reflexive, this
+clause is automatically satisfied when $a = b$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Composition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Composition of Relations)}},
+  fonttitle=\small\bfseries]
+\label{def:rel-composition}
+Let $R \subseteq A \times B$ and $S \subseteq B \times C$.
+The \emph{composition} $S \circ R \subseteq A \times C$ is defined by
+\[
+  a \;(S \circ R)\; c
+  \;\iff\;
+  \exists b \in B,\quad a \mathrel{R} b \;\land\; b \mathrel{S} c.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall a \in A)(\forall c \in C)\;
+[a\,(S\circ R)\,c
+\;\iff\;
+(\exists b \in B)\;(a \mathrel{R} b \land b \mathrel{S} c)]$.
+\end{remark}
+
+\begin{remark}[Composition is an operation on relations]
+When $R$ and $S$ are both on the same set $A$ (i.e.\ $A = B = C$),
+composition $\circ$ is a binary operation on the set of all relations on $A$.
+It is associative but not in general commutative.
+This is the first instance of a binary operation on a \emph{collection of
+relations} rather than on elements of a set — a pattern that recurs in
+function composition and later in group theory.
+\end{remark}
+
+% ---------------------------------------------------------
+% Structural classes
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Equivalence Relation)}},
+  fonttitle=\small\bfseries]
+\label{def:equiv-relation}
+A binary relation $R$ on $A$ is an \emph{equivalence relation} if it is
+\begin{enumerate}[label=(\roman*)]
+  \item reflexive: $\forall a \in A,\quad a \mathrel{R} a$,
+  \item symmetric: $a \mathrel{R} b \Rightarrow b \mathrel{R} a$,
+  \item transitive: $a \mathrel{R} b \land b \mathrel{R} c \Rightarrow a \mathrel{R} c$.
+\end{enumerate}
+We write $a \sim b$ when $R$ is an equivalence relation and the
+particular relation is understood from context.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$R$ is an equivalence relation on $A$
+$\iff$
+$[(\forall a)\, a \mathrel{R} a]$
+$\land\;
+[(\forall a,b)\, a \mathrel{R} b \Rightarrow b \mathrel{R} a]$
+$\land\;
+[(\forall a,b,c)\, a \mathrel{R} b \land b \mathrel{R} c \Rightarrow a \mathrel{R} c]$.
+\end{remark}
+
+\begin{remark}[Algebraic role]
+An equivalence relation on $A$ is precisely the data needed to partition
+$A$ into disjoint, exhaustive classes — the equivalence classes.
+This partition structure is the algebraic mechanism behind
+quotient constructions throughout algebra:
+quotient groups, quotient rings, quotient vector spaces, and quotient topologies
+are all built by choosing an equivalence relation compatible with the relevant
+operations.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partial Order)}},
+  fonttitle=\small\bfseries]
+\label{def:partial-order}
+A binary relation $R$ on $A$ is a \emph{partial order} if it is
+\begin{enumerate}[label=(\roman*)]
+  \item reflexive: $\forall a \in A,\quad a \mathrel{R} a$,
+  \item antisymmetric: $a \mathrel{R} b \land b \mathrel{R} a \Rightarrow a = b$,
+  \item transitive: $a \mathrel{R} b \land b \mathrel{R} c \Rightarrow a \mathrel{R} c$.
+\end{enumerate}
+A set $A$ equipped with a partial order $R$ is a \emph{partially ordered set}
+(or \emph{poset}), written $(A, R)$.
+We typically write $\leq$ for a partial order.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(A, \leq)$ is a poset
+$\iff$
+$[(\forall a)\, a \leq a]$
+$\land\; [(\forall a,b)\, a \leq b \land b \leq a \Rightarrow a = b]$
+$\land\; [(\forall a,b,c)\, a \leq b \land b \leq c \Rightarrow a \leq c]$.
+\end{remark}
+
+\begin{remark}[Strict partial order]
+\label{def:strict-partial-order}
+The \emph{strict} version $<$ associated to a partial order $\leq$ is defined by
+\[
+  a < b \;\iff\; a \leq b \;\land\; a \neq b.
+\]
+The strict relation $<$ is irreflexive, asymmetric, and transitive —
+equivalently, it is a \emph{strict partial order}.
+Every partial order determines a strict partial order and vice versa:
+the two presentations are interconvertible and carry the same information.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Total Order)}},
+  fonttitle=\small\bfseries]
+\label{def:total-order}
+A partial order $\leq$ on $A$ is a \emph{total order} (also
+\emph{linear order}) if it is also total:
+\[
+  \forall a,b \in A,\quad a \leq b \;\lor\; b \leq a.
+\]
+A set $A$ equipped with a total order is a \emph{totally ordered set}
+(or \emph{chain}).
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(A, \leq)$ is a chain
+$\iff$
+$(A, \leq)$ is a poset
+$\land\; (\forall a,b \in A)\,[a \leq b \lor b \leq a]$.
+\end{remark}
+
+\begin{remark}[Compatibility with operations]
+A relation $R$ on $A$ is \emph{compatible with a binary operation}
+$\star : A \times A \to A$ if
+\[
+  a_1 \mathrel{R} a_2 \;\land\; b_1 \mathrel{R} b_2
+  \;\Rightarrow\;
+  (a_1 \star b_1) \mathrel{R} (a_2 \star b_2).
+\]
+This condition connects the relational and operational layers of algebraic
+structure.
+An equivalence relation satisfying it is called a \emph{congruence relation}.
+An order satisfying it (for $+$ on an ordered field) yields the ordered field
+axioms.
+\end{remark}
