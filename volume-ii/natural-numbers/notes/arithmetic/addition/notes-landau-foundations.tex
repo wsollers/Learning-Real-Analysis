@@ -1,0 +1,346 @@
+% volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+%
+% Landau's axiomatic development of addition on the natural numbers.
+%
+% Formal verification: Every theorem and lemma in this section has been
+% verified in Lean 4 (no Mathlib) and can be found in:
+%   lean/LRA/VolumeII/NaturalNumbers/
+% The Lean proofs are the authoritative formal record; the proofs here
+% are the human-readable mathematical record.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Where You Are in the Journey}},
+  fonttitle=\small\bfseries]
+\begin{center}\small
+  Tao's Addition Development $\;\to\;$ \textbf{Landau's Foundations of Addition}
+  $\;\to\;$ Multiplication
+\end{center}
+\medskip
+\noindent\textbf{How we got here.}
+The Tao development of addition (§9.1) built arithmetic recursively on the
+left argument, starting from zero. Every algebraic property --- commutativity,
+associativity, cancellation --- was proved from the recursive definition alone.
+The Peano axioms P1--P5 and the recursion theorem provided the foundation.
+
+\medskip
+\noindent\textbf{What this section builds.}
+We now follow \textcite{LandauFoundationsAnalysis} and reconstruct addition
+from a different starting point: the natural numbers begin at $1$ rather than
+$0$, and the successor is primitive. Landau proves that the two defining
+equations of addition determine a \emph{unique} function on
+$\mathbb{N} \times \mathbb{N}$, and then \emph{constructs} that function
+explicitly. The uniqueness and existence proofs have been verified in
+Lean~4 without Mathlib; see
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+
+\medskip
+\noindent\textbf{Where this leads.}
+With addition established, Landau proceeds to prove commutativity,
+associativity, and cancellation --- each by induction, each respecting the
+strict variable ordering imposed by the asymmetric definition. These results
+feed directly into the construction of~$\mathbb{Z}$.
+\end{tcolorbox}
+\vspace{1em}
+
+\subsection*{Landau's Foundations of the Natural Numbers}
+
+The development of arithmetic on $\mathbb{N}$ presented here follows
+\textcite{LandauFoundationsAnalysis} with complete fidelity to his variable
+ordering and logical dependencies. No commutativity or associativity is
+assumed; every such property is proved when it is first needed.
+Notation: we write $x'$ for the successor of $x$.
+
+% ------------------------------------------------------------------
+\subsubsection*{The Peano Axioms}
+% ------------------------------------------------------------------
+
+The natural numbers are characterised by five axioms.
+
+\begin{axiom}[Peano Axioms]
+\label{ax:landau-peano}
+There exists a set $\mathbb{N}$ with a distinguished element $1 \in \mathbb{N}$
+and a function $(\cdot)' : \mathbb{N} \to \mathbb{N}$, called the
+\emph{successor}, satisfying:
+\begin{enumerate}
+  \item[\textbf{P1.}] $1 \in \mathbb{N}$.
+  \item[\textbf{P2.}] For every $x \in \mathbb{N}$, $x' \in \mathbb{N}$.
+  \item[\textbf{P3.}] For every $x \in \mathbb{N}$, $x' \neq 1$.
+  \item[\textbf{P4.}] If $x' = y'$ then $x = y$ \quad (successor is injective).
+  \item[\textbf{P5.}] \emph{(Induction.)} If $M \subseteq \mathbb{N}$ contains
+        $1$, and contains $x'$ whenever it contains $x$, then
+        $M = \mathbb{N}$.
+\end{enumerate}
+\end{axiom}
+
+\begin{remark*}[Logical form of P5]
+Axiom P5 is an axiom schema: for any predicate $P$ on $\mathbb{N}$,
+\[
+  \bigl[P(1) \land \forall x \in \mathbb{N},\, P(x) \Rightarrow P(x')\bigr]
+  \;\Rightarrow\;
+  \forall x \in \mathbb{N},\, P(x).
+\]
+\end{remark*}
+
+% ------------------------------------------------------------------
+\subsubsection*{Theorems on the Successor}
+% ------------------------------------------------------------------
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-succ-strict]{Successor is strictly monotone}%
+}{Successor is strictly monotone}]
+\label{thm:landau-succ-strict}
+For all $x, y \in \mathbb{N}$, if $x \neq y$ then $x' \neq y'$.
+\end{theorem}
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-succ-ne-self]{Successor has no fixed points}%
+}{Successor has no fixed points}]
+\label{thm:landau-succ-ne-self}
+For all $x \in \mathbb{N}$, $x' \neq x$.
+\end{theorem}
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-pred-unique]{Existence and uniqueness of predecessor}%
+}{Existence and uniqueness of predecessor}]
+\label{thm:landau-pred-unique}
+For every $x \in \mathbb{N}$ with $x \neq 1$, there exists a unique
+$u \in \mathbb{N}$ such that $x = u'$.
+\end{theorem}
+
+% ------------------------------------------------------------------
+\subsubsection*{Addition (Theorem 4 / Definition 1)}
+% ------------------------------------------------------------------
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-addition-exists]{Definition of Addition~{\normalfont\cite[Thm.~4]{LandauFoundationsAnalysis}}}%
+}{Definition of Addition}]
+\label{thm:landau-addition-exists-unique}
+To every pair $x, y \in \mathbb{N}$ we may assign, in exactly one way,
+a natural number $x + y$, called the \emph{sum} of $x$ and $y$, such that:
+\begin{enumerate}
+  \item[\textbf{A6.}] $x + 1 = x'$ \quad for all $x \in \mathbb{N}$,
+  \item[\textbf{A7.}] $x + y' = (x + y)'$ \quad for all $x, y \in \mathbb{N}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark*}[Variable ordering]
+Note that $x$ is fixed throughout and recursion proceeds on $y$ alone.
+Commutativity $x + y = y + x$ has not yet been established and must not
+be assumed.
+\end{remark*}
+
+% ------------------------------------------------------------------
+\subsubsection*{Uniqueness of Addition}
+% ------------------------------------------------------------------
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-addition-unique]{The addition function is unique}%
+}{The addition function is unique}]
+\label{thm:landau-addition-unique}
+If $f, g : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ both satisfy
+conditions \textbf{A6} and \textbf{A7}, then $f(x,y) = g(x,y)$ for
+all $x, y \in \mathbb{N}$.
+\end{theorem}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{addition\_unique} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+Proved without Mathlib from axioms P1--P5 alone.
+\end{remark*}
+
+% ------------------------------------------------------------------
+\subsubsection*{Arithmetic Properties of Addition}
+% ------------------------------------------------------------------
+
+The following results establish the algebraic structure of addition.
+Each is proved by induction, respecting the strict variable ordering
+imposed by the asymmetric definition of addition.
+
+\begin{lemma}[\texorpdfstring{%
+  \hyperref[prf:landau-succ-comm]{Successor is commutative with addition}%
+}{Successor is commutative with addition}]
+\label{lem:landau-succ-comm}
+For all $x \in \mathbb{N}$, $x + 1 = 1 + x$.
+\end{lemma}
+
+\begin{remark*}[Dependency note]
+This lemma is a prerequisite for commutativity of addition. It must be
+proved first since commutativity cannot be assumed in its proof.
+\end{remark*}
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-plus-assoc]{Associative Law of Addition~{\normalfont\cite[Thm.~5]{LandauFoundationsAnalysis}}}%
+}{Associative Law of Addition}]
+\label{thm:landau-plus-assoc}
+For all $x, y, z \in \mathbb{N}$,
+\[
+  (x + y) + z = x + (y + z).
+\]
+\end{theorem}
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-plus-comm]{Commutative Law of Addition~{\normalfont\cite[Thm.~6]{LandauFoundationsAnalysis}}}%
+}{Commutative Law of Addition}]
+\label{thm:landau-plus-comm}
+For all $x, y \in \mathbb{N}$,
+\[
+  x + y = y + x.
+\]
+\end{theorem}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{plus\_assoc}, \texttt{succ\_comm}, and \texttt{plus\_comm} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+Proved without Mathlib from axioms P1--P5 and \textbf{A6}--\textbf{A7} alone.
+\end{remark*}
+
+\begin{lemma}[\texorpdfstring{%
+  \hyperref[prf:landau-one-plus-x]{One plus $x$}%
+}{One plus $x$}]
+\label{lem:landau-one-plus-x}
+For all $x \in \mathbb{N}$,
+\[
+  1 + x = x'.
+\]
+\end{lemma}
+
+\begin{remark*}[Dependency note]
+This is not immediate from \textbf{A6}: that axiom gives $x + 1 = x'$
+with $x$ on the left. This lemma establishes the same equation with $1$
+on the left, by induction on $x$.
+Verified in Lean~4 as \texttt{one\_plus\_x}.
+\end{remark*}
+
+\begin{lemma}[\texorpdfstring{%
+  \hyperref[prf:landau-successor-plus]{Successor distributes over addition on the left}%
+}{Successor distributes over addition on the left}]
+\label{lem:landau-successor-plus}
+For all $x, y \in \mathbb{N}$,
+\[
+  x' + y = (x + y)'.
+\]
+\end{lemma}
+
+\begin{remark*}[Dependency note]
+Axiom \textbf{A7} gives $x + y' = (x + y)'$ --- successor on the
+\emph{right} argument. This lemma is the corresponding statement for
+the \emph{left} argument, proved by induction on $y$.
+It is a prerequisite for commutativity.
+Verified in Lean~4 as \texttt{successor\_plus}.
+\end{remark*}
+
+\begin{lemma}[\texorpdfstring{%
+  \hyperref[prf:landau-add-one-comm]{Addition by one commutes}%
+}{Addition by one commutes}]
+\label{lem:landau-add-one-comm}
+For all $x \in \mathbb{N}$,
+\[
+  x + 1 = 1 + x.
+\]
+\end{lemma}
+
+\begin{remark*}[Dependency note]
+This is the base case ($y = 1$) of commutativity, isolated as a lemma
+because commutativity cannot be assumed in its own proof.
+Depends on \texttt{successor\_plus}.
+Verified in Lean~4 as \texttt{add\_one\_comm}.
+\end{remark*}
+
+% ------------------------------------------------------------------
+\subsubsection*{Non-Self-Sum (Theorem 7)}
+% ------------------------------------------------------------------
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-add-ne-self]{$y \neq x + y$}%
+}{y neq x + y}]
+\label{thm:landau-add-ne-self}
+For all $x, y \in \mathbb{N}$,
+\[
+  y \neq x + y.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall x, y \in \mathbb{N},\; y \neq x + y$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State Landau's Theorem~7: what does addition by any $x$ do to $y$?}
+\FlashA{$y \neq x + y$ for all $x, y \in \mathbb{N}$: no natural number
+  equals the result of adding another natural number to it.}
+\FlashHint{Induction on $y$. Base: $1 \neq x + 1 = x'$ by P3.
+  Step: $y' \neq x + y' = (x+y)'$ by Theorem~1 applied to the IH
+  $y \neq x + y$.}
+\FlashImplies{thm:landau-plus-comm}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{add\_ne\_self} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+Proved without Mathlib from axioms P1--P5 and \textbf{A6}--\textbf{A7} alone.
+\end{remark*}
+
+
+% ------------------------------------------------------------------
+\subsubsection*{Addition Injective in First Argument (Theorem 8)}
+% ------------------------------------------------------------------
+
+\begin{theorem}[\texorpdfstring{%
+  \hyperref[prf:landau-thm8-add-injective]{$y \neq z \Rightarrow x + y \neq x + z$}%
+}{y neq z implies x + y neq x + z}]
+\label{thm:landau-thm8-add-injective}
+For all $y, z \in \mathbb{N}$ with $y \neq z$, and for all $x \in \mathbb{N}$,
+\[
+  x + y \neq x + z.
+\]
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\forall y, z \in \mathbb{N},\; y \neq z \Rightarrow \forall x \in \mathbb{N},\;
+x + y \neq x + z$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State Landau's Theorem~8: what does addition preserve about distinct
+  natural numbers?}
+\FlashA{If $y \neq z$ then $x + y \neq x + z$ for all $x \in \mathbb{N}$:
+  adding the same number to both sides of an inequality preserves
+  the inequality.}
+\FlashHint{Induction on $x$, with $y \neq z$ fixed.
+  Base: $1 + y = y'$ and $1 + z = z'$ by A6; $y \neq z$ gives $y' \neq z'$
+  by Theorem~1.
+  Step: A7 rewrites $x' + y = (x+y)'$ and $x' + z = (x+z)'$;
+  apply Theorem~1 to the IH $x + y \neq x + z$.}
+\FlashImplies{thm:landau-thm9-add-cancel}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{add\_injective\_right} (or next available name) in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+Proved without Mathlib from axioms P1--P5 and \textbf{A6}--\textbf{A7} alone.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,71 @@
+% volume-ii/natural-numbers/proofs/notes/landau-plus-comm.tex
+% =========================================================
+% Proof: Commutative Law of Addition (Landau Theorem 6)
+% Source: volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Commutative Law of Addition}
+\label{prf:landau-plus-comm}
+
+\begin{remark*}[Return]
+\hyperref[thm:landau-plus-comm]{$\leftarrow$ Back to Theorem
+(Commutative Law of Addition) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim For all $x, y \in \mathbb{N}$, $x + y = y + x$.
+
+Fix $x \in \mathbb{N}$. We proceed by induction on $y$.
+
+\textbf{Base case.} Let $y = 1$. By \ByThm{A6} and
+\ByThm{Successor is commutative with addition},
+\[
+  x + 1 = x' = 1 + x.
+\]
+
+\textbf{Inductive step.} Assume $x + y = y + x$ for some $y \in \mathbb{N}$.
+We show $x + y' = y' + x$.
+\[
+\begin{aligned}
+  x + y'
+    &= (x + y)'  && \text{by \ByThm{A7}} \\
+    &= (y + x)'  && \text{by the inductive hypothesis} \\
+    &= y + x'    && \text{by \ByThm{A7} (right to left)} \\
+    &= y' + x.   && \text{by \ByThm{A7} (right to left)}
+\end{aligned}
+\]
+If $a' = b'$ then $a = b$ by \ByThm{Axiom P4}, so $(y + x)' = (y' + x)'$
+implies $y + x' = y' + x$ as required.
+
+By \ByThm{Axiom of Induction}, $x + y = y + x$ for all $y \in \mathbb{N}$.
+Since $x$ was arbitrary, the result holds for all $x, y \in \mathbb{N}$.
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Induction on $y$ with $x$ fixed. Base case uses \textbf{A6} and the
+successor commutativity lemma. Inductive step applies \textbf{A7} to both
+sides, uses the inductive hypothesis, then refolds using \textbf{A7}
+in reverse. Axiom P4 closes the final step.
+
+\FlashProof{1. Fix $x$. Induct on $y$.
+2. Base: $x + 1 = x' = 1 + x$ by A6 and successor lemma.
+3. Step: $x + y' = (x+y)' = (y+x)' = y + x' = y' + x$
+   by A7, IH, A7 backwards, A7 backwards.}
+\FlashImplies{thm:landau-plus-comm}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[ax:landau-peano]{Peano Axioms P4, P5}
+  \item \hyperref[thm:landau-addition-exists-unique]{A6, A7 (defining equations of addition)}
+  \item \hyperref[lem:landau-succ-comm]{Successor is commutative with addition}
+\end{itemize}
+
+\FlashUses{ax:landau-peano, thm:landau-addition-exists-unique, lem:landau-succ-comm}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{plus\_comm} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+\end{remark*}

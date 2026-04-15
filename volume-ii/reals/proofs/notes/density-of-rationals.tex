@@ -1,0 +1,90 @@
+% =========================================================
+% Proof: Density of Q in R
+% Source: volume-iii/analysis/bounding/notes/notes-completeness.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Density of $\mathbb{Q}$ in $\mathbb{R}$}
+\label{prf:density-of-rationals}
+
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:density-of-rationals]{Back to Theorem in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim For every $a < b$ in $\mathbb{R}$, there exists $q \in \mathbb{Q}$
+with $a < q < b$.
+
+\Strategy
+Scale the interval $(a,b)$ by $n$ until it has width greater than $1$,
+guaranteeing it contains an integer $m$.
+Then $q = (m+1)/n$ is the required rational.
+The width condition $n(b-a) > 1$ is achieved by the Archimedean Property;
+the integer inside the scaled interval is found by the Floor Lemma.
+
+\medskip
+Since $b - a > 0$, by the \ByThm{Archimedean Property} there exists
+$n \in \mathbb{N}$ such that
+\[
+  n > \frac{1}{b-a}.
+\]
+Rearranging:
+\[
+  nb - na > 1.
+\]
+By the \ByThm{Floor Lemma}, there exists $m \in \mathbb{Z}$ with
+\[
+  m \leq na < m+1.
+\]
+Set $q := \dfrac{m+1}{n}$.
+Since $m+1 \in \mathbb{Z}$ and $n \in \mathbb{N}$, we have $q \in \mathbb{Q}$.
+
+\medskip
+\textbf{Lower bound.}
+From $na < m+1$, dividing by $n > 0$:
+\[
+  a < \frac{m+1}{n} = q.
+\]
+
+\medskip
+\textbf{Upper bound.}
+From $m \leq na$ and $nb > na + 1$:
+\[
+  nb > na + 1 \geq m + 1,
+\]
+and dividing by $n > 0$:
+\[
+  q = \frac{m+1}{n} < b.
+\]
+
+\Hence $a < q < b$ with $q \in \mathbb{Q}$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Scale-and-floor construction.
+The key insight: scale $(a,b)$ by $n$ until the width $n(b-a) > 1$,
+which guarantees the interval $(na,nb)$ contains an integer.
+The Archimedean Property produces the required $n$;
+the Floor Lemma finds the integer $m$ with $m \leq na < m+1$;
+then $m+1 \in (na,nb)$ and $q = (m+1)/n \in (a,b)$.
+
+\FlashProof{Archimedean gives $n>1/(b-a)$, so $nb-na>1$. Floor Lemma gives $m\leq na<m+1$. Set $q=(m+1)/n\in\mathbb{Q}$. Lower: $na<m+1$ gives $a<q$. Upper: $nb>na+1\geq m+1$ gives $q<b$.}
+\FlashUses{Archimedean Property; Floor Lemma; $\mathbb{Q}$ closed under $m/n$ with $m\in\mathbb{Z}$, $n\in\mathbb{N}$.}
+\end{remark*}
+
+\begin{remark*}[Why this completes $\overline{\mathbb{Q}} = \mathbb{R}$]
+This theorem is the engine behind $\overline{\mathbb{Q}} = \mathbb{R}$.
+Given any $x \in \mathbb{R}$ and $\varepsilon > 0$, apply Density of $\mathbb{Q}$
+to the interval $(x - \varepsilon, x + \varepsilon)$ to obtain
+$q \in \mathbb{Q}$ with $|x - q| < \varepsilon$.
+Hence every real is adherent to $\mathbb{Q}$, so $\mathbb{R} \subseteq \overline{\mathbb{Q}}$.
+See \hyperref[prf:closure-rationals]{Proof: $\overline{\mathbb{Q}} = \mathbb{R}$}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[prf:archimedean-property]{Archimedean Property}
+  \item \hyperref[prf:floor-lemma]{Floor Lemma}
+  \item $\mathbb{Q}$ is closed under $m/n$ for $m \in \mathbb{Z}$, $n \in \mathbb{N}$
+\end{itemize}
+\end{remark*}

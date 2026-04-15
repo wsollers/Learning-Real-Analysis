@@ -1,0 +1,615 @@
+% =========================================================
+% The Mediant Property
+% =========================================================
+
+\section{The Mediant Property}
+\label{sec:mediant}
+
+\subsection{Definitions and Theorems}
+
+Once density is known abstractly, it is natural to ask for a \emph{constructive} way to produce a
+new rational number between two old ones.  The mediant does exactly this.
+
+\begin{definition}[Mediant]
+\label{def:mediant}
+Let
+\[
+\frac{a}{b},\frac{c}{d}\in\mathbb{Q},
+\qquad b,d>0.
+\]
+The \emph{mediant} of these two fractions is
+\[
+\frac{a+c}{b+d}.
+\]
+\end{definition}
+
+\begin{remark}
+The mediant is formed by adding the numerators and denominators separately.  At first glance this
+looks arbitrary, but it has a remarkable order-theoretic property.
+\end{remark}
+
+\begin{theorem}[Mediant inequality]
+\label{thm:mediant-inequality}
+If
+\[
+\frac{a}{b}<\frac{c}{d}
+\qquad\text{with}\qquad b,d>0,
+\]
+then
+\[
+\frac{a}{b}<\frac{a+c}{b+d}<\frac{c}{d}.
+\]
+\end{theorem}
+
+\begin{proof}
+From $a/b<c/d$ we obtain $ad<bc$.
+For the left-hand inequality, compute
+\[
+a(b+d)=ab+ad < ab+bc = b(a+c),
+\]
+so
+\[
+\frac{a}{b}<\frac{a+c}{b+d}.
+\]
+For the right-hand inequality,
+\[
+(a+c)d = ad+cd < bc+cd = c(b+d),
+\]
+which gives
+\[
+\frac{a+c}{b+d}<\frac{c}{d}.
+\]
+\end{proof}
+
+\begin{corollary}[Density of $\mathbb{Q}$ within itself]
+\label{cor:q-dense-in-q}
+If $r,s\in\mathbb{Q}$ with $r<s$, then there exists $t\in\mathbb{Q}$ such that
+\[
+r<t<s.
+\]
+\end{corollary}
+
+\begin{proof}
+Write $r=a/b$ and $s=c/d$ with positive denominators.  Then the mediant
+\[
+t=\frac{a+c}{b+d}
+\]
+satisfies $r<t<s$.
+\end{proof}
+
+\begin{remark}[Local versus global structure]
+\label{rem:mediant-vs-arch}
+The mediant property and the Archimedean property describe different aspects of $\mathbb{Q}$.  The
+mediant property is \emph{local}: it refines an interval by inserting a rational between two given
+rationals.  The Archimedean property is \emph{global}: it says the natural numbers eventually exceed
+any fixed number.
+\end{remark}
+
+\subsection{Farey and Stern--Brocot phenomena}
+
+\begin{theorem}[Farey neighbor determinant condition]
+\label{thm:farey-neighbor}
+Suppose
+\[
+\frac{a}{b}<\frac{c}{d}
+\qquad\text{with}\qquad
+\gcd(a,b)=\gcd(c,d)=1,
+\quad b,d>0.
+\]
+If
+\[
+bc-ad=1,
+\]
+then the two fractions are neighbors in a Farey sequence, and their mediant is already in reduced
+form:
+\[
+\frac{a+c}{b+d}.
+\]
+\end{theorem}
+
+\begin{remark}
+The determinant condition $bc-ad=1$ is the arithmetic shadow of the Stern--Brocot tree.  Adjacent
+fractions in that tree satisfy this condition, and the mediant inserts the unique next fraction between
+them.
+\end{remark}
+
+\begin{theorem}[Stern--Brocot enumeration]
+\label{thm:stern-brocot-enumeration}
+Every positive rational number appears exactly once in reduced form in the Stern--Brocot tree.
+\end{theorem}
+
+\begin{remark}
+This theorem is striking because it turns the set of positive rational numbers into a navigable object.
+Repeated mediants do not merely produce some rationals; they eventually produce \emph{all} positive
+rationals, and without duplication.
+\end{remark}
+
+\subsection{Consequences}
+
+\begin{remark}
+The mediant is one of the most useful constructive tools in elementary number theory and analysis.
+It underlies Farey sequences, the Stern--Brocot tree, continued fractions, and many concrete
+approximation procedures.
+\end{remark}
+
+
+
+% =========================================================
+% Farey Sequences
+% =========================================================
+
+\subsection{Farey Sequences}
+
+\subsection{Definitions and Theorems}
+
+\begin{definition}[Farey sequence]
+For a natural number $n$, the \emph{Farey sequence of order $n$}, 
+denoted $F_n$, is the sequence of all rational numbers
+
+\[
+\frac{a}{b}
+\]
+
+such that
+
+\[
+0 \le a \le b \le n, \qquad \gcd(a,b)=1,
+\]
+
+arranged in increasing order.
+\end{definition}
+
+\begin{remark}
+Thus $F_n$ contains every rational number between $0$ and $1$
+whose denominator does not exceed $n$, written in reduced form.
+\end{remark}
+
+\begin{example}
+The first few Farey sequences are
+
+\[
+F_1 =
+\left(
+\frac{0}{1},\,
+\frac{1}{1}
+\right)
+\]
+
+\[
+F_2 =
+\left(
+\frac{0}{1},\,
+\frac{1}{2},\,
+\frac{1}{1}
+\right)
+\]
+
+\[
+F_3 =
+\left(
+\frac{0}{1},\,
+\frac{1}{3},\,
+\frac{1}{2},\,
+\frac{2}{3},\,
+\frac{1}{1}
+\right)
+\]
+
+\[
+F_4 =
+\left(
+\frac{0}{1},\,
+\frac{1}{4},\,
+\frac{1}{3},\,
+\frac{1}{2},\,
+\frac{2}{3},\,
+\frac{3}{4},\,
+\frac{1}{1}
+\right)
+\]
+\end{example}
+
+\begin{remark}
+The Farey sequences grow by inserting new fractions between existing
+neighbors as the allowed denominator increases.
+This behavior is closely related to the mediant operation.
+\end{remark}
+
+\begin{theorem}[Farey Neighbor Theorem]
+Let
+
+\[
+\frac{a}{b} < \frac{c}{d}
+\]
+
+be two consecutive fractions in the Farey sequence $F_n$.
+
+Then
+
+\[
+bc - ad = 1.
+\]
+\end{theorem}
+
+\begin{proof}
+Suppose there existed another reduced fraction
+
+\[
+\frac{p}{q}
+\]
+
+with
+
+\[
+\frac{a}{b} < \frac{p}{q} < \frac{c}{d}
+\]
+
+and
+
+\[
+q \le n.
+\]
+
+Cross multiplication yields
+
+\[
+aq < bp
+\]
+
+and
+
+\[
+pd < qc.
+\]
+
+Combining these inequalities gives
+
+\[
+ad < aq < bp < pd < bc.
+\]
+
+This implies
+
+\[
+bc - ad \ge 2.
+\]
+
+But if $bc-ad \ge 2$, one can construct a fraction between
+$a/b$ and $c/d$ with denominator $\le n$, contradicting the
+assumption that the fractions were consecutive in $F_n$.
+
+Therefore
+
+\[
+bc - ad = 1.
+\]
+\end{proof}
+
+\subsection{Consequences}
+
+\begin{theorem}[Mediant Property of Farey Neighbors]
+If
+
+\[
+\frac{a}{b}, \frac{c}{d}
+\]
+
+are consecutive fractions in a Farey sequence, then the mediant
+
+\[
+\frac{a+c}{b+d}
+\]
+
+lies strictly between them:
+
+\[
+\frac{a}{b}
+<
+\frac{a+c}{b+d}
+<
+\frac{c}{d}.
+\]
+\end{theorem}
+
+\begin{remark}
+The condition
+
+\[
+bc - ad = 1
+\]
+
+explains why the mediant behaves so nicely in the Stern–Brocot tree.
+Adjacent fractions always satisfy this determinant condition,
+and the mediant inserts the next rational number between them.
+\end{remark}
+
+\begin{remark}[Conceptual significance]
+Farey sequences reveal a deep arithmetic structure inside the
+rational numbers.
+
+They show that:
+
+\begin{itemize}
+\item neighboring fractions satisfy a simple determinant relation
+\[
+bc - ad = 1,
+\]
+
+\item the mediant operation generates new fractions between neighbors,
+
+\item repeated mediants generate the entire Stern–Brocot tree.
+\end{itemize}
+
+Thus the simple operation
+
+\[
+\frac{a}{b},\frac{c}{d}
+\;\mapsto\;
+\frac{a+c}{b+d}
+\]
+
+is not accidental: it is the natural arithmetic mechanism governing
+the structure of the rational numbers.
+\end{remark}
+
+\begin{theorem}[Gap Between Farey Neighbors]
+\label{thm:farey-gap}
+
+Let
+
+\[
+\frac{a}{b} < \frac{c}{d}
+\]
+
+be consecutive fractions in a Farey sequence.
+
+Then
+
+\[
+\frac{c}{d} - \frac{a}{b}
+=
+\frac{1}{bd}.
+\]
+
+\end{theorem}
+
+\begin{proof}
+
+Compute the difference directly:
+
+\[
+\frac{c}{d} - \frac{a}{b}
+=
+\frac{bc - ad}{bd}.
+\]
+
+By the Farey Neighbor Theorem,
+
+\[
+bc - ad = 1.
+\]
+
+Therefore
+
+\[
+\frac{c}{d} - \frac{a}{b}
+=
+\frac{1}{bd}.
+\]
+
+\end{proof}
+
+\begin{remark}
+This identity shows that the spacing between neighboring fractions in
+a Farey sequence is determined entirely by their denominators.
+
+Fractions with larger denominators lie closer together, reflecting
+the increasing density of rational numbers.
+\end{remark}
+
+\begin{remark}[Conceptual significance]
+The formula
+
+\[
+\frac{c}{d}-\frac{a}{b}=\frac{1}{bd}
+\]
+
+reveals a remarkable arithmetic structure inside the rational numbers.
+
+\begin{itemize}
+\item Neighboring fractions satisfy the determinant relation
+\[
+bc-ad=1.
+\]
+
+\item Their spacing is therefore exactly
+\[
+\frac{1}{bd}.
+\]
+
+\item As the denominators grow, the spacing becomes smaller, which
+explains how the rational numbers become arbitrarily dense.
+\end{itemize}
+
+This relationship is fundamental in the theory of Diophantine
+approximation and underlies constructions such as the
+Stern–Brocot tree and continued fractions.
+\end{remark}
+
+% ---------------------------------------------------------
+% Why the Farey Gap Identity Is Powerful
+% ---------------------------------------------------------
+
+\begin{remark}[Why this identity is powerful]
+
+The identity
+
+\[
+\frac{c}{d}-\frac{a}{b}=\frac{1}{bd}
+\]
+
+for Farey neighbors leads immediately to several important
+observations about the structure of the rational numbers.
+
+\begin{enumerate}
+
+\item \textbf{Farey neighbors are best approximations.}
+
+If
+
+\[
+\frac{a}{b} < \frac{c}{d}
+\]
+
+are consecutive fractions in a Farey sequence, then no rational
+number with denominator smaller than $b$ or $d$ can lie between them.
+Thus these fractions serve as optimal rational approximations within
+their denominator range.
+
+\item \textbf{It quantifies the density of $\mathbb{Q}$.}
+
+The distance between neighboring fractions is
+
+\[
+\frac{1}{bd}.
+\]
+
+As the denominators increase, this quantity becomes smaller, which
+explains why rational numbers become arbitrarily dense on the real
+line.
+
+\item \textbf{It connects to Dirichlet approximation.}
+
+Dirichlet's approximation theorem states that for any real number
+$x$ there exist infinitely many rational numbers $\frac{p}{q}$ such
+that
+
+\[
+\left|x-\frac{p}{q}\right| < \frac{1}{q^{2}}.
+\]
+
+Bounds of this type arise naturally when controlling intervals whose
+lengths behave like $\frac{1}{bd}$.
+
+\item \textbf{It explains the geometry of the Stern--Brocot tree.}
+
+When the mediant
+
+\[
+\frac{a+c}{b+d}
+\]
+
+is inserted between $\frac{a}{b}$ and $\frac{c}{d}$, the denominators
+increase, and the resulting gaps become smaller.  Indeed,
+
+\[
+bd < (b+d)d,
+\]
+
+so the new fractions lie closer together.  Repeated mediants therefore
+generate progressively better rational approximations.
+
+\end{enumerate}
+
+\end{remark}
+
+
+% ---------------------------------------------------------
+% Mental Picture
+% ---------------------------------------------------------
+
+\begin{remark}[A geometric picture]
+
+If
+
+\[
+\frac{a}{b} < \frac{c}{d}
+\]
+
+are neighboring fractions in a Farey sequence, the real line can be
+visualized as
+
+\[
+\frac{a}{b}
+\qquad
+\underbrace{\hspace{2cm}}_{\displaystyle \frac{1}{bd}}
+\qquad
+\frac{c}{d}.
+\]
+
+The length of the gap between the fractions is exactly
+$\frac{1}{bd}$.
+
+Thus the spacing between rational numbers is determined entirely by
+their denominators.
+
+\end{remark}
+
+
+% ---------------------------------------------------------
+% Mediant Gap Lemma
+% ---------------------------------------------------------
+
+\begin{lemma}[Mediant Gap Lemma]
+\label{lem:mediant-gap}
+
+If
+
+\[
+\frac{a}{b} < \frac{c}{d},
+\]
+
+then the mediant
+
+\[
+\frac{a+c}{b+d}
+\]
+
+lies between them, and the gaps satisfy
+
+\[
+\frac{a+c}{b+d}-\frac{a}{b}
+=
+\frac{1}{b(b+d)}
+\]
+
+and
+
+\[
+\frac{c}{d}-\frac{a+c}{b+d}
+=
+\frac{1}{d(b+d)}.
+\]
+
+\end{lemma}
+
+\begin{remark}
+
+This lemma explains why mediants improve approximations
+symmetrically.  Each insertion reduces the gap between rational
+numbers while preserving the order.
+
+It is precisely this behavior that makes the Stern--Brocot tree an
+effective mechanism for generating all rational numbers.
+
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

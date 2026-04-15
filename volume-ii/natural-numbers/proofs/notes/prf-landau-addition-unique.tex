@@ -1,0 +1,71 @@
+% volume-ii/natural-numbers/proofs/notes/landau-addition-unique.tex
+% =========================================================
+% Proof: The addition function is unique
+% Source: volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{The addition function is unique}
+\label{prf:landau-addition-unique}
+
+\begin{remark*}[Return]
+\hyperref[thm:landau-addition-unique]{$\leftarrow$ Back to Theorem
+(The addition function is unique) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim If $f, g : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ both satisfy
+\textbf{A6} ($f(x,1) = x'$, $g(x,1) = x'$) and \textbf{A7}
+($f(x,y') = (f(x,y))'$, $g(x,y') = (g(x,y))'$) for all $x, y \in \mathbb{N}$,
+then $f(x,y) = g(x,y)$ for all $x, y \in \mathbb{N}$.
+
+Let $f, g : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ satisfy \textbf{A6}
+and \textbf{A7}. Fix an arbitrary $x \in \mathbb{N}$. We proceed by induction
+on $y$.
+
+\textbf{Base case.} Let $y = 1$. By \ByThm{A6},
+\[
+  f(x, 1) = x' \quad \text{and} \quad g(x, 1) = x'.
+\]
+Hence $f(x, 1) = g(x, 1)$.
+
+\textbf{Inductive step.} Assume $f(x, y) = g(x, y)$ for some
+$y \in \mathbb{N}$. We show $f(x, y') = g(x, y')$.
+By \ByThm{A7},
+\[
+  f(x, y') = (f(x, y))' \quad \text{and} \quad g(x, y') = (g(x, y))'.
+\]
+Let $d = f(x,y)$. By the inductive hypothesis $d = g(x,y)$, so $d' = d'$,
+hence $(f(x,y))' = (g(x,y))'$. Therefore $f(x,y') = g(x,y')$.
+
+By \ByThm{Axiom of Induction}, $f(x,y) = g(x,y)$ for all $y \in \mathbb{N}$.
+Since $x$ was arbitrary, $f = g$.
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Induction on $y$ with $x$ fixed. Base case closes by \textbf{A6} alone.
+Inductive step applies \textbf{A7} to both functions then uses congruence of
+successor: equal inputs yield equal outputs.
+
+\FlashProof{1. Fix $x$. Induct on $y$.
+2. Base: $f(x,1) = x' = g(x,1)$ by A6.
+3. Step: $f(x,y') = (f(x,y))' = (g(x,y))' = g(x,y')$ by A7 and IH.
+4. Since $x$ arbitrary, $f = g$.}
+\FlashImplies{thm:landau-addition-exists-unique}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[ax:landau-peano]{Peano Axiom P5 (Induction)}
+  \item \hyperref[thm:landau-addition-exists-unique]{A6, A7 (defining equations of addition)}
+\end{itemize}
+
+\FlashUses{ax:landau-peano, thm:landau-addition-exists-unique}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{addition\_unique} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+Key tactics: \texttt{intro}, \texttt{apply A5\_Induction},
+\texttt{rw}, \texttt{congr}.
+\end{remark*}

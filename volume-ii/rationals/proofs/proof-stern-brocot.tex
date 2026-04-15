@@ -1,0 +1,348 @@
+% =========================================================
+% Proof stubs — Stern–Brocot Limit Theory
+% Four files; each would live at:
+%   volume-ii/rationals/proofs/notes/<filename>.tex
+%
+% File A: sb-denom-growth.tex
+% File B: sb-length-zero.tex
+% File C: sb-unique-point.tex
+% File D: sb-path-limit.tex
+% File E: sb-limit-irrational.tex
+% =========================================================
+
+
+% =========================================================
+% FILE A: sb-denom-growth.tex
+% Proof: Lemma — Denominator growth on infinite SB paths
+% Source: volume-ii/rationals/notes/<topic>.tex
+% =========================================================
+
+\subsection*{Lemma --- Denominator growth on infinite Stern--Brocot paths}
+\label{prf:sb-denom-growth}
+
+\begin{remark*}[Return]
+$\leftarrow$ Back to Lemma~\ref{lem:sb-denom-growth} (Denominator growth) in Notes.
+\end{remark*}
+
+\begin{proof}
+\Claim Along any infinite path in the Stern--Brocot tree, the denominators
+of the successive endpoint fractions form a strictly increasing sequence
+tending to $\infty$.
+
+\Given A path in the Stern--Brocot tree.  At each level $n$ the path
+occupies an interval $[a_n/b_n,\; c_n/d_n]$.  By the Farey determinant
+condition (Farey Neighbor Theorem, Theorem~10.61), the two endpoints satisfy
+$b_n c_n - a_n d_n = 1$ at every level.
+
+\Goal To show $b_{n+1} > b_n$ (and symmetrically $d_{n+1} > d_n$) for
+every $n$, and hence $b_n \to \infty$.
+
+\Strategy We proceed by induction on the level $n$ of the path.
+
+\textbf{Base case} ($n = 0$). The tree is initialised from $0/1$ and $1/0$
+(the sentinel fractions). Their denominators are $1$ and $0$. When the
+first mediant $1/1$ is inserted, the new interval is either $[0/1, 1/1]$
+with denominators $1, 1$, or $[1/1, 1/0]$ with denominators $1, 0$.
+In both cases the denominator of the chosen boundary fraction is $b_0 = 1$,
+which is positive. \checkbox
+
+\textbf{Inductive step.} Assume the interval at level $n$ is
+$[a_n/b_n,\; c_n/d_n]$ with $b_n, d_n \ge 1$.
+
+\ByDef the mediant-insertion rule, the new fraction inserted at level
+$n+1$ is
+\[
+  \frac{a_n + c_n}{b_n + d_n}.
+\]
+One endpoint of the new interval is this mediant, which has denominator
+$b_n + d_n$.
+
+\ByAss $b_n \ge 1$ and $d_n \ge 1$, we have
+\[
+  b_n + d_n > b_n \quad \text{and} \quad b_n + d_n > d_n.
+\]
+\Therefore the denominator of the new endpoint strictly exceeds both
+$b_n$ and $d_n$. The other endpoint retains the denominator it had
+at level $n$.  In either case the minimum denominator on the boundary
+strictly increases. \checkbox
+
+\Hence by induction every denominator encountered along the path is
+strictly larger than its predecessor.  Since the denominators are positive
+integers, a strictly increasing sequence of positive integers is unbounded.
+\Therefore $b_n \to \infty$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Induction on depth, with the key computation being $b_n + d_n > b_n$.
+The unboundedness conclusion is immediate once strict monotonicity of a
+positive-integer sequence is in hand.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+Farey Neighbor Theorem (Theorem~10.61) --- guarantees the determinant
+condition at each level, confirming the endpoints are genuine Farey
+neighbors. Positivity of natural numbers (Corollary~10.26) --- ensures
+denominators are at least $1$ after the first step, making the strict
+inequality $b_n + d_n > b_n$ valid.
+\end{remark*}
+
+
+% =========================================================
+% FILE B: sb-length-zero.tex
+% Proof: Lemma — SB interval lengths shrink to zero
+% Source: volume-ii/rationals/notes/<topic>.tex
+% =========================================================
+
+\subsection*{Lemma --- Stern--Brocot interval lengths shrink to zero}
+\label{prf:sb-length-zero}
+
+\begin{remark*}[Return]
+$\leftarrow$ Back to Lemma~\ref{lem:sb-length-zero} (SB lengths to zero) in Notes.
+\end{remark*}
+
+\begin{proof}
+\Claim Let $(I_n)$ be the nested intervals from the Stern--Brocot
+refinement process, with $I_n = [a_n/b_n,\; c_n/d_n]$ and
+$\ell_n = c_n/d_n - a_n/b_n$. Then $\ell_n \to 0$.
+
+\Given At each level $n$, the two endpoints $a_n/b_n$ and $c_n/d_n$
+are Farey neighbors (the determinant condition is preserved by mediant
+insertion, as verified in the proof of the Farey Neighbor Theorem).
+
+\Goal To show $\forall \varepsilon > 0\ \exists N\ \forall n \ge N,\ \ell_n < \varepsilon$.
+
+\Strategy Apply the Gap Between Farey Neighbors identity, then use the
+denominator growth lemma.
+
+\ByThm{Gap Between Farey Neighbors} (Theorem~10.65), since $a_n/b_n$
+and $c_n/d_n$ are Farey neighbors at every level,
+\[
+  \ell_n = \frac{c_n}{d_n} - \frac{a_n}{b_n} = \frac{1}{b_n d_n}.
+\]
+
+\ByThm{Denominator growth on infinite Stern--Brocot paths}
+(Lemma~\ref{lem:sb-denom-growth}), $b_n \to \infty$ and $d_n \to \infty$.
+
+\Let $\varepsilon > 0$ be arbitrary.
+\ByThm{Archimedean property of $\mathbb{Q}$} (Theorem~10.42), there
+exists $N \in \mathbb{N}$ such that $b_N d_N > 1/\varepsilon$.
+
+For all $n \ge N$, the strict monotonicity of denominators gives
+$b_n \ge b_N$ and $d_n \ge d_N$, so
+\[
+  \ell_n = \frac{1}{b_n d_n} \le \frac{1}{b_N d_N} < \varepsilon.
+\]
+
+\Hence $\ell_n \to 0$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+A direct application of two previously established results: the exact
+gap formula and the denominator growth lemma.  The Archimedean property
+converts the asymptotic statement into a concrete $N$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+Gap Between Farey Neighbors (Theorem~10.65) --- provides the identity
+$\ell_n = 1/(b_n d_n)$. Denominator growth on infinite Stern--Brocot
+paths (Lemma~\ref{lem:sb-denom-growth}) --- supplies $b_n, d_n \to \infty$.
+Archimedean property of $\mathbb{Q}$ (Theorem~10.42) --- used to find
+the index $N$.
+\end{remark*}
+
+
+% =========================================================
+% FILE C: sb-unique-point.tex
+% Proof: Proposition — Nested SB intervals contain unique point
+% Source: volume-ii/rationals/notes/<topic>.tex
+% =========================================================
+
+\subsection*{Proposition --- Nested Stern--Brocot intervals contain a unique limit point}
+\label{prf:sb-unique-point}
+
+\begin{remark*}[Return]
+$\leftarrow$ Back to Proposition~\ref{prop:sb-unique-point} (Unique limit point) in Notes.
+\end{remark*}
+
+\begin{proof}
+\Claim Let $(I_n)$ with $I_n = [a_n/b_n,\; c_n/d_n]$ be the nested
+closed rational intervals from the Stern--Brocot refinement process.
+Then $\bigcap_{n=0}^{\infty} I_n$ contains exactly one point.
+
+\Given The intervals are nested: $I_0 \supseteq I_1 \supseteq I_2 \supseteq \cdots$
+by construction (at each step one endpoint is replaced by the mediant,
+which lies strictly inside the current interval). The lengths satisfy
+$\ell_n \to 0$ by Lemma~\ref{lem:sb-length-zero}.
+
+\Goal Existence: $\bigcap I_n \ne \varnothing$.
+Uniqueness: $|\bigcap I_n| = 1$.
+
+\Strategy Apply the Monotone Convergence Theorem in $\mathbb{R}$ to both
+endpoint sequences; then use $\ell_n \to 0$ to pin them to the same limit.
+
+\textbf{Left endpoints.} The sequence $(a_n/b_n)$ is increasing
+(each left endpoint is either unchanged or replaced by a larger mediant)
+and bounded above by $c_0/d_0$. \ByThm{Monotone Convergence Theorem in
+$\mathbb{R}$}, the supremum $\alpha = \sup_n a_n/b_n$ exists in
+$\mathbb{R}$ and $a_n/b_n \to \alpha$.
+
+\textbf{Right endpoints.} The sequence $(c_n/d_n)$ is decreasing
+and bounded below by $a_0/b_0$.  By the same theorem, the infimum
+$\beta = \inf_n c_n/d_n$ exists in $\mathbb{R}$ and $c_n/d_n \to \beta$.
+
+\Therefore $\alpha \le \beta$ (since $a_n/b_n \le c_n/d_n$ for all $n$).
+But
+\[
+  0 \le \beta - \alpha \le \ell_n = \frac{1}{b_n d_n} \to 0,
+\]
+so $\alpha = \beta$.
+
+\Let $\xi = \alpha = \beta$. Then $a_n/b_n \le \xi \le c_n/d_n$ for
+all $n$, so $\xi \in I_n$ for all $n$.
+\Therefore $\xi \in \bigcap I_n$, establishing existence.
+
+\textbf{Uniqueness.} Suppose $\xi, \xi' \in \bigcap I_n$.
+Then for every $n$,
+\[
+  |\xi - \xi'| \le \ell_n = \frac{1}{b_n d_n}.
+\]
+Since $\ell_n \to 0$, we have $|\xi - \xi'| = 0$, so $\xi = \xi'$.
+
+\Hence $\bigcap I_n = \{\xi\}$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+A nested-intervals argument in $\mathbb{R}$: the left endpoints form a
+bounded increasing sequence and the right endpoints form a bounded decreasing
+sequence; both converge; the limit length forces the two limits to coincide.
+Uniqueness is a direct consequence of the length tending to zero.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+Monotone Convergence Theorem in $\mathbb{R}$ (from the bounding/sequences
+chapter) --- the load-bearing tool; requires completeness of $\mathbb{R}$,
+which is why the proof cannot be carried out inside $\mathbb{Q}$.
+Stern--Brocot interval lengths shrink to zero (Lemma~\ref{lem:sb-length-zero})
+--- supplies $\ell_n \to 0$.
+\end{remark*}
+
+
+% =========================================================
+% FILE D: sb-path-limit.tex
+% Proof: Corollary — Every infinite SB path converges
+% Source: volume-ii/rationals/notes/<topic>.tex
+% =========================================================
+
+\subsection*{Corollary --- Every infinite Stern--Brocot path converges}
+\label{prf:sb-path-limit}
+
+\begin{remark*}[Return]
+$\leftarrow$ Back to Corollary~\ref{cor:sb-path-limit} (SB path converges) in Notes.
+\end{remark*}
+
+\begin{proof}
+\Claim Both endpoint sequences $(a_n/b_n)$ and $(c_n/d_n)$ of the
+Stern--Brocot refinement process targeting $x > 0$ converge to $x$.
+
+\Given The process constructs $I_n = [a_n/b_n, c_n/d_n]$ with $x \in I_n$
+for all $n$ (by the selection rule: at each step the endpoint that does not
+separate $x$ from the mediant is retained, so $x$ remains in the interval).
+
+\Strategy Apply Proposition~\ref{prop:sb-unique-point}.
+
+\ByThm{Nested Stern--Brocot intervals contain a unique limit point}
+(Proposition~\ref{prop:sb-unique-point}), there is a unique $\xi$ with
+$\xi \in \bigcap I_n$ and $a_n/b_n, c_n/d_n \to \xi$.
+
+\ByAss $x \in I_n$ for all $n$, so $x \in \bigcap I_n$.
+By the uniqueness from Proposition~\ref{prop:sb-unique-point}, $\xi = x$.
+
+\Hence $a_n/b_n \to x$ and $c_n/d_n \to x$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+A one-step corollary: the unique point in $\bigcap I_n$ is $\xi$;
+$x$ also lies in every $I_n$; therefore $\xi = x$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+Nested Stern--Brocot intervals contain a unique limit point
+(Proposition~\ref{prop:sb-unique-point}).
+Construction rule for the Stern--Brocot refinement process (the selection
+step that keeps $x$ in the interval at every stage).
+\end{remark*}
+
+
+% =========================================================
+% FILE E: sb-limit-irrational.tex
+% Proof: Corollary — Infinite paths converge to irrationals
+% Source: volume-ii/rationals/notes/<topic>.tex
+% =========================================================
+
+\subsection*{Corollary --- Infinite Stern--Brocot paths converge to irrationals}
+\label{prf:sb-limit-irrational}
+
+\begin{remark*}[Return]
+$\leftarrow$ Back to Corollary~\ref{cor:sb-limit-irrational} (Irrational limits) in Notes.
+\end{remark*}
+
+\begin{proof}
+\Claim A positive real number $x$ is rational if and only if it
+corresponds to a finite path in the Stern--Brocot tree.
+
+\Given The Stern--Brocot tree is generated from $0/1$ and $1/0$ by
+repeated mediant insertion. At each step the process asks: is $x$ equal
+to, less than, or greater than the current mediant?
+
+\Strategy We prove both implications separately.
+
+\medskip
+\noindent$(\Rightarrow)$\ \textit{Rational implies finite path.}
+
+\Given $x = p/q \in \mathbb{Q}_{>0}$ in reduced form.
+
+The search process compares $x$ to successive mediants.  At each step
+the two boundary fractions $a_n/b_n$ and $c_n/d_n$ satisfy $b_n c_n -
+a_n d_n = 1$ (Farey Neighbor Theorem, Theorem~10.61) and the mediant
+has denominator $b_n + d_n$.
+
+Suppose $x$ is never equal to a mediant. Then at every level the
+inequality is strict and both $b_n$ and $d_n$ are at most $q - 1$
+(otherwise a fraction with denominator $\le q$ equal to $x$ would have
+been produced, contradicting the assumption that $x = p/q$ is in reduced
+form with denominator exactly $q$). But Lemma~\ref{lem:sb-denom-growth}
+says $b_n \to \infty$, contradiction.
+
+\Therefore the process must encounter $x$ as a mediant at some finite
+level $N$, and the path terminates there. \checkbox
+
+\medskip
+\noindent$(\Leftarrow)$\ \textit{Finite path implies rational.}
+
+\Given The path terminates at level $N$, meaning $x$ equals the mediant
+$(a_N + c_N)/(b_N + d_N)$.
+
+\ByDef a mediant is a rational number (sum of integers over sum of
+integers).
+\Therefore $x \in \mathbb{Q}$. \checkbox
+
+\medskip
+Taking the contrapositive of the $(\Rightarrow)$ direction:
+if $x$ is irrational then the path is infinite.
+Together with $(\Leftarrow)$ this gives the equivalence. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+A biconditional proof. The $(\Leftarrow)$ direction is trivial (a mediant
+is visibly rational). The $(\Rightarrow)$ direction is the substantive half:
+it proceeds by contradiction, using denominator growth to force $x$ to
+appear as a mediant within a bounded number of steps.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+Farey Neighbor Theorem (Theorem~10.61) --- the determinant condition
+$b_n c_n - a_n d_n = 1$ controls what denominators can appear. Denominator
+growth on infinite Stern--Brocot paths (Lemma~\ref{lem:sb-denom-growth})
+--- the engine of the $(\Rightarrow)$ contradiction. Definition of reduced
+form for rational numbers (Definition~10.8 and Remark~10.15).
+\end{remark*}

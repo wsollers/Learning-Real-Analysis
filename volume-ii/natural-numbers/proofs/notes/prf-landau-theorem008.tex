@@ -1,0 +1,83 @@
+% =========================================================
+% Proof: Addition is injective in the second argument
+% Source: volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Addition is injective in the second argument}
+\label{prf:landau-thm8-add-injective}
+
+\begin{remark*}[Return]
+\hyperref[thm:landau-thm8-add-injective]{$\leftarrow$ Back to Theorem
+(Addition is injective in the second argument) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim Let $y, z \in \mathbb{N}$ with $y \neq z$.
+The claim is that $x + y \neq x + z$ for all $x \in \mathbb{N}$.
+
+Fix $y, z \in \mathbb{N}$ with $y \neq z$.
+We proceed by induction on $x$.
+
+\textbf{Base case} ($x = 1$).
+We show $1 + y \neq 1 + z$.
+By \ByThm{Defining equation A6 of addition},
+\[
+  1 + y = y' \qquad \text{and} \qquad 1 + z = z'.
+\]
+Since $y \neq z$, \ByThm{Theorem 1 (distinct naturals have distinct successors)}
+gives $y' \neq z'$.
+Hence $1 + y \neq 1 + z$. \checkbox
+
+\textbf{Inductive hypothesis.}
+Assume $x + y \neq x + z$ for some fixed $x \in \mathbb{N}$.
+
+\textbf{Inductive step} (show $x' + y \neq x' + z$).
+By \ByThm{Defining equation A7 of addition},
+\[
+  x' + y = (x + y)' \qquad \text{and} \qquad x' + z = (x + z)'.
+\]
+The inductive hypothesis gives $x + y \neq x + z$.
+Apply \ByThm{Theorem 1 (distinct naturals have distinct successors)}:
+\[
+  (x + y)' \neq (x + z)'.
+\]
+Hence $x' + y \neq x' + z$.
+
+\Hence by \ByThm{Axiom of Induction}, $x + y \neq x + z$ for all
+$x \in \mathbb{N}$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Induction on $x$ with $y \neq z$ fixed throughout.
+Both the base case and the inductive step reduce to the same one-step
+application of Theorem~1: unequal naturals have unequal successors.
+A6 and A7 do the bookkeeping — they rewrite $1 + y$ and $x' + y$ into
+successor form so that Theorem~1 can fire.
+
+\FlashProof{%
+1. Fix $y \neq z$; induct on $x$. \\
+2. Base: $1+y = y'$, $1+z = z'$ by A6; $y \neq z$ gives $y' \neq z'$ by Thm~1. \\
+3. Step: $x'+y = (x+y)'$, $x'+z = (x+z)'$ by A7; IH gives $x+y \neq x+z$;
+   Thm~1 gives $(x+y)' \neq (x+z)'$.}
+\FlashImplies{thm:landau-thm9-add-comm-injective}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:landau-thm1-succ-strict]{Theorem 1 (distinct naturals have
+    distinct successors)}: used twice — base case and inductive step.
+  \item \hyperref[thm:landau-addition-exists-unique]{Defining equations A6 and A7 of addition}.
+  \item \hyperref[ax:landau-peano]{Peano Axiom P5 (Induction)}.
+\end{itemize}
+
+\FlashUses{thm:landau-thm1-succ-strict, thm:landau-addition-exists-unique, ax:landau-peano}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{add\_injective\_right} (or the next available name consistent with
+\texttt{Addition.lean} conventions) in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+Proved without Mathlib from axioms P1--P5 and the defining equations of
+addition alone.
+\end{remark*}

@@ -1,0 +1,64 @@
+% volume-ii/natural-numbers/proofs/notes/landau-succ-comm.tex
+% =========================================================
+% Proof: Successor is commutative with addition
+% Source: volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Successor is commutative with addition}
+\label{prf:landau-succ-comm}
+
+\begin{remark*}[Return]
+\hyperref[lem:landau-succ-comm]{$\leftarrow$ Back to Lemma
+(Successor is commutative with addition) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim For all $x \in \mathbb{N}$, $x + 1 = 1 + x$.
+
+Let $x \in \mathbb{N}$ be arbitrary. We proceed by induction on $x$.
+
+\textbf{Base case.} Let $x = 1$. Then
+\[
+  1 + 1 = 1 + 1,
+\]
+which holds by reflexivity.
+
+\textbf{Inductive step.} Assume $x + 1 = 1 + x$ for some $x \in \mathbb{N}$.
+We show $x' + 1 = 1 + x'$.
+\[
+\begin{aligned}
+  x' + 1
+    &= (x + 1)'  && \text{by \ByThm{A7}} \\
+    &= (1 + x)'  && \text{by the inductive hypothesis} \\
+    &= 1 + x'    && \text{by \ByThm{A7} (right to left).}
+\end{aligned}
+\]
+
+By \ByThm{Axiom of Induction}, $x + 1 = 1 + x$ for all $x \in \mathbb{N}$.
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Induction on $x$. Base case is immediate by reflexivity. Inductive step
+applies \textbf{A7} to unfold the left side, uses the inductive hypothesis,
+then refolds the right side using \textbf{A7} in reverse.
+
+\FlashProof{1. Induct on $x$.
+2. Base: $1 + 1 = 1 + 1$ by reflexivity.
+3. Step: $x' + 1 = (x+1)' = (1+x)' = 1 + x'$ by A7, IH, A7 backwards.}
+\FlashImplies{thm:landau-plus-comm}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[ax:landau-peano]{Peano Axiom P5 (Induction)}
+  \item \hyperref[thm:landau-addition-exists-unique]{A6, A7 (defining equations of addition)}
+\end{itemize}
+
+\FlashUses{ax:landau-peano, thm:landau-addition-exists-unique}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{succ\_comm} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+\end{remark*}

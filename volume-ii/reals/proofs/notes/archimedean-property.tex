@@ -1,0 +1,77 @@
+% =========================================================
+% Proof: Archimedean Property
+% Source: volume-iii/analysis/bounding/notes/notes-completeness.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Archimedean Property}
+\label{prf:archimedean-property}
+
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[thm:archimedean-property]{Back to Theorem in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim $\forall x \in \mathbb{R},\; \exists n \in \mathbb{N},\; n > x$.
+
+\Strategy Contradiction.
+Assume $\mathbb{N}$ is bounded above in $\mathbb{R}$.
+The completeness axiom then gives $\sup \mathbb{N} \in \mathbb{R}$.
+We exhibit an element of $\mathbb{N}$ exceeding this supremum,
+contradicting it being an upper bound.
+
+\medskip
+Assume for contradiction that $\mathbb{N}$ is bounded above in $\mathbb{R}$.
+Then in particular there exists $x \in \mathbb{R}$ that is an upper bound
+for $\mathbb{N}$.
+By the Axiom of Completeness, $s := \sup \mathbb{N}$ exists in $\mathbb{R}$.
+
+By the $\varepsilon$-characterisation of the supremum, for every
+$\varepsilon > 0$ there exists $n \in \mathbb{N}$ such that
+\[
+  n > s - \varepsilon.
+\]
+Setting $\varepsilon := 1$, there exists $n \in \mathbb{N}$ satisfying
+\begin{equation}
+\label{eq:arch-near-sup}
+  n > s - 1.
+\end{equation}
+Adding $1$ to both sides of \eqref{eq:arch-near-sup}:
+\[
+  n + 1 > s.
+\]
+By the successor axiom, $n + 1 \in \mathbb{N}$.
+But $n + 1 > s = \sup \mathbb{N}$ contradicts $s$ being an upper bound
+for $\mathbb{N}$.
+
+\Hence our assumption was false.
+Therefore $\mathbb{N}$ is unbounded in $\mathbb{R}$:
+for any $x \in \mathbb{R}$, $x$ is not an upper bound for $\mathbb{N}$,
+so there exists $n \in \mathbb{N}$ with $n > x$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Contradiction via the $\varepsilon$-characterisation of supremum.
+If $\mathbb{N}$ were bounded above, completeness would give $s = \sup\mathbb{N}$.
+The $\varepsilon$-characterisation with $\varepsilon = 1$ produces $n \in \mathbb{N}$
+with $n > s - 1$, so $n + 1 > s$ — but $n+1 \in \mathbb{N}$ by the successor axiom,
+contradicting $s$ being an upper bound.
+
+\FlashProof{Contradiction. Assume $\mathbb{N}$ bounded above; completeness gives $s=\sup\mathbb{N}$. $\varepsilon$-characterisation with $\varepsilon=1$ gives $n\in\mathbb{N}$ with $n>s-1$, so $n+1>s$. By successor axiom $n+1\in\mathbb{N}$, contradicting $s$ being an upper bound.}
+\FlashUses{Axiom of Completeness; $\varepsilon$-characterisation of supremum; successor axiom.}
+\end{remark*}
+
+\begin{remark*}[Why completeness is essential]
+The Archimedean property does \emph{not} follow from the ordered field axioms alone.
+Non-Archimedean ordered fields exist (e.g.\ the field of formal Laurent series).
+Completeness is what rules them out for $\mathbb{R}$ --- without it,
+$\mathbb{N}$ could be bounded above with no contradiction.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[axiom:completeness]{Axiom of Completeness}
+  \item \hyperref[thm:supremum-approximation]{$\varepsilon$-characterisation of supremum}
+  \item Successor axiom: $n \in \mathbb{N} \Rightarrow n+1 \in \mathbb{N}$
+\end{itemize}
+\end{remark*}

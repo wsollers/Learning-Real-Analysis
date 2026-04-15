@@ -1,0 +1,240 @@
+% =========================================================
+% Notes: Number Systems — Axioms, Properties, and Comparison
+% File: volume-ii/numbers-summary/notes/notes-number-systems-summary.tex
+% =========================================================
+
+\section{Axiom Systems for $\mathbb{N}$, $\mathbb{Z}$, $\mathbb{Q}$, and $\mathbb{R}$}
+\label{sec:number-systems-axioms}
+
+% ---------------------------------------------------------
+\subsection{The Natural Numbers $\mathbb{N}$}
+
+\begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Peano Axioms for $\mathbb{N}$}},
+  fonttitle=\small\bfseries]
+Let $\mathbb{N}$ be a set with distinguished element $0$
+and successor operation $n \mapsto n{+\!\!+}$.
+
+\medskip
+\begin{tabular}{@{} l p{0.80\linewidth} @{}}
+\textbf{P1} & $0 \in \mathbb{N}$. \\[4pt]
+\textbf{P2} & $n \in \mathbb{N} \Rightarrow n{+\!\!+} \in \mathbb{N}$.
+             \hfill\textit{(successor closure)} \\[4pt]
+\textbf{P3} & $n{+\!\!+} \neq 0$ for all $n \in \mathbb{N}$.
+             \hfill\textit{(zero has no predecessor)} \\[4pt]
+\textbf{P4} & $n{+\!\!+} = m{+\!\!+} \Rightarrow n = m$.
+             \hfill\textit{(successor is injective)} \\[4pt]
+\textbf{P5} & If $P(0)$ holds and $P(n) \Rightarrow P(n{+\!\!+})$,
+             then $P(n)$ holds for all $n \in \mathbb{N}$.
+             \hfill\textit{(induction)} \\
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}
+P1--P4 rule out wrap-around, ceiling, and rogue elements.
+P5 eliminates anything unreachable from $0$ by finite iteration of the
+successor.
+Addition, multiplication, and order are not axioms — they are \emph{defined}
+recursively from the successor and then shown to satisfy familiar laws by
+induction.
+\end{remark}
+
+\begin{remark}[Well-ordering and induction are equivalent over $\mathbb{N}$]
+The following are logically equivalent:
+\begin{itemize}
+  \item Principle of Mathematical Induction (P5).
+  \item Well-Ordering Principle: every nonempty $A \subseteq \mathbb{N}$
+        has a least element.
+  \item Strong Induction: $(\forall k < n,\, P(k)) \Rightarrow P(n)$
+        for all $n$ implies $P$ holds everywhere.
+\end{itemize}
+One must assume at least one; the others follow.
+Well-ordering is the engine behind the Division Algorithm, Bézout's Identity,
+and unique prime factorization.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{The Integers $\mathbb{Z}$}
+
+\begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Axioms for $\mathbb{Z}$ — Ordered Commutative Ring}},
+  fonttitle=\small\bfseries]
+
+\medskip
+\noindent\textbf{Addition}
+
+\medskip
+\begin{tabular}{@{} l p{0.78\linewidth} @{}}
+\textbf{A1} & $a + b = b + a$ \hfill\textit{(commutativity)} \\[3pt]
+\textbf{A2} & $(a + b) + c = a + (b + c)$ \hfill\textit{(associativity)} \\[3pt]
+\textbf{A3} & $\exists\, 0 \in \mathbb{Z}$ such that $a + 0 = a$
+             \hfill\textit{(additive identity)} \\[3pt]
+\textbf{A4} & $\forall\, a,\; \exists\, {-a} \in \mathbb{Z}$ with
+             $a + (-a) = 0$
+             \hfill\textit{(additive inverses)} \\[6pt]
+\end{tabular}
+
+\noindent\textbf{Multiplication}
+
+\medskip
+\begin{tabular}{@{} l p{0.78\linewidth} @{}}
+\textbf{M1} & $a \cdot b = b \cdot a$ \hfill\textit{(commutativity)} \\[3pt]
+\textbf{M2} & $(a \cdot b) \cdot c = a \cdot (b \cdot c)$
+             \hfill\textit{(associativity)} \\[3pt]
+\textbf{M3} & $\exists\, 1 \in \mathbb{Z},\; 1 \neq 0,$ such that $a \cdot 1 = a$
+             \hfill\textit{(multiplicative identity)} \\[6pt]
+\end{tabular}
+
+\noindent\textbf{Distributivity}
+
+\medskip
+\begin{tabular}{@{} l p{0.78\linewidth} @{}}
+\textbf{D} & $a \cdot (b + c) = a \cdot b + a \cdot c$
+            \hfill\textit{(distributivity)} \\[6pt]
+\end{tabular}
+
+\noindent\textbf{Order}
+
+\medskip
+\begin{tabular}{@{} l p{0.78\linewidth} @{}}
+\textbf{O1} & $a \leq b$ or $b \leq a$ \hfill\textit{(totality)} \\[3pt]
+\textbf{O2} & $a \leq b \land b \leq a \Rightarrow a = b$
+             \hfill\textit{(antisymmetry)} \\[3pt]
+\textbf{O3} & $a \leq b \land b \leq c \Rightarrow a \leq c$
+             \hfill\textit{(transitivity)} \\[3pt]
+\textbf{O4} & $b \leq c \Rightarrow a + b \leq a + c$
+             \hfill\textit{(order + addition)} \\[3pt]
+\textbf{O5} & $a \geq 0 \land b \geq 0 \Rightarrow ab \geq 0$
+             \hfill\textit{(order + multiplication)} \\
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[What $\mathbb{Z}$ gains over $\mathbb{N}$, and what it lacks]
+\textbf{Gain:} Axiom A4 — additive inverses. Subtraction is always defined
+in $\mathbb{Z}$; it is not in $\mathbb{N}$.
+
+\textbf{Lack:} Multiplicative inverses. There is no $x \in \mathbb{Z}$
+with $2x = 1$, so M4 (every nonzero element is invertible) fails.
+In the language of abstract algebra, $\mathbb{Z}$ is a
+\emph{commutative ordered ring} but not a field.
+The passage to $\mathbb{Q}$ restores multiplicative inverses by formally
+adjoining fractions.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Derived Properties of $\mathbb{Z}$ (from the Ring Axioms)}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Derived Properties — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{} l l p{0.42\linewidth} @{}}
+\toprule
+\textbf{Name} & \textbf{Statement} & \textbf{Proof sketch} \\
+\midrule
+Zero multiplication
+  & $a \cdot 0 = 0$
+  & $a\cdot 0 = a\cdot(0+0) = a\cdot 0 + a\cdot 0$;
+    cancel $a\cdot 0$ via A4. \\
+Negation rule
+  & $(-a)\cdot b = -(ab)$
+  & $ab + (-a)b = (a + (-a))b = 0\cdot b = 0$. \\
+$(-1)$ rule
+  & $(-1)\cdot a = -a$
+  & Special case: $b = a$, $-a = (-1)a$. \\
+Double negation
+  & $(-a)(-b) = ab$
+  & $(-a)(-b) = -(a(-b)) = -(-(ab)) = ab$. \\
+No zero divisors
+  & $ab = 0 \Rightarrow a=0$ or $b=0$
+  & $\mathbb{Z}$ is an integral domain;
+    proved via well-ordering + sign analysis. \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[Zero multiplication — the step most often looked up]
+The identity $a \cdot 0 = 0$ is not an axiom; it is derived.
+The proof uses only A3, A4, and D:
+\[
+a \cdot 0
+= a \cdot (0 + 0)
+\overset{\text{D}}{=} a \cdot 0 + a \cdot 0.
+\]
+Adding $-(a \cdot 0)$ to both sides (A4) gives $0 = a \cdot 0$, i.e.\ $a \cdot 0 = 0$.
+No order axioms, no well-ordering, no properties of $\mathbb{N}$ are needed —
+this holds in any ring.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{Structural Comparison: $\mathbb{N}$, $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Axiom Comparison Table}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{} l l c c c c @{}}
+\toprule
+\textbf{Group} & \textbf{Axiom} &
+$\mathbb{N}$ & $\mathbb{Z}$ & $\mathbb{Q}$ & $\mathbb{R}$ \\
+\midrule
+Addition
+  & A1 commutativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & A2 associativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & A3 identity ($0$)         & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & A4 inverses ($-a$)        & $\times$   & \checkmark & \checkmark & \checkmark \\
+\midrule
+Multiplication
+  & M1 commutativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & M2 associativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & M3 identity ($1$)         & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & M4 inverses ($1/a$)       & $\times$   & $\times$   & \checkmark & \checkmark \\
+\midrule
+  & D distributivity          & \checkmark & \checkmark & \checkmark & \checkmark \\
+\midrule
+Order
+  & O1--O3 total order        & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & O4--O5 order + arithmetic & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & Well-ordering             & \checkmark & $\times$   & $\times$   & $\times$   \\
+\midrule
+Completeness
+  & Least upper bound         & $\times$   & $\times$   & $\times$   & \checkmark \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Structure}} &
+\textit{semiring} & \textit{comm.\ ring} &
+\textit{ordered field} & \textit{complete ordered field} \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\noindent\small $\checkmark$ = satisfied \quad $\times$ = fails
+\end{tcolorbox}
+
+\begin{remark}[The extension hierarchy]
+Each number system repairs exactly one deficiency of its predecessor:
+\[
+\mathbb{N}
+\;\xrightarrow{+\;\mathrm{A4}}\;
+\mathbb{Z}
+\;\xrightarrow{+\;\mathrm{M4}}\;
+\mathbb{Q}
+\;\xrightarrow{+\;\mathrm{LUB}}\;
+\mathbb{R}.
+\]
+$\mathbb{N} \to \mathbb{Z}$: adjoin additive inverses so subtraction is
+always defined.
+$\mathbb{Z} \to \mathbb{Q}$: adjoin multiplicative inverses so division by
+any nonzero element is always defined.
+$\mathbb{Q} \to \mathbb{R}$: adjoin least upper bounds so every bounded
+increasing sequence converges.
+
+Note that $\mathbb{N}$ is the only system in the chain that is well-ordered.
+$\mathbb{Z}$ loses well-ordering the moment negative integers are introduced
+(the set of all negative integers has no least element).
+\end{remark}
