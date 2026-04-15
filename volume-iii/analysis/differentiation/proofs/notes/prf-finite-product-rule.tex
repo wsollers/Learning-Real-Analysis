@@ -1,25 +1,50 @@
-\subsection*{6. Finite Product Rule}
-\textbf{Claim:} If $f_1, f_2, \dots, f_n$ are functions on an interval $I$ to $\mathbb{R}$ that are differentiable at $c \in I$, then:
+\newpage
+\phantomsection
+\label{prf:finite-product-rule}
+
+\begin{remark*}[Return]
+\hyperref[thm:finite-product-rule]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Finite Product Rule]
+If $f_1, f_2, \ldots, f_n$ are functions on an interval $I$ to $\mathbb{R}$ that are differentiable at $c \in I$, then:
 \[ \left( \prod_{i=1}^{n} f_i \right)'(c) = \sum_{i=1}^{n} \left( f_i'(c) \prod_{j \neq i} f_j(c) \right) \]
+\end{theorem*}
 
 \begin{proof}
-We proceed by mathematical induction on $n$.
-
-\textbf{Base Case ($n=1$):} 
-For $n=1$, $(f_1)'(c) = f_1'(c)$, which is trivially true. 
-
-\textbf{Inductive Hypothesis:} 
-Assume the rule holds for $n=k$:
-\[ (f_1 f_2 \cdots f_k)'(c) = \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j=1}^{k} f_j(c) \right) \]
-
-\textbf{Inductive Step:} 
-Consider $n = k+1$. Let $g = f_1 f_2 \cdots f_k$. Then the product is $g \cdot f_{k+1}$. By the **Product Rule for two functions**:
-\[ (g \cdot f_{k+1})'(c) = g'(c)f_{k+1}(c) + g(c)f_{k+1}'(c) \]
-Substituting the inductive hypothesis for $g'(c)$ and the definition of $g(c)$:
-\[ \left[ \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j=1}^{k} f_j(c) \right) \right] f_{k+1}(c) + \left[ \prod_{i=1}^{k} f_i(c) \right] f_{k+1}'(c) \]
-Distributing $f_{k+1}(c)$ into the sum:
-\[ \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j=1}^{k+1} f_j(c) \right) + \left( f_{k+1}'(c) \prod_{j=1}^{k} f_j(c) \right) \]
-This combines into a single sum from $i=1$ to $k+1$:
-\[ \sum_{i=1}^{k+1} \left( f_i'(c) \prod_{j \neq i, j=1}^{k+1} f_j(c) \right) \]
-Thus, the statement holds for all $n \in \mathbb{N}$ by induction.
+\textbf{Professional Standard Proof.}~\\
+By induction on $n$. Base case $n=1$ is trivial. Assume the formula holds for $n=k$. For $n=k+1$, let $g = \prod_{i=1}^{k} f_i$. Then $\prod_{i=1}^{k+1} f_i = g \cdot f_{k+1}$. By the product rule, $(g \cdot f_{k+1})'(c) = g'(c)f_{k+1}(c) + g(c)f_{k+1}'(c)$. The inductive hypothesis gives $g'(c) = \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j \leq k} f_j(c) \right)$. Substituting and distributing $f_{k+1}(c)$ into the sum yields $\sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j \leq k+1} f_j(c) \right) + f_{k+1}'(c) \prod_{j=1}^{k} f_j(c)$, which equals $\sum_{i=1}^{k+1} \left( f_i'(c) \prod_{j \neq i} f_j(c) \right)$.
 \end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the base case for $n=1$. The formula states $(f_1)'(c) = f_1'(c)$, which is trivially true since the product contains only one function and the sum contains only one term.
+
+\textbf{Step 2.} State the inductive hypothesis. Assume the formula holds for $n=k$:
+\[ \left( \prod_{i=1}^{k} f_i \right)'(c) = \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j=1}^{k} f_j(c) \right) \]
+
+\textbf{Step 3.} Set up the inductive step for $n=k+1$. Define $g(x) = \prod_{i=1}^{k} f_i(x)$, so the product of $k+1$ functions becomes $g(x) \cdot f_{k+1}(x)$. This reduces the problem to applying the two-function product rule.
+
+\textbf{Step 4.} Apply the product rule for two functions. The derivative is:
+\[ (g \cdot f_{k+1})'(c) = g'(c)f_{k+1}(c) + g(c)f_{k+1}'(c) \]
+
+\textbf{Step 5.} Substitute the inductive hypothesis for $g'(c)$. This gives:
+\[ \left[ \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j=1}^{k} f_j(c) \right) \right] f_{k+1}(c) + \left[ \prod_{i=1}^{k} f_i(c) \right] f_{k+1}'(c) \]
+
+\textbf{Step 6.} Distribute $f_{k+1}(c)$ into the sum. Each term $f_i'(c) \prod_{j \neq i, j=1}^{k} f_j(c)$ becomes $f_i'(c) \prod_{j \neq i, j=1}^{k+1} f_j(c)$ when multiplied by $f_{k+1}(c)$:
+\[ \sum_{i=1}^{k} \left( f_i'(c) \prod_{j \neq i, j=1}^{k+1} f_j(c) \right) + f_{k+1}'(c) \prod_{j=1}^{k} f_j(c) \]
+
+\textbf{Step 7.} Recognize that the second term fits the pattern for $i=k+1$. The term $f_{k+1}'(c) \prod_{j=1}^{k} f_j(c)$ equals $f_{k+1}'(c) \prod_{j \neq k+1, j=1}^{k+1} f_j(c)$, completing the sum from $i=1$ to $i=k+1$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a proof by mathematical induction. The strategy works by reducing the $(k+1)$-function product to a two-function product using the substitution $g = \prod_{i=1}^{k} f_i$, then applying the standard product rule and the inductive hypothesis. The key insight is that each term in the final sum represents the derivative of exactly one factor while keeping all other factors constant.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:product-rule]{Product Rule}
+  \item \hyperref[def:differentiability]{Definition of Differentiability}
+\end{itemize}
+\end{remark*}

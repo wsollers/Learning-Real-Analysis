@@ -1,218 +1,54 @@
-% =========================================================
-% Proof: Interior Extremum Theorem
-% Source: volume-iii/analysis/differentiation/notes/notes-extrema.tex
-% Mode: standard
-% =========================================================
-
-\subsection*{Interior Extremum Theorem}
+\newpage
+\phantomsection
 \label{prf:interior-extremum-theorem}
 
 \begin{remark*}[Return]
-\hyperref[thm:interior-extremum-theorem]{$\leftarrow$ Back to Theorem (Interior Extremum Theorem) in Notes}
+\hyperref[thm:interior-extremum-theorem]{Return to Theorem}
 \end{remark*}
 
-% ---------------------------------------------------------
-% Proof I — Learning Version
-% ---------------------------------------------------------
-\subsubsection*{Proof I \textemdash\ Learning Version (Contradiction)}
-\label{prf:interior-extremum-theorem-naive}
+\begin{theorem*}[Interior Extremum Theorem]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ has a relative extremum at $c$ and is differentiable at $c$, then $f'(c) = 0$.
+\end{theorem*}
 
 \begin{proof}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$,
-and let $c \in I$. Assume $f$ has a relative maximum at $c$ and is
-differentiable at $c$. The claim is that $f'(c) = 0$.
+\textbf{Professional Standard Proof.}~\\
+Consider the case where $f$ has a relative maximum at $c$. By definition, there exists $\delta > 0$ such that $(c - \delta, c + \delta) \subseteq I$ and $f(x) - f(c) \leq 0$ for all $x \in (c - \delta, c + \delta)$.
 
-Suppose for contradiction that $f'(c) \neq 0$.
+For $x \in (c, c + \delta)$, the quotient $\frac{f(x) - f(c)}{x - c} \leq 0$ since the numerator is nonpositive and the denominator is positive. By order preservation for limits, $f'_+(c) \leq 0$.
 
-By \ByDef{Relative Maximum} there exists $\delta > 0$ such that
-$(c - \delta, c + \delta) \subseteq I$ and $f(x) - f(c) \leq 0$ for all
-$x \in (c - \delta, c + \delta)$.
+For $x \in (c - \delta, c)$, the quotient $\frac{f(x) - f(c)}{x - c} \geq 0$ since the numerator is nonpositive and the denominator is negative. By order preservation for limits, $f'_-(c) \geq 0$.
 
-\ProofStep{1}{Case $f'(c) > 0$.}
-Since $f'(c) = \lim_{x \to c} \frac{f(x)-f(c)}{x-c} > 0$, by
-\ByThm{Sign Preservation for Limits} there exists a sub-interval
-$(c, c + \delta')$ on which the difference quotient is positive. For
-$x \in (c, c + \delta')$ the displacement $x - c > 0$, so positivity of
-the quotient requires $f(x) - f(c) > 0$, i.e.\ $f(x) > f(c)$. This
-contradicts $f(x) - f(c) \leq 0$ on $(c - \delta, c + \delta)$.
+Since $f$ is differentiable at $c$, the one-sided derivatives exist and agree: $f'(c) = f'_+(c) = f'_-(c)$. Therefore $0 \geq f'(c) \geq 0$, which forces $f'(c) = 0$.
 
-\ProofStep{2}{Case $f'(c) < 0$.}
-Since $f'(c) < 0$, by \ByThm{Sign Preservation for Limits} there exists
-a sub-interval $(c - \delta', c)$ on which the difference quotient is
-negative. For $x \in (c - \delta', c)$ the displacement $x - c < 0$, so
-negativity of the quotient requires $f(x) - f(c) > 0$, i.e.\ $f(x) > f(c)$.
-This again contradicts $f(x) - f(c) \leq 0$.
-
-\ProofStep{3}{Conclusion.}
-Both cases lead to a contradiction, so $f'(c) \neq 0$ is false.
-Therefore $f'(c) = 0$.
-
-The case of a relative minimum follows by applying the same argument to
-$-f$: $-f$ has a relative maximum at $c$, so $(-f)'(c) = 0$, giving
-$f'(c) = 0$.
+The case of a relative minimum follows by applying the argument to $-f$ at $c$.
 \end{proof}
-
-% ---------------------------------------------------------
-% Proof II — Professional Standard
-% ---------------------------------------------------------
-\subsubsection*{Proof II \textemdash\ Professional Standard (Direct)}
-\label{prf:interior-extremum-theorem-direct}
 
 \begin{proof}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$,
-and let $c \in I$. Assume $f$ has a relative maximum at $c$ and is
-differentiable at $c$. The claim is that $f'(c) = 0$.
+\textbf{Detailed Learning Proof.}~\\
 
-Since $f$ has a relative maximum at $c$, by \ByDef{Relative Maximum} there
-exists $\delta > 0$ such that $(c - \delta, c + \delta) \subseteq I$ and
-\[
-  f(x) - f(c) \leq 0
-  \qquad \text{for all } x \in (c - \delta, c + \delta).
-\]
+\textbf{Step 1.} Establish the constraint from the relative maximum. Since $f$ has a relative maximum at $c$, by definition there exists $\delta > 0$ such that $(c - \delta, c + \delta) \subseteq I$ and $f(x) - f(c) \leq 0$ for all $x \in (c - \delta, c + \delta)$. This inequality means $f(c)$ is the largest value in the interval, so every other value satisfies $f(x) \leq f(c)$.
 
-\ProofStep{1}{Sign of the difference quotient from the right.}
-For $x \in (c, c + \delta)$, the increment $f(x) - f(c) \leq 0$ and the
-displacement $x - c > 0$, so
-\[
-  \frac{f(x) - f(c)}{x - c} \leq 0.
-\]
-Passing to the right-hand limit and applying \ByThm{Order Preservation for
-Limits},
-\[
-  f'_+(c) = \lim_{x \to c^+} \frac{f(x) - f(c)}{x - c} \leq 0.
-\]
+\textbf{Step 2.} Analyze the difference quotient for $x > c$. For any $x \in (c, c + \delta)$, the increment $f(x) - f(c) \leq 0$ by Step 1, and the displacement $x - c > 0$. Therefore the difference quotient satisfies $\frac{f(x) - f(c)}{x - c} \leq 0$. This inequality holds for all $x$ in the right half-neighborhood of $c$.
 
-\ProofStep{2}{Sign of the difference quotient from the left.}
-For $x \in (c - \delta, c)$, the increment $f(x) - f(c) \leq 0$ and the
-displacement $x - c < 0$, so
-\[
-  \frac{f(x) - f(c)}{x - c} \geq 0.
-\]
-Passing to the left-hand limit and applying \ByThm{Order Preservation for
-Limits},
-\[
-  f'_-(c) = \lim_{x \to c^-} \frac{f(x) - f(c)}{x - c} \geq 0.
-\]
+\textbf{Step 3.} Apply order preservation to obtain $f'_+(c) \leq 0$. Since the difference quotient is nonpositive throughout the interval $(c, c + \delta)$, and the right-hand derivative is the limit of this quotient as $x$ approaches $c$ from the right, order preservation for limits gives $f'_+(c) = \lim_{x \to c^+} \frac{f(x) - f(c)}{x - c} \leq 0$.
 
-\ProofStep{3}{Conclude $f'(c) = 0$.}
-Since $f$ is differentiable at $c$, by \ByThm{Differentiability and
-One-Sided Derivatives}, $f'(c) = f'_+(c) = f'_-(c)$. From Steps 1 and 2,
-\[
-  0 \geq f'(c) \geq 0,
-\]
-therefore $f'(c) = 0$.
+\textbf{Step 4.} Analyze the difference quotient for $x < c$. For any $x \in (c - \delta, c)$, the increment $f(x) - f(c) \leq 0$ by Step 1, and the displacement $x - c < 0$. When a nonpositive number is divided by a negative number, the result is nonnegative, so $\frac{f(x) - f(c)}{x - c} \geq 0$. This inequality holds for all $x$ in the left half-neighborhood of $c$.
 
-The case of a relative minimum follows by applying the above to $-f$ at $c$.
+\textbf{Step 5.} Apply order preservation to obtain $f'_-(c) \geq 0$. Since the difference quotient is nonnegative throughout the interval $(c - \delta, c)$, order preservation for limits gives $f'_-(c) = \lim_{x \to c^-} \frac{f(x) - f(c)}{x - c} \geq 0$.
+
+\textbf{Step 6.} Use differentiability to conclude $f'(c) = 0$. Since $f$ is differentiable at $c$, the one-sided derivatives exist and are equal: $f'(c) = f'_+(c) = f'_-(c)$. From Steps 3 and 5, this common value satisfies both $f'(c) \leq 0$ and $f'(c) \geq 0$. The only real number satisfying both inequalities is $0$, so $f'(c) = 0$.
+
+\textbf{Step 7.} Handle the minimum case. If $f$ has a relative minimum at $c$, then $-f$ has a relative maximum at $c$. Applying the above argument to $-f$ gives $(-f)'(c) = 0$, which means $-f'(c) = 0$, so $f'(c) = 0$.
 \end{proof}
 
-% ---------------------------------------------------------
-% Shared remark blocks
-% ---------------------------------------------------------
-\begin{remark*}[Proof shape]
-The direct proof reads the sign of the difference quotient on each side of
-$c$ separately. From the right, a non-positive increment over a positive
-displacement gives a non-positive quotient, so $f'_+(c) \leq 0$. From the
-left, a non-positive increment over a negative displacement gives a
-non-negative quotient, so $f'_-(c) \geq 0$. Differentiability forces the
-two one-sided derivatives to agree, pinning $f'(c) = 0$. No contradiction
-is needed.
-
-\FlashProof{1. Relative maximum gives $f(x) - f(c) \leq 0$ near $c$.
-  2. For $x > c$: quotient $\leq 0$, so $f'_+(c) \leq 0$ by order
-  preservation.
-  3. For $x < c$: quotient $\geq 0$, so $f'_-(c) \geq 0$ by order
-  preservation.
-  4. Differentiability gives $f'_+(c) = f'_-(c) = f'(c)$, so $f'(c) = 0$.}
+\begin{remark*}[Proof structure]
+The proof uses a direct approach that reads the sign of the difference quotient separately on each side of the critical point. The relative maximum condition provides a uniform constraint $f(x) - f(c) \leq 0$ throughout a neighborhood of $c$. However, the sign of the difference quotient depends on the sign of the displacement $x - c$, which changes across $c$. By analyzing the left and right sides separately, the proof obtains complementary inequalities on the one-sided derivatives that together force the derivative to be zero. No contradiction argument is needed—the conclusion emerges directly from the sandwich $0 \geq f'(c) \geq 0$.
 \end{remark*}
 
-\begin{remark*}[Self-assessment of Proof I]
-Proof I is correct. At three months of proof writing, producing a valid
-contradiction argument with proper case analysis and correct citation of
-a named limit theorem is genuinely good work. The following notes identify
-specific patterns to grow out of.
-
-\textbf{Inefficiency: contradiction when a direct argument exists.}
-Proof I opens with "suppose for contradiction that $f'(c) \neq 0$" and then
-cases on the sign of $f'(c)$. But the conclusion $f'(c) = 0$ can be reached
-without contradiction at all: the sign inequalities on the one-sided
-derivatives directly force $0 \geq f'(c) \geq 0$. Contradiction is a valid
-strategy but it is often chosen by default when a direct argument is
-available. The habit to build: before assuming the negation, ask whether
-the conclusion can be squeezed out of the hypotheses directly. Here it can.
-
-\textbf{Naivety: two cases for what is one phenomenon.}
-Cases 1 and 2 in Proof I treat $f'(c) > 0$ and $f'(c) < 0$ separately, each
-producing a slightly different contradiction. They look like two different
-arguments, but they are the same argument — the difference quotient has a
-sign mismatch with the maximum condition — applied once to the right and once
-to the left. Proof II recognises this as a single phenomenon (split by the
-sign of $x - c$) and handles both sides in two parallel steps rather than
-two cases. When two cases in a proof look nearly identical, that is a signal
-that there is a unifying observation waiting to be named.
-
-\textbf{Extra theorem required: Sign Preservation vs.\ Order Preservation.}
-Proof I invokes Sign Preservation for Limits, which is a theorem about the
-behaviour of a function in a neighbourhood given the sign of its limit.
-Proof II invokes Order Preservation for Limits, which is a theorem about the
-behaviour of a limit given the sign of the function on a neighbourhood.
-These are converses of each other. In this proof, the information flows from
-the function to the limit (the maximum condition gives the sign of the
-quotient, which is then passed to the limit), so Order Preservation is the
-natural tool. Sign Preservation runs in the opposite direction and requires
-an extra step — finding the sub-neighbourhood — before the contradiction
-can be assembled. Recognising the direction of information flow in a proof
-is a skill that eliminates unnecessary theorem invocations.
-
-\textbf{What Proof I does well.}
-The case structure is clear and explicit. The contradiction is properly
-closed in each case. The minimum case is handled by reduction to $-f$,
-which is the correct move and was stated cleanly. The hypothesis is fully
-set up before the case split. These are all marks of a well-organised proof,
-and they carry forward into the professional version unchanged.
-\end{remark*}
-
-\begin{remark*}[Commentary]
-\textbf{(a) Why does the maximum give $f(x) - f(c) \leq 0$?}
-The definition of a relative maximum says $f(c)$ is the largest value in
-some neighbourhood of $c$. Every other value in that neighbourhood is at
-most $f(c)$, which is exactly $f(x) - f(c) \leq 0$. This single inequality
-is the only fact about the maximum used anywhere in either proof.
-
-\textbf{(b) Why split into left and right in Proof II?}
-The numerator $f(x) - f(c)$ is always $\leq 0$ near $c$. But the denominator
-$x - c$ changes sign: positive for $x > c$, negative for $x < c$. Splitting
-the analysis by side lets the sign of the quotient be determined cleanly on
-each half, yielding two one-sided inequalities that together pin $f'(c)$.
-
-\textbf{(c) Why does Order Preservation apply?}
-Order Preservation for Limits says: if a function is $\leq 0$ on a full
-deleted half-neighbourhood, its one-sided limit (when it exists) satisfies
-the same inequality. The difference quotient is $\leq 0$ for all $x \in
-(c, c+\delta)$, not just eventually, so the hypothesis is met directly.
-
-\textbf{(d) Why does differentiability pin $f'(c) = 0$?}
-Differentiability at $c$ forces the one-sided derivatives to exist and
-agree: $f'_+(c) = f'_-(c) = f'(c)$. Step 1 gives $f'(c) \leq 0$ and Step 2
-gives $f'(c) \geq 0$. The only real number satisfying both simultaneously
-is $0$.
-\end{remark*}
-
-\begin{remark*}[Dependencies]
+\begin{remark*}[Dependencies]~\\
 \begin{itemize}
-  \item \hyperref[def:relative-maximum]{Definition of Relative Maximum}:
-    Supplies the neighbourhood and the inequality $f(x) - f(c) \leq 0$
-    (both proofs).
-  \item \hyperref[thm:order-preservation-limits]{Order Preservation for
-    Limits}: Passes sign inequalities through the one-sided limits
-    (Proof II, Steps 1 and 2).
-  \item \hyperref[thm:sign-preservation-limits]{Sign Preservation for
-    Limits}: Guarantees a sub-interval of definite sign from the limit
-    (Proof I, Steps 1 and 2).
-  \item \hyperref[thm:differentiability-one-sided]{Differentiability and
-    One-Sided Derivatives}: Forces $f'_+(c) = f'_-(c) = f'(c)$
-    (Proof II, Step 3).
+  \item \hyperref[def:relative-maximum]{Definition of Relative Maximum}
+  \item \hyperref[thm:order-preservation-limits]{Order Preservation for Limits}
+  \item \hyperref[thm:differentiability-one-sided]{Differentiability and One-Sided Derivatives}
 \end{itemize}
-
-\FlashUses{def:relative-maximum, thm:order-preservation-limits,
-thm:differentiability-one-sided}
 \end{remark*}

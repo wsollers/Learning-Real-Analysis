@@ -1,105 +1,50 @@
-% =========================================================
-% Proof: Finite Linear Combination Rule
-% Source: volume-iii/analysis/differentiation/notes/notes-algebra.tex
-% Mode: standard
-% =========================================================
-
-\subsection*{Finite Linear Combination Rule}
-\label{prf:finite-linear-combination-rule}
+\newpage
+\phantomsection
+\label{prf:finite-linear-combination}
 
 \begin{remark*}[Return]
-\hyperref[thm:finite-linear-combination-rule]{$\leftarrow$ Back to Theorem (Finite Linear Combination Rule) in Notes}
+\hyperref[thm:finite-linear-combination-rule]{Return to Theorem}
 \end{remark*}
+
+\begin{theorem*}[Finite Linear Combination Rule]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, let $n \in \mathbb{N}$, let $f_1, \ldots, f_n : I \to \mathbb{R}$ be differentiable at $c$, and let $\alpha_1, \ldots, \alpha_n \in \mathbb{R}$. Then $\sum_{i=1}^{n} \alpha_i f_i$ is differentiable at $c$ and
+\[
+\left(\sum_{i=1}^{n} \alpha_i f_i\right)'(c) = \sum_{i=1}^{n} \alpha_i f_i'(c).
+\]
+\end{theorem*}
 
 \begin{proof}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, let
-$n \in \mathbb{N}$, let $f_1, \dots, f_n : I \to \mathbb{R}$ be
-differentiable at $c$, and let $\alpha_1, \dots, \alpha_n \in \mathbb{R}$.
-Define $h := \sum_{i=1}^{n} \alpha_i f_i$. The claim is that $h$ is
-differentiable at $c$ and $h'(c) = \sum_{i=1}^{n} \alpha_i f_i'(c)$.
-
-The proof proceeds by induction on $n$.
-
-\ProofStep{1}{Base case $n = 1$.}
-$h = \alpha_1 f_1$. By \ByThm{Constant Multiple Rule}, $h$ is differentiable
-at $c$ and $h'(c) = \alpha_1 f_1'(c)$. This is $\sum_{i=1}^{1} \alpha_i
-f_i'(c)$, so the claim holds for $n = 1$.
-
-\ProofStep{2}{Inductive hypothesis.}
-Assume the claim holds for some $n = k \geq 1$: for any $k$ functions
-differentiable at $c$ and any scalars $\alpha_1, \dots, \alpha_k \in
-\mathbb{R}$,
-\[
-  \left(\sum_{i=1}^{k} \alpha_i f_i\right)'(c) = \sum_{i=1}^{k} \alpha_i f_i'(c).
-\]
-
-\ProofStep{3}{Inductive step: $n = k+1$.}
-Write $h = \sum_{i=1}^{k+1} \alpha_i f_i = \left(\sum_{i=1}^{k} \alpha_i
-f_i\right) + \alpha_{k+1} f_{k+1}$. Let $g := \sum_{i=1}^{k} \alpha_i f_i$.
-By the inductive hypothesis, $g$ is differentiable at $c$ and $g'(c) =
-\sum_{i=1}^{k} \alpha_i f_i'(c)$. Since $\alpha_{k+1} f_{k+1}$ is
-differentiable at $c$ by \ByThm{Constant Multiple Rule} with derivative
-$\alpha_{k+1} f_{k+1}'(c)$, and since $h = g + \alpha_{k+1} f_{k+1}$,
-the \ByThm{Sum Rule} gives
-\[
-  h'(c) = g'(c) + \alpha_{k+1} f_{k+1}'(c)
-  = \sum_{i=1}^{k} \alpha_i f_i'(c) + \alpha_{k+1} f_{k+1}'(c)
-  = \sum_{i=1}^{k+1} \alpha_i f_i'(c).
-\]
-
-\ProofStep{4}{Conclusion.}
-By induction, the claim holds for all $n \in \mathbb{N}$.
+\textbf{Professional Standard Proof.}~\\
+The proof proceeds by induction on $n$. For $n = 1$, the result follows from the Constant Multiple Rule. For the inductive step, assume the statement holds for $n = k$ and consider $n = k+1$. Write $\sum_{i=1}^{k+1} \alpha_i f_i = \left(\sum_{i=1}^{k} \alpha_i f_i\right) + \alpha_{k+1} f_{k+1}$. By the inductive hypothesis, $\sum_{i=1}^{k} \alpha_i f_i$ is differentiable at $c$ with derivative $\sum_{i=1}^{k} \alpha_i f_i'(c)$. By the Constant Multiple Rule, $\alpha_{k+1} f_{k+1}$ is differentiable at $c$ with derivative $\alpha_{k+1} f_{k+1}'(c)$. The Sum Rule then gives the desired result.
 \end{proof}
 
-\begin{remark*}[Proof shape]
-Induction on $n$, with the base case handled by the Constant Multiple Rule
-and the inductive step by peeling off the last term and applying both the
-Constant Multiple Rule (to scale $f_{k+1}$) and the Sum Rule (to add it to
-the inductive hypothesis). The Finite Sum Rule and Constant Multiple Rule are
-subsumed — this theorem is their common generalisation.
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
 
-\FlashProof{Induction on $n$. Base ($n=1$): Constant Multiple Rule.
-  Step: write $\sum_{i=1}^{k+1} \alpha_i f_i = \bigl(\sum_{i=1}^{k}
-  \alpha_i f_i\bigr) + \alpha_{k+1}f_{k+1}$. Apply inductive hypothesis
-  to the first part, Constant Multiple Rule to the second, Sum Rule to
-  combine. Conclude $h'(c) = \sum_{i=1}^{k+1} \alpha_i f_i'(c)$.}
+\textbf{Step 1.} Base case $n = 1$. Define $h = \alpha_1 f_1$. By the Constant Multiple Rule, $h$ is differentiable at $c$ and $h'(c) = \alpha_1 f_1'(c)$. This equals $\sum_{i=1}^{1} \alpha_i f_i'(c)$, establishing the base case.
+
+\textbf{Step 2.} Inductive hypothesis. Assume the statement holds for some $n = k \geq 1$: for any $k$ functions differentiable at $c$ and any scalars $\alpha_1, \ldots, \alpha_k \in \mathbb{R}$,
+\[
+\left(\sum_{i=1}^{k} \alpha_i f_i\right)'(c) = \sum_{i=1}^{k} \alpha_i f_i'(c).
+\]
+
+\textbf{Step 3.} Inductive step for $n = k+1$. Consider $h = \sum_{i=1}^{k+1} \alpha_i f_i$. Write this as $h = \left(\sum_{i=1}^{k} \alpha_i f_i\right) + \alpha_{k+1} f_{k+1}$. Let $g = \sum_{i=1}^{k} \alpha_i f_i$. By the inductive hypothesis, $g$ is differentiable at $c$ with $g'(c) = \sum_{i=1}^{k} \alpha_i f_i'(c)$. By the Constant Multiple Rule, $\alpha_{k+1} f_{k+1}$ is differentiable at $c$ with derivative $\alpha_{k+1} f_{k+1}'(c)$.
+
+\textbf{Step 4.} Application of the Sum Rule. Since $h = g + \alpha_{k+1} f_{k+1}$ where both $g$ and $\alpha_{k+1} f_{k+1}$ are differentiable at $c$, the Sum Rule gives
+\[
+h'(c) = g'(c) + \alpha_{k+1} f_{k+1}'(c) = \sum_{i=1}^{k} \alpha_i f_i'(c) + \alpha_{k+1} f_{k+1}'(c) = \sum_{i=1}^{k+1} \alpha_i f_i'(c).
+\]
+
+\textbf{Step 5.} Conclusion by induction. The statement holds for all $n \in \mathbb{N}$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses induction on $n$, establishing linearity of differentiation over finite linear combinations. The base case invokes the Constant Multiple Rule, while the inductive step decomposes the $(k+1)$-term sum by peeling off the last term, applying the inductive hypothesis to the first $k$ terms, the Constant Multiple Rule to the final term, and the Sum Rule to combine them. This structure reveals that finite linearity builds systematically from the two fundamental linearity properties: scalar multiplication and addition.
 \end{remark*}
 
-\begin{remark*}[Commentary]
-\textbf{(a) Why induction rather than a direct limit argument?}
-A direct limit argument is possible — split the difference quotient of
-$\sum \alpha_i f_i$ term by term and apply the limit laws — but it requires
-justifying that the limit distributes over a finite sum, which is itself an
-induction on $n$. The induction-on-$n$ structure makes the dependency
-explicit: the $n$-function result genuinely requires the $(n-1)$-function
-result, and the two-function result (the Sum Rule) is the inductive engine.
-
-\textbf{(b) Why peel off the last term rather than splitting differently?}
-The inductive step writes $\sum_{i=1}^{k+1} = \bigl(\sum_{i=1}^{k}\bigr) +
-(\text{one more term})$. This is the standard decomposition because the
-inductive hypothesis applies to exactly $k$ terms. Any other split — say,
-first term plus the rest — works equally well by the same argument. The
-choice of which term to peel is arbitrary.
-
-\textbf{(c) What does this theorem say structurally?}
-The Finite Linear Combination Rule is the statement that differentiation is
-a \emph{linear operator} on the vector space of differentiable functions on
-$I$: it respects scalar multiplication (Constant Multiple Rule) and addition
-(Sum Rule). This theorem packages both properties into a single statement
-over finite linear combinations, which is exactly linearity. Every result
-about linearity of differentiation that appears downstream — including the
-relationship between differentiation and polynomial algebra — rests on this
-foundation.
-\end{remark*}
-
-\begin{remark*}[Dependencies]
+\begin{remark*}[Dependencies]~\\
 \begin{itemize}
-  \item \hyperref[thm:constant-multiple-rule]{Constant Multiple Rule}:
-    Handles the base case ($n=1$) and licenses scaling of $f_{k+1}$ in
-    the inductive step.
-  \item \hyperref[thm:sum-rule]{Sum Rule}: Combines the inductive
-    hypothesis with the scaled $f_{k+1}$ term in the inductive step.
+  \item \hyperref[thm:constant-multiple-rule]{Constant Multiple Rule}
+  \item \hyperref[thm:sum-rule]{Sum Rule}
 \end{itemize}
-
-\FlashUses{thm:constant-multiple-rule, thm:sum-rule}
 \end{remark*}

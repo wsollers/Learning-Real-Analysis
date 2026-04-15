@@ -1,57 +1,51 @@
-% =========================================================
-% Proof: Constant Multiple Rule
-% Source: volume-iii/analysis/differentiation/notes/notes-algebra.tex
-% Mode: standard
-% =========================================================
-
-\subsection*{Constant Multiple Rule}
-\label{prf:constant-multiple-rule}
+\newpage
+\phantomsection
+\label{prf:constant-multiple}
 
 \begin{remark*}[Return]
-\hyperref[thm:constant-multiple-rule]{$\leftarrow$ Back to Theorem (Constant Multiple Rule) in Notes}
+\hyperref[thm:constant-multiple-rule]{Return to Theorem}
 \end{remark*}
+
+\begin{theorem*}[Constant Multiple Rule]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, let $f : I \to \mathbb{R}$ be differentiable at $c$, and let $\alpha \in \mathbb{R}$. Then $\alpha f$ is differentiable at $c$ and $(\alpha f)'(c) = \alpha f'(c)$.
+\end{theorem*}
 
 \begin{proof}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, let
-$f : I \to \mathbb{R}$ be differentiable at $c$, and let $\alpha \in \mathbb{R}$.
-Set $h := \alpha f$. The claim is that $h$ is differentiable at $c$ and
-$h'(c) = \alpha f'(c)$.
-
-\ProofStep{1}{Form the difference quotient of $h$.}
-For $x \in I$ with $x \neq c$, substituting $h(x) = \alpha f(x)$ gives
+\textbf{Professional Standard Proof.}~\\
+Set $h := \alpha f$. For $x \in I$ with $x \neq c$, the difference quotient becomes
 \[
-  \frac{h(x) - h(c)}{x - c}
-  = \frac{\alpha f(x) - \alpha f(c)}{x - c}
-  = \alpha \cdot \frac{f(x) - f(c)}{x - c}.
+  \frac{h(x) - h(c)}{x - c} = \frac{\alpha f(x) - \alpha f(c)}{x - c} = \alpha \cdot \frac{f(x) - f(c)}{x - c}.
 \]
-
-\ProofStep{2}{Pass to the limit.}
-By \ByThm{Constant Multiple Rule for Limits},
+By the Constant Multiple Rule for Limits,
 \[
-  \lim_{x \to c} \frac{h(x) - h(c)}{x - c}
-  = \alpha \cdot \lim_{x \to c} \frac{f(x) - f(c)}{x - c}.
+  \lim_{x \to c} \frac{h(x) - h(c)}{x - c} = \alpha \cdot \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \alpha f'(c),
 \]
-Since $f$ is differentiable at $c$, the limit on the right exists and equals
-$f'(c)$ by \ByDef{Differentiability at a Point}. Therefore $h'(c) = \alpha f'(c)$.
+where the final equality follows from the differentiability of $f$ at $c$. Therefore $h'(c) = \alpha f'(c)$.
 \end{proof}
 
-\begin{remark*}[Proof shape]
-The scalar $\alpha$ factors out of the difference quotient by arithmetic,
-reducing the problem immediately to the known limit $f'(c)$. The Constant
-Multiple Rule for Limits handles the passage through the scalar.
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
 
-\FlashProof{1. Factor $\alpha$ out of the difference quotient of $\alpha f$.
-  2. Apply the Constant Multiple Rule for Limits; differentiability of $f$
-  supplies $f'(c)$.}
+\textbf{Step 1.} Form the difference quotient of $h := \alpha f$. For $x \in I$ with $x \neq c$, substituting the definition of $h$ gives
+\[
+  \frac{h(x) - h(c)}{x - c} = \frac{\alpha f(x) - \alpha f(c)}{x - c} = \alpha \cdot \frac{f(x) - f(c)}{x - c}.
+\]
+The scalar $\alpha$ factors out by basic arithmetic properties of real numbers.
+
+\textbf{Step 2.} Apply the limit properties to establish differentiability. By the Constant Multiple Rule for Limits, the scalar $\alpha$ can be moved outside the limit:
+\[
+  \lim_{x \to c} \frac{h(x) - h(c)}{x - c} = \alpha \cdot \lim_{x \to c} \frac{f(x) - f(c)}{x - c}.
+\]
+Since $f$ is differentiable at $c$, the limit $\lim_{x \to c} \frac{f(x) - f(c)}{x - c}$ exists and equals $f'(c)$ by definition of differentiability at a point. Therefore $h'(c) = \alpha f'(c)$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof using the definition of differentiability. The strategy exploits the linearity of limits: the scalar $\alpha$ factors out of the difference quotient algebraically, then the Constant Multiple Rule for Limits allows passage of the scalar through the limit operation. The differentiability of the original function $f$ supplies the required limit value.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{remark*}[Dependencies]~\\
 \begin{itemize}
-  \item \hyperref[def:derivative-at-point]{Definition of Differentiability at a Point}:
-    Identifies the limit of the difference quotient of $f$ as $f'(c)$.
-  \item \hyperref[thm:limit-constant-multiple]{Constant Multiple Rule for Limits}:
-    Licenses pulling $\alpha$ outside the limit.
+  \item \hyperref[def:derivative-at-point]{Definition of Differentiability at a Point}
+  \item \hyperref[thm:limit-constant-multiple]{Constant Multiple Rule for Limits}
 \end{itemize}
-
-\FlashUses{def:derivative-at-point, thm:limit-constant-multiple}
 \end{remark*}

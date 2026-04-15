@@ -1,74 +1,41 @@
-% =========================================================
-% Proof: Differentiability Implies Continuity
-% Source: volume-iv/calculus/differentiation/notes/notes-definitions.tex
-% Mode: standard
-% =========================================================
-
-\subsection*{Differentiability Implies Continuity}
-\label{prf:diff-implies-cont}
+\newpage
+\phantomsection
+\label{prf:differentiable-implies-continuous}
 
 \begin{remark*}[Return]
-\hyperref[thm:diff-implies-cont]{$\leftarrow$ Back to Theorem (Differentiability Implies Continuity) in Notes}
+\hyperref[thm:diff-implies-cont]{Return to Theorem}
 \end{remark*}
+
+\begin{theorem*}[Differentiability Implies Continuity]
+Let $f$ be defined on an open interval $I$ containing $c$. If $f$ is differentiable at $c$, then $f$ is continuous at $c$.
+\end{theorem*}
 
 \begin{proof}
-Let $f$ be defined on an open interval $I$ containing $c$, and assume $f$ is
-differentiable at $c$. The claim is that $f$ is continuous at $c$, i.e.,
-$\lim_{x \to c} f(x) = f(c)$, equivalently $\lim_{x \to c} [f(x) - f(c)] = 0$.
-
-\ProofStep{1}{Secant identity.}
-For any $x \in I$ with $x \neq c$, the vertical displacement admits the factorization
-\[
-    f(x) - f(c)
-    \;=\;
-    \underbrace{\left(\frac{f(x) - f(c)}{x - c}\right)}_{\text{difference quotient}}
-    \cdot
-    \underbrace{(x - c)}_{\Delta x}.
-\]
-This identity holds on all of $I \setminus \{c\}$ by arithmetic; no limit has
-been taken.
-
-\ProofStep{2}{Distribute the limit over the product.}
-Taking the limit as $x \to c$ and applying \ByThm{Product Rule for Limits}:
-\[
-    \lim_{x \to c} [f(x) - f(c)]
-    \;=\;
-    \left(\lim_{x \to c} \frac{f(x) - f(c)}{x - c}\right)
-    \cdot
-    \left(\lim_{x \to c} (x - c)\right).
-\]
-The Product Rule applies because both limits on the right exist — the first by
-the differentiability hypothesis, the second trivially.
-
-\ProofStep{3}{Evaluate each factor.}
-By \ByDef{Differentiability at a point}, the first factor equals $f'(c)$, a
-finite real number. The second factor satisfies $\lim_{x \to c}(x - c) = 0$
-by the \ByThm{Identity Limit}. Therefore:
-\[
-    \lim_{x \to c} [f(x) - f(c)] = f'(c) \cdot 0 = 0.
-\]
-
-\ProofStep{4}{Conclude continuity.}
-Since $\lim_{x \to c}[f(x) - f(c)] = 0$, it follows that
-$\lim_{x \to c} f(x) = f(c)$. By \ByDef{Continuity at a point}, $f$ is
-continuous at $c$.
+\textbf{Professional Standard Proof.}~\\
+Assume $f$ is differentiable at $c$. For any $x \in I$ with $x \neq c$, the identity $f(x) - f(c) = \frac{f(x) - f(c)}{x - c} \cdot (x - c)$ holds. Taking limits as $x \to c$ and applying the Product Rule for Limits yields $\lim_{x \to c}[f(x) - f(c)] = \lim_{x \to c}\frac{f(x) - f(c)}{x - c} \cdot \lim_{x \to c}(x - c) = f'(c) \cdot 0 = 0$. Therefore $\lim_{x \to c} f(x) = f(c)$, establishing continuity at $c$.
 \end{proof}
 
-\begin{remark*}[Proof shape]
-The proof hinges on the algebraic factorization of $f(x) - f(c)$ into the
-product of the difference quotient and the displacement. This converts the
-continuity problem into a limit-of-product problem, where the derivative
-hypothesis controls one factor and the displacement annihilates the product.
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
 
-\FlashProof{1. Factor $f(x)-f(c)$ as (difference quotient)$\cdot(x-c)$. 2. Apply the Product Rule for Limits — both factors have limits. 3. Differentiability gives $f'(c)$ finite; displacement gives $0$. 4. Product is $0$, so $\lim f(x)=f(c)$.}
+\textbf{Step 1.} Factor the vertical displacement using secant identity. For any $x \in I$ with $x \neq c$, the vertical displacement admits the factorization $f(x) - f(c) = \left(\frac{f(x) - f(c)}{x - c}\right) \cdot (x - c)$. This identity holds on all of $I \setminus \{c\}$ by arithmetic; no limit has been taken.
+
+\textbf{Step 2.} Distribute the limit over the product. Taking the limit as $x \to c$ and applying the Product Rule for Limits: $\lim_{x \to c} [f(x) - f(c)] = \left(\lim_{x \to c} \frac{f(x) - f(c)}{x - c}\right) \cdot \left(\lim_{x \to c} (x - c)\right)$. The Product Rule applies because both limits on the right exist — the first by the differentiability hypothesis, the second trivially.
+
+\textbf{Step 3.} Evaluate each factor. By definition of differentiability at a point, the first factor equals $f'(c)$, a finite real number. The second factor satisfies $\lim_{x \to c}(x - c) = 0$ by the Identity Limit. Therefore: $\lim_{x \to c} [f(x) - f(c)] = f'(c) \cdot 0 = 0$.
+
+\textbf{Step 4.} Conclude continuity. Since $\lim_{x \to c}[f(x) - f(c)] = 0$, it follows that $\lim_{x \to c} f(x) = f(c)$. By definition of continuity at a point, $f$ is continuous at $c$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof employs a direct approach, hinging on the algebraic factorization of $f(x) - f(c)$ into the product of the difference quotient and the displacement. This converts the continuity problem into a limit-of-product problem, where the derivative hypothesis controls one factor and the displacement annihilates the product.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{remark*}[Dependencies]~\\
 \begin{itemize}
-  \item \hyperref[def:derivative]{Definition of Differentiability at a Point}: Identifies the limit of the difference quotient as $f'(c)$.
-  \item \hyperref[prop:limit-product-rule]{Product Rule for Limits}: Distributes the limit over the factored expression.
-  \item \hyperref[prop:identity-limit]{Identity Limit}: Establishes $\lim_{x \to c}(x-c) = 0$.
-  \item \hyperref[def:continuity]{Definition of Continuity at a Point}: Frames the conclusion.
+  \item \hyperref[def:derivative]{Definition of Differentiability at a Point}
+  \item \hyperref[prop:limit-product-rule]{Product Rule for Limits}
+  \item \hyperref[prop:identity-limit]{Identity Limit}
+  \item \hyperref[def:continuity]{Definition of Continuity at a Point}
 \end{itemize}
-\FlashUses{def:derivative, prop:limit-product-rule, prop:identity-limit, def:continuity}
 \end{remark*}

@@ -1,28 +1,43 @@
+\newpage
+\phantomsection
+\label{prf:increment-definition-derivative}
 
-\section*{Equivalence of Derivative Definitions}
+\begin{remark*}[Return]
+\hyperref[thm:increment-definition-derivative]{Return to Theorem}
+\end{remark*}
 
-\noindent \textbf{Proposition:} A function $f: (a,b) \to \mathbb{R}$ is differentiable at $c \in (a,b)$ if and only if 
+\begin{theorem*}[Equivalence of Derivative Definitions]
+A function $f: (a,b) \to \mathbb{R}$ is differentiable at $c \in (a,b)$ if and only if 
 \[ \lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = f'(c). \]
+\end{theorem*}
 
 \begin{proof}
-$(\Rightarrow)$ Assume $f$ is differentiable at $c$, meaning $\lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c)$.
-\begin{enumerate}
-    \item \textbf{Substitution:} Let $h = x - c$. It follows that $x = c + h$.
-    \item \textbf{Change of Limit Variable:} As $x \to c$, the difference $(x - c) \to 0$, therefore $h \to 0$.
-    \item \textbf{Apply Substitution to the Limit:}
-    \[ \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \lim_{h \to 0} \frac{f(c + h) - f(c)}{h} \]
-    \item \textbf{Conclusion:} Since the first limit exists and equals $f'(c)$, the second limit must also exist and equal $f'(c)$.
-\end{enumerate}
+\textbf{Professional Standard Proof.}~\\
+$(\Rightarrow)$ Assume $f$ is differentiable at $c$, so $\lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c)$. Substituting $h = x - c$ gives $x = c + h$, and as $x \to c$, we have $h \to 0$. Therefore $\lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c)$.
 
-\vspace{1em}
-
-$(\Leftarrow)$ Conversely, assume the limit with respect to $h$ exists and equals $f'(c)$.
-\begin{enumerate}
-    \item \textbf{Reverse Substitution:} Let $x = c + h$, which implies $h = x - c$.
-    \item \textbf{Change of Limit Variable:} As $h \to 0$, $x \to c$.
-    \item \textbf{Conclusion:} By substituting back, we recover the original definition:
-    \[ \lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c). \]
-    Thus, $f$ is differentiable at $c$.
-\end{enumerate}
+$(\Leftarrow)$ Conversely, assume $\lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = f'(c)$. Setting $x = c + h$ gives $h = x - c$, and as $h \to 0$, we have $x \to c$. Thus $\lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = f'(c)$, establishing differentiability at $c$.
 \end{proof}
 
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Establish the forward direction by variable substitution. Assume $f$ is differentiable at $c$, meaning $\lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c)$ exists. The substitution $h = x - c$ transforms this limit: when $x = c + h$, the condition $x \to c$ becomes $h \to 0$ since $(c + h) \to c$ precisely when $h \to 0$.
+
+\textbf{Step 2.} Apply the substitution to transform the limit expression. Under the substitution $h = x - c$, the difference quotient becomes $\frac{f(x) - f(c)}{x - c} = \frac{f(c + h) - f(c)}{h}$. The limit transformation preserves the value: $\lim_{x \to c} \frac{f(x) - f(c)}{x - c} = \lim_{h \to 0} \frac{f(c + h) - f(c)}{h}$.
+
+\textbf{Step 3.} Establish the reverse direction using the inverse substitution. Assume $\lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = f'(c)$ exists. The reverse substitution $x = c + h$ (equivalently $h = x - c$) transforms this limit back to the standard form.
+
+\textbf{Step 4.} Complete the bidirectional equivalence. Under the reverse substitution, $h \to 0$ becomes $x \to c$, and the expression $\frac{f(c+h) - f(c)}{h}$ becomes $\frac{f(x) - f(c)}{x - c}$. Therefore $\lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = \lim_{x \to c} \frac{f(x) - f(c)}{x - c} = f'(c)$, confirming differentiability at $c$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof establishing logical equivalence through variable substitution. The strategy demonstrates that both derivative definitions are merely different parameterizations of the same geometric concept: the slope of the secant line approaching the tangent line. The bijective nature of the linear substitution $h = x - c$ preserves all limit properties, making the equivalence immediate once the correspondence is established.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:differentiability]{Definition of Differentiability}
+  \item \hyperref[def:limit]{Definition of Limit}
+  \item \hyperref[thm:limit-substitution]{Limit Substitution Theorem}
+\end{itemize}
+\end{remark*}

@@ -1,68 +1,37 @@
-% =========================================================
-% Proof: Uniqueness of the Derivative
-% Source: volume-iii/analysis/differentiation/notes/notes-definitions.tex
-% Mode: standard
-% =========================================================
-
-\subsection*{Uniqueness of the Derivative}
-\label{prf:uniqueness-derivative}
+\newpage
+\phantomsection
+\label{prf:uniqueness-of-derivative}
 
 \begin{remark*}[Return]
-\hyperref[thm:uniqueness-derivative]{$\leftarrow$ Back to Theorem (Uniqueness of the Derivative) in Notes}
+\hyperref[thm:uniqueness-derivative]{Return to Theorem}
 \end{remark*}
+
+\begin{theorem*}[Uniqueness of the Derivative]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ is differentiable at $c$, then $f'(c)$ is unique.
+\end{theorem*}
 
 \begin{proof}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$,
-and let $c \in I$. Assume $f$ is differentiable at $c$. The claim is that
-$f'(c)$ is unique: if $L_1$ and $L_2$ both satisfy the definition of the
-derivative at $c$, then $L_1 = L_2$.
+\textbf{Professional Standard Proof.}~\\
+Suppose both $L_1$ and $L_2$ satisfy the definition of the derivative at $c$. Then both are values of the limit $\lim_{x \to c} \frac{f(x)-f(c)}{x-c}$. By the Uniqueness of Limits of Functions, this limit has at most one value. Therefore $L_1 = L_2$.
+\end{proof}
 
-The derivative is defined as the limit of the difference quotient at $c$.
-Both $L_1$ and $L_2$ are therefore values of the same limit,
-$\lim_{x \to c} \frac{f(x)-f(c)}{x-c}$. By \ByThm{Uniqueness of Limits of
-Functions}, a function can have at most one limit at a cluster point.
-Therefore $L_1 = L_2$.
-\end{proof>
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
 
-\begin{remark*}[Proof shape]
-The derivative is a limit, and limits are unique. The entire proof is a
-one-step reduction from uniqueness of the derivative to uniqueness of limits.
+\textbf{Step 1.} Suppose both $L_1$ and $L_2$ satisfy the definition of the derivative at $c$. By definition of the derivative, this means both $L_1$ and $L_2$ equal $\lim_{x \to c} \frac{f(x)-f(c)}{x-c}$. The difference quotient $\frac{f(x)-f(c)}{x-c}$ is a function of $x$ defined for all $x \in I$ with $x \neq c$.
 
-\FlashProof{Both $L_1$ and $L_2$ are values of $\lim_{x\to c}
-  \frac{f(x)-f(c)}{x-c}$. By Uniqueness of Limits of Functions, this
-  limit is unique, so $L_1 = L_2$.}
+\textbf{Step 2.} Since $I$ is an open interval and $c \in I$, the point $c$ is a cluster point of the domain $I \setminus \{c\}$. The Uniqueness of Limits of Functions theorem states that if a function has a limit at a cluster point, then that limit is unique.
+
+\textbf{Step 3.} Therefore, the limit $\lim_{x \to c} \frac{f(x)-f(c)}{x-c}$ can have at most one value. Since both $L_1$ and $L_2$ equal this limit, it follows that $L_1 = L_2$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a direct proof by reduction to a previously established result. The strategy is to recognize that the derivative is defined as a limit of the difference quotient, then apply the general theorem that limits are unique. The proof works because it reduces a specific question about derivatives to the general principle of uniqueness of limits.
 \end{remark*}
 
-\begin{remark*}[Commentary]
-\textbf{(a) Why is this theorem needed at all?}
-The definition of the derivative says $f'(c) = L$ if $L$ satisfies
-the $\varepsilon$-$\delta$ condition. Without a uniqueness theorem, there
-is no guarantee that two different values $L_1$ and $L_2$ could not both
-satisfy that condition. The proof closes this gap by showing the defining
-limit can have at most one value — but this fact is not free, it is a
-theorem about limits that must be cited.
-
-\textbf{(b) Why does the proof reduce to limits rather than arguing directly?}
-The difference quotient $\frac{f(x)-f(c)}{x-c}$ is an ordinary function
-of $x$ (defined for $x \neq c$). Its limit as $x \to c$ is therefore a
-function limit, and the Uniqueness of Limits of Functions theorem applies
-directly. There is no need to reprove uniqueness from scratch — the limit
-machinery already carries it.
-
-\textbf{(c) What makes this proof so short?}
-The work was done earlier in the curriculum when Uniqueness of Limits of
-Functions was proved. This proof does nothing more than recognise that the
-derivative is a special case of that theorem. Recognising when a new result
-is a direct instance of a previously proved general theorem — rather than
-something requiring new work — is a key proof-reading skill.
-\end{remark*}
-
-\begin{remark*}[Dependencies]
+\begin{remark*}[Dependencies]~\\
 \begin{itemize}
-  \item \hyperref[thm:limit-unique]{Uniqueness of Limits of Functions}:
-    The single result doing all the work. The derivative is a limit;
-    limits are unique; therefore the derivative is unique.
+  \item \hyperref[def:derivative]{Definition of Derivative}
+  \item \hyperref[thm:limit-unique]{Uniqueness of Limits of Functions}
 \end{itemize}
-
-\FlashUses{thm:limit-unique}
 \end{remark*}
