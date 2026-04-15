@@ -1,3 +1,54 @@
-% Capstone exercise: Lambda Calculus
-% See DESIGN.md §1.4
-% TODO
+% =========================================================
+% Capstone Exercise — Lambda Calculus
+% =========================================================
+
+\subsection*{Capstone: The Identity Proof Under Curry--Howard}
+\label{prf:capstone-lambda-calculus}
+
+\begin{remark*}[Return]
+Chapter capstone --- synthesises the introduction section.
+\end{remark*}
+
+\begin{proof}
+The claim is threefold:
+\begin{enumerate}
+  \item The lambda term $I := \lambda x.x$ is well-typed: in the
+        empty context, $\vdash \lambda x.x : A \to A$ for any type $A$.
+  \item Under the Curry--Howard correspondence, this typing derivation
+        \emph{is} the proof of the tautology $A \Rightarrow A$.
+  \item In Lean~4, the term \texttt{fun x => x} proves any goal
+        of the form \texttt{A \to\ A}, and \texttt{\#check @id} confirms
+        the type is \texttt{$\forall$ (A : Type), A \to\ A}.
+\end{enumerate}
+
+% TODO: Work out parts (1) and (2) by hand.
+%
+% Part (1): Construct the typing derivation tree using the three
+% typing rules from Definition~\ref{def:typing-judgment}.
+% The derivation has exactly two steps: (Var) then (Abs).
+%
+% Part (2): Identify each rule in the derivation with its logical
+% counterpart: (Var) = hypothesis; (Abs) = implication introduction.
+%
+% Part (3): Write the Lean term and verify it compiles.
+% This is a paper exercise; no Lean file is generated.
+\end{proof}
+
+\begin{remark*}[Proof shape]
+% TODO: fill once worked by hand.
+
+\FlashProof{1. Apply (Var): $x:A \vdash x:A$.
+  2. Apply (Abs): $\vdash \lambda x.x : A\to A$.
+  3. Identify with logical proof: hypothesis then implication introduction.}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:typing-judgment]{Definition of typing judgment}:
+        the three typing rules
+  \item \hyperref[thm:curry-howard]{Curry--Howard correspondence}:
+        the dictionary between types and propositions
+\end{itemize}
+
+\FlashUses{def:typing-judgment, thm:curry-howard}
+\end{remark*}

@@ -1,0 +1,80 @@
+% =========================================================
+% Why Induction Works
+% =========================================================
+\paragraph{Why Induction Works.}
+
+Mathematical induction is often presented as a technique: base case,
+inductive step, done. That presentation is useful but incomplete.
+Induction \emph{feels} like a procedure, but it is actually a theorem,
+and it is worth understanding why it is true before using it.
+
+\begin{remark}[The Peano axiom behind induction]
+The natural numbers are characterized by the Peano axioms.
+The critical one for induction is Axiom~P5:
+
+\medskip
+\noindent\textit{If $A \subseteq \mathbb{N}$ satisfies (i) $0 \in A$ and
+(ii) $n \in A \Rightarrow S(n) \in A$, then $A = \mathbb{N}$.}
+
+\medskip
+\noindent This axiom says that $\mathbb{N}$ is the \emph{smallest}
+set containing $0$ and closed under the successor function $S$.
+There is no proper subset of $\mathbb{N}$ with these two properties.
+
+The induction principle is a direct translation. Let $P(n)$ be any
+statement. Define $A = \{n \in \mathbb{N} : P(n)\}$. If $P(0)$ holds,
+then $0 \in A$. If $P(n) \Rightarrow P(S(n))$ for every $n$, then
+$A$ is closed under $S$. By P5, $A = \mathbb{N}$.
+Therefore $P(n)$ holds for every $n \in \mathbb{N}$.
+
+The full development of this from the Peano axioms is in the
+Axiom Systems chapter. Here, the takeaway is: induction is not
+a trick. It is a theorem derivable from the definition of $\mathbb{N}$.
+\end{remark}
+
+\begin{remark}[Why the base case is not optional]
+The inductive step alone says: \emph{if} $P(n)$ holds for some $n$,
+then $P(n+1)$ holds. This is a conditional, not an assertion.
+Without a base case, there is no $n$ for which $P(n)$ is known to hold.
+The chain of conditionals has no starting point, and the proof produces
+nothing.
+
+The most famous illustration is the false theorem ``all horses are the
+same colour.'' A flawed argument runs: base case trivial ($n=1$),
+inductive step [fatally flawed reasoning]. The lesson is not just that
+the step is wrong --- it is that even a correct base case does not rescue
+a bad step, and even a correct step does not rescue a missing base case.
+Each part is independent; both are necessary.
+
+In terms of P5: the base case establishes $0 \in A$. The inductive step
+establishes closure under $S$. Both conditions of P5 are required for
+the conclusion $A = \mathbb{N}$.
+\end{remark}
+
+\begin{remark}[The domino picture and its limitations]
+The common picture of induction as an infinite row of falling dominoes
+is a useful mnemonic but a misleading explanation. It suggests that
+induction requires each domino to knock over the next, which captures
+the inductive step. But it does not explain why the argument is valid ---
+the validity comes from P5, not from a physical metaphor.
+
+More importantly, the domino picture suggests that the steps happen
+\emph{in time}: first domino~0 falls, then~1, then~2, and so on.
+But induction proves a statement about \emph{all} natural numbers
+simultaneously, not by a sequential process. The proof is instantaneous:
+once you have established the base case and the inductive step, the
+conclusion $P(n)$ for all $n$ follows at once from P5.
+
+Use the domino picture as memory aid. For understanding, use P5.
+\end{remark}
+
+\begin{remark}[Induction and well-ordering are equivalent]
+The induction principle and the well-ordering principle for $\mathbb{N}$
+(every nonempty subset has a least element) are logically equivalent.
+This means every induction argument can be rephrased as a
+minimal-counterexample argument, and vice versa. Both are valid proof
+tools. The well-ordering approach is sometimes more natural when you
+want to reason about the \emph{first} failure rather than climbing
+from a base case. The equivalence is proved in
+Section~\ref{sec:wellordering}.
+\end{remark}

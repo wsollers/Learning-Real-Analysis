@@ -1,0 +1,397 @@
+% =========================================================
+% Section: Introduction to Lambda Calculus
+% Chapter: Lambda Calculus — Volume I
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Section Toolkit --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l}
+\toprule
+\textbf{Concept} & \textbf{One-line summary} \\
+\midrule
+$\lambda$-term
+  & Variable $x$, abstraction $\lambda x.M$, application $MN$ \\
+$\alpha$-equivalence
+  & $\lambda x.M =_\alpha \lambda y.M[y/x]$ when $y$ fresh \\
+$\beta$-reduction
+  & $(\lambda x.M)N \to_\beta M[N/x]$ \\
+Normal form
+  & Term with no $\beta$-redex; may not exist (non-termination) \\
+Church boolean \textbf{T}
+  & $\lambda x.\lambda y.x$ \\
+Church boolean \textbf{F}
+  & $\lambda x.\lambda y.y$ \\
+Church numeral $\overline{n}$
+  & $\lambda f.\lambda x.f^n(x)$ ($f$ applied $n$ times to $x$) \\
+Type $\tau \to \sigma$
+  & Function type: input of type $\tau$, output of type $\sigma$ \\
+Typing judgment
+  & $\Gamma\vdash M : \tau$ reads ``$M$ has type $\tau$ in context $\Gamma$'' \\
+Curry--Howard
+  & Propositions are types; proofs are terms; $A\to B$ is implication \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Part I: Untyped Lambda Calculus
+% ---------------------------------------------------------
+
+\subsection*{Untyped Lambda Calculus}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Lambda Terms)}},
+  fonttitle=\small\bfseries]
+\label{def:lambda-terms}
+Fix a countably infinite set $\mathcal{V}$ of \textbf{variables}.
+The set $\Lambda$ of \textbf{lambda terms} is defined inductively:
+\begin{enumerate}
+  \item[(i)] (\textit{Variable}) Every $x \in \mathcal{V}$ is a
+             lambda term.
+  \item[(ii)] (\textit{Abstraction}) If $x \in \mathcal{V}$ and
+              $M \in \Lambda$, then $(\lambda x.M) \in \Lambda$.
+  \item[(iii)] (\textit{Application}) If $M, N \in \Lambda$,
+               then $(MN) \in \Lambda$.
+\end{enumerate}
+Application is left-associative: $MNP := (MN)P$.
+Abstraction extends as far right as possible:
+$\lambda x.MN := \lambda x.(MN)$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\Lambda$ is the smallest set satisfying (i)--(iii).
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What are the three syntactic forms of a lambda term?}
+\FlashA{Variable $x$; abstraction $\lambda x.M$ (a function with
+  parameter $x$ and body $M$); application $MN$ (apply $M$ to $N$).}
+\FlashHint{The entire expressiveness of lambda calculus --- booleans,
+  numbers, recursion, data structures --- is encoded using only these
+  three forms.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Free and Bound Variables)}},
+  fonttitle=\small\bfseries]
+\label{def:free-bound-variables}
+The sets $\mathrm{FV}(M)$ and $\mathrm{BV}(M)$ of
+\textbf{free} and \textbf{bound} variables of $M \in \Lambda$
+are defined by structural recursion:
+\begin{align*}
+\mathrm{FV}(x)        &= \{x\},
+  & \mathrm{BV}(x)        &= \emptyset \\
+\mathrm{FV}(\lambda x.M) &= \mathrm{FV}(M) \setminus \{x\},
+  & \mathrm{BV}(\lambda x.M) &= \mathrm{BV}(M) \cup \{x\} \\
+\mathrm{FV}(MN)       &= \mathrm{FV}(M) \cup \mathrm{FV}(N),
+  & \mathrm{BV}(MN)       &= \mathrm{BV}(M) \cup \mathrm{BV}(N)
+\end{align*}
+A term $M$ is \textbf{closed} (a \textbf{combinator}) if
+$\mathrm{FV}(M) = \emptyset$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathrm{FV}$ and $\mathrm{BV}$ are total functions $\Lambda\to\mathcal{P}(\mathcal{V})$
+defined by the equations above.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What makes a variable free vs.\ bound in a lambda term?}
+\FlashA{A variable occurrence is \emph{bound} if it is within the scope
+  of a $\lambda$ that binds it; \emph{free} otherwise.
+  In $\lambda x.(xy)$: $x$ is bound, $y$ is free.
+  A closed term has no free variables.}
+\FlashHint{The binder $\lambda x$ captures every free occurrence of $x$
+  in its body.  Shadowing: inner $\lambda x$ captures occurrences in
+  its body even if outer $\lambda x$ exists.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\alpha$-Equivalence)}},
+  fonttitle=\small\bfseries]
+\label{def:alpha-equivalence}
+Two lambda terms are \textbf{$\alpha$-equivalent}, written
+$M =_\alpha N$, if one can be obtained from the other by
+consistently renaming bound variables.  Formally,
+$=_\alpha$ is the smallest congruence on $\Lambda$ satisfying:
+\[
+  \lambda x.M =_\alpha \lambda y.M[y/x]
+  \quad \text{whenever } y \notin \mathrm{FV}(M).
+\]
+We work with $\alpha$-equivalence classes throughout: terms
+that differ only in bound variable names are identified.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$=_\alpha$ is an equivalence relation on $\Lambda$, and
+$\lambda x.M =_\alpha \lambda y.M[y/x]$ for all $y\notin\mathrm{FV}(M)$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What is $\alpha$-equivalence and why do we need it?}
+\FlashA{$\alpha$-equivalence identifies terms differing only in bound
+  variable names: $\lambda x.x =_\alpha \lambda y.y$.
+  We need it because the \emph{name} of a bound variable carries no
+  information --- only the binding structure matters.
+  It prevents variable capture in substitution.}
+\FlashHint{Think of it as ``the name of a local variable in a function
+  doesn't matter.'' $f(x) = x^2$ and $f(t) = t^2$ define the same function.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\beta$-Reduction)}},
+  fonttitle=\small\bfseries]
+\label{def:beta-reduction}
+The \textbf{$\beta$-reduction} relation $\to_\beta$ on $\Lambda$
+is the smallest compatible relation satisfying:
+\[
+  (\lambda x.M)N \to_\beta M[N/x]
+\]
+where $M[N/x]$ denotes the capture-avoiding substitution of $N$
+for all free occurrences of $x$ in $M$.
+The reflexive-transitive closure is written $\twoheadrightarrow_\beta$.
+A term with no $\beta$-redex (no subterm of the form
+$(\lambda x.M)N$) is in \textbf{$\beta$-normal form}.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\to_\beta$ is a relation on $\Lambda/\!=_\alpha$ satisfying the
+one-step reduction axiom above, closed under abstraction and
+application contexts.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State the $\beta$-reduction rule and give an example.}
+\FlashA{$(\lambda x.M)N \to_\beta M[N/x]$: apply the function
+  $\lambda x.M$ to argument $N$ by substituting $N$ for $x$ in $M$.
+  Example: $(\lambda x.x\,x)(\lambda y.y)
+  \to_\beta (\lambda y.y)(\lambda y.y)
+  \to_\beta \lambda y.y$.}
+\FlashHint{``Capture-avoiding'' means if $N$ contains a free variable
+  $z$ and $M$ contains $\lambda z.(...)$, rename the bound $z$ before
+  substituting.  $\alpha$-equivalence handles this.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Church Encodings
+% ---------------------------------------------------------
+
+\subsection*{Church Encodings}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Church Booleans)}},
+  fonttitle=\small\bfseries]
+\label{def:church-booleans}
+The \textbf{Church booleans} are the closed lambda terms:
+\[
+  \mathbf{T} := \lambda x.\lambda y.\,x
+  \qquad
+  \mathbf{F} := \lambda x.\lambda y.\,y
+\]
+The \textbf{if-then-else} combinator is:
+\[
+  \mathbf{if} := \lambda b.\lambda t.\lambda f.\,b\,t\,f
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathbf{T}, \mathbf{F}, \mathbf{if} \in \Lambda$ are closed terms.
+$\mathbf{if}\,\mathbf{T}\,M\,N \twoheadrightarrow_\beta M$ and
+$\mathbf{if}\,\mathbf{F}\,M\,N \twoheadrightarrow_\beta N$
+for all $M,N\in\Lambda$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What are the Church booleans and how does if-then-else work?}
+\FlashA{$\mathbf{T} = \lambda x.\lambda y.x$ (select first);
+  $\mathbf{F} = \lambda x.\lambda y.y$ (select second).
+  $\mathbf{if}\,\mathbf{T}\,M\,N
+  = (\lambda b\lambda t\lambda f.btf)\,\mathbf{T}\,M\,N
+  \twoheadrightarrow_\beta \mathbf{T}\,M\,N
+  = (\lambda x\lambda y.x)\,M\,N
+  \twoheadrightarrow_\beta M$.}
+\FlashHint{The key insight: a boolean \emph{is} a binary selector.
+  True selects the first branch; false selects the second.
+  No primitive boolean type is needed.}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Every Church encoding works by the same principle: data is represented
+as a function that \emph{performs} the relevant case analysis.  A boolean
+selects one of two branches.  A natural number applies a function $n$
+times.  A list folds over its elements.  This is not a trick --- it is
+the deepest fact about computation: data and control flow are the same thing.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Church Numerals)}},
+  fonttitle=\small\bfseries]
+\label{def:church-numerals}
+The \textbf{Church numeral} $\overline{n}$ for $n \in \mathbb{N}$
+is the closed lambda term:
+\[
+  \overline{n} := \lambda f.\lambda x.\,f^n(x)
+\]
+where $f^0(x) := x$ and $f^{n+1}(x) := f(f^n(x))$.
+Explicitly: $\overline{0} = \lambda f.\lambda x.\,x$,\quad
+$\overline{1} = \lambda f.\lambda x.\,f\,x$,\quad
+$\overline{2} = \lambda f.\lambda x.\,f(f\,x)$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\forall n\in\mathbb{N}$: $\overline{n}\in\Lambda$ is closed and
+$\overline{n}\,f\,x \twoheadrightarrow_\beta f^n(x)$ for all $f,x$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What is the Church numeral $\overline{n}$?}
+\FlashA{$\overline{n} = \lambda f.\lambda x.f^n(x)$: a function that
+  takes $f$ and $x$ and applies $f$ to $x$ exactly $n$ times.
+  $\overline{0}\,f\,x = x$; $\overline{1}\,f\,x = f\,x$;
+  $\overline{2}\,f\,x = f(f\,x)$.}
+\FlashHint{The successor function is
+  $\mathbf{S} = \lambda n.\lambda f.\lambda x.f\,(n\,f\,x)$:
+  apply $f$ once more than $n$ does.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Part II: Simply Typed Lambda Calculus
+% ---------------------------------------------------------
+
+\subsection*{Simply Typed Lambda Calculus ($\lambda^\to$)}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Simple Types)}},
+  fonttitle=\small\bfseries]
+\label{def:simple-types}
+Fix a set of \textbf{base types} (e.g.\ $o$ for propositions).
+The set $\mathcal{T}$ of \textbf{simple types} is:
+\begin{enumerate}
+  \item[(i)] Every base type is a simple type.
+  \item[(ii)] If $\sigma, \tau \in \mathcal{T}$ then
+              $(\sigma \to \tau) \in \mathcal{T}$.
+\end{enumerate}
+$\to$ is right-associative: $\sigma\to\tau\to\rho := \sigma\to(\tau\to\rho)$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathcal{T}$ is the smallest set of expressions satisfying (i) and (ii).
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What is a simple type and how is the function type formed?}
+\FlashA{Base types plus function types: if $\sigma$ and $\tau$ are types
+  then $\sigma\to\tau$ is the type of functions from $\sigma$ to $\tau$.
+  Right-associative: $A\to B\to C$ means $A\to(B\to C)$, a curried
+  two-argument function.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Typing Judgment)}},
+  fonttitle=\small\bfseries]
+\label{def:typing-judgment}
+A \textbf{context} $\Gamma$ is a finite list of pairs
+$x_1:\sigma_1,\ldots,x_n:\sigma_n$ with distinct variable names.
+The \textbf{typing judgment} $\Gamma \vdash M : \tau$ is defined
+by the following rules:
+\[
+  \frac{x:\tau \in \Gamma}{\Gamma \vdash x : \tau}
+  \qquad
+  \frac{\Gamma, x:\sigma \vdash M : \tau}
+       {\Gamma \vdash \lambda x.M : \sigma\to\tau}
+  \qquad
+  \frac{\Gamma \vdash M : \sigma\to\tau \quad \Gamma \vdash N : \sigma}
+       {\Gamma \vdash MN : \tau}
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\Gamma\vdash M:\tau$ is derivable iff there exists a derivation tree
+built from the three rules above.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State the three typing rules for simply typed lambda calculus.}
+\FlashA{(Var): a variable has its declared type.
+  (Abs): $\lambda x.M$ has type $\sigma\to\tau$ if $M$ has type $\tau$
+  in a context extended with $x:\sigma$.
+  (App): applying a function of type $\sigma\to\tau$ to an argument
+  of type $\sigma$ gives type $\tau$.}
+\FlashHint{These three rules are the computational counterpart of three
+  logical rules: hypothesis, implication introduction, implication
+  elimination (modus ponens).}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Curry-Howard Correspondence
+% ---------------------------------------------------------
+
+\subsection*{The Curry--Howard Correspondence}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Curry--Howard Correspondence)}},
+  fonttitle=\small\bfseries]
+\label{thm:curry-howard}
+There is a correspondence between simply typed lambda calculus
+and propositional intuitionistic logic:
+\[
+  \begin{array}{ccc}
+  \textbf{Type theory} & & \textbf{Logic} \\
+  \hline
+  \text{type } \tau & \longleftrightarrow & \text{proposition } \tau \\
+  \text{term } M : \tau & \longleftrightarrow & \text{proof of } \tau \\
+  \text{function type } \sigma\to\tau & \longleftrightarrow
+    & \text{implication } \sigma\Rightarrow\tau \\
+  \text{abstraction } \lambda x.M & \longleftrightarrow
+    & \text{implication introduction} \\
+  \text{application } MN & \longleftrightarrow
+    & \text{modus ponens} \\
+  \text{type checking} & \longleftrightarrow & \text{proof checking}
+  \end{array}
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\Gamma\vdash M:\tau$ is derivable in $\lambda^\to$ iff
+$\Gamma$ (viewed as a list of hypotheses) proves $\tau$
+(viewed as a proposition) in intuitionistic propositional logic.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State the Curry--Howard correspondence in one sentence.}
+\FlashA{Propositions are types, proofs are programs (lambda terms),
+  and checking a proof is type-checking a term.}
+\FlashHint{The simplest instance: the identity function $\lambda x.x$
+  has type $A\to A$ and is simultaneously the proof of $A\Rightarrow A$.
+  In Lean: \texttt{fun x => x} proves any goal of the form \texttt{A \to\ A}.}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+This is not a metaphor.  Every Lean tactic proof is constructing a lambda
+term behind the scenes.  When you write \texttt{intro h} you are writing
+$\lambda h.$; when you write \texttt{exact h} you are supplying the term
+$h$.  The \texttt{\#check} command in Lean shows the type of a term ---
+which, under Curry--Howard, is the proposition it proves.  Understanding
+lambda calculus makes the Lean kernel transparent.
+\end{remark*}
+
+\begin{remark*}[Forward reference]
+A full treatment of dependent types (where types can depend on terms),
+the Calculus of Inductive Constructions, and Lean's underlying type
+theory (based on the Calculus of Constructions with universes) is
+deferred until sufficient formalization experience accumulates.
+The present section provides the conceptual foundation; the full
+machinery will be added as a later section of this chapter.
+\end{remark*}

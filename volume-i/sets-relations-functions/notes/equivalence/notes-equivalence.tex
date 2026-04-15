@@ -1,0 +1,236 @@
+% =========================================================
+% Equivalence Classes and Partitions
+% =========================================================
+
+\section{Equivalence Classes and Partitions}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Equivalence and Partitions — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Equivalence class  & $[a]_R = \{x \in A \mid (a,x)\in R\}$                        & \hyperref[def:equiv-class]{↓ Def} \\
+Quotient set       & $A/R$: all equivalence classes                                & \hyperref[def:quotient-set]{↓ Def} \\
+Index of $R$       & Cardinality of $A/R$                                          & \hyperref[def:index]{↓ Def} \\
+Canonical surjection & $\pi : A \to A/R$, $\pi(a) = [a]$                          & \hyperref[def:canonical-surj]{↓ Def} \\
+Partition          & Nonempty, disjoint, covering collection of subsets            & \hyperref[def:partition]{↓ Def} \\
+Rep.\ independence & $[a]=[b] \iff (a,b)\in R$                                    & \hyperref[lem:rep-independence]{↓ Lem} \\
+Equiv.--partition correspondence & Bijection between equiv.\ relations and partitions & \hyperref[thm:equiv-partition]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Equivalence Class)}},
+  fonttitle=\small\bfseries]
+\label{def:equiv-class}
+Let $R$ be an equivalence relation on $A$. For $a \in A$, the
+\emph{equivalence class} of $a$ is:
+\[
+[a]_R \;:=\; \{\, x \in A \mid (a,x) \in R \,\}.
+\]
+When $R$ is clear from context, we write $[a]$.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+$[a]_R$ is the set of all elements that $R$ declares ``the same as $a$.''
+Two elements lie in the same class iff they are related: this is precisely
+the Representative Independence Lemma below.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Quotient Set)}},
+  fonttitle=\small\bfseries]
+\label{def:quotient-set}
+The \emph{quotient set} of $A$ by $R$ is the set of all equivalence classes:
+\[
+A / R \;:=\; \{\, [a]_R \mid a \in A \,\}.
+\]
+\end{tcolorbox}
+
+\begin{definition}[Index of an Equivalence Relation]\label{def:index}
+The \emph{index} of $R$ on $A$ is the cardinality $|A/R|$, i.e.\ the number
+of equivalence classes.
+\end{definition}
+
+\begin{remark*}[Fully quantified form]
+$\mathrm{index}(R) = |A/R| = |\{[a]_R \mid a \in A\}|$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Canonical Surjection)}},
+  fonttitle=\small\bfseries]
+\label{def:canonical-surj}
+The \emph{canonical surjection} (quotient map) is the function
+\[
+\pi : A \to A/R,
+\qquad
+\pi(a) := [a].
+\]
+\end{tcolorbox}
+
+\begin{remark}[Properties of $\pi$]
+$\pi$ is surjective by construction. Elements $a, b \in A$ satisfy
+$\pi(a) = \pi(b)$ iff $(a,b) \in R$. The canonical surjection is the
+prototype for all quotient constructions: it reappears as the quotient
+homomorphism in algebra and the quotient map in topology.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partition)}},
+  fonttitle=\small\bfseries]
+\label{def:partition}
+A \emph{partition} of $A$ is a collection $\mathcal{P}$ of subsets of $A$ such
+that:
+\begin{enumerate}[label=(\roman*)]
+\item every block is nonempty: $\forall P \in \mathcal{P},\; P \neq \varnothing$;
+\item distinct blocks are disjoint:
+$\forall P,Q \in \mathcal{P},\; P \neq Q \rightarrow P \cap Q = \varnothing$;
+\item the blocks cover $A$: $\bigcup_{P \in \mathcal{P}} P = A$.
+\end{enumerate}
+The sets $P \in \mathcal{P}$ are called the \emph{blocks} of the partition.
+\end{tcolorbox}
+
+\begin{remark}[Partition vs.\ cover]
+Every partition of $A$ is a cover of $A$ whose members are nonempty and
+pairwise disjoint. Partitions are precisely the covers satisfying the
+disjointness condition.
+\end{remark}
+
+% ---------------------------------------------------------
+% Core Lemma and Theorem
+% ---------------------------------------------------------
+
+\begin{lemma}[Representative Independence Lemma]\label{lem:rep-independence}
+Let $R$ be an equivalence relation on $A$. For any $a,b \in A$,
+\[
+[a] = [b]
+\;\;\Longleftrightarrow\;\;
+(a,b) \in R.
+\]
+\end{lemma}
+
+\begin{remark*}[Fully quantified form]
+$\forall a, b \in A:\; [a]_R = [b]_R \;\leftrightarrow\; (a,b)\in R$.
+\end{remark*}
+\begin{remark}[Well-definedness on quotient sets]
+This lemma is the key fact underlying well-definedness of functions on quotient
+sets: a function $f : A \to B$ defined by $f([a]) = \cdots$ is well-defined
+iff the formula gives the same output for all representatives of $[a]$.
+\end{remark}
+
+\begin{theorem}[Equivalence Relations and Partitions]\label{thm:equiv-partition}
+Let $A$ be a set.
+\begin{enumerate}[label=(\roman*)]
+\item If $R$ is an equivalence relation on $A$, then $A/R$ is a partition of $A$.
+\item If $\mathcal{P}$ is a partition of $A$, then the relation
+$R_{\mathcal{P}}$ defined by
+\[
+(a,b) \in R_{\mathcal{P}} \;\Longleftrightarrow\;
+\exists P \in \mathcal{P} \text{ with } a \in P \text{ and } b \in P
+\]
+is an equivalence relation on $A$.
+\item These constructions are inverse: $R_{A/R} = R$ and $A/R_{\mathcal{P}} = \mathcal{P}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+(i) $\forall a \in A,\; [a]_R \neq \varnothing$; $\forall a,b \in A,\; [a]_R \neq [b]_R \to [a]_R \cap [b]_R = \varnothing$; $\bigcup_{a \in A}[a]_R = A$.\\
+(ii) $\forall a,b \in A:\; (a,b) \in R_{\mathcal{P}} \;\leftrightarrow\; \exists P \in \mathcal{P},\; a \in P \wedge b \in P$.
+\end{remark*}
+\begin{remark}[Duality of perspectives]
+This theorem establishes a bijection between equivalence relations on $A$
+and partitions of $A$. The two perspectives---``same block'' (partition) and
+``related'' (equivalence relation)---are interchangeable and each is more
+natural in different contexts.
+\end{remark}
+
+\begin{example}[Extremal equivalence relations]
+On any set $A$:
+\begin{enumerate}
+\item The \emph{equality relation} $(a,b) \in R \iff a=b$ gives singleton
+classes $[a] = \{a\}$ and the finest partition of $A$.
+\item The \emph{universal relation} $R = A \times A$ gives $[a] = A$ for all
+$a$, and the coarsest partition (one block).
+\end{enumerate}
+All other equivalence relations on $A$ lie strictly between these extremes.
+\end{example}
+
+% ---------------------------------------------------------
+% Universal Property of Quotient Maps
+% ---------------------------------------------------------
+
+\begin{theorem}[Universal Property of the Quotient Map]
+\label{thm:quotient-universal}
+Let $R$ be an equivalence relation on $A$, let $\pi : A \to A/R$ be the
+canonical surjection, and let $f : A \to B$ be any function. Then $f$ is
+\emph{constant on equivalence classes} — meaning $(a,b) \in R$ implies
+$f(a) = f(b)$ — if and only if there exists a unique function
+$\bar{f} : A/R \to B$ such that
+\[
+f = \bar{f} \circ \pi.
+\]
+When it exists, $\bar{f}$ is defined by $\bar{f}([a]) = f(a)$.
+\end{theorem}
+
+\begin{remark*}[Fully quantified form]
+$\bigl(\forall a,b \in A,\; (a,b)\in R \to f(a) = f(b)\bigr) \;\leftrightarrow\; \bigl(\exists!\, \bar{f} : A/R \to B,\; \forall a \in A,\; \bar{f}([a]) = f(a)\bigr)$.
+\end{remark*}
+
+\begin{remark}[Why this is called the universal property]
+The condition $f = \bar{f} \circ \pi$ says the diagram commutes: going
+from $A$ to $B$ directly via $f$ gives the same result as going first to
+$A/R$ via $\pi$ and then to $B$ via $\bar{f}$. The word ``universal''
+refers to the fact that $\pi : A \to A/R$ is the \emph{unique} quotient with
+this property: any other map that ``respects the equivalence'' factors through
+$\pi$.
+
+The uniqueness of $\bar{f}$ is forced by $\pi$ being surjective: every
+element of $A/R$ is $[a]$ for some $a$, so $\bar{f}([a]) = f(a)$ is the
+only possible definition.
+\end{remark}
+
+\begin{remark}[Well-definedness is the key verification]
+The heart of the theorem is well-definedness: the formula $\bar{f}([a]) =
+f(a)$ could be ambiguous if $[a] = [b]$ but $f(a) \neq f(b)$. The hypothesis
+that $f$ is constant on equivalence classes is precisely what prevents this:
+$(a,b) \in R$ (i.e., $[a] = [b]$) implies $f(a) = f(b)$, so the output
+does not depend on which representative of the class is chosen.
+
+This ``well-definedness check'' recurs throughout mathematics. Whenever a
+function is defined on equivalence classes by a formula involving
+representatives, the first obligation is to verify that the formula gives
+the same answer for all representatives. The universal property tells exactly
+what condition on $f$ makes this work.
+\end{remark}
+
+\begin{remark}[Where this appears downstream]
+This theorem is not an abstract curiosity. It is the engine behind:
+\begin{itemize}
+\item \emph{Integer construction}: the integers $\mathbb{Z}$ are defined as
+equivalence classes of pairs of natural numbers, and arithmetic operations
+are defined by formulas on representatives. The universal property verifies
+the operations are well-defined.
+\item \emph{Rational construction}: $\mathbb{Q}$ is defined as equivalence
+classes of pairs $(p,q)$ with $q \neq 0$, and addition/multiplication on
+representatives must be checked.
+\item \emph{Quotient groups in algebra}: the quotient group $G/N$ is defined
+by the same factorization, and the quotient homomorphism is $\pi$.
+\item \emph{Quotient topology}: the quotient topological space is defined as
+the finest topology on $A/R$ making $\pi$ continuous — a condition stated
+precisely via the universal property.
+\end{itemize}
+\end{remark}

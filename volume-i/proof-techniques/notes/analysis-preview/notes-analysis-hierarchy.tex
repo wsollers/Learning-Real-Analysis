@@ -1,0 +1,167 @@
+% =========================================================
+% The Four-Layer Hierarchy
+% =========================================================
+\paragraph{The Four-Layer Hierarchy.}
+
+The twelve moves are not all at the same level. They form a four-layer
+hierarchy that reflects the logical structure of metric space proofs:
+each layer depends on the one below it, and together the four layers
+describe a progression from the most basic (unpacking definitions) to
+the most structural (global topological reasoning).
+
+Understanding the hierarchy is not an organizational convenience.
+It tells you something deep: \emph{why} metric spaces are defined the
+way they are, and why nearly every proof in the subject follows the
+same basic upward shape. Once you see this, metric space theory stops
+looking like a collection of unrelated tricks and starts looking like
+a small, elegant machine built from a few core mechanisms.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Four Levels}},
+  fonttitle=\small\bfseries]
+\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.06\textwidth}p{0.22\textwidth}p{0.30\textwidth}p{0.30\textwidth}}
+\toprule
+\textbf{L} & \textbf{Name} & \textbf{Moves} & \textbf{What it does} \\
+\midrule
+L1 & Definition Expansion & Move 1 &
+  Turns abstract concepts into inequalities \\
+L2 & Inequality Mechanics & Moves 2, 3, 5, 9 &
+  Combines and bounds distances \\
+L3 & Sequence Control & Moves 4, 6, 8, 12 &
+  Controls asymptotic and tail behavior \\
+L4 & Structural / Topological & Moves 7, 10, 11 &
+  Reasons about the space as a whole \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\begin{remark}[Level 1: Definition Expansion --- the foundation of everything]
+Every other move operates on inequalities. Those inequalities do not
+appear until you unpack a definition. Before Level~1, you have a
+statement about abstract objects. After Level~1, you have quantifiers
+and specific inequality conditions that can be manipulated.
+
+This is why Level~1 is always the first step in any analysis proof,
+regardless of how complex the argument becomes. The inequality
+$d(x_n, p) < \varepsilon$ does not exist in the proof until you write
+it down. You write it down by unpacking the definition of convergence.
+
+What Level~1 produces:
+\begin{itemize}[itemsep=2pt]
+  \item ``$x_n \to p$'' $\mapsto$ $\forall\,\varepsilon>0\;\exists\,N$
+    s.t.\ $n \geq N \Rightarrow d(x_n, p) < \varepsilon$
+  \item ``$\{x_n\}$ is Cauchy'' $\mapsto$ $\forall\,\varepsilon>0\;\exists\,M$
+    s.t.\ $m,n \geq M \Rightarrow d(x_m, x_n) < \varepsilon$
+  \item ``$K$ is compact'' $\mapsto$ every open cover of $K$ has a finite subcover
+  \item ``$E$ is closed'' $\mapsto$ every convergent sequence in $E$ converges
+    to a point of $E$
+\end{itemize}
+The abstract word is a compressed form of the inequality. Unpacking
+it is not simplification; it is \emph{activation}.
+\end{remark}
+
+\begin{remark}[Level 2: Inequality Mechanics --- the algebra of metric spaces]
+Once Level~1 has produced inequalities, Level~2 manipulates them.
+This is the algebra of metric spaces: you combine, bound, split, and
+chain inequalities to move from what you know toward what you need.
+
+The triangle inequality is a \emph{metric axiom} for a reason: it was
+included in the definition of a metric precisely because it is the tool
+needed to chain distance bounds. Without it, you cannot get from control
+over $d(x,y)$ and $d(y,z)$ to control over $d(x,z)$. The axiom is there
+because it enables Level~2.
+
+Notice that Level~2 does not involve sequences, indices, or tails.
+It is purely about bounding distances between specific points. The
+sequence machinery comes at the next level.
+\end{remark}
+
+\begin{remark}[Level 3: Sequence Control --- the engine of limit arguments]
+Analysis is fundamentally about sequences approaching limits, distances
+becoming arbitrarily small, behavior stabilizing as an index grows large.
+Level~3 controls this asymptotic behavior.
+
+The key idea: sequence control is about managing the word ``eventually.''
+The definition of convergence says that for large enough $n$, the
+distance $d(x_n, p)$ is small. The tail argument combines multiple
+``large enough $n$'' conditions by taking the maximum index. Choosing $N$
+explicitly produces the specific threshold. Subsequence extraction selects
+which terms of the sequence to keep.
+
+These moves require genuine sequence machinery --- you are reasoning
+about indexed infinite processes, not just about individual distances
+between points. That is what places them at Level~3 rather than Level~2.
+\end{remark}
+
+\begin{remark}[Level 4: Structural / Topological --- global reasoning]
+Level~4 moves operate on the global structure of the metric space, not
+on individual sequences or inequalities. Contradiction reasons about
+the logical structure of the whole proof. Embedding reasons about how
+the space sits inside a larger ambient space. Compactness reasons about
+the global covering properties of the space.
+
+Compactness is the flagship Level~4 property. It converts infinite
+problems into finite ones: an infinite family of open sets reduces to
+a finite subcover, and a finite collection has a minimum, a maximum, a
+single controlling constant. This is the most powerful tool in metric
+space theory.
+
+Level~4 and Level~3 interact bidirectionally. Sequential compactness
+(every sequence has a convergent subsequence) is a Level~3
+characterization of a Level~4 property. Many deep results in analysis
+are precisely about these interactions.
+\end{remark}
+
+\begin{remark}[Reading a proof using the hierarchy]
+When you read a proof in the textbook, label each step by level.
+This is not a mechanical exercise; it reveals the logical architecture
+and tells you why each step appears where it does.
+
+Here is the proof that convergent implies Cauchy, labeled:
+
+\begin{quote}
+Let $\varepsilon > 0$.\hfill \textit{[L1: introduce $\varepsilon$ from the Cauchy definition]}
+
+Since $x_n \to p$, there exists $N$ such that $n \geq N \Rightarrow d(x_n,p) < \varepsilon/2$.
+\hfill \textit{[L3: choose $N$ from the convergence hypothesis]}
+
+For $m, n \geq N$:
+\hfill \textit{[L3: tail condition]}
+
+$d(x_m, x_n) \leq d(x_m, p) + d(p, x_n)$
+\hfill \textit{[L2: triangle inequality]}
+
+$\phantom{d(x_m, x_n)} < \varepsilon/2 + \varepsilon/2 = \varepsilon$.\hfill
+\textit{[L2: $\varepsilon$-splitting]}
+
+Hence $\{x_n\}$ is Cauchy.\hfill \textit{[L1: conclusion matches Cauchy definition]}
+\end{quote}
+
+This proof uses Levels 1, 2, and 3, but not Level 4. It is a local
+argument about sequences, not a global structural argument. To reach
+Level~4, you would need compactness or an embedding argument.
+
+The levels a proof reaches tell you its depth and what tools it uses.
+A verification exercise stays at Levels~1--2. A limit argument reaches
+Level~3. A compactness argument reaches Level~4.
+\end{remark}
+
+\begin{remark}[Why the metric axioms are the axioms they are]
+The metric axioms --- non-negativity, identity of indiscernibles,
+symmetry, triangle inequality --- are not arbitrary. They are exactly
+the conditions needed to make Level~2 possible.
+
+Without the triangle inequality, you cannot chain distance bounds.
+Without identity of indiscernibles, the notion of a limit point
+degenerates. Without symmetry, the definitions of balls and convergence
+become asymmetric and unworkable.
+
+The axioms are the \emph{minimal conditions on a distance function
+that support the full four-level proof hierarchy.} When you study a
+new property of metric spaces, ask: which level does it live at?
+The answer tells you what tools to expect and what kind of proofs
+will be required.
+\end{remark}

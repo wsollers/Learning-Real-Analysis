@@ -1,0 +1,305 @@
+% =========================================================
+% Ordered Sets
+% =========================================================
+
+\section{Ordered Sets}\label{sec:ordered-sets}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Ordered Sets — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Ordered set        & $(A, \leq)$: set with a partial order                        & \hyperref[def:ordered-set]{↓ Def} \\
+Strict order       & $a < b \iff a \leq b \land a \neq b$                         & \hyperref[def:strict-order]{↓ Def} \\
+Comparable / incomparable & $a \leq b$ or $b \leq a$ / neither              & \hyperref[def:comparable]{↓ Def} \\
+Total (linear) order & Partial order with all pairs comparable                  & \hyperref[def:linear-order]{↓ Def} \\
+Upper / lower bound & $u \geq s$ / $\ell \leq s$ for all $s \in S$               & \hyperref[def:bounds]{↓ Def} \\
+Minimal / maximal  & No smaller/larger element in $S$                            & \hyperref[def:min-max]{↓ Def} \\
+Least / greatest   & Smaller/larger than all elements of $S$                     & \hyperref[def:least-greatest]{↓ Def} \\
+Order-preserving   & $a \leq b \Rightarrow f(a) \leq' f(b)$                       & \hyperref[def:order-pres]{↓ Def} \\
+Order isomorphism  & Bijective order-preserving map with order-preserving inverse & \hyperref[def:order-iso]{↓ Def} \\
+Well-ordered set   & Every nonempty subset has a least element                   & \hyperref[def:well-order]{↓ Def} \\
+Chain / antichain  & All comparable / none comparable                            & \hyperref[def:chain]{↓ Def} \\
+Initial segment    & Downward-closed subset                                      & \hyperref[def:initial-segment]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Ordered Set)}},
+  fonttitle=\small\bfseries]
+\label{def:ordered-set}
+An \emph{ordered set} (or \emph{partially ordered set}, \emph{poset}) is a
+pair $(A,\leq)$ where $\leq$ is a partial order on $A$: a relation that is
+reflexive, antisymmetric, and transitive.
+\end{tcolorbox}
+
+\begin{remark}[English reading]
+An ordered set is a set equipped with a specified way to compare elements,
+but without requiring all pairs to be comparable.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Strict Order)}},
+  fonttitle=\small\bfseries]
+\label{def:strict-order}
+Let $(A,\leq)$ be an ordered set. The \emph{strict order} $<$ is defined by:
+\[
+a < b \;\;\Longleftrightarrow\;\; (a \leq b \land a \neq b).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Strict and non-strict are equivalent]
+The relation $<$ is irreflexive and transitive. Conversely, given any strict
+partial order $<$, one recovers a non-strict order by setting
+$a \leq b \iff (a < b \lor a=b)$. The two formulations carry exactly the
+same information.
+\end{remark}
+
+\begin{definition}[Comparable and Incomparable Elements]\label{def:comparable}
+In an ordered set $(A,\leq)$, elements $a,b \in A$ are \emph{comparable} if
+$a \leq b$ or $b \leq a$; they are \emph{incomparable} if neither holds.
+\end{definition}
+
+\begin{remark*}[Fully quantified form]
+$a,b$ comparable $\;\leftrightarrow\; a \leq b \vee b \leq a$. \quad
+$a,b$ incomparable $\;\leftrightarrow\; \neg(a \leq b) \wedge \neg(b \leq a)$.
+\end{remark*}
+
+\begin{remark}[Incomparable elements]
+Incomparable elements can only occur in partial orders. In a total order,
+every pair is comparable by definition.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Total / Linear Order)}},
+  fonttitle=\small\bfseries]
+\label{def:linear-order}
+An ordered set $(A,\leq)$ is a \emph{total order} (or \emph{linear order})
+if every pair of elements is comparable:
+\[
+\forall a,b \in A,\; a \leq b \lor b \leq a.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Examples]
+$(\mathbb{R},\leq)$ is a total order. $(\mathcal{P}(A), \subseteq)$ is a
+partial order that is generally not total.
+\end{remark}
+
+% ---------------------------------------------------------
+% Bounds and extremal elements
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Upper and Lower Bounds)}},
+  fonttitle=\small\bfseries]
+\label{def:bounds}
+Let $(A,\leq)$ be an ordered set and $S \subseteq A$.
+
+An element $u \in A$ is an \emph{upper bound} of $S$ if $\forall s \in S,\; s \leq u$.
+
+An element $\ell \in A$ is a \emph{lower bound} of $S$ if $\forall s \in S,\; \ell \leq s$.
+\end{tcolorbox}
+
+\begin{remark}[Consequence]
+Bounds need not exist and need not be unique. They need not lie in $S$ itself.
+Bounds are central to the definition of completeness for ordered fields.
+\end{remark}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Minimal, Maximal, Least, Greatest Elements)}},
+  fonttitle=\small\bfseries]
+\label{def:min-max}
+Let $S \subseteq A$ in an ordered set $(A,\leq)$.
+
+$m \in S$ is a \emph{minimal element} of $S$ if $\nexists s \in S$ with $s < m$.
+
+$M \in S$ is a \emph{maximal element} of $S$ if $\nexists s \in S$ with $M < s$.
+
+\smallskip
+\label{def:least-greatest}
+$\ell \in S$ is the \emph{least element} if $\forall s \in S,\; \ell \leq s$.
+
+$g \in S$ is the \emph{greatest element} if $\forall s \in S,\; s \leq g$.
+\end{tcolorbox}
+
+\begin{remark}[Minimal vs.\ least]
+A \emph{least} element is below every element of $S$; it must be unique if it
+exists. A \emph{minimal} element merely has nothing below it within $S$; there
+may be many. Every least element is minimal, but not conversely.
+\end{remark}
+
+% ---------------------------------------------------------
+% Order maps and isomorphisms
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Order-Preserving Map and Isomorphism)}},
+  fonttitle=\small\bfseries]
+\label{def:order-pres}
+Let $(M,\leq)$ and $(M',\leq')$ be partially ordered sets.
+
+A function $f : M \to M'$ is \emph{order-preserving} (or \emph{monotone}) if
+\[
+\forall a,b \in M,\quad a \leq b \;\Longrightarrow\; f(a) \leq' f(b).
+\]
+
+$f$ is an \emph{order isomorphism}\label{def:order-iso} if it is bijective and
+\[
+\forall a,b \in M,\quad a \leq b \;\Longleftrightarrow\; f(a) \leq' f(b).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Order-isomorphic posets]
+An order isomorphism preserves and reflects the order structure exactly,
+including comparability, minimal and maximal elements, and bounds. Two posets
+are \emph{order-isomorphic} if such a map exists; they are structurally
+identical from the order-theoretic viewpoint.
+\end{remark}
+
+% ---------------------------------------------------------
+% Well-order
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Well-Ordered Set)}},
+  fonttitle=\small\bfseries]
+\label{def:well-order}
+An ordered set $(A,<)$ is \emph{well-ordered} if every nonempty subset
+$S \subseteq A$ has a least element:
+\[
+\forall S \subseteq A,\;
+\bigl(S \neq \varnothing \;\Rightarrow\; \exists m \in S \text{ s.t.\ }
+m \leq s \;\forall s \in S\bigr).
+\]
+\end{tcolorbox}
+
+\begin{remark}[Well-order implies total order]
+Every well-ordered set is totally ordered. The well-ordering condition is
+strictly stronger: it requires a least element in every nonempty subset,
+not just in $A$ as a whole.
+\end{remark}
+
+\begin{example}[Well-order examples]
+$(\mathbb{N},\leq)$ is well-ordered. $(\mathbb{Z},\leq)$ is not: the set
+$\{\dots,-3,-2,-1\}$ has no least element. $(\mathbb{R},\leq)$ is not:
+$(0,1)$ has no least element.
+\end{example}
+
+\begin{remark}[Connection to ordinal numbers]
+An \emph{ordinal number} is defined as an equivalence class of well-ordered
+sets under order isomorphism: it measures the \emph{order type} of a
+well-ordered set, not merely its cardinality.
+\end{remark}
+
+% ---------------------------------------------------------
+% Chains, antichains, initial segments
+% ---------------------------------------------------------
+\begin{definition}[Chain and Antichain]\label{def:chain}
+A subset $C \subseteq A$ of a poset $(A,\leq)$ is a \emph{chain} if every
+pair of elements in $C$ is comparable. It is an \emph{antichain} if no two
+distinct elements of $C$ are comparable.
+\end{definition}
+
+\begin{remark*}[Fully quantified form]
+$C$ is a chain $\;\leftrightarrow\; \forall a,b \in C,\; a \leq b \vee b \leq a$.\\
+$C$ is an antichain $\;\leftrightarrow\; \forall a,b \in C,\; a \neq b \to \neg(a \leq b) \wedge \neg(b \leq a)$.
+\end{remark*}
+
+\begin{definition}[Initial Segment]\label{def:initial-segment}
+A subset $I \subseteq A$ is an \emph{initial segment} of $(A,\leq)$ if
+\[
+a \in I \text{ and } b \leq a \;\Rightarrow\; b \in I.
+\]
+\end{definition}
+
+\begin{remark*}[Fully quantified form]
+$I$ is an initial segment $\;\leftrightarrow\; \forall a \in I,\; \forall b \in A,\; b \leq a \to b \in I$.
+\end{remark*}
+
+\begin{remark}[Transition]
+Ordered sets provide the abstract framework for order structures on the real
+numbers, function spaces, and metric spaces. In later sections, order
+interacts with topology and analysis through intervals, monotone functions,
+and the completeness axiom for $\mathbb{R}$.
+\end{remark}
+
+% ---------------------------------------------------------
+% Directed Sets and Nets
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Directed Set)}},
+  fonttitle=\small\bfseries]
+\label{def:directed-set}
+A preorder $(I, \leq)$ is \emph{directed} (or a \emph{directed set}) if every
+finite subset of $I$ has an upper bound in $I$: for all $i, j \in I$ there
+exists $k \in I$ with $i \leq k$ and $j \leq k$.
+\end{tcolorbox}
+
+\begin{remark}[What directed means]
+In a directed set, any two elements can always be ``dominated'' by a third.
+The condition does not require a maximum element to exist, only that no two
+elements are ever incomparable in a final way: there is always a common
+upper bound available. Every totally ordered set is directed (take $k =
+\max(i,j)$), but directed sets can be far more general.
+\end{remark}
+
+\begin{example}[Canonical directed sets]
+\begin{enumerate}[label=(\roman*)]
+\item $(\mathbb{N}, \leq)$ is directed: given $m, n \in \mathbb{N}$, take
+$k = \max(m,n)$.
+\item The collection of all finite subsets of a set $X$, ordered by inclusion,
+is directed: given finite sets $F_1, F_2 \subseteq X$, take $k = F_1 \cup
+F_2$.
+\item The set of all open neighborhoods of a point $x$ in a topological space,
+ordered by reverse inclusion ($U \leq V$ iff $U \supseteq V$), is directed:
+given neighborhoods $U$ and $V$ of $x$, take $k = U \cap V$, which is also
+a neighborhood of $x$.
+\item A partially ordered set is directed if and only if every finite subset
+has an upper bound. Partially ordered sets that are \emph{not} directed have
+``incomparable maximal elements'' — elements with no common upper bound.
+\end{enumerate}
+\end{example}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Net)}},
+  fonttitle=\small\bfseries]
+\label{def:net}
+Let $(I, \leq)$ be a directed set and $X$ a set. A \emph{net} in $X$ is a
+function $x : I \to X$. The value at $i \in I$ is written $x_i$, and the
+net is written $(x_i)_{i \in I}$.
+\end{tcolorbox}
+
+\begin{remark}[Nets generalize sequences]
+A sequence is a net with index set $(\mathbb{N}, \leq)$. Nets are the correct
+generalization of sequences to general topological spaces: in a metric space,
+sequences suffice to detect all topological properties (closure, continuity,
+compactness). In a general topological space, sequences can fail to detect
+these properties — one needs nets. Specifically, a subset $A$ of a
+topological space is closed if and only if every convergent net in $A$ has
+its limit in $A$; and a function is continuous if and only if it preserves
+limits of nets.
+
+The definition of net is placed here because it is purely order-theoretic:
+a directed index set and a function. The analytic content — what it means
+for a net to converge — belongs to topology and functional analysis. By
+establishing the set-theoretic definition now, those chapters can immediately
+state convergence conditions without set-theoretic digression.
+\end{remark}

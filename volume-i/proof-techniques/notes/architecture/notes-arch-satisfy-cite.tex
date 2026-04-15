@@ -1,0 +1,122 @@
+% =========================================================
+% Satisfy-and-Cite Uniqueness
+% =========================================================
+\paragraph{The Satisfy-and-Cite Pattern.}
+\label{sec:satisfy-cite}
+
+There is a proof pattern that does not appear in any of the standard
+proof archetypes by name, yet appears constantly --- in every chapter of
+abstract algebra and analysis. Most undergraduates have never been taught
+it explicitly, which means they either reinvent it poorly each time or
+miss it entirely and write longer, less clear proofs.
+
+The pattern is called \textbf{satisfy-and-cite}. Here is its logic.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Satisfy-and-Cite Pattern}}, fonttitle=\small\bfseries]
+\textbf{Setup.} You want to prove $a = b$, where $b$ is a
+\emph{uniquely determined} object: the unique identity, the unique
+inverse, the unique limit, the unique fixed point, the unique
+element satisfying some algebraic condition.
+
+\medskip
+\textbf{Step 1.} Show that $a$ satisfies the defining property of $b$.
+
+\textbf{Step 2.} Cite the previously proved uniqueness theorem: there is
+exactly one object satisfying that property.
+
+\textbf{Step 3.} Conclude that $a = b$, since $b$ is the unique such object
+and $a$ is one too.
+\end{tcolorbox}
+
+\begin{remark}[Why this is not the same as assume-two-and-compare]
+The confusion between these two patterns is extremely common, so it is
+worth being precise about what each one does.
+
+The \textbf{assume-two-and-compare} pattern \emph{proves} a uniqueness
+theorem. You use it when the goal is to establish that some object is
+unique. You say: let $x$ and $y$ both satisfy the definition; then show
+$x = y$.
+
+The \textbf{satisfy-and-cite} pattern \emph{uses} an already proved
+uniqueness theorem. You use it when you already know some object $b$
+is unique and you want to identify $a$ with $b$. You show $a$ satisfies
+$b$'s defining property, then invoke uniqueness to collapse $a$ to $b$.
+
+Assume-two-and-compare appears in the proof that the identity is unique.
+Satisfy-and-cite appears in every proof that uses that fact afterward.
+The first creates the tool; the second uses it. Conflating them means
+writing a new uniqueness proof every time you want to identify two equal
+objects, which is circular at best and wrong at worst.
+\end{remark}
+
+\begin{example}[Socks-shoes property: $(ab)^{-1} = b^{-1}a^{-1}$]
+We want to show $(ab)^{-1} = b^{-1}a^{-1}$ in a group.
+
+The inverse of $ab$ is, by definition, the unique element $x$
+satisfying $(ab)x = e$ and $x(ab) = e$.
+
+We compute directly, using only associativity and the inverse axiom:
+\[
+(ab)(b^{-1}a^{-1})
+= a(bb^{-1})a^{-1}
+= a e a^{-1}
+= aa^{-1} = e.
+\]
+Similarly $(b^{-1}a^{-1})(ab) = e$.
+
+So $b^{-1}a^{-1}$ \emph{satisfies the defining property of $(ab)^{-1}$}.
+By the uniqueness of inverses (which we have already proved), we
+conclude $(ab)^{-1} = b^{-1}a^{-1}$. \qed
+
+\medskip
+\noindent
+Notice what did not happen: we never assumed two inverses of $ab$ existed
+and compared them. We showed one specific element satisfies the inverse
+condition, then cited uniqueness to identify it with the named inverse.
+\end{example}
+
+\begin{example}[Ring theorem: $a \cdot (-b) = -(ab)$]
+We want to show $a(-b) = -(ab)$ in a ring.
+
+The additive inverse $-(ab)$ is, by definition, the unique element $x$
+satisfying $ab + x = 0$.
+
+We compute using distributivity:
+\[
+ab + a(-b) = a(b + (-b)) = a \cdot 0 = 0.
+\]
+So $a(-b)$ \emph{satisfies the defining property of $-(ab)$}.
+By the uniqueness of additive inverses (previously proved), $a(-b) = -(ab)$. \qed
+
+\medskip
+\noindent Same pattern: compute, satisfy, cite.
+\end{example}
+
+\begin{remark}[The pattern across mathematics]
+Once you see satisfy-and-cite, you will see it everywhere. It appears
+wherever uniqueness theorems have been proved:
+
+\medskip
+\noindent In \textbf{algebra}: every proof of the form ``this element equals
+the inverse/identity/zero'' uses it. The four examples above are
+$(ab)^{-1} = b^{-1}a^{-1}$, $a \cdot (-b) = -(ab)$, $-(-a) = a$,
+and $a \cdot 0 = 0$.
+
+\noindent In \textbf{analysis}: the uniqueness of limits means that to
+show $\lim_{n \to \infty} x_n = L$, you verify $x_n$ converges to $L$
+by the definition; uniqueness then implies $L$ equals any other
+expression you have shown to be the limit of the same sequence.
+
+\noindent In \textbf{linear algebra}: the zero vector is unique; the
+additive inverse is unique; a linear transformation is uniquely determined
+by its values on a basis. Each uniqueness theorem creates a new application
+of satisfy-and-cite.
+
+\medskip
+\noindent
+Each time a uniqueness theorem is proved, it creates a new proof tool
+that can be activated by satisfy-and-cite for every subsequent argument
+in that structure. The theorem is not just a fact --- it is a lever.
+\end{remark}

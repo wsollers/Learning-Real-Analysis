@@ -1,0 +1,118 @@
+% =========================================================
+% Tactics Catalog
+% =========================================================
+\paragraph{Catalog of Algebraic Tactics.}
+
+The following catalog lists the specific algebraic moves available once
+a proof is in progress and the architecture has been chosen. Each entry
+states the tactic, its precondition (what must already be established
+or assumed), and its effect (what it achieves in the proof).
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{p{0.20\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
+\toprule
+\textbf{Tactic} & \textbf{Precondition} & \textbf{Effect} \\
+\midrule
+
+\textbf{Multiply by inverse} &
+  $a \neq 0$ in a field; or $a \in G$ in a group &
+  Multiply both sides by $a^{-1}$; use associativity to collapse
+  $a^{-1}a = e$; isolates the target variable. \\
+
+\textbf{Cancellation} &
+  $ac = bc$ (or $ca = cb$) in a group or integral domain &
+  Conclude $a = b$. In a group: multiply by $c^{-1}$.
+  In an integral domain: cite no-zero-divisors. \\
+
+\textbf{Distributivity bridge} &
+  Multiplication by $0$, $-1$, or a negative element &
+  Rewrite the product as a sum using distributivity, then use
+  additive group structure to collapse. Crosses from
+  $\times$ to $+$. \\
+
+\textbf{Add zero} &
+  Need to introduce a term without changing the expression &
+  Write $a = a + 0 = a + (b + (-b))$; regroup to expose
+  the needed structure. \\
+
+\textbf{Satisfy-and-cite} &
+  A uniqueness theorem for some named object $b$ is in scope &
+  Show $a$ satisfies $b$'s defining property; cite uniqueness;
+  conclude $a = b$. Avoids assume-two-and-compare entirely. \\
+
+\textbf{Double negation} &
+  $-(-a)$ appears or is the goal &
+  $-a$ is the unique element $x$ with $a + x = 0$;
+  $-(-a)$ satisfies this; by uniqueness, $-(-a) = a$. \\
+
+\textbf{Absorb into axiom} &
+  A subexpression matches the LHS of an axiom &
+  Rewrite using the axiom. Tag as \tagTA. \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[The distributivity bridge in detail]
+The distributivity bridge is the central tactic for ring and field
+proofs involving zero and negatives. Every instance of ``$a \cdot 0 = 0$''
+and ``$a(-b) = -(ab)$'' uses it. Once you have seen the pattern, it is
+immediately recognizable.
+
+The pattern always has four steps:
+\begin{enumerate}[itemsep=2pt]
+  \item Introduce $a \cdot 0$ or $a \cdot (-b)$ into the argument.
+  \item Expand: write $0 = x + (-x)$ or $-b = b + (-b) + (-b)$ using
+    the additive inverse definition.
+  \item Apply distributivity: $a(x + y) = ax + ay$.
+  \item Use uniqueness of the additive inverse to identify the result
+    with $-(ab)$ or $0$.
+\end{enumerate}
+
+The reason this requires distributivity as a bridge is that the
+additive structure (with its identity $0$ and its inverses $-a$) and
+the multiplicative structure (with its products $ab$) are separate. The
+only connection between them is distributivity. To get from the multiplicative
+side ($a \cdot 0$) to the additive side ($0 = 0 + 0$), you must cross
+the bridge.
+\end{remark}
+
+\begin{remark}[Cancellation: two theorems that must not be conflated]
+``Cancellation'' names two distinct results with different preconditions.
+
+\medskip
+\noindent\textbf{Group cancellation.} In any group, $ac = bc \Rightarrow a = b$.
+Proved by multiplying both sides on the right by $c^{-1}$, which always
+exists in a group. The hypothesis $c \neq 0$ is not needed because
+inverses always exist in a group.
+
+\medskip
+\noindent\textbf{Domain cancellation (or integral domain cancellation).}
+In an integral domain, $ac = bc$ and $c \neq 0$ imply $a = b$.
+Proved by rewriting as $(a - b)c = 0$ and invoking the no-zero-divisors
+property. The hypothesis $c \neq 0$ is essential: without it, cancellation
+can fail (e.g., in $\mathbb{Z}_6$, $2 \cdot 3 = 4 \cdot 3$ but $2 \neq 4$).
+
+\medskip
+\noindent
+The error to avoid: using group cancellation in an integral domain
+argument (it works but uses stronger machinery than needed and may not
+be available), or trying to use domain cancellation without verifying
+$c \neq 0$.
+\end{remark}
+
+\begin{remark}[Add zero: the simplest but most overlooked tactic]
+The add-zero tactic sounds trivial but appears in almost every algebraic
+proof where an intermediate term needs to be introduced without
+changing the value of an expression. The template is:
+\[
+a = a + 0 = a + (b + (-b)) = (a + b) + (-b).
+\]
+This exposes $a + b$ as a subexpression of $a$, which can then be
+worked with. It is the algebraic equivalent of adding and subtracting
+the same term in a real analysis inequality argument.
+
+When you need a term to appear in an expression and cannot see how to
+introduce it, ask: can I write some zero as $x + (-x)$ and distribute?
+\end{remark}

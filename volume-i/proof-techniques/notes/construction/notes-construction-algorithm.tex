@@ -1,0 +1,231 @@
+% =========================================================
+% Proof Construction Algorithm
+% =========================================================
+
+\begin{remark}[What this section is for]
+Architecture (Section~\ref{sec:proof-architecture}) tells you what kind
+of proof to write. This section tells you how to write it, line by line,
+once the architecture is chosen.
+
+The procedure below is intentionally explicit and more detailed than
+anything you will find in a standard textbook. That is on purpose.
+With practice, these steps will become internalized and automatic.
+But until they are --- until you have written enough proofs that the
+process feels natural --- working through them consciously will prevent
+the most common errors: undefined objects, unjustified steps, and
+forgotten stop conditions.
+
+A longer proof with every step explicit is always better than a shorter
+proof with implicit gaps.
+\end{remark}
+
+\paragraph{Step 0: Classify the Statement.}
+
+Before anything else, identify the logical form of the claim. Common
+forms:
+\begin{itemize}[itemsep=2pt]
+  \item Universal: $\forall x\; P(x)$
+  \item Conditional: $P \rightarrow Q$
+  \item Biconditional: $P \leftrightarrow Q$
+  \item Existential: $\exists x\; P(x)$
+  \item Existence-and-uniqueness: $\exists!\, x\; P(x)$
+  \item Set equality: $A = B$
+  \item Algebraic equality: $a = b$
+  \item Structural assertion: ``$f$ is injective,'' ``$R$ is an equivalence relation''
+\end{itemize}
+
+The logical form determines the skeleton of the proof. Consulting the
+statement map (Section~\ref{sec:proof-architecture}) is the direct link
+from this classification to an opening strategy.
+
+\paragraph{Step 1: Restate the Givens.}
+
+Write out explicitly what is given. Introduce every set, relation,
+function, and algebraic structure, and record any properties assumed
+about them.
+
+\begin{quote}
+Let $G$ be a group. Let $a \in G$.
+\end{quote}
+
+This is not a formality. By recording the givens, you license their
+use in the proof --- you can now invoke associativity, the existence of
+inverses, and the identity element without reintroducing them each time.
+What is not in the givens cannot be used.
+
+\paragraph{Step 2: Identify Objects and Their Types.}
+
+Before reasoning begins, verify the \emph{type} of each object you
+will work with: is it an element, a set, a function, or a relation?
+What is its ambient universe? What operations apply to it?
+
+\[
+x \in A,\quad f : A \to B,\quad R \subseteq A \times A.
+\]
+
+This step prevents the most common logical errors in undergraduate
+proofs: writing $x \in f$ when you mean $x \in \text{dom}(f)$; writing
+$A = x$ when you mean $x \in A$; confusing membership ($\in$) with
+inclusion ($\subseteq$). Every object used in a proof must have a
+declared type. If you cannot say what type something is, you do not
+yet understand what you are working with.
+
+\paragraph{Step 3: Introduce Arbitrary Elements.}
+
+If the claim is universal ($\forall x\; P(x)$), immediately introduce
+an arbitrary element:
+\[
+\text{Let } x \in A \text{ be arbitrary.}
+\]
+
+The word ``arbitrary'' is not decorative. It means the element is not
+given any properties beyond those of the set $A$. Whatever you prove
+about this $x$ will hold for all $x \in A$, precisely because you have
+assumed nothing about it beyond membership. The moment you specialize
+--- ``let $x = 0$'' or ``let $x$ be such that \ldots'' --- you have
+lost the ability to conclude the universal statement.
+
+\paragraph{Step 4: Expand the Goal.}
+
+Rewrite the conclusion using definitions rather than named concepts.
+\begin{itemize}[itemsep=2pt]
+  \item To prove $f$ is injective: expand injectivity as
+    ``$f(a) = f(b) \Rightarrow a = b$'' and take that as the new goal.
+  \item To prove $A = B$ (sets): take as new goal
+    ``$A \subseteq B$ and $B \subseteq A$.''
+  \item To prove $x \in A \cup B$: rewrite the goal as ``$x \in A$
+    or $x \in B$.''
+  \item To prove $\{x_n\}$ converges: expand to
+    ``$\forall\, \varepsilon > 0\; \exists\, N$ s.t.\ $n \geq N
+    \Rightarrow d(x_n, L) < \varepsilon$.''
+\end{itemize}
+
+This step is the one most students skip, and skipping it is the single
+most reliable predictor of a stuck proof. You cannot make progress toward
+a goal you have not named in operative terms. ``Prove $f$ is injective''
+is not an operative goal. ``Prove that $f(a) = f(b)$ implies $a = b$''
+is.
+
+\paragraph{Step 5: Introduce Helper Objects.}
+
+Introduce any auxiliary objects needed for the argument: witnesses
+for existential claims, intermediate elements for indirect arguments,
+bounds for inequality proofs, function values.
+
+\[
+\text{Let } N_1 \in \mathbb{N} \text{ s.t.\ } n \geq N_1
+\Rightarrow d(x_n, L) < \varepsilon/2.
+\]
+
+No object should appear in a proof without being explicitly introduced.
+If you write ``let $c$ be the cancellation element'' without first
+establishing that such an element exists, your proof has an undefined
+object. Every name carries an obligation: the obligation to have said
+what the name refers to.
+
+\paragraph{Step 6: Apply One Rule at a Time.}
+
+Each line of a proof follows from exactly one of four sources:
+\begin{enumerate}[itemsep=2pt]
+  \item A definition (unpacking what a term means),
+  \item A hypothesis (something assumed in the current proof),
+  \item A previously proved theorem (cited by name and reference),
+  \item A basic logical rule (modus ponens, universal instantiation, etc.).
+\end{enumerate}
+
+Lines that are justified by ``clearly'' or ``obviously'' or no reason at
+all are gaps. At the learning stage, every step should have an explicit
+justification. When a proof stalls, the right question is always: which
+of the four sources has not been consulted? Almost always, the answer is
+that some definition has not been unpacked.
+
+\paragraph{Step 7: Use Forward and Backward Reasoning.}
+
+Proofs alternate between two modes of reasoning, and recognizing which
+mode is productive at each stage is a significant skill.
+
+\emph{Forward reasoning:} deduce consequences from what you have
+established so far. If you know $a^2 = e$ in a group, derive that
+$a(ae) = a \cdot a \cdot e = a^2 \cdot e = e$. You are moving away
+from the hypotheses, toward the goal.
+
+\emph{Backward reasoning:} examine the goal and ask what would
+suffice to establish it. If the goal is ``$a = a^{-1}$,'' ask: by
+what definition would that follow? It follows if $aa = e$, since
+that is the condition for $a$ to be its own inverse. Now your new
+goal is to prove $aa = e$, which may be more directly accessible.
+
+In practice, most proofs proceed in both directions simultaneously:
+you derive forward from the hypotheses while simplifying the goal
+backward until the two sides meet. When you are stuck, try the
+direction you have not been working in.
+
+\paragraph{Step 8: Handle Cases Explicitly.}
+
+If a statement splits into mutually exclusive and exhaustive cases,
+enumerate all of them.
+
+\[
+\text{Either } n \text{ is even, or } n \text{ is odd.}
+\]
+
+Handle each case separately. Close each case before opening the next.
+Verify, explicitly, that the cases together cover every possibility.
+A proof with unlabeled cases --- where it is unclear which case is
+being argued or whether all cases have been covered --- is not a proof.
+
+\paragraph{Step 9: Close the Argument.}
+
+Once the desired conclusion has been established, state it explicitly:
+
+\begin{itemize}[itemsep=2pt]
+  \item ``Thus $x \in B$, and so $A \subseteq B$.''
+  \item ``Hence $f(a) = f(b)$ implies $a = b$, so $f$ is injective.''
+  \item ``In both cases $P(n+1)$ holds.''
+\end{itemize}
+
+The explicit closing step serves two functions. First, it tells the reader
+(and you) that the proof goal has been achieved. Second, it forces you to
+check that what you have proved actually \emph{is} the goal. Students who
+reach the end of a proof and write \qed without stating a conclusion often
+discover, on re-reading, that they proved something adjacent to the goal
+but not the goal itself.
+
+\paragraph{Step 10: Signal Completion.}
+
+Conclude with \qed, $\blacksquare$, or ``This completes the proof.''
+
+\bigskip
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Legal Moves and Stop Conditions}},
+  fonttitle=\small\bfseries]
+\textbf{What you may never do:}
+\begin{itemize}[itemsep=2pt]
+  \item Choose an existential witness before proving it exists.
+  \item Introduce an ``arbitrary'' element and then give it special properties.
+  \item Assume the conclusion at any point in the proof.
+  \item Apply a definition partially (all conditions must be checked).
+\end{itemize}
+
+\medskip
+\textbf{A proof is complete when:}
+\begin{itemize}[itemsep=2pt]
+  \item A universal claim has been proved for a genuinely arbitrary element.
+  \item An existential claim has produced a verified witness.
+  \item A set equality has established both inclusions explicitly.
+  \item Each direction of a biconditional has been proved separately.
+  \item An existence-uniqueness claim has done both parts.
+\end{itemize}
+\end{tcolorbox}
+
+\paragraph{Line-by-Line Discipline.}
+
+Before writing each line, ask three silent questions:
+\begin{enumerate}[label=(\roman*), itemsep=2pt]
+  \item Has every object mentioned in this line been defined or introduced earlier?
+  \item Which definition, hypothesis, or theorem justifies this step?
+  \item Does this step move the argument toward the stated goal?
+\end{enumerate}
+If any answer is no, stop and resolve it before continuing.

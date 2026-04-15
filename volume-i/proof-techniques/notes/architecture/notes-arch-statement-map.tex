@@ -1,0 +1,125 @@
+% =========================================================
+% Statement Forms → Proof Strategies Map
+% =========================================================
+\paragraph{Statement Forms and Their Proof Strategies.}
+
+The following table maps every common statement form to the proof
+strategy it demands. This is not a list of suggestions --- it is a
+mechanical lookup. Once you have identified the outermost logical
+form of the statement you are trying to prove, the table tells you
+how to open your proof.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.28\textwidth} p{0.30\textwidth} p{0.32\textwidth}}
+\toprule
+\textbf{Statement Form} & \textbf{Proof Strategy} & \textbf{Opening Move} \\
+\midrule
+$\forall x,\; P(x)$ &
+  Introduce arbitrary element &
+  ``Let $x$ be arbitrary.'' \\
+
+$P \Rightarrow Q$ &
+  Direct proof &
+  ``Assume $P$.'' \\
+
+$P \Rightarrow Q$ &
+  Contrapositive &
+  ``Assume $\neg Q$.'' \\
+
+$P \Rightarrow Q$
+(when negation more useful) &
+  Contradiction &
+  ``Assume $P$ and $\neg Q$.'' \\
+
+$P \Leftrightarrow Q$ &
+  Two separate directions &
+  Prove $P \Rightarrow Q$, then $Q \Rightarrow P$. \\
+
+$\exists x,\; P(x)$ &
+  Construct a witness &
+  ``Define $x := \ldots$ and verify $P(x)$.'' \\
+
+$\exists!\, x,\; P(x)$ &
+  Existence then uniqueness &
+  Construct witness; then assume-two-and-compare. \\
+
+$A = B$ (sets) &
+  Double inclusion &
+  Prove $A \subseteq B$ and $B \subseteq A$. \\
+
+$a = b$ (algebraic elements) &
+  Satisfy-and-cite or algebra &
+  Show $a$ satisfies the defining property of $b$. \\
+
+$P(n)$ for all $n \in \mathbb{N}$ &
+  Induction &
+  Base case; inductive step. \\
+
+``$X$ is unique'' &
+  Assume-two-and-compare &
+  ``Let $x, y$ both satisfy the definition.'' \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Reading the table: defaults and alternatives]
+Some statement forms admit more than one strategy, and the table
+reflects this with multiple rows for the same form.
+
+For $P \Rightarrow Q$, the default is direct proof: assume $P$ and
+derive $Q$ by forward reasoning. Contrapositive is reached for when
+$\neg Q$ is more useful than $P$ as an assumption --- this happens
+when the negation of the conclusion is a strong, concrete condition
+(for example, ``$n$ is odd'' is concrete; ``$n$ is not even'' is the
+same thing but sounds weaker). Contradiction is reached for when neither
+$P$ alone nor $\neg Q$ alone gets you far, but combining them produces
+a quick absurdity.
+
+The hierarchy is: try direct proof first. If the hypothesis is hard
+to use forward, try contrapositive. If neither works, try contradiction.
+Do not reach for contradiction as a default just because the proof
+feels difficult.
+\end{remark}
+
+\begin{remark}[Set equality versus element equality are genuinely different]
+The two equality rows in the table look similar but demand completely
+different techniques, and conflating them is a common error.
+
+$A = B$ as \emph{sets} is proved by double inclusion because sets are
+defined extensionally: two sets are equal if and only if they have the
+same elements. Proving $A = B$ by any other means --- saying they are
+``clearly the same'' or ``follow from the definition'' --- is not a proof.
+The double inclusion must be made explicit.
+
+$a = b$ as \emph{elements in an algebraic structure} is different.
+Here $b$ is typically a uniquely-determined object: an inverse, an
+identity, a limit, a fixed point. The strategy is to show $a$ satisfies
+the same defining property as $b$, and then invoke the previously proved
+uniqueness theorem to conclude $a = b$. This is the satisfy-and-cite pattern
+(Section~\ref{sec:satisfy-cite}).
+
+The mistake is trying to use double inclusion on algebraic elements, or
+trying to use algebraic manipulation on sets. The form of the objects
+determines which technique applies.
+\end{remark}
+
+\begin{remark}[The biconditional is always two separate proofs]
+A biconditional $P \Leftrightarrow Q$ is \emph{never} proved in a single
+argument that runs from $P$ to $Q$ and ``loops back.'' It is always
+proved in two distinct proofs:
+
+\medskip
+\noindent \textbf{($\Rightarrow$)} Assume $P$. Prove $Q$.
+
+\noindent \textbf{($\Leftarrow$)} Assume $Q$. Prove $P$.
+
+\medskip
+\noindent
+Label the two directions explicitly. The two directions often require
+completely different techniques and different amounts of work.
+In characterisation theorems in analysis, one direction is typically
+a two-line unraveling of a definition while the other requires a
+nontrivial inequality argument. Treating them as one argument is how
+gaps get hidden.
+\end{remark}

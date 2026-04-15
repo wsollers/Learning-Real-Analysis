@@ -1,0 +1,327 @@
+% =========================================================
+% Section: Set Operations and the Hierarchy
+% Chapter: Algebras of Sets — Volume I
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Section Toolkit --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+D\ref{def:set-operations}
+  & $\cup,\cap,\setminus,\triangle,(\cdot)^c$ defined
+  & Definition & \hyperref[def:set-operations]{$\downarrow$} \\
+D\ref{def:ring-of-sets}
+  & Ring: closed under $\cup$, $\setminus$
+  & Definition & \hyperref[def:ring-of-sets]{$\downarrow$} \\
+D\ref{def:algebra-of-sets}
+  & Algebra: ring $+$ closed under complement
+  & Definition & \hyperref[def:algebra-of-sets]{$\downarrow$} \\
+D\ref{def:sigma-algebra}
+  & $\sigma$-algebra: algebra $+$ countable $\cup$
+  & Definition & \hyperref[def:sigma-algebra]{$\downarrow$} \\
+P\ref{prop:hierarchy-inclusions}
+  & $\sigma\text{-alg} \subseteq \text{alg} \subseteq \text{ring}$
+    (strict)
+  & Element chase $+$ counterexample
+  & \hyperref[prf:hierarchy-inclusions]{$\downarrow$} \\
+P\ref{prop:ring-closed-intersection}
+  & Every ring is closed under $\cap$
+  & Element chase via $\setminus$
+  & \hyperref[prf:ring-closed-intersection]{$\downarrow$} \\
+P\ref{prop:sigma-closed-countable-intersection}
+  & Every $\sigma$-algebra is closed under countable $\cap$
+  & De Morgan $+$ countable $\cup$
+  & \hyperref[prf:sigma-closed-countable-intersection]{$\downarrow$} \\
+P\ref{prop:intersection-sigma-algebras}
+  & Arbitrary intersection of $\sigma$-algebras is a $\sigma$-algebra
+  & Direct verification of axioms
+  & \hyperref[prf:intersection-sigma-algebras]{$\downarrow$} \\
+P\ref{prop:union-sigma-algebras-fails}
+  & Union of $\sigma$-algebras need not be a $\sigma$-algebra
+  & Explicit counterexample
+  & \hyperref[prf:union-sigma-algebras-fails]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definitions
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Set Operations)}},
+  fonttitle=\small\bfseries]
+\label{def:set-operations}
+Let $X$ be a non-empty set and let $A, B \subseteq X$.  The
+following operations are defined on $\mathcal{P}(X)$:
+\begin{align*}
+A \cup B      &:= \{ x \in X : x \in A \text{ or } x \in B \}
+  && \text{union} \\
+A \cap B      &:= \{ x \in X : x \in A \text{ and } x \in B \}
+  && \text{intersection} \\
+A \setminus B &:= \{ x \in X : x \in A \text{ and } x \notin B \}
+  && \text{set difference} \\
+A^c           &:= X \setminus A
+  && \text{complement (relative to } X\text{)} \\
+A \mathbin{\triangle} B
+              &:= (A \setminus B) \cup (B \setminus A)
+  && \text{symmetric difference}
+\end{align*}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+For all $A, B \in \mathcal{P}(X)$: $A \cup B$, $A \cap B$,
+$A \setminus B$, $A^c$, and $A \mathbin{\triangle} B$ are each
+elements of $\mathcal{P}(X)$ as defined above.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What are the five primitive set operations and their definitions?}
+\FlashA{$A\cup B$ (or), $A\cap B$ (and), $A\setminus B$ (in $A$ not $B$),
+  $A^c = X\setminus A$ (complement relative to $X$),
+  $A\triangle B = (A\setminus B)\cup(B\setminus A)$ (symmetric difference).}
+\FlashHint{Symmetric difference is the odd one out: both halves are differences,
+  then unioned.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Ring of Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:ring-of-sets}
+A collection $\mathcal{R} \subseteq \mathcal{P}(X)$ is a
+\textbf{ring of sets} on $X$ if:
+\begin{enumerate}
+  \item[(R1)] $\emptyset \in \mathcal{R}$,
+  \item[(R2)] $A, B \in \mathcal{R} \Rightarrow A \cup B \in \mathcal{R}$,
+  \item[(R3)] $A, B \in \mathcal{R} \Rightarrow A \setminus B \in \mathcal{R}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathcal{R}$ is a ring of sets on $X$ iff
+$\emptyset \in \mathcal{R}$ and
+$\forall A,B\in\mathcal{R}:
+  A\cup B\in\mathcal{R}$ and $A\setminus B\in\mathcal{R}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What are the three axioms of a ring of sets?}
+\FlashA{(R1) $\emptyset \in \mathcal{R}$;
+  (R2) closed under $\cup$;
+  (R3) closed under $\setminus$.}
+\FlashHint{A ring does \emph{not} require $X \in \mathcal{R}$ or closure under complement.}
+\FlashNeg{The collection of all finite subsets of $\mathbb{N}$ is a ring
+  but not an algebra: $\mathbb{N}^c = \emptyset \in \mathcal{R}$ but
+  $\{0\}^c = \mathbb{N}\setminus\{0\}$ is infinite, hence not in $\mathcal{R}$.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Algebra of Sets)}},
+  fonttitle=\small\bfseries]
+\label{def:algebra-of-sets}
+A collection $\mathcal{A} \subseteq \mathcal{P}(X)$ is an
+\textbf{algebra of sets} (or \textbf{field of sets}) on $X$ if:
+\begin{enumerate}
+  \item[(A1)] $\emptyset \in \mathcal{A}$,
+  \item[(A2)] $A \in \mathcal{A} \Rightarrow A^c \in \mathcal{A}$,
+  \item[(A3)] $A, B \in \mathcal{A} \Rightarrow A \cup B \in \mathcal{A}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathcal{A}$ is an algebra of sets on $X$ iff
+$\emptyset \in \mathcal{A}$,
+$\forall A\in\mathcal{A}: A^c\in\mathcal{A}$, and
+$\forall A,B\in\mathcal{A}: A\cup B\in\mathcal{A}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What are the three axioms of an algebra of sets?}
+\FlashA{(A1) $\emptyset \in \mathcal{A}$;
+  (A2) closed under complement;
+  (A3) closed under $\cup$.}
+\FlashHint{An algebra is a ring plus complement closure.
+  $X \in \mathcal{A}$ follows immediately: $X = \emptyset^c$.}
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\sigma$-Algebra)}},
+  fonttitle=\small\bfseries]
+\label{def:sigma-algebra}
+A collection $\mathcal{F} \subseteq \mathcal{P}(X)$ is a
+\textbf{$\sigma$-algebra} on $X$ if:
+\begin{enumerate}
+  \item[($\sigma$1)] $\emptyset \in \mathcal{F}$,
+  \item[($\sigma$2)] $A \in \mathcal{F} \Rightarrow A^c \in \mathcal{F}$,
+  \item[($\sigma$3)] $(A_n)_{n\in\mathbb{N}} \subseteq \mathcal{F}
+    \Rightarrow \bigcup_{n=1}^{\infty} A_n \in \mathcal{F}$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathcal{F}$ is a $\sigma$-algebra on $X$ iff
+$\emptyset\in\mathcal{F}$,
+$\forall A\in\mathcal{F}: A^c\in\mathcal{F}$, and
+$\forall (A_n)_{n\in\mathbb{N}}\subseteq\mathcal{F}:
+  \bigcup_{n=1}^\infty A_n\in\mathcal{F}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What distinguishes a $\sigma$-algebra from an algebra of sets?}
+\FlashA{A $\sigma$-algebra replaces closure under \emph{finite} unions
+  with closure under \emph{countable} unions.
+  Axioms ($\sigma$1) and ($\sigma$2) are identical to (A1) and (A2).}
+\FlashHint{Every $\sigma$-algebra is an algebra; the converse fails.
+  Counterexample: finite/co-finite sets on $\mathbb{N}$ form an algebra
+  but not a $\sigma$-algebra.}
+\FlashNeg{The collection of finite and co-finite subsets of $\mathbb{N}$
+  is an algebra: closed under complement by definition, closed under
+  finite union since finite union of finite sets is finite.
+  But $\{2n : n\in\mathbb{N}\} = \bigcup_{n=0}^\infty \{2n\}$ is
+  countably infinite and not co-finite, hence not in the collection.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Propositions
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:ring-closed-intersection]{Ring Closed Under Intersection}}{%
+  Ring Closed Under Intersection}]
+\label{prop:ring-closed-intersection}
+Every ring of sets $\mathcal{R}$ on $X$ is closed under finite intersection:
+if $A, B \in \mathcal{R}$ then $A \cap B \in \mathcal{R}$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall \mathcal{R}$ ring of sets on $X$,
+$\forall A,B\in\mathcal{R}: A\cap B\in\mathcal{R}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Why is every ring of sets automatically closed under intersection?}
+\FlashA{$A\cap B = A\setminus(A\setminus B)$.
+  Since $\mathcal{R}$ is closed under $\setminus$,
+  $A\setminus B\in\mathcal{R}$, then $A\setminus(A\setminus B)\in\mathcal{R}$.}
+\FlashHint{Intersection is not an axiom of a ring --- it is derived via two
+  applications of the difference axiom.}
+\FlashImplies{prop:hierarchy-inclusions}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:sigma-closed-countable-intersection]{%
+    $\sigma$-Algebra Closed Under Countable Intersection}}{%
+  Sigma-Algebra Closed Under Countable Intersection}]
+\label{prop:sigma-closed-countable-intersection}
+Every $\sigma$-algebra $\mathcal{F}$ on $X$ is closed under countable
+intersection: if $(A_n)_{n\in\mathbb{N}} \subseteq \mathcal{F}$ then
+$\bigcap_{n=1}^{\infty} A_n \in \mathcal{F}$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall \mathcal{F}\ \sigma\text{-algebra on }X,\
+\forall (A_n)_{n\in\mathbb{N}}\subseteq\mathcal{F}:
+\bigcap_{n=1}^\infty A_n\in\mathcal{F}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{How does a $\sigma$-algebra achieve closure under countable intersection?}
+\FlashA{By De Morgan: $\bigcap A_n = \bigl(\bigcup A_n^c\bigr)^c$.
+  Each $A_n^c\in\mathcal{F}$ by complement closure;
+  $\bigcup A_n^c\in\mathcal{F}$ by countable union closure;
+  complement again gives $\bigcap A_n\in\mathcal{F}$.}
+\FlashHint{De Morgan converts intersection to union; the $\sigma$-algebra axioms
+  handle the rest.}
+\FlashImplies{prop:hierarchy-inclusions}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:hierarchy-inclusions]{Hierarchy of Set Algebras}}{%
+  Hierarchy of Set Algebras}]
+\label{prop:hierarchy-inclusions}
+Every $\sigma$-algebra on $X$ is an algebra of sets on $X$, and every
+algebra of sets on $X$ is a ring of sets on $X$.  Both inclusions are
+strict.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\{\sigma\text{-algebras on }X\}
+  \subsetneq \{\text{algebras on }X\}
+  \subsetneq \{\text{rings on }X\}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State the strict hierarchy of set algebras.}
+\FlashA{$\sigma$-algebra $\subsetneq$ algebra $\subsetneq$ ring.
+  Strictness: finite/co-finite subsets of $\mathbb{N}$ is an algebra
+  but not a $\sigma$-algebra;
+  finite subsets of $\mathbb{N}$ is a ring but not an algebra.}
+\FlashHint{Each strictness witness is a counterexample showing the forward
+  implication fails.}
+\FlashImplies{def:sigma-algebra, def:algebra-of-sets, def:ring-of-sets}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:intersection-sigma-algebras]{%
+    Intersection of $\sigma$-Algebras is a $\sigma$-Algebra}}{%
+  Intersection of Sigma-Algebras is a Sigma-Algebra}]
+\label{prop:intersection-sigma-algebras}
+Let $\{ \mathcal{F}_\alpha \}_{\alpha \in I}$ be an arbitrary non-empty
+family of $\sigma$-algebras on $X$.  Then
+$\bigcap_{\alpha \in I} \mathcal{F}_\alpha$ is a $\sigma$-algebra on $X$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall$ non-empty index set $I$,
+$\forall \{\mathcal{F}_\alpha\}_{\alpha\in I}$ each a $\sigma$-algebra on $X$:
+$\bigcap_{\alpha\in I}\mathcal{F}_\alpha$ is a $\sigma$-algebra on $X$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Why does arbitrary intersection preserve the $\sigma$-algebra property?}
+\FlashA{Verify all three axioms pointwise: $\emptyset$ is in every
+  $\mathcal{F}_\alpha$, so in the intersection; if $A$ is in every
+  $\mathcal{F}_\alpha$ then $A^c$ is; if each $A_n$ is in every
+  $\mathcal{F}_\alpha$ then $\bigcup A_n$ is in every $\mathcal{F}_\alpha$.}
+\FlashHint{This is the key lemma enabling the generated $\sigma$-algebra
+  construction.}
+\FlashImplies{def:generated-sigma-algebra}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:union-sigma-algebras-fails]{%
+    Union of $\sigma$-Algebras Need Not Be a $\sigma$-Algebra}}{%
+  Union of Sigma-Algebras Need Not Be a Sigma-Algebra}]
+\label{prop:union-sigma-algebras-fails}
+There exist $\sigma$-algebras $\mathcal{F}_1, \mathcal{F}_2$ on a set
+$X$ such that $\mathcal{F}_1 \cup \mathcal{F}_2$ is not a
+$\sigma$-algebra on $X$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\exists X,\ \exists \mathcal{F}_1, \mathcal{F}_2\ \sigma\text{-algebras on }X:
+\mathcal{F}_1\cup\mathcal{F}_2$ is not a $\sigma$-algebra on $X$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Give a counterexample showing that union of $\sigma$-algebras can fail
+  to be a $\sigma$-algebra.}
+\FlashA{Let $X = \{1,2,3\}$,
+  $\mathcal{F}_1 = \{\emptyset,\{1\},\{2,3\},X\}$,
+  $\mathcal{F}_2 = \{\emptyset,\{2\},\{1,3\},X\}$.
+  Both are $\sigma$-algebras.
+  But $\{1\},\{2\}\in\mathcal{F}_1\cup\mathcal{F}_2$
+  while $\{1\}\cup\{2\}=\{1,2\}\notin\mathcal{F}_1\cup\mathcal{F}_2$.}
+\FlashHint{Contrast with intersection: intersection always works, union almost
+  never does.}
+\FlashImplies{prop:intersection-sigma-algebras}
+\end{remark*}

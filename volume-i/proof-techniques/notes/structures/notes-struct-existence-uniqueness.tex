@@ -1,0 +1,113 @@
+% =========================================================
+% Existence and Uniqueness Patterns
+% =========================================================
+\paragraph{Existence and Uniqueness.}
+
+The statement $\exists!\, x\; P(x)$ asserts two things simultaneously:
+that some object satisfying $P$ exists, and that it is the \emph{only}
+such object. These two obligations are proved separately, in order.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Template: Existence and Uniqueness ($\exists!\, x\; P(x)$)}},
+  fonttitle=\small\bfseries]
+\textbf{Step 1 --- Existence.}\\
+Define $x := [\text{explicit construction}]$.\\
+Verify that $P(x)$ holds. (Check every condition in $P$.)
+
+\medskip
+\textbf{Step 2 --- Uniqueness (assume-two-and-compare).}\\
+Let $x$ and $y$ be arbitrary objects both satisfying $P$.\\
+\emph{Apply the definition of $x$ with $y$ as input; apply the definition
+of $y$ with $x$ as input. The two applications collapse.}\\
+Conclude $x = y$.
+
+\medskip
+\textbf{Step 3 --- Conclude.}\\
+By Steps~1 and~2, there exists exactly one object satisfying $P$. \qed
+\end{tcolorbox}
+
+\begin{remark}[Existence must be proved before uniqueness]
+The uniqueness argument has the form: ``let $x$ and $y$ both satisfy
+$P$.'' This assumption is only meaningful if we already know that at
+least one object satisfying $P$ exists. Without Step~1, the uniqueness
+argument is vacuous: we are asserting something about objects that
+might not exist.
+
+This is not pedantry. There are statements where the existence fails
+and the uniqueness argument would appear to go through --- but the
+whole proof would then be establishing uniqueness for an empty set of
+objects, which is trivially true and useless. Existence first is not
+just a convention; it is logically necessary.
+\end{remark}
+
+\begin{remark}[The key move in assume-two-and-compare]
+The assume-two-and-compare argument has a characteristic structure that
+appears across mathematics. The critical move is this: if $x$ and $y$
+both satisfy the defining property $P$, apply $x$'s property with $y$
+as the argument, and simultaneously apply $y$'s property with $x$ as
+the argument. The two applications collapse to $x = y$.
+
+Here is the pattern in the group identity example: if $e$ satisfies
+the identity axiom, then $e \cdot e' = e'$ (using $e$ as identity with
+argument $e'$). If $e'$ satisfies the identity axiom, then $e \cdot e' = e$
+(using $e'$ as identity with argument $e$). Combining: $e' = e$.
+
+The same move works for: uniqueness of inverses, uniqueness of the
+zero vector, uniqueness of limits, uniqueness of the supremum.
+In every case, the two assumed objects are ``played against each other'':
+each one's defining property is applied with the other as input.
+\end{remark}
+
+\begin{example}[Uniqueness of the group identity]
+\textit{Proof.}
+Let $G$ be a group. Suppose $e$ and $e'$ both satisfy the identity axiom:
+\[
+e \cdot g = g \cdot e = g \quad \text{for all } g \in G,
+\]
+\[
+e' \cdot g = g \cdot e' = g \quad \text{for all } g \in G.
+\]
+
+Apply $e'$'s identity property with $g = e$:
+\[
+e' \cdot e = e.
+\]
+Apply $e$'s identity property with $g = e'$:
+\[
+e \cdot e' = e'.
+\]
+But $e' \cdot e = e \cdot e'$ (both equal the product $e \cdot e'$ in $G$
+by commutativity --- actually, both equal $e \cdot e'$ directly).
+Actually, more directly: $e = e' \cdot e = e'$ where the first step
+uses $e'$ as identity and the second uses $e$ as identity.
+Hence $e = e'$. \qed
+
+\medskip\noindent
+The single line is: $e = e \cdot e' = e'$.
+First equality: $e$ acts as identity on $e'$.
+Second equality: $e'$ acts as identity on $e$.
+Both identities applied to the same product; both sides collapse to
+the same expression; $e = e'$.
+\end{example}
+
+\begin{remark}[Why proving uniqueness creates a proof tool]
+Every uniqueness theorem, once proved, creates a new application of
+the satisfy-and-cite tactic. This is the connection that most students
+miss.
+
+Proving uniqueness says: there is exactly one object satisfying $P$.
+This means: if you can ever show that some element $a$ satisfies $P$,
+you automatically get $a = b$, where $b$ is the canonical name for the
+unique object satisfying $P$.
+
+The group inverse provides the clearest example. Once you have proved
+that inverses are unique, the pattern for proving $(ab)^{-1} = b^{-1}a^{-1}$
+is immediate: show $b^{-1}a^{-1}$ satisfies the defining property of
+the inverse of $ab$, then cite uniqueness. You never need to set up
+another assume-two-and-compare argument. The uniqueness theorem absorbs
+all future comparisons.
+
+This is why uniqueness results are not just facts --- they are
+\emph{tools}. Prove them early; use them everywhere afterward.
+\end{remark}

@@ -1,0 +1,125 @@
+% =========================================================
+% Proof by Cases
+% =========================================================
+\paragraph{Proof by Cases.}
+
+If the hypotheses or conclusion naturally divide into a finite number
+of mutually exclusive and collectively exhaustive alternatives, handle
+each case separately.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Template: Proof by Cases}}, fonttitle=\small\bfseries]
+\textbf{Goal:} Prove $Q$, given that exactly one of $P_1, P_2, \ldots, P_k$
+holds (and one of them always holds).
+
+\medskip
+\textit{Verify exhaustiveness:} Every possibility falls under some $P_i$.\\
+\textit{Verify mutual exclusivity} (when needed).
+
+\medskip
+\textbf{Case 1:} Assume $P_1$. \quad [Argue.] \quad Hence $Q$.\\[4pt]
+\textbf{Case 2:} Assume $P_2$. \quad [Argue.] \quad Hence $Q$.\\[4pt]
+\hspace{1.2em}$\vdots$\\[4pt]
+\textbf{Case $k$:} Assume $P_k$. \quad [Argue.] \quad Hence $Q$.
+
+\medskip
+Since $P_1, \ldots, P_k$ are exhaustive and $Q$ holds in each case,
+$Q$ holds unconditionally. \qed
+\end{tcolorbox}
+
+\begin{remark}[The exhaustiveness obligation is non-negotiable]
+A case proof is only valid when the cases together cover every
+possibility. Always verify exhaustiveness explicitly, even when it
+feels obvious.
+
+The most common exhaustive splits:
+\begin{itemize}[itemsep=2pt]
+  \item $n$ is even, or $n$ is odd.
+  \item $a > 0$, $a = 0$, or $a < 0$.
+  \item $a \mid b$, or $a \nmid b$.
+  \item $x \in A$, or $x \notin A$.
+  \item $x = y$, or $x \neq y$.
+\end{itemize}
+
+Writing ``we consider two cases'' without naming what they are, or
+naming cases that do not cover all possibilities, is a structural error.
+The proof is not valid until exhaustiveness is established.
+\end{remark}
+
+\begin{remark}[Each case is a self-contained argument]
+Inside each case, you have an additional assumption: $P_i$ is true.
+That assumption is local to the case. You may use it within Case~$i$,
+but you may not carry it into Case~$j$.
+
+When you close a case --- ``hence $Q$, completing Case~1'' --- you
+are signalling that the local assumption is no longer in scope.
+Case~2 starts fresh, with only the original given plus the assumption $P_2$.
+
+This discipline prevents the most common case-analysis error: drifting
+from one case into another by accidentally retaining a local assumption
+beyond its scope.
+\end{remark}
+
+\begin{remark}[Symmetric cases]
+When two cases are exactly symmetric --- when the argument for Case~2
+is obtained from the argument for Case~1 by renaming variables, with
+no other change --- it is acceptable to write ``Case~2 is symmetric
+to Case~1 by swapping $a$ and $b$.'' But be careful: only write this
+when the symmetry is complete. A partial symmetry that requires a
+different step at one point must be written out in full.
+\end{remark}
+
+\begin{example}[Parity of $n(n+1)$]
+\textbf{Claim.} For every $n \in \mathbb{Z}$, $n(n+1)$ is even.
+
+\medskip
+\noindent\textit{Proof.}
+Every integer is either even or odd (these cases are exhaustive and
+mutually exclusive).
+
+\textbf{Case 1: $n$ is even.}
+Write $n = 2k$ for some $k \in \mathbb{Z}$.
+Then $n(n+1) = 2k(n+1)$. Since this is $2$ times an integer,
+$n(n+1)$ is even.
+
+\textbf{Case 2: $n$ is odd.}
+Write $n = 2k+1$ for some $k \in \mathbb{Z}$.
+Then $n+1 = 2k+2 = 2(k+1)$, so $n(n+1) = (2k+1) \cdot 2(k+1)$.
+This is $2$ times an integer, so $n(n+1)$ is even.
+
+In both cases $n(n+1)$ is even. Since every integer falls into one of
+these cases, the proof is complete. \qed
+
+\medskip
+\noindent
+Notice that the cases were named before the argument, the exhaustiveness
+was verified (``every integer is even or odd''), and each case was
+closed explicitly before moving to the next.
+\end{example}
+
+\begin{example}[Case split induced by a definition]
+\textbf{Claim.} The discrete metric satisfies the triangle inequality.
+
+\medskip
+\noindent\textit{Proof.}
+Let $x, y, z \in X$. We must show $d(x,z) \leq d(x,y) + d(y,z)$.
+
+\textbf{Case 1: $x = z$.}
+Then $d(x,z) = 0$. Since $d(x,y) \geq 0$ and $d(y,z) \geq 0$,
+we have $0 \leq d(x,y) + d(y,z)$.
+
+\textbf{Case 2: $x \neq z$.}
+Then $d(x,z) = 1$. We cannot have both $x = y$ and $y = z$,
+for that would force $x = z$. So at least one of $d(x,y), d(y,z)$
+equals~$1$, hence $d(x,y) + d(y,z) \geq 1 = d(x,z)$.
+
+The cases $x = z$ and $x \neq z$ are exhaustive. The triangle
+inequality holds in both cases. \qed
+
+\medskip
+\noindent
+The case split here is induced by the two-value structure of the
+discrete metric: distances are $0$ or $1$. The right case split
+to use is the one naturally suggested by the definition you are working with.
+\end{example}

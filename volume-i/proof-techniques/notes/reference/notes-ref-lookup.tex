@@ -1,0 +1,140 @@
+% =========================================================
+% Proof Strategies Lookup Table
+% =========================================================
+\paragraph{Lookup Table: Stuck Situations and Strategies.}
+
+\begin{remark}[How to use this table]
+When progress on a proof stalls, locate the row that describes your
+situation. The middle column names the strategy. The right column
+gives the specific first move and a cross-reference to the section
+where that strategy is developed in detail.
+
+This table is not a substitute for understanding the strategies; it
+is a navigation aid for when you know what you are trying to do but
+have forgotten the precise machinery. The full explanations and worked
+examples are in the sections cited.
+\end{remark}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{p{0.27\textwidth} p{0.22\textwidth} p{0.40\textwidth}}
+\toprule
+\textbf{Stuck because\ldots} &
+\textbf{Strategy} &
+\textbf{First move / See} \\
+\midrule
+
+I need to prove $P$ but don't know where to start &
+  Two-question check &
+  Write the logical form of $P$. Consult the statement map.
+  \S\ref{sec:proof-architecture} \\
+
+I need to show two things are equal and one is uniquely defined &
+  Satisfy-and-cite &
+  Show the first satisfies the definition of the second.
+  Cite the uniqueness theorem.
+  \S\ref{sec:satisfy-cite} \\
+
+I need to show something is the only object of its kind &
+  Assume-two-and-compare &
+  ``Let $x, y$ both satisfy the definition. Show $x = y$.''
+  \S\ref{sec:proof-structures} \\
+
+I have a conditional $P \Rightarrow Q$ and $P$ is hard to use forward &
+  Contrapositive &
+  ``Assume $\neg Q$.'' Derive $\neg P$.
+  \S\ref{sec:proof-structures} \\
+
+I have a conditional and the conclusion seems impossible to reach directly &
+  Contradiction &
+  ``Assume $P$ and $\neg Q$.'' Derive any contradiction.
+  \S\ref{sec:proof-structures} \\
+
+The claim splits naturally into a finite number of cases &
+  Case analysis &
+  List all cases explicitly. Verify exhaustiveness first.
+  \S\ref{sec:proof-structures} \\
+
+The claim is about all $n \in \mathbb{N}$ &
+  Weak induction &
+  Write $P(n)$ as a full sentence. Prove the base case directly.
+  \S\ref{sec:induction} \\
+
+The inductive step needs $P(k)$ for some $k < n$ (not just $n-1$) &
+  Strong induction &
+  Replace ``assume $P(n)$'' with ``assume $P(k)$ for all $k < n$.''
+  \S\ref{sec:induction} \\
+
+The claim is about all $n \geq n_0$ and feels easier to negate &
+  Minimal counterexample &
+  ``Let $S = \{n : \neg P(n)\} \neq \emptyset$. Let $m = \min S$.''
+  \S\ref{sec:wellordering} \\
+
+I need to prove $a \cdot 0 = 0$ or $a(-b) = -(ab)$ in a ring &
+  Distributivity bridge &
+  Write $0 = x + (-x)$; apply distributivity; use
+  uniqueness of additive inverse.
+  \S\ref{sec:tactics} \\
+
+I have $ac = bc$ and need $a = b$ &
+  Cancellation &
+  Group: multiply by $c^{-1}$.
+  Domain: write $(a-b)c = 0$; cite no zero divisors.
+  \S\ref{sec:tactics} \\
+
+I need to prove two sets are equal &
+  Double inclusion &
+  Prove $A \subseteq B$: let $x \in A$ arbitrary, derive $x \in B$.
+  Then prove $B \subseteq A$.
+  \S\ref{sec:proof-architecture} \\
+
+A definition has not been unpacked &
+  DU move &
+  Identify the named concept and write out its definition.
+  Tag the line \tagDU.
+  \S\ref{sec:tactics} \\
+
+A step uses an axiom or theorem by name &
+  TA move &
+  Cite the axiom or theorem explicitly by label or full name.
+  Tag the line \tagTA.
+  \S\ref{sec:tactics} \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Cross-references to primary worked examples]
+The following table maps each strategy to a worked example in these
+notes where it is the primary tool.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.35\textwidth} p{0.55\textwidth}}
+\toprule
+\textbf{Strategy} & \textbf{Primary worked examples} \\
+\midrule
+Assume-two-and-compare &
+  Uniqueness of group identity (this section) \\
+Satisfy-and-cite &
+  $(ab)^{-1} = b^{-1}a^{-1}$; $a(-b) = -(ab)$ (this section) \\
+Distributivity bridge &
+  $a \cdot 0 = 0$; $a(-b) = -(ab)$ (Tactics section) \\
+Cancellation (group) &
+  Group left-cancellation (Tactics section) \\
+Cancellation (domain) &
+  Integral domain cancellation (Tactics section) \\
+Weak induction &
+  Sum formula $\sum k = n(n+1)/2$; $3 \mid 4^n - 1$ \\
+Strong induction &
+  Fibonacci bound; prime factor theorem \\
+Minimal counterexample &
+  $2^n > n$ \\
+Contrapositive &
+  $n^2$ even $\Rightarrow$ $n$ even \\
+Contradiction &
+  $\sqrt{2} \notin \mathbb{Q}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{remark}

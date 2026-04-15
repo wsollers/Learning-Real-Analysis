@@ -1,0 +1,210 @@
+% =========================================================
+% Section: Rings of Sets
+% Chapter: Algebras of Sets — Volume I
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Section Toolkit --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+P\ref{prop:algebra-is-ring}
+  & Every algebra of sets is a ring of sets
+  & Verify (R1)--(R3) from (A1)--(A3)
+  & \hyperref[prf:algebra-is-ring]{$\downarrow$} \\
+P\ref{prop:ring-not-algebra}
+  & Not every ring of sets is an algebra
+  & Explicit counterexample
+  & \hyperref[prf:ring-not-algebra]{$\downarrow$} \\
+P\ref{prop:ring-closed-finite-union}
+  & Ring closed under finite union (induction)
+  & Induction on $n$ using (R2)
+  & \hyperref[prf:ring-closed-finite-union]{$\downarrow$} \\
+P\ref{prop:ring-closed-finite-intersection}
+  & Ring closed under finite intersection
+  & Induction $+$ $A\cap B = A\setminus(A\setminus B)$
+  & \hyperref[prf:ring-closed-finite-intersection]{$\downarrow$} \\
+P\ref{prop:half-open-intervals-ring}
+  & Finite unions of half-open intervals $(a,b]$ form a ring
+  & Verify (R1)--(R3) directly
+  & \hyperref[prf:half-open-intervals-ring]{$\downarrow$} \\
+P\ref{prop:generated-algebra}
+  & $\mathcal{A}(\mathcal{C})$ exists and is the smallest
+    algebra containing $\mathcal{C}$
+  & Intersection of all algebras containing $\mathcal{C}$
+  & \hyperref[prf:generated-algebra]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Propositions
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:algebra-is-ring]{Every Algebra of Sets is a Ring of Sets}}{%
+  Every Algebra of Sets is a Ring of Sets}]
+\label{prop:algebra-is-ring}
+Every algebra of sets on $X$ is a ring of sets on $X$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall \mathcal{A}$ algebra of sets on $X$:
+$\mathcal{A}$ is a ring of sets on $X$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Why is every algebra of sets automatically a ring of sets?}
+\FlashA{(R1): $\emptyset\in\mathcal{A}$ by (A1).
+  (R2): closed under $\cup$ by (A3).
+  (R3): $A\setminus B = A\cap B^c$.
+  Since $B^c\in\mathcal{A}$ by (A2) and $A\cap B^c\in\mathcal{A}$
+  by closure under $\cap$ (which follows from (A2),(A3) and De Morgan),
+  $A\setminus B\in\mathcal{A}$.}
+\FlashHint{The only non-trivial step is (R3): express $\setminus$ in terms
+  of $\cap$ and complement, both of which algebras handle.}
+\FlashImplies{prop:hierarchy-inclusions}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:ring-not-algebra]{Not Every Ring of Sets is an Algebra}}{%
+  Not Every Ring of Sets is an Algebra}]
+\label{prop:ring-not-algebra}
+There exists a ring of sets on a set $X$ that is not an algebra of sets on $X$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\exists X,\ \exists\mathcal{R}$ ring of sets on $X$:
+$\mathcal{R}$ is not an algebra of sets on $X$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Give a counterexample of a ring that is not an algebra.}
+\FlashA{Let $X = \mathbb{N}$ and $\mathcal{R} = \{A\subseteq\mathbb{N} : A\text{ is finite}\}$.
+  (R1): $\emptyset\in\mathcal{R}$. (R2): finite union of finite sets is finite.
+  (R3): subset of a finite set is finite.
+  Not an algebra: $\{0\}^c = \mathbb{N}\setminus\{0\}$ is infinite,
+  hence $\{0\}^c\notin\mathcal{R}$, violating (A2).}
+\FlashHint{Finite sets on an infinite ambient space are the canonical example.
+  The complement of a finite set is co-finite, not finite.}
+\FlashImplies{prop:hierarchy-inclusions}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:ring-closed-finite-union]{%
+    Ring Closed Under Finite Union}}{Ring Closed Under Finite Union}]
+\label{prop:ring-closed-finite-union}
+Let $\mathcal{R}$ be a ring of sets on $X$.  For all $n \geq 1$ and
+all $A_1,\ldots,A_n \in \mathcal{R}$,
+$A_1 \cup \cdots \cup A_n \in \mathcal{R}$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall\mathcal{R}$ ring of sets on $X$,
+$\forall n\geq 1$,
+$\forall A_1,\ldots,A_n\in\mathcal{R}:\
+\bigcup_{k=1}^n A_k\in\mathcal{R}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove that a ring is closed under finite unions by induction.}
+\FlashA{Base case $n=1$: trivial.
+  Inductive step: assume $\bigcup_{k=1}^n A_k\in\mathcal{R}$.
+  Then $\bigcup_{k=1}^{n+1} A_k
+  = \bigl(\bigcup_{k=1}^n A_k\bigr)\cup A_{n+1}\in\mathcal{R}$
+  by (R2) and the inductive hypothesis.}
+\FlashImplies{prop:ring-closed-finite-intersection}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:ring-closed-finite-intersection]{%
+    Ring Closed Under Finite Intersection}}{%
+  Ring Closed Under Finite Intersection}]
+\label{prop:ring-closed-finite-intersection}
+Let $\mathcal{R}$ be a ring of sets on $X$.  For all $n \geq 1$ and
+all $A_1,\ldots,A_n \in \mathcal{R}$,
+$A_1 \cap \cdots \cap A_n \in \mathcal{R}$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall\mathcal{R}$ ring of sets on $X$,
+$\forall n\geq 1$,
+$\forall A_1,\ldots,A_n\in\mathcal{R}:\
+\bigcap_{k=1}^n A_k\in\mathcal{R}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove that a ring is closed under finite intersections.}
+\FlashA{Two-set case first: $A\cap B = A\setminus(A\setminus B)\in\mathcal{R}$
+  by two applications of (R3).
+  General case by induction: $\bigcap_{k=1}^{n+1} A_k
+  = \bigl(\bigcap_{k=1}^n A_k\bigr)\cap A_{n+1}\in\mathcal{R}$.}
+\FlashHint{Intersection is not an axiom of a ring --- derive it from $\setminus$.
+  The identity $A\cap B = A\setminus(A\setminus B)$ is the key.}
+\FlashImplies{prop:half-open-intervals-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:half-open-intervals-ring]{%
+    Half-Open Intervals Form a Ring}}{Half-Open Intervals Form a Ring}]
+\label{prop:half-open-intervals-ring}
+Let $\mathcal{H}$ denote the collection of all finite unions of
+half-open intervals of the form $(a,b] \subseteq \mathbb{R}$
+(including $\emptyset$ as the empty union).
+Then $\mathcal{H}$ is a ring of sets on $\mathbb{R}$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+Let $\mathcal{H} := \bigl\{ \bigcup_{k=1}^n (a_k,b_k] :
+  n\geq 0,\ a_k < b_k\in\mathbb{R} \bigr\}$.
+Then $\mathcal{H}$ is a ring of sets on $\mathbb{R}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Why do finite unions of half-open intervals form a ring but not an
+  algebra?}
+\FlashA{(R1): $\emptyset\in\mathcal{H}$ as the empty union.
+  (R2): union of two elements of $\mathcal{H}$ is still a finite union of
+  half-open intervals.
+  (R3): difference of two half-open intervals is a finite union of half-open
+  intervals (split at endpoints).
+  Not an algebra: $(-\infty,0]^c = (0,\infty)$ is not a finite union of
+  bounded half-open intervals.}
+\FlashHint{This is the canonical ring used to construct Lebesgue measure via
+  Carath\'eodory extension.  It reappears in the measure theory chapter.}
+\FlashImplies{def:sigma-algebra}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:generated-algebra]{Generated Algebra Exists and is Smallest}}{%
+  Generated Algebra Exists and is Smallest}]
+\label{prop:generated-algebra}
+Let $\mathcal{C} \subseteq \mathcal{P}(X)$ be any collection of subsets
+of $X$.  There exists a unique smallest algebra of sets on $X$ containing
+$\mathcal{C}$, denoted $\mathcal{A}(\mathcal{C})$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall\mathcal{C}\subseteq\mathcal{P}(X)$,
+$\exists!\mathcal{A}(\mathcal{C})$ algebra of sets on $X$:
+(i) $\mathcal{C}\subseteq\mathcal{A}(\mathcal{C})$, and
+(ii) $\forall\mathcal{B}$ algebra of sets on $X$ with $\mathcal{C}\subseteq\mathcal{B}$:
+$\mathcal{A}(\mathcal{C})\subseteq\mathcal{B}$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{How is the generated algebra $\mathcal{A}(\mathcal{C})$ constructed,
+  and why does it exist?}
+\FlashA{$\mathcal{A}(\mathcal{C}) := \bigcap\{\mathcal{B} :
+  \mathcal{B}\text{ is an algebra on }X,\ \mathcal{C}\subseteq\mathcal{B}\}$.
+  The family is non-empty since $\mathcal{P}(X)$ is an algebra containing
+  $\mathcal{C}$.  The intersection of algebras is an algebra
+  (verify axioms pointwise).}
+\FlashHint{The same intersection trick works for $\sigma$-algebras --- it is
+  the template for the generated $\sigma$-algebra construction in Section~4.}
+\FlashImplies{prop:intersection-sigma-algebras, def:generated-sigma-algebra}
+\end{remark*}

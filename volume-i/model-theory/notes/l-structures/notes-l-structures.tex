@@ -1,0 +1,320 @@
+% notes-l-structures.tex
+% Volume I — Model Theory
+% Topic: L-Structures (Languages and their interpretations)
+% Status: Active
+
+% ──────────────────────────────────────────────────────────────
+%  TOOLKIT — L-Structures Quick Reference
+% ──────────────────────────────────────────────────────────────
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{L-Structures Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Symbol / Notation} & \textbf{Detail} \\
+\midrule
+First-order language    & $\mathcal{L}$                          & \hyperref[def:first-order-language]{↓} \\
+L-structure             & $\mathcal{M} = (M, \mathcal{L}^{\mathcal{M}})$ & \hyperref[def:l-structure]{↓} \\
+Domain / universe       & $|\mathcal{M}|$ or $M$                 & \hyperref[def:l-structure]{↓} \\
+Interpretation of $f$   & $f^{\mathcal{M}} : M^n \to M$          & \hyperref[def:l-structure]{↓} \\
+Interpretation of $R$   & $R^{\mathcal{M}} \subseteq M^n$        & \hyperref[def:l-structure]{↓} \\
+Interpretation of $c$   & $c^{\mathcal{M}} \in M$                & \hyperref[def:l-structure]{↓} \\
+Variable assignment     & $s : \mathrm{Var} \to M$               & \hyperref[def:variable-assignment]{↓} \\
+Term evaluation         & $s(t) \in M$                           & \hyperref[def:term-evaluation]{↓} \\
+Satisfaction            & $\mathcal{M} \models \varphi[s]$       & \hyperref[def:satisfaction]{↓} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{0.5em}
+
+% ──────────────────────────────────────────────────────────────
+%  §1  FIRST-ORDER LANGUAGES
+% ──────────────────────────────────────────────────────────────
+
+\section{First-Order Languages}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (First-Order Language $\mathcal{L}$)}},
+  fonttitle=\small\bfseries]
+\label{def:first-order-language}
+A \textbf{first-order language} $\mathcal{L}$ consists of three (possibly
+empty) sets of non-logical symbols:
+\begin{itemize}
+  \item a set $\mathcal{R}$ of \textbf{relation symbols} (also called
+        \emph{predicate symbols}), each assigned a fixed arity $n \geq 1$;
+  \item a set $\mathcal{F}$ of \textbf{function symbols}, each assigned a
+        fixed \textbf{arity} $n \geq 0$ (0-ary function symbols are
+        \emph{constant symbols});
+  \item a set $\mathcal{C}$ of \textbf{constant symbols} (equivalently,
+        0-ary function symbols — listed separately for emphasis).
+\end{itemize}
+Together with the logical symbols common to all first-order languages
+(variables, connectives $\lnot, \land, \lor, \to, \leftrightarrow$,
+quantifiers $\forall, \exists$, equality $=$, parentheses), the triple
+$(\mathcal{F}, \mathcal{R}, \mathcal{C})$ determines $\mathcal{L}$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathcal{L} = (\mathcal{F}, \mathcal{R}, \mathcal{C})$ where
+$\mathrm{ar}(f) \in \mathbb{N}$ for each $f \in \mathcal{F}$ and
+$\mathrm{ar}(R) \in \mathbb{N}_{\geq 1}$ for each $R \in \mathcal{R}$.
+\end{remark*}
+
+\begin{remark*}[Intuition]
+A language is a \emph{vocabulary}: it names the operations, relations, and
+distinguished elements that can appear in sentences, without yet saying what
+those names mean. The meaning is supplied by a structure.
+\end{remark*}
+
+\begin{remark*}[Source note]
+Some sources (e.g.\ Marker \S1.1, Hodges) absorb constant symbols into
+0-ary function symbols. Others (e.g.\ Chang--Keisler) list them separately.
+The content is equivalent; only the bookkeeping differs.
+\end{remark*}
+
+\begin{remark*}[Consequence]
+The set of $\mathcal{L}$-terms and the set of $\mathcal{L}$-formulas are
+both defined inductively from $\mathcal{L}$; see
+\hyperref[def:term-evaluation]{term evaluation} below.
+\end{remark*}
+
+% ── Examples of languages ─────────────────────────────────────
+
+\begin{example}[Standard examples of first-order languages]
+\begin{enumerate}
+  \item \textbf{Language of ordered fields} $\mathcal{L}_{\mathrm{of}}$:
+        function symbols $\{+, \cdot, -\}$ of arities $2, 2, 1$;
+        relation symbol $\{<\}$ of arity $2$;
+        constant symbols $\{0, 1\}$.
+        The real field $(\mathbb{R}, +, \cdot, -, <, 0, 1)$ is an
+        $\mathcal{L}_{\mathrm{of}}$-structure.
+
+  \item \textbf{Language of graphs} $\mathcal{L}_{\mathrm{gr}}$:
+        no function symbols, no constants;
+        one binary relation symbol $\{E\}$ (for ``edge'').
+
+  \item \textbf{Language of groups} $\mathcal{L}_{\mathrm{gp}}$:
+        function symbols $\{\cdot, {}^{-1}\}$ of arities $2, 1$;
+        constant symbol $\{e\}$.
+
+  \item \textbf{Pure equality language} $\mathcal{L}_{=}$:
+        no non-logical symbols at all. Structures are arbitrary
+        non-empty sets.
+\end{enumerate}
+\end{example}
+
+% ──────────────────────────────────────────────────────────────
+%  §2  L-STRUCTURES
+% ──────────────────────────────────────────────────────────────
+
+\subsection{L-Structures}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\mathcal{L}$-Structure)}},
+  fonttitle=\small\bfseries]
+\label{def:l-structure}
+Let $\mathcal{L} = (\mathcal{F}, \mathcal{R}, \mathcal{C})$ be a
+first-order language.
+An \textbf{$\mathcal{L}$-structure} $\mathcal{M}$ consists of:
+\begin{enumerate}
+  \item a non-empty set $M$ called the \textbf{domain} (or
+        \textbf{universe}) of $\mathcal{M}$, written $|\mathcal{M}|$;
+  \item for each $n$-ary relation symbol $R \in \mathcal{R}$,
+        a relation $R^{\mathcal{M}} \subseteq M^n$;
+  \item for each $n$-ary function symbol $f \in \mathcal{F}$,
+        a function $f^{\mathcal{M}} : M^n \to M$;
+  \item for each constant symbol $c \in \mathcal{C}$,
+        a distinguished element $c^{\mathcal{M}} \in M$.
+\end{enumerate}
+The superscript notation $f^{\mathcal{M}}, R^{\mathcal{M}}, c^{\mathcal{M}}$
+denotes the \textbf{interpretation} of each symbol in $\mathcal{M}$.
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$\mathcal{M}$ is an $\mathcal{L}$-structure iff
+$M \neq \emptyset$,
+and $\forall f \in \mathcal{F}_{(n)},\ f^{\mathcal{M}} : M^n \to M$,
+and $\forall R \in \mathcal{R}_{(n)},\ R^{\mathcal{M}} \subseteq M^n$,
+and $\forall c \in \mathcal{C},\ c^{\mathcal{M}} \in M$.
+\end{remark*}
+
+\begin{remark*}[Intuition]
+A structure is an $\mathcal{L}$-vocabulary \emph{made concrete}: each
+symbol is assigned an actual mathematical object of the correct type.
+The domain provides the raw material; the interpretations give the
+symbols their meaning inside that domain.
+\end{remark*}
+
+\begin{remark*}[Common error]
+The domain $M$ must be \emph{non-empty}. First-order logic with an empty
+domain is pathological: $\forall x\, \varphi$ would be vacuously true
+and $\exists x\, \varphi$ vacuously false for every $\varphi$, breaking
+the duality of the quantifiers.
+\end{remark*}
+
+\begin{remark*}[Source note]
+Some sources write $\mathfrak{M}$ (Fraktur) for structures and reserve
+$M$ for the domain; others use $\mathcal{M}$ throughout and write
+$|\mathcal{M}|$ for the domain. The latter convention is used here.
+Marker uses $\mathcal{M}$; Enderton uses $\mathfrak{A}$.
+\end{remark*}
+
+% ── Examples of L-structures ──────────────────────────────────
+
+\begin{example}[L-structures for familiar mathematical objects]
+\begin{enumerate}
+  \item $(\mathbb{R}, +^{\mathbb{R}}, \cdot^{\mathbb{R}}, -^{\mathbb{R}},
+         <^{\mathbb{R}}, 0^{\mathbb{R}}, 1^{\mathbb{R}})$
+        is an $\mathcal{L}_{\mathrm{of}}$-structure with domain
+        $M = \mathbb{R}$.
+
+  \item $(\mathbb{Q}, +^{\mathbb{Q}}, \cdot^{\mathbb{Q}}, -^{\mathbb{Q}},
+         <^{\mathbb{Q}}, 0^{\mathbb{Q}}, 1^{\mathbb{Q}})$
+        is another $\mathcal{L}_{\mathrm{of}}$-structure with domain
+        $M = \mathbb{Q}$.
+
+  \item The complete graph $K_3$ on $\{1,2,3\}$ is an
+        $\mathcal{L}_{\mathrm{gr}}$-structure with
+        $E^{K_3} = \{(1,2),(2,1),(1,3),(3,1),(2,3),(3,2)\}$.
+\end{enumerate}
+Two different structures can share the same language — the language only
+fixes the \emph{type} of the interpretations, not their specific content.
+\end{example}
+
+% ──────────────────────────────────────────────────────────────
+%  §3  VARIABLE ASSIGNMENTS
+% ──────────────────────────────────────────────────────────────
+
+\subsection{Variable Assignments}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Variable Assignment)}},
+  fonttitle=\small\bfseries]
+\label{def:variable-assignment}
+Let $\mathcal{M}$ be an $\mathcal{L}$-structure with domain $M$, and let
+$\mathrm{Var} = \{v_1, v_2, v_3, \ldots\}$ be a fixed countable set of
+first-order variables.
+
+A \textbf{variable assignment} (or \textbf{environment}) for $\mathcal{M}$
+is a function $s : \mathrm{Var} \to M$.
+
+For a variable assignment $s$, a variable $v_i$, and an element $a \in M$,
+write $s[v_i \mapsto a]$ for the assignment that agrees with $s$ on all
+variables except $v_i$, where it returns $a$:
+\[
+  s[v_i \mapsto a](v_j) =
+  \begin{cases}
+    a      & \text{if } j = i, \\
+    s(v_j) & \text{if } j \neq i.
+  \end{cases}
+\]
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$s : \mathrm{Var} \to M$, and
+$s[v_i \mapsto a](v_j) = a$ if $j = i$, else $s(v_j)$.
+\end{remark*}
+
+\begin{remark*}[Intuition]
+A variable assignment gives temporary values to free variables before
+evaluating a formula. The $s[v_i \mapsto a]$ notation is the standard
+tool for handling quantifier rules: to check $\exists v_i\,\varphi$,
+test whether $\mathcal{M} \models \varphi[s[v_i \mapsto a]]$ for some
+$a \in M$.
+\end{remark*}
+
+% ──────────────────────────────────────────────────────────────
+%  §4  TERM EVALUATION
+% ──────────────────────────────────────────────────────────────
+
+\subsection{Term Evaluation}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Term Evaluation)}},
+  fonttitle=\small\bfseries]
+\label{def:term-evaluation}
+Let $\mathcal{M}$ be an $\mathcal{L}$-structure and $s : \mathrm{Var} \to M$
+a variable assignment.
+The \textbf{evaluation} $s(t) \in M$ of an $\mathcal{L}$-term $t$ under
+$s$ is defined inductively:
+\begin{enumerate}
+  \item If $t = v_i$ is a variable, then $s(t) = s(v_i)$.
+  \item If $t = c$ is a constant symbol, then $s(t) = c^{\mathcal{M}}$.
+  \item If $t = f(t_1, \ldots, t_n)$ for an $n$-ary function symbol $f$,
+        then $s(t) = f^{\mathcal{M}}(s(t_1), \ldots, s(t_n))$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+$s : \mathrm{Var} \to M$, and $s(t) \in M$ for every $\mathcal{L}$-term $t$.
+Formally: $s(\cdot)$ is the unique function on terms satisfying clauses (1)--(3).
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Term evaluation is the ``computation'' step: given concrete values for
+all variables, every term reduces to an element of $M$. The inductive
+definition mirrors the inductive definition of terms themselves.
+\end{remark*}
+
+% ──────────────────────────────────────────────────────────────
+%  §5  SATISFACTION  [STUB]
+% ──────────────────────────────────────────────────────────────
+
+\subsection{Satisfaction \textnormal{[Stub]}}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Satisfaction, $\mathcal{M} \models \varphi[s]$) — Stub}},
+  fonttitle=\small\bfseries]
+\label{def:satisfaction}
+Let $\mathcal{M}$ be an $\mathcal{L}$-structure, $s$ a variable assignment,
+and $\varphi$ an $\mathcal{L}$-formula.
+The \textbf{satisfaction relation} $\mathcal{M} \models \varphi[s]$
+(read: ``$\mathcal{M}$ satisfies $\varphi$ under $s$'') is defined
+inductively on the structure of $\varphi$:
+
+\medskip
+\textit{[To be filled in — clauses for atomic formulas, negation,
+conjunction, disjunction, implication, existential quantifier,
+universal quantifier.]}
+\end{tcolorbox}
+
+\begin{remark*}[Fully quantified form]
+\textit{[Stub — to be completed.]}
+\end{remark*}
+
+\begin{remark*}[Intuition]
+Satisfaction is the semantic notion of truth: $\mathcal{M} \models \varphi[s]$
+means $\varphi$ is true in $\mathcal{M}$ when each free variable $v_i$ takes
+the value $s(v_i)$.
+The definition proceeds by induction on formula complexity,
+grounding out on atomic formulas evaluated via term evaluation.
+\end{remark*}
+
+% ──────────────────────────────────────────────────────────────
+%  §6  ELEMENTARY EQUIVALENCE AND SUBSTRUCTURES  [STUB]
+% ──────────────────────────────────────────────────────────────
+
+\subsection{Elementary Equivalence and Substructures \textnormal{[Stub]}}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Status: Planned}},
+  fonttitle=\small\bfseries]
+The following topics are planned for this section:
+\begin{enumerate}
+  \item Substructures ($\mathcal{N} \subseteq \mathcal{M}$).
+  \item Elementary substructures ($\mathcal{N} \prec \mathcal{M}$) and
+        the Tarski--Vaught criterion.
+  \item Elementary equivalence ($\mathcal{M} \equiv \mathcal{N}$).
+  \item Isomorphisms of $\mathcal{L}$-structures.
+\end{enumerate}
+\end{tcolorbox}

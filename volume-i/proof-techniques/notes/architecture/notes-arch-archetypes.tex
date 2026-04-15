@@ -1,0 +1,96 @@
+% =========================================================
+% The Five Archetypes
+% =========================================================
+\paragraph{The Five Proof Archetypes.}
+
+Every mathematical proof, at the highest level of compression, is an
+instance of one of five archetypes. The statement map tells you the
+specific opening move. The archetypes tell you the \emph{global shape}
+of the argument --- what kind of reasoning is being done, and why it
+constitutes a valid proof of the claim.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Five Proof Archetypes}}, fonttitle=\small\bfseries]
+\begin{enumerate}
+  \item \textbf{Construct something.}
+    Exhibit a concrete object and verify it has every required property.
+    This is the proof structure for all existence claims.
+
+  \item \textbf{Assume two and compare.}
+    Assume two objects both satisfy a definition; derive that they are
+    equal. This is the proof structure for all uniqueness claims.
+
+  \item \textbf{Take a minimal element.}
+    Apply the well-ordering principle to a nonempty set of counterexamples;
+    exploit the minimality of the least element to derive a contradiction.
+    Used in number theory, descent arguments, and equivalence with induction.
+
+  \item \textbf{Induct.}
+    Verify a base case; show the property propagates to successors.
+    Used whenever the claim concerns all natural numbers or any
+    recursively defined structure.
+
+  \item \textbf{Chase an arbitrary element.}
+    Take an arbitrary element satisfying one condition; track it through
+    definitions and established facts until it satisfies the target condition.
+    Used for set inclusions, function properties, and direct proofs where
+    the logic flows in a straight line from hypothesis to conclusion.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Why five archetypes, not more?]
+The five archetypes are not a classification chosen for convenience.
+They correspond to the five fundamental proof obligations that
+mathematical statements impose:
+
+To prove something \emph{exists}, you must produce it. To prove something
+is \emph{unique}, you must show that any two instances are equal.
+To prove a statement holds \emph{for all natural numbers}, the inductive
+structure of $\mathbb{N}$ provides the only available tool. To prove a
+\emph{conditional} claim $P \Rightarrow Q$, you must trace an arbitrary
+element or object satisfying $P$ to a situation where $Q$ holds.
+The minimal element archetype is the well-ordering counterpart to
+induction, available whenever you need to reason about the smallest
+counterexample.
+
+Everything else in proof writing is refinement of these five. The specific
+proof structures in Section~\ref{sec:proof-structures} (direct proof,
+contrapositive, contradiction, cases, existence-uniqueness) are
+instantiations of these archetypes adapted to specific logical forms.
+The tactics in Section~\ref{sec:tactics} are the move-level tools
+used to execute whichever archetype applies.
+\end{remark}
+
+\begin{remark}[Archetypes can nest, and this is a feature]
+A single proof often uses more than one archetype. The most common
+nested pattern in abstract algebra is: construct a witness (archetype~1),
+then invoke a uniqueness theorem (archetype~2) to conclude that the
+constructed object equals a previously named one.
+
+This is the satisfy-and-cite tactic (Section~\ref{sec:satisfy-cite}).
+It appears in almost every proof of the form ``$a = b$'' where $b$ is
+an algebraically defined object. The nesting is not a complication ---
+it is the standard pattern for proving equalities in algebraic structures,
+and once recognized, it becomes mechanical.
+
+Another common nesting: induct (archetype~4), and inside the inductive
+step, use a direct proof argument (archetype~5) to move from $P(n)$ to
+$P(n+1)$. The outer structure is induction; the inner argument is
+element-chasing.
+\end{remark}
+
+\begin{remark}[The archetype identifies the proof's centre of gravity]
+When you read a finished proof in a textbook, the archetype is usually
+visible in the first line or two. ``Suppose $x, y$ both satisfy the
+definition'' --- that is archetype~2. ``Define $f : X \to Y$ by
+$f(x) = \ldots$'' --- that is archetype~1. ``Let $n \in \mathbb{N}$ be
+arbitrary'' followed by induction markup --- that is archetype~4.
+``Let $x \in A$'' followed by a chain of implications --- that is
+archetype~5.
+
+Reading proofs actively means identifying the archetype at the start
+and then watching how the author executes it. This is far more efficient
+than trying to absorb a proof line by line without a sense of its
+overall shape.
+\end{remark}

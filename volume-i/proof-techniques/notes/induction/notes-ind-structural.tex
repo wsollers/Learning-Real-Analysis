@@ -1,0 +1,55 @@
+% =========================================================
+% Structural Induction (Preview)
+% =========================================================
+\paragraph{Structural Induction (Preview).}
+
+Induction on $\mathbb{N}$ is a special case of a general principle
+that applies to any recursively defined structure. You do not need
+$\mathbb{N}$ to do induction; you need a recursive definition.
+
+\begin{remark}[The general principle]
+Let $X$ be a set defined by:
+\begin{enumerate}[itemsep=2pt]
+  \item A collection of \emph{base cases} (atomic elements not built
+    from other elements), and
+  \item A collection of \emph{constructor rules} (ways of building
+    larger elements from smaller ones).
+\end{enumerate}
+Structural induction on $X$: to prove $P(x)$ for all $x \in X$,
+prove $P$ for all base cases, then prove that if $P$ holds for the
+parts, it holds for the whole.
+
+This is exactly standard induction where the ``less than'' ordering
+on $\mathbb{N}$ is replaced by the ``proper sub-element'' ordering
+on $X$.
+\end{remark}
+
+\begin{example}[Induction on algebraic terms]
+Define an \emph{algebraic term} over a ring $R$ by:
+\begin{itemize}[itemsep=2pt]
+  \item Base case: any element $r \in R$ is a term.
+  \item Constructor: if $s, t$ are terms, so are $s + t$ and $s \cdot t$.
+\end{itemize}
+To prove a property $P$ holds for all terms:
+\begin{enumerate}[itemsep=2pt]
+  \item Prove $P(r)$ for all $r \in R$ (base cases).
+  \item Prove: if $P(s)$ and $P(t)$ hold, then $P(s + t)$ holds.
+  \item Prove: if $P(s)$ and $P(t)$ hold, then $P(s \cdot t)$ holds.
+\end{enumerate}
+The recursive structure of terms determines the structure of the proof.
+\end{example}
+
+\begin{remark}[Where structural induction appears in this project]
+Induction on $\mathbb{N}$ is structural induction on the Peano
+structure $(\mathbb{N}, 0, S)$: the base case is $n = 0$, the
+constructor is $n \mapsto n\pp$.
+
+In the Abstract Algebra chapter, polynomial properties are proved by
+induction on degree, which is structural induction on the recursive
+definition of polynomials over a ring.
+
+In computer science, correctness of recursive algorithms is proved by
+structural induction on the input data structure (lists, trees,
+expressions). The full treatment of structural induction appears in
+the Abstract Algebra chapter.
+\end{remark}

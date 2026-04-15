@@ -1,0 +1,111 @@
+% =========================================================
+% Presburger Arithmetic
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Presburger Arithmetic}},
+  fonttitle=\small\bfseries]
+\begin{enumerate}
+  \item[\textbf{Pr1.}] $0 \in \mathbb{N}$
+    \quad (zero is a natural number)
+
+    \textit{Logical form:} $0 \in \mathbb{N}$
+
+  \item[\textbf{Pr2.}] $n \in \mathbb{N} \Rightarrow n\pp \in \mathbb{N}$
+    \quad (closure under successor)
+
+    \textit{Logical form:} $\forall n \in \mathbb{N},\ n\pp \in \mathbb{N}$
+
+  \item[\textbf{Pr3.}] $n\pp \neq 0$ for all $n \in \mathbb{N}$
+    \quad (zero is not a successor)
+
+    \textit{Logical form:} $\forall n \in \mathbb{N},\ n\pp \neq 0$
+
+  \item[\textbf{Pr4.}] $n\pp = m\pp \Rightarrow n = m$
+    \quad (successor is injective)
+
+    \textit{Logical form:} $\forall n,m \in \mathbb{N},\ n\pp = m\pp \Rightarrow n = m$
+
+  \item[\textbf{Pr5.}] \emph{Induction schema}: if $P(0)$ is true and
+    $P(n) \Rightarrow P(n\pp)$ for all $n \in \mathbb{N}$,
+    then $P(n)$ is true for all $n \in \mathbb{N}$,
+    where $P$ ranges over formulas in the language of
+    Presburger arithmetic.
+
+    \textit{Logical form:}
+    \[
+    \bigl[P(0) \wedge \forall n \in \mathbb{N},\ P(n) \Rightarrow P(n\pp)\bigr]
+    \Rightarrow \forall n \in \mathbb{N},\ P(n)
+    \]
+
+  \item[\textbf{Pr6.}] $n + 0 = n$ for all $n \in \mathbb{N}$
+    \quad (zero is a right additive identity)
+
+    \textit{Logical form:} $\forall n \in \mathbb{N},\ n + 0 = n$
+
+  \item[\textbf{Pr7.}] $n + m\pp = (n + m)\pp$ for all $n,m \in \mathbb{N}$
+    \quad (recursive definition of addition)
+
+    \textit{Logical form:}
+    $\forall n,m \in \mathbb{N},\ n + m\pp = (n + m)\pp$
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Why these axioms?]
+Pr1--Pr4 fix the successor structure of the natural numbers.
+Pr5 supplies induction, but only for formulas in the
+first-order language of Presburger arithmetic.
+Pr6--Pr7 define addition recursively from $0$ and successor.
+Thus Presburger arithmetic is the theory of the natural numbers
+with addition, but without multiplication as a primitive operation.
+\end{remark}
+
+\begin{remark}[First-order rather than second-order]
+Unlike the second-order Peano axioms, Presburger arithmetic is a
+\emph{first-order} theory. The induction principle is not stated as
+quantification over arbitrary properties or subsets of
+$\mathbb{N}$; instead it appears as an \emph{axiom schema}, one
+instance for each first-order formula in the language.
+This keeps the theory inside first-order logic.
+\end{remark}
+
+\begin{remark}[What is omitted]
+The crucial difference from full Peano arithmetic is that
+multiplication is not part of the primitive language.
+Presburger arithmetic studies the structure
+\[
+(\mathbb{N},0,\pp,+)
+\]
+rather than
+\[
+(\mathbb{N},0,\pp,+,\cdot).
+\]
+This omission is decisive: addition alone yields a far tamer theory.
+\end{remark}
+
+\begin{remark}[Why Presburger arithmetic matters]
+Presburger arithmetic is one of the standard examples showing how
+sensitive logical complexity is to the choice of primitive
+operations. The first-order theory of
+\[
+(\mathbb{N},0,\pp,+)
+\]
+is complete and decidable, whereas adding multiplication leads to
+first-order Peano arithmetic, whose theory is far more complicated
+and no longer decidable.
+\end{remark}
+
+\begin{remark}[Axioms define structure, not objects]
+As with the Peano axioms, these axioms do not specify what $0$ or
+$n\pp$ or $+$ \emph{are} in a set-theoretic sense. They specify the
+relations they must satisfy. The symbols are determined only up to
+isomorphism of structures satisfying the axioms.
+\end{remark}
+
+\begin{remark}[Notation]
+Tao writes $n\pp$ for the successor of $n$.
+Presburger arithmetic may also be written using $S(n)$ in place of
+$n\pp$. Likewise, some presentations include the order relation
+$<$ as a primitive symbol, while others define it from addition.
+\end{remark}

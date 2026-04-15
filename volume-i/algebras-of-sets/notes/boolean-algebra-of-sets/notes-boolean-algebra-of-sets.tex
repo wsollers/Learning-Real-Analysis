@@ -1,0 +1,587 @@
+% =========================================================
+% Section: Boolean Algebra of Sets
+% Chapter: Algebras of Sets — Volume I
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Section Toolkit --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+P\ref{prop:comm-union}
+  & $A\cup B = B\cup A$
+  & Element chase & \hyperref[prf:comm-union]{$\downarrow$} \\
+P\ref{prop:comm-intersection}
+  & $A\cap B = B\cap A$
+  & Element chase & \hyperref[prf:comm-intersection]{$\downarrow$} \\
+P\ref{prop:assoc-union}
+  & $A\cup(B\cup C) = (A\cup B)\cup C$
+  & Element chase & \hyperref[prf:assoc-union]{$\downarrow$} \\
+P\ref{prop:assoc-intersection}
+  & $A\cap(B\cap C) = (A\cap B)\cap C$
+  & Element chase & \hyperref[prf:assoc-intersection]{$\downarrow$} \\
+P\ref{prop:dist-cap-over-cup}
+  & $A\cap(B\cup C) = (A\cap B)\cup(A\cap C)$
+  & Element chase & \hyperref[prf:dist-cap-over-cup]{$\downarrow$} \\
+P\ref{prop:dist-cup-over-cap}
+  & $A\cup(B\cap C) = (A\cup B)\cap(A\cup C)$
+  & Element chase & \hyperref[prf:dist-cup-over-cap]{$\downarrow$} \\
+P\ref{prop:demorgan-cup}
+  & $(A\cup B)^c = A^c\cap B^c$
+  & Element chase & \hyperref[prf:demorgan-cup]{$\downarrow$} \\
+P\ref{prop:demorgan-cap}
+  & $(A\cap B)^c = A^c\cup B^c$
+  & Element chase & \hyperref[prf:demorgan-cap]{$\downarrow$} \\
+P\ref{prop:identity-union}
+  & $A\cup\emptyset = A$
+  & Element chase & \hyperref[prf:identity-union]{$\downarrow$} \\
+P\ref{prop:identity-intersection}
+  & $A\cap X = A$
+  & Element chase & \hyperref[prf:identity-intersection]{$\downarrow$} \\
+P\ref{prop:complement-union}
+  & $A\cup A^c = X$
+  & Element chase & \hyperref[prf:complement-union]{$\downarrow$} \\
+P\ref{prop:complement-intersection}
+  & $A\cap A^c = \emptyset$
+  & Element chase & \hyperref[prf:complement-intersection]{$\downarrow$} \\
+P\ref{prop:idempotence-union}
+  & $A\cup A = A$
+  & Element chase & \hyperref[prf:idempotence-union]{$\downarrow$} \\
+P\ref{prop:idempotence-intersection}
+  & $A\cap A = A$
+  & Element chase & \hyperref[prf:idempotence-intersection]{$\downarrow$} \\
+P\ref{prop:double-complement}
+  & $(A^c)^c = A$
+  & Element chase & \hyperref[prf:double-complement]{$\downarrow$} \\
+P\ref{prop:absorption-cup}
+  & $A\cup(A\cap B) = A$
+  & Element chase & \hyperref[prf:absorption-cup]{$\downarrow$} \\
+P\ref{prop:absorption-cap}
+  & $A\cap(A\cup B) = A$
+  & Element chase & \hyperref[prf:absorption-cap]{$\downarrow$} \\
+P\ref{prop:symmdiff-comm}
+  & $A\triangle B = B\triangle A$
+  & Unfold definition & \hyperref[prf:symmdiff-comm]{$\downarrow$} \\
+P\ref{prop:symmdiff-assoc}
+  & $A\triangle(B\triangle C) = (A\triangle B)\triangle C$
+  & Element chase (hard) & \hyperref[prf:symmdiff-assoc]{$\downarrow$} \\
+P\ref{prop:symmdiff-self}
+  & $A\triangle A = \emptyset$
+  & Unfold definition & \hyperref[prf:symmdiff-self]{$\downarrow$} \\
+P\ref{prop:symmdiff-empty}
+  & $A\triangle\emptyset = A$
+  & Unfold definition & \hyperref[prf:symmdiff-empty]{$\downarrow$} \\
+P\ref{prop:cap-dist-symmdiff}
+  & $A\cap(B\triangle C)=(A\cap B)\triangle(A\cap C)$
+  & Element chase & \hyperref[prf:cap-dist-symmdiff]{$\downarrow$} \\
+P\ref{prop:powerset-boolean-ring}
+  & $(\mathcal{P}(X),\triangle,\cap)$ is a Boolean ring
+  & Verify ring axioms & \hyperref[prf:powerset-boolean-ring]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Commutativity
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:comm-union]{Commutativity of Union}}{Commutativity of Union}]
+\label{prop:comm-union}
+For all sets $A, B \subseteq X$: $A \cup B = B \cup A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ A\cup B = B\cup A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove commutativity of union from the element-chase definition.}
+\FlashA{$x\in A\cup B \Leftrightarrow x\in A$ or $x\in B
+  \Leftrightarrow x\in B$ or $x\in A \Leftrightarrow x\in B\cup A$.}
+\FlashImplies{prop:assoc-union}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:comm-intersection]{Commutativity of Intersection}}{%
+  Commutativity of Intersection}]
+\label{prop:comm-intersection}
+For all sets $A, B \subseteq X$: $A \cap B = B \cap A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ A\cap B = B\cap A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove commutativity of intersection from the element-chase definition.}
+\FlashA{$x\in A\cap B \Leftrightarrow x\in A$ and $x\in B
+  \Leftrightarrow x\in B$ and $x\in A \Leftrightarrow x\in B\cap A$.}
+\FlashImplies{prop:assoc-intersection}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Associativity
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:assoc-union]{Associativity of Union}}{Associativity of Union}]
+\label{prop:assoc-union}
+For all sets $A, B, C \subseteq X$:
+$A \cup (B \cup C) = (A \cup B) \cup C$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B,C\subseteq X:\ A\cup(B\cup C) = (A\cup B)\cup C$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Outline the element-chase proof of associativity of union.}
+\FlashA{$x\in A\cup(B\cup C)
+  \Leftrightarrow x\in A$ or ($x\in B$ or $x\in C$)
+  $\Leftrightarrow$ ($x\in A$ or $x\in B$) or $x\in C$
+  $\Leftrightarrow x\in(A\cup B)\cup C$.
+  The middle step is associativity of logical disjunction.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:assoc-intersection]{Associativity of Intersection}}{%
+  Associativity of Intersection}]
+\label{prop:assoc-intersection}
+For all sets $A, B, C \subseteq X$:
+$A \cap (B \cap C) = (A \cap B) \cap C$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B,C\subseteq X:\ A\cap(B\cap C) = (A\cap B)\cap C$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Outline the element-chase proof of associativity of intersection.}
+\FlashA{$x\in A\cap(B\cap C)
+  \Leftrightarrow x\in A$ and ($x\in B$ and $x\in C$)
+  $\Leftrightarrow$ ($x\in A$ and $x\in B$) and $x\in C$
+  $\Leftrightarrow x\in(A\cap B)\cap C$.
+  The middle step is associativity of logical conjunction.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Distributivity
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:dist-cap-over-cup]{%
+    Distributivity of $\cap$ over $\cup$}}{%
+  Distributivity of Intersection over Union}]
+\label{prop:dist-cap-over-cup}
+For all sets $A, B, C \subseteq X$:
+$A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B,C\subseteq X:\
+  A\cap(B\cup C) = (A\cap B)\cup(A\cap C)$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State and outline the proof of distributivity of $\cap$ over $\cup$.}
+\FlashA{$A\cap(B\cup C) = (A\cap B)\cup(A\cap C)$.
+  Element chase: $x$ is in the left side iff $x\in A$ and ($x\in B$ or $x\in C$),
+  iff ($x\in A$ and $x\in B$) or ($x\in A$ and $x\in C$), iff $x$ is in the right.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:dist-cup-over-cap]{%
+    Distributivity of $\cup$ over $\cap$}}{%
+  Distributivity of Union over Intersection}]
+\label{prop:dist-cup-over-cap}
+For all sets $A, B, C \subseteq X$:
+$A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B,C\subseteq X:\
+  A\cup(B\cap C) = (A\cup B)\cap(A\cup C)$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State and outline the proof of distributivity of $\cup$ over $\cap$.}
+\FlashA{$A\cup(B\cap C) = (A\cup B)\cap(A\cup C)$.
+  Element chase: $x$ is in the left side iff $x\in A$ or ($x\in B$ and $x\in C$),
+  iff ($x\in A$ or $x\in B$) and ($x\in A$ or $x\in C$), iff $x$ is in the right.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+% ---------------------------------------------------------
+% De Morgan
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:demorgan-cup]{De Morgan --- Union}}{De Morgan --- Union}]
+\label{prop:demorgan-cup}
+For all sets $A, B \subseteq X$: $(A \cup B)^c = A^c \cap B^c$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ (A\cup B)^c = A^c\cap B^c$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove De Morgan's law for union.}
+\FlashA{$x\in(A\cup B)^c \Leftrightarrow x\notin A\cup B
+  \Leftrightarrow \neg(x\in A\text{ or }x\in B)
+  \Leftrightarrow x\notin A\text{ and }x\notin B
+  \Leftrightarrow x\in A^c\cap B^c$.}
+\FlashHint{The key step is De Morgan for logic: $\neg(P\vee Q)\Leftrightarrow\neg P\wedge\neg Q$.}
+\FlashImplies{prop:sigma-closed-countable-intersection}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:demorgan-cap]{De Morgan --- Intersection}}{%
+  De Morgan --- Intersection}]
+\label{prop:demorgan-cap}
+For all sets $A, B \subseteq X$: $(A \cap B)^c = A^c \cup B^c$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ (A\cap B)^c = A^c\cup B^c$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove De Morgan's law for intersection.}
+\FlashA{$x\in(A\cap B)^c \Leftrightarrow x\notin A\cap B
+  \Leftrightarrow \neg(x\in A\text{ and }x\in B)
+  \Leftrightarrow x\notin A\text{ or }x\notin B
+  \Leftrightarrow x\in A^c\cup B^c$.}
+\FlashHint{Key step: $\neg(P\wedge Q)\Leftrightarrow\neg P\vee\neg Q$.}
+\FlashImplies{prop:sigma-closed-countable-intersection}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Identity, Complement, Idempotence
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:identity-union]{Identity for Union}}{Identity for Union}]
+\label{prop:identity-union}
+For all $A \subseteq X$: $A \cup \emptyset = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\cup\emptyset = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\cup\emptyset = A$.}
+\FlashA{$x\in A\cup\emptyset \Leftrightarrow x\in A$ or $x\in\emptyset
+  \Leftrightarrow x\in A$ or $\bot \Leftrightarrow x\in A$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:identity-intersection]{Identity for Intersection}}{%
+  Identity for Intersection}]
+\label{prop:identity-intersection}
+For all $A \subseteq X$: $A \cap X = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\cap X = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\cap X = A$.}
+\FlashA{$x\in A\cap X \Leftrightarrow x\in A$ and $x\in X
+  \Leftrightarrow x\in A$ and $\top \Leftrightarrow x\in A$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:complement-union]{Complement Union is $X$}}{%
+  Complement Union is X}]
+\label{prop:complement-union}
+For all $A \subseteq X$: $A \cup A^c = X$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\cup A^c = X$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\cup A^c = X$.}
+\FlashA{($\subseteq$): $A\cup A^c\subseteq X$ since both $A,A^c\subseteq X$.
+  ($\supseteq$): Let $x\in X$; either $x\in A$ or $x\notin A$, i.e.\ $x\in A^c$.
+  So $x\in A\cup A^c$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:complement-intersection]{Complement Intersection is $\emptyset$}}{%
+  Complement Intersection is Empty}]
+\label{prop:complement-intersection}
+For all $A \subseteq X$: $A \cap A^c = \emptyset$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\cap A^c = \emptyset$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\cap A^c = \emptyset$.}
+\FlashA{Suppose $x\in A\cap A^c$; then $x\in A$ and $x\in A^c = X\setminus A$,
+  so $x\notin A$. Contradiction. Hence $A\cap A^c = \emptyset$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:idempotence-union]{Idempotence of Union}}{Idempotence of Union}]
+\label{prop:idempotence-union}
+For all $A \subseteq X$: $A \cup A = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\cup A = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\cup A = A$.}
+\FlashA{$x\in A\cup A \Leftrightarrow x\in A$ or $x\in A \Leftrightarrow x\in A$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:idempotence-intersection]{Idempotence of Intersection}}{%
+  Idempotence of Intersection}]
+\label{prop:idempotence-intersection}
+For all $A \subseteq X$: $A \cap A = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\cap A = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\cap A = A$.}
+\FlashA{$x\in A\cap A \Leftrightarrow x\in A$ and $x\in A \Leftrightarrow x\in A$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:double-complement]{Double Complement}}{Double Complement}]
+\label{prop:double-complement}
+For all $A \subseteq X$: $(A^c)^c = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ (A^c)^c = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $(A^c)^c = A$.}
+\FlashA{$x\in(A^c)^c \Leftrightarrow x\notin A^c \Leftrightarrow
+  \neg(x\notin A) \Leftrightarrow x\in A$.}
+\FlashImplies{prop:demorgan-cup, prop:demorgan-cap}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Absorption
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:absorption-cup]{Absorption --- Union}}{Absorption --- Union}]
+\label{prop:absorption-cup}
+For all $A, B \subseteq X$: $A \cup (A \cap B) = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ A\cup(A\cap B) = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove the absorption law $A\cup(A\cap B)=A$.}
+\FlashA{($\supseteq$): $A\subseteq A\cup(A\cap B)$ trivially.
+  ($\subseteq$): $x\in A\cup(A\cap B)$ means $x\in A$ or ($x\in A$ and $x\in B$).
+  In either case $x\in A$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:absorption-cap]{Absorption --- Intersection}}{%
+  Absorption --- Intersection}]
+\label{prop:absorption-cap}
+For all $A, B \subseteq X$: $A \cap (A \cup B) = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ A\cap(A\cup B) = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove the absorption law $A\cap(A\cup B)=A$.}
+\FlashA{($\subseteq$): $x\in A\cap(A\cup B)$ implies $x\in A$.
+  ($\supseteq$): $x\in A$ implies $x\in A\cup B$, hence $x\in A\cap(A\cup B)$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Symmetric difference
+% ---------------------------------------------------------
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:symmdiff-comm]{Commutativity of Symmetric Difference}}{%
+  Commutativity of Symmetric Difference}]
+\label{prop:symmdiff-comm}
+For all $A, B \subseteq X$:
+$A \mathbin{\triangle} B = B \mathbin{\triangle} A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B\subseteq X:\ A\triangle B = B\triangle A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove commutativity of symmetric difference.}
+\FlashA{$A\triangle B = (A\setminus B)\cup(B\setminus A)
+  = (B\setminus A)\cup(A\setminus B) = B\triangle A$,
+  using commutativity of union.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:symmdiff-assoc]{Associativity of Symmetric Difference}}{%
+  Associativity of Symmetric Difference}]
+\label{prop:symmdiff-assoc}
+For all $A, B, C \subseteq X$:
+$A \mathbin{\triangle} (B \mathbin{\triangle} C)
+= (A \mathbin{\triangle} B) \mathbin{\triangle} C$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B,C\subseteq X:\
+  A\triangle(B\triangle C) = (A\triangle B)\triangle C$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What is the proof strategy for associativity of symmetric difference?}
+\FlashA{Full element chase: show $x$ belongs to the left side iff it belongs
+  to an odd number of the sets $A$, $B$, $C$.  This parity characterisation
+  is symmetric in grouping, giving associativity.}
+\FlashHint{This is the hardest proof in the Boolean section.  The parity
+  argument is the cleanest route: $x\in A\triangle B$ iff $x$ is in exactly
+  one of $A$, $B$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:symmdiff-self]{Symmetric Difference with Self}}{%
+  Symmetric Difference with Self}]
+\label{prop:symmdiff-self}
+For all $A \subseteq X$: $A \mathbin{\triangle} A = \emptyset$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\triangle A = \emptyset$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\triangle A = \emptyset$.}
+\FlashA{$A\triangle A = (A\setminus A)\cup(A\setminus A) = \emptyset\cup\emptyset = \emptyset$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:symmdiff-empty]{Symmetric Difference with Empty Set}}{%
+  Symmetric Difference with Empty Set}]
+\label{prop:symmdiff-empty}
+For all $A \subseteq X$: $A \mathbin{\triangle} \emptyset = A$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A\subseteq X:\ A\triangle\emptyset = A$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{Prove $A\triangle\emptyset = A$.}
+\FlashA{$A\triangle\emptyset
+  = (A\setminus\emptyset)\cup(\emptyset\setminus A)
+  = A\cup\emptyset = A$.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:cap-dist-symmdiff]{%
+    Distributivity of $\cap$ over $\triangle$}}{%
+  Distributivity of Intersection over Symmetric Difference}]
+\label{prop:cap-dist-symmdiff}
+For all $A, B, C \subseteq X$:
+$A \cap (B \mathbin{\triangle} C)
+= (A \cap B) \mathbin{\triangle} (A \cap C)$.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall A,B,C\subseteq X:\
+  A\cap(B\triangle C) = (A\cap B)\triangle(A\cap C)$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{State and outline the proof that $\cap$ distributes over $\triangle$.}
+\FlashA{$A\cap(B\triangle C) = (A\cap B)\triangle(A\cap C)$.
+  Element chase: $x\in A\cap(B\triangle C)$ iff $x\in A$ and $x$ is in exactly
+  one of $B$, $C$, iff $x$ is in exactly one of $A\cap B$, $A\cap C$,
+  iff $x\in(A\cap B)\triangle(A\cap C)$.}
+\FlashHint{This is the ring distributivity law: in the Boolean ring
+  $(\mathcal{P}(X),\triangle,\cap)$, $\cap$ is multiplication distributing
+  over $\triangle$ as addition.}
+\FlashImplies{prop:powerset-boolean-ring}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Boolean ring capstone
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Power Set Boolean Ring)}},
+  fonttitle=\small\bfseries]
+\label{thm:powerset-boolean-ring}
+Let $X$ be a non-empty set.  Then
+$(\mathcal{P}(X),\mathbin{\triangle},\cap)$ is a commutative ring
+with unity in which every element is idempotent (a Boolean ring).
+The additive identity is $\emptyset$ and the multiplicative identity
+is $X$.
+\end{tcolorbox}
+
+\begin{proposition}[\texorpdfstring{%
+  \hyperref[prf:powerset-boolean-ring]{%
+    $(\mathcal{P}(X),\triangle,\cap)$ is a Boolean Ring}}{%
+  Power Set is a Boolean Ring}]
+\label{prop:powerset-boolean-ring}
+$(\mathcal{P}(X), \mathbin{\triangle}, \cap)$ is a Boolean ring.
+\end{proposition}
+
+\begin{remark*}[Fully quantified form]
+$\forall$ non-empty set $X$:
+$(\mathcal{P}(X),\triangle,\cap)$ satisfies all ring axioms,
+is commutative, has unity $X$, and satisfies $A\cap A = A$
+for all $A\in\mathcal{P}(X)$.
+\end{remark*}
+
+\begin{remark*}[Flash]
+\FlashQ{What ring structure does $\mathcal{P}(X)$ carry, and what are the
+  additive and multiplicative identities?}
+\FlashA{$(\mathcal{P}(X),\triangle,\cap)$ is a Boolean ring.
+  Additive identity: $\emptyset$ (since $A\triangle\emptyset = A$).
+  Multiplicative identity: $X$ (since $A\cap X = A$).
+  Every element satisfies $A\cap A = A$ (idempotence).}
+\FlashHint{The ring axioms are assembled from the Boolean law propositions
+  proved earlier in this section.  No new element chasing is required ---
+  cite the named propositions.}
+\FlashImplies{def:ring-of-sets, def:algebra-of-sets}
+\end{remark*}

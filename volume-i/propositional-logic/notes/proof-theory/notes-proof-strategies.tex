@@ -1,0 +1,298 @@
+% =========================================================
+% Proof Strategies: From Goal to Method
+% =========================================================
+
+\section{Proof Strategies: Connecting Logic to Mathematical Practice}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Proof Strategy Guide — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Goal shape} & \textbf{Primary strategy} & \textbf{Key rule} \\
+\midrule
+Prove $P \to Q$              & Assume $P$, derive $Q$, discharge          & Conditional Intro (CP) \\
+Prove $P \to Q$ (indirectly) & Assume $\neg Q$, derive $\neg P$           & Contraposition \\
+Prove $\neg P$               & Assume $P$, derive $\bot$, discharge       & Negation Intro (RAA) \\
+Prove $P$ (from $\neg P \to \bot$) & Assume $\neg P$, derive $\bot$         & Indirect Proof \\
+Prove $P \wedge Q$           & Prove $P$ and $Q$ separately               & Conjunction Intro \\
+Prove $P \vee Q$             & Prove $P$, or prove $Q$, or use a split    & Disjunction Intro \\
+Prove $P \leftrightarrow Q$  & Prove $P \to Q$ and $Q \to P$ separately   & Biconditional Intro \\
+Use $P \vee Q$               & Consider case $P$ and case $Q$ separately  & Disjunction Elim \\
+Use $P \to Q$ and $P$        & Apply directly                             & Modus Ponens \\
+Use $P \to Q$ and $\neg Q$   & Derive $\neg P$                            & Modus Tollens \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+The inference rules of the previous section are the atoms of formal reasoning:
+each rule licenses a single step. But in practice, one never asks ``which
+single rule applies here?'' One asks: ``what is the shape of my goal, and what
+strategy does that shape call for?'' The goal dictates the strategy; the
+strategy selects the rules. This section makes that mapping explicit.
+
+% ---------------------------------------------------------
+% The anatomy of a proof
+% ---------------------------------------------------------
+
+\section*{The Anatomy of a Proof}
+
+Every formal proof has the same three-part structure. Understanding this
+structure before attempting any proof prevents the most common errors.
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{The Three-Part Structure of a Proof}},
+  fonttitle=\small\bfseries]
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Available:} The premises and assumptions currently in force.
+  These are what you are allowed to use. At the start, this is the hypothesis
+  set $\Gamma$. Inside a subproof, additional assumptions are temporarily added.
+\item \textbf{Goal:} The formula you are trying to derive. Every proof step
+  either moves toward the goal directly or adds something to ``Available'' that
+  will be useful later.
+\item \textbf{Strategy:} The top-level decision about how to attack the goal.
+  This depends almost entirely on the \emph{shape} of the goal formula.
+\end{enumerate}
+\end{tcolorbox}
+
+The most important principle is: \emph{look at the goal first, not the
+hypotheses}. Beginners often scan their hypotheses and start applying rules
+without a target in mind. This produces proof fragments that go nowhere. The
+goal tells you what kind of proof you need; the hypotheses tell you what
+material you have to work with.
+
+% ---------------------------------------------------------
+% Proving a conditional
+% ---------------------------------------------------------
+
+\section*{Strategy 1: Proving a Conditional $P \to Q$}
+
+If the goal is $P \to Q$, the standard approach is \emph{conditional proof}
+(also called \emph{direct proof} of a conditional): assume $P$ temporarily,
+derive $Q$ under that assumption, then discharge the assumption and conclude
+$P \to Q$ by Conditional Introduction. The proof skeleton is:
+
+\begin{quote}
+\textbf{Assume:} $P$. \\
+\textbf{[derive $Q$ from the available hypotheses and $P$]} \\
+\textbf{Conclude:} $P \to Q$. \quad (by Conditional Introduction)
+\end{quote}
+
+The assumption $P$ is in force only within the subproof; it is discharged at
+the moment Conditional Introduction is applied. Nothing derived inside the
+subproof using $P$ may be exported outside it, except $P \to Q$ itself.
+
+\begin{example}[Direct conditional proof]
+Prove: $(P \wedge Q) \to P$.
+
+\begin{enumerate}
+\item Assume $P \wedge Q$.
+\item From (1), $P$ \quad (by Conjunction Elimination).
+\item Therefore $(P \wedge Q) \to P$ \quad (by Conditional Introduction, discharging assumption 1).
+\end{enumerate}
+\end{example}
+
+% ---------------------------------------------------------
+% Contrapositive
+% ---------------------------------------------------------
+
+\section*{Strategy 2: Proof by Contrapositive}
+
+If the goal is $P \to Q$ and the direct route (assuming $P$, deriving $Q$) is
+not obvious, consider instead proving $\neg Q \to \neg P$, which is logically
+equivalent by contraposition ($P \to Q \equiv \neg Q \to \neg P$).
+
+\begin{quote}
+\textbf{Assume:} $\neg Q$. \\
+\textbf{[derive $\neg P$ from the available hypotheses and $\neg Q$]} \\
+\textbf{Conclude:} $\neg Q \to \neg P$, hence $P \to Q$. \quad (by Contraposition)
+\end{quote}
+
+\begin{remark}[When contrapositive is preferred]
+Proof by contrapositive is typically chosen when the hypothesis $\neg Q$ is
+richer or easier to work with than $P$. A common situation in analysis: to
+prove ``if $f$ is continuous at $a$, then $f$ satisfies property $Q$,'' it is
+sometimes easier to assume $f$ fails property $Q$ (i.e., $\neg Q$) and derive
+that $f$ is not continuous at $a$ (i.e., $\neg P$).
+\end{remark}
+
+% ---------------------------------------------------------
+% Contradiction
+% ---------------------------------------------------------
+
+\section*{Strategy 3: Proof by Contradiction}
+
+There are two related but distinct uses of contradiction. They have different
+goals.
+
+\medskip
+\noindent\textbf{Proving $\neg P$ (Negation Introduction / RAA):}
+
+If the goal is $\neg P$, assume $P$ temporarily, derive a contradiction $\bot$
+(typically by deriving both some $Q$ and $\neg Q$), and conclude $\neg P$ by
+Negation Introduction.
+
+\begin{quote}
+\textbf{Assume:} $P$. \\
+\textbf{[derive $Q$]} \\
+\textbf{[derive $\neg Q$ from the same assumptions]} \\
+\textbf{Conclude:} $\bot$, then $\neg P$. \quad (by Negation Introduction)
+\end{quote}
+
+\medskip
+\noindent\textbf{Proving $P$ (Indirect Proof / Negation Elimination):}
+
+If the goal is $P$ itself and a direct route is not apparent, assume $\neg P$
+temporarily, derive a contradiction, and conclude $P$ by Negation Elimination
+(Indirect Proof). This is the classical reductio: one shows $\neg P$ is
+untenable.
+
+\begin{quote}
+\textbf{Assume:} $\neg P$. \\
+\textbf{[derive a contradiction $\bot$]} \\
+\textbf{Conclude:} $P$. \quad (by Negation Elimination)
+\end{quote}
+
+\begin{remark}[When to use contradiction vs. contrapositive]
+Both strategies involve a negated assumption, so they are easy to confuse.
+The difference is the goal: contradiction is used when the goal is hard to
+reach directly and it is easier to show its negation leads to absurdity.
+Contrapositive is used specifically for a conditional goal $P \to Q$.
+In practice, when the goal is $\neg P$, use Negation Introduction (RAA). When
+the goal is an arbitrary $P$ and you are stuck, try Indirect Proof (assume
+$\neg P$).
+\end{remark}
+
+\begin{remark}[Classical logic caveat]
+Indirect Proof (Negation Elimination) and the equivalence $P \equiv \neg\neg P$
+are classical logic rules. They fail in intuitionistic logic, where proving $\neg P$
+is impossible leads to absurdity but does not, on its own, establish $P$.
+All proofs in this text use classical logic.
+\end{remark}
+
+% ---------------------------------------------------------
+% Proof by cases
+% ---------------------------------------------------------
+
+\section*{Strategy 4: Proof by Cases (Disjunction Elimination)}
+
+If a hypothesis or known fact has the form $P \vee Q$, one cannot simply use
+$P$ or use $Q$ --- neither is known on its own. Instead, split into two
+subproofs: prove the goal $R$ in the case where $P$ holds, and prove $R$ in
+the case where $Q$ holds. Since one of $P$ or $Q$ must be true, $R$ follows
+in either case.
+
+\begin{quote}
+\textbf{Available:} $P \vee Q$. Goal: $R$. \\
+\textbf{Case 1:} Assume $P$. \quad [derive $R$] \\
+\textbf{Case 2:} Assume $Q$. \quad [derive $R$] \\
+\textbf{Conclude:} $R$. \quad (by Disjunction Elimination)
+\end{quote}
+
+\begin{remark}[Cases need not be $P$ and $\neg P$]
+Proof by cases is often written as ``case $A$ holds'' and ``case $A$ does not
+hold'' — an exhaustive split. This is a special case where $P \vee Q$ is
+$A \vee \neg A$ (the law of excluded middle). But cases can come from any
+disjunction in the hypotheses, not just LEM.
+\end{remark}
+
+\begin{example}[Case split on an available disjunction]
+Suppose the hypotheses include $P \vee Q$, $P \to R$, and $Q \to R$.
+Goal: $R$.
+
+\begin{enumerate}
+\item From $P \to R$, $Q \to R$, and $P \vee Q$: apply Constructive Dilemma
+  to obtain $R \vee R$.
+\item From $R \vee R$: apply idempotence or Disjunction Elimination to obtain $R$.
+\end{enumerate}
+
+Alternatively, use Disjunction Elimination directly: in case $P$, apply MP to
+get $R$; in case $Q$, apply MP to get $R$; conclude $R$.
+\end{example}
+
+% ---------------------------------------------------------
+% Biconditional strategy
+% ---------------------------------------------------------
+
+\section*{Strategy 5: Proving a Biconditional $P \leftrightarrow Q$}
+
+If the goal is $P \leftrightarrow Q$, always split into two sub-goals using
+Biconditional Introduction:
+
+\begin{quote}
+\textbf{Part ($\Rightarrow$):} Prove $P \to Q$ (using Conditional Introduction).\\
+\textbf{Part ($\Leftarrow$):} Prove $Q \to P$ (using Conditional Introduction).\\
+\textbf{Conclude:} $P \leftrightarrow Q$. \quad (by Biconditional Introduction)
+\end{quote}
+
+This is the standard structure of every ``if and only if'' proof in mathematics.
+The two directions are typically argued separately and may require different
+strategies.
+
+% ---------------------------------------------------------
+% Decision flowchart
+% ---------------------------------------------------------
+
+\section*{Putting It Together: The Strategy Decision Process}
+
+The following sequence of questions, applied to the current proof goal, leads
+to the right strategy in nearly every case.
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Strategy Selection: Questions to Ask}},
+  fonttitle=\small\bfseries]
+\small
+\begin{enumerate}[label=\textbf{Q\arabic*.}]
+\item \textbf{Is the goal a conditional $P \to Q$?}
+  If yes: assume $P$ (conditional proof). If that seems hard, try assuming
+  $\neg Q$ (contrapositive) instead.
+
+\item \textbf{Is the goal a negation $\neg P$?}
+  If yes: assume $P$, derive a contradiction (Negation Introduction / RAA).
+
+\item \textbf{Is the goal a biconditional $P \leftrightarrow Q$?}
+  If yes: split into two conditional proofs.
+
+\item \textbf{Is the goal a conjunction $P \wedge Q$?}
+  If yes: prove $P$ and prove $Q$ independently, then apply Conjunction Introduction.
+
+\item \textbf{Is a disjunction $P \vee Q$ available as a hypothesis?}
+  If yes: consider proof by cases (Disjunction Elimination).
+
+\item \textbf{Are you stuck with a non-connective goal?}
+  If yes: try Indirect Proof (assume the negation of the goal, derive a
+  contradiction).
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[The order matters]
+Apply these questions top-to-bottom. The goal shape (Q1--Q4) is checked before
+the hypothesis shape (Q5). This order reflects the fundamental principle: the
+goal drives the proof structure; hypotheses supply the material.
+\end{remark}
+
+\begin{remark}[Connection to mathematical practice]
+Every standard proof technique in real analysis is an instance of one of these
+five strategies:
+\begin{itemize}
+\item Most analysis proofs prove a conditional (``if $\varepsilon > 0$ then
+  $\exists \delta > 0$ such that \ldots'') by conditional proof: fix
+  $\varepsilon > 0$ and construct $\delta$.
+\item Proofs of irrationality (``$\sqrt{2}$ is irrational'') use Indirect
+  Proof: assume $\sqrt{2}$ is rational, derive a contradiction.
+\item Proofs about sets often use case splits: either $x \in A$ or $x \notin A$.
+\item Proofs of ``iff'' characterizations use biconditional introduction: two
+  separate directional arguments.
+\end{itemize}
+The logical strategies learned here are the skeleton of every proof that will
+be written from Volume II onward.
+\end{remark}

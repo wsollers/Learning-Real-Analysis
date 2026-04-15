@@ -1,0 +1,63 @@
+% =========================================================
+% Recursive Definitions (Tao §2.1, Prop. 2.1.16)
+% =========================================================
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Recursion on $\mathbb{N}$)}},
+  fonttitle=\small\bfseries]
+Let $X$ be a set, let $a \in X$, and let $f : X \to X$ be a function.
+Then there exists a \textbf{unique} function $g : \mathbb{N} \to X$ such that:
+\[
+g(0) = a
+\quad \text{and} \quad
+g(n\pp) = f(g(n)) \quad \text{for all } n \in \mathbb{N}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Reading the theorem]
+The theorem has two parts.
+\emph{Existence}: the recursive rule actually defines a function ---
+there are no gaps (every $n$ gets a value) and no contradictions
+(no $n$ gets two different values).
+\emph{Uniqueness}: there is only one such function. Two functions
+satisfying the same recursive rule must agree everywhere, proved
+by induction on $n$.
+\end{remark}
+
+\begin{remark}[Tao's version]
+Tao states this as Proposition~2.1.16 in a slightly more general
+form: instead of a single function $f : X \to X$, he allows a
+family $f_n : X \to X$ indexed by $n$. The version above is the
+standard form and suffices for all applications here.
+\end{remark}
+
+\begin{remark}[Why all five axioms are needed]
+\begin{itemize}
+  \item P1 anchors the recursion: $g(0) = a$ is well-defined.
+  \item P2 guarantees $g(n\pp)$ is always reachable from $g(n)$.
+  \item P3 ensures $g(0)$ is never overwritten by a step $g(n\pp)$,
+    since $n\pp \neq 0$ for all $n$.
+  \item P4 ensures no two steps conflict: if $m \neq n$ then
+    $m\pp \neq n\pp$, so $g(m\pp)$ and $g(n\pp)$ are defined
+    independently.
+  \item P5 (induction) proves $g$ is defined at \emph{every}
+    $n \in \mathbb{N}$, not just the ones we can reach by hand.
+\end{itemize}
+Remove any one axiom and the construction breaks.
+\end{remark}
+
+\begin{remark}[Recursive definitions as the engine of arithmetic]
+Every arithmetic operation on $\mathbb{N}$ is an instance of this
+theorem with $X = \mathbb{N}$:
+\begin{itemize}
+  \item \textbf{Addition} ($+\, m$): $g(0) = m$, $f(x) = x\pp$.
+    This gives $g(n) = n + m$.
+  \item \textbf{Multiplication} ($\times\, m$): $g(0) = 0$,
+    $f(x) = x + m$. This gives $g(n) = n \times m$.
+  \item \textbf{Exponentiation} ($m^{\,\cdot}$): $g(0) = 1$,
+    $f(x) = x \times m$. This gives $g(n) = m^n$.
+\end{itemize}
+Each new operation is defined in terms of the previous one.
+The recursion theorem guarantees all three are well-defined and unique.
+\end{remark}
