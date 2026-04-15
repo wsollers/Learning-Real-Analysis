@@ -1,6 +1,60 @@
 # Learning Real Analysis House Constitution
 ## Working Draft
 
+## Primary Rules
+
+## A - Rule — Layer-Gated Notation Enforcement
+
+Before editing or generating any formal block, classify the target block by role.
+
+Allowed notation by role:
+
+1. Definition/theorem/lemma/proposition/corollary/axiom body:
+   standard mathematical notation only.
+
+2. Standard quantified statement:
+   standard mathematical notation only.
+
+3. Negated quantified statement:
+   standard mathematical notation only.
+
+4. Contrapositive quantified statement:
+   standard mathematical notation only.
+
+5. Definition predicate reading:
+   canonical predicates allowed and preferred.
+
+6. Negation predicate reading:
+   canonical predicates allowed and preferred.
+
+7. Failure mode decomposition:
+   canonical predicates allowed only if the block is explicitly serving a predicate-analysis role; otherwise use standard mathematical notation.
+
+8. Interpretation:
+   prose only; no formal predicate language unless explicitly discussed as notation.
+
+## B - Rule — No Predicate Leakage
+
+Predicate names from predicates.yaml must never appear in:
+- definition bodies
+- theorem/lemma/proposition/corollary/axiom bodies
+- standard quantified statements
+- negated quantified statements
+- contrapositive quantified statements
+
+unless the user explicitly asks for a predicate-language version.
+
+## C - Rule — Rewrite Preflight Audit
+
+Before returning a transformed file, check each formal block and report:
+
+- BLOCK TYPE
+- NOTATION FAMILY USED
+- COMPLIANT / NONCOMPLIANT
+
+If a standard quantified statement contains any \operatorname{...} predicate name from predicates.yaml, the output is invalid.
+If a definition/theorem-like body contains any canonical predicate name, the output is invalid.
+
 ## 1. Purpose and Identity
 
 These notes are a long-term mathematical reference, not a transcript of a course and not a workbook. They are written to preserve definitions, theorems, proof structures, dependencies, and canonical notation in a form that remains readable, rigorous, and stable across years of revision.
@@ -10,7 +64,7 @@ The document has four governing aims:
 1. preserve mathematical precision,
 2. preserve structural clarity,
 3. preserve visual consistency,
-4. preserve machine-readable regularity for extraction, linking, and graph construction.
+4. preserve machine-readable semantic structure through canonical predicate systems
 
 The notes are therefore governed by repository rules, notation rules, box rules, proof rules, logical-form rules, and figure rules.
 
@@ -210,10 +264,30 @@ It appears last in `proofs/exercises/index.tex` and is tracked in `proofs-to-do-
 ### 3.1 Governing Principle
 
 Notation in the notes is determined by `notation.yaml`, not by source texts. Source notation is never binding.
+Rule — Long Logical Display Formatting
 
+### 3.1.1 All multi-clause logical statements must use aligned environments.
+
+Preferred breakpoints:
+- implications
+- conjunctions
+- disjunctions
+- 
 ### 3.2 Canonical Rewrite Rule
 
-Every imported theorem, definition, proof, remark, or exercise is rewritten into house notation before it enters the notes.
+Every imported theorem, definition, proof, remark, or exercise is rewritten into house notation using standard mathematical concepts and terminology before it enters the notes.
+
+### 3.2.1 Rule — Predicate Coverage Audit
+
+During processing:
+
+If a quantified logical structure appears that cannot be expressed using existing predicates:
+
+DO NOT invent a predicate inline
+ADD an audit entry:
+Missing predicate: <description>
+Location: <file + label>
+Suggested form: <formal structure>
 
 ### 3.3 Canonical Role Assignment
 
@@ -635,19 +709,29 @@ Even when explanation is omitted, the proof still obeys house notation, label co
 Each mathematically distinct term, condition, or assertion receives its own environment.
 
 Paired notions such as upper bound and lower bound, bounded above and bounded below, or monotone increasing and monotone decreasing are not bundled into one environment merely because they are naturally related.
+### 10.1.1 Mathematical Standards in Definition and Theorem like Environments
+
+Definition, lemma, corollary, theorem, proposition, axiom, should only contain standard 
+mathematical notation. 
+
+House predicates are reserved soley for the remark blocks:
+1. Definition predicate reading
+2. Negation predicate reading
+3. Failure mode decomposition
+All other blocks use standard notation.
 
 ### 10.2 Required Logical Blocks
 
 Every definition, axiom, theorem, lemma, proposition, corollary is followed immediately by these blocks, in order:
 
 1. Standard quantified statement
-2. Definition predicate reading, when applicable
-3. Negated quantified statement, when applicable
-4. Failure mode decomposition, when applicable
-5. Negation predicate reading, when applicable
-6. Failure modes, when applicable
+2. Definition predicate reading
+3. Negated quantified statement, when negation mathematically illuminating
+4. Negation predicate reading, If a negated quantification was generated
+5. Failure modes, when applicable
+6. Failure mode decomposition, if failure modes were generated
 7. Contrapositive quantified statement when mathematically illuminating
-8. Interpretation block by default
+8. Interpretation block - always
 
 A predicate-reading block is included only when a canonical predicate exists or clearly deserves to exist. It need not be forced for one-off statements whose quantified form is already structurally transparent.
 
@@ -693,6 +777,14 @@ Important predicate readings may use underbrace decomposition when this clarifie
 
 Contrapositive blocks are included only when mathematically illuminating, not merely because a contrapositive can be written formally.
 
+### 10.12  Rule — Long Logical Display Formatting
+
+All multi-clause logical statements must use aligned environments.
+
+Preferred breakpoints:
+- implications
+- conjunctions
+- disjunctions
 ---
 
 ## 11. Variable and Domain Rules

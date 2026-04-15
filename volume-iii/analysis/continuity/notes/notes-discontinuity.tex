@@ -1,25 +1,16 @@
 % =========================================================
 % Characterization of Discontinuity — Notes
-% Chapter: continuity
-% Volume III · Analysis
 % =========================================================
 
-\section{Characterization of Discontinuity}
+\subsection{Characterization of Discontinuity}
 \label{sec:discontinuity}
 
 \begin{tcolorbox}[title={Toolkit --- Discontinuity}]
 \begin{itemize}
-  \item $\operatorname{DiscontinuousAt}(f,a)$ $\iff$ negation of
-    $\operatorname{ContinuousAt}(f,a)$. Three equivalent forms:
-    $\varepsilon$-$\delta$, sequential, neighbourhood.
-  \item Quantifier reversal from continuity:
-    $\forall\varepsilon\leadsto\exists\varepsilon_0$,\;
-    $\exists\delta\leadsto\forall\delta$,\;
-    $\forall x\leadsto\exists x$.
-  \item Taxonomy: removable, jump (first kind), essential (second kind).
-  \item First kind: both one-sided limits $f(a^-)$, $f(a^+)$ exist finitely.
-  \item Second kind: at least one one-sided limit fails to exist finitely.
-  \item Every discontinuity is of exactly one kind.
+  \item $\operatorname{DiscontinuousAt}(f,a)$ is the negation of $\operatorname{ContinuousAt}(f,a)$.
+  \item Quantifier reversal governs failure of continuity.
+  \item Three equivalent formulations: $\varepsilon$-$\delta$, sequential, neighbourhood.
+  \item Taxonomy: removable, jump, essential.
 \end{itemize}
 \end{tcolorbox}
 
@@ -30,79 +21,33 @@
 \begin{tcolorbox}[title={Definition --- Point of Discontinuity}]
 \begin{definition}[Point of Discontinuity]
 \label{def:point-of-discontinuity}
-$\operatorname{DiscontinuousAt}(f,a) \colonequiv
-\neg\,\operatorname{ContinuousAt}(f,a)$.
+A function $f$ is discontinuous at $a$ if it is not continuous at $a$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}(f,a)
-  \;\iff\;
-  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
-  \operatorname{Within}(x,a,\delta)
-  \;\wedge\;
-  \neg\,\operatorname{OutputTolerance}(f(x),f(a),\varepsilon_0).
+\begin{aligned}
+&\operatorname{DiscontinuousAt}(f,a) \\
+&\quad\Longleftrightarrow\quad
+\exists \varepsilon_0 > 0 \; \forall \delta > 0 \; \exists x \in A \\
+&\qquad \operatorname{InputTolerance}(x,a,\delta)
+\;\wedge\;
+\neg \operatorname{OutputTolerance}(f(x),f(a),\varepsilon_0)
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{DiscontinuousAt}(f,a)
-  \;\colonequiv\;
-  \neg\,\operatorname{ContinuousAt}(f,a).
-\]
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition — quantifier reversal]
-\[
-  \underbrace{\forall\varepsilon>0}_{\text{cts}}
-  \;\leadsto\;
-  \underbrace{\exists\varepsilon_0>0}_{\text{dis}},
-  \qquad
-  \underbrace{\exists\delta>0}_{\text{cts}}
-  \;\leadsto\;
-  \underbrace{\forall\delta>0}_{\text{dis}},
-  \qquad
-  \underbrace{\forall x\in A}_{\text{cts}}
-  \;\leadsto\;
-  \underbrace{\exists x\in E}_{\text{dis}}.
-\]
-The surviving gap $\varepsilon_0>0$ is the witness to discontinuity.
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-A fixed output gap cannot be closed no matter how tightly the input
-window shrinks. Continuity fails because nearby values cannot be
-forced into an arbitrarily small band around $f(a)$.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Definition — epsilon-delta Characterization
-% ---------------------------------------------------------
-
-\begin{definition}[$\varepsilon$-$\delta$ Characterization of Discontinuity]
-\label{def:epsilon-delta-discontinuity-at-a-point}
-$f$ is \textbf{discontinuous at $x_0$} ($\varepsilon$-$\delta$) if
-\[
-  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
-  |x-x_0|<\delta \;\wedge\; |f(x)-f(x_0)|\geq\varepsilon_0.
-\]
-\end{definition}
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \operatorname{DiscontinuousAt}_{\varepsilon\delta}(f,x_0)
-  \;\colonequiv\;
-  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
-  \operatorname{Within}(x,x_0,\delta)
-  \;\wedge\;
-  \neg\,\operatorname{OutputTolerance}(f(x),f(x_0),\varepsilon_0).
+\operatorname{DiscontinuousAt}(f,a)
+\;\colonequiv\;
+\neg \operatorname{ContinuousAt}(f,a)
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Some fixed output gap survives every shrinking of the input window.
+A fixed output gap persists regardless of how small the input neighborhood is.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -111,28 +56,21 @@ Some fixed output gap survives every shrinking of the input window.
 
 \begin{definition}[Sequential Characterization of Discontinuity]
 \label{def:sequential-discontinuity-at-a-point}
-$f$ is \textbf{discontinuous at $x_0$} (sequential) if
-\[
-  \exists(x_n)\subseteq E:\;
-  x_n\to x_0 \;\wedge\; f(x_n)\not\to f(x_0).
-\]
+A function $f$ is discontinuous at $x_0$ if there exists a sequence
+$(x_n)$ with $x_n \to x_0$ such that $f(x_n)$ does not converge to $f(x_0)$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}_{\mathrm{seq}}(f,x_0)
-  \;\colonequiv\;
-  \exists(x_n)\subseteq E:\;
-  \operatorname{ConvergentSequence}(x_n,x_0)
-  \;\wedge\;
-  \neg\,\operatorname{ConvergentSequence}(f(x_n),f(x_0)).
+\begin{aligned}
+&\operatorname{DiscontinuousAt}(f,x_0) \\
+&\quad\Longleftrightarrow\quad
+\exists (x_n)\subseteq A \\
+&\qquad \operatorname{ConvergentSequence}(x_n,x_0)
+\;\wedge\;
+\neg \operatorname{ConvergentSequence}(f(x_n),f(x_0))
+\end{aligned}
 \]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-One witness sequence converging to $x_0$ whose image fails to converge
-to $f(x_0)$ suffices. Continuity demands every such sequence succeed;
-one failure is enough to establish discontinuity.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -141,160 +79,49 @@ one failure is enough to establish discontinuity.
 
 \begin{definition}[Neighbourhood Characterization of Discontinuity]
 \label{def:neighborhood-discontinuity-at-a-point}
-$f$ is \textbf{discontinuous at $x_0$} (neighbourhood) if
-\[
-  \exists V\text{ nbhd of }f(x_0),\;\forall U\text{ nbhd of }x_0,\;
-  \exists x\in U\cap E: f(x)\notin V.
-\]
+A function $f$ is discontinuous at $x_0$ if there exists a neighborhood
+$V$ of $f(x_0)$ such that for every neighborhood $U$ of $x_0$, there exists
+$x \in U \cap A$ with $f(x) \notin V$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}_{\mathrm{nbhd}}(f,x_0)
-  \;\colonequiv\;
-  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
-  \operatorname{Within}(x,x_0,\delta)
-  \;\wedge\;
-  \neg\,\operatorname{Within}(f(x),f(x_0),\varepsilon_0).
+\begin{aligned}
+&\operatorname{DiscontinuousAt}(f,x_0) \\
+&\quad\Longleftrightarrow\quad
+\exists \varepsilon_0 > 0 \; \forall \delta > 0 \; \exists x \in A \\
+&\qquad \operatorname{InputTolerance}(x,x_0,\delta)
+\;\wedge\;
+\neg \operatorname{OutputTolerance}(f(x),f(x_0),\varepsilon_0)
+\end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Interpretation]
-A fixed target neighbourhood around $f(x_0)$ that the image of every
-domain neighbourhood fails to stay inside. Continuity would require
-some domain neighbourhood to map entirely inside any prescribed target;
-discontinuity is the failure for at least one target.
-\end{remark*}
-
 % ---------------------------------------------------------
-% Lemma — Equivalence of Three Formulations
+% Lemma — Equivalence
 % ---------------------------------------------------------
 
 \begin{lemma}[Equivalent Formulations of Discontinuity at a Point]
 \label{lem:equivalent-discontinuity-at-a-point}
-The $\varepsilon$-$\delta$, sequential, and neighbourhood forms of
-discontinuity at $x_0$ are equivalent.
+The $\varepsilon$-$\delta$, sequential, and neighbourhood formulations are equivalent.
 
-\smallskip\noindent
+\smallskip
+\noindent
 \hyperref[prf:discontinuity-equivalence]{\textit{Go to proof.}}
 \end{lemma}
-
-\begin{remark*}[Interpretation]
-Each is the negation of the corresponding formulation of continuity,
-and they are equivalent by the same cyclic argument.
-\end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Types of Discontinuity
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Types of Discontinuity at a Point}]
-\begin{definition}[Types of Discontinuity at a Point]
+\begin{tcolorbox}[title={Definition --- Types of Discontinuity}]
+\begin{definition}[Types of Discontinuity]
 \label{def:types-of-discontinuity-at-a-point}
-Let $x_0\in E$ be a point of discontinuity of $f$.
+Let $x_0 \in A$.
 \begin{enumerate}[label=(\roman*)]
-  \item \textbf{Removable}: $\operatorname{FunctionLimit}(f,x_0,L)$
-    exists but $L\neq f(x_0)$.
-  \item \textbf{Jump}: $\operatorname{LeftLimit}(f,x_0,L_-)$ and
-    $\operatorname{RightLimit}(f,x_0,L_+)$ both exist but $L_-\neq L_+$.
-  \item \textbf{Essential}: not removable.
-  \item \textbf{Infinite}: at least one one-sided limit is $\pm\infty$.
-  \item \textbf{Oscillatory}: neither removable, jump, nor infinite.
+  \item Removable: $\operatorname{FunctionLimit}(f,x_0,L)$ and $L \neq f(x_0)$.
+  \item Jump: $\operatorname{LeftLimit}(f,x_0,L_-)$ and $\operatorname{RightLimit}(f,x_0,L_+)$ with $L_- \neq L_+$.
+  \item Essential: not removable.
 \end{enumerate}
 \end{definition}
 \end{tcolorbox}
-
-\begin{remark*}[Standard quantified statement]
-\[
-\begin{aligned}
-  \text{Removable} &\;\colonequiv\;
-    \exists L\in\mathbb{R}:\operatorname{FunctionLimit}(f,x_0,L)\wedge f(x_0)\neq L. \\
-  \text{Jump} &\;\colonequiv\;
-    \exists L_-,L_+\in\mathbb{R}:
-    \operatorname{LeftLimit}(f,x_0,L_-)\wedge
-    \operatorname{RightLimit}(f,x_0,L_+)\wedge L_-\neq L_+.
-\end{aligned}
-\]
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-\[
-  \operatorname{DiscontinuousAt}(f,x_0)
-  \;\begin{cases}
-    \text{removable} & \text{limit exists, wrong value} \\
-    \text{jump} & \text{both one-sided limits exist, unequal} \\
-    \text{essential}
-      \;\begin{cases}
-        \text{infinite} & \text{some limit is }\pm\infty \\
-        \text{oscillatory} & \text{no relevant limit exists}
-      \end{cases}
-  \end{cases}
-\]
-\end{remark*}
-
-\begin{remark*}[Canonical examples]
-(i) Removable: $f(x)=(x^2-1)/(x-1)$, $f(1)=0$; limit at $1$ is $2$.
-(ii) Jump: $f(x)=\operatorname{sgn}(x)$ at $0$.
-(iii) Infinite: $f(x)=1/x^2$ at $0$.
-(iv) Oscillatory: $f(x)=\sin(1/x)$ at $0$.
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-Removable discontinuities have correct limiting behavior but wrong
-point value — redefining $f$ at $x_0$ alone repairs them. Essential
-discontinuities cannot be repaired at a single point.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Definition — First and Second Kind
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Definition --- Discontinuity of First Kind}]
-\begin{definition}[Discontinuity of First Kind]
-\label{def:discontinuity-of-first-kind}
-$\operatorname{FirstKind}(f,a)$: both $\operatorname{LeftLimit}(f,a,L_-)$
-and $\operatorname{RightLimit}(f,a,L_+)$ exist in $\mathbb{R}$.
-\end{definition}
-\end{tcolorbox}
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \operatorname{FirstKind}(f,a)
-  \;\colonequiv\;
-  \exists L_-,L_+\in\mathbb{R}:
-  \operatorname{LeftLimit}(f,a,L_-)
-  \;\wedge\;
-  \operatorname{RightLimit}(f,a,L_+).
-\]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-First-kind includes both removable (one-sided limits exist and are
-equal, but differ from $f(a)$) and jump (one-sided limits exist but
-are unequal). The defining feature is existence of both finite
-one-sided limits.
-\end{remark*}
-
-\begin{tcolorbox}[title={Definition --- Discontinuity of Second Kind}]
-\begin{definition}[Discontinuity of Second Kind]
-\label{def:discontinuity-of-second-kind}
-$\operatorname{SecondKind}(f,a)$: $\neg\,\operatorname{FirstKind}(f,a)$.
-At least one of $\operatorname{LeftLimit}(f,a,\cdot)$,
-$\operatorname{RightLimit}(f,a,\cdot)$ does not exist as a real number.
-\end{definition}
-\end{tcolorbox}
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \operatorname{SecondKind}(f,a)
-  \;\colonequiv\;
-  \neg\,\operatorname{FirstKind}(f,a).
-\]
-\end{remark*>
-
-\begin{remark*}[Interpretation]
-Second-kind includes infinite blow-up and oscillatory behavior.
-$\sin(1/x)$ at $0$ is the canonical second-kind example: oscillates
-between $-1$ and $1$ in every neighbourhood of $0$, so no one-sided
-limit exists. Every discontinuity is of exactly first or second kind.
-\end{remark*}
