@@ -1,0 +1,268 @@
+% ============================================================
+%  §4  Interval Bisection and Nested Intervals
+%  volume-iii/analysis/real-analysis/notes/proof-techniques/
+%  04-bisection-nested-intervals.tex
+% ============================================================
+
+\section{Interval Bisection and Nested Intervals}
+\label{sec:bisection-nested}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Bisection and NIP Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof method} & \textbf{Detail} \\
+\midrule
+NIP
+  & $\bigcap_{n=1}^{\infty}I_n\neq\emptyset$ for nested closed bounded intervals
+  & Supremum of left endpoints
+  & \hyperref[thm:nested-interval-property]{$\downarrow$} \\[4pt]
+IVT
+  & $f$ continuous, $f(a)<L<f(b)$
+    $\Rightarrow\exists\,c\in(a,b),\;f(c)=L$
+  & Bisection $+$ NIP
+  & \hyperref[prop:ivt-bisection]{$\downarrow$} \\[4pt]
+UNC
+  & $\mathbb{R}$ is uncountable
+  & Nested interval diagonalisation
+  & \hyperref[prop:r-uncountable]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ── §4.1: The Nested Interval Property ───────────────────────
+\subsection{The Nested Interval Property}
+\label{subsec:nip}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Nested Interval Property)}},
+  fonttitle=\small\bfseries]
+\label{thm:nested-interval-property}
+For each $n\in\mathbb{N}$, let $I_n=[a_n,b_n]$ be a closed bounded interval
+with $I_1\supseteq I_2\supseteq I_3\supseteq\cdots$. Then
+$\displaystyle\bigcap_{n=1}^{\infty}I_n\neq\emptyset$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$\forall n\in\mathbb{N},\;I_n=[a_n,b_n]\neq\emptyset,\;
+[a_{n+1},b_{n+1}]\subseteq[a_n,b_n]
+\;\Longrightarrow\;
+\exists\,x\in\mathbb{R},\;\forall n,\;x\in I_n$.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+Let $A=\{a_n:n\in\mathbb{N}\}$. Nestedness implies every $b_n$ is an upper
+bound for $A$. By AoC, $x=\sup A$ exists. Then $a_n\leq x\leq b_n$ for
+all $n$, so $x\in I_n$ for all $n$.
+\end{remark}
+
+\begin{remark}[Closedness is essential]
+The open intervals $(0,1/n)$ are nested but $\bigcap(0,1/n)=\emptyset$.
+Closedness ensures the endpoints can serve as witnesses in the AoC argument.
+\end{remark}
+
+\begin{remark}[Boundedness is essential]
+The unbounded closed intervals $[n,\infty)$ are nested but their intersection
+is empty. Both hypotheses are necessary.
+\end{remark}
+
+\begin{remark}[Singleton intersection]
+If additionally $b_n-a_n\to 0$, the intersection is a singleton $\{x\}$,
+since $a_n\leq x\leq b_n$ and the squeeze theorem forces $a_n\to x$ and
+$b_n\to x$. This strengthened form is used in most applications.
+\end{remark}
+
+\input{volume-iii/analysis/real-analysis/notes/proof-techniques/figure-nested-intervals}
+
+\begin{remark}[Equivalence with completeness]
+NIP is equivalent to AoC over the Archimedean ordered field axioms. In
+particular, NIP fails over $\mathbb{Q}$: the intervals
+$[1,\sqrt{2}\,]\cap\mathbb{Q}$ shrink to a gap that $\mathbb{Q}$ cannot fill.
+\end{remark}
+
+% ── §4.2: The bisection technique ────────────────────────────
+\subsection{The Bisection Technique}
+\label{subsec:bisection}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bisection Sequence)}},
+  fonttitle=\small\bfseries]
+\label{def:bisection-sequence}
+Let $I_0=[a_0,b_0]$ carry a property $P$. The \textbf{bisection sequence}
+$(I_n)$ is defined inductively: given $I_n=[a_n,b_n]$, let
+$m_n=(a_n+b_n)/2$ and set
+\[
+  I_{n+1}=
+  \begin{cases}
+    [a_n,m_n] & \text{if }[a_n,m_n]\text{ inherits }P,\\
+    [m_n,b_n] & \text{otherwise.}
+  \end{cases}
+\]
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$I_0=[a_0,b_0]$;\;
+$\forall n,\;I_{n+1}\subseteq I_n$;\;
+$|I_n|=(b_0-a_0)/2^n$.
+\end{remark}
+
+\begin{remark}[Length control]
+Bisection gives automatic length control: $|I_n|=(b_0-a_0)/2^n\to 0$.
+No separate argument for the length condition of NIP is required.
+\end{remark}
+
+\begin{remark}[Abstract template]
+Every bisection proof has the same five-step shape:
+\begin{enumerate}
+  \item \emph{Initialize.} Identify $P$ and starting interval $I_0$.
+  \item \emph{Bisect.} Check which half inherits $P$.
+  \item \emph{Extract.} Apply NIP to obtain $x\in\bigcap I_n$;
+        note $a_n\to x$ and $b_n\to x$.
+  \item \emph{Conclude.} Pass $P$ through the limit, using continuity,
+        MCT, or squeeze as appropriate.
+  \item \emph{Verify hypotheses.} Confirm intervals are closed and nested;
+        length control is free from bisection.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Connection to predicate-walking]
+The bisection technique is a special case of predicate-walking: the predicate
+$P(I)=$ ``interval $I$ inherits the relevant property'' is propagated at
+each stage by bisecting and keeping the half that satisfies $P$. The
+infinite-pigeonhole dichotomy appears in the Bolzano--Weierstrass proof
+(\cref{prop:bw-bisection}) but not in the IVT proof, where neither half
+is discarded based on cardinality — instead the sign-test determines
+the choice deterministically.
+\end{remark}
+
+\input{volume-iii/analysis/real-analysis/notes/proof-techniques/figure-ivt-bisection-steps}
+
+% ── §4.3: IVT ────────────────────────────────────────────────
+\subsection{The Intermediate Value Theorem via Bisection}
+\label{subsec:ivt-bisection}
+
+\begin{proposition}[Intermediate Value Theorem]
+\label{prop:ivt-bisection}
+Let $f:[a,b]\to\mathbb{R}$ be continuous. If $L\in\mathbb{R}$ satisfies
+$f(a)<L<f(b)$ or $f(a)>L>f(b)$, then there exists $c\in(a,b)$ with
+$f(c)=L$.
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State the Intermediate Value Theorem.}
+\FlashA{If $f:[a,b]\to\mathbb{R}$ is continuous and $f(a)<L<f(b)$ (or $f(a)>L>f(b)$), then $\exists c\in(a,b): f(c)=L$.}
+\FlashHint{Bisection: maintain $f(a_n)<L<f(b_n)$; the intersection point $c$ satisfies $f(c)=L$ by continuity.}
+\end{remark*}
+
+
+\begin{remark}[Proof strategy --- bisection approach]
+Reduce to $L=0$, $f(a)<0<f(b)$ (replace $f$ by $f-L$).
+
+\medskip
+\noindent\textbf{Property to propagate.}
+$f(a_n)<0$ and $f(b_n)\geq 0$ — a sign change across the interval.
+
+\noindent\textbf{Branching rule.}
+Let $m_n=(a_n+b_n)/2$: if $f(m_n)\geq 0$ set $[a_{n+1},b_{n+1}]=[a_n,m_n]$;
+otherwise set $[a_{n+1},b_{n+1}]=[m_n,b_n]$. The sign-change property is
+preserved in both cases.
+
+\noindent\textbf{Closing argument.}
+NIP yields $c\in\bigcap I_n$ with $a_n\to c$ and $b_n\to c$.
+Since $f(a_n)<0$ for all $n$: continuity gives $f(c)\leq 0$.
+Since $f(b_n)\geq 0$ for all $n$: continuity gives $f(c)\geq 0$.
+Therefore $f(c)=0$.
+\end{remark}
+
+\begin{remark}[Two completeness paths]
+IVT admits two proofs from completeness:
+\begin{enumerate}
+  \item \emph{AoC path.} Set $K=\{x\in[a,b]:f(x)\leq 0\}$, $c=\sup K$;
+        rule out $f(c)>0$ and $f(c)<0$ using the LUB property.
+  \item \emph{NIP path.} Bisection as above.
+\end{enumerate}
+The two paths are equivalent over the Archimedean ordered field axioms.
+\end{remark}
+
+\begin{remark}[Applied interpretation]
+The bisection construction is directly algorithmic: it locates a root to
+any desired precision in finitely many steps. After $n$ bisections the
+root is known to within $(b-a)/2^n$. This is the bisection method of
+numerical analysis.
+\end{remark}
+
+% ── §4.4: Uncountability ─────────────────────────────────────
+\subsection{Uncountability of $\mathbb{R}$ via Nested Intervals}
+\label{subsec:uncountable}
+
+\begin{proposition}
+\label{prop:r-uncountable}
+$\mathbb{R}$ is uncountable.
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State: $\mathbb{R}$ is uncountable.}
+\FlashA{$\mathbb{R}$ is uncountable: any proposed enumeration can be contradicted by a nested-interval construction.}
+\end{remark*}
+
+
+\begin{remark}[Proof strategy --- nested interval diagonalisation]
+Suppose for contradiction $\mathbb{R}=\{x_1,x_2,\ldots\}$. Build nested
+intervals $(I_n)$ inductively with $I_{n+1}\subseteq I_n$ and
+$x_n\notin I_{n+1}$: at each step $I_n$ contains two disjoint closed
+subintervals; $x_{n+1}$ lies in at most one, so choose the other.
+
+By NIP, $\bigcap I_n\neq\emptyset$: pick $y\in\bigcap I_n$. Then
+$y\neq x_n$ for every $n$ (since $y\in I_n$ but $x_n\notin I_n$),
+contradicting the assumption that $\{x_n\}$ enumerates $\mathbb{R}$.
+\end{remark}
+
+\begin{remark}[Relation to Cantor's diagonal argument]
+This is the geometric form of Cantor's diagonalisation: instead of
+altering a decimal digit, the $n$th real is excluded from the $n$th nested
+interval. The witness $y$ is the interval analogue of the ``diagonal'' real.
+\end{remark}
+
+% ── §4.5: Summary ────────────────────────────────────────────
+\section*{Summary: When to Use Each Technique}
+
+\begin{remark}[Bisection vs.\ general nested intervals]
+\medskip
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Feature} & \textbf{Bisection} & \textbf{General nested intervals} \\
+\midrule
+How built & Halving at midpoints & Any shrinking closed intervals \\
+Length control & Automatic: $(b_0-a_0)/2^n$ & Must ensure $|I_n|\to 0$ separately \\
+Typical use & Property propagation via sign test & Existence, uncountability, completeness \\
+Canonical examples & IVT, BW & Uncountability, Baire's theorem \\
+Guarantor & NIP $\equiv$ AoC & NIP $\equiv$ AoC \\
+\bottomrule
+\end{tabular}
+\end{remark}
+
+\begin{remark}[Completeness is indispensable]
+Neither technique works over $\mathbb{Q}$. The bisection procedure for
+$f(x)=x^2-2$ on $[1,2]$ runs mechanically over $\mathbb{Q}$, but the
+limiting point $\sqrt{2}$ is not in $\mathbb{Q}$. Every bisection proof
+is, at bottom, an appeal to the completeness of $\mathbb{R}$.
+\end{remark}
+
+\begin{remark}[Cross-section of the chapter]
+The four sections of this chapter are not independent: each builds on the
+last. Inequality bounding (\S\ref{sec:inequality-bounding}) requires only
+the ordered field axioms. Completeness as a constructive engine
+(\S\ref{sec:completeness-construction}) requires AoC and the Archimedean
+Property. Predicate-walking (\S\ref{sec:predicate-walking}) requires
+completeness via MCT or NIP, depending on the variant. Bisection and NIP
+(\S\ref{sec:bisection-nested}) is the geometric synthesis: it encapsulates
+completeness in a form that drives the IVT, BW, and uncountability proofs
+simultaneously, connecting back to both the inductive-selection constructions
+of \S\ref{sec:completeness-construction} and the predicate-walking patterns
+of \S\ref{sec:predicate-walking}.
+\end{remark}

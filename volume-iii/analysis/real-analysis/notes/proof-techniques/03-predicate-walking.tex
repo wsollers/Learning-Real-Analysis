@@ -1,0 +1,337 @@
+% ============================================================
+%  §3  Walking a Sequence with a Predicate
+%  volume-iii/analysis/real-analysis/notes/proof-techniques/
+%  03-predicate-walking.tex
+% ============================================================
+
+\section{Walking a Sequence with a Predicate}
+\label{sec:predicate-walking}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Predicate-Walking Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Theorem} & \textbf{Predicate $P(n)$} & \textbf{Tool} & \textbf{Detail} \\
+\midrule
+Monotone Subseq.
+  & $n$ is a peak of $(x_n)$
+  & Dichotomy on peak count
+  & \hyperref[thm:monotone-subsequence]{$\downarrow$} \\[3pt]
+Bolzano--Weierstrass
+  & interval has $\infty$ many terms
+  & Bisection + pigeonhole
+  & \hyperref[prop:bw-bisection]{$\downarrow$} \\[3pt]
+Arzel\`a--Ascoli
+  & converges at $d_1,\ldots,d_m$
+  & Diagonal extraction
+  & \hyperref[rem:arzela-ascoli]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ── §3.1: The core dichotomy ─────────────────────────────────
+\subsection{The Infinitely-Often / Eventually Dichotomy}
+\label{subsec:io-ev-dichotomy}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Infinitely Often / Eventually)}},
+  fonttitle=\small\bfseries]
+\label{def:inf-often-eventually}
+Let $(x_n)$ be a sequence and $P$ a predicate on $\mathbb{N}$. $P$ holds
+\textbf{infinitely often} if $\{n\in\mathbb{N}:P(n)\}$ is infinite; $P$
+holds \textbf{eventually} if there exists $N\in\mathbb{N}$ such that
+$P(n)$ holds for all $n\geq N$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$P$ infinitely often: $\forall N\in\mathbb{N},\;\exists n\geq N,\;P(n)$.
+
+$P$ eventually: $\exists N\in\mathbb{N},\;\forall n\geq N,\;P(n)$.
+\end{remark}
+
+\begin{proposition}[The dichotomy]
+\label{prop:io-ev-dichotomy}
+For any predicate $P$ on $\mathbb{N}$, exactly one of the following holds:
+\begin{enumerate}[label=(\roman*)]
+  \item $P$ holds infinitely often.
+  \item $\neg P$ holds eventually.
+\end{enumerate}
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State the IO/EV dichotomy.}
+\FlashA{For any predicate $P$: exactly one of ($P$ infinitely often) or ($\neg P$ eventually) holds.}
+\end{remark*}
+
+
+\begin{remark}[Fully quantified form]
+$\bigl(\forall N,\;\exists n\geq N,\;P(n)\bigr)
+\;\veebar\;
+\bigl(\exists N,\;\forall n\geq N,\;\neg P(n)\bigr)$.
+The two cases are exhaustive because $\mathbb{N}$ is infinite: if $P$
+fails for all but finitely many $n$, those indices have a maximum $N$,
+and $\neg P(n)$ holds for all $n>N$.
+\end{remark}
+
+\begin{remark}[Relation to Infinite Pigeonhole]
+The index set $\mathbb{N}$ is partitioned into $\{n:P(n)\}$ and
+$\{n:\neg P(n)\}$; an infinite set cannot have both parts finite. The
+``infinitely often'' case provides an inexhaustible reservoir of indices
+from which to select subsequence terms inductively.
+\end{remark}
+
+% ── §3.2: Abstract template ──────────────────────────────────
+\subsection{The Abstract Extraction Template}
+\label{subsec:extraction-template}
+
+\begin{remark}[Four-step pattern]
+\label{rem:extraction-template}
+Every predicate-walking argument follows the same skeleton:
+\begin{enumerate}
+  \item \emph{Define the predicate.} Identify the property $P(n)$ to
+        propagate: peak, infinite-occupancy, pointwise convergence, etc.
+  \item \emph{Apply the dichotomy.} Either $P$ holds infinitely often, or
+        $\neg P$ holds eventually. Handle each case.
+  \item \emph{Extract the subsequence.} In the ``infinitely often'' case,
+        enumerate indices satisfying $P$ in increasing order:
+        $n_1<n_2<\cdots$. In the ``eventually'' case, work in the
+        $\neg P$-tail and build inductively, using $\neg P$ as the fuel.
+  \item \emph{Verify the property.} Show $(x_{n_k})$ has the desired
+        property, using the predicate and any additional hypotheses
+        (boundedness, MCT, NIP, equicontinuity).
+\end{enumerate}
+The critical structural requirement: at each inductive stage, one must find
+$n_{k+1}>n_k$ satisfying the relevant condition. The ``infinitely often''
+guarantee ensures the reservoir is never exhausted.
+\end{remark}
+
+% ── §3.3: Peak argument ──────────────────────────────────────
+\subsection{The Peak Argument: Monotone Subsequence Theorem}
+\label{subsec:peak-argument}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Peak Index)}},
+  fonttitle=\small\bfseries]
+\label{def:peak}
+An index $m\in\mathbb{N}$ is a \textbf{peak} of $(x_n)$ if
+$x_m\geq x_n$ for all $n\geq m$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$m$ is a peak: $\forall n\in\mathbb{N},\;n\geq m\Rightarrow x_m\geq x_n$.
+\end{remark}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Monotone Subsequence)}},
+  fonttitle=\small\bfseries]
+\label{thm:monotone-subsequence}
+Every sequence $(x_n)$ in $\mathbb{R}$ has a monotone subsequence.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$\forall(x_n)\subset\mathbb{R},\;
+\exists(n_k)\text{ strictly increasing},\;(x_{n_k})\text{ is monotone}$.
+\end{remark}
+
+\begin{remark}[Proof strategy --- peak dichotomy]
+Apply the dichotomy to $P(m)=\,$``$m$ is a peak.''
+
+\medskip
+\noindent\textbf{Case 1: infinitely many peaks.}
+Let $n_1<n_2<\cdots$ enumerate the peaks. Since $n_k$ is a peak and
+$n_{k+1}>n_k$: $x_{n_k}\geq x_{n_{k+1}}$. The subsequence is decreasing.
+
+\medskip
+\noindent\textbf{Case 2: finitely many peaks.}
+Let $N$ be an index beyond all peaks. No $n\geq N$ is a peak, so for each
+such $n$ there exists $m>n$ with $x_m>x_n$. Set $n_1=N$. Since $n_1$ is
+not a peak, $\exists n_2>n_1$ with $x_{n_2}>x_{n_1}$. Inductively, this
+produces a strictly increasing subsequence.
+
+\medskip
+The no-peak condition $\neg P(n_k)$ is the fuel for each inductive step:
+it is precisely the statement ``there exists a later term exceeding
+$x_{n_k}$,'' which supplies $n_{k+1}$.
+\end{remark}
+
+\begin{remark}[Consequence: Bolzano--Weierstrass]
+Every bounded sequence has a bounded monotone subsequence. By MCT, that
+subsequence converges. Bolzano--Weierstrass follows immediately.
+\end{remark}
+
+\begin{remark}[Common error]
+Assuming Case 2 produces an increasing subsequence ``by default.'' It does,
+but only because $\neg P(n)$ supplies a strictly larger term. If the
+predicate were defined differently, $\neg P$ might provide no useful
+structure. The conclusion depends on the specific content of $\neg P$,
+not the abstract case structure.
+\end{remark}
+
+\input{volume-iii/analysis/real-analysis/notes/proof-techniques/figure-peak-argument-cases}
+
+% ── §3.4: Bisection variant ───────────────────────────────────
+\subsection{The Infinite-Occupancy Predicate: Bolzano--Weierstrass via Bisection}
+\label{subsec:bw-bisection}
+
+\begin{proposition}[Bolzano--Weierstrass via bisection]
+\label{prop:bw-bisection}
+Every bounded sequence in $\mathbb{R}$ has a convergent subsequence.
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State Bolzano--Weierstrass.}
+\FlashA{Every bounded sequence in $\mathbb{R}$ has a convergent subsequence.}
+\FlashHint{Extract a monotone subsequence; bounded monotone sequences converge by MCT.}
+\end{remark*}
+
+
+\begin{remark}[Proof strategy --- infinite-occupancy predicate]
+The predicate at each stage: $P(I)=\,$``interval $I$ contains infinitely
+many terms of $(x_n)$.'' Since $(x_n)\subseteq[a_0,b_0]$ for some bounded
+interval, $P([a_0,b_0])$ holds.
+
+\medskip
+\noindent\textbf{Inductive step.} Given $I_k=[a_k,b_k]$ with $P(I_k)$,
+bisect at $m_k=(a_k+b_k)/2$. The two halves cover $I_k$; at least one
+contains infinitely many terms. Set $I_{k+1}$ to be that half. Pick
+$x_{n_{k+1}}\in I_{k+1}$ with $n_{k+1}>n_k$. The predicate $P(I_{k+1})$
+holds by construction.
+
+\medskip
+\noindent\textbf{Convergence.} The intervals have $|I_k|=(b_0-a_0)/2^k\to 0$.
+By NIP there exists a unique $L\in\bigcap I_k$. Since
+$a_k\leq x_{n_k}\leq b_k$ and both endpoints converge to $L$, the squeeze
+theorem gives $x_{n_k}\to L$.
+\end{remark}
+
+\begin{remark}[Comparison with the peak proof]
+The peak proof is combinatorial: it operates on the values of the sequence
+directly and produces a monotone subsequence without requiring boundedness.
+Convergence follows from MCT.
+
+The bisection proof is geometric: it operates on intervals containing the
+sequence's range and produces a subsequence squeezed to a limit directly.
+Boundedness is required from the outset to produce the initial interval.
+
+Both proofs use the same dichotomy, but in the peak proof it is applied to
+an index predicate; in the bisection proof, to an interval predicate.
+\end{remark}
+
+% ── §3.5: Diagonal extraction ────────────────────────────────
+\subsection{Diagonal Extraction: Arzel\`a--Ascoli}
+\label{subsec:diagonal-extraction}
+
+\begin{remark}[Diagonal extraction pattern]
+\label{rem:arzela-ascoli}
+The diagonal argument generalises predicate-walking to sequences of
+functions. Let $(f_n)$ be bounded and equicontinuous in
+$C^0([a,b],\mathbb{R})$, and let $D=\{d_1,d_2,\ldots\}=\mathbb{Q}\cap[a,b]$.
+
+\medskip
+\noindent\textbf{Stage 1.} $(f_n(d_1))$ is bounded; extract by BW a
+subsequence $(f_{1,k})$ converging at $d_1$.
+
+\noindent\textbf{Stage 2.} $(f_{1,k}(d_2))$ is bounded; extract a
+sub-subsequence $(f_{2,k})$ converging at $d_2$. As a subsequence of
+$(f_{1,k})$, it still converges at $d_1$.
+
+\noindent\textbf{Stage $m$.} Extract $(f_{m,k})$ as a subsequence of
+$(f_{m-1,k})$ converging at $d_m$. By induction, $(f_{m,k})$ converges
+at $d_1,\ldots,d_m$.
+
+\noindent\textbf{Diagonal step.} Define $g_m=f_{m,m}$. For any fixed $j$
+and $m\geq j$, the term $g_m=f_{m,m}$ is a term of $(f_{j,k})$ with
+index $k=m\geq j$. Hence $g_m(d_j)\to y_j$. The sequence $(g_m)$
+converges pointwise on all of $D$.
+
+\medskip
+Equicontinuity then propagates pointwise convergence on $D$ to uniform
+convergence on $[a,b]$ via an $\varepsilon/3$ argument.
+\end{remark}
+
+\begin{remark}[Why the diagonal works]
+At stage $m$, the predicate ``converges at $d_1,\ldots,d_m$'' holds for
+all terms of $(f_{m,k})$. The diagonal term $g_m=f_{m,m}$ is a tail term
+of every earlier row $f_{j,k}$ for $j\leq m$, so it satisfies the
+predicate for all $j\leq m$ simultaneously. Sending $m\to\infty$ gives
+convergence at every $d_j$.
+\end{remark}
+
+\input{volume-iii/analysis/real-analysis/notes/proof-techniques/figure-diagonal-extraction}
+
+% ── §3.6: Limitations ────────────────────────────────────────
+\subsection{Limitations of the Technique}
+\label{subsec:predicate-limitations}
+
+\begin{remark}[The predicate must be decidable at each stage]
+At each inductive step, one must determine which branch of the dichotomy
+applies. If the predicate requires knowledge of the limit — a quantity not
+yet known — the construction cannot proceed. Predicate-walking requires a
+finitary, combinatorial, or topological condition on the terms already seen.
+\end{remark}
+
+\begin{remark}[Multiple simultaneous predicates may exhaust the reservoir]
+The conjunction $P\wedge Q$ can hold only finitely often even when $P$ and
+$Q$ each hold infinitely often. The diagonal argument avoids this by handling
+one predicate at a time, composing via the diagonal.
+\end{remark}
+
+\begin{remark}[Subsequences, not sequences]
+Predicate-walking yields existence of a subsequence with the desired
+property, not a conclusion about the full sequence. The Monotone Subsequence
+Theorem does not assert $(x_n)$ is monotone, or that the extracted
+subsequence is unique.
+\end{remark}
+
+\begin{remark}[Convergence requires a separate argument]
+The extracted subsequence has structural properties but not yet a limit.
+Converting structure into convergence requires a separate theorem:
+monotone subsequence $\to$ MCT (requires boundedness);
+bisection subsequence $\to$ NIP and squeeze;
+pointwise convergence on $D$ $\to$ equicontinuity and $\varepsilon/3$.
+\end{remark}
+
+\begin{remark}[Quantitative control is absent]
+Predicate-walking proofs are pure existence arguments. They specify neither
+the rate of convergence nor which indices are selected. Explicit rates or
+constructive witnesses require a different approach.
+\end{remark}
+
+\begin{remark}[Countability is essential for the diagonal]
+The Arzel\`a--Ascoli diagonal requires a countable dense $D$ so that points
+can be enumerated and handled one at a time. In non-separable metric spaces
+(those without a countable dense subset) the argument breaks down.
+\end{remark}
+
+% ── §3.7: Unifying principle ─────────────────────────────────
+\section*{The Unifying Principle}
+
+\begin{remark}[Infinite Pigeonhole as the common core]
+Every predicate-walking argument rests on the fact that an infinite set
+cannot be partitioned into two finite parts. Applied to $\mathbb{N}$: if
+$P$ holds only finitely often, the $P$-indices have a maximum, and $\neg P$
+holds from that point on. The method reduces a complex existence question
+to a sequence of binary choices, each justified by the Infinite Pigeonhole
+Principle. The construction is inductive, automatic, and never runs dry,
+provided the predicate is well-chosen and the reservoir is genuinely infinite
+at each stage.
+\end{remark}
+
+\begin{remark}[Dependency summary]
+\begin{enumerate}
+  \item Monotone Subsequence Theorem — peak dichotomy alone; no completeness.
+  \item Bolzano--Weierstrass via MCT — Monotone Subseq.\ $+$ MCT (requires
+        completeness via AoC).
+  \item Bolzano--Weierstrass via bisection — NIP $+$ squeeze (requires
+        completeness via NIP $\equiv$ AoC).
+  \item Arzel\`a--Ascoli — BW at each diagonal stage $+$ equicontinuity.
+\end{enumerate}
+The Monotone Subsequence Theorem is the only result in the cluster requiring
+no completeness. All others depend on completeness via MCT or NIP.
+\end{remark}

@@ -1,0 +1,61 @@
+% figure-diagonal-extraction.tex — inline, no float wrapper.
+
+\begin{center}
+\begin{tikzpicture}[
+  cell/.style={draw=gray!40!black, fill=green!10!white,
+    minimum width=1.4cm, minimum height=0.65cm,
+    inner sep=2pt, font=\small, rounded corners=1pt},
+  gcell/.style={draw=red!60!black, fill=red!12!white,
+    minimum width=1.4cm, minimum height=0.65cm,
+    inner sep=2pt, font=\small\bfseries, rounded corners=1pt},
+  gray/.style={draw=gray!30!white, fill=gray!6!white,
+    minimum width=1.4cm, minimum height=0.65cm,
+    inner sep=2pt, font=\small, text=gray!50!black, rounded corners=1pt},
+  lbl/.style={font=\small},
+  arr/.style={->, >=stealth, draw=red!60!black, thick}
+]
+\foreach \i/\x in {1/1.6, 2/3.1, 3/4.6, 4/6.1}
+  \node[lbl] at (\x, 4.3) {$d_{\i}$};
+\node[lbl] at (7.3, 4.3) {$\cdots$};
+\node[lbl, anchor=east] at (0.6, 3.6) {Stage 1: $(f_{1,k})$};
+\node[lbl, anchor=east] at (0.6, 2.8) {Stage 2: $(f_{2,k})$};
+\node[lbl, anchor=east] at (0.6, 2.0) {Stage 3: $(f_{3,k})$};
+\node[lbl, anchor=east] at (0.6, 1.2) {Stage 4: $(f_{4,k})$};
+% Row 1
+\node[gcell] at (1.6, 3.6) {conv.};
+\node[gray]  at (3.1, 3.6) {?};
+\node[gray]  at (4.6, 3.6) {?};
+\node[gray]  at (6.1, 3.6) {?};
+% Row 2
+\node[cell]  at (1.6, 2.8) {conv.};
+\node[gcell] at (3.1, 2.8) {conv.};
+\node[gray]  at (4.6, 2.8) {?};
+\node[gray]  at (6.1, 2.8) {?};
+% Row 3
+\node[cell]  at (1.6, 2.0) {conv.};
+\node[cell]  at (3.1, 2.0) {conv.};
+\node[gcell] at (4.6, 2.0) {conv.};
+\node[gray]  at (6.1, 2.0) {?};
+% Row 4
+\node[cell]  at (1.6, 1.2) {conv.};
+\node[cell]  at (3.1, 1.2) {conv.};
+\node[cell]  at (4.6, 1.2) {conv.};
+\node[gcell] at (6.1, 1.2) {conv.};
+\draw[arr] (1.6, 3.28) -- (3.1, 2.47);
+\draw[arr] (3.1, 2.47) -- (4.6, 1.68);
+\draw[arr] (4.6, 1.68) -- (6.1, 0.88);
+\node[lbl, text=red!60!black] at (4.3, 2.6) {diagonal: $g_m = f_{m,m}$};
+\node[lbl] at (4.0, 0.25)
+  {$(g_m)$ converges pointwise on all of $D = \{d_1, d_2, \ldots\}$};
+\end{tikzpicture}
+\end{center}
+\captionof{figure}{%
+  Diagonal extraction in the Arzel\`a--Ascoli argument.
+  Each row $(f_{m,k})$ converges at $d_1, \ldots, d_m$ (green) and is a
+  subsequence of the row above. The diagonal $g_m = f_{m,m}$ (red) is a
+  tail of every row, so it converges at every $d_j$. Equicontinuity then
+  extends pointwise convergence on the dense set $D$ to uniform convergence
+  on $[a,b]$.%
+}
+\label{fig:diagonal-extraction}
+\medskip

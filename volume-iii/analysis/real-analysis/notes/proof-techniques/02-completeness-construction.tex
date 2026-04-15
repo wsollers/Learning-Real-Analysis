@@ -1,0 +1,308 @@
+% ============================================================
+%  §2  Completeness as a Constructive Engine
+%  volume-iii/analysis/real-analysis/notes/proof-techniques/
+%  02-completeness-construction.tex
+% ============================================================
+
+\section{Completeness as a Constructive Engine}
+\label{sec:completeness-construction}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Completeness Construction Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Tool} & \textbf{What it supplies} & \textbf{Detail} \\
+\midrule
+$\varepsilon$-characterisation of $\sup$
+  & $\forall\varepsilon>0,\;\exists x\in S,\;x>\sup S-\varepsilon$
+  & \hyperref[prop:eps-char-sup]{$\downarrow$} \\[3pt]
+Inductive selection
+  & Monotone $(x_n)\subset S$ with $x_n\to\sup S$
+  & \hyperref[thm:inductive-selection]{$\downarrow$} \\[3pt]
+Monotone Approximation
+  & Such a sequence exists for any nonempty bounded $S$
+  & \hyperref[prop:monotone-approx-bounds]{$\downarrow$} \\[3pt]
+LUB $\Leftrightarrow$ MCT
+  & The two completeness statements are equivalent
+  & \hyperref[thm:LUB-iff-MCT]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ── §2.1: The ε-characterisation ─────────────────────────────
+\subsection{The $\varepsilon$-Characterisation of Suprema and Infima}
+\label{subsec:eps-char}
+
+\begin{proposition}[$\varepsilon$-characterisation of $\sup$]
+\label{prop:eps-char-sup}
+Let $S\subset\mathbb{R}$ be nonempty and bounded above, and let
+$s=\sup S$. Then for every $\varepsilon>0$ there exists $x\in S$ with
+$x>s-\varepsilon$.
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State the $\varepsilon$-characterisation of $\sup$ (proof-techniques version).}
+\FlashA{If $s=\sup S$ then $\forall\varepsilon>0\,\exists x\in S: x>s-\varepsilon$.}
+\end{remark*}
+
+
+\begin{remark}[Fully quantified form]
+$\forall\varepsilon>0,\;\exists x\in S,\;s-\varepsilon<x\leq s$.
+Equivalently: any $M<s$ is not an upper bound for $S$.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+If no such $x$ existed for some $\varepsilon_0>0$, then $s-\varepsilon_0$
+would be an upper bound for $S$ smaller than $s$, contradicting $s=\sup S$.
+\end{remark}
+
+\begin{remark}[Operative role]
+The $\varepsilon$-characterisation is the \emph{existential engine} of
+constructive completeness arguments. At each inductive step it is invoked
+with a specific $\varepsilon$ value, discharging the universal quantifier
+and yielding a concrete existence claim. Existential instantiation then
+names a witness — call it $x_{n+1}$ — and the rest of the argument uses
+only the single property $x_{n+1}>s-\varepsilon$. The witness is
+underspecified; the argument makes no commitment about which element of $S$
+is chosen, and no further properties of $x_{n+1}$ are used.
+\end{remark}
+
+\begin{remark}[Symmetric form for $\inf$]
+For $t=\inf S$: for every $\varepsilon>0$ there exists $y\in S$ with
+$y<t+\varepsilon$. The proof is symmetric: any $M>t$ is not a lower bound.
+\end{remark}
+
+% ── §2.2: Inductive selection ────────────────────────────────
+\subsection{Inductive Selection at Bounds}
+\label{subsec:inductive-selection}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Inductive Selection at $\sup$)}},
+  fonttitle=\small\bfseries]
+\label{thm:inductive-selection}
+Let $S\subset\mathbb{R}$ be nonempty and bounded above, and let
+$s=\sup S$. Then there exists a strictly increasing sequence
+$(x_n)_{n=1}^{\infty}\subset S$ with $x_n\to s$.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$\exists(x_n)\subset S$: $\forall n,\;x_n<x_{n+1}$;\;
+$\forall n,\;s-\tfrac{1}{n}<x_n\leq s$;\;
+$\lim_{n\to\infty}x_n=s$.
+\end{remark}
+
+\begin{remark}[Why no algebraic formula is possible in general]
+The set $S$ may have large gaps; any fixed formula might land outside $S$
+entirely. The construction must be inductive, selecting from $S$ at each
+stage using the $\varepsilon$-characterisation rather than evaluating a
+closed expression.
+\end{remark}
+
+\begin{remark}[Proof strategy — the $\max$ device]
+The inductive step must simultaneously satisfy two lower bounds:
+$x_{n+1}>x_n$ (monotonicity) and $x_{n+1}>s-\tfrac{1}{n+1}$ (proximity).
+A single invocation of the existential can impose only one threshold. Setting
+\[
+  M_n:=\max\!\Bigl(x_n,\;s-\tfrac{1}{n+1}\Bigr)
+\]
+collapses both requirements into one: $x_{n+1}>M_n$ delivers both
+$x_{n+1}>x_n$ and $x_{n+1}>s-\tfrac{1}{n+1}$ simultaneously. Since
+$M_n<s$ (both entries are strictly below $s$ whenever $s\notin S$, or
+the constant sequence $x_n=s$ handles the case $s\in S$), the
+$\varepsilon$-characterisation with $\varepsilon=s-M_n>0$ supplies the
+required witness.
+
+\medskip
+\noindent\textbf{Base case.} Set $\varepsilon=1$. The
+$\varepsilon$-characterisation gives $x_1\in S$ with $x_1>s-1$; since
+$x_1\in S$, also $x_1\leq s$.
+
+\noindent\textbf{Inductive step.} Given $x_n$ with
+$s-\tfrac{1}{n}<x_n\leq s$, form $M_n$ as above and instantiate the
+$\varepsilon$-characterisation with $\varepsilon=s-M_n>0$ to obtain
+$x_{n+1}\in S$ with $x_{n+1}>M_n$. Then:
+\begin{align*}
+  x_{n+1}>M_n\geq x_n
+    &\quad\Rightarrow\quad x_{n+1}>x_n, \\
+  x_{n+1}>M_n\geq s-\tfrac{1}{n+1}
+    &\quad\Rightarrow\quad s-\tfrac{1}{n+1}<x_{n+1}\leq s.
+\end{align*}
+
+\noindent\textbf{Convergence.} $0\leq s-x_n<\tfrac{1}{n}$; the squeeze
+theorem and the Archimedean Property give $x_n\to s$.
+\end{remark}
+
+\begin{remark}[What the construction requires]
+Three ingredients: (i) completeness of $\mathbb{R}$ ($\sup S$ exists);
+(ii) the $\varepsilon$-characterisation (\cref{prop:eps-char-sup}), supplying
+the witness at each step; (iii) the Archimedean Property
+(\cref{prop:archimedean}), forcing $|s-x_n|\leq\tfrac{1}{n}\to 0$.
+The internal structure of $S$ — its cardinality, openness, density —
+plays no role.
+\end{remark}
+
+\begin{remark}[Common error]
+Instantiating the existential with only the proximity threshold
+$s-\tfrac{1}{n+1}$ and ignoring $x_n$. The resulting witness satisfies
+proximity but not monotonicity: one might obtain $x_1=0.9$, $x_2=0.4$,
+$x_3=0.85$, each close to $s$ but not increasing. The $\max$ is not a
+convenience; it is the minimal device that encodes both requirements into
+one threshold.
+\end{remark}
+
+\begin{remark}[Infimum case]
+Replace $\max$ by $\min$, $s-\tfrac{1}{n}$ by $t+\tfrac{1}{n}$, and
+reverse all strict inequalities. The resulting sequence $(y_n)\subset S$
+is strictly decreasing with $y_n\to t=\inf S$.
+\end{remark}
+
+% ── §2.3: Monotone approximation ─────────────────────────────
+\subsection{Monotone Approximation of Bounds}
+\label{subsec:monotone-approx}
+
+\begin{proposition}[Monotone Approximation of Bounds]
+\label{prop:monotone-approx-bounds}
+Let $S\subset\mathbb{R}$ be nonempty and bounded. Then there exist
+monotone sequences $(x_n),(y_n)\subset S$ with
+$x_n\to\sup S$ and $y_n\to\inf S$.
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State Monotone Approximation of Bounds (proof-techniques version).}
+\FlashA{For nonempty bounded $S$: there exist monotone sequences in $S$ converging to $\sup S$ and $\inf S$.}
+\end{remark*}
+
+
+\begin{remark}[Fully quantified form]
+$\forall S\neq\emptyset$ bounded:
+$\exists(x_n)\subset S$, $x_n\uparrow\sup S$;\;
+$\exists(y_n)\subset S$, $y_n\downarrow\inf S$.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+The strictly increasing sequence from \cref{thm:inductive-selection} is
+already monotone and converges to $\sup S$. Taking $X_n=\max\{x_1,\ldots,x_n\}$
+makes it explicitly non-decreasing (useful when the inductive step does
+not guarantee strict increase). The infimum case is symmetric.
+\end{remark}
+
+\begin{remark}[Consequence]
+Every supremum is the limit of a sequence from the set. The sequential
+characterisation of $\sup$ and $\inf$ — that they are realised as limits
+of internal sequences — follows from this construction, making
+\cref{prop:monotone-approx-bounds} the canonical proof of that
+characterisation.
+\end{remark}
+
+\begin{remark}[Forward connections]
+The inductive selection pattern reappears in:
+\begin{itemize}
+  \item \textbf{Monotone Convergence Theorem} — every increasing bounded
+        sequence converges to the supremum of its range; this construction
+        exhibits that the supremum is always realised as such a limit.
+  \item \textbf{Nested Interval Property} — the left and right endpoints
+        of nested intervals form monotone sequences converging to a common
+        point by exactly this mechanism.
+  \item \textbf{Existence of square roots} — the standard proof sets
+        $s=\sup\{x\in\mathbb{R}:x^2<2\}$ and extracts an approximating
+        sequence from that set by inductive selection.
+\end{itemize}
+\end{remark}
+
+% ── §2.4: LUB ↔ MCT equivalence ──────────────────────────────
+\subsection{LUB $\Longleftrightarrow$ MCT: The Completeness Equivalence}
+\label{subsec:LUB-MCT}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Least Upper Bound Property)}},
+  fonttitle=\small\bfseries]
+\label{def:LUB}
+$\mathbb{R}$ has the \textbf{least upper bound property} if every nonempty
+set $A\subset\mathbb{R}$ that is bounded above has a supremum in $\mathbb{R}$.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (LUB $\Longleftrightarrow$ MCT)}},
+  fonttitle=\small\bfseries]
+\label{thm:LUB-iff-MCT}
+The following are equivalent over the Archimedean ordered field axioms:
+\begin{enumerate}[label=(\roman*)]
+  \item $\mathbb{R}$ has the least upper bound property (LUB).
+  \item Every bounded monotone sequence of real numbers converges (MCT).
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+(i) $\forall A\subset\mathbb{R},\;
+    (A\neq\emptyset\land\exists M,\;\forall a\in A,\;a\leq M)
+    \Rightarrow\exists\sup A\in\mathbb{R}$.
+
+(ii) $\forall(x_n)\subset\mathbb{R},\;
+    (\forall n,\;x_n\leq x_{n+1})\land(\exists M,\;\forall n,\;x_n\leq M)
+    \Rightarrow\exists L\in\mathbb{R},\;\lim_{n\to\infty}x_n=L$.
+\end{remark}
+
+\begin{remark}[Proof strategy — LUB $\Rightarrow$ MCT]
+Let $(x_n)$ be increasing and bounded. The image set $A=\{x_n:n\in\mathbb{N}\}$
+is bounded above, so LUB gives $\alpha=\sup A$. The
+$\varepsilon$-characterisation produces $N$ with $x_N>\alpha-\varepsilon$.
+Monotonicity promotes this to a tail statement: $\alpha-\varepsilon<x_n\leq\alpha$
+for all $n\geq N$. Hence $x_n\to\alpha$.
+
+The quantifier structure is:
+\[
+  \alpha=\sup A
+  \;\Rightarrow\;
+  (\forall\varepsilon>0)\;\exists N\;(x_N>\alpha-\varepsilon)
+  \;\xrightarrow{\text{monotone}}\;
+  (\forall\varepsilon>0)\;\exists N\;(\forall n\geq N)\;(|x_n-\alpha|<\varepsilon).
+\]
+\end{remark}
+
+\begin{remark}[Proof strategy — MCT $\Rightarrow$ LUB]
+Given $A\neq\emptyset$ and bounded above by $u_1$, pick $l_1\in A$.
+Build a bisection bracket: at each stage, let $m_n=(l_n+u_n)/2$; if $m_n$
+is an upper bound for $A$ set $u_{n+1}=m_n$, otherwise set $l_{n+1}=m_n$
+(and pick a witnessing $a\in A$ with $a>l_{n+1}$). The sequences $(l_n)$
+and $(u_n)$ are monotone and bounded, so MCT gives limits
+$l_n\to s$ and $u_n\to s$ (since $u_n-l_n=(u_1-l_1)/2^n\to 0$). The
+invariants — ``$u_n$ is an upper bound for $A$'' and ``$l_n$ is not'' —
+force $s=\sup A$.
+
+\medskip
+The construction maintains:
+\begin{itemize}
+  \item a \emph{universal} invariant: $(\forall a\in A)(a\leq u_n)$,
+  \item a \emph{failure} invariant: $(\exists a\in A)(a>l_n)$.
+\end{itemize}
+These two invariants, together with $u_n-l_n\to 0$, pin $s$ as the least
+upper bound.
+\end{remark}
+
+\begin{remark}[Why this matters structurally]
+The chain LUB $\Leftrightarrow$ MCT $\Leftrightarrow$ NIP $\Leftrightarrow$
+BW $\Leftrightarrow$ CC (Cauchy Criterion) is the backbone of the equivalence
+cluster at the heart of real analysis. All five statements assert that
+$\mathbb{R}$ has no gaps, each in its own language. The inductive selection
+technique — building sequences from sets using the $\varepsilon$-characterisation
+— is the constructive face of all five equivalences.
+\end{remark}
+
+\begin{remark}[Downstream reuse]
+The quantifier pattern
+\[
+  (\forall\varepsilon>0)(\exists\text{witness})
+  \;\Rightarrow\;
+  (\exists\text{sequence with controlled tail})
+\]
+reappears in Bolzano--Weierstrass (extracting convergent subsequences),
+$\limsup$/$\liminf$ (tail suprema as a decreasing sequence),
+compactness (finite subcovers as finite witnesses), and approximation
+theorems throughout analysis.
+\end{remark}

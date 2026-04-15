@@ -1,0 +1,335 @@
+% ============================================================
+%  §5  Subsequence Partition via Residue Classes
+%  Volume III · Real Analysis
+%  volume-iii/analysis/real-analysis/notes/proof-techniques/
+%  05-residue-partition.tex
+% ============================================================
+
+\section{Subsequence Partition via Residue Classes}
+\label{sec:residue-partition}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Residue Partition Toolkit --- Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Tool} & \textbf{Statement} & \textbf{Use} \\
+\midrule
+$k$-Periodicity Criterion
+  & $(a_n)\to L \;\Leftrightarrow\; \forall r,\;(a_{kn+r})\to L$
+  & Prove convergence by analysing $k$ classes \\[3pt]
+Forward direction
+  & Subseqs.\ of convergent seqs.\ converge to $L$
+  & Reduce to subsequence analysis \\[3pt]
+Divergence corollary
+  & Two classes $\to$ different limits $\Rightarrow$ $(a_n)$ diverges
+  & \hyperref[prop:residue-divergence]{$\downarrow$} \\[3pt]
+Index translation
+  & $m = kn+r \Rightarrow n \geq N_r$ once $m \geq k\max_r N_r$
+  & Core of the backward direction \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+% ── §5.1 The partition ────────────────────────────────────────
+\subsection{The Residue-Class Partition}
+\label{subsec:residue-partition-def}
+
+For any sequence $(a_n)$ and any integer $k \geq 2$, the division algorithm
+partitions $\mathbb{N}$ into $k$ disjoint residue classes:
+\[
+  \mathbb{N} = \bigsqcup_{r=0}^{k-1} \{kn + r : n \geq 0\}.
+\]
+Each class defines a subsequence: $(a_{kn+r})_{n \geq 0}$ selects every
+$k$th term of $(a_n)$ beginning at position $r$. These $k$ subsequences
+partition $(a_n)$ exactly — every term appears in precisely one class,
+order within each class is preserved, and their union recovers $(a_n)$.
+
+\begin{remark}[Fully quantified form of the partition]
+$\forall n \in \mathbb{N},\;\exists!\, r \in \{0,\ldots,k-1\},\;\exists!\, q
+\in \mathbb{N},\;n = kq + r$. Hence $\{(a_{kn+r})_{n\geq 0} :
+r = 0,\ldots,k-1\}$ is a partition of $(a_n)$ into $k$ subsequences.
+\end{remark}
+
+\input{volume-iii/analysis/real-analysis/notes/proof-techniques/figure-residue-partition-k3}
+
+% ── §5.2 The criterion ────────────────────────────────────────
+\subsection{The $k$-Periodicity Convergence Criterion}
+\label{subsec:k-periodicity}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($k$-Periodicity Convergence Criterion)}},
+  fonttitle=\small\bfseries]
+\label{thm:k-periodicity}
+Let $(a_n)$ be a sequence, $k \geq 2$ an integer, and $L \in \mathbb{R}$.
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+  \item $(a_n) \to L$.
+  \item For every $r \in \{0, 1, \ldots, k-1\}$, the subsequence
+        $(a_{kn+r}) \to L$.
+\end{enumerate}
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(i) \;\Leftrightarrow\; (ii)$, where:
+
+$(i)$: $\forall \varepsilon > 0,\;\exists N \in \mathbb{N},\;\forall m \geq N,\;
+|a_m - L| < \varepsilon$.
+
+$(ii)$: $\forall r \in \{0,\ldots,k-1\},\;\forall \varepsilon > 0,\;
+\exists N_r \in \mathbb{N},\;\forall n \geq N_r,\;|a_{kn+r} - L| < \varepsilon$.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+\noindent\textbf{Forward direction} $(i) \Rightarrow (ii)$.
+Each $(a_{kn+r})$ is a subsequence of $(a_n)$. Subsequences of a convergent
+sequence converge to the same limit (\cref{prop:convergent-bounded}).
+
+\medskip
+\noindent\textbf{Backward direction} $(ii) \Rightarrow (i)$.
+The operative direction. Given $\varepsilon > 0$, for each residue $r$ let
+$N_r$ satisfy $|a_{kn+r} - L| < \varepsilon$ for all $n \geq N_r$. Set
+$N^* = k \cdot \max_{r} N_r$. For any $m \geq N^*$, write $m = kn + r$
+via the division algorithm. Then:
+\[
+  n = \frac{m - r}{k} \geq \frac{N^* - (k-1)}{k}
+    \geq \frac{k \max_r N_r - (k-1)}{k} \geq N_r,
+\]
+so $|a_m - L| = |a_{kn+r} - L| < \varepsilon$.
+\end{remark}
+
+\begin{remark}[The index translation]
+The key step converts a global index $m$ to a local index $n$ within its
+residue class via $m = kn + r$. The factor $k$ in the definition of $N^*$
+absorbs the offset $r \leq k-1$ from every class simultaneously, ensuring
+that $n \geq N_r$ holds for whichever class $m$ lands in.
+\end{remark}
+
+% ── §5.3 Divergence ───────────────────────────────────────────
+\subsection{The Divergence Corollary}
+\label{subsec:residue-divergence}
+
+\begin{proposition}[Residue divergence criterion]
+\label{prop:residue-divergence}
+If there exist residues $r, s \in \{0,\ldots,k-1\}$ such that
+$(a_{kn+r}) \to L$ and $(a_{kn+s}) \to M$ with $L \neq M$, then
+$(a_n)$ diverges.
+\end{proposition}
+
+\begin{remark*}[Flash]
+\FlashQ{State the Residue Divergence Criterion.}
+\FlashA{If residue subsequences $(a_{kn+r})\to L$ and $(a_{kn+s})\to M$ with $L\neq M$, then $(a_n)$ diverges.}
+\end{remark*}
+
+
+\begin{remark}[Fully quantified form]
+$(a_{kn+r}) \to L \;\land\; (a_{kn+s}) \to M \;\land\; L \neq M
+\;\Rightarrow\; (a_n) \text{ diverges}$.
+\end{remark}
+
+\begin{remark}[Proof strategy]
+Contrapositively: if $(a_n) \to L$, then every subsequence converges to
+$L$ (forward direction of \cref{thm:k-periodicity}). If two residue-class
+subsequences converge to different limits, $(a_n)$ cannot converge.
+\end{remark}
+
+\begin{remark}[Canonical example]
+The sequence $((-1)^n)$ has $a_{2n} = 1 \to 1$ and $a_{2n+1} = -1 \to -1$.
+Since $1 \neq -1$, the sequence diverges — established immediately without
+any $\varepsilon$-$N$ computation.
+\end{remark}
+
+% ── §5.4 Alternating Series Test ─────────────────────────────
+\subsection{The Alternating Series Test via Even/Odd Partition}
+\label{subsec:ast-even-odd}
+
+The $k = 2$ case of \cref{thm:k-periodicity} drives the cleanest proof
+of the Alternating Series Test.
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Alternating Series Test)}},
+  fonttitle=\small\bfseries]
+\label{thm:alternating-series-test}
+Let $(a_n)$ be a positive decreasing sequence with $a_n \to 0$. Then the
+alternating series $\sum_{n=1}^{\infty} (-1)^{n+1} a_n$ converges.
+\end{tcolorbox}
+
+\begin{remark}[Fully quantified form]
+$(\forall n,\;a_n > 0)\;\land\;(\forall n,\;a_{n+1} \leq a_n)\;\land\;
+(a_n \to 0) \;\Rightarrow\; \exists L,\;\sum_{n=1}^\infty (-1)^{n+1} a_n = L$.
+\end{remark}
+
+\begin{remark}[Proof strategy --- even/odd partition]
+Let $s_n$ denote the $n$th partial sum. Apply \cref{thm:k-periodicity}
+with $k = 2$: it suffices to show $(s_{2k}) \to L$ and $(s_{2k+1}) \to L$
+for the same $L$.
+
+\medskip
+\noindent\textbf{Even subsequence $(s_{2k})$: decreasing and bounded.}
+Group consecutive pairs:
+\[
+  s_{2k} = \sum_{j=1}^{k} (-a_{2j-1} + a_{2j}).
+\]
+Since $(a_n)$ is decreasing, each summand $-a_{2j-1} + a_{2j} \leq 0$,
+so $(s_{2k})$ is decreasing. Also:
+\[
+  s_{2k} = -a_1 + \sum_{j=1}^{k-1}(a_{2j} - a_{2j+1}) + a_{2k} \geq -a_1,
+\]
+since each term in the sum is non-negative. Thus $(s_{2k})$ is decreasing
+and bounded below by $-a_1$. By MCT, $s_{2k} \to L$ for some $L \geq -a_1$.
+
+\medskip
+\noindent\textbf{Odd subsequence $(s_{2k+1})$: linked to the even.}
+Observe $s_{2k+1} = s_{2k} + a_{2k+1}$. Since $s_{2k} \to L$ and
+$a_{2k+1} \to 0$, the Algebraic Limit Theorem gives $s_{2k+1} \to L$.
+
+\medskip
+\noindent\textbf{Applying the criterion.}
+Both residue-class subsequences converge to the same $L$. By
+\cref{thm:k-periodicity} with $k = 2$, $(s_n) \to L$.
+\end{remark}
+
+\begin{remark}[Why the partition is the right tool]
+The even and odd partial sums have structurally different characters:
+the even sums are monotone (enabling MCT), the odd sums are then
+controlled via the algebraic relationship $s_{2k+1} = s_{2k} + a_{2k+1}$.
+No single uniform argument handles both. The partition separates the two
+cases into independent analyses, then the criterion reassembles the
+conclusion.
+\end{remark}
+
+\input{volume-iii/analysis/real-analysis/notes/proof-techniques/figure-alternating-series-even-odd}
+
+\begin{remark}[Alternative proofs]
+The Alternating Series Test admits three proofs from different
+completeness avatars:
+\begin{enumerate}
+  \item \emph{Cauchy criterion} --- show $(s_n)$ is eventually
+        $\varepsilon$-steady directly.
+  \item \emph{NIP} --- the nested intervals $[s_{2k}, s_{2k-1}]$ shrink
+        to a point by the Nested Interval Property.
+  \item \emph{MCT + residue partition} --- as above.
+\end{enumerate}
+The partition proof is the most transparent structurally: the monotone
+behaviour and the limit identity are isolated into the two residue classes
+rather than handled simultaneously.
+\end{remark}
+
+% ── §5.5 Higher k ─────────────────────────────────────────────
+\subsection{Higher $k$ and Choosing the Right Period}
+\label{subsec:higher-k}
+
+For sequences with period $k > 2$, the criterion applies directly. The
+sequence $a_n = \cos(2\pi n / 3)$ takes values $1, -\tfrac{1}{2},
+-\tfrac{1}{2}, 1, -\tfrac{1}{2}, -\tfrac{1}{2}, \ldots$, cycling with
+period $3$. Partitioning modulo $3$:
+\begin{align*}
+  a_{3n}   &= 1 \to 1, \\
+  a_{3n+1} &= -\tfrac{1}{2} \to -\tfrac{1}{2}, \\
+  a_{3n+2} &= -\tfrac{1}{2} \to -\tfrac{1}{2}.
+\end{align*}
+The three limits differ ($1 \neq -\tfrac{1}{2}$), so the sequence diverges
+by \cref{prop:residue-divergence}.
+
+\begin{remark}[Choosing $k$ to match the period]
+The right choice of $k$ is the natural period of the sequence's structure.
+Using $k = 2$ for a period-$3$ sequence produces residue classes that are
+themselves period-$3$ subsequences; convergence of each class then requires
+a further partition with $k = 3$. Choosing $k$ to match the period compresses
+the argument to a single application of the criterion.
+\end{remark}
+
+\begin{remark}[Applying the criterion to prove convergence]
+To prove $(a_n) \to L$ via the criterion, one must:
+\begin{enumerate}
+  \item Select $k$ matching the period of the sequence's behaviour.
+  \item Prove $(a_{kn+r}) \to L$ for each $r \in \{0,\ldots,k-1\}$,
+        using whatever tool fits that residue class.
+  \item Invoke \cref{thm:k-periodicity} to conclude $(a_n) \to L$.
+\end{enumerate}
+The method does not produce $L$ --- it confirms a candidate. Identifying
+$L$ requires separate work (direct computation, MCT applied to a class,
+etc.) before the criterion is invoked.
+\end{remark}
+
+% ── §5.6 Contrast with predicate-walking ─────────────────────
+\subsection{Contrast with Predicate-Walking}
+\label{subsec:contrast-predicate}
+
+\begin{remark}[Dual logical directions]
+The residue partition technique and predicate-walking
+(\S\ref{sec:predicate-walking}) operate in opposite logical directions.
+
+\medskip
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Feature} & \textbf{Predicate-walking} & \textbf{Residue partition} \\
+\midrule
+Flow & Whole $\to$ one part & All parts $\to$ whole \\
+Goal & Property of extracted subseq. & Convergence of full $(a_n)$ \\
+Coverage & One ``good'' subsequence & All $k$ residue classes \\
+Divergence use & Two classes, different limits & Same: two classes, different limits \\
+Completeness role & Via MCT or NIP & Via MCT or algebraic limit theorem \\
+\bottomrule
+\end{tabular}
+
+\medskip
+Predicate-walking extracts what is needed; the residue partition reassembles
+from all pieces. The divergence criterion is available in both frameworks:
+two subsequences with different limits immediately imply divergence.
+\end{remark}
+
+% ── §5.7 Limitations ──────────────────────────────────────────
+\subsection{Limitations}
+\label{subsec:residue-limitations}
+
+\begin{remark}[The same-limit condition is non-negotiable]
+The backward direction of \cref{thm:k-periodicity} requires all $k$
+residue-class subsequences to converge to the \emph{same} $L$. There is
+no weakening: a convergent sequence has all its subsequences converging
+to the identical limit, so any two classes converging to different limits
+already certify divergence. The technique cannot produce convergence from
+mixed limits.
+\end{remark}
+
+\begin{remark}[The limit must be known in advance]
+The criterion confirms a candidate limit $L$; it does not produce $L$ from
+scratch. In practice, $L$ is identified by direct computation on one
+residue class (e.g., the even partial sums converge to $L$ by MCT), then
+the criterion assembles global convergence.
+\end{remark}
+
+\begin{remark}[Exact periodicity is required]
+The technique applies when the sequence's qualitative behaviour repeats
+with exact period $k$ in the index. For sequences whose oscillation
+decays without exact periodicity, the residue classes are not individually
+tractable, and a direct $\varepsilon$-$N$ argument or a squeeze is more
+appropriate.
+\end{remark}
+
+\begin{remark}[Common error]
+Applying the criterion with $k$ smaller than the true period, then
+concluding convergence after verifying only the even residue class.
+If the odd class is not verified, the conclusion does not follow.
+Every residue class must be checked.
+\end{remark}
+
+\begin{remark}[Forward connections]
+The residue partition technique reappears in:
+\begin{itemize}
+  \item \textbf{Ces\`aro means} --- the Ces\`aro average of a sequence
+        $(a_n)$ can be analysed by partitioning the partial sums of
+        the average into residue classes.
+  \item \textbf{Fourier series} --- the convergence of partial sums
+        of a Fourier series is often established by analysing even and
+        odd partial sums (or partial sums along specific subsequences of
+        the approximation order).
+  \item \textbf{Recursively defined sequences} --- when a recurrence
+        has period $k$, the residue-class subsequences each satisfy a
+        simpler recurrence, enabling separate analysis.
+\end{itemize}
+\end{remark}

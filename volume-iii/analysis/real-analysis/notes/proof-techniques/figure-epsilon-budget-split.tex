@@ -1,0 +1,39 @@
+% figure-epsilon-budget-split.tex — inline, no float wrapper.
+
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=3pt, minimum width=3.2cm,
+    minimum height=0.8cm, inner sep=4pt, font=\small},
+  teal/.style={box, fill=green!10!white, draw=green!50!black},
+  purp/.style={box, fill=blue!8!white, draw=blue!50!black},
+  gray/.style={box, fill=gray!7!white, draw=gray!40!black},
+  lbl/.style={font=\small},
+  arr/.style={->, >=stealth, thin, gray!60!black}
+]
+\node[teal, minimum width=7.0cm] (tot) at (3.5, 3.2)
+  {total budget: $\varepsilon$};
+\draw[arr] (1.8, 2.82) -- (1.3, 2.18);
+\draw[arr] (5.2, 2.82) -- (5.7, 2.18);
+\node[lbl, gray!60!black] at (3.5, 2.5) {split};
+\node[purp] (A) at (1.3, 1.8) {piece $|A| < \varepsilon/2$};
+\node[lbl, below=3pt, text=blue!60!black] at (1.3, 1.38) {$n \geq N_1$};
+\node[purp] (B) at (5.7, 1.8) {piece $|B| < \varepsilon/2$};
+\node[lbl, below=3pt, text=blue!60!black] at (5.7, 1.38) {$n \geq N_2$};
+\draw[arr] (1.3, 1.38) -- (2.8, 0.72);
+\draw[arr] (5.7, 1.38) -- (4.2, 0.72);
+\node[gray] (sum) at (3.5, 0.4)
+  {$|A+B| \leq |A|+|B| < \varepsilon$};
+\node[lbl] at (3.5, -0.25)
+  {take $N = \max\{N_1, N_2\}$ to enforce both constraints simultaneously};
+\end{tikzpicture}
+\end{center}
+\captionof{figure}{%
+  The $\varepsilon$-budget split. The total tolerance $\varepsilon$ is
+  distributed as shares $\varepsilon/2$ between two pieces. Each piece is
+  controlled independently for $n \geq N_i$. Taking $N = \max\{N_1, N_2\}$
+  enforces both bounds simultaneously, giving $|A+B| < \varepsilon$ for all
+  $n \geq N$. With $k$ pieces, assign $\varepsilon/k$ each and take
+  $N = \max_i N_i$.%
+}
+\label{fig:epsilon-budget-split}
+\medskip
