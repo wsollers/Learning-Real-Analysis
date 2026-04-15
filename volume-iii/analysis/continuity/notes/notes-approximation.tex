@@ -1,26 +1,19 @@
 % =========================================================
-% Approximation Theorems — Notes
+% Approximation of Continuous Functions — Notes
 % Chapter: continuity
-% Section: approximation
 % Volume III · Analysis
 % =========================================================
 
 \section{Approximation of Continuous Functions}
 \label{sec:approximation}
 
-% ---------------------------------------------------------
-% Toolkit
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Toolkit — Approximation}]
+\begin{tcolorbox}[title={Toolkit --- Approximation}]
 \begin{itemize}
-  \item Approximation hierarchy: step functions $\subset$ piecewise
-    linear functions $\subset$ polynomials. Each class is dense in
-    $C([a,b])$ under the uniform norm.
-  \item All three results use Heine--Cantor: uniform continuity on
-    $[a,b]$ produces the $\delta$ that controls the partition.
-  \item Bernstein polynomials give a constructive proof of Weierstrass:
-    $B_n(x) = \sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$.
+  \item Hierarchy: step functions $\subset$ piecewise linear $\subset$
+    polynomials. All three classes are dense in $(C([a,b]),\|\cdot\|_\infty)$.
+  \item All three results use Heine--Cantor: $\operatorname{UniformlyContinuous}(f,[a,b])$
+    provides the controlling $\delta$.
+  \item Bernstein polynomials: $B_n(x)=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$.
   \item Step function approximation feeds directly into Riemann
     integrability of continuous functions.
 \end{itemize}
@@ -32,74 +25,38 @@
 
 \begin{theorem}[Step Function Approximation]
 \label{thm:step-function-approximation}
-Let $I = [a,b]$ be a closed bounded interval and let
-$f : I \to \mathbb{R}$ be continuous on $I$. For every $\varepsilon
-> 0$ there exists a step function $s_\varepsilon : I \to \mathbb{R}$
-such that
-\[
-  |f(x) - s_\varepsilon(x)| < \varepsilon
-  \qquad\text{for all } x \in I.
-\]
+$\operatorname{ContinuousOn}(f,[a,b])$, $\varepsilon>0$
+$\Rightarrow\exists$ step function $s_\varepsilon$:
+$\sup_{x\in[a,b]}|f(x)-s_\varepsilon(x)|<\varepsilon$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:step-function-approximation]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ cts on } [a,b],\;
-  \varepsilon > 0
+  \operatorname{ContinuousOn}(f,[a,b]),\;\varepsilon>0
   \;\Rightarrow\;
-  \exists \text{ step function } s_\varepsilon:\;
-  \sup_{x \in [a,b]} |f(x) - s_\varepsilon(x)| < \varepsilon.
+  \exists s_\varepsilon\text{ step}:\;
+  \operatorname{OutputTolerance}(f(x),s_\varepsilon(x),\varepsilon)
+  \;\forall x\in[a,b].
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \|f-s_\varepsilon\|_\infty<\varepsilon
+  \;\colonequiv\;
+  \sup_{x\in[a,b]}\operatorname{OutputTolerance}(f(x),s_\varepsilon(x),\varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Heine--Cantor provides $\delta > 0$ such that $|f(x) - f(y)|
-< \varepsilon$ whenever $|x-y| < \delta$. Partition $[a,b]$ into
-subintervals of width less than $\delta$ and define $s_\varepsilon$
-to be constant on each piece at the value of $f$ at the left
-endpoint. Uniform continuity ensures the approximation error is
-less than $\varepsilon$ throughout. This is used in the theory of
-Riemann integration to show that continuous functions on $[a,b]$
-are Riemann integrable.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Corollary — Uniform Partition Version
-% ---------------------------------------------------------
-
-\begin{corollary}[Uniform Partition Approximation]
-\label{cor:uniform-partition-approximation}
-Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
-For every $\varepsilon > 0$ there exists $m \in \mathbb{N}$ such that
-if $I$ is divided into $m$ equal subintervals of length $h =
-(b-a)/m$, the step function $s_\varepsilon$ defined by
-\[
-  s_\varepsilon(x) = f(x_{k-1}),
-  \quad x \in [x_{k-1}, x_k],
-\]
-satisfies $|f(x) - s_\varepsilon(x)| < \varepsilon$ for all $x \in I$.
-\end{corollary}
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \forall \varepsilon > 0,\;
-  \exists m \in \mathbb{N}:\;
-  \sup_{x \in [a,b]} |f(x) - s_\varepsilon(x)| < \varepsilon,
-\]
-where $s_\varepsilon$ is the uniform left-endpoint step function
-with $m$ equal subintervals.
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-This is the uniform partition specialization of the Step Function
-Approximation Theorem. The Heine--Cantor $\delta$ determines $m$
-via $m > (b-a)/\delta$. This is the form directly relevant to
-Riemann sums: upper and lower sums over uniform partitions converge
-to the integral for continuous functions.
+Heine--Cantor provides $\delta>0$ with $|f(x)-f(y)|<\varepsilon$
+whenever $|x-y|<\delta$. Partition $[a,b]$ into subintervals of
+width less than $\delta$ and define $s_\varepsilon$ constant at
+the left-endpoint value on each piece. Used directly to show
+continuous functions on $[a,b]$ are Riemann integrable.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -108,28 +65,25 @@ to the integral for continuous functions.
 
 \begin{definition}[Piecewise Linear Function]
 \label{def:piecewise-linear-function}
-Let $I = [a,b]$. A function $g : I \to \mathbb{R}$ is
-\textbf{piecewise linear} on $I$ if $I$ is the union of finitely
-many disjoint subintervals $I_1, \ldots, I_m$ such that the
-restriction of $g$ to each $I_k$ is an affine (linear) function.
+$g:[a,b]\to\mathbb{R}$ is \textbf{piecewise linear} if there exist
+$a=x_0<x_1<\cdots<x_m=b$ such that $g|_{[x_{k-1},x_k]}$ is affine
+for each $k$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  g \text{ piecewise linear on } [a,b]
+  g\text{ piecewise linear}
   \;\iff\;
-  \exists a = x_0 < x_1 < \cdots < x_m = b,\;
-  \forall k:\;
-  g\big|_{[x_{k-1},x_k]} \text{ is affine.}
+  \exists a=x_0<\cdots<x_m=b,\;
+  \forall k: g|_{[x_{k-1},x_k]}\text{ affine}.
 \]
-\end{remark*}
+\end{remark*>
 
 \begin{remark*}[Interpretation]
-A piecewise linear function is continuous (the affine pieces are
-required to agree at the partition points) and its graph consists
-of finitely many line segments. It is more regular than a step
-function — it has no jump discontinuities — but less regular than
-a polynomial.
+A piecewise linear function is continuous (pieces agree at nodes)
+and its graph consists of finitely many line segments. More regular
+than step functions (no jump discontinuities), less regular than
+polynomials.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -138,38 +92,29 @@ a polynomial.
 
 \begin{theorem}[Piecewise Linear Approximation]
 \label{thm:piecewise-linear-approximation}
-Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
-For every $\varepsilon > 0$ there exists a continuous piecewise
-linear function $\ell_\varepsilon : I \to \mathbb{R}$ such that
-\[
-  |f(x) - \ell_\varepsilon(x)| < \varepsilon
-  \qquad\text{for all } x \in I.
-\]
+$\operatorname{ContinuousOn}(f,[a,b])$, $\varepsilon>0$
+$\Rightarrow\exists$ continuous piecewise linear $\ell_\varepsilon$:
+$\sup_{[a,b]}|f-\ell_\varepsilon|<\varepsilon$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:piecewise-linear-approximation]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ cts on } [a,b],\;
-  \varepsilon > 0
+  \operatorname{ContinuousOn}(f,[a,b]),\;\varepsilon>0
   \;\Rightarrow\;
-  \exists \text{ cts piecewise linear } \ell_\varepsilon:\;
-  \sup_{x \in [a,b]} |f(x) - \ell_\varepsilon(x)| < \varepsilon.
+  \exists\ell_\varepsilon\text{ cts piecewise linear}:\;
+  \|f-\ell_\varepsilon\|_\infty<\varepsilon.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Heine--Cantor gives $\delta$; partition $[a,b]$ into subintervals of
-width less than $\delta$ at nodes $x_0 < \cdots < x_n$; define
-$\ell_\varepsilon$ on each $[x_{j-1}, x_j]$ as the affine function
-through $(x_{j-1}, f(x_{j-1}))$ and $(x_j, f(x_j))$. For any
-$x \in [x_{j-1}, x_j]$, the value $\ell_\varepsilon(x)$ is a convex
-combination of $f(x_{j-1})$ and $f(x_j)$, which by the IVT equals
-some value of $f$ on the same subinterval, so within $\varepsilon$
-of $f(x)$.
+Partition via Heine--Cantor $\delta$; connect adjacent graph values
+by line segments. Each segment is a convex combination of $f$-values
+at nodes within $\delta$, so by IVT stays within $\varepsilon$ of
+$f$. Approximation hierarchy: step $\subset$ piecewise linear
+$\subset$ polynomials.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -178,37 +123,28 @@ of $f(x)$.
 
 \begin{theorem}[Weierstrass Approximation Theorem]
 \label{thm:weierstrass-approximation}
-Let $I = [a,b]$ and let $f : I \to \mathbb{R}$ be continuous on $I$.
-For every $\varepsilon > 0$ there exists a polynomial $p_\varepsilon$
-such that
-\[
-  |f(x) - p_\varepsilon(x)| < \varepsilon
-  \qquad\text{for all } x \in I.
-\]
+$\operatorname{ContinuousOn}(f,[a,b])$, $\varepsilon>0$
+$\Rightarrow\exists p_\varepsilon\in\mathbb{R}[x]$:
+$\|f-p_\varepsilon\|_\infty<\varepsilon$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:bernstein-approximation]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ cts on } [a,b],\;
-  \varepsilon > 0
+  \operatorname{ContinuousOn}(f,[a,b]),\;\varepsilon>0
   \;\Rightarrow\;
-  \exists p_\varepsilon \in \mathbb{R}[x]:\;
-  \sup_{x \in [a,b]} |f(x) - p_\varepsilon(x)| < \varepsilon.
+  \exists p_\varepsilon\in\mathbb{R}[x]:\;
+  \sup_{x\in[a,b]}|f(x)-p_\varepsilon(x)|<\varepsilon.
 \]
-\end{remark*}
+\end{remark*>
 
 \begin{remark*}[Interpretation]
-Every continuous function on a closed bounded interval is the
-uniform limit of polynomials. In the language of function spaces,
-the polynomials are dense in $C([a,b])$ under the uniform norm
-$\|f\|_\infty = \sup_{x \in [a,b]} |f(x)|$. This is a major result:
-polynomials, which are the simplest functions, are sufficient to
-approximate any continuous function to arbitrary precision. The
-constructive proof via Bernstein polynomials is given below.
+Polynomials are dense in $(C([a,b]),\|\cdot\|_\infty)$. Every
+continuous function on a closed bounded interval is the uniform
+limit of polynomials — the simplest functions suffice to approximate
+any continuous function to arbitrary precision.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -218,36 +154,24 @@ constructive proof via Bernstein polynomials is given below.
 \begin{tcolorbox}[title={Definition --- Bernstein Polynomial}]
 \begin{definition}[Bernstein Polynomial]
 \label{def:bernstein-polynomial}
-Let $f : [0,1] \to \mathbb{R}$. The \textbf{$n$-th Bernstein
-polynomial for $f$} is
-\[
-  B_n(x) \;:=\; \sum_{k=0}^{n}
-  f\!\left(\tfrac{k}{n}\right)
-  \binom{n}{k} x^k (1-x)^{n-k},
-  \qquad x \in [0,1].
-\]
+$B_n(x):=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$ for
+$f:[0,1]\to\mathbb{R}$, $x\in[0,1]$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  B_n(x) = \sum_{k=0}^{n}
-  f\!\Bigl(\frac{k}{n}\Bigr)
-  \binom{n}{k} x^k (1-x)^{n-k},
-  \quad
-  \binom{n}{k} = \frac{n!}{k!(n-k)!}.
+  B_n(x)=\sum_{k=0}^n f\!\left(\tfrac{k}{n}\right)
+  \binom{n}{k}x^k(1-x)^{n-k},\quad
+  \binom{n}{k}=\frac{n!}{k!(n-k)!}.
 \]
 \end{remark*}
 
-\begin{remark*}[Interpretation]
-$B_n(x)$ is a polynomial of degree at most $n$. Its coefficients
-are weighted values of $f$ at the equally spaced points $0, 1/n,
-2/n, \ldots, 1$, weighted by the binomial probabilities
-$\binom{n}{k}x^k(1-x)^{n-k}$. The probabilistic interpretation
-is direct: $B_n(x) = \mathbb{E}[f(S_n/n)]$ where $S_n \sim
-\mathrm{Binomial}(n,x)$. The law of large numbers forces $S_n/n
-\to x$ in probability, and uniform continuity of $f$ converts
-this convergence into uniform approximation.
+\begin{remark*}[Probabilistic interpretation]
+$B_n(x)=\mathbb{E}[f(S_n/n)]$ where $S_n\sim\mathrm{Binomial}(n,x)$.
+The law of large numbers forces $S_n/n\to x$ in probability;
+$\operatorname{UniformlyContinuous}(f,[0,1])$ converts this to
+uniform approximation.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -256,38 +180,28 @@ this convergence into uniform approximation.
 
 \begin{theorem}[Bernstein Approximation Theorem]
 \label{thm:bernstein-approximation}
-Let $f : [0,1] \to \mathbb{R}$ be continuous and let
-$\varepsilon > 0$. There exists $n_\varepsilon \in \mathbb{N}$
-such that for all $n \geq n_\varepsilon$,
-\[
-  |f(x) - B_n(x)| < \varepsilon
-  \qquad\text{for all } x \in [0,1],
-\]
-where $B_n$ is the $n$-th Bernstein polynomial for $f$.
+$\operatorname{ContinuousOn}(f,[0,1])$, $\varepsilon>0$
+$\Rightarrow\exists n_\varepsilon:\;\forall n\geq n_\varepsilon,\;
+\|f-B_n\|_\infty<\varepsilon$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:bernstein-approximation]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ cts on } [0,1],\;
-  \varepsilon > 0
+  \operatorname{ContinuousOn}(f,[0,1]),\;\varepsilon>0
   \;\Rightarrow\;
-  \exists n_\varepsilon \in \mathbb{N},\;
-  \forall n \geq n_\varepsilon:\;
-  \sup_{x \in [0,1]} |f(x) - B_n(x)| < \varepsilon.
+  \exists n_\varepsilon\in\mathbb{N},\;\forall n\geq n_\varepsilon:\;
+  \sup_{x\in[0,1]}|f(x)-B_n(x)|<\varepsilon.
 \]
-\end{remark*}
+\end{remark*>
 
 \begin{remark*}[Interpretation]
-The Bernstein theorem is a constructive proof of the Weierstrass
-Approximation Theorem. As $n \to \infty$, the Bernstein polynomials
-converge uniformly to $f$ on $[0,1]$. This is the canonical
-constructive proof: it builds the approximating polynomials
-explicitly and the convergence proof is elementary, using only the
-uniform continuity of $f$ and a variance estimate for the binomial
-distribution. The Weierstrass theorem for general $[a,b]$ follows
-by a linear change of variables.
+Constructive proof of Weierstrass. Bernstein polynomials converge
+uniformly to $f$ on $[0,1]$. The convergence proof uses only
+$\operatorname{UniformlyContinuous}(f,[0,1])$ and a variance
+estimate for the binomial distribution — elementary and explicit.
+The Weierstrass theorem for general $[a,b]$ follows by a linear
+change of variables.
 \end{remark*}

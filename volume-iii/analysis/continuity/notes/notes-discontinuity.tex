@@ -1,5 +1,5 @@
 % =========================================================
-% Discontinuity — Canonical Notes
+% Characterization of Discontinuity — Notes
 % Chapter: continuity
 % Volume III · Analysis
 % =========================================================
@@ -7,17 +7,18 @@
 \section{Characterization of Discontinuity}
 \label{sec:discontinuity}
 
-% ---------------------------------------------------------
-% Toolkit
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Toolkit — Discontinuity}]
+\begin{tcolorbox}[title={Toolkit --- Discontinuity}]
 \begin{itemize}
-  \item $\varepsilon$-$\delta$, sequential, and neighbourhood characterizations of
-    discontinuity are equivalent.
+  \item $\operatorname{DiscontinuousAt}(f,a)$ $\iff$ negation of
+    $\operatorname{ContinuousAt}(f,a)$. Three equivalent forms:
+    $\varepsilon$-$\delta$, sequential, neighbourhood.
+  \item Quantifier reversal from continuity:
+    $\forall\varepsilon\leadsto\exists\varepsilon_0$,\;
+    $\exists\delta\leadsto\forall\delta$,\;
+    $\forall x\leadsto\exists x$.
   \item Taxonomy: removable, jump (first kind), essential (second kind).
-  \item First kind: both one-sided limits exist.
-  \item Second kind: at least one one-sided limit fails to exist.
+  \item First kind: both one-sided limits $f(a^-)$, $f(a^+)$ exist finitely.
+  \item Second kind: at least one one-sided limit fails to exist finitely.
   \item Every discontinuity is of exactly one kind.
 \end{itemize}
 \end{tcolorbox}
@@ -29,283 +30,176 @@
 \begin{tcolorbox}[title={Definition --- Point of Discontinuity}]
 \begin{definition}[Point of Discontinuity]
 \label{def:point-of-discontinuity}
-Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$. A point
-$a \in E$ is a \textbf{point of discontinuity} of $f$, or a
-\textbf{discontinuity} of $f$, if $f$ is not continuous at $a$.
+$\operatorname{DiscontinuousAt}(f,a) \colonequiv
+\neg\,\operatorname{ContinuousAt}(f,a)$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}(f, a)
-  \;\colonequiv\;
-  \exists \varepsilon > 0,\;
-  \forall \delta > 0,\;
-  \exists x \in E :\;
-  |x - a| < \delta \;\wedge\; |f(x) - f(a)| \geq \varepsilon.
+  \operatorname{DiscontinuousAt}(f,a)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
+  \operatorname{Within}(x,a,\delta)
+  \;\wedge\;
+  \neg\,\operatorname{OutputTolerance}(f(x),f(a),\varepsilon_0).
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{DiscontinuousAt}(f,a)
+  \;\colonequiv\;
+  \neg\,\operatorname{ContinuousAt}(f,a).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition — quantifier reversal]
+\[
+  \underbrace{\forall\varepsilon>0}_{\text{cts}}
+  \;\leadsto\;
+  \underbrace{\exists\varepsilon_0>0}_{\text{dis}},
+  \qquad
+  \underbrace{\exists\delta>0}_{\text{cts}}
+  \;\leadsto\;
+  \underbrace{\forall\delta>0}_{\text{dis}},
+  \qquad
+  \underbrace{\forall x\in A}_{\text{cts}}
+  \;\leadsto\;
+  \underbrace{\exists x\in E}_{\text{dis}}.
+\]
+The surviving gap $\varepsilon_0>0$ is the witness to discontinuity.
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-A point of discontinuity is simply the negation of continuity.
-A fixed output gap $\varepsilon_{0} > 0$ survives every shrinking
-of the input window: no matter how tightly the domain is restricted
-to a neighborhood of $a$, the function values are not confined to a
-$\varepsilon_{0}$-band around $f(a)$.
+A fixed output gap cannot be closed no matter how tightly the input
+window shrinks. Continuity fails because nearby values cannot be
+forced into an arbitrarily small band around $f(a)$.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Definition — epsilon-delta Characterization of Discontinuity
+% Definition — epsilon-delta Characterization
 % ---------------------------------------------------------
 
-\begin{definition}[$\varepsilon$-$\delta$ Characterization of Discontinuity at a Point]
+\begin{definition}[$\varepsilon$-$\delta$ Characterization of Discontinuity]
 \label{def:epsilon-delta-discontinuity-at-a-point}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$x_{0} \in E$. The function $f$ is \textbf{discontinuous at $x_{0}$}
-in the $\varepsilon$-$\delta$ sense if
+$f$ is \textbf{discontinuous at $x_0$} ($\varepsilon$-$\delta$) if
 \[
-  \exists \varepsilon_{0} > 0,\;
-  \forall \delta > 0,\;
-  \exists x \in E :\;
-  |x - x_{0}| < \delta
-  \;\wedge\;
-  |f(x) - f(x_{0})| \geq \varepsilon_{0}.
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
+  |x-x_0|<\delta \;\wedge\; |f(x)-f(x_0)|\geq\varepsilon_0.
 \]
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}_{\varepsilon\delta}(f, x_{0})
+  \operatorname{DiscontinuousAt}_{\varepsilon\delta}(f,x_0)
   \;\colonequiv\;
-  \exists \varepsilon_{0} > 0,\;
-  \forall \delta > 0,\;
-  \exists x \in E :\;
-  \bigl(|x - x_{0}| < \delta\bigr)
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
+  \operatorname{Within}(x,x_0,\delta)
   \;\wedge\;
-  \bigl(|f(x) - f(x_{0})| \geq \varepsilon_{0}\bigr).
+  \neg\,\operatorname{OutputTolerance}(f(x),f(x_0),\varepsilon_0).
 \]
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-The quantifier reversal from the continuity definition is exact:
-\[
-  \underbrace{\forall \varepsilon > 0}_{\text{continuity}}
-  \;\leadsto\;
-  \underbrace{\exists \varepsilon_{0} > 0}_{\text{discontinuity}},
-  \qquad
-  \underbrace{\exists \delta > 0}_{\text{continuity}}
-  \;\leadsto\;
-  \underbrace{\forall \delta > 0}_{\text{discontinuity}},
-  \qquad
-  \underbrace{\forall x \in A}_{\text{continuity}}
-  \;\leadsto\;
-  \underbrace{\exists x \in E}_{\text{discontinuity}}.
-\]
-The surviving gap $\varepsilon_{0}$ is the witness to discontinuity.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Some fixed output gap cannot be eliminated by shrinking the input
-window. Continuity fails because the nearby values cannot be forced
-into an arbitrarily small band around $f(x_{0})$.
+Some fixed output gap survives every shrinking of the input window.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Sequential Characterization
 % ---------------------------------------------------------
 
-\begin{definition}[Sequential Characterization of Discontinuity at a Point]
+\begin{definition}[Sequential Characterization of Discontinuity]
 \label{def:sequential-discontinuity-at-a-point}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$x_{0} \in E$. The function $f$ is \textbf{discontinuous at $x_{0}$}
-in the sequential sense if
+$f$ is \textbf{discontinuous at $x_0$} (sequential) if
 \[
-  \exists (x_{n}) \subseteq E :\;
-  x_{n} \to x_{0}
-  \;\wedge\;
-  f(x_{n}) \not\to f(x_{0}).
+  \exists(x_n)\subseteq E:\;
+  x_n\to x_0 \;\wedge\; f(x_n)\not\to f(x_0).
 \]
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}_{\mathrm{seq}}(f, x_{0})
+  \operatorname{DiscontinuousAt}_{\mathrm{seq}}(f,x_0)
   \;\colonequiv\;
-  \exists (x_{n}) \subseteq E :\;
-  x_{n} \to x_{0}
+  \exists(x_n)\subseteq E:\;
+  \operatorname{ConvergentSequence}(x_n,x_0)
   \;\wedge\;
-  f(x_{n}) \not\to f(x_{0}).
+  \neg\,\operatorname{ConvergentSequence}(f(x_n),f(x_0)).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A single sequence converging to $x_{0}$ whose image fails to converge
-to $f(x_{0})$ witnesses discontinuity. Continuity demands that every
-such sequence transport successfully; one failure suffices to break
-continuity.
+One witness sequence converging to $x_0$ whose image fails to converge
+to $f(x_0)$ suffices. Continuity demands every such sequence succeed;
+one failure is enough to establish discontinuity.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Neighbourhood Characterization
 % ---------------------------------------------------------
 
-\begin{definition}[Neighbourhood Characterization of Discontinuity at a Point]
+\begin{definition}[Neighbourhood Characterization of Discontinuity]
 \label{def:neighborhood-discontinuity-at-a-point}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$x_{0} \in E$. The function $f$ is \textbf{discontinuous at $x_{0}$}
-in the neighbourhood sense if
+$f$ is \textbf{discontinuous at $x_0$} (neighbourhood) if
 \[
-  \exists V \text{ a neighbourhood of } f(x_{0}),\;
-  \forall U \text{ a neighbourhood of } x_{0},\;
-  \exists x \in U \cap E :\;
-  f(x) \notin V.
+  \exists V\text{ nbhd of }f(x_0),\;\forall U\text{ nbhd of }x_0,\;
+  \exists x\in U\cap E: f(x)\notin V.
 \]
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{DiscontinuousAt}_{\mathrm{nbhd}}(f, x_{0})
+  \operatorname{DiscontinuousAt}_{\mathrm{nbhd}}(f,x_0)
   \;\colonequiv\;
-  \exists V \text{ nbhd of } f(x_{0}),\;
-  \forall U \text{ nbhd of } x_{0},\;
-  \exists x \in U \cap E :\;
-  f(x) \notin V.
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x\in E:\;
+  \operatorname{Within}(x,x_0,\delta)
+  \;\wedge\;
+  \neg\,\operatorname{Within}(f(x),f(x_0),\varepsilon_0).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-There exists a fixed target neighbourhood around $f(x_{0})$ that
-the image of every domain neighbourhood fails to stay inside.
-Continuity would require some domain neighbourhood to map entirely
-into any prescribed target neighbourhood; discontinuity is the
-failure of that requirement for at least one target.
+A fixed target neighbourhood around $f(x_0)$ that the image of every
+domain neighbourhood fails to stay inside. Continuity would require
+some domain neighbourhood to map entirely inside any prescribed target;
+discontinuity is the failure for at least one target.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Lemma — Equivalent Formulations of Discontinuity at a Point
+% Lemma — Equivalence of Three Formulations
 % ---------------------------------------------------------
 
 \begin{lemma}[Equivalent Formulations of Discontinuity at a Point]
 \label{lem:equivalent-discontinuity-at-a-point}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$x_{0} \in E$. The following are equivalent:
-\begin{enumerate}[label=\textup{(\roman*)}]
-  \item $f$ is discontinuous at $x_{0}$ in the $\varepsilon$-$\delta$
-    sense.
-  \item $f$ is discontinuous at $x_{0}$ in the sequential sense.
-  \item $f$ is discontinuous at $x_{0}$ in the neighbourhood sense.
-\end{enumerate}
+The $\varepsilon$-$\delta$, sequential, and neighbourhood forms of
+discontinuity at $x_0$ are equivalent.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:discontinuity-equivalence]{\textit{Go to proof.}}
 \end{lemma}
 
-\begin{remark*}[Standard quantified statement]
-\[
-\begin{aligned}
-(i)   &\quad \exists \varepsilon_{0} > 0,\;
-             \forall \delta > 0,\;
-             \exists x \in E :\;
-             |x - x_{0}| < \delta \;\wedge\; |f(x) - f(x_{0})| \geq \varepsilon_{0}. \\
-(ii)  &\quad \exists (x_{n}) \subseteq E :\;
-             x_{n} \to x_{0} \;\wedge\; f(x_{n}) \not\to f(x_{0}). \\
-(iii) &\quad \exists V \text{ nbhd of } f(x_{0}),\;
-             \forall U \text{ nbhd of } x_{0},\;
-             \exists x \in U \cap E :\; f(x) \notin V.
-\end{aligned}
-\]
-\end{remark*}
-
 \begin{remark*}[Interpretation]
-This is the failure-version of the equivalence theorem for continuity.
-The three formulations of discontinuity are exactly the negations of
-the three formulations of continuity, and they are equivalent by
-the same cyclic argument.
+Each is the negation of the corresponding formulation of continuity,
+and they are equivalent by the same cyclic argument.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Definition — Discontinuity on a Set
-% ---------------------------------------------------------
-
-\begin{definition}[Discontinuity on a Set]
-\label{def:discontinuity-on-a-set}
-Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$. The
-function $f$ is \textbf{discontinuous on $E$} if there exists a point
-$x_{0} \in E$ at which $f$ is discontinuous.
-\end{definition}
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \operatorname{DiscontinuousOn}(f, E)
-  \;\colonequiv\;
-  \exists x_{0} \in E,\;
-  \exists \varepsilon_{0} > 0,\;
-  \forall \delta > 0,\;
-  \exists x \in E :\;
-  |x - x_{0}| < \delta \;\wedge\; |f(x) - f(x_{0})| \geq \varepsilon_{0}.
-\]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-Discontinuity on a set is the existential lift of pointwise
-discontinuity: one bad point suffices. Continuity on a set is
-universal; discontinuity on a set is existential.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Lemma — Discontinuity on a Set Is Pointwise Failure Somewhere
-% ---------------------------------------------------------
-
-\begin{lemma}[Discontinuity on a Set Is Pointwise Failure Somewhere]
-\label{lem:discontinuity-on-a-set}
-Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$.
-The following are equivalent:
-\begin{enumerate}[label=\textup{(\roman*)}]
-  \item $f$ is discontinuous on $E$.
-  \item $\exists x_{0} \in E$ at which $f$ is discontinuous in the
-    $\varepsilon$-$\delta$ sense.
-  \item $\exists x_{0} \in E$ at which $f$ is discontinuous in the
-    sequential sense.
-  \item $\exists x_{0} \in E$ at which $f$ is discontinuous in the
-    neighbourhood sense.
-\end{enumerate}
-
-\smallskip
-\noindent
-\hyperref[prf:discontinuity-on-set-is-failure-at-point]{\textit{Go to proof.}}
-\end{lemma}
-
-\begin{remark*}[Interpretation]
-Set-level discontinuity is one outer existential quantifier over the
-pointwise notion. The equivalence of the three pointwise formulations
-immediately gives the four-way equivalence at the set level.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Definition — Types of Discontinuity at a Point
+% Definition — Types of Discontinuity
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[title={Definition --- Types of Discontinuity at a Point}]
 \begin{definition}[Types of Discontinuity at a Point]
 \label{def:types-of-discontinuity-at-a-point}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$x_{0} \in E$ be a point of discontinuity of $f$.
-
-\begin{enumerate}[label=\textup{(\roman*)}]
-  \item The discontinuity is \textbf{removable} if
-    $\lim_{x \to x_{0}} f(x) = L \in \mathbb{R}$ exists but
-    $f(x_{0}) \neq L$.
-  \item The discontinuity is a \textbf{jump discontinuity} if both
-    one-sided limits $\lim_{x \to x_{0}^{-}} f(x)$ and
-    $\lim_{x \to x_{0}^{+}} f(x)$ exist as real numbers but are
-    unequal.
-  \item The discontinuity is \textbf{essential} if it is not removable.
-  \item An essential discontinuity is \textbf{infinite} if at least
-    one relevant one-sided or two-sided limit is $+\infty$ or
-    $-\infty$.
-  \item An essential discontinuity is \textbf{oscillatory} if it is
-    neither removable, nor a jump, nor infinite.
+Let $x_0\in E$ be a point of discontinuity of $f$.
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Removable}: $\operatorname{FunctionLimit}(f,x_0,L)$
+    exists but $L\neq f(x_0)$.
+  \item \textbf{Jump}: $\operatorname{LeftLimit}(f,x_0,L_-)$ and
+    $\operatorname{RightLimit}(f,x_0,L_+)$ both exist but $L_-\neq L_+$.
+  \item \textbf{Essential}: not removable.
+  \item \textbf{Infinite}: at least one one-sided limit is $\pm\infty$.
+  \item \textbf{Oscillatory}: neither removable, jump, nor infinite.
 \end{enumerate}
 \end{definition}
 \end{tcolorbox}
@@ -313,30 +207,25 @@ $x_{0} \in E$ be a point of discontinuity of $f$.
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-\text{removable at } x_{0} &\;\colonequiv\;
-  \exists L \in \mathbb{R},\;
-  \lim_{x \to x_{0}} f(x) = L \;\wedge\; f(x_{0}) \neq L. \\
-\text{jump at } x_{0} &\;\colonequiv\;
-  \exists L_{-}, L_{+} \in \mathbb{R},\;
-  \lim_{x \to x_{0}^{-}} f(x) = L_{-}
-  \;\wedge\;
-  \lim_{x \to x_{0}^{+}} f(x) = L_{+}
-  \;\wedge\;
-  L_{-} \neq L_{+}.
+  \text{Removable} &\;\colonequiv\;
+    \exists L\in\mathbb{R}:\operatorname{FunctionLimit}(f,x_0,L)\wedge f(x_0)\neq L. \\
+  \text{Jump} &\;\colonequiv\;
+    \exists L_-,L_+\in\mathbb{R}:
+    \operatorname{LeftLimit}(f,x_0,L_-)\wedge
+    \operatorname{RightLimit}(f,x_0,L_+)\wedge L_-\neq L_+.
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
-Every discontinuity falls into exactly one structural class:
 \[
-  \text{Discontinuity at } x_{0}
+  \operatorname{DiscontinuousAt}(f,x_0)
   \;\begin{cases}
-    \text{removable} & \text{two-sided limit exists, wrong value} \\
-    \text{jump (first kind)} & \text{both one-sided limits exist, unequal} \\
-    \text{essential (second kind)}
+    \text{removable} & \text{limit exists, wrong value} \\
+    \text{jump} & \text{both one-sided limits exist, unequal} \\
+    \text{essential}
       \;\begin{cases}
-        \text{infinite} & \text{some limit is } \pm\infty \\
+        \text{infinite} & \text{some limit is }\pm\infty \\
         \text{oscillatory} & \text{no relevant limit exists}
       \end{cases}
   \end{cases}
@@ -344,102 +233,68 @@ Every discontinuity falls into exactly one structural class:
 \end{remark*}
 
 \begin{remark*}[Canonical examples]
-\begin{enumerate}[label=\textup{(\roman*)}]
-  \item \textbf{Removable:}
-    $f(x) = (x^{2}-1)/(x-1)$ for $x \neq 1$, $f(1) = 0$.
-    The limit at $1$ is $2$, but $f(1) = 0$.
-  \item \textbf{Jump:}
-    $f(x) = 0$ for $x < 0$, $f(x) = 1$ for $x \geq 0$.
-    Left limit $0$, right limit $1$.
-  \item \textbf{Infinite:}
-    $f(x) = 1/x^{2}$ at $x_{0} = 0$.
-  \item \textbf{Oscillatory:}
-    $f(x) = \sin(1/x)$ at $x_{0} = 0$.
-\end{enumerate}
+(i) Removable: $f(x)=(x^2-1)/(x-1)$, $f(1)=0$; limit at $1$ is $2$.
+(ii) Jump: $f(x)=\operatorname{sgn}(x)$ at $0$.
+(iii) Infinite: $f(x)=1/x^2$ at $0$.
+(iv) Oscillatory: $f(x)=\sin(1/x)$ at $0$.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The clean structural split is between removable and essential
-discontinuities. A removable discontinuity has the correct limiting
-behavior but the wrong point value — redefining $f$ at $x_{0}$ alone
-repairs it. Essential discontinuities cannot be repaired by modifying
-the function at a single point. Jump, infinite, and oscillatory
-behavior are the three standard manifestations of essential failure.
+Removable discontinuities have correct limiting behavior but wrong
+point value — redefining $f$ at $x_0$ alone repairs them. Essential
+discontinuities cannot be repaired at a single point.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Definition — Discontinuity of First Kind
+% Definition — First and Second Kind
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[title={Definition --- Discontinuity of First Kind}]
 \begin{definition}[Discontinuity of First Kind]
 \label{def:discontinuity-of-first-kind}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$a \in E$ be a discontinuity of $f$. The point $a$ is a
-\textbf{discontinuity of first kind} if both one-sided limits
-\[
-  \lim_{x \to a^{-},\, x \in E} f(x)
-  \qquad\text{and}\qquad
-  \lim_{x \to a^{+},\, x \in E} f(x)
-\]
-exist as real numbers, but at least one does not equal $f(a)$.
+$\operatorname{FirstKind}(f,a)$: both $\operatorname{LeftLimit}(f,a,L_-)$
+and $\operatorname{RightLimit}(f,a,L_+)$ exist in $\mathbb{R}$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FirstKind}(f, a)
+  \operatorname{FirstKind}(f,a)
   \;\colonequiv\;
-  \exists L_{-}, L_{+} \in \mathbb{R} :\;
-  \lim_{x \to a^{-}} f(x) = L_{-}
+  \exists L_-,L_+\in\mathbb{R}:
+  \operatorname{LeftLimit}(f,a,L_-)
   \;\wedge\;
-  \lim_{x \to a^{+}} f(x) = L_{+}
-  \;\wedge\;
-  \bigl(L_{-} \neq f(a) \;\vee\; L_{+} \neq f(a)\bigr).
+  \operatorname{RightLimit}(f,a,L_+).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-First-kind discontinuities include both removable discontinuities
-(both one-sided limits exist and are equal, but differ from $f(a)$)
-and jump discontinuities (both one-sided limits exist but are
-unequal). The defining feature is existence of both finite one-sided
-limits.
+First-kind includes both removable (one-sided limits exist and are
+equal, but differ from $f(a)$) and jump (one-sided limits exist but
+are unequal). The defining feature is existence of both finite
+one-sided limits.
 \end{remark*}
-
-% ---------------------------------------------------------
-% Definition — Discontinuity of Second Kind
-% ---------------------------------------------------------
 
 \begin{tcolorbox}[title={Definition --- Discontinuity of Second Kind}]
 \begin{definition}[Discontinuity of Second Kind]
 \label{def:discontinuity-of-second-kind}
-Let $E \subseteq \mathbb{R}$, let $f : E \to \mathbb{R}$, and let
-$a \in E$ be a discontinuity of $f$. The point $a$ is a
-\textbf{discontinuity of second kind} if it is not of first kind:
-at least one of the one-sided limits
-\[
-  \lim_{x \to a^{-},\, x \in E} f(x),
-  \qquad
-  \lim_{x \to a^{+},\, x \in E} f(x)
-\]
-does not exist as a real number.
+$\operatorname{SecondKind}(f,a)$: $\neg\,\operatorname{FirstKind}(f,a)$.
+At least one of $\operatorname{LeftLimit}(f,a,\cdot)$,
+$\operatorname{RightLimit}(f,a,\cdot)$ does not exist as a real number.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{SecondKind}(f, a)
+  \operatorname{SecondKind}(f,a)
   \;\colonequiv\;
-  \neg\,\operatorname{FirstKind}(f, a).
+  \neg\,\operatorname{FirstKind}(f,a).
 \]
-\end{remark*}
+\end{remark*>
 
 \begin{remark*}[Interpretation]
-Second-kind discontinuities include infinite blow-up ($\pm\infty$ as
-a limit) and oscillatory behavior (no limit in any extended sense).
-The canonical second-kind example is $\sin(1/x)$ at $x_{0} = 0$,
-where the function oscillates between $-1$ and $1$ in every
-neighborhood of $0$. Every discontinuity is of exactly first kind or
-second kind; the classification is exhaustive and mutually exclusive.
+Second-kind includes infinite blow-up and oscillatory behavior.
+$\sin(1/x)$ at $0$ is the canonical second-kind example: oscillates
+between $-1$ and $1$ in every neighbourhood of $0$, so no one-sided
+limit exists. Every discontinuity is of exactly first or second kind.
 \end{remark*}

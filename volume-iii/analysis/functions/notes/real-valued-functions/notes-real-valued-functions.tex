@@ -8,72 +8,62 @@
 \section{Real-Valued Functions}
 \label{sec:real-valued-functions}
 
-% ---------------------------------------------------------
-% Toolkit
-% ---------------------------------------------------------
-
 \begin{tcolorbox}[title={Toolkit --- Real-Valued Functions}]
 \begin{itemize}
-  \item Pointwise operations on $f, g : X \to \mathbb{R}$: sum,
-    difference, product, quotient (where $g \neq 0$), scalar
-    multiple, absolute value, max, min. Each is purely algebraic —
-    no limits involved.
-  \item $fg$ denotes pointwise product $(fg)(x) := f(x)g(x)$, not
-    composition $f \circ g$.
-  \item Bounded above: $\exists M, \forall x, f(x) \leq M$.
-    Bounded: $\exists B > 0, \forall x, |f(x)| \leq B$.
-  \item Increasing: $x_1 < x_2 \Rightarrow f(x_1) \leq f(x_2)$.
-    Strictly increasing: $x_1 < x_2 \Rightarrow f(x_1) < f(x_2)$.
-  \item Maximum attained at $x^*$: $f(x^*) = \sup f(A)$ with $x^* \in A$.
+  \item Pointwise operations: sum, difference, product, quotient,
+    scalar multiple, absolute value, max, min. All purely algebraic
+    — no limits involved. $fg$ is pointwise product, not composition.
+  \item $\operatorname{BoundedOn}(f,A)$: $\exists B>0,\;\forall x\in A:
+    |f(x)|\leq B$.
+  \item $\operatorname{MonotoneFunction}(f,A)$: increasing or decreasing.
+  \item Maximum attained at $x^*$: $f(x^*) = \sup f(A)$, $x^*\in A$.
     Supremum need not be attained.
 \end{itemize}
 \end{tcolorbox}
 
 % ---------------------------------------------------------
-% Definition — Pointwise Arithmetic Operations
+% Definition — Pointwise Operations
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Pointwise Arithmetic Operations}]
-\begin{definition}[Pointwise Arithmetic Operations on Real-Valued Functions]
+\begin{tcolorbox}[title={Definition --- Pointwise Operations}]
+\begin{definition}[Pointwise Arithmetic Operations]
 \label{def:pointwise-ops-R}
-Let $X \subseteq \mathbb{R}$ and let $f, g : X \to \mathbb{R}$.
-The following real-valued functions on $X$ are defined pointwise:
+Let $X \subseteq \mathbb{R}$, $f, g : X \to \mathbb{R}$.
 \begin{align*}
-  (f + g)(x)      &:= f(x) + g(x)                         & &\text{sum} \\
-  (f - g)(x)      &:= f(x) - g(x)                         & &\text{difference} \\
-  (fg)(x)         &:= f(x) \cdot g(x)                     & &\text{product} \\
-  (cf)(x)         &:= c \cdot f(x),\quad c \in \mathbb{R} & &\text{scalar multiple} \\
-  \max(f,g)(x)    &:= \max(f(x), g(x))                    & &\text{pointwise maximum} \\
-  \min(f,g)(x)    &:= \min(f(x), g(x))                    & &\text{pointwise minimum} \\
-  |f|(x)          &:= |f(x)|                               & &\text{absolute value}
+  (f+g)(x)   &:= f(x)+g(x),  & (f-g)(x) &:= f(x)-g(x), \\
+  (fg)(x)    &:= f(x)g(x),   & (cf)(x)  &:= cf(x), \\
+  |f|(x)     &:= |f(x)|,     & \max(f,g)(x) &:= \max(f(x),g(x)).
 \end{align*}
-If additionally $g(x) \neq 0$ for all $x \in X$:
-\[
-  (f/g)(x) := f(x)/g(x). \qquad\text{quotient}
-\]
+If $g(x)\neq 0$ for all $x\in X$: $(f/g)(x) := f(x)/g(x)$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall x \in X :\; (f+g)(x) = f(x) + g(x).
+  \forall x\in X : (f+g)(x) = f(x)+g(x).
 \]
-Each operation is pointwise: the value at $x$ depends only on $f(x)$
-and $g(x)$, not on values at nearby points.
+Each operation is pointwise: value at $x$ depends only on $f(x)$,
+$g(x)$, not on nearby values.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Function}(f+g, X, \mathbb{R})
+  \;\colonequiv\;
+  \forall x\in X : (f+g)(x) = f(x)+g(x).
+\]
 \end{remark*}
 
 \begin{remark*}[Product vs.\ composition]
-$fg : X \to \mathbb{R}$ maps $x \mapsto f(x)g(x)$. This is the
-pointwise product, not the composition $f \circ g$ which maps $x
-\mapsto f(g(x))$ and requires $g : X \to X$. For $f(x) = x^2$ and
-$g(x) = 2x$: $(fg)(x) = 2x^3$ but $(f \circ g)(x) = 4x^2$.
+$fg(x) = f(x)g(x)$ (pointwise product). $(f\circ g)(x) = f(g(x))$
+(composition, requires $g:X\to X$). For $f(x)=x^2$, $g(x)=2x$:
+$fg(x)=2x^3$ but $(f\circ g)(x)=4x^2$.
 \end{remark*}
 
 \begin{remark*}[Algebraic structure]
-The set $\mathbb{R}^X := \{f : X \to \mathbb{R}\}$ forms a
-commutative ring under pointwise addition and multiplication, with
-zero function $\mathbf{0}(x) := 0$ and identity $\mathbf{1}(x) :=
-1$. Scalar multiplication makes it an $\mathbb{R}$-algebra.
+$\mathbb{R}^X$ is a commutative ring under pointwise $+$ and $\cdot$,
+zero function $\mathbf{0}(x):=0$, identity $\mathbf{1}(x):=1$.
+Scalar multiplication makes it an $\mathbb{R}$-algebra.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -83,84 +73,84 @@ zero function $\mathbf{0}(x) := 0$ and identity $\mathbf{1}(x) :=
 \begin{tcolorbox}[title={Definition --- Boundedness of Functions}]
 \begin{definition}[Bounded Above, Bounded Below, Bounded]
 \label{def:function-boundedness}
-Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$.
+Let $A\subseteq\mathbb{R}$, $f:A\to\mathbb{R}$.
 \begin{itemize}
-  \item $f$ is \textbf{bounded above} on $A$ if $\exists M \in
-    \mathbb{R},\; \forall x \in A :\; f(x) \leq M$.
-  \item $f$ is \textbf{bounded below} on $A$ if $\exists m \in
-    \mathbb{R},\; \forall x \in A :\; f(x) \geq m$.
-  \item $f$ is \textbf{bounded} on $A$ if $\exists B > 0,\;
-    \forall x \in A :\; |f(x)| \leq B$.
+  \item $f$ \textbf{bounded above}: $\exists M,\;\forall x\in A: f(x)\leq M$.
+  \item $f$ \textbf{bounded below}: $\exists m,\;\forall x\in A: f(x)\geq m$.
+  \item $\operatorname{BoundedOn}(f,A)$: $\exists B>0,\;\forall x\in A: |f(x)|\leq B$.
 \end{itemize}
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ bounded on } A
+  \operatorname{BoundedOn}(f,A)
   \;\iff\;
-  \exists B > 0,\;
-  \forall x \in A :\; |f(x)| \leq B
+  \exists B>0,\;\forall x\in A: |f(x)|\leq B
   \;\iff\;
-  f(A) \subseteq [-B, B].
+  f(A)\subseteq[-B,B].
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{BoundedOn}(f,A)
+  \;\colonequiv\;
+  \operatorname{BoundedSet}(f(A)).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  f \text{ unbounded on } A
+  \neg\,\operatorname{BoundedOn}(f,A)
   \;\iff\;
-  \forall B > 0,\;
-  \exists x \in A :\; |f(x)| > B.
+  \forall B>0,\;\exists x\in A: |f(x)|>B.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Bounded means the image $f(A)$ fits inside some finite interval
-$[-B, B]$. Bounded above alone does not imply bounded: $f(x) := -x$
-on $\mathbb{R}$ is bounded above by $0$ but unbounded below.
+Bounded above alone does not imply bounded: $f(x):=-x$ on $\mathbb{R}$
+is bounded above by $0$ but unbounded below.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Supremum, Infimum, Maximum, Minimum
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Extremal Values of Functions}]
+\begin{tcolorbox}[title={Definition --- Extremal Values}]
 \begin{definition}[Supremum, Infimum, Maximum, Minimum of a Function]
 \label{def:function-sup-inf-max-min}
-Let $A \subseteq \mathbb{R}$ and let $f : A \to \mathbb{R}$.
+Let $A\subseteq\mathbb{R}$, $f:A\to\mathbb{R}$.
 \begin{itemize}
-  \item The \textbf{supremum} of $f$ on $A$ is $\sup_{x \in A}
-    f(x) := \sup f(A)$.
-  \item The \textbf{infimum} of $f$ on $A$ is $\inf_{x \in A}
-    f(x) := \inf f(A)$.
-  \item $f$ \textbf{attains a maximum} at $x^* \in A$ if
-    $f(x^*) = \sup_{x \in A} f(x)$.
-  \item $f$ \textbf{attains a minimum} at $x_* \in A$ if
-    $f(x_*) = \inf_{x \in A} f(x)$.
+  \item $\sup_{x\in A}f(x) := \sup f(A)$;\quad $\inf_{x\in A}f(x) := \inf f(A)$.
+  \item $\operatorname{Maximum}(x^*,f(A))$: $x^*\in A$ and $f(x^*)=\sup f(A)$.
+  \item $\operatorname{Minimum}(x_*,f(A))$: $x_*\in A$ and $f(x_*)=\inf f(A)$.
 \end{itemize}
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\begin{aligned}
-  f \text{ has max at } x^*
-  &\;\iff\;
-  x^* \in A \;\wedge\; \forall x \in A :\; f(x) \leq f(x^*). \\
-  f \text{ has min at } x_*
-  &\;\iff\;
-  x_* \in A \;\wedge\; \forall x \in A :\; f(x) \geq f(x_*).
-\end{aligned}
+  \operatorname{Maximum}(x^*,f(A))
+  \;\iff\;
+  x^*\in A \;\wedge\; \forall x\in A: f(x)\leq f(x^*).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Maximum}(x^*,f(A))
+  \;\colonequiv\;
+  x^*\in A
+  \;\wedge\;
+  \operatorname{Supremum}(f(x^*), f(A)).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The supremum of $f$ on $A$ always exists when $f$ is bounded above
-(by completeness), but need not be attained. A maximum is a
-supremum that is achieved at some point of the domain. The function
-$f(x) = x$ on $(0,1)$ has supremum $1$ but no maximum: no $x \in
-(0,1)$ achieves $f(x) = 1$.
+Supremum exists when $f$ is bounded above; maximum requires the
+supremum to be attained at some $x^*\in A$. $f(x)=x$ on $(0,1)$
+has supremum $1$ but no maximum.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -170,42 +160,49 @@ $f(x) = x$ on $(0,1)$ has supremum $1$ but no maximum: no $x \in
 \begin{tcolorbox}[title={Definition --- Monotonicity}]
 \begin{definition}[Increasing, Decreasing, Monotone, Constant]
 \label{def:function-monotonicity}
-Let $f : A \to \mathbb{R}$ on a nonempty $A \subseteq \mathbb{R}$.
+Let $f:A\to\mathbb{R}$, $A\subseteq\mathbb{R}$ nonempty.
 \begin{itemize}
-  \item $f$ is \textbf{increasing} on $A$ if $x_1 < x_2 \Rightarrow
-    f(x_1) \leq f(x_2)$.
-  \item $f$ is \textbf{strictly increasing} on $A$ if $x_1 < x_2
-    \Rightarrow f(x_1) < f(x_2)$.
-  \item $f$ is \textbf{decreasing} on $A$ if $x_1 < x_2 \Rightarrow
-    f(x_1) \geq f(x_2)$.
-  \item $f$ is \textbf{strictly decreasing} on $A$ if $x_1 < x_2
-    \Rightarrow f(x_1) > f(x_2)$.
-  \item $f$ is \textbf{monotone} if it is increasing or decreasing.
-  \item $f$ is \textbf{constant} if $f(x_1) = f(x_2)$ for all
-    $x_1, x_2 \in A$.
+  \item \textbf{Increasing}: $x_1<x_2\Rightarrow f(x_1)\leq f(x_2)$.
+  \item \textbf{Strictly increasing}: $x_1<x_2\Rightarrow f(x_1)<f(x_2)$.
+  \item \textbf{Decreasing}: $x_1<x_2\Rightarrow f(x_1)\geq f(x_2)$.
+  \item \textbf{Strictly decreasing}: $x_1<x_2\Rightarrow f(x_1)>f(x_2)$.
+  \item $\operatorname{MonotoneFunction}(f,A)$: increasing or decreasing.
+  \item \textbf{Constant}: $\forall x_1,x_2\in A: f(x_1)=f(x_2)$.
 \end{itemize}
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\begin{aligned}
-  f \text{ increasing}
-  &:\; \forall x_1, x_2 \in A,\; x_1 < x_2 \Rightarrow f(x_1) \leq f(x_2). \\
-  f \text{ strictly increasing}
-  &:\; \forall x_1, x_2 \in A,\; x_1 < x_2 \Rightarrow f(x_1) < f(x_2).
-\end{aligned}
+  f\text{ strictly increasing}
+  \;\iff\;
+  \forall x_1,x_2\in A:\;
+  x_1<x_2 \Rightarrow f(x_1)<f(x_2).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{MonotoneFunction}(f,A)
+  \;\colonequiv\;
+  \bigl(\forall x_1,x_2\in A: x_1<x_2\Rightarrow f(x_1)\leq f(x_2)\bigr)
+  \;\vee\;
+  \bigl(\forall x_1,x_2\in A: x_1<x_2\Rightarrow f(x_1)\geq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement — strictly increasing]
+\[
+  \neg(f\text{ strictly increasing})
+  \;\iff\;
+  \exists x_1,x_2\in A:\;
+  x_1<x_2 \;\wedge\; f(x_1)\geq f(x_2).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The word \emph{strictly} tightens $\leq$ to $<$. A constant function
-is both increasing and decreasing but neither strictly increasing nor
-strictly decreasing. A strictly increasing function is injective:
-$f(x_1) = f(x_2) \Rightarrow x_1 = x_2$ (by contrapositive of the
-strict condition).
-
-Terminology is not uniform across sources. These notes follow Bartle
-and Sohrab: \emph{increasing} means non-decreasing; \emph{strictly
-increasing} means the strict inequality holds.
+Strictly tightens $\leq$ to $<$. Strictly increasing implies
+$\operatorname{Injective}(f)$: $f(x_1)=f(x_2)\Rightarrow x_1=x_2$
+by contrapositive. A constant function is both increasing and
+decreasing but neither strictly.
 \end{remark*}

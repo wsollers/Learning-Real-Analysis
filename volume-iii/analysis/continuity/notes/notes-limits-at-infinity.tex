@@ -1,26 +1,22 @@
 % =========================================================
 % Limits at Infinity — Notes
 % Chapter: continuity
-% Section: limits-at-infinity
 % Volume III · Analysis
 % =========================================================
 
 \section{Limits at Infinity}
 \label{sec:limits-at-infinity}
 
-% ---------------------------------------------------------
-% Toolkit
-% ---------------------------------------------------------
-
 \begin{tcolorbox}[title={Toolkit --- Limits at Infinity}]
 \begin{itemize}
-  \item $+\infty$ is adherent to $X$ iff $X$ is unbounded above
-    ($\sup X = +\infty$).
-  \item $\lim_{x \to +\infty} f(x) = L$: replace $|x - c| < \delta$
-    with $x > M$. Same $\varepsilon$ condition on outputs.
+  \item $+\infty$ is adherent to $X$ iff $\neg\,\operatorname{BoundedSet}(X)$
+    above ($\sup X=+\infty$).
+  \item $\operatorname{LimitAtInfinity}(f,+\infty,L)$: replace
+    $\operatorname{InputTolerance}(x,c,\delta)$ with $x>M$.
+    Same $\operatorname{OutputTolerance}(f(x),L,\varepsilon)$.
   \item All standard limit laws carry over unchanged.
-  \item Sequential characterisation: $\lim_{x \to +\infty} f(x) = L$
-    iff $f(x_n) \to L$ for every sequence $x_n \to +\infty$ in $X$.
+  \item Sequential characterisation: $\operatorname{LimitAtInfinity}
+    (f,+\infty,L)\iff f(x_n)\to L$ for every $x_n\to+\infty$ in $X$.
 \end{itemize}
 \end{tcolorbox}
 
@@ -31,106 +27,121 @@
 \begin{tcolorbox}[title={Definition --- Infinite Adherent Points}]
 \begin{definition}[Infinite Adherent Points]
 \label{def:infinite-adherent-points}
-Let $X \subseteq \mathbb{R}$.
+Let $X\subseteq\mathbb{R}$.
 \begin{itemize}
-  \item $+\infty$ is \textbf{adherent to $X$} if
-    $\forall M \in \mathbb{R},\; \exists x \in X : x > M$,
-    equivalently $\sup X = +\infty$.
-  \item $-\infty$ is \textbf{adherent to $X$} if
-    $\forall M \in \mathbb{R},\; \exists x \in X : x < M$,
-    equivalently $\inf X = -\infty$.
+  \item $+\infty$ \textbf{adherent to $X$}: $\forall M\in\mathbb{R},\;
+    \exists x\in X:x>M$ $\iff\sup X=+\infty$.
+  \item $-\infty$ \textbf{adherent to $X$}: $\forall M\in\mathbb{R},\;
+    \exists x\in X:x<M$ $\iff\inf X=-\infty$.
 \end{itemize}
-A set $X$ is bounded if and only if neither $+\infty$ nor $-\infty$
+$\operatorname{BoundedSet}(X)\iff$ neither $+\infty$ nor $-\infty$
 is adherent to $X$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  +\infty \text{ adherent to } X
+  +\infty\text{ adherent to }X
   \;\iff\;
-  \forall M \in \mathbb{R},\;
-  \exists x \in X : x > M
+  \forall M\in\mathbb{R},\;\exists x\in X:x>M
   \;\iff\;
-  \sup X = +\infty.
+  \neg\,\operatorname{BoundedAbove}(X).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{AdherentPoint}(+\infty,X)
+  \;\colonequiv\;
+  \forall M\in\mathbb{R},\;\exists x\in X:x>M.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Infinite adherence is the unboundedness analogue of the finite
-adherence condition. A finite point $x_0$ is adherent to $X$ when
-$X$ has elements arbitrarily close to $x_0$. The point $+\infty$
-is adherent to $X$ when $X$ has elements arbitrarily large. Both
-are instances of adherence in the extended real line
-$\overline{\mathbb{R}} = \mathbb{R} \cup \{-\infty, +\infty\}$,
-where the neighbourhoods of $+\infty$ are the rays $(M, +\infty)$.
+Both finite adherence and infinite adherence are instances of
+adherence in $\overline{\mathbb{R}}=\mathbb{R}\cup\{-\infty,+\infty\}$:
+finite adherence uses balls $(x_0-\delta,x_0+\delta)$; infinite
+adherence uses rays $(M,+\infty)$.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Definition — Limits at Infinity
+% Definition — Limit at Infinity
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[title={Definition --- Limit at Infinity}]
 \begin{definition}[Limit at Infinity]
 \label{def:limit-at-infinity}
-Let $X \subseteq \mathbb{R}$ with $+\infty$ adherent to $X$, and
-let $f : X \to \mathbb{R}$. The function $f$ \textbf{converges to
-$L$ as $x \to +\infty$}, written $\lim_{x \to +\infty} f(x) = L$,
-if for every $\varepsilon > 0$ there exists $M \in \mathbb{R}$ such
-that
+Let $X\subseteq\mathbb{R}$ with $\operatorname{AdherentPoint}(+\infty,X)$,
+$f:X\to\mathbb{R}$.
+$\operatorname{LimitAtInfinity}(f,+\infty,L)$ if
 \[
-  x \in X \;\wedge\; x > M
-  \;\Rightarrow\;
-  |f(x) - L| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \exists M\in\mathbb{R},\;
+  \forall x\in X:\;
+  x>M \;\Rightarrow\; \operatorname{OutputTolerance}(f(x),L,\varepsilon).
 \]
-Similarly, $\lim_{x \to -\infty} f(x) = L$ if for every
-$\varepsilon > 0$ there exists $M \in \mathbb{R}$ such that
+Similarly, $\operatorname{LimitAtInfinity}(f,-\infty,L)$ if
 \[
-  x \in X \;\wedge\; x < M
-  \;\Rightarrow\;
-  |f(x) - L| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \exists M\in\mathbb{R},\;
+  \forall x\in X:\;
+  x<M \;\Rightarrow\; \operatorname{OutputTolerance}(f(x),L,\varepsilon).
 \]
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \lim_{x \to +\infty} f(x) = L
+  \operatorname{LimitAtInfinity}(f,+\infty,L)
   \;\iff\;
-  \forall \varepsilon > 0,\;
-  \exists M \in \mathbb{R},\;
-  \forall x \in X:\;
-  x > M \Rightarrow |f(x) - L| < \varepsilon.
+  \forall\varepsilon>0,\;\exists M\in\mathbb{R},\;\forall x\in X:\;
+  x>M \Rightarrow |f(x)-L|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{LimitAtInfinity}(f,+\infty,L)
+  \;\colonequiv\;
+  \ForallOT{\varepsilon},\;
+  \exists M\in\mathbb{R},\;
+  \forall x\in X:\;
+  x>M \Rightarrow \operatorname{OutputTolerance}(f(x),L,\varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \lim_{x \to +\infty} f(x) \neq L
+  \neg\,\operatorname{LimitAtInfinity}(f,+\infty,L)
   \;\iff\;
-  \exists \varepsilon_0 > 0,\;
-  \forall M \in \mathbb{R},\;
-  \exists x \in X:\;
-  x > M \;\wedge\; |f(x) - L| \geq \varepsilon_0.
+  \exists\varepsilon_0>0,\;\forall M\in\mathbb{R},\;\exists x\in X:\;
+  x>M \;\wedge\; |f(x)-L|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\,\operatorname{LimitAtInfinity}(f,+\infty,L)
+  \;\colonequiv\;
+  \exists\varepsilon_0>0,\;\forall M,\;\exists x\in X:\;
+  x>M \;\wedge\;
+  \neg\,\operatorname{OutputTolerance}(f(x),L,\varepsilon_0).
 \]
 \end{remark*}
 
 \begin{remark*}[Comparison with finite limits]
-The finite limit $\lim_{x \to c} f(x) = L$ uses the proximity
-condition $|x - c| < \delta$. The limit at $+\infty$ replaces this
-with $x > M$: instead of $x$ lying within $\delta$ of $c$, $x$
-must exceed the threshold $M$. The output condition $|f(x) - L|
-< \varepsilon$ is identical. All standard limit laws (sum, product,
-quotient, composition, squeeze) carry over with the same proofs,
-replacing $|x - c| < \delta$ by $x > M$ throughout.
+$\operatorname{FunctionLimit}(f,c,L)$ uses
+$\operatorname{InputTolerance}(x,c,\delta)$: $x$ lies within $\delta$
+of $c$. $\operatorname{LimitAtInfinity}(f,+\infty,L)$ replaces this
+with $x>M$: $x$ exceeds threshold $M$. The output condition
+$\operatorname{OutputTolerance}(f(x),L,\varepsilon)$ is identical
+in both. All standard limit laws carry over with the same proofs,
+replacing $\operatorname{InputTolerance}(x,c,\delta)$ by $x>M$.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A limit at infinity formalizes the intuition that $f(x)$ stabilizes
-near $L$ as $x$ grows without bound. The threshold $M$ plays the
-role of $c - \delta$ in the finite limit: everything to the right
-of $M$ in $X$ must be within $\varepsilon$ of $L$. The definition
-fits naturally into the framework of limits as $x_0$ approaches a
-point adherent to the domain, here the adherent point being
-$+\infty$.
+A limit at infinity formalizes the stabilization of $f(x)$ near $L$
+as $x$ grows without bound. The threshold $M$ plays the role of
+$c-\delta$ in the finite limit: everything to the right of $M$ in
+$X$ must lie within $\operatorname{OutputTolerance}(f(x),L,\varepsilon)$.
 \end{remark*}

@@ -8,35 +8,26 @@
 \section{Subsets of $\mathbb{R}$}
 \label{sec:subsets-of-R}
 
-% ---------------------------------------------------------
-% Toolkit
-% ---------------------------------------------------------
-
 \begin{tcolorbox}[title={Toolkit --- Subsets of $\mathbb{R}$}]
 \begin{itemize}
   \item Cluster point (= limit point = accumulation point): every
     $\varepsilon$-neighbourhood contains a \emph{distinct} point of $X$.
-    Adherent point: every $\varepsilon$-neighbourhood contains \emph{some}
-    point of $X$ (witness may equal $x$).
-  \item Adherent = cluster $\cup$ isolated. Closure $\overline{X}$ =
-    set of all adherent points.
-  \item Closed $\iff$ $\overline{X} = X$ $\iff$ sequentially closed
-    (limits of sequences in $X$ stay in $X$).
-  \item Heine--Borel: $X$ closed and bounded $\iff$ every sequence in
-    $X$ has a subsequence converging to a limit in $X$.
-  \item Every point of an interval is a cluster point of that interval.
-    This justifies intervals as the natural domains for function limits.
+    Adherent point: every neighbourhood contains \emph{some} point of $X$.
+  \item $\operatorname{Within}(x,c,r)$: the unpunctured ball condition
+    $|x-c| < r$. Used for adherence and continuity.
+  \item $\operatorname{InputTolerance}(x,c,\delta)$: the punctured ball
+    $0 < |x-c| < \delta$. Used for cluster points and function limits.
+  \item Closed $\iff$ $\overline{X} = X$ $\iff$ sequentially closed.
+  \item Heine--Borel: $\operatorname{ClosedSet}(X)$ and
+    $\operatorname{BoundedSet}(X)$ $\iff$ every sequence in $X$ has a
+    subsequence converging to a limit in $X$.
 \end{itemize}
 \end{tcolorbox}
 
 \begin{remark*}[Terminological note]
-The terms \emph{cluster point}, \emph{limit point}, and
-\emph{accumulation point} are synonyms. Bartle and Lebl use
+Cluster point = limit point = accumulation point. Bartle and Lebl use
 \emph{cluster point}; Rudin uses \emph{limit point}; Tao uses both.
-The term \emph{adherent point} is Tao's notation for the weaker notion
-that includes isolated points. These notes follow the convention:
-cluster point = strict notion (distinct witness required); adherent
-point = weak notion (any witness, including $x$ itself).
+Adherent point (Tao) is the weaker notion that includes isolated points.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -46,34 +37,37 @@ point = weak notion (any witness, including $x$ itself).
 \begin{tcolorbox}[title={Definition --- $\varepsilon$-Neighbourhood}]
 \begin{definition}[$\varepsilon$-Neighbourhood]
 \label{def:epsilon-neighbourhood}
-Let $x \in \mathbb{R}$ and $\varepsilon > 0$. The
-\textbf{$\varepsilon$-neighbourhood} of $x$ is
+Let $x \in \mathbb{R}$ and $\varepsilon > 0$.
 \[
-  V_\varepsilon(x) \;:=\; (x - \varepsilon,\; x + \varepsilon)
-  \;=\; \{\, y \in \mathbb{R} : |y - x| < \varepsilon \,\}.
+  V_\varepsilon(x) := (x - \varepsilon, x + \varepsilon)
+  = \{\, y \in \mathbb{R} : \operatorname{Within}(y, x, \varepsilon) \,\}.
 \]
 The \textbf{deleted $\varepsilon$-neighbourhood} of $x$ is
 \[
-  V_\varepsilon^*(x) \;:=\; V_\varepsilon(x) \setminus \{x\}
-  \;=\; \{\, y \in \mathbb{R} : 0 < |y - x| < \varepsilon \,\}.
+  V_\varepsilon^*(x) := V_\varepsilon(x) \setminus \{x\}
+  = \{\, y \in \mathbb{R} : \operatorname{InputTolerance}(y, x, \varepsilon) \,\}.
 \]
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  y \in V_\varepsilon(x) \;\iff\; |y - x| < \varepsilon.
+  y \in V_\varepsilon(x)
+  \;\iff\; \operatorname{Within}(y, x, \varepsilon)
+  \;\iff\; |y - x| < \varepsilon.
   \qquad
-  y \in V_\varepsilon^*(x) \;\iff\; 0 < |y - x| < \varepsilon.
+  y \in V_\varepsilon^*(x)
+  \;\iff\; \operatorname{InputTolerance}(y, x, \varepsilon)
+  \;\iff\; 0 < |y - x| < \varepsilon.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 The deleted neighbourhood $V_\varepsilon^*(x)$ is the operative set
-in the definition of a function limit: the condition $0 < |x - c| <
-\delta$ means exactly $x \in V_\delta^*(c)$. The $0 <$ excludes the
-base point $c$ itself, which is the defining structural feature
-separating limits from continuity.
+in the limit definition. The condition $0 < |x - c| < \delta$ means
+$\operatorname{InputTolerance}(x, c, \delta)$, i.e., $x \in
+V_\delta^*(c)$. The $0 <$ excludes the base point — the defining
+structural feature separating limits from continuity.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -83,48 +77,61 @@ separating limits from continuity.
 \begin{tcolorbox}[title={Definition --- Cluster Point}]
 \begin{definition}[Cluster Point]
 \label{def:cluster-point-R}
-Let $X \subseteq \mathbb{R}$ and let $x \in \mathbb{R}$. The point
-$x$ is a \textbf{cluster point} of $X$ (also called a \textbf{limit
-point} or \textbf{accumulation point} of $X$) if every
-$\varepsilon$-neighbourhood of $x$ contains at least one point of
-$X$ distinct from $x$:
+Let $X \subseteq \mathbb{R}$ and $x \in \mathbb{R}$. The point $x$
+is a \textbf{cluster point} of $X$ if
 \[
-  \forall\,\varepsilon > 0,\quad
-  \exists\, y \in X \setminus \{x\},\quad |y - x| < \varepsilon.
+  \forall\varepsilon > 0,\;
+  \exists\, y \in X \setminus \{x\} :\;
+  \operatorname{Within}(y, x, \varepsilon).
 \]
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  x \text{ is a cluster point of } X
+  \operatorname{ClusterPoint}(x, X)
   \;\iff\;
-  \forall\,\varepsilon > 0,\;
+  \forall\varepsilon > 0,\;
   \exists\, y \in X \setminus \{x\} :\;
-  |y - x| < \varepsilon
-  \;\iff\;
-  x \text{ is adherent to } X \setminus \{x\}.
+  |y - x| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ClusterPoint}(x, X)
+  \;\colonequiv\;
+  \forall\varepsilon > 0,\;
+  V_\varepsilon^*(x) \cap X \neq \emptyset.
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  x \text{ is not a cluster point of } X
+  \neg\,\operatorname{ClusterPoint}(x, X)
   \;\iff\;
-  \exists\,\varepsilon > 0,\;
+  \exists\varepsilon > 0,\;
   \forall\, y \in X \setminus \{x\} :\;
-  |y - x| \geq \varepsilon.
+  \neg\operatorname{Within}(y, x, \varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\,\operatorname{ClusterPoint}(x, X)
+  \;\colonequiv\;
+  \exists\varepsilon > 0 :\;
+  V_\varepsilon^*(x) \cap X = \emptyset.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A cluster point is a point that $X$ approaches from arbitrarily close
-by distinct witnesses. A cluster point need not belong to $X$: $0$ is
-a cluster point of $(0,1)$ but $0 \notin (0,1)$. A finite set and
-$\mathbb{N}$ have no cluster points at all. The concept is exactly
-what is needed to make the function limit non-vacuous: $\lim_{x \to c}
-f(x)$ requires $c$ to be a cluster point of $\operatorname{dom}(f)$
-so that the condition $0 < |x-c| < \delta$ can actually be satisfied.
+A cluster point is approached by $X$ via distinct witnesses
+arbitrarily close. A cluster point need not belong to $X$: $0$ is
+a cluster point of $(0,1)$ but $0 \notin (0,1)$. The condition
+$\operatorname{FunctionLimit}(f,c,L)$ requires
+$\operatorname{ClusterPoint}(c, \operatorname{dom}(f))$; without
+it the punctured ball condition is vacuous.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -133,77 +140,85 @@ so that the condition $0 < |x-c| < \delta$ can actually be satisfied.
 
 \begin{theorem}[Sequential Characterization of Cluster Points]
 \label{thm:cluster-point-sequential}
-Let $A \subseteq \mathbb{R}$ and let $c \in \mathbb{R}$. Then $c$
-is a cluster point of $A$ if and only if there exists a sequence
-$(a_n) \subseteq A \setminus \{c\}$ with $\lim_{n \to \infty} a_n
-= c$.
+$\operatorname{ClusterPoint}(c, A)$ if and only if there exists
+$(a_n) \subseteq A \setminus \{c\}$ with $a_n \to c$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:cluster-point-sequential]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  c \text{ cluster point of } A
+  \operatorname{ClusterPoint}(c, A)
   \;\iff\;
-  \exists (a_n)_{n=1}^\infty \subseteq A \setminus \{c\} :\;
-  a_n \to c.
+  \exists (a_n) \subseteq A \setminus \{c\} :\;
+  \operatorname{ConvergentSequence}(a_n, c).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-This bridges the $\varepsilon$-$\delta$ definition with the sequential
-language used throughout the chapter. The forward direction uses the
-$\varepsilon = 1/n$ construction to build the witness sequence. The
-reverse direction is immediate since the sequence witnesses the
-$\varepsilon$-$\delta$ condition directly.
+The forward direction: use $\varepsilon = 1/n$ to build the witness
+sequence. The reverse direction is immediate since the sequence
+witnesses the ball condition for every $\varepsilon$. This bridges
+the $\varepsilon$-$\delta$ definition with the sequential language.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Adherent Point and Isolated Point
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Adherent Point and Isolated Point}]
+\begin{tcolorbox}[title={Definition --- Adherent Point; Isolated Point}]
 \begin{definition}[Adherent Point; Isolated Point]
 \label{def:adherent-point-R}
-Let $X \subseteq \mathbb{R}$ and let $x \in \mathbb{R}$.
+Let $X \subseteq \mathbb{R}$ and $x \in \mathbb{R}$.
 
-The point $x$ is an \textbf{adherent point} of $X$ if every
-$\varepsilon$-neighbourhood of $x$ contains at least one point of
-$X$:
+$x$ is an \textbf{adherent point} of $X$ if
 \[
-  \forall\,\varepsilon > 0,\quad
-  \exists\, y \in X :\quad |y - x| \leq \varepsilon.
+  \forall\varepsilon > 0,\;
+  \exists\, y \in X :\;
+  \operatorname{Within}(y, x, \varepsilon).
 \]
 
-A point $x \in X$ is an \textbf{isolated point} of $X$ if $x \in X$
-and $x$ is not a cluster point of $X$; equivalently,
-\[
-  \exists\,\varepsilon > 0 :\; V_\varepsilon(x) \cap X = \{x\}.
-\]
+A point $x \in X$ is an \textbf{isolated point} of $X$ if
+$\neg\,\operatorname{ClusterPoint}(x, X)$; equivalently,
+$\exists\varepsilon > 0 : V_\varepsilon(x) \cap X = \{x\}$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  x \text{ adherent to } X
+  \operatorname{AdherentPoint}(x, X)
   \;\iff\;
-  \forall\,\varepsilon > 0,\;
+  \forall\varepsilon > 0 :\;
   V_\varepsilon(x) \cap X \neq \emptyset.
 \]
 \end{remark*}
 
-\begin{remark*}[Cluster vs.\ adherent]
-The sole difference is whether the witness $y$ may equal $x$. Every
-cluster point is adherent; an isolated point is adherent but not a
-cluster point. The partition is:
+\begin{remark*}[Definition predicate reading]
 \[
-  \text{Adherent points of } X
-  = \text{Cluster points of } X
-  \;\cup\;
-  \text{Isolated points of } X.
+  \operatorname{AdherentPoint}(x, X)
+  \;\colonequiv\;
+  \forall\varepsilon > 0,\;
+  \exists\, y \in X :\;
+  \operatorname{Within}(y, x, \varepsilon).
 \]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\,\operatorname{AdherentPoint}(x, X)
+  \;\colonequiv\;
+  \exists\varepsilon > 0 :\;
+  V_\varepsilon(x) \cap X = \emptyset.
+\]
+\end{remark*}
+
+\begin{remark*}[Cluster vs.\ adherent]
+The only difference: $\operatorname{Within}$ vs
+$\operatorname{InputTolerance}$ — adherent permits the witness $y =
+x$; cluster requires $y \neq x$. Partition:
+$\text{Adherent}(X) = \operatorname{ClusterPoint}(X) \cup
+\operatorname{Isolated}(X)$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -212,47 +227,37 @@ cluster point. The partition is:
 
 \begin{definition}[Interior, Exterior, Boundary]
 \label{def:interior-exterior-boundary-R}
-Let $X \subseteq \mathbb{R}$ and $x \in \mathbb{R}$.
+Let $X \subseteq \mathbb{R}$, $x \in \mathbb{R}$.
 
-$x$ is an \textbf{interior point} of $X$ if some neighbourhood of
-$x$ lies entirely in $X$:
-\[
-  \exists\,\varepsilon > 0 :\; V_\varepsilon(x) \subseteq X.
-\]
-The \textbf{interior} of $X$ is $X^\circ := \{x : x \text{ interior
-to } X\}$.
+$\operatorname{InteriorPoint}(x, X)$: $\exists\varepsilon > 0 :
+V_\varepsilon(x) \subseteq X$.
 
-$x$ is a \textbf{boundary point} of $X$ if every neighbourhood of
-$x$ meets both $X$ and $X^c$:
-\[
-  \forall\,\varepsilon > 0 :\;
-  V_\varepsilon(x) \cap X \neq \emptyset
-  \;\wedge\;
-  V_\varepsilon(x) \cap X^c \neq \emptyset.
-\]
-The \textbf{boundary} of $X$ is $\partial X$.
+$\operatorname{BoundaryPoint}(x, X)$: $\forall\varepsilon > 0 :
+V_\varepsilon(x) \cap X \neq \emptyset \;\wedge\;
+V_\varepsilon(x) \cap X^c \neq \emptyset$.
+
+Interior $X^\circ := \{x : \operatorname{InteriorPoint}(x,X)\}$;\quad
+boundary $\partial X := \{x : \operatorname{BoundaryPoint}(x,X)\}$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-  x \in X^\circ
-  &\;\iff\; \exists\,\varepsilon > 0,\;
-    \forall\, y :\; |y-x| < \varepsilon \Rightarrow y \in X. \\
-  x \in \partial X
-  &\;\iff\; \forall\,\varepsilon > 0,\;
-    V_\varepsilon(x) \cap X \neq \emptyset
-    \;\wedge\;
-    V_\varepsilon(x) \cap X^c \neq \emptyset.
+  \operatorname{InteriorPoint}(x,X)
+  &\;\iff\; \exists\varepsilon>0,\;
+    \forall y : \operatorname{Within}(y,x,\varepsilon) \Rightarrow y \in X. \\
+  \operatorname{BoundaryPoint}(x,X)
+  &\;\iff\; \forall\varepsilon>0 :
+    V_\varepsilon(x)\cap X\neq\emptyset
+    \wedge V_\varepsilon(x)\cap X^c\neq\emptyset.
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The three sets $X^\circ$, $\partial X$, and $\mathrm{Ext}(X) :=
-(X^c)^\circ$ partition $\mathbb{R}$. $X$ is open iff $X = X^\circ$
-(contains no boundary points). $X$ is closed iff $X \supseteq
-\partial X$ (contains all its boundary points). The closure
+$X^\circ$, $\partial X$, $\mathrm{Ext}(X)$ partition $\mathbb{R}$.
+$\operatorname{OpenSet}(X) \iff X = X^\circ$.
+$\operatorname{ClosedSet}(X) \iff X \supseteq \partial X$.
 $\overline{X} = X^\circ \cup \partial X$.
 \end{remark*}
 
@@ -261,19 +266,9 @@ $\overline{X} = X^\circ \cup \partial X$.
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[title={Definition --- Closure}]
-\begin{definition}[Closure of a Subset of $\mathbb{R}$]
+\begin{definition}[Closure]
 \label{def:closure-R}
-Let $X \subseteq \mathbb{R}$. The \textbf{closure} of $X$ is the set
-of all adherent points of $X$:
-\[
-  \overline{X}
-  \;:=\;
-  \bigl\{\, x \in \mathbb{R} \;\bigm|\;
-    \forall\varepsilon > 0,\;
-    \exists\, y \in X :\;
-    |x - y| \leq \varepsilon
-  \,\bigr\}.
-\]
+$\overline{X} := \{x \in \mathbb{R} : \operatorname{AdherentPoint}(x, X)\}$.
 \end{definition}
 \end{tcolorbox}
 
@@ -281,17 +276,16 @@ of all adherent points of $X$:
 \[
   x \in \overline{X}
   \;\iff\;
-  \forall\varepsilon > 0,\;
-  V_\varepsilon(x) \cap X \neq \emptyset.
+  \operatorname{AdherentPoint}(x, X)
+  \;\iff\;
+  \forall\varepsilon>0 : V_\varepsilon(x)\cap X\neq\emptyset.
 \]
 \end{remark*}
 
 \begin{remark*}[Canonical examples]
-$\overline{(a,b)} = [a,b]$;\quad
-$\overline{\mathbb{Q}} = \mathbb{R}$;\quad
+$\overline{(a,b)} = [a,b]$;\quad $\overline{\mathbb{Q}} = \mathbb{R}$;\quad
 $\overline{\mathbb{Z}} = \mathbb{Z}$;\quad
-$\overline{\{1/n : n \in \mathbb{N}\}} = \{1/n : n \in \mathbb{N}\}
-\cup \{0\}$.
+$\overline{\{1/n\}} = \{1/n\}\cup\{0\}$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -300,34 +294,25 @@ $\overline{\{1/n : n \in \mathbb{N}\}} = \{1/n : n \in \mathbb{N}\}
 
 \begin{lemma}[Elementary Properties of Closures]
 \label{lem:closure-elementary}
-Let $X, Y \subseteq \mathbb{R}$. Then:
-\begin{enumerate}[label=(\roman*)]
-  \item $X \subseteq \overline{X}$.
-  \item $\overline{X \cup Y} = \overline{X} \cup \overline{Y}$.
-  \item $\overline{X \cap Y} \subseteq \overline{X} \cap \overline{Y}$.
-  \item $X \subseteq Y \Rightarrow \overline{X} \subseteq \overline{Y}$.
-\end{enumerate}
+Let $X, Y \subseteq \mathbb{R}$. Then: (i) $X \subseteq \overline{X}$;
+(ii) $\overline{X \cup Y} = \overline{X} \cup \overline{Y}$;
+(iii) $\overline{X \cap Y} \subseteq \overline{X} \cap \overline{Y}$;
+(iv) $X \subseteq Y \Rightarrow \overline{X} \subseteq \overline{Y}$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:closure-elementary]{\textit{Go to proof.}}
 \end{lemma}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall X, Y \subseteq \mathbb{R}:\quad
-  X \subseteq \overline{X};\quad
   \overline{X \cup Y} = \overline{X} \cup \overline{Y};\quad
-  \overline{X \cap Y} \subseteq \overline{X} \cap \overline{Y};\quad
-  X \subseteq Y \Rightarrow \overline{X} \subseteq \overline{Y}.
+  \overline{X \cap Y} \subseteq \overline{X} \cap \overline{Y}.
 \]
 \end{remark*}
 
 \begin{remark*}[Failure of equality in (iii)]
-$\overline{X \cap Y} = \overline{X} \cap \overline{Y}$ fails in general.
-Take $X = (0,1)$, $Y = (1,2)$: then $\overline{X \cap Y} =
-\overline{\emptyset} = \emptyset$ but $\overline{X} \cap \overline{Y}
-= [0,1] \cap [1,2] = \{1\}$.
+Take $X = (0,1)$, $Y = (1,2)$: $\overline{X\cap Y} = \emptyset$ but
+$\overline{X}\cap\overline{Y} = \{1\}$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -337,71 +322,77 @@ Take $X = (0,1)$, $Y = (1,2)$: then $\overline{X \cap Y} =
 \begin{tcolorbox}[title={Definition --- Closed Subset of $\mathbb{R}$}]
 \begin{definition}[Closed Subset of $\mathbb{R}$]
 \label{def:closed-set-R}
-A set $E \subseteq \mathbb{R}$ is \textbf{closed} if $E$ contains
-all its adherent points:
-\[
-  E \text{ is closed}
-  \;\iff\;
-  \overline{E} = E.
-\]
+$\operatorname{ClosedSet}(E) \iff \overline{E} = E$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  E \text{ closed}
+  \operatorname{ClosedSet}(E)
   \;\iff\;
   \forall x \in \mathbb{R} :\;
-  \bigl(\forall\varepsilon > 0,\;
-    \exists\, y \in E :\; |x-y| \leq \varepsilon\bigr)
-  \;\Rightarrow\; x \in E.
+  \operatorname{AdherentPoint}(x,E) \Rightarrow x \in E.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ClosedSet}(E)
+  \;\colonequiv\;
+  \forall x :\;
+  \operatorname{AdherentPoint}(x, E) \Rightarrow x \in E.
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  E \text{ not closed}
+  \neg\,\operatorname{ClosedSet}(E)
   \;\iff\;
+  \exists x \notin E :\; \operatorname{AdherentPoint}(x, E).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\,\operatorname{ClosedSet}(E)
+  \;\colonequiv\;
   \exists x \notin E :\;
-  \forall\varepsilon > 0,\;
-  V_\varepsilon(x) \cap E \neq \emptyset.
+  \forall\varepsilon>0 : V_\varepsilon(x)\cap E\neq\emptyset.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Closedness is the condition that the set contains its own boundary.
-Canonical examples: $[a,b]$ is closed; $(a,b)$ is not (its boundary
-points $a,b$ lie outside it); $\mathbb{R}$ and $\emptyset$ are both
-closed; $\mathbb{Q}$ is not closed since $\overline{\mathbb{Q}} =
-\mathbb{R} \neq \mathbb{Q}$.
+$E$ is closed iff it contains its own boundary. Examples:
+$[a,b]$ closed; $(a,b)$ not closed; $\mathbb{R}$ and $\emptyset$
+both closed; $\mathbb{Q}$ not closed.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Corollary — Sequential Characterization of Closed Sets
+% Corollary — Sequentially Closed
 % ---------------------------------------------------------
 
 \begin{corollary}[Closed iff Sequentially Closed]
 \label{cor:closed-iff-seq-limits}
-Let $X \subseteq \mathbb{R}$. Then $X$ is closed if and only if
-every convergent sequence $(a_n) \subseteq X$ has its limit in $X$:
-\[
-  X \text{ closed}
-  \;\iff\;
-  \forall (a_n) \subseteq X,\;
-  a_n \to x \;\Rightarrow\; x \in X.
-\]
+$\operatorname{ClosedSet}(X) \iff \forall (a_n)\subseteq X,\;
+a_n \to x \Rightarrow x \in X$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:closed-iff-seq-limits]{\textit{Go to proof.}}
 \end{corollary}
 
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ClosedSet}(X)
+  \;\iff\;
+  \forall (a_n)\subseteq X,\;
+  \operatorname{ConvergentSequence}(a_n, x)
+  \Rightarrow x \in X.
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-A set is closed precisely when it cannot be escaped by convergent
-sequences. The forward direction: if $x$ is adherent to $X$ then
-some sequence in $X$ converges to $x$; closedness pulls $x$ into $X$.
-The reverse direction: every adherent point has a sequence witnessing
-adherence; the sequential hypothesis forces it into $X$.
+A closed set cannot be escaped by convergent sequences. Every adherent
+point has a witness sequence; closedness forces the limit into the set.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -410,19 +401,18 @@ adherence; the sequential hypothesis forces it into $X$.
 
 \begin{corollary}[Every Point of an Interval Is a Cluster Point]
 \label{cor:interval-all-limit-points}
-Let $I$ be an interval. Then every element of $I$ is a cluster point
-of $I$.
+If $I$ is an interval, then $\operatorname{ClusterPoint}(x, I)$ for
+every $x \in I$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:interval-all-limit-points]{\textit{Go to proof.}}
 \end{corollary}
 
 \begin{remark*}[Interpretation]
-This justifies intervals as the natural domains for function limits.
-The condition $\lim_{x \to c} f(x)$ requires $c$ to be a cluster
-point of the domain; since every point of an interval satisfies this,
-no additional hypotheses are needed when working on intervals.
+This justifies intervals as natural domains for function limits.
+$\operatorname{FunctionLimit}(f,c,L)$ requires
+$\operatorname{ClusterPoint}(c, \operatorname{dom}(f))$; on any
+interval this is free.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -431,29 +421,20 @@ no additional hypotheses are needed when working on intervals.
 
 \begin{definition}[Bounded Subset of $\mathbb{R}$]
 \label{def:bounded-set-R}
-A subset $X \subseteq \mathbb{R}$ is \textbf{bounded} if
-$X \subseteq [-M, M]$ for some $M > 0$:
-\[
-  X \text{ bounded}
-  \;\iff\;
-  \exists M > 0,\;
-  \forall x \in X :\; |x| \leq M.
-\]
+$\operatorname{BoundedSet}(X) \iff \exists M>0,\;\forall x\in X:
+|x|\leq M$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  X \text{ unbounded}
+  \operatorname{BoundedSet}(X)
   \;\iff\;
-  \forall M > 0,\;
-  \exists x \in X :\; |x| > M.
+  \exists M>0,\;\forall x\in X : |x|\leq M.
+  \qquad
+  \neg\,\operatorname{BoundedSet}(X)
+  \;\iff\;
+  \forall M>0,\;\exists x\in X : |x|>M.
 \]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-A bounded set fits inside some finite symmetric interval. For a
-nonempty bounded set, both $\sup X$ and $\inf X$ exist in $\mathbb{R}$
-by the Axiom of Completeness.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -462,39 +443,52 @@ by the Axiom of Completeness.
 
 \begin{theorem}[Heine--Borel Theorem for $\mathbb{R}$]
 \label{thm:heine-borel}
-Let $X \subseteq \mathbb{R}$. The following are equivalent:
-\begin{enumerate}[label=(\alph*)]
-  \item $X$ is closed and bounded.
-  \item Every sequence $(a_n) \subseteq X$ has a subsequence
-    converging to a limit $L \in X$.
-\end{enumerate}
+$\operatorname{ClosedSet}(X) \wedge \operatorname{BoundedSet}(X)$
+$\iff$ every $(a_n)\subseteq X$ has a subsequence converging to
+a limit in $X$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:heine-borel]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \bigl(X \text{ closed} \wedge X \text{ bounded}\bigr)
+  \operatorname{ClosedSet}(X) \wedge \operatorname{BoundedSet}(X)
   \;\iff\;
-  \forall (a_n) \subseteq X,\;
-  \exists (a_{n_k}),\;
-  \exists L \in X :\;
-  a_{n_k} \to L.
+  \forall (a_n)\subseteq X,\;
+  \exists (a_{n_k}),\;\exists L\in X : a_{n_k}\to L.
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{SequentiallyCompact}(X)
+  \;\colonequiv\;
+  \operatorname{ClosedSet}(X) \wedge \operatorname{BoundedSet}(X).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\bigl(\operatorname{ClosedSet}(X)\wedge\operatorname{BoundedSet}(X)\bigr)
+  \;\iff\;
+  \exists (a_n)\subseteq X:\;
+  \text{no subsequence converges to a limit in } X.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+Either $\operatorname{BoundedSet}(X)$ fails — a sequence escapes to
+$\pm\infty$ — or $\operatorname{ClosedSet}(X)$ fails — a convergent
+subsequence exists but its limit lies outside $X$.
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-Closed and bounded together characterize the subsets of $\mathbb{R}$
-on which every sequence must eventually settle. Boundedness prevents
-sequences from escaping to infinity; closedness prevents limits from
-escaping through boundary gaps. The forward direction: bounded gives
-Bolzano--Weierstrass; closed keeps the limit inside $X$. The reverse
-direction: if $X$ were unbounded, the sequence $x_n$ with $|x_n| > n$
-would have no convergent subsequence; if $X$ were not closed, an
-adherent point outside $X$ would be the limit of a sequence in $X$
-with no limit in $X$.
+Closed prevents limits from escaping through boundary gaps; bounded
+prevents escape to infinity. Both are required. Forward: bounded
+gives Bolzano--Weierstrass; closed keeps the limit in $X$. Reverse:
+negate either hypothesis to construct a sequence with no convergent
+subsequence in $X$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -503,24 +497,22 @@ with no limit in $X$.
 
 \begin{definition}[True Near a Point]
 \label{def:true-near}
-Let $x_0 \in \mathbb{R}$, let $f$ be a function defined near $x_0$
-(except possibly at $x_0$ itself). A property $P(f(x))$ is
-\textbf{true near $x_0$} if there exists $\delta > 0$ such that
-$P(f(x))$ holds for all $x$ with $0 < |x - x_0| < \delta$.
+Property $P(f(x))$ is \textbf{true near $x_0$} if
+$\exists\delta>0,\;\forall x : \operatorname{InputTolerance}(x,x_0,
+\delta) \Rightarrow P(f(x))$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  P(f(x)) \text{ true near } x_0
+  P(f(x))\text{ true near }x_0
   \;\iff\;
-  \exists\,\delta > 0,\;
-  \forall x :\; 0 < |x - x_0| < \delta \Rightarrow P(f(x)).
+  \exists\delta>0,\;\forall x :
+  0 < |x-x_0| < \delta \Rightarrow P(f(x)).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The limit definition $\lim_{x \to x_0} f(x) = L$ can be restated:
-for every $\varepsilon > 0$, the property $|f(x) - L| < \varepsilon$
-is true near $x_0$. This compact notation makes the logical structure
-of limit arguments transparent.
+$\operatorname{FunctionLimit}(f,x_0,L)$ states: for every
+$\varepsilon>0$, the property $\operatorname{OutputTolerance}(f(x),
+L,\varepsilon)$ is true near $x_0$.
 \end{remark*}

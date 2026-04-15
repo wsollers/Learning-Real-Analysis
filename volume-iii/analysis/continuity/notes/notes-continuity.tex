@@ -12,21 +12,22 @@
 % Toolkit
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Toolkit — Continuity}]
+\begin{tcolorbox}[title={Toolkit --- Continuity}]
 \begin{itemize}
   \item Three equivalent forms: $\varepsilon$-$\delta$, neighbourhood,
-    sequential. All three are used in proofs.
-  \item Key structural rule: $\delta$ may depend on both $\varepsilon$
-    and the base point $c$. When $\delta$ depends only on $\varepsilon$,
-    the condition becomes uniform continuity.
-  \item Isolated points are automatically continuous. Non-trivial
-    verification is required only at cluster points.
+    sequential. The $\varepsilon$-$\delta$ form uses
+    $\operatorname{Within}(x,c,\delta)$ — \emph{unpunctured}.
+    This is the critical structural difference from function limits,
+    which use $\operatorname{InputTolerance}(x,c,\delta)$ (punctured).
+  \item $\delta$ may depend on both $\varepsilon$ and the base point
+    $c$. When $\delta$ depends only on $\varepsilon$, the condition
+    is uniform continuity.
+  \item Isolated points are automatically continuous.
   \item Algebra: sums, differences, products, scalar multiples, and
-    (when denominator is nonzero) quotients of continuous functions
-    are continuous.
-  \item Composition preserves continuity: if $f$ is continuous at $c$
-    and $g$ is continuous at $f(c)$, then $g \circ f$ is continuous
-    at $c$.
+    quotients (denominator nonzero) of continuous functions are
+    continuous.
+  \item Composition preserves continuity: $f$ cts at $c$, $g$ cts at
+    $f(c)$ $\Rightarrow$ $g \circ f$ cts at $c$.
 \end{itemize}
 \end{tcolorbox}
 
@@ -49,19 +50,29 @@ where $U(a)$ is a neighborhood of $a$ in $\mathbb{R}$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  U_E(a) \;=\; E \cap (a - \delta,\, a + \delta)
-  \quad \text{for some } \delta > 0.
+  U_E(a) = E \cap (a - \delta,\, a + \delta)
+  \;=\;
+  \{\, x \in E : \operatorname{Within}(x, a, \delta) \,\}
+  \quad\text{for some } \delta > 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{AdherentPoint}(a, E)
+  \;\wedge\;
+  U_E(a) = E \cap (a-\delta, a+\delta)
+  \;\colonequiv\;
+  \{\, x \in E : \operatorname{Within}(x, a, \delta) \,\}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The relative neighborhood is the portion of the domain $E$ that
-lies within a full $\delta$-ball around $a$. It relativizes the
-standard neighborhood concept to an arbitrary subset: properties
-stated in terms of $U_E(a)$ are local properties of $f$ on $E$
-near $a$, unaffected by behavior of $\mathbb{R}$ outside $E$. This
-is the correct setting for stating local properties of functions
-defined on proper subsets of $\mathbb{R}$.
+The relative neighborhood restricts a full $\delta$-ball to the
+domain $E$. Properties stated in terms of $U_E(a)$ are local
+properties of $f$ on $E$ near $a$, unaffected by what $\mathbb{R}$
+looks like outside $E$. This is the correct setting for continuity
+on proper subsets.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -72,77 +83,107 @@ defined on proper subsets of $\mathbb{R}$.
 \begin{definition}[Continuity at a Point]
 \label{def:continuous-at-point}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
-$c \in A$. The function $f$ is \textbf{continuous at $c$} if for
-every $\varepsilon > 0$ there exists $\delta > 0$ such that for
-every $x \in A$,
+$c \in A$. The function $f$ is \textbf{continuous at $c$} if
 \[
-  |x - c| < \delta \;\Rightarrow\; |f(x) - f(c)| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in A :\;
+  \operatorname{Within}(x, c, \delta)
+  \;\Rightarrow\;
+  \operatorname{OutputTolerance}(f(x), f(c), \varepsilon).
 \]
 If $f$ is not continuous at $c$, then $f$ is \textbf{discontinuous
 at $c$}.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:equivalent-forms-continuity]{\textit{Go to proof.}}
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ continuous at } c
+  \operatorname{ContinuousAt}(f, c)
   \;\iff\;
   \forall\varepsilon > 0,\;
   \exists\delta > 0,\;
-  \forall x \in A:\;
+  \forall x \in A :\;
   |x - c| < \delta \;\Rightarrow\; |f(x) - f(c)| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ContinuousAt}(f, c)
+  \;\colonequiv\;
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in A :\;
+  \operatorname{Within}(x, c, \delta)
+  \;\Rightarrow\;
+  \operatorname{OutputTolerance}(f(x), f(c), \varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  f \text{ discontinuous at } c
+  \operatorname{DiscontinuousAt}(f, c)
   \;\iff\;
   \exists\varepsilon_0 > 0,\;
   \forall\delta > 0,\;
-  \exists x \in A:\;
+  \exists x \in A :\;
+  \operatorname{Within}(x, c, \delta)
+  \;\wedge\;
+  \neg\,\operatorname{OutputTolerance}(f(x), f(c), \varepsilon_0).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \operatorname{DiscontinuousAt}(f, c)
+  \;\colonequiv\;
+  \exists\varepsilon_0 > 0,\;
+  \forall\delta > 0,\;
+  \exists x \in A :\;
   |x - c| < \delta \;\wedge\; |f(x) - f(c)| \geq \varepsilon_0.
 \]
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
-Discontinuity at $c$ decomposes into three distinct failure modes:
+Discontinuity at $c$ decomposes into three structurally distinct
+cases:
 \[
   \underbrace{%
-    \lim_{x \to c} f(x) \text{ exists but } \neq f(c)
-  }_{\text{removable discontinuity}}
+    \lim_{x\to c} f(x) \text{ exists but } \neq f(c)
+  }_{\text{removable}}
   \;\vee\;
   \underbrace{%
-    \text{one-sided limits exist and are unequal}
-  }_{\text{jump discontinuity}}
+    f(c^-), f(c^+) \text{ exist but are unequal}
+  }_{\text{jump}}
   \;\vee\;
   \underbrace{%
     \text{no one-sided limit exists}
-  }_{\text{essential discontinuity}}.
+  }_{\text{essential}}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Three features distinguish continuity from the limit definition.
-First, $x = c$ is permitted — the implication holds for all $x \in A$,
-not just $x \neq c$. Second, the target value is $f(c)$ itself, not an
-independently specified limit $L$. Third, $c$ must belong to $A$.
-At a cluster point $c$, continuity is equivalent to
-$\lim_{x \to c} f(x) = f(c)$. At an isolated point, the condition
-holds vacuously for every $\varepsilon > 0$ since no $x \in A$
-satisfies $0 < |x - c| < \delta$ for small $\delta$, so every
-isolated point of $A$ is automatically a continuity point.
+Three features distinguish $\operatorname{ContinuousAt}(f,c)$ from
+$\operatorname{FunctionLimit}(f,c,L)$. First, the input condition
+is $\operatorname{Within}$ (unpunctured): $x = c$ is permitted, so
+the behavior at the point itself is included. Second, the target is
+$f(c)$ — not an independently specified $L$. Third, $c$ must belong
+to $A$. At a cluster point, continuity is equivalent to
+$\operatorname{FunctionLimit}(f,c,f(c))$. At an isolated point,
+$\operatorname{Within}(x,c,\delta) \cap A = \{c\}$ for small
+$\delta$, so the condition holds vacuously — every isolated point is
+a continuity point.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Continuity at a Point (neighbourhood form)
 % ---------------------------------------------------------
 
-\begin{definition}[Continuity at a Point — Neighbourhood Form]
+\begin{definition}[Continuity at a Point --- Neighbourhood Form]
 \label{def:continuous-at-point-nbhd}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
 $c \in A$. The function $f$ is \textbf{continuous at $c$} in the
@@ -156,28 +197,40 @@ $V_\delta(c)$ of $c$ such that
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0:\;
-  \forall x \in A \cap V_\delta(c),\;
+  \operatorname{ContinuousAt}(f,c)\text{ (nbhd)}
+  \;\iff\;
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in A \cap V_\delta(c) :\;
   f(x) \in V_\varepsilon(f(c)).
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ContinuousAt}(f,c)\text{ (nbhd)}
+  \;\colonequiv\;
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  f\bigl(A \cap V_\delta(c)\bigr) \subseteq V_\varepsilon(f(c)).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-The neighbourhood form packages the $\varepsilon$-$\delta$ condition
-as an image-inclusion statement: the image of the $\delta$-slice of
-$A$ must land inside the $\varepsilon$-ball around $f(c)$. It uses
-the full neighbourhood $V_\delta(c)$, not the punctured version
-$V_\delta^*(c)$ required by the limit definition. This is the form
-of continuity most naturally generalized to metric spaces, where
-$|x - c| < \delta$ is replaced by $d(x,c) < \delta$.
+The neighbourhood form uses the full ball $V_\delta(c)$ — not the
+punctured $V_\delta^*(c)$ required by the limit definition. This is
+the algebraic trace of the $\operatorname{Within}$ vs
+$\operatorname{InputTolerance}$ distinction: continuity includes the
+base point $c$ in the input set; limits do not. The neighbourhood
+form is the version most naturally extended to metric and topological
+spaces.
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition — Continuity at a Point (sequential form)
 % ---------------------------------------------------------
 
-\begin{definition}[Continuity at a Point — Sequential Form]
+\begin{definition}[Continuity at a Point --- Sequential Form]
 \label{def:continuous-at-point-seq}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
 $c \in A$. The function $f$ is \textbf{continuous at $c$} in the
@@ -187,29 +240,41 @@ $x_n \to c$, the sequence $(f(x_n))$ converges to $f(c)$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall (x_n) \subseteq A:\;
+  \operatorname{ContinuousAt}(f,c)\text{ (seq)}
+  \;\iff\;
+  \forall (x_n) \subseteq A :\;
   x_n \to c \;\Rightarrow\; f(x_n) \to f(c).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ContinuousAt}(f,c)\text{ (seq)}
+  \;\colonequiv\;
+  \forall (x_n) \subseteq A :\;
+  \operatorname{ConvergentSequence}(x_n, c)
+  \;\Rightarrow\;
+  \operatorname{ConvergentSequence}(f(x_n), f(c)).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  f \text{ discontinuous at } c
+  \operatorname{DiscontinuousAt}(f,c)\text{ (seq)}
   \;\iff\;
-  \exists (x_n) \subseteq A:\;
+  \exists (x_n) \subseteq A :\;
   x_n \to c \;\wedge\; f(x_n) \not\to f(c).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The sequential form converts the point-proximity condition into a
-sequence-convergence condition. It differs from the sequential
-criterion for function limits in one essential respect: sequences
-$(x_n)$ may include $x_n = c$, since continuity at $c$ requires
-$f(c)$ itself to be consistent with the limiting behavior, not
-merely the behavior off $c$. The negation — a single sequence
-converging to $c$ whose image does not converge to $f(c)$ — is the
-standard tool for exhibiting discontinuities.
+The sequential form of continuity differs from the sequential form
+of function limits in one precise way: sequences $(x_n)$ may include
+$x_n = c$. The limit sequential form requires $(x_n) \subseteq A
+\setminus \{c\}$. This mirrors the $\operatorname{Within}$ vs
+$\operatorname{InputTolerance}$ distinction exactly. The negation —
+one witness sequence that converges but whose image does not — is the
+standard tool for disproving continuity at a point.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -221,8 +286,9 @@ standard tool for exhibiting discontinuities.
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
 $c \in A$. The following are equivalent:
 \begin{enumerate}[label=(\roman*)]
-  \item $\forall\varepsilon>0,\;\exists\delta>0,\;\forall x\in A:\;
-    |x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon$.
+  \item $\ForallOT{\varepsilon},\;\ExistsIT{\delta},\;\forall x\in A:\;
+    \operatorname{Within}(x,c,\delta) \Rightarrow
+    \operatorname{OutputTolerance}(f(x),f(c),\varepsilon)$.
     \hfill ($\varepsilon$-$\delta$)
   \item $\forall\,V_\varepsilon(f(c)),\;\exists\,V_\delta(c):\;
     f(A \cap V_\delta(c)) \subseteq V_\varepsilon(f(c))$.
@@ -232,39 +298,47 @@ $c \in A$. The following are equivalent:
     \hfill (sequential)
 \end{enumerate}
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:equivalent-forms-continuity]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-\text{(i)}\quad
+(i)\quad
   &\forall\varepsilon>0,\;
    \exists\delta>0,\;
    \forall x\in A:\;
-   |x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon \\
-\text{(ii)}\quad
-  &\forall\varepsilon>0,\;
-   \exists\delta>0:\;
-   f(A\cap V_\delta(c)) \subseteq V_\varepsilon(f(c)) \\
-\text{(iii)}\quad
+   |x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon. \\[3pt]
+(ii)\quad
+  &\forall\varepsilon>0,\;\exists\delta>0:\;
+   f(A\cap V_\delta(c)) \subseteq V_\varepsilon(f(c)). \\[3pt]
+(iii)\quad
   &\forall (x_n)\subseteq A:\;
-   x_n\to c \Rightarrow f(x_n)\to f(c)
+   x_n\to c \Rightarrow f(x_n)\to f(c).
 \end{aligned}
 \]
 \end{remark*}
 
+\begin{remark*}[Negated quantified statement]
+\[
+  \operatorname{DiscontinuousAt}(f,c)
+  \;\iff\;
+  \exists (x_n)\subseteq A :\;
+  x_n \to c \;\wedge\; f(x_n) \not\to f(c).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-The equivalence (i)$\iff$(ii) is notational: $x \in V_\delta(c)$
-means $|x-c|<\delta$, and $f(x) \in V_\varepsilon(f(c))$ means
-$|f(x)-f(c)|<\varepsilon$. The equivalence (i)$\iff$(iii) mirrors
-the sequential criterion for function limits, but with the critical
-difference that sequences may include $x_n = c$. The proof of
-(iii)$\Rightarrow$(i) is by contrapositive: negating (i) constructs
-a sequence via the $1/n$ trick that converges to $c$ but whose image
-does not converge to $f(c)$, contradicting (iii).
+The equivalence (i)$\iff$(ii) is notational: $V_\delta(c)$ is the
+ball $\{|x-c|<\delta\}$ and $V_\varepsilon(f(c))$ is the ball
+$\{|y-f(c)|<\varepsilon\}$, so (i) and (ii) state the same condition
+in two notations. The equivalence (i)$\iff$(iii) mirrors the
+Sequential Criterion for limits but with $(x_n) \subseteq A$ (not
+$A \setminus \{c\}$): the base point is included. The proof of
+(iii)$\Rightarrow$(i) is by contrapositive: negate (i) to get
+$\varepsilon_0$ and build $(x_n)$ via $\delta = 1/n$ — a sequence
+converging to $c$ whose image does not converge to $f(c)$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -275,24 +349,37 @@ does not converge to $f(c)$, contradicting (iii).
 \label{def:discontinuity-criterion}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
 $c \in A$. The function $f$ is \textbf{discontinuous at $c$} if and
-only if there exists a sequence $(x_n) \subseteq A$ such that
-$x_n \to c$ but $f(x_n) \not\to f(c)$.
+only if
+\[
+  \exists (x_n) \subseteq A :\;
+  x_n \to c \;\wedge\; f(x_n) \not\to f(c).
+\]
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ discontinuous at } c
+  \operatorname{DiscontinuousAt}(f,c)
   \;\iff\;
-  \exists (x_n) \subseteq A:\;
-  x_n \to c \;\wedge\; f(x_n) \not\to f(c).
+  \exists (x_n) \subseteq A :\;
+  \operatorname{ConvergentSequence}(x_n, c)
+  \;\wedge\;
+  \neg\,\operatorname{ConvergentSequence}(f(x_n), f(c)).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \operatorname{DiscontinuousAt}(f,c)
+  \;\colonequiv\;
+  \neg\,\operatorname{ContinuousAt}(f,c).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-This is the negation of the sequential form of continuity. A single
-witness sequence suffices: it converges in the domain but its image
-fails to converge to the function value. The criterion is the
-standard tool for proving discontinuity — exhibit one bad sequence.
+One witness sequence is sufficient: it converges in the domain but
+its image fails to converge to the function value. The criterion is
+the operative tool for proving discontinuity — exhibit one bad
+sequence and the work is done.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -304,30 +391,50 @@ standard tool for proving discontinuity — exhibit one bad sequence.
 \label{def:continuity-on-set}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let
 $B \subseteq A$. The function $f$ is \textbf{continuous on $B$} if
-$f$ is continuous at every point of $B$.
+$\operatorname{ContinuousAt}(f, c)$ for every $c \in B$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f \text{ continuous on } B
+  \operatorname{ContinuousOn}(f, B)
   \;\iff\;
   \forall c \in B,\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in A:\;
-  |x - c| < \delta \Rightarrow |f(x) - f(c)| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in A :\;
+  \operatorname{Within}(x,c,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(f(x),f(c),\varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ContinuousOn}(f, B)
+  \;\colonequiv\;
+  \forall c \in B :\;
+  \operatorname{ContinuousAt}(f, c).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{ContinuousOn}(f, B)
+  \;\iff\;
+  \exists c \in B :\;
+  \operatorname{DiscontinuousAt}(f, c).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 Continuity on a set is a pointwise condition: $\delta$ may depend on
-both $\varepsilon$ and the base point $c$. This is the crucial
-structural difference from uniform continuity, where a single $\delta$
-must serve all $c \in B$ simultaneously. The pointwise condition is
-logically weaker and admits functions whose local control deteriorates
-as $c$ varies — for example, $f(x) = 1/x$ on $(0,1)$ is continuous
-on $(0,1)$ but not uniformly so.
+both $\varepsilon$ and the base point $c \in B$. This is the
+essential structural difference from $\operatorname{UniformlyContinuous}
+(f,B)$, where a single $\delta$ must serve all $c \in B$
+simultaneously. The pointwise condition admits functions whose local
+control deteriorates as $c$ varies — $f(x) = 1/x$ on $(0,1)$ is
+$\operatorname{ContinuousOn}$ but not $\operatorname{UniformlyContinuous}$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -337,18 +444,19 @@ on $(0,1)$ but not uniformly so.
 \begin{theorem}[Algebra of Continuity at a Point]
 \label{thm:continuity-algebra-at-a-point}
 Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, let
-$b \in \mathbb{R}$, and let $c \in A$. Assume $f$ and $g$ are
-continuous at $c$.
+$b \in \mathbb{R}$, and let $c \in A$. If
+$\operatorname{ContinuousAt}(f,c)$ and $\operatorname{ContinuousAt}(g,c)$,
+then:
 \begin{enumerate}[label=(\alph*)]
-  \item The functions $f+g$, $f-g$, $fg$, and $bf$ are continuous
-    at $c$.
-  \item If $h : A \to \mathbb{R}$ is continuous at $c$ and
-    $h(x) \neq 0$ for all $x \in A$, then $f/h$ is continuous
-    at $c$.
+  \item $\operatorname{ContinuousAt}(f+g, c)$,
+    $\operatorname{ContinuousAt}(f-g, c)$,
+    $\operatorname{ContinuousAt}(fg, c)$,
+    $\operatorname{ContinuousAt}(bf, c)$.
+  \item If $\operatorname{ContinuousAt}(h,c)$ and $h(x) \neq 0$ for
+    all $x \in A$, then $\operatorname{ContinuousAt}(f/h, c)$.
 \end{enumerate}
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:algebra-of-continuity-at-a-point]{\textit{Go to proof.}}
 \end{theorem}
 
@@ -356,28 +464,28 @@ continuous at $c$.
 \[
 \begin{aligned}
 &\text{(a)}\quad
-  \bigl(f \text{ cts at } c\bigr) \wedge
-  \bigl(g \text{ cts at } c\bigr)
+  \operatorname{ContinuousAt}(f,c)
+  \wedge \operatorname{ContinuousAt}(g,c)
   \;\Rightarrow\;
-  f+g,\; f-g,\; fg,\; bf \text{ cts at } c. \\[4pt]
+  \operatorname{ContinuousAt}(f+g,c),\;
+  \operatorname{ContinuousAt}(fg,c),\;
+  \operatorname{ContinuousAt}(bf,c). \\[4pt]
 &\text{(b)}\quad
-  \bigl(f \text{ cts at } c\bigr) \wedge
-  \bigl(h \text{ cts at } c\bigr) \wedge
-  \bigl(\forall x \in A,\; h(x) \neq 0\bigr)
+  \operatorname{ContinuousAt}(h,c)
+  \wedge (\forall x \in A,\; h(x)\neq 0)
   \;\Rightarrow\;
-  f/h \text{ cts at } c.
+  \operatorname{ContinuousAt}(f/h,c).
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The proof reduces continuity at $c$ to the limit of the function
-at $c$, then applies the algebra of limits of functions. Continuity
-is preserved under all four arithmetic operations, with the natural
-restriction that division requires the denominator to be nonzero
-throughout $A$, not merely at $c$. This is stronger than what the
-limit theorem requires (denominator nonzero only at $c$) because
-$h$ must be well-defined as a function on all of $A$.
+The proof reduces $\operatorname{ContinuousAt}(f,c)$ to
+$\operatorname{FunctionLimit}(f,c,f(c))$, then applies the algebra
+of function limits. Part (b) requires $h(x) \neq 0$ throughout $A$
+— not merely at $c$ — because $h$ must be well-defined as a function
+on $A$. This is a stronger hypothesis than the limit quotient rule,
+which only needs $h(c) \neq 0$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -387,43 +495,35 @@ $h$ must be well-defined as a function on all of $A$.
 \begin{theorem}[Algebra of Continuity on a Set]
 \label{thm:continuity-algebra-on-a-set}
 Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, and
-let $b \in \mathbb{R}$. Assume $f$ and $g$ are continuous on $A$.
+let $b \in \mathbb{R}$. If $\operatorname{ContinuousOn}(f,A)$ and
+$\operatorname{ContinuousOn}(g,A)$, then:
 \begin{enumerate}[label=(\alph*)]
-  \item The functions $f+g$, $f-g$, $fg$, and $bf$ are continuous
-    on $A$.
-  \item If $h : A \to \mathbb{R}$ is continuous on $A$ and
-    $h(x) \neq 0$ for all $x \in A$, then $f/h$ is continuous
-    on $A$.
+  \item $\operatorname{ContinuousOn}(f+g,A)$,
+    $\operatorname{ContinuousOn}(f-g,A)$,
+    $\operatorname{ContinuousOn}(fg,A)$,
+    $\operatorname{ContinuousOn}(bf,A)$.
+  \item If $\operatorname{ContinuousOn}(h,A)$ and $h(x) \neq 0$ for
+    all $x \in A$, then $\operatorname{ContinuousOn}(f/h,A)$.
 \end{enumerate}
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:algebra-of-continuity-on-a-set]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\begin{aligned}
-&\text{(a)}\quad
-  \bigl(f \text{ cts on } A\bigr) \wedge
-  \bigl(g \text{ cts on } A\bigr)
+  \operatorname{ContinuousOn}(f,A)
+  \wedge \operatorname{ContinuousOn}(g,A)
   \;\Rightarrow\;
-  f+g,\; f-g,\; fg,\; bf \text{ cts on } A. \\[4pt]
-&\text{(b)}\quad
-  \bigl(h \text{ cts on } A\bigr) \wedge
-  \bigl(\forall x \in A,\; h(x) \neq 0\bigr)
-  \;\Rightarrow\;
-  f/h \text{ cts on } A.
-\end{aligned}
+  \operatorname{ContinuousOn}(f+g,A),\;
+  \operatorname{ContinuousOn}(fg,A).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-This is the pointwise theorem applied at an arbitrary $c \in A$. The
-set-level statement follows immediately by universally quantifying
-over $c$. It packages the algebraic stability of continuity into a
-single statement about function spaces: the set $C(A)$ of continuous
-functions on $A$ is closed under the standard algebraic operations.
+The pointwise theorem applied at an arbitrary $c \in A$. The set
+$C^0(A)$ of continuous functions on $A$ is closed under the
+standard ring operations: it is a subalgebra of $\mathbb{R}^A$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -433,35 +533,46 @@ functions on $A$ is closed under the standard algebraic operations.
 \begin{theorem}[Composition of Continuous Functions]
 \label{thm:composition-of-continuous-functions}
 Let $X, Y \subseteq \mathbb{R}$, let $f : X \to \mathbb{R}$ and
-$g : Y \to \mathbb{R}$ with $f(X) \subseteq Y$. If $f$ is continuous
-at $x_0 \in X$ and $g$ is continuous at $f(x_0) \in Y$, then the
-composition $h = g \circ f : X \to \mathbb{R}$ is continuous at
-$x_0$.
+$g : Y \to \mathbb{R}$ with $f(X) \subseteq Y$. If
+$\operatorname{ContinuousAt}(f, x_0)$ and
+$\operatorname{ContinuousAt}(g, f(x_0))$, then
+$\operatorname{ContinuousAt}(g \circ f, x_0)$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:composition-is-continuous]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \bigl(f \text{ cts at } x_0\bigr)
+  \operatorname{ContinuousAt}(f,x_0)
   \;\wedge\;
-  \bigl(g \text{ cts at } f(x_0)\bigr)
+  \operatorname{ContinuousAt}(g,f(x_0))
   \;\Rightarrow\;
-  \bigl(g \circ f \text{ cts at } x_0\bigr).
+  \operatorname{ContinuousAt}(g \circ f,\, x_0).
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+  \operatorname{DiscontinuousAt}(g \circ f,\, x_0)
+  \;\Rightarrow\;
+  \operatorname{DiscontinuousAt}(f, x_0)
+  \;\vee\;
+  \operatorname{DiscontinuousAt}(g, f(x_0)).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Continuity is preserved by composition: closeness of $x$ to $x_0$
-forces closeness of $f(x)$ to $f(x_0)$, which in turn forces
-closeness of $g(f(x))$ to $g(f(x_0))$. The $\varepsilon$-$\delta$
-proof makes this chain explicit: given $\varepsilon > 0$, extract
-$\delta_1$ from continuity of $g$ at $f(x_0)$, then extract $\delta$
-from continuity of $f$ at $x_0$ using $\delta_1$ as the new target.
-The condition $f(X) \subseteq Y$ ensures $g$ is defined on the range
-of $f$.
+Continuity is preserved by composition. The proof chains two
+$\operatorname{Within}$ implications: $\operatorname{Within}(x,x_0,\delta)$
+forces $\operatorname{Within}(f(x),f(x_0),\delta_1)$ by continuity
+of $f$, which forces $\operatorname{OutputTolerance}(g(f(x)),
+g(f(x_0)),\varepsilon)$ by continuity of $g$. The condition
+$f(X) \subseteq Y$ ensures $g$ is defined on the range of $f$.
+Note the contrast with $\operatorname{FunctionLimit}$ composition,
+which required the extra hypothesis $g(c_2) = L$: here no such
+hypothesis is needed because continuity already includes the base
+point.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -470,24 +581,24 @@ of $f$.
 
 \begin{theorem}[Local Properties of Continuous Functions]
 \label{thm:local-properties-of-continuous-functions}
-Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$ be
-continuous at $a \in E$. Then:
+Let $E \subseteq \mathbb{R}$ and let $f : E \to \mathbb{R}$ with
+$\operatorname{ContinuousAt}(f, a)$. Then:
 \begin{enumerate}[label=\arabic*$^\circ$]
-  \item \textbf{Local boundedness.} $f$ is bounded on some
+  \item \textbf{Local boundedness.}
+    $\operatorname{BoundedNear}(f, a)$: $f$ is bounded on some
     neighborhood $U_E(a)$.
-  \item \textbf{Local sign stability.} If $f(a) \neq 0$, then in
-    some neighborhood $U_E(a)$, all values of $f$ have the same
-    sign as $f(a)$.
-  \item \textbf{Algebra at a point.} If $g : U_E(a) \to \mathbb{R}$
-    is continuous at $a$, then $f+g$ and $f-g$ are continuous at
-    $a$, and $f/g$ is continuous at $a$ provided $g(a) \neq 0$.
-  \item \textbf{Composition.} If $g : Y \to \mathbb{R}$ is
-    continuous at $b \in Y$ and $f : E \to Y$ satisfies
-    $f(a) = b$, then $g \circ f$ is continuous at $a$.
+  \item \textbf{Sign stability.} If $f(a) \neq 0$, then
+    $\operatorname{sgn}(f(x)) = \operatorname{sgn}(f(a))$ for all
+    $x$ in some $U_E(a)$.
+  \item \textbf{Algebra.} If $\operatorname{ContinuousAt}(g, a)$
+    for $g : U_E(a) \to \mathbb{R}$, then $f+g$, $f-g$ are cts at
+    $a$, and $f/g$ is cts at $a$ when $g(a) \neq 0$.
+  \item \textbf{Composition.} If $\operatorname{ContinuousAt}(g, f(a))$
+    for $g : Y \to \mathbb{R}$ with $f(E) \subseteq Y$, then
+    $\operatorname{ContinuousAt}(g \circ f, a)$.
 \end{enumerate}
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:local-properties-of-continuous-functions]{\textit{Go to proof.}}
 \end{theorem}
 
@@ -495,28 +606,27 @@ continuous at $a \in E$. Then:
 \[
 \begin{aligned}
 1^\circ\quad
-  &\exists\,\delta_1 > 0,\; \exists M > 0:\;
-   \forall x \in E,\; |x-a| < \delta_1
-   \;\Rightarrow\; |f(x)| \leq M. \\[4pt]
+  &\operatorname{ContinuousAt}(f,a)
+  \;\Rightarrow\;
+  \operatorname{BoundedNear}(f,a). \\[3pt]
 2^\circ\quad
-  &f(a) \neq 0
-   \;\Rightarrow\;
-   \exists\,\delta_2 > 0:\;
-   \forall x \in E,\; |x-a| < \delta_2
-   \;\Rightarrow\; \operatorname{sgn}(f(x)) = \operatorname{sgn}(f(a)).
+  &\operatorname{ContinuousAt}(f,a) \wedge f(a)\neq 0
+  \;\Rightarrow\;
+  \exists\,\delta>0,\;\forall x\in E:\;
+  \operatorname{Within}(x,a,\delta)
+  \Rightarrow \operatorname{sgn}(f(x))=\operatorname{sgn}(f(a)).
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Continuity at a point forces local regularity in four respects.
-Part $1^\circ$ says the function cannot blow up near $a$. Part
-$2^\circ$ is sign preservation: if $f(a) > 0$ (respectively $< 0$),
-then $f$ remains positive (respectively negative) in a full
-neighborhood. Parts $3^\circ$ and $4^\circ$ package the algebra and
-composition theorems into the local setting. These four properties
-are the standard toolkit for proving local consequences of continuity
-in arguments where only behavior near $a$ is relevant.
+These four local consequences of $\operatorname{ContinuousAt}(f,a)$
+package the most-used tools in a single theorem. Part $1^\circ$
+prevents blow-up near $a$. Part $2^\circ$ is sign preservation — the
+key ingredient in the IVT and EVT proofs. Parts $3^\circ$ and
+$4^\circ$ are the pointwise algebra and composition theorems
+re-stated as local consequences. The theorem is load-bearing in all
+arguments that reason about behavior near a single point.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -525,11 +635,10 @@ in arguments where only behavior near $a$ is relevant.
 
 \begin{lemma}[Power Function Is Continuous]
 \label{lem:power-function-continuous}
-Let $n \in \mathbb{N}$. The function $f : \mathbb{R} \to \mathbb{R}$
-defined by $f(x) = x^n$ is continuous.
+Let $n \in \mathbb{N}$. The function $f(x) = x^n$ satisfies
+$\operatorname{ContinuousOn}(f, \mathbb{R})$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:power-function-is-continuous]{\textit{Go to proof.}}
 \end{lemma}
 
@@ -537,18 +646,21 @@ defined by $f(x) = x^n$ is continuous.
 \[
   \forall n \in \mathbb{N},\;
   \forall x_0 \in \mathbb{R},\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in \mathbb{R}:\;
-  |x - x_0| < \delta \Rightarrow |x^n - x_0^n| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in \mathbb{R} :\;
+  \operatorname{Within}(x,x_0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(x^n, x_0^n, \varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 Every monomial is continuous on $\mathbb{R}$. The proof factors
-$x^n - x_0^n = (x - x_0)(x^{n-1} + x^{n-2}x_0 + \cdots +
-x_0^{n-1})$ and bounds the second factor uniformly near $x_0$. This
-lemma is the base case for the continuity of polynomials.
+$x^n - x_0^n = (x-x_0)(x^{n-1}+x^{n-2}x_0+\cdots+x_0^{n-1})$ and
+bounds the second factor uniformly near $x_0$. This lemma is the
+base case for the continuity of polynomials via the algebra of
+continuous functions.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -558,31 +670,31 @@ lemma is the base case for the continuity of polynomials.
 \begin{theorem}[Any Real Polynomial Is Continuous]
 \label{thm:polynomials-are-continuous}
 Let $P(x) = a_0 + a_1 x + \cdots + a_n x^n$ be a real polynomial.
-Then $P$ is continuous on $\mathbb{R}$.
+Then $\operatorname{ContinuousOn}(P, \mathbb{R})$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:polynomials-are-continuous]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall\, P \in \mathbb{R}[x],\;
+  \forall P \in \mathbb{R}[x],\;
   \forall x_0 \in \mathbb{R},\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in \mathbb{R}:\;
-  |x - x_0| < \delta \Rightarrow |P(x) - P(x_0)| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in \mathbb{R} :\;
+  \operatorname{Within}(x,x_0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(P(x),P(x_0),\varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Polynomials are continuous because the class of continuous functions
-is closed under addition and scalar multiplication, and each monomial
-$x^k$ is continuous by the Power Function lemma. The argument is
-purely structural: apply the algebra of continuous functions finitely
-many times. This result, combined with the quotient rule, yields the
-continuity of rational functions on their domains.
+Polynomials are continuous because $C^0(\mathbb{R})$ is closed under
+addition and scalar multiplication, and each monomial $x^k$ is in
+$C^0(\mathbb{R})$ by the power function lemma. The argument is
+structural: apply the algebra of continuous functions finitely many
+times.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -591,32 +703,33 @@ continuity of rational functions on their domains.
 
 \begin{proposition}[Rational Functions Are Continuous on Their Domain]
 \label{prop:rational-functions-continuous}
-Let $P$ and $Q$ be real polynomials and let
-$D = \{\, x \in \mathbb{R} \mid Q(x) \neq 0 \,\}$. The rational
-function $R(x) = P(x)/Q(x)$ is continuous on $D$.
+Let $P, Q$ be real polynomials and let
+$D = \{x \in \mathbb{R} : Q(x) \neq 0\}$.
+Then $\operatorname{ContinuousOn}(P/Q, D)$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:rational-function-continuous-on-domain]{\textit{Go to proof.}}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
+  \operatorname{ContinuousOn}(P/Q,\, D)
+  \;\colonequiv\;
   \forall x_0 \in D,\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in D:\;
-  |x - x_0| < \delta \Rightarrow |R(x) - R(x_0)| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in D :\;
+  \operatorname{Within}(x,x_0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(R(x),R(x_0),\varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Both $P$ and $Q$ are continuous everywhere; at every point of $D$
-the denominator is nonzero, so the quotient rule for continuous
-functions applies. The domain $D$ is open in $\mathbb{R}$ since $Q$
-is continuous and $\{0\}$ is closed, so $D = Q^{-1}(\mathbb{R}
-\setminus \{0\})$ is the preimage of an open set under a continuous
-function.
+Both $P$ and $Q$ are in $C^0(\mathbb{R})$; at every $x_0 \in D$ the
+denominator is nonzero, so the quotient rule for continuous functions
+applies. The domain $D$ is open: $Q$ is continuous and $D =
+Q^{-1}(\mathbb{R} \setminus \{0\})$ is the preimage of an open set.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -626,50 +739,45 @@ function.
 \begin{theorem}[Square Root Preserves Continuity]
 \label{thm:square-root-preserves-continuity}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$ with
-$f(x) \geq 0$ for all $x \in A$, and define
-$(\sqrt{f})(x) := \sqrt{f(x)}$ for $x \in A$.
+$f \geq 0$ on $A$, and define $\sqrt{f}(x) := \sqrt{f(x)}$.
 \begin{enumerate}[label=(\alph*)]
-  \item If $f$ is continuous at $c \in A$, then $\sqrt{f}$ is
-    continuous at $c$.
-  \item If $f$ is continuous on $A$, then $\sqrt{f}$ is continuous
-    on $A$.
+  \item $\operatorname{ContinuousAt}(f,c) \Rightarrow
+    \operatorname{ContinuousAt}(\sqrt{f},c)$.
+  \item $\operatorname{ContinuousOn}(f,A) \Rightarrow
+    \operatorname{ContinuousOn}(\sqrt{f},A)$.
 \end{enumerate}
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:square-root-preserves-continuity]{\textit{Go to proof.}}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \bigl(f \text{ cts at } c,\; f \geq 0\bigr)
+  \operatorname{ContinuousAt}(f,c) \wedge f \geq 0
   \;\Rightarrow\;
-  \bigl(\sqrt{f} \text{ cts at } c\bigr).
+  \operatorname{ContinuousAt}(\sqrt{f},c).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The square root operation preserves continuity when the function
-is nonneg\-a\-tive-valued. Part (b) follows from part (a) by
-pointwise application. The proof of part (a) treats the cases
-$f(c) > 0$ and $f(c) = 0$ separately: when $f(c) > 0$, rationalize
-$|\sqrt{f(x)} - \sqrt{f(c)}| = |f(x) - f(c)| / (\sqrt{f(x)} +
-\sqrt{f(c)})$ and bound the denominator away from zero; when
-$f(c) = 0$, use $|\sqrt{f(x)}| = \sqrt{f(x)} \leq \sqrt{\varepsilon}$
-once $|f(x)| < \varepsilon$.
+The square root operation preserves continuity on nonnegative-valued
+functions. The proof splits on whether $f(c) > 0$ or $f(c) = 0$.
+For $f(c) > 0$: rationalize $|\sqrt{f(x)} - \sqrt{f(c)}| =
+|f(x)-f(c)| / (\sqrt{f(x)}+\sqrt{f(c)})$ and bound the denominator
+away from zero. For $f(c) = 0$: use $\sqrt{f(x)} \leq
+\sqrt{\varepsilon}$ once $|f(x)| < \varepsilon$.
 \end{remark*}
 
 % ---------------------------------------------------------
-% Proposition — Exponentiation Is Continuous (base variable)
+% Propositions — Exponentiation Is Continuous
 % ---------------------------------------------------------
 
 \begin{proposition}[Exponentiation Is Continuous, I]
 \label{prop:exponentiation-continuous-base}
-Let $a > 0$. The function $f : \mathbb{R} \to \mathbb{R}$ defined
-by $f(x) := a^x$ is continuous.
+Let $a > 0$. Then $\operatorname{ContinuousOn}(x \mapsto a^x,
+\mathbb{R})$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:exponentiation-is-continuous-1]{\textit{Go to proof.}}
 \end{proposition}
 
@@ -677,32 +785,28 @@ by $f(x) := a^x$ is continuous.
 \[
   \forall a > 0,\;
   \forall x_0 \in \mathbb{R},\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in \mathbb{R}:\;
-  |x - x_0| < \delta \Rightarrow |a^x - a^{x_0}| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in \mathbb{R} :\;
+  \operatorname{Within}(x,x_0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(a^x, a^{x_0}, \varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-For a fixed positive base $a$, real exponentiation in the exponent
-variable is continuous on all of $\mathbb{R}$. The proof uses the
-construction of real exponentiation and the continuity properties
-established in that context. This is part of the foundational
-justification that the exponential function behaves as expected.
+For fixed positive base $a$, the exponential is continuous on all of
+$\mathbb{R}$. The proof uses the construction of real exponentiation
+and the continuity properties established in the elementary functions
+chapter.
 \end{remark*}
-
-% ---------------------------------------------------------
-% Proposition — Exponentiation Is Continuous (exponent variable)
-% ---------------------------------------------------------
 
 \begin{proposition}[Exponentiation Is Continuous, II]
 \label{prop:exponentiation-continuous-exponent}
-Let $p \in \mathbb{R}$. The function $f : (0,\infty) \to \mathbb{R}$
-defined by $f(x) := x^p$ is continuous.
+Let $p \in \mathbb{R}$. Then $\operatorname{ContinuousOn}(x \mapsto
+x^p,\, (0,\infty))$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:exponentiation-is-continuous-1]{\textit{Go to proof.}}
 \end{proposition}
 
@@ -710,19 +814,13 @@ defined by $f(x) := x^p$ is continuous.
 \[
   \forall p \in \mathbb{R},\;
   \forall x_0 > 0,\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x > 0:\;
-  |x - x_0| < \delta \Rightarrow |x^p - x_0^p| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x > 0 :\;
+  \operatorname{Within}(x,x_0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(x^p, x_0^p, \varepsilon).
 \]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-For a fixed real exponent $p$, exponentiation in the base variable
-is continuous on the positive reals. Together with Proposition
-\hyperref[prop:exponentiation-continuous-base]{I}, this establishes
-that the two-variable function $(a,x) \mapsto a^x$ is separately
-continuous in each variable on its natural domain.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -731,38 +829,33 @@ continuous in each variable on its natural domain.
 
 \begin{proposition}[Continuous Extension to a Closed Interval]
 \label{prop:continuous-extension-closed-interval}
-Let $f : (a,b] \to \mathbb{R}$ be continuous. Suppose
-$L := \lim_{x \to a^+} f(x)$ exists. Define
-$\widetilde{f} : [a,b] \to \mathbb{R}$ by
-\[
-  \widetilde{f}(x) :=
-  \begin{cases}
-    L, & x = a, \\
-    f(x), & x \in (a,b].
-  \end{cases}
-\]
-Then $\widetilde{f}$ is continuous on $[a,b]$.
+Let $\operatorname{ContinuousOn}(f, (a,b])$ and suppose
+$L := \lim_{x \to a^+} f(x)$ exists. Define $\widetilde{f} :
+[a,b] \to \mathbb{R}$ by $\widetilde{f}(a) := L$ and
+$\widetilde{f}(x) := f(x)$ for $x \in (a,b]$. Then
+$\operatorname{ContinuousOn}(\widetilde{f}, [a,b])$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:continuous-extension-to-closed-interval]{\textit{Go to proof.}}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \Bigl(\lim_{x \to a^+} f(x) = L \in \mathbb{R}\Bigr)
+  \operatorname{RightLimit}(f, a, L)
   \;\Rightarrow\;
-  \widetilde{f} \text{ is continuous on } [a,b].
+  \operatorname{ContinuousOn}(\widetilde{f},\, [a,b]).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 If the right-hand limit at the missing endpoint exists, the function
-extends continuously to that endpoint by assignment. Continuity of
-$\widetilde{f}$ away from $a$ is inherited from $f$. Continuity at
-$a$ follows from the definition of $\widetilde{f}(a) = L$ and the
-one-sided limit. This proposition is used in the proof that uniformly
-continuous functions on open intervals extend to their closure.
+extends continuously to the closed interval. Continuity at $a$ uses
+$\operatorname{Within}$ (not $\operatorname{InputTolerance}$) so the
+definition of $\widetilde{f}(a) = L$ is used directly — the limit
+condition provides the output tolerance for sequences approaching $a$
+from the right, and $\widetilde{f}(a) = L$ provides it for $x = a$.
+This proposition underlies the proof that uniformly continuous
+functions on open intervals extend to their closure.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -775,32 +868,41 @@ Let $X \subseteq \mathbb{R}$. The \textbf{space of continuous
 functions on $X$} is
 \[
   C^0(X;\mathbb{R}) \;:=\;
-  \{\, f : X \to \mathbb{R} : f \text{ is continuous on } X \,\}.
+  \{\, f : X \to \mathbb{R} : \operatorname{ContinuousOn}(f,X) \,\}.
 \]
-When the codomain is clear from context, this space is denoted
-$C^0(X)$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
   f \in C^0(X)
   \;\iff\;
+  \operatorname{ContinuousOn}(f,X)
+  \;\iff\;
   \forall c \in X,\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in X:\;
-  |x - c| < \delta \Rightarrow |f(x) - f(c)| < \varepsilon.
+  \ForallOT{\varepsilon},\;
+  \ExistsIT{\delta},\;
+  \forall x \in X :\;
+  \operatorname{Within}(x,c,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(f(x),f(c),\varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  f \in C^0(X)
+  \;\colonequiv\;
+  \operatorname{ContinuousOn}(f,X).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The set $C^0(X;\mathbb{R})$ collects all continuous real-valued
-functions on the fixed domain $X$ into a single mathematical object.
-It is closed under pointwise addition and scalar multiplication, so
-it forms a real vector space. On compact $X$, it carries the
-uniform norm $\|f\|_\infty = \sup_{x \in X} |f(x)|$, making it a
-Banach space. This is the setting for the Weierstrass approximation
-theorem and for the study of function sequences.
+$C^0(X)$ is closed under pointwise addition and scalar
+multiplication — it is a real vector space and in fact a
+commutative ring. On compact $X$ it carries the uniform norm
+$\|f\|_\infty = \sup_{x \in X}|f(x)|$, making it a Banach space.
+This is the natural setting for the Weierstrass approximation
+theorem and for uniform convergence theory.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -809,47 +911,52 @@ theorem and for the study of function sequences.
 
 \begin{proposition}[Sign Preservation]
 \label{prop:sign-preservation}
-Let $f : E \to \mathbb{R}$ be continuous at $x_0 \in E$. If
-$f(x_0) > 0$, then there exists $\delta > 0$ such that
+Let $\operatorname{ContinuousAt}(f, x_0)$ where $f : E \to \mathbb{R}$.
+If $f(x_0) > 0$, then
 \[
-  f(x) > 0 \quad \text{for all } x \in E \text{ with }
-  |x - x_0| < \delta.
+  \exists\,\delta > 0,\;
+  \forall x \in E :\;
+  \operatorname{Within}(x,x_0,\delta) \Rightarrow f(x) > 0.
 \]
-Analogously, if $f(x_0) < 0$, then there exists $\delta > 0$
-such that $f(x) < 0$ for all $x \in E$ with $|x - x_0| < \delta$.
+Analogously, $f(x_0) < 0$ implies $f(x) < 0$ on some
+$U_E(x_0)$.
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:sign-preservation]{\textit{Go to proof.}}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \bigl(f \text{ cts at } x_0\bigr) \wedge
-  \bigl(f(x_0) > 0\bigr)
+  \operatorname{ContinuousAt}(f,x_0) \wedge f(x_0)>0
   \;\Rightarrow\;
-  \exists\,\delta > 0,\;
-  \forall x \in E:\;
-  |x - x_0| < \delta \Rightarrow f(x) > 0.
+  \exists\,\delta>0,\;\forall x\in E:\;
+  \operatorname{Within}(x,x_0,\delta) \Rightarrow f(x)>0.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \operatorname{ContinuousAt}(f,x_0) \wedge f(x_0)>0
+  \;\Rightarrow\;
+  \operatorname{BoundedAwayFromZeroNear}(f, x_0).
 \]
 \end{remark*}
 
 \begin{remark*}[Contrapositive quantified statement]
 \[
-  \bigl(\forall\delta > 0,\;\exists x \in E:\;
-    |x - x_0| < \delta \wedge f(x) \leq 0\bigr)
+  \bigl(\forall\delta>0,\;\exists x\in E:\;
+    \operatorname{Within}(x,x_0,\delta) \wedge f(x)\leq 0\bigr)
   \;\Rightarrow\;
-  \bigl(f(x_0) \leq 0 \;\vee\; f \text{ not cts at } x_0\bigr).
+  f(x_0) \leq 0 \;\vee\; \operatorname{DiscontinuousAt}(f,x_0).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A continuous function that is positive (respectively negative) at a
-point remains positive (respectively negative) throughout some
-neighborhood of that point. The proof applies the $\varepsilon$-$\delta$
-definition with $\varepsilon = f(x_0)/2 > 0$: the resulting $\delta$
-forces $|f(x) - f(x_0)| < f(x_0)/2$, which gives $f(x) > f(x_0)/2
-> 0$. Sign preservation is the key ingredient in the proof of the
-Intermediate Value Theorem and in the argument that continuous
-functions on compact sets attain their extreme values.
+A continuous function that is positive at $x_0$ remains positive
+throughout some neighborhood. The proof applies
+$\operatorname{ContinuousAt}(f,x_0)$ with $\varepsilon = f(x_0)/2$:
+the resulting $\delta$ forces $|f(x)-f(x_0)| < f(x_0)/2$, so
+$f(x) > f(x_0)/2 > 0$. Sign preservation is the key ingredient in
+the proofs of the Intermediate Value Theorem (a function cannot
+cross zero without hitting it) and the Extreme Value Theorem.
 \end{remark*}
