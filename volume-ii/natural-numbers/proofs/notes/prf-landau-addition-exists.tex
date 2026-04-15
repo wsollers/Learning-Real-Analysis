@@ -1,0 +1,70 @@
+% volume-ii/natural-numbers/proofs/notes/landau-addition-exists.tex
+% =========================================================
+% Proof: The addition function exists
+% Source: volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{The addition function exists}
+\label{prf:landau-addition-exists}
+
+\begin{remark*}[Return]
+\hyperref[thm:landau-addition-exists-unique]{$\leftarrow$ Back to Theorem
+(Definition of Addition) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim There exists a function $f : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$
+satisfying \textbf{A6} and \textbf{A7}.
+
+Construct $f : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ as follows.
+Fix $x \in \mathbb{N}$. Define $f(x, y)$ by recursion on $y$:
+\[
+  f(x, y) = \begin{cases}
+    x'         & \text{if } y = 1, \\
+    (f(x, v))' & \text{if } y = v' \text{ for some } v \in \mathbb{N}.
+  \end{cases}
+\]
+This definition is valid: by \ByThm{Existence and Uniqueness of Predecessor},
+every $y \in \mathbb{N}$ is either $1$ or $v'$ for a unique $v$, and the two
+cases are mutually exclusive by \ByThm{Axiom P3}.
+
+We verify that $f$ satisfies \textbf{A6} and \textbf{A7}.
+
+\textbf{A6:} $f(x,1) = x'$ holds by the first case of the definition.
+
+\textbf{A7:} $f(x,y') = (f(x,y))'$. Since $y'$ is a successor, the second
+case applies with $v = y$, giving $f(x, y') = (f(x,y))'$, as required.
+
+Hence $f$ satisfies both defining equations of addition.
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Explicit construction by primitive recursion on $y$. Both equations hold by
+definition --- no induction argument is needed in the body of the proof.
+The validity of the recursive definition rests on
+\hyperref[thm:landau-pred-unique]{Existence and Uniqueness of Predecessor}
+and \hyperref[ax:landau-peano]{Axiom P3}.
+
+\FlashProof{1. Fix $x$. Define $f(x,1) = x'$ and $f(x,v') = (f(x,v))'$.
+2. Valid: every $y$ is $1$ or a successor by predecessor theorem + P3.
+3. A6 holds by case 1. A7 holds by case 2. Done.}
+\FlashImplies{thm:landau-addition-exists-unique}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[ax:landau-peano]{Peano Axioms P3, P5}
+  \item \hyperref[thm:landau-pred-unique]{Existence and Uniqueness of Predecessor}
+\end{itemize}
+
+\FlashUses{ax:landau-peano, thm:landau-pred-unique}
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+\texttt{addition\_exists} in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}.
+The construction uses \texttt{N\_rec} with base \texttt{successor x}
+and step \texttt{fun prev => successor prev}.
+Key tactics: \texttt{let}, \texttt{refine}, \texttt{show}, \texttt{rw}.
+\end{remark*}

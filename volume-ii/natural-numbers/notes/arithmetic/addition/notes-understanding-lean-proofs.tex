@@ -1,0 +1,215 @@
+% volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-lean-proofs.tex
+%
+% Line-by-line annotation of the Lean 4 proofs of Theorem 4 (Landau).
+% Purpose: to memorialize Lean arcana encountered during Project Landau
+% and to serve as a reference for future Lean proof work in this project.
+
+\subsection*{Lean 4 Proofs: Theorem 4 (Landau)}
+
+The following section annotates the Lean 4 proofs of the two halves of
+Landau's Theorem~4. Both proofs live in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean} and are verified
+without Mathlib, using only the axioms in \texttt{Axioms.lean}.
+
+% ------------------------------------------------------------------
+\subsubsection*{Part I: Uniqueness (\texttt{addition\_unique})}
+% ------------------------------------------------------------------
+
+\begin{verbatim}
+theorem addition_unique :
+    ∀ f g : N → N → N,
+    (∀ x : N, f x one = successor x) →
+    (∀ x : N, g x one = successor x) →
+    (∀ x y : N, f x (successor y) = successor (f x y)) →
+    (∀ x y : N, g x (successor y) = successor (g x y)) →
+    ∀ x y : N, f x y = g x y := by
+\end{verbatim}
+
+\noindent
+The theorem statement is a chain of implications. In Lean~4, every
+\verb|→| is a function arrow: the theorem is literally a function that
+takes hypotheses as arguments and returns a proof. The type
+\verb|N → N → N| is curried --- it means a function that takes an
+\verb|N| and returns a function \verb|N → N|, which is equivalent to a
+function on $\mathbb{N} \times \mathbb{N}$.
+The \verb|∀ f g : N → N → N| quantifies over the two functions just as
+\verb|∀ x : N| quantifies over natural numbers; functions are first-class
+values in Lean's type theory.
+
+\begin{verbatim}
+    intro f g
+    intro hfx
+    intro hgx
+    intro hfs
+    intro hgs
+    intro x y
+\end{verbatim}
+
+\noindent
+The \verb|intro| tactic peels off one layer of \verb|∀| or \verb|→| at a
+time, moving the universally quantified variable or hypothesis into the
+local context. Since \verb|f| and \verb|g| appear first under \verb|∀|,
+they must be introduced before the hypotheses that mention them.
+The names \verb|hfx|, \verb|hgx|, \verb|hfs|, \verb|hgs| are chosen
+mnemonically: \verb|hfx| is the hypothesis about \verb|f| at base,
+\verb|hfs| is the hypothesis about \verb|f| at the successor step, and
+so on. After \verb|intro x y|, both $x$ and $y$ are fixed arbitrary
+elements of $\mathbb{N}$ and the goal is \verb|f x y = g x y|.
+
+\begin{verbatim}
+    apply A5_Induction (fun v => f x v = g x v)
+\end{verbatim}
+
+\noindent
+This is the central move. \verb|A5_Induction| has type
+\[
+  \forall (P : \mathbb{N} \to \mathsf{Prop}),\;
+  P(1) \to
+  (\forall x,\, P(x) \to P(x')) \to
+  \forall x,\, P(x).
+\]
+We instantiate $P$ as the predicate \verb|fun v => f x v = g x v|,
+which says ``$f$ and $g$ agree at $v$ when the first argument is the
+fixed $x$.'' Note that $x$ is free in this predicate --- it is captured
+from the surrounding context. Lean creates two new goals: the base case
+$P(1)$ and the inductive step.
+
+\begin{verbatim}
+    · rw [hfx x, hgx x]
+\end{verbatim}
+
+\noindent
+The base case goal is \verb|f x one = g x one|.
+The \verb|rw| tactic rewrites using equalities: \verb|hfx x| is the
+specialisation of \verb|hfx| to the fixed \verb|x|, giving
+\verb|f x one = successor x|. After rewriting, \verb|f x one| becomes
+\verb|successor x|. Then \verb|hgx x| rewrites \verb|g x one| to
+\verb|successor x| as well. The goal becomes
+\verb|successor x = successor x|, which is closed by \verb|rfl|
+automatically.
+
+\begin{verbatim}
+    · intro v ih
+      rw [hfs x v, hgs x v]
+      congr
+\end{verbatim}
+
+\noindent
+The inductive step goal is
+\verb|f x (successor v) = g x (successor v)|,
+with inductive hypothesis \verb|ih : f x v = g x v| in context.
+\verb|hfs x v| rewrites \verb|f x (successor v)| to
+\verb|successor (f x v)|, and \verb|hgs x v| rewrites
+\verb|g x (successor v)| to \verb|successor (g x v)|.
+The goal is now \verb|successor (f x v) = successor (g x v)|.
+The \verb|congr| tactic (``congruence'') strips the outermost
+constructor --- here \verb|successor| --- reducing the goal to
+\verb|f x v = g x v|, which is exactly \verb|ih|. Lean closes
+the goal automatically.
+
+% ------------------------------------------------------------------
+\subsubsection*{Part II: Existence (\texttt{addition\_exists})}
+% ------------------------------------------------------------------
+
+\begin{verbatim}
+theorem addition_exists :
+    ∃ f : N → N → N,
+    (∀ x : N, f x one = successor x) ∧
+    (∀ x y : N, f x (successor y) = successor (f x y)) := by
+\end{verbatim}
+
+\noindent
+An existential goal \verb|∃ f, P f| requires producing a witness ---
+a concrete \verb|f| --- and a proof that \verb|P f| holds.
+
+\begin{verbatim}
+  let f : N → N → N :=
+    fun x y =>
+      N_rec (successor x) (fun prev => successor prev) y
+\end{verbatim}
+
+\noindent
+The \verb|let| tactic introduces a local definition into the proof
+context. The witness \verb|f| is constructed using \verb|N_rec|, the
+primitive recursion axiom on $\mathbb{N}$:
+\[
+  \mathtt{N\_rec} : T \to (T \to T) \to \mathbb{N} \to T
+\]
+Applied here with $T = \mathbb{N}$:
+\begin{itemize}
+  \item Base value: \verb|successor x| --- the result when $y = 1$.
+  \item Step function: \verb|fun prev => successor prev| --- at each
+        successor step, wrap the previous result in \verb|successor|.
+  \item Argument: \verb|y| --- the natural number to recurse on.
+\end{itemize}
+This constructs exactly the piecewise definition
+\[
+  f(x, y) = \begin{cases} x' & \text{if } y = 1 \\ (f(x,v))' & \text{if } y = v' \end{cases}
+\]
+
+\begin{verbatim}
+  refine ⟨f, ?_, ?_⟩
+\end{verbatim}
+
+\noindent
+The \verb|refine| tactic provides a partial proof term with holes marked
+\verb|?_|. The angle bracket notation \verb|⟨f, ?_, ?_⟩| constructs the
+existential witness: \verb|f| is the function, and the two \verb|?_|
+placeholders become the two conjuncts to prove. Lean creates two new
+goals, one for each.
+
+\begin{verbatim}
+  · intro x
+    show N_rec (successor x) (fun prev => successor prev) one = successor x
+    rw [N_rec_one]
+\end{verbatim}
+
+\noindent
+The first goal is \verb|f x one = successor x|. Because \verb|f| is a
+\verb|let|-binding, Lean does not automatically unfold it. The
+\verb|show| tactic replaces the goal with a definitionally equal
+expression --- here the explicit unfolding of \verb|f x one| to its
+\verb|N_rec| form --- making the pattern visible for rewriting.
+\verb|N_rec_one| is the computation rule
+\verb|N_rec base step one = base|, so the rewrite closes the goal.
+
+\begin{verbatim}
+  · intro x y
+    show N_rec (successor x) (fun prev => successor prev) (successor y) =
+         successor (N_rec (successor x) (fun prev => successor prev) y)
+    rw [N_rec_succ]
+\end{verbatim}
+
+\noindent
+The second goal is \verb|f x (successor y) = successor (f x y)|.
+Again \verb|show| unfolds \verb|f| explicitly on both sides.
+\verb|N_rec_succ| is the computation rule
+\verb|N_rec base step (successor n) = step (N_rec base step n)|.
+After rewriting, the step function \verb|fun prev => successor prev|
+applied to \verb|N_rec ... y| reduces to
+\verb|successor (N_rec ... y)|, which is exactly the right-hand side.
+The goal is closed.
+
+\begin{remark*}[The \texttt{show} tactic and definitional equality]
+In Lean~4, \verb|let|-bound definitions are definitionally equal to
+their bodies but are not automatically unfolded by tactics like
+\verb|rw|. The \verb|show| tactic is the standard way to replace a goal
+with a definitionally equal expression, forcing the unfolding and making
+syntactic patterns available for rewriting. This is a recurring pattern
+when working with locally constructed witnesses.
+\end{remark*}
+
+\begin{remark*}[The \texttt{congr} tactic]
+The \verb|congr| tactic proves goals of the form $f\,a = f\,b$ by
+reducing them to $a = b$, exploiting the fact that functions respect
+equality (congruence). It is particularly useful at the end of inductive
+steps where the outermost constructor is known to match and only the
+recursive arguments need to be compared.
+\end{remark*}
+
+\begin{remark*}[Lean 4 verification]
+Both theorems are verified in
+\texttt{lean/LRA/VolumeII/NaturalNumbers/Addition.lean}
+without Mathlib, using only \texttt{A5\_Induction}, \texttt{N\_rec},
+\texttt{N\_rec\_one}, and \texttt{N\_rec\_succ} from \texttt{Axioms.lean}.
+\end{remark*}

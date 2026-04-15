@@ -1,0 +1,154 @@
+% =========================================================
+% Interval Arithmetic in $\mathbb{R}^n$
+% =========================================================
+
+\section{Interval Arithmetic in $\mathbb{R}^n$}
+\label{sec:interval-arithmetic-rn}
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Box (Interval) Arithmetic in $\mathbb{R}^n$ — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Operation} & \textbf{Rule} & \textbf{Detail} \\
+\midrule
+Box (product interval) & $[a,b] := \{x\in\mathbb{R}^n : a\le x \le b\}$ & \hyperref[def:box]{↓ Def} \\
+Containment & $[a,b]\subseteq[c,d] \iff c\le a \ \land\ b\le d$ & \hyperref[def:box-contain]{↓ Def} \\
+Minkowski sum & $[a,b]\oplus[c,d]=[a+c,\; b+d]$ & \hyperref[def:box-add]{↓ Def} \\
+Difference & $[a,b]\ominus[c,d]=[a-d,\; b-c]$ & \hyperref[def:box-sub]{↓ Def} \\
+Scalar mult. $(\lambda\ge 0)$ & $\lambda[a,b]=[\lambda a,\; \lambda b]$ & \hyperref[def:box-smul]{↓ Def} \\
+Scalar mult. $(\lambda<0)$ & $\lambda[a,b]=[\lambda b,\; \lambda a]$ & \hyperref[def:box-smul]{↓ Def} \\
+Coordinatewise product & $[a,b]\odot[c,d]=\prod_i [\min S_i,\max S_i]$ & \hyperref[def:box-hadamard]{↓ Def} \\
+Norm bound (Euclidean) & $\|x\|_2 \le \max\{\|a\|_2,\|b\|_2\}$ for $x\in[a,b]$ if $0\le a\le b$ & \hyperref[rem:norm-bounds]{↓ Rem} \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% Definitions and Theorems
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Box / Product Interval)}},
+  fonttitle=\small\bfseries]
+\label{def:box}
+Let $a,b\in\mathbb{R}^n$ with $a\le b$ coordinatewise (i.e., $a_i\le b_i$ for all $i$).
+The \emph{box} (or \emph{interval vector}) determined by $(a,b)$ is
+\[
+[a,b] \;:=\; \{x\in\mathbb{R}^n : a\le x \le b\}
+\;=\;\prod_{i=1}^n [a_i,b_i].
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Box Containment)}},
+  fonttitle=\small\bfseries]
+\label{def:box-contain}
+For $a\le b$ and $c\le d$ in $\mathbb{R}^n$, we write $[a,b]\subseteq[c,d]$ iff
+\[
+(\forall x\in\mathbb{R}^n)\ \bigl(x\in[a,b]\Rightarrow x\in[c,d]\bigr).
+\]
+Equivalently (and most useful computationally),
+\[
+[a,b]\subseteq[c,d]\quad \Longleftrightarrow\quad c\le a\ \land\ b\le d
+\qquad\text{(coordinatewise).}
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Minkowski Addition of Boxes)}},
+  fonttitle=\small\bfseries]
+\label{def:box-add}
+For boxes $X=[a,b]$ and $Y=[c,d]$ in $\mathbb{R}^n$, their \emph{Minkowski sum} is
+\[
+X\oplus Y \;:=\; \{x+y : x\in X,\ y\in Y\}.
+\]
+For boxes, this closes in the class of boxes and satisfies the endpoint rule
+\[
+[a,b]\oplus[c,d] \;=\; [a+c,\; b+d].
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Box Subtraction / Difference)}},
+  fonttitle=\small\bfseries]
+\label{def:box-sub}
+For boxes $X=[a,b]$ and $Y=[c,d]$ in $\mathbb{R}^n$, define
+\[
+X\ominus Y \;:=\; \{x-y : x\in X,\ y\in Y\}.
+\]
+Then
+\[
+[a,b]\ominus[c,d] \;=\; [a-d,\; b-c].
+\]
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Scalar Multiplication of a Box)}},
+  fonttitle=\small\bfseries]
+\label{def:box-smul}
+For $\lambda\in\mathbb{R}$ and a box $[a,b]\subseteq\mathbb{R}^n$, define
+\[
+\lambda[a,b] \;:=\; \{\lambda x : x\in[a,b]\}.
+\]
+Then
+\[
+\lambda[a,b]=
+\begin{cases}
+[\lambda a,\ \lambda b], & \lambda\ge 0,\\[4pt]
+[\lambda b,\ \lambda a], & \lambda<0,
+\end{cases}
+\]
+where the inequalities are coordinatewise.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Coordinatewise / Hadamard Product of Boxes)}},
+  fonttitle=\small\bfseries]
+\label{def:box-hadamard}
+For $x,y\in\mathbb{R}^n$, write $(x\odot y)_i := x_i y_i$.
+For boxes $X=[a,b]$ and $Y=[c,d]$, define
+\[
+X\odot Y \;:=\; \{x\odot y : x\in X,\ y\in Y\}.
+\]
+Then $X\odot Y$ is again a box, computed coordinatewise:
+\[
+[a,b]\odot[c,d] \;=\; \prod_{i=1}^n \Bigl[\min S_i,\ \max S_i\Bigr],
+\qquad
+S_i:=\{a_ic_i,\ a_id_i,\ b_ic_i,\ b_id_i\}.
+\]
+\end{tcolorbox}
+
+\begin{remark}[Interpretation: intervals as guaranteed enclosures]
+A box $X=[a,b]\subseteq\mathbb{R}^n$ represents a \emph{set of possible vectors}
+(e.g., a computed vector plus uncertainty bounds). The operations above are
+\emph{set operations} (Minkowski sum/difference, scalar image), so the result is a
+\emph{guaranteed enclosure} of all possible true outcomes under the corresponding
+vector operation.
+\end{remark}
+
+\begin{remark}[Norm bounds and why boxes are convenient]
+For many applications you also want quick bounds on a norm over a box.
+For example, if $0\le a\le b$ coordinatewise, then for every $x\in[a,b]$ we have
+$0\le x\le b$ and hence $\|x\|_2\le \|b\|_2$. More generally, bounding norms over
+a box can be reduced to checking finitely many ``corners'' when the objective is
+coordinatewise monotone.
+\label{rem:norm-bounds}
+\end{remark}
+
+\begin{remark}[Status]
+\textit{This section is a stub. A full treatment — interval extensions of general
+functions $f:\mathbb{R}^n\to\mathbb{R}^m$, the dependency problem, sub-distributivity,
+natural vs. centered (affine) forms, and connections to compactness and continuity —
+will be developed in a future revision.}
+\end{remark}

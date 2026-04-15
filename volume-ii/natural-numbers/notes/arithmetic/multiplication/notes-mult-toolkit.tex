@@ -1,0 +1,111 @@
+% =========================================================
+% Multiplication Toolkit (Tao §2.3)
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Multiplication Toolkit — Quick Reference}},
+  fonttitle=\small\bfseries]
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Key tool} \\
+\midrule
+M1 & $0 \times m = 0$ & Definition \\
+M2 & $(n\pp) \times m = (n \times m) + m$ & Definition \\
+L2.3.2 & $n \times m = m \times n$ & Induction \\
+L2.3.3 & $nm = 0 \iff n = 0$ or $m = 0$ & P2.2.8 (contrapositive) \\
+P2.3.4 & $a(b+c) = ab + ac$ (distributive law) & Induction on $c$ \\
+P2.3.5 & $(a \times b) \times c = a \times (b \times c)$ & Induction \\
+P2.3.6 & $a < b,\ c > 0 \Rightarrow ac < bc$ & P2.2.12(f), P2.3.4 \\
+C2.3.7 & $ac = bc,\ c \neq 0 \Rightarrow a = b$ & P2.2.13 + P2.3.6 \\
+P2.3.9 & Euclidean algorithm: $\exists\, m, r,\ n = mq + r,\ 0 \leq r < q$
+        & Induction \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ---------------------------------------------------------
+% L2.3.2
+% ---------------------------------------------------------
+\begin{lemma}[Tao 2.3.2 — Commutativity]
+\label{lem:mult-comm}
+For all $n, m \in \mathbb{N}$,\quad $n \times m = m \times n$.
+\end{lemma}
+
+% ---------------------------------------------------------
+% L2.3.3
+% ---------------------------------------------------------
+\begin{lemma}[Tao 2.3.3 — No zero divisors]
+\label{lem:no-zero-div}
+For all $n, m \in \mathbb{N}$,\quad $n \times m = 0$ if and only if
+$n = 0$ or $m = 0$.
+
+In particular, if $n$ and $m$ are both positive, then $nm$ is positive.
+\end{lemma}
+
+% ---------------------------------------------------------
+% P2.3.4
+% ---------------------------------------------------------
+\begin{proposition}[Tao 2.3.4 — Distributive law]
+\label{prop:distrib}
+For all $a, b, c \in \mathbb{N}$:
+\[
+a(b+c) = ab + ac \qquad \text{and} \qquad (b+c)a = ba + ca.
+\]
+\end{proposition}
+
+\begin{remark}[Proof strategy]
+The second identity follows from the first by commutativity (L2.3.2).
+For the first, induct on $c$ (the right summand), keeping $a$ and $b$ fixed.
+M2 fires on the left side; the inductive hypothesis closes the step.
+\end{remark}
+
+% ---------------------------------------------------------
+% P2.3.5
+% ---------------------------------------------------------
+\begin{proposition}[Tao 2.3.5 — Associativity]
+\label{prop:mult-assoc}
+For all $a, b, c \in \mathbb{N}$,\quad $(a \times b) \times c = a \times (b \times c)$.
+\end{proposition}
+
+% ---------------------------------------------------------
+% P2.3.6
+% ---------------------------------------------------------
+\begin{proposition}[Tao 2.3.6 — Multiplication preserves order]
+\label{prop:mult-order}
+If $a < b$ and $c$ is positive, then $ac < bc$.
+\end{proposition}
+
+% ---------------------------------------------------------
+% C2.3.7
+% ---------------------------------------------------------
+\begin{corollary}[Tao 2.3.7 — Cancellation for multiplication]
+\label{cor:mult-cancel}
+Let $a, b, c \in \mathbb{N}$ with $ac = bc$ and $c \neq 0$. Then $a = b$.
+\end{corollary}
+
+\begin{remark}[Virtual division]
+This is the multiplicative analogue of the additive cancellation law
+(P2.2.6). It provides ``virtual division'' before division is defined,
+and will be used to define $\mathbb{Q}$ later.
+\end{remark}
+
+% ---------------------------------------------------------
+% P2.3.9
+% ---------------------------------------------------------
+\begin{proposition}[Tao 2.3.9 — Euclidean algorithm]
+\label{prop:euclid}
+Let $n \in \mathbb{N}$ and let $q$ be positive. Then there exist
+$m, r \in \mathbb{N}$ such that:
+\[
+0 \leq r < q \qquad \text{and} \qquad n = mq + r.
+\]
+\end{proposition}
+
+\begin{remark}
+This is the seed of number theory: every natural number has a
+unique quotient and remainder when divided by a positive number.
+\end{remark}

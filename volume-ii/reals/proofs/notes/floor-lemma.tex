@@ -1,0 +1,102 @@
+% =========================================================
+% Proof: Floor Lemma
+% Source: volume-iii/analysis/bounding/notes/notes-completeness.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Floor Lemma}
+\label{prf:floor-lemma}
+
+\begin{remark*}[Return]
+$\leftarrow$ \hyperref[lem:floor-lemma]{Back to Lemma in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim For every $x \in \mathbb{R}$, there exists a unique $m \in \mathbb{Z}$
+such that $m \leq x < m+1$.
+
+\Strategy
+Existence: use the Archimedean Property to bound $x$ between two integers,
+then apply well-ordering of $\mathbb{Z}$ to find the greatest integer $\leq x$.
+Uniqueness: if two integers both satisfy the condition, their difference
+is an integer with absolute value less than $1$, forcing them to be equal.
+
+\medskip
+\Let $x \in \mathbb{R}$ be given.
+By the \ByThm{Archimedean Property}, there exists $n \in \mathbb{N}$
+with $n \geq |x|$. Then
+\[
+  -n \leq -|x| \leq x \leq |x| \leq n,
+\]
+so $x \in [-n, n]$.
+
+\medskip
+\textbf{Existence.}
+Define
+\[
+  S := \{ k \in \mathbb{Z} \mid k \leq x \}.
+\]
+$S$ is nonempty (since $-n \in S$) and bounded above (by $n$).
+Since $S$ is a nonempty bounded-above subset of $\mathbb{Z}$,
+by well-ordering of $\mathbb{Z}$ it has a maximum element; set $m := \max S$.
+
+By definition of $S$, $m \leq x$.
+Since $m$ is the maximum of $S$, the integer $m+1 \notin S$,
+which means $m+1 > x$. Hence
+\[
+  m \leq x < m+1.
+\]
+
+\medskip
+\textbf{Uniqueness.}
+Suppose $m' \in \mathbb{Z}$ also satisfies
+\begin{align}
+  m  &\leq x < m  + 1, \label{eq:floor-m} \\
+  m' &\leq x < m' + 1. \label{eq:floor-mprime}
+\end{align}
+From \eqref{eq:floor-m} and \eqref{eq:floor-mprime}:
+$m < m'+1$ and $m' < m+1$, giving $m - m' < 1$ and $m' - m < 1$, so
+\[
+  |m - m'| < 1.
+\]
+Since $m, m' \in \mathbb{Z}$, we have $m - m' \in \mathbb{Z}$.
+The only integer with absolute value strictly less than $1$ is $0$,
+so $m - m' = 0$, i.e.\ $m = m'$.
+
+\Hence for every $x \in \mathbb{R}$ there exists a unique $m \in \mathbb{Z}$
+with $m \leq x < m+1$. \AsReq
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Two-part proof: existence by well-ordering, uniqueness by integrality.
+The Archimedean Property boxes $x$ inside $[-n, n]$, giving concrete
+witnesses that $S$ is nonempty and bounded above.
+Well-ordering then produces the maximum of $S$ directly ---
+this is a pure order argument, not a bounding argument:
+we want the last element of a discrete ordered set, which is
+exactly what well-ordering provides.
+Uniqueness is a one-line integrality argument:
+two integers satisfying the same condition differ by less than $1$,
+forcing their difference to be $0$.
+
+\FlashProof{Existence: Archimedean gives $n\geq|x|$; set $S=\{k\in\mathbb{Z}\mid k\leq x\}$; nonempty ($-n\in S$), bounded above ($n$); $m:=\max S$ by well-ordering; $m\leq x$ by definition, $m+1>x$ by maximality. Uniqueness: $|m-m'|<1$ and $m-m'\in\mathbb{Z}$ forces $m=m'$.}
+\FlashUses{Archimedean Property; well-ordering of $\mathbb{Z}$; integrality of $\mathbb{Z}$.}
+\end{remark*}
+
+\begin{remark*}[Well-ordering vs.\ supremum]
+One might attempt to use $\sup S$ instead of $\max S$.
+This requires the additional argument that $\sup S \in S$
+(i.e.\ that the supremum is actually attained), which holds here
+because $S \subseteq \mathbb{Z}$ is discrete ---
+but this argument requires more work than simply citing well-ordering.
+Well-ordering is the primitive fact; $\max S = \sup S$ is a consequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[prf:archimedean-property]{Archimedean Property}
+  \item Well-ordering of $\mathbb{Z}$: every nonempty subset of $\mathbb{Z}$
+        bounded above has a maximum element
+  \item Integrality: $m, m' \in \mathbb{Z} \Rightarrow m - m' \in \mathbb{Z}$
+\end{itemize}
+\end{remark*}

@@ -1,0 +1,334 @@
+% =========================================================
+% Rational Approximation
+% =========================================================
+
+\section{Rational Approximation}
+\label{sec:rational-approximation}
+
+\subsection{Definitions and Theorems}
+
+One of the most important structural facts about the rational numbers is that they can approximate
+other numbers arbitrarily well.  This is the point at which the density of $\mathbb{Q}$ begins to turn
+into analysis.
+
+\begin{theorem}[Rational approximation]
+\label{thm:rational-approximation}
+For every real number $x$ and every $\varepsilon>0$, there exists $r\in\mathbb{Q}$ such that
+\[
+|x-r|<\varepsilon.
+\]
+\end{theorem}
+
+\begin{proof}
+Apply the density theorem to the interval $(x-\varepsilon,x+\varepsilon)$.  The rational number found
+in that interval satisfies the desired inequality.
+\end{proof}
+
+\begin{remark}
+This theorem says that rational numbers are dense not only in the order-theoretic sense of lying
+between real numbers, but also in the metric sense of lying arbitrarily close to any prescribed real
+number.
+\end{remark}
+
+\begin{remark}[Constructive approximation methods]
+There are several useful ways to approximate a real number by rational numbers.
+\begin{enumerate}
+  \item \textbf{Decimal truncation.}  If $x=1.4142135\dots$, then
+  \[
+  1.4,\quad 1.41,\quad 1.414,\quad 1.4142
+  \]
+  are rational approximations.
+  \item \textbf{Mediants.}  If
+  \[
+  \frac{a}{b}<x<\frac{c}{d},
+  \]
+  then the mediant
+  \[
+  \frac{a+c}{b+d}
+  \]
+  gives a new rational approximation between the two old ones.
+  \item \textbf{Continued fractions.}  Continued fractions often produce exceptionally good rational
+  approximations and are closely related to the Stern--Brocot tree.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Approximation by sequences]
+A real number can often be approximated naturally by a sequence of rationals.  For example,
+\[
+1,\ 1.4,\ 1.41,\ 1.414,\ 1.4142,\dots
+\]
+is a sequence of rational approximations to $\sqrt{2}$.  This point of view leads directly to Cauchy
+sequences and to the construction of the real numbers.
+\end{remark}
+
+\subsection{Dirichlet's Approximation Theorem}
+
+Density alone says that rationals come arbitrarily close to a real number, but it says nothing about
+\emph{how efficient} those approximations can be.  Dirichlet's theorem gives a surprisingly strong
+quantitative answer.
+
+\begin{theorem}[Dirichlet's Approximation Theorem]
+\label{thm:dirichlet-approx}
+For every real number $x$ there exist infinitely many rational numbers $p/q$ with $p\in\mathbb{Z}$ and
+$q\in\mathbb{N}$ such that
+\[
+\left|x-\frac{p}{q}\right|<\frac{1}{q^2}.
+\]
+\end{theorem}
+
+\begin{remark}[Interpretation]
+If the denominator $q$ is moderately large, the error bound $1/q^2$ can already be very small.  In
+this sense the rational numbers approximate real numbers far better than density by itself might
+suggest.
+\end{remark}
+
+\begin{remark}[Idea of proof]
+Consider the fractional parts of
+\[
+x,2x,3x,\dots,(N+1)x.
+\]
+These $N+1$ numbers lie in the interval $[0,1)$, which is divided into $N$ equal subintervals.
+By the pigeonhole principle two of the fractional parts must land in the same subinterval.  Their
+difference produces integers $p$ and $q$ for which
+\[
+\left|x-\frac{p}{q}\right|<\frac{1}{qN}.
+\]
+A suitable choice of $N$ then yields the stated estimate.
+\end{remark}
+
+\begin{remark}[Conceptual significance]
+The study of how well real numbers can be approximated by rationals is called
+\emph{Diophantine approximation}.  Dirichlet's theorem is one of its basic foundational results and
+forms a natural bridge from elementary rational arithmetic to deeper number theory.
+\end{remark}
+
+
+\input{volume-ii/rationals/notes/figure-geometry-rational-approximation}
+
+% =========================================================
+% Exposition: The Geometry of Rational Approximation
+% For inclusion in Volume III, Bounding chapter,
+% following the Density of Q and Density of Irrationals.
+% =========================================================
+
+\section*{Reading the Diagram: A Walking Tour}
+
+The figure above is a single picture with three layers, each telling
+the same story from a different vantage point.
+Take a moment to orient yourself before reading further.
+
+\bigskip
+
+\section*{Why rational approximation matters}
+
+You have just proved that the rationals are dense in $\mathbb{R}$:
+between any two real numbers lies a rational one.
+That result tells you approximation is \emph{possible}, but it says
+nothing about how \emph{efficient} those approximations can be made.
+
+Here is the sharper question: given an irrational number $x$, how
+close can a fraction $p/q$ get to $x$, and how does the quality of
+the approximation depend on the size of the denominator $q$?
+This is the question the diagram is designed to answer geometrically.
+
+\bigskip
+
+\section*{Layer 1 (top): The Farey gap identity}
+
+The number line at the top shows two fractions in \emph{lowest terms},
+$a/b$ and $c/d$, that are \emph{Farey neighbors}: that is, they satisfy
+$|bc - ad| = 1$ (equivalently, $bc - ad = 1$ if $a/b < c/d$).
+The blue tick marks the \emph{mediant} $(a+c)/(b+d)$, which lies
+strictly between them.
+
+\medskip
+
+The key identity, shown by the double-headed arrow below the line, is
+\[
+\frac{c}{d} - \frac{a}{b} = \frac{1}{bd}.
+\]
+This is not an approximation --- it is \emph{exact}.
+Farey neighbors are not merely close; their distance is completely
+determined by their denominators.
+A moment's algebra confirms it:
+\[
+\frac{c}{d} - \frac{a}{b}
+= \frac{bc - ad}{bd}
+= \frac{1}{bd},
+\]
+where the last step uses the Farey neighbor condition $bc - ad = 1$.
+
+\medskip
+
+The blue annotations above the line show what the mediant does to this
+gap.  It does not split the interval in half; it splits it into two
+pieces of \emph{unequal} size:
+\[
+\frac{a+c}{b+d} - \frac{a}{b} = \frac{1}{b(b+d)},
+\qquad
+\frac{c}{d} - \frac{a+c}{b+d} = \frac{1}{d(b+d)}.
+\]
+The larger denominator produces the smaller subgap.
+This asymmetry is the engine of the whole theory: inserting mediants
+refines intervals, but does so unevenly, always shrinking more on the
+side with the larger existing denominator.
+
+\medskip
+
+\begin{remark*}[Check the algebra yourself]
+Verify both subgap identities by direct computation.
+You will use $bc - ad = 1$ in each case.
+This is a one-line calculation and worth doing at least once.
+\end{remark*}
+
+\bigskip
+
+\section*{Layer 2 (middle): The Stern--Brocot tree}
+
+If you apply mediant insertion \emph{repeatedly}, starting from
+$0/1$ and $1/0$ (a formal symbol for $\infty$, used to bookend the
+positive rationals), you generate the \emph{Stern--Brocot tree}.
+
+\medskip
+
+The middle panel shows the first two levels of this construction.
+\begin{itemize}
+  \item \textbf{Level 0.} The seeds: $0/1$, $1/1$, $1/0$.
+  \item \textbf{Level 1.} Insert mediants between adjacent seeds.
+        Between $0/1$ and $1/1$ the mediant is
+        $\frac{0+1}{1+1} = \frac{1}{2}$.
+        Between $1/1$ and $1/0$ the mediant is
+        $\frac{1+1}{1+0} = \frac{2}{1}$.
+  \item \textbf{Level 2.} Insert mediants between every adjacent pair
+        at level 1, yielding $1/3$, $2/3$, $3/2$, $3/1$.
+\end{itemize}
+
+\medskip
+
+What makes the Stern--Brocot tree remarkable is the following theorem
+(whose proof we defer): \emph{every positive rational number appears
+in the tree exactly once, already in lowest terms.}
+The tree is therefore a complete, duplicate-free enumeration of all
+positive rationals, built out of nothing but repeated mediant
+insertion.
+
+\medskip
+
+Notice how the fractions spread across the number line: small
+denominators appear at the top (coarse level) and large denominators
+appear further down (fine level).
+The tree encodes the idea that simple fractions --- those with small
+denominators --- are the best approximations to any given real number,
+and complex fractions (large denominators) are needed only to
+approximate with high precision.
+
+\bigskip
+
+\section*{Layer 3 (bottom): Dirichlet approximation}
+
+The bottom number line makes the approximation viewpoint explicit.
+The red tick is an irrational number $x$.
+Around it float four rational approximants $p_1/q_1, p_2/q_2,
+p_3/q_3, p_4/q_4$ with increasing denominators, each closer to $x$
+than the last.
+
+\medskip
+
+The three concentric dashed circles are a visual metaphor for
+the Dirichlet bound
+\[
+\left| x - \frac{p}{q} \right| < \frac{1}{q^2}.
+\]
+Each circle represents a shrinking window: as $q$ grows, the window
+$1/q^2$ tightens around $x$, forcing the approximants to cluster.
+
+\medskip
+
+\textbf{Why $1/q^2$?}
+The Farey gap identity tells us that two Farey neighbors at level $q$
+are separated by $1/(q \cdot q')$ where $q' \geq q$.
+The irrational $x$ must land in one of these subintervals, and the
+nearer neighbor satisfies the $1/q^2$ bound.
+So Dirichlet's theorem is not a magical accident; it is the Farey gap
+identity applied to the interval containing $x$.
+
+\medskip
+
+\begin{remark*}[Dirichlet's theorem]
+For any irrational $x$ and any $N \in \mathbb{N}$, there exists
+$p/q$ with $1 \leq q \leq N$ such that
+\[
+\left| x - \frac{p}{q} \right| < \frac{1}{qN} \leq \frac{1}{q^2}.
+\]
+The proof uses the Pigeonhole Principle on the $N+1$ fractional parts
+$\{kx\}$ for $k = 0, 1, \ldots, N$ distributed among $N$ subintervals
+of length $1/N$.
+\end{remark*}
+
+\bigskip
+
+\section*{The hidden unity}
+
+The diagram's caption says these are ``different manifestations of the
+same hidden geometry of the rational numbers.''
+What is that geometry, precisely?
+
+\medskip
+
+The answer is the Farey identity $bc - ad = 1$.
+\begin{itemize}
+  \item In \textbf{Layer 1}, it gives the exact gap $1/(bd)$.
+  \item In \textbf{Layer 2}, it is preserved by mediant insertion:
+        if $a/b$ and $c/d$ are Farey neighbors, then $a/b$ and
+        $(a+c)/(b+d)$ are Farey neighbors, and so is
+        $(a+c)/(b+d)$ and $c/d$.
+        The tree grows by propagating this relation.
+  \item In \textbf{Layer 3}, it implies the Dirichlet bound, because
+        $x$ lies in a Farey interval whose endpoints satisfy
+        $bc - ad = 1$.
+\end{itemize}
+
+\medskip
+
+This invariant --- an integer determinant equal to $1$ --- is the
+thread connecting all three panels.
+It is the same identity that appears in the theory of continued
+fractions, in the modular group $\mathrm{SL}(2,\mathbb{Z})$, and in
+the study of lattice points.
+The diagram is your first glimpse of a deep structure that recurs
+throughout number theory and geometry.
+
+\bigskip
+
+\section*{What to take away}
+
+After studying this diagram, you should be able to answer the
+following questions without looking anything up:
+
+\begin{enumerate}
+  \item Why is the gap between Farey neighbors $a/b$ and $c/d$
+        exactly $1/(bd)$ rather than approximately $1/(bd)$?
+  \item Given two Farey neighbors, which subgap --- left or right ---
+        is smaller after mediant insertion, and why?
+  \item Why does increasing the denominator $q$ make a better
+        rational approximation to an irrational $x$?
+  \item What is the connection between the Stern--Brocot tree and
+        continued fractions?
+        (You do not know the answer yet, but formulating the question
+        precisely is the right first step.)
+\end{enumerate}
+
+\noindent
+If you can answer (1)--(3) from the diagram alone, without algebra,
+you have genuinely understood the picture.
+Question (4) points to where we are going.
+
+
+
+
+
+
+
+
+
+

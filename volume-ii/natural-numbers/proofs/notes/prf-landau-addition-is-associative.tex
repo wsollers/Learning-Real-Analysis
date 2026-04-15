@@ -1,0 +1,68 @@
+% volume-ii/natural-numbers/proofs/notes/landau-plus-assoc.tex
+% =========================================================
+% Proof: Associative Law of Addition (Landau Theorem 5)
+% Source: volume-ii/natural-numbers/notes/arithmetic/addition/notes-landau-foundations.tex
+% Mode: standard
+% =========================================================
+
+\subsection*{Associative Law of Addition}
+\label{prf:landau-plus-assoc}
+
+\begin{remark*}[Return]
+\hyperref[thm:landau-plus-assoc]{$\leftarrow$ Back to Theorem
+(Associative Law of Addition) in Notes}
+\end{remark*}
+
+\begin{proof}
+\Claim For all $x, y, z \in \mathbb{N}$, $(x + y) + z = x + (y + z)$.
+
+Fix $x, y \in \mathbb{N}$. We proceed by induction on $z$.
+
+\textbf{Base case.} Let $z = 1$. By \ByThm{A6},
+\[
+  (x + y) + 1 = (x + y)' \quad \text{and} \quad y + 1 = y',
+\]
+so $x + (y + 1) = x + y' = (x + y)'$ by \ByThm{A7}. Hence
+\[
+  (x + y) + 1 = (x + y)' = x + (y + 1).
+\]
+
+\textbf{Inductive step.} Assume $(x + y) + z = x + (y + z)$ for some
+$z \in \mathbb{N}$. We show $(x + y) + z' = x + (y + z')$.
+
+\[
+\begin{aligned}
+  (x + y) + z'
+    &= \bigl((x + y) + z\bigr)'  && \text{by \ByThm{A7}} \\
+    &= \bigl(x + (y + z)\bigr)'  && \text{by the inductive hypothesis} \\
+    &= x + (y + z)'              && \text{by \ByThm{A7} (right to left)} \\
+    &= x + (y + z').             && \text{by \ByThm{A7} (right to left)}
+\end{aligned}
+\]
+
+By \ByThm{Axiom of Induction}, $(x + y) + z = x + (y + z)$ for all
+$z \in \mathbb{N}$. Since $x$ and $y$ were arbitrary, the result holds
+for all $x, y, z \in \mathbb{N}$.
+\end{proof}
+
+\begin{remark*}[Proof shape]
+Induction on $z$ with $x$ and $y$ fixed. Base case uses \textbf{A6} and
+\textbf{A7}. Inductive step applies \textbf{A7} to unfold the left side,
+uses the inductive hypothesis, then refolds the right side using \textbf{A7}
+in reverse.
+
+\FlashProof{1. Fix $x, y$. Induct on $z$.
+2. Base: $(x+y)+1 = (x+y)' = x+y' = x+(y+1)$ by A6 and A7.
+3. Step: $(x+y)+z' = ((x+y)+z)' = (x+(y+z))' = x+(y+z)' = x+(y+z')$
+   by A7, IH, A7 backwards, A7 backwards.}
+\FlashImplies{thm:landau-plus-assoc}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[ax:landau-peano]{Peano Axiom P5 (Induction)}
+  \item \hyperref[thm:landau-addition-exists-unique]{A6, A7 (defining equations of addition)}
+\end{itemize}
+
+\FlashUses{ax:landau-peano, thm:landau-addition-exists-unique}
+\end{remark*}
