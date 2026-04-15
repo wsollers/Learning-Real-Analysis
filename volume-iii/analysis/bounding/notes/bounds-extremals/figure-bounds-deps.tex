@@ -1,0 +1,99 @@
+% volume-iii/bounding/figure-bounds-dependency-map.tex
+% TikZ Code only, per House Constitution Rule 2.6
+
+\begin{tikzpicture}[
+  node distance=0.6cm and 0.8cm,
+  >=Latex,
+  every node/.style={align=center, font=\footnotesize},
+  axiomnode/.style={draw, rounded corners, thick, minimum width=2.6cm, minimum height=0.6cm, fill=violet!5, draw=violet!50!black},
+  definitionnode/.style={draw, rounded corners, thick, minimum width=2.1cm, minimum height=0.5cm, fill=blue!5, draw=blue!40!black},
+  theoremnode/.style={draw, rounded corners, thick, minimum width=3.2cm, minimum height=0.6cm, fill=orange!5, draw=orange!50!black},
+  impliesedge/.style={->, thick, blue},
+  usesedge/.style={->, thick, olive},
+  definesedge/.style={->, thick, green!60!black}
+]
+
+  % =========================================================
+  % 1. The Origin (Shifted far left and down)
+  % =========================================================
+  \node[axiomnode] (lub) at (-7.5,-1.2) {Least Upper Bound\\Property of $\mathbb{R}$};
+
+  % =========================================================
+  % 2. The Suprema Track (Top Spine)
+  % =========================================================
+  
+  % Theorem Anchor
+  \node[theoremnode] (supEx) at (-3.0,0.2) {Existence of Suprema};
+  
+  % Definitions Above
+  \node[definitionnode, above=0.8cm of supEx, xshift=-1.5cm] (ub) {Upper Bound};
+  \node[definitionnode, right=of ub] (ba) {Bounded Above};
+  
+  % Horizontal Progression
+  \node[theoremnode, right=0.8cm of supEx] (supCmp) {Upper Bound Comparison\\with the Supremum};
+  
+  % Extremals
+  \node[definitionnode, above=0.6cm of supCmp] (sup) {Supremum};
+  \node[definitionnode, right=0.8cm of sup] (max) {Maximum};
+  \node[theoremnode, below=1.4cm of max] (maxSup) {Maximum Equals\\the Supremum};
+
+  % =========================================================
+  % 3. The Infima Track (Bottom Spine)
+  % =========================================================
+  
+  % Theorem Anchor
+  \node[theoremnode, below=2.0cm of supEx] (infEx) {Existence of Infima};
+  
+  % Horizontal Progression
+  \node[theoremnode, right=0.8cm of infEx] (infCmp) {Lower Bound Comparison\\with the Infimum};
+  
+  % Definitions Below
+  \node[definitionnode, below=0.8cm of infEx, xshift=-1.5cm] (lb) {Lower Bound};
+  \node[definitionnode, right=of lb] (bb) {Bounded Below};
+  
+  \node[definitionnode, below=0.6cm of infCmp] (inf) {Infimum};
+  \node[definitionnode, right=0.8cm of inf] (min) {Minimum};
+  \node[theoremnode, right=0.8cm of infCmp] (minInf) {Minimum Equals\\the Infimum};
+
+  % =========================================================
+  % 4. Edges (Standardized R13.5)
+  % =========================================================
+
+  % Defines (Green)
+  \draw[definesedge] (ub) -- (ba);
+  \draw[definesedge] (lb) -- (bb);
+  \draw[definesedge] (ba) -- (sup);
+  \draw[definesedge] (bb) -- (inf);
+  \draw[definesedge] (sup) -- (max);
+  \draw[definesedge] (inf) -- (min);
+
+  % Uses (Olive)
+  \draw[usesedge] (lub.east) to[out=25, in=180] (supEx.west);
+  \draw[usesedge] (lub.east) to[out=335, in=180] (infEx.west);
+  
+  \draw[usesedge] (ba.south) -- (supEx.north);
+  \draw[usesedge] (bb.north) -- (infEx.south);
+  
+  \draw[usesedge] (ub.east) to[out=0, in=135] (supCmp.north west);
+  \draw[usesedge] (sup.south) -- (supCmp.north);
+  
+  \draw[usesedge] (lb.east) to[out=0, in=225] (infCmp.south west);
+  \draw[usesedge] (inf.north) -- (infCmp.south);
+  
+  \draw[usesedge] (max.south) -- (maxSup.north);
+  \draw[usesedge] (sup.east) to[out=0, in=145] (maxSup.north west);
+  
+  \draw[usesedge] (min.north) -- (minInf.south);
+  \draw[usesedge] (inf.east) to[out=0, in=215] (minInf.south west);
+
+  % Implies (Blue)
+  \draw[impliesedge] (supEx) -- (supCmp);
+  \draw[impliesedge] (supCmp) -- (maxSup);
+  \draw[impliesedge] (infEx) -- (infCmp);
+  \draw[impliesedge] (infCmp) -- (minInf);
+
+\end{tikzpicture}
+
+\begin{center}
+\DependencyFigureLegend
+\end{center}
