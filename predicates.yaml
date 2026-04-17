@@ -1198,3 +1198,190 @@ predicates:
   optional_arguments: []
   formal: "\\operatorname{Ring}(R, +, \\cdot, -, 0, 1) \\land \\operatorname{IdempotentRing}(R, \\cdot)"
   note: "An idempotent ring with unit. Halmos Definition 7. Implies CommutativeRing and Characteristic2."
+
+# =========================================================
+# Linear Algebra — Vector Spaces, Maps, Dimension
+# Added for LADR (Axler, Linear Algebra Done Right, 4e)
+# Chapters 1–3: Vector Spaces, Finite-Dimensional Spaces,
+# Linear Maps
+# =========================================================
+
+- id: pred:vector-space
+  name: VectorSpace
+  category: linear-algebra
+  arity: 4
+  arguments: [V, F, add, scalar-mul]
+  optional_arguments: []
+  formal: "V \\text{ is a vector space over } \\mathbf{F} \\text{ with addition } + \\text{ and scalar multiplication } \\cdot"
+  note: "Axler 1.20. F is R or C. Requires commutativity, associativity, additive identity, additive inverse, multiplicative identity, and both distributive properties."
+
+- id: pred:real-vector-space
+  name: RealVectorSpace
+  category: linear-algebra
+  arity: 1
+  arguments: [V]
+  optional_arguments: []
+  formal: "\\operatorname{VectorSpace}(V, \\mathbb{R}, +, \\cdot)"
+  note: "Axler 1.22. A vector space over R."
+
+- id: pred:complex-vector-space
+  name: ComplexVectorSpace
+  category: linear-algebra
+  arity: 1
+  arguments: [V]
+  optional_arguments: []
+  formal: "\\operatorname{VectorSpace}(V, \\mathbb{C}, +, \\cdot)"
+  note: "Axler 1.22. A vector space over C."
+
+- id: pred:subspace
+  name: Subspace
+  category: linear-algebra
+  arity: 2
+  arguments: [U, V]
+  optional_arguments: []
+  formal: "U \\subseteq V \\land \\operatorname{VectorSpace}(U) \\land 0 \\in U \\land \\operatorname{ClosedUnderAddition}(U) \\land \\operatorname{ClosedUnderScalarMultiplication}(U)"
+  note: "Axler 1.33. U is a subspace of V iff U satisfies the three conditions of 1.34: 0 in U, closed under addition, closed under scalar multiplication."
+
+- id: pred:sum-of-subspaces
+  name: SumOfSubspaces
+  category: linear-algebra
+  arity: 3
+  arguments: [W, subspaces, V]
+  optional_arguments: []
+  formal: "W = V_1 + \\cdots + V_m = \\{v_1 + \\cdots + v_m : v_k \\in V_k\\}"
+  note: "Axler 1.36. The sum of subspaces V1,...,Vm is the smallest subspace of V containing all of them."
+
+- id: pred:direct-sum
+  name: DirectSum
+  category: linear-algebra
+  arity: 3
+  arguments: [V, subspaces, F]
+  optional_arguments: []
+  formal: "V = V_1 \\oplus \\cdots \\oplus V_m \\Longleftrightarrow \\text{each } v \\in V \\text{ has a unique representation } v = v_1 + \\cdots + v_m,\\; v_k \\in V_k"
+  note: "Axler 1.41. The sum is direct iff the only way to write 0 as a sum is with each component 0."
+
+- id: pred:linear-combination
+  name: LinearCombination
+  category: linear-algebra
+  arity: 4
+  arguments: [v, vectors, scalars, V]
+  optional_arguments: []
+  formal: "v = a_1 v_1 + \\cdots + a_m v_m,\\quad a_k \\in \\mathbf{F}"
+  note: "Axler 2.2. v is a linear combination of the list v1,...,vm with scalars a1,...,am."
+
+- id: pred:span
+  name: Span
+  category: linear-algebra
+  arity: 3
+  arguments: [S, vectors, V]
+  optional_arguments: []
+  formal: "S = \\operatorname{span}(v_1, \\ldots, v_m) = \\{a_1 v_1 + \\cdots + a_m v_m : a_k \\in \\mathbf{F}\\}"
+  note: "Axler 2.4. The span is the smallest subspace containing all vectors in the list."
+
+- id: pred:spans
+  name: Spans
+  category: linear-algebra
+  arity: 2
+  arguments: [vectors, V]
+  optional_arguments: []
+  formal: "\\operatorname{span}(v_1, \\ldots, v_m) = V"
+  note: "Axler 2.7. The list v1,...,vm spans V."
+
+- id: pred:linearly-independent
+  name: LinearlyIndependent
+  category: linear-algebra
+  arity: 2
+  arguments: [vectors, V]
+  optional_arguments: []
+  formal: "a_1 v_1 + \\cdots + a_m v_m = 0 \\Longrightarrow a_1 = \\cdots = a_m = 0"
+  note: "Axler 2.15. A list is linearly independent if the only zero linear combination uses all-zero scalars."
+
+- id: pred:linearly-dependent
+  name: LinearlyDependent
+  category: linear-algebra
+  arity: 2
+  arguments: [vectors, V]
+  optional_arguments: []
+  formal: "\\exists a_1, \\ldots, a_m \\in \\mathbf{F}, \\text{ not all } 0{:}\\; a_1 v_1 + \\cdots + a_m v_m = 0"
+  note: "Axler 2.17. Negation of LinearlyIndependent."
+
+- id: pred:basis
+  name: Basis
+  category: linear-algebra
+  arity: 2
+  arguments: [vectors, V]
+  optional_arguments: []
+  formal: "\\operatorname{LinearlyIndependent}(v_1,\\ldots,v_n, V) \\land \\operatorname{Spans}(v_1,\\ldots,v_n, V)"
+  note: "Axler 2.26. A basis is a linearly independent spanning list. Criterion: every v in V has a unique representation as a linear combination of the basis vectors."
+
+- id: pred:finite-dimensional
+  name: FiniteDimensional
+  category: linear-algebra
+  arity: 1
+  arguments: [V]
+  optional_arguments: []
+  formal: "\\exists \\text{ list } v_1, \\ldots, v_m \\in V{:}\; \\operatorname{Spans}(v_1,\\ldots,v_m, V)"
+  note: "Axler 2.9. V is finite-dimensional if some finite list spans it."
+
+- id: pred:infinite-dimensional
+  name: InfiniteDimensional
+  category: linear-algebra
+  arity: 1
+  arguments: [V]
+  optional_arguments: []
+  formal: "\\neg\\operatorname{FiniteDimensional}(V)"
+  note: "Axler 2.13. V is infinite-dimensional if no finite list spans it."
+
+- id: pred:dimension
+  name: Dimension
+  category: linear-algebra
+  arity: 2
+  arguments: [n, V]
+  optional_arguments: []
+  formal: "\\dim V = n \\Longleftrightarrow \\text{every basis of } V \\text{ has length } n"
+  note: "Axler 2.35. Well-defined by 2.34: any two bases of a finite-dimensional space have the same length."
+
+- id: pred:linear-map
+  name: LinearMap
+  category: linear-algebra
+  arity: 3
+  arguments: [T, V, W]
+  optional_arguments: []
+  formal: "T : V \\to W \\land (\\forall u,v \\in V{:}\; T(u+v) = Tu + Tv) \\land (\\forall \\lambda \\in \\mathbf{F}, v \\in V{:}\; T(\\lambda v) = \\lambda Tv)"
+  note: "Axler 3.1. Additivity and homogeneity. A linear map takes 0 to 0 (3.10)."
+
+- id: pred:null-space
+  name: NullSpace
+  category: linear-algebra
+  arity: 2
+  arguments: [N, T]
+  optional_arguments: []
+  formal: "N = \\operatorname{null} T = \\{v \\in V : Tv = 0\\}"
+  note: "Axler 3.11. The null space is a subspace of the domain. T is injective iff null T = {0}."
+
+- id: pred:range-of-map
+  name: Range
+  category: linear-algebra
+  arity: 2
+  arguments: [R, T]
+  optional_arguments: []
+  formal: "R = \\operatorname{range} T = \\{Tv : v \\in V\\}"
+  note: "Axler 3.16. The range is a subspace of the codomain. T is surjective iff range T = W."
+
+- id: pred:isomorphism
+  name: Isomorphism
+  category: linear-algebra
+  arity: 3
+  arguments: [T, V, W]
+  optional_arguments: []
+  formal: "\\operatorname{LinearMap}(T,V,W) \\land \\operatorname{Injective}(T) \\land \\operatorname{Surjective}(T)"
+  note: "Axler 3D. An invertible linear map. T is an isomorphism iff it is bijective."
+
+- id: pred:isomorphic-vector-spaces
+  name: IsomorphicVectorSpaces
+  category: linear-algebra
+  arity: 2
+  arguments: [V, W]
+  optional_arguments: []
+  formal: "\\exists T{:}\; \\operatorname{Isomorphism}(T, V, W)"
+  note: "Axler 3D. V and W are isomorphic iff there exists an invertible linear map between them. Two finite-dimensional spaces over the same field are isomorphic iff they have the same dimension."

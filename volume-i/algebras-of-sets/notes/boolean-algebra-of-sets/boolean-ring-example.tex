@@ -1,0 +1,120 @@
+% =========================================================
+% Scratch: No 3-Element Boolean Ring — Example Note
+% Chapter: Boolean Rings and Boolean Algebras — Volume I
+% Source: Halmos & Givant, Introduction to Boolean Algebras, §1
+%
+% STATUS: scratch file — move into chapter structure when
+%         volume-i/boolean-rings/ directory is created.
+%
+% Depends on:
+%   \ref{lem:self-additive-inverse}  (p + p = 0)
+%   colors: defbox/defborder, propbox/propborder (common/colors.tex)
+%   environments: example*, remark* (common/environments.tex)
+%   packages: booktabs (for \toprule etc.)
+% =========================================================
+
+% ---------------------------------------------------------
+% Remark: No Boolean Ring of Order 3 Exists
+% ---------------------------------------------------------
+
+\begin{remark*}[No Boolean ring of order 3]
+A Boolean ring of order~3 does not exist.
+The additive group $(R,+)$ of any Boolean ring satisfies
+$p + p = 0$ for all $p$, by Lemma~\ref{lem:self-additive-inverse}.
+Every element therefore has additive order dividing~2, so
+$(R,+)$ is an elementary abelian $2$-group.
+Elementary abelian $2$-groups have order $2^n$ for some $n \ge 0$.
+Since $3$ is not a power of~$2$, no Boolean ring of order~$3$
+can exist.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Example: The Four-Element Boolean Ring 2^2
+% ---------------------------------------------------------
+
+\begin{example*}[The four-element Boolean ring $\mathbf{2}^2$]
+\label{ex:boolean-ring-four-elements}
+The smallest Boolean ring with more than two elements is
+$\mathbf{2}^2 = \{(0,0),\,(0,1),\,(1,0),\,(1,1)\}$,
+the set of ordered pairs from $\mathbf{2} = \{0,1\}$.
+Addition and multiplication are defined coordinatewise:
+\[
+  (p_0,p_1) + (q_0,q_1) \;=\; (p_0+q_0,\;p_1+q_1),
+  \qquad
+  (p_0,p_1) \cdot (q_0,q_1) \;=\; (p_0 \cdot q_0,\;p_1 \cdot q_1),
+\]
+where each coordinate is computed in $\mathbf{2}$.
+The zero element is $(0,0)$ and the unit is $(1,1)$.
+
+\medskip
+\noindent\textbf{Addition table.}
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{c|cccc}
+$+$     & $(0,0)$ & $(0,1)$ & $(1,0)$ & $(1,1)$ \\ \hline
+$(0,0)$ & $(0,0)$ & $(0,1)$ & $(1,0)$ & $(1,1)$ \\
+$(0,1)$ & $(0,1)$ & $(0,0)$ & $(1,1)$ & $(1,0)$ \\
+$(1,0)$ & $(1,0)$ & $(1,1)$ & $(0,0)$ & $(0,1)$ \\
+$(1,1)$ & $(1,1)$ & $(1,0)$ & $(0,1)$ & $(0,0)$
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{Multiplication table.}
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{c|cccc}
+$\cdot$ & $(0,0)$ & $(0,1)$ & $(1,0)$ & $(1,1)$ \\ \hline
+$(0,0)$ & $(0,0)$ & $(0,0)$ & $(0,0)$ & $(0,0)$ \\
+$(0,1)$ & $(0,0)$ & $(0,1)$ & $(0,0)$ & $(0,1)$ \\
+$(1,0)$ & $(0,0)$ & $(0,0)$ & $(1,0)$ & $(1,0)$ \\
+$(1,1)$ & $(0,0)$ & $(0,1)$ & $(1,0)$ & $(1,1)$
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{Verification of idempotence.}
+Every element squares to itself:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{cc}
+\toprule
+$p$     & $p \cdot p$ \\ \midrule
+$(0,0)$ & $(0,0)$     \\
+$(0,1)$ & $(0,1)$     \\
+$(1,0)$ & $(1,0)$     \\
+$(1,1)$ & $(1,1)$     \\ \bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{Verification of characteristic~$2$.}
+Every element is its own additive inverse:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{cc}
+\toprule
+$p$     & $p + p$ \\ \midrule
+$(0,0)$ & $(0,0)$ \\
+$(0,1)$ & $(0,0)$ \\
+$(1,0)$ & $(0,0)$ \\
+$(1,1)$ & $(0,0)$ \\ \bottomrule
+\end{tabular}
+\end{center}
+\end{example*}
+
+% ---------------------------------------------------------
+% Remark: The Pattern — Boolean Rings Have Order 2^n
+% ---------------------------------------------------------
+
+\begin{remark*}[Boolean rings have order $2^n$]
+Every finite Boolean ring is isomorphic to $\mathbf{2}^n$ for
+some $n \ge 0$, and therefore has exactly $2^n$ elements.
+This follows from the representation theorem
+(Halmos--Givant, Chapter~22): every Boolean algebra is isomorphic
+to a field of sets, and every finite field of sets is isomorphic
+to $\mathcal{P}(X)$ for some finite set $X$ with $|X| = n$,
+giving $|\mathcal{P}(X)| = 2^n$.
+The permissible finite sizes are $1, 2, 4, 8, 16, \ldots$
+and no other cardinality is achievable.
+\end{remark*}
