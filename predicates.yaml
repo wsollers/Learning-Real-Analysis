@@ -1058,3 +1058,143 @@ predicates:
   arity: 2
   arguments: [f_n, A]
   optional_arguments: []
+
+# =========================================================
+# Algebra — Ring Hierarchy
+# Added for Project Foundation (Halmos Boolean Algebra)
+# =========================================================
+
+- id: pred:associative
+  name: Associative
+  category: algebra
+  arity: 2
+  arguments: [S, op]
+  optional_arguments: []
+  formal: "\\forall x,y,z \\in S:\\; x \\mathbin{\\mathrm{op}} (y \\mathbin{\\mathrm{op}} z) = (x \\mathbin{\\mathrm{op}} y) \\mathbin{\\mathrm{op}} z"
+  note: "Associativity of a binary operation op on a set S."
+
+- id: pred:commutative
+  name: Commutative
+  category: algebra
+  arity: 2
+  arguments: [S, op]
+  optional_arguments: []
+  formal: "\\forall x,y \\in S:\\; x \\mathbin{\\mathrm{op}} y = y \\mathbin{\\mathrm{op}} x"
+  note: "Commutativity of a binary operation op on a set S."
+
+- id: pred:has-identity
+  name: HasIdentity
+  category: algebra
+  arity: 3
+  arguments: [S, op, e]
+  optional_arguments: []
+  formal: "\\forall x \\in S:\\; e \\mathbin{\\mathrm{op}} x = x \\mathbin{\\mathrm{op}} e = x"
+  note: "e is a two-sided identity for op on S."
+
+- id: pred:has-inverses
+  name: HasInverses
+  category: algebra
+  arity: 4
+  arguments: [S, op, inv, e]
+  optional_arguments: []
+  formal: "\\forall x \\in S:\\; x \\mathbin{\\mathrm{op}} \\mathrm{inv}(x) = \\mathrm{inv}(x) \\mathbin{\\mathrm{op}} x = e"
+  note: "Every element of S has a two-sided inverse under op with identity e."
+
+- id: pred:distributes
+  name: Distributes
+  category: algebra
+  arity: 3
+  arguments: [mul, add, S]
+  optional_arguments: []
+  formal: "\\forall x,y,z \\in S:\\; x \\cdot (y + z) = x \\cdot y + x \\cdot z \\;\\land\\; (y+z) \\cdot x = y \\cdot x + z \\cdot x"
+  note: "mul distributes over add on both sides in S."
+
+- id: pred:semigroup
+  name: Semigroup
+  category: algebra
+  arity: 2
+  arguments: [S, op]
+  optional_arguments: []
+  formal: "\\operatorname{Associative}(S, \\mathrm{op})"
+  note: "A set S with an associative binary operation."
+
+- id: pred:monoid
+  name: Monoid
+  category: algebra
+  arity: 3
+  arguments: [S, op, e]
+  optional_arguments: []
+  formal: "\\operatorname{Semigroup}(S, \\mathrm{op}) \\land \\operatorname{HasIdentity}(S, \\mathrm{op}, e)"
+  note: "A semigroup with a two-sided identity element e."
+
+- id: pred:group
+  name: Group
+  category: algebra
+  arity: 4
+  arguments: [S, op, inv, e]
+  optional_arguments: []
+  formal: "\\operatorname{Monoid}(S, \\mathrm{op}, e) \\land \\operatorname{HasInverses}(S, \\mathrm{op}, \\mathrm{inv}, e)"
+  note: "A monoid in which every element has a two-sided inverse."
+
+- id: pred:abelian-group
+  name: AbelianGroup
+  category: algebra
+  arity: 4
+  arguments: [S, add, neg, zero]
+  optional_arguments: []
+  formal: "\\operatorname{Group}(S, +, -, 0) \\land \\operatorname{Commutative}(S, +)"
+  note: "A commutative group. The standard additive group structure."
+
+- id: pred:ring
+  name: Ring
+  category: algebra
+  arity: 6
+  arguments: [R, add, mul, neg, zero, one]
+  optional_arguments: []
+  formal: "\\operatorname{AbelianGroup}(R, +, -, 0) \\land \\operatorname{Monoid}(R, \\cdot, 1) \\land \\operatorname{Distributes}(\\cdot, +, R)"
+  note: "A ring with unit, following Halmos. Axioms (1)-(3),(5)-(9) of Halmos-Givant."
+
+- id: pred:commutative-ring
+  name: CommutativeRing
+  category: algebra
+  arity: 6
+  arguments: [R, add, mul, neg, zero, one]
+  optional_arguments: []
+  formal: "\\operatorname{Ring}(R, +, \\cdot, -, 0, 1) \\land \\operatorname{Commutative}(R, \\cdot)"
+  note: "A ring in which multiplication is also commutative."
+
+- id: pred:idempotent-element
+  name: IdempotentElement
+  category: algebra
+  arity: 3
+  arguments: [x, S, mul]
+  optional_arguments: []
+  formal: "x \\cdot x = x"
+  note: "x is idempotent under mul in S. Halmos equation (11)."
+
+- id: pred:idempotent-ring
+  name: IdempotentRing
+  category: algebra
+  arity: 2
+  arguments: [R, mul]
+  optional_arguments: []
+  formal: "\\forall x \\in R:\\; \\operatorname{IdempotentElement}(x, R, \\cdot)"
+  note: "Every element of R is idempotent under mul. The defining property of Boolean rings."
+
+- id: pred:characteristic-2
+  name: Characteristic2
+  category: algebra
+  arity: 3
+  arguments: [R, add, zero]
+  optional_arguments: []
+  formal: "\\forall x \\in R:\\; x + x = 0"
+  note: "R has characteristic 2. Halmos equation (10). Derived from IdempotentRing."
+
+- id: pred:boolean-ring
+  name: BooleanRing
+  category: algebra
+  arity: 6
+  arguments: [R, add, mul, neg, zero, one]
+  optional_arguments: []
+  formal: "\\operatorname{Ring}(R, +, \\cdot, -, 0, 1) \\land \\operatorname{IdempotentRing}(R, \\cdot)"
+  note: "An idempotent ring with unit. Halmos Definition 7. Implies CommutativeRing and Characteristic2."

@@ -4,19 +4,17 @@ namespace LRA.VolumeI.Sets
 def Set (α : Type) := α → Prop
 
 -- Element-of relation: x ∈ S
-def mem (x : α) (s : Set α) : Prop := s x
+def memberOf (x : α) (s : Set α) : Prop := s x
 
 -- Intersection (A ∩ B): The set of x such that x is in A AND x is in B
-def inter (s1 s2 : Set α) : Set α :=
-  fun x => mem x s1 ∧ mem x s2
+def intersection (s1 s2 : Set α) : Set α :=
+  fun x => memberOf x s1 ∧ memberOf x s2
 
 -- Union (A ∪ B): The set of x such that x is in A OR x is in B
 def union (s1 s2 : Set α) : Set α :=
-  fun x => mem x s1 ∨ mem x s2
+  fun x => memberOf x s1 ∨ memberOf x s2
 
--- Extensionality: Two sets are equal if they have the same members.
--- This is the only "Axiom" we need for these proofs.
-axiom set_ext {α : Type} (A B : Set α) : (∀ x, mem x A ↔ mem x B) → A = B
+
 -- ============================================================
 -- ZFC AXIOMS IN LEAN 4 (FOUNDATIONAL REFERENCE)
 -- ============================================================
@@ -27,16 +25,20 @@ axiom set_ext {α : Type} (A B : Set α) : (∀ x, mem x A ↔ mem x B) → A = 
 /-
   1. AXIOM OF EXTENSIONALITY
      Status: NOT built-in for predicates.
-     We must define it (as we did with `set_ext`) to treat
+     We must define it (as we did with `axiom_set_extension`) to treat
      functions as sets.
 -/
--- axiom set_ext {α : Type} (A B : Set α) : (∀ x, mem x A ↔ mem x B) → A = B
+
+-- Extensionality: Two sets are equal if they have the same members.
+-- This is the only "Axiom" we need for these proofs.
+axiom axiom_set_extension {α : Type} (A B : Set α) : (∀ x, memberOf x A ↔ memberOf x B) → A = B
 
 /-
   2. AXIOM OF EMPTY SET / EXISTENCE
      Status: Built-in via the 'Empty' type or 'False' predicate.
-     def emptySet (α : Type) : Set α := fun _ => False
 -/
+def emptySet (α : Type) : Set α := fun _ => False
+
 
 /-
   3. AXIOM OF PAIRING
@@ -77,4 +79,9 @@ axiom set_ext {α : Type} (A B : Set α) : (∀ x, mem x A ↔ mem x B) → A = 
      Status: Implicitly handled by Lean's requirement that
      inductive types be well-founded (no infinite descending chains).
 -/
+
+
+
+
+
 end LRA.VolumeI.Sets
