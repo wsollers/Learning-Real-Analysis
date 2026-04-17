@@ -1,8 +1,10 @@
-% ---------------------------------------------------------
+% =========================================================
 % Definition: Ring
-% ---------------------------------------------------------
+% Section: Boolean Rings — Volume I
+% Source: Halmos & Givant, Introduction to Boolean Algebras, §1
+% =========================================================
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Definition --- Ring}},
   fonttitle=\small\bfseries]
@@ -11,7 +13,7 @@
 A \textbf{ring} is a non-empty set $R$ together with two binary
 operations $+$ and $\cdot$ on $R$, a unary operation $-$ on $R$,
 and two distinguished elements $0, 1 \in R$, satisfying the
-following axioms:
+following axioms for all $p, q, r \in R$:
 \begin{enumerate}
   \item[(1)] $p + (q + r) = (p + q) + r$
              \hfill\textit{(additive associativity)}
@@ -22,7 +24,7 @@ following axioms:
   \item[(5)] $p + 0 = p$
              \hfill\textit{(additive identity)}
   \item[(6)] $p \cdot 1 = p$
-             \hfill\textit{(multiplicative identity --- unit)}
+             \hfill\textit{(multiplicative identity)}
   \item[(7)] $p + (-p) = 0$
              \hfill\textit{(additive inverse)}
   \item[(8)] $p \cdot (q + r) = p \cdot q + p \cdot r$
@@ -30,99 +32,98 @@ following axioms:
   \item[(9)] $(q + r) \cdot p = q \cdot p + r \cdot p$
              \hfill\textit{(right distributivity)}
 \end{enumerate}
-The numbering follows Halmos and Givant~\cite{HalmosGivant2009}.
-A ring satisfying axiom~(6) is called a \textbf{ring with unit}.
-A ring satisfying $p \cdot q = q \cdot p$ for all $p, q \in R$ is
-called a \textbf{commutative ring}.
+Axiom numbering follows Halmos--Givant~\cite{HalmosGivant2009};
+axiom~(4) is commutativity of multiplication, which is not a ring
+axiom but a theorem in the Boolean setting.
+A ring possessing a distinguished element $1$ satisfying
+axiom~(6) is called a \textbf{ring with unit}.
+A ring satisfying $p \cdot q = q \cdot p$ for all $p, q \in R$
+is called a \textbf{commutative ring}.
+
+\smallskip
+\noindent
+\hyperref[prf:ring-axioms-well-defined]{\textit{Go to proof.}}
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&(R, +, \cdot, -, 0, 1) \text{ is a ring} \\
-&\quad\Longleftrightarrow\quad
-  \bigl(\forall p,q,r \in R\bigr) \\
-&\qquad
-  p + (q+r) = (p+q)+r \\
-&\qquad\land\quad p \cdot (q \cdot r) = (p \cdot q) \cdot r \\
-&\qquad\land\quad p + q = q + p \\
-&\qquad\land\quad p + 0 = p \\
-&\qquad\land\quad p \cdot 1 = p \\
-&\qquad\land\quad p + (-p) = 0 \\
-&\qquad\land\quad p \cdot (q + r) = p \cdot q + p \cdot r \\
-&\qquad\land\quad (q + r) \cdot p = q \cdot p + r \cdot p.
+(R,+,\cdot,-,0,1)\ \text{is a ring}
+\;\Longleftrightarrow\;
+  &\forall p,q,r \in R{:} \\
+  &\quad p + (q + r) = (p + q) + r \\
+  &\;\land\quad p \cdot (q \cdot r) = (p \cdot q) \cdot r \\
+  &\;\land\quad p + q = q + p \\
+  &\;\land\quad p + 0 = p \\
+  &\;\land\quad p \cdot 1 = p \\
+  &\;\land\quad p + (-p) = 0 \\
+  &\;\land\quad p \cdot (q + r) = p \cdot q + p \cdot r \\
+  &\;\land\quad (q + r) \cdot p = q \cdot p + r \cdot p.
 \end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Ring}(R,+,\cdot,-,0,1)
+\;\Longleftrightarrow\;
+\operatorname{AbelianGroup}(R,+,-,0)
+\;\land\;
+\operatorname{Monoid}(R,\cdot,1)
+\;\land\;
+\operatorname{Distributes}(\cdot,+,R)
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&(R, +, \cdot, -, 0, 1) \text{ is \textbf{not} a ring} \\
-&\quad\Longleftrightarrow\quad
-  \bigl(\exists p,q,r \in R\bigr) \\
-&\qquad
-  p + (q+r) \neq (p+q)+r \\
-&\qquad\lor\quad p \cdot (q \cdot r) \neq (p \cdot q) \cdot r \\
-&\qquad\lor\quad p + q \neq q + p \\
-&\qquad\lor\quad p + 0 \neq p \\
-&\qquad\lor\quad p \cdot 1 \neq p \\
-&\qquad\lor\quad p + (-p) \neq 0 \\
-&\qquad\lor\quad p \cdot (q + r) \neq p \cdot q + p \cdot r \\
-&\qquad\lor\quad (q + r) \cdot p \neq q \cdot p + r \cdot p.
+(R,+,\cdot,-,0,1)\ \text{is \textbf{not} a ring}
+\;\Longleftrightarrow\;
+  &\exists p,q,r \in R{:} \\
+  &\quad p + (q + r) \neq (p + q) + r \\
+  &\;\lor\quad p \cdot (q \cdot r) \neq (p \cdot q) \cdot r \\
+  &\;\lor\quad p + q \neq q + p \\
+  &\;\lor\quad p + 0 \neq p \\
+  &\;\lor\quad p \cdot 1 \neq p \\
+  &\;\lor\quad p + (-p) \neq 0 \\
+  &\;\lor\quad p \cdot (q + r) \neq p \cdot q + p \cdot r \\
+  &\;\lor\quad (q + r) \cdot p \neq q \cdot p + r \cdot p.
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
-A structure fails to be a ring at the first axiom it violates.
-The eight axioms form two groups:
+The eight axioms partition into three structural groups:
 \[
-\underbrace{(1),(3),(5),(7)}_{\text{additive abelian group}}
+\underbrace{(1),(3),(5),(7)}_{\displaystyle\operatorname{AbelianGroup}(R,+,-,0)}
 \qquad
-\underbrace{(2),(6)}_{\text{multiplicative semigroup with unit}}
+\underbrace{(2),(6)}_{\displaystyle\operatorname{Monoid}(R,\cdot,1)}
 \qquad
-\underbrace{(8),(9)}_{\text{distributivity}}
+\underbrace{(8),(9)}_{\displaystyle\operatorname{Distributes}(\cdot,+,R)}
 \]
-The additive group axioms are the most commonly violated in naive
-constructions.  A structure satisfying only (1), (3), (5), (7) is
-an abelian group under $+$ but carries no multiplication.
-Distributivity is the structural link between the two operations;
-its failure destroys the ring property even when both operations
-are individually well-behaved.
+A structure violating any axiom in the first group lacks a coherent
+additive group.
+A structure violating any axiom in the second group lacks a
+multiplicative identity or associativity.
+A structure violating the third group possesses two individually
+well-behaved operations that do not interact coherently;
+distributivity is the sole structural bridge between $+$ and
+$\cdot$, and its failure is sufficient to destroy the ring
+property.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A ring is an algebraic structure abstracting the arithmetic of the
-integers.  The additive structure is always a commutative group.
-The multiplicative structure is a monoid (associative with unit)
-but need not be commutative.  Distributivity is the axiom that
-makes the two operations interact coherently --- it is the
-algebraic encoding of the familiar rule that multiplication
-distributes over addition.  A ring need not have a unit in the
-most general definition; here, following Halmos, a unit is
-required, making the multiplicative structure a monoid rather
-than a mere semigroup.
+A ring abstracts the arithmetic of the integers.
+The additive structure is always a commutative group.
+The multiplicative structure is a monoid --- associative with
+unit --- but need not be commutative; axiom~(4) of
+Halmos--Givant, commutativity of multiplication, is absent from
+the ring axioms.
+In the Boolean setting, multiplicative commutativity is not
+assumed but derived as a theorem from idempotence alone.
+Distributivity encodes the coherent interaction between the
+two operations: it is the axiom that makes $\cdot$ and $+$
+form a single algebraic system rather than two independent ones.
 \end{remark*}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

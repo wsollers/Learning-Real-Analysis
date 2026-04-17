@@ -1,0 +1,220 @@
+% =========================================================
+% Section: Boolean Rings — Definitions and First Properties
+% Chapter: Boolean Rings and Boolean Algebras — Volume I
+% Source: Halmos & Givant, Introduction to Boolean Algebras, §1
+% =========================================================
+
+% ---------------------------------------------------------
+% The Two-Element Boolean Ring 2
+% ---------------------------------------------------------
+
+The simplest non-degenerate Boolean ring is the two-element ring
+$\mathbf{2} = \{0, 1\}$.
+Its addition and multiplication are given by the following tables.
+
+\begin{center}
+\begin{tabular}{c|cc}
+$+$ & $0$ & $1$ \\ \hline
+$0$ & $0$ & $1$ \\
+$1$ & $1$ & $0$
+\end{tabular}
+\qquad\qquad
+\begin{tabular}{c|cc}
+$\cdot$ & $0$ & $1$ \\ \hline
+$0$ & $0$ & $0$ \\
+$1$ & $0$ & $1$
+\end{tabular}
+\end{center}
+
+\noindent
+Addition in $\mathbf{2}$ is addition modulo $2$: $1 + 1 = 0$.
+Multiplication in $\mathbf{2}$ is ordinary multiplication of
+integers restricted to $\{0, 1\}$.
+Every element of $\mathbf{2}$ satisfies $p + p = 0$ and
+$p \cdot p = p$, making $\mathbf{2}$ the canonical example against
+which both axioms~(10) and~(11) are verified.
+
+% ---------------------------------------------------------
+% Definition: Idempotent Element
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition --- Idempotent Element}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Idempotent Element]
+\label{def:idempotent-element}
+An element $p$ of a ring $R$ is called \textbf{idempotent} if
+\[
+p \cdot p = p.
+\]
+A ring in which every element is idempotent is called an
+\textbf{idempotent ring}.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+\operatorname{IdempotentElement}(p, R, \cdot)
+&\;\Longleftrightarrow\; p \cdot p = p. \\[4pt]
+\operatorname{IdempotentRing}(R, \cdot)
+&\;\Longleftrightarrow\; \forall p \in R{:}\; p \cdot p = p.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{IdempotentElement}(p,R,\cdot)
+\qquad
+\operatorname{IdempotentRing}(R,\cdot)
+\;\Longleftrightarrow\;
+\forall p \in R{:}\;
+\operatorname{IdempotentElement}(p,R,\cdot)
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\,\operatorname{IdempotentElement}(p,R,\cdot)
+\;\Longleftrightarrow\;
+p \cdot p \neq p.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Idempotence is the single additional axiom that forces Boolean
+structure.  In the two-element ring $\mathbf{2}$, verification is
+immediate: $0 \cdot 0 = 0$ and $1 \cdot 1 = 1$.  In a power set
+algebra $\mathcal{P}(X)$, idempotence of intersection --- $A \cap A
+= A$ --- is the set-theoretic counterpart.  The force of the axiom
+is not in these examples but in what it implies for an arbitrary
+ring: characteristic~2 and commutativity of multiplication both
+follow from idempotence alone, as the theorems below establish.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition: Characteristic 2
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition --- Characteristic 2}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Characteristic 2]
+\label{def:characteristic-2}
+A ring $R$ is said to have \textbf{characteristic~$2$} if
+\[
+p + p = 0 \qquad \text{for all } p \in R. \tag{10}
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Characteristic2}(R,+,0)
+\;\Longleftrightarrow\;
+\forall p \in R{:}\; p + p = 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Characteristic2}(R,+,0)
+\;\Longleftrightarrow\;
+\forall p \in R{:}\;
+\operatorname{IdempotentElement}(p, R, +)
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\,\operatorname{Characteristic2}(R,+,0)
+\;\Longleftrightarrow\;
+\exists p \in R{:}\; p + p \neq 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Characteristic~2 means that every element is its own additive
+inverse: $p + p = 0$ says precisely $p = -p$.  The operation of
+negation therefore becomes the identity map --- applying $-$ to
+any element returns that element unchanged.  Halmos observes that
+in a ring of characteristic~2, the minus sign for additive inverses
+is never needed and is henceforth dropped.  Axiom~(7),
+$p + (-p) = 0$, is replaced in the official Boolean ring axiom set
+by the stronger equation~(10), $p + p = 0$, which is a theorem
+derived from idempotence.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Lemma: Self Additive Inverse (Characteristic 2)
+% ---------------------------------------------------------
+
+\begin{lemma}[Self Additive Inverse]
+\label{lem:self-additive-inverse}
+In any Boolean ring $R$,
+\[
+p + p = 0 \qquad \text{for all } p \in R.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:self-additive-inverse]{\textit{Go to proof.}}
+\end{lemma}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall p \in R{:}\; p + p = 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{BooleanRing}(R,+,\cdot,-,0,1)
+\;\Longrightarrow\;
+\operatorname{Characteristic2}(R,+,0).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is Halmos consequence~(a): idempotence of multiplication
+forces the additive structure to have characteristic~2.  The proof
+expands $(p+q)^2$ by distributivity and idempotence, cancels $p$
+and $q$, then sets $p = q$ to obtain $p + p = 0$.  The Lean~4
+formalisation is \texttt{AdditiveIdempotence} in
+\texttt{BooleanAlgebraDefinitions.lean}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Lemma: Self Negation
+% ---------------------------------------------------------
+
+\begin{lemma}[Self Negation]
+\label{lem:self-negation}
+In any Boolean ring $R$,
+\[
+-p = p \qquad \text{for all } p \in R.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:self-negation]{\textit{Go to proof.}}
+\end{lemma}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall p \in R{:}\; -p = p.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This follows immediately from \ref{lem:self-additive-inverse}.
+Since $p + p = 0$ and $p + (-p) = 0$ both hold, the uniqueness of
+additive inverses gives $-p = p$.  The negation operation is
+therefore the identity map on any Boolean ring.  Halmos uses this
+to drop the minus sign entirely from his notation for the rest of
+the book: since $-p = p$, writing $-p$ and writing $p$ are the
+same thing.
+\end{remark*}
