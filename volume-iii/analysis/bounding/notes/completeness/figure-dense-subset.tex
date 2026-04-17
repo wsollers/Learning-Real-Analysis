@@ -1,0 +1,46 @@
+\begin{tikzpicture}[scale=1.5]
+
+% Draw the real line R
+\draw[->, thick] (-1,0) -- (6,0) node[right] {$\mathbb{R}$};
+
+% Draw Superset S (as a thick light gray line segment)
+\draw[line width=4pt, lightgray!50] (0,0) -- (5,0);
+\node[lightgray, above] at (0.5, 0.1) {$S$};
+
+% Draw Dense Subset D (as distinct dots)
+\foreach \x in {0.1, 0.4, 0.7, 1.2, 1.6, 2.1, 2.3, 2.5, 2.7, 3.0, 3.4, 3.8, 4.2, 4.5, 4.9}
+  \fill[blue] (\x,0) circle (1.5pt);
+\node[blue, below] at (4.5, -0.1) {$D$};
+
+% Draw the arbitrary point x in S
+\coordinate (X) at (2.5,0);
+\fill[black] (X) circle (2pt);
+\node[above] at (X) {$x$};
+
+% Draw the Epsilon-Neighborhood (The tolerance zones)
+\def\eps{0.6}
+\draw[thick, red] ($(X)-(\eps,0)$) -- ($(X)+(\eps,0)$);
+\draw[red, thin, dashed] ($(X)-(\eps,0)$) -- ($(X)-(\eps,-0.5)$);
+\draw[red, thin, dashed] ($(X)+(\eps,0)$) -- ($(X)+(\eps,-0.5)$);
+
+% Identify the found point d from D
+\coordinate (Dfound) at (2.3,0); % One of the blue dots inside the red zone
+\fill[red] (Dfound) circle (1.5pt);
+\node[red, below] at ($(Dfound)-(0,0.1)$) {$d$};
+
+% Label the neighborhood and distance
+\draw[<->, thin, red] ($(X)-(0,0.3)$) -- ($(Dfound)-(0,0.3)$);
+\node[red, below, scale=0.8] at (2.4, -0.35) {$< \varepsilon$};
+
+% Add curly brace for neighborhood visualization
+\draw[decorate, decoration={calligraphic brace, amplitude=5pt}, thick, red]
+  ($(X)+(\eps,0.2)$) -- ($(X)-(\eps,0.2)$) node[pos=0.5, above=6pt] {$\varepsilon\text{-neighborhood of } x$};
+
+% Caption-like node for TikZ figure reference
+\node[text width=8cm, align=center, anchor=north] at (2.5, -1) {
+    \textbf{Figure \ref{fig:dense-subset}}. Illustration of a Dense Subset $D \subseteq S$. \\
+    Given any $x \in S$ (black dot) and any $\varepsilon > 0$ (red interval width), there exists $d \in D$ (red-filled blue dot) such that $|x - d| < \varepsilon$.
+};
+
+\end{tikzpicture}
+
