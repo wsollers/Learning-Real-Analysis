@@ -1,0 +1,49 @@
+% --- Figure: dependency-bound-algebra.tex ---
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    node distance=1.5cm and 1.2cm,
+    every node/.style={draw, thick, rounded corners, inner sep=6pt, font=\small, align=center},
+    % Applying Constitution 13.4: Node colors reinforced by box vocabulary
+    axiom/.style={fill=axiombox, draw=axiomborder},
+    definition/.style={fill=lightblue, draw=propborder},
+    theorem/.style={fill=thmbox, draw=thmborder},
+    % Applying Constitution 13.5: Edge colors standardized by relation type
+    implies/.style={->, thick, arrISA}, % blue-range
+    uses/.style={->, thick, arrUSES},   % green-range
+    defines/.style={->, thick, sigmagreen}
+  ]
+
+    % Foundations
+    \node[axiom] (LUB) {Least Upper Bound \\ Property};
+    
+    % Definitions
+    \node[definition, above right=of LUB] (Sup) {Supremum \\ (def:supremum)};
+    \node[definition, below right=of LUB] (Inf) {Infimum \\ (def:infimum)};
+
+    % Theorems: The Algebra Spine
+    \node[theorem, right=of Sup] (Trans) {Translation \\ Invariance};
+    \node[theorem, right=of Trans] (Sum) {Supremum of \\ Sum Set};
+    \node[theorem, below=of Trans] (PosScale) {Positive \\ Scaling};
+    \node[theorem, right=of Inf] (NegEx) {Negation \\ Exchange};
+    \node[theorem, right=of NegEx] (NegScale) {Negative \\ Scaling};
+
+    % Relationships
+    \draw[uses] (LUB) -- (Sup);
+    \draw[uses] (LUB) -- (Inf);
+    \draw[defines] (Sup) -- (Trans);
+    \draw[defines] (Sup) -- (PosScale);
+    \draw[uses] (Sup) -- (Sum);
+    \draw[uses] (Sup) -- (NegEx);
+    \draw[implies] (Inf) -- (NegEx);
+    \draw[implies] (NegEx) -- (NegScale);
+
+  \end{tikzpicture}
+  
+
+  \caption{Bound Algebra Cluster Dependency Map. The map originates from the `Least Upper Bound Property` (Axiom) and branches into the dual properties of the continuum. The Negation Exchange serves as the structural bridge between supremum and infimum algebra.}
+  \label{fig:dependency-bound-algebra}
+\end{figure}
+\begin{center}
+\DependencyFigureLegend
+\end{center}

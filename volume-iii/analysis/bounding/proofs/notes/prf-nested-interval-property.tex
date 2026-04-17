@@ -1,0 +1,52 @@
+\newpage
+\phantomsection
+\label{prf:nested-interval-theorem}
+
+\begin{remark*}[Return]
+\hyperref[thm:nested-interval-theorem]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Nested Interval Theorem]
+Let $I_n = [a_n, b_n]$ be a sequence of non-empty closed bounded intervals such that $I_{n+1} \subseteq I_n$. Then $\bigcap_{n=1}^\infty I_n \neq \varnothing$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Since $I_{n+1} \subseteq I_n$, the sequence of endpoints satisfies $a_n \le a_{n+1} \le b_{n+1} \le b_n$. Thus, $(a_n)$ is monotone increasing and bounded above by $b_1$. By the Monotone Convergence Theorem, $a_n \to x$ where $x = \sup \{a_n\}$. For any fixed $k$, $a_n \le b_k$ for all $n$ (since if $n > k$, $a_n \le b_n \le b_k$, and if $n \le k$, $a_n \le a_k \le b_k$). Thus, $x = \sup \{a_n\} \le b_k$ for all $k$. Since $a_k \le x$ for all $k$, we have $a_k \le x \le b_k$, implying $x \in I_k$ for all $k \in \mathbb{N}$. Thus $x \in \bigcap I_n$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Analyze the endpoints of the nested intervals.}
+By the definition of nesting, $[a_{n+1}, b_{n+1}] \subseteq [a_n, b_n]$. This implies the following ordering:
+\[ a_n \le a_{n+1} \le b_{n+1} \le b_n \]
+This tells us that $(a_n)$ is a $\operatorname{MonotoneIncreasingSequence}$ and $(b_n)$ is a $\operatorname{MonotoneDecreasingSequence}$.
+
+\textbf{Step 2. Establish a bound for the sequence of left endpoints.}
+Every $b_k$ serves as an upper bound for the entire set $\{a_n : n \in \mathbb{N}\}$. To see this, if $n \le k$, then $a_n \le a_k \le b_k$. If $n > k$, then $a_n \le b_n \le b_k$. Thus, $a_n \le b_k$ for all $n, k$.
+
+\textbf{Step 3. Invoke the Least Upper Bound property.}
+Let $A = \{a_n : n \in \mathbb{N}\}$. Since $A$ is non-empty and bounded above (by $b_1$), $x = \sup A$ exists in $\mathbb{R}$. 
+
+\textbf{Step 4. Show the supremum is contained in every interval.}
+By definition of the supremum as an upper bound, $a_n \le x$ for all $n$.
+From Step 2, we know that every $b_n$ is an upper bound for $A$. By the "leastness" property of the supremum, $x \le b_n$ for all $n$.
+Combining these, we have:
+\[ a_n \le x \le b_n \implies x \in [a_n, b_n] \text{ for all } n \in \mathbb{N} \]
+
+\textbf{Step 5. Conclude non-empty intersection.}
+Since $x$ is in every $I_n$, it belongs to their intersection. Thus, $\bigcap I_n$ is not empty.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof utilizes the Monotone Convergence/Least Upper Bound property to identify the supremum of the left endpoints as a point that is caught between the "rising floor" and the "falling ceiling" of the intervals.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[pred:least-upper-bound-property]{Least Upper Bound Property}
+  \item \hyperref[pred:monotone-increasing-sequence]{Monotone Increasing Sequence}
+  \item \hyperref[thm:infimum-supremum-comparison]{Infimum-Supremum Comparison}
+\end{itemize}
+\end{remark*}
