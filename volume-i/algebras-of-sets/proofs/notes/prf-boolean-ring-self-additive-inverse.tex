@@ -1,0 +1,155 @@
+% =========================================================
+% Proof: Self Additive Inverse (Characteristic 2)
+% Lemma: Self Additive Inverse — Boolean Rings and Boolean Algebras
+% Label: prf:boolean-ring-self-additive-inverse
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:boolean-ring-self-additive-inverse}
+
+\begin{remark*}[Return]
+\hyperref[lem:self-additive-inverse]{Return to Lemma}
+\end{remark*}
+
+\begin{lemma*}[Self Additive Inverse]
+In any Boolean ring $R$,
+\[
+p + p = 0 \qquad \text{for all } p \in R.
+\]
+\end{lemma*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Apply idempotence to the element $p + p$:
+\[
+(p + p) \cdot (p + p) = p + p. \tag{i}
+\]
+Expand the left side using right distributivity~(9), then left
+distributivity~(8), then collapse each $p \cdot p = p$ by
+idempotence~(11):
+\[
+(p + p) \cdot (p + p)
+  \;\overset{(9)}{=}\; p\cdot(p+p) + p\cdot(p+p)
+  \;\overset{(8)}{=}\; (p^2 + p^2) + (p^2 + p^2)
+  \;\overset{p^2=p}{=}\; (p + p) + (p + p). \tag{ii}
+\]
+Combining (i) and (ii): $(p+p) + (p+p) = p+p$.
+Setting $s = p+p$, the equation $s + s = s$ gives $s = 0$
+by adding $-s$ and applying associativity, the inverse law,
+and the identity law.
+Hence $p + p = 0$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Apply idempotence to the element $p + p$.}
+The element $p + p$ is a member of the carrier of $R$.
+Axiom~(11) (multiplicative idempotence) asserts every element
+of $R$ is its own square.
+Apply this to the element $p + p$:
+\[
+(p + p) \cdot (p + p) = p + p. \tag{i}
+\]
+This is the pivot of the proof.
+It says $p + p$ squares to itself.
+Nothing about $p + p = 0$ has been assumed;
+that is the conclusion to be derived.
+
+\textbf{Step 2. Expand $(p+p)\cdot(p+p)$ using right distributivity.}
+Axiom~(9) (right distributivity) states:
+\[
+(q + r) \cdot t = q \cdot t + r \cdot t
+\qquad \forall\, q, r, t \in R.
+\]
+Set $q = p$, $r = p$, $t = p + p$:
+\[
+(p + p) \cdot (p + p) = p \cdot (p + p) \;+\; p \cdot (p + p). \tag{ii}
+\]
+The product has split into two identical copies of $p \cdot (p+p)$.
+This step holds in any ring; no idempotence has been used.
+
+\textbf{Step 3. Expand each $p\cdot(p+p)$ using left distributivity.}
+Axiom~(8) (left distributivity) states:
+\[
+t \cdot (q + r) = t \cdot q + t \cdot r
+\qquad \forall\, t, q, r \in R.
+\]
+Apply to $p \cdot (p + p)$ with $t = p$, $q = p$, $r = p$:
+\[
+p \cdot (p + p) = p \cdot p \;+\; p \cdot p.
+\]
+Apply to both copies in~(ii):
+\[
+p \cdot (p+p) + p \cdot (p+p)
+= (p \cdot p + p \cdot p) + (p \cdot p + p \cdot p). \tag{iii}
+\]
+The right side contains four occurrences of $p \cdot p$.
+This expansion holds in any ring; idempotence has still not
+been used.
+
+\textbf{Step 4. Collapse each $p \cdot p$ to $p$ by idempotence.}
+Axiom~(11) gives $p \cdot p = p$.
+Substitute into all four occurrences in~(iii):
+\[
+(p \cdot p + p \cdot p) + (p \cdot p + p \cdot p)
+= (p + p) + (p + p). \tag{iv}
+\]
+This is the second and final use of idempotence.
+
+\textbf{Step 5. Chain (i) through (iv).}
+Equations (i), (ii), (iii), (iv) combine as:
+\[
+p + p
+\;=\; (p+p)\cdot(p+p)
+\;=\; (p+p)+(p+p).
+\]
+Hence
+\[
+(p+p) + (p+p) = p+p. \tag{v}
+\]
+
+\textbf{Step 6. Conclude $p + p = 0$ by cancellation.}
+Let $s = p + p$.
+Equation~(v) states $s + s = s$.
+Add the additive inverse $-s$ to the right of both sides,
+then apply associativity, the inverse law, and the identity law:
+\[
+s + s = s
+\;\implies\; (s + s) + (-s) = s + (-s)
+\;\implies\; s + \underbrace{(s + (-s))}_{=\,0} = 0
+\;\implies\; s + 0 = 0
+\;\implies\; s = 0.
+\]
+Since $s = p + p$, the conclusion is $p + p = 0$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof is direct.
+The strategy applies idempotence twice: once to $p + p$ as a
+whole (Step~1) and once to $p$ individually (Step~4), with
+distributivity (Steps~2--3) connecting the two applications.
+The conclusion follows by a standard additive cancellation
+(Step~6) using only the group axioms for $(R,+)$.
+No circularity arises: the proof never assumes $1 + 1 = 0$
+or any consequence of characteristic~$2$.
+Both $p + p = 0$ and $1 + 1 = 0$ are consequences of
+idempotence; this proof derives the former directly without
+appealing to the latter.
+The Lean~4 formalisation is \texttt{AdditiveIdempotence} in
+\texttt{LRA/VolumeI/BooleanAlgebra/BooleanAlgebraDefinitions.lean}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:ring]{Definition of Ring}
+        --- axioms~(1) associativity, (5) identity, (7) inverse,
+        (8) left distributivity, (9) right distributivity.
+  \item \hyperref[def:boolean-ring]{Definition of Boolean Ring}
+        --- axiom~(11) multiplicative idempotence,
+        applied in Steps~1 and~4.
+  \item \hyperref[def:idempotent-element]{Definition of Idempotent Element}
+        --- names the property $p \cdot p = p$.
+\end{itemize}
+\end{remark*}
