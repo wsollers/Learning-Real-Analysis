@@ -1,0 +1,300 @@
+% =========================================================
+% Uniform Continuity — Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\subsection{Uniform Continuity}
+\label{sec:uniform-continuity}
+
+\begin{tcolorbox}[title={Toolkit --- Uniform Continuity}]
+\begin{itemize}
+  \item Key distinction: $\delta=\delta(\varepsilon)$ only, not
+    $\delta(\varepsilon,c)$. One $\delta$ serves all pairs in $A$.
+  \item Input condition: $\operatorname{Within}(x,u,\delta)$ --- both
+    $x$ and $u$ range freely, no puncturing.
+  \item Implication chain: $\operatorname{Lipschitz}(f,A)
+    \Rightarrow\operatorname{UniformlyContinuous}(f,A)
+    \Rightarrow\operatorname{ContinuousOn}(f,A)$.
+    Both implications are strict.
+  \item Heine--Cantor: $\operatorname{ContinuousOn}(f,[a,b])
+    \Rightarrow\operatorname{UniformlyContinuous}(f,[a,b])$.
+  \item Failure criterion: sequences $(x_n),(u_n)$ with
+    $x_n-u_n\to 0$ but $|f(x_n)-f(u_n)|\geq\varepsilon_0$.
+  \item $\operatorname{UniformlyContinuous}(f,A)$ preserves Cauchy
+    sequences --- the key lemma for continuous extensions.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Uniform Continuity}]
+\begin{definition}[Uniform Continuity]
+\label{def:uniform-continuity}
+Let $A\subseteq\mathbb{R}$, $f:A\to\mathbb{R}$.
+$\operatorname{UniformlyContinuous}(f,A)$ holds if
+\[
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x,u\in A:\;
+  |x-u|<\delta \Rightarrow |f(x)-f(u)|<\varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f,A)
+  \;\iff\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x,u\in A:\;
+  |x-u|<\delta \Rightarrow |f(x)-f(u)|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{UniformlyContinuous}(f,A)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;
+  \forall x,u\in A:\;
+  \operatorname{Within}(x,u,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}(f(x),f(u),\varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{UniformlyContinuous}(f,A)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x,u\in A:\;
+  |x-u|<\delta \;\wedge\; |f(x)-f(u)|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Contrast with pointwise continuity]
+In $\operatorname{ContinuousAt}(f,c)$: $\delta=\delta(\varepsilon,c)$
+depends on both $\varepsilon$ and the base point $c$. In
+$\operatorname{UniformlyContinuous}(f,A)$: $\delta=\delta(\varepsilon)$
+depends only on $\varepsilon$, serving all pairs $(x,u)$
+simultaneously.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Uniform Continuity (General Domain)
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Uniform Continuity on a General Domain]
+\label{thm:algebra-of-uniform-continuity-general}
+Let $A\subseteq\mathbb{R}$, $f,g:A\to\mathbb{R}$ uniformly
+continuous on $A$, $c\in\mathbb{R}$.
+\begin{enumerate}[label=(\alph*)]
+  \item $\operatorname{UniformlyContinuous}(f+g,A)$,
+    $\operatorname{UniformlyContinuous}(f-g,A)$,
+    $\operatorname{UniformlyContinuous}(cf,A)$.
+  \item $fg$ need not be uniformly continuous on $A$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark*}[Why products fail]
+$f(x)=g(x)=x$ on $\mathbb{R}$ are both Lipschitz, but $fg(x)=x^2$
+is not UC: take $x_n=n+1/n$, $u_n=n$; $x_n-u_n=1/n\to 0$ but
+$|fg(x_n)-fg(u_n)|=2+1/n^2\not\to 0$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Uniform Continuity (Bounded Domain)
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Uniform Continuity on a Bounded Domain]
+\label{thm:algebra-of-uniform-continuity-bounded}
+Let $A\subseteq\mathbb{R}$ bounded, $f,g:A\to\mathbb{R}$ uniformly
+continuous on $A$.
+\begin{enumerate}[label=(\alph*)]
+  \item $\operatorname{UniformlyContinuous}(fg,A)$.
+  \item If $|g(x)|\geq k>0$ for all $x\in A$:
+    $\operatorname{UniformlyContinuous}(f/g,A)$.
+\end{enumerate}
+\end{theorem}
+
+% ---------------------------------------------------------
+% Proposition — Sequential Characterization of Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{proposition}[Sequential Characterization of Uniform Continuity]
+\label{prop:sequential-uniform-continuity}
+$\operatorname{UniformlyContinuous}(f,X)\iff$ whenever
+$(x_n)\sim(y_n)$ in $X$, also $(f(x_n))\sim(f(y_n))$.
+
+\smallskip\noindent
+\hyperref[prf:sequential-uniform-continuity]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f,X)
+  \;\iff\;
+  \forall(x_n),(y_n)\subseteq X:\;
+  (x_n-y_n)\to 0 \Rightarrow (f(x_n)-f(y_n))\to 0.
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Heine--Cantor
+% ---------------------------------------------------------
+
+\begin{theorem}[Heine--Cantor Theorem]
+\label{thm:heine-cantor}
+$\operatorname{ContinuousOn}(f,[a,b])
+\Rightarrow\operatorname{UniformlyContinuous}(f,[a,b])$.
+
+\smallskip\noindent
+\hyperref[prf:heine-cantor]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b])
+  \;\Rightarrow\;
+  \operatorname{UniformlyContinuous}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The compact domain $[a,b]$ promotes pointwise to uniform continuity.
+Proof by contradiction: negate UC to get sequences $(x_n),(u_n)$
+with inputs converging and outputs $\varepsilon_0$-separated;
+Bolzano--Weierstrass and continuity at the limit produce a
+contradiction.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Uniform Continuity Preserves Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{proposition}[Uniform Continuity Preserves Cauchy Sequences]
+\label{prop:uniform-continuity-cauchy}
+$\operatorname{UniformlyContinuous}(f,S)\wedge(x_n)$ Cauchy in $S$
+$\Rightarrow(f(x_n))$ Cauchy in $\mathbb{R}$.
+
+\smallskip\noindent
+\hyperref[prf:cauchy-sequences-preserved]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{UniformlyContinuous}(f,S)
+  \wedge \operatorname{CauchySequence}(x_n)
+  \;\Rightarrow\;
+  \operatorname{CauchySequence}(f(x_n)).
+\]
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Lipschitz Condition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Lipschitz Condition}]
+\begin{definition}[Lipschitz Condition]
+\label{def:lipschitz-condition}
+$\operatorname{Lipschitz}(f,A,K)$: $\exists K>0,\;\forall x,u\in A:
+|f(x)-f(u)|\leq K|x-u|$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{Lipschitz}(f,A,K)
+  \;\iff\;
+  \forall x,u\in A:|f(x)-f(u)|\leq K|x-u|.
+\]
+\end{remark*}
+
+\begin{remark*}[Geometric interpretation]
+Every secant has slope bounded by $K$. The canonical non-Lipschitz
+but UC example is $\sqrt{x}$ on $[0,1]$: the secant through $(0,0)$
+has slope $1/\sqrt{x}\to\infty$ as $x\to 0^+$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Lipschitz Implies UC
+% ---------------------------------------------------------
+
+\begin{proposition}[Lipschitz Implies Uniform Continuity]
+\label{prop:lipschitz-implies-uc}
+$\operatorname{Lipschitz}(f,A)
+\Rightarrow\operatorname{UniformlyContinuous}(f,A)$.
+
+\smallskip\noindent
+\hyperref[prf:lipschitz-implies-uniform-continuous]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Strict hierarchy]
+$\operatorname{Lipschitz}\Rightarrow\operatorname{UniformlyContinuous}
+\Rightarrow\operatorname{ContinuousOn}$, both strict.
+$\sqrt{x}$ on $[0,1]$: UC but not Lipschitz.
+$x^2$ on $\mathbb{R}$: continuous but not UC.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Algebra of Lipschitz Functions
+% ---------------------------------------------------------
+
+\begin{theorem}[Algebra of Lipschitz Functions]
+\label{thm:algebra-of-lipschitz-functions}
+Let $f,g$ Lipschitz on $A$ with constants $K_f,K_g$.
+\begin{enumerate}[label=(\alph*)]
+  \item $cf$: Lipschitz-$|c|K_f$.
+  \item $f+g$, $f-g$: Lipschitz-$(K_f+K_g)$.
+  \item Composition: $h\circ f$ is Lipschitz-$K_hK_f$.
+  \item Products (if $|f|\leq M_f$, $|g|\leq M_g$):
+    $fg$ is Lipschitz-$(M_gK_f+M_fK_g)$.
+  \item Quotients (if $|g|\geq k>0$):
+    $f/g$ is Lipschitz-$(K_f/k+M_fK_g/k^2)$.
+\end{enumerate}
+
+\smallskip\noindent
+\hyperref[prf:algebra-of-lipschitz-functions]{\textit{Go to proof.}}
+\end{theorem}
+
+% ---------------------------------------------------------
+% Definition — Bi-Lipschitz Map
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Bi-Lipschitz Map}]
+\begin{definition}[Bi-Lipschitz Map]
+\label{def:bi-lipschitz}
+$\operatorname{BiLipschitz}(f,A,\alpha,K)$:
+$\exists 0<\alpha\leq K,\;\forall x,u\in A:
+\alpha|x-u|\leq|f(x)-f(u)|\leq K|x-u|$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{BiLipschitz}(f,A)
+  \;\iff\;
+  \exists 0<\alpha\leq K,\;\forall x,u\in A:
+  \alpha|x-u|\leq|f(x)-f(u)|\leq K|x-u|.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Upper bound: $f$ cannot stretch distances by more than $K$.
+Lower bound: $f$ cannot compress by more than $1/\alpha$.
+Lower bound forces $\operatorname{Injective}(f)$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Inverse of Bi-Lipschitz Map Is Lipschitz
+% ---------------------------------------------------------
+
+\begin{theorem}[Inverse of a Bi-Lipschitz Map Is Lipschitz]
+\label{thm:bilipschitz-inverse-is-lipschitz}
+$\operatorname{BiLipschitz}(f,A,\alpha,K)\Rightarrow$
+$f$ is injective, $f^{-1}:f(A)\to A$ exists, and
+$\operatorname{BiLipschitz}(f^{-1},f(A),1/K,1/\alpha)$.
+
+\smallskip\noindent
+\hyperref[prf:bilipschitz-inverse-is-lipschitz]{\textit{Go to proof.}}
+\end{theorem}

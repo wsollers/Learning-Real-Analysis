@@ -1,0 +1,200 @@
+% =========================================================
+% Approximation of Continuous Functions — Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\subsection{Approximation of Continuous Functions}
+\label{sec:approximation}
+
+\begin{tcolorbox}[title={Toolkit --- Approximation}]
+\begin{itemize}
+  \item Hierarchy: step functions $\subset$ piecewise linear $\subset$
+    polynomials. All three classes are dense in $(C([a,b]),\|\cdot\|_\infty)$.
+  \item All three results use Heine--Cantor: $\operatorname{UniformlyContinuous}(f,[a,b])$
+    provides the controlling $\delta$.
+  \item Bernstein polynomials: $B_n(x)=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$.
+  \item Step function approximation feeds directly into Riemann
+    integrability of continuous functions.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Theorem — Step Function Approximation
+% ---------------------------------------------------------
+
+\begin{theorem}[Step Function Approximation]
+\label{thm:step-function-approximation}
+$\operatorname{ContinuousOn}(f,[a,b])$, $\varepsilon>0$
+$\Rightarrow\exists$ step function $s_\varepsilon$:
+$\sup_{x\in[a,b]}|f(x)-s_\varepsilon(x)|<\varepsilon$.
+
+\smallskip\noindent
+\hyperref[prf:step-function-approximation]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b]),\;\varepsilon>0
+  \;\Rightarrow\;
+  \exists s_\varepsilon\text{ step}:\;
+  \forall x\in[a,b]:\;
+  \operatorname{OutputTolerance}(f(x),s_\varepsilon(x),\varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \|f-s_\varepsilon\|_\infty<\varepsilon
+  \;\colonequiv\;
+  \sup_{x\in[a,b]}|f(x)-s_\varepsilon(x)|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Heine--Cantor provides $\delta>0$ with $|f(x)-f(y)|<\varepsilon$
+whenever $|x-y|<\delta$. Partition $[a,b]$ into subintervals of
+width less than $\delta$ and define $s_\varepsilon$ constant at
+the left-endpoint value on each piece. Used directly to show
+continuous functions on $[a,b]$ are Riemann integrable.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Piecewise Linear Function
+% ---------------------------------------------------------
+
+\begin{definition}[Piecewise Linear Function]
+\label{def:piecewise-linear-function}
+$g:[a,b]\to\mathbb{R}$ is \textbf{piecewise linear} if there exist
+$a=x_0<x_1<\cdots<x_m=b$ such that $g|_{[x_{k-1},x_k]}$ is affine
+for each $k$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  g\text{ piecewise linear}
+  \;\iff\;
+  \exists a=x_0<\cdots<x_m=b,\;
+  \forall k: g|_{[x_{k-1},x_k]}\text{ affine}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A piecewise linear function is continuous (pieces agree at nodes)
+and its graph consists of finitely many line segments. More regular
+than step functions, less regular than polynomials.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Piecewise Linear Approximation
+% ---------------------------------------------------------
+
+\begin{theorem}[Piecewise Linear Approximation]
+\label{thm:piecewise-linear-approximation}
+$\operatorname{ContinuousOn}(f,[a,b])$, $\varepsilon>0$
+$\Rightarrow\exists$ continuous piecewise linear $\ell_\varepsilon$:
+$\sup_{[a,b]}|f-\ell_\varepsilon|<\varepsilon$.
+
+\smallskip\noindent
+\hyperref[prf:piecewise-linear-approximation]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b]),\;\varepsilon>0
+  \;\Rightarrow\;
+  \exists\ell_\varepsilon\text{ cts piecewise linear}:\;
+  \|f-\ell_\varepsilon\|_\infty<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Partition via Heine--Cantor $\delta$; connect adjacent graph values
+by line segments. Approximation hierarchy: step $\subset$ piecewise
+linear $\subset$ polynomials.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Weierstrass Approximation Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Weierstrass Approximation Theorem]
+\label{thm:weierstrass-approximation}
+$\operatorname{ContinuousOn}(f,[a,b])$, $\varepsilon>0$
+$\Rightarrow\exists p_\varepsilon\in\mathbb{R}[x]$:
+$\|f-p_\varepsilon\|_\infty<\varepsilon$.
+
+\smallskip\noindent
+\hyperref[prf:bernstein-approximation]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b]),\;\varepsilon>0
+  \;\Rightarrow\;
+  \exists p_\varepsilon\in\mathbb{R}[x]:\;
+  \sup_{x\in[a,b]}|f(x)-p_\varepsilon(x)|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Polynomials are dense in $(C([a,b]),\|\cdot\|_\infty)$. Every
+continuous function on a closed bounded interval is the uniform
+limit of polynomials.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Bernstein Polynomial
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Bernstein Polynomial}]
+\begin{definition}[Bernstein Polynomial]
+\label{def:bernstein-polynomial}
+$B_n(x):=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$ for
+$f:[0,1]\to\mathbb{R}$, $x\in[0,1]$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  B_n(x)=\sum_{k=0}^n f\!\left(\tfrac{k}{n}\right)
+  \binom{n}{k}x^k(1-x)^{n-k},\quad
+  \binom{n}{k}=\frac{n!}{k!(n-k)!}.
+\]
+\end{remark*}
+
+\begin{remark*}[Probabilistic interpretation]
+$B_n(x)=\mathbb{E}[f(S_n/n)]$ where $S_n\sim\mathrm{Binomial}(n,x)$.
+The law of large numbers forces $S_n/n\to x$ in probability;
+uniform continuity converts this to uniform approximation.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Bernstein Approximation Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Bernstein Approximation Theorem]
+\label{thm:bernstein-approximation}
+$\operatorname{ContinuousOn}(f,[0,1])$, $\varepsilon>0$
+$\Rightarrow\exists n_\varepsilon\in\mathbb{N}:\;\forall n\geq n_\varepsilon,\;
+\|f-B_n\|_\infty<\varepsilon$.
+
+\smallskip\noindent
+\hyperref[prf:bernstein-approximation]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[0,1]),\;\varepsilon>0
+  \;\Rightarrow\;
+  \exists n_\varepsilon\in\mathbb{N},\;\forall n\geq n_\varepsilon:\;
+  \sup_{x\in[0,1]}|f(x)-B_n(x)|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Constructive proof of Weierstrass. The convergence proof uses only
+uniform continuity and a variance estimate for the binomial
+distribution. The Weierstrass theorem for general $[a,b]$ follows
+by a linear change of variables.
+\end{remark*}

@@ -1,0 +1,306 @@
+% =========================================================
+% Intermediate Value Theorem — Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\subsection{Intermediate Value Theorem}
+\label{sec:ivt}
+
+\begin{tcolorbox}[title={Toolkit --- Boundedness, Extrema, and Intermediate Values}]
+\begin{itemize}
+  \item Implication chain on $[a,b]$:
+    $\operatorname{ContinuousOn}(f,[a,b])$
+    $\Rightarrow\operatorname{BoundedOn}(f,[a,b])$
+    $\Rightarrow$ extrema attained
+    $\Rightarrow$ all intermediate values attained
+    $\Rightarrow$ $f([a,b])$ is a closed bounded interval.
+  \item All three hypotheses are essential: closed, bounded, continuous.
+    Drop any one and the conclusion fails.
+  \item IVT on a general interval: continuous image of any interval
+    is an interval (Preservation of Intervals).
+  \item Darboux property: a continuous function cannot skip a value.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Bounded on a Set
+% ---------------------------------------------------------
+
+\begin{definition}[Bounded on a Set]
+\label{def:bounded-on-a-set}
+$\operatorname{BoundedOn}(f,A)$: $\exists M>0,\;\forall x\in A:
+|f(x)|\leq M$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{BoundedOn}(f,A)
+  \;\iff\;
+  \exists M>0,\;\forall x\in A:|f(x)|\leq M.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{BoundedOn}(f,A)
+  \;\iff\;
+  \forall M>0,\;\exists x\in A:|f(x)|>M.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Boundedness means $f(A)\subseteq[-M,M]$ for some finite $M$.
+Boundedness is the minimal global control on $f$ and is the first
+consequence of $\operatorname{ContinuousOn}(f,[a,b])$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Boundedness Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Boundedness Theorem]
+\label{thm:boundedness-theorem}
+$\operatorname{ContinuousOn}(f,[a,b])
+\Rightarrow\operatorname{BoundedOn}(f,[a,b])$.
+
+\smallskip\noindent
+\hyperref[prf:boundedness-theorem]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b])
+  \;\Rightarrow\;
+  \exists M>0,\;\forall x\in[a,b]:|f(x)|\leq M.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement --- contrapositive]
+\[
+  \neg\,\operatorname{BoundedOn}(f,[a,b])
+  \;\Rightarrow\;
+  \neg\,\operatorname{ContinuousOn}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+The three hypotheses are each necessary. $f(x)=x$ on $(0,1)$ (not
+closed): unbounded near $0$. $f(x)=x$ on $[0,\infty)$ (not bounded):
+unbounded. $f(x)=1/x$ on $(0,1]$ (not continuous at $0$): unbounded.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Proof by contradiction via Bolzano--Weierstrass: if $f$ were
+unbounded, a sequence $(x_n)\subseteq[a,b]$ with $|f(x_n)|>n$
+would exist; compactness produces a convergent subsequence;
+continuity at the limit forces $f$ to be bounded nearby ---
+contradiction.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Absolute Extrema
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Absolute Extrema}]
+\begin{definition}[Absolute Maximum and Absolute Minimum]
+\label{def:absolute-extrema}
+$\operatorname{Maximum}(x^*,f(A))$: $x^*\in A$ and $f(x^*)\geq f(x)$
+for all $x\in A$.
+
+$\operatorname{Minimum}(x_*,f(A))$: $x_*\in A$ and $f(x_*)\leq f(x)$
+for all $x\in A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{Maximum}(x^*,f(A))
+  \;\iff\;
+  x^*\in A \;\wedge\; \forall x\in A: f(x^*)\geq f(x).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Maximum}(x^*,f(A))
+  \;\colonequiv\;
+  x^*\in A \;\wedge\; \operatorname{Supremum}(f(x^*),f(A)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An absolute extremum is a global attainment: the supremum (or
+infimum) of $f(A)$ is actually achieved at some $x^*\in A$.
+Being bounded above implies the supremum exists but does not
+guarantee attainment.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Extreme Value Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Extreme Value Theorem]
+\label{thm:extreme-value-theorem}
+$\operatorname{ContinuousOn}(f,[a,b])$ $\Rightarrow$ $f$ has an
+absolute maximum and an absolute minimum on $[a,b]$.
+
+\smallskip\noindent
+\hyperref[prf:evt-maximum-minimum]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b])
+  \;\Rightarrow\;
+  \exists x^*,x_*\in[a,b]:\;
+  \operatorname{Maximum}(x^*,f([a,b]))
+  \;\wedge\;
+  \operatorname{Minimum}(x_*,f([a,b])).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The EVT upgrades boundedness to attainment. Boundedness guarantees
+the supremum and infimum exist; the EVT guarantees they are achieved.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Location of Roots
+% ---------------------------------------------------------
+
+\begin{theorem}[Location of Roots]
+\label{thm:location-of-roots}
+$\operatorname{ContinuousOn}(f,[a,b])$
+$\wedge(f(a)<0<f(b)\vee f(a)>0>f(b))$
+$\Rightarrow\exists c\in(a,b):f(c)=0$.
+
+\smallskip\noindent
+\hyperref[prf:locations-of-roots]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b])
+  \;\wedge\;
+  \operatorname{sgn}(f(a))\neq\operatorname{sgn}(f(b))
+  \;\Rightarrow\;
+  \exists c\in(a,b): f(c)=0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A continuous function cannot pass from negative to positive without
+crossing zero. Proof uses bisection: maintain nested intervals with
+sign change; the intersection point is the root.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Bolzano's IVT
+% ---------------------------------------------------------
+
+\begin{theorem}[Bolzano's Intermediate Value Theorem]
+\label{thm:bolzano-intermediate-value}
+$\operatorname{ContinuousOn}(f,I)$, $a,b\in I$,
+$f(a)<k<f(b)$ $\Rightarrow\exists c$ between $a$ and $b$: $f(c)=k$.
+
+\smallskip\noindent
+\hyperref[prf:bolzano-ivt]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,I),\;a,b\in I,\;f(a)<k<f(b)
+  \;\Rightarrow\;
+  \exists c\in I:\min\{a,b\}<c<\max\{a,b\}\wedge f(c)=k.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuous functions on intervals do not skip intermediate values.
+Reduces to Location of Roots via $g=f-k$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Image of Closed Bounded Interval
+% ---------------------------------------------------------
+
+\begin{theorem}[Image of Closed Bounded Interval Is Closed Bounded Interval]
+\label{thm:image-of-closed-bounded-interval}
+$\operatorname{ContinuousOn}(f,[a,b])
+\Rightarrow f([a,b])=[\min f,\max f]$.
+
+\smallskip\noindent
+\hyperref[prf:image-of-closed-bounded-interval-is-interval]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b])
+  \;\Rightarrow\;
+  f([a,b])=[\min_{[a,b]}f,\,\max_{[a,b]}f].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Synthesises boundedness, EVT, and IVT. The image is exactly the
+closed interval $[\min f,\max f]$ --- no gaps, both endpoints included.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Preservation of Intervals
+% ---------------------------------------------------------
+
+\begin{theorem}[Preservation of Intervals]
+\label{thm:preservation-of-intervals}
+$I$ an interval, $\operatorname{ContinuousOn}(f,I)$
+$\Rightarrow f(I)$ is an interval.
+
+\smallskip\noindent
+\hyperref[prf:preservation-of-intervals]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  I\text{ interval},\;
+  \operatorname{ContinuousOn}(f,I)
+  \;\Rightarrow\;
+  f(I)\text{ is an interval.}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+General form of IVT: no compactness required. Continuous image of
+any interval is an interval.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Darboux Property
+% ---------------------------------------------------------
+
+\begin{theorem}[Darboux Property]
+\label{thm:darboux-property}
+$\operatorname{ContinuousOn}(f,[a,b])$,
+$\forall x\in[a,b]:f(x)\neq c$
+$\Rightarrow(f>c$ on $[a,b])$ or $(f<c$ on $[a,b])$.
+
+\smallskip\noindent
+\hyperref[prf:darboux-property]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousOn}(f,[a,b])
+  \;\wedge\;
+  \forall x\in[a,b]:f(x)\neq c
+  \;\Rightarrow\;
+  \bigl(\forall x:f(x)>c\bigr)
+  \;\vee\;
+  \bigl(\forall x:f(x)<c\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Contrapositive of IVT: if $c$ is not attained, $f$ lies entirely
+on one side of $c$. Used in sign-argument proofs.
+\end{remark*}

@@ -1,0 +1,198 @@
+% =========================================================
+% Oscillation — Notes
+% Chapter: continuity
+% Volume III · Analysis
+% =========================================================
+
+\subsection{Oscillation}
+\label{sec:oscillation}
+
+\begin{tcolorbox}[title={Toolkit --- Oscillation}]
+\begin{itemize}
+  \item $\operatorname{OscillationOn}(f,E,\omega)$:
+    $\omega(f;E)=\sup_{x_1,x_2\in E}|f(x_1)-f(x_2)|=\operatorname{diam}(f(E))$.
+  \item $\operatorname{OscillationAt}(f,x_0,\omega)$:
+    $\omega(f;x_0)=\lim_{\delta\to 0^+}\omega(f;U_\delta(x_0)\cap E)$.
+    The limit exists because the function $\delta\mapsto\omega(f;U_\delta(x_0)\cap E)$
+    is nonincreasing.
+  \item $\operatorname{ContinuousAt}(f,x_0)\iff\omega(f;x_0)=0$.
+  \item Discontinuity set: $D(f)=\{x:\omega(f;x)>0\}=
+    \bigcup_{n=1}^\infty\{x:\omega(f;x)\geq 1/n\}$.
+  \item Each threshold set is closed; $D(f)$ is $F_\sigma$.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition — Oscillation on a Set
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Oscillation on a Set}]
+\begin{definition}[Oscillation on a Set]
+\label{def:oscillation-on-a-set}
+$\operatorname{OscillationOn}(f,E,\omega)$:
+\[
+  \omega(f;E) \;:=\; \sup_{x_1,x_2\in E}|f(x_1)-f(x_2)|
+  \;=\; \operatorname{diam}(f(E)).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \omega(f;E)
+  = \sup\{|f(x_1)-f(x_2)|:x_1,x_2\in E\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{OscillationOn}(f,E,\omega)
+  \;\colonequiv\;
+  \omega = \operatorname{diam}(f(E))
+  = \sup_{x_1,x_2\in E}|f(x_1)-f(x_2)|.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Oscillation on a set records the spread of the image --- the diameter
+of $f(E)$. Small oscillation means all values of $f$ on $E$ lie
+close together. Zero oscillation means $f$ is constant on $E$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition — Oscillation at a Point
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[title={Definition --- Oscillation at a Point}]
+\begin{definition}[Oscillation at a Point]
+\label{def:oscillation-at-a-point}
+$\operatorname{OscillationAt}(f,x_0,\omega)$:
+\[
+  \omega(f;x_0) \;:=\;
+  \lim_{\delta\to 0^+}
+  \omega\bigl(f;\,U_\delta(x_0)\cap E\bigr),
+\]
+where $U_\delta(x_0)=\{x:|x-x_0|<\delta\}$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \omega(f;x_0)
+  = \lim_{\delta\to 0^+}
+    \sup\bigl\{|f(x_1)-f(x_2)|:x_1,x_2\in U_\delta(x_0)\cap E\bigr\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{OscillationAt}(f,x_0,\omega)
+  \;\colonequiv\;
+  \omega = \inf_{\delta>0}\operatorname{OscillationOn}(f,U_\delta(x_0)\cap E,\cdot).
+\]
+\end{remark*}
+
+\begin{remark*}[The limit exists]
+$U_{\delta_1}\subseteq U_{\delta_2}$ for $\delta_1<\delta_2$, so
+$\omega(f;U_{\delta_1}\cap E)\leq\omega(f;U_{\delta_2}\cap E)$.
+The function $\delta\mapsto\omega(f;U_\delta\cap E)$ is nonincreasing
+and bounded below by $0$, so its limit as $\delta\to 0^+$ exists.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The oscillation at $x_0$ measures the residual spread of nearby
+values as the neighbourhood shrinks to the point. Zero oscillation
+means $f$ collapses to a single cluster near $x_0$. Positive
+oscillation means a positive spread persists --- $f$ is discontinuous
+at $x_0$.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem — Continuity iff Zero Oscillation
+% ---------------------------------------------------------
+
+\begin{theorem}[Continuity Characterised by Oscillation]
+\label{thm:continuity-iff-zero-oscillation}
+$\operatorname{ContinuousAt}(f,x_0)\iff\omega(f;x_0)=0$.
+
+\smallskip\noindent
+\hyperref[prf:continuity-iff-zero-oscillation]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{ContinuousAt}(f,x_0)
+  \;\iff\;
+  \operatorname{OscillationAt}(f,x_0,0).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{ContinuousAt}(f,x_0)
+  \;\colonequiv\;
+  \operatorname{OscillationAt}(f,x_0,0)
+  \;\colonequiv\;
+  \inf_{\delta>0}\omega(f;U_\delta(x_0)\cap E)=0.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \operatorname{DiscontinuousAt}(f,x_0)
+  \;\iff\;
+  \omega(f;x_0)>0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The $\varepsilon$-$\delta$ definition controls all nearby values
+relative to $f(x_0)$. The oscillation formulation is symmetric:
+it controls the spread between any two nearby values. The equivalence
+holds because once all nearby values are close to each other, and
+$x_0$ is one of those nearby points, all nearby values must be close
+to $f(x_0)$. Continuity collapses to the vanishing of a single
+local invariant.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Proposition — Discontinuity Set via Oscillation
+% ---------------------------------------------------------
+
+\begin{proposition}[Discontinuity Set via Oscillation]
+\label{prop:discontinuity-set-via-oscillation}
+$D(f):=\{x\in E:\operatorname{DiscontinuousAt}(f,x)\}
+=\{x\in E:\omega(f;x)>0\}
+=\bigcup_{n=1}^\infty\{x\in E:\omega(f;x)\geq 1/n\}$.
+
+\smallskip\noindent
+\hyperref[prf:discontinuity-set-via-oscillation]{\textit{Go to proof.}}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in E:\;
+  x\in D(f)
+  \;\iff\;
+  \omega(f;x)>0
+  \;\iff\;
+  \exists n\in\mathbb{N}:\omega(f;x)\geq 1/n.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  D(f)
+  \;=\;
+  \bigcup_{n=1}^\infty
+  \bigl\{x\in E:\operatorname{OscillationAt}(f,x,\omega)\wedge\omega\geq 1/n\bigr\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Each threshold set $\{x:\omega(f;x)\geq 1/n\}$ is closed (the
+oscillation function is upper semicontinuous). Hence $D(f)$ is
+$F_\sigma$ --- a countable union of closed sets. This is the starting
+point for the Riemann integrability criterion: a bounded function is
+Riemann integrable iff $D(f)$ has Lebesgue measure zero.
+\end{remark*}
