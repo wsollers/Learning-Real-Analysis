@@ -1,0 +1,318 @@
+% =========================================================
+% Vector Spaces — Main File
+% =========================================================
+% Input order follows logical dependency:
+%   prerequisites → definitions → examples → propositions
+
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Vector Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Vector Space]
+\label{def:vector-space}
+A \textbf{vector space} over $\mathbf{F}$ is a set $V$ together with an
+addition on $V$ and a scalar multiplication
+\[
+\mathbf{F} \times V \to V
+\]
+such that the following properties hold for all $u,v,w \in V$ and all
+$a,b \in \mathbf{F}$:
+\begin{enumerate}[label=(\roman*)]
+  \item $u + v \in V$;
+  \item $u + v = v + u$;
+  \item $(u + v) + w = u + (v + w)$;
+  \item there exists $0 \in V$ such that $v + 0 = v$;
+  \item for every $v \in V$ there exists $-v \in V$ such that
+        $v + (-v) = 0$;
+  \item $av \in V$;
+  \item $a(u+v) = au + av$;
+  \item $(a+b)v = av + bv$;
+  \item $a(bv) = (ab)v$;
+  \item $1v = v$.
+\end{enumerate}
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&V \text{ is a vector space over } \mathbf{F} \\
+&\quad\Longleftrightarrow\quad
+\text{$V$ is closed under addition and scalar multiplication,} \\
+&\qquad\text{addition on $V$ is commutative and associative,} \\
+&\qquad\text{$V$ has an additive identity and additive inverses,} \\
+&\qquad\text{and scalar multiplication satisfies the two distributive laws,} \\
+&\qquad\text{the associative law for scalar multiplication, and the identity law.}
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{VectorSpace}(V,\mathbf{F},+,\cdot)
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A vector space is a set whose elements can be added together and multiplied
+by scalars, with these operations satisfying the natural algebraic rules
+familiar from $\mathbf{F}^n$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Vector and Point)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Vector and Point]
+\label{def:vector-and-point}
+An element of a vector space $V$ is called a \textbf{vector}.
+
+When $V = \mathbf{F}^n$, an element of $\mathbf{F}^n$ may also be called
+a \textbf{point}.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&v \in V \;\Longrightarrow\; v \text{ is a vector}, \\
+&x \in \mathbf{F}^n \;\Longrightarrow\; x \text{ is a point of } \mathbf{F}^n.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The word \emph{vector} emphasizes the algebraic role of an element of $V$.
+In $\mathbf{F}^n$, the same object can also be viewed geometrically as a point
+with coordinates in $\mathbf{F}$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Real Vector Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Real Vector Space]
+\label{def:real-vector-space}
+A \textbf{real vector space} is a vector space over $\mathbb{R}$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+V \text{ is a real vector space}
+\;\Longleftrightarrow\;
+V \text{ is a vector space over } \mathbb{R}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{RealVectorSpace}(V)
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+In a real vector space, the scalars used in scalar multiplication are real numbers.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Complex Vector Space)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Complex Vector Space]
+\label{def:complex-vector-space}
+A \textbf{complex vector space} is a vector space over $\mathbb{C}$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+V \text{ is a complex vector space}
+\;\Longleftrightarrow\;
+V \text{ is a vector space over } \mathbb{C}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ComplexVectorSpace}(V)
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+In a complex vector space, the scalars used in scalar multiplication are complex numbers.
+\end{remark*}
+
+\begin{remark*}[Notation]
+For each positive integer $m$, the notation $\mathbf{F}^m$ denotes the vector
+space of all lists of length $m$ of elements of $\mathbf{F}$.
+
+The notation $\mathbf{F}^{\infty}$ denotes the set of all infinite lists
+\[
+(x_1,x_2,x_3,\dots)
+\]
+with each $x_j \in \mathbf{F}$, equipped with coordinatewise addition and
+coordinatewise scalar multiplication.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The spaces $\mathbf{F}^m$ provide the basic finite-dimensional examples of
+vector spaces, while $\mathbf{F}^{\infty}$ is the corresponding infinite-list
+version.
+\end{remark*}
+
+\begin{remark*}[Coordinates in Vector Spaces]
+A pointwise proof is available when vectors are given explicitly by coordinates, as in $\mathbf{F}^n$, because the operations are defined coordinatewise. In an arbitrary vector space, vectors need not come with coordinates, so proofs must use the vector space axioms rather than coordinate calculations.
+\end{remark*}
+
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Unique Additive Identity)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Unique Additive Identity]
+\label{thm:unique-additive-identity}
+A vector space has a unique additive identity.
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{If } 0,0' \in V \text{ each satisfy} \\
+&\qquad \forall v \in V,\; v+0=v
+\quad\text{and}\quad
+\forall v \in V,\; v+0'=v, \\
+&\text{then } 0=0'.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Although the vector space axioms assert the existence of an additive identity,
+they force that identity to be unique.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Unique Additive Inverse)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Unique Additive Inverse]
+\label{thm:unique-additive-inverse}
+Every vector in a vector space has a unique additive inverse.
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall v \in V,\;
+\text{if } w,u \in V \text{ satisfy } v+w=0 \text{ and } v+u=0, \\
+&\quad\text{then } w=u.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The vector space axioms guarantee that each vector has an additive inverse,
+and that inverse is determined uniquely by the requirement that the sum be $0$.
+\end{remark*}
+
+\begin{remark*}[Notation]
+If $v \in V$, then the unique additive inverse of $v$ is denoted by $-v$.
+
+If $w,v \in V$, then
+\[
+w-v
+\;:=\;
+w+(-v).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The notation $-v$ names the unique vector that cancels $v$, and $w-v$
+means adding the inverse of $v$ to $w$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($0v=0$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[$0v=0$]
+\label{thm:zero-scalar-times-vector}
+For every $v \in V$,
+\[
+0v=0.
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall v \in V,\; 0v=0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Multiplying any vector by the scalar $0$ gives the zero vector.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($a0=0$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[$a0=0$]
+\label{thm:scalar-times-zero-vector}
+For every $a \in \mathbf{F}$,
+\[
+a0=0.
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a \in \mathbf{F},\; a0=0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every scalar sends the zero vector to the zero vector.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (($-1)v=-v$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[($-1)v=-v$]
+\label{thm:minus-one-times-vector}
+For every $v \in V$,
+\[
+(-1)v=-v.
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall v \in V,\; (-1)v=-v.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Scalar multiplication by $-1$ produces the additive inverse of a vector.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+

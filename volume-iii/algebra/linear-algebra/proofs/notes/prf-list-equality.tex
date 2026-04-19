@@ -1,0 +1,42 @@
+\newpage
+\phantomsection
+\label{prf:list-equality}
+
+\begin{remark*}[Return]
+\hyperref[def:list]{Return to Definition of List}
+\end{remark*}
+
+\begin{theorem*}[Equality of Lists]
+Two lists $L = (x_1, \dots, x_n)$ and $M = (y_1, \dots, y_m)$ are equal if and only if $n = m$ and $x_j = y_j$ for all $j \in \{1, \dots, n\}$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+A list of length $n$ is formally defined as a function $f: \{1, \dots, n\} \to S$. By the axiom of extensionality for functions, two functions $f$ and $g$ are equal if and only if they have the same domain and $f(j) = g(j)$ for all $j$ in that domain. Let $L$ be the function $j \mapsto x_j$ and $M$ be $j \mapsto y_j$. Then $L = M$ if and only if their domains $\{1, \dots, n\}$ and $\{1, \dots, m\}$ are equal (implying $n = m$) and $x_j = y_j$ for all $j \in \{1, \dots, n\}$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Address the global constraint (Length).}
+Before examining individual elements, we observe that the length $n$ is an intrinsic property of the list. If $n \neq m$, the lists are distinct objects in different spaces (e.g., $\mathbb{F}^n$ vs $\mathbb{F}^m$). Thus, $n=m$ is a necessary condition.
+
+\textbf{Step 2. Address the local constraint (Positional Identity).}
+Since lists are ordered, identity is not just about having the same "pool" of elements (like a set), but about the mapping of indices to values. We define equality element-wise:
+\[ \forall j \in \{1, \dots, n\}, x_j = y_j \]
+If there exists even one index $k$ such that $x_k \neq y_k$, the mapping is different, and thus the lists are not equal.
+
+\textbf{Step 3. Critique of the Induction/Summation approach.}
+While one could define a "difference sum" $D = \sum_{j=1}^n \delta(x_j, y_j)$ where $\delta$ returns $1$ if elements differ, this assumes the elements exist in a space where addition is defined. The functional definition used in Step 2 is more robust because it applies even if the list contains non-mathematical objects.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof relies on the definition of a list as a finite sequence (function) and uses the principle of functional extensionality.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:list]{Definition of List}
+  \item \operatorname{FunctionEquality} (Volume I)
+\end{itemize}
+\end{remark*}

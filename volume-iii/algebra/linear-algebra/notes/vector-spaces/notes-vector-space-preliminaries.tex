@@ -1,0 +1,238 @@
+% --- Volume III: Analysis / Linear Algebra ---
+% Section: Basic Structures
+
+\begin{definition}[List]
+\label{def:list}
+Suppose $n$ is a non-negative integer. A \textbf{list} of length $n$ is an ordered collection of $n$ elements.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall L, \exists n \in \mathbb{N} \cup \{0\} : \bigl( \operatorname{Length}(L) = n \land L = (x_1, x_2, \dots, x_n) \bigr)
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{List}(L) \iff \exists n \in \mathbb{N}_0, \exists (x_1, \dots, x_n) : L = (x_1, \dots, x_n)
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A list is the primary mechanism for discussing ordered finite sets of vectors or scalars. Unlike a set, the structural integrity of a list depends on both the identity and the position of its members.
+\begin{itemize}
+    \hfill \item \textbf{Order Sensitivity}: The lists $(a, b)$ and $(b, a)$ are distinct unless $a=b$. \hfill
+    \hfill \item \textbf{Finiteness}: By Axler's convention, a list must have a finite number of elements. Infinite ordered collections are categorized as sequences. \hfill
+    \hfill \item \textbf{Empty List}: A list of length $n=0$ is called the empty list, denoted by $()$. \hfill
+\end{itemize}
+\end{remark*}
+
+\smallskip
+\noindent
+\hyperref[prf:list-equality]{\textit{Go to proof of equality.}}
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition ($\mathbf{F}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[$\mathbf{F}^n$]
+\label{def:Fn}
+Let $\mathbf{F}$ denote $\mathbb{R}$ or $\mathbb{C}$, and let $n$ be a positive integer.
+Then $\mathbf{F}^n$ is defined to be the set of all lists of length $n$ of elements of $\mathbf{F}$:
+\[
+\mathbf{F}^n
+=
+\{(x_1,\dots,x_n) : x_1,\dots,x_n \in \mathbf{F}\}.
+\]
+The entries in a list in $\mathbf{F}^n$ are called the coordinates of the list.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&x \in \mathbf{F}^n \\
+&\quad\Longleftrightarrow\quad
+\exists x_1,\dots,x_n \in \mathbf{F}
+\text{ such that }
+x = (x_1,\dots,x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An element of $\mathbf{F}^n$ is an ordered list of $n$ scalars from $\mathbf{F}$.
+The order matters, and the list is completely specified by its coordinates.
+\end{remark*}
+
+
+
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Addition in $\mathbf{F}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Addition in $\mathbf{F}^n$]
+\label{def:addition-in-Fn}
+Let
+\[
+x=(x_1,\dots,x_n), \qquad y=(y_1,\dots,y_n)
+\]
+be vectors in $\mathbf{F}^n$.
+The sum of $x$ and $y$ is defined by
+\[
+x+y
+=
+(x_1+y_1,\dots,x_n+y_n).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall x,y \in \mathbf{F}^n, \\
+&\quad
+x=(x_1,\dots,x_n)\land y=(y_1,\dots,y_n)
+\;\Rightarrow\;
+x+y=(x_1+y_1,\dots,x_n+y_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Addition in $\mathbf{F}^n$ is defined coordinatewise: add the first coordinates,
+then the second coordinates, and so on through the $n$th coordinates.
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Addition Is Commutative in $\mathbf{F}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Addition Is Commutative in $\mathbf{F}^n$]
+\label{thm:addition-commutative-in-Fn}
+For all $x,y \in \mathbf{F}^n$,
+\[
+x+y=y+x.
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x,y \in \mathbf{F}^n,\; x+y=y+x.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Because addition in $\mathbf{F}^n$ is coordinatewise and scalar addition in
+$\mathbf{F}$ is commutative, vector addition in $\mathbf{F}^n$ is commutative.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Zero Vector in $\mathbf{F}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Zero Vector in $\mathbf{F}^n$]
+\label{def:zero-vector-in-Fn}
+The symbol $0$ denotes the list of length $n$ all of whose coordinates are $0$:
+\[
+0=(0,\dots,0)\in \mathbf{F}^n.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+0=(0,\dots,0)\in \mathbf{F}^n.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The zero vector is the vector whose every coordinate is the scalar $0$ in
+$\mathbf{F}$. It is the additive identity for $\mathbf{F}^n$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Additive Inverse in $\mathbf{F}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Additive Inverse in $\mathbf{F}^n$]
+\label{def:additive-inverse-in-Fn}
+Let
+\[
+x=(x_1,\dots,x_n)\in \mathbf{F}^n.
+\]
+The additive inverse of $x$ is defined by
+\[
+-x=(-x_1,\dots,-x_n).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall x \in \mathbf{F}^n, \\
+&\quad
+x=(x_1,\dots,x_n)
+\;\Rightarrow\;
+-x=(-x_1,\dots,-x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The additive inverse in $\mathbf{F}^n$ is formed coordinatewise by taking
+the additive inverse of each coordinate in $\mathbf{F}$.
+\end{remark*}
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Scalar Multiplication in $\mathbf{F}^n$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Scalar Multiplication in $\mathbf{F}^n$]
+\label{def:scalar-multiplication-in-Fn}
+Let
+\[
+\lambda \in \mathbf{F}
+\quad\text{and}\quad
+x=(x_1,\dots,x_n)\in \mathbf{F}^n.
+\]
+The product of $\lambda$ and $x$ is defined by
+\[
+\lambda x
+=
+(\lambda x_1,\dots,\lambda x_n).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall \lambda \in \mathbf{F}\;\forall x \in \mathbf{F}^n, \\
+&\quad
+x=(x_1,\dots,x_n)
+\;\Rightarrow\;
+\lambda x=(\lambda x_1,\dots,\lambda x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Scalar multiplication in $\mathbf{F}^n$ is defined coordinatewise: multiply
+each coordinate of the vector by the scalar \(\lambda\).
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
