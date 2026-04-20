@@ -44,8 +44,16 @@ and $x > 0$, the \textbf{real power} is defined by
 \[
   \forall r \in \mathbb{R},\; \forall x > 0 :\; x^r = e^{r\ln x}.
 \]
-For $r \in \mathbb{N}$ this reduces to the $r$-fold product $x \cdot
-x \cdots x$.
+For $r \in \mathbb{N}$ this reduces to the $r$-fold product
+$x \cdot x \cdots x$.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{RealPower}(x, r, y)
+  \;\colonequiv\;
+  x > 0 \;\wedge\; y = e^{r \ln x}.
+\]
 \end{remark*}
 
 \begin{remark*}[Laws of exponents]
@@ -62,8 +70,8 @@ the definition $x^r = e^{r\ln x}$.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Defining $x^r := e^{r\ln x}$ unifies all three cases — integer,
-rational, irrational exponents — into a single formula and makes
+Defining $x^r := e^{r\ln x}$ unifies all three cases --- integer,
+rational, irrational exponents --- into a single formula and makes
 differentiability of $x^r$ immediate from that of $e^x$ and $\ln x$
 via the chain rule: $(x^r)' = rx^{r-1}$.
 \end{remark*}
@@ -85,12 +93,19 @@ Both expressions define the same real number.
 \end{definition}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+  e = \sum_{n=0}^\infty \frac{1}{n!}
+  \;\wedge\;
+  e = \lim_{n\to\infty}\!\left(1+\frac{1}{n}\right)^n.
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
 The series $\sum 1/n!$ converges rapidly by comparison with a
-geometric series; its sum is $e$. The limit $(1+1/n)^n$ arises from
-continuous compound interest and is proved equal to the series sum
-via the fundamental logarithmic limit. Both representations are in
-common use.
+geometric series. The limit $(1+1/n)^n$ arises from continuous
+compound interest and is proved equal to the series sum via the
+fundamental logarithmic limit. Both representations are in common use.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -118,6 +133,14 @@ is defined by the absolutely convergent power series
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Exponential}(x, y)
+  \;\colonequiv\;
+  y = \sum_{n=0}^\infty \frac{x^n}{n!}.
+\]
+\end{remark*}
+
 \begin{remark*}[Key properties]
 \begin{enumerate}[label=(\roman*)]
   \item $e^0 = 1$;\; $e^1 = e$.
@@ -126,11 +149,8 @@ is defined by the absolutely convergent power series
   \item $e^x > 0$ for all $x$;\; $e^{-x} = 1/e^x$.
   \item $e^x$ is strictly increasing and bijective
     $\mathbb{R} \to (0,\infty)$.
-  \item $(e^x)' = e^x$ — the exponential is its own derivative.
+  \item $(e^x)' = e^x$ --- the exponential is its own derivative.
 \end{enumerate}
-The functional equation follows from the Cauchy product of two
-absolutely convergent series; the self-derivative property follows
-from the fundamental exponential limit.
 \end{remark*}
 
 \begin{remark*}[General exponential]
@@ -149,8 +169,7 @@ Only $e^x$ is its own derivative.
   \lim_{x \to 0} \frac{e^x - 1}{x} = 1.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:limit-exponential-fundamental]{\textit{Go to proof.}}
 \end{proposition}
 
@@ -160,6 +179,26 @@ Only $e^x$ is its own derivative.
   \exists\delta > 0 :\;
   0 < |x| < \delta \Rightarrow
   \left|\frac{e^x - 1}{x} - 1\right| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to 0}\frac{e^x-1}{x}=1\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
+  0<|x|<\delta \;\wedge\; \left|\frac{e^x-1}{x}-1\right|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}\!\left(\frac{e^x-1}{x},\,0,\,1\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
+  \operatorname{InputTolerance}(x,0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}\!\left(\frac{e^x-1}{x},1,\varepsilon\right).
 \]
 \end{remark*}
 
@@ -180,10 +219,35 @@ functional equation, this implies $(e^x)' = e^x$ everywhere.
   \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:limit-compound-interest]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall\varepsilon>0,\;\exists M>0:\;
+  x>M \Rightarrow
+  \left|\!\left(1+\frac{1}{x}\right)^x - e\right| < \varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to\infty}\!\left(1+\tfrac{1}{x}\right)^x=e\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall M>0,\;\exists x>M:\;
+  \left|\!\left(1+\frac{1}{x}\right)^x - e\right|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{LimitAtInfinity}\!\left(\left(1+\tfrac{1}{x}\right)^x,\,+\infty,\,e\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists M\in\mathbb{R},\;\forall x:\;
+  x>M \Rightarrow \operatorname{OutputTolerance}\!\left(\left(1+\tfrac{1}{x}\right)^x,e,\varepsilon\right).
+\]
+\end{remark*}
 
 \begin{remark*}[Proof strategy]
 Write $(1+1/x)^x = e^{x\ln(1+1/x)}$. Set $t = 1/x \to 0^+$ and use
@@ -203,14 +267,31 @@ For every $r > 0$:
   \lim_{x \to \infty} \frac{x^r}{e^x} = 0.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:exponential-dominates-power]{\textit{Go to proof.}}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
   \forall r > 0 :\; \lim_{x \to \infty} x^r e^{-x} = 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to\infty}\frac{x^r}{e^x}=0\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall M>0,\;\exists x>M:\;
+  x^r e^{-x} \geq \varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{LimitAtInfinity}(x^r e^{-x},\,+\infty,\,0)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists M\in\mathbb{R},\;\forall x:\;
+  x>M \Rightarrow \operatorname{OutputTolerance}(x^r e^{-x},0,\varepsilon).
 \]
 \end{remark*}
 
@@ -227,6 +308,5 @@ For any $r > 0$:
 \]
 The exponential eventually dominates every polynomial and every
 power function. This ordering is used constantly in estimates,
-dominated convergence arguments, and comparison tests in series and
-integration.
+dominated convergence arguments, and comparison tests.
 \end{remark*}

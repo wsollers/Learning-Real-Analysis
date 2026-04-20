@@ -54,9 +54,36 @@ $\coth x := \cosh x / \sinh x$.
 \[
   \forall x \in \mathbb{R} :\;
   \cosh x = \frac{e^x + e^{-x}}{2} \geq 1,\;
-  \sinh x = \frac{e^x - e^{-x}}{2} \in \mathbb{R},\;
+  \sinh x = \frac{e^x - e^{-x}}{2},\;
   e^x = \cosh x + \sinh x.
 \]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{HyperbolicCosh}(x,y)
+  \;\colonequiv\;
+  y = \frac{e^x + e^{-x}}{2}.
+  \qquad
+  \operatorname{HyperbolicSinh}(x,y)
+  \;\colonequiv\;
+  y = \frac{e^x - e^{-x}}{2}.
+\]
+\[
+  \operatorname{HyperbolicTanh}(x,y)
+  \;\colonequiv\;
+  \cosh x \neq 0 \;\wedge\; y = \frac{\sinh x}{\cosh x}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{HyperbolicTanh}(x,y)
+  \;\iff\;
+  y \neq \frac{\sinh x}{\cosh x}.
+\]
+Note $\cosh x > 0$ for all $x$, so $\operatorname{HyperbolicTanh}$
+is defined on all of $\mathbb{R}$.
 \end{remark*}
 
 \begin{remark*}[Contrast with trigonometric functions]
@@ -72,9 +99,6 @@ Parametrises unit circle & Parametrises unit hyperbola \\
 \end{center}
 The minus sign in $\cosh^2 - \sinh^2 = 1$ versus $\cos^2 + \sin^2 =
 1$ reflects the substitution $x \mapsto ix$ in Euler's formula.
-The derivative formulas have no sign alternation for hyperbolic
-functions: both $\cosh$ and $\sinh$ differentiate to each other
-without minus signs.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -88,17 +112,40 @@ For all $x \in \mathbb{R}$:
   \cosh^2 x - \sinh^2 x = 1.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:hyperbolic-pythagorean]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in \mathbb{R} :\; \cosh^2 x - \sinh^2 x = 1.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,(\forall x:\cosh^2 x - \sinh^2 x=1)
+  \;\iff\;
+  \exists x\in\mathbb{R}:\cosh^2 x - \sinh^2 x\neq 1.
+\]
+The negation has no witness --- the identity holds universally.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{HyperbolicPythagorean}(x)
+  \;\colonequiv\;
+  \operatorname{HyperbolicCosh}(x,c)
+  \;\wedge\; \operatorname{HyperbolicSinh}(x,s)
+  \;\wedge\; c^2 - s^2 = 1.
+\]
+\end{remark*}
 
 \begin{remark*}[Proof]
 Direct computation:
 \[
   \cosh^2 x - \sinh^2 x
   = \frac{(e^x+e^{-x})^2}{4} - \frac{(e^x-e^{-x})^2}{4}
-  = \frac{(e^{2x}+2+e^{-2x}) - (e^{2x}-2+e^{-2x})}{4}
   = \frac{4}{4} = 1.
 \]
 \end{remark*}
@@ -116,10 +163,38 @@ For all $x, y \in \mathbb{R}$:
   \cosh(x+y) = \cosh x \cosh y + \sinh x \sinh y.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:hyperbolic-addition]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x,y\in\mathbb{R}:\;
+  \sinh(x+y) = \sinh x\cosh y + \cosh x\sinh y
+  \;\wedge\;
+  \cosh(x+y) = \cosh x\cosh y + \sinh x\sinh y.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,(\text{addition formula for }\sinh)
+  \;\iff\;
+  \exists x,y\in\mathbb{R}:\;
+  \sinh(x+y) \neq \sinh x\cosh y + \cosh x\sinh y.
+\]
+The negation has no witness.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{HyperbolicAddition}(x,y)
+  \;\colonequiv\;
+  \sinh(x+y) = \sinh x\cosh y + \cosh x\sinh y
+  \;\wedge\;
+  \cosh(x+y) = \cosh x\cosh y + \sinh x\sinh y.
+\]
+\end{remark*}
 
 \begin{remark*}[Proof strategy]
 Substitute the definitions and expand, or note the formulas follow
@@ -128,9 +203,10 @@ from $e^{x+y} = e^x e^y$ by taking even and odd parts.
 
 \begin{remark*}[Comparison with trigonometric addition formulas]
 The $\sinh$ formula matches $\sin(x+y)$ exactly. The $\cosh$ formula
-differs from $\cos(x+y)$ in the sign of the last term: $+\sinh x
-\sinh y$ versus $-\sin x \sin y$. The sign difference is a direct
-consequence of $\cosh^2 - \sinh^2 = 1$ versus $\cos^2 + \sin^2 = 1$.
+differs from $\cos(x+y)$ only in the sign of the last term:
+$+\sinh x\sinh y$ versus $-\sin x\sin y$. The sign difference is a
+direct consequence of $\cosh^2 - \sinh^2 = 1$ versus
+$\cos^2 + \sin^2 = 1$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -145,10 +221,35 @@ consequence of $\cosh^2 - \sinh^2 = 1$ versus $\cos^2 + \sin^2 = 1$.
   \lim_{x \to -\infty} \tanh x = -1.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:tanh-limits]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \operatorname{LimitAtInfinity}(\tanh x,\,+\infty,\,1)
+  \;\wedge\;
+  \operatorname{LimitAtInfinity}(\tanh x,\,-\infty,\,-1).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to+\infty}\tanh x=1\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall M>0,\;\exists x>M:\;
+  |\tanh x - 1|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{LimitAtInfinity}(\tanh x,\,+\infty,\,1)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists M\in\mathbb{R},\;\forall x:\;
+  x>M \Rightarrow \operatorname{OutputTolerance}(\tanh x,1,\varepsilon).
+\]
+\end{remark*}
 
 \begin{remark*}[Proof strategy]
 Write $\tanh x = (1 - e^{-2x})/(1 + e^{-2x})$. As $x \to +\infty$,
@@ -184,11 +285,51 @@ Explicit logarithmic formulas:
 \end{align*}
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in\mathbb{R}:\;
+  \sinh(\operatorname{arcsinh} x)=x
+  \;\wedge\;
+  \operatorname{arcsinh}(\sinh x)=x.
+\]
+\[
+  \forall x\geq 1:\;
+  \cosh(\operatorname{arccosh} x)=x.
+  \qquad
+  \forall |x|<1:\;
+  \tanh(\operatorname{arctanh} x)=x.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Arcsinh}(y,x)
+  \;\colonequiv\;
+  x\in\mathbb{R} \;\wedge\; \sinh x = y
+  \;\colonequiv\;
+  x = \ln\!\left(y+\sqrt{y^2+1}\right).
+\]
+\[
+  \operatorname{Arctanh}(y,x)
+  \;\colonequiv\;
+  |y|<1 \;\wedge\; \tanh x = y
+  \;\colonequiv\;
+  x = \tfrac{1}{2}\ln\!\left(\frac{1+y}{1-y}\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{Arctanh}(y,x)
+  \;\iff\;
+  |y|\geq 1 \;\vee\; \tanh x \neq y.
+\]
+\end{remark*}
+
 \begin{remark*}[Derivation of $\operatorname{arcsinh}$]
 Set $y = \sinh x = (e^x - e^{-x})/2$ and let $u = e^x > 0$. Then
-$y = (u - 1/u)/2$, so $u^2 - 2yu - 1 = 0$. The positive root of
-the quadratic is $u = y + \sqrt{y^2+1}$, giving $x = \ln(y +
-\sqrt{y^2+1})$.
+$y = (u - 1/u)/2$, so $u^2 - 2yu - 1 = 0$. The positive root is
+$u = y + \sqrt{y^2+1}$, giving $x = \ln(y+\sqrt{y^2+1})$.
 \end{remark*}
 
 \begin{remark*}[Derivatives]

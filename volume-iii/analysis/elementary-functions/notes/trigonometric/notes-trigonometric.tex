@@ -60,6 +60,18 @@ $x \in \mathbb{R}$ by the absolutely convergent power series
 both absolutely convergent by the ratio test.
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Sine}(x,y)
+  \;\colonequiv\;
+  y = \sum_{n=0}^\infty \frac{(-1)^n x^{2n+1}}{(2n+1)!}.
+  \qquad
+  \operatorname{Cosine}(x,y)
+  \;\colonequiv\;
+  y = \sum_{n=0}^\infty \frac{(-1)^n x^{2n}}{(2n)!}.
+\]
+\end{remark*}
+
 \begin{remark*}[Key properties]
 \begin{enumerate}[label=(\roman*)]
   \item $\sin 0 = 0$;\; $\cos 0 = 1$.
@@ -67,17 +79,15 @@ both absolutely convergent by the ratio test.
   \item $(\sin x)' = \cos x$;\; $(\cos x)' = -\sin x$.
   \item $|\sin x| \leq 1$;\; $|\cos x| \leq 1$ for all $x$.
   \item $\sin^2 x + \cos^2 x = 1$ (Pythagorean identity).
-  \item Periodic: $\sin(x+2\pi) = \sin x$;\;
-    $\cos(x+2\pi) = \cos x$.
+  \item Periodic: $\sin(x+2\pi) = \sin x$;\; $\cos(x+2\pi) = \cos x$.
 \end{enumerate}
 \end{remark*}
 
 \begin{remark*}[Relationship to $e^{ix}$]
 Euler's formula: $e^{ix} = \cos x + i\sin x$, where $e^{ix}$ is
 defined by the complex exponential series. This gives $\cos x =
-\operatorname{Re}(e^{ix})$ and $\sin x = \operatorname{Im}(e^{ix})$,
-connecting trigonometric and exponential functions at the deepest
-level. Euler's identity $e^{i\pi} + 1 = 0$ follows immediately.
+\operatorname{Re}(e^{ix})$ and $\sin x = \operatorname{Im}(e^{ix})$.
+Euler's identity $e^{i\pi} + 1 = 0$ follows immediately.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -91,10 +101,33 @@ For all $x \in \mathbb{R}$:
   \sin^2 x + \cos^2 x = 1.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:pythagorean-identity]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in \mathbb{R} :\; \sin^2 x + \cos^2 x = 1.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,(\forall x:\sin^2 x+\cos^2 x=1)
+  \;\iff\;
+  \exists x\in\mathbb{R}:\sin^2 x+\cos^2 x\neq 1.
+\]
+The negation has no witness --- the identity holds universally.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{PythagoreanIdentity}(x)
+  \;\colonequiv\;
+  \operatorname{Sine}(x,s) \;\wedge\; \operatorname{Cosine}(x,c)
+  \;\wedge\; s^2 + c^2 = 1.
+\]
+\end{remark*}
 
 \begin{remark*}[Proof strategy]
 Define $f(x) := \sin^2 x + \cos^2 x$. Then $f'(x) = 2\sin x \cos x
@@ -115,10 +148,38 @@ For all $x, y \in \mathbb{R}$:
   \cos(x+y) = \cos x \cos y - \sin x \sin y.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:trig-addition-formulas]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x,y\in\mathbb{R}:\;
+  \sin(x+y) = \sin x\cos y + \cos x\sin y
+  \;\wedge\;
+  \cos(x+y) = \cos x\cos y - \sin x\sin y.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,(\text{addition formula for }\sin)
+  \;\iff\;
+  \exists x,y\in\mathbb{R}:\;
+  \sin(x+y) \neq \sin x\cos y + \cos x\sin y.
+\]
+The negation has no witness.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{TrigAddition}(x,y)
+  \;\colonequiv\;
+  \sin(x+y) = \sin x\cos y + \cos x\sin y
+  \;\wedge\;
+  \cos(x+y) = \cos x\cos y - \sin x\sin y.
+\]
+\end{remark*}
 
 \begin{remark*}[Proof strategy]
 From the Cauchy product: $e^{i(x+y)} = e^{ix}e^{iy}$. Taking real
@@ -146,9 +207,24 @@ and imaginary parts yields both addition formulas simultaneously.
   \sec x := \frac{1}{\cos x},\quad
   \csc x := \frac{1}{\sin x}.
 \]
-$\tan x$ and $\sec x$ are defined where $\cos x \neq 0$, i.e.,
-$x \neq \pi/2 + k\pi$ for $k \in \mathbb{Z}$.
+$\tan x$ and $\sec x$ are defined where $\cos x \neq 0$,
+i.e., $x \neq \pi/2 + k\pi$ for $k \in \mathbb{Z}$.
 \end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in\mathbb{R},\;\cos x\neq 0:\;
+  \tan x = \frac{\sin x}{\cos x}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Tangent}(x,y)
+  \;\colonequiv\;
+  \cos x \neq 0 \;\wedge\; y = \frac{\sin x}{\cos x}.
+\]
+\end{remark*}
 
 \begin{remark*}[Pythagorean identities for $\tan$]
 Dividing $\sin^2 x + \cos^2 x = 1$ by $\cos^2 x$:
@@ -172,6 +248,30 @@ Dividing by $\sin^2 x$: $\cot^2 x + 1 = \csc^2 x$.
 \end{itemize}
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall y\in[-1,1]:\;\sin(\arcsin y)=y.
+  \qquad
+  \forall x\in[-\pi/2,\pi/2]:\;\arcsin(\sin x)=x.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Arctan}(y,x)
+  \;\colonequiv\;
+  x\in(-\pi/2,\pi/2) \;\wedge\; \tan x = y.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{Arctan}(y,x)
+  \;\iff\;
+  x\notin(-\pi/2,\pi/2) \;\vee\; \tan x \neq y.
+\]
+\end{remark*}
+
 \begin{remark*}[Key limits of $\arctan$]
 \[
   \lim_{x \to +\infty} \arctan x = \frac{\pi}{2},
@@ -193,8 +293,7 @@ supremum and infimum of its range.
   \lim_{x \to 0} \frac{\sin x}{x} = 1.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:fundamental-trig-limit]{\textit{Go to proof.}}
 \end{theorem}
 
@@ -207,23 +306,43 @@ supremum and infimum of its range.
 \]
 \end{remark*}
 
-\begin{remark*}[Proof strategy — series]
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to 0}\frac{\sin x}{x}=1\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
+  0<|x|<\delta \;\wedge\;
+  \left|\frac{\sin x}{x}-1\right|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}\!\left(\frac{\sin x}{x},\,0,\,1\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
+  \operatorname{InputTolerance}(x,0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}\!\left(\frac{\sin x}{x},1,\varepsilon\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Proof strategy --- series]
 From the series: $\sin x / x = 1 - x^2/3! + x^4/5! - \cdots \to 1$
 as $x \to 0$ by continuity of power series at their center.
 \end{remark*}
 
-\begin{remark*}[Proof strategy — geometric squeeze]
-For $0 < x < \pi/2$, the area comparison of two triangles and a
-circular sector gives $\cos x \leq \sin x / x \leq 1$. Since $\cos
-x \to 1$ as $x \to 0^+$, the Squeeze Theorem gives $\sin x / x \to
-1$. The even symmetry of $\sin x / x$ extends this to $x \to 0^-$.
+\begin{remark*}[Proof strategy --- geometric squeeze]
+For $0 < x < \pi/2$, area comparison of two triangles and a circular
+sector gives $\cos x \leq \sin x / x \leq 1$. Since $\cos x \to 1$
+as $x \to 0^+$, the Squeeze Theorem gives $\sin x / x \to 1$.
+Even symmetry extends this to $x \to 0^-$.
 \end{remark*}
 
 \begin{remark*}[Significance]
 This is the statement $(\sin x)'\big|_{x=0} = 1$, which implies
 $(\sin x)' = \cos x$ everywhere. It underlies all trigonometric
-differentiation and is used in the proof of the addition formulas
-via the limit approach.
+differentiation.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -236,10 +355,38 @@ via the limit approach.
   \lim_{x \to 0} \frac{1 - \cos x}{x^2} = \frac{1}{2}.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:limit-one-minus-cos]{\textit{Go to proof.}}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall\varepsilon>0,\;\exists\delta>0:\;
+  0<|x|<\delta \Rightarrow
+  \left|\frac{1-\cos x}{x^2}-\frac{1}{2}\right|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to 0}\frac{1-\cos x}{x^2}=\frac{1}{2}\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
+  0<|x|<\delta \;\wedge\;
+  \left|\frac{1-\cos x}{x^2}-\frac{1}{2}\right|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}\!\left(\frac{1-\cos x}{x^2},\,0,\,\tfrac{1}{2}\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
+  \operatorname{InputTolerance}(x,0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}\!\left(\frac{1-\cos x}{x^2},\tfrac{1}{2},\varepsilon\right).
+\]
+\end{remark*}
 
 \begin{remark*}[Proof strategy]
 Use the half-angle identity $1 - \cos x = 2\sin^2(x/2)$:

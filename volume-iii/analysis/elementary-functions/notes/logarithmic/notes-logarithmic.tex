@@ -56,12 +56,29 @@ Equivalently, $\ln x$ is defined by the integral
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{NaturalLog}(x, y)
+  \;\colonequiv\;
+  x > 0 \;\wedge\; e^y = x
+  \;\colonequiv\;
+  x > 0 \;\wedge\; y = \int_1^x \frac{1}{t}\,dt.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\,\operatorname{NaturalLog}(x,y)
+  \;\iff\;
+  x \leq 0 \;\vee\; e^y \neq x.
+\]
+\end{remark*}
+
 \begin{remark*}[Two definitions, same function]
 The inverse-of-exponential definition requires $e^x$ to be
 established first. The integral definition is self-contained and
 is preferred when building analysis from scratch. Both yield the
-same function; the choice depends on what has been proved at the
-time of introduction.
+same function.
 \end{remark*}
 
 \begin{remark*}[Key properties]
@@ -80,9 +97,8 @@ time of introduction.
 
 \begin{remark*}[General logarithm]
 For $a > 0$, $a \neq 1$, the \textbf{logarithm base $a$} is
-$\log_a x := \ln x / \ln a$. Then $\log_a(a^x) = x$ and
-$a^{\log_a x} = x$. The common logarithm is $\log_{10}$; the
-binary logarithm is $\log_2$.
+$\log_a x := \ln x / \ln a$. The common logarithm is $\log_{10}$;
+the binary logarithm is $\log_2$.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -95,8 +111,7 @@ binary logarithm is $\log_2$.
   \lim_{x \to 0} \frac{\ln(1+x)}{x} = 1.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:limit-logarithm-fundamental]{\textit{Go to proof.}}
 \end{proposition}
 
@@ -109,18 +124,39 @@ binary logarithm is $\log_2$.
 \]
 \end{remark*}
 
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to 0}\frac{\ln(1+x)}{x}=1\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
+  0<|x|<\delta \;\wedge\;
+  \left|\frac{\ln(1+x)}{x}-1\right|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}\!\left(\frac{\ln(1+x)}{x},\,0,\,1\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
+  \operatorname{InputTolerance}(x,0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}\!\left(\frac{\ln(1+x)}{x},1,\varepsilon\right).
+\]
+\end{remark*}
+
 \begin{remark*}[Equivalence with exponential limit]
 The fundamental exponential limit $\lim(e^x-1)/x = 1$ and the
 fundamental logarithmic limit $\lim\ln(1+x)/x = 1$ are equivalent:
 each follows from the other via the substitution $x \leftrightarrow
-e^x - 1$ (which maps $x \to 0$ to $x \to 0$). Both express the
-first-order Taylor approximation of the respective function at $0$.
+e^x - 1$. Both express the first-order Taylor approximation of the
+respective function at $0$.
 \end{remark*}
 
 \begin{remark*}[Proof strategy]
-From the series: $\ln(1+x) = x - x^2/2 + x^3/3 - \cdots$ (valid for
-$|x| < 1$). Dividing by $x$ gives $1 - x/2 + x^2/3 - \cdots \to 1$
-as $x \to 0$ by continuity of power series.
+From the series: $\ln(1+x) = x - x^2/2 + x^3/3 - \cdots$ (valid
+for $|x| < 1$). Dividing by $x$ gives $1 - x/2 + x^2/3 - \cdots
+\to 1$ as $x \to 0$ by continuity of power series.
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -136,8 +172,7 @@ For every $r > 0$:
   \lim_{x \to 0^+} x^r \ln x = 0.
 \]
 
-\smallskip
-\noindent
+\smallskip\noindent
 \hyperref[prf:power-dominates-log]{\textit{Go to proof.}}
 \end{proposition}
 
@@ -150,10 +185,28 @@ For every $r > 0$:
 \]
 \end{remark*}
 
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to\infty}\frac{\ln x}{x^r}=0\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall M>0,\;\exists x>M:\;
+  x^{-r}|\ln x|\geq\varepsilon_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{LimitAtInfinity}(x^{-r}\ln x,\,+\infty,\,0)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists M\in\mathbb{R},\;\forall x:\;
+  x>M \Rightarrow \operatorname{OutputTolerance}(x^{-r}\ln x,0,\varepsilon).
+\]
+\end{remark*}
+
 \begin{remark*}[Proof strategy]
 For the first: substitute $x = e^t$ to get $t/e^{rt} \to 0$ by
 exponential dominance. For the second: substitute $x = 1/t$ and
-reduce to the first limit: $x^r \ln x = (-\ln t)/t^r \to 0$.
+reduce to the first: $x^r \ln x = (-\ln t)/t^r \to 0$.
 \end{remark*}
 
 \begin{remark*}[Significance]
@@ -162,6 +215,6 @@ hierarchy: $\ln x$ is dominated by every positive power. Combined
 with the exponential dominance result, the full ordering is
 $\ln x \ll x^r \ll e^x$ as $x \to \infty$ for any $r > 0$.
 The second limit says that near $0^+$, the positive power $x^r$
-wins over the logarithmic blow-up $|\ln x| \to \infty$. This is
-used in integrability arguments near $0$.
+wins over the logarithmic blow-up $|\ln x| \to \infty$. Used in
+integrability arguments near $0$.
 \end{remark*}
