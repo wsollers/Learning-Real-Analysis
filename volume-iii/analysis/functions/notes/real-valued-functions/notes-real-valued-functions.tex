@@ -25,184 +25,672 @@
 % Definition — Pointwise Operations
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Pointwise Operations}]
-\begin{definition}[Pointwise Arithmetic Operations]
-\label{def:pointwise-ops-R}
-Let $X \subseteq \mathbb{R}$, $f, g : X \to \mathbb{R}$.
-\begin{align*}
-  (f+g)(x)   &:= f(x)+g(x),  & (f-g)(x) &:= f(x)-g(x), \\
-  (fg)(x)    &:= f(x)g(x),   & (cf)(x)  &:= cf(x), \\
-  |f|(x)     &:= |f(x)|,     & \max(f,g)(x) &:= \max(f(x),g(x)).
-\end{align*}
-If $g(x)\neq 0$ for all $x\in X$: $(f/g)(x) := f(x)/g(x)$.
+\begin{definition}[Pointwise Sum of Functions]
+\label{def:pointwise-sum-of-functions}
+Let $X\subseteq\mathbb{R}$ and let $f,g:X\to\mathbb{R}$.  The
+pointwise sum $f+g:X\to\mathbb{R}$ is the function defined by
+\[
+  (f+g)(x)=f(x)+g(x)
+  \qquad (x\in X).
+\]
 \end{definition}
-\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall x\in X : (f+g)(x) = f(x)+g(x).
+  \forall x\in X\;\bigl((f+g)(x)=f(x)+g(x)\bigr).
 \]
-Each operation is pointwise: value at $x$ depends only on $f(x)$,
-$g(x)$, not on nearby values.
 \end{remark*}
 
-\begin{remark*}[Definition predicate reading]
+\begin{remark*}[Interpretation]
+The sum is computed output by output; at each input, add the two function
+values at that same input.
+\end{remark*}
+
+\begin{definition}[Pointwise Difference of Functions]
+\label{def:pointwise-difference-of-functions}
+Let $X\subseteq\mathbb{R}$ and let $f,g:X\to\mathbb{R}$.  The
+pointwise difference $f-g:X\to\mathbb{R}$ is the function defined by
 \[
-  \operatorname{Function}(f+g, X, \mathbb{R})
-  \;\colonequiv\;
-  \forall x\in X : (f+g)(x) = f(x)+g(x).
+  (f-g)(x)=f(x)-g(x)
+  \qquad (x\in X).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in X\;\bigl((f-g)(x)=f(x)-g(x)\bigr).
 \]
 \end{remark*}
 
-\begin{remark*}[Product vs.\ composition]
-$fg(x) = f(x)g(x)$ (pointwise product). $(f\circ g)(x) = f(g(x))$
-(composition, requires $g:X\to X$). For $f(x)=x^2$, $g(x)=2x$:
-$fg(x)=2x^3$ but $(f\circ g)(x)=4x^2$.
+\begin{remark*}[Interpretation]
+The difference subtracts the output of $g$ from the output of $f$ at each
+input separately.
 \end{remark*}
 
-\begin{remark*}[Algebraic structure]
-$\mathbb{R}^X$ is a commutative ring under pointwise $+$ and $\cdot$,
-zero function $\mathbf{0}(x):=0$, identity $\mathbf{1}(x):=1$.
-Scalar multiplication makes it an $\mathbb{R}$-algebra.
+\begin{definition}[Pointwise Product of Functions]
+\label{def:pointwise-product-of-functions}
+Let $X\subseteq\mathbb{R}$ and let $f,g:X\to\mathbb{R}$.  The
+pointwise product $fg:X\to\mathbb{R}$ is the function defined by
+\[
+  (fg)(x)=f(x)g(x)
+  \qquad (x\in X).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in X\;\bigl((fg)(x)=f(x)g(x)\bigr).
+\]
 \end{remark*}
+
+\begin{remark*}[Interpretation]
+The product is not composition: it multiplies the two real outputs at the
+same input.
+\end{remark*}
+
+\begin{definition}[Pointwise Scalar Multiple of a Function]
+\label{def:pointwise-scalar-multiple-of-a-function}
+Let $X\subseteq\mathbb{R}$, let $f:X\to\mathbb{R}$, and let
+$c\in\mathbb{R}$.  The pointwise scalar multiple $cf:X\to\mathbb{R}$ is
+the function defined by
+\[
+  (cf)(x)=c f(x)
+  \qquad (x\in X).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in X\;\bigl((cf)(x)=c f(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Scalar multiplication stretches every output of the function by the same
+real scalar.
+\end{remark*}
+
+\begin{definition}[Pointwise Absolute Value of a Function]
+\label{def:pointwise-absolute-value-of-a-function}
+Let $X\subseteq\mathbb{R}$ and let $f:X\to\mathbb{R}$.  The pointwise
+absolute value $|f|:X\to\mathbb{R}$ is the function defined by
+\[
+  |f|(x)=|f(x)|
+  \qquad (x\in X).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in X\;\bigl(|f|(x)=|f(x)|\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The absolute value operation applies the ordinary real absolute value to
+each output.
+\end{remark*}
+
+\begin{definition}[Pointwise Maximum of Two Functions]
+\label{def:pointwise-maximum-of-two-functions}
+Let $X\subseteq\mathbb{R}$ and let $f,g:X\to\mathbb{R}$.  The
+pointwise maximum $\max(f,g):X\to\mathbb{R}$ is the function defined by
+\[
+  \max(f,g)(x)=\max\{f(x),g(x)\}
+  \qquad (x\in X).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x\in X\;\bigl(\max(f,g)(x)=\max\{f(x),g(x)\}\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+At each input, the new function keeps the larger of the two output values.
+\end{remark*}
+
+\begin{definition}[Pointwise Quotient of Functions]
+\label{def:pointwise-quotient-of-functions}
+Let $X\subseteq\mathbb{R}$ and let $f,g:X\to\mathbb{R}$.  Suppose
+$g(x)\neq 0$ for every $x\in X$.  The pointwise quotient $f/g:X\to\mathbb{R}$
+is the function defined by
+\[
+  (f/g)(x)=\frac{f(x)}{g(x)}
+  \qquad (x\in X).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \bigl(\forall x\in X\;(g(x)\neq 0)\bigr)
+  \;\Longrightarrow\;
+  \forall x\in X\;\bigl((f/g)(x)=f(x)/g(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The quotient is defined pointwise only when the denominator function never
+vanishes on the domain.
+\end{remark*}
+
 
 % ---------------------------------------------------------
 % Definition — Bounded Functions
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Boundedness of Functions}]
-\begin{definition}[Bounded Above, Bounded Below, Bounded]
-\label{def:function-boundedness}
-Let $A\subseteq\mathbb{R}$, $f:A\to\mathbb{R}$.
-\begin{itemize}
-  \item $f$ \textbf{bounded above}: $\exists M,\;\forall x\in A: f(x)\leq M$.
-  \item $f$ \textbf{bounded below}: $\exists m,\;\forall x\in A: f(x)\geq m$.
-  \item $\operatorname{BoundedOn}(f,A)$: $\exists B>0,\;\forall x\in A: |f(x)|\leq B$.
-\end{itemize}
+\begin{definition}[Bounded Above Function]
+\label{def:function-bounded-above}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is bounded above on $A$ if there exists $M\in\mathbb{R}$ such that
+\[
+  f(x)\leq M
+  \qquad (x\in A).
+\]
 \end{definition}
-\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{BoundedOn}(f,A)
-  \;\iff\;
-  \exists B>0,\;\forall x\in A: |f(x)|\leq B
-  \;\iff\;
-  f(A)\subseteq[-B,B].
-\]
-\end{remark*}
-
-\begin{remark*}[Definition predicate reading]
-\[
-  \operatorname{BoundedOn}(f,A)
-  \;\colonequiv\;
-  \operatorname{BoundedSet}(f(A)).
+  \exists M\in\mathbb{R}\;\forall x\in A\;\bigl(f(x)\leq M\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \neg\,\operatorname{BoundedOn}(f,A)
-  \;\iff\;
-  \forall B>0,\;\exists x\in A: |f(x)|>B.
+  \forall M\in\mathbb{R}\;\exists x\in A\;\bigl(f(x)>M\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+No proposed real ceiling works: whenever a candidate upper bound is chosen,
+some input has an output larger than that candidate.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \forall M\in\mathbb{R}\;\exists x\in A\;\bigl(f(x)>M\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Bounded above alone does not imply bounded: $f(x):=-x$ on $\mathbb{R}$
-is bounded above by $0$ but unbounded below.
+Bounded above means all output values lie below one common real ceiling.
 \end{remark*}
 
-% ---------------------------------------------------------
-% Definition — Supremum, Infimum, Maximum, Minimum
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Definition --- Extremal Values}]
-\begin{definition}[Supremum, Infimum, Maximum, Minimum of a Function]
-\label{def:function-sup-inf-max-min}
-Let $A\subseteq\mathbb{R}$, $f:A\to\mathbb{R}$.
-\begin{itemize}
-  \item $\sup_{x\in A}f(x) := \sup f(A)$;\quad $\inf_{x\in A}f(x) := \inf f(A)$.
-  \item $\operatorname{Maximum}(x^*,f(A))$: $x^*\in A$ and $f(x^*)=\sup f(A)$.
-  \item $\operatorname{Minimum}(x_*,f(A))$: $x_*\in A$ and $f(x_*)=\inf f(A)$.
-\end{itemize}
+\begin{definition}[Bounded Below Function]
+\label{def:function-bounded-below}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is bounded below on $A$ if there exists $m\in\mathbb{R}$ such that
+\[
+  m\leq f(x)
+  \qquad (x\in A).
+\]
 \end{definition}
-\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{Maximum}(x^*,f(A))
-  \;\iff\;
-  x^*\in A \;\wedge\; \forall x\in A: f(x)\leq f(x^*).
+  \exists m\in\mathbb{R}\;\forall x\in A\;\bigl(m\leq f(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \forall m\in\mathbb{R}\;\exists x\in A\;\bigl(f(x)<m\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+No proposed real floor works: whenever a candidate lower bound is chosen,
+some input has an output smaller than that candidate.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \forall m\in\mathbb{R}\;\exists x\in A\;\bigl(f(x)<m\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bounded below means all output values lie above one common real floor.
+\end{remark*}
+
+\begin{definition}[Bounded Function]
+\label{def:function-bounded}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is bounded on $A$ if there exists $B>0$ such that
+\[
+  |f(x)|\leq B
+  \qquad (x\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \exists B>0\;\forall x\in A\;\bigl(|f(x)|\leq B\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{Maximum}(x^*,f(A))
-  \;\colonequiv\;
-  x^*\in A
-  \;\wedge\;
-  \operatorname{Supremum}(f(x^*), f(A)).
+  \operatorname{BoundedOn}(f,A)
+  \;\coloneqq\;
+  \exists B>0\;\forall x\in A\;\bigl(|f(x)|\leq B\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \forall B>0\;\exists x\in A\;\bigl(|f(x)|>B\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\operatorname{BoundedOn}(f,A)
+  \;\Longleftrightarrow\;
+  \forall B>0\;\exists x\in A\;\bigl(|f(x)|>B\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Every symmetric interval around $0$ fails to contain all output values of
+$f$ on $A$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \forall B>0\;\exists x\in A\;
+  \bigl(f(x)>B\;\vee\;f(x)<-B\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Supremum exists when $f$ is bounded above; maximum requires the
-supremum to be attained at some $x^*\in A$. $f(x)=x$ on $(0,1)$
-has supremum $1$ but no maximum.
+A bounded function has all of its values trapped inside some symmetric
+interval $[-B,B]$.  Being bounded above alone is not enough; the function
+$f(x)=-x$ on $\mathbb{R}$ is bounded above by $0$ but is not bounded.
 \end{remark*}
+
+
+% ---------------------------------------------------------
+% Definition — Supremum, Infimum, Maximum, Minimum
+% ---------------------------------------------------------
+
+\begin{definition}[Supremum of a Function on a Set]
+\label{def:function-supremum-on-set}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The supremum of
+$f$ on $A$ is
+\[
+  \sup_{x\in A} f(x) = \sup f(A),
+\]
+provided the supremum of $f(A)$ exists.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  s=\sup_{x\in A}f(x)
+  \;\Longleftrightarrow\;
+  \bigl(\forall x\in A\;(f(x)\leq s)\bigr)
+  \;\wedge\;
+  \bigl(\forall u\in\mathbb{R}\;((\forall x\in A\;(f(x)\leq u))\Rightarrow s\leq u)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The supremum is the least real ceiling for the output set $f(A)$; it need
+not be an output value of $f$.
+\end{remark*}
+
+\begin{definition}[Infimum of a Function on a Set]
+\label{def:function-infimum-on-set}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The infimum of
+$f$ on $A$ is
+\[
+  \inf_{x\in A} f(x) = \inf f(A),
+\]
+provided the infimum of $f(A)$ exists.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  t=\inf_{x\in A}f(x)
+  \;\Longleftrightarrow\;
+  \bigl(\forall x\in A\;(t\leq f(x))\bigr)
+  \;\wedge\;
+  \bigl(\forall \ell\in\mathbb{R}\;((\forall x\in A\;(\ell\leq f(x)))\Rightarrow \ell\leq t)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The infimum is the greatest real floor for the output set $f(A)$; it need
+not be an output value of $f$.
+\end{remark*}
+
+\begin{definition}[Maximum Point of a Function]
+\label{def:function-maximum-point}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  A point
+$x^*\in A$ is a maximum point of $f$ on $A$ if
+\[
+  f(x)\leq f(x^*)
+  \qquad (x\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  x^*\in A\;\wedge\;\forall x\in A\;\bigl(f(x)\leq f(x^*)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  x^*\notin A\;\vee\;\exists x\in A\;\bigl(f(x)>f(x^*)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed maximum point fails either by not belonging to the domain or by
+being beaten by another output value.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  x^*\notin A
+  \;\vee\;
+  \exists x\in A\;\bigl(f(x)>f(x^*)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A maximum point is an input where the largest output value is attained.
+\end{remark*}
+
+\begin{definition}[Minimum Point of a Function]
+\label{def:function-minimum-point}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  A point
+$x_*\in A$ is a minimum point of $f$ on $A$ if
+\[
+  f(x_*)\leq f(x)
+  \qquad (x\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  x_*\in A\;\wedge\;\forall x\in A\;\bigl(f(x_*)\leq f(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  x_*\notin A\;\vee\;\exists x\in A\;\bigl(f(x)<f(x_*)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed minimum point fails either by not belonging to the domain or by
+being undercut by another output value.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  x_*\notin A
+  \;\vee\;
+  \exists x\in A\;\bigl(f(x)<f(x_*)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A minimum point is an input where the smallest output value is attained.
+\end{remark*}
+
 
 % ---------------------------------------------------------
 % Definition — Monotone Functions
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Monotonicity}]
-\begin{definition}[Increasing, Decreasing, Monotone, Constant]
-\label{def:function-monotonicity}
-Let $f:A\to\mathbb{R}$, $A\subseteq\mathbb{R}$ nonempty.
-\begin{itemize}
-  \item \textbf{Increasing}: $x_1<x_2\Rightarrow f(x_1)\leq f(x_2)$.
-  \item \textbf{Strictly increasing}: $x_1<x_2\Rightarrow f(x_1)<f(x_2)$.
-  \item \textbf{Decreasing}: $x_1<x_2\Rightarrow f(x_1)\geq f(x_2)$.
-  \item \textbf{Strictly decreasing}: $x_1<x_2\Rightarrow f(x_1)>f(x_2)$.
-  \item $\operatorname{MonotoneFunction}(f,A)$: increasing or decreasing.
-  \item \textbf{Constant}: $\forall x_1,x_2\in A: f(x_1)=f(x_2)$.
-\end{itemize}
+\begin{definition}[Increasing Function]
+\label{def:function-increasing}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is increasing on $A$ if
+\[
+  x_1<x_2\;\Longrightarrow\;f(x_1)\leq f(x_2)
+  \qquad (x_1,x_2\in A).
+\]
 \end{definition}
-\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  f\text{ strictly increasing}
-  \;\iff\;
-  \forall x_1,x_2\in A:\;
-  x_1<x_2 \Rightarrow f(x_1)<f(x_2).
+  \forall x_1,x_2\in A\;\bigl(x_1<x_2\Rightarrow f(x_1)\leq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)>f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The function fails to be increasing if some later input has a smaller
+output than an earlier input.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)>f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+As the input moves to the right in $A$, the output is not allowed to go
+down.
+\end{remark*}
+
+\begin{definition}[Strictly Increasing Function]
+\label{def:function-strictly-increasing}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is strictly increasing on $A$ if
+\[
+  x_1<x_2\;\Longrightarrow\;f(x_1)<f(x_2)
+  \qquad (x_1,x_2\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x_1,x_2\in A\;\bigl(x_1<x_2\Rightarrow f(x_1)<f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)\geq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Strict increase fails if some later input has an output that is no larger
+than the earlier output.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)\geq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Strict increase requires every genuine move to the right in the domain to
+produce a genuine increase in output.
+\end{remark*}
+
+\begin{definition}[Decreasing Function]
+\label{def:function-decreasing}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is decreasing on $A$ if
+\[
+  x_1<x_2\;\Longrightarrow\;f(x_1)\geq f(x_2)
+  \qquad (x_1,x_2\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x_1,x_2\in A\;\bigl(x_1<x_2\Rightarrow f(x_1)\geq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)<f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The function fails to be decreasing if some later input has a larger output
+than an earlier input.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)<f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+As the input moves to the right in $A$, the output is not allowed to go up.
+\end{remark*}
+
+\begin{definition}[Strictly Decreasing Function]
+\label{def:function-strictly-decreasing}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is strictly decreasing on $A$ if
+\[
+  x_1<x_2\;\Longrightarrow\;f(x_1)>f(x_2)
+  \qquad (x_1,x_2\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x_1,x_2\in A\;\bigl(x_1<x_2\Rightarrow f(x_1)>f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)\leq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Strict decrease fails if some later input has an output that is no smaller
+than the earlier output.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \exists x_1,x_2\in A\;\bigl(x_1<x_2\;\wedge\;f(x_1)\leq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Strict decrease requires every genuine move to the right in the domain to
+produce a genuine decrease in output.
+\end{remark*}
+
+\begin{definition}[Monotone Function]
+\label{def:function-monotone}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is monotone on $A$ if $f$ is increasing on $A$ or decreasing on $A$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \bigl(\forall x_1,x_2\in A\;(x_1<x_2\Rightarrow f(x_1)\leq f(x_2))\bigr)
+  \;\vee\;
+  \bigl(\forall x_1,x_2\in A\;(x_1<x_2\Rightarrow f(x_1)\geq f(x_2))\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
   \operatorname{MonotoneFunction}(f,A)
-  \;\colonequiv\;
-  \bigl(\forall x_1,x_2\in A: x_1<x_2\Rightarrow f(x_1)\leq f(x_2)\bigr)
+  \;\coloneqq\;
+  \bigl(\forall x_1,x_2\in A\;(x_1<x_2\Rightarrow f(x_1)\leq f(x_2))\bigr)
   \;\vee\;
-  \bigl(\forall x_1,x_2\in A: x_1<x_2\Rightarrow f(x_1)\geq f(x_2)\bigr).
+  \bigl(\forall x_1,x_2\in A\;(x_1<x_2\Rightarrow f(x_1)\geq f(x_2))\bigr).
 \]
 \end{remark*}
 
-\begin{remark*}[Negated quantified statement — strictly increasing]
+\begin{remark*}[Negated quantified statement]
 \[
-  \neg(f\text{ strictly increasing})
-  \;\iff\;
-  \exists x_1,x_2\in A:\;
-  x_1<x_2 \;\wedge\; f(x_1)\geq f(x_2).
+  \bigl(\exists x_1,x_2\in A\;(x_1<x_2\wedge f(x_1)>f(x_2))\bigr)
+  \;\wedge\;
+  \bigl(\exists y_1,y_2\in A\;(y_1<y_2\wedge f(y_1)<f(y_2))\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\operatorname{MonotoneFunction}(f,A)
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A nonmonotone function has evidence of both kinds of reversal: one pair
+where the outputs go down as inputs increase, and another pair where the
+outputs go up as inputs increase.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \begin{aligned}
+  &\exists x_1,x_2\in A\;(x_1<x_2\wedge f(x_1)>f(x_2))\\
+  &\qquad\wedge\;
+  \exists y_1,y_2\in A\;(y_1<y_2\wedge f(y_1)<f(y_2)).
+  \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Strictly tightens $\leq$ to $<$. Strictly increasing implies
-$\operatorname{Injective}(f)$: $f(x_1)=f(x_2)\Rightarrow x_1=x_2$
-by contrapositive. A constant function is both increasing and
-decreasing but neither strictly.
+A monotone function moves consistently in one direction: nondecreasing or
+nonincreasing.
 \end{remark*}
+
+\begin{definition}[Constant Function]
+\label{def:function-constant}
+Let $A\subseteq\mathbb{R}$ and let $f:A\to\mathbb{R}$.  The function
+$f$ is constant on $A$ if
+\[
+  f(x_1)=f(x_2)
+  \qquad (x_1,x_2\in A).
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x_1,x_2\in A\;\bigl(f(x_1)=f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \exists x_1,x_2\in A\;\bigl(f(x_1)\neq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Constancy fails as soon as two inputs in the domain have different outputs.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \exists x_1,x_2\in A\;\bigl(f(x_1)\neq f(x_2)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A constant function assigns the same real value to every input in its domain.
+\end{remark*}
+

@@ -165,12 +165,15 @@ def parse_formal_clusters(text: str) -> list[FormalCluster]:
     clusters: list[FormalCluster] = []
     tcolorboxes = [(match.start(), match.end()) for match in TCOLORBOX_PATTERN.finditer(text)]
     for match in FORMAL_PATTERN.finditer(text):
+        cluster_start = match.start()
         probe_end = match.end()
         containing_boxes = [
-            box_end for box_start, box_end in tcolorboxes if box_start <= match.start() and match.end() <= box_end
+            (box_start, box_end) for box_start, box_end in tcolorboxes if box_start <= match.start() and match.end() <= box_end
         ]
         if containing_boxes:
-            probe_end = min(containing_boxes)
+            box_start, box_end = min(containing_boxes, key=lambda item: item[1] - item[0])
+            cluster_start = box_start
+            probe_end = box_end
         label_match = LABEL_PATTERN.search(match.group(3))
         remarks, cluster_end = collect_attached_remarks(text, probe_end)
         clusters.append(
@@ -179,7 +182,7 @@ def parse_formal_clusters(text: str) -> list[FormalCluster]:
                 title=(match.group(2) or "").strip(),
                 body=match.group(3),
                 label=label_match.group(1) if label_match else "",
-                start=match.start(),
+                start=cluster_start,
                 end=cluster_end,
                 line=line_of(text, match.start()),
                 remarks=remarks,
@@ -448,13 +451,47 @@ def validate_entry(entry: dict[str, Any], predicate_names: set[str]) -> dict[str
 
 
 def validate_generated_doc(generated_doc: dict[str, Any], predicate_names: set[str]) -> dict[str, Any]:
-    counts = {"pending": 0, "validated": 0, "invalid": 0}
+    counts = {"pending": 0, "validated": 0, "invalid": 0, "superseded": 0}
     for entry in generated_doc.get("entries", []):
         validation = validate_entry(entry, predicate_names)
         entry["validation"] = validation
         if validation["status"] == "validated":
             entry["status"] = "validated"
-        counts[validation["status"]] = counts.get(validation["status"], 0) + 1
+    replacement_lines = {
+        int(entry.get("input", {}).get("line"))
+        for entry in generated_doc.get("entries", [])
+        if entry.get("validation", {}).get("status") == "validated"
+        and replacement_latex_from_output(entry.get("output"))
+        and entry.get("input", {}).get("line") is not None
+    }
+    replacement_labels = {
+        entry.get("input", {}).get("label")
+        for entry in generated_doc.get("entries", [])
+        if entry.get("validation", {}).get("status") == "validated"
+        and replacement_latex_from_output(entry.get("output"))
+        and entry.get("input", {}).get("label")
+    }
+    for entry in generated_doc.get("entries", []):
+        line = entry.get("input", {}).get("line")
+        label = entry.get("input", {}).get("label")
+        validation = entry.get("validation", {})
+        if (
+            (
+                (line is not None and int(line) in replacement_lines)
+                or (label and label in replacement_labels)
+            )
+            and validation.get("status") == "pending"
+            and not replacement_latex_from_output(entry.get("output"))
+        ):
+            entry["status"] = "superseded"
+            entry["validation"] = {
+                "status": "superseded",
+                "errors": [],
+                "warnings": ["Request covered by a validated replacement_latex for the same source cluster."],
+            }
+    for entry in generated_doc.get("entries", []):
+        status = entry.get("validation", {}).get("status", "pending")
+        counts[status] = counts.get(status, 0) + 1
     return counts
 
 
@@ -542,7 +579,7 @@ def process_requests_file(
         pending = [
             entry["request_id"]
             for entry in generated_doc.get("entries", [])
-            if entry.get("validation", {}).get("status") != "validated"
+            if entry.get("validation", {}).get("status") not in {"validated", "superseded"}
         ]
         if pending:
             blockers.extend(f"{request_id} is not validated." for request_id in pending)
@@ -617,7 +654,7 @@ def main() -> int:
         "total_requests": sum(report["request_count"] for report in reports),
         "validation_counts": {
             status: sum(report["validation_counts"].get(status, 0) for report in reports)
-            for status in ("pending", "validated", "invalid")
+            for status in ("pending", "validated", "invalid", "superseded")
         },
         "files": reports,
     }
