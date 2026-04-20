@@ -326,5 +326,33 @@ theorem AdditiveIdempotence (R : BooleanRing) (x : R.carrier) :
     (SquareOfDouble R x).symm.trans Step1
   exact AdditiveFixedPointIsZero R (R.Addition x x) Step2
 
+/--
+  MultiplicativeCommutativity (Halmos §1, consequence (b)):
+  In any Boolean ring, p · q = q · p for all p q.
+
+  Proof strategy:
+    Step 1 — Expand (p+q)·(p+q) two ways to obtain equation (12):
+               Zero R = q·p + p·q
+    Step 2 — From AdditiveIdempotence: p·q + p·q = Zero R
+               so  −(p·q) = p·q  (negation is identity)
+    Step 3 — Add p·q to both sides of equation (12):
+               p·q = q·p + p·q + p·q
+                   = q·p + Zero R
+                   = q·p
+-/
+theorem MultiplicativeCommutativity (R : BooleanRing) (p q : R.carrier) :
+    R.Multiplication p q = R.Multiplication q p := by
+  -- Step 1. Establish equation (12): Zero R = q·p + p·q
+  have Equation12 : Zero R = R.Addition (R.Multiplication q p) (R.Multiplication p q) := by
+    sorry
+  -- Step 2. Negation is identity: p·q + p·q = Zero R
+  have NegationIsIdentity : R.Addition (R.Multiplication p q) (R.Multiplication p q)
+      = Zero R := by
+    sorry
+  -- Step 3. Add p·q to both sides of Equation12 and cancel
+  sorry
+
+
+
 
 end LRA.VolumeI.BooleanAlgebra

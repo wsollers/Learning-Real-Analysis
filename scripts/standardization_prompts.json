@@ -1,0 +1,201 @@
+{
+  "split_environment": {
+    "instruction": "Split one source formal environment into atomic formal environments under DESIGN.md. Do not generate remark blocks in this step.",
+    "output_format": "json_only",
+    "json_schema": {
+      "atomic_items": [
+        {
+          "env": "definition|theorem|lemma|proposition|corollary|axiom",
+          "title": "Atomic display title",
+          "label": "correct-prefix:stable-slug",
+          "formal_body": "LaTeX body only, without \\begin{...} or \\end{...}",
+          "source_fragment": "small source fragment this item came from",
+          "rationale": "why this is independently extractable"
+        }
+      ],
+      "toolkit_needed": true,
+      "exposition_needed": true,
+      "notes": []
+    },
+    "hard_rules": [
+      "Each atomic item must contain exactly one independently extractable mathematical item.",
+      "Do not use canonical predicate names or \\operatorname{...} in formal_body.",
+      "Do not bundle paired notions, operation lists, or multiple cases into one item.",
+      "Every item must have exactly one label with the correct environment prefix.",
+      "Do not generate Standard/Predicate/Negation/Failure/Interpretation blocks here."
+    ],
+    "label_prefixes": {
+      "definition": "def:",
+      "theorem": "thm:",
+      "lemma": "lem:",
+      "proposition": "prop:",
+      "corollary": "cor:",
+      "axiom": "ax:"
+    }
+  },
+  "generate_definition": {
+    "instruction": "Generate one atomic formal environment in house notation from one atomic item.",
+    "output_format": "latex_only",
+    "latex_template": "\\begin{{{env}}}[{title}]\n\\label{{{label}}}\n{formal_body}\n\\end{{{env}}}",
+    "hard_rules": [
+      "Use standard mathematical notation only in the formal body.",
+      "Do not use canonical predicate names or \\operatorname{...}.",
+      "Include exactly one label immediately after the environment heading.",
+      "Do not include any remark blocks.",
+      "Do not include proof text."
+    ]
+  },
+  "generate_standard_quantified_statement": {
+    "instruction": "Generate the Standard quantified statement remark for one atomic formal environment.",
+    "output_format": "latex_only",
+    "latex_template": "\\begin{remark*}[Standard quantified statement]\n\\[\n{standard_quantified_statement}\n\\]\n\\end{remark*}",
+    "hard_rules": [
+      "Use standard mathematical notation only.",
+      "Do not use canonical predicate names or \\operatorname{...}.",
+      "Declare all newly quantified variable domains explicitly.",
+      "If the display is multi-clause or long, use an aligned environment.",
+      "Do not include explanatory prose; prose belongs in Interpretation or Failure modes."
+    ]
+  },
+  "generate_definition_predicate_reading": {
+    "instruction": "Generate the Definition predicate reading remark if a canonical predicate exists or clearly applies.",
+    "output_format": "json_or_latex",
+    "no_predicate_json_schema": {
+      "no_predicate": true,
+      "reason": "No canonical predicate exists or the quantified form is clearer without one."
+    },
+    "latex_template": "\\begin{remark*}[Definition predicate reading]\n\\[\n{predicate_reading}\n\\]\n\\end{remark*}",
+    "hard_rules": [
+      "Use only predicate names present in predicates.yaml.",
+      "Use operator-style predicate names: \\operatorname{Name}(...).",
+      "Do not invent predicates locally.",
+      "The predicate reading must be logically closed unless parameters are fixed by the immediately preceding statement."
+    ]
+  },
+  "generate_negated_quantified_statement": {
+    "instruction": "Generate the Negated quantified statement remark for one atomic formal environment when the negation is mathematically illuminating.",
+    "output_format": "json_or_latex",
+    "omit_json_schema": {
+      "omit": true,
+      "reason": "The negation is not mathematically illuminating for this item."
+    },
+    "latex_template": "\\begin{remark*}[Negated quantified statement]\n\\[\n{negated_quantified_statement}\n\\]\n\\end{remark*}",
+    "hard_rules": [
+      "Use standard mathematical notation only.",
+      "Do not use canonical predicate names or \\operatorname{...}.",
+      "The block contains the formal negation only.",
+      "Do not explain the negation in prose here.",
+      "Push negations through quantifiers when this clarifies the failure condition."
+    ]
+  },
+  "generate_negation_predicate_reading": {
+    "instruction": "Generate the Negation predicate reading remark when a Negated quantified statement was generated and canonical predicates apply.",
+    "output_format": "json_or_latex",
+    "no_predicate_json_schema": {
+      "no_predicate": true,
+      "reason": "No canonical predicate reading applies to the negation."
+    },
+    "latex_template": "\\begin{remark*}[Negation predicate reading]\n\\[\n{negation_predicate_reading}\n\\]\n\\end{remark*}",
+    "hard_rules": [
+      "Use only predicate names present in predicates.yaml.",
+      "Use operator-style predicate names: \\operatorname{Name}(...).",
+      "Do not invent predicates locally.",
+      "This block may use predicate language because its role permits it."
+    ]
+  },
+  "generate_failure_modes": {
+    "instruction": "Generate a Failure modes remark when the negation has distinct mathematically meaningful branches.",
+    "output_format": "json_or_latex",
+    "omit_json_schema": {
+      "omit": true,
+      "reason": "The negation has no useful branch decomposition."
+    },
+    "latex_template": "\\begin{remark*}[Failure modes]\n{failure_modes_body}\n\\end{remark*}",
+    "hard_rules": [
+      "Use prose or a short itemize list.",
+      "If the body begins with itemize, include \\hfill immediately after the remark heading.",
+      "Do not introduce new definitions.",
+      "Do not use predicate language unless the remark is explicitly analyzing predicate failure."
+    ]
+  },
+  "generate_failure_mode_decomposition": {
+    "instruction": "Generate a Failure mode decomposition remark when failure modes benefit from formal decomposition.",
+    "output_format": "json_or_latex",
+    "omit_json_schema": {
+      "omit": true,
+      "reason": "The failure modes do not require a formal decomposition display."
+    },
+    "latex_template": "\\begin{remark*}[Failure mode decomposition]\n\\[\n\\begin{aligned}\n{failure_mode_decomposition}\n\\end{aligned}\n\\]\n\\end{remark*}",
+    "hard_rules": [
+      "Use aligned displays for long or multi-branch decompositions.",
+      "Canonical predicates are allowed only when the block is explicitly predicate-analysis oriented.",
+      "Do not duplicate prose from Failure modes."
+    ]
+  },
+  "generate_contrapositive_quantified_statement": {
+    "instruction": "Generate a Contrapositive quantified statement only when it is mathematically illuminating.",
+    "output_format": "json_or_latex",
+    "omit_json_schema": {
+      "omit": true,
+      "reason": "The contrapositive is not useful enough to include."
+    },
+    "latex_template": "\\begin{remark*}[Contrapositive quantified statement]\n\\[\n{contrapositive_quantified_statement}\n\\]\n\\end{remark*}",
+    "hard_rules": [
+      "Use standard mathematical notation only.",
+      "Do not use canonical predicate names or \\operatorname{...}.",
+      "Use aligned displays if the statement is long.",
+      "Do not include generic contrapositives that add no mathematical insight."
+    ]
+  },
+  "generate_interpretation": {
+    "instruction": "Generate the Interpretation remark for one atomic formal environment.",
+    "output_format": "latex_only",
+    "latex_template": "\\begin{remark*}[Interpretation]\n{interpretation_body}\n\\end{remark*}",
+    "hard_rules": [
+      "Use prose.",
+      "Do not introduce new formal content.",
+      "Do not use predicate-language notation unless explicitly discussing notation.",
+      "Keep the interpretation concise and explanatory."
+    ]
+  },
+  "rewrite_formal_body": {
+    "instruction": "Rewrite a noncompliant formal environment body into standard mathematical notation.",
+    "output_format": "json_only",
+    "json_schema": {
+      "formal_body": "rewritten LaTeX body only",
+      "changed_meaning": false,
+      "notes": []
+    },
+    "hard_rules": [
+      "Remove predicate-language notation from forbidden roles.",
+      "Preserve mathematical meaning.",
+      "Do not make a bundled environment atomic by hiding multiple concepts in prose.",
+      "If the body is bundled, return needs_split=true rather than rewriting it as one block."
+    ]
+  },
+  "rewrite_logical_block": {
+    "instruction": "Rewrite a logical block for its stated role under DESIGN.md.",
+    "output_format": "json_only",
+    "json_schema": {
+      "heading": "original heading",
+      "body": "rewritten LaTeX body only",
+      "role_compliant": true,
+      "notes": []
+    },
+    "hard_rules": [
+      "Standard, negated, and contrapositive quantified statements must use standard mathematical notation only.",
+      "Predicate names belong only in predicate-reading or explicit predicate-analysis blocks.",
+      "Interpretation blocks must be prose only."
+    ]
+  },
+  "assemble_atomic_block_stack": {
+    "instruction": "Assemble one complete atomic formal block stack after all component generations pass validation.",
+    "output_format": "latex_only",
+    "latex_template": "{formal_environment}\n\n{standard_quantified_statement}\n\n{definition_predicate_reading_if_present}\n\n{negated_quantified_statement_if_present}\n\n{negation_predicate_reading_if_present}\n\n{failure_modes_if_present}\n\n{failure_mode_decomposition_if_present}\n\n{contrapositive_quantified_statement_if_present}\n\n{interpretation}",
+    "hard_rules": [
+      "Preserve DESIGN.md logical block order.",
+      "Omit optional blocks only when their generation step returned an explicit omit/no_predicate result.",
+      "Do not insert prose between the formal environment and its attached logical blocks."
+    ]
+  }
+}

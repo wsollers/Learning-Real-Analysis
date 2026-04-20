@@ -402,6 +402,298 @@ Stub chapters still carry a breadcrumb. A stub chapter inserts a **Status: Plann
 
 ---
 
+Rule — Toolkit-Guided Decomposition of Bundled Concepts
+
+Purpose.
+To preserve conceptual coherence for the reader while ensuring that all formal content remains atomic and extractable for the knowledge graph.
+
+1. Atomicity Requirement (Global)
+
+Every definition or theorem-like environment (definition, theorem, lemma, proposition, corollary, axiom) must contain exactly one independently extractable mathematical item.
+
+No environment may bundle multiple predicates, operations, relations, conditions, or named statements.
+
+2. Detection of Bundled Content
+
+An environment is non-compliant if it contains:
+
+Multiple named concepts (e.g., “bounded above / below / bounded”)
+Multiple operations or constructions (e.g., all pointwise operations in one definition)
+Bullet lists or clauses that define distinct mathematical notions
+Multiple statements that could each be given their own label
+3. Required Repair Structure (MANDATORY)
+
+When bundled content is encountered, it must be refactored using the following structure:
+
+(a) Toolkit Box (Top of Section)
+
+A single gray Toolkit box must appear at the top of the section representing the conceptual family.
+
+The Toolkit box must:
+
+Name the concept family (e.g., Bounding Toolkit, Limits Toolkit)
+List the primary notions or tools in that family
+Provide a structural overview (not formal definitions)
+(b) Expository Block (Immediately After Toolkit)
+
+A prose block must follow the Toolkit box explaining the concept at a high level.
+
+The exposition must:
+
+Describe the unifying idea of the concept family
+Explain relationships informally
+Prepare the reader for the formal decomposition
+
+This block must be unboxed (or a remark* if required by house style).
+
+(c) Atomic Formal Blocks (Following Exposition)
+
+All formal content must be split into separate environments.
+
+Each environment must:
+
+Contain exactly one concept or statement
+Have its own label
+Be independently extractable
+Contain no bundled definitions or clauses
+4. Ordering Constraint
+
+The required order is:
+
+Toolkit Box
+→ Exposition
+→ Definition/Theorem Block
+→ Definition/Theorem Block
+→ ...
+
+No formal block introducing a member of a concept family may appear before its Toolkit and exposition.
+
+5. Non-Permissible Transformations
+
+The following are not allowed:
+
+Splitting a bundled definition into multiple environments without introducing or verifying a Toolkit
+Leaving multiple concepts grouped under bullet points inside a single environment
+Using prose inside a definition to implicitly define multiple notions
+Creating atomic blocks without conceptual framing
+6. Conceptual Consistency Requirement
+
+All atomic items produced from a decomposition must correspond to entries in the canonical predicate, relation, or notation systems when applicable.
+
+This ensures:
+
+alignment with predicates.yaml
+consistency in naming and extraction
+stable knowledge graph nodes
+7. Audit Rule
+
+During compliance checks:
+
+If a definition/theorem-like environment contains multiple independently nameable items:
+Flag as Bundled Content Violation
+Verify presence of appropriate Toolkit box
+If absent, require insertion
+Require insertion of exposition
+Require full decomposition into atomic environments
+8. Design Principle (Normative Statement)
+
+Conceptual grouping belongs to Toolkit and exposition.
+Formal environments must remain strictly atomic.
+
+This rule is mandatory and applies globally across all volumes and chapters.
+Addendum — Bundled Content Detection Criteria
+
+Purpose.
+To ensure that bundled mathematical content is detected reliably and uniformly, independent of formatting style, so that all formal environments remain atomic and extractable.
+
+1. Trigger Condition (Formatting-Independent)
+
+A bundled-content violation is triggered whenever a definition or theorem-like environment introduces more than one independently nameable mathematical item, regardless of how the content is formatted.
+
+This applies independently of presentation, including but not limited to:
+
+itemize or enumerate lists
+align, aligned, or multi-line equation blocks
+comma-separated definitions or assignments
+multiple constructions defined in a single display
+conditional clauses introducing additional notions
+inline chains of definitions (e.g., “define …, …, and …”)
+2. Formal Detection Rule
+
+Let an environment E be a definition or theorem-like environment.
+If the content of E can be decomposed into two or more statements S
+1
+	​
+
+,S
+2
+	​
+
+,…,S
+n
+	​
+
+ such that each S
+i
+	​
+
+ could be assigned:
+
+its own name, and
+its own label,
+then E is non-compliant and must be decomposed.
+3. Canonical Examples of Violations
+
+The following patterns are always violations:
+
+(a) Multiple predicates in one definition
+$f$ is bounded above, bounded below, and bounded if ...
+(b) Multiple operations defined together
+(f+g)(x), (f-g)(x), (fg)(x), ...
+(c) Bullet-list definitions
+\begin{itemize}
+\item ...
+\item ...
+\end{itemize}
+(d) Multi-clause logical definitions
+We define A if ..., and define B if ...
+4. Non-Exceptions
+
+There are no formatting-based exceptions to this rule.
+
+In particular, the following do not exempt an environment from decomposition:
+
+grouping for convenience
+brevity of presentation
+traditional textbook style
+“closely related” concepts
+use of shared notation
+5. Required Action Upon Detection
+
+When a bundled-content violation is detected:
+
+Identify the concept family governing the items
+Locate or create the corresponding Toolkit box
+Insert or verify presence of expository block
+Decompose the environment into atomic environments:
+one item per environment
+one label per item
+no residual bundling
+6. Design Principle (Reinforced)
+
+Formatting must not obscure structure.
+If multiple concepts exist, they must be made structurally explicit.
+
+This addendum is mandatory and extends the global atomicity requirement to be strictly formatting-independent.
+
+
+Rule — Bundled Content Detection Criteria
+
+Purpose.
+To ensure that bundled mathematical content is detected reliably and uniformly, independent of formatting style, so that all formal environments remain atomic and extractable.
+
+1. Trigger Condition (Formatting-Independent)
+
+A bundled-content violation is triggered whenever a definition or theorem-like environment introduces more than one independently nameable mathematical item, regardless of how the content is formatted.
+
+This applies independently of presentation, including but not limited to:
+
+itemize or enumerate lists
+align, aligned, or other multi-line equation blocks
+comma-separated definitions or assignments
+multiple constructions defined in a single display
+conditional clauses introducing additional notions
+inline chains of definitions such as “define …, …, and …”
+2. Formal Detection Rule
+
+Let E be a definition or theorem-like environment. If the content of E can be decomposed into two or more statements S
+1
+	​
+
+,S
+2
+	​
+
+,…,S
+n
+	​
+
+ such that each S
+i
+	​
+
+ could be assigned:
+
+its own name, and
+its own label,
+
+then E is non-compliant and must be decomposed.
+
+3. Canonical Examples of Violations
+
+The following patterns are always violations:
+
+(a) Multiple predicates in one definition
+
+$f$ is bounded above, bounded below, and bounded if ...
+
+(b) Multiple operations defined together
+
+(f+g)(x), (f-g)(x), (fg)(x), ...
+
+(c) Bullet-list definitions
+
+\begin{itemize}
+\item ...
+\item ...
+\end{itemize}
+
+(d) Multi-clause logical definitions
+
+We define A if ..., and define B if ...
+4. Non-Exceptions
+
+There are no formatting-based exceptions to this rule.
+
+In particular, the following do not exempt an environment from decomposition:
+
+grouping for convenience
+brevity of presentation
+traditional textbook style
+closely related concepts
+use of shared notation
+5. Required Action Upon Detection
+
+When a bundled-content violation is detected:
+
+identify the concept family governing the items,
+locate or create the corresponding Toolkit box,
+insert or verify presence of expository block,
+decompose the environment into atomic environments:
+one item per environment,
+one label per item,
+no residual bundling.
+6. Design Principle
+
+Formatting must not obscure structure.
+If multiple concepts exist, they must be made structurally explicit.
+
+Rule — Toolkit Must Enumerate the Atomic Family
+
+When bundled content is decomposed under a Toolkit box, the Toolkit must enumerate exactly the atomic items that follow, either explicitly or by unmistakable grouped reference.
+
+Requirements
+
+The Toolkit must:
+
+name the governing concept family,
+list the atomic notions or results that will be formalized below,
+provide structural orientation without itself serving as a formal definition or theorem.
+Consequence
+
+The Toolkit functions as the conceptual hub for the atomic sequence that follows. It is not decorative and it must correspond to the formal decomposition beneath it.
+
+
 ## 6. Governing Box Rules
 
 ### Rule R1 — What Gets a Box
