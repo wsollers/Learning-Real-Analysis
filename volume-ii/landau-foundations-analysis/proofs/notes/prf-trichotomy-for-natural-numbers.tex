@@ -1,0 +1,246 @@
+\newpage
+\phantomsection
+\label{prf:trichotomy-for-natural-numbers}
+
+\begin{remark*}[Return]
+\hyperref[thm:trichotomy-for-natural-numbers]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Trichotomy for Natural Numbers]
+Let \(x,y\in\mathbb{N}\). Then exactly one of the following holds:
+\begin{enumerate}[label=(\arabic*)]
+\item \(x=y\),
+\item there exists \(u\in\mathbb{N}\) such that \(x=y+u\),
+\item there exists \(v\in\mathbb{N}\) such that \(y=x+v\).
+\end{enumerate}
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+The proof is divided into two parts.
+
+First, at most one of the three alternatives can hold.
+
+If \(x=y\), then alternative \((2)\) is impossible, because \(x=y+u\) would imply
+\[
+y=y+u,
+\]
+contrary to \hyperref[thm:no-natural-number-equals-itself-plus-a-natural-number]{Theorem 7}. Similarly, if \(x=y\), then alternative \((3)\) is impossible.
+
+Now suppose that alternatives \((2)\) and \((3)\) both hold. Then there exist \(u,v\in\mathbb{N}\) such that
+\[
+x=y+u
+\qquad\text{and}\qquad
+y=x+v.
+\]
+Substituting the second equality into the first gives
+\[
+x=(x+v)+u=x+(v+u),
+\]
+which again contradicts \hyperref[thm:no-natural-number-equals-itself-plus-a-natural-number]{Theorem 7}. Hence no two of the three alternatives can hold simultaneously.
+
+Second, at least one of the three alternatives holds.
+
+Fix \(x\in\mathbb{N}\), and let
+\[
+\mathfrak{M}:=\{\,y\in\mathbb{N} : \text{at least one of \((1)\), \((2)\), \((3)\) holds for }x\text{ and }y\,\}.
+\]
+The claim is that \(\mathfrak{M}=\mathbb{N}\). By induction on \(y\), it is enough to prove that \(1\in\mathfrak{M}\) and that \(y\in\mathfrak{M}\Rightarrow y'\in\mathfrak{M}\).
+
+For \(y=1\), \hyperref[thm:every-natural-number-is-one-or-a-successor]{Theorem 3} gives either \(x=1\) or \(x=u'\) for some \(u\in\mathbb{N}\). In the first case, \(x=1=y\), so \((1)\) holds. In the second case,
+\[
+x=u'=u+1=1+u=y+u,
+\]
+so \((2)\) holds. Thus \(1\in\mathfrak{M}\).
+
+Now assume \(y\in\mathfrak{M}\). Then one of \((1)\), \((2)\), \((3)\) holds.
+
+If \(x=y\), then
+\[
+y'=y+1=x+1,
+\]
+so \((3)\) holds for \(y'\).
+
+If \(x=y+v\) for some \(v\in\mathbb{N}\), then either \(v=1\) or \(v=u'\) for some \(u\in\mathbb{N}\) by \hyperref[thm:every-natural-number-is-one-or-a-successor]{Theorem 3}. If \(v=1\), then
+\[
+x=y+1=y',
+\]
+so \((1)\) holds for \(y'\). If \(v=u'\), then
+\[
+x=y+v=y+u'=y'+u,
+\]
+using \hyperref[thm:successor-addition-rule]{Theorem 8}, so \((2)\) holds for \(y'\).
+
+If \(y=x+v\) for some \(v\in\mathbb{N}\), then
+\[
+y'=(x+v)'=x+v',
+\]
+again by \hyperref[thm:successor-addition-rule]{Theorem 8}, so \((3)\) holds for \(y'\).
+
+Thus \(y'\in\mathfrak{M}\) whenever \(y\in\mathfrak{M}\). Therefore \(\mathfrak{M}=\mathbb{N}\), so for every \(y\in\mathbb{N}\) at least one of \((1)\), \((2)\), \((3)\) holds.
+
+Combining the two parts, exactly one of the three alternatives holds.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Prove exclusivity.}
+The first task is to show that the three alternatives cannot overlap.
+
+Assume first that \(x=y\). Then alternative \((2)\) would say that there exists \(u\in\mathbb{N}\) such that
+\[
+x=y+u.
+\]
+Since \(x=y\), this becomes
+\[
+y=y+u,
+\]
+which is impossible by \hyperref[thm:no-natural-number-equals-itself-plus-a-natural-number]{Theorem 7}. Thus \((1)\) and \((2)\) cannot hold together. The same argument shows that \((1)\) and \((3)\) cannot hold together.
+
+Now suppose \((2)\) and \((3)\) both hold. Then there exist \(u,v\in\mathbb{N}\) such that
+\[
+x=y+u
+\qquad\text{and}\qquad
+y=x+v.
+\]
+Substitute the second equality into the first:
+\[
+x=(x+v)+u.
+\]
+By associativity,
+\[
+x=x+(v+u).
+\]
+This is impossible by \hyperref[thm:no-natural-number-equals-itself-plus-a-natural-number]{Theorem 7}. Hence \((2)\) and \((3)\) cannot hold together.
+
+At this point, the proof has established that \emph{at most one} alternative can hold.
+
+\textbf{Step 2. Define the induction set.}
+Fix \(x\in\mathbb{N}\). The second task is to show that for every \(y\in\mathbb{N}\), \emph{at least one} of the three alternatives holds.
+
+Define
+\[
+\mathfrak{M}:=\{\,y\in\mathbb{N} : \text{at least one of \((1)\), \((2)\), \((3)\) holds for }x\text{ and }y\,\}.
+\]
+The goal is to prove that every natural number lies in \(\mathfrak{M}\). The argument proceeds by induction.
+
+\textbf{Step 3. Verify the base case \(y=1\).}
+It must be shown that \(1\in\mathfrak{M}\).
+
+By \hyperref[thm:every-natural-number-is-one-or-a-successor]{Theorem 3}, either \(x=1\) or \(x=u'\) for some \(u\in\mathbb{N}\).
+
+If \(x=1\), then since \(y=1\),
+\[
+x=y,
+\]
+so alternative \((1)\) holds.
+
+If \(x=u'\) for some \(u\in\mathbb{N}\), then
+\[
+x=u'=u+1=1+u=y+u,
+\]
+so alternative \((2)\) holds.
+
+Thus \(1\in\mathfrak{M}\).
+
+\textbf{Step 4. State the inductive hypothesis.}
+Assume \(y\in\mathfrak{M}\). This means that at least one of the three alternatives already holds for \(x\) and \(y\). The goal is to prove that \(y'\in\mathfrak{M}\).
+
+Since \(y\in\mathfrak{M}\), there are three cases to consider.
+
+\textbf{Step 5. Handle Case 1 of the inductive step.}
+Assume
+\[
+x=y.
+\]
+Then
+\[
+y'=y+1=x+1.
+\]
+This has the form
+\[
+y'=x+v
+\]
+with \(v=1\). Therefore alternative \((3)\) holds for \(y'\).
+
+\textbf{Step 6. Handle Case 2 of the inductive step.}
+Assume
+\[
+x=y+v
+\]
+for some \(v\in\mathbb{N}\).
+
+By \hyperref[thm:every-natural-number-is-one-or-a-successor]{Theorem 3}, either \(v=1\) or \(v=u'\) for some \(u\in\mathbb{N}\).
+
+If \(v=1\), then
+\[
+x=y+1=y',
+\]
+so alternative \((1)\) holds for \(y'\).
+
+If \(v=u'\), then
+\[
+x=y+v=y+u'.
+\]
+By \hyperref[thm:successor-addition-rule]{Theorem 8},
+\[
+y+u'=y'+u.
+\]
+Hence
+\[
+x=y'+u,
+\]
+so alternative \((2)\) holds for \(y'\).
+
+Thus in Case 2, at least one alternative holds for \(y'\).
+
+\textbf{Step 7. Handle Case 3 of the inductive step.}
+Assume
+\[
+y=x+v
+\]
+for some \(v\in\mathbb{N}\).
+
+Taking successors gives
+\[
+y'=(x+v)'.
+\]
+By \hyperref[thm:successor-addition-rule]{Theorem 8},
+\[
+(x+v)'=x+v'.
+\]
+Therefore
+\[
+y'=x+v',
+\]
+so alternative \((3)\) holds for \(y'\).
+
+\textbf{Step 8. Complete the induction.}
+In every possible case arising from the inductive hypothesis, at least one of the three alternatives holds for \(y'\). Therefore
+\[
+y\in\mathfrak{M}\Longrightarrow y'\in\mathfrak{M}.
+\]
+Since \(1\in\mathfrak{M}\), the induction principle yields
+\[
+\mathfrak{M}=\mathbb{N}.
+\]
+Thus for every \(y\in\mathbb{N}\), at least one of the three alternatives holds.
+
+\textbf{Step 9. Combine existence and exclusivity.}
+Step 1 proved that at most one alternative can hold. Steps 2--8 proved that at least one alternative must hold. Therefore exactly one of the three alternatives holds.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof has two layers. The first layer proves exclusivity directly by contradiction: no two alternatives can occur simultaneously. The second layer proves exhaustiveness by induction on \(y\) for fixed \(x\). The inductive step is a case split on the alternative that holds for \(y\).
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:trichotomy-for-natural-numbers]{Trichotomy for Natural Numbers}
+  \item \hyperref[thm:every-natural-number-is-one-or-a-successor]{Every Natural Number Is One or a Successor}
+  \item \hyperref[thm:no-natural-number-equals-itself-plus-a-natural-number]{No Natural Number Equals Itself Plus a Natural Number}
+  \item \hyperref[thm:successor-addition-rule]{Successor Addition Rule}
+  \item \hyperref[ax:induction]{Induction Axiom}
+\end{itemize}
+\end{remark*}
