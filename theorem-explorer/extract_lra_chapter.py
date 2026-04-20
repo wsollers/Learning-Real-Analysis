@@ -271,16 +271,31 @@ def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]]
     return label_to_proof, theorem_return_to_proof
 
 
+def enclosing_tcolorbox_end(envs: list[EnvBlock], env: EnvBlock) -> int | None:
+    parent = env.parent
+    while parent is not None:
+        parent_env = envs[parent]
+        if parent_env.name == "tcolorbox":
+            return parent_env.end_end
+        parent = parent_env.parent
+    return None
+
+
 def collect_trailing_remarks(text: str, envs: list[EnvBlock], idx: int) -> list[dict[str, Any]]:
     current = envs[idx]
+    current_end = current.end_end
+    wrapper_end = enclosing_tcolorbox_end(envs, current)
     out: list[dict[str, Any]] = []
     j = idx + 1
     while j < len(envs):
         nxt = envs[j]
-        if nxt.begin_start < current.end_end:
+        if nxt.begin_start < current_end:
             j += 1
             continue
-        between = text[current.end_end : nxt.begin_start]
+        between_start = current_end
+        if wrapper_end is not None and between_start < wrapper_end <= nxt.begin_start:
+            between_start = wrapper_end
+        between = text[between_start : nxt.begin_start]
         if between.strip():
             break
         if nxt.name != REMARK_ENV:
@@ -294,7 +309,7 @@ def collect_trailing_remarks(text: str, envs: list[EnvBlock], idx: int) -> list[
                 "raw_latex_b64": b64(raw),
             }
         )
-        current = nxt
+        current_end = nxt.end_end
         j += 1
     return out
 

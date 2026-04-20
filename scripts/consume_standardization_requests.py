@@ -65,6 +65,7 @@ LOGICAL_BLOCK_ORDER = [
     "Failure mode decomposition",
     "Contrapositive quantified statement",
     "Interpretation",
+    "Dependencies",
 ]
 
 FORMAL_PATTERN = re.compile(
@@ -78,6 +79,7 @@ REMARK_PATTERN = re.compile(
     re.S,
 )
 LABEL_PATTERN = re.compile(r"\\label\{([^}]+)\}")
+HYPERREF_PATTERN = re.compile(r"\\hyperref\[([^\]]+)\]")
 TCOLORBOX_PATTERN = re.compile(
     r"\\begin\{tcolorbox\}(.*?)(?=\\end\{tcolorbox\})\\end\{tcolorbox\}",
     re.S,
@@ -270,6 +272,7 @@ def make_generated_stub(requests_path: Path, requests_doc: dict[str, Any], root:
                     "missing_heading": request.get("missing_heading"),
                     "remark_heading": request.get("remark_heading"),
                     "existing_remark_headings": request.get("existing_remark_headings", []),
+                    "formal_label_catalog": request.get("formal_label_catalog", []),
                 },
                 "output": None,
                 "validation": {
@@ -382,6 +385,13 @@ def validate_remark_roles(text: str, predicate_names: set[str]) -> tuple[list[st
                 errors.append(f"{heading} uses noncanonical predicate/operator names: {', '.join(unknown)}.")
         if heading == "Interpretation" and canonical_hits:
             warnings.append("Interpretation contains canonical predicate notation; verify this is explanatory.")
+        if heading == "Dependencies":
+            refs = HYPERREF_PATTERN.findall(body)
+            proof_refs = [ref for ref in refs if ref.startswith("prf:")]
+            if proof_refs:
+                errors.append("Dependencies references proof labels: " + ", ".join(proof_refs) + ".")
+            if not refs and "No local dependencies." not in body:
+                errors.append("Dependencies must contain explicit \\hyperref[...] links or exactly No local dependencies.")
         if heading == "Failure modes" and re.match(r"\s*\\begin\{itemize\}", body):
             warnings.append("Failure modes begins with itemize; DESIGN.md usually expects \\hfill after heading.")
     clusters = parse_formal_clusters(text)

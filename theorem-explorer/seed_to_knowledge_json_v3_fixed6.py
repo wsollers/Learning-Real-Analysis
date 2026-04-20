@@ -203,19 +203,43 @@ def extract_detailed_learning_steps(text: str) -> list[str]:
     return steps
 
 
-def extract_dependencies_from_blocks(blocks: list[dict[str, Any]]) -> list[str]:
-    ids: list[str] = []
+RELATIONSHIP_REMARK_KINDS = {
+    "dependencies": "dependencies",
+    "prerequisites": "dependencies",
+    "uses": "dependencies",
+    "consequences": "implies_ids",
+    "implies": "implies_ids",
+    "equivalent forms": "equivalent_to_ids",
+    "equivalent to": "equivalent_to_ids",
+    "equivalences": "equivalent_to_ids",
+}
+
+
+def extract_relationships_from_blocks(blocks: list[dict[str, Any]]) -> dict[str, list[str]]:
+    relationships: dict[str, list[str]] = {
+        "dependencies": [],
+        "implies_ids": [],
+        "equivalent_to_ids": [],
+    }
     for blk in blocks:
-        if blk.get("env_name") == "remark*" and (blk.get("title") or "").strip().lower() == "dependencies":
+        title = (blk.get("title") or "").strip().lower()
+        field = RELATIONSHIP_REMARK_KINDS.get(title)
+        if blk.get("env_name") == "remark*" and field:
             raw = clean_remark_content(blk.get("raw_latex_b64", ""))
-            ids.extend(HYPERREF_TARGET_RE.findall(raw))
-    seen = set()
-    out = []
-    for x in ids:
-        if x not in seen:
-            seen.add(x)
-            out.append(x)
-    return out
+            relationships[field].extend(HYPERREF_TARGET_RE.findall(raw))
+    for field, ids in relationships.items():
+        seen = set()
+        out = []
+        for x in ids:
+            if x not in seen:
+                seen.add(x)
+                out.append(x)
+        relationships[field] = out
+    return relationships
+
+
+def extract_dependencies_from_blocks(blocks: list[dict[str, Any]]) -> list[str]:
+    return extract_relationships_from_blocks(blocks)["dependencies"]
 
 
 def summarize_proof_blocks(blocks: list[dict[str, Any]], node_id: str, proof_source_path: str) -> tuple[str, str, str, str, dict[str, Any] | None]:
@@ -414,6 +438,33 @@ def build_multiple_primary_statement_warning(node: dict[str, Any]) -> dict[str, 
     return warning
 
 
+def build_missing_dependencies_warning(node: dict[str, Any]) -> dict[str, Any] | None:
+    headings = {
+        (blk.get("title") or "").strip().lower()
+        for blk in node.get("remark_blocks", [])
+        if blk.get("env_name") == "remark*"
+    }
+    if "dependencies" in headings:
+        return None
+    warning: dict[str, Any] = {
+        "type": "missing_dependencies_block",
+        "kind": node.get("kind", ""),
+        "node_id": node.get("id", ""),
+        "title": node.get("name", ""),
+        "source": node.get("source", ""),
+        "message": (
+            "Extracted theorem/definition item has no attached Dependencies remark. "
+            "Extraction was preserved, but the source should include explicit dependency "
+            "hyperrefs or 'No local dependencies.' for reliable graph generation."
+        ),
+        "signals": ["missing remark*:Dependencies"],
+        "excerpt": short_excerpt(node.get("statement_tex", "")),
+    }
+    if node.get("proof_source"):
+        warning["proof_source"] = node["proof_source"]
+    return warning
+
+
 def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, Any], dict[str, Any] | None]:
     node = json.loads(json.dumps(FIELD_DEFAULTS))
     node["id"] = seed_node["id"]
@@ -433,6 +484,10 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
 
     remark_fields = classify_remark_fields(seed_node.get("remark_blocks", []))
     node.update(remark_fields)
+    note_relationships = extract_relationships_from_blocks(seed_node.get("remark_blocks", []))
+    node["dependencies"] = note_relationships["dependencies"]
+    node["implies_ids"] = note_relationships["implies_ids"]
+    node["equivalent_to_ids"] = note_relationships["equivalent_to_ids"]
 
     proof_sketch, proof_idea, proof_type, method, error = summarize_proof_blocks(
         seed_node.get("proof_file_blocks", []),
@@ -691,6 +746,9 @@ def convert_chapter(chapter_root: Path, output_dir: Path | None = None) -> tuple
         structure_warning = build_multiple_primary_statement_warning(node)
         if structure_warning:
             errors.append(structure_warning)
+        dependency_warning = build_missing_dependencies_warning(node)
+        if dependency_warning:
+            errors.append(dependency_warning)
         if error:
             errors.append(error)
     edges, edge_warnings = build_edges(nodes, edge_seed)

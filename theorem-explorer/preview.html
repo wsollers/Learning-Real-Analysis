@@ -11,7 +11,7 @@
   --def:#14b8a6; --thm:#60a5fa; --sel:#f59e0b; --dep:#94a3b8; --impl:#f59e0b; --danger:#ef4444;
 }
 *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
-body{display:grid;grid-template-columns:360px minmax(0,1fr) minmax(410px,34vw);height:100vh;overflow:hidden}
+body{display:grid;grid-template-columns:360px minmax(0,1fr) minmax(500px,38vw);height:100vh;overflow:hidden}
 .sidebar{background:var(--panel);overflow:auto;border-right:1px solid #243041}
 .detail{background:var(--panel);overflow-y:auto;overflow-x:hidden;border-left:1px solid #243041}
 .main{position:relative;overflow:auto;background:
@@ -41,17 +41,24 @@ svg{position:absolute;inset:0}
 .meta{margin-top:8px;font-size:.78rem;color:#cbd5e1;display:flex;justify-content:space-between;gap:8px}
 .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:14px;margin-bottom:12px;overflow:visible}
 .label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:5px}
-.value{white-space:pre-wrap;line-height:1.42;overflow-wrap:anywhere;word-break:break-word;max-width:100%;overflow:visible}
+.value{white-space:pre-wrap;line-height:1.5;overflow-wrap:break-word;word-break:normal;hyphens:auto;max-width:100%;overflow:visible}
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.chip{display:inline-flex;align-items:center;max-width:100%;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--ink);font-size:.88rem;line-height:1.25;white-space:normal;overflow-wrap:break-word;word-break:normal;cursor:pointer;text-decoration:none}
+.chip.kind-depends{background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.28)}
+.chip.kind-implies{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3)}
+.chip.kind-tag{background:rgba(20,184,166,.12);border-color:rgba(20,184,166,.3)}
+.chip.kind-alias{background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.3)}
+.chip:hover{filter:brightness(1.08);border-color:rgba(255,255,255,.24)}
 .danger{border:2px solid var(--danger)!important;background:rgba(127,29,29,.16)!important}
 .tooltip{position:fixed;display:none;pointer-events:none;max-width:520px;background:rgba(15,23,42,.98);border:1px solid #334155;border-radius:14px;padding:12px;z-index:50;box-shadow:0 18px 38px rgba(0,0,0,.4)}
 .tooltip .block{margin-top:8px;padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);white-space:pre-wrap}
 .tooltip .danger{border:2px solid var(--danger);background:rgba(127,29,29,.16)}
 code{background:#111827;padding:1px 5px;border-radius:6px}
 .value .katex-display,.tooltip .block .katex-display{max-width:100%;overflow:visible;padding:.25rem 0;margin:.45rem 0;white-space:normal}
-.value .katex,.tooltip .block .katex{max-width:100%;white-space:normal;overflow-wrap:anywhere}
-.value .katex-html,.tooltip .block .katex-html{white-space:normal;overflow-wrap:anywhere}
-.value .katex-display>.katex,.tooltip .block .katex-display>.katex{white-space:normal;text-align:left}
-.value .katex .base,.tooltip .block .katex .base{white-space:normal;max-width:100%}
+.value .katex,.tooltip .block .katex{max-width:100%;white-space:inherit;overflow:visible}
+.value .katex-html,.tooltip .block .katex-html{white-space:inherit;overflow:visible}
+.value .katex-display>.katex,.tooltip .block .katex-display>.katex{white-space:nowrap;text-align:left;max-width:100%;overflow-x:auto;overflow-y:hidden}
+.value .katex .base,.tooltip .block .katex .base{white-space:nowrap;max-width:none}
 </style>
 </head>
 <body>
@@ -190,7 +197,14 @@ function kindClass(kind) {
 }
 function texToHtml(s) {
   if (!s) return '';
-  return esc(autoDelimitLatex(normalizeExtractedLatex(s)));
+  return formatDetailText(esc(autoDelimitLatex(normalizeExtractedLatex(s))));
+}
+function formatDetailText(html) {
+  return String(html)
+    .replace(/,\s+/g, ',<wbr> ')
+    .replace(/;\s+/g, ';<br>')
+    .replace(/\s+·\s+/g, ' · ')
+    .replace(/([_:/#])(?![\\[{(])/g, '$1<wbr>');
 }
 function normalizeExtractedLatex(text) {
   let out = Array.isArray(text) ? text.join('\n') : String(text ?? '');
@@ -248,6 +262,42 @@ function autoDelimitLatex(text) {
 }
 function getNodes() { return state.knowledge.nodes || []; }
 function getCardsById(id) { return state.cards.filter(c => c.label === id); }
+function getNodeById(id) { return getNodes().find(n => n.id === id) || null; }
+function displayLabelForRef(ref) {
+  const node = getNodeById(ref);
+  return node ? node.name : String(ref || '');
+}
+function centerNodeInView(node, options={}) {
+  if (!node) return;
+  const viewport = els.graphWrap;
+  const behavior = options.behavior || 'smooth';
+  const clamp = (value, max) => Math.max(0, Math.min(value, Math.max(0, max)));
+  const doCenter = () => {
+    const el = state.nodeElements?.get(node.id);
+    const width = el?.offsetWidth || node.w || 250;
+    const height = el?.offsetHeight || node.h || 86;
+    const nodeCenterX = (node.x + width / 2) * state.zoom;
+    const nodeCenterY = (node.y + height / 2) * state.zoom;
+    const maxLeft = viewport.scrollWidth - viewport.clientWidth;
+    const maxTop = viewport.scrollHeight - viewport.clientHeight;
+    const targetLeft = clamp(nodeCenterX - viewport.clientWidth / 2, maxLeft);
+    const targetTop = clamp(nodeCenterY - viewport.clientHeight / 2, maxTop);
+    viewport.scrollTo({left: targetLeft, top: targetTop, behavior});
+  };
+  requestAnimationFrame(() => {
+    doCenter();
+    setTimeout(doCenter, 40);
+  });
+}
+function selectNodeById(id, options={}) {
+  const node = getNodeById(id);
+  if (!node) return;
+  state.selectedId = node.id;
+  render();
+  renderDetails(node);
+  if (options.center !== false) centerNodeInView(node, options);
+}
+
 function normalizeCards(cardData) {
   if (!cardData) return [];
   if (cardData.decks) {
@@ -573,17 +623,32 @@ function renderDetails(n) {
   const cards = getCardsById(n.id);
   const blocks = [];
   function add(title,val,danger=false) { if(!val) return; blocks.push(`<div class="card ${danger?'danger':''}"><div class="label">${esc(title)}</div><div class="value">${texToHtml(val)}</div></div>`)}
+  function addChips(title,items,kind='') {
+    if(!items || !items.length) return;
+    const chips = items
+      .filter(v => v !== null && v !== undefined && String(v).trim() !== '')
+      .map(v => {
+        const raw = String(v).trim();
+        const label = displayLabelForRef(raw);
+        const node = getNodeById(raw);
+        const attrs = node ? ` data-node-id="${esc(raw)}" role="button" tabindex="0"` : '';
+        return `<span class="chip ${kind ? 'kind-'+kind : ''}"${attrs} title="${esc(raw)}">${esc(label)}</span>`;
+      })
+      .join('');
+    if(!chips) return;
+    blocks.push(`<div class="card"><div class="label">${esc(title)}</div><div class="chip-group">${chips}</div></div>`);
+  }
   blocks.push(`<div class="card"><div class="label">Title</div><div class="value"><strong>${esc(n.name)}</strong></div><div class="tiny" style="margin-top:8px">${esc(n.kind)} · ${esc(n.deck)} · ${esc(n.id)}</div></div>`);
   add('Statement', n.statement_display);
   add('Proposition', n.proposition);
   add('Formal', n.formal || n.fully_quantified_form);
   add('Negation', n.negation_formal || n.negation_display, true);
   add('Contrapositive', n.contrapositive, true);
-  add('Depends on', (n.depends_on_ids||[]).join(', '));
-  add('Implies', (n.implies_ids||[]).join(', '));
-  add('Used by', (n.used_by_ids||[]).join(', '));
-  add('Aliases', (n.aliases||[]).join(', '));
-  add('Tags', (n.tags||[]).join(', '));
+  addChips('Depends on', n.depends_on_ids || [], 'depends');
+  addChips('Implies', n.implies_ids || [], 'implies');
+  addChips('Used by', n.used_by_ids || [], 'depends');
+  addChips('Aliases', n.aliases || [], 'alias');
+  addChips('Tags', n.tags || [], 'tag');
   add('Symbol', n.symbol);
   add('Proof sketch', n.proof_sketch);
   add('Proof idea', n.proof_idea);
@@ -592,9 +657,15 @@ function renderDetails(n) {
   add('Uses text', n.uses_text);
   add('Source', n.source);
   add('Proof source', n.proof_source);
-  if(cards.length) add('Cards present', cards.map(c=>c.card_type).join(', '));
+  if(cards.length) addChips('Cards present', cards.map(c=>c.card_type), 'tag');
   els.detailContent.innerHTML = blocks.join('');
   renderMathInElementSafe(els.detailContent);
+  els.detailContent.querySelectorAll('.chip[data-node-id]').forEach(chip => {
+    chip.addEventListener('click', () => selectNodeById(chip.dataset.nodeId));
+    chip.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); selectNodeById(chip.dataset.nodeId); }
+    });
+  });
 }
 
 function render() {
@@ -622,7 +693,7 @@ function render() {
     d.addEventListener('mouseleave',hideTooltip);
     d.addEventListener('click',()=>{
       if (state.suppressNextClick) { state.suppressNextClick = false; return; }
-      state.selectedId=n.id; render(); renderDetails(n);
+      selectNodeById(n.id, {center:true});
     });
     attachNodeDrag(d, n);
     els.nodeLayer.appendChild(d);

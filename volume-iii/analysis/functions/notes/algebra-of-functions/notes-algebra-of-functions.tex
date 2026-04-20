@@ -33,8 +33,8 @@ typically intervals or unions of intervals.
 
 \begin{proposition}[Composition of Injections Is Injective]
 \label{prop:composition-injective}
-$\operatorname{Injective}(f)\wedge\operatorname{Injective}(g)
-\Rightarrow\operatorname{Injective}(g\circ f)$.
+Let $f:A\to B$ and let $g:B\to C$. If $f$ is injective and $g$ is
+injective, then $g\circ f:A\to C$ is injective.
 
 \smallskip\noindent
 \hyperref[prf:composition-injective]{\textit{Go to proof.}}
@@ -42,35 +42,60 @@ $\operatorname{Injective}(f)\wedge\operatorname{Injective}(g)
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{Injective}(f)\wedge\operatorname{Injective}(g)
-  \;\Rightarrow\;
-  \forall a_1,a_2\in A:
-  g(f(a_1))=g(f(a_2))\Rightarrow a_1=a_2.
+\begin{aligned}
+&\Bigl(\forall a_1,a_2\in A\;(f(a_1)=f(a_2)\Rightarrow a_1=a_2)\Bigr)
+\wedge
+\Bigl(\forall b_1,b_2\in B\;(g(b_1)=g(b_2)\Rightarrow b_1=b_2)\Bigr) \\
+&\quad\Rightarrow
+\forall a_1,a_2\in A\;(g(f(a_1))=g(f(a_2))\Rightarrow a_1=a_2).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{Injective}(g\circ f)
-  \;\colonequiv\;
-  \forall a_1,a_2\in A:
-  (g\circ f)(a_1)=(g\circ f)(a_2)\Rightarrow a_1=a_2.
+  \operatorname{Injective}(f)\wedge\operatorname{Injective}(g)
+  \;\Longrightarrow\;
+  \operatorname{Injective}(g\circ f).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \neg\,\operatorname{Injective}(g\circ f)
-  \;\iff\;
-  \exists a_1\neq a_2\in A: g(f(a_1))=g(f(a_2)).
+  \exists a_1,a_2\in A\;\bigl(a_1\neq a_2\;\wedge\;g(f(a_1))=g(f(a_2))\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\,\operatorname{Injective}(g\circ f).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The composite fails to be injective exactly when two distinct inputs of
+$A$ are sent to the same output in $C$ after applying both functions.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+  \exists a_1,a_2\in A\;\bigl(a_1\neq a_2\;\wedge\;g(f(a_1))=g(f(a_2))\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Proof: $g(f(a_1))=g(f(a_2))\Rightarrow f(a_1)=f(a_2)$ by
-$\operatorname{Injective}(g)$, then $a_1=a_2$ by
-$\operatorname{Injective}(f)$.
+Injectivity survives composition: equality after $g\circ f$ can be
+pulled back first through $g$ and then through $f$.
 \end{remark*}
+
+
+
+
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
 
 % ---------------------------------------------------------
 % Proposition — Composition of Surjections
@@ -107,9 +132,86 @@ $\operatorname{Surjective}(f)\wedge\operatorname{Surjective}(g)
 
 \begin{corollary}[Composition of Bijections Is Bijective]
 \label{cor:composition-bijective}
-$\operatorname{Bijective}(f)\wedge\operatorname{Bijective}(g)
-\Rightarrow\operatorname{Bijective}(g\circ f)$.
+Let $f:A\to B$ and let $g:B\to C$. If $f$ is bijective and $g$ is
+bijective, then $g\circ f:A\to C$ is bijective.
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[
+  \bigl(\forall a_1,a_2\in A\;(f(a_1)=f(a_2)\Rightarrow a_1=a_2)\bigr)
+  \wedge
+  \bigl(\forall b\in B\;\exists a\in A\;(f(a)=b)\bigr)
+ \Bigr] \\
+&\quad\wedge
+ \Bigl[
+  \bigl(\forall b_1,b_2\in B\;(g(b_1)=g(b_2)\Rightarrow b_1=b_2)\bigr)
+  \wedge
+  \bigl(\forall c\in C\;\exists b\in B\;(g(b)=c)\bigr)
+ \Bigr] \\
+&\quad\Rightarrow
+ \Bigl[
+  \bigl(\forall a_1,a_2\in A\;(g(f(a_1))=g(f(a_2))\Rightarrow a_1=a_2)\bigr)
+  \wedge
+  \bigl(\forall c\in C\;\exists a\in A\;(g(f(a))=c)\bigr)
+ \Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{Bijective}(f)\wedge\operatorname{Bijective}(g)
+  \;\Longrightarrow\;
+  \operatorname{Bijective}(g\circ f).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\exists a_1,a_2\in A\;\bigl(a_1\neq a_2\;\wedge\;g(f(a_1))=g(f(a_2))\bigr) \\
+&\quad\vee\;
+  \exists c\in C\;\forall a\in A\;\bigl(g(f(a))\neq c\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+  \neg\,\operatorname{Bijective}(g\circ f).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A composite bijection can fail only by losing injectivity or by missing
+some target value in $C$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+\neg\,\operatorname{Bijective}(g\circ f)
+&\;\Longleftrightarrow\;
+\neg\,\operatorname{Injective}(g\circ f)
+\;\vee\;
+\neg\,\operatorname{Surjective}(g\circ f).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A bijection is an injective and surjective function. Since both of those
+properties are preserved by composition, bijectivity is preserved too.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
 
 % ---------------------------------------------------------
 % Proposition — Inverse of Bijection

@@ -18,7 +18,7 @@
     of $\operatorname{dom}(f)$. The value $f(c)$ is irrelevant;
     $f$ need not be defined at $c$.
   \item The input condition is punctured:
-    $\operatorname{InputTolerance}(x,c,\delta)$ means
+    $0<|x-c|<\delta$ means
     $0 < |x-c| < \delta$. This is what separates limits from
     continuity, where $\operatorname{Within}(x,c,\delta)$
     permits $x = c$.
@@ -26,7 +26,7 @@
     sequential. The Sequential Criterion is the primary working tool.
   \item Bridge principle: algebra of sequence limits transfers
     automatically via the Sequential Criterion.
-  \item A finite limit implies $\operatorname{BoundedNear}(f,c)$.
+  \item A finite limit implies $\exists\delta>0\;\exists M>0\;\forall x\in A\;(0<|x-c|<\delta\Rightarrow |f(x)|\leq M)$.
   \item Limits are local: behavior far from $c$ is irrelevant.
 \end{itemize}
 \end{tcolorbox}
@@ -39,17 +39,15 @@
 \label{def:eps-close-function}
 Let $X \subseteq \mathbb{R}$, let $f : X \to \mathbb{R}$, let
 $L \in \mathbb{R}$, and let $\varepsilon > 0$. The function $f$ is
-\textbf{$\varepsilon$-close to $L$} if
-$\operatorname{OutputTolerance}(f(x), L, \varepsilon)$ holds for all
-$x \in X$, i.e., $|f(x) - L| \leq \varepsilon$ for all $x \in X$.
+\textbf{$\varepsilon$-close to $L$} if $|f(x)-L|\leq\varepsilon$ for
+all $x\in X$.
 \end{definition}
 
 \begin{remark*}[Standard quantified statement]
 \[
   f \;\varepsilon\text{-close to } L
   \;\iff\;
-  \forall x \in X :\;
-  \operatorname{OutputTolerance}(f(x), L, \varepsilon).
+  \forall x \in X\;\bigl(|f(x)-L|\leq\varepsilon\bigr).
 \]
 \end{remark*}
 
@@ -60,16 +58,21 @@ toward the limit definition, which localises the same output
 condition to a punctured neighbourhood of $c$.
 \end{remark*}
 
+
+
+
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
 \begin{definition}[Local $\delta$-Closeness Near a Point]
 \label{def:delta-close-function}
 Let $f : X \to \mathbb{R}$, let $L \in \mathbb{R}$, let $x_0$ be
 adherent to $X$, and let $\varepsilon, \delta > 0$. The function $f$
 is \textbf{$\varepsilon$-close to $L$ near $x_0$ within $\delta$} if
 \[
-  \forall x \in X :\;
-  \operatorname{Within}(x, x_0, \delta)
-  \;\Rightarrow\;
-  \operatorname{OutputTolerance}(f(x), L, \varepsilon).
+  \forall x \in X\;\bigl(|x-x_0|<\delta\Rightarrow |f(x)-L|\leq\varepsilon\bigr).
 \]
 \end{definition}
 
@@ -88,6 +91,14 @@ this with $\operatorname{InputTolerance}$ (punctured) and asserts
 that for every $\varepsilon$ such a $\delta$ exists.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:eps-close-function]{$\varepsilon$-Closeness of a Function to a Value}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Definition — Limit of a Function
 % ---------------------------------------------------------
@@ -99,14 +110,9 @@ Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
 A real number $L$ is the \textbf{limit of $f$ at $c$}, written
 $\lim_{x \to c} f(x) = L$, if
 \[
-  \ForallOT{\varepsilon},\;
-  \ExistsIT{\delta},\;
-  \forall x \in A :\;
-  \operatorname{InputTolerance}(x, c, \delta)
-  \;\Rightarrow\;
-  \operatorname{OutputTolerance}(f(x), L, \varepsilon).
+  \forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+  0<|x-c|<\delta\Rightarrow |f(x)-L|<\varepsilon.
 \]
-If no such $L$ exists, $f$ \textbf{diverges} at $c$.
 
 \smallskip\noindent
 \hyperref[prf:limit-unique]{\textit{Go to uniqueness proof.}}
@@ -115,11 +121,7 @@ If no such $L$ exists, $f$ \textbf{diverges} at $c$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f, c, L)
-  \;\iff\;
-  \forall\varepsilon > 0,\;
-  \exists\delta > 0,\;
-  \forall x \in A :\;
+  \forall\varepsilon > 0\;\exists\delta > 0\;\forall x \in A\;
   0 < |x - c| < \delta
   \;\Rightarrow\;
   |f(x) - L| < \varepsilon.
@@ -128,33 +130,27 @@ If no such $L$ exists, $f$ \textbf{diverges} at $c$.
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{FunctionLimit}(f, c, L)
+  \lim_{x\to c}f(x)=L
   \;\colonequiv\;
   \ForallOT{\varepsilon},\;
   \ExistsIT{\delta},\;
   \forall x \in A :\;
-  \operatorname{InputTolerance}(x, c, \delta)
+  0<|x-c|<\delta
   \;\Rightarrow\;
-  \operatorname{OutputTolerance}(f(x), L, \varepsilon).
+  |f(x)-L|<\varepsilon.
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \neg\,\operatorname{FunctionLimit}(f, c, L)
-  \;\iff\;
-  \exists\varepsilon_0 > 0,\;
-  \forall\delta > 0,\;
-  \exists x \in A :\;
-  \operatorname{InputTolerance}(x, c, \delta)
-  \;\wedge\;
-  \neg\,\operatorname{OutputTolerance}(f(x), L, \varepsilon_0).
+  \exists\varepsilon_0 > 0\;\forall\delta > 0\;\exists x \in A\;
+  0<|x-c|<\delta\;\wedge\; |f(x)-L|\geq\varepsilon_0.
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-  \neg\,\operatorname{FunctionLimit}(f, c, L)
+  \neg\,\lim_{x\to c}f(x)=L
   \;\colonequiv\;
   \exists\varepsilon_0 > 0,\;
   \forall\delta > 0,\;
@@ -196,6 +192,14 @@ $\varepsilon$; (iv) the condition is about all $x$ near $c$
 simultaneously, not just one.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cluster-point-R]{Cluster Point}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Definition — Sequential Form of Limit
 % ---------------------------------------------------------
@@ -210,10 +214,8 @@ with $x_n \to c$, the sequence $(f(x_n))$ converges to $L$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f, c, L) \text{ (sequential)}
-  \;\iff\;
-  \forall (x_n) \subseteq A \setminus \{c\} :\;
-  x_n \to c \;\Rightarrow\; f(x_n) \to L.
+  \forall (x_n) \subseteq A \setminus \{c\}\;
+  \bigl(x_n \to c \Rightarrow f(x_n) \to L\bigr).
 \]
 \end{remark*}
 
@@ -230,10 +232,8 @@ with $x_n \to c$, the sequence $(f(x_n))$ converges to $L$.
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \neg\,\operatorname{FunctionLimit}_{\mathrm{seq}}(f, c, L)
-  \;\iff\;
-  \exists (x_n) \subseteq A \setminus \{c\} :\;
-  x_n \to c \;\wedge\; f(x_n) \not\to L.
+  \exists (x_n) \subseteq A \setminus \{c\}\;
+  \bigl(x_n \to c \;\wedge\; f(x_n) \not\to L\bigr).
 \]
 \end{remark*}
 
@@ -246,6 +246,15 @@ sequence). The $\varepsilon$-$\delta$ form is better for constructing
 explicit $\delta$ functions.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:cluster-point-R]{Cluster Point}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Proposition — Neighbourhood Form
 % ---------------------------------------------------------
@@ -253,13 +262,10 @@ explicit $\delta$ functions.
 \begin{proposition}[Neighbourhood Form of the Limit]
 \label{prop:limit-neighbourhood-equiv}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
-The following are equivalent:
-\begin{enumerate}[label=(\roman*)]
-  \item $\lim_{x \to c} f(x) = L$.
-  \item For every $\varepsilon$-neighbourhood $V_\varepsilon(L)$
-    there exists a $\delta$-neighbourhood $V_\delta(c)$ such that
-    $x \in V_\delta^*(c) \cap A \Rightarrow f(x) \in V_\varepsilon(L)$.
-\end{enumerate}
+Then $\lim_{x\to c}f(x)=L$ if and only if for every
+$\varepsilon$-neighbourhood $V_\varepsilon(L)$ there exists a
+$\delta$-neighbourhood $V_\delta(c)$ such that
+$x\in V_\delta^*(c)\cap A$ implies $f(x)\in V_\varepsilon(L)$.
 
 \smallskip\noindent
 \hyperref[prf:limit-neighbourhood-equiv]{\textit{Go to proof.}}
@@ -268,16 +274,11 @@ The following are equivalent:
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-(i)\quad &\ForallOT{\varepsilon},\;
-  \ExistsIT{\delta},\;
-  \forall x \in A :\;
-  \operatorname{InputTolerance}(x,c,\delta)
-  \Rightarrow
-  \operatorname{OutputTolerance}(f(x),L,\varepsilon). \\[4pt]
-(ii)\quad &\forall\varepsilon>0,\;
-  \exists\delta>0,\;
-  \forall x \in V_\delta^*(c) \cap A :\;
-  f(x) \in V_\varepsilon(L).
+&\Bigl[\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+  0<|x-c|<\delta\Rightarrow |f(x)-L|<\varepsilon\Bigr] \\
+&\quad\Longleftrightarrow
+\Bigl[\forall\varepsilon>0\;\exists\delta>0\;\forall x\in V_\delta^*(c)\cap A\;
+  f(x)\in V_\varepsilon(L)\Bigr].
 \end{aligned}
 \]
 \end{remark*}
@@ -285,12 +286,22 @@ The following are equivalent:
 \begin{remark*}[Interpretation]
 The equivalence is purely notational: $V_\delta^*(c) \cap A$ is
 exactly the set of $x \in A$ satisfying
-$\operatorname{InputTolerance}(x,c,\delta)$, and $f(x) \in
+$0<|x-c|<\delta$, and $f(x) \in
 V_\varepsilon(L)$ is exactly $\operatorname{OutputTolerance}(f(x),L,
 \varepsilon)$. The neighbourhood form makes the geometric content
 explicit: the image of every punctured $\delta$-slice of $A$ must
 fit inside the $\varepsilon$-ball around $L$. This is the form of
 continuity used in metric space topology.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:epsilon-neighbourhood]{$\varepsilon$-Neighbourhood}
+  \item \hyperref[def:deleted-epsilon-neighbourhood]{Deleted $\varepsilon$-Neighbourhood}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -308,9 +319,9 @@ Then $f$ has at most one limit at $c$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f,c,L)
+  \lim_{x\to c}f(x)=L
   \;\wedge\;
-  \operatorname{FunctionLimit}(f,c,L')
+  \lim_{x\to c}f(x)=L'
   \;\Rightarrow\; L = L'.
 \]
 \end{remark*}
@@ -331,6 +342,14 @@ behavior of $f$ near $c$. Uniqueness is what licenses writing
 $\lim_{x\to c} f(x) = L$ as an equation rather than an assertion.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Proposition — Sequential Criterion
 % ---------------------------------------------------------
@@ -338,12 +357,9 @@ $\lim_{x\to c} f(x) = L$ as an equation rather than an assertion.
 \begin{proposition}[Sequential Criterion for Function Limits]
 \label{prop:sequential-criterion-limits}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
-The following are equivalent:
-\begin{enumerate}[label=(\alph*)]
-  \item $\lim_{x \to c} f(x) = L$.
-  \item For every $(x_n) \subseteq A \setminus \{c\}$ with
-    $x_n \to c$, $\; f(x_n) \to L$.
-\end{enumerate}
+Then $\lim_{x\to c}f(x)=L$ if and only if for every sequence
+$(x_n)\subseteq A\setminus\{c\}$ with $x_n\to c$, one has
+$f(x_n)\to L$.
 
 \smallskip\noindent
 \hyperref[prf:sequential-criterion-limits]{\textit{Go to proof.}}
@@ -352,30 +368,25 @@ The following are equivalent:
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-(a)\quad
-  &\ForallOT{\varepsilon},\;
-   \ExistsIT{\delta},\;
-   \forall x \in A :\;
-   \operatorname{InputTolerance}(x,c,\delta)
-   \Rightarrow
-   \operatorname{OutputTolerance}(f(x),L,\varepsilon). \\[4pt]
-(b)\quad
-  &\forall (x_n) \subseteq A \setminus \{c\} :\;
-   x_n \to c \;\Rightarrow\; f(x_n) \to L.
+&\Bigl[\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+  0<|x-c|<\delta\Rightarrow |f(x)-L|<\varepsilon\Bigr] \\
+&\quad\Longleftrightarrow
+\Bigl[\forall (x_n)\subseteq A\setminus\{c\}\;
+  x_n\to c\Rightarrow f(x_n)\to L\Bigr].
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \neg\operatorname{FunctionLimit}(f,c,L)
+  \neg\lim_{x\to c}f(x)=L
   \;\iff\;
   \exists (x_n) \subseteq A \setminus \{c\} :\;
   x_n \to c \;\wedge\; f(x_n) \not\to L.
 \]
 \end{remark*}
 
-\begin{remark*}[The bridge principle]
+\begin{remark*}[Interpretation]
 The Sequential Criterion is the engine of the algebra of limits.
 Once it is in hand:
 \[
@@ -386,9 +397,18 @@ Once it is in hand:
 Every sequence result — sum, product, quotient, squeeze — transfers
 to function limits by feeding a sequence into the criterion and
 reading the result back. The negation is equally powerful: to
-disprove $\operatorname{FunctionLimit}(f,c,L)$, exhibit one sequence
+disprove $\lim_{x\to c}f(x)=L$, exhibit one sequence
 $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$ and
 $f(x_n) \not\to L$.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:limit-function-sequential]{Sequential Definition of Limit}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -398,19 +418,25 @@ $f(x_n) \not\to L$.
 \begin{corollary}[Three Equivalent Forms of the Function Limit]
 \label{cor:limit-three-equiv}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
-The following are equivalent:
-\begin{enumerate}[label=(\roman*)]
-  \item $\operatorname{FunctionLimit}(f,c,L)$.
-    \hfill ($\varepsilon$-$\delta$)
-  \item $\forall V_\varepsilon(L),\;\exists V_\delta(c) :\;
-    x \in V_\delta^*(c) \cap A
-    \Rightarrow f(x) \in V_\varepsilon(L)$.
-    \hfill (neighbourhood)
-  \item $\forall (x_n) \subseteq A \setminus \{c\},\;
-    x_n \to c \Rightarrow f(x_n) \to L$.
-    \hfill (sequential)
-\end{enumerate}
+The $\varepsilon$-$\delta$ form of $\lim_{x\to c}f(x)=L$, the
+neighbourhood form, and the sequential form are equivalent descriptions
+of the same limit condition.
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+  0<|x-c|<\delta\Rightarrow |f(x)-L|<\varepsilon\Bigr] \\
+&\quad\Longleftrightarrow
+\Bigl[\forall\varepsilon>0\;\exists\delta>0\;\forall x\in V_\delta^*(c)\cap A\;
+  f(x)\in V_\varepsilon(L)\Bigr] \\
+&\quad\Longleftrightarrow
+\Bigl[\forall (x_n)\subseteq A\setminus\{c\}\;
+  x_n\to c\Rightarrow f(x_n)\to L\Bigr].
+\end{aligned}
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
 All three encodings capture the same mathematical condition. The
@@ -420,6 +446,16 @@ generalisation. The sequential form is best for importing sequence
 results and constructing counterexamples.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[prop:limit-neighbourhood-equiv]{Neighbourhood Form of the Limit}
+  \item \hyperref[prop:sequential-criterion-limits]{Sequential Criterion for Function Limits}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Theorem — Limit Implies Local Boundedness
 % ---------------------------------------------------------
@@ -427,10 +463,9 @@ results and constructing counterexamples.
 \begin{theorem}[Limit Implies Local Boundedness]
 \label{thm:limit-implies-local-bounding}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
-If $\operatorname{FunctionLimit}(f, c, L)$ for some $L \in \mathbb{R}$,
-then $\operatorname{BoundedNear}(f, c)$: there exist $\delta, M > 0$
-such that $|f(x)| \leq M$ for all $x \in A$ with
-$\operatorname{InputTolerance}(x,c,\delta)$.
+If $\lim_{x\to c}f(x)=L$ for some $L \in \mathbb{R}$,
+then there exist $\delta, M > 0$ such that $|f(x)| \leq M$ for all
+$x \in A$ with $0<|x-c|<\delta$.
 
 \smallskip\noindent
 \hyperref[prf:limit-implies-local-bounding]{\textit{Go to proof.}}
@@ -438,20 +473,17 @@ $\operatorname{InputTolerance}(x,c,\delta)$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f,c,L)
+  \lim_{x\to c}f(x)=L
   \;\Rightarrow\;
-  \operatorname{BoundedNear}(f,c)
-  \;\colonequiv\;
-  \exists\delta > 0,\;\exists M > 0,\;
-  \forall x \in A :\;
-  0 < |x-c| < \delta \Rightarrow |f(x)| \leq M.
+  \exists\delta>0\;\exists M>0\;\forall x\in A\;
+  \bigl(0<|x-c|<\delta\Rightarrow |f(x)|\leq M\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Proof sketch]
 Apply the definition with $\varepsilon = 1$: get $\delta > 0$ such
-that $\operatorname{OutputTolerance}(f(x),L,1)$ holds for all $x$
-satisfying $\operatorname{InputTolerance}(x,c,\delta)$. The triangle
+that $|f(x)-L|<1$ holds for all $x$
+satisfying $0<|x-c|<\delta$. The triangle
 inequality then gives $|f(x)| \leq |f(x)-L| + |L| < 1 + |L|$.
 Set $M = 1 + |L|$.
 \end{remark*}
@@ -463,6 +495,14 @@ boundedness is a coarser statement than limit existence, but it is
 what is needed for the product and quotient rules.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Theorem — Bounded Limits
 % ---------------------------------------------------------
@@ -471,7 +511,7 @@ what is needed for the product and quotient rules.
 \label{thm:bounded-limits}
 Let $f : A \to \mathbb{R}$, let $c$ be a cluster point of $A$, and
 let $a, b \in \mathbb{R}$. If $a \leq f(x) \leq b$ for all $x \in A$
-with $x \neq c$, and $\operatorname{FunctionLimit}(f,c,L)$, then
+with $x \neq c$, and $\lim_{x\to c}f(x)=L$, then
 $a \leq L \leq b$.
 
 \smallskip\noindent
@@ -482,7 +522,7 @@ $a \leq L \leq b$.
 \[
   \bigl(\forall x \in A \setminus \{c\} :\; a \leq f(x) \leq b\bigr)
   \;\wedge\;
-  \operatorname{FunctionLimit}(f,c,L)
+  \lim_{x\to c}f(x)=L
   \;\Rightarrow\;
   a \leq L \leq b.
 \]
@@ -496,6 +536,14 @@ proof applies the Sequential Criterion and that sequence result
 directly.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Theorem — Squeeze Theorem for Function Limits
 % ---------------------------------------------------------
@@ -503,8 +551,8 @@ directly.
 \begin{theorem}[Squeeze Theorem for Function Limits]
 \label{thm:squeeze-function-limits}
 Let $f, g, h : A \to \mathbb{R}$ and let $c$ be a cluster point of
-$A$. Suppose $\operatorname{FunctionLimit}(f,c,L) =
-\operatorname{FunctionLimit}(g,c,L)$, and suppose there exists
+$A$. Suppose $\lim_{x\to c}f(x)=L =
+\lim_{x\to c}g(x)=L$, and suppose there exists
 $\delta_0 > 0$ such that
 \[
   \forall x \in A,\;
@@ -512,7 +560,7 @@ $\delta_0 > 0$ such that
   \;\Rightarrow\;
   f(x) \leq h(x) \leq g(x).
 \]
-Then $\operatorname{FunctionLimit}(h, c, L)$.
+Then $\lim_{x\to c}h(x)=L$.
 
 \smallskip\noindent
 \hyperref[prf:squeeze-function-limits]{\textit{Go to proof.}}
@@ -520,12 +568,12 @@ Then $\operatorname{FunctionLimit}(h, c, L)$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f,c,L)
-  = \operatorname{FunctionLimit}(g,c,L)
+  \lim_{x\to c}f(x)=L
+  = \lim_{x\to c}g(x)=L
   \;\wedge\;
   f \leq h \leq g \text{ near } c
   \;\Rightarrow\;
-  \operatorname{FunctionLimit}(h,c,L).
+  \lim_{x\to c}h(x)=L.
 \]
 \end{remark*}
 
@@ -534,6 +582,15 @@ The proof routes entirely through the Sequential Criterion: convert
 to sequences, apply the sequential squeeze theorem, convert back. No
 new $\varepsilon$-$\delta$ argument is needed. The condition
 $f \leq h \leq g$ is only required near $c$, not globally.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[thm:bounded-limits]{Bounded Limits}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -546,10 +603,9 @@ Let $E \subseteq X \subseteq \mathbb{R}$, let $x_0$ be a cluster
 point of $E$, let $f : X \to \mathbb{R}$, and let $\delta > 0$.
 Then
 \[
-  \operatorname{FunctionLimit}(f\!\restriction_E,\, x_0,\, L)
+  \lim_{x\to x_0;\,x\in E}f(x)=L
   \;\iff\;
-  \operatorname{FunctionLimit}(f\!\restriction_{E \cap (x_0-\delta,\,
-  x_0+\delta)},\, x_0,\, L).
+  \lim_{x\to x_0;\,x\in E\cap(x_0-\delta,x_0+\delta)}f(x)=L.
 \]
 
 \smallskip\noindent
@@ -573,6 +629,14 @@ justifies focusing all limit arguments on small balls around $c$
 without any loss of generality.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Proposition — Limit of Absolute Value
 % ---------------------------------------------------------
@@ -580,8 +644,8 @@ without any loss of generality.
 \begin{proposition}[Limit of Absolute Value]
 \label{prop:limit-absolute-value}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
-If $\operatorname{FunctionLimit}(f,c,L)$, then
-$\operatorname{FunctionLimit}(|f|, c, |L|)$.
+If $\lim_{x\to c}f(x)=L$, then
+$\lim_{x\to c}|f(x)|=|L|$.
 
 \smallskip\noindent
 \hyperref[prf:limit-absolute-value]{\textit{Go to proof.}}
@@ -589,25 +653,45 @@ $\operatorname{FunctionLimit}(|f|, c, |L|)$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f,c,L)
+  \lim_{x\to c}f(x)=L
   \;\Rightarrow\;
-  \operatorname{FunctionLimit}(|f|, c, |L|).
+  \lim_{x\to c}|f(x)|=|L|.
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
-The converse fails. $\operatorname{FunctionLimit}(|f|,c,|L|)$ does
-not imply $\operatorname{FunctionLimit}(f,c,L)$. Counterexample:
-$f(x) = \operatorname{sgn}(x)$ at $c = 0$ has $|f(x)| \equiv 1$ so
-$\lim|f| = 1$, but $\lim f$ does not exist.
+\[
+  \lim_{x\to c}|f(x)|=|L|
+  \;\centernot\Rightarrow\;
+  \lim_{x\to c}f(x)=L.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The absolute values may converge while the signs of $f(x)$ oscillate or
+approach the opposite sign from the proposed limiting value.
 \end{remark*}
 
 \begin{remark*}[Proof strategy]
 The reverse triangle inequality
 $\bigl||f(x)| - |L|\bigr| \leq |f(x) - L|$
 feeds the $\varepsilon$-$\delta$ definition directly: the same
-$\delta$ that delivers $\operatorname{OutputTolerance}(f(x),L,\varepsilon)$
-also delivers $\operatorname{OutputTolerance}(|f(x)|,|L|,\varepsilon)$.
+$\delta$ that delivers $|f(x)-L|<\varepsilon$
+also delivers $\bigl||f(x)|-|L|\bigr|<\varepsilon$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Taking absolute values can collapse sign information, so convergence of
+$f$ forces convergence of $|f|$, but convergence of $|f|$ alone does not
+recover the original limiting sign.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -618,10 +702,9 @@ also delivers $\operatorname{OutputTolerance}(|f(x)|,|L|,\varepsilon)$.
 \label{thm:composition-of-limits}
 Let $f : A \to B$, let $g : B \to \mathbb{R}$, let $c_1$ be a
 cluster point of $A$, and let $c_2 \in \mathbb{R}$ be a cluster
-point of $B$. Suppose $\operatorname{FunctionLimit}(f, c_1, c_2)$
-and $\operatorname{FunctionLimit}(g, c_2, L)$. If $c_2 \in B$,
-assume also that $g(c_2) = L$. Then
-$\operatorname{FunctionLimit}(g \circ f, c_1, L)$.
+point of $B$. Suppose $\lim_{x\to c_1}f(x)=c_2$ and
+$\lim_{y\to c_2}g(y)=L$. If $c_2 \in B$, assume also that
+$g(c_2) = L$. Then $\lim_{x\to c_1}g(f(x))=L$.
 
 \smallskip\noindent
 \hyperref[prf:composition-of-limits]{\textit{Go to proof.}}
@@ -629,13 +712,13 @@ $\operatorname{FunctionLimit}(g \circ f, c_1, L)$.
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{FunctionLimit}(f,c_1,c_2)
+  \lim_{x\to c_1}f(x)=c_2
   \;\wedge\;
-  \operatorname{FunctionLimit}(g,c_2,L)
+  \lim_{y\to c_2}g(y)=L
   \;\wedge\;
   \bigl(c_2 \in B \Rightarrow g(c_2) = L\bigr)
   \;\Rightarrow\;
-  \operatorname{FunctionLimit}(g \circ f,\, c_1,\, L).
+  \lim_{x\to c_1}g(f(x))=L.
 \]
 \end{remark*}
 
@@ -643,7 +726,7 @@ $\operatorname{FunctionLimit}(g \circ f, c_1, L)$.
 The hypothesis $g(c_2) = L$ is essential. Without it the composition
 can fail: take $f \equiv c_2$ (constant) and $g(c_2) \neq L$.
 Then $g(f(x)) = g(c_2) \neq L$ for all $x$, so
-$\operatorname{FunctionLimit}(g \circ f, c_1, L)$ fails even
+$\lim_{x\to c_1}g(f(x))=L$ fails even
 though both component limits exist. The failure is that $f(x) = c_2$
 is excluded from the punctured condition on $g$, but $f$ hits $c_2$
 constantly.
@@ -655,6 +738,14 @@ condition is punctured. The extra hypothesis $g(c_2) = L$ bridges the
 gap: when $f(x) = c_2$, the output condition $g(f(x)) = g(c_2) = L$
 is satisfied directly. This hypothesis is equivalent to requiring $g$
 to be continuous at $c_2$ (within $B$).
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
@@ -678,14 +769,14 @@ For increasing $f$ and every $x_0 \in (a,b)$:
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{MonotoneFunction}(f,(a,b))
+  f\text{ is monotone on }(a,b)
   \;\wedge\;
-  \operatorname{BoundedOn}(f,(a,b))
+  \exists B>0\;\forall x\in(a,b)\;(|f(x)|\leq B)
   \;\Rightarrow\;
   \forall x_0 \in (a,b) :\;
-  \operatorname{LeftLimit}(f,x_0,f(x_0^-))
+  \lim_{x\to x_0^-}f(x)=f(x_0^-)
   \;\wedge\;
-  \operatorname{RightLimit}(f,x_0,f(x_0^+)).
+  \lim_{x\to x_0^+}f(x)=f(x_0^+).
 \]
 \end{remark*}
 
@@ -698,6 +789,17 @@ possible. The theorem establishes that monotone functions can only
 have jump discontinuities — never oscillatory ones.
 \end{remark*}
 
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:function-monotone]{Monotone Function}
+  \item \hyperref[def:function-bounded]{Bounded Function}
+  \item \hyperref[def:left-hand-limit]{Left-Hand Limit}
+  \item \hyperref[def:right-hand-limit]{Right-Hand Limit}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Proposition — Cauchy Criterion for Function Limits
 % ---------------------------------------------------------
@@ -705,17 +807,17 @@ have jump discontinuities — never oscillatory ones.
 \begin{proposition}[Cauchy Criterion for Function Limits]
 \label{prop:cauchy-criterion-limits}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
-Then $\operatorname{FunctionLimit}(f,c,L)$ exists for some
+Then $\lim_{x\to c}f(x)=L$ exists for some
 $L \in \mathbb{R}$ if and only if
 \[
   \ForallOT{\varepsilon},\;
   \ExistsIT{\delta},\;
   \forall x, y \in A :\;
-  \operatorname{InputTolerance}(x,c,\delta)
+  0<|x-c|<\delta
   \;\wedge\;
-  \operatorname{InputTolerance}(y,c,\delta)
+  0<|y-c|<\delta
   \;\Rightarrow\;
-  \operatorname{OutputTolerance}(f(x),f(y),\varepsilon).
+  |f(x)-f(y)|<\varepsilon.
 \]
 
 \smallskip\noindent
@@ -724,8 +826,7 @@ $L \in \mathbb{R}$ if and only if
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \exists L \in \mathbb{R},\;
-  \operatorname{FunctionLimit}(f,c,L)
+  \exists L \in \mathbb{R}\;\bigl(\lim_{x\to c}f(x)=L\bigr)
   \;\iff\;
   \forall\varepsilon>0,\;\exists\delta>0,\;
   \forall x,y \in A :\;
@@ -741,4 +842,12 @@ $\varepsilon$ of each other — the outputs cluster even if their
 common limit is unknown. This is the function-limit analogue of the
 Cauchy completeness criterion for sequences, and relies on the
 completeness of $\mathbb{R}$ in exactly the same way.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
 \end{remark*}

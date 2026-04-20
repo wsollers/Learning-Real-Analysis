@@ -1024,6 +1024,7 @@ Every definition, axiom, theorem, lemma, proposition, corollary is followed imme
 6. Failure mode decomposition, if failure modes were generated
 7. Contrapositive quantified statement when mathematically illuminating
 8. Interpretation block - always
+9. Dependencies block - always
 
 A predicate-reading block is included only when a canonical predicate exists or clearly deserves to exist. It need not be forced for one-off statements whose quantified form is already structurally transparent.
 
@@ -1031,21 +1032,57 @@ A predicate-reading block is included only when a canonical predicate exists or 
 
 If a definition introduces notation, that notation appears in the definition itself and may then be used in the logical blocks.
 
-### 10.4 Negation Interpretation Rule
+### 10.4 Dependencies Block Rule
+
+Every definition, axiom, theorem, lemma, proposition, and corollary carries an attached `remark*` block titled **Dependencies** after its Interpretation block. This block is extraction infrastructure, not exposition.
+
+If the item depends on earlier formal items, the block lists those items using explicit `\hyperref[...]` links to their labels:
+
+```latex
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:cluster-point-R]{Cluster Point}
+\end{itemize}
+\end{remark*}
+```
+
+If the item is foundational within the current extraction scope, the block states:
+
+```latex
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+```
+
+Dependency labels must point to formal mathematical items such as definitions, axioms, lemmas, propositions, corollaries, and theorems. They must not point to proof labels. The extraction convention is:
+
+```text
+dependency label -> current item label
+```
+
+For downstream graph extraction, optional attached relationship blocks may also be used after Dependencies:
+
+- `\begin{remark*}[Consequences] ... \end{remark*}` for direct implication or downstream-use links;
+- `\begin{remark*}[Equivalent forms] ... \end{remark*}` for equivalence links.
+
+These relationship blocks must also use explicit `\hyperref[...]` labels.
+
+### 10.5 Negation Interpretation Rule
 
 The negated quantified statement block contains the formal negation only. Explanatory prose about the negation belongs in a later failure-mode or interpretation block.
 
-### 10.5 Failure Mode Decomposition Rule
+### 10.6 Failure Mode Decomposition Rule
 
 Important negations may be followed by a `remark*` block titled **Failure mode decomposition**. This block may use underbraces or similar visual grouping to display the mathematically meaningful branches of the negation.
 
-### 10.6 Predicate Availability Rule
+### 10.7 Predicate Availability Rule
 
 Predicate blocks must use the canonical predicate library in `predicates.yaml`.
 
 If a new predicate seems necessary, permission must be requested before it is introduced.
 
-### 10.7 No Bundled Predicate Rule
+### 10.8 No Bundled Predicate Rule
 
 Distinct concepts are not collapsed into one predicate block unless the canonical predicate library already treats them as inseparable.
 

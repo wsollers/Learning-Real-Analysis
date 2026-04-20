@@ -25,64 +25,237 @@
 % Theorem — Algebra of Limits
 % ---------------------------------------------------------
 
-\begin{theorem}[Algebra of Limits of Functions]
-\label{thm:limit-algebra}
-Let $f,g:A\to\mathbb{R}$, $c$ a cluster point of $A$,
-$\operatorname{FunctionLimit}(f,c,L)$, $\operatorname{FunctionLimit}(g,c,M)$.
-Then:
-\begin{enumerate}[label=(\roman*)]
-  \item $\operatorname{FunctionLimit}(f+g,\,c,\,L+M)$.
-  \item $\operatorname{FunctionLimit}(f-g,\,c,\,L-M)$.
-  \item $\operatorname{FunctionLimit}(\alpha f,\,c,\,\alpha L)$
-    for all $\alpha\in\mathbb{R}$.
-  \item $\operatorname{FunctionLimit}(fg,\,c,\,LM)$.
-  \item If $M\neq 0$: $g(x)\neq 0$ for all $x$ in some punctured
-    neighbourhood of $c$, and
-    $\operatorname{FunctionLimit}(f/g,\,c,\,L/M)$.
-\end{enumerate}
+\begin{theorem}[Sum Rule for Function Limits]
+\label{thm:limit-sum}
+Let $f,g:A\to\mathbb{R}$ and let $c$ be a cluster point of $A$. If
+$\lim_{x\to c}f(x)=L$ and $\lim_{x\to c}g(x)=M$, then
+\[
+  \lim_{x\to c}(f+g)(x)=L+M.
+\]
 
 \smallskip\noindent
 \hyperref[prf:limit-algebra]{\textit{Go to proof.}}
 \end{theorem}
 
-\begin{remark*}[Standard quantified statement — sum rule]
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[\forall\varepsilon>0\;\exists\delta_f>0\;\forall x\in A\;
+  0<|x-c|<\delta_f\Rightarrow |f(x)-L|<\varepsilon\Bigr] \\
+&\quad\wedge
+\Bigl[\forall\varepsilon>0\;\exists\delta_g>0\;\forall x\in A\;
+  0<|x-c|<\delta_g\Rightarrow |g(x)-M|<\varepsilon\Bigr] \\
+&\quad\Rightarrow
+\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+0<|x-c|<\delta\Rightarrow |(f+g)(x)-(L+M)|<\varepsilon.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}(f,c,L)\wedge\operatorname{FunctionLimit}(g,c,M)
+  \;\Longrightarrow\;
+  \operatorname{FunctionLimit}(f+g,c,L+M).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Limits respect addition: sufficiently close values of $f$ and $g$ add to
+values of $f+g$ close to the sum of the two limits.
+\end{remark*}
+
+
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:pointwise-sum-of-functions]{Pointwise Sum of Functions}
+\end{itemize}
+\end{remark*}
+
+\begin{theorem}[Difference Rule for Function Limits]
+\label{thm:limit-difference}
+Let $f,g:A\to\mathbb{R}$ and let $c$ be a cluster point of $A$. If
+$\lim_{x\to c}f(x)=L$ and $\lim_{x\to c}g(x)=M$, then
+\[
+  \lim_{x\to c}(f-g)(x)=L-M.
+\]
+
+\smallskip\noindent
+\hyperref[prf:limit-algebra]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[\lim_{x\to c}f(x)=L\Bigr]\wedge\Bigl[\lim_{x\to c}g(x)=M\Bigr] \\
+&\quad\Rightarrow
+\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+0<|x-c|<\delta\Rightarrow |(f-g)(x)-(L-M)|<\varepsilon.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}(f,c,L)\wedge\operatorname{FunctionLimit}(g,c,M)
+  \;\Longrightarrow\;
+  \operatorname{FunctionLimit}(f-g,c,L-M).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The difference rule is the sum rule applied to $f+(-g)$.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:pointwise-difference-of-functions]{Pointwise Difference of Functions}
+\end{itemize}
+\end{remark*}
+
+\begin{theorem}[Scalar Multiple Rule for Function Limits]
+\label{thm:limit-scalar-multiple}
+Let $f:A\to\mathbb{R}$, let $c$ be a cluster point of $A$, and let
+$\alpha\in\mathbb{R}$. If $\lim_{x\to c}f(x)=L$, then
+\[
+  \lim_{x\to c}(\alpha f)(x)=\alpha L.
+\]
+
+\smallskip\noindent
+\hyperref[prf:limit-algebra]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \Bigl[\lim_{x\to c}f(x)=L\Bigr]
+  \;\Rightarrow\;
+  \forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+  0<|x-c|<\delta\Rightarrow |\alpha f(x)-\alpha L|<\varepsilon.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
 \[
   \operatorname{FunctionLimit}(f,c,L)
-  \;\wedge\;
-  \operatorname{FunctionLimit}(g,c,M)
-  \;\Rightarrow\;
-  \ForallOT{\varepsilon},\;
-  \ExistsIT{\delta},\;
-  \forall x\in A:\;
-  \operatorname{InputTolerance}(x,c,\delta)
-  \Rightarrow
-  \operatorname{OutputTolerance}((f+g)(x),L+M,\varepsilon).
+  \;\Longrightarrow\;
+  \operatorname{FunctionLimit}(\alpha f,c,\alpha L).
 \]
 \end{remark*}
 
-\begin{remark*}[Definition predicate reading — sum rule]
+\begin{remark*}[Interpretation]
+Multiplying a function by a fixed scalar multiplies its limiting value by
+that same scalar.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:pointwise-scalar-multiple-of-a-function]{Pointwise Scalar Multiple of a Function}
+\end{itemize}
+\end{remark*}
+
+\begin{theorem}[Product Rule for Function Limits]
+\label{thm:limit-product}
+Let $f,g:A\to\mathbb{R}$ and let $c$ be a cluster point of $A$. If
+$\lim_{x\to c}f(x)=L$ and $\lim_{x\to c}g(x)=M$, then
 \[
-  \operatorname{FunctionLimit}(f+g,c,L+M)
-  \;\colonequiv\;
-  \ForallOT{\varepsilon},\;
-  \ExistsIT{\delta},\;
-  \forall x\in A:\;
-  \operatorname{InputTolerance}(x,c,\delta)
-  \Rightarrow
-  \operatorname{OutputTolerance}((f+g)(x),L+M,\varepsilon).
+  \lim_{x\to c}(fg)(x)=LM.
+\]
+
+\smallskip\noindent
+\hyperref[prf:limit-algebra]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[\lim_{x\to c}f(x)=L\Bigr]\wedge\Bigl[\lim_{x\to c}g(x)=M\Bigr] \\
+&\quad\Rightarrow
+\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+0<|x-c|<\delta\Rightarrow |f(x)g(x)-LM|<\varepsilon.
+\end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Proof strategy]
-Fix $(x_n)\subseteq A\setminus\{c\}$ with $x_n\to c$. By the
-Sequential Criterion: $f(x_n)\to L$, $g(x_n)\to M$. Algebra of
-sequence limits gives $(f+g)(x_n)\to L+M$, $(fg)(x_n)\to LM$, etc.
-Sequential Criterion lifts back to function limits. Five rules, one
-line each.
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}(f,c,L)\wedge\operatorname{FunctionLimit}(g,c,M)
+  \;\Longrightarrow\;
+  \operatorname{FunctionLimit}(fg,c,LM).
+\]
 \end{remark*}
 
-\begin{remark*}[Consequences]
-$\lim_{x\to c}(\alpha f+\beta g)(x)=\alpha L+\beta M$. For any
-polynomial $p$: $\lim_{x\to c}p(x)=p(c)$. For rational $P/Q$ with
-$Q(c)\neq 0$: $\lim_{x\to c}P(x)/Q(x)=P(c)/Q(c)$.
+\begin{remark*}[Interpretation]
+The product rule combines closeness of $f$ to $L$ with local boundedness
+of $g$ near $c$.
 \end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:pointwise-product-of-functions]{Pointwise Product of Functions}
+\end{itemize}
+\end{remark*}
+
+\begin{theorem}[Quotient Rule for Function Limits]
+\label{thm:limit-quotient}
+Let $f,g:A\to\mathbb{R}$ and let $c$ be a cluster point of $A$. If
+$\lim_{x\to c}f(x)=L$, $\lim_{x\to c}g(x)=M$, and $M\neq 0$, then
+there exists $\delta_0>0$ such that $g(x)\neq 0$ whenever $x\in A$ and
+$0<|x-c|<\delta_0$, and
+\[
+  \lim_{x\to c}\frac{f(x)}{g(x)}=\frac{L}{M}.
+\]
+
+\smallskip\noindent
+\hyperref[prf:limit-algebra]{\textit{Go to proof.}}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[\lim_{x\to c}f(x)=L\Bigr]\wedge\Bigl[\lim_{x\to c}g(x)=M\Bigr]\wedge M\neq 0 \\
+&\quad\Rightarrow
+\exists\delta_0>0\;\forall x\in A\;
+0<|x-c|<\delta_0\Rightarrow g(x)\neq 0, \\
+&\quad\text{and}\quad
+\forall\varepsilon>0\;\exists\delta>0\;\forall x\in A\;
+0<|x-c|<\delta\Rightarrow
+\left|\frac{f(x)}{g(x)}-\frac{L}{M}\right|<\varepsilon.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}(f,c,L)\wedge\operatorname{FunctionLimit}(g,c,M)\wedge M\neq 0
+  \;\Longrightarrow\;
+  \operatorname{FunctionLimit}(f/g,c,L/M).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A nonzero limiting denominator stays away from zero near the limit point,
+so division becomes locally legitimate and the quotient limit follows.
+\end{remark*}
+
+
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:pointwise-quotient-of-functions]{Pointwise Quotient of Functions}
+\end{itemize}
+\end{remark*}
+

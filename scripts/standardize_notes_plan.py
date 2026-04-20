@@ -58,6 +58,7 @@ REQUIRED_BLOCK_ORDER = [
     "Failure mode decomposition",
     "Contrapositive quantified statement",
     "Interpretation",
+    "Dependencies",
 ]
 
 FORMAL_PATTERN = re.compile(
@@ -73,6 +74,7 @@ REMARK_PATTERN = re.compile(
 )
 
 LABEL_PATTERN = re.compile(r"\\label\{([^}]+)\}")
+HYPERREF_PATTERN = re.compile(r"\\hyperref\[([^\]]+)\]")
 TCOLORBOX_PATTERN = re.compile(
     r"\\begin\{tcolorbox\}(.*?)(?=\\end\{tcolorbox\})\\end\{tcolorbox\}",
     re.S,
@@ -89,6 +91,7 @@ CHECKED_RULE_IDS = {
     "labels.prefix",
     "notation.no_predicate_leakage",
     "logical_blocks.standard_quantified_statement",
+    "logical_blocks.dependencies_block",
     "prose.interpretation_required",
     "boxes.single_bare_environment",
     "extraction.sidecar_workflow",
@@ -101,6 +104,9 @@ VIOLATION_RULE_IDS = {
     "No Predicate Leakage in Negated quantified statement": ["notation.no_predicate_leakage", "notation.layer_gated_roles"],
     "No Predicate Leakage in Contrapositive quantified statement": ["notation.no_predicate_leakage", "notation.layer_gated_roles"],
     "Required logical blocks": ["logical_blocks.standard_quantified_statement", "prose.interpretation_required"],
+    "Required dependencies block": ["logical_blocks.dependencies_block"],
+    "Dependencies block - proof label": ["logical_blocks.dependencies_block"],
+    "Dependencies block - missing links": ["logical_blocks.dependencies_block"],
     "Label discipline - missing label": ["labels.required"],
     "Label discipline - prefix": ["labels.prefix"],
     "Box-environment separation": ["boxes.single_bare_environment"],
@@ -196,6 +202,8 @@ def rule_ids_for_missing_heading(heading: str) -> list[str]:
         return ["logical_blocks.standard_quantified_statement"]
     if "Interpretation" in heading:
         return ["prose.interpretation_required"]
+    if "Dependencies" in heading:
+        return ["logical_blocks.dependencies_block"]
     return ["logical_blocks.required_order"]
 
 
@@ -293,6 +301,27 @@ def parse_formal_blocks(text: str) -> list[FormalBlock]:
             )
         )
     return blocks
+
+
+def build_formal_label_catalog(files: list[Path], root: Path) -> list[dict[str, Any]]:
+    catalog: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for path in files:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for block in parse_formal_blocks(text):
+            if not block.label or block.label in seen:
+                continue
+            seen.add(block.label)
+            catalog.append(
+                {
+                    "label": block.label,
+                    "env": block.env,
+                    "title": block.title,
+                    "file": str(path.relative_to(root)).replace("\\", "/"),
+                    "line": block.line,
+                }
+            )
+    return sorted(catalog, key=lambda item: (item["file"], item["line"], item["label"]))
 
 
 def predicate_regex(predicate_names: list[str]) -> re.Pattern[str]:
@@ -399,6 +428,13 @@ def default_prompt_library() -> dict[str, Any]:
             "content and do not use predicate-language notation unless discussing "
             "notation explicitly."
         ),
+        "generate_dependencies": (
+            "Generate the mandatory Dependencies remark for the given atomic formal "
+            "environment. Use explicit \\hyperref[...] labels from the provided "
+            "formal-item label catalog, or write exactly 'No local dependencies.' "
+            "when the item is foundational in the current extraction scope. Do not "
+            "reference proof labels."
+        ),
     }
 
 
@@ -416,10 +452,12 @@ def audit_file(
     path: Path,
     root: Path,
     predicate_names: list[str],
+    formal_label_catalog: list[dict[str, Any]] | None = None,
     selected_rules: list[dict[str, Any]] | None = None,
 ) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
     pred_re = predicate_regex(predicate_names)
+    label_catalog = formal_label_catalog or []
     formal_blocks = parse_formal_blocks(text)
     violations: list[dict] = []
     requests: list[dict] = []
@@ -498,12 +536,14 @@ def audit_file(
                             "generate_failure_mode_decomposition_if_failure_modes_were_generated",
                             "generate_contrapositive_quantified_statement_when_mathematically_illuminating",
                             "generate_interpretation",
+                            "generate_dependencies",
                         ],
                         "validation_gate_after_each_step": [
                             "formal_body_has_no_predicate_leakage",
                             "standard_negated_and_contrapositive_blocks_have_no_predicate_leakage",
                             "predicate_blocks_use_only_predicates_yaml",
                             "interpretation_is_prose_only",
+                            "dependencies_use_existing_formal_labels_or_explicit_no_local_dependencies",
                             "logical_blocks_are_in_design_order",
                         ],
                     },
@@ -540,10 +580,12 @@ def audit_file(
             missing.append("Standard quantified statement")
         if not any("Interpretation" in heading for heading in remark_headings):
             missing.append("Interpretation")
+        if not any("Dependencies" == heading for heading in remark_headings):
+            missing.append("Dependencies")
         if missing:
             add_violation(
                 block,
-                "Required logical blocks",
+                "Required dependencies block" if missing == ["Dependencies"] else "Required logical blocks",
                 "WARNING",
                 "Required logical block stack is incomplete or not immediately attached.",
                 ", ".join(missing),
@@ -562,12 +604,32 @@ def audit_file(
                         "missing_heading": heading,
                         "source": block.body.strip(),
                         "existing_remark_headings": remark_headings,
+                        "formal_label_catalog": label_catalog,
                         "rule_ids": rule_ids_for_missing_heading(heading),
                         "prompt_key": key,
                     }
                 )
 
         for remark in block.remarks:
+            if remark.heading == "Dependencies":
+                refs = HYPERREF_PATTERN.findall(remark.body)
+                proof_refs = [ref for ref in refs if ref.startswith("prf:")]
+                if proof_refs:
+                    add_violation(
+                        block,
+                        "Dependencies block - proof label",
+                        "ERROR",
+                        "Dependencies remarks must reference formal mathematical items, not proof labels.",
+                        ", ".join(proof_refs),
+                    )
+                if not refs and "No local dependencies." not in remark.body:
+                    add_violation(
+                        block,
+                        "Dependencies block - missing links",
+                        "WARNING",
+                        "Dependencies remark should contain explicit hyperref links or the exact text 'No local dependencies.'.",
+                        remark.body,
+                    )
             remark_predicate_hits = sorted(set(pred_re.findall(remark.body)))
             forbidden_role = any(
                 role in remark.heading
@@ -633,6 +695,7 @@ def audit_file(
         "requests": {
             "file": str(path.relative_to(root)).replace("\\", "/"),
             "prompt_library": prompt_library(),
+            "formal_label_catalog": label_catalog,
             "requests": requests,
         },
         "tmp_text": build_tmp_text(text, formal_blocks, requests),
@@ -750,6 +813,7 @@ def main() -> int:
     files = list(iter_tex_files(target))
     if not files:
         raise SystemExit(f"No .tex files found under {target}")
+    formal_label_catalog = build_formal_label_catalog(files, root)
 
     summary = {
         "target": str(target),
@@ -760,12 +824,13 @@ def main() -> int:
         "total_requests": 0,
         "workflows": workflows,
         "modules": args.module,
+        "formal_label_catalog_count": len(formal_label_catalog),
         "rule_coverage": summarize_coverage(initial_rule_coverage(selected_rules)),
         "files": [],
     }
 
     for path in files:
-        result = audit_file(path, root, predicate_names, selected_rules)
+        result = audit_file(path, root, predicate_names, formal_label_catalog, selected_rules)
         audit = result["audit"]
         if audit["request_count"]:
             summary["files_with_requests"] += 1

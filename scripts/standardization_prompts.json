@@ -158,6 +158,21 @@
       "Keep the interpretation concise and explanatory."
     ]
   },
+  "generate_dependencies": {
+    "instruction": "Generate the Dependencies remark for one atomic formal environment using the provided formal-item label catalog.",
+    "output_format": "latex_only",
+    "latex_template": "\\begin{remark*}[Dependencies]\n{dependencies_body}\n\\end{remark*}",
+    "allowed_empty_template": "\\begin{remark*}[Dependencies]\nNo local dependencies.\n\\end{remark*}",
+    "linked_template": "\\begin{remark*}[Dependencies]\\hfill\n\\begin{itemize}\n  \\item \\hyperref[{label}]{Display title}\n\\end{itemize}\n\\end{remark*}",
+    "hard_rules": [
+      "Use explicit \\hyperref[...] labels from the provided formal-item label catalog.",
+      "Do not reference proof labels such as prf:...",
+      "Use No local dependencies. only for items that are foundational within the current extraction scope.",
+      "Do not infer a dependency merely from thematic similarity.",
+      "Do include definitions directly used by the statement, notation, proof idea, or standard quantified form.",
+      "If the body begins with itemize, include \\hfill immediately after the remark heading."
+    ]
+  },
   "rewrite_formal_body": {
     "instruction": "Rewrite a noncompliant formal environment body into standard mathematical notation.",
     "output_format": "json_only",
@@ -191,11 +206,12 @@
   "assemble_atomic_block_stack": {
     "instruction": "Assemble one complete atomic formal block stack after all component generations pass validation.",
     "output_format": "latex_only",
-    "latex_template": "{formal_environment}\n\n{standard_quantified_statement}\n\n{definition_predicate_reading_if_present}\n\n{negated_quantified_statement_if_present}\n\n{negation_predicate_reading_if_present}\n\n{failure_modes_if_present}\n\n{failure_mode_decomposition_if_present}\n\n{contrapositive_quantified_statement_if_present}\n\n{interpretation}",
+    "latex_template": "{formal_environment}\n\n{standard_quantified_statement}\n\n{definition_predicate_reading_if_present}\n\n{negated_quantified_statement_if_present}\n\n{negation_predicate_reading_if_present}\n\n{failure_modes_if_present}\n\n{failure_mode_decomposition_if_present}\n\n{contrapositive_quantified_statement_if_present}\n\n{interpretation}\n\n{dependencies}",
     "hard_rules": [
       "Preserve DESIGN.md logical block order.",
       "Omit optional blocks only when their generation step returned an explicit omit/no_predicate result.",
-      "Do not insert prose between the formal environment and its attached logical blocks."
+      "Do not insert prose between the formal environment and its attached logical blocks.",
+      "The Dependencies block is mandatory and comes after Interpretation."
     ]
   }
 }

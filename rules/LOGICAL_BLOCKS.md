@@ -13,6 +13,7 @@ Required order after formal environments:
 6. Failure mode decomposition, if failure modes were generated
 7. Contrapositive quantified statement, when illuminating
 8. Interpretation
+9. Dependencies
 
 Role discipline:
 
@@ -20,6 +21,9 @@ Role discipline:
   notation only;
 - predicate readings use canonical predicates only;
 - Interpretation is prose by default;
+- Dependencies is extraction infrastructure and must contain explicit
+  `\hyperref[...]` links to formal-item labels, or the exact statement
+  `No local dependencies.`;
 - long multi-clause displays use `aligned`.
 
 Machine-readable rule objects live in `design-rules.json` with

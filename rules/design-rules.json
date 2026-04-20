@@ -425,6 +425,27 @@
       "generation_contract": ["generate standard notation only"]
     },
     {
+      "id": "logical_blocks.dependencies_block",
+      "source": "DESIGN.md 10.4",
+      "module": "logical_blocks",
+      "scope": ["formal_environment_cluster", "extraction_relationships"],
+      "applies_to": ["definition_generation", "theorem_generation", "logical_block_generation", "audit", "extraction"],
+      "severity": "WARNING",
+      "implementation_status": "partial",
+      "summary": "Every formal mathematical item carries an attached Dependencies remark for extraction, listing explicit hyperref labels or stating No local dependencies.",
+      "checks": [
+        "verify nearby Dependencies remark",
+        "verify dependency entries use explicit \\hyperref[...] labels",
+        "flag proof-label dependencies",
+        "provide formal-item label catalog to generation requests"
+      ],
+      "generation_contract": [
+        "generate Dependencies after Interpretation",
+        "use only existing formal-item labels",
+        "emit No local dependencies. only when the item is foundational in the current extraction scope"
+      ]
+    },
+    {
       "id": "logical_blocks.predicate_reading_header",
       "source": "DESIGN.md 10.10",
       "module": "logical_blocks",
