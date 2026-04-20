@@ -545,6 +545,8 @@ function cardHtml(n) {
   const statement = n.statement_display || byType.statement?.answer || '';
   const formal = n.formal || n.fully_quantified_form || byType.recognition?.question || '';
   const neg = n.negation_formal || n.negation_display || byType.negation?.answer || '';
+  const negPred = n.negation_predicate || '';
+  const failure = n.failure_modes || n.failure_mode_decomposition || '';
   const contra = n.contrapositive || '';
   return `
     <div><strong>${esc(n.name)}</strong></div>
@@ -552,6 +554,8 @@ function cardHtml(n) {
     ${statement ? `<div class="block"><strong>Statement</strong><br>${texToHtml(statement)}</div>`:''}
     ${formal ? `<div class="block"><strong>Formal</strong><br>${texToHtml(formal)}</div>`:''}
     ${neg ? `<div class="block danger"><strong>Negation</strong><br>${texToHtml(neg)}</div>`:''}
+    ${negPred ? `<div class="block danger"><strong>Negation predicate</strong><br>${texToHtml(negPred)}</div>`:''}
+    ${failure ? `<div class="block danger"><strong>Failure analysis</strong><br>${texToHtml(failure)}</div>`:''}
     ${contra ? `<div class="block danger"><strong>Contrapositive</strong><br>${texToHtml(contra)}</div>`:''}
   `;
 }
@@ -578,6 +582,9 @@ function renderDetails(n) {
   add('Proposition', n.proposition);
   add('Formal', n.formal || n.fully_quantified_form);
   add('Negation', n.negation_formal || n.negation_display, true);
+  add('Negation predicate', n.negation_predicate, true);
+  add('Failure modes', n.failure_modes, true);
+  add('Failure mode decomposition', n.failure_mode_decomposition, true);
   add('Contrapositive', n.contrapositive, true);
   add('Depends on', (n.depends_on_ids||[]).join(', '));
   add('Implies', (n.implies_ids||[]).join(', '));

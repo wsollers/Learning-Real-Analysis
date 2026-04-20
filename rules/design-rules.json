@@ -15,12 +15,12 @@
       "applies_to": ["definition_generation", "theorem_generation", "logical_block_generation", "audit"],
       "severity": "ERROR",
       "implementation_status": "partial",
-      "summary": "Notation is governed by block role; formal bodies and standard/negated/contrapositive blocks use standard notation, while predicate readings may use canonical predicates.",
+      "summary": "Notation is governed by block role; formal bodies and standard/negated/contrapositive blocks use standard notation, while predicate readings may use canonical predicates or registered predicate reading aliases.",
       "checks": [
         "classify block role before validation",
         "forbid canonical predicates in formal_body",
         "forbid canonical predicates in standard, negated, and contrapositive quantified statements",
-        "allow canonical predicates in predicate-reading and explicit predicate-analysis blocks"
+        "allow canonical predicates and registered reading_aliases in predicate-reading and explicit predicate-analysis blocks"
       ],
       "generation_contract": [
         "always state the target role in the prompt",
@@ -206,7 +206,11 @@
       "implementation_status": "partial",
       "summary": "All predicate, relation, and notation names come from predicates.yaml, relations.yaml, and notation.yaml.",
       "checks": ["load canonical yaml files", "flag unknown predicate/relation/notation names"],
-      "generation_contract": ["do not invent local predicates, relations, or notation names"]
+      "generation_contract": [
+        "do not invent local predicates, relations, or notation names",
+        "transmit the applicable predicate catalog to predicate-reading generation requests",
+        "use reading_aliases only when registered in predicates.yaml"
+      ]
     },
     {
       "id": "notation.canonical_rewrite",

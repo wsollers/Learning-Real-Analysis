@@ -58,18 +58,31 @@
     ]
   },
   "generate_definition_predicate_reading": {
-    "instruction": "Generate the Definition predicate reading remark if a canonical predicate exists or clearly applies.",
+    "instruction": "Generate the Definition predicate reading remark if a canonical predicate exists or clearly applies. Use the provided predicate_catalog as project memory for names, arities, signatures, aliases, and formal templates.",
     "output_format": "json_or_latex",
+    "required_context": [
+      "predicate_catalog"
+    ],
     "no_predicate_json_schema": {
       "no_predicate": true,
       "reason": "No canonical predicate exists or the quantified form is clearer without one."
     },
-    "latex_template": "\\begin{remark*}[Definition predicate reading]\n\\[\n{predicate_reading}\n\\]\n\\end{remark*}",
+    "latex_template": "\\begin{remark*}[Definition predicate reading]\n{predicate_reading_body}\n\\end{remark*}",
     "hard_rules": [
-      "Use only predicate names present in predicates.yaml.",
+      "Use only predicate names or reading_aliases present in the provided predicate_catalog.",
       "Use operator-style predicate names: \\operatorname{Name}(...).",
       "Do not invent predicates locally.",
-      "The predicate reading must be logically closed unless parameters are fixed by the immediately preceding statement."
+      "The predicate reading must be logically closed unless parameters are fixed by the immediately preceding statement.",
+      "Prefer the house pattern: first define any helper predicates from the catalog, then state the main predicate equivalence.",
+      "Use \\Longleftrightarrow for definition/equivalence readings and \\Rightarrow for implication clauses inside predicate expansions.",
+      "Use an aligned display for long or nested readings.",
+      "Do not place predicate names in Standard quantified statement blocks; predicate language belongs only here and in other predicate-reading roles."
+    ],
+    "preferred_template": "\\begin{remark*}[Definition predicate reading]\nDefine\n\\[\n\\begin{aligned}\n  \\operatorname{HelperName}(...) &\\Longleftrightarrow ...\\\\\n  \\operatorname{OtherHelper}(...) &\\Longleftrightarrow ...\n\\end{aligned}\n\\]\nThen\n\\[\n\\begin{aligned}\n  \\operatorname{MainPredicate}(...)\n  &\\Longleftrightarrow ...\n\\end{aligned}\n\\]\n\\end{remark*}",
+    "style_guidance": [
+      "For epsilon-delta definitions, use registered tolerance helpers such as PositiveOutputTolerance, PositiveInputTolerance, InputTolerance/PuncturedNbhd, and OutputTolerance/OutputNbhd when they apply.",
+      "The helper dictionary should make nested quantifiers readable rather than repeating every raw inequality in one dense line.",
+      "Preserve ordinary mathematical variables and domains from the source statement."
     ]
   },
   "generate_negated_quantified_statement": {
@@ -89,18 +102,24 @@
     ]
   },
   "generate_negation_predicate_reading": {
-    "instruction": "Generate the Negation predicate reading remark when a Negated quantified statement was generated and canonical predicates apply.",
+    "instruction": "Generate the Negation predicate reading remark when a Negated quantified statement was generated and canonical predicates apply. Use the provided predicate_catalog as project memory.",
     "output_format": "json_or_latex",
+    "required_context": [
+      "predicate_catalog"
+    ],
     "no_predicate_json_schema": {
       "no_predicate": true,
       "reason": "No canonical predicate reading applies to the negation."
     },
-    "latex_template": "\\begin{remark*}[Negation predicate reading]\n\\[\n{negation_predicate_reading}\n\\]\n\\end{remark*}",
+    "latex_template": "\\begin{remark*}[Negation predicate reading]\n{negation_predicate_reading_body}\n\\end{remark*}",
     "hard_rules": [
-      "Use only predicate names present in predicates.yaml.",
+      "Use only predicate names or reading_aliases present in the provided predicate_catalog.",
       "Use operator-style predicate names: \\operatorname{Name}(...).",
       "Do not invent predicates locally.",
-      "This block may use predicate language because its role permits it."
+      "This block may use predicate language because its role permits it.",
+      "Use \\Longleftrightarrow for equivalence to the negated predicate reading and \\Rightarrow for internal implication clauses.",
+      "Prefer an aligned display for nested quantifier negations.",
+      "Use helper predicates from the catalog when they clarify the failure condition."
     ]
   },
   "generate_failure_modes": {

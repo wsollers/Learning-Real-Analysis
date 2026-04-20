@@ -139,7 +139,14 @@ def load_predicate_names(root: Path) -> set[str]:
     if not path.exists():
         return set()
     text = path.read_text(encoding="utf-8", errors="replace")
-    return set(re.findall(r"^\s*name:\s*([A-Za-z][A-Za-z0-9]*)\s*$", text, re.M))
+    names = set(re.findall(r"^\s*name:\s*([A-Za-z][A-Za-z0-9]*)\s*$", text, re.M))
+    for value in re.findall(r"^\s*reading_aliases:\s*\[([^\]]*)\]\s*$", text, re.M):
+        names.update(
+            part.strip().strip("'\"")
+            for part in value.split(",")
+            if part.strip()
+        )
+    return names
 
 
 def collect_attached_remarks(text: str, end: int) -> tuple[list[RemarkBlock], int]:

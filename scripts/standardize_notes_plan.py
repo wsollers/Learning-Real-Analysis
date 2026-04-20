@@ -144,13 +144,75 @@ def find_repo_root(start: Path) -> Path:
     raise SystemExit("Could not find repository root containing DESIGN.md")
 
 
-def load_predicate_names(root: Path) -> list[str]:
+def parse_yaml_list(value: str) -> list[str]:
+    value = value.strip()
+    if not value.startswith("[") or not value.endswith("]"):
+        return []
+    inner = value[1:-1].strip()
+    if not inner:
+        return []
+    return [part.strip().strip("'\"") for part in inner.split(",") if part.strip()]
+
+
+def folded_yaml_field(block: str, field: str) -> str:
+    match = re.search(rf"^\s*{re.escape(field)}:\s*(.*)$", block, re.M)
+    if not match:
+        return ""
+    value = match.group(1).strip()
+    if value not in {">", "|"}:
+        return value.strip("'\"")
+    tail = block[match.end() :].splitlines()
+    lines: list[str] = []
+    for line in tail:
+        if re.match(r"^\s{2}[A-Za-z_][A-Za-z0-9_]*:\s*", line):
+            break
+        if line.startswith("    "):
+            lines.append(line[4:])
+        elif not line.strip():
+            lines.append("")
+        else:
+            break
+    return "\n".join(lines).strip()
+
+
+def load_predicate_catalog(root: Path) -> list[dict[str, Any]]:
     path = root / "predicates.yaml"
     if not path.exists():
         return []
     text = path.read_text(encoding="utf-8", errors="replace")
-    names = re.findall(r"^\s*name:\s*([A-Za-z][A-Za-z0-9]*)\s*$", text, re.M)
-    return sorted(set(names), key=len, reverse=True)
+    catalog: list[dict[str, Any]] = []
+    for match in re.finditer(r"(?m)^-\s+id:\s*([^\n]+)\n", text):
+        start = match.start()
+        next_match = re.search(r"(?m)^-\s+id:\s*", text[match.end() :])
+        end = match.end() + next_match.start() if next_match else len(text)
+        block = text[start:end]
+        name = folded_yaml_field(block, "name")
+        if not name:
+            continue
+        catalog.append(
+            {
+                "id": match.group(1).strip(),
+                "name": name,
+                "reading_aliases": parse_yaml_list(folded_yaml_field(block, "reading_aliases")),
+                "category": folded_yaml_field(block, "category"),
+                "arity": folded_yaml_field(block, "arity"),
+                "arguments": parse_yaml_list(folded_yaml_field(block, "arguments")),
+                "optional_arguments": parse_yaml_list(folded_yaml_field(block, "optional_arguments")),
+                "signature": folded_yaml_field(block, "signature"),
+                "formal": folded_yaml_field(block, "formal"),
+                "reading_template": folded_yaml_field(block, "reading_template"),
+                "note": folded_yaml_field(block, "note"),
+            }
+        )
+    return sorted(catalog, key=lambda item: (item.get("category", ""), item["name"]))
+
+
+def load_predicate_names(root: Path) -> list[str]:
+    names: set[str] = set()
+    for item in load_predicate_catalog(root):
+        names.add(item["name"])
+        names.update(item.get("reading_aliases", []))
+    return sorted(names, key=len, reverse=True)
 
 
 def load_rule_registry(root: Path) -> dict[str, Any]:
@@ -204,6 +266,10 @@ def rule_ids_for_missing_heading(heading: str) -> list[str]:
         return ["prose.interpretation_required"]
     if "Dependencies" in heading:
         return ["logical_blocks.dependencies_block"]
+    if "Negation predicate reading" in heading:
+        return ["logical_blocks.predicate_reading_header", "variables.closed_predicate"]
+    if "Failure modes" in heading or "Failure mode decomposition" in heading:
+        return ["logical_blocks.failure_mode_decomposition"]
     return ["logical_blocks.required_order"]
 
 
@@ -402,8 +468,11 @@ def default_prompt_library() -> dict[str, Any]:
         ),
         "generate_definition_predicate_reading": (
             "Generate the Definition predicate reading remark for the given atomic "
-            "formal environment. Use only canonical predicates from predicates.yaml. "
-            "If no canonical predicate applies, return an explicit no_predicate result."
+            "formal environment. Use only canonical predicates or registered "
+            "reading_aliases from the provided predicates.yaml catalog. When helpful, "
+            "start with a short helper-predicate dictionary and then give the main "
+            "predicate equivalence in an aligned display. If no canonical predicate "
+            "applies, return an explicit no_predicate result."
         ),
         "generate_negated_quantified_statement": (
             "Generate the Negated quantified statement remark. Use standard "
@@ -412,8 +481,10 @@ def default_prompt_library() -> dict[str, Any]:
         ),
         "generate_negation_predicate_reading": (
             "Generate the Negation predicate reading remark using only canonical "
-            "predicates from predicates.yaml. If no canonical predicate applies, "
-            "return an explicit no_predicate result."
+            "predicates or registered reading_aliases from the provided predicates.yaml "
+            "catalog. Prefer readable helper predicates for nested quantifier "
+            "structure. If no canonical predicate applies, return an explicit "
+            "no_predicate result."
         ),
         "generate_failure_modes": (
             "Generate the Failure modes remark in prose/list form. Explain the "
@@ -451,11 +522,20 @@ def prompt_library() -> dict[str, Any]:
 def audit_file(
     path: Path,
     root: Path,
-    predicate_names: list[str],
+    predicate_catalog: list[dict[str, Any]],
     formal_label_catalog: list[dict[str, Any]] | None = None,
     selected_rules: list[dict[str, Any]] | None = None,
 ) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
+    predicate_names = sorted(
+        {
+            name
+            for item in predicate_catalog
+            for name in [item["name"], *item.get("reading_aliases", [])]
+        },
+        key=len,
+        reverse=True,
+    )
     pred_re = predicate_regex(predicate_names)
     label_catalog = formal_label_catalog or []
     formal_blocks = parse_formal_blocks(text)
@@ -526,6 +606,7 @@ def audit_file(
                     },
                     "rule_ids": ["atomicity.global", "atomicity.detect_bundled_content"],
                     "post_split_generation_plan": {
+                        "predicate_catalog_available": True,
                         "for_each_atomic_item": [
                             "generate_definition",
                             "generate_standard_quantified_statement",
@@ -582,6 +663,14 @@ def audit_file(
             missing.append("Interpretation")
         if not any("Dependencies" == heading for heading in remark_headings):
             missing.append("Dependencies")
+        has_negation = any("Negated quantified statement" == heading for heading in remark_headings)
+        if has_negation:
+            if not any("Negation predicate reading" == heading for heading in remark_headings):
+                missing.append("Negation predicate reading")
+            if not any(heading in {"Failure mode", "Failure modes"} for heading in remark_headings):
+                missing.append("Failure modes")
+            if not any("Failure mode decomposition" == heading for heading in remark_headings):
+                missing.append("Failure mode decomposition")
         if missing:
             add_violation(
                 block,
@@ -605,6 +694,7 @@ def audit_file(
                         "source": block.body.strip(),
                         "existing_remark_headings": remark_headings,
                         "formal_label_catalog": label_catalog,
+                        "predicate_catalog": predicate_catalog,
                         "rule_ids": rule_ids_for_missing_heading(heading),
                         "prompt_key": key,
                     }
@@ -659,6 +749,9 @@ def audit_file(
                         "remark_heading": remark.heading,
                         "predicate_hits": remark_predicate_hits,
                         "source": remark.body.strip(),
+                        "predicate_catalog": predicate_catalog
+                        if "predicate reading" in remark.heading.lower()
+                        else [],
                         "rule_ids": ["notation.no_predicate_leakage", "notation.layer_gated_roles"],
                         "prompt_key": "generate_" + remark.heading.lower().replace(" ", "_"),
                     }
@@ -696,6 +789,7 @@ def audit_file(
             "file": str(path.relative_to(root)).replace("\\", "/"),
             "prompt_library": prompt_library(),
             "formal_label_catalog": label_catalog,
+            "predicate_catalog": predicate_catalog,
             "requests": requests,
         },
         "tmp_text": build_tmp_text(text, formal_blocks, requests),
@@ -806,7 +900,7 @@ def main() -> int:
         target = (Path.cwd() / target).resolve()
     root = find_repo_root(target if target.exists() else Path.cwd())
     tmp_dir = Path(args.tmp_dir)
-    predicate_names = load_predicate_names(root)
+    predicate_catalog = load_predicate_catalog(root)
     workflows = args.workflow or DEFAULT_WORKFLOWS
     registry = load_rule_registry(root)
     selected_rules = select_rules(registry, workflows, args.module)
@@ -825,12 +919,13 @@ def main() -> int:
         "workflows": workflows,
         "modules": args.module,
         "formal_label_catalog_count": len(formal_label_catalog),
+        "predicate_catalog_count": len(predicate_catalog),
         "rule_coverage": summarize_coverage(initial_rule_coverage(selected_rules)),
         "files": [],
     }
 
     for path in files:
-        result = audit_file(path, root, predicate_names, formal_label_catalog, selected_rules)
+        result = audit_file(path, root, predicate_catalog, formal_label_catalog, selected_rules)
         audit = result["audit"]
         if audit["request_count"]:
             summary["files_with_requests"] += 1

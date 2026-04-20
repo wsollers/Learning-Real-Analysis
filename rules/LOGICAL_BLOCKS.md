@@ -19,7 +19,11 @@ Role discipline:
 
 - standard, negated, and contrapositive quantified statements use standard
   notation only;
-- predicate readings use canonical predicates only;
+- predicate readings use canonical predicates or registered
+  `reading_aliases` from `predicates.yaml` only;
+- predicate readings may begin with a short helper-predicate dictionary
+  followed by the main predicate equivalence when that makes nested
+  quantifiers easier to read;
 - Interpretation is prose by default;
 - Dependencies is extraction infrastructure and must contain explicit
   `\hyperref[...]` links to formal-item labels, or the exact statement

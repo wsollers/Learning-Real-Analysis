@@ -69,6 +69,9 @@ FIELD_DEFAULTS: dict[str, Any] = {
     "fully_quantified_form": "",
     "negation_display": "",
     "negation_formal": "",
+    "negation_predicate": "",
+    "failure_modes": "",
+    "failure_mode_decomposition": "",
     "contrapositive": "",
     "depends_on_ids": [],
     "used_by_ids": [],
@@ -301,6 +304,9 @@ def classify_remark_fields(remark_blocks: list[dict[str, Any]]) -> dict[str, str
         "fully_quantified_form": "",
         "negation_display": "",
         "negation_formal": "",
+        "negation_predicate": "",
+        "failure_modes": "",
+        "failure_mode_decomposition": "",
         "contrapositive": "",
         "proposition": "",
         "source_text": "",
@@ -318,9 +324,15 @@ def classify_remark_fields(remark_blocks: list[dict[str, Any]]) -> dict[str, str
             out["proposition"] = content
             if not out["formal"]:
                 out["formal"] = content
-        elif title in {"negated quantified statement", "negation predicate reading"}:
+        elif title == "negated quantified statement":
             out["negation_display"] = content
             out["negation_formal"] = content
+        elif title == "negation predicate reading":
+            out["negation_predicate"] = content
+        elif title in {"failure mode", "failure modes"}:
+            out["failure_modes"] = content
+        elif title == "failure mode decomposition":
+            out["failure_mode_decomposition"] = content
         elif title == "contrapositive quantified statement":
             out["contrapositive"] = content
         elif title == "interpretation":

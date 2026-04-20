@@ -9,7 +9,7 @@ design:
   optional_parameter_examples:
   - CauchySequence(x_n [, d])
   - ConvergentSequence(x_n, L [, d])
-  - FunctionLimit(f, c, L [, d_dom, d_cod])
+  - FunctionLimit(f, A, c, L [, d_dom, d_cod])
   - ContinuousAt(f, c [, d_dom, d_cod])
   - LimitPoint(x, A [, M, d])
 predicates:
@@ -149,13 +149,17 @@ predicates:
 # Tolerance / Proximity
 # =========================================================
 #
-# These three predicates are the primitive metric ingredients
-# of every epsilon-delta argument. They compose to give the
-# standard readings for limits, continuity, and uniform
-# continuity without repeating the raw inequality syntax.
+# These predicates are the primitive metric ingredients of every
+# epsilon-delta argument. They compose to give the standard readings
+# for limits, continuity, and uniform continuity without repeating the
+# raw inequality syntax.
 #
 #   Within(x, c, r)         -- x lies within radius r of c
 #                              (the ball condition, input or output)
+#
+#   PositiveOutputTolerance(eps) -- eps is an admissible output tolerance
+#
+#   PositiveInputTolerance(delta) -- delta is an admissible input tolerance
 #
 #   InputTolerance(x, c, delta)  -- x is a valid input:
 #                              strictly within delta of c,
@@ -166,7 +170,7 @@ predicates:
 #
 # Usage pattern (function limit):
 #
-#   FunctionLimit(f, c, L)
+#   FunctionLimit(f, A, c, L)
 #   :=  forall eps > 0,
 #       exists delta > 0,
 #       forall x in A :
@@ -187,8 +191,35 @@ predicates:
     punctured (x != c) distinction is not required. In metric space
     contexts, replace |x - c| with d(x, c).
 
+- id: pred:positive-output-tolerance
+  name: PositiveOutputTolerance
+  reading_aliases: [OutputTol]
+  category: tolerance
+  arity: 1
+  arguments: [\varepsilon]
+  optional_arguments: []
+  formal: \varepsilon > 0
+  note: >
+    Positivity predicate for the demanded output tolerance in an
+    epsilon-delta argument. The short alias OutputTol may be used in
+    predicate-reading remarks when it improves readability.
+
+- id: pred:positive-input-tolerance
+  name: PositiveInputTolerance
+  reading_aliases: [InputTol]
+  category: tolerance
+  arity: 1
+  arguments: [\delta]
+  optional_arguments: []
+  formal: \delta > 0
+  note: >
+    Positivity predicate for the responding input tolerance in an
+    epsilon-delta argument. The short alias InputTol may be used in
+    predicate-reading remarks when it improves readability.
+
 - id: pred:input-tolerance
   name: InputTolerance
+  reading_aliases: [PuncturedNbhd]
   category: tolerance
   arity: 3
   arguments: [x, c, \delta]
@@ -204,6 +235,7 @@ predicates:
 
 - id: pred:output-tolerance
   name: OutputTolerance
+  reading_aliases: [OutputNbhd]
   category: tolerance
   arity: 3
   arguments: [y, L, \varepsilon]
@@ -513,22 +545,42 @@ predicates:
 - id: pred:function-limit
   name: FunctionLimit
   category: limit
-  arity: 3
-  arguments: [f, c, L]
+  arity: 4
+  arguments: [f, A, c, L]
   optional_arguments: [d_dom, d_cod]
-  signature: FunctionLimit(f, c, L [, d_dom, d_cod])
+  signature: FunctionLimit(f, A, c, L [, d_dom, d_cod])
   formal: >
-    \forall\,\operatorname{OutputTolerance}(\varepsilon),\;
-    \exists\,\operatorname{InputTolerance}(\delta),\;
-    \forall x \in A :\;
-    \operatorname{InputTolerance}(x, c, \delta)
-    \;\Rightarrow\;
-    \operatorname{OutputTolerance}(f(x), L, \varepsilon)
+    \forall \varepsilon\,
+    \Bigl(\operatorname{PositiveOutputTolerance}(\varepsilon)
+    \Rightarrow
+    \exists \delta\,
+    \bigl(\operatorname{PositiveInputTolerance}(\delta)
+    \land
+    \forall x \in A\,
+    [\operatorname{InputTolerance}(x, c, \delta)
+    \Rightarrow
+    \operatorname{OutputTolerance}(f(x), L, \varepsilon)]\bigr)\Bigr)
+  reading_template: >
+    \begin{aligned}
+    \operatorname{FunctionLimit}(f,A,c,L)
+    &\Longleftrightarrow
+    \forall \varepsilon\,
+    \Bigl(\operatorname{PositiveOutputTolerance}(\varepsilon)
+    \Rightarrow
+    \exists \delta\,
+    \bigl(\operatorname{PositiveInputTolerance}(\delta)
+    \land
+    \forall x \in A\,
+    [\operatorname{InputTolerance}(x,c,\delta)
+    \Rightarrow
+    \operatorname{OutputTolerance}(f(x),L,\varepsilon)]\bigr)\Bigr).
+    \end{aligned}
   note: >
-    Quantifiers are typed: OutputTolerance(eps) names the demanded
-    precision; InputTolerance(delta) names the responding tolerance.
-    The input condition is punctured (0 < |x-c| < delta), distinguishing
-    this from ContinuousAt where Within(x, c, delta) permits x = c.
+    Quantifiers are typed: PositiveOutputTolerance(eps) names the
+    demanded positive precision; PositiveInputTolerance(delta) names
+    the positive responding tolerance. The input condition is
+    punctured, via InputTolerance(x,c,delta), distinguishing this from
+    ContinuousAt where Within(x,c,delta) permits x = c.
 
 - id: pred:left-limit
   name: LeftLimit

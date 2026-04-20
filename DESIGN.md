@@ -323,6 +323,12 @@ The canonical sources are:
 - `relations.yaml`
 - `notation.yaml`
 
+For AI-assisted generation, these source files are the project memory.
+Standardizer request files must transmit the applicable predicate catalog
+instead of relying on unstated model memory. Predicate-reading blocks may
+use a `reading_aliases` entry from `predicates.yaml` only when that alias is
+registered on the canonical predicate.
+
 No ad hoc predicate, relation, or notation name may be invented locally inside a notes file, theorem file, proof file, or remark block.
 
 If a formal name is needed and it is not already present in the canonical source files, that is a hard audit failure. The name must first be added to the appropriate canonical source file before it is used anywhere in the notes.
