@@ -1,0 +1,150 @@
+# Artifact Matrix
+# Requirement level for every block (from block-registry.yaml) indexed by
+# artifact type.
+#
+# Requirement levels:
+#   R  = Required — must be present; absence is a hard audit failure
+#   C  = Conditional — present if and only if trigger condition is met
+#   D  = Dependent — present if and only if parent block is present
+#   N  = Never / Not applicable — must not be present
+#
+# Artifact types:
+#   def   = definition
+#   thm   = theorem
+#   lem   = lemma
+#   prop  = proposition
+#   cor   = corollary
+#   ax    = axiom
+#
+# Block ids correspond exactly to block-registry.yaml ids.
+# The trigger conditions and parent dependencies live in block-registry.yaml.
+# This matrix records only the requirement level per artifact type.
+
+matrix:
+
+  toolkit_box:
+    def:  R
+    thm:  R
+    lem:  R
+    prop: R
+    cor:  R
+    ax:   R
+
+  environment_label:
+    def:  R
+    thm:  R
+    lem:  R
+    prop: R
+    cor:  R
+    ax:   R
+
+  box:
+    def:  R   # required on first appearance only; second appearance = N
+    thm:  C   # conditional: named, primary result, cited by name
+    lem:  N
+    prop: N
+    cor:  N
+    ax:   R
+
+  proof_link:
+    def:  N
+    thm:  R
+    lem:  R
+    prop: R
+    cor:  R
+    ax:   N
+
+  standard_quantified_stmt:
+    def:  R
+    thm:  R
+    lem:  R
+    prop: R
+    cor:  R
+    ax:   R
+
+  predicate_reading:
+    def:  C
+    thm:  C
+    lem:  C
+    prop: C
+    cor:  C
+    ax:   C
+
+  negated_quantified_stmt:
+    def:  C
+    thm:  C
+    lem:  C
+    prop: C
+    cor:  C
+    ax:   C
+
+  negation_predicate_reading:
+    def:  D
+    thm:  D
+    lem:  D
+    prop: D
+    cor:  D
+    ax:   D
+
+  failure_modes:
+    def:  C
+    thm:  C
+    lem:  C
+    prop: C
+    cor:  C
+    ax:   C
+
+  failure_mode_decomposition:
+    def:  D
+    thm:  D
+    lem:  D
+    prop: D
+    cor:  D
+    ax:   D
+
+  contrapositive_quantified_stmt:
+    def:  N   # definitions have no hypothesis-conclusion structure
+    thm:  C
+    lem:  C
+    prop: C
+    cor:  C
+    ax:   N
+
+  contrapositive_predicate_reading:
+    def:  N
+    thm:  D
+    lem:  D
+    prop: D
+    cor:  D
+    ax:   N
+
+  interpretation:
+    def:  C   # conditional on omission exception; default is R
+    thm:  C
+    lem:  C
+    prop: C
+    cor:  C
+    ax:   C
+
+  dependencies:
+    def:  R
+    thm:  R
+    lem:  R
+    prop: R
+    cor:  R
+    ax:   R
+
+# Notes on second-appearance rule for definitions:
+#
+# When a definition appears for the second or subsequent time in the notes
+# (e.g. recalled in a later chapter), the box requirement drops from R to N.
+# The label still appears. All logical blocks still appear.
+# The auditor must check the chapter registry to determine whether this is
+# a first or subsequent appearance.
+
+# Notes on interpretation omission:
+#
+# The interpretation block is marked C for all types because of the omission
+# exception. Treat it as R unless the auditor can identify nearby section-level
+# exposition that explicitly performs the interpretive work for this specific
+# item. The burden of proof for omission is on the author, not the auditor.

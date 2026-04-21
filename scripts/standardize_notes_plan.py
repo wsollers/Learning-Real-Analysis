@@ -85,15 +85,29 @@ DEFAULT_TMP_DIR = Path("scripts/tmp/standardizer")
 
 CHECKED_RULE_IDS = {
     "notation.layer_gated_roles",
+    "notation.canonical_source_files",
     "atomicity.global",
     "atomicity.detect_bundled_content",
+    "atomicity.no_formatting_exceptions",
     "labels.required",
     "labels.prefix",
+    "labels.unique",
     "notation.no_predicate_leakage",
+    "logical_blocks.required_order",
     "logical_blocks.standard_quantified_statement",
     "logical_blocks.dependencies_block",
+    "logical_blocks.predicate_reading_header",
+    "logical_blocks.long_display_aligned",
     "prose.interpretation_required",
+    "prose.interpretation_prose_only",
+    "prose.itemize_layout",
     "boxes.single_bare_environment",
+    "figures.figure_file_scope",
+    "figures.no_inline_color_definitions",
+    "proofs.statement_proof_separation",
+    "proofs.navigation_links",
+    "proofs.unnumbered_restatement",
+    "proofs.macro_restriction",
     "extraction.sidecar_workflow",
 }
 
@@ -104,12 +118,52 @@ VIOLATION_RULE_IDS = {
     "No Predicate Leakage in Negated quantified statement": ["notation.no_predicate_leakage", "notation.layer_gated_roles"],
     "No Predicate Leakage in Contrapositive quantified statement": ["notation.no_predicate_leakage", "notation.layer_gated_roles"],
     "Required logical blocks": ["logical_blocks.standard_quantified_statement", "prose.interpretation_required"],
+    "Logical block order": ["logical_blocks.required_order"],
+    "Predicate reading header": ["logical_blocks.predicate_reading_header"],
     "Required dependencies block": ["logical_blocks.dependencies_block"],
     "Dependencies block - proof label": ["logical_blocks.dependencies_block"],
     "Dependencies block - missing links": ["logical_blocks.dependencies_block"],
     "Label discipline - missing label": ["labels.required"],
     "Label discipline - prefix": ["labels.prefix"],
+    "Label discipline - duplicate": ["labels.unique"],
     "Box-environment separation": ["boxes.single_bare_environment"],
+    "Interpretation prose only": ["prose.interpretation_prose_only"],
+    "Remark itemize layout": ["prose.itemize_layout"],
+    "Long logical display formatting": ["logical_blocks.long_display_aligned"],
+    "Figure file scope": ["figures.figure_file_scope"],
+    "Figure inline color definition": ["figures.no_inline_color_definitions"],
+    "Proof separation": ["proofs.statement_proof_separation"],
+    "Proof navigation": ["proofs.navigation_links"],
+    "Proof restatement numbering": ["proofs.unnumbered_restatement"],
+    "Proof macro restriction": ["proofs.macro_restriction"],
+}
+
+DETERMINISTIC_CHECK_IMPLEMENTATIONS = {
+    "notation.layer_gated_roles": "Predicate leakage is checked by block role for formal bodies and forbidden logical block headings.",
+    "notation.canonical_source_files": "Predicate names and reading aliases are loaded from predicates.yaml and supplied to generation requests.",
+    "notation.no_predicate_leakage": "Formal bodies and standard/negated/contrapositive logical blocks are scanned for canonical predicate names.",
+    "atomicity.global": "Formal environments are scanned for bundled-content signals.",
+    "atomicity.detect_bundled_content": "Lists, item counts, multiple assignments, multi-concept titles, and repeated bold heads are flagged.",
+    "atomicity.no_formatting_exceptions": "Bundled-content checks run across list, display, title, and prose-like formatting patterns.",
+    "labels.required": "Formal environments are scanned for labels and missing-label repair requests are generated.",
+    "labels.prefix": "Formal labels are checked against environment-specific prefixes.",
+    "labels.unique": "The target file set is indexed and duplicate labels are reported with all known locations.",
+    "logical_blocks.required_order": "Attached remark headings are compared against the canonical logical block order.",
+    "logical_blocks.standard_quantified_statement": "Attached remark stack is checked for a nearby Standard quantified statement.",
+    "logical_blocks.dependencies_block": "Attached Dependencies remarks are required and checked for formal hyperrefs or No local dependencies.",
+    "logical_blocks.predicate_reading_header": "Generic Predicate reading headings are flagged.",
+    "logical_blocks.long_display_aligned": "Long or multi-clause display math in logical remarks is flagged when it lacks aligned/alignedat/gathered.",
+    "prose.interpretation_required": "Attached Interpretation remarks are required by default.",
+    "prose.interpretation_prose_only": "Interpretation remarks are scanned for canonical predicate operator names.",
+    "prose.itemize_layout": "remark* blocks whose body immediately starts itemize/enumerate are checked for \\hfill.",
+    "boxes.single_bare_environment": "Non-toolkit tcolorbox bodies are checked for exactly one bare formal environment.",
+    "figures.figure_file_scope": "figure-*.tex files are checked for preamble commands and notes files for inline tikzpicture.",
+    "figures.no_inline_color_definitions": "figure-*.tex files are checked for \\definecolor.",
+    "proofs.statement_proof_separation": "Notes files are checked for inline proof environments.",
+    "proofs.navigation_links": "Theorem-like notes blocks are checked for proof links and proof files for Return links.",
+    "proofs.unnumbered_restatement": "Proof files are checked for numbered theorem-like restatements and labels inside restatement environments.",
+    "proofs.macro_restriction": "Proof files are checked for known proof-structuring/flash macros.",
+    "extraction.sidecar_workflow": "Planner writes old/tmp/audit/request sidecars and never modifies source files.",
 }
 
 
@@ -246,6 +300,7 @@ def initial_rule_coverage(selected_rules: list[dict[str, Any]]) -> dict[str, dic
             "violations": 0,
             "source": rule.get("source"),
             "summary": rule.get("summary"),
+            "deterministic_check": DETERMINISTIC_CHECK_IMPLEMENTATIONS.get(rule_id, ""),
         }
     return coverage
 
@@ -311,6 +366,33 @@ def line_of(text: str, pos: int) -> int:
 
 def snippet(text: str, limit: int = 240) -> str:
     return re.sub(r"\s+", " ", text.strip())[:limit]
+
+
+def tex_display_blocks(text: str) -> Iterable[str]:
+    yield from re.findall(r"\\\[(.*?)\\\]", text, re.S)
+    yield from re.findall(r"\$\$(.*?)\$\$", text, re.S)
+
+
+def long_display_needs_alignment(display: str) -> bool:
+    stripped = re.sub(r"\s+", " ", display.strip())
+    if "\\begin{aligned" in display or "\\begin{alignedat" in display or "\\begin{gathered" in display:
+        return False
+    has_many_clauses = len(re.findall(r"\\(?:Rightarrow|Longrightarrow|Leftrightarrow|Longleftrightarrow|land|lor)\b|=>|<=>", display)) >= 2
+    return len(stripped) > 140 or has_many_clauses
+
+
+def is_notes_path(path: Path) -> bool:
+    parts = {part.lower() for part in path.parts}
+    return "notes" in parts and "proofs" not in parts
+
+
+def is_proof_path(path: Path) -> bool:
+    parts = [part.lower() for part in path.parts]
+    return "proofs" in parts
+
+
+def is_figure_path(path: Path) -> bool:
+    return path.name.startswith("figure-") and path.suffix == ".tex"
 
 
 def iter_tex_files(target: Path) -> Iterable[Path]:
@@ -395,6 +477,24 @@ def build_formal_label_catalog(files: list[Path], root: Path) -> list[dict[str, 
                 }
             )
     return sorted(catalog, key=lambda item: (item["file"], item["line"], item["label"]))
+
+
+def build_label_locations(files: list[Path], root: Path) -> dict[str, list[dict[str, Any]]]:
+    locations: dict[str, list[dict[str, Any]]] = {}
+    for path in files:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for block in parse_formal_blocks(text):
+            if not block.label:
+                continue
+            locations.setdefault(block.label, []).append(
+                {
+                    "file": str(path.relative_to(root)).replace("\\", "/"),
+                    "line": block.line,
+                    "env": block.env,
+                    "title": block.title,
+                }
+            )
+    return locations
 
 
 def predicate_regex(predicate_names: list[str]) -> re.Pattern[str]:
@@ -532,6 +632,7 @@ def audit_file(
     predicate_catalog: list[dict[str, Any]],
     formal_label_catalog: list[dict[str, Any]] | None = None,
     selected_rules: list[dict[str, Any]] | None = None,
+    label_locations: dict[str, list[dict[str, Any]]] | None = None,
 ) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
     predicate_names = sorted(
@@ -545,6 +646,7 @@ def audit_file(
     )
     pred_re = predicate_regex(predicate_names)
     label_catalog = formal_label_catalog or []
+    label_locations = label_locations or {}
     formal_blocks = parse_formal_blocks(text)
     violations: list[dict] = []
     requests: list[dict] = []
@@ -601,6 +703,17 @@ def audit_file(
                 "WARNING",
                 f"Label should start with {LABEL_PREFIX.get(block.env, '')}.",
                 block.label,
+            )
+        elif len(label_locations.get(block.label, [])) > 1:
+            locations = "; ".join(
+                f"{item['file']}:{item['line']}" for item in label_locations.get(block.label, [])
+            )
+            add_violation(
+                block,
+                "Label discipline - duplicate",
+                "ERROR",
+                "Formal label is duplicated in the audited target.",
+                f"{block.label}: {locations}",
             )
 
         if signals:
@@ -724,7 +837,44 @@ def audit_file(
                     }
                 )
 
+        ordered_indices = [REQUIRED_BLOCK_ORDER.index(heading) for heading in remark_headings if heading in REQUIRED_BLOCK_ORDER]
+        if ordered_indices != sorted(ordered_indices):
+            add_violation(
+                block,
+                "Logical block order",
+                "ERROR",
+                "Attached logical remark blocks are not in DESIGN.md order.",
+                ", ".join(remark_headings),
+            )
+
+        if block.env in {"theorem", "lemma", "proposition", "corollary"} and is_notes_path(path):
+            proof_refs = re.findall(r"\\hyperref\[(prf:[^\]]+)\]", block.body)
+            if not proof_refs:
+                add_violation(
+                    block,
+                    "Proof navigation",
+                    "WARNING",
+                    "Theorem-like notes environment does not contain an explicit Go to proof hyperref.",
+                    block.body,
+                )
+
         for remark in block.remarks:
+            if remark.heading == "Predicate reading":
+                add_violation(
+                    block,
+                    "Predicate reading header",
+                    "WARNING",
+                    "Generic Predicate reading heading should be role-specific.",
+                    remark.heading,
+                )
+            if re.match(r"\s*\\begin\{(?:itemize|enumerate)\}", remark.body) and "\\hfill" not in text[remark.start:remark.end].split("\n", 1)[0]:
+                add_violation(
+                    block,
+                    "Remark itemize layout",
+                    "WARNING",
+                    "remark* begins immediately with a list and should include \\hfill after the heading.",
+                    text[remark.start:remark.end],
+                )
             if remark.heading == "Dependencies":
                 refs = HYPERREF_PATTERN.findall(remark.body)
                 proof_refs = [ref for ref in refs if ref.startswith("prf:")]
@@ -780,9 +930,29 @@ def audit_file(
                         "prompt_key": "generate_" + remark.heading.lower().replace(" ", "_"),
                     }
                 )
+            if remark.heading == "Interpretation" and remark_predicate_hits:
+                add_violation(
+                    block,
+                    "Interpretation prose only",
+                    "WARNING",
+                    "Interpretation block contains canonical predicate notation.",
+                    ", ".join(remark_predicate_hits),
+                )
+            if remark.heading in REQUIRED_BLOCK_ORDER:
+                for display in tex_display_blocks(remark.body):
+                    if long_display_needs_alignment(display):
+                        add_violation(
+                            block,
+                            "Long logical display formatting",
+                            "WARNING",
+                            "Long or multi-clause logical display should use an aligned-style environment.",
+                            display,
+                        )
 
     box_violations = audit_tcolorboxes(text, path, root)
     violations.extend(box_violations)
+    violations.extend(audit_file_scope(text, path, root))
+    violations.extend(audit_proof_file(text, path, root))
     attach_rule_ids(violations)
     if selected_rules is not None:
         selected_rule_ids = {rule["id"] for rule in selected_rules}
@@ -848,6 +1018,123 @@ def audit_tcolorboxes(text: str, path: Path, root: Path) -> list[dict]:
     return violations
 
 
+def audit_file_scope(text: str, path: Path, root: Path) -> list[dict]:
+    violations: list[dict] = []
+    rel = str(path.relative_to(root)).replace("\\", "/")
+    if is_figure_path(path):
+        for pattern, rule, message in (
+            (r"\\documentclass\b|\\usepackage\b|\\begin\{document\}|\\end\{document\}", "Figure file scope", "figure-*.tex files must contain TikZ/body code only, not a document preamble."),
+            (r"\\definecolor\b", "Figure inline color definition", "figure-*.tex files must use shared colors, not inline \\definecolor."),
+        ):
+            for match in re.finditer(pattern, text):
+                violations.append(
+                    {
+                        "rule": rule,
+                        "severity": "ERROR" if rule == "Figure file scope" else "WARNING",
+                        "line": line_of(text, match.start()),
+                        "env": None,
+                        "title": None,
+                        "label": None,
+                        "message": message,
+                        "evidence": snippet(text[match.start() : match.start() + 160]),
+                    }
+                )
+    elif is_notes_path(path):
+        for match in re.finditer(r"\\begin\{tikzpicture\}", text):
+            violations.append(
+                {
+                    "rule": "Figure file scope",
+                    "severity": "WARNING",
+                    "line": line_of(text, match.start()),
+                    "env": None,
+                    "title": None,
+                    "label": None,
+                    "message": "Inline TikZ in notes should live in a dedicated figure-*.tex file.",
+                    "evidence": rel,
+                }
+            )
+        for match in re.finditer(r"\\begin\{proof\}", text):
+            violations.append(
+                {
+                    "rule": "Proof separation",
+                    "severity": "ERROR",
+                    "line": line_of(text, match.start()),
+                    "env": "proof",
+                    "title": None,
+                    "label": None,
+                    "message": "Proof environments should not appear inline in notes files.",
+                    "evidence": snippet(text[match.start() : match.start() + 240]),
+                }
+            )
+    return violations
+
+
+def audit_proof_file(text: str, path: Path, root: Path) -> list[dict]:
+    if not is_proof_path(path):
+        return []
+    violations: list[dict] = []
+    for match in re.finditer(r"\\begin\{(theorem|lemma|proposition|corollary|definition)\}(?!\*)", text):
+        violations.append(
+            {
+                "rule": "Proof restatement numbering",
+                "severity": "ERROR",
+                "line": line_of(text, match.start()),
+                "env": match.group(1),
+                "title": None,
+                "label": None,
+                "message": "Proof files must use unnumbered theorem-like restatements.",
+                "evidence": snippet(text[match.start() : match.start() + 180]),
+            }
+        )
+    for match in re.finditer(
+        r"\\begin\{(theorem|lemma|proposition|corollary|definition)\*?\}(.+?)\\end\{\1\*?\}",
+        text,
+        re.S,
+    ):
+        labels = LABEL_PATTERN.findall(match.group(2))
+        if labels:
+            violations.append(
+                {
+                    "rule": "Proof restatement numbering",
+                    "severity": "ERROR",
+                    "line": line_of(text, match.start()),
+                    "env": match.group(1),
+                    "title": None,
+                    "label": labels[0],
+                    "message": "Proof-file restatements must not contain labels.",
+                    "evidence": ", ".join(labels),
+                }
+            )
+    if "\\begin{proof}" in text and not re.search(r"\\begin\{remark\*\}\[Return\].*?\\hyperref\[thm:", text, re.S):
+        violations.append(
+            {
+                "rule": "Proof navigation",
+                "severity": "WARNING",
+                "line": 1,
+                "env": "proof",
+                "title": None,
+                "label": None,
+                "message": "Proof file is missing a Return remark with a hyperref to the theorem label.",
+                "evidence": str(path.relative_to(root)).replace("\\", "/"),
+            }
+        )
+    forbidden_macros = sorted(set(re.findall(r"\\(?:ProofStep|LearningStep|Flashcard|flashcard|stepmacro)\b", text)))
+    if forbidden_macros:
+        violations.append(
+            {
+                "rule": "Proof macro restriction",
+                "severity": "WARNING",
+                "line": 1,
+                "env": "proof",
+                "title": None,
+                "label": None,
+                "message": "Proof files should use ordinary environments and bold inline step headings, not proof/flash macros.",
+                "evidence": ", ".join(forbidden_macros),
+            }
+        )
+    return violations
+
+
 def is_breadcrumb_or_navigation_box(body: str, title: str) -> bool:
     """Breadcrumb/navigation boxes are intentionally out of extraction scope."""
     haystack = f"{title}\n{body}"
@@ -897,6 +1184,67 @@ def write_sidecars(path: Path, result: dict, overwrite_old: bool, root: Path, tm
     requests_path.write_text(json.dumps(result["requests"], indent=2, ensure_ascii=False), encoding="utf-8")
 
 
+def markdown_escape_cell(value: Any) -> str:
+    text = str(value or "")
+    return text.replace("|", "\\|").replace("\n", " ")
+
+
+def write_coverage_markdown(path: Path, summary: dict[str, Any]) -> None:
+    coverage = summary.get("rule_coverage", {})
+    rules = coverage.get("rules", [])
+    status_counts = coverage.get("by_status", {})
+    lines = [
+        "# DESIGN.md Deterministic Python Coverage Audit",
+        "",
+        "This report compares `rules/design-rules.json` requirements against the deterministic Python checks currently wired into `scripts/standardize_notes_plan.py` and the standardization consumer.",
+        "",
+        "## Run Summary",
+        "",
+        f"- Target: `{summary.get('target')}`",
+        f"- Files seen: {summary.get('files_seen')}",
+        f"- Files with requests: {summary.get('files_with_requests')}",
+        f"- Total violations: {summary.get('total_violations')}",
+        f"- Total requests: {summary.get('total_requests')}",
+        f"- Checked rules: {status_counts.get('checked', 0)}",
+        f"- Not checked rules: {status_counts.get('not_checked', 0)}",
+        "",
+        "## Rule Coverage",
+        "",
+        "| Rule ID | Module | Status | Violations | Deterministic Python Check | Requirement |",
+        "|---|---:|---:|---:|---|---|",
+    ]
+    for rule in rules:
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    markdown_escape_cell(rule.get("id")),
+                    markdown_escape_cell(rule.get("module")),
+                    markdown_escape_cell(rule.get("status")),
+                    markdown_escape_cell(rule.get("violations")),
+                    markdown_escape_cell(rule.get("deterministic_check") or "Not implemented deterministically yet."),
+                    markdown_escape_cell(rule.get("summary")),
+                ]
+            )
+            + " |"
+        )
+    not_checked = [rule for rule in rules if rule.get("status") != "checked"]
+    if not_checked:
+        lines.extend(
+            [
+                "",
+                "## Remaining Non-Deterministic Or Unimplemented Rules",
+                "",
+            ]
+        )
+        for rule in not_checked:
+            lines.append(
+                f"- `{rule.get('id')}` ({rule.get('module')}): {rule.get('summary')}"
+            )
+    lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Create deterministic standardization audits and AI request plans for LRA .tex notes."
@@ -917,6 +1265,9 @@ def main() -> int:
         help="Workflow tag for rule selection. Defaults to extraction-standardization workflows.",
     )
     parser.add_argument("--module", action="append", default=[], help="Restrict selected registry rules by module.")
+    parser.add_argument("--all-rules", action="store_true", help="Report coverage against every rule in rules/design-rules.json.")
+    parser.add_argument("--coverage-md", help="Optional path for a Markdown audit of deterministic Python rule coverage.")
+    parser.add_argument("--quiet", action="store_true", help="Suppress the run summary JSON on stdout.")
     args = parser.parse_args()
 
     target = Path(args.target)
@@ -927,11 +1278,12 @@ def main() -> int:
     predicate_catalog = load_predicate_catalog(root)
     workflows = args.workflow or DEFAULT_WORKFLOWS
     registry = load_rule_registry(root)
-    selected_rules = select_rules(registry, workflows, args.module)
+    selected_rules = registry.get("rules", []) if args.all_rules else select_rules(registry, workflows, args.module)
     files = list(iter_tex_files(target))
     if not files:
         raise SystemExit(f"No .tex files found under {target}")
     formal_label_catalog = build_formal_label_catalog(files, root)
+    label_locations = build_label_locations(files, root)
 
     summary = {
         "target": str(target),
@@ -942,6 +1294,7 @@ def main() -> int:
         "total_requests": 0,
         "workflows": workflows,
         "modules": args.module,
+        "all_rules": args.all_rules,
         "formal_label_catalog_count": len(formal_label_catalog),
         "predicate_catalog_count": len(predicate_catalog),
         "rule_coverage": summarize_coverage(initial_rule_coverage(selected_rules)),
@@ -949,7 +1302,14 @@ def main() -> int:
     }
 
     for path in files:
-        result = audit_file(path, root, predicate_catalog, formal_label_catalog, selected_rules)
+        result = audit_file(
+            path,
+            root,
+            predicate_catalog,
+            formal_label_catalog,
+            selected_rules,
+            label_locations,
+        )
         audit = result["audit"]
         if audit["request_count"]:
             summary["files_with_requests"] += 1
@@ -976,8 +1336,14 @@ def main() -> int:
     if args.summary_json:
         summary_path = Path(args.summary_json)
         summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    if args.coverage_md:
+        coverage_path = Path(args.coverage_md)
+        if not coverage_path.is_absolute():
+            coverage_path = root / coverage_path
+        write_coverage_markdown(coverage_path, summary)
 
-    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    if not args.quiet:
+        print(json.dumps(summary, indent=2, ensure_ascii=False))
     return 0
 
 

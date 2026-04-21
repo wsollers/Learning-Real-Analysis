@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AuditReport",
+  "description": "Shared response schema for all structural audit API calls. Returned by audit-statement, audit-proof, and audit-stub prompts.",
+  "type": "object",
+  "required": ["audit_type", "artifact_type", "label", "summary", "checks", "violations"],
+  "properties": {
+
+    "audit_type": {
+      "type": "string",
+      "enum": ["statement", "proof", "stub_chapter", "stub_volume"],
+      "description": "Which audit prompt produced this report."
+    },
+
+    "artifact_type": {
+      "type": "string",
+      "enum": ["def", "thm", "lem", "prop", "cor", "ax", "proof", "stub_chapter", "stub_volume"],
+      "description": "The artifact type being audited."
+    },
+
+    "label": {
+      "type": "string",
+      "description": "The LaTeX label of the audited item (e.g. def:upper-bound, thm:cauchy-criterion, prf:cauchy-criterion)."
+    },
+
+    "summary": {
+      "type": "object",
+      "required": ["total_checks", "passed", "failed", "noncompliant", "conditional_met", "conditional_unmet", "conditional_violation", "dependent_met", "dependent_unmet", "dependent_violation", "forbidden_violation", "stub"],
+      "properties": {
+        "total_checks":           { "type": "integer" },
+        "passed":                 { "type": "integer" },
+        "failed":                 { "type": "integer" },
+        "noncompliant":           { "type": "integer" },
+        "conditional_met":        { "type": "integer" },
+        "conditional_unmet":      { "type": "integer" },
+        "conditional_violation":  { "type": "integer" },
+        "dependent_met":          { "type": "integer" },
+        "dependent_unmet":        { "type": "integer" },
+        "dependent_violation":    { "type": "integer" },
+        "forbidden_violation":    { "type": "integer" },
+        "stub":                   { "type": "boolean", "description": "True if the proof is a TODO stub." }
+      }
+    },
+
+    "checks": {
+      "type": "array",
+      "description": "One entry per block checked, in block-registry order.",
+      "items": {
+        "type": "object",
+        "required": ["block_id", "requirement", "status", "finding"],
+        "properties": {
+
+          "block_id": {
+            "type": "string",
+            "description": "The block id from block-registry.yaml (e.g. standard_quantified_stmt)."
+          },
+
+          "requirement": {
+            "type": "string",
+            "enum": ["R", "C", "D", "N"],
+            "description": "Requirement level for this artifact type from artifact-matrix.yaml."
+          },
+
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NONCOMPLIANT",
+              "CONDITIONAL_MET",
+              "CONDITIONAL_UNMET",
+              "CONDITIONAL_VIOLATION",
+              "DEPENDENT_MET",
+              "DEPENDENT_UNMET",
+              "DEPENDENT_VIOLATION",
+              "FORBIDDEN_VIOLATION",
+              "STUB"
+            ]
+          },
+
+          "finding": {
+            "type": "string",
+            "description": "One-sentence description of the finding. Empty string if PASS or CONDITIONAL_UNMET or DEPENDENT_UNMET."
+          },
+
+          "trigger_evaluation": {
+            "type": "string",
+            "description": "For C-type blocks only: explanation of whether the trigger condition was met and why. Omit for R, D, N blocks."
+          },
+
+          "proof_usage_evaluation": {
+            "type": "string",
+            "description": "For negated_quantified_stmt and contrapositive_quantified_stmt only: explanation of whether proof_usage is true for this concept."
+          }
+
+        }
+      }
+    },
+
+    "violations": {
+      "type": "array",
+      "description": "All non-passing findings collected for quick review. Subset of checks.",
+      "items": {
+        "type": "object",
+        "required": ["block_id", "status", "finding"],
+        "properties": {
+          "block_id": { "type": "string" },
+          "status":   { "type": "string" },
+          "finding":  { "type": "string" }
+        }
+      }
+    },
+
+    "special_flags": {
+      "type": "array",
+      "description": "Flags that require human attention but are not block-level failures.",
+      "items": {
+        "type": "object",
+        "required": ["flag_type", "description"],
+        "properties": {
+
+          "flag_type": {
+            "type": "string",
+            "enum": [
+              "BUNDLED_CONTENT",
+              "MISSING_PREDICATE",
+              "MISSING_NOTATION",
+              "MISSING_RELATION",
+              "PREDICATE_LEAKAGE",
+              "ORDER_VIOLATION",
+              "MACRO_VIOLATION",
+              "UNREGISTERED_LABEL",
+              "SECOND_APPEARANCE_BOX"
+            ]
+          },
+
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the flag, including location and suggested resolution."
+          },
+
+          "location": {
+            "type": "string",
+            "description": "File and approximate line or environment where the flag was detected."
+          },
+
+          "suggested_form": {
+            "type": "string",
+            "description": "For MISSING_PREDICATE / MISSING_NOTATION / MISSING_RELATION: the suggested canonical form. Empty string otherwise."
+          }
+
+        }
+      }
+    }
+
+  }
+}

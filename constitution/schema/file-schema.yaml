@@ -1,0 +1,212 @@
+# File Schema
+# Canonical filesystem structure for volumes, chapters, and proof directories.
+# Stub generation is derived entirely from this file.
+# The Python script instantiates these templates given a volume path and
+# chapter subject.
+
+# ---------------------------------------------------------------------------
+# Repository Root
+# ---------------------------------------------------------------------------
+
+repository_root:
+  - main.tex
+  - bibliography/
+  - common/
+  - predicates.yaml
+  - notation.yaml
+  - relations.yaml
+  - proofs-to-do-analysis.md
+  - volume-i/
+  - volume-ii/
+  - volume-iii/
+  - volume-iv/
+
+# ---------------------------------------------------------------------------
+# Volume Structure
+# ---------------------------------------------------------------------------
+
+volume:
+  required_files:
+    - index.tex
+    - chapter.yaml        # chapter registry for this volume in dependency order
+
+  chapter_registry_rule: >
+    Every volume declares its canonical chapter subjects in dependency order.
+    Registry order is structural, not alphabetical. Canonical chapter subjects
+    are authoritative — a chapter must use a subject from the registry.
+    Chapter subject names are repository identifiers, not display titles.
+
+# ---------------------------------------------------------------------------
+# Chapter Structure (full)
+# ---------------------------------------------------------------------------
+
+chapter:
+  required_files:
+    - index.tex
+    - chapter.yaml
+
+  required_directories:
+    - notes/
+    - proofs/
+    - proofs/notes/
+    - proofs/exercises/
+
+  required_files_in_directories:
+    notes/:
+      - index.tex
+    proofs/:
+      - index.tex
+    proofs/notes/:
+      - index.tex
+    proofs/exercises/:
+      - index.tex
+      - capstone-{chapter}.tex   # {chapter} = repository subject name
+
+  section_structure:
+    notes/{section}/:
+      - notes-{section}.tex
+      - figure-{n}.tex           # TikZ only; no preamble; no inline color defs
+
+  input_rules:
+    - main.tex inputs volumes only
+    - chapter index.tex is the only file that inputs proofs/index.tex
+    - notes/{section}/ contains no local index.tex
+    - proofs/notes/index.tex inputs proof files in dependency order
+    - proofs/exercises/index.tex inputs exercise proofs with capstone last
+
+# ---------------------------------------------------------------------------
+# Chapter Stub Structure (minimum required for a planned chapter)
+# ---------------------------------------------------------------------------
+
+chapter_stub:
+  required_files:
+    - index.tex
+    - chapter.yaml
+
+  required_directories:
+    - notes/
+    - proofs/
+    - proofs/notes/
+    - proofs/exercises/
+
+  required_files_in_directories:
+    notes/:
+      - index.tex
+    proofs/:
+      - index.tex
+    proofs/notes/:
+      - index.tex
+    proofs/exercises/:
+      - index.tex
+      - capstone-{chapter}.tex
+
+  index_tex_order:
+    - breadcrumb_box
+    - status_box             # Status: Planned
+    - structural_roadmap
+    - placeholder_inputs     # only if section stubs already exist
+
+  breadcrumb_source: chapter_registry   # neighbors come from registry only
+
+  roadmap_must_state:
+    - what the chapter is expected to formalize
+    - which prior chapter it depends on
+    - which later chapter it feeds into
+
+  naming_rules: >
+    A stub chapter does not postpone naming discipline. Folder name, capstone
+    name, and future proof paths must already conform to house naming rules.
+    Stub generation does not invent detailed theorem lists without being asked.
+
+# ---------------------------------------------------------------------------
+# Proof File Structure
+# ---------------------------------------------------------------------------
+
+proof_file:
+  location: proofs/notes/{proof-id}.tex
+  naming_rule: lowercase, hyphen-separated, ASCII only, free of LaTeX markup
+
+  required_layers_in_order:
+    1: \newpage
+    2: \phantomsection
+    3: \label{prf:{theorem-id}}       # outside all environments
+    4: remark* Return                 # \hyperref back to theorem
+    5: theorem*                       # restatement, unnumbered, no label inside
+    6: proof Professional Standard    # compact rigorous argument
+    7: proof Detailed Learning        # bold inline step headings only
+    8: remark* Proof structure        # high-level strategy
+    9: remark* Dependencies           # \hyperref links to all items used
+
+  label_rules:
+    - proof label must be \label{prf:X} where X matches \label{thm:X} / \label{def:X}
+    - label appears outside and prior to all environments
+    - no \label{} inside theorem* environment
+    - no \label{} inside proof environments
+
+  macro_rules:
+    - no flash macros
+    - no proof-structuring macros
+    - only ordinary environments and hyperlinks
+
+  step_rule: >
+    Detailed learning proof uses inline bold step headings only:
+    \textbf{Step 1.} ...
+    No step macros. No separate remark environments to organize steps.
+
+# ---------------------------------------------------------------------------
+# Capstone Structure
+# ---------------------------------------------------------------------------
+
+capstone:
+  location: proofs/exercises/capstone-{chapter}.tex
+  position: last in proofs/exercises/index.tex
+  tracking: proofs-to-do-analysis.md
+
+  scope_rule: >
+    A capstone must synthesize the chapter's material using only concepts that
+    are pedagogical prerequisites of or within the current chapter. It must not
+    invoke concepts from any chapter that succeeds it in the chapter registry
+    dependency order.
+
+  dependency_ceiling: chapter_registry_order
+    # The capstone may reference any concept from chapters at or before the
+    # current chapter in the registry. Concepts from later chapters are
+    # forbidden regardless of how closely related they may seem.
+
+  content_requirement: >
+    The capstone is exactly one problem. It must require the student to
+    synthesize multiple results from within the chapter. It is not a routine
+    exercise and not a proof of a theorem already established in the notes.
+
+  example:
+    chapter: bounds
+    permitted: supremum, infimum, upper bound, lower bound, completeness axiom
+    forbidden: derivatives, integrals, limits of functions, continuity
+
+# ---------------------------------------------------------------------------
+# Breadcrumb Box Structure
+# ---------------------------------------------------------------------------
+
+breadcrumb:
+  environment: tcolorbox (breadcrumb palette)
+  title_rule: chapter subject name, not the word "Breadcrumb"
+
+  content_rule: >
+    Arrow chain showing immediate conceptual neighborhood only.
+    Not the full historical dependency spine.
+    Format: prior \;\to\; prior-neighbor \;\to\; \textbf{current} \;\to\; next
+    Current chapter is bolded.
+    Neighbors sourced from chapter registry only.
+
+  formatting:
+    arrow: $\;\to\;$
+    current: \textbf{...}
+    max_lines: 2
+
+  scope_rule: >
+    Full dependency structure belongs in the roadmap and in graph files,
+    not in the breadcrumb.
+
+  stub_rule: >
+    Stub chapters still carry a breadcrumb. A stub chapter inserts a
+    Status: Planned box immediately after the breadcrumb.

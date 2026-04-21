@@ -1,0 +1,214 @@
+# Block Registry
+# Every possible logical block in a theorem-like or definition environment.
+# This is the single source of truth for block identity, trigger conditions,
+# and parent dependencies.
+#
+# Fields:
+#   id:           machine identifier used in artifact-matrix.yaml
+#   display:      human-readable block name
+#   environment:  LaTeX environment or structural role
+#   requirement:  base level — R (required) / C (conditional) / D (dependent) / N (never)
+#                 artifact-matrix.yaml overrides this per artifact type
+#   parent:       block id this block depends on (for D-type blocks)
+#   trigger:      explicit condition that must be true for a C-type block to be generated
+#   proof_usage:  true if the negated/contrapositive form standardly appears in proofs
+#                 in the mathematical literature for this concept class
+#   notes:        clarifying remarks for the auditor or generator
+
+blocks:
+
+  - id: toolkit_box
+    display: Toolkit Box
+    environment: tcolorbox (gray, section top)
+    requirement: R
+    parent: null
+    trigger: null
+    proof_usage: null
+    notes: >
+      Exactly one toolkit box per section. Names the concept family, lists the
+      atomic notions that follow, provides structural orientation. Must enumerate
+      exactly the atomic items that follow. Not a formal definition or theorem.
+
+  - id: environment_label
+    display: Environment + Label
+    environment: definition / theorem / lemma / proposition / corollary / axiom
+    requirement: R
+    parent: null
+    trigger: null
+    proof_usage: null
+    notes: >
+      Every theorem-like environment carries exactly one label. Label prefix is
+      determined by artifact type (def:, thm:, lem:, prop:, cor:, ax:).
+      Unlabeled environments are non-compliant.
+
+  - id: box
+    display: Box (tcolorbox)
+    environment: tcolorbox wrapping the environment
+    requirement: C
+    parent: null
+    trigger: >
+      Definitions: required on first appearance only.
+      Theorems: required only if the theorem has a proper name, is the primary
+      result of the section, and will be cited later by name.
+      Axioms: always required.
+      All others: never boxed.
+    proof_usage: null
+    notes: >
+      At most one structurally dominant boxed theorem per section.
+      Toolkit boxes do not count toward box density.
+
+  - id: proof_link
+    display: Proof Navigation Link
+    environment: hyperref inside environment body
+    requirement: C
+    parent: null
+    trigger: >
+      Required for all theorem-like environments that have a corresponding proof
+      file (thm, lem, prop, cor). Not applicable for definitions or axioms.
+    proof_usage: null
+    notes: >
+      Pattern: \hyperref[prf:...]{Go to proof.}
+      Must appear at the end of the environment body before \end{...}.
+
+  - id: standard_quantified_stmt
+    display: Standard Quantified Statement
+    environment: remark* titled "Standard quantified statement"
+    requirement: R
+    parent: null
+    trigger: null
+    proof_usage: null
+    notes: >
+      Contains standard mathematical notation only. No predicate names from
+      predicates.yaml. Uses canonical quantifier forms from notation.yaml.
+      Multi-clause statements must use aligned environments.
+
+  - id: predicate_reading
+    display: Definition Predicate Reading
+    environment: remark* titled "Definition predicate reading"
+    requirement: C
+    parent: null
+    trigger: >
+      Generated if and only if a canonical predicate exists in predicates.yaml
+      for this concept, or if one clearly deserves to exist (flag as missing
+      predicate audit entry if the latter). Not forced for one-off statements
+      whose quantified form is already structurally transparent.
+    proof_usage: null
+    notes: >
+      Predicate names typeset with \operatorname{...}. Header reflects role:
+      "Definition predicate reading" for definitions, "Predicate reading" for
+      theorem-like environments. Underbrace decomposition permitted when it
+      clarifies conjunctive or disjunctive structure.
+
+  - id: negated_quantified_stmt
+    display: Negated Quantified Statement
+    environment: remark* titled "Negated quantified statement"
+    requirement: C
+    parent: null
+    trigger: >
+      Generated if and only if proof_usage is true for this concept — that is,
+      the negated form of this statement standardly appears in proofs in the
+      mathematical literature. This is a stable fact about mathematical practice,
+      not a per-instance aesthetic judgment.
+      Examples where proof_usage is true: upper bound (not an upper bound is
+      used constantly in supremum proofs), Cauchy sequence, convergence.
+      Examples where proof_usage is false: definitions of algebraic operations
+      whose negations are rarely invoked directly in proofs.
+    proof_usage: true
+    notes: >
+      Contains the formal negation only. No explanatory prose. Prose about the
+      negation belongs in failure-mode or interpretation blocks.
+
+  - id: negation_predicate_reading
+    display: Negation Predicate Reading
+    environment: remark* titled "Negation predicate reading"
+    requirement: D
+    parent: negated_quantified_stmt
+    trigger: null
+    proof_usage: null
+    notes: >
+      Required if and only if negated_quantified_stmt was generated AND a
+      canonical negation predicate exists or is derivable from predicates.yaml.
+
+  - id: failure_modes
+    display: Failure Modes
+    environment: remark* titled "Failure modes"
+    requirement: C
+    parent: null
+    trigger: >
+      Generated when the concept has multiple structurally distinct ways it can
+      fail to hold, and naming those branches aids mathematical understanding.
+      Typically accompanies negated_quantified_stmt but is a separate block.
+    proof_usage: null
+    notes: >
+      Prose description of failure branches. Distinct from failure_mode_decomposition
+      which provides the formal underbrace display.
+
+  - id: failure_mode_decomposition
+    display: Failure Mode Decomposition
+    environment: remark* titled "Failure mode decomposition"
+    requirement: D
+    parent: failure_modes
+    trigger: null
+    proof_usage: null
+    notes: >
+      Required if and only if failure_modes was generated. May use underbrace
+      or similar visual grouping to display the mathematically meaningful
+      branches of the negation. Canonical predicates permitted here.
+
+  - id: contrapositive_quantified_stmt
+    display: Contrapositive Quantified Statement
+    environment: remark* titled "Contrapositive quantified statement"
+    requirement: C
+    parent: null
+    trigger: >
+      Generated if and only if proof_usage is true for the contrapositive form —
+      that is, the contrapositive of this statement standardly appears in proofs
+      in the mathematical literature. Apply the same proof-usage standard as for
+      negated_quantified_stmt.
+    proof_usage: true
+    notes: >
+      Only for theorem-like environments (not definitions, which have no
+      hypothesis-conclusion structure). Not generated merely because a
+      contrapositive can be written formally.
+
+  - id: contrapositive_predicate_reading
+    display: Contrapositive Predicate Reading
+    environment: remark* titled "Contrapositive predicate reading"
+    requirement: D
+    parent: contrapositive_quantified_stmt
+    trigger: null
+    proof_usage: null
+    notes: >
+      Required if and only if contrapositive_quantified_stmt was generated AND
+      a canonical predicate representation exists or is derivable.
+
+  - id: interpretation
+    display: Interpretation Block
+    environment: remark* titled "Interpretation"
+    requirement: C
+    parent: null
+    trigger: >
+      Required by default. May be omitted only when nearby section-level
+      exposition already supplies the interpretation clearly and a local
+      interpretation would be directly repetitive. This exception applies
+      especially to tightly clustered definitions such as bounds and extremals
+      when a shared structural exposition already performs the interpretive work.
+    proof_usage: null
+    notes: >
+      Prose only. No formal predicate language unless explicitly discussed as
+      notation. Explains the mathematical fact, why it is true, why it matters,
+      its standard failure mode, and its structural or geometric picture.
+
+  - id: dependencies
+    display: Dependencies Block
+    environment: remark* titled "Dependencies"
+    requirement: R
+    parent: null
+    trigger: null
+    proof_usage: null
+    notes: >
+      Always present. Lists explicit \hyperref[...] links to all formal items
+      this environment depends on. If foundational within current extraction
+      scope, states "No local dependencies." Dependency labels point to formal
+      items only (def, thm, lem, prop, cor, ax) — never to proof labels.
+      Optional downstream blocks: Consequences, Equivalent forms.
