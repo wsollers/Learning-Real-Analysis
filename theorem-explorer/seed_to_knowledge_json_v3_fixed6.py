@@ -18,7 +18,7 @@ BEGIN_ENV_RE = re.compile(r"\\begin\{([A-Za-z*]+)\}(?:\[[^\]]*\])?")
 END_ENV_RE = re.compile(r"\\end\{([A-Za-z*]+)\}")
 ITEM_RE = re.compile(r"\\item(?:\[[^\]]*\])?\s*")
 HYPERREF_TARGET_RE = re.compile(r"\\hyperref\[([^\]]+)\]")
-COMMAND_SPACES_RE = re.compile(r"\\(?:smallskip|medskip|bigskip|noindent|phantomsection|newpage)\b")
+COMMAND_SPACES_RE = re.compile(r"\\(?:smallskip|medskip|bigskip|noindent|phantomsection|newpage|hfill)\b")
 TITLE_BRACKET_RE = re.compile(r"^\s*\[[^\]]*\]\s*")
 COMMENT_RE = re.compile(r"(?<!\\)%.*")
 MATH_DISPLAY_WRAP_RE = re.compile(r"^\s*\\\[(.*)\\\]\s*$", re.DOTALL)
@@ -83,6 +83,8 @@ FIELD_DEFAULTS: dict[str, Any] = {
     "symbol": "",
     "category": "",
     "proof_sketch": "",
+    "proof_steps": [],
+    "proof_sketch_source": "",
     "proof_idea": "",
     "proof_type": "",
     "method": "",
@@ -110,6 +112,11 @@ def humanize_slug(slug: str) -> str:
     if not slug:
         return ""
     return slug.replace("-", " ").replace("_", " ").title()
+
+
+def humanize_label(label: str) -> str:
+    tail = str(label or "").split(":", 1)[-1]
+    return humanize_slug(tail)
 
 
 def strip_comments(text: str) -> str:
@@ -194,15 +201,17 @@ def strip_leading_proof_heading(text: str) -> str:
 def extract_detailed_learning_steps(text: str) -> list[str]:
     body = strip_leading_proof_heading(text)
     pattern = re.compile(
-        r'\\textbf\{Step\s+([^{}]+?)\.\}\s*(.*?)(?=(?:\\textbf\{Step\s+[^{}]+?\.\})|\Z)',
+        r'\\textbf\{Step\s+([0-9A-Za-z]+)\.\s*([^{}]*?)\}\s*(.*?)(?=(?:\\textbf\{Step\s+[0-9A-Za-z]+\.)|\Z)',
         re.DOTALL | re.IGNORECASE,
     )
     steps: list[str] = []
     for m in pattern.finditer(body):
         step_no = m.group(1).strip()
-        step_body = m.group(2).strip()
-        if step_body:
-            steps.append(f"Step {step_no}. {step_body}")
+        step_title = m.group(2).strip()
+        step_body = m.group(3).strip()
+        step_text = " ".join(part for part in [step_title, step_body] if part)
+        if step_text:
+            steps.append(f"Step {step_no}. {step_text}")
     return steps
 
 
@@ -245,7 +254,7 @@ def extract_dependencies_from_blocks(blocks: list[dict[str, Any]]) -> list[str]:
     return extract_relationships_from_blocks(blocks)["dependencies"]
 
 
-def summarize_proof_blocks(blocks: list[dict[str, Any]], node_id: str, proof_source_path: str) -> tuple[str, str, str, str, dict[str, Any] | None]:
+def summarize_proof_blocks(blocks: list[dict[str, Any]], node_id: str, proof_source_path: str) -> tuple[str, list[str], str, str, str, str, dict[str, Any] | None]:
     proof_texts: list[str] = []
     proof_structure = ""
     method = ""
@@ -271,8 +280,10 @@ def summarize_proof_blocks(blocks: list[dict[str, Any]], node_id: str, proof_sou
 
     if detailed_steps:
         proof_sketch = "\n".join(detailed_steps)
+        proof_sketch_source = "detailed_learning_proof_steps"
     else:
         proof_sketch = choose_shortest_nonempty(proof_texts)
+        proof_sketch_source = "proof_body_fallback" if proof_sketch else ""
 
     proof_type = ""
     if proof_texts:
@@ -295,7 +306,30 @@ def summarize_proof_blocks(blocks: list[dict[str, Any]], node_id: str, proof_sou
             "message": "Proof file has proof content but no Detailed Learning Proof block.",
         }
 
-    return proof_sketch, proof_structure, proof_type, method, error
+    return proof_sketch, detailed_steps, proof_sketch_source, proof_structure, proof_type, method, error
+
+
+PREDICATE_LEAD_IN_RE = re.compile(
+    r"^\s*\\\[\s*"
+    r"(?:\\neg\s*)?"
+    r"\\operatorname\{[A-Za-z][A-Za-z0-9]*\}\s*(?:\([^][]*?\))?\s*\.?\s*"
+    r"\\\]\s*"
+    r"(?:Equivalently,?\s*)",
+    re.DOTALL,
+)
+
+
+def strip_predicate_lead_in(content: str) -> str:
+    """Remove predicate-only prefaces from formal extraction fields.
+
+    Some legacy notes put a predicate statement first inside a
+    "Standard quantified statement" or "Negated quantified statement" remark
+    and then give the actual standard notation after "Equivalently".  For the
+    viewer's formal fields, keep the standard notation and leave predicate
+    notation to the dedicated predicate-reading fields.
+    """
+    stripped = PREDICATE_LEAD_IN_RE.sub("", content, count=1).strip()
+    return stripped or content
 
 
 def classify_remark_fields(remark_blocks: list[dict[str, Any]]) -> dict[str, str]:
@@ -317,6 +351,7 @@ def classify_remark_fields(remark_blocks: list[dict[str, Any]]) -> dict[str, str
         if not content:
             continue
         if title == "standard quantified statement":
+            content = strip_predicate_lead_in(content)
             out["fully_quantified_form"] = content
             if not out["formal"]:
                 out["formal"] = content
@@ -325,6 +360,7 @@ def classify_remark_fields(remark_blocks: list[dict[str, Any]]) -> dict[str, str
             if not out["formal"]:
                 out["formal"] = content
         elif title == "negated quantified statement":
+            content = strip_predicate_lead_in(content)
             out["negation_display"] = content
             out["negation_formal"] = content
         elif title == "negation predicate reading":
@@ -477,11 +513,35 @@ def build_missing_dependencies_warning(node: dict[str, Any]) -> dict[str, Any] |
     return warning
 
 
+def build_missing_environment_title_warning(seed_node: dict[str, Any], node: dict[str, Any]) -> dict[str, Any] | None:
+    if (seed_node.get("title") or "").strip():
+        return None
+    warning: dict[str, Any] = {
+        "type": "missing_environment_title",
+        "kind": node.get("kind", ""),
+        "node_id": node.get("id", ""),
+        "title": node.get("name", ""),
+        "source": node.get("source", ""),
+        "message": (
+            "Extracted theorem/definition-like environment has no explicit title. "
+            "The converter used a humanized label fallback, but the source should add "
+            "an environment title for stable extraction and readable graph labels."
+        ),
+        "signals": ["empty optional environment title"],
+        "label": seed_node.get("label", ""),
+        "fallback_title": node.get("name", ""),
+        "excerpt": short_excerpt(node.get("statement_tex", "")),
+    }
+    if node.get("proof_source"):
+        warning["proof_source"] = node["proof_source"]
+    return warning
+
+
 def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, Any], dict[str, Any] | None]:
     node = json.loads(json.dumps(FIELD_DEFAULTS))
     node["id"] = seed_node["id"]
     node["kind"] = seed_node.get("kind", "")
-    node["name"] = seed_node.get("title") or seed_node.get("label") or seed_node["id"]
+    node["name"] = seed_node.get("title") or humanize_label(seed_node.get("label") or seed_node["id"])
     node["deck"] = humanize_slug(seed_node.get("section_slug") or seed_node.get("note_dir") or chapter_name)
     node["section"] = seed_node.get("section_slug") or ""
     node["source"] = seed_node.get("source_path") or ""
@@ -501,12 +561,14 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
     node["implies_ids"] = note_relationships["implies_ids"]
     node["equivalent_to_ids"] = note_relationships["equivalent_to_ids"]
 
-    proof_sketch, proof_idea, proof_type, method, error = summarize_proof_blocks(
+    proof_sketch, proof_steps, proof_sketch_source, proof_idea, proof_type, method, error = summarize_proof_blocks(
         seed_node.get("proof_file_blocks", []),
         node_id=node["id"],
         proof_source_path=node["proof_source"],
     )
     node["proof_sketch"] = proof_sketch
+    node["proof_steps"] = proof_steps
+    node["proof_sketch_source"] = proof_sketch_source
     node["proof_idea"] = proof_idea
     node["proof_type"] = proof_type
     node["method"] = method
@@ -755,6 +817,9 @@ def convert_chapter(chapter_root: Path, output_dir: Path | None = None) -> tuple
     for seed in knowledge_seed.get("nodes", []):
         node, error = build_node(seed, chapter_name)
         nodes.append(node)
+        title_warning = build_missing_environment_title_warning(seed, node)
+        if title_warning:
+            errors.append(title_warning)
         structure_warning = build_multiple_primary_statement_warning(node)
         if structure_warning:
             errors.append(structure_warning)

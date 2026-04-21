@@ -61,11 +61,15 @@ predicates:
 
 - id: pred:least-upper-bound-property-in
   name: LeastUpperBoundProperty
+  reading_aliases: [LUBProperty]
   category: completeness
   arity: 1
   arguments: [S]
   optional_arguments: []
   formal: \forall A \; ((A \subseteq S \land NonemptySet(A) \land BoundedAbove(A)) \rightarrow \exists s \in S \; Supremum(s,A))
+  reading_template: >
+    LeastUpperBoundProperty(S) \Longleftrightarrow every nonempty subset of S
+    that is bounded above in S has a supremum in S.
   note: >
     General ambient-set version of the least upper bound property.
     This is order-theoretic completeness for an ambient ordered system S.
@@ -75,75 +79,106 @@ predicates:
 
 - id: pred:upper-bound
   name: UpperBound
+  reading_aliases: [UpperBd]
   category: bounding
   arity: 2
   arguments: [u, A]
   optional_arguments: []
   formal: \forall x \in A \; (x \le u)
+  reading_template: >
+    UpperBound(u,A) \Longleftrightarrow u is an upper bound for A, meaning
+    every x in A satisfies x \le u.
 
 - id: pred:lower-bound
   name: LowerBound
+  reading_aliases: [LowerBd]
   category: bounding
   arity: 2
   arguments: [l, A]
   optional_arguments: []
   formal: \forall x \in A \; (l \le x)
+  reading_template: >
+    LowerBound(l,A) \Longleftrightarrow l is a lower bound for A, meaning
+    every x in A satisfies l \le x.
 
 - id: pred:bounded-above
   name: BoundedAbove
+  reading_aliases: [UpperBounded]
   category: bounding
   arity: 1
   arguments: [A]
   optional_arguments: []
   formal: \exists u \; UpperBound(u, A)
+  reading_template: >
+    BoundedAbove(A) \Longleftrightarrow there exists u such that UpperBound(u,A).
 
 - id: pred:bounded-below
   name: BoundedBelow
+  reading_aliases: [LowerBounded]
   category: bounding
   arity: 1
   arguments: [A]
   optional_arguments: []
   formal: \exists l \; LowerBound(l, A)
+  reading_template: >
+    BoundedBelow(A) \Longleftrightarrow there exists l such that LowerBound(l,A).
 
 - id: pred:bounded-set
   name: BoundedSet
+  reading_aliases: [Bounded]
   category: bounding
   arity: 1
   arguments: [A]
   optional_arguments: []
   formal: BoundedAbove(A) \land BoundedBelow(A)
+  reading_template: >
+    BoundedSet(A) \Longleftrightarrow BoundedAbove(A) and BoundedBelow(A).
 
 - id: pred:maximum
   name: Maximum
+  reading_aliases: [Max]
   category: bounding
   arity: 2
   arguments: [m, A]
   optional_arguments: []
   formal: (m \in A) \land \forall x \in A \; (x \le m)
+  reading_template: >
+    Maximum(m,A) \Longleftrightarrow m belongs to A and UpperBound(m,A).
 
 - id: pred:minimum
   name: Minimum
+  reading_aliases: [Min]
   category: bounding
   arity: 2
   arguments: [m, A]
   optional_arguments: []
   formal: (m \in A) \land \forall x \in A \; (m \le x)
+  reading_template: >
+    Minimum(m,A) \Longleftrightarrow m belongs to A and LowerBound(m,A).
 
 - id: pred:supremum
   name: Supremum
+  reading_aliases: [Sup]
   category: completeness
   arity: 2
   arguments: [s, A]
   optional_arguments: []
   formal: UpperBound(s,A) \land \forall u \; (UpperBound(u,A) \rightarrow s \le u)
+  reading_template: >
+    Supremum(s,A) \Longleftrightarrow UpperBound(s,A) and every upper bound
+    u of A satisfies s \le u.
 
 - id: pred:infimum
   name: Infimum
+  reading_aliases: [Inf]
   category: completeness
   arity: 2
   arguments: [t, A]
   optional_arguments: []
   formal: LowerBound(t,A) \land \forall l \; (LowerBound(l,A) \rightarrow l \le t)
+  reading_template: >
+    Infimum(t,A) \Longleftrightarrow LowerBound(t,A) and every lower bound
+    l of A satisfies l \le t.
 
 # =========================================================
 # Tolerance / Proximity
@@ -254,19 +289,27 @@ predicates:
 
 - id: pred:least-upper-bound-property
   name: LeastUpperBoundProperty
+  reading_aliases: [RealLUBProperty]
   category: completeness
   arity: 0
   arguments: []
   optional_arguments: []
   formal: \forall A \subseteq \mathbb{R} \; ((NonemptySet(A) \land BoundedAbove(A)) \rightarrow \exists s \; Supremum(s,A))
+  reading_template: >
+    LeastUpperBoundProperty \Longleftrightarrow every nonempty subset of
+    \mathbb{R} that is bounded above has a supremum in \mathbb{R}.
 
 - id: pred:archimedean-property
   name: ArchimedeanProperty
+  reading_aliases: [Archimedean]
   category: completeness
   arity: 0
   arguments: []
   optional_arguments: []
   formal: \forall x \in \mathbb{R} \; \exists n \in \mathbb{N} \; (n > x)
+  reading_template: >
+    ArchimedeanProperty \Longleftrightarrow for every real x there exists
+    a natural number n with n > x.
 
 - id: pred:dense-subset
   name: DenseSubset

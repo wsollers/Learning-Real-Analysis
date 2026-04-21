@@ -129,15 +129,41 @@ $\lim_{x \to c} f(x) = L$, if
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
+Define
 \[
-  \lim_{x\to c}f(x)=L
-  \;\colonequiv\;
-  \ForallOT{\varepsilon},\;
-  \ExistsIT{\delta},\;
-  \forall x \in A :\;
-  0<|x-c|<\delta
-  \;\Rightarrow\;
-  |f(x)-L|<\varepsilon.
+\begin{aligned}
+  \operatorname{OutputTol}(\varepsilon)
+  &\Longleftrightarrow \varepsilon>0,\\
+  \operatorname{InputTol}(\delta)
+  &\Longleftrightarrow \delta>0,\\
+  \operatorname{PuncturedNbhd}(x,c,\delta)
+  &\Longleftrightarrow 0<|x-c|<\delta,\\
+  \operatorname{OutputNbhd}(y,L,\varepsilon)
+  &\Longleftrightarrow |y-L|<\varepsilon.
+\end{aligned}
+\]
+Then
+\[
+\begin{aligned}
+  \operatorname{FunctionLimit}(f,A,c,L)
+  &\Longleftrightarrow
+  \forall \varepsilon\,
+  \Bigl(
+    \operatorname{OutputTol}(\varepsilon)
+    \Rightarrow
+    \exists \delta\,
+    \bigl(
+      \operatorname{InputTol}(\delta)
+      \wedge
+      \forall x\in A\,
+      [
+        \operatorname{PuncturedNbhd}(x,c,\delta)
+        \Rightarrow
+        \operatorname{OutputNbhd}(f(x),L,\varepsilon)
+      ]
+    \bigr)
+  \Bigr).
+\end{aligned}
 \]
 \end{remark*}
 
@@ -150,29 +176,63 @@ $\lim_{x \to c} f(x) = L$, if
 
 \begin{remark*}[Negation predicate reading]
 \[
-  \neg\,\lim_{x\to c}f(x)=L
-  \;\colonequiv\;
-  \exists\varepsilon_0 > 0,\;
-  \forall\delta > 0,\;
-  \exists x \in A :\;
-  0 < |x - c| < \delta
-  \;\wedge\;
-  |f(x) - L| \geq \varepsilon_0.
+\begin{aligned}
+  \neg\,\operatorname{FunctionLimit}(f,A,c,L)
+  &\Longleftrightarrow
+  \exists \varepsilon_0\,
+  \Bigl(
+    \operatorname{OutputTol}(\varepsilon_0)
+    \wedge
+    \forall \delta\,
+    \bigl(
+      \operatorname{InputTol}(\delta)
+      \Rightarrow
+      \exists x\in A\,
+      [
+        \operatorname{PuncturedNbhd}(x,c,\delta)
+        \wedge
+        \neg\,\operatorname{OutputNbhd}(f(x),L,\varepsilon_0)
+      ]
+    \bigr)
+  \Bigr)\\
+  &\Longleftrightarrow
+  \exists \varepsilon_0>0\;
+  \forall \delta>0\;
+  \exists x\in A\;
+  \bigl(
+    0<|x-c|<\delta
+    \wedge
+    |f(x)-L|\geq\varepsilon_0
+  \bigr).
+\end{aligned}
 \]
 \end{remark*}
 
+\begin{remark*}[Failure modes]\hfill
+\begin{itemize}
+  \item The proposed value $L$ is the wrong target: the function approaches
+  some value $M\neq L$ near $c$.
+  \item The function does not settle near any single value as $x$ approaches
+  $c$ through $A$.
+  \item The outputs repeatedly stay at least a fixed distance from $L$ no
+  matter how tightly the inputs are restricted around $c$.
+\end{itemize}
+\end{remark*}
+
 \begin{remark*}[Failure mode decomposition]
-The negation says: some fixed output gap $\varepsilon_0 > 0$ cannot
-be closed no matter how small the input window.
 \[
-  \underbrace{%
-    \exists\,\text{two sequences } x_n, y_n \to c
-    \text{ with } f(x_n) \to L_1 \neq L_2 \leftarrow f(y_n)
-  }_{\text{limit does not exist at all}}
-  \quad\vee\quad
-  \underbrace{%
-    f(x_n) \text{ oscillates for every } x_n \to c
-  }_{\text{essential oscillation near } c}.
+\begin{aligned}
+  \neg\,\operatorname{FunctionLimit}(f,A,c,L)
+  &\Longleftrightarrow
+  \exists \varepsilon_0>0\;
+  \forall \delta>0\;
+  \exists x\in A\;
+  \bigl(
+    \underbrace{0<|x-c|<\delta}_{\text{arbitrarily close to }c}
+    \wedge
+    \underbrace{|f(x)-L|\geq\varepsilon_0}_{\text{fixed output gap from }L}
+  \bigr).
+\end{aligned}
 \]
 \end{remark*}
 

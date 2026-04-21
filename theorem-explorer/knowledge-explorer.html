@@ -8,7 +8,7 @@
 <style>
 :root {
   --bg:#0f172a; --panel:#111827; --ink:#e5e7eb; --muted:#94a3b8; --grid:#1f2937;
-  --def:#14b8a6; --thm:#60a5fa; --sel:#f59e0b; --dep:#94a3b8; --impl:#f59e0b; --danger:#ef4444;
+  --def:#14b8a6; --thm:#60a5fa; --sel:#f59e0b; --dep:#94a3b8; --impl:#f59e0b; --use:#a78bfa; --equiv:#22c55e; --danger:#ef4444;
 }
 *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
 body{display:grid;grid-template-columns:360px minmax(0,1fr) minmax(410px,34vw);height:100vh;overflow:hidden}
@@ -33,7 +33,8 @@ svg{position:absolute;inset:0}
 .node{position:absolute;width:250px;min-height:86px;padding:14px;border-radius:18px;cursor:pointer;border:2px solid rgba(255,255,255,.08);
  box-shadow:0 10px 24px rgba(0,0,0,.28);touch-action:none;user-select:none}
 .node.dragging{cursor:grabbing;z-index:5}
-.node.definition,.node.axiom{background:linear-gradient(180deg, rgba(20,184,166,.18), rgba(20,184,166,.1));border-color:rgba(45,212,191,.55)}
+.node.definition{background:linear-gradient(180deg, rgba(20,184,166,.18), rgba(20,184,166,.1));border-color:rgba(45,212,191,.55)}
+.node.axiom{background:linear-gradient(180deg, rgba(20,184,166,.22), rgba(20,184,166,.12));border-color:rgba(251,191,36,.7)}
 .node.theorem,.node.lemma,.node.proposition,.node.corollary{background:linear-gradient(180deg, rgba(96,165,250,.18), rgba(96,165,250,.1));border-color:rgba(147,197,253,.55)}
 .node.selected{outline:3px solid rgba(245,158,11,.8)}
 .type{font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;color:#cbd5e1;font-weight:700;margin-bottom:6px}
@@ -52,6 +53,9 @@ code{background:#111827;padding:1px 5px;border-radius:6px}
 .value .katex-html,.tooltip .block .katex-html{white-space:normal;overflow-wrap:anywhere}
 .value .katex-display>.katex,.tooltip .block .katex-display>.katex{white-space:normal;text-align:left}
 .value .katex .base,.tooltip .block .katex .base{white-space:normal;max-width:100%}
+.math-list{margin:.35rem 0 .2rem 1.25rem;padding-left:1rem}
+.math-list li{margin:.35rem 0}
+.proof-panel{border-color:rgba(96,165,250,.28);background:rgba(96,165,250,.08)}
 </style>
 </head>
 <body>
@@ -82,10 +86,12 @@ code{background:#111827;padding:1px 5px;border-radius:6px}
     <input type="text" id="searchBox" placeholder="Search title, id, statement, tags, deck..."/>
     <div class="row" style="margin-top:10px">
       <label class="chk"><input type="checkbox" id="showDefinitions" checked/>Definitions</label>
+      <label class="chk"><input type="checkbox" id="showAxioms" checked/>Axioms</label>
       <label class="chk"><input type="checkbox" id="showResults" checked/>Results</label>
     </div>
     <div class="row" style="margin-top:10px">
       <label class="chk"><input type="checkbox" id="showDepends" checked/>Dependencies</label>
+      <label class="chk"><input type="checkbox" id="showUses" checked/>Uses</label>
       <label class="chk"><input type="checkbox" id="showImplies" checked/>Implications</label>
     </div>
     <div style="margin-top:10px">
@@ -129,7 +135,7 @@ const state = {
   dragging: null,
   suppressNextClick: false,
   renderedGraph: null,
-  filters: {search:'',showDefinitions:true,showResults:true,showDepends:true,showImplies:true,deck:'All'}
+  filters: {search:'',showDefinitions:true,showAxioms:true,showResults:true,showDepends:true,showUses:true,showImplies:true,deck:'All'}
 };
 
 const els = {
@@ -141,8 +147,10 @@ const els = {
   tooltip: document.getElementById('tooltip'),
   searchBox: document.getElementById('searchBox'),
   showDefinitions: document.getElementById('showDefinitions'),
+  showAxioms: document.getElementById('showAxioms'),
   showResults: document.getElementById('showResults'),
   showDepends: document.getElementById('showDepends'),
+  showUses: document.getElementById('showUses'),
   showImplies: document.getElementById('showImplies'),
   deckFilter: document.getElementById('deckFilter'),
   detailEmpty: document.getElementById('detailEmpty'),
@@ -158,28 +166,35 @@ const els = {
 };
 
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function htmlWithBreaks(s) { return esc(s).replace(/\n/g, '<br>'); }
+const KATEX_OPTIONS = {
+  throwOnError: false,
+  strict: 'warn',
+  macros: {
+    '\\ForallOT': '\\forall\\,\\operatorname{OutputTolerance}(#1)',
+    '\\ExistsIT': '\\exists\\,\\operatorname{InputTolerance}(#1)',
+    '\\ForallIT': '\\forall\\,\\operatorname{InputTolerance}(#1)',
+    '\\colonequiv': '\\equiv',
+    '\\coloniff': '\\Longleftrightarrow'
+  }
+};
 function renderMathInElementSafe(el) {
   if (!el || typeof renderMathInElement !== 'function') return;
-  try {
-    renderMathInElement(el, {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '\\[', right: '\\]', display: true},
-        {left: '$', right: '$', display: false}
-      ],
-      throwOnError: false,
-      strict: 'warn',
-      macros: {
-        '\\ForallOT': '\\forall\\,\\operatorname{OutputTolerance}(#1)',
-        '\\ExistsIT': '\\exists\\,\\operatorname{InputTolerance}(#1)',
-        '\\ForallIT': '\\forall\\,\\operatorname{InputTolerance}(#1)',
-        '\\colonequiv': '\\equiv',
-        '\\coloniff': '\\Longleftrightarrow'
-      },
-      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    });
-  } catch (err) {
-    // Leave the escaped original text in place if KaTeX cannot process a field.
+  const targets = el.matches?.('.value,.block') ? [el] : Array.from(el.querySelectorAll('.value,.block'));
+  for (const target of (targets.length ? targets : [el])) {
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        ...KATEX_OPTIONS,
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'span']
+      });
+    } catch (err) {
+      // Leave that field's escaped original text in place if KaTeX cannot process it.
+    }
   }
 }
 function kindClass(kind) {
@@ -190,7 +205,7 @@ function kindClass(kind) {
 }
 function texToHtml(s) {
   if (!s) return '';
-  return esc(autoDelimitLatex(normalizeExtractedLatex(s)));
+  return renderMixedMath(normalizeExtractedLatex(s));
 }
 function normalizeExtractedLatex(text) {
   let out = Array.isArray(text) ? text.join('\n') : String(text ?? '');
@@ -228,7 +243,7 @@ function isMathHeavy(text) {
   return /^[A-Za-z][A-Za-z]*(?:At|Limit|Predicate|Tolerance)?\s*\([^)]*\)(?:\s*(?:\\Rightarrow|\\Longleftrightarrow|=>|<=>|=|<|>|<=|>=)\s*.*)?$/.test(t);
 }
 function mathModeText(text) {
-  return text.replace(/\b(FunctionLimit|ContinuousAt|OutputTolerance|InputTolerance)\s*\(/g, '\\operatorname{$1}(');
+  return text.replace(/\b(FunctionLimit|ContinuousAt|OutputTolerance|InputTolerance|PositiveOutputTolerance|PositiveInputTolerance|OutputTol|InputTol|PuncturedNbhd|OutputNbhd)\s*\(/g, '\\operatorname{$1}(');
 }
 function autoDelimitLatex(text) {
   if (hasMathDelimiters(text)) return text;
@@ -246,6 +261,47 @@ function autoDelimitLatex(text) {
     return line.replace(trimmed, `\\[${mathModeText(trimmed)}\\]`);
   }).join('\n');
 }
+function renderLatexToHtml(src, display=false) {
+  const latex = mathModeText(src.trim());
+  if (!latex) return '';
+  try {
+    return katex.renderToString(latex, {...KATEX_OPTIONS, displayMode: display});
+  } catch (err) {
+    return htmlWithBreaks(display ? `\\[\n${src}\n\\]` : `$${src}$`);
+  }
+}
+function renderLatexList(src) {
+  const t = src.trim();
+  const m = t.match(/^\\begin\{(itemize|enumerate)\}([\s\S]*?)\\end\{\1\}$/);
+  if (!m) return null;
+  const tag = m[1] === 'enumerate' ? 'ol' : 'ul';
+  const items = m[2].split(/\\item(?:\[[^\]]*\])?\s*/).map(x => x.trim()).filter(Boolean);
+  if (!items.length) return null;
+  return `<${tag} class="math-list">${items.map(item => `<li>${renderMixedMath(item)}</li>`).join('')}</${tag}>`;
+}
+function renderMixedMath(text) {
+  const listHtml = renderLatexList(text);
+  if (listHtml) return listHtml;
+  const normalized = autoDelimitLatex(text);
+  const tokenRe = /(\\\[[\s\S]*?\\\]|\$\$[\s\S]*?\$\$|\$[^$\n]*(?:\\.[^$\n]*)*\$)/g;
+  let out = '';
+  let pos = 0;
+  let m;
+  while ((m = tokenRe.exec(normalized)) !== null) {
+    out += htmlWithBreaks(normalized.slice(pos, m.index));
+    const token = m[0];
+    if (token.startsWith('\\[')) {
+      out += renderLatexToHtml(token.slice(2, -2), true);
+    } else if (token.startsWith('$$')) {
+      out += renderLatexToHtml(token.slice(2, -2), true);
+    } else {
+      out += renderLatexToHtml(token.slice(1, -1), false);
+    }
+    pos = tokenRe.lastIndex;
+  }
+  out += htmlWithBreaks(normalized.slice(pos));
+  return out;
+}
 function getNodes() { return state.knowledge.nodes || []; }
 function getCardsById(id) { return state.cards.filter(c => c.label === id); }
 function normalizeCards(cardData) {
@@ -259,10 +315,19 @@ function normalizeCards(cardData) {
 }
 function normalizeEdgeKind(kind) {
   const k = String(kind || '').toLowerCase();
-  if (k === 'dependency' || k === 'uses' || k === 'links_to_proof' || k === 'prereq' || k === 'used_by') return 'depends_on';
+  if (k === 'dependency' || k === 'links_to_proof' || k === 'prereq') return 'depends_on';
+  if (k === 'use' || k === 'uses' || k === 'uses_text') return 'uses';
+  if (k === 'used_by' || k === 'used-by') return 'used_by';
   if (k === 'implication' || k === 'consequence' || k === 'implies') return 'implies';
   if (k === 'equivalent' || k === 'equivalence') return 'equivalent_to';
   return k || 'depends_on';
+}
+function edgeVisual(kind) {
+  const k = normalizeEdgeKind(kind);
+  if (k === 'implies') return {color:'var(--impl)', marker:'url(#arrowImp)', width:'2.8', opacity:'.92'};
+  if (k === 'uses' || k === 'used_by') return {color:'var(--use)', marker:'url(#arrowUse)', width:'2.45', opacity:'.82'};
+  if (k === 'equivalent_to') return {color:'var(--equiv)', marker:'url(#arrowEquiv)', width:'2.5', opacity:'.86'};
+  return {color:'var(--dep)', marker:'url(#arrowDep)', width:'2.3', opacity:'.72'};
 }
 function cleanEdgeTarget(value) {
   return String(value || '').trim().replace(/^['"`]+|['"`]+$/g, '');
@@ -308,7 +373,6 @@ function normalizeGraphEdges(knowledge, edgeData, cards) {
   nodes.forEach(n => {
     splitEdgeTargets(n.depends_on_ids).forEach(id => addEdge(edges, seen, ids, id, n.id, 'depends_on'));
     splitEdgeTargets(n.prereq_ids).forEach(id => addEdge(edges, seen, ids, id, n.id, 'prereq'));
-    splitEdgeTargets(n.used_by_ids).forEach(id => addEdge(edges, seen, ids, n.id, id, 'used_by'));
     splitEdgeTargets(n.implies_ids).forEach(id => addEdge(edges, seen, ids, n.id, id, 'implies'));
     splitEdgeTargets(n.equivalent_to_ids).forEach(id => addEdge(edges, seen, ids, n.id, id, 'equivalent_to'));
   });
@@ -319,7 +383,7 @@ function normalizeGraphEdges(knowledge, edgeData, cards) {
     if (type !== 'uses' && type !== 'implies') return;
     splitEdgeTargets(card.answer).forEach(target => {
       const to = ids.has(target) ? target : byName.get(normalizeLookupKey(target));
-      if (type === 'uses') addEdge(edges, seen, ids, to, from, 'depends_on');
+      if (type === 'uses') addEdge(edges, seen, ids, to, from, 'uses');
       if (type === 'implies') addEdge(edges, seen, ids, from, to, 'implies');
     });
   });
@@ -356,7 +420,7 @@ function visibleGraph() {
   const visible = new Map();
   for (const n of nodes) {
     const cls = kindClass(n.kind);
-    const byType = (cls==='definition' || cls==='axiom') ? state.filters.showDefinitions : state.filters.showResults;
+    const byType = cls==='axiom' ? state.filters.showAxioms : (cls==='definition' ? state.filters.showDefinitions : state.filters.showResults);
     const byDeck = state.filters.deck==='All' || n.deck===state.filters.deck;
     const blob = JSON.stringify(n).toLowerCase();
     const bySearch = !q || blob.includes(q);
@@ -368,7 +432,8 @@ function visibleGraph() {
     const kind = normalizeEdgeKind(e.kind);
     return ids.has(e.from) && ids.has(e.to) &&
       ((kind === 'depends_on' && state.filters.showDepends) ||
-       (kind !== 'depends_on' && state.filters.showImplies));
+       ((kind === 'uses' || kind === 'used_by') && state.filters.showUses) ||
+       ((kind === 'implies' || kind === 'equivalent_to') && state.filters.showImplies));
   });
   return {nodes: outNodes, edges: outEdges};
 }
@@ -493,11 +558,11 @@ function drawEdges(g=state.renderedGraph) {
     p.classList.add('edge');
     p.setAttribute('d',`M ${start.x} ${start.y} C ${start.x + dir*bend} ${start.y}, ${end.x - dir*bend} ${end.y}, ${end.x} ${end.y}`);
     p.setAttribute('fill','none');
-    const edgeKind = normalizeEdgeKind(e.kind);
-    p.setAttribute('stroke', edgeKind==='depends_on' ? 'var(--dep)' : 'var(--impl)');
-    p.setAttribute('stroke-width', edgeKind==='depends_on' ? '2.3' : '2.8');
-    p.setAttribute('opacity', edgeKind==='depends_on' ? '.72' : '.92');
-    p.setAttribute('marker-end', edgeKind==='depends_on' ? 'url(#arrowDep)' : 'url(#arrowImp)');
+    const visual = edgeVisual(e.kind);
+    p.setAttribute('stroke', visual.color);
+    p.setAttribute('stroke-width', visual.width);
+    p.setAttribute('opacity', visual.opacity);
+    p.setAttribute('marker-end', visual.marker);
     els.edgeLayer.appendChild(p);
   }
 }
@@ -572,15 +637,39 @@ function moveTooltip(ev) {
 }
 function hideTooltip() { els.tooltip.style.display='none'; }
 
+function isTheoremLikeNode(n) {
+  const k = String(n?.kind || '').toLowerCase();
+  return ['theorem','lemma','proposition','corollary','axiom','consequence'].some(x => k.includes(x));
+}
+
 function renderDetails(n) {
   els.detailEmpty.style.display='none'; els.detailContent.style.display='block';
   const cards = getCardsById(n.id);
   const blocks = [];
   function add(title,val,danger=false) { if(!val) return; blocks.push(`<div class="card ${danger?'danger':''}"><div class="label">${esc(title)}</div><div class="value">${texToHtml(val)}</div></div>`)}
+  function addProofSketch() {
+    if (!isTheoremLikeNode(n)) return;
+    const steps = Array.isArray(n.proof_steps) ? n.proof_steps.filter(Boolean) : [];
+    const sketch = n.proof_sketch || '';
+    const source = n.proof_sketch_source || '';
+    const sourceLine = source ? `<div class="tiny" style="margin-bottom:8px">Derived from ${esc(source.replaceAll('_',' '))}.</div>` : '';
+    if (steps.length) {
+      const list = `<ol class="math-list">${steps.map(step => `<li>${texToHtml(step.replace(/^Step\s+[0-9A-Za-z]+\.\s*/, ''))}</li>`).join('')}</ol>`;
+      blocks.push(`<div class="card proof-panel"><div class="label">Proof sketch</div>${sourceLine}<div class="value">${list}</div></div>`);
+    } else if (sketch) {
+      blocks.push(`<div class="card proof-panel"><div class="label">Proof sketch</div>${sourceLine}<div class="value">${texToHtml(sketch)}</div></div>`);
+    } else {
+      const reason = n.proof_source
+        ? 'No detailed instructional proof steps were extracted from the linked proof file.'
+        : 'No linked proof file with detailed instructional steps was found for this item.';
+      blocks.push(`<div class="card proof-panel"><div class="label">Proof sketch</div><div class="tiny">${esc(reason)}</div></div>`);
+    }
+  }
   blocks.push(`<div class="card"><div class="label">Title</div><div class="value"><strong>${esc(n.name)}</strong></div><div class="tiny" style="margin-top:8px">${esc(n.kind)} · ${esc(n.deck)} · ${esc(n.id)}</div></div>`);
   add('Statement', n.statement_display);
   add('Proposition', n.proposition);
   add('Formal', n.formal || n.fully_quantified_form);
+  addProofSketch();
   add('Negation', n.negation_formal || n.negation_display, true);
   add('Negation predicate', n.negation_predicate, true);
   add('Failure modes', n.failure_modes, true);
@@ -592,7 +681,6 @@ function renderDetails(n) {
   add('Aliases', (n.aliases||[]).join(', '));
   add('Tags', (n.tags||[]).join(', '));
   add('Symbol', n.symbol);
-  add('Proof sketch', n.proof_sketch);
   add('Proof idea', n.proof_idea);
   add('Proof type', n.proof_type);
   add('Method', n.method);
@@ -614,7 +702,9 @@ function render() {
   els.edgeLayer.setAttribute('width', dims.width); els.edgeLayer.setAttribute('height', dims.height); els.edgeLayer.setAttribute('viewBox', `0 0 ${dims.width} ${dims.height}`);
   els.edgeLayer.innerHTML = `<defs>
     <marker id="arrowDep" viewBox="0 0 12 12" markerWidth="14" markerHeight="14" refX="11" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 z" fill="#94a3b8"/></marker>
+    <marker id="arrowUse" viewBox="0 0 12 12" markerWidth="14" markerHeight="14" refX="11" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 z" fill="#a78bfa"/></marker>
     <marker id="arrowImp" viewBox="0 0 12 12" markerWidth="14" markerHeight="14" refX="11" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 z" fill="#f59e0b"/></marker>
+    <marker id="arrowEquiv" viewBox="0 0 12 12" markerWidth="14" markerHeight="14" refX="11" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L12,6 L0,12 z" fill="#22c55e"/></marker>
   </defs>`;
   els.nodeLayer.innerHTML='';
   state.nodeElements = new Map();
@@ -686,8 +776,10 @@ els.autoBtn.onclick = tryAutoLoad;
 els.loadFilesBtn.onclick = loadManual;
 els.searchBox.oninput = e => { state.filters.search=e.target.value; render(); };
 els.showDefinitions.onchange = e => { state.filters.showDefinitions=e.target.checked; render(); };
+els.showAxioms.onchange = e => { state.filters.showAxioms=e.target.checked; render(); };
 els.showResults.onchange = e => { state.filters.showResults=e.target.checked; render(); };
 els.showDepends.onchange = e => { state.filters.showDepends=e.target.checked; render(); };
+els.showUses.onchange = e => { state.filters.showUses=e.target.checked; render(); };
 els.showImplies.onchange = e => { state.filters.showImplies=e.target.checked; render(); };
 els.deckFilter.onchange = e => { state.filters.deck=e.target.value; render(); };
 els.zoomInBtn.onclick = ()=>{ state.zoom=Math.min(2.4, +(state.zoom+0.1).toFixed(2)); render(); };
