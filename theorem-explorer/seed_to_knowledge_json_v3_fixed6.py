@@ -21,6 +21,7 @@ HYPERREF_TARGET_RE = re.compile(r"\\hyperref\[([^\]]+)\]")
 COMMAND_SPACES_RE = re.compile(r"\\(?:smallskip|medskip|bigskip|noindent|phantomsection|newpage|hfill)\b")
 TITLE_BRACKET_RE = re.compile(r"^\s*\[[^\]]*\]\s*")
 COMMENT_RE = re.compile(r"(?<!\\)%.*")
+HTML_LIST_TAG_RE = re.compile(r"</?(?:ul|ol|li)\b[^>]*>", re.IGNORECASE)
 MATH_DISPLAY_WRAP_RE = re.compile(r"^\s*\\\[(.*)\\\]\s*$", re.DOTALL)
 INLINE_MATH_DOLLAR_WRAP_RE = re.compile(r"^\s*\$(.*)\$\s*$", re.DOTALL)
 MULTISPACE_RE = re.compile(r"[ \t]+")
@@ -42,7 +43,21 @@ IS_IFF_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 TITLE_MULTI_CONCEPT_RE = re.compile(r"\s*(?:;|/|\band\b|,)\s*", re.IGNORECASE)
-
+STANDARD_FIELD_PREDICATE_RE = re.compile(
+    r"(?:\\operatorname\{([A-Z][A-Za-z0-9]*)\}|(?<![A-Za-z\\])([A-Z][A-Za-z0-9]{2,})\s*\()"
+)
+SPACING_ARTIFACT_RE = re.compile(
+    r"\b(?:"
+    r"This(?:allows|shows|gives|implies|ensures|means|is|has|the|a|an|we)|"
+    r"Since(?:the|this|there|it|we|f|S|A)|"
+    r"Then(?:the|this|there|it|we|f|S|A)|"
+    r"Therefore(?:the|this|it|we)|"
+    r"Thus(?:the|this|it|we)|"
+    r"fromthe|forthe|inthe|onthe|tothe|bythe|ofthe|andthe|withthe|"
+    r"sothat|suchthat|thereexists|thereforethe"
+    r")\b",
+    re.IGNORECASE,
+)
 
 
 def resolve_output_dir(chapter_root: Path, output_dir: Path | None) -> Path:
@@ -132,6 +147,7 @@ def cleanup_statement_tex(text: str) -> str:
     t = TITLE_BRACKET_RE.sub("", t, count=1)
     t = LABEL_RE.sub("", t)
     t = HYPERREF_LINE_RE.sub("", t)
+    t = HTML_LIST_TAG_RE.sub(" ", t)
     t = COMMAND_SPACES_RE.sub(" ", t)
     t = MULTISPACE_RE.sub(" ", t)
     t = MULTIBLANK_RE.sub("\n\n", t)
@@ -162,7 +178,7 @@ def clean_remark_content(raw_b64: str) -> str:
 
 def latex_to_basic_html(text: str) -> str:
     t = text.strip()
-    def replace_list_env(src: str, env_name: str, tag: str) -> str:
+    def replace_list_env(src: str, env_name: str) -> str:
         pattern = re.compile(rf"\\begin\{{{env_name}\}}(.*?)\\end\{{{env_name}\}}", re.DOTALL)
         while True:
             m = pattern.search(src)
@@ -170,12 +186,11 @@ def latex_to_basic_html(text: str) -> str:
                 break
             content = m.group(1)
             parts = [p.strip() for p in ITEM_RE.split(content) if p.strip()]
-            items = "".join(f"<li>{p}</li>" for p in parts)
-            repl = f"<{tag} style=\"margin:.6em 0 .6em 1.5em\">{items}</{tag}>"
+            repl = "\n".join(f"- {p}" for p in parts)
             src = src[: m.start()] + repl + src[m.end() :]
         return src
-    t = replace_list_env(t, "enumerate", "ol")
-    t = replace_list_env(t, "itemize", "ul")
+    t = replace_list_env(t, "enumerate")
+    t = replace_list_env(t, "itemize")
     t = HYPERREF_LINE_RE.sub("", t)
     t = LABEL_RE.sub("", t)
     t = COMMAND_SPACES_RE.sub(" ", t)
@@ -537,6 +552,98 @@ def build_missing_environment_title_warning(seed_node: dict[str, Any], node: dic
     return warning
 
 
+def find_standard_field_predicates(text: str) -> list[str]:
+    names = []
+    for op_name, bare_name in STANDARD_FIELD_PREDICATE_RE.findall(text or ""):
+        name = op_name or bare_name
+        if name and name not in {"Bigl", "Bigr", "Big"}:
+            names.append(name)
+    return unique_preserve_order(names)
+
+
+def build_predicate_notation_warning(node: dict[str, Any]) -> dict[str, Any] | None:
+    fields = [
+        "statement_display",
+        "formal",
+        "fully_quantified_form",
+        "negation_display",
+        "negation_formal",
+        "contrapositive",
+    ]
+    hits = []
+    signals = []
+    for field in fields:
+        names = find_standard_field_predicates(node.get(field, ""))
+        if names:
+            hits.append({"field": field, "predicate_names": names})
+            signals.append(f"{field}:" + ", ".join(names[:8]))
+    if not hits:
+        return None
+    warning: dict[str, Any] = {
+        "type": "predicate_notation_in_standard_field",
+        "kind": node.get("kind", ""),
+        "node_id": node.get("id", ""),
+        "title": node.get("name", ""),
+        "source": node.get("source", ""),
+        "message": (
+            "A standard statement/formal field appears to contain predicate notation. "
+            "House style reserves canonical predicate names for predicate-reading blocks; "
+            "standard quantified, negated, contrapositive, and statement fields should use standard mathematical notation."
+        ),
+        "signals": signals,
+        "fields": hits,
+        "excerpt": short_excerpt(
+            node.get("formal")
+            or node.get("fully_quantified_form")
+            or node.get("statement_display")
+            or node.get("negation_formal", "")
+        ),
+    }
+    if node.get("proof_source"):
+        warning["proof_source"] = node["proof_source"]
+    return warning
+
+
+def find_spacing_artifacts(text: str) -> list[str]:
+    return unique_preserve_order(SPACING_ARTIFACT_RE.findall(text or ""))
+
+
+def build_proof_spacing_artifact_warning(node: dict[str, Any]) -> dict[str, Any] | None:
+    candidates: list[tuple[str, str]] = []
+    if node.get("proof_sketch"):
+        candidates.append(("proof_sketch", node["proof_sketch"]))
+    if node.get("proof_idea"):
+        candidates.append(("proof_idea", node["proof_idea"]))
+    for i, step in enumerate(node.get("proof_steps", []) or [], start=1):
+        candidates.append((f"proof_steps[{i}]", step))
+
+    hits = []
+    signals = []
+    for field, text in candidates:
+        artifacts = find_spacing_artifacts(text)
+        if artifacts:
+            hits.append({"field": field, "artifacts": artifacts})
+            signals.append(f"{field}:" + ", ".join(artifacts[:8]))
+    if not hits:
+        return None
+    warning: dict[str, Any] = {
+        "type": "proof_text_spacing_artifact",
+        "kind": node.get("kind", ""),
+        "node_id": node.get("id", ""),
+        "title": node.get("name", ""),
+        "source": node.get("source", ""),
+        "proof_source": node.get("proof_source", ""),
+        "message": (
+            "Extracted proof sketch text appears to contain fused-word spacing artifacts. "
+            "Extraction was preserved, but the proof source or extraction cleanup should be reviewed."
+        ),
+        "signals": signals,
+        "fields": hits,
+        "excerpt": short_excerpt(node.get("proof_sketch") or "\n".join(node.get("proof_steps", []) or [])),
+    }
+    return warning
+
+
 def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, Any], dict[str, Any] | None]:
     node = json.loads(json.dumps(FIELD_DEFAULTS))
     node["id"] = seed_node["id"]
@@ -826,6 +933,12 @@ def convert_chapter(chapter_root: Path, output_dir: Path | None = None) -> tuple
         dependency_warning = build_missing_dependencies_warning(node)
         if dependency_warning:
             errors.append(dependency_warning)
+        predicate_warning = build_predicate_notation_warning(node)
+        if predicate_warning:
+            errors.append(predicate_warning)
+        proof_spacing_warning = build_proof_spacing_artifact_warning(node)
+        if proof_spacing_warning:
+            errors.append(proof_spacing_warning)
         if error:
             errors.append(error)
     edges, edge_warnings = build_edges(nodes, edge_seed)

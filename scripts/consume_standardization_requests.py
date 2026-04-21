@@ -278,6 +278,7 @@ def make_generated_stub(requests_path: Path, requests_doc: dict[str, Any], root:
                     "signals": request.get("signals", []),
                     "missing_heading": request.get("missing_heading"),
                     "remark_heading": request.get("remark_heading"),
+                    "suggested_label": request.get("suggested_label"),
                     "existing_remark_headings": request.get("existing_remark_headings", []),
                     "formal_label_catalog": request.get("formal_label_catalog", []),
                 },
@@ -301,6 +302,47 @@ def make_generated_stub(requests_path: Path, requests_doc: dict[str, Any], root:
         ],
         "entries": entries,
     }
+
+
+def deterministic_output_for_request(request: dict[str, Any]) -> dict[str, Any] | None:
+    action = request.get("action")
+    if action == "add_missing_label":
+        label = request.get("suggested_label") or request.get("label")
+        if not label:
+            return None
+        return {
+            "status": "ready_for_validation",
+            "output": {
+                "label": label,
+                "label_latex": f"\\label{{{label}}}",
+                "deterministic": True,
+            },
+        }
+    if action == "generate_missing_block" and request.get("missing_heading") == "Dependencies":
+        return {
+            "status": "ready_for_validation",
+            "output": {
+                "remark_latex": "\\begin{remark*}[Dependencies]\nNo local dependencies.\n\\end{remark*}",
+                "deterministic": True,
+            },
+        }
+    return None
+
+
+def apply_deterministic_fills(generated_doc: dict[str, Any]) -> int:
+    filled = 0
+    for entry in generated_doc.get("entries", []):
+        if entry.get("status") not in {"pending", "ready_for_validation"}:
+            continue
+        if entry.get("output") not in (None, ""):
+            continue
+        fill = deterministic_output_for_request(entry.get("input", {}) | {"action": entry.get("action")})
+        if not fill:
+            continue
+        entry["status"] = fill["status"]
+        entry["output"] = fill["output"]
+        filled += 1
+    return filled
 
 
 def sync_generated_doc(
@@ -341,6 +383,21 @@ def latex_from_output(output: Any) -> str:
 def replacement_latex_from_output(output: Any) -> str:
     if isinstance(output, dict) and isinstance(output.get("replacement_latex"), str):
         return output["replacement_latex"]
+    return ""
+
+
+def remark_latex_from_output(output: Any) -> str:
+    if isinstance(output, dict) and isinstance(output.get("remark_latex"), str):
+        return output["remark_latex"]
+    latex = latex_from_output(output)
+    return latex if REMARK_PATTERN.search(latex) else ""
+
+
+def label_latex_from_output(output: Any) -> str:
+    if isinstance(output, dict) and isinstance(output.get("label_latex"), str):
+        return output["label_latex"]
+    if isinstance(output, dict) and isinstance(output.get("label"), str):
+        return f"\\label{{{output['label']}}}"
     return ""
 
 
@@ -435,7 +492,16 @@ def validate_entry(entry: dict[str, Any], predicate_names: set[str]) -> dict[str
             errors.append("no_predicate output requires a reason.")
         return {"status": "invalid" if errors else "validated", "errors": errors, "warnings": warnings}
     latex = latex_from_output(output)
+    label_latex = label_latex_from_output(output)
     if not latex.strip():
+        if entry.get("action") == "add_missing_label" and label_latex:
+            label = LABEL_PATTERN.findall(label_latex)
+            env = entry.get("input", {}).get("env", "")
+            if len(label) != 1:
+                errors.append("Label output must contain exactly one \\label{...}.")
+            elif not label[0].startswith(LABEL_PREFIX.get(env, "")):
+                errors.append(f"Suggested label {label[0]!r} does not use prefix {LABEL_PREFIX.get(env, '')!r}.")
+            return {"status": "invalid" if errors else "validated", "errors": errors, "warnings": warnings}
         errors.append("No LaTeX content found in output.")
         return {"status": "invalid", "errors": errors, "warnings": warnings}
 
@@ -512,6 +578,43 @@ def validate_generated_doc(generated_doc: dict[str, Any], predicate_names: set[s
     return counts
 
 
+def validate_source_text(text: str, predicate_names: set[str]) -> dict[str, Any]:
+    errors: list[dict[str, Any]] = []
+    warnings: list[dict[str, Any]] = []
+    for cluster in parse_formal_clusters(text):
+        where = {"line": cluster.line, "env": cluster.env, "label": cluster.label, "title": cluster.title}
+        if not cluster.label:
+            errors.append({**where, "type": "missing_label", "message": "Formal environment has no label."})
+        elif not cluster.label.startswith(LABEL_PREFIX.get(cluster.env, "")):
+            errors.append({**where, "type": "bad_label_prefix", "message": f"Label should start with {LABEL_PREFIX.get(cluster.env, '')}."})
+        body_hits = sorted(operator_names(cluster.body).intersection(predicate_names))
+        if body_hits:
+            errors.append({**where, "type": "predicate_leakage_formal_body", "message": ", ".join(body_hits)})
+        headings = [remark.heading for remark in cluster.remarks]
+        if not any("Standard quantified statement" in heading for heading in headings[:2]):
+            errors.append({**where, "type": "missing_standard_quantified_statement", "message": "Missing attached Standard quantified statement."})
+        if not any("Interpretation" == heading for heading in headings):
+            errors.append({**where, "type": "missing_interpretation", "message": "Missing attached Interpretation block."})
+        if not any("Dependencies" == heading for heading in headings):
+            errors.append({**where, "type": "missing_dependencies", "message": "Missing attached Dependencies block."})
+        ordered_indices = [LOGICAL_BLOCK_ORDER.index(h) for h in headings if h in LOGICAL_BLOCK_ORDER]
+        if ordered_indices != sorted(ordered_indices):
+            errors.append({**where, "type": "logical_block_order", "message": "Logical blocks are not in DESIGN.md order."})
+        for remark in cluster.remarks:
+            if remark.heading == "Dependencies":
+                refs = HYPERREF_PATTERN.findall(remark.body)
+                proof_refs = [ref for ref in refs if ref.startswith("prf:")]
+                if proof_refs:
+                    errors.append({**where, "type": "dependency_references_proof", "message": ", ".join(proof_refs)})
+                if not refs and "No local dependencies." not in remark.body:
+                    errors.append({**where, "type": "dependency_unparseable", "message": "Dependencies must contain hyperrefs or No local dependencies."})
+            if remark.heading in FORBIDDEN_PREDICATE_HEADINGS:
+                hits = sorted(operator_names(remark.body).intersection(predicate_names))
+                if hits:
+                    errors.append({**where, "type": "predicate_leakage_logical_block", "heading": remark.heading, "message": ", ".join(hits)})
+    return {"status": "valid" if not errors else "invalid", "errors": errors, "warnings": warnings}
+
+
 def group_replacements(generated_doc: dict[str, Any]) -> dict[int, dict[str, Any]]:
     replacements: dict[int, dict[str, Any]] = {}
     for entry in generated_doc.get("entries", []):
@@ -528,21 +631,82 @@ def group_replacements(generated_doc: dict[str, Any]) -> dict[int, dict[str, Any
     return replacements
 
 
-def assemble_text(source_text: str, replacements_by_line: dict[int, dict[str, Any]]) -> tuple[str, list[str]]:
+def group_insertions(generated_doc: dict[str, Any]) -> dict[int, dict[str, list[dict[str, Any]]]]:
+    insertions: dict[int, dict[str, list[dict[str, Any]]]] = {}
+    for entry in generated_doc.get("entries", []):
+        if entry.get("validation", {}).get("status") != "validated":
+            continue
+        line = entry.get("input", {}).get("line")
+        if line is None:
+            continue
+        line = int(line)
+        bucket = insertions.setdefault(line, {"labels": [], "remarks": []})
+        label_latex = label_latex_from_output(entry.get("output"))
+        if label_latex:
+            bucket["labels"].append({"request_id": entry.get("request_id"), "latex": label_latex.strip()})
+        remark_latex = remark_latex_from_output(entry.get("output"))
+        if remark_latex:
+            bucket["remarks"].append(
+                {
+                    "request_id": entry.get("request_id"),
+                    "heading": entry.get("input", {}).get("missing_heading", ""),
+                    "latex": remark_latex.strip(),
+                }
+            )
+    return insertions
+
+
+def remark_order_key(item: dict[str, Any]) -> int:
+    heading = item.get("heading", "")
+    return LOGICAL_BLOCK_ORDER.index(heading) if heading in LOGICAL_BLOCK_ORDER else len(LOGICAL_BLOCK_ORDER)
+
+
+def insert_label_into_segment(segment: str, cluster: FormalCluster, label_latex: str) -> tuple[str, str | None]:
+    match = FORMAL_PATTERN.search(segment)
+    if not match:
+        return segment, f"Could not find formal environment at line {cluster.line} for label insertion."
+    if LABEL_PATTERN.search(match.group(3)):
+        return segment, None
+    insert_at = match.start(3)
+    return segment[:insert_at] + "\n" + label_latex + "\n" + segment[insert_at:], None
+
+
+def assemble_text(
+    source_text: str,
+    replacements_by_line: dict[int, dict[str, Any]],
+    insertions_by_line: dict[int, dict[str, list[dict[str, Any]]]] | None = None,
+    allow_partial: bool = False,
+) -> tuple[str, list[str]]:
     blockers: list[str] = []
     clusters = parse_formal_clusters(source_text)
     output: list[str] = []
     cursor = 0
+    insertions_by_line = insertions_by_line or {}
     for cluster in clusters:
         replacement = replacements_by_line.get(cluster.line)
-        if not replacement:
+        bucket = insertions_by_line.get(cluster.line, {})
+        if not replacement and not bucket.get("remarks") and not bucket.get("labels"):
             continue
-        if not replacement["validated"]:
+        if replacement and not replacement["validated"]:
             blockers.append(f"{replacement['request_id']} has replacement_latex but did not validate.")
             continue
         output.append(source_text[cursor:cluster.start])
-        output.append(replacement["replacement_latex"])
-        cursor = cluster.end
+        if replacement:
+            output.append(replacement["replacement_latex"])
+            cursor = cluster.end
+        else:
+            segment = source_text[cluster.start:cluster.end]
+            for label_item in bucket.get("labels", []):
+                segment, blocker = insert_label_into_segment(segment, cluster, label_item["latex"])
+                if blocker:
+                    blockers.append(blocker)
+            output.append(segment)
+            remarks = sorted(bucket.get("remarks", []), key=remark_order_key)
+            if remarks:
+                output.append("\n\n")
+                output.append("\n\n".join(item["latex"] for item in remarks))
+                output.append("\n")
+            cursor = cluster.end
     output.append(source_text[cursor:])
     return "".join(output), blockers
 
@@ -554,6 +718,8 @@ def process_requests_file(
     init_stubs: bool,
     overwrite_stubs: bool,
     assemble: bool,
+    deterministic_fill: bool,
+    allow_partial_assembly: bool,
 ) -> dict[str, Any]:
     requests_doc = load_json(requests_path)
     generated_path = generated_path_for(requests_path)
@@ -565,15 +731,18 @@ def process_requests_file(
     else:
         generated_doc = make_generated_stub(requests_path, requests_doc, root)
 
+    deterministic_filled = apply_deterministic_fills(generated_doc) if deterministic_fill else 0
     counts = validate_generated_doc(generated_doc, predicate_names)
     write_json(generated_path, generated_doc)
 
     source_file = root / requests_doc["file"]
     source_text = source_file.read_text(encoding="utf-8", errors="replace")
     replacements = group_replacements(generated_doc)
+    insertions = group_insertions(generated_doc)
     blockers: list[str] = []
     assembled_path = assembled_tex_path_for(requests_path)
     wrote_assembled = False
+    draft_validation: dict[str, Any] | None = None
     if assemble:
         request_count = len(requests_doc.get("requests", []))
         if request_count == 0:
@@ -598,13 +767,21 @@ def process_requests_file(
             for entry in generated_doc.get("entries", [])
             if entry.get("validation", {}).get("status") not in {"validated", "superseded"}
         ]
-        if pending:
+        if pending and not allow_partial_assembly:
             blockers.extend(f"{request_id} is not validated." for request_id in pending)
-        if not replacements:
-            blockers.append("No validated replacement_latex blocks are available.")
-        assembled_text, assembly_blockers = assemble_text(source_text, replacements)
+        if not replacements and not insertions:
+            blockers.append("No validated replacements or insertions are available.")
+        assembled_text, assembly_blockers = assemble_text(
+            source_text,
+            replacements,
+            insertions,
+            allow_partial=allow_partial_assembly,
+        )
         blockers.extend(assembly_blockers)
-        if not blockers:
+        draft_validation = validate_source_text(assembled_text, predicate_names)
+        if draft_validation["status"] != "valid" and not allow_partial_assembly:
+            blockers.append("Assembled draft did not pass end-to-end deterministic validation.")
+        if not blockers or allow_partial_assembly:
             assembled_path.write_text(assembled_text, encoding="utf-8")
             wrote_assembled = True
 
@@ -616,10 +793,14 @@ def process_requests_file(
         "assembled_file": str(assembled_path.relative_to(root)).replace("\\", "/"),
         "request_count": len(requests_doc.get("requests", [])),
         "validation_counts": counts,
+        "deterministic_filled": deterministic_filled,
         "replacement_count": len(replacements),
+        "insertion_count": sum(len(v.get("labels", [])) + len(v.get("remarks", [])) for v in insertions.values()),
         "assembly_requested": assemble,
+        "partial_assembly_allowed": allow_partial_assembly,
         "assembled_written": wrote_assembled,
         "blockers": blockers,
+        "draft_validation": draft_validation,
     }
     write_json(assembly_report_path_for(requests_path), report)
     return report
@@ -633,6 +814,16 @@ def main() -> int:
     parser.add_argument("--init-stubs", action="store_true", help="Create or sync .generated.json stubs.")
     parser.add_argument("--overwrite-stubs", action="store_true", help="Recreate generated stubs from requests.")
     parser.add_argument("--assemble", action="store_true", help="Write .assembled.tmp.tex when all outputs validate.")
+    parser.add_argument(
+        "--deterministic-fill",
+        action="store_true",
+        help="Fill safe deterministic outputs such as missing labels and No local dependencies.",
+    )
+    parser.add_argument(
+        "--allow-partial-assembly",
+        action="store_true",
+        help="Write approval drafts even when AI/non-deterministic requests remain pending; reports list remaining validation issues.",
+    )
     parser.add_argument(
         "--tmp-dir",
         default=str(DEFAULT_TMP_DIR),
@@ -659,6 +850,8 @@ def main() -> int:
             init_stubs=args.init_stubs,
             overwrite_stubs=args.overwrite_stubs,
             assemble=args.assemble,
+            deterministic_fill=args.deterministic_fill,
+            allow_partial_assembly=args.allow_partial_assembly,
         )
         for path in files
     ]
@@ -669,9 +862,15 @@ def main() -> int:
         "files_blocked": sum(1 for report in reports if report["blockers"]),
         "assembled_written": sum(1 for report in reports if report["assembled_written"]),
         "total_requests": sum(report["request_count"] for report in reports),
+        "deterministic_filled": sum(report.get("deterministic_filled", 0) for report in reports),
+        "insertion_count": sum(report.get("insertion_count", 0) for report in reports),
         "validation_counts": {
             status: sum(report["validation_counts"].get(status, 0) for report in reports)
             for status in ("pending", "validated", "invalid", "superseded")
+        },
+        "draft_validation_counts": {
+            status: sum(1 for report in reports if (report.get("draft_validation") or {}).get("status") == status)
+            for status in ("valid", "invalid")
         },
         "files": reports,
     }

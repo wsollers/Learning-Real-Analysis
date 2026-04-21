@@ -259,6 +259,13 @@ def rule_ids_for_violation(rule_name: str) -> list[str]:
     return []
 
 
+def slugify_title(title: str, fallback: str) -> str:
+    text = title or fallback
+    text = re.sub(r"\\[A-Za-z]+\*?(?:\[[^\]]*\])?(?:\{([^{}]*)\})?", r"\1", text)
+    text = re.sub(r"[^A-Za-z0-9]+", "-", text).strip("-").lower()
+    return text or "unnamed"
+
+
 def rule_ids_for_missing_heading(heading: str) -> list[str]:
     if "Standard quantified statement" in heading:
         return ["logical_blocks.standard_quantified_statement"]
@@ -563,12 +570,29 @@ def audit_file(
         remark_headings = [remark.heading for remark in block.remarks]
 
         if not block.label:
+            suggested_label = LABEL_PREFIX.get(block.env, "") + slugify_title(block.title, f"{path.stem}-{i}")
             add_violation(
                 block,
                 "Label discipline - missing label",
                 "ERROR",
                 "Formal environment has no label.",
                 block.body,
+            )
+            requests.append(
+                {
+                    "id": f"{block_id}:label",
+                    "action": "add_missing_label",
+                    "file": str(path.relative_to(root)).replace("\\", "/"),
+                    "line": block.line,
+                    "env": block.env,
+                    "title": block.title,
+                    "label": "",
+                    "suggested_label": suggested_label,
+                    "source": block.body.strip(),
+                    "rule_ids": ["labels.required"],
+                    "prompt_key": "add_missing_label",
+                    "deterministic": True,
+                }
             )
         elif not block.label.startswith(LABEL_PREFIX.get(block.env, "")):
             add_violation(

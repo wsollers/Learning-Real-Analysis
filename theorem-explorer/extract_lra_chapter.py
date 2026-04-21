@@ -60,6 +60,7 @@ INPUT_RE = re.compile(r"\\(?:input|include)\{([^{}]+)\}")
 SECTION_RE = re.compile(r"\\(?:section|subsection|subsubsection)\{([^{}]+)\}")
 STRIP_CMD_RE = re.compile(r"\\[A-Za-z@]+\*?(?:\[[^\]]*\])?(?:\{[^{}]*\})?")
 WHITESPACE_RE = re.compile(r"\s+")
+HTML_LIST_TAG_RE = re.compile(r"</?(?:ul|ol|li)\b[^>]*>", re.IGNORECASE)
 
 
 @dataclass(slots=True)
@@ -133,6 +134,27 @@ def strip_comments_keep_length(text: str) -> str:
     return "".join(out)
 
 
+def skip_optional_arg(text: str, pos: int) -> int:
+    i = pos
+    n = len(text)
+    while i < n and text[i].isspace():
+        i += 1
+    if i >= n or text[i] != "[":
+        return pos
+    depth = 0
+    i += 1
+    while i < n:
+        ch = text[i]
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            if depth == 0:
+                return i + 1
+            depth -= 1
+        i += 1
+    return pos
+
+
 def parse_env_tree(text: str) -> list[EnvBlock]:
     masked = strip_comments_keep_length(text)
     stack: list[tuple[str, int, int, int]] = []  # env_name, token_start, token_end, content_start
@@ -140,7 +162,7 @@ def parse_env_tree(text: str) -> list[EnvBlock]:
     for m in BEGIN_END_RE.finditer(masked):
         kind, name = m.group(1), m.group(2)
         if kind == "begin":
-            stack.append((name, m.start(), m.end(), m.end()))
+            stack.append((name, m.start(), m.end(), skip_optional_arg(masked, m.end())))
         else:
             for idx in range(len(stack) - 1, -1, -1):
                 if stack[idx][0] == name:
@@ -194,12 +216,71 @@ def extract_optional_arg(text: str, pos: int) -> tuple[str, int]:
     return "", pos
 
 
+def read_braced_arg(text: str, pos: int) -> tuple[str, int] | None:
+    i = pos
+    n = len(text)
+    while i < n and text[i].isspace():
+        i += 1
+    if i >= n or text[i] != "{":
+        return None
+    depth = 0
+    start = i + 1
+    i += 1
+    while i < n:
+        ch = text[i]
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            if depth == 0:
+                return text[start:i], i + 1
+            depth -= 1
+        i += 1
+    return None
+
+
+def replace_two_arg_command(text: str, command: str, arg_index: int) -> str:
+    needle = "\\" + command
+    out: list[str] = []
+    i = 0
+    while True:
+        j = text.find(needle, i)
+        if j < 0:
+            out.append(text[i:])
+            break
+        first = read_braced_arg(text, j + len(needle))
+        if not first:
+            out.append(text[i : j + len(needle)])
+            i = j + len(needle)
+            continue
+        second = read_braced_arg(text, first[1])
+        if not second:
+            out.append(text[i : first[1]])
+            i = first[1]
+            continue
+        out.append(text[i:j])
+        out.append(first[0] if arg_index == 0 else second[0])
+        i = second[1]
+    return "".join(out)
+
+
+def clean_title(title: str) -> str:
+    t = strip_comments_keep_length(title).strip()
+    t = replace_two_arg_command(t, "texorpdfstring", 1)
+    t = re.sub(r"\\hyperref\[[^\]]+\]\{([^{}]*)\}", r"\1", t)
+    t = re.sub(r"\\(?:textbf|textit|emph|mathrm|mathsf|small)\{([^{}]*)\}", r"\1", t)
+    t = STRIP_CMD_RE.sub(r" ", t)
+    t = t.replace("{", " ").replace("}", " ")
+    t = WHITESPACE_RE.sub(" ", t).strip()
+    return t
+
+
 def infer_kind(env_name: str) -> str:
     return env_name.replace("*", "").capitalize()
 
 
 def clean_preview(latex: str, limit: int = 220) -> str:
     s = SECTION_RE.sub(" ", latex)
+    s = HTML_LIST_TAG_RE.sub(" ", s)
     s = STRIP_CMD_RE.sub(" ", s)
     s = s.replace("{", " ").replace("}", " ")
     s = WHITESPACE_RE.sub(" ", s).strip()
@@ -339,6 +420,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
             raw = env.raw(text)
             body = env.content(text)
             title, _ = extract_optional_arg(text, env.begin_end)
+            cleaned_title = clean_title(title)
             labels = LABEL_RE.findall(raw)
             label = labels[0] if labels else ""
             kind = infer_kind(env.name)
@@ -351,7 +433,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
                 id=item_id,
                 kind=kind,
                 env_name=env.name,
-                title=title.strip(),
+                title=cleaned_title,
                 label=label,
                 source_path=relative_posix(path, chapter_root),
                 chapter=chapter_name,
