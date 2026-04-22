@@ -88,6 +88,7 @@ def call(
     user: str,
     *,
     expect_json: bool = True,
+    validate_report: bool = True,
 ) -> dict | str:
     """
     Sends a single request to the API.
@@ -111,7 +112,23 @@ def call(
     if not expect_json:
         return raw
 
-    return _parse_json_response(raw)
+    return _parse_json_response(raw, validate_report=validate_report)
+
+
+def test_connection() -> str:
+    """
+    Sends a tiny provider request to verify API key, package, URL, model,
+    and network plumbing before a long audit run.
+    """
+    raw = call(
+        "You are a connectivity test for an automated CLI. Reply with exactly OK.",
+        "Reply with exactly OK.",
+        expect_json=False,
+    )
+    response = raw.strip()
+    if not response:
+        raise RuntimeError("Provider returned an empty response.")
+    return response
 
 
 def _call_anthropic(system: str, user: str) -> str:
@@ -137,7 +154,19 @@ def _call_codex(system: str, user: str) -> str:
     return response.output_text
 
 
-def _parse_json_response(raw: str) -> dict:
+def _audit_report_schema_prompt() -> str:
+    schema = json.dumps(audit_report_schema(), indent=2)
+    return (
+        "\n\n## Required JSON Output Schema\n\n"
+        "Return exactly one JSON object and no surrounding prose. "
+        "The object must conform to this schema. The top-level object must "
+        "include audit_type, artifact_type, label, summary, checks, and "
+        "violations.\n\n"
+        f"```json\n{schema}\n```"
+    )
+
+
+def _parse_json_response(raw: str, *, validate_report: bool = True) -> dict:
     """
     Parses a JSON response from the model.
     Strips markdown code fences if present.
@@ -151,20 +180,30 @@ def _parse_json_response(raw: str) -> dict:
         cleaned = re.sub(r"\s*```$", "", cleaned)
         cleaned = cleaned.strip()
 
+    if not cleaned.startswith("{"):
+        match = re.search(r"\{.*\}", cleaned, flags=re.DOTALL)
+        if match:
+            cleaned = match.group(0)
+
     try:
         parsed = json.loads(cleaned)
     except json.JSONDecodeError as e:
-        raise RuntimeError(
-            f"Model returned non-JSON response.\n"
-            f"Parse error: {e}\n"
-            f"Raw response (first 500 chars):\n{raw[:500]}"
-        )
+        repaired = re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", cleaned)
+        try:
+            parsed = json.loads(repaired)
+        except json.JSONDecodeError:
+            raise RuntimeError(
+                f"Model returned non-JSON response.\n"
+                f"Parse error: {e}\n"
+                f"Raw response (first 500 chars):\n{raw[:500]}"
+            ) from e
 
-    _validate_audit_report(parsed)
+    if validate_report:
+        validate_audit_report(parsed)
     return parsed
 
 
-def _validate_audit_report(report: dict) -> None:
+def validate_audit_report(report: dict) -> None:
     """
     Validates that the parsed JSON has the required top-level fields
     of the audit report schema. Not a full JSON Schema validation —
@@ -175,7 +214,8 @@ def _validate_audit_report(report: dict) -> None:
     if missing:
         raise RuntimeError(
             f"Model response is missing required audit report fields: {missing}\n"
-            f"Report keys present: {list(report.keys())}"
+            f"Report keys present: {list(report.keys())}\n"
+            f"Report preview: {json.dumps(report, ensure_ascii=False)[:1000]}"
         )
 
 
@@ -195,6 +235,7 @@ def assemble_audit_system_prompt(
     Concatenates base prompt + registry + matrix row in that order.
     """
     parts = [base_prompt]
+    parts.append(_audit_report_schema_prompt())
 
     if artifact_type:
         parts.append(f"\n\n## Artifact Type\n\n{artifact_type}")
@@ -243,6 +284,8 @@ def assemble_generate_system_prompt(
     notation_yaml: str = "",
     relations_yaml: str = "",
     chapter_registry: str = "",
+    formal_label_index: str = "",
+    candidate_label_context: str = "",
 ) -> str:
     """
     Assembles the system prompt for a generation call.
@@ -275,5 +318,11 @@ def assemble_generate_system_prompt(
 
     if chapter_registry:
         parts.append(f"\n\n## Chapter Registry\n\n```yaml\n{chapter_registry}\n```")
+
+    if formal_label_index:
+        parts.append(f"\n\n## Formal Mathematical Label Index\n\n```json\n{formal_label_index}\n```")
+
+    if candidate_label_context:
+        parts.append(f"\n\n## Candidate Existing Labels\n\n{candidate_label_context}")
 
     return "\n".join(parts)

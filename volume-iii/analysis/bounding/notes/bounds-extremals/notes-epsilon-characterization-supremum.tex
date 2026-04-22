@@ -12,85 +12,82 @@
 % House style
 % =========================================================
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Epsilon Characterization of the Supremum)}},
+  title={\small\textbf{Definition (Epsilon Characterization of Supremum)}},
   fonttitle=\small\bfseries]
-\begin{definition}
+\begin{definition}[Epsilon Characterization of Supremum]
 \label{def:epsilon-characterization-of-supremum}
-Let $A \subseteq \mathbb{R}$ and let $s \in \mathbb{R}$. The element $s$ is said to satisfy
-the \emph{epsilon characterization of the supremum of $A$} if $s$ is an upper bound of $A$
-and for every $\varepsilon > 0$ there exists $a \in A$ such that
-\[
-s-\varepsilon < a.
-\]
+Let $A\subseteq\mathbb{R}$ and let $s\in\mathbb{R}$. The element $s$ satisfies the \emph{epsilon characterization of the supremum} of $A$ if and only if $s$ is an upper bound of $A$ and for every $\varepsilon>0$ there exists $a\in A$ such that $s-\varepsilon<a$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&s \text{ satisfies the epsilon characterization of } \sup A \\
-&\quad\Longleftrightarrow\quad
- \bigl(\forall x \in A \;(x \le s)\bigr) \\
-&\qquad\qquad\land\;
- \bigl(\forall \varepsilon > 0 \;\exists a \in A \;(s-\varepsilon < a)\bigr).
+&\text{Let } A\subseteq\mathbb{R} \text{ and } s\in\mathbb{R}.\\
+&s \text{ satisfies the epsilon characterization of } \sup A\\
+&\Longleftrightarrow
+\Bigl[\forall x\in A\;(x\le s)\Bigr]
+\land
+\Bigl[\forall \varepsilon>0\;\exists a\in A\;(s-\varepsilon<a)\Bigr].
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-\begin{aligned}
-&EpsilonCharacterizationOfSupremum(s,A) \\
-&\quad\Longleftrightarrow\quad
- \underbrace{UpperBound(s,A)}_{\text{$s$ is an upper bound of $A$}} \\
-&\qquad\qquad\land\;
- \underbrace{\forall \varepsilon > 0 \;\exists a \in A \;(s-\varepsilon < a)}_{\text{$A$ comes arbitrarily close to $s$ from below}}.
-\end{aligned}
+\operatorname{EpsilonSupremum}(s,A)\coloneqq
+\operatorname{UpperBound}(s,A)
+\land
+\forall \varepsilon>0\;\exists a\in A\;(s-\varepsilon<a).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&s \text{ does not satisfy the epsilon characterization of } \sup A \\
-&\quad\Longleftrightarrow\quad
- \bigl(\exists x \in A \;(s < x)\bigr) \\
-&\qquad\qquad\lor\;
- \bigl(\exists \varepsilon_0 > 0 \;\forall a \in A \;(a \le s-\varepsilon_0)\bigr).
+&\text{Let } A\subseteq\mathbb{R} \text{ and } s\in\mathbb{R}.\\
+&s \text{ does not satisfy the epsilon characterization of } \sup A\\
+&\Longleftrightarrow
+\Bigl[\exists x\in A\;(s<x)\Bigr]
+\lor
+\Bigl[\exists \varepsilon_0>0\;\forall a\in A\;(a\le s-\varepsilon_0)\Bigr].
 \end{aligned}
 \]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{EpsilonSupremum}(s,A)\Longleftrightarrow
+\Bigl[\exists x\in A\;(s<x)\Bigr]
+\lor
+\Bigl[\exists \varepsilon_0>0\;\forall a\in A\;(a\le s-\varepsilon_0)\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The characterization fails either because $s$ is not an upper bound of $A$, or because $A$ remains at least some positive distance below $s$.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
-\begin{aligned}
-&s \text{ does not satisfy the epsilon characterization of } \sup A \\
-&\quad\Longleftrightarrow\quad
- \underbrace{\exists x \in A \;(s < x)}_{\text{$s$ fails to be an upper bound}} \\
-&\qquad\qquad\lor\;
- \underbrace{\exists \varepsilon_0 > 0 \;\forall a \in A \;(a \le s-\varepsilon_0)}_{\text{$A$ stays a positive distance below $s$}}.
-\end{aligned}
+\neg\operatorname{EpsilonSupremum}(s,A)
+=
+\underbrace{\exists x\in A\;(s<x)}_{\text{upper-bound failure}}
+\;\lor\;
+\underbrace{\exists \varepsilon_0>0\;\forall a\in A\;(a\le s-\varepsilon_0)}_{\text{positive gap below }s}.
 \]
 \end{remark*}
 
-\begin{remark*}[Failure modes]\hfill
-\begin{itemize}
-  \item \textbf{Failure to be an upper bound.} There exists an element of $A$ strictly larger than $s$.
-  \item \textbf{Failure of approximation from below.} There exists a positive gap below $s$ that contains no points of $A$ close enough to reach $s$.
-\end{itemize}
-\end{remark*}
-
 \begin{remark*}[Interpretation]
-This characterization says that $s$ sits above all elements of $A$, but not with any positive
-slack. No matter how small a positive distance $\varepsilon$ is chosen, some point of $A$
-lies within $\varepsilon$ of $s$ from below.
-
-The important point is that the second condition rules out the possibility that $s$ is merely
-an upper bound that sits strictly above the set. It forces $A$ to press upward arbitrarily
-close to $s$.
+This condition says that $s$ caps the set from above while points of $A$ approach $s$ from below at every positive scale. The upper-bound clause prevents $A$ from crossing above $s$, and the epsilon clause prevents $s$ from floating strictly above the set. Geometrically, $s$ is a ceiling that the set presses against arbitrarily closely.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:upper-bound]{Definition~\ref*{def:upper-bound}}.
+\end{remark*}
+
 
 
 
@@ -112,85 +109,82 @@ close to $s$.
 
 \input{volume-iii/analysis/bounding/notes/bounds-extremals/figure-epsilon-characterization-supremum}
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Epsilon Characterization of the Infimum)}},
+  title={\small\textbf{Definition (Epsilon Characterization of Infimum)}},
   fonttitle=\small\bfseries]
-\begin{definition}
+\begin{definition}[Epsilon Characterization of Infimum]
 \label{def:epsilon-characterization-of-infimum}
-Let $A \subseteq \mathbb{R}$ and let $t \in \mathbb{R}$. The element $t$ is said to satisfy
-the \emph{epsilon characterization of the infimum of $A$} if $t$ is a lower bound of $A$
-and for every $\varepsilon > 0$ there exists $a \in A$ such that
-\[
-a < t+\varepsilon.
-\]
+Let $A\subseteq\mathbb{R}$ and let $t\in\mathbb{R}$. The element $t$ satisfies the \emph{epsilon characterization of the infimum} of $A$ if and only if $t$ is a lower bound of $A$ and for every $\varepsilon>0$ there exists $a\in A$ such that $a<t+\varepsilon$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&t \text{ satisfies the epsilon characterization of } \inf A \\
-&\quad\Longleftrightarrow\quad
- \bigl(\forall x \in A \;(t \le x)\bigr) \\
-&\qquad\qquad\land\;
- \bigl(\forall \varepsilon > 0 \;\exists a \in A \;(a < t+\varepsilon)\bigr).
+&\text{Let } A\subseteq\mathbb{R} \text{ and } t\in\mathbb{R}.\\
+&t \text{ satisfies the epsilon characterization of } \inf A\\
+&\Longleftrightarrow
+\Bigl[\forall x\in A\;(t\le x)\Bigr]
+\land
+\Bigl[\forall \varepsilon>0\;\exists a\in A\;(a<t+\varepsilon)\Bigr].
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-\begin{aligned}
-&EpsilonCharacterizationOfInfimum(t,A) \\
-&\quad\Longleftrightarrow\quad
- \underbrace{\operatorname{LowerBound}(t,A)}_{\text{$t$ is a lower bound of $A$}} \\
-&\qquad\qquad\land\;
- \underbrace{\forall \varepsilon > 0 \;\exists a \in A \;(a < t+\varepsilon)}_{\text{$A$ comes arbitrarily close to $t$ from above}}.
-\end{aligned}
+\operatorname{EpsilonInfimum}(t,A)\coloneqq
+\operatorname{LowerBound}(t,A)
+\land
+\forall \varepsilon>0\;\exists a\in A\;(a<t+\varepsilon).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&t \text{ does not satisfy the epsilon characterization of } \inf A \\
-&\quad\Longleftrightarrow\quad
- \bigl(\exists x \in A \;(x < t)\bigr) \\
-&\qquad\qquad\lor\;
- \bigl(\exists \varepsilon_0 > 0 \;\forall a \in A \;(t+\varepsilon_0 \le a)\bigr).
+&\text{Let } A\subseteq\mathbb{R} \text{ and } t\in\mathbb{R}.\\
+&t \text{ does not satisfy the epsilon characterization of } \inf A\\
+&\Longleftrightarrow
+\Bigl[\exists x\in A\;(x<t)\Bigr]
+\lor
+\Bigl[\exists \varepsilon_0>0\;\forall a\in A\;(t+\varepsilon_0\le a)\Bigr].
 \end{aligned}
 \]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{EpsilonInfimum}(t,A)\Longleftrightarrow
+\Bigl[\exists x\in A\;(x<t)\Bigr]
+\lor
+\Bigl[\exists \varepsilon_0>0\;\forall a\in A\;(t+\varepsilon_0\le a)\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The characterization fails either because $t$ is not a lower bound of $A$, or because $A$ remains at least some positive distance above $t$.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
-\begin{aligned}
-&t \text{ does not satisfy the epsilon characterization of } \inf A \\
-&\quad\Longleftrightarrow\quad
- \underbrace{\exists x \in A \;(x < t)}_{\text{$t$ fails to be a lower bound}} \\
-&\qquad\qquad\lor\;
- \underbrace{\exists \varepsilon_0 > 0 \;\forall a \in A \;(t+\varepsilon_0 \le a)}_{\text{$A$ stays a positive distance above $t$}}.
-\end{aligned}
+\neg\operatorname{EpsilonInfimum}(t,A)
+=
+\underbrace{\exists x\in A\;(x<t)}_{\text{lower-bound failure}}
+\;\lor\;
+\underbrace{\exists \varepsilon_0>0\;\forall a\in A\;(t+\varepsilon_0\le a)}_{\text{positive gap above }t}.
 \]
 \end{remark*}
 
-\begin{remark*}[Failure modes]\hfill
-\begin{itemize}
-  \item \textbf{Failure to be a lower bound.} There exists an element of $A$ strictly smaller than $t$.
-  \item \textbf{Failure of approximation from above.} There exists a positive gap above $t$ that contains no points of $A$ close enough to reach $t$.
-\end{itemize}
-\end{remark*}
-
 \begin{remark*}[Interpretation]
-This characterization says that $t$ sits below all elements of $A$, but not with any positive
-slack. No matter how small a positive distance $\varepsilon$ is chosen, some point of $A$
-lies within $\varepsilon$ of $t$ from above.
-
-The important point is that the second condition rules out the possibility that $t$ is merely
-a lower bound that sits strictly below the set. It forces $A$ to press downward arbitrarily
-close to $t$.
+This condition says that $t$ sits below the set while points of $A$ approach $t$ from above at every positive scale. The lower-bound clause prevents $A$ from crossing below $t$, and the epsilon clause prevents $t$ from sitting strictly below the set with a positive gap. Geometrically, $t$ is a floor that the set presses against arbitrarily closely from above.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lower-bound]{Definition~\ref*{def:lower-bound}}.
+\end{remark*}
+
 
 
 

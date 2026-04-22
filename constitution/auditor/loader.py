@@ -11,14 +11,7 @@ from pathlib import Path
 
 import yaml
 
-from auditor.config import (
-    BLOCK_REGISTRY_PATH,
-    ARTIFACT_MATRIX_PATH,
-    FILE_SCHEMA_PATH,
-    AUDIT_REPORT_SCHEMA_PATH,
-    CANONICAL_SOURCES,
-    PROMPTS,
-)
+from auditor import config
 
 
 # ---------------------------------------------------------------------------
@@ -55,23 +48,23 @@ def _load_json(path: Path) -> dict:
 
 def block_registry() -> dict:
     """Returns the full block registry as a dict keyed by block id."""
-    raw = _load_yaml(BLOCK_REGISTRY_PATH)
+    raw = _load_yaml(config.BLOCK_REGISTRY_PATH)
     return {block["id"]: block for block in raw["blocks"]}
 
 
 def artifact_matrix() -> dict:
     """Returns the artifact matrix as a dict keyed by block_id → {artifact_type: requirement}."""
-    return _load_yaml(ARTIFACT_MATRIX_PATH)["matrix"]
+    return _load_yaml(config.ARTIFACT_MATRIX_PATH)["matrix"]
 
 
 def file_schema() -> dict:
     """Returns the full file schema dict."""
-    return _load_yaml(FILE_SCHEMA_PATH)
+    return _load_yaml(config.FILE_SCHEMA_PATH)
 
 
 def audit_report_schema() -> dict:
     """Returns the JSON schema for audit reports."""
-    return _load_json(AUDIT_REPORT_SCHEMA_PATH)
+    return _load_json(config.AUDIT_REPORT_SCHEMA_PATH)
 
 
 def prompt(name: str) -> str:
@@ -80,7 +73,7 @@ def prompt(name: str) -> str:
     name must be a key from config.PROMPTS.
     Raises KeyError if name is unknown, FileNotFoundError if file is missing.
     """
-    path = PROMPTS[name]
+    path = config.PROMPTS[name]
     return _load_text(path)
 
 
@@ -89,7 +82,7 @@ def canonical_source(name: str) -> str:
     Returns the raw text of a canonical source file (predicates, notation, relations).
     Returns empty string with a warning if the file does not exist.
     """
-    path = CANONICAL_SOURCES[name]
+    path = config.CANONICAL_SOURCES[name]
     if not path.exists():
         return f"# WARNING: {name}.yaml not found at {path}\n"
     return _load_text(path)
@@ -117,7 +110,7 @@ def registry_entry(block_id: str) -> dict:
 
 def all_block_ids() -> list[str]:
     """Returns block ids in registry order."""
-    raw = _load_yaml(BLOCK_REGISTRY_PATH)
+    raw = _load_yaml(config.BLOCK_REGISTRY_PATH)
     return [block["id"] for block in raw["blocks"]]
 
 

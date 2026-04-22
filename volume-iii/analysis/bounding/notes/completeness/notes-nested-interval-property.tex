@@ -12,108 +12,90 @@
 
 
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Nested Interval Property)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Nested Interval Property]
 \label{thm:nested-interval-theorem}
-Let $(I_n)$ be a sequence of closed intervals in $\mathbb{R}$. If $(I_n)$ is a nested
-interval sequence, then
+Let $(I_n)$ be a sequence of nonempty closed intervals in $\mathbb{R}$. If $I_{n+1}\subseteq I_n$ for every $n\in\mathbb{N}$, then
 \[
-\bigcap_{n=1}^{\infty} I_n \neq \varnothing.
+  \bigcap_{n=1}^{\infty} I_n\neq\varnothing.
 \]
+
 \smallskip
 \noindent
 \hyperref[prf:nested-interval-theorem]{\textit{Go to proof.}}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\forall (a_n) \subseteq \mathbb{R}\; \forall (b_n) \subseteq \mathbb{R}\;
-\Biggl[
-\Bigl(\forall n \in \mathbb{N}\; (a_n \le b_n)\Bigr)
-\\
-&\qquad\land
-\Bigl(\forall n \in \mathbb{N}\; (I_n = [a_n,b_n])\Bigr)
+&\forall (a_n)\subseteq\mathbb{R}\;\forall (b_n)\subseteq\mathbb{R}\;\\
+&\Bigl[
+\bigl(\forall n\in\mathbb{N}\;(a_n\le b_n)\bigr)
 \land
-\Bigl(\forall n \in \mathbb{N}\; (I_{n+1} \subseteq I_n)\Bigr)
+\bigl(\forall n\in\mathbb{N}\;([a_{n+1},b_{n+1}]\subseteq [a_n,b_n])\bigr)
 \\
 &\qquad\rightarrow
-\exists x \in \mathbb{R}\; \forall n \in \mathbb{N}\; (x \in I_n)
-\Biggr].
+\exists x\in\mathbb{R}\;\forall n\in\mathbb{N}\;(x\in [a_n,b_n])
+\Bigr].
 \end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Theorem predicate reading]
+\begin{remark*}[Predicate reading]
 \[
-\forall (I_n)\;
-\Bigl[
-\underbrace{\operatorname{NestedIntervalSequence}(I_n)}_{\text{the intervals are nested}}
-\rightarrow
-\underbrace{\operatorname{NonemptySet}\!\left(\bigcap_{n=1}^{\infty} I_n\right)}_{\text{their total intersection is nonempty}}
-\Bigr].
+\operatorname{NestedClosedIntervals}(I_n)\Longrightarrow
+\operatorname{NonemptyIntersection}\!\left(\bigcap_{n=1}^{\infty}I_n\right).
 \]
-In this theorem, each $I_n$ is additionally assumed to be a closed interval in $\mathbb{R}$.
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&\exists (a_n) \subseteq \mathbb{R}\; \exists (b_n) \subseteq \mathbb{R}\;
-\Biggl[
-\Bigl(\forall n \in \mathbb{N}\; (a_n \le b_n)\Bigr)
+&\exists (a_n)\subseteq\mathbb{R}\;\exists (b_n)\subseteq\mathbb{R}\;\\
+&\Bigl[
+\bigl(\forall n\in\mathbb{N}\;(a_n\le b_n)\bigr)
+\land
+\bigl(\forall n\in\mathbb{N}\;([a_{n+1},b_{n+1}]\subseteq [a_n,b_n])\bigr)
 \\
 &\qquad\land
-\Bigl(\forall n \in \mathbb{N}\; (I_n = [a_n,b_n])\Bigr)
-\land
-\Bigl(\forall n \in \mathbb{N}\; (I_{n+1} \subseteq I_n)\Bigr)
-\\
-&\qquad\land
-\forall x \in \mathbb{R}\; \exists n \in \mathbb{N}\; (x \notin I_n)
-\Biggr].
-\end{aligned}
-\]
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-\[
-\exists (I_n)\;
-\Bigl[
-\underbrace{\operatorname{NestedIntervalSequence}(I_n)}_{\text{the intervals remain nested}}
-\land
-\underbrace{\neg \operatorname{NonemptySet}\!\left(\bigcap_{n=1}^{\infty} I_n\right)}_{\text{the total intersection is empty}}
+\forall x\in\mathbb{R}\;\exists n\in\mathbb{N}\;(x\notin [a_n,b_n])
 \Bigr].
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-\exists (I_n)\;
-\Bigl[
-\operatorname{NestedIntervalSequence}(I_n)
+\operatorname{NestedClosedIntervals}(I_n)
 \land
-\neg \operatorname{NonemptySet}\!\left(\bigcap_{n=1}^{\infty} I_n\right)
-\Bigr].
+\neg\operatorname{NonemptyIntersection}\!\left(\bigcap_{n=1}^{\infty}I_n\right).
 \]
-Equivalently, there exists a nested sequence of closed intervals in $\mathbb{R}$ whose total
-intersection is empty.
 \end{remark*}
 
-\begin{remark*}[Failure modes]\hfill
-\begin{itemize}
-  \item \textbf{Failure of common containment.} The intervals remain nested, but no single real number lies in all of them.
-  \item \textbf{Failure of completeness behavior.} The nesting construction keeps restricting location, yet the real line would still fail to retain a common point.
-\end{itemize}
+\begin{remark*}[Failure modes]
+The theorem fails when a nested sequence of nonempty closed real intervals has no common real point.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\operatorname{NestedClosedIntervals}(I_n)}_{\text{closed intervals remain nested}}
+\;\land\;
+\underbrace{\forall x\in\mathbb{R}\;\exists n\in\mathbb{N}\;(x\notin I_n)}_{\text{no real point lies in every interval}}.
+\]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The Nested Interval Property says that a decreasing sequence of closed intervals in
-$\mathbb{R}$ cannot shrink in such a way that every point is eventually lost. If each interval
-lies inside the previous one, then at least one real number remains in all of them.
-
-The important point is that nesting prevents the intervals from wandering apart, while
-closedness prevents limiting endpoint behavior from dropping the common point out of the
-intersection.
+Nested closed intervals cannot keep shrinking or relocating in a way that loses every real point. Nesting keeps the intervals aligned, nonemptiness prevents trivial collapse at each stage, and completeness supplies a real point that survives all stages at once.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[ax:completeness-of-reals]{Axiom~\ref*{ax:completeness-of-reals}}.
+\end{remark*}
+
 
 
 \input{volume-iii/analysis/bounding/notes/completeness/figure-nested-intervals}

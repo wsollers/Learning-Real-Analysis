@@ -266,16 +266,21 @@ def scan_result_to_yaml(
     Converts a ScanResult to a chapter.yaml string.
 
     If existing_yaml is provided, preserves top-level metadata fields
-    (display_title, volume, status, dependencies) from the existing file,
+    (subject/display title/volume/status/dependencies/path) from the existing file,
     only replacing environments and proof_files sections.
     """
     doc: dict = {}
 
     if existing_yaml:
         # Preserve metadata
-        for key in ("subject", "display_title", "volume", "status", "dependencies"):
+        doc["subject"] = existing_yaml.get("subject") or existing_yaml.get("chapter") or result.subject
+        for key in ("display_title", "volume", "status", "dependencies", "path"):
             if key in existing_yaml:
                 doc[key] = existing_yaml[key]
+        doc.setdefault("display_title", "")
+        doc.setdefault("volume", "")
+        doc.setdefault("status", "in-progress")
+        doc.setdefault("dependencies", {"prior": "", "next": ""})
     else:
         doc["subject"] = result.subject
         doc["display_title"] = ""   # caller fills in

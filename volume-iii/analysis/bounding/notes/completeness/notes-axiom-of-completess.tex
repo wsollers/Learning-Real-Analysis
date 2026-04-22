@@ -22,91 +22,101 @@ and it underlies every major theorem in analysis.
 \end{remark*}
 
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Definition (Least Upper Bound Property)}},
   fonttitle=\small\bfseries]
-\begin{definition}
+\begin{definition}[Least Upper Bound Property]
 \label{def:least-upper-bound-property}
-Let $S$ be a partially ordered set. The set $S$ is said to have the
-\emph{Least Upper Bound Property} if every nonempty subset of $S$ that is bounded
-above in $S$ has a least upper bound in $S$.
+Let $(S,\le)$ be an ordered set. The set $S$ has the \emph{Least Upper Bound Property} if and only if every nonempty subset of $S$ that is bounded above in $S$ has a supremum in $S$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&S \text{ has the Least Upper Bound Property}
-\\
-&\qquad\Longleftrightarrow\qquad
-\forall A \subseteq S\;
+&\text{Let }(S,\le)\text{ be an ordered set}.\\
+&S\text{ has the Least Upper Bound Property}\\
+&\Longleftrightarrow
+\forall A\subseteq S\;
 \Bigl[
-(A \neq \varnothing \land \exists u \in S\;\forall x \in A\;(x \le u))
-\\
-&\qquad\qquad\rightarrow
-\exists s \in S\;
-\Bigl(
-(\forall x \in A\;(x \le s))
-\land
-(\forall u \in S\;((\forall x \in A\;(x \le u)) \rightarrow s \le u))
-\Bigr)
+\bigl(A\neq\varnothing \land \exists u\in S\;\forall x\in A\;(x\le u)\bigr)
+\rightarrow
+\exists s\in S\;\operatorname{Supremum}(s,A)
 \Bigr].
 \end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Predicate statement]
+\begin{remark*}[Definition predicate reading]
 \[
-\operatorname{LeastUpperBoundProperty}(S).
-\]
-Equivalently,
-\[
-\begin{aligned}
-&\forall A\;
+\operatorname{LeastUpperBoundProperty}(S)\coloneqq
+\forall A\subseteq S\;
 \Bigl[
-(\operatorname{Subset}(A,S) \land \operatorname{NonemptySet}(A) \land \operatorname{BoundedAbove}(A))
-\\
-&\qquad\rightarrow
-\exists s \in S\; \operatorname{Supremum}(s,A)
+\bigl(A\neq\varnothing \land \exists u\in S\;\forall x\in A\;(x\le u)\bigr)
+\rightarrow
+\exists s\in S\;\operatorname{Supremum}(s,A)
 \Bigr].
-\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&S \text{ does not have the Least Upper Bound Property}
-\\
-&\qquad\Longleftrightarrow\qquad
-\exists A \subseteq S\;
+&\text{Let }(S,\le)\text{ be an ordered set}.\\
+&S\text{ does not have the Least Upper Bound Property}\\
+&\Longleftrightarrow
+\exists A\subseteq S\;
 \Bigl[
-(A \neq \varnothing \land \exists u \in S\;\forall x \in A\;(x \le u))
-\\
-&\qquad\qquad\land
-\forall s \in S\;
-\Bigl(
-(\exists x \in A\;(x > s))
-\lor
-(\exists v \in S\;((\forall x \in A\;(x \le v)) \land v < s))
-\Bigr)
+A\neq\varnothing
+\land
+\exists u\in S\;\forall x\in A\;(x\le u)
+\land
+\forall s\in S\;\neg\operatorname{Supremum}(s,A)
 \Bigr].
 \end{aligned}
 \]
-This means there exists a nonempty subset of $S$ that is bounded above in $S$ but has no
-least upper bound in $S$. The failure is not in the subset alone, but in the ambient ordered
-system $S$.
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{LeastUpperBoundProperty}(S)\Longleftrightarrow
+\exists A\subseteq S\;
+\Bigl[
+A\neq\varnothing
+\land
+\exists u\in S\;\forall x\in A\;(x\le u)
+\land
+\forall s\in S\;\neg\operatorname{Supremum}(s,A)
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The property fails when there is a nonempty subset of the ambient ordered set that has at least one upper bound but has no least upper bound inside that same ambient set.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\operatorname{LeastUpperBoundProperty}(S)
+=
+\underbrace{\exists A\subseteq S\;(A\neq\varnothing)}_{\text{nonempty witness set}}
+\;\land\;
+\underbrace{\exists u\in S\;\forall x\in A\;(x\le u)}_{\text{bounded above in }S}
+\;\land\;
+\underbrace{\forall s\in S\;\neg\operatorname{Supremum}(s,A)}_{\text{no supremum in }S}.
+\]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The Least Upper Bound Property says that whenever a nonempty subset of $S$ is bounded
-above, it has a smallest upper bound in $S$.
-
-The important point is that the issue is not in the subset alone. A bounded set can fail to
-have a least upper bound only because $S$ is missing the element that should serve as that
-bound.
+The Least Upper Bound Property says that upper-bounded nonempty subsets do not point toward missing ceiling elements. Whenever the order supplies at least one upper bound, it also supplies a smallest upper bound in the same ambient set. Failure therefore indicates a hole in the ordered structure rather than a defect in the subset alone.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:upper-bound]{Definition~\ref*{def:upper-bound}},
+\hyperref[def:supremum]{Definition~\ref*{def:supremum}}.
+\end{remark*}
+
 
 
 
@@ -116,7 +126,7 @@ bound.
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Axiom (Completeness of $\mathbb{R}$)}},
   fonttitle=\small\bfseries]
-\begin{axiom}
+\begin{axiom}[Completeness of $\mathbb{R}$]
 \label{ax:completeness-of-reals}
 The ordered field $\mathbb{R}$ has the Least Upper Bound Property.
 \end{axiom}
@@ -129,17 +139,11 @@ The ordered field $\mathbb{R}$ has the Least Upper Bound Property.
 Equivalently,
 \[
 \begin{aligned}
-&\forall A \subseteq \mathbb{R}\;
+&\forall A\subseteq\mathbb{R}\;
 \Bigl[
-(A \neq \varnothing \land \exists u \in \mathbb{R}\;\forall x \in A\;(x \le u))
-\\
-&\qquad\rightarrow
-\exists s \in \mathbb{R}\;
-\Bigl(
-(\forall x \in A\;(x \le s))
-\land
-(\forall u \in \mathbb{R}\;((\forall x \in A\;(x \le u)) \rightarrow s \le u))
-\Bigr)
+\bigl(A\neq\varnothing \land \exists u\in\mathbb{R}\;\forall x\in A\;(x\le u)\bigr)
+\rightarrow
+\exists s\in\mathbb{R}\;\operatorname{Supremum}(s,A)
 \Bigr].
 \end{aligned}
 \]
@@ -153,44 +157,16 @@ Equivalently,
 
 \begin{remark*}[Negated quantified statement]
 \[
-\neg \operatorname{LeastUpperBoundProperty}(\mathbb{R}).
-\]
-Equivalently,
-\[
 \begin{aligned}
-&\exists A \subseteq \mathbb{R}\;
+&\neg\operatorname{LeastUpperBoundProperty}(\mathbb{R})\\
+&\Longleftrightarrow
+\exists A\subseteq\mathbb{R}\;
 \Bigl[
-(A \neq \varnothing \land \exists u \in \mathbb{R}\;\forall x \in A\;(x \le u))
-\\
-&\qquad\land
-\forall s \in \mathbb{R}\;
-\neg\Bigl(
-(\forall x \in A\;(x \le s))
+A\neq\varnothing
 \land
-(\forall u \in \mathbb{R}\;((\forall x \in A\;(x \le u)) \rightarrow s \le u))
-\Bigr)
-\Bigr].
-\end{aligned}
-\]
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-\[
-\begin{aligned}
-&\neg \operatorname{LeastUpperBoundProperty}(\mathbb{R})
-\\
-&\qquad\Longleftrightarrow\qquad
-\exists A \subseteq \mathbb{R}\;
-\Bigl[
-(A \neq \varnothing \land \operatorname{BoundedAbove}(A))
-\\
-&\qquad\qquad\land
-\forall s \in \mathbb{R}\;
-\Bigl(
-\underbrace{\exists x \in A\;(s < x)}_{\text{$s$ fails to be an upper bound}}
-\;\lor\;
-\underbrace{\exists v \in \mathbb{R}\;(\operatorname{UpperBound}(v,A) \land v < s)}_{\text{$s$ fails to be the least upper bound}}
-\Bigr)
+\exists u\in\mathbb{R}\;\forall x\in A\;(x\le u)
+\land
+\forall s\in\mathbb{R}\;\neg\operatorname{Supremum}(s,A)
 \Bigr].
 \end{aligned}
 \]
@@ -198,43 +174,42 @@ Equivalently,
 
 \begin{remark*}[Negation predicate reading]
 \[
-\begin{aligned}
-&\neg \operatorname{LeastUpperBoundProperty}(\mathbb{R})
-\\
-&\qquad\Longleftrightarrow\qquad
-\exists A\;
+\neg\operatorname{LeastUpperBoundProperty}(\mathbb{R})\Longleftrightarrow
+\exists A\subseteq\mathbb{R}\;
 \Bigl[
-\operatorname{Subset}(A,\mathbb{R})
+A\neq\varnothing
 \land
-\operatorname{NonemptySet}(A)
+\exists u\in\mathbb{R}\;\forall x\in A\;(x\le u)
 \land
-\operatorname{BoundedAbove}(A)
-\\
-&\qquad\qquad\land
-\forall s \in \mathbb{R}\; \neg \operatorname{Supremum}(s,A)
+\forall s\in\mathbb{R}\;\neg\operatorname{Supremum}(s,A)
 \Bigr].
-\end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Failure modes]\hfill
-\begin{itemize}
-  \item \textbf{Failure of existence.} There exists a nonempty subset of $\mathbb{R}$ that is bounded above but has no supremum in $\mathbb{R}$.
-  \item \textbf{Failure of the field.} The problem is not in the subset alone. The failure is that $\mathbb{R}$ would be missing the element that should serve as the least upper bound.
-\end{itemize}
+\begin{remark*}[Failure modes]
+Completeness would fail if some nonempty subset of $\mathbb{R}$ were bounded above in $\mathbb{R}$ but had no supremum in $\mathbb{R}$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\operatorname{LeastUpperBoundProperty}(\mathbb{R})
+=
+\underbrace{\exists A\subseteq\mathbb{R}\;(A\neq\varnothing)}_{\text{nonempty witness set}}
+\;\land\;
+\underbrace{\exists u\in\mathbb{R}\;\forall x\in A\;(x\le u)}_{\text{bounded above in }\mathbb{R}}
+\;\land\;
+\underbrace{\forall s\in\mathbb{R}\;\neg\operatorname{Supremum}(s,A)}_{\text{missing real supremum}}.
+\]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-This axiom asserts that the real numbers satisfy the general completeness condition already
-captured by the Least Upper Bound Property.
-
-A standard contrast is the set
-\[
-A=\{q \in \mathbb{Q} : q^2 < 2\}.
-\]
-This set is nonempty and bounded above in $\mathbb{Q}$, but it has no supremum in $\mathbb{Q}$.
-The missing least upper bound is $\sqrt{2}$, so the failure lies in the field, not in the set.
+The completeness axiom asserts that the real line has no order gaps of the least-upper-bound kind. Nonempty sets of real numbers that are bounded above always determine a real number sitting exactly at the least possible ceiling. This is the structural property that distinguishes $\mathbb{R}$ from ordered fields such as $\mathbb{Q}$.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:least-upper-bound-property]{Definition~\ref*{def:least-upper-bound-property}}.
+\end{remark*}
+
 
 
 

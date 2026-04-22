@@ -34,6 +34,11 @@ Then classify the finding as:
 - DEPENDENT_VIOLATION — requirement is D, parent is present, block is ABSENT
 - FORBIDDEN_VIOLATION — requirement is N, block is PRESENT
 
+Important: `toolkit_box` is a section-level planning artifact. It is audited by
+the deterministic toolkit audit, not by this per-statement audit. If
+`toolkit_box` is absent from the supplied registry row, do not report it in
+`checks`, `violations`, or `special_flags`.
+
 ## Compliance Checks Per Block
 
 ### toolkit_box

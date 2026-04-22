@@ -94,8 +94,7 @@ def get_ai_provider_settings(provider: str | None = None) -> ProviderSettings:
         api_key_env=api_key_env,
         provider_url=provider_url or "https://api.openai.com/v1",
         provider_url_env=provider_url_env,
-        model=os.environ.get("CODEX_MODEL", "gpt-5.1-codex"),
+        model=os.environ.get("CODEX_MODEL") or os.environ.get("OPENAI_MODEL", "gpt-5.1-codex"),
         model_env="CODEX_MODEL",
         max_tokens=max_tokens,
     )
-

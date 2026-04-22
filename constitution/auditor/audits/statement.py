@@ -103,6 +103,9 @@ def audit_statement(
     label: str,
     artifact_type: str,
     chapter: str,
+    print_report: bool = True,
+    output_dir: Path | None = None,
+    filename_prefix: str = "",
 ) -> dict:
     """
     Audits a single statement environment identified by label.
@@ -129,6 +132,8 @@ def audit_statement(
     base_prompt    = loader.prompt("audit_statement")
     registry       = loader.block_registry()
     matrix_row     = loader.matrix_row(artifact_type)
+    registry.pop("toolkit_box", None)
+    matrix_row.pop("toolkit_box", None)
 
     registry_yaml  = yaml.dump(
         {"blocks": list(registry.values())},
@@ -155,13 +160,24 @@ def audit_statement(
         f"Label: {label}"
     )
 
-    report = client.call(system, user, expect_json=True)
+    report = client.call(system, user, expect_json=True, validate_report=False)
 
-    # Ensure label is set correctly in report
+    # Ensure fixed metadata is set correctly before schema validation.
+    report.setdefault("audit_type", "statement")
     report["label"] = label
     report["artifact_type"] = artifact_type
+    client.validate_audit_report(report)
 
-    save_audit_report(report, chapter, "audit-statement")
+    report["_report_path"] = str(
+        save_audit_report(
+            report,
+            chapter,
+            "audit-statement",
+            print_report=print_report,
+            output_dir=output_dir,
+            filename_prefix=filename_prefix,
+        )
+    )
 
     return report
 
@@ -170,6 +186,9 @@ def audit_statement_from_yaml_entry(
     entry: dict,
     chapter_root: Path,
     chapter: str,
+    print_report: bool = True,
+    output_dir: Path | None = None,
+    filename_prefix: str = "",
 ) -> dict:
     """
     Convenience wrapper that accepts an environments entry from chapter.yaml.
@@ -180,4 +199,7 @@ def audit_statement_from_yaml_entry(
         label=entry["label"],
         artifact_type=entry["type"],
         chapter=chapter,
+        print_report=print_report,
+        output_dir=output_dir,
+        filename_prefix=filename_prefix,
     )

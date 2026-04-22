@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from auditor.config import REPORTS_DIR
+from auditor import config
 
 
 # ---------------------------------------------------------------------------
@@ -27,14 +27,28 @@ def _human_timestamp() -> str:
 # Report path construction
 # ---------------------------------------------------------------------------
 
+def _safe_label(label: str) -> str:
+    return label.replace(":", "-").replace("/", "-").replace("\\", "-")
+
+
 def report_path(chapter: str, operation: str, label: str) -> Path:
     """
     Constructs the output path for a timestamped report file.
     label is sanitized (colons replaced with dashes) for filesystem safety.
     """
-    safe_label = label.replace(":", "-")
+    safe_label = _safe_label(label)
     filename = f"{_timestamp()}_{operation}_{safe_label}.md"
-    return REPORTS_DIR / chapter / filename
+    return config.REPORTS_DIR / chapter / filename
+
+
+def stable_report_path(output_dir: Path, operation: str, label: str, filename_prefix: str = "") -> Path:
+    """
+    Constructs a deterministic report filename inside an explicit output dir.
+    Used by resumable chapter runs so completed items can be skipped later.
+    """
+    safe_label = _safe_label(label)
+    prefix = f"{filename_prefix}_" if filename_prefix else ""
+    return output_dir / f"{prefix}{operation}_{safe_label}.md"
 
 
 # ---------------------------------------------------------------------------
@@ -43,17 +57,17 @@ def report_path(chapter: str, operation: str, label: str) -> Path:
 
 def _status_emoji(status: str) -> str:
     return {
-        "PASS":                  "✅",
-        "FAIL":                  "❌",
-        "NONCOMPLIANT":          "⚠️",
-        "CONDITIONAL_MET":       "✅",
-        "CONDITIONAL_UNMET":     "—",
-        "CONDITIONAL_VIOLATION": "❌",
-        "DEPENDENT_MET":         "✅",
-        "DEPENDENT_UNMET":       "—",
-        "DEPENDENT_VIOLATION":   "❌",
-        "FORBIDDEN_VIOLATION":   "🚫",
-        "STUB":                  "📝",
+        "PASS":                  "[PASS]",
+        "FAIL":                  "[FAIL]",
+        "NONCOMPLIANT":          "[WARN]",
+        "CONDITIONAL_MET":       "[PASS]",
+        "CONDITIONAL_UNMET":     "[-]",
+        "CONDITIONAL_VIOLATION": "[FAIL]",
+        "DEPENDENT_MET":         "[PASS]",
+        "DEPENDENT_UNMET":       "[-]",
+        "DEPENDENT_VIOLATION":   "[FAIL]",
+        "FORBIDDEN_VIOLATION":   "[FORBIDDEN]",
+        "STUB":                  "[STUB]",
     }.get(status, status)
 
 
@@ -108,15 +122,15 @@ def format_audit_report_markdown(
         "",
         "| Status | Count |",
         "|--------|-------|",
-        f"| ✅ Pass | {s.get('passed', 0) + s.get('conditional_met', 0) + s.get('dependent_met', 0)} |",
-        f"| ❌ Fail | {s.get('failed', 0)} |",
-        f"| ⚠️ Noncompliant | {s.get('noncompliant', 0)} |",
-        f"| ❌ Conditional violation | {s.get('conditional_violation', 0)} |",
-        f"| ❌ Dependent violation | {s.get('dependent_violation', 0)} |",
-        f"| 🚫 Forbidden violation | {s.get('forbidden_violation', 0)} |",
-        f"| — Conditional unmet (correct) | {s.get('conditional_unmet', 0)} |",
-        f"| — Dependent unmet (correct) | {s.get('dependent_unmet', 0)} |",
-        f"| 📝 Stub | {'Yes' if s.get('stub') else 'No'} |",
+        f"| [PASS] Pass | {s.get('passed', 0) + s.get('conditional_met', 0) + s.get('dependent_met', 0)} |",
+        f"| [FAIL] Fail | {s.get('failed', 0)} |",
+        f"| [WARN] Noncompliant | {s.get('noncompliant', 0)} |",
+        f"| [FAIL] Conditional violation | {s.get('conditional_violation', 0)} |",
+        f"| [FAIL] Dependent violation | {s.get('dependent_violation', 0)} |",
+        f"| [FORBIDDEN] Forbidden violation | {s.get('forbidden_violation', 0)} |",
+        f"| [-] Conditional unmet (correct) | {s.get('conditional_unmet', 0)} |",
+        f"| [-] Dependent unmet (correct) | {s.get('dependent_unmet', 0)} |",
+        f"| [STUB] Stub | {'Yes' if s.get('stub') else 'No'} |",
         "",
     ]
 
@@ -126,7 +140,7 @@ def format_audit_report_markdown(
         lines += ["## Violations", ""]
         for v in violations:
             lines += [
-                f"### {_status_emoji(v['status'])} `{v['block_id']}` — {v['status']}",
+                f"### {_status_emoji(v['status'])} `{v['block_id']}` - {v['status']}",
                 "",
                 v.get("finding", ""),
                 "",
@@ -140,7 +154,7 @@ def format_audit_report_markdown(
         lines += ["## Special Flags", ""]
         for f in flags:
             lines += [
-                f"### 🔍 {f['flag_type']}",
+                f"### [FLAG] {f['flag_type']}",
                 "",
                 f.get("description", ""),
                 "",
@@ -277,6 +291,9 @@ def save_audit_report(
     report: dict,
     chapter: str,
     operation: str,
+    print_report: bool = True,
+    output_dir: Path | None = None,
+    filename_prefix: str = "",
 ) -> Path:
     """
     Formats and writes an audit report. Returns the path written.
@@ -284,11 +301,16 @@ def save_audit_report(
     """
     label   = report.get("label", "unknown")
     content = format_audit_report_markdown(report, chapter, operation)
-    path    = report_path(chapter, operation, label)
+    path    = (
+        stable_report_path(output_dir, operation, label, filename_prefix)
+        if output_dir
+        else report_path(chapter, operation, label)
+    )
 
     write_report(content, path)
-    print(content)
-    print(f"\nReport written to: {path}")
+    if print_report:
+        print(content)
+        print(f"\nReport written to: {path}")
 
     return path
 
