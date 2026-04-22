@@ -1,3 +1,162 @@
-% Capstone exercise: Differentiation
-% See DESIGN.md §1.4
-% TODO
+\newpage
+\phantomsection
+\label{prf:capstone-differentiation}
+
+\begin{remark*}[Return]
+\hyperref[chap:differentiation]{Return to Chapter: Differentiation}
+\end{remark*}
+
+\subsection*{Capstone --- Differentiation}
+
+\begin{remark*}[Capstone Problem]
+Let $I := [a,b] \subseteq \mathbb{R}$ and let $f : I \to \mathbb{R}$ be continuous on $I$
+and differentiable on $(a,b)$. Suppose there exists $M > 0$ such that
+\[
+|f'(x)| \leq M \qquad \text{for all } x \in (a,b).
+\]
+
+\begin{enumerate}[label=(\alph*)]
+
+\item \textbf{(Lipschitz bound from the MVT.)}
+Prove that $f$ satisfies a Lipschitz condition with constant $M$ on $I$: for all
+$x, y \in I$,
+\[
+|f(x) - f(y)| \leq M|x - y|.
+\]
+
+\item \textbf{(Uniform modulus of continuity.)}
+Deduce that $f$ is uniformly continuous on $I$ with modulus of continuity
+$\omega(\delta) = M\delta$: for every $\varepsilon > 0$, taking $\delta = \varepsilon/M$
+gives
+\[
+|x - y| < \delta \;\Rightarrow\; |f(x) - f(y)| < \varepsilon.
+\]
+
+\item \textbf{(Uniqueness of antiderivatives via the derivative bound.)}
+Let $g : I \to \mathbb{R}$ be a second function, also continuous on $I$ and
+differentiable on $(a,b)$, satisfying $f'(x) = g'(x)$ for all $x \in (a,b)$.
+Use the bound from part (a) to give an alternative proof that $f - g$ is constant
+on $I$, by showing that $|f(x) - g(x) - (f(a) - g(a))| = 0$ for all $x \in I$.
+
+\item \textbf{(Carathéodory form of the Lipschitz constant.)}
+Without using the MVT, prove directly from the Carathéodory characterisation
+of differentiability that if $|f'(c)| \leq M$ for all $c \in (a,b)$ and the
+Carathéodory function $\varphi_c$ of $f$ at each $c$ satisfies
+$|\varphi_c(x)| \leq M$ for $x$ near $c$, then
+\[
+|f(x) - f(c)| \leq M|x - c|
+\]
+for $x$ near $c$. Explain why this gives a \emph{local} Lipschitz estimate
+at every interior point, and contrast it with the \emph{global} estimate of part (a).
+
+\end{enumerate}
+
+\medskip
+\textit{Concepts synthesized:}
+Mean Value Theorem,
+Zero Derivative Implies Constant,
+Equal Derivatives Imply Difference Is Constant,
+Carathéodory Characterisation of Differentiability,
+uniform continuity (from the continuity chapter).
+
+\medskip
+\textit{Connection to simulation.}
+Part (a) is the formal mathematical constraint underlying numerical
+stability in Euler-type integration schemes. If a vector field $f$ satisfies
+$|f'| \leq M$, then the Lipschitz constant $M$ bounds how rapidly nearby
+trajectories can diverge, and controls the allowable timestep $\Delta t$
+for a stable discretisation. In a Brownian motion simulation on a torus,
+the drift term of the SDE satisfies a Lipschitz condition of this form,
+and the constant $M$ enters directly into the GPU thread-scheduling constraint
+on the maximum stable step size.
+\end{remark*}
+
+\begin{proof}
+\textbf{Solution.}~\\
+
+\textbf{Part (a): Lipschitz bound.}
+
+Let $x, y \in I$ be arbitrary with $x \neq y$; without loss of generality
+assume $x < y$. The function $f$ is continuous on $[x,y] \subseteq I$ and
+differentiable on $(x,y) \subseteq (a,b)$. By the Mean Value Theorem, there
+exists $c \in (x,y)$ such that
+\[
+f(y) - f(x) = f'(c)(y - x).
+\]
+Taking absolute values and applying the bound $|f'(c)| \leq M$:
+\[
+|f(x) - f(y)| = |f'(c)| \cdot |x - y| \leq M|x - y|.
+\]
+The case $x = y$ gives $|f(x) - f(y)| = 0 \leq M \cdot 0$. Since $x, y \in I$
+were arbitrary, $f$ is $M$-Lipschitz on $I$.
+
+\medskip
+\textbf{Part (b): Uniform modulus of continuity.}
+
+Let $\varepsilon > 0$. Set $\delta := \varepsilon / M > 0$. For any $x, y \in I$
+with $|x - y| < \delta$, part (a) gives
+\[
+|f(x) - f(y)| \leq M|x - y| < M \cdot \frac{\varepsilon}{M} = \varepsilon.
+\]
+The same $\delta$ responds to $\varepsilon$ for every pair $x, y \in I$, so $f$ is
+uniformly continuous on $I$ with modulus $\omega(\delta) = M\delta$.
+
+\medskip
+\textbf{Part (c): Antiderivative uniqueness via the Lipschitz bound.}
+
+Define $h := f - g$. Then $h$ is continuous on $I$, differentiable on $(a,b)$,
+and $h'(x) = f'(x) - g'(x) = 0$ for all $x \in (a,b)$. In particular $|h'(x)| \leq M$
+trivially (with $M = 0$, or with any $M > 0$). Applying part (a) to $h$ with
+the bound $|h'| \leq 0$: for all $x \in I$,
+\[
+|h(x) - h(a)| \leq 0 \cdot |x - a| = 0,
+\]
+so $h(x) = h(a)$ for all $x \in I$. Therefore $f(x) - g(x) = f(a) - g(a)$, i.e.\
+$f - g$ is constant. This recovers the conclusion of the Equal Derivatives Imply
+Difference Is Constant corollary by a direct Lipschitz argument with $M = 0$,
+without invoking the Zero Derivative theorem by name.
+
+\medskip
+\textbf{Part (d): Carathéodory form of the local Lipschitz estimate.}
+
+Fix $c \in (a,b)$. Since $f$ is differentiable at $c$, the Carathéodory
+Characterisation of Differentiability supplies a function $\varphi : I \to \mathbb{R}$,
+continuous at $c$, such that
+\[
+f(x) - f(c) = \varphi(x)(x - c) \qquad \text{for all } x \in I,
+\]
+with $\varphi(c) = f'(c)$. Since $\varphi$ is continuous at $c$ and $|\varphi(c)|
+= |f'(c)| \leq M$, by continuity of $\varphi$ at $c$ there exists $\delta_c > 0$
+such that $|\varphi(x)| \leq M + 1$ for all $x \in I$ with $|x - c| < \delta_c$
+(taking $\varepsilon = 1$ in the continuity definition). For such $x$:
+\[
+|f(x) - f(c)| = |\varphi(x)| \cdot |x - c| \leq (M+1)|x - c|.
+\]
+More precisely, if we assume $|\varphi(x)| \leq M$ throughout the neighbourhood
+(as the problem posits), then
+\[
+|f(x) - f(c)| \leq M|x - c|
+\]
+for all $x$ in a $\delta_c$-neighbourhood of $c$.
+
+\textbf{Local vs.\ global.} The Carathéodory estimate is \emph{local}: the
+constant $M$ controls $f$ only within the neighbourhood of radius $\delta_c$,
+where $\delta_c$ may depend on $c$. The global Lipschitz estimate from part (a)
+uses the same constant $M$ uniformly across all of $I$, with no dependence on
+the base point. The passage from local to global is provided by the MVT, which
+selects a single witness point $c$ from the entire interval $[x,y]$ and produces
+a bound valid for all $x, y \in I$ simultaneously. The Carathéodory approach gives
+a neater algebraic factorization but requires the additional hypothesis that
+$|\varphi_c(x)| \leq M$ throughout the neighbourhood, not just at $c$.
+\end{proof}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:mean-value-theorem]{Theorem: Mean Value Theorem}
+  \item \hyperref[thm:zero-derivative-implies-constant]{Theorem: Zero Derivative Implies Constant}
+  \item \hyperref[cor:equal-derivatives-constant-difference]{Corollary: Equal Derivatives Imply Difference Is Constant}
+  \item \hyperref[thm:caratheodory-characterization-of-differentiability]{Theorem: Carath\'{e}odory Characterisation of Differentiability}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[thm:uniformly-continuous]{Theorem: Uniform Continuity (continuity chapter)}
+\end{itemize}
+\end{remark*}
