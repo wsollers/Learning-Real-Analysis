@@ -131,7 +131,9 @@ where $\operatorname{Partition}(P,[a,b])$ abbreviates $a=x_0<\cdots<x_n=b$ for $
 &\text{Let } a,b \in \mathbb{R} \text{ with } a<b, \text{ and } \dot{\mathcal{P}}=\{([x_{i-1},x_i],t_i)\}_{i=1}^n.\\
 &\dot{\mathcal{P}} \text{ is not a tagged partition of } [a,b]\\
 &\Longleftrightarrow
-\Bigl(\exists j \in \{1,\ldots,n\}\;(x_{j-1} \ge x_j) \lor \exists i \in \{1,\ldots,n\}\;(t_i \notin [x_{i-1},x_i])\Bigr).
+\Bigl(x_0\ne a \lor x_n\ne b \lor
+\exists j \in \{1,\ldots,n\}\;(x_{j-1} \ge x_j) \lor
+\exists i \in \{1,\ldots,n\}\;(t_i \notin [x_{i-1},x_i])\Bigr).
 \end{aligned}
 \]
 \end{remark*}
@@ -140,6 +142,7 @@ where $\operatorname{Partition}(P,[a,b])$ abbreviates $a=x_0<\cdots<x_n=b$ for $
 \[
 \neg\operatorname{TaggedPartition}(\dot{\mathcal{P}},[a,b])
 \Longleftrightarrow
+(x_0\ne a)\lor(x_n\ne b)\lor
 \Bigl(\exists j\;(x_{j-1} \ge x_j)\Bigr) \lor \Bigl(\exists i\;(t_i \notin [x_{i-1},x_i])\Bigr).
 \]
 \end{remark*}
@@ -150,7 +153,11 @@ A list fails to be a tagged partition either because the subintervals do not for
 
 \begin{remark*}[Failure mode decomposition]
 \[
-\underbrace{\exists j\;(x_{j-1} \ge x_j)}_{\text{partition defect}}
+\underbrace{x_0\ne a}_{\text{left endpoint defect}}
+\;\lor\;
+\underbrace{x_n\ne b}_{\text{right endpoint defect}}
+\;\lor\;
+\underbrace{\exists j\;(x_{j-1} \ge x_j)}_{\text{ordering defect}}
 \;\lor\;
 \underbrace{\exists i\;(t_i \notin [x_{i-1},x_i])}_{\text{tag misplaced}}.
 \]
@@ -267,8 +274,6 @@ Let $[a,b]$ be a closed interval, let $\delta:[a,b]\to(0,\infty)$ be a gauge, an
 
 \begin{remark*}[Negated quantified statement]
 \[
-\neg\operatorname{DeltaFine}(\dot{\mathcal{P}},\delta)
-\Longleftrightarrow
 \exists i \in \{1,\dots,n\}\;\exists x \in [x_{i-1},x_i]\;
 \bigl(|x-t_i|\ge \delta(t_i)\bigr).
 \]
@@ -286,8 +291,6 @@ A tagged partition fails to be $\delta$-fine precisely when some subinterval con
 
 \begin{remark*}[Failure mode decomposition]
 \[
-\neg \operatorname{DeltaFine}(\dot{\mathcal{P}},\delta)
-=
 \underbrace{\exists i \in \{1,\dots,n\}\;\exists x \in [x_{i-1},x_i]}_{\text{choose offending subinterval and point}}
 \;\underbrace{(|x-t_i|\ge \delta(t_i))}_{\text{distance not controlled by }\delta}.
 \]

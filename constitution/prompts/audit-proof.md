@@ -45,8 +45,9 @@ description when not PASS.
 
 ### Layer 4 -- Return Remark
 - \begin{remark*}[Return] ... \end{remark*} present?
-- Contains \hyperref[thm:...]{...} or \hyperref[def:...]{...} pointing
-  back to the canonical statement?
+- Contains \hyperref[...]{...} pointing back to the canonical statement?
+- The target label may be any theorem-like or definition-like statement
+  prefix used in the notes: def:, thm:, lem:, prop:, cor:, or ax:.
 - Label in hyperref matches the theorem/definition label in notes?
 
 ### Layer 5 -- Theorem Restatement

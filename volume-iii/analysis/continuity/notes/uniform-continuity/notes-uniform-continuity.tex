@@ -43,8 +43,11 @@ Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. The function $f$ is u
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\text{Let } A \subseteq \mathbb{R} \text{ and } f:A \to \mathbb{R}.\\
-&f \text{ is uniformly continuous on } A \Longleftrightarrow \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,u \in A \; (|x-u| < \delta \Rightarrow |f(x)-f(u)| < \varepsilon).
+&(A\subseteq\mathbb{R})\land(f:A\to\mathbb{R})\\
+&\qquad\Longrightarrow
+\Bigl[f \text{ is uniformly continuous on } A
+\Longleftrightarrow
+\forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,u \in A \; (|x-u| < \delta \Rightarrow |f(x)-f(u)| < \varepsilon)\Bigr].
 \end{aligned}
 \]
 \end{remark*}
@@ -58,8 +61,8 @@ Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. The function $f$ is u
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&\text{Let } A \subseteq \mathbb{R} \text{ and } f:A \to \mathbb{R}.\\
-&f \text{ is not uniformly continuous on } A \Longleftrightarrow \exists \varepsilon > 0 \; \forall \delta > 0 \; \exists x,u \in A \; (|x-u| < \delta \land |f(x)-f(u)| \ge \varepsilon).
+&\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\\
+&\qquad\lor\exists \varepsilon > 0 \; \forall \delta > 0 \; \exists x,u \in A \; (|x-u| < \delta \land |f(x)-f(u)| \ge \varepsilon).
 \end{aligned}
 \]
 \end{remark*}
@@ -116,8 +119,32 @@ No local dependencies.
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\forall A \subseteq \mathbb{R}\; \forall f,g : A \to \mathbb{R}\; \Bigl((f \text{ and } g \text{ uniformly continuous on } A) \Longrightarrow \forall c \in \mathbb{R}\; (f+g, f-g, cf \text{ uniformly continuous on } A)\Bigr),\\
-&\exists A \subseteq \mathbb{R}\; \exists f,g : A \to \mathbb{R}\; \bigl(f \text{ and } g \text{ uniformly continuous on } A \land fg \text{ not uniformly continuous on } A\bigr).
+&\forall A \subseteq \mathbb{R}\; \forall f,g : A \to \mathbb{R}\; \forall c \in \mathbb{R}:\\
+&\qquad
+\Bigl[
+\bigl(\forall \varepsilon>0\;\exists \delta_f>0\;\forall x,y\in A\;(|x-y|<\delta_f\Rightarrow |f(x)-f(y)|<\varepsilon)\bigr)\\
+&\qquad\land
+\bigl(\forall \varepsilon>0\;\exists \delta_g>0\;\forall x,y\in A\;(|x-y|<\delta_g\Rightarrow |g(x)-g(y)|<\varepsilon)\bigr)
+\Bigr]
+\Rightarrow
+\Bigl[
+\forall \varepsilon>0\;\exists \delta_1>0\;\forall x,y\in A\;(|x-y|<\delta_1\Rightarrow |(f+g)(x)-(f+g)(y)|<\varepsilon)\\
+&\qquad\land
+\forall \varepsilon>0\;\exists \delta_2>0\;\forall x,y\in A\;(|x-y|<\delta_2\Rightarrow |(f-g)(x)-(f-g)(y)|<\varepsilon)\\
+&\qquad\land
+\forall \varepsilon>0\;\exists \delta_3>0\;\forall x,y\in A\;(|x-y|<\delta_3\Rightarrow |cf(x)-cf(y)|<\varepsilon)
+\Bigr],\\
+&\exists A \subseteq \mathbb{R}\; \exists f,g : A \to \mathbb{R}:\;
+\Bigl[
+\forall \varepsilon>0\;\exists \delta_f>0\;\forall x,y\in A\;(|x-y|<\delta_f\Rightarrow |f(x)-f(y)|<\varepsilon)
+\Bigr]\\
+&\qquad\land
+\Bigl[
+\forall \varepsilon>0\;\exists \delta_g>0\;\forall x,y\in A\;(|x-y|<\delta_g\Rightarrow |g(x)-g(y)|<\varepsilon)
+\Bigr]\\
+&\qquad\land
+\exists \varepsilon_0>0\;\forall \delta>0\;\exists x,y\in A\;
+\bigl(|x-y|<\delta\land |f(x)g(x)-f(y)g(y)|\ge\varepsilon_0\bigr).
 \end{aligned}
 \]
 \end{remark*}
@@ -177,6 +204,7 @@ Let $A \subseteq \mathbb{R}$ be bounded, and let $f,g:A \to \mathbb{R}$ be unifo
 \end{remark*}
 
 \begin{remark*}[Predicate reading]
+\[
 \begin{aligned}
 &\text{Assume } A \subseteq \mathbb{R} \text{ is bounded and } f,g:A \to \mathbb{R}.\\
 &\operatorname{UniformlyContinuous}(f,A) \land \operatorname{UniformlyContinuous}(g,A)\\
@@ -184,6 +212,27 @@ Let $A \subseteq \mathbb{R}$ be bounded, and let $f,g:A \to \mathbb{R}$ be unifo
 &\operatorname{UniformlyContinuous}(f,A) \land \operatorname{UniformlyContinuous}(g,A) \land \exists k>0\;\forall x \in A\;(|g(x)| \ge k)\\
 &\qquad\Longrightarrow \operatorname{UniformlyContinuous}(f/g,A).
 \end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The product conclusion can fail only when one of the hypotheses used to
+control the product is missing: the domain is not bounded, $f$ is not
+uniformly continuous on $A$, or $g$ is not uniformly continuous on $A$.
+The quotient conclusion can also fail if the denominator is not bounded
+away from zero on $A$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\neg\operatorname{BoundedSet}(A)
+\lor \neg\operatorname{UniformlyContinuous}(f,A)
+\lor \neg\operatorname{UniformlyContinuous}(g,A)\\
+&\qquad\lor
+\neg\exists k>0\;\forall x\in A:\; |g(x)|\ge k.
+\end{aligned}
+\]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
@@ -209,7 +258,9 @@ Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. Then $f$ is uniformly
 \[
 \begin{aligned}
 &\forall A \subseteq \mathbb{R}\;\forall f:A \to \mathbb{R}:\\
-&\quad f \text{ uniformly continuous on } A \Longleftrightarrow
+\Bigl[\forall \varepsilon>0\;\exists \delta>0\;\forall x,y\in A\;
+\bigl(|x-y|<\delta\Rightarrow |f(x)-f(y)|<\varepsilon\bigr)\Bigr]
+\Longleftrightarrow
 \forall x_n,y_n:\mathbb{N} \to A\;
 \bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr).
 \end{aligned}
@@ -229,9 +280,14 @@ Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. Then $f$ is uniformly
 \[
 \begin{aligned}
 &\exists A \subseteq \mathbb{R}\;\exists f:A \to \mathbb{R}:\\
-&\quad \Bigl(f \text{ uniformly continuous on } A \land \exists x_n,y_n:\mathbb{N}\to A\;
+\quad &\Bigl(
+\bigl[\forall \varepsilon>0\;\exists \delta>0\;\forall x,y\in A\;
+(|x-y|<\delta\Rightarrow |f(x)-f(y)|<\varepsilon)\bigr]\\
+&\qquad\land \exists x_n,y_n:\mathbb{N}\to A\;
 \bigl(|x_n - y_n| \to 0 \land \neg(|f(x_n) - f(y_n)| \to 0)\bigr)\Bigr)\\
-&\quad \lor \Bigl(\neg(f \text{ uniformly continuous on } A) \land
+\quad &\lor \Bigl(
+\bigl[\exists \varepsilon_0>0\;\forall \delta>0\;\exists x,y\in A\;
+(|x-y|<\delta\land |f(x)-f(y)|\ge\varepsilon_0)\bigr]\land
 \forall x_n,y_n:\mathbb{N}\to A\;
 \bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr)\Bigr).
 \end{aligned}
@@ -344,13 +400,13 @@ Continuity on the compact interval $[a,b]$ forces a single modulus of continuity
 \begin{proposition}[Uniform Continuity Preserves Cauchy Sequences]
 \label{prop:uniform-continuity-cauchy}
 Let S \subseteq \mathbb{R}, let f:S \to \mathbb{R}, and let (x_n) be a sequence in S. If f is uniformly continuous on S and (x_n) is a Cauchy sequence in S, then (f(x_n)) is a Cauchy sequence in \mathbb{R}.
-\hyperref[prf:cauchy-sequences-preserved]{Go to proof.}
+\hyperref[prf:uniform-continuity-cauchy]{Go to proof.}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\text{Let } S \subseteq \mathbb{R},\ f:S \to \mathbb{R},\ x_n \subseteq S.\\
+&\text{Let } S \subseteq \mathbb{R},\; f:S \to \mathbb{R},\; (x_n)_{n\in\mathbb{N}}\subseteq S.\\
 &\Bigl[\forall \varepsilon>0\;\exists \delta>0\;\forall x,y \in S\;( |x-y|<\delta \Rightarrow |f(x)-f(y)|<\varepsilon )\Bigr]\\
 &\land \Bigl[\forall \varepsilon>0\;\exists N \in \mathbb{N}\;\forall m,n \ge N\;( |x_n - x_m|<\varepsilon )\Bigr]\\
 &\Rightarrow \forall \varepsilon>0\;\exists N \in \mathbb{N}\;\forall m,n \ge N\;( |f(x_n) - f(x_m)|<\varepsilon ).
@@ -369,8 +425,8 @@ Uniform continuity controls the change in f(x) solely through the distance betwe
 \end{remark*}
 
 \begin{remark*}[Dependencies]
-Uses \hyperref[def:uniform-continuity]{Definition~\ref{def:uniform-continuity}}.
-% UNRESOLVED_DEPENDENCY: Definition of Cauchy Sequence | Reason: no label available in index.
+\hyperref[def:uniform-continuity]{Definition~\ref{def:uniform-continuity}};
+\hyperref[def:cauchy-sequence]{Definition~\ref{def:cauchy-sequence}}.
 \end{remark*}
 
 
@@ -391,10 +447,11 @@ Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $K>0$. The funct
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\text{Let } A \subseteq \mathbb{R},\; f:A \to \mathbb{R},\; K>0.\\
-&f \text{ satisfies the Lipschitz condition on } A \text{ with constant } K\\
-&\Longleftrightarrow
-\forall x,u \in A\;\bigl(|f(x)-f(u)| \le K|x-u|\bigr).
+&(A\subseteq\mathbb{R})\land(f:A\to\mathbb{R})\land(K>0)\\
+&\qquad\Longrightarrow
+\Bigl[f \text{ is Lipschitz on } A \text{ with constant } K
+\Longleftrightarrow
+\forall x,u \in A\;\bigl(|f(x)-f(u)| \le K|x-u|\bigr)\Bigr].
 \end{aligned}
 \]
 \end{remark*}
@@ -408,28 +465,36 @@ Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $K>0$. The funct
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&\text{Let } A \subseteq \mathbb{R},\; f:A \to \mathbb{R},\; K>0.\\
-&\neg\bigl[f \text{ satisfies the Lipschitz condition on } A \text{ with constant } K\bigr]\\
-&\Longleftrightarrow
-\exists x,u \in A\;\bigl(|f(x)-f(u)| > K|x-u|\bigr).
+\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\lor(K\le 0)\\
+&\qquad\lor\exists x,u \in A\;\bigl(|f(x)-f(u)| > K|x-u|\bigr).
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg \operatorname{Lipschitz}(f,A,K) \Longleftrightarrow (K>0) \land \exists x,u \in A\;\bigl(|f(x)-f(u)| > K|x-u|\bigr).
+\neg \operatorname{Lipschitz}(f,A,K) \Longleftrightarrow
+\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\lor(K\le 0)\lor
+\exists x,u \in A\;\bigl(|f(x)-f(u)| > K|x-u|\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Failure modes]
-The Lipschitz condition fails precisely when there exists a pair of points in $A$ whose images separate faster than $K$ times the separation of the points themselves, yielding a violated slope bound.
+The Lipschitz condition fails when the ambient data are malformed, when
+the proposed constant is not positive, or when there exists a pair of
+points in $A$ whose images separate faster than $K$ times the separation
+of the points themselves.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
-\exists x,u \in A:
-\underbrace{|f(x)-f(u)| > K|x-u|}_{\text{excessive separation of outputs}}.
+\underbrace{\neg(A\subseteq\mathbb{R})}_{\text{bad domain}}
+\lor
+\underbrace{\neg(f:A\to\mathbb{R})}_{\text{bad function type}}
+\lor
+\underbrace{K\le 0}_{\text{bad constant}}
+\lor
+\underbrace{\exists x,u \in A:\; |f(x)-f(u)| > K|x-u|}_{\text{excessive separation of outputs}}.
 \]
 \end{remark*}
 
@@ -556,9 +621,12 @@ Any such pair $(\alpha,K)$ is called a bi-Lipschitz constant pair for $f$ on $A$
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\text{Let } A\subseteq \mathbb{R} \text{ and } f:A\to\mathbb{R}.\\
-&f \text{ is bi-Lipschitz on } A \Longleftrightarrow \exists \alpha,K \text{ with } 0<\alpha\le K \text{ such that } \forall x,u\in A:\\
-&\qquad \alpha|x-u|\le |f(x)-f(u)| \land |f(x)-f(u)|\le K|x-u|.
+&(A\subseteq\mathbb{R})\land(f:A\to\mathbb{R})\\
+&\qquad\Longrightarrow
+\Bigl[f \text{ is bi-Lipschitz on } A
+\Longleftrightarrow
+\exists \alpha,K\in\mathbb{R}\;\Bigl(0<\alpha\le K
+\land \forall x,u\in A:\; \alpha|x-u|\le |f(x)-f(u)|\le K|x-u|\Bigr)\Bigr].
 \end{aligned}
 \]
 \end{remark*}
@@ -572,9 +640,10 @@ Any such pair $(\alpha,K)$ is called a bi-Lipschitz constant pair for $f$ on $A$
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&\text{Let } A\subseteq \mathbb{R} \text{ and } f:A\to\mathbb{R}.\\
-&f \text{ is not bi-Lipschitz on } A \Longleftrightarrow \forall \alpha,K \text{ with } 0<\alpha\le K \; \exists x,u\in A:\\
-&\qquad \left(|f(x)-f(u)|<\alpha|x-u|\right) \lor \left(|f(x)-f(u)|>K|x-u|\right).
+\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\\
+&\qquad\lor
+\forall \alpha,K\in\mathbb{R}\;\Bigl(0<\alpha\le K \Rightarrow
+\exists x,u\in A:\; |f(x)-f(u)|<\alpha|x-u| \lor |f(x)-f(u)|>K|x-u|\Bigr).
 \end{aligned}
 \]
 \end{remark*}

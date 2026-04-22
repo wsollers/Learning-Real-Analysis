@@ -54,6 +54,17 @@ Let $A \subseteq \mathbb{R}$ and $f \colon A \to \mathbb{R}$. The function $f$ i
 \]
 \end{remark*}
 
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b])
+\land \forall x\in[a,b]\;(f(x)\neq c)
+\Longrightarrow
+\Bigl[\bigl(\forall x\in[a,b]\; f(x)>c\bigr)
+\lor
+\bigl(\forall x\in[a,b]\; f(x)<c\bigr)\Bigr].
+\]
+\end{remark*}
+
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
@@ -95,11 +106,17 @@ No local dependencies.
 % Theorem --- Boundedness Theorem
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Boundedness Theorem)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Boundedness Theorem]
 \label{thm:boundedness-theorem}
 Let $a<b$ and let $f:[a,b]\to\mathbb{R}$ be continuous on $[a,b]$. Then there exists $M>0$ such that $|f(x)|\le M$ for every $x\in[a,b]$.
 \hyperref[prf:boundedness-theorem]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
+
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -148,22 +165,6 @@ Each component hypothesis is indispensable: without closedness (for instance $f(
 \lor
 \underbrace{\neg\operatorname{ContinuousOn}(f,[a,b])}_{\text{discontinuity}}.
 \end{aligned}
-\]
-\end{remark*}
-
-\begin{remark*}[Contrapositive quantified statement]
-\[
-\begin{aligned}
-&\text{Let } a<b \text{ and } f:[a,b]\to\mathbb{R}.\\
-&\bigl(\forall M>0\;\exists x\in[a,b]\;(|f(x)|>M)\bigr)\\
-&\qquad\Longrightarrow \exists c\in[a,b]\;\exists \varepsilon>0\;\forall \delta>0\;\exists x\in[a,b]\bigl(|x-c|<\delta \land |f(x)-f(c)|\ge \varepsilon\bigr).
-\end{aligned}
-\]
-\end{remark*}
-
-\begin{remark*}[Contrapositive predicate reading]
-\[
-\neg\operatorname{BoundedOn}(f,[a,b]) \Longrightarrow \neg\operatorname{ContinuousOn}(f,[a,b]).
 \]
 \end{remark*}
 
@@ -299,6 +300,24 @@ Let $a,b \in \mathbb{R}$ with $a<b$, and let $f:[a,b] \to \mathbb{R}$ be continu
 Continuity on a closed and bounded interval forces the image of the interval to inherit the compact features of the domain. The function cannot escape to infinity or oscillate without settling, so it must reach both its highest and lowest values somewhere in the interval. When the hypotheses fail, the typical obstruction is the loss of compactness: on an open interval the function might drift off without achieving its supremum, and without continuity it may jump over candidate extrema.
 \end{remark*}
 
+\begin{remark*}[Failure modes]
+The theorem can fail if the compact interval hypothesis is lost, or if
+the function is not continuous on the whole interval. Without compactness
+an extremal value may exist only as a limiting value, and without
+continuity the graph may jump over its supremum or infimum.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\neg(a<b)}_{\text{invalid interval}}
+\;\lor\;
+\underbrace{\neg\bigl(f:[a,b]\to\mathbb{R}\bigr)}_{\text{wrong function type}}
+\;\lor\;
+\underbrace{\exists c\in[a,b]\;\exists \varepsilon>0\;\forall \delta>0\;\exists x\in[a,b]\;
+\bigl(|x-c|<\delta\land |f(x)-f(c)|\ge\varepsilon\bigr)}_{\text{loss of continuity}}.
+\]
+\end{remark*}
+
 \begin{remark*}[Dependencies]
 Uses \hyperref[def:absolute-extrema]{Definition \ref{def:absolute-extrema}} and \hyperref[thm:boundedness-theorem]{Theorem \ref{thm:boundedness-theorem}}.
 \end{remark*}
@@ -327,6 +346,20 @@ Let $a,b \in \mathbb{R}$ with $a<b$ and let $f:[a,b]\to\mathbb{R}$ be continuous
 Continuity forces the image of the interval $[a,b]$ to contain every intermediate value between $f(a)$ and $f(b)$. A sign change therefore compels the graph to cross the horizontal axis, producing a root strictly inside the interval. Failure occurs when the endpoint values share the same sign or when $f$ is not continuous, because then the image need not sweep across zero. Geometrically, the theorem asserts that a continuous curve connecting opposite sides of the $x$-axis must intersect the axis somewhere in between.
 \end{remark*}
 
+\begin{remark*}[Failure modes]
+The root conclusion can fail if $f$ is not continuous on $[a,b]$, or if
+the endpoint values do not have opposite signs.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\exists c\in[a,b]\;\exists \varepsilon>0\;\forall \delta>0\;\exists x\in[a,b]\;
+\bigl(|x-c|<\delta\land |f(x)-f(c)|\ge\varepsilon\bigr)}_{\text{loss of continuity}}
+\;\lor\;
+\underbrace{\bigl(f(a)f(b)\ge 0\bigr)}_{\text{no sign change}}.
+\]
+\end{remark*}
+
 \begin{remark*}[Dependencies]
 \hyperref[thm:bolzano-intermediate-value]{Bolzano's Intermediate Value Theorem}.
 \end{remark*}
@@ -342,7 +375,7 @@ Continuity forces the image of the interval $[a,b]$ to contain every intermediat
   fonttitle=\small\bfseries]
 \begin{theorem}[Bolzano's Intermediate Value Theorem]
 \label{thm:bolzano-intermediate-value}
-Let $I \subseteq \mathbb{R}$ be an interval, let $f \colon I \to \mathbb{R}$ be continuous on $I$, and choose $a,b \in I$ with $f(a) < k < f(b)$. Then there exists $c \in I$ such that $\min\{a,b\} < c < \max\{a,b\}$ and $f(c) = k$. \hyperref[prf:bolzano-ivt]{Go to proof.}
+Let $I \subseteq \mathbb{R}$ be an interval, let $f \colon I \to \mathbb{R}$ be continuous on $I$, and choose $a,b \in I$ with $f(a) < k < f(b)$. Then there exists $c \in I$ such that $\min\{a,b\} < c < \max\{a,b\}$ and $f(c) = k$. \hyperref[prf:bolzano-intermediate-value]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
@@ -350,7 +383,11 @@ Let $I \subseteq \mathbb{R}$ be an interval, let $f \colon I \to \mathbb{R}$ be 
 \[
 \forall I\subseteq\mathbb{R}\;\forall f:I\to\mathbb{R}\;\forall a,b\in I\;\forall k\in\mathbb{R}\;
 \Bigl[
-\operatorname{Interval}(I)\land\operatorname{ContinuousOn}(f,I)\land f(a)<k<f(b)
+\bigl(\forall x,y\in I\;\forall z\in\mathbb{R}\;(x<z<y\Rightarrow z\in I)\bigr)
+\land
+\bigl(\forall c\in I\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in I\;
+(|x-c|<\delta\Rightarrow |f(x)-f(c)|<\varepsilon)\bigr)
+\land f(a)<k<f(b)
 \Rightarrow
 \exists c\in I\;\bigl(\min\{a,b\}<c<\max\{a,b\}\land f(c)=k\bigr)
 \Bigr].
@@ -361,6 +398,20 @@ Let $I \subseteq \mathbb{R}$ be an interval, let $f \colon I \to \mathbb{R}$ be 
 The conclusion can fail only if the continuity-on-an-interval hypothesis
 breaks down, or if the proposed level $k$ is not strictly between the two
 attained endpoint values.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\underbrace{\exists x,y\in I\;\exists z\in\mathbb{R}\;
+\bigl(x<z<y\land z\notin I\bigr)}_{\text{not an interval}}\\
+&\lor\;
+\underbrace{\exists c\in I\;\exists \varepsilon>0\;\forall \delta>0\;\exists x\in I\;
+\bigl(|x-c|<\delta\land |f(x)-f(c)|\ge\varepsilon\bigr)}_{\text{loss of continuity}}\\
+&\lor\;
+\underbrace{\neg\bigl(f(a)<k<f(b)\bigr)}_{\text{level not between endpoint values}}.
+\end{aligned}
+\]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
@@ -379,7 +430,7 @@ No local dependencies.
 \begin{theorem}[Image of Closed Bounded Interval Is Closed Bounded Interval]
 \label{thm:image-of-closed-bounded-interval}
 Let $f:[a,b]\to\mathbb{R}$ be continuous. Then $f([a,b])=[\min_{[a,b]} f,\max_{[a,b]} f]$.
-\hyperref[prf:image-of-closed-bounded-interval-is-interval]{Go to proof.}
+\hyperref[prf:image-of-closed-bounded-interval]{Go to proof.}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]

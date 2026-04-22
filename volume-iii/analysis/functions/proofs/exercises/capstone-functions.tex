@@ -1,0 +1,187 @@
+\newpage
+\phantomsection
+\label{prf:capstone-functions}
+
+\begin{remark*}[Return]
+\hyperref[chap:functions]{Return to Chapter: Functions}
+\end{remark*}
+
+\subsection*{Capstone --- Functions}
+
+\begin{remark*}[Capstone Problem]
+Let $A \subseteq \mathbb{R}$, let $c$ be a cluster point of $A$, and let
+$f, g : A \to \mathbb{R}$. Throughout, assume all stated limits exist and
+are finite.
+
+\begin{enumerate}[label=(\alph*)]
+
+\item \textbf{(Uniqueness via the Sequential Criterion.)}
+Suppose $\lim_{x \to c} f(x) = L$ and $\lim_{x \to c} f(x) = L'$. Without
+using the Uniqueness of Limits theorem directly, prove $L = L'$ by applying
+the Sequential Criterion: construct a sequence $(x_n) \subseteq A \setminus \{c\}$
+with $x_n \to c$ (using the fact that $c$ is a cluster point), and use
+the uniqueness of sequence limits to conclude $L = L'$.
+
+\item \textbf{(Algebra via the bridge principle.)}
+Suppose $\lim_{x \to c} f(x) = L$ and $\lim_{x \to c} g(x) = M$.
+Prove the Product Rule $\lim_{x \to c}(fg)(x) = LM$ by the following
+route: take any $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$,
+apply the Sequential Criterion to get $f(x_n) \to L$ and $g(x_n) \to M$,
+then invoke the Product Rule for sequence limits to get $f(x_n)g(x_n) \to LM$,
+and conclude via the Sequential Criterion.
+
+\item \textbf{(Local boundedness as a prerequisite.)}
+Before proving the Product Rule in full generality, the Limit Implies Local
+Boundedness theorem is needed. State precisely what it asserts (as a quantified
+statement), and explain at which step of part (b) it would be invoked if you
+were instead proving the Product Rule directly from the $\varepsilon$-$\delta$
+definition without using the Sequential Criterion.
+
+\item \textbf{(Heine--Borel in the limit context.)}
+Let $X \subseteq \mathbb{R}$ be closed and bounded, and let $h : X \to \mathbb{R}$.
+Suppose $(x_n) \subseteq X$ is a sequence with $x_n \to c$ for some $c \in \mathbb{R}$.
+
+\begin{enumerate}[label=(\roman*)]
+\item Use Heine--Borel to prove $c \in X$.
+\item Deduce that if $\lim_{x \to c;\, x \in X} h(x) = L$ exists, then $c$ is
+a cluster point of $X$ (justify this), and the Sequential Criterion applies.
+\item Explain why the assumption that $X$ is closed is essential in (i): give
+an explicit example of a bounded but not closed set $X$ and a sequence $(x_n)
+\subseteq X$ with $x_n \to c \notin X$.
+\end{enumerate}
+
+\item \textbf{(Counterexample: composition of limits without the continuity
+hypothesis.)}
+The Composition of Limits theorem requires the extra hypothesis $g(c_2) = L$
+when $c_2 \in B$. Exhibit explicit functions $f$ and $g$ and a point $c_1$
+such that $\lim_{x \to c_1} f(x) = c_2$ and $\lim_{y \to c_2} g(y) = L$ both
+exist, but $\lim_{x \to c_1} g(f(x)) \neq L$. Identify exactly which hypothesis
+fails in your example.
+
+\end{enumerate}
+
+\medskip
+\textit{Concepts synthesized:}
+Cluster points (sequential characterisation),
+Sequential Criterion for function limits,
+Uniqueness of limits,
+Limit Implies Local Boundedness,
+Product Rule for function limits,
+Heine--Borel,
+Closed iff Sequentially Closed,
+Composition of Limits (failure mode).
+
+\medskip
+\textit{Connection to simulation.}
+The bridge principle in part (b) is structurally the same operation as
+lifting a numerical scheme's convergence proof from scalar sequences to
+function-valued processes. In the Brownian motion simulation, the drift
+coefficient $b(\theta)$ and diffusion coefficient $\sigma(\theta)$ on the
+torus both depend continuously on position $\theta$; the product
+$b(\theta)\sigma(\theta)$ appearing in the It\^{o} formula inherits its
+limit behaviour at boundary identifications via exactly this transfer
+mechanism. Part (d) is the compactness argument that guarantees the torus
+$\mathbb{T}^2$ (as a quotient of the closed square $[0,1]^2$) is a valid
+state space: closed and bounded, so every trajectory has a convergent
+subsequence with its limit still on the torus.
+\end{remark*}
+
+\begin{proof}
+\textbf{Solution.}~\\
+
+\textbf{Part (a): Uniqueness via the Sequential Criterion.}
+
+Since $c$ is a cluster point of $A$, for each $n \in \mathbb{N}$ there exists
+$x_n \in A \setminus \{c\}$ with $|x_n - c| < 1/n$. The sequence $(x_n) \subseteq
+A \setminus \{c\}$ satisfies $x_n \to c$. Applying the Sequential Criterion to
+$\lim_{x \to c} f(x) = L$ gives $f(x_n) \to L$. Applying it to
+$\lim_{x \to c} f(x) = L'$ gives $f(x_n) \to L'$. Since a sequence has at most
+one limit, $L = L'$.
+
+\medskip
+\textbf{Part (b): Product Rule via the bridge principle.}
+
+Let $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$ be arbitrary. By the
+Sequential Criterion applied to $\lim_{x \to c} f(x) = L$: $f(x_n) \to L$. By the
+Sequential Criterion applied to $\lim_{x \to c} g(x) = M$: $g(x_n) \to M$. By
+the Product Rule for sequence limits: $f(x_n)g(x_n) \to LM$. Since $(x_n)$ was
+arbitrary, the Sequential Criterion (reverse direction) gives
+$\lim_{x \to c}(fg)(x) = LM$.
+
+\medskip
+\textbf{Part (c): Role of Local Boundedness.}
+
+The Limit Implies Local Boundedness theorem asserts:
+\[
+  \lim_{x \to c} f(x) = L
+  \;\Rightarrow\;
+  \exists \delta > 0\;\exists M > 0\;\forall x \in A\;
+  \bigl(0 < |x-c| < \delta \Rightarrow |f(x)| \leq M\bigr).
+\]
+In a direct $\varepsilon$-$\delta$ proof of the Product Rule, one writes:
+\[
+  |f(x)g(x) - LM|
+  \leq |f(x)||g(x) - M| + |M||f(x) - L|.
+\]
+The term $|f(x)|$ must be bounded by a constant before the $|g(x) - M|$ factor
+can be made small. Local Boundedness supplies this bound: it gives a $\delta_0$
+and $M_0$ such that $|f(x)| \leq M_0$ for $x$ in the punctured $\delta_0$-ball.
+Without this bound, $|f(x)|$ could grow as $x \to c$ and prevent the product
+from converging. The Sequential Criterion route in part (b) sidesteps this issue
+because the sequence $f(x_n)$ is already convergent (hence bounded by the
+analogous sequence result), so the product rule for sequences handles the
+boundedness implicitly.
+
+\medskip
+\textbf{Part (d): Heine--Borel in the limit context.}
+
+\textit{(i)} The sequence $(x_n) \subseteq X$ is bounded (since $X$ is bounded)
+and converges to $c$. By Heine--Borel, $X$ is closed. Since $X$ is closed and
+$(x_n) \subseteq X$ converges to $c$, the Closed iff Sequentially Closed
+characterisation gives $c \in X$.
+
+\textit{(ii)} Since $X$ is a non-degenerate subset of $\mathbb{R}$ and the sequence
+$(x_n)$ witnesses that $c$ can be approximated by distinct points of $X$
+(if $x_n \neq c$ for infinitely many $n$, those terms form a subsequence in
+$X \setminus \{c\}$ converging to $c$, so $c$ is a cluster point of $X$).
+The Sequential Criterion then applies: $\lim_{x \to c;\, x \in X} h(x) = L$
+is equivalent to $h(x_n) \to L$ for every such sequence.
+
+\textit{(iii)} Take $X = (0,1]$ (bounded, not closed) and $x_n = 1/n \in X$.
+Then $x_n \to 0 \notin X$. A function $h$ defined on $(0,1]$ could have
+$\lim_{x \to 0^+} h(x) = L$ without $h$ being defined or extendable at $0$;
+the limit point escapes the domain.
+
+\medskip
+\textbf{Part (e): Composition failure without the continuity hypothesis.}
+
+Define $f : \mathbb{R} \to \mathbb{R}$ by $f(x) = 0$ for all $x$, and define
+$g : \mathbb{R} \to \mathbb{R}$ by
+\[
+  g(y) = \begin{cases} 1 & \text{if } y = 0, \\ 0 & \text{if } y \neq 0. \end{cases}
+\]
+Set $c_1 = 1$ and $c_2 = 0$. Then $\lim_{x \to 1} f(x) = 0 = c_2$ and
+$\lim_{y \to 0} g(y) = 0 = L$. However, $g(f(x)) = g(0) = 1$ for all $x$, so
+$\lim_{x \to 1} g(f(x)) = 1 \neq 0 = L$.
+
+The failing hypothesis is $g(c_2) = L$: here $g(0) = 1 \neq 0 = L$. The function
+$f$ sends every input to $c_2 = 0$, so $f(x)$ always lands on the single point
+where $g$ disagrees with its limit. Since the punctured condition on $g$ excludes
+$y = c_2$ from consideration, the limit $\lim_{y \to 0} g(y) = 0$ never ``sees''
+the bad value $g(0) = 1$; but the composition forces $g$ to evaluate at $0$
+constantly.
+\end{proof}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:cluster-point-R]{Definition: Cluster Point}
+  \item \hyperref[thm:cluster-point-sequential]{Theorem: Sequential Characterization of Cluster Points}
+  \item \hyperref[prop:sequential-criterion-limits]{Proposition: Sequential Criterion for Function Limits}
+  \item \hyperref[thm:limit-unique]{Theorem: Uniqueness of Limits of Functions}
+  \item \hyperref[thm:limit-implies-local-bounding]{Theorem: Limit Implies Local Boundedness}
+  \item \hyperref[thm:product-rule-function-limits]{Theorem: Product Rule for Function Limits}
+  \item \hyperref[thm:heine-borel]{Theorem: Heine--Borel Theorem for $\mathbb{R}$}
+  \item \hyperref[cor:closed-iff-seq-limits]{Corollary: Closed iff Sequentially Closed}
+  \item \hyperref[thm:composition-of-limits]{Theorem: Composition of Limits}
+\end{itemize}
+\end{remark*}

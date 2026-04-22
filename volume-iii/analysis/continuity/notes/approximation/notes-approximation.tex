@@ -23,11 +23,16 @@
 % Theorem --- Step Function Approximation
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Step Function Approximation)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Step Function Approximation]
 \label{thm:step-function-approximation}
 Let $f:[a,b]\to\mathbb{R}$ be continuous and let $\varepsilon>0$. There exists a step function $s_\varepsilon:[a,b]\to\mathbb{R}$ such that $\sup_{x\in[a,b]} |f(x)-s_\varepsilon(x)|<\varepsilon$.
 \hyperref[prf:step-function-approximation]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -42,7 +47,7 @@ Let $f:[a,b]\to\mathbb{R}$ be continuous and let $\varepsilon>0$. There exists a
 \[
 \operatorname{StepApproximation}(f,s_\varepsilon,[a,b],\varepsilon)
 \coloneqq
-\Bigl(s_\varepsilon \text{ is a step function on } [a,b]\Bigr)
+\operatorname{StepFunction}(s_\varepsilon,[a,b])
 \land
 \forall x\in[a,b]\;(|f(x)-s_\varepsilon(x)|<\varepsilon).
 \]
@@ -54,6 +59,17 @@ Let $f:[a,b]\to\mathbb{R}$ be continuous and let $\varepsilon>0$. There exists a
 &\text{Let } f:[a,b]\to\mathbb{R} \text{ be continuous and let } \varepsilon>0.\\
 &\forall s:[a,b]\to\mathbb{R} \text{ step function } \exists x\in[a,b]\;(|f(x)-s(x)|\ge\varepsilon).
 \end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\exists s_\varepsilon\;
+\operatorname{StepApproximation}(f,s_\varepsilon,[a,b],\varepsilon)
+\Longleftrightarrow
+\forall s:[a,b]\to\mathbb{R}\;
+\Bigl(\operatorname{StepFunction}(s,[a,b]) \Rightarrow
+\exists x\in[a,b]\;(|f(x)-s(x)|\ge\varepsilon)\Bigr).
 \]
 \end{remark*}
 
@@ -137,17 +153,6 @@ for every $k\in\{1,\ldots,m\}$.
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg\exists s_\varepsilon\;
-\operatorname{StepApproximation}(f,s_\varepsilon,[a,b],\varepsilon)
-\Longleftrightarrow
-\forall s:[a,b]\to\mathbb{R}\;
-\Bigl(s \text{ step function } \Rightarrow
-\exists x\in[a,b]\;(|f(x)-s(x)|\ge\varepsilon)\Bigr).
-\]
-\end{remark*}
-
-\begin{remark*}[Negation predicate reading]
-\[
 \neg\operatorname{PiecewiseLinear}(g,[a,b])
 \Longleftrightarrow
 \forall m \in \mathbb{N}\;\Bigl(m \ge 1 \Rightarrow
@@ -155,6 +160,21 @@ for every $k\in\{1,\ldots,m\}$.
 \bigl[a=x_0 < \cdots < x_m = b
 \Rightarrow
 \exists k \in \{1,\ldots,m\}\; g|_{[x_{k-1},x_k]} \text{ is not affine}\bigr]\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed piecewise-linear structure can fail because no finite ordered
+partition of $[a,b]$ is available, or because for every such partition
+at least one subinterval has a restriction of $g$ that is not affine.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\forall m\in\mathbb{N}\;(m\ge 1\Rightarrow
+\forall x_0,\ldots,x_m\in[a,b]\;(a=x_0<\cdots<x_m=b\Rightarrow\cdots))}_{\text{no valid finite affine subdivision}}
+\;\lor\;
+\underbrace{\exists k\in\{1,\ldots,m\}\; g|_{[x_{k-1},x_k]}\text{ is not affine}}_{\text{non-affine segment}}.
 \]
 \end{remark*}
 
@@ -269,51 +289,6 @@ B_n(x)=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}
 \Bigl(
 B_n(x)=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}
 \Bigr).
-\]
-\end{remark*}
-
-\begin{remark*}[Negated quantified statement]
-\[
-\begin{aligned}
-&\text{Let }n\in\mathbb{N},\; f:[0,1]\to\mathbb{R},\; B_n:[0,1]\to\mathbb{R}.\\
-&\neg\Bigl(B_n \text{ is the } n\text{th Bernstein polynomial of } f\Bigr)\\
-&\Longleftrightarrow
-\exists x\in[0,1]\;
-\Bigl(
-B_n(x)\neq\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}
-\Bigr).
-\end{aligned}
-\]
-\end{remark*}
-
-\begin{remark*}[Negation predicate reading]
-\[
-\neg\operatorname{BernsteinPolynomial}(B_n,f,n)
-\Longleftrightarrow
-\neg\bigl(B_n:[0,1]\to\mathbb{R}\bigr)
-\lor
-\exists x\in[0,1]\;
-\Bigl(
-B_n(x)\neq\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}
-\Bigr).
-\]
-\end{remark*}
-
-\begin{remark*}[Failure modes]
-Failure occurs either because $B_n$ is not a function from $[0,1]$ to
-$\mathbb{R}$, or because at some point $x\in[0,1]$ its value does not
-match the prescribed binomial average of the sample values $f(k/n)$.
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-\[
-\neg\operatorname{BernsteinPolynomial}(B_n,f,n)=
-\underbrace{\neg\bigl(B_n:[0,1]\to\mathbb{R}\bigr)}_{\text{wrong function type}}
-\;\lor\;
-\underbrace{\exists x\in[0,1]\;
-\Bigl(
-B_n(x)\neq\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}
-\Bigr)}_{\text{Mismatch with binomial averaging at some }x}.
 \]
 \end{remark*}
 

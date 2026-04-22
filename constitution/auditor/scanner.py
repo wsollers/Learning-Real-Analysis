@@ -3,7 +3,7 @@ scanner.py
 Scans a chapter directory for LaTeX theorem-like environments and proof files.
 Used to bootstrap chapter.yaml and to true-up an existing chapter.yaml.
 
-All file writes require explicit caller approval — this module only returns
+All file writes require explicit caller approval - this module only returns
 data structures, never writes to disk.
 """
 
@@ -63,7 +63,7 @@ _LABEL = re.compile(r"\\label\{([a-z]+:[a-z0-9\-]+)\}")
 # Matches: \label{prf:...} in proof files
 _PROOF_LABEL = re.compile(r"\\label\{(prf:[a-z0-9\-]+)\}")
 
-# Matches: \hyperref[thm:...]{Return to Theorem} — extracts theorem_label
+# Matches: \hyperref[thm:...]{Return to Theorem} and analogous theorem-like returns.
 _RETURN_LINK = re.compile(r"\\hyperref\[([a-z]+:[a-z0-9\-]+)\]\{Return")
 
 
@@ -113,7 +113,7 @@ def _scan_notes_file(
             if label is None:
                 warnings.append(
                     f"{rel_path} line {i+1}: "
-                    f"\\begin{{{env_name}}} has no \\label within 10 lines — skipped."
+                    f"\\begin{{{env_name}}} has no \\label within 10 lines - skipped."
                 )
                 i += 1
                 continue
@@ -128,7 +128,7 @@ def _scan_notes_file(
             if actual_prefix != expected_prefix:
                 warnings.append(
                     f"{rel_path} line {i+1}: "
-                    f"Label prefix mismatch — expected {expected_prefix}:, "
+                    f"Label prefix mismatch - expected {expected_prefix}:, "
                     f"got {actual_prefix}: in {label}"
                 )
 
@@ -165,7 +165,7 @@ def _scan_proof_file(
     # Find proof label
     proof_label_match = _PROOF_LABEL.search(text)
     if not proof_label_match:
-        warnings.append(f"{rel_path}: No \\label{{prf:...}} found — skipped.")
+        warnings.append(f"{rel_path}: No \\label{{prf:...}} found - skipped.")
         return None, warnings
 
     proof_label = proof_label_match.group(1)
@@ -175,7 +175,7 @@ def _scan_proof_file(
     if not return_match:
         warnings.append(
             f"{rel_path}: No return hyperref link found. "
-            f"Cannot determine theorem_label — using prf label root."
+            f"Cannot determine theorem_label - using prf label root."
         )
         # Infer theorem label from proof label
         root = proof_label.replace("prf:", "")
@@ -224,7 +224,7 @@ def scan_chapter(chapter_path: Path) -> ScanResult:
     notes_dir = chapter_root / "notes"
     if notes_dir.exists():
         for tex_file in sorted(notes_dir.rglob("*.tex")):
-            # Skip index files — they only contain \input chains
+            # Skip index files - they only contain \input chains
             if tex_file.name == "index.tex":
                 continue
             entries, warnings = _scan_notes_file(tex_file, chapter_root)

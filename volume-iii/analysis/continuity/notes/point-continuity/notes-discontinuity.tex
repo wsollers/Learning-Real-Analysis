@@ -35,7 +35,7 @@ Let $A \subseteq \mathbb{R}$, let $f \colon A \to \mathbb{R}$, and let $a \in A$
 &f \text{ is discontinuous at } a
 \Longleftrightarrow
 \neg\Bigl(\forall \varepsilon > 0\; \exists \delta > 0\; \forall x \in A\;
-\bigl(\operatorname{Within}(x,a,\delta) \Rightarrow |f(x)-f(a)| < \varepsilon\bigr)\Bigr).
+\bigl(|x-a|<\delta \Rightarrow |f(x)-f(a)| < \varepsilon\bigr)\Bigr).
 \end{aligned}
 \]
 \end{remark*}
@@ -53,7 +53,7 @@ Let $A \subseteq \mathbb{R}$, let $f \colon A \to \mathbb{R}$, and let $a \in A$
 &f \text{ is discontinuous at } a
 \Longleftrightarrow
 \exists \varepsilon > 0\; \forall \delta > 0\; \exists x \in A\;
-\bigl(\operatorname{Within}(x,a,\delta) \land |f(x)-f(a)| \ge \varepsilon\bigr).
+\bigl(|x-a|<\delta \land |f(x)-f(a)| \ge \varepsilon\bigr).
 \end{aligned}
 \]
 \end{remark*}
@@ -65,7 +65,7 @@ Let $A \subseteq \mathbb{R}$, let $f \colon A \to \mathbb{R}$, and let $a \in A$
 \operatorname{ContinuousAt}(f,a)
 \Longleftrightarrow
 \forall \varepsilon > 0\; \exists \delta > 0\; \forall x \in A\;
-\bigl(\operatorname{Within}(x,a,\delta) \Rightarrow |f(x)-f(a)| < \varepsilon\bigr).
+\bigl(|x-a|<\delta \Rightarrow |f(x)-f(a)| < \varepsilon\bigr).
 \]
 \end{remark*}
 
@@ -229,18 +229,6 @@ where $f \colon A \to \mathbb{R}$ and $c \in A$.
 \]
 \end{remark*}
 
-\begin{remark*}[Failure modes]
-Discontinuity fails exactly when every neighborhood $V$ of $f(c)$ admits some neighborhood $U$ of $c$ whose intersection with $A$ is mapped entirely inside $V$; this is the continuity condition at $c$.
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-\[
-\neg \operatorname{DiscontinuousAt}(f,c)
-=
-\underbrace{\forall V \ni f(c)\; \exists U \ni c\; \forall x \in U \cap A\; (f(x) \in V)}_{\text{Continuity at } c}.
-\]
-\end{remark*}
-
 \begin{remark*}[Interpretation]
 This reformulation says that discontinuity at $c$ is witnessed by a fixed output neighborhood $V$ that the function fails to enter no matter how tightly the input is restricted around $c$. The search over input neighborhoods $U$ reflects the idea that every microscopic view near $c$ still contains points whose images leave $V$. When this cannot happen, every output neighborhood traps the image of some small input neighborhood, which is precisely continuity. Geometrically, discontinuity corresponds to oscillation or jumping that defeats any single output tolerance, while continuity guarantees that some entire cluster of nearby domain points already sits inside every prescribed target neighborhood.
 \end{remark*}
@@ -340,7 +328,7 @@ Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $x_0 \in A$ with
 \begin{aligned}
 \operatorname{RemovableDiscontinuity}(f,x_0) &\coloneqq \exists L \in \mathbb{R}\; \bigl(\operatorname{FunctionLimit}(f,A,x_0,L) \land L \ne f(x_0)\bigr),\\
 \operatorname{JumpDiscontinuity}(f,x_0) &\coloneqq \exists L_{-},L_{+} \in \mathbb{R}\; \bigl(\operatorname{LeftLimit}(f,x_0,L_{-}) \land \operatorname{RightLimit}(f,x_0,L_{+}) \land L_{-} \ne L_{+}\bigr),\\
-\text{(Essential)} &\coloneqq \neg \operatorname{RemovableDiscontinuity}(f,x_0).
+\operatorname{EssentialDiscontinuity}(f,x_0) &\coloneqq \neg \operatorname{RemovableDiscontinuity}(f,x_0).
 \end{aligned}
 \]
 \end{remark*}
@@ -348,7 +336,6 @@ Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $x_0 \in A$ with
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&\text{Within the same context as above:}\\
 &\text{Not removable } \Longleftrightarrow \forall L \in \mathbb{R}\; \bigl(\lim_{x \to x_0} f(x) \ne L \lor L = f(x_0)\bigr).\\
 &\text{Not jump } \Longleftrightarrow \forall L_{-},L_{+} \in \mathbb{R}\; \bigl(\lim_{x \to x_0^-} f(x) \ne L_{-} \lor \lim_{x \to x_0^+} f(x) \ne L_{+} \lor L_{-} = L_{+}\bigr).\\
 &\text{Not essential } \Longleftrightarrow \exists L \in \mathbb{R}\; \bigl(\lim_{x \to x_0} f(x) = L \land L \ne f(x_0)\bigr).
@@ -361,7 +348,7 @@ Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $x_0 \in A$ with
 \begin{aligned}
 \neg \operatorname{RemovableDiscontinuity}(f,x_0) &\Longleftrightarrow \forall L \in \mathbb{R}\; \bigl(\neg \operatorname{FunctionLimit}(f,A,x_0,L) \lor L = f(x_0)\bigr),\\
 \neg \operatorname{JumpDiscontinuity}(f,x_0) &\Longleftrightarrow \forall L_{-},L_{+} \in \mathbb{R}\; \bigl(\neg \operatorname{LeftLimit}(f,x_0,L_{-}) \lor \neg \operatorname{RightLimit}(f,x_0,L_{+}) \lor L_{-} = L_{+}\bigr),\\
-\text{(Not essential)} &\Longleftrightarrow \operatorname{RemovableDiscontinuity}(f,x_0).
+\neg\operatorname{EssentialDiscontinuity}(f,x_0) &\Longleftrightarrow \operatorname{RemovableDiscontinuity}(f,x_0).
 \end{aligned}
 \]
 \end{remark*}
@@ -384,7 +371,8 @@ The classification isolates the three canonical behaviors that obstruct continui
 \end{remark*}
 
 \begin{remark*}[Dependencies]
-\hyperref[def:point-of-discontinuity]{Definition~\ref*{def:point-of-discontinuity}}
-% UNRESOLVED_DEPENDENCY: Bilateral function limit at a point | Reason: Label not available in index.
-% UNRESOLVED_DEPENDENCY: Left and right limits at a point | Reason: Labels not available in index.
+\hyperref[def:point-of-discontinuity]{Definition~\ref*{def:point-of-discontinuity}};
+\hyperref[def:limit-function]{Definition~\ref*{def:limit-function}};
+\hyperref[def:left-hand-limit]{Definition~\ref*{def:left-hand-limit}};
+\hyperref[def:right-hand-limit]{Definition~\ref*{def:right-hand-limit}}.
 \end{remark*}

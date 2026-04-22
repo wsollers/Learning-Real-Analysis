@@ -44,8 +44,15 @@ Then both one-sided limits exist and satisfy
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\text{Let } I \subseteq \mathbb{R} \text{ be an interval, } f:I\to\mathbb{R} \text{ increasing, and } c\in I \text{ with } \exists a,b\in I \text{ such that } a<c<b.\\
-&\text{Let } L_- = \sup\{f(x): x\in I,\; x<c\} \text{ and } L_+ = \inf\{f(x): x\in I,\; c<x\}.\\
+&I\subseteq\mathbb{R}\land
+\bigl(\forall x,y\in I\;\forall z\in\mathbb{R}\;(x<z<y\Rightarrow z\in I)\bigr)
+\land f:I\to\mathbb{R}\\
+&\land\bigl(\forall x,y\in I\;(x<y\Rightarrow f(x)\le f(y))\bigr)
+\land c\in I
+\land \exists a,b\in I\;(a<c<b)\\
+&\land L_- = \sup\{f(x): x\in I,\; x<c\}
+\land L_+ = \inf\{f(x): x\in I,\; c<x\}\\
+&\Longrightarrow\\
 &\forall \varepsilon>0\; \exists \delta_- > 0\; \forall x\in I\; \bigl((0<c-x<\delta_- \land x<c) \Rightarrow |f(x)-L_-|<\varepsilon \bigr)\\
 &\land \forall \varepsilon>0\; \exists \delta_+ > 0\; \forall x\in I\; \bigl((0<x-c<\delta_+ \land c<x) \Rightarrow |f(x)-L_+|<\varepsilon \bigr).
 \end{aligned}
@@ -162,9 +169,13 @@ j_f(c)\coloneqq f(c^+)-f(c^-).
 \[
 \begin{aligned}
 &\forall I\subseteq\mathbb{R}\;\forall f:I\to\mathbb{R}\;\forall c\in I\;\forall j\in\mathbb{R}\\
-&\Bigl[\operatorname{Interval}(I)\land \operatorname{InteriorPoint}(c,I)
-\land \operatorname{Increasing}(f,I)
-\land f(c^-)\text{ exists}\land f(c^+)\text{ exists}\Bigr]\\
+&\Bigl[
+\bigl(\forall x,y\in I\;\forall z\in\mathbb{R}\;(x<z<y\Rightarrow z\in I)\bigr)
+\land \exists a,b\in I\;(a<c<b)\\
+&\qquad\land \bigl(\forall x,y\in I\;(x<y\Rightarrow f(x)\le f(y))\bigr)
+\land \exists L_-,L_+\in\mathbb{R}\;
+\bigl(\lim_{x\to c^-}f(x)=L_- \land \lim_{x\to c^+}f(x)=L_+\bigr)
+\Bigr]\\
 &\qquad\Rightarrow
 \bigl(j=j_f(c)\Longleftrightarrow j=f(c^+)-f(c^-)\bigr).
 \end{aligned}
@@ -279,8 +290,10 @@ Let $I \subseteq \mathbb{R}$ be an interval and let $f:I \to \mathbb{R}$ be nond
 \forall a,b\in I\;
 \Bigl[
 a\ne b\land
-\neg\operatorname{ContinuousAt}(f,a)\land
-\neg\operatorname{ContinuousAt}(f,b)
+\bigl(\exists \varepsilon_a>0\;\forall \delta>0\;\exists x\in I\;
+(|x-a|<\delta\land |f(x)-f(a)|\ge\varepsilon_a)\bigr)\land
+\bigl(\exists \varepsilon_b>0\;\forall \delta>0\;\exists y\in I\;
+(|y-b|<\delta\land |f(y)-f(b)|\ge\varepsilon_b)\bigr)
 \Rightarrow
 (f(a^-),f(a^+))\cap(f(b^-),f(b^+))=\varnothing
 \Bigr].
@@ -363,6 +376,15 @@ Let $f:[a,b]\to\mathbb{R}$ be monotone. Then the set $\{x\in[a,b]:f \text{ is co
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
+\[
+\exists u,v\in[a,b]\;
+\Bigl(u<v \land
+\forall c\in(u,v)\;\exists \varepsilon_c>0\;\forall \delta>0\;\exists x\in[a,b]\;
+\bigl(|x-c|<\delta\land |f(x)-f(c)|\ge\varepsilon_c\bigr)\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
 \[
 \exists u,v\in[a,b]\;
 \Bigl(u<v \land
