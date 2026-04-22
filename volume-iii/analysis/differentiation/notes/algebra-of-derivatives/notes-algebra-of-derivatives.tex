@@ -1,192 +1,493 @@
+% =========================================================
+% Section: Algebra of Derivatives
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Algebra of Derivatives --- toolkit}]
+\textbf{Concept family:} The pointwise algebra rules for differentiation at a point, and their global (interval) forms.
+
+\medskip
+\textbf{Pointwise rules (at a point $c$):}
+\begin{itemize}
+  \item Theorem: Constant Multiple Rule
+  \item Theorem: Sum Rule
+  \item Theorem: Product Rule
+  \item Theorem: Quotient Rule
+  \item Corollary: Finite Sum Rule
+  \item Corollary: Extended Product Rule
+  \item Corollary: Power Rule for Integer Powers of a Function
+  \item Theorem: Finite Linear Combination Rule
+\end{itemize}
+
+\medskip
+\textbf{Global rules (on an interval $I$):}
+\begin{itemize}
+  \item Theorem: Constant Multiple Rule on an Interval
+  \item Theorem: Sum Rule on an Interval
+  \item Theorem: Product Rule on an Interval
+  \item Theorem: Quotient Rule on an Interval
+  \item Corollary: Finite Sum Rule on an Interval
+  \item Corollary: Extended Product Rule on an Interval
+  \item Corollary: Power Rule for Integer Powers of a Function on an Interval
+  \item Theorem: Finite Linear Combination Rule on an Interval
+\end{itemize}
+\end{tcolorbox}
+
+% =========================================================
+% Pointwise algebra rules
+% =========================================================
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{theorem}[Constant Multiple Rule]
 \label{thm:constant-multiple-rule}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, let $c \in A$ be a limit point of $A$, and let $\alpha \in \mathbb{R}$. If $f$ is differentiable at $c$, then $\alpha f$ is differentiable at $c$, and
 \[
-(\alpha f)'(c)=\alpha f'(c).
+(\alpha f)'(c) = \alpha f'(c).
 \]
+\hyperref[prf:constant-multiple]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DifferentiableAt}(f,c) \;\Rightarrow\;
+\operatorname{DerivativeAt}(\alpha f,\,c,\,\alpha f'(c)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Multiplying a function by a constant scales its derivative by the same constant. The proof is one line: the scalar $\alpha$ factors out of the difference quotient algebraically, then the Constant Multiple Rule for Limits passes it through the limit. Differentiation is therefore homogeneous of degree one with respect to scalar multiplication.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[thm:limit-constant-multiple]{Constant Multiple Rule for Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{theorem}[Sum Rule]
 \label{thm:sum-rule}
-Let $A \subseteq \mathbb{R}$, let $f,g : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If $f$ and $g$ are differentiable at $c$, then $f+g$ is differentiable at $c$, and
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If $f$ and $g$ are differentiable at $c$, then $f + g$ is differentiable at $c$, and
 \[
-(f+g)'(c)=f'(c)+g'(c).
+(f+g)'(c) = f'(c) + g'(c).
 \]
+\hyperref[prf:sum-rule]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DifferentiableAt}(f,c) \;\land\; \operatorname{DifferentiableAt}(g,c)
+\;\Rightarrow\;
+\operatorname{DerivativeAt}(f+g,\,c,\,f'(c)+g'(c)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The derivative of a sum is the sum of the derivatives. The proof is immediate: the difference quotient of $f+g$ splits linearly into the sum of the individual difference quotients, and the Sum Rule for Limits distributes the limit across the sum. Together with the Constant Multiple Rule, this establishes that differentiation is a linear operation: $(\alpha f + \beta g)' = \alpha f' + \beta g'$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[thm:limit-sum]{Sum Rule for Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{theorem}[Product Rule]
 \label{thm:product-rule}
-Let $A \subseteq \mathbb{R}$, let $f,g : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If $f$ and $g$ are differentiable at $c$, then $fg$ is differentiable at $c$, and
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If $f$ and $g$ are differentiable at $c$, then $fg$ is differentiable at $c$, and
 \[
-(fg)'(c)=f'(c)g(c)+f(c)g'(c).
+(fg)'(c) = f'(c)g(c) + f(c)g'(c).
 \]
+\hyperref[prf:product-rule]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DifferentiableAt}(f,c) \;\land\; \operatorname{DifferentiableAt}(g,c)
+\;\Rightarrow\;
+\operatorname{DerivativeAt}(fg,\,c,\,f'(c)g(c)+f(c)g'(c)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The derivative of a product is not simply the product of the derivatives. The correct formula adds two terms: the rate of change of $f$ weighted by the current value of $g$, plus the rate of change of $g$ weighted by the current value of $f$. The proof inserts the auxiliary term $f(x)g(c)$ to decouple the increments of $f$ and $g$, isolating the individual difference quotients. Continuity of $f$ at $c$ (which follows from differentiability) is used to evaluate $\lim_{x\to c} f(x) = f(c)$ in one of the factors.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[thm:differentiable-implies-continuous]{Theorem: Differentiable Implies Continuous}
+  \item \hyperref[thm:limit-sum]{Sum Rule for Limits}
+  \item \hyperref[thm:limit-product]{Product Rule for Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{theorem}[Quotient Rule]
 \label{thm:quotient-rule}
-Let $A \subseteq \mathbb{R}$, let $f,g : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. Suppose that $f$ and $g$ are differentiable at $c$ and that $g(c)\neq 0$. Then $f/g$ is differentiable at $c$, and
+Let $A \subseteq \mathbb{R}$, let $f, g : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. Suppose that $f$ and $g$ are differentiable at $c$ and that $g(c) \neq 0$. Then $f/g$ is differentiable at $c$, and
 \[
-\left(\frac{f}{g}\right)'(c)=\frac{f'(c)g(c)-f(c)g'(c)}{(g(c))^2}.
+\left(\frac{f}{g}\right)'(c) = \frac{f'(c)g(c) - f(c)g'(c)}{(g(c))^2}.
 \]
+\hyperref[prf:quotient-rule]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DifferentiableAt}(f,c) \;\land\; \operatorname{DifferentiableAt}(g,c) \;\land\; g(c)\neq 0
+\;\Rightarrow\;
+\operatorname{DerivativeAt}\!\left(\tfrac{f}{g},\,c,\,\tfrac{f'(c)g(c)-f(c)g'(c)}{(g(c))^2}\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The quotient rule is the product rule applied to $f \cdot g^{-1}$, but stated directly. The hypothesis $g(c) \neq 0$ ensures the quotient is defined near $c$ — continuity of $g$ (from its differentiability) and the non-vanishing limit theorem guarantee $g(x) \neq 0$ in a deleted neighbourhood of $c$, so the difference quotient of $f/g$ is well-defined throughout. The add-and-subtract technique with $f(c)g(c)$ decouples the increments of $f$ and $g$ in the numerator, exactly as in the product rule proof.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[thm:differentiable-implies-continuous]{Theorem: Differentiable Implies Continuous}
+  \item \hyperref[thm:limit-nonvanishing]{Non-Vanishing Limit Theorem}
+  \item \hyperref[thm:limit-sum]{Sum Rule for Limits}
+  \item \hyperref[thm:limit-product]{Product Rule for Limits}
+  \item \hyperref[thm:limit-quotient]{Quotient Rule for Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{corollary}[Finite Sum Rule]
 \label{cor:finite-sum-rule}
-Let $A \subseteq \mathbb{R}$, let $f_1,\dots,f_n : A \to \mathbb{R}$, let $\alpha_1,\dots,\alpha_n \in \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If each $f_i$ is differentiable at $c$, then $\sum_{i=1}^n \alpha_i f_i$ is differentiable at $c$, and
+Let $A \subseteq \mathbb{R}$, let $f_1, \dots, f_n : A \to \mathbb{R}$, let $\alpha_1, \dots, \alpha_n \in \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If each $f_i$ is differentiable at $c$, then $\sum_{i=1}^{n} \alpha_i f_i$ is differentiable at $c$, and
 \[
-\left(\sum_{i=1}^n \alpha_i f_i\right)'(c)=\sum_{i=1}^n \alpha_i f_i'(c).
+\left(\sum_{i=1}^{n} \alpha_i f_i\right)'(c) = \sum_{i=1}^{n} \alpha_i f_i'(c).
 \]
+\hyperref[prf:finite-sum-rule]{Go to proof.}
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall i \in \{1,\dots,n\}\;\operatorname{DifferentiableAt}(f_i,c)
+\;\Rightarrow\;
+\operatorname{DerivativeAt}\!\left(\textstyle\sum_i \alpha_i f_i,\,c,\,\textstyle\sum_i \alpha_i f_i'(c)\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:sum-rule]{Theorem: Sum Rule}
+  \item \hyperref[thm:constant-multiple-rule]{Theorem: Constant Multiple Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{corollary}[Extended Product Rule]
 \label{cor:extended-product-rule}
-Let $A \subseteq \mathbb{R}$, let $f_1,\dots,f_n : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If each $f_i$ is differentiable at $c$, then the product $\prod_{i=1}^n f_i$ is differentiable at $c$, and
+Let $A \subseteq \mathbb{R}$, let $f_1, \dots, f_n : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If each $f_i$ is differentiable at $c$, then $\prod_{i=1}^{n} f_i$ is differentiable at $c$, and
 \[
-\left(\prod_{i=1}^n f_i\right)'(c)
+\left(\prod_{i=1}^{n} f_i\right)'(c)
 =
-\sum_{k=1}^n
-\left(
-f_1(c)\cdots f_{k-1}(c)\,f_k'(c)\,f_{k+1}(c)\cdots f_n(c)
-\right).
+\sum_{k=1}^{n}
+f_k'(c) \prod_{\substack{i=1\\i\neq k}}^{n} f_i(c).
 \]
+\hyperref[prf:finite-product-rule]{Go to proof.}
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall i\;\operatorname{DifferentiableAt}(f_i,c)
+\;\Rightarrow\;
+\operatorname{DerivativeAt}\!\left(\textstyle\prod_i f_i,\;c,\;\textstyle\sum_k f_k'(c)\prod_{i\neq k} f_i(c)\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:product-rule]{Theorem: Product Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{corollary}[Power Rule for Integer Powers of a Function]
 \label{cor:power-rule-special-case}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, let $c \in A$ be a limit point of $A$, and let $n \in \mathbb{N}$. If $f$ is differentiable at $c$, then $f^n$ is differentiable at $c$, and
 \[
-(f^n)'(c)=n(f(c))^{n-1}f'(c).
+(f^n)'(c) = n(f(c))^{n-1}f'(c).
 \]
+\hyperref[prf:special-case-product-rule]{Go to proof.}
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DifferentiableAt}(f,c) \;\land\; n \in \mathbb{N}
+\;\Rightarrow\;
+\operatorname{DerivativeAt}(f^n,\,c,\,n(f(c))^{n-1}f'(c)).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[cor:extended-product-rule]{Corollary: Extended Product Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{theorem}[Finite Linear Combination Rule]
 \label{thm:finite-linear-combination-rule}
-Let $A \subseteq \mathbb{R}$, let $f_1,\dots,f_n : A \to \mathbb{R}$, let $\alpha_1,\dots,\alpha_n \in \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If each $f_i$ is differentiable at $c$, then the function
+Let $A \subseteq \mathbb{R}$, let $f_1, \dots, f_n : A \to \mathbb{R}$, let $\alpha_1, \dots, \alpha_n \in \mathbb{R}$, and let $c \in A$ be a limit point of $A$. If each $f_i$ is differentiable at $c$, then
 \[
-x \mapsto \sum_{i=1}^n \alpha_i f_i(x)
+\left(\sum_{i=1}^{n} \alpha_i f_i\right)'(c) = \sum_{i=1}^{n} \alpha_i f_i'(c).
 \]
-is differentiable at $c$, and
-\[
-\left(\sum_{i=1}^n \alpha_i f_i\right)'(c)=\sum_{i=1}^n \alpha_i f_i'(c).
-\]
+\hyperref[prf:finite-linear-combination]{Go to proof.}
 \end{theorem}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\forall i\;\operatorname{DifferentiableAt}(f_i,c)
+\;\Rightarrow\;
+\operatorname{DerivativeAt}\!\left(\textstyle\sum_i\alpha_i f_i,\;c,\;\textstyle\sum_i\alpha_i f_i'(c)\right).
+\]
+\end{remark*}
 
+\begin{remark*}[Interpretation]
+The Finite Linear Combination Rule is the full statement that differentiation is a \emph{linear operator}: it commutes with scalar multiplication and addition simultaneously, for any finite collection of differentiable functions. This is not a separate theorem from the Constant Multiple and Sum Rules — it is their inductive closure. Stated in operator language: if $\mathcal{D}(I)$ denotes the vector space of functions differentiable at $c$, then $D_c : \mathcal{D}(I) \to \mathbb{R}$ defined by $D_c(f) = f'(c)$ is a linear functional. The Finite Linear Combination Rule says $D_c(\sum_i \alpha_i f_i) = \sum_i \alpha_i D_c(f_i)$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:constant-multiple-rule]{Theorem: Constant Multiple Rule}
+  \item \hyperref[thm:sum-rule]{Theorem: Sum Rule}
+\end{itemize}
+\end{remark*}
+
+% =========================================================
+% Global (interval) algebra rules
+% =========================================================
 
 \begin{theorem}[Constant Multiple Rule on an Interval]
 \label{thm:constant-multiple-rule-interval}
 Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $\alpha \in \mathbb{R}$. If $f$ is differentiable on $I$, then $\alpha f$ is differentiable on $I$, and
 \[
-(\alpha f)'(x)=\alpha f'(x)
-\qquad \text{for all } x \in I.
+(\alpha f)'(x) = \alpha f'(x) \qquad \text{for all } x \in I.
 \]
 \end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x \in I\;\operatorname{DifferentiableAt}(f,x)
+\;\Rightarrow\;
+\forall x \in I\;\operatorname{DerivativeAt}(\alpha f,\,x,\,\alpha f'(x)).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:constant-multiple-rule]{Theorem: Constant Multiple Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{theorem}[Sum Rule on an Interval]
 \label{thm:sum-rule-interval}
-Let $I \subseteq \mathbb{R}$ be an interval, and let $f,g : I \to \mathbb{R}$. If $f$ and $g$ are differentiable on $I$, then $f+g$ is differentiable on $I$, and
+Let $I \subseteq \mathbb{R}$ be an interval, and let $f, g : I \to \mathbb{R}$. If $f$ and $g$ are differentiable on $I$, then $f + g$ is differentiable on $I$, and
 \[
-(f+g)'(x)=f'(x)+g'(x)
-\qquad \text{for all } x \in I.
+(f+g)'(x) = f'(x) + g'(x) \qquad \text{for all } x \in I.
 \]
 \end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x \in I\;\bigl(\operatorname{DifferentiableAt}(f,x) \land \operatorname{DifferentiableAt}(g,x)\bigr)
+\;\Rightarrow\;
+\forall x \in I\;\operatorname{DerivativeAt}(f+g,\,x,\,f'(x)+g'(x)).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:sum-rule]{Theorem: Sum Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{theorem}[Product Rule on an Interval]
 \label{thm:product-rule-interval}
-Let $I \subseteq \mathbb{R}$ be an interval, and let $f,g : I \to \mathbb{R}$. If $f$ and $g$ are differentiable on $I$, then $fg$ is differentiable on $I$, and
+Let $I \subseteq \mathbb{R}$ be an interval, and let $f, g : I \to \mathbb{R}$. If $f$ and $g$ are differentiable on $I$, then $fg$ is differentiable on $I$, and
 \[
-(fg)'(x)=f'(x)g(x)+f(x)g'(x)
-\qquad \text{for all } x \in I.
+(fg)'(x) = f'(x)g(x) + f(x)g'(x) \qquad \text{for all } x \in I.
 \]
 \end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x \in I\;\bigl(\operatorname{DifferentiableAt}(f,x)\land\operatorname{DifferentiableAt}(g,x)\bigr)
+\;\Rightarrow\;
+\forall x \in I\;\operatorname{DerivativeAt}(fg,\,x,\,f'(x)g(x)+f(x)g'(x)).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:product-rule]{Theorem: Product Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{theorem}[Quotient Rule on an Interval]
 \label{thm:quotient-rule-interval}
-Let $I \subseteq \mathbb{R}$ be an interval, and let $f,g : I \to \mathbb{R}$. Suppose that $f$ and $g$ are differentiable on $I$ and that $g(x)\neq 0$ for all $x \in I$. Then $f/g$ is differentiable on $I$, and
+Let $I \subseteq \mathbb{R}$ be an interval, and let $f, g : I \to \mathbb{R}$. Suppose that $f$ and $g$ are differentiable on $I$ and that $g(x) \neq 0$ for all $x \in I$. Then $f/g$ is differentiable on $I$, and
 \[
-\left(\frac{f}{g}\right)'(x)=\frac{f'(x)g(x)-f(x)g'(x)}{(g(x))^2}
-\qquad \text{for all } x \in I.
+\left(\frac{f}{g}\right)'(x) = \frac{f'(x)g(x) - f(x)g'(x)}{(g(x))^2} \qquad \text{for all } x \in I.
 \]
 \end{theorem}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x \in I\;\bigl(\operatorname{DifferentiableAt}(f,x)\land\operatorname{DifferentiableAt}(g,x)\land g(x)\neq 0\bigr)
+\;\Rightarrow\;
+\forall x \in I\;\operatorname{DerivativeAt}\!\left(\tfrac{f}{g},\,x,\,\tfrac{f'(x)g(x)-f(x)g'(x)}{(g(x))^2}\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:quotient-rule]{Theorem: Quotient Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
 \begin{corollary}[Finite Sum Rule on an Interval]
 \label{cor:finite-sum-rule-interval}
-Let $I \subseteq \mathbb{R}$ be an interval, let $f_1,\dots,f_n : I \to \mathbb{R}$, and let $\alpha_1,\dots,\alpha_n \in \mathbb{R}$. If each $f_i$ is differentiable on $I$, then $\sum_{i=1}^n \alpha_i f_i$ is differentiable on $I$, and
+Let $I \subseteq \mathbb{R}$ be an interval, let $f_1, \dots, f_n : I \to \mathbb{R}$, and let $\alpha_1, \dots, \alpha_n \in \mathbb{R}$. If each $f_i$ is differentiable on $I$, then $\sum_{i=1}^{n} \alpha_i f_i$ is differentiable on $I$, and
 \[
-\left(\sum_{i=1}^n \alpha_i f_i\right)'(x)=\sum_{i=1}^n \alpha_i f_i'(x)
+\left(\sum_{i=1}^{n} \alpha_i f_i\right)'(x) = \sum_{i=1}^{n} \alpha_i f_i'(x) \qquad \text{for all } x \in I.
+\]
+\end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall i\;\forall x\in I\;\operatorname{DifferentiableAt}(f_i,x)
+\;\Rightarrow\;
+\forall x\in I\;\operatorname{DerivativeAt}\!\left(\textstyle\sum_i\alpha_i f_i,\,x,\,\textstyle\sum_i\alpha_i f_i'(x)\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[cor:finite-sum-rule]{Corollary: Finite Sum Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{corollary}[Extended Product Rule on an Interval]
+\label{cor:extended-product-rule-interval}
+Let $I \subseteq \mathbb{R}$ be an interval, and let $f_1, \dots, f_n : I \to \mathbb{R}$. If each $f_i$ is differentiable on $I$, then $\prod_{i=1}^{n} f_i$ is differentiable on $I$, and
+\[
+\left(\prod_{i=1}^{n} f_i\right)'(x)
+= \sum_{k=1}^{n} f_k'(x) \prod_{\substack{i=1\\i\neq k}}^{n} f_i(x)
 \qquad \text{for all } x \in I.
 \]
 \end{corollary}
 
-\begin{corollary}[Extended Product Rule on an Interval]
-\label{cor:extended-product-rule-interval}
-Let $I \subseteq \mathbb{R}$ be an interval, and let $f_1,\dots,f_n : I \to \mathbb{R}$. If each $f_i$ is differentiable on $I$, then $\prod_{i=1}^n f_i$ is differentiable on $I$, and
+\begin{remark*}[Standard quantified statement]
 \[
-\left(\prod_{i=1}^n f_i\right)'(x)
-=
-\sum_{k=1}^n
-\left(
-f_1(x)\cdots f_{k-1}(x)\,f_k'(x)\,f_{k+1}(x)\cdots f_n(x)
-\right)
-\qquad \text{for all } x \in I.
+\forall i\;\forall x\in I\;\operatorname{DifferentiableAt}(f_i,x)
+\;\Rightarrow\;
+\forall x\in I\;\operatorname{DerivativeAt}\!\left(\textstyle\prod_i f_i,\;x,\;\textstyle\sum_k f_k'(x)\prod_{i\neq k} f_i(x)\right).
 \]
-\end{corollary}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[cor:extended-product-rule]{Corollary: Extended Product Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{corollary}[Power Rule for Integer Powers of a Function on an Interval]
 \label{cor:power-rule-special-case-interval}
 Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $n \in \mathbb{N}$. If $f$ is differentiable on $I$, then $f^n$ is differentiable on $I$, and
 \[
-(f^n)'(x)=n(f(x))^{n-1}f'(x)
-\qquad \text{for all } x \in I.
+(f^n)'(x) = n(f(x))^{n-1}f'(x) \qquad \text{for all } x \in I.
 \]
 \end{corollary}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\in I\;\operatorname{DifferentiableAt}(f,x) \;\land\; n\in\mathbb{N}
+\;\Rightarrow\;
+\forall x\in I\;\operatorname{DerivativeAt}(f^n,\,x,\,n(f(x))^{n-1}f'(x)).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[cor:power-rule-special-case]{Corollary: Power Rule for Integer Powers of a Function}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
 \begin{theorem}[Finite Linear Combination Rule on an Interval]
 \label{thm:finite-linear-combination-rule-interval}
-Let $I \subseteq \mathbb{R}$ be an interval, let $f_1,\dots,f_n : I \to \mathbb{R}$, and let $\alpha_1,\dots,\alpha_n \in \mathbb{R}$. If each $f_i$ is differentiable on $I$, then the function
+Let $I \subseteq \mathbb{R}$ be an interval, let $f_1, \dots, f_n : I \to \mathbb{R}$, and let $\alpha_1, \dots, \alpha_n \in \mathbb{R}$. If each $f_i$ is differentiable on $I$, then
 \[
-x \mapsto \sum_{i=1}^n \alpha_i f_i(x)
-\]
-is differentiable on $I$, and
-\[
-\left(\sum_{i=1}^n \alpha_i f_i\right)'(x)=\sum_{i=1}^n \alpha_i f_i'(x)
-\qquad \text{for all } x \in I.
+\left(\sum_{i=1}^{n} \alpha_i f_i\right)'(x) = \sum_{i=1}^{n} \alpha_i f_i'(x) \qquad \text{for all } x \in I.
 \]
 \end{theorem}
 
-
-
-\begin{remark*}[Global differentiability]
-The pointwise statements above — each asserting differentiability and a
-derivative formula at a single point $c \in I$ — extend immediately to global
-statements when the hypotheses hold at every point. If $f$ is differentiable
-on $I$ (meaning at every $c \in I$), then $f'$ is itself a function
-$f' : I \to \mathbb{R}$, and differentiation acts as an operator on the space
-of differentiable functions. The algebra rules then read:
+\begin{remark*}[Standard quantified statement]
 \[
-  (\lambda f)' = \lambda f', \qquad
-  (f \pm g)' = f' \pm g', \qquad
-  (fg)' = f'g + fg', \qquad
-  \left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2},
+\forall i\;\forall x\in I\;\operatorname{DifferentiableAt}(f_i,x)
+\;\Rightarrow\;
+\forall x\in I\;\operatorname{DerivativeAt}\!\left(\textstyle\sum_i\alpha_i f_i,\;x,\;\textstyle\sum_i\alpha_i f_i'(x)\right).
 \]
-where equality holds as functions on $I$, and $g(x) \neq 0$ for all $x \in I$
-in the quotient case. These are not separate theorems — they are the pointwise
-results collected into function notation. The Finite Linear Combination Rule
-in this global form is the statement that differentiation is a linear operator
-on the vector space of differentiable functions on $I$.
 \end{remark*}
 
-
-\begin{remark*}[Global form]
-When $f$ is strictly monotone on $I$ (continuity of $f$ is not separately
-required — it follows from strict monotonicity on an interval up to endpoint
-behaviour) and differentiable on $I$ with $f'(x) \neq 0$ for all $x \in I$,
-the pointwise result holds at every $c \in I$ simultaneously. The inverse
-$g : J \to I$ is then differentiable on $J$ and
+\begin{remark*}[Interpretation]
+The pointwise statements above --- each proved at a single point $c$ --- extend to global statements when the hypotheses hold at every point of $I$. If $f$ is differentiable on $I$, then $f' : I \to \mathbb{R}$ is itself a function and differentiation acts as a linear operator on the vector space $\mathcal{D}(I)$ of functions differentiable on $I$:
 \[
-  g' = \frac{1}{f' \circ g},
+  (\alpha f + \beta g)' = \alpha f' + \beta g',\qquad
+  (fg)' = f'g + fg',\qquad
+  \left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2}.
 \]
-where equality holds as functions on $J$. This is the global statement obtained
-by applying the pointwise theorem at each $d \in J$ with $c = g(d)$.
+These equalities hold as functions on $I$. The Finite Linear Combination Rule in its global form is precisely the statement that $D : \mathcal{D}(I) \to \mathcal{F}(I)$ defined by $D(f) = f'$ is a linear map between function spaces, where $\mathcal{F}(I)$ denotes functions on $I$. The interval variants are not separate theorems --- they are the pointwise results collected into function notation by applying the pointwise result at each $x \in I$.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:finite-linear-combination-rule]{Theorem: Finite Linear Combination Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{remark*}[Inverse function --- forward note]
+When $f$ is strictly monotone and differentiable on $I$ with $f'(x) \neq 0$ for all $x \in I$, the inverse $g : J \to I$ is differentiable on $J = f(I)$ and
+\[
+g' = \frac{1}{f' \circ g},
+\]
+as functions on $J$. This is the global form of the Inverse Function Theorem for derivatives and is treated in the inverse function section.
+\end{remark*}

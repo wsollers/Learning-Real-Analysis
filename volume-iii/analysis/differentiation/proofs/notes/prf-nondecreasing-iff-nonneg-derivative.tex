@@ -1,0 +1,44 @@
+\newpage
+\phantomsection
+\label{prf:nondecreasing-iff-nonneg-derivative}
+
+\begin{remark*}[Return]
+\hyperref[thm:nondecreasing-iff-nonneg-derivative]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Nondecreasing Iff Nonnegative Derivative]
+Let $I \subseteq \mathbb{R}$ be an interval, and let $f : I \to \mathbb{R}$ be differentiable on $I$. Then $f$ is nondecreasing on $I$ if and only if $f'(x) \geq 0$ for all $x \in I$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+$(\Rightarrow)$ Suppose $f$ is nondecreasing. For any $c \in I$ and $x \in I$ with $x > c$, the hypothesis gives $f(x) \geq f(c)$, so the difference quotient $\tfrac{f(x)-f(c)}{x-c} \geq 0$. By order preservation for limits, $f'(c) = \lim_{x \to c} \tfrac{f(x)-f(c)}{x-c} \geq 0$.
+
+$(\Leftarrow)$ Suppose $f'(x) \geq 0$ for all $x \in I$. For any $a, b \in I$ with $a < b$, the MVT supplies $c \in (a,b)$ with $f(b) - f(a) = f'(c)(b-a) \geq 0$. Therefore $f(a) \leq f(b)$, so $f$ is nondecreasing.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Prove the forward direction: nondecreasing implies $f' \geq 0$. Fix $c \in I$. For any $x \in I$ with $x > c$, the nondecreasing hypothesis gives $f(x) \geq f(c)$, so the numerator $f(x) - f(c) \geq 0$ and the denominator $x - c > 0$, making the difference quotient $\tfrac{f(x)-f(c)}{x-c} \geq 0$. For $x < c$, both numerator and denominator are $\leq 0$ and $< 0$ respectively, so the quotient is again $\geq 0$. By order preservation for limits, $f'(c) \geq 0$.
+
+\textbf{Step 2.} Prove the reverse direction: $f' \geq 0$ implies nondecreasing. Let $a, b \in I$ with $a < b$. The function $f$ is continuous on $[a,b]$ (since it is differentiable) and differentiable on $(a,b)$. By the Mean Value Theorem, there exists $c \in (a,b)$ such that
+\[
+f(b) - f(a) = f'(c)(b - a).
+\]
+Since $f'(c) \geq 0$ and $b - a > 0$, the right-hand side is $\geq 0$, so $f(b) \geq f(a)$.
+
+\textbf{Step 3.} Conclude. Since $a < b$ in $I$ was arbitrary and $f(a) \leq f(b)$ holds for all such pairs, $f$ is nondecreasing on $I$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+A biconditional proof with two direct arguments. The forward direction uses order preservation for limits applied to the non-negative difference quotient. The reverse direction is a one-application of the MVT: the MVT converts the derivative condition into a sign condition on $f(b) - f(a)$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[thm:mean-value-theorem]{Theorem: Mean Value Theorem}
+  \item \hyperref[thm:order-preservation-limits]{Order Preservation for Limits}
+\end{itemize}
+\end{remark*}

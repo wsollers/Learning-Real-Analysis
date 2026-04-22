@@ -1,0 +1,50 @@
+\newpage
+\phantomsection
+\label{prf:mean-value-theorem}
+
+\begin{remark*}[Return]
+\hyperref[thm:mean-value-theorem]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Mean Value Theorem]
+Let $a, b \in \mathbb{R}$ with $a < b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ and differentiable on $(a,b)$. Then there exists $c \in (a,b)$ such that $f'(c) = \dfrac{f(b)-f(a)}{b-a}$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Define the auxiliary function
+\[
+g(x) := f(x) - f(a) - \frac{f(b)-f(a)}{b-a}(x-a).
+\]
+Then $g$ is continuous on $[a,b]$, differentiable on $(a,b)$, and satisfies $g(a) = 0 = g(b)$. By Rolle's Theorem, there exists $c \in (a,b)$ with $g'(c) = 0$. Since $g'(x) = f'(x) - \tfrac{f(b)-f(a)}{b-a}$, this gives $f'(c) = \tfrac{f(b)-f(a)}{b-a}$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Construct the auxiliary function. The secant line through $(a, f(a))$ and $(b, f(b))$ has slope $\tfrac{f(b)-f(a)}{b-a}$ and passes through $(a, f(a))$, giving the line $\ell(x) = f(a) + \tfrac{f(b)-f(a)}{b-a}(x-a)$. Define
+\[
+g(x) := f(x) - \ell(x) = f(x) - f(a) - \frac{f(b)-f(a)}{b-a}(x-a).
+\]
+Geometrically, $g(x)$ is the signed vertical distance from the graph of $f$ to the secant line at $x$.
+
+\textbf{Step 2.} Verify the hypotheses of Rolle's Theorem for $g$. Continuity: $g$ is the difference of $f$ (continuous on $[a,b]$) and the linear function $\ell$ (continuous everywhere), so $g$ is continuous on $[a,b]$. Differentiability: $g'(x) = f'(x) - \tfrac{f(b)-f(a)}{b-a}$ exists on $(a,b)$ since $f$ is differentiable there. Equal endpoint values: $g(a) = f(a) - f(a) - 0 = 0$ and $g(b) = f(b) - f(a) - (f(b)-f(a)) = 0$, so $g(a) = g(b) = 0$.
+
+\textbf{Step 3.} Apply Rolle's Theorem. Since $g$ is continuous on $[a,b]$, differentiable on $(a,b)$, and $g(a) = g(b)$, Rolle's Theorem guarantees the existence of $c \in (a,b)$ with $g'(c) = 0$.
+
+\textbf{Step 4.} Recover the conclusion for $f$. From Step 2, $g'(c) = f'(c) - \tfrac{f(b)-f(a)}{b-a}$. Setting this to zero gives
+\[
+f'(c) = \frac{f(b)-f(a)}{b-a}.
+\]
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof reduces the MVT to Rolle's Theorem by a linear subtraction trick. Subtracting the secant line from $f$ produces an auxiliary function $g$ that vanishes at both endpoints, making Rolle's Theorem applicable. The derivative of $g$ at the Rolle point $c$ then directly yields the MVT conclusion. The auxiliary function $g(x) = f(x) - \ell(x)$ measures the deviation of $f$ from its secant; the proof asserts that this deviation has a horizontal tangent somewhere in the interior.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:rolles-theorem]{Theorem: Rolle's Theorem}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+\end{itemize}
+\end{remark*}

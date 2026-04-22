@@ -1,0 +1,50 @@
+\newpage
+\phantomsection
+\label{prf:positive-derivative-implies-locally-increasing}
+
+\begin{remark*}[Return]
+\hyperref[lem:positive-derivative-implies-locally-increasing]{Return to Lemma}
+\end{remark*}
+
+\begin{theorem*}[Positive Derivative Implies Locally Increasing]
+Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, let $c \in I$, and suppose $f$ is differentiable at $c$. If $f'(c) > 0$, then there exists $\delta > 0$ such that $f(x) < f(c)$ for all $x \in I$ with $c - \delta < x < c$, and $f(x) > f(c)$ for all $x \in I$ with $c < x < c + \delta$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Set $\varepsilon = f'(c)/2 > 0$. By differentiability of $f$ at $c$, there exists $\delta > 0$ such that for all $x \in I$ with $0 < |x-c| < \delta$,
+\[
+\left|\frac{f(x)-f(c)}{x-c} - f'(c)\right| < \varepsilon = \frac{f'(c)}{2}.
+\]
+This gives $\frac{f(x)-f(c)}{x-c} > f'(c) - \varepsilon = \frac{f'(c)}{2} > 0$ for all such $x$. For $x \in (c, c+\delta)$, the denominator $x - c > 0$, so $f(x) - f(c) > 0$. For $x \in (c-\delta, c)$, the denominator $x - c < 0$, so $f(x) - f(c) < 0$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Choose $\varepsilon$ to control the sign of the difference quotient. Since $f'(c) > 0$, set $\varepsilon := f'(c)/2$. Then $\varepsilon > 0$ and $f'(c) - \varepsilon = f'(c)/2 > 0$.
+
+\textbf{Step 2.} Extract $\delta$ from the definition of differentiability. Since $f$ is differentiable at $c$ with $f'(c) > 0$, there exists $\delta > 0$ such that for all $x \in I$ with $0 < |x-c| < \delta$:
+\[
+\left|\frac{f(x)-f(c)}{x-c} - f'(c)\right| < \varepsilon.
+\]
+This rearranges to:
+\[
+f'(c) - \varepsilon < \frac{f(x)-f(c)}{x-c} < f'(c) + \varepsilon.
+\]
+In particular, $\dfrac{f(x)-f(c)}{x-c} > f'(c) - \varepsilon = \dfrac{f'(c)}{2} > 0$ for all $x \in I$ with $0 < |x-c| < \delta$.
+
+\textbf{Step 3.} Deduce the right-side inequality. For $x \in I$ with $c < x < c+\delta$, the difference quotient is positive and the denominator $x - c > 0$, so the numerator $f(x) - f(c) > 0$, giving $f(x) > f(c)$.
+
+\textbf{Step 4.} Deduce the left-side inequality. For $x \in I$ with $c - \delta < x < c$, the difference quotient is positive and the denominator $x - c < 0$, so the numerator $f(x) - f(c) < 0$, giving $f(x) < f(c)$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+A direct $\varepsilon$-$\delta$ argument. The key insight is to take $\varepsilon = f'(c)/2$, which forces the difference quotient to be bounded away from zero (positive) throughout the punctured neighbourhood. The sign of the denominator $x - c$ then determines the sign of the numerator $f(x) - f(c)$ on each side of $c$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+\end{itemize}
+\end{remark*}

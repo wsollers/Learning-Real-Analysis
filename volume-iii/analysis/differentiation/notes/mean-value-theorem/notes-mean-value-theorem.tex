@@ -1,0 +1,82 @@
+% =========================================================
+% Section: Mean Value Theorem
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Mean Value Theorem --- toolkit}]
+\textbf{Concept family:} Rolle's Theorem and the Mean Value Theorem --- the chapter's load-bearing existence results.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Theorem: Rolle's Theorem
+  \item Theorem: Mean Value Theorem
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+
+\begin{theorem}[Rolle's Theorem]
+\label{thm:rolles-theorem}
+Let $a, b \in \mathbb{R}$ with $a < b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$, differentiable on $(a,b)$, and satisfies $f(a) = f(b)$. Then there exists $c \in (a,b)$ such that
+\[
+f'(c) = 0.
+\]
+\hyperref[prf:rolles-theorem]{Go to proof.}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\begin{align*}
+&\operatorname{ContinuousOn}(f,[a,b])
+\;\land\;
+\forall x \in (a,b)\;\operatorname{DifferentiableAt}(f,x)
+\;\land\;
+f(a)=f(b)\\
+&\quad\Rightarrow\;
+\exists c \in (a,b)\;\operatorname{DerivativeAt}(f,c,0).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+If a differentiable function returns to the same value at both endpoints of an interval, the derivative must vanish somewhere in between. Geometrically: if the curve starts and ends at the same height, at some interior point the tangent line is horizontal. The proof combines two ingredients --- the Extreme Value Theorem guarantees that a continuous function on a closed bounded interval attains its maximum and minimum, and the Interior Extremum Theorem guarantees that at an interior extremum the derivative is zero. If both extrema occur at the endpoints then $f$ is constant and $f' \equiv 0$ throughout. Rolle's Theorem is the special case of the MVT where the secant slope is zero.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:interior-extremum-theorem]{Theorem: Interior Extremum Theorem}
+  \item \hyperref[thm:extreme-value-theorem]{Theorem: Extreme Value Theorem}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{theorem}[Mean Value Theorem]
+\label{thm:mean-value-theorem}
+Let $a, b \in \mathbb{R}$ with $a < b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ and differentiable on $(a,b)$. Then there exists $c \in (a,b)$ such that
+\[
+f'(c) = \frac{f(b) - f(a)}{b - a}.
+\]
+\hyperref[prf:mean-value-theorem]{Go to proof.}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\begin{align*}
+&\operatorname{ContinuousOn}(f,[a,b])
+\;\land\;
+\forall x \in (a,b)\;\operatorname{DifferentiableAt}(f,x)\\
+&\quad\Rightarrow\;
+\exists c \in (a,b)\;
+\operatorname{DerivativeAt}\!\left(f,\,c,\,\tfrac{f(b)-f(a)}{b-a}\right).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The MVT asserts that the instantaneous rate of change equals the average rate of change at some interior point. Geometrically: the tangent line at some point $c$ is parallel to the secant line through $(a,f(a))$ and $(b,f(b))$. The proof reduces to Rolle's Theorem by subtracting the secant: define $g(x) = f(x) - \tfrac{f(b)-f(a)}{b-a}(x-a)$, which satisfies $g(a)=g(b)=f(a)$, then apply Rolle's. The theorem is an existence result, not a construction: it guarantees some $c$ exists but gives no formula for it. Its immediate corollaries --- the constant function corollary, the monotonicity corollary, and the Lipschitz bound corollary --- each flow from the MVT by a one-line argument and are the theorem's primary applications.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:rolles-theorem]{Theorem: Rolle's Theorem}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+\end{itemize}
+\end{remark*}

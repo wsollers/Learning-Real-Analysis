@@ -14,6 +14,17 @@ You do not modify canonical files.
 You do not propose YAML blocks.
 You report findings only.
 
+## Output Encoding And TeX Notation
+
+All output must be ASCII. Do not emit Unicode mathematical symbols or Unicode
+punctuation. In this markdown report, every mathematical expression, suggested
+canonical form, predicate form, notation form, and relation form must be written
+as raw LaTeX source inside backticks. Use TeX commands such as `\forall`,
+`\exists`, `\in`, `\land`, `\lor`, `\Rightarrow`, `\to`, `\varepsilon`,
+`\delta`, and `\mathbb{R}`. Do not write rendered symbols such as forall,
+exists, element-of, logical-and, arrows, Greek letters, smart quotes, en dashes,
+or em dashes as Unicode characters.
+
 ## Input
 
 You will receive:
@@ -28,17 +39,17 @@ Perform three passes over the chapter content.
 
 ---
 
-### Pass 1 — Predicate Audit
+### Pass 1 -- Predicate Audit
 
 Scan the chapter for all uses of \operatorname{...} that represent predicate
 names, and any other formal predicate-style names used in remark* blocks.
 
 For each predicate name found:
 
-**MISSING** — used in the chapter but not registered in predicates.yaml.
-**INCONSISTENT** — registered in predicates.yaml but used differently in the
+**MISSING** -- used in the chapter but not registered in predicates.yaml.
+**INCONSISTENT** -- registered in predicates.yaml but used differently in the
   chapter (different arity, different argument names, different canonical form).
-**CORRECT** — present in predicates.yaml and used correctly.
+**CORRECT** -- present in predicates.yaml and used correctly.
 
 Also scan for predicate names that appear outside their permitted block types
 (i.e., predicate names appearing in environment bodies, standard quantified
@@ -47,17 +58,17 @@ Flag these as PREDICATE_LEAKAGE with the block type and location.
 
 ---
 
-### Pass 2 — Notation Audit
+### Pass 2 -- Notation Audit
 
 Scan the chapter for all mathematical notation: symbols, operators, variable
 conventions, quantifier forms, set names, and spacing conventions.
 
 For each notation item found:
 
-**MISSING** — used in the chapter but not registered in notation.yaml.
-**INCONSISTENT** — registered in notation.yaml but used differently in the
+**MISSING** -- used in the chapter but not registered in notation.yaml.
+**INCONSISTENT** -- registered in notation.yaml but used differently in the
   chapter (e.g., wrong quantifier form, wrong variable letter, wrong spacing).
-**CORRECT** — present in notation.yaml and used correctly.
+**CORRECT** -- present in notation.yaml and used correctly.
 
 Pay particular attention to:
 - Quantifier forms (e.g., \forall \varepsilon > 0 \; \exists N \in \mathbb{N})
@@ -67,24 +78,24 @@ Pay particular attention to:
 
 ---
 
-### Pass 3 — Relation Audit
+### Pass 3 -- Relation Audit
 
 Scan the chapter for all relation names used in formal displays.
 
 For each relation name found:
 
-**MISSING** — used in the chapter but not registered in relations.yaml.
-**INCONSISTENT** — registered but used differently.
-**CORRECT** — registered and used correctly.
+**MISSING** -- used in the chapter but not registered in relations.yaml.
+**INCONSISTENT** -- registered but used differently.
+**CORRECT** -- registered and used correctly.
 
 ---
 
-### Pass 4 — Unused Registry Entries (Informational)
+### Pass 4 -- Unused Registry Entries (Informational)
 
 List any predicates, notation items, or relations that are registered in the
 canonical files but never referenced in this chapter.
 
-This is INFORMATIONAL ONLY — unused registry entries are not violations.
+This is INFORMATIONAL ONLY -- unused registry entries are not violations.
 Do not recommend deletion without explicit instruction.
 
 ---
@@ -92,7 +103,8 @@ Do not recommend deletion without explicit instruction.
 ## Output Format
 
 Return a markdown document with the following structure. Do not return JSON.
-Do not return LaTeX. Return only the markdown report.
+Do not return a standalone LaTeX document. Return only the markdown report.
+When the report mentions math, write it as raw LaTeX source inside backticks.
 
 ```markdown
 # Symbol Audit Report
@@ -119,7 +131,7 @@ Do not return LaTeX. Return only the markdown report.
 | ...            | ...        | ...      |
 
 ### Correct Predicates
-(list names only — no table needed)
+(list names only -- no table needed)
 
 ---
 
@@ -136,7 +148,7 @@ Do not return LaTeX. Return only the markdown report.
 | ...           | ...             | ...       | ...      |
 
 ### Correct Notation
-(list items only — no table needed)
+(list items only -- no table needed)
 
 ---
 
@@ -153,7 +165,7 @@ Do not return LaTeX. Return only the markdown report.
 | ...           | ...             | ...       | ...      |
 
 ### Correct Relations
-(list names only — no table needed)
+(list names only -- no table needed)
 
 ---
 

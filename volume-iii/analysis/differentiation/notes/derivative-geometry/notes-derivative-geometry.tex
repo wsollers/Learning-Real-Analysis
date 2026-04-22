@@ -1,110 +1,233 @@
+% =========================================================
+% Section: Derivative Geometry --- Extrema
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Derivative Geometry --- toolkit}]
+\textbf{Concept family:} Relative extrema, the Interior Extremum Theorem, and the necessary condition for extrema.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Relative Minimum
+  \item Definition: Relative Maximum
+  \item Definition: Relative Extremum
+  \item Theorem: Interior Extremum Theorem
+  \item Theorem: Necessary Condition for an Interior Extremum
+  \item Corollary: Necessary Condition for an Extremum
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{definition}[Relative Minimum]
 \label{def:relative-minimum}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$. We say that $f$ has a \emph{relative minimum} at $c$ if there exists $\delta > 0$ such that
 \[
-f(c) \leq f(x)
-\qquad \text{for all } x \in A \cap (c-\delta,c+\delta).
+f(c) \leq f(x) \qquad \text{for all } x \in A \cap (c-\delta,c+\delta).
 \]
 If, in addition,
 \[
-f(c) < f(x)
-\qquad \text{for all } x \in \bigl(A \cap (c-\delta,c+\delta)\bigr)\setminus\{c\},
+f(c) < f(x) \qquad \text{for all } x \in \bigl(A \cap (c-\delta,c+\delta)\bigr)\setminus\{c\},
 \]
 then $f$ has a \emph{strict relative minimum} at $c$.
 \end{definition}
+\end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\exists \delta > 0\;\forall x \in A\;
+\bigl(|x - c| < \delta \implies f(c) \leq f(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{LocalMinimum}(f, c)
+\;\Longleftrightarrow\;
+\exists \delta > 0\;\forall x \in A\;
+\bigl(\operatorname{Within}(x, c, \delta) \implies f(c) \leq f(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+$f$ has a relative minimum at $c$ if $f(c)$ is the smallest value of $f$ in some open neighbourhood of $c$ within the domain. The word \emph{relative} (or \emph{local}) signals that we are comparing $f(c)$ only to nearby values, not to all values of $f$ globally. The strict variant excludes the degenerate case where nearby points share the minimum value. The symmetric notion --- relative maximum --- reverses the inequality. Together they constitute a relative extremum. These are purely neighbourhood conditions; no derivative appears in the definitions.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{definition}[Relative Maximum]
 \label{def:relative-maximum}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$. We say that $f$ has a \emph{relative maximum} at $c$ if there exists $\delta > 0$ such that
 \[
-f(x) \leq f(c)
-\qquad \text{for all } x \in A \cap (c-\delta,c+\delta).
+f(x) \leq f(c) \qquad \text{for all } x \in A \cap (c-\delta,c+\delta).
 \]
 If, in addition,
 \[
-f(x) < f(c)
-\qquad \text{for all } x \in \bigl(A \cap (c-\delta,c+\delta)\bigr)\setminus\{c\},
+f(x) < f(c) \qquad \text{for all } x \in \bigl(A \cap (c-\delta,c+\delta)\bigr)\setminus\{c\},
 \]
 then $f$ has a \emph{strict relative maximum} at $c$.
 \end{definition}
+\end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\exists \delta > 0\;\forall x \in A\;
+\bigl(|x - c| < \delta \implies f(x) \leq f(c)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{LocalMaximum}(f, c)
+\;\Longleftrightarrow\;
+\exists \delta > 0\;\forall x \in A\;
+\bigl(\operatorname{Within}(x, c, \delta) \implies f(x) \leq f(c)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:relative-minimum]{Definition: Relative Minimum}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{definition}[Relative Extremum]
 \label{def:relative-extremum}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$. We say that $f$ has a \emph{relative extremum} at $c$ if $f$ has either a relative minimum at $c$ or a relative maximum at $c$.
 \end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{LocalExtremum}(f, c)
+\;\Longleftrightarrow\;
+\operatorname{LocalMinimum}(f, c) \;\lor\; \operatorname{LocalMaximum}(f, c).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{LocalExtremum}(f, c)
+\;\Longleftrightarrow\;
+\operatorname{LocalMinimum}(f, c) \;\lor\; \operatorname{LocalMaximum}(f, c).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:relative-minimum]{Definition: Relative Minimum}
+  \item \hyperref[def:relative-maximum]{Definition: Relative Maximum}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{theorem}[Interior Extremum Theorem]
 \label{thm:interior-extremum-theorem}
-Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in \operatorname{int}(I)$. If $f$ has a relative minimum at $c$, then there exists $\delta > 0$ such that
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$.
+If $f$ has a relative extremum at $c$ and $f$ is differentiable at $c$, then
 \[
-f(c) \leq f(x)
-\qquad \text{for all } x \in I \cap (c-\delta,c+\delta).
+f'(c) = 0.
 \]
-If $f$ has a relative maximum at $c$, then there exists $\delta > 0$ such that
-\[
-f(x) \leq f(c)
-\qquad \text{for all } x \in I \cap (c-\delta,c+\delta).
-\]
+\hyperref[prf:interior-extremum-theorem]{Go to proof.}
 \end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{LocalExtremum}(f, c) \;\land\; \operatorname{DifferentiableAt}(f, c)
+\;\Rightarrow\; \operatorname{DerivativeAt}(f, c, 0).
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\operatorname{DerivativeAt}(f, c, L) \;\land\; L \neq 0
+\;\Rightarrow\; \lnot\operatorname{LocalExtremum}(f, c).
+\]
+If $f'(c)$ exists and is nonzero, then $c$ is not a relative extremum.
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\[
+\operatorname{DerivativeAt}(f, c, L) \;\land\; L \neq 0
+\;\Rightarrow\;
+\lnot\operatorname{LocalMinimum}(f, c) \;\land\; \lnot\operatorname{LocalMaximum}(f, c).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The theorem gives a necessary condition for interior extrema under differentiability: the derivative must vanish. The geometric picture is immediate --- at a local max or min, the tangent line must be horizontal, since the function is neither consistently increasing nor consistently decreasing. The proof is a sign argument: at a relative maximum, the difference quotient is non-positive for $x > c$ and non-negative for $x < c$; since the derivative is a single limit, it is squeezed to zero. The converse fails: $f'(c) = 0$ does not imply an extremum ($f(x) = x^3$ at $c = 0$). Critical points --- where $f'(c) = 0$ or $f'(c)$ does not exist --- are candidates for extrema, not guarantees.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:relative-extremum]{Definition: Relative Extremum}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[def:left-hand-derivative]{Definition: Left-Hand Derivative}
+  \item \hyperref[def:right-hand-derivative]{Definition: Right-Hand Derivative}
+  \item \hyperref[thm:differentiability-and-one-sided-derivatives]{Theorem: Differentiability and One-Sided Derivatives}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{theorem}[Necessary Condition for an Interior Extremum]
 \label{thm:necessary-condition-extremum}
 Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ has a relative extremum at $c$, then either $f'(c)$ does not exist, or
 \[
-f'(c)=0.
+f'(c) = 0.
 \]
+\hyperref[prf:relative-extremum-derivatives-equal-0-or-dont-exist]{Go to proof.}
 \end{theorem}
 
-
-
-
-
-
-
-\begin{theorem}[Rolle's Theorem]
-\label{thm:rolles-theorem}
-Let $I \subseteq \mathbb{R}$ be an interval, and let $a,b \in I$ with $a<b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$, differentiable on $(a,b)$, and satisfies
+\begin{remark*}[Standard quantified statement]
 \[
-f(a)=f(b).
+\operatorname{LocalExtremum}(f,c)
+\;\Rightarrow\;
+\lnot\operatorname{DifferentiableAt}(f,c) \;\lor\; \operatorname{DerivativeAt}(f,c,0).
 \]
-Then there exists $c \in (a,b)$ such that
-\[
-f'(c)=0.
-\]
-\end{theorem}
-
-\begin{theorem}[Mean Value Theorem]
-\label{thm:mean-value-theorem}
-Let $I \subseteq \mathbb{R}$ be an interval, and let $a,b \in I$ with $a<b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ and differentiable on $(a,b)$. Then there exists $c \in (a,b)$ such that
-\[
-f'(c)=\frac{f(b)-f(a)}{b-a}.
-\]
-\end{theorem}
-
-
-
-
-
-\begin{remark*}[Common error]
-The MVT guarantees \emph{existence} of $c$ but gives no formula for
-it. The point $c$ depends on $f$, $a$, and $b$ and typically cannot
-be identified explicitly. Using the MVT to compute a specific $c$ is
-a misreading of the theorem — it is an existence result, not a
-construction.
 \end{remark*}
 
-\begin{remark*}[Consequence]
-The MVT is the chapter's load-bearing result. Its immediate corollaries
-include: a function with $f' = 0$ on $(a,b)$ is constant
-(\hyperref[cor:mvt-constant]{Constant Function Corollary}); a function
-with $f' > 0$ is strictly increasing
-(\hyperref[cor:mvt-monotonicity]{Monotonicity Corollary}); and a
-function with $|f'| \le M$ is Lipschitz with constant $M$
-(\hyperref[cor:mvt-lipschitz]{Lipschitz Bound Corollary}). Each of
-these flows from the MVT by a one-line argument.
+\begin{remark*}[Interpretation]
+This is a weakening of the Interior Extremum Theorem that drops the differentiability hypothesis. Without assuming $f'(c)$ exists, the conclusion is a disjunction: either the derivative fails to exist at $c$, or it exists and equals zero. This is the correct form for identifying \emph{critical points} --- points that are candidates for extrema. The set of critical points is the union of points where $f'$ is zero and points where $f'$ does not exist.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:interior-extremum-theorem]{Theorem: Interior Extremum Theorem}
+\end{itemize}
+\end{remark*}
 
+% ---------------------------------------------------------
 
+\begin{corollary}[Necessary Condition for an Extremum]
+\label{cor:necessary-condition-extremum}
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ has a relative extremum at $c$, then
+\[
+f'(c) = 0 \quad \text{or} \quad f'(c) \text{ does not exist.}
+\]
+\hyperref[prf:relative-extremum-derivatives-equal-0-or-dont-exist]{Go to proof.}
+\end{corollary}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{LocalExtremum}(f,c)
+\;\Rightarrow\;
+\operatorname{DerivativeAt}(f,c,0) \;\lor\; \lnot\operatorname{DifferentiableAt}(f,c).
+\]
+\end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:necessary-condition-extremum]{Theorem: Necessary Condition for an Interior Extremum}
+\end{itemize}
+\end{remark*}

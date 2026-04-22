@@ -1,0 +1,56 @@
+\newpage
+\phantomsection
+\label{prf:derivative-equivalence}
+
+\begin{remark*}[Return]
+\hyperref[thm:derivative-equivalence]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Equivalence of Definitions of the Derivative at a Point]
+Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. Let $L \in \mathbb{R}$. The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{(Epsilon--Delta)} $\forall \varepsilon > 0\;\exists \delta > 0\;\forall x \in A\;\bigl(0 < |x-c| < \delta \Rightarrow \left|\tfrac{f(x)-f(c)}{x-c} - L\right| < \varepsilon\bigr)$.
+\item \textbf{(Neighbourhood)} For every $\varepsilon > 0$, there exists a neighbourhood $V$ of $c$ such that $x \in (A \cap V) \setminus \{c\} \Rightarrow \left|\tfrac{f(x)-f(c)}{x-c} - L\right| < \varepsilon$.
+\item \textbf{(Sequential)} $\forall (x_n) \subseteq A \setminus \{c\}\;\bigl(x_n \to c \Rightarrow \tfrac{f(x_n)-f(c)}{x_n-c} \to L\bigr)$.
+\end{enumerate}
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let $g : A \setminus \{c\} \to \mathbb{R}$ denote the difference quotient function $g(x) = \tfrac{f(x)-f(c)}{x-c}$. The three conditions are precisely the epsilon--delta, neighbourhood, and sequential characterisations of $\lim_{x \to c} g(x) = L$, applied to $g$ at the limit point $c$ of $A \setminus \{c\}$. Their equivalence is therefore exactly the equivalence of the three standard definitions of a function limit, which is a theorem in the limits chapter. Since the equivalence of those three definitions is already established, the equivalence of (i)--(iii) follows immediately by applying that result to $g$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Reduce to a function limit. Define the difference quotient function $g : A \setminus \{c\} \to \mathbb{R}$ by
+\[
+g(x) := \frac{f(x) - f(c)}{x - c}.
+\]
+This function is well-defined on $A \setminus \{c\}$, and $c$ is a limit point of $A \setminus \{c\}$ since $c$ is a limit point of $A$. All three conditions (i)--(iii) assert $\lim_{x \to c} g(x) = L$ in three different equivalent formulations.
+
+\textbf{Step 2.} Identify (i) as the epsilon--delta definition of $\lim_{x \to c} g(x) = L$. Condition (i) states:
+\[
+\forall \varepsilon > 0\;\exists \delta > 0\;\forall x \in A\;\bigl(0 < |x-c| < \delta \Rightarrow |g(x) - L| < \varepsilon\bigr).
+\]
+This is verbatim the epsilon--delta definition of $\operatorname{FunctionLimit}(g, A\setminus\{c\}, c, L)$.
+
+\textbf{Step 3.} Identify (ii) as the neighbourhood definition of $\lim_{x \to c} g(x) = L$. A neighbourhood $V$ of $c$ with $|c' - c| < r$ for some $r > 0$ corresponds to the punctured ball $B_r(c) \cap A = A \cap (c-r, c+r)$. The condition $x \in (A \cap V) \setminus \{c\}$ with $|g(x) - L| < \varepsilon$ is the neighbourhood formulation of the function limit. The epsilon--delta and neighbourhood formulations of function limits are equivalent by the standard theorem on function limits.
+
+\textbf{Step 4.} Identify (iii) as the sequential criterion for $\lim_{x \to c} g(x) = L$. Condition (iii) asserts that for every sequence $(x_n) \subseteq A \setminus \{c\}$ converging to $c$, the sequence $g(x_n)$ converges to $L$. This is exactly the sequential criterion for function limits. The sequential criterion is equivalent to the epsilon--delta definition by the standard theorem on function limits.
+
+\textbf{Step 5.} Conclude the three-way equivalence. Since (i), (ii), and (iii) are respectively the epsilon--delta, neighbourhood, and sequential formulations of the same statement $\lim_{x \to c} g(x) = L$, and these three formulations are mutually equivalent for any function limit at a limit point, all three are equivalent.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a reduction proof. The key insight is that all three conditions are formulations of the same underlying object: the limit of the difference quotient function $g(x) = (f(x)-f(c))/(x-c)$ at $c$. Once this identification is made, the three-way equivalence follows immediately from the already-established equivalence of the three standard function limit definitions. The proof requires no $\varepsilon$-$\delta$ calculation; it is purely structural.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point (epsilon--delta)}
+  \item \hyperref[def:topological-definition-of-derivative-at-a-point]{Definition: Topological Definition of Derivative at a Point}
+  \item \hyperref[def:sequential-definition-of-derivative-at-a-point]{Definition: Sequential Definition of Derivative at a Point}
+  \item \hyperref[thm:equivalence-of-function-limit-definitions]{Equivalence of Function Limit Definitions}
+\end{itemize}
+\end{remark*}

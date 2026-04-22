@@ -1,0 +1,51 @@
+\newpage
+\phantomsection
+\label{prf:darboux}
+
+\begin{remark*}[Return]
+\hyperref[thm:darboux]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Darboux's Theorem]
+Let $I := [a,b] \subseteq \mathbb{R}$ and let $f : I \to \mathbb{R}$ be differentiable on $I$. If $k$ is a real number strictly between $f'(a)$ and $f'(b)$, then there exists $c \in (a,b)$ such that $f'(c) = k$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Without loss of generality assume $f'(a) < k < f'(b)$. Define $g(x) := f(x) - kx$. Then $g$ is continuous on $[a,b]$, differentiable on $[a,b]$, and $g'(x) = f'(x) - k$. In particular $g'(a) = f'(a) - k < 0$ and $g'(b) = f'(b) - k > 0$. By the Extreme Value Theorem, $g$ attains its minimum on $[a,b]$ at some point $c$. Since $g'(a) < 0$, the Negative Derivative Locally Decreasing lemma gives points $x > a$ near $a$ with $g(x) < g(a)$, so $c \neq a$. Since $g'(b) > 0$, the Positive Derivative Locally Increasing lemma gives points $x < b$ near $b$ with $g(x) < g(b)$, so $c \neq b$. Therefore $c \in (a,b)$, and the Interior Extremum Theorem gives $g'(c) = 0$, i.e.\ $f'(c) = k$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Reduce to the case $f'(a) < k < f'(b)$. If $f'(a) > k > f'(b)$, apply the argument to $-f$ (whose derivative satisfies $(-f)'(a) = -f'(a) < -k < -f'(b) = (-f)'(b)$) and note that a zero of $(-f)' + k$ is a zero of $f' - k$. Henceforth assume $f'(a) < k < f'(b)$.
+
+\textbf{Step 2.} Construct the auxiliary function. Define $g : [a,b] \to \mathbb{R}$ by $g(x) := f(x) - kx$. Since $f$ is differentiable on $[a,b]$ and $kx$ is differentiable everywhere, $g$ is differentiable on $[a,b]$ with $g'(x) = f'(x) - k$. The target condition $f'(c) = k$ becomes $g'(c) = 0$.
+
+\textbf{Step 3.} Identify the sign conditions on $g'$ at the endpoints.
+\[
+g'(a) = f'(a) - k < 0 \qquad \text{and} \qquad g'(b) = f'(b) - k > 0.
+\]
+
+\textbf{Step 4.} Locate the global minimum of $g$ in the interior. Since $g$ is continuous on the closed bounded interval $[a,b]$, the Extreme Value Theorem guarantees that $g$ attains its minimum at some point $c \in [a,b]$.
+
+\textbf{Step 5.} Exclude the left endpoint. Since $g'(a) < 0$, the Negative Derivative Implies Locally Decreasing lemma applies: there exists $\delta_1 > 0$ such that $g(x) < g(a)$ for all $x \in (a, a+\delta_1)$. In particular, $g$ takes values strictly less than $g(a)$ near $a$, so the minimum of $g$ cannot be at $a$. Therefore $c \neq a$.
+
+\textbf{Step 6.} Exclude the right endpoint. Since $g'(b) > 0$, the Positive Derivative Implies Locally Increasing lemma applies: there exists $\delta_2 > 0$ such that $g(x) < g(b)$ for all $x \in (b-\delta_2, b)$. In particular, $g$ takes values strictly less than $g(b)$ near $b$, so the minimum cannot be at $b$. Therefore $c \neq b$.
+
+\textbf{Step 7.} Conclude. Since $c \in [a,b]$ with $c \neq a$ and $c \neq b$, we have $c \in (a,b)$. Since $c$ is an interior minimum and $f$ is differentiable on $(a,b)$, the Interior Extremum Theorem gives $g'(c) = 0$, hence $f'(c) = k$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof constructs an auxiliary function $g = f - kx$ that shifts the target value $k$ to a zero of $g'$. The strategy then has two phases. First, the EVT guarantees $g$ attains its minimum on $[a,b]$. Second, the sign conditions $g'(a) < 0$ and $g'(b) > 0$ --- derived from $f'(a) < k < f'(b)$ --- are used via the local behavior lemmas to show the minimum lies strictly in the interior: near $a$ the function is decreasing (so $a$ is not a min), and near $b$ it is increasing (so $b$ is not a min). The Interior Extremum Theorem then converts the interior minimum into the equation $g'(c) = 0$. The proof does not require continuity of $f'$; differentiability of $f$ alone is sufficient.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[thm:extreme-value-theorem]{Theorem: Extreme Value Theorem}
+  \item \hyperref[thm:interior-extremum-theorem]{Theorem: Interior Extremum Theorem}
+  \item \hyperref[lem:positive-derivative-implies-locally-increasing]{Lemma: Positive Derivative Implies Locally Increasing}
+  \item \hyperref[lem:negative-derivative-implies-locally-decreasing]{Lemma: Negative Derivative Implies Locally Decreasing}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+\end{itemize}
+\end{remark*}

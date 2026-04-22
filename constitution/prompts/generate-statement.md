@@ -10,6 +10,17 @@ content block, ready to paste into a notes file.
 Use plain ASCII punctuation in prose. Do not emit smart quotes, curly
 apostrophes, en dashes, em dashes, or mojibake.
 
+## Output Encoding And TeX Notation
+
+All output must be ASCII raw LaTeX source. Do not emit Unicode mathematical
+symbols or Unicode punctuation anywhere, including prose, comments, labels,
+remark blocks, and displayed formulas. Write every mathematical symbol with a
+LaTeX command or ASCII source form, for example `\forall`, `\exists`, `\in`,
+`\land`, `\lor`, `\Rightarrow`, `\to`, `\varepsilon`, `\delta`, `\mathbb{R}`,
+`\le`, `\ge`, and `\subseteq`. Do not write rendered symbols such as forall,
+exists, element-of, logical-and, arrows, Greek letters, smart quotes, en dashes,
+or em dashes as Unicode characters.
+
 ## Input
 
 You will receive:

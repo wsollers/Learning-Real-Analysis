@@ -1,50 +1,74 @@
+% =========================================================
+% Section: Secant and Tangent Lines
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Secant and Tangent --- toolkit}]
+\textbf{Concept family:} The geometric objects underlying the derivative: secant lines and tangent lines.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Secant Line
+  \item Definition: Tangent Line
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{definition}[Secant Line]
 \label{def:secant-line}
-Let $f : A \to \mathbb{R}$, and let $x_1,x_2 \in A$ with $x_1 \neq x_2$. The \emph{secant line} determined by the points
+Let $f : A \to \mathbb{R}$, and let $x_1, x_2 \in A$ with $x_1 \neq x_2$. The \emph{secant line} determined by the points $(x_1, f(x_1))$ and $(x_2, f(x_2))$ is the unique line passing through these two points. Its slope is
 \[
-(x_1,f(x_1))
-\qquad \text{and} \qquad
-(x_2,f(x_2))
-\]
-is the unique line passing through these two points. Its slope is
-\[
-\frac{f(x_2)-f(x_1)}{x_2-x_1}.
+m_{\mathrm{sec}}(x_1, x_2) := \frac{f(x_2) - f(x_1)}{x_2 - x_1}.
 \]
 \end{definition}
+\end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x_1, x_2 \in A\;(x_1 \neq x_2 \Rightarrow \operatorname{SecantLine}(f, x_1, x_2)
+\text{ has slope } \tfrac{f(x_2)-f(x_1)}{x_2-x_1}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+With increments $\Delta x := x_2 - x_1$ and $\Delta y := f(x_2) - f(x_1)$, the secant slope is $\Delta y / \Delta x$ --- the average rate of change of $f$ over the interval $[x_1, x_2]$. This is an exact algebraic identity; no limit is involved. As $x_2 \to x_1$, if the secant slope converges, its limit is the derivative $f'(x_1)$ --- the instantaneous rate of change. Geometrically, the secant line rotates about the fixed point $(x_1, f(x_1))$ as $x_2$ approaches $x_1$, and the limit position is the tangent line.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies. The secant line is a purely geometric-algebraic object defined before any limit is taken.
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{definition}[Tangent Line]
 \label{def:tangent-line}
-Let $f : A \to \mathbb{R}$, let $c \in A$, and suppose that $f$ is differentiable at $c$. The \emph{tangent line} to the graph of $f$ at the point $(c,f(c))$ is the line through $(c,f(c))$ with slope $f'(c)$. Its equation is
+Let $f : A \to \mathbb{R}$, let $c \in A$, and suppose that $f$ is differentiable at $c$. The \emph{tangent line} to the graph of $f$ at the point $(c, f(c))$ is the line through $(c, f(c))$ with slope $f'(c)$. Its equation is
 \[
-y - f(c) = f'(c)(x-c).
-\]
-Equivalently,
-\[
-y = f(c) + f'(c)(x-c).
+y = f(c) + f'(c)(x - c).
 \]
 \end{definition}
+\end{tcolorbox}
 
-
-
-
-\begin{remark*}[Increment form]
-With increments $\Delta x := x - c$ and $\Delta y := f(x) - f(c)$, the
-difference quotient gives the exact relation
+\begin{remark*}[Standard quantified statement]
 \[
-  \Delta y = m_{\mathrm{sec}}(c,x) \cdot \Delta x
-  = \frac{f(x)-f(c)}{x-c} \cdot (x-c).
+\operatorname{DifferentiableAt}(f, c) \;\Rightarrow\;
+\operatorname{LinearApproximationAt}(f, c) = f(c) + f'(c)(x - c).
 \]
-This identity is purely algebraic: it expresses the output change as
-secant slope times input change. No limit is involved.
 \end{remark*}
 
-\begin{remark*}[Geometric interpretation]
-The derivative $f'(c)$, when it exists, is the limit of the secant slopes
-$m_{\mathrm{sec}}(c,x)$ as $x \to c$. Geometrically, the secant line through
-$(c, f(c))$ and $(x, f(x))$ rotates toward the tangent line at $(c, f(c))$
-as $x \to c$. The derivative is the slope of that limiting tangent.
-See \hyperref[fig:secant-tangent]{Figure: Secant converging to tangent}.
+\begin{remark*}[Interpretation]
+The tangent line is the limit of the family of secant lines through $(c, f(c))$ and $(x, f(x))$ as $x \to c$. More precisely: the slope $m_{\mathrm{sec}}(c, x) = (f(x)-f(c))/(x-c)$ converges to $f'(c)$, so the tangent line is the line whose slope is that limit. It is also the unique linear function $\ell(x) = f(c) + f'(c)(x-c)$ satisfying $\ell(c) = f(c)$ and $\ell'(c) = f'(c)$ --- the best first-order approximation to $f$ near $c$. The error $f(x) - \ell(x) = o(x-c)$ as $x \to c$, meaning it vanishes faster than the displacement.
 \end{remark*}
 
-% Figure: secant and tangent lines — extracted to figure file
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:secant-line]{Definition: Secant Line}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+\end{itemize}
+\end{remark*}
+
+% Figure: secant and tangent lines --- extracted to figure file
 \input{volume-iii/analysis/differentiation/notes/secant-tangent/figure1}

@@ -1,143 +1,138 @@
+% =========================================================
+% Section: Carathéodory Factorization and Chain Rule
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Carathéodory and Chain Rule --- toolkit}]
+\textbf{Concept family:} The Carathéodory factorization of the derivative, its characterization theorem, and the Chain Rule.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Carathéodory Factorization
+  \item Theorem: Carathéodory Characterization of Differentiability
+  \item Theorem: Chain Rule
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
 \begin{definition}[Carathéodory Factorization]
-Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in I$.
-We say that $f$ admits a \emph{Carathéodory factorization} at $c$ if there exists a function
-$\phi : I \to \mathbb{R}$, continuous at $c$, such that
+\label{def:caratheodory-factorization}
+Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in I$. We say that $f$ admits a \emph{Carathéodory factorization} at $c$ if there exists a function $\phi : I \to \mathbb{R}$, continuous at $c$, such that
 \[
-f(x)=f(c)+(x-c)\phi(x)
-\qquad \text{for all } x \in I.
+f(x) = f(c) + (x-c)\,\phi(x) \qquad \text{for all } x \in I.
 \]
-In this case, $f$ is differentiable at $c$, and
-\[
-f'(c)=\phi(c).
-\]
+In this case, $f$ is differentiable at $c$ and $f'(c) = \phi(c)$.
 \end{definition}
+\end{tcolorbox}
 
-
-\begin{theorem}[Carath\'eodory Characterization of Differentiability]
-\label{thm:caratheodory-characterization-of-differentiability}
-Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in I$. Then the following are equivalent:
-
-\begin{enumerate}[label=(\roman*)]
-\item $f$ is differentiable at $c$.
-
-\item There exists a function $\phi : I \to \mathbb{R}$, continuous at $c$, such that
+\begin{remark*}[Standard quantified statement]
 \[
-f(x)=f(c)+(x-c)\phi(x)
-\qquad \text{for all } x \in I.
+\exists \phi : I \to \mathbb{R}\;
+\bigl(\operatorname{ContinuousAt}(\phi,c)
+\;\land\;
+\forall x \in I\;[f(x) = f(c)+(x-c)\phi(x)]\bigr).
 \]
-\end{enumerate}
+\end{remark*}
 
-In this case,
+\begin{remark*}[Definition predicate reading]
+The existence of a Carathéodory factorization at $c$ is equivalent to $\operatorname{DifferentiableAt}(f,c)$ by the characterization theorem below. The factorizing function is explicit:
 \[
-\phi(c)=f'(c).
-\]
-\end{theorem}
-
-
-\begin{remark}[The explicit factorizing function]
-The unique $\varphi$ satisfying the identity is
-\[
-\varphi(x) =
+\phi(x) =
 \begin{cases}
-\dfrac{f(x) - f(c)}{x - c} & x \neq c, \\[6pt]
-L & x = c.
+\dfrac{f(x)-f(c)}{x-c} & x \neq c, \\[6pt]
+f'(c) & x = c.
 \end{cases}
 \]
-Differentiability of $f$ at $c$ is precisely the statement that this
-piecewise-defined function is continuous at $c$.
-The factorization eliminates the division-by-zero that makes the
-limit definition awkward in algebraic arguments.
-\end{remark}
+Differentiability of $f$ at $c$ is precisely the statement that this piecewise-defined $\phi$ is continuous at $c$.
+\end{remark*}
 
-\begin{remark}[Chain rule via Carathéodory]
-If $f$ is differentiable at $c$ with factor $\varphi$, and $g$ is
-differentiable at $f(c)$ with factor $\psi$, then
+\begin{remark*}[Interpretation]
+The Carathéodory factorization replaces the difference quotient --- a function with a removable discontinuity at $c$ --- with a function $\phi$ that is genuinely continuous at $c$. The factorization $f(x)-f(c) = (x-c)\phi(x)$ holds everywhere on $I$, including at $x=c$ where both sides equal zero. The derivative is recovered as $\phi(c)$ without ever dividing by zero. This reframing converts analytical limit conditions into topological continuity conditions, which compose and factor more cleanly. It is the preferred tool for proving the product rule, quotient rule, and chain rule, because continuity of a product or composition is easier to establish than the existence of a limit of a quotient.
+
+\medskip
+\textbf{Carathéodory vs.\ Lipschitz.} Both control the increment $f(x)-f(c)$ by the factor $(x-c)$, but differently. The Carathéodory factorization requires the slope function $\phi(x)$ to extend \emph{continuously} to $c$; it controls the \emph{behaviour} of the slope, not just its size. The Lipschitz condition $|f(x)-f(c)| \leq L|x-c|$ only bounds the size of the increment. Carathéodory implies Lipschitz: if $\phi$ is continuous at $c$ it is bounded near $c$, so $|f(x)-f(c)| = |\phi(x)||x-c| \leq K|x-c|$ for some $K$ near $c$. The converse fails: $f(x)=|x|$ is Lipschitz on $\mathbb{R}$ with constant $1$ but the slope function takes values $\pm 1$ on either side of $0$ with no continuous extension.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[def:continuous-at]{Definition: Continuous at a Point}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{theorem}[Carathéodory Characterization of Differentiability]
+\label{thm:caratheodory-characterization-of-differentiability}
+Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in I$. The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $f$ is differentiable at $c$.
+\item There exists a function $\phi : I \to \mathbb{R}$, continuous at $c$, such that
+\[
+f(x) = f(c) + (x-c)\,\phi(x) \qquad \text{for all } x \in I.
+\]
+\end{enumerate}
+In this case, $\phi(c) = f'(c)$.
+\hyperref[prf:caratheodory-theorem]{Go to proof.}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
 \begin{align*}
-g(f(x)) - g(f(c))
-  &= \psi(f(x))\cdot(f(x) - f(c)) \\
-  &= \psi(f(x))\cdot\varphi(x)\cdot(x - c).
+\operatorname{DifferentiableAt}(f,c)
+\;&\iff\;
+\exists\phi:I\to\mathbb{R}\;
+\bigl(\operatorname{ContinuousAt}(\phi,c)\\
+&\quad\land\;\forall x \in I\;[f(x)=f(c)+(x-c)\phi(x)]\bigr).
 \end{align*}
-The function $x \mapsto \psi(f(x))\cdot\varphi(x)$ is continuous at $c$
-and evaluates there to $g'(f(c))\cdot f'(c)$.
-This gives the chain rule with no limit computation.
-\end{remark}
-
-\begin{remark}[Why this matters]
-The Carathéodory form is the preferred tool for proving the product rule,
-quotient rule, and chain rule cleanly. It converts limit arguments into
-continuity arguments, which are often simpler to chain together.
-\end{remark}
-
-
-
-
-
-
-\begin{remark*}
-Differentiability at $c$ is equivalent to the ability to factor the increment
-$f(x) - f(c)$ by $(x-c)$ with a coefficient function $\varphi(x)$ that extends
-continuously to $x = c$. The derivative is then simply recovered as
-$f'(c) = \varphi(c)$. This reframes a limit condition on a quotient as a
-continuity condition on a function — a reformulation that makes algebraic
-manipulation of derivatives significantly cleaner.
+In this case $\phi(c) = f'(c)$.
 \end{remark*}
 
-\begin{remark*}[Carathéodory factorization vs.\ Lipschitz control]
-Both Carathéodory's theorem and the Lipschitz condition control the increment
-$f(x) - f(c)$ by the factor $(x-c)$, but in fundamentally different ways.
-
-\textbf{Carathéodory factorization} gives an exact linear factorization: the
-slope function $(f(x)-f(c))/(x-c)$ is required to extend continuously to
-$x = c$. The derivative appears as the value of this continuous extension.
-This is a differentiability criterion — it controls the behaviour of the slope,
-not merely its size.
-
-\textbf{Lipschitz control} gives only an inequality: $|f(x)-f(c)| \le L|x-c|$
-for $x$ near $c$. This bounds how large the increment can be, but imposes no
-requirement that the slope quotient converge to any limit.
-
-\textbf{Relationship.} Carathéodory's representation implies Lipschitz: if
-$\varphi$ is continuous at $c$, it is bounded near $c$, so
-$|f(x)-f(c)| = |\varphi(x)||x-c| \le L|x-c|$ for some $L$ and all $x$ near
-$c$. Thus differentiability at $c$ implies a local Lipschitz estimate. The
-converse fails: $f(x) = |x|$ is Lipschitz on $\mathbb{R}$ with constant $L = 1$,
-but the slope function takes values $\pm 1$ on either side of $0$ with no
-continuous extension, so $f$ is not differentiable at $0$.
+\begin{remark*}[Interpretation]
+This theorem establishes that differentiability and the existence of a Carathéodory factorization are exactly the same condition. The proof is a two-direction construction: in the forward direction, define $\phi$ as the difference quotient extended by $f'(c)$ at $c$ and verify continuity from the definition of the derivative; in the backward direction, recover the difference quotient from $\phi$ and read off its limit as $\phi(c)$. The theorem's power is that it converts every future differentiability argument into a continuity argument: to show $g \circ f$ is differentiable, find a continuous Carathéodory function for it; composing the Carathéodory functions of $f$ and $g$ yields one automatically.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:caratheodory-factorization]{Definition: Carathéodory Factorization}
+  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
+  \item \hyperref[def:continuous-at]{Definition: Continuous at a Point}
+\end{itemize}
+\end{remark*}
 
-
+% ---------------------------------------------------------
 
 \begin{theorem}[Chain Rule]
-Let $I, J \subseteq \mathbb{R}$ be intervals, let $f : I \to \mathbb{R}$ and $g : J \to \mathbb{R}$, and suppose that $f(I) \subseteq J$. Let $c \in I$.
-
-If $f$ is differentiable at $c$ and $g$ is differentiable at $f(c)$, then the composition $g \circ f$ is differentiable at $c$, and
+\label{thm:chain-rule}
+Let $I, J \subseteq \mathbb{R}$ be intervals, let $f : I \to \mathbb{R}$ and $g : J \to \mathbb{R}$, and suppose that $f(I) \subseteq J$. Let $c \in I$. If $f$ is differentiable at $c$ and $g$ is differentiable at $f(c)$, then the composition $g \circ f$ is differentiable at $c$, and
 \[
 (g \circ f)'(c) = g'(f(c))\,f'(c).
 \]
+\hyperref[prf:chain-rule]{Go to proof.}
 \end{theorem}
 
-
-
-
-
-
-
-\begin{remark*}
-The standard approach via Carathéodory's theorem avoids the division-by-zero
-failure of the naive proof. Let $\varphi_f$ be the Carathéodory function of
-$f$ at $c$ and $\varphi_g$ be the Carathéodory function of $g$ at $f(c)$.
-Then:
-\[
-  g(f(x)) - g(f(c))
-  = \varphi_g(f(x)) \cdot (f(x) - f(c))
-  = \varphi_g(f(x)) \cdot \varphi_f(x) \cdot (x - c).
-\]
-The function $x \mapsto \varphi_g(f(x)) \cdot \varphi_f(x)$ is continuous at
-$c$: $\varphi_f$ is continuous at $c$ by differentiability of $f$, $f$ is
-continuous at $c$ (differentiability implies continuity), and $\varphi_g$ is
-continuous at $f(c)$ by differentiability of $g$. The value at $x = c$ is
-$\varphi_g(f(c)) \cdot \varphi_f(c) = g'(f(c)) \cdot f'(c)$. By
-Carathéodory's theorem applied to $g \circ f$, this gives the result.
+\begin{remark*}[Standard quantified statement]
+\begin{align*}
+&\operatorname{DifferentiableAt}(f,c) \;\land\; \operatorname{DifferentiableAt}(g,f(c))\\
+&\quad\Rightarrow\;
+\operatorname{DerivativeAt}(g\circ f,\,c,\,g'(f(c))\cdot f'(c)).
+\end{align*}
 \end{remark*}
 
+\begin{remark*}[Interpretation]
+The chain rule computes the derivative of a composition by multiplying the derivatives at the respective points: the outer function $g$ is differentiated at the intermediate value $f(c)$, and the inner function $f$ is differentiated at $c$. The Carathéodory proof is the cleanest: let $\phi_f$ and $\phi_g$ be the Carathéodory functions of $f$ at $c$ and $g$ at $f(c)$ respectively. Then
+\[
+g(f(x)) - g(f(c)) = \phi_g(f(x))\cdot(f(x)-f(c)) = \phi_g(f(x))\cdot\phi_f(x)\cdot(x-c).
+\]
+The function $x \mapsto \phi_g(f(x))\cdot\phi_f(x)$ is continuous at $c$ --- the product of two continuous functions --- and its value at $c$ is $g'(f(c))\cdot f'(c)$. By the characterization theorem, $g\circ f$ is differentiable with the stated derivative. The naive proof via difference quotients fails because $f(x) = f(c)$ for $x$ near $c$ is possible, causing division by zero; Carathéodory avoids this entirely.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:caratheodory-characterization-of-differentiability]{Theorem: Carathéodory Characterization of Differentiability}
+  \item \hyperref[thm:differentiable-implies-continuous]{Theorem: Differentiable Implies Continuous}
+  \item \hyperref[thm:continuity-composition]{Theorem: Continuity of Composite Functions}
+  \item \hyperref[thm:continuity-product]{Theorem: Product of Continuous Functions is Continuous}
+\end{itemize}
+\end{remark*}
