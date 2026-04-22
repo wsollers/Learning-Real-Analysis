@@ -427,18 +427,25 @@ No local dependencies.
 % Theorem --- Image of Closed Bounded Interval
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Image of Closed Bounded Interval Is Closed Bounded Interval)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Image of Closed Bounded Interval Is Closed Bounded Interval]
 \label{thm:image-of-closed-bounded-interval}
 Let $f:[a,b]\to\mathbb{R}$ be continuous. Then $f([a,b])=[\min_{[a,b]} f,\max_{[a,b]} f]$.
 \hyperref[prf:image-of-closed-bounded-interval]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
 &\forall a,b\in\mathbb{R}\;\forall f:[a,b]\to\mathbb{R}:\\
 &\qquad
-\bigl(a<b \land \operatorname{ContinuousOn}(f,[a,b])\bigr)
+\Bigl(a<b \land
+\forall c\in[a,b]\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in[a,b]\;
+\bigl(|x-c|<\delta\Rightarrow |f(x)-f(c)|<\varepsilon\bigr)\Bigr)
 \Longrightarrow
 f([a,b])=[\min_{[a,b]} f,\max_{[a,b]} f].
 \end{aligned}
@@ -476,7 +483,12 @@ Let $I \subseteq \mathbb{R}$ be an interval and let $f:I \to \mathbb{R}$ be cont
 \begin{aligned}
 &\forall I\subseteq\mathbb{R}\;\forall f:I\to\mathbb{R}:\\
 &\qquad
-\bigl(\operatorname{Interval}(I)\land\operatorname{ContinuousOn}(f,I)\bigr)
+\Bigl[
+\bigl(\forall x_1,x_2\in I\;\forall z\in\mathbb{R}\;(x_1<z<x_2\Rightarrow z\in I)\bigr)\\
+&\qquad\land
+\bigl(\forall c\in I\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in I\;
+(|x-c|<\delta\Rightarrow |f(x)-f(c)|<\varepsilon)\bigr)
+\Bigr]
 \Longrightarrow
 \forall y_1,y_2 \in f(I)\; \forall y \in \mathbb{R}\;
 \bigl(y_1 < y < y_2 \Rightarrow y \in f(I)\bigr).
@@ -489,6 +501,31 @@ Let $I \subseteq \mathbb{R}$ be an interval and let $f:I \to \mathbb{R}$ be cont
 \operatorname{ContinuousOn}(f,I)
 \Longrightarrow
 \operatorname{Interval}(f(I)).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\exists I\subseteq\mathbb{R}\;\exists f:I\to\mathbb{R}\;
+\exists y_1,y_2\in f(I)\;\exists y\in\mathbb{R}:\\
+&\qquad
+\bigl(\forall x_1,x_2\in I\;\forall z\in\mathbb{R}\;(x_1<z<x_2\Rightarrow z\in I)\bigr)\\
+&\qquad\land
+\bigl(\forall c\in I\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in I\;
+(|x-c|<\delta\Rightarrow |f(x)-f(c)|<\varepsilon)\bigr)\\
+&\qquad\land
+y_1<y<y_2
+\land
+y\notin f(I).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{Interval}(I)\land\operatorname{ContinuousOn}(f,I)
+\land\neg\operatorname{Interval}(f(I)).
 \]
 \end{remark*}
 
