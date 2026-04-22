@@ -49,7 +49,10 @@ Let $a<b$ and set $I=[a,b]$. A finite ordered set $P=\{x_0,\ldots,x_n\}$ with $n
 
 \begin{remark*}[Definition predicate reading]
 \[
-\operatorname{PartitionOfInterval}(P,I) \coloneqq \bigl(P=\{x_0,\ldots,x_n\}\subseteq I \land x_0=a \land x_n=b \land \forall i\in\{1,\ldots,n\}\;(x_{i-1}<x_i)\bigr).
+\operatorname{PartitionOfInterval}(P,I) \coloneqq
+\exists n\in\mathbb{N}\;\Bigl(n\ge 1 \land P=\{x_0,\ldots,x_n\}\subseteq I
+\land x_0=\min I \land x_n=\max I
+\land \forall i\in\{1,\ldots,n\}\;(x_{i-1}<x_i)\Bigr).
 \]
 \end{remark*}
 
@@ -65,7 +68,11 @@ Let $a<b$ and set $I=[a,b]$. A finite ordered set $P=\{x_0,\ldots,x_n\}$ with $n
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg\operatorname{PartitionOfInterval}(P,I) \Longleftrightarrow (x_0\ne a) \lor (x_n\ne b) \lor \exists i\in\{1,\ldots,n\}\;(x_{i-1}\ge x_i).
+\neg\operatorname{PartitionOfInterval}(P,I) \Longleftrightarrow
+\forall n\in\mathbb{N}\;\Bigl(n\ge 1 \Rightarrow
+\bigl(P\ne\{x_0,\ldots,x_n\}\lor P\nsubseteq I
+\lor x_0\ne\min I \lor x_n\ne\max I
+\lor \exists i\in\{1,\ldots,n\}\;(x_{i-1}\ge x_i)\bigr)\Bigr).
 \]
 \end{remark*}
 
@@ -225,11 +232,15 @@ Let $a,b \in \mathbb{R}$ with $a<b$ and set $I=[a,b]$. A gauge on $I$ is a funct
 \end{remark*}
 
 \begin{remark*}[Failure modes]
-A purported gauge fails precisely when it takes on a nonpositive value somewhere in $I$.
+A purported gauge fails either because it is not a function from $I$ to
+\(\mathbb{R}\), or because it takes on a nonpositive value somewhere in
+$I$.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
+\underbrace{\neg\bigl(\delta:I\to\mathbb{R}\bigr)}_{\text{wrong function type}}
+\;\lor\;
 \underbrace{\exists x\in I\;(\delta(x)\le 0)}_{\text{nonpositive gauge value}}
 \]
 \end{remark*}
@@ -397,7 +408,7 @@ admits a $\delta$-fine tagged partition of $[a,b]$.
 
 \begin{remark*}[Negation predicate reading]
 \[
-\forall \delta:[a,b]\to(0,\infty)\;
+\exists \delta:[a,b]\to(0,\infty)\;
 \forall \dot{\mathcal{P}}\;\Bigl(
 \operatorname{TaggedPartition}(\dot{\mathcal{P}},[a,b])
 \Rightarrow

@@ -184,35 +184,48 @@ j_f(c)\coloneqq f(c^+)-f(c^-).
 
 \begin{remark*}[Definition predicate reading]
 \[
-\operatorname{JumpOfFunction}(f,c,j)
+\operatorname{JumpOfFunction}(f,I,c,j)
 \coloneqq
-j=f(c^+)-f(c^-).
+\operatorname{Interval}(I)
+\land \operatorname{MonotoneIncreasing}(f,I)
+\land \operatorname{InteriorPoint}(c,I)
+\land \exists L_-,L_+\in\mathbb{R}\;
+\bigl(\operatorname{LeftLimit}(f,c,L_-)
+\land \operatorname{RightLimit}(f,c,L_+)
+\land j=L_+-L_-\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
 \begin{aligned}
-&\neg\bigl(j=j_f(c)\bigr)
+&\forall I\subseteq\mathbb{R}\;\forall f:I\to\mathbb{R}\;\forall c\in I\;\forall j\in\mathbb{R}:\\
+&\neg\operatorname{JumpOfFunction}(f,I,c,j)
 \Longleftrightarrow
-\neg\bigl(f(c^-)\text{ exists}\bigr)
-\lor
-\neg\bigl(f(c^+)\text{ exists}\bigr)
-\lor
-j\ne f(c^+)-f(c^-).
+\neg\operatorname{Interval}(I)
+\lor \neg\operatorname{MonotoneIncreasing}(f,I)
+\lor \neg\operatorname{InteriorPoint}(c,I)\\
+&\qquad\lor
+\forall L_-,L_+\in\mathbb{R}\;
+\bigl(\neg\operatorname{LeftLimit}(f,c,L_-)
+\lor \neg\operatorname{RightLimit}(f,c,L_+)
+\lor j\ne L_+-L_-\bigr).
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg\operatorname{JumpOfFunction}(f,c,j)
+\neg\operatorname{JumpOfFunction}(f,I,c,j)
 \Longleftrightarrow
-\neg\bigl(f(c^-)\text{ exists}\bigr)
+\neg\operatorname{Interval}(I)
+\lor \neg\operatorname{MonotoneIncreasing}(f,I)
+\lor \neg\operatorname{InteriorPoint}(c,I)
 \lor
-\neg\bigl(f(c^+)\text{ exists}\bigr)
-\lor
-j\ne f(c^+)-f(c^-).
+\forall L_-,L_+\in\mathbb{R}\;
+\bigl(\neg\operatorname{LeftLimit}(f,c,L_-)
+\lor \neg\operatorname{RightLimit}(f,c,L_+)
+\lor j\ne L_+-L_-\bigr).
 \]
 \end{remark*}
 
@@ -323,10 +336,15 @@ The corollary states that a nondecreasing function assigns disjoint open value i
 \end{remark*}
 
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Discontinuities of a Monotone Function Are Countable)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Discontinuities of a Monotone Function Are Countable]
 \label{thm:monotone-discontinuities-countable}
 Let $I \subseteq \mathbb{R}$ be an interval and let $f:I\to\mathbb{R}$ be monotone. Then the set $D_f \coloneqq \{c \in I : f \text{ is discontinuous at } c\}$ is at most countable. \hyperref[prf:monotone-discontinuities-countable]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
