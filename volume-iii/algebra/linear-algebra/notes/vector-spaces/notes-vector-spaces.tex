@@ -1,11 +1,39 @@
 % =========================================================
 % Vector Spaces — Main File
 % =========================================================
-% Input order follows logical dependency:
-%   prerequisites → definitions → examples → propositions
 
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Toolkit --- Vector Spaces}},
+  fonttitle=\small\bfseries]
+\textbf{Concept family:} The abstract vector space axioms and their immediate
+consequences.
 
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Vector Space (10 axioms)
+  \item Definition: Vector and Point
+  \item Definition: Real Vector Space
+  \item Definition: Complex Vector Space
+  \item Theorem: Unique Additive Identity
+  \item Theorem: Unique Additive Inverse
+  \item Theorem: $0v = 0$
+  \item Theorem: $a0 = 0$
+  \item Theorem: $(-1)v = -v$
+\end{itemize}
 
+\medskip
+\textbf{Key predicate:}
+\[
+  \operatorname{VectorSpace}(V, \mathbf{F}, +, \cdot).
+\]
+The 10 axioms are closure, commutativity, associativity, additive identity,
+additive inverse, scalar closure, both distributive laws, scalar associativity,
+and the scalar identity.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -56,11 +84,29 @@ $a,b \in \mathbf{F}$:
 \]
 \end{remark*}
 
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\,\operatorname{VectorSpace}(V,\mathbf{F},+,\cdot)
+\;\Longleftrightarrow\;
+\text{at least one of the ten axioms fails for some } u,v,w \in V,\; a,b \in \mathbf{F}.
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
 A vector space is a set whose elements can be added together and multiplied
 by scalars, with these operations satisfying the natural algebraic rules
 familiar from $\mathbf{F}^n$.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:Fn]{Definition: $\mathbf{F}^n$} (motivating example)
+  \item \hyperref[def:addition-in-Fn]{Definition: Addition in $\mathbf{F}^n$}
+  \item \hyperref[def:scalar-multiplication-in-Fn]{Definition: Scalar Multiplication in $\mathbf{F}^n$}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -90,6 +136,14 @@ In $\mathbf{F}^n$, the same object can also be viewed geometrically as a point
 with coordinates in $\mathbf{F}$.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Definition (Real Vector Space)}},
@@ -111,12 +165,22 @@ V \text{ is a vector space over } \mathbb{R}.
 \begin{remark*}[Definition predicate reading]
 \[
 \operatorname{RealVectorSpace}(V)
+\;\colonequiv\;
+\operatorname{VectorSpace}(V,\mathbb{R},+,\cdot).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 In a real vector space, the scalars used in scalar multiplication are real numbers.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -139,11 +203,19 @@ V \text{ is a vector space over } \mathbb{C}.
 \begin{remark*}[Definition predicate reading]
 \[
 \operatorname{ComplexVectorSpace}(V)
+\;\colonequiv\;
+\operatorname{VectorSpace}(V,\mathbb{C},+,\cdot).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 In a complex vector space, the scalars used in scalar multiplication are complex numbers.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+\end{itemize}
 \end{remark*}
 
 \begin{remark*}[Notation]
@@ -158,16 +230,11 @@ with each $x_j \in \mathbf{F}$, equipped with coordinatewise addition and
 coordinatewise scalar multiplication.
 \end{remark*}
 
-\begin{remark*}[Interpretation]
-The spaces $\mathbf{F}^m$ provide the basic finite-dimensional examples of
-vector spaces, while $\mathbf{F}^{\infty}$ is the corresponding infinite-list
-version.
-\end{remark*}
-
 \begin{remark*}[Coordinates in Vector Spaces]
 A pointwise proof is available when vectors are given explicitly by coordinates, as in $\mathbf{F}^n$, because the operations are defined coordinatewise. In an arbitrary vector space, vectors need not come with coordinates, so proofs must use the vector space axioms rather than coordinate calculations.
 \end{remark*}
 
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -176,6 +243,7 @@ A pointwise proof is available when vectors are given explicitly by coordinates,
 \begin{theorem}[Unique Additive Identity]
 \label{thm:unique-additive-identity}
 A vector space has a unique additive identity.
+\hyperref[prf:unique-additive-identity]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -196,6 +264,14 @@ Although the vector space axioms assert the existence of an additive identity,
 they force that identity to be unique.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Theorem (Unique Additive Inverse)}},
@@ -203,6 +279,7 @@ they force that identity to be unique.
 \begin{theorem}[Unique Additive Inverse]
 \label{thm:unique-additive-inverse}
 Every vector in a vector space has a unique additive inverse.
+\hyperref[prf:unique-additive-inverse]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -232,10 +309,14 @@ w+(-v).
 \]
 \end{remark*}
 
-\begin{remark*}[Interpretation]
-The notation $-v$ names the unique vector that cancels $v$, and $w-v$
-means adding the inverse of $v$ to $w$.
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+  \item \hyperref[thm:unique-additive-identity]{Theorem: Unique Additive Identity}
+\end{itemize}
 \end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -247,6 +328,7 @@ For every $v \in V$,
 \[
 0v=0.
 \]
+\hyperref[prf:zero-scalar-times-vector]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -257,8 +339,19 @@ For every $v \in V$,
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Multiplying any vector by the scalar $0$ gives the zero vector.
+Multiplying any vector by the scalar $0$ gives the zero vector. The $0$ on the
+left is the scalar zero in $\mathbf{F}$; the $0$ on the right is the zero vector
+in $V$.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+  \item \hyperref[thm:unique-additive-inverse]{Theorem: Unique Additive Inverse}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -270,6 +363,7 @@ For every $a \in \mathbf{F}$,
 \[
 a0=0.
 \]
+\hyperref[prf:scalar-times-zero-vector]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -280,19 +374,30 @@ a0=0.
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Every scalar sends the zero vector to the zero vector.
+Every scalar sends the zero vector to the zero vector. The $0$ on the right of
+$a$ is the zero vector in $V$.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+  \item \hyperref[thm:unique-additive-inverse]{Theorem: Unique Additive Inverse}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (($-1)v=-v$)}},
+  title={\small\textbf{Theorem ($(-1)v=-v$)}},
   fonttitle=\small\bfseries]
-\begin{theorem}[($-1)v=-v$]
+\begin{theorem}[$(-1)v=-v$]
 \label{thm:minus-one-times-vector}
 For every $v \in V$,
 \[
 (-1)v=-v.
 \]
+\hyperref[prf:minus-one-times-vector]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -304,15 +409,14 @@ For every $v \in V$,
 
 \begin{remark*}[Interpretation]
 Scalar multiplication by $-1$ produces the additive inverse of a vector.
+This justifies the notation $-v$ for the additive inverse: it is literally
+$(-1)$ times $v$.
 \end{remark*}
 
-
-
-
-
-
-
-
-
-
-
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+  \item \hyperref[thm:unique-additive-inverse]{Theorem: Unique Additive Inverse}
+  \item \hyperref[thm:zero-scalar-times-vector]{Theorem: $0v=0$}
+\end{itemize}
+\end{remark*}

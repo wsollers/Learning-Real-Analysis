@@ -1,0 +1,214 @@
+\newpage
+\phantomsection
+\label{prf:capstone-linear-algebra}
+
+\begin{remark*}[Return]
+\hyperref[chap:linear-algebra]{Return to Chapter: Linear Algebra}
+\end{remark*}
+
+\subsection*{Capstone --- Linear Algebra}
+
+\begin{remark*}[Capstone Problem]
+Let $V$ be a vector space over $\mathbf{F}$, and throughout let $U$, $U_1$,
+$U_2$, $W$ denote subspaces of $V$.
+
+\begin{enumerate}[label=(\alph*)]
+
+\item \textbf{(Subspace criterion from the three conditions.)}
+Prove directly from the definition of a vector space that if a non-empty subset
+$U \subseteq V$ satisfies conditions (ii) and (iii) of the Subspace Conditions
+Theorem --- that is, $U$ is closed under addition and scalar multiplication ---
+then $0 \in U$ automatically. Deduce that for non-empty subsets, condition (i)
+is redundant and can be dropped.
+
+\textit{Hint}: If $u \in U$, consider $0 \cdot u$.
+
+\item \textbf{(Direct sum via the zero-decomposition test.)}
+Let $V = U_1 + U_2$.
+\begin{enumerate}[label=(\roman*)]
+  \item Use the Condition for a Direct Sum to prove that $V = U_1 \oplus U_2$
+        if and only if $U_1 \cap U_2 = \{0\}$.
+  \item Exhibit subspaces $U_1, U_2, U_3$ of $\mathbf{F}^2$ such that
+        $U_i \cap U_j = \{0\}$ for all $i \neq j$, yet
+        $U_1 + U_2 + U_3 \neq U_1 \oplus U_2 \oplus U_3$.
+        Explain which hypothesis of the Condition for a Direct Sum fails.
+\end{enumerate}
+
+\item \textbf{(The zero vector is unique and absorbing.)}
+Using only the vector space axioms and the theorems proved in this chapter,
+prove the following chain:
+\begin{enumerate}[label=(\roman*)]
+  \item $0v = 0$ for every $v \in V$ (the zero \emph{scalar} kills every vector).
+  \item $a0 = 0$ for every $a \in \mathbf{F}$ (every scalar kills the zero \emph{vector}).
+  \item $(-1)v = -v$ for every $v \in V$.
+  \item Conclude: $(-1)(-1)v = v$. State which axiom and which theorem from (iii)
+        you use at each step.
+\end{enumerate}
+
+\item \textbf{(Subspaces and the subspace lattice.)}
+\begin{enumerate}[label=(\roman*)]
+  \item Prove that the intersection $U_1 \cap U_2$ of any two subspaces of $V$
+        is itself a subspace of $V$.
+  \item Prove that the union $U_1 \cup U_2$ is a subspace of $V$ if and only if
+        $U_1 \subseteq U_2$ or $U_2 \subseteq U_1$.
+  \item Use part (i) to show that the set of all subspaces of $V$, ordered by
+        inclusion, forms a lattice with meet $U_1 \wedge U_2 = U_1 \cap U_2$
+        and join $U_1 \vee U_2 = U_1 + U_2$.
+\end{enumerate}
+
+\item \textbf{(Connection to Brownian motion on the torus.)}
+The state space of $n$-particle Brownian motion on the torus $\mathbb{T}^2$
+is $(\mathbb{T}^2)^n \cong (\mathbb{R}^2/\mathbb{Z}^2)^n$. The tangent
+space at any point is $(\mathbb{R}^2)^n$, a real vector space of dimension $2n$.
+\begin{enumerate}[label=(\roman*)]
+  \item Identify the subspace $D \subseteq (\mathbb{R}^2)^n$ of displacement
+        vectors of the form $(v, v, \ldots, v)$ with $v \in \mathbb{R}^2$
+        (all particles moving identically). What is $\dim D$?
+  \item Identify the subspace $R \subseteq (\mathbb{R}^2)^n$ of relative
+        displacement vectors of the form $(v_1, \ldots, v_n)$ with
+        $v_1 + \cdots + v_n = 0$. What is $\dim R$?
+  \item Show that $(\mathbb{R}^2)^n = D \oplus R$ by verifying the direct sum
+        conditions. This decomposition separates the center-of-mass motion
+        (governed by $D$) from the relative (chase) dynamics (governed by $R$)
+        in the delay-pursuit simulation.
+\end{enumerate}
+
+\end{enumerate}
+
+\medskip
+\textit{Concepts synthesized:}
+Subspace criterion (three conditions),
+Conditions for a Direct Sum,
+Direct Sum of Two Subspaces ($U \cap W = \{0\}$),
+Unique Additive Identity,
+Unique Additive Inverse,
+$0v = 0$, $a0 = 0$, $(-1)v = -v$,
+Sum of Subspaces Is the Smallest Containing Subspace.
+
+\medskip
+\textit{Connection to simulation.}
+Part (e) is the exact decomposition used to structure the Brownian motion
+simulation. The center-of-mass component $D$ drifts freely and contributes
+only to the overall torus translation; the relative component $R$ governs
+the inter-particle distances and is where the delay-pursuit dynamics live.
+Projecting the SDE onto $D$ and $R$ separately — possible precisely because
+$(\mathbb{R}^2)^n = D \oplus R$ — is what allows the GPU shader to decouple
+the simulation into an independent drift pass and a relative-position update
+pass.
+\end{remark*}
+
+\begin{proof}
+\textbf{Solution.}~\\
+
+\textbf{Part (a): Condition (i) is redundant for non-empty subsets.}
+
+Suppose $U \neq \emptyset$ and $U$ is closed under addition and scalar
+multiplication. Pick any $u \in U$ (possible since $U$ is non-empty). By
+closure under scalar multiplication with scalar $0 \in \mathbf{F}$:
+$0 \cdot u \in U$. By the theorem $0v = 0$ (proved from the vector space
+axioms), $0 \cdot u = 0$. Therefore $0 \in U$.
+
+Hence for non-empty subsets, conditions (ii) and (iii) imply (i). The
+three-condition criterion can be streamlined to: $U \neq \emptyset$,
+closed under addition, closed under scalar multiplication.
+
+\medskip
+\textbf{Part (b): Direct sum and the intersection test.}
+
+\textit{(i)} This is the Direct Sum of Two Subspaces theorem. The key
+direction is the Condition for a Direct Sum: $V = U_1 \oplus U_2$ iff
+whenever $u_1 + u_2 = 0$ with $u_i \in U_i$, one has $u_1 = u_2 = 0$.
+If $v \in U_1 \cap U_2$, then $v + (-v) = 0$ with $v \in U_1$ and
+$-v \in U_2$ (since $U_2$ is a subspace). By the zero-decomposition test,
+$v = 0$. Conversely, if $U_1 \cap U_2 = \{0\}$ and $u_1 + u_2 = 0$,
+then $u_1 = -u_2 \in U_1 \cap U_2 = \{0\}$, so $u_1 = u_2 = 0$.
+
+\textit{(ii)} In $\mathbf{F}^2$, take $U_1 = \operatorname{span}(e_1)$,
+$U_2 = \operatorname{span}(e_2)$, $U_3 = \operatorname{span}(e_1 + e_2)$.
+Each pairwise intersection is $\{0\}$. But $(e_1 + e_2) = e_1 + e_2 + 0 =
+0 + e_2 + e_1$, giving two distinct representations of $e_1 + e_2$ in
+$U_1 + U_2 + U_3$. The Condition for a Direct Sum fails: $e_1 + e_2 +
+(-e_1 - e_2) = 0$ has the non-trivial decomposition $e_1 \in U_1$,
+$e_2 \in U_2$, $-e_1 - e_2 \in U_3$.
+
+\medskip
+\textbf{Part (c): The zero vector is absorbing.}
+
+\textit{(i)} $0v = (0+0)v = 0v + 0v$ by axiom (viii). Adding $-(0v)$ to
+both sides (which exists by axiom (v)) gives $0 = 0v$.
+
+\textit{(ii)} $a0 = a(0+0) = a0 + a0$ by axiom (vii). Adding $-(a0)$ gives
+$0 = a0$.
+
+\textit{(iii)} $v + (-1)v = 1v + (-1)v = (1 + (-1))v = 0v = 0$ by axiom
+(viii) and (i). By uniqueness of additive inverses, $(-1)v = -v$.
+
+\textit{(iv)} $(-1)(-1)v = (-1)(-v) = -(-v)$ by (iii) applied twice. By
+uniqueness of the additive inverse, $-(-v) = v$. Therefore $(-1)(-1)v = v$.
+This uses axiom (ix) (associativity of scalar multiplication) implicitly
+via the identification $(-1)(-1) = 1$.
+
+\medskip
+\textbf{Part (d): The subspace lattice.}
+
+\textit{(i)} $U_1 \cap U_2$ is non-empty (both contain $0$). If $u, v \in U_1
+\cap U_2$, then $u,v \in U_1$ so $u+v \in U_1$, and $u,v \in U_2$ so
+$u+v \in U_2$; thus $u+v \in U_1 \cap U_2$. Scalar closure follows
+similarly. By the three-conditions criterion, $U_1 \cap U_2$ is a subspace.
+
+\textit{(ii)} ($\Leftarrow$) If $U_1 \subseteq U_2$, then $U_1 \cup U_2 = U_2$
+is a subspace. Symmetrically for $U_2 \subseteq U_1$.
+($\Rightarrow$) Suppose $U_1 \not\subseteq U_2$ and $U_2 \not\subseteq U_1$.
+Pick $u \in U_1 \setminus U_2$ and $w \in U_2 \setminus U_1$. Then
+$u + w \in U_1 \cup U_2$ (if it were in $U_1 \cup U_2$, it would lie in $U_1$
+or $U_2$; in $U_1$: $w = (u+w) - u \in U_1$, contradiction; in $U_2$:
+$u = (u+w) - w \in U_2$, contradiction). So $U_1 \cup U_2$ is not closed
+under addition, hence not a subspace.
+
+\textit{(iii)} $\cap$ is associative and commutative (set operations); the
+meet of $U_1$ and $U_2$ is $U_1 \cap U_2$, which is a subspace by (i). The
+join is $U_1 + U_2$, which is a subspace by the Sum of Subspaces theorem and
+is the smallest subspace containing both. Absorption laws hold: $U_1 \cap
+(U_1 + U_2) = U_1$ and $U_1 + (U_1 \cap U_2) = U_1$ follow from $U_1
+\subseteq U_1 + U_2$ and $U_1 \cap U_2 \subseteq U_1$. The lattice is
+therefore verified.
+
+\medskip
+\textbf{Part (e): Decomposition of the tangent space for the torus simulation.}
+
+\textit{(i)} $D = \{(v,v,\ldots,v) : v \in \mathbb{R}^2\} \cong \mathbb{R}^2$,
+so $\dim D = 2$. It is a subspace: $0 \in D$, closed under coordinatewise
+addition $(v,\ldots,v) + (w,\ldots,w) = (v+w,\ldots,v+w)$, and closed
+under scalar multiplication.
+
+\textit{(ii)} $R = \{(v_1,\ldots,v_n) : v_1+\cdots+v_n = 0\}$. This is a
+subspace (the kernel of the linear map $\Sigma : (\mathbb{R}^2)^n \to
+\mathbb{R}^2$, $(v_1,\ldots,v_n) \mapsto v_1+\cdots+v_n$). Its dimension
+is $2n - 2$ (the kernel of a surjection from a $2n$-dimensional space to
+a $2$-dimensional space).
+
+\textit{(iii)} $D + R = (\mathbb{R}^2)^n$: given any $(v_1,\ldots,v_n)$,
+let $\bar{v} = \frac{1}{n}(v_1+\cdots+v_n)$ and write $(v_1,\ldots,v_n) =
+(\bar{v},\ldots,\bar{v}) + (v_1-\bar{v},\ldots,v_n-\bar{v})$; the first
+term is in $D$ and the second is in $R$ (its components sum to zero).
+$D \cap R = \{0\}$: if $(v,\ldots,v) \in R$ then $nv = 0$ so $v = 0$.
+By the Direct Sum of Two Subspaces theorem, $D \cap R = \{0\}$ and
+$D + R = (\mathbb{R}^2)^n$ give $(\mathbb{R}^2)^n = D \oplus R$.
+\end{proof}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+  \item \hyperref[def:subspace]{Definition: Subspace}
+  \item \hyperref[thm:conditions-for-a-subspace]{Theorem: Conditions for a Subspace}
+  \item \hyperref[thm:unique-additive-identity]{Theorem: Unique Additive Identity}
+  \item \hyperref[thm:unique-additive-inverse]{Theorem: Unique Additive Inverse}
+  \item \hyperref[thm:zero-scalar-times-vector]{Theorem: $0v=0$}
+  \item \hyperref[thm:scalar-times-zero-vector]{Theorem: $a0=0$}
+  \item \hyperref[thm:minus-one-times-vector]{Theorem: $(-1)v=-v$}
+  \item \hyperref[def:direct-sum]{Definition: Direct Sum}
+  \item \hyperref[thm:condition-for-direct-sum]{Theorem: Condition for a Direct Sum}
+  \item \hyperref[thm:direct-sum-of-two-subspaces]{Theorem: Direct Sum of Two Subspaces}
+  \item \hyperref[thm:sum-of-subspaces-smallest-containing]{Theorem: Sum of Subspaces Is the Smallest Containing Subspace}
+\end{itemize}
+\end{remark*}

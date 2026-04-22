@@ -1,14 +1,49 @@
 % --- Volume III: Analysis / Linear Algebra ---
-% Section: Basic Structures
+% Section: Vector Space Preliminaries
 
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Toolkit --- Vector Space Preliminaries}},
+  fonttitle=\small\bfseries]
+\textbf{Concept family:} The concrete foundations for $\mathbf{F}^n$ before the
+abstract vector space axioms are introduced.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: List
+  \item Definition: $\mathbf{F}^n$
+  \item Definition: Addition in $\mathbf{F}^n$
+  \item Theorem: Addition Is Commutative in $\mathbf{F}^n$
+  \item Definition: Zero Vector in $\mathbf{F}^n$
+  \item Definition: Additive Inverse in $\mathbf{F}^n$
+  \item Definition: Scalar Multiplication in $\mathbf{F}^n$
+\end{itemize}
+
+\medskip
+\textbf{Key predicate:}
+\[
+  \operatorname{ListEquality}((x_1,\ldots,x_n),(y_1,\ldots,y_m))
+  \;\colonequiv\;
+  n = m \;\wedge\; \forall k \le n\;(x_k = y_k).
+\]
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (List)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[List]
 \label{def:list}
 Suppose $n$ is a non-negative integer. A \textbf{list} of length $n$ is an ordered collection of $n$ elements.
 \end{definition}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\forall L, \exists n \in \mathbb{N} \cup \{0\} : \bigl( \operatorname{Length}(L) = n \land L = (x_1, x_2, \dots, x_n) \bigr)
+\operatorname{List}(L) \iff \exists n \in \mathbb{N} \cup \{0\} : \bigl( \operatorname{Length}(L) = n \land L = (x_1, x_2, \dots, x_n) \bigr)
 \]
 \end{remark*}
 
@@ -31,6 +66,11 @@ A list is the primary mechanism for discussing ordered finite sets of vectors or
 \noindent
 \hyperref[prf:list-equality]{\textit{Go to proof of equality.}}
 
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -61,13 +101,26 @@ x = (x_1,\dots,x_n).
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Fn}(\mathbf{F},n)
+\;\colonequiv\;
+\mathbf{F}^n = \{(x_1,\ldots,x_n) : x_k \in \mathbf{F}\}.
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
 An element of $\mathbf{F}^n$ is an ordered list of $n$ scalars from $\mathbf{F}$.
 The order matters, and the list is completely specified by its coordinates.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:list]{Definition: List}
+\end{itemize}
+\end{remark*}
 
-
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -106,6 +159,14 @@ Addition in $\mathbf{F}^n$ is defined coordinatewise: add the first coordinates,
 then the second coordinates, and so on through the $n$th coordinates.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:Fn]{Definition: $\mathbf{F}^n$}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Theorem (Addition Is Commutative in $\mathbf{F}^n$)}},
@@ -116,6 +177,7 @@ For all $x,y \in \mathbf{F}^n$,
 \[
 x+y=y+x.
 \]
+\hyperref[prf:addition-commutative-fn]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -129,6 +191,14 @@ x+y=y+x.
 Because addition in $\mathbf{F}^n$ is coordinatewise and scalar addition in
 $\mathbf{F}$ is commutative, vector addition in $\mathbf{F}^n$ is commutative.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:addition-in-Fn]{Definition: Addition in $\mathbf{F}^n$}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -153,6 +223,14 @@ The symbol $0$ denotes the list of length $n$ all of whose coordinates are $0$:
 The zero vector is the vector whose every coordinate is the scalar $0$ in
 $\mathbf{F}$. It is the additive identity for $\mathbf{F}^n$.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:Fn]{Definition: $\mathbf{F}^n$}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -187,6 +265,15 @@ x=(x_1,\dots,x_n)
 The additive inverse in $\mathbf{F}^n$ is formed coordinatewise by taking
 the additive inverse of each coordinate in $\mathbf{F}$.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:Fn]{Definition: $\mathbf{F}^n$}
+  \item \hyperref[def:zero-vector-in-Fn]{Definition: Zero Vector in $\mathbf{F}^n$}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -226,13 +313,8 @@ Scalar multiplication in $\mathbf{F}^n$ is defined coordinatewise: multiply
 each coordinate of the vector by the scalar \(\lambda\).
 \end{remark*}
 
-
-
-
-
-
-
-
-
-
-
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:Fn]{Definition: $\mathbf{F}^n$}
+\end{itemize}
+\end{remark*}

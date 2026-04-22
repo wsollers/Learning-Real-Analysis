@@ -1,4 +1,41 @@
 % =========================================================
+% Vector Subspaces — Notes
+% =========================================================
+
+\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Toolkit --- Vector Subspaces}},
+  fonttitle=\small\bfseries]
+\textbf{Concept family:} Subspaces, their sums, and direct sums.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Subspace
+  \item Theorem: Conditions for a Subspace
+  \item Definition: Sum of Subspaces
+  \item Theorem: Sum of Subspaces Is the Smallest Containing Subspace
+  \item Definition: Direct Sum
+  \item Theorem: Condition for a Direct Sum
+  \item Theorem: Direct Sum of Two Subspaces
+\end{itemize}
+
+\medskip
+\textbf{Key predicates:}
+\[
+  \operatorname{Subspace}(U,V),
+  \qquad
+  \operatorname{ClosedUnderAddition}(U),
+  \qquad
+  \operatorname{ClosedUnderScalarMultiplication}(U,\mathbf{F}),
+  \qquad
+  \operatorname{DirectSum}(V,\{U_1,\ldots,U_m\},\mathbf{F}).
+\]
+\textbf{Key test:} $U$ is a subspace $\iff$ $0\in U$, $U$ closed under $+$,
+$U$ closed under scalar multiplication.
+\end{tcolorbox}
+
+% =========================================================
 % Definition — Subspace
 % =========================================================
 
@@ -29,13 +66,31 @@ U \subseteq V
 
 \begin{remark*}[Definition predicate reading]
 \[
-\operatorname{Subspace}(U,V).
+\operatorname{Subspace}(U,V)
+\;\colonequiv\;
+U \subseteq V \;\wedge\; \operatorname{VectorSpace}(U,\mathbf{F},+,\cdot).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\,\operatorname{Subspace}(U,V)
+\;\Longleftrightarrow\;
+U \not\subseteq V
+\;\vee\;
+\neg\,\operatorname{VectorSpace}(U,\mathbf{F},+,\cdot).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 A subspace is a subset of a vector space that is closed under the vector-space
 operations and therefore forms a vector space in its own right.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+\end{itemize}
 \end{remark*}
 
 % =========================================================
@@ -55,6 +110,7 @@ Then $U$ is a subspace of $V$ if and only if the following three conditions hold
   \item for all $u,v \in U$, one has $u+v \in U$;
   \item for all $a \in \mathbf{F}$ and all $u \in U$, one has $au \in U$.
 \end{enumerate}
+\hyperref[prf:conditions-for-a-subspace]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -65,16 +121,44 @@ Then $U$ is a subspace of $V$ if and only if the following three conditions hold
 &\quad\Longleftrightarrow\quad
 0 \in U \\
 &\qquad\land\;
-\forall u,v \in U \;(u+v \in U) \\
+\operatorname{ClosedUnderAddition}(U) \\
 &\qquad\land\;
-\forall a \in \mathbf{F}\;\forall u \in U \;(au \in U).
+\operatorname{ClosedUnderScalarMultiplication}(U,\mathbf{F}).
 \end{aligned}
 \]
 \end{remark*}
 
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\neg\,\operatorname{Subspace}(U,V)
+\;\Longleftrightarrow\;
+0 \notin U
+\;\vee\;
+\neg\,\operatorname{ClosedUnderAddition}(U)
+\;\vee\;
+\neg\,\operatorname{ClosedUnderScalarMultiplication}(U,\mathbf{F}).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+$U$ fails to be a subspace via exactly one of three routes: it omits the zero
+vector, it contains two vectors whose sum falls outside $U$, or it contains a
+vector and a scalar whose product falls outside $U$.
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-To check that a subset is a subspace, it is enough to verify that it contains
-the zero vector and is closed under addition and scalar multiplication.
+To check that a subset is a subspace, it suffices to verify the three
+conditions. The remaining seven vector space axioms are inherited automatically
+from $V$ since $U$ uses the same operations. The three conditions are minimal:
+condition (i) ensures $U$ is non-empty; (ii) and (iii) ensure the inherited
+operations stay within $U$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:subspace]{Definition: Subspace}
+  \item \hyperref[def:vector-space]{Definition: Vector Space}
+\end{itemize}
 \end{remark*}
 
 % =========================================================
@@ -112,16 +196,21 @@ U_1+\cdots+U_m
 \begin{remark*}[Definition predicate reading]
 \[
 \operatorname{SumOfSubspaces}(W,\{U_1,\dots,U_m\},V)
-\]
-with
-\[
+\;\colonequiv\;
 W=U_1+\cdots+U_m.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 The sum of subspaces consists of all vectors that can be built by adding
-together one vector from each subspace.
+together one vector from each subspace. Vectors from different subspaces
+interact; the representation $v = u_1 + \cdots + u_m$ need not be unique.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:subspace]{Definition: Subspace}
+\end{itemize}
 \end{remark*}
 
 % =========================================================
@@ -143,13 +232,14 @@ $U_1,\dots,U_m$, then
 \[
 U_1+\cdots+U_m \subseteq W.
 \]
+\hyperref[prf:sum-of-subspaces-smallest-containing]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&U_1+\cdots+U_m \text{ is a subspace of } V, \\
+&\operatorname{Subspace}(U_1+\cdots+U_m,\,V), \\
 &U_j \subseteq U_1+\cdots+U_m \quad \text{for } j=1,\dots,m, \\
 &\forall W \subseteq V\;
 \Bigl[
@@ -163,8 +253,17 @@ U_1+\cdots+U_m \subseteq W
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The sum is the smallest subspace that contains all the given subspaces.
-It is the subspace generated by putting them together.
+The sum is the smallest subspace containing all the given subspaces: it is
+their join in the lattice of subspaces of $V$. Any subspace containing all
+of $U_1,\ldots,U_m$ must contain every sum $u_1+\cdots+u_m$, so it
+contains the sum subspace.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:sum-of-subspaces]{Definition: Sum of Subspaces}
+  \item \hyperref[thm:conditions-for-a-subspace]{Theorem: Conditions for a Subspace}
+\end{itemize}
 \end{remark*}
 
 % =========================================================
@@ -205,7 +304,7 @@ V=U_1\oplus\cdots\oplus U_m.
 V=U_1+\cdots+U_m \\
 &\qquad\land\;
 \forall v \in V\;
-\exists! \, u_1 \in U_1 \;\cdots\; \exists! \, u_m \in U_m
+\exists!\, u_1 \in U_1 \;\cdots\; \exists!\, u_m \in U_m
 \text{ such that } v=u_1+\cdots+u_m.
 \end{aligned}
 \]
@@ -213,13 +312,31 @@ V=U_1+\cdots+U_m \\
 
 \begin{remark*}[Definition predicate reading]
 \[
-\operatorname{DirectSum}(V,\{U_1,\dots,U_m\},\mathbf{F}).
+\operatorname{DirectSum}(V,\{U_1,\dots,U_m\},\mathbf{F})
+\;\colonequiv\;
+V=U_1\oplus\cdots\oplus U_m.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\,\operatorname{DirectSum}(V,\{U_1,\dots,U_m\},\mathbf{F})
+\;\Longleftrightarrow\;
+\exists v \in V\;\exists \text{ two distinct decompositions of } v.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 A direct sum is a sum in which every vector has a unique decomposition
-into pieces coming from the given subspaces.
+into pieces coming from the given subspaces. The uniqueness condition is
+the structural rigidity that makes direct sums so useful — it means the
+subspaces contribute independently, with no redundancy.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:sum-of-subspaces]{Definition: Sum of Subspaces}
+\end{itemize}
 \end{remark*}
 
 
@@ -253,6 +370,7 @@ Then the following are equivalent:
         u_1=\cdots=u_m=0.
         \]
 \end{enumerate}
+\hyperref[prf:condition-for-direct-sum]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -270,7 +388,16 @@ Then the following are equivalent:
 
 \begin{remark*}[Interpretation]
 A sum is direct exactly when the zero vector has only the trivial
-decomposition as a sum of vectors from the given subspaces.
+decomposition as a sum of vectors from the given subspaces. This is the
+practical test: rather than verifying uniqueness for every $v \in V$,
+it suffices to check uniqueness at $v = 0$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:direct-sum]{Definition: Direct Sum}
+  \item \hyperref[thm:unique-additive-identity]{Theorem: Unique Additive Identity}
+\end{itemize}
 \end{remark*}
 
 % =========================================================
@@ -292,6 +419,7 @@ if and only if
 \[
 U \cap W = \{0\}.
 \]
+\hyperref[prf:direct-sum-of-two-subspaces]{\textit{Go to proof.}}
 \end{theorem}
 \end{tcolorbox}
 
@@ -305,15 +433,27 @@ U \cap W = \{0\}.
 \]
 \end{remark*}
 
-\begin{remark*}[Interpretation]
-For two subspaces, directness is equivalent to saying that they overlap only
-in the zero vector.
+\begin{remark*}[Contrapositive quantified statement]
+\[
+U \cap W \neq \{0\}
+\;\Longleftrightarrow\;
+U + W \neq U \oplus W.
+\]
+If the two subspaces share a nonzero vector, the sum is not direct.
 \end{remark*}
 
+\begin{remark*}[Interpretation]
+For two subspaces, directness is equivalent to saying they overlap only
+in the zero vector. This gives a simple geometric test: draw both subspaces
+and check whether their intersection is just the origin. The result does not
+generalise to three or more subspaces --- it is possible for $U_1\cap U_2$,
+$U_1\cap U_3$, and $U_2\cap U_3$ to all equal $\{0\}$ yet $U_1+U_2+U_3$
+still fail to be a direct sum.
+\end{remark*}
 
-
-
-
-
-
-
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:condition-for-direct-sum]{Theorem: Condition for a Direct Sum}
+  \item \hyperref[def:direct-sum]{Definition: Direct Sum}
+\end{itemize}
+\end{remark*}
