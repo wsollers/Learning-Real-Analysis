@@ -1,7 +1,7 @@
 % =========================================================
-% Tagged Partitions — Notes (stub, expand before Riemann)
+% Tagged Partitions --- Notes (stub, expand before Riemann)
 % Chapter: continuity
-% Volume III · Analysis
+% Volume III - Analysis
 % =========================================================
 
 % ---------------------------------------------------------
@@ -13,7 +13,7 @@
 \label{sec:tagged-partitions}
 
 % ---------------------------------------------------------
-% Definition — Mesh of a Partition
+% Definition --- Mesh of a Partition
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
@@ -22,29 +22,75 @@
   fonttitle=\small\bfseries]
 \begin{definition}[Mesh of a Partition]
 \label{def:mesh-of-partition}
-The \textbf{mesh} (or \textbf{norm}) of a partition
-$P=\{x_0,\ldots,x_n\}$ of $[a,b]$ is
+Let $a,b \in \mathbb{R}$ with $a<b$, and let $P=\{x_0,\ldots,x_n\}$ be a partition of $[a,b]$. A real number $m$ is the \emph{mesh} (or \emph{norm}) of $P$ if and only if
 \[
-  \|P\| := \max_{1\leq i\leq n}(x_i - x_{i-1}).
+m=\max_{1\le i\le n}(x_i - x_{i-1}).
 \]
+The mesh of $P$ is denoted by $\|P\|$ and is the unique $m$ satisfying this equivalence.
 \end{definition}
 \end{tcolorbox}
 
-
 \begin{remark*}[Standard quantified statement]
 \[
-  \|P\| = \max\{x_i - x_{i-1} : 1\leq i\leq n\}.
+\begin{aligned}
+&\text{Let } a,b\in\mathbb{R} \text{ with } a<b, \text{ and let } P=\{x_0,\ldots,x_n\} \text{ be a partition of } [a,b].\\
+&m \text{ is the mesh of } P
+\Longleftrightarrow
+m=\max_{1\le i\le n}(x_i - x_{i-1}).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{NormOfPartition}(P,m) \coloneqq m=\max_{1\le i\le n}(x_i - x_{i-1}).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a,b\in\mathbb{R} \text{ with } a<b, \text{ and let } P=\{x_0,\ldots,x_n\} \text{ be a partition of } [a,b].\\
+&\neg\bigl(m \text{ is the mesh of } P\bigr)
+\Longleftrightarrow
+\bigl(m<\max_{1\le i\le n}(x_i - x_{i-1})\bigr)\lor\bigl(m>\max_{1\le i\le n}(x_i - x_{i-1})\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{NormOfPartition}(P,m)
+\Longleftrightarrow
+\bigl(m<\max_{1\le i\le n}(x_i - x_{i-1})\bigr)\lor\bigl(m>\max_{1\le i\le n}(x_i - x_{i-1})\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Failure occurs either when $m$ underestimates the largest subinterval of $P$ or when $m$ overshoots that largest subinterval.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\operatorname{NormOfPartition}(P,m)
+=
+\underbrace{\bigl(m<\max_{1\le i\le n}(x_i - x_{i-1})\bigr)}_{\text{Underestimate}}
+\;\lor\;
+\underbrace{\bigl(m>\max_{1\le i\le n}(x_i - x_{i-1})\bigr)}_{\text{Overestimate}}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The mesh is the width of the widest subinterval. A partition has
-small mesh iff every subinterval is narrow. The Riemann integral
-is defined by taking limits as $\|P\|\to 0$.
+The mesh of a finite partition records the length of the widest subinterval and thus measures the resolution of the partition. Refining a partition strictly decreases or preserves this value, so a small mesh signals uniformly short subintervals, a critical input for Riemann and gauge integral estimates. Failure arises when a proposed number does not coincide with the actual maximum subinterval length, either because some subinterval is longer than the proposal or because all subintervals are shorter.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[def:partition]{Definition~\ref{def:partition}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Definition — Refinement
+% Definition --- Refinement
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
@@ -53,34 +99,60 @@ is defined by taking limits as $\|P\|\to 0$.
   fonttitle=\small\bfseries]
 \begin{definition}[Refinement]
 \label{def:refinement-of-partition}
-A partition $Q$ is a \textbf{refinement} of $P$ if every point of
-$P$ is also a point of $Q$:
-\[
-  \operatorname{Refinement}(Q,P)
-  \;\iff\;
-  P \subseteq Q \text{ (as sets of points)}.
-\]
+Let [a,b] \subseteq \mathbb{R} and let P and Q be partitions of [a,b]. Then Q is a refinement of P if and only if every point of P is also a point of Q; equivalently, P \subseteq Q.
 \end{definition}
 \end{tcolorbox}
 
-
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{Refinement}(Q,P)
-  \;\iff\;
-  \forall x\in P: x\in Q.
+\operatorname{Refinement}(Q,P)
+\Longleftrightarrow
+\forall x\;(x\in P \Rightarrow x\in Q).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Refinement}(Q,P) \coloneqq P \subseteq Q.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{Refinement}(Q,P)
+\Longleftrightarrow
+\exists x\;(x\in P \land x\notin Q).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{Refinement}(Q,P) \Longleftrightarrow \exists x \in P\; (x \notin Q).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Failure occurs precisely when some point listed in P fails to appear in Q, meaning Q omits at least one of the partition points it was supposed to inherit from P.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg \operatorname{Refinement}(Q,P)
+= \underbrace{\exists x \in P\; (x \notin Q)}_{\text{point of }P\text{ omitted by }Q}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Refinement adds partition points without removing any. Every
-refinement satisfies $\|Q\|\leq\|P\|$. The Darboux approach to
-Riemann integration uses the fact that upper sums decrease and
-lower sums increase under refinement.
+Refinement formalizes the idea of subdividing an interval more finely without losing any previously chosen partition points. The condition P \subseteq Q guarantees that every subinterval defined by P is still represented when one passes to Q, allowing comparisons of sums or integrals computed on different meshes. Failure means that Q discards at least one point of P, so information tied to that breakpoint would be lost when transitioning between partitions.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[def:partition]{Definition~\ref*{def:partition}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Definition — Common Refinement
+% Definition --- Common Refinement
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
@@ -89,14 +161,64 @@ lower sums increase under refinement.
   fonttitle=\small\bfseries]
 \begin{definition}[Common Refinement]
 \label{def:common-refinement}
-The \textbf{common refinement} of partitions $P$ and $Q$ of $[a,b]$
-is $P\cup Q$ (as sets of points).
+Let a<b and let P and Q be partitions of [a,b]. Their common refinement is the partition R obtained by taking the union of their node sets, so R = P \cup Q as sets of points in [a,b].
 \end{definition}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b \text{ in } \mathbb{R}, \text{ and let } P,Q \text{ be partitions of } [a,b].\\
+&\forall R \text{ partition of } [a,b]:\;
+R \text{ is the common refinement of } P \text{ and } Q
+\Longleftrightarrow
+R = P \cup Q.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CommonRefinement}(R,P,Q) \coloneqq (R = P \cup Q).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b \text{ in } \mathbb{R}, \text{ and let } P,Q \text{ be partitions of } [a,b].\\
+&\forall R \text{ partition of } [a,b]:\;
+R \text{ fails to be the common refinement of } P \text{ and } Q
+\Longleftrightarrow
+R \ne P \cup Q.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{CommonRefinement}(R,P,Q) \Longleftrightarrow R \ne P \cup Q.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The claim that a partition R is the common refinement of P and Q fails exactly when R either contains a node not present in P \cup Q or omits a node that P \cup Q contributes. These are the only two structural ways in which R can differ from P \cup Q.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+R \ne P \cup Q
+\Longleftrightarrow
+\underbrace{\exists x \in R \setminus (P \cup Q)}_{\text{extra node}}
+\;\lor\;
+\underbrace{\exists x \in (P \cup Q) \setminus R}_{\text{missing node}}.
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-$P\cup Q$ is the coarsest partition that refines both $P$ and $Q$.
-Used in Darboux integration proofs to compare upper and lower sums
-from two different partitions.
+Forming the common refinement of two partitions simply collects every partition point that either partition already uses, producing the unique partition whose nodes are exactly those existing ones. No new nodes are created beyond those already in P or Q, and none are discarded; the construction merely merges the lists so that later comparisons, such as evaluating tagged sums on both partitions simultaneously, can be performed without further adjustment.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partition]{Definition~\ref*{def:partition}}
 \end{remark*}

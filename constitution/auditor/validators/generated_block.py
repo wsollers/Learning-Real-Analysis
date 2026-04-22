@@ -433,7 +433,10 @@ def _strip_comments(text: str) -> str:
 
 
 def _excerpt(text: str, pattern: str, radius: int = 100) -> str:
-    match = re.search(pattern, text, re.IGNORECASE)
+    try:
+        match = re.search(pattern, text, re.IGNORECASE)
+    except re.PatternError:
+        match = re.search(re.escape(pattern), text, re.IGNORECASE)
     if not match:
         return text.strip()[: radius * 2]
     start = max(0, match.start() - radius)

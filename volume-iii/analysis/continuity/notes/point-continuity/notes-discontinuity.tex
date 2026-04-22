@@ -1,5 +1,5 @@
 % =========================================================
-% Characterization of Discontinuity — Notes
+% Characterization of Discontinuity --- Notes
 % =========================================================
 
 \subsection{Characterization of Discontinuity}
@@ -15,43 +15,83 @@
 \end{tcolorbox}
 
 % ---------------------------------------------------------
-% Definition — Point of Discontinuity
+% Definition --- Point of Discontinuity
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Point of Discontinuity}]
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Point of Discontinuity)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Point of Discontinuity]
 \label{def:point-of-discontinuity}
-A function $f$ is discontinuous at $a$ if it is not continuous at $a$.
+Let $A \subseteq \mathbb{R}$, let $f \colon A \to \mathbb{R}$, and let $a \in A$. The function $f$ is discontinuous at $a$ if and only if $f$ is not continuous at $a$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\operatorname{DiscontinuousAt}(f,a) \\
-&\quad\Longleftrightarrow\quad
-\exists \varepsilon_0 > 0 \; \forall \delta > 0 \; \exists x \in A \\
-&\qquad \operatorname{InputTolerance}(x,a,\delta)
-\;\wedge\;
-\neg \operatorname{OutputTolerance}(f(x),f(a),\varepsilon_0)
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; a \in A.\\
+&f \text{ is discontinuous at } a
+\Longleftrightarrow
+\neg\Bigl(\forall \varepsilon > 0\; \exists \delta > 0\; \forall x \in A\;
+\bigl(\operatorname{Within}(x,a,\delta) \Rightarrow |f(x)-f(a)| < \varepsilon\bigr)\Bigr).
 \end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-\operatorname{DiscontinuousAt}(f,a)
-\;\colonequiv\;
-\neg \operatorname{ContinuousAt}(f,a)
+\operatorname{DiscontinuousAt}(f,a) \coloneqq \neg \operatorname{ContinuousAt}(f,a).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; a \in A.\\
+&f \text{ is discontinuous at } a
+\Longleftrightarrow
+\exists \varepsilon > 0\; \forall \delta > 0\; \exists x \in A\;
+\bigl(\operatorname{Within}(x,a,\delta) \land |f(x)-f(a)| \ge \varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{DiscontinuousAt}(f,a)
+\Longleftrightarrow
+\operatorname{ContinuousAt}(f,a)
+\Longleftrightarrow
+\forall \varepsilon > 0\; \exists \delta > 0\; \forall x \in A\;
+\bigl(\operatorname{Within}(x,a,\delta) \Rightarrow |f(x)-f(a)| < \varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Discontinuity arises either because the nearby values of $f$ do not approach any single real number as $x \to a$, or because a well-defined limit exists but disagrees with the actual value $f(a)$. The first branch covers oscillation, blow-up, or multi-valued limiting behavior, while the second isolates removable discontinuities where redefining $f(a)$ would repair continuity.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\neg \exists L \in \mathbb{R}\; \operatorname{FunctionLimit}(f,A,a,L)}_{\text{no limit exists}}
+\;\lor\;
+\underbrace{\bigl(\exists L \in \mathbb{R}\; \operatorname{FunctionLimit}(f,A,a,L) \land L \ne f(a)\bigr)}_{\text{limit-value mismatch}}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A fixed output gap persists regardless of how small the input neighborhood is.
+A point of discontinuity is detected by the breakdown of the usual epsilon-delta control: some tolerance on the outputs cannot be met, no matter how tightly one restricts the inputs. Geometrically, the graph either jumps, oscillates, or spikes near $a$, preventing values from clustering around $f(a)$; alternatively, the left and right behavior settles at a number different from $f(a)$, making the point a removable defect. Understanding these scenarios guides how to remedy or classify singular behavior in proofs.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[def:continuous-at-point]{Definition~\ref*{def:continuous-at-point}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Definition — Sequential Characterization
+% Definition --- Sequential Characterization
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
@@ -60,27 +100,79 @@ A fixed output gap persists regardless of how small the input neighborhood is.
   fonttitle=\small\bfseries]
 \begin{definition}[Sequential Characterization of Discontinuity]
 \label{def:sequential-discontinuity-at-a-point}
-A function $f$ is discontinuous at $x_0$ if there exists a sequence
-$(x_n)$ with $x_n \to x_0$ such that $f(x_n)$ does not converge to $f(x_0)$.
+Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $c \in A$. The function $f$ is discontinuous at $c$ if and only if there exists a sequence $(x_n)_{n\in\mathbb{N}} \subseteq A$ such that $x_n \to c$ while $f(x_n) \not\to f(c)$.
 \end{definition}
 \end{tcolorbox}
-
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\operatorname{DiscontinuousAt}(f,x_0) \\
-&\quad\Longleftrightarrow\quad
-\exists (x_n)\subseteq A \\
-&\qquad \operatorname{ConvergentSequence}(x_n,x_0)
-\;\wedge\;
-\neg \operatorname{ConvergentSequence}(f(x_n),f(x_0))
+&\text{Let } A \subseteq \mathbb{R},\; f:A\to\mathbb{R},\; c\in A.\\
+&f \text{ is discontinuous at } c \Longleftrightarrow
+\exists (x_n)_{n\in\mathbb{N}}\subseteq A \Bigl[
+\forall \varepsilon>0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; (|x_n - c| < \varepsilon)\\
+&\hspace{5.0cm}\land
+\exists \varepsilon_0>0\; \forall N \in \mathbb{N}\; \exists n\ge N\; (|f(x_n)-f(c)| \ge \varepsilon_0)
+\Bigr].
 \end{aligned}
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DiscontinuousAt}(f,c) \coloneqq \exists (x_n)_{n\in\mathbb{N}}\subseteq A
+\begin{cases}
+\forall \varepsilon>0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; (|x_n - c| < \varepsilon),\\
+\exists \varepsilon_0>0\; \forall N \in \mathbb{N}\; \exists n\ge N\; (|f(x_n)-f(c)| \ge \varepsilon_0).
+\end{cases}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f:A\to\mathbb{R},\; c\in A.\\
+&f \text{ is not discontinuous at } c \Longleftrightarrow
+\forall (x_n)_{n\in\mathbb{N}}\subseteq A \Bigl[
+\forall \varepsilon>0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; (|x_n - c| < \varepsilon)\\
+&\hspace{5.0cm}\Rightarrow
+\forall \varepsilon>0\; \exists N' \in \mathbb{N}\; \forall n\ge N'\; (|f(x_n)-f(c)| < \varepsilon)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{DiscontinuousAt}(f,c) \Longleftrightarrow \operatorname{ContinuousAt}(f,c).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The characterization fails precisely when every sequence in $A$ converging to $c$ yields function values converging to $f(c)$, so no sequential witness to discontinuity exists.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\forall (x_n)_{n\in\mathbb{N}}\subseteq A \Bigl[
+(\forall \varepsilon>0 \; \exists N \; \forall n \ge N \; (|x_n - c| < \varepsilon))
+\Rightarrow
+(\forall \varepsilon>0 \; \exists N' \; \forall n \ge N' \; (|f(x_n)-f(c)| < \varepsilon))
+\Bigr]}_{\text{Every approaching sequence preserves the limit}}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A discontinuity at $c$ can be certified by a single sequence of inputs from $A$ that approaches $c$ while the corresponding outputs refuse to settle at $f(c)$. This sequential lens converts the local topological behavior of $f$ into a failure of the tail behavior of $f(x_n)$. When no such rebellious sequence exists, the function must respect limits along every convergent approach, which is exactly continuity at $c$. Intuitively, a discontinuity forces at least one path toward $c$ along which the function oscillates or jumps away from the expected value, whereas continuity forces uniform tameness across all converging paths.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:continuous-at-point-seq]{Definition~\ref{def:continuous-at-point-seq}}; \hyperref[def:point-of-discontinuity]{Definition~\ref{def:point-of-discontinuity}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Definition — Neighbourhood Characterization
+% Definition --- Neighbourhood Characterization
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
@@ -89,51 +181,210 @@ $(x_n)$ with $x_n \to x_0$ such that $f(x_n)$ does not converge to $f(x_0)$.
   fonttitle=\small\bfseries]
 \begin{definition}[Neighbourhood Characterization of Discontinuity]
 \label{def:neighborhood-discontinuity-at-a-point}
-A function $f$ is discontinuous at $x_0$ if there exists a neighborhood
-$V$ of $f(x_0)$ such that for every neighborhood $U$ of $x_0$, there exists
-$x \in U \cap A$ with $f(x) \notin V$.
+Let $A \subseteq \mathbb{R}$, let $f \colon A \to \mathbb{R}$, and let $c \in A$. The function $f$ is discontinuous at $c$ if and only if there exists a neighborhood $V$ of $f(c)$ in $\mathbb{R}$ such that for every neighborhood $U$ of $c$ relative to $A$ there exists $x \in U \cap A$ with $f(x) \notin V$.
 \end{definition}
 \end{tcolorbox}
-
 
 \begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\operatorname{DiscontinuousAt}(f,x_0) \\
-&\quad\Longleftrightarrow\quad
-\exists \varepsilon_0 > 0 \; \forall \delta > 0 \; \exists x \in A \\
-&\qquad \operatorname{InputTolerance}(x,x_0,\delta)
-\;\wedge\;
-\neg \operatorname{OutputTolerance}(f(x),f(x_0),\varepsilon_0)
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; c \in A.\\
+&f \text{ is discontinuous at } c\\
+&\Longleftrightarrow
+\exists \text{ neighborhood } V \text{ of } f(c)\;
+\forall \text{ neighborhood } U \text{ of } c\;
+\exists x \in U \cap A\; (f(x) \notin V).
 \end{aligned}
 \]
 \end{remark*}
 
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DiscontinuousAt}(f,c)
+\coloneqq
+\exists V \text{ neigh. of } f(c)\;
+\forall U \text{ neigh. of } c\;
+\exists x \in U \cap A\; (f(x) \notin V),
+\]
+where $f \colon A \to \mathbb{R}$ and $c \in A$.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&f \text{ is discontinuous at } c \text{ fails}\\
+&\Longleftrightarrow
+\forall \text{ neighborhood } V \text{ of } f(c)\;
+\exists \text{ neighborhood } U \text{ of } c\;
+\forall x \in U \cap A\; (f(x) \in V).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{DiscontinuousAt}(f,c)
+\Longleftrightarrow
+\operatorname{ContinuousAt}(f,c).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Discontinuity fails exactly when every neighborhood $V$ of $f(c)$ admits some neighborhood $U$ of $c$ whose intersection with $A$ is mapped entirely inside $V$; this is the continuity condition at $c$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg \operatorname{DiscontinuousAt}(f,c)
+=
+\underbrace{\forall V \ni f(c)\; \exists U \ni c\; \forall x \in U \cap A\; (f(x) \in V)}_{\text{Continuity at } c}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This reformulation says that discontinuity at $c$ is witnessed by a fixed output neighborhood $V$ that the function fails to enter no matter how tightly the input is restricted around $c$. The search over input neighborhoods $U$ reflects the idea that every microscopic view near $c$ still contains points whose images leave $V$. When this cannot happen, every output neighborhood traps the image of some small input neighborhood, which is precisely continuity. Geometrically, discontinuity corresponds to oscillation or jumping that defeats any single output tolerance, while continuity guarantees that some entire cluster of nearby domain points already sits inside every prescribed target neighborhood.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:relative-neighborhood]{Definition~\ref*{def:relative-neighborhood}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Lemma — Equivalence
+% Lemma --- Equivalence
 % ---------------------------------------------------------
 
 \begin{lemma}[Equivalent Formulations of Discontinuity at a Point]
 \label{lem:equivalent-discontinuity-at-a-point}
-The $\varepsilon$-$\delta$, sequential, and neighbourhood formulations are equivalent.
-
-\smallskip
-\noindent
-\hyperref[prf:equivalent-discontinuity-at-a-point]{\textit{Go to proof.}}
+Let $A\subseteq \mathbb{R}$, let $f:A\to\mathbb{R}$, and let $c\in A$. The following are equivalent:
+\begin{enumerate}
+\item $c$ is a point of discontinuity of $f$ in the $\varepsilon$-$\delta$ sense of Definition~\ref{def:point-of-discontinuity}.
+\item $c$ is a sequential point of discontinuity of $f$ as in Definition~\ref{def:sequential-discontinuity-at-a-point}.
+\item $c$ is a neighbourhood point of discontinuity of $f$ as in Definition~\ref{def:neighborhood-discontinuity-at-a-point}.
+\end{enumerate}
+\hyperref[prf:equivalent-discontinuity-at-a-point]{Go to proof.}
 \end{lemma}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A\subseteq \mathbb{R},\; f:A\to\mathbb{R},\; c\in A.\\
+&(1)\; \exists \varepsilon_0>0\;\forall \delta>0\;\exists x\in A:\;0<|x-c|<\delta \land |f(x)-f(c)|\ge \varepsilon_0\\
+&\Longleftrightarrow
+(2)\; \exists (x_n)_{n\in\mathbb{N}}\subseteq A:\; x_n \to c \land \neg\bigl(f(x_n)\to f(c)\bigr)\\
+&\Longleftrightarrow
+(3)\; \exists \varepsilon_0>0\;\forall U\subseteq A\;\Bigl((\exists \delta>0:\,(c-\delta,c+\delta)\cap A \subseteq U)\\
+&\hspace{104pt}\Rightarrow \exists x\in U:\;|f(x)-f(c)|\ge \varepsilon_0\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\begin{aligned}
+\operatorname{DiscontinuousAt}(f,c)
+&\Longleftrightarrow
+\exists (x_n)\subseteq A:\;x_n\to c \land \neg\bigl(f(x_n)\to f(c)\bigr)\\
+&\Longleftrightarrow
+\exists \varepsilon_0>0\;\forall \delta>0\;\exists x\in A:\;0<|x-c|<\delta \land |f(x)-f(c)|\ge \varepsilon_0\\
+&\Longleftrightarrow
+\exists \varepsilon_0>0\;\forall U\subseteq A\;\Bigl((\exists \delta>0:\,(c-\delta,c+\delta)\cap A \subseteq U)\\
+&\hspace{104pt}\Rightarrow \exists x\in U:\;|f(x)-f(c)|\ge \varepsilon_0\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The lemma shows that the intuitive ways a function can fail to behave continuously at a point agree with one another. Failing the $\varepsilon$-$\delta$ test forces the existence of oscillations arbitrarily close to $c$, which can be detected either by tracking a single carefully chosen sequence approaching $c$ or by inspecting every relative neighbourhood of $c$. Consequently, any approach that witnesses discontinuity may be converted into the others, so analysts may select whichever viewpoint simplifies a particular argument.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:point-of-discontinuity]{Definition~\ref{def:point-of-discontinuity}},
+\hyperref[def:sequential-discontinuity-at-a-point]{Definition~\ref{def:sequential-discontinuity-at-a-point}},
+\hyperref[def:neighborhood-discontinuity-at-a-point]{Definition~\ref{def:neighborhood-discontinuity-at-a-point}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Definition — Types of Discontinuity
+% Definition --- Types of Discontinuity
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Types of Discontinuity}]
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Types of Discontinuity)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Types of Discontinuity]
 \label{def:types-of-discontinuity-at-a-point}
-Let $x_0 \in A$.
+Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $x_0 \in A$ with $f$ discontinuous at $x_0$. The discontinuity of $f$ at $x_0$ is classified as follows.
 \begin{enumerate}[label=(\roman*)]
-  \item Removable: $\operatorname{FunctionLimit}(f,x_0,L)$ and $L \neq f(x_0)$.
-  \item Jump: $\operatorname{LeftLimit}(f,x_0,L_-)$ and $\operatorname{RightLimit}(f,x_0,L_+)$ with $L_- \neq L_+$.
-  \item Essential: not removable.
+  \item \emph{Removable} if and only if there exists $L \in \mathbb{R}$ such that $\lim_{x \to x_0} f(x) = L$ and $L \ne f(x_0)$.
+  \item \emph{Jump} if and only if there exist $L_{-}, L_{+} \in \mathbb{R}$ such that $\lim_{x \to x_0^-} f(x) = L_{-}$, $\lim_{x \to x_0^+} f(x) = L_{+}$, and $L_{-} \ne L_{+}$.
+  \item \emph{Essential} if and only if it is not removable.
 \end{enumerate}
 \end{definition}
 \end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let }A \subseteq \mathbb{R},\; f:A \to \mathbb{R},\; x_0 \in A,\text{ and suppose }f\text{ is discontinuous at }x_0.\\
+&\text{Removable } \Longleftrightarrow \exists L \in \mathbb{R}\; \bigl(\lim_{x \to x_0} f(x) = L \land L \ne f(x_0)\bigr).\\
+&\text{Jump } \Longleftrightarrow \exists L_{-}, L_{+} \in \mathbb{R}\; \bigl(\lim_{x \to x_0^-} f(x) = L_{-} \land \lim_{x \to x_0^+} f(x) = L_{+} \land L_{-} \ne L_{+}\bigr).\\
+&\text{Essential } \Longleftrightarrow \neg \exists L \in \mathbb{R}\; \bigl(\lim_{x \to x_0} f(x) = L \land L \ne f(x_0)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\begin{aligned}
+\operatorname{RemovableDiscontinuity}(f,x_0) &\coloneqq \exists L \in \mathbb{R}\; \bigl(\operatorname{FunctionLimit}(f,A,x_0,L) \land L \ne f(x_0)\bigr),\\
+\operatorname{JumpDiscontinuity}(f,x_0) &\coloneqq \exists L_{-},L_{+} \in \mathbb{R}\; \bigl(\operatorname{LeftLimit}(f,x_0,L_{-}) \land \operatorname{RightLimit}(f,x_0,L_{+}) \land L_{-} \ne L_{+}\bigr),\\
+\text{(Essential)} &\coloneqq \neg \operatorname{RemovableDiscontinuity}(f,x_0).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Within the same context as above:}\\
+&\text{Not removable } \Longleftrightarrow \forall L \in \mathbb{R}\; \bigl(\lim_{x \to x_0} f(x) \ne L \lor L = f(x_0)\bigr).\\
+&\text{Not jump } \Longleftrightarrow \forall L_{-},L_{+} \in \mathbb{R}\; \bigl(\lim_{x \to x_0^-} f(x) \ne L_{-} \lor \lim_{x \to x_0^+} f(x) \ne L_{+} \lor L_{-} = L_{+}\bigr).\\
+&\text{Not essential } \Longleftrightarrow \exists L \in \mathbb{R}\; \bigl(\lim_{x \to x_0} f(x) = L \land L \ne f(x_0)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\begin{aligned}
+\neg \operatorname{RemovableDiscontinuity}(f,x_0) &\Longleftrightarrow \forall L \in \mathbb{R}\; \bigl(\neg \operatorname{FunctionLimit}(f,A,x_0,L) \lor L = f(x_0)\bigr),\\
+\neg \operatorname{JumpDiscontinuity}(f,x_0) &\Longleftrightarrow \forall L_{-},L_{+} \in \mathbb{R}\; \bigl(\neg \operatorname{LeftLimit}(f,x_0,L_{-}) \lor \neg \operatorname{RightLimit}(f,x_0,L_{+}) \lor L_{-} = L_{+}\bigr),\\
+\text{(Not essential)} &\Longleftrightarrow \operatorname{RemovableDiscontinuity}(f,x_0).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A removable discontinuity fails either because the bilateral limit does not exist or because it coincides with $f(x_0)$. A jump discontinuity fails when one of the one-sided limits does not exist or when both one-sided limits exist but agree. Essential discontinuities capture precisely the first failure of the removable condition.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+\text{Not removable } &= \underbrace{\neg\bigl(\lim_{x \to x_0} f(x) \text{ exists}\bigr)}_{\text{no bilateral limit}} \;\lor\; \underbrace{\lim_{x \to x_0} f(x) = f(x_0)}_{\text{limit equals the value}},\\
+\text{Not jump } &= \underbrace{\neg\bigl(\lim_{x \to x_0^-} f(x) \text{ exists}\bigr)}_{\text{missing left limit}} \;\lor\; \underbrace{\neg\bigl(\lim_{x \to x_0^+} f(x) \text{ exists}\bigr)}_{\text{missing right limit}} \;\lor\; \underbrace{\lim_{x \to x_0^-} f(x) = \lim_{x \to x_0^+} f(x)}_{\text{one-sided limits agree}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The classification isolates the three canonical behaviors that obstruct continuity at $x_0$. A removable discontinuity is the mildest obstruction: the graph approaches a single height from both sides, but the actual value at $x_0$ is either missing or mismatched, so redefining $f(x_0)$ restores continuity. A jump discontinuity reflects a genuine break in the graph, with distinct left and right limiting heights, so no single replacement value repairs continuity. Essential discontinuities encompass all remaining pathological behaviors, including oscillations or infinite spikes, and they are precisely the discontinuities where no bilateral limit exists that differs from $f(x_0)$. These distinctions dictate which analytic tools can tame a given discontinuity: only removable ones can be cured locally, jump discontinuities still provide well-defined one-sided limits useful in integration theory, and essential discontinuities require more global information.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:point-of-discontinuity]{Definition~\ref*{def:point-of-discontinuity}}
+% UNRESOLVED_DEPENDENCY: Bilateral function limit at a point | Reason: Label not available in index.
+% UNRESOLVED_DEPENDENCY: Left and right limits at a point | Reason: Labels not available in index.
+\end{remark*}

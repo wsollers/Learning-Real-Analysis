@@ -1,7 +1,7 @@
 % =========================================================
-% Intermediate Value Theorem — Notes
+% Intermediate Value Theorem --- Notes
 % Chapter: continuity
-% Volume III · Analysis
+% Volume III - Analysis
 % =========================================================
 
 \subsection{Intermediate Value Theorem}
@@ -24,7 +24,7 @@
 \end{tcolorbox}
 
 % ---------------------------------------------------------
-% Definition — Bounded on a Set
+% Definition --- Bounded on a Set
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
@@ -33,117 +33,239 @@
   fonttitle=\small\bfseries]
 \begin{definition}[Bounded on a Set]
 \label{def:bounded-on-a-set}
-$\operatorname{BoundedOn}(f,A)$: $\exists M>0,\;\forall x\in A:
-|f(x)|\leq M$.
-\end{definition}
-\end{tcolorbox}
-
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \operatorname{BoundedOn}(f,A)
-  \;\iff\;
-  \exists M>0,\;\forall x\in A:|f(x)|\leq M.
-\]
-\end{remark*}
-
-\begin{remark*}[Negated quantified statement]
-\[
-  \neg\,\operatorname{BoundedOn}(f,A)
-  \;\iff\;
-  \forall M>0,\;\exists x\in A:|f(x)|>M.
-\]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-Boundedness means $f(A)\subseteq[-M,M]$ for some finite $M$.
-Boundedness is the minimal global control on $f$ and is the first
-consequence of $\operatorname{ContinuousOn}(f,[a,b])$.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Theorem — Boundedness Theorem
-% ---------------------------------------------------------
-
-\begin{theorem}[Boundedness Theorem]
-\label{thm:boundedness-theorem}
-$\operatorname{ContinuousOn}(f,[a,b])
-\Rightarrow\operatorname{BoundedOn}(f,[a,b])$.
-
-\smallskip\noindent
-\hyperref[prf:boundedness-theorem]{\textit{Go to proof.}}
-\end{theorem}
-
-\begin{remark*}[Standard quantified statement]
-\[
-  \operatorname{ContinuousOn}(f,[a,b])
-  \;\Rightarrow\;
-  \exists M>0,\;\forall x\in[a,b]:|f(x)|\leq M.
-\]
-\end{remark*}
-
-\begin{remark*}[Negated quantified statement --- contrapositive]
-\[
-  \neg\,\operatorname{BoundedOn}(f,[a,b])
-  \;\Rightarrow\;
-  \neg\,\operatorname{ContinuousOn}(f,[a,b]).
-\]
-\end{remark*}
-
-\begin{remark*}[Failure mode decomposition]
-The three hypotheses are each necessary. $f(x)=x$ on $(0,1)$ (not
-closed): unbounded near $0$. $f(x)=x$ on $[0,\infty)$ (not bounded):
-unbounded. $f(x)=1/x$ on $(0,1]$ (not continuous at $0$): unbounded.
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-Proof by contradiction via Bolzano--Weierstrass: if $f$ were
-unbounded, a sequence $(x_n)\subseteq[a,b]$ with $|f(x_n)|>n$
-would exist; compactness produces a convergent subsequence;
-continuity at the limit forces $f$ to be bounded nearby ---
-contradiction.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Definition — Absolute Extrema
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Definition --- Absolute Extrema}]
-\begin{definition}[Absolute Maximum and Absolute Minimum]
-\label{def:absolute-extrema}
-$\operatorname{Maximum}(x^*,f(A))$: $x^*\in A$ and $f(x^*)\geq f(x)$
-for all $x\in A$.
-
-$\operatorname{Minimum}(x_*,f(A))$: $x_*\in A$ and $f(x_*)\leq f(x)$
-for all $x\in A$.
+Let $A \subseteq \mathbb{R}$ and $f \colon A \to \mathbb{R}$. The function $f$ is bounded on $A$ if and only if there exists a constant $M>0$ such that $|f(x)| \le M$ for every $x \in A$.
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{Maximum}(x^*,f(A))
-  \;\iff\;
-  x^*\in A \;\wedge\; \forall x\in A: f(x^*)\geq f(x).
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R} \text{ and } f \colon A \to \mathbb{R}.\\
+&f \text{ is bounded on } A
+\Longleftrightarrow
+\exists M>0 \; \forall x \in A \; (|f(x)| \le M).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{Maximum}(x^*,f(A))
-  \;\colonequiv\;
-  x^*\in A \;\wedge\; \operatorname{Supremum}(f(x^*),f(A)).
+\operatorname{BoundedOn}(f,A) \coloneqq \exists M>0 \; \forall x \in A \; (|f(x)| \le M).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R} \text{ and } f \colon A \to \mathbb{R}.\\
+&\neg(f \text{ bounded on } A)
+\Longleftrightarrow
+\forall M>0 \; \exists x \in A \; (|f(x)| > M).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{BoundedOn}(f,A) \Longleftrightarrow \forall M>0 \; \exists x \in A \; (|f(x)| > M).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Failure occurs precisely when every proposed positive bound $M$ is exceeded by some value of $|f(x)|$ with $x \in A$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\forall M>0}_{\text{no admissible bound}}
+\; \underbrace{\exists x \in A \; (|f(x)| > M)}_{\text{value exceeding } M}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-An absolute extremum is a global attainment: the supremum (or
-infimum) of $f(A)$ is actually achieved at some $x^*\in A$.
-Being bounded above implies the supremum exists but does not
-guarantee attainment.
+The definition packages the informal idea that the values of $f$ stay within a fixed vertical strip over $A$. The witness $M$ serves as a uniform ceiling for the magnitudes $|f(x)|$, so once such an $M$ is known the graph of $f$ never escapes the band $[-M,M]$. Failure means that the outputs of $f$ grow without limit along some sequence of points inside $A$, so no finite strip can contain the entire image. Boundedness on a set is the foundational regularity hypothesis that underlies the boundedness and extreme value theorems for continuous functions on compact domains.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Extreme Value Theorem
+% Theorem --- Boundedness Theorem
+% ---------------------------------------------------------
+
+\begin{theorem}[Boundedness Theorem]
+\label{thm:boundedness-theorem}
+Let $a<b$ and let $f:[a,b]\to\mathbb{R}$ be continuous on $[a,b]$. Then there exists $M>0$ such that $|f(x)|\le M$ for every $x\in[a,b]$.
+\hyperref[prf:boundedness-theorem]{Go to proof.}
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b \text{ and } f:[a,b]\to\mathbb{R}.\\
+&\Bigl(\forall c\in[a,b]\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in[a,b]\bigl(|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon\bigr)\Bigr)\\
+&\qquad\Longrightarrow \exists M>0\;\forall x\in[a,b]\;(|f(x)|\le M).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \Longrightarrow \operatorname{BoundedOn}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b \text{ and } f:[a,b]\to\mathbb{R}.\\
+&\Bigl(\forall c\in[a,b]\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in[a,b]\bigl(|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon\bigr)\Bigr)\\
+&\qquad\land \Bigl(\forall M>0\;\exists x\in[a,b]\;(|f(x)|>M)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \land \neg\operatorname{BoundedOn}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Each component hypothesis is indispensable: without closedness (for instance $f(x)=1/x$ on $(0,1]$) continuity does not prevent divergence near the missing endpoint; without bounded domain (for example $f(x)=x$ on $[0,\infty)$) linear growth forces unbounded values; without continuity (take $f(0)=0$ and $f(x)=1/x$ for $x\in(0,1]$) the discontinuity at $0$ again creates arbitrarily large magnitudes.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+\neg\bigl[\operatorname{ClosedInterval}(a,b) \land \operatorname{BoundedSet}([a,b]) \land \operatorname{ContinuousOn}(f,[a,b])\bigr]
+&=
+\underbrace{\neg\operatorname{ClosedInterval}(a,b)}_{\text{missing endpoint}}
+\lor
+\underbrace{\neg\operatorname{BoundedSet}([a,b])}_{\text{unbounded domain}}
+\lor
+\underbrace{\neg\operatorname{ContinuousOn}(f,[a,b])}_{\text{discontinuity}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b \text{ and } f:[a,b]\to\mathbb{R}.\\
+&\bigl(\forall M>0\;\exists x\in[a,b]\;(|f(x)|>M)\bigr)\\
+&\qquad\Longrightarrow \exists c\in[a,b]\;\exists \varepsilon>0\;\forall \delta>0\;\exists x\in[a,b]\bigl(|x-c|<\delta \land |f(x)-f(c)|\ge \varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\[
+\neg\operatorname{BoundedOn}(f,[a,b]) \Longrightarrow \neg\operatorname{ContinuousOn}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuity ties nearby inputs to nearby outputs, and the compact interval $[a,b]$ can be covered by finitely many neighborhoods in which the oscillation of $f$ is controlled; taking the maximal oscillation among this finite cover supplies a global bound. Failure typically arises when the domain lacks compactness: an omitted endpoint allows the function to escape control near the hole, an unbounded interval lets values diverge along the ray, and a point of discontinuity can spike the function without upsetting nearby behavior elsewhere.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:continuous-at-point]{Definition~\ref*{def:continuous-at-point}}; \hyperref[def:bounded-on-a-set]{Definition~\ref*{def:bounded-on-a-set}}.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Definition --- Absolute Extrema
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Absolute Maximum and Absolute Minimum)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Absolute Maximum and Absolute Minimum]
+\label{def:absolute-extrema}
+Let $A \subseteq \mathbb{R}$ and let $f \colon A \to \mathbb{R}$. A point $x^{*} \in A$ is an absolute maximum of $f$ on $A$ if and only if $f(x^{*}) \ge f(x)$ for every $x \in A$. A point $x_{*} \in A$ is an absolute minimum of $f$ on $A$ if and only if $f(x_{*}) \le f(x)$ for every $x \in A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; x^{*}, x_{*} \in A.\\
+&x^{*} \text{ is an absolute maximum of } f \text{ on } A
+\Longleftrightarrow \forall x \in A\; (f(x) \le f(x^{*})).\\
+&x_{*} \text{ is an absolute minimum of } f \text{ on } A
+\Longleftrightarrow \forall x \in A\; (f(x_{*}) \le f(x)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\begin{aligned}
+&(x^{*} \in A) \land \operatorname{Maximum}(f(x^{*}), f(A))
+\Longleftrightarrow (x^{*} \in A) \land \forall x \in A\; (f(x) \le f(x^{*})),\\
+&(x_{*} \in A) \land \operatorname{Minimum}(f(x_{*}), f(A))
+\Longleftrightarrow (x_{*} \in A) \land \forall x \in A\; (f(x_{*}) \le f(x)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; x^{*}, x_{*} \in \mathbb{R}.\\
+&x^{*} \text{ fails to be an absolute maximum of } f \text{ on } A\\
+&\Longleftrightarrow (x^{*} \notin A) \lor \bigl(\exists x \in A\; (f(x) > f(x^{*}))\bigr).\\
+&x_{*} \text{ fails to be an absolute minimum of } f \text{ on } A\\
+&\Longleftrightarrow (x_{*} \notin A) \lor \bigl(\exists x \in A\; (f(x_{*}) > f(x))\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\begin{aligned}
+&\neg\bigl[(x^{*} \in A) \land \operatorname{Maximum}(f(x^{*}), f(A))\bigr]
+\Longleftrightarrow (x^{*} \notin A) \lor \bigl(\exists x \in A\; (f(x) > f(x^{*}))\bigr),\\
+&\neg\bigl[(x_{*} \in A) \land \operatorname{Minimum}(f(x_{*}), f(A))\bigr]
+\Longleftrightarrow (x_{*} \notin A) \lor \bigl(\exists x \in A\; (f(x_{*}) > f(x))\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+An alleged absolute maximum can fail because the proposed point lies outside the domain $A$, or because some $x \in A$ produces a strictly larger function value. An alleged absolute minimum fails for the analogous reasons, either by leaving the domain or by admitting a point in $A$ with a strictly smaller value.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\neg\bigl[(x^{*} \in A) \land \operatorname{Maximum}(f(x^{*}), f(A))\bigr]
+= \underbrace{(x^{*} \notin A)}_{\text{external point}}
+\lor
+\underbrace{\bigl(\exists x \in A\; (f(x) > f(x^{*}))\bigr)}_{\text{better value}},\\
+&\neg\bigl[(x_{*} \in A) \land \operatorname{Minimum}(f(x_{*}), f(A))\bigr]
+= \underbrace{(x_{*} \notin A)}_{\text{external point}}
+\lor
+\underbrace{\bigl(\exists x \in A\; (f(x_{*}) > f(x))\bigr)}_{\text{better value}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An absolute maximum identifies the highest value that $f$ attains on its domain $A$, together with a point of attainment, and the absolute minimum identifies the lowest attained value. These extrema describe the global ceiling and floor of the graph restricted to $A$, so they are the endpoints of the vertical range. Failure occurs either when the candidate point is not part of the domain or when another domain point produces a superior value, reflecting that global optimization is sensitive to both membership and comparative size. Geometrically the absolute maximum sits at the tallest point of the graph above $A$, while the absolute minimum sits at the lowest point.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Theorem --- Extreme Value Theorem
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
@@ -152,167 +274,251 @@ guarantee attainment.
   fonttitle=\small\bfseries]
 \begin{theorem}[Extreme Value Theorem]
 \label{thm:extreme-value-theorem}
-$\operatorname{ContinuousOn}(f,[a,b])$ $\Rightarrow$ $f$ has an
-absolute maximum and an absolute minimum on $[a,b]$.
-
-\smallskip\noindent
-\hyperref[prf:evt-maximum-minimum]{\textit{Go to proof.}}
+Let $a,b \in \mathbb{R}$ with $a<b$, and let $f:[a,b] \to \mathbb{R}$ be continuous. There exist points $x_m,x_M \in [a,b]$ such that $f(x_m) \le f(x) \le f(x_M)$ for every $x \in [a,b]$. Equivalently, $f$ attains both an absolute maximum and an absolute minimum on $[a,b]$.
+\hyperref[prf:extreme-value-theorem]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
-
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{ContinuousOn}(f,[a,b])
-  \;\Rightarrow\;
-  \exists x^*,x_*\in[a,b]:\;
-  \operatorname{Maximum}(x^*,f([a,b]))
-  \;\wedge\;
-  \operatorname{Minimum}(x_*,f([a,b])).
+\begin{aligned}
+&\text{Let } a,b\in\mathbb{R} \text{ with } a<b, \text{ and let } f:[a,b]\to\mathbb{R} \text{ be continuous}.\\
+&\exists x_m,x_M\in [a,b]\; \forall x\in [a,b]\; (f(x_m)\le f(x)\le f(x_M)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \Longrightarrow \exists x_m,x_M\in [a,b]\;
+\bigl(\operatorname{Maximum}(f(x_M),f([a,b])) \land \operatorname{Minimum}(f(x_m),f([a,b]))\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The EVT upgrades boundedness to attainment. Boundedness guarantees
-the supremum and infimum exist; the EVT guarantees they are achieved.
+Continuity on a closed and bounded interval forces the image of the interval to inherit the compact features of the domain. The function cannot escape to infinity or oscillate without settling, so it must reach both its highest and lowest values somewhere in the interval. When the hypotheses fail, the typical obstruction is the loss of compactness: on an open interval the function might drift off without achieving its supremum, and without continuity it may jump over candidate extrema.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+Uses \hyperref[def:absolute-extrema]{Definition \ref{def:absolute-extrema}} and \hyperref[thm:boundedness-theorem]{Theorem \ref{thm:boundedness-theorem}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Location of Roots
+% Theorem --- Location of Roots
 % ---------------------------------------------------------
 
 \begin{theorem}[Location of Roots]
 \label{thm:location-of-roots}
-$\operatorname{ContinuousOn}(f,[a,b])$
-$\wedge(f(a)<0<f(b)\vee f(a)>0>f(b))$
-$\Rightarrow\exists c\in(a,b):f(c)=0$.
-
-\smallskip\noindent
-\hyperref[prf:locations-of-roots]{\textit{Go to proof.}}
+Let $a,b \in \mathbb{R}$ with $a<b$ and let $f:[a,b]\to\mathbb{R}$ be continuous. If either $f(a)<0<f(b)$ or $f(a)>0>f(b)$, then there exists $c\in(a,b)$ such that $f(c)=0$.
+\hyperref[prf:location-of-roots]{Go to proof.}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{ContinuousOn}(f,[a,b])
-  \;\wedge\;
-  \operatorname{sgn}(f(a))\neq\operatorname{sgn}(f(b))
-  \;\Rightarrow\;
-  \exists c\in(a,b): f(c)=0.
+\begin{aligned}
+&\text{Let } a,b \in \mathbb{R} \text{ with } a<b \text{ and } f:[a,b]\to\mathbb{R} \text{ continuous.}\\
+&\bigl(f(a)<0<f(b) \lor f(a)>0>f(b)\bigr) \Rightarrow \exists c \in (a,b)\; \bigl(f(c)=0\bigr).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A continuous function cannot pass from negative to positive without
-crossing zero. Proof uses bisection: maintain nested intervals with
-sign change; the intersection point is the root.
+Continuity forces the image of the interval $[a,b]$ to contain every intermediate value between $f(a)$ and $f(b)$. A sign change therefore compels the graph to cross the horizontal axis, producing a root strictly inside the interval. Failure occurs when the endpoint values share the same sign or when $f$ is not continuous, because then the image need not sweep across zero. Geometrically, the theorem asserts that a continuous curve connecting opposite sides of the $x$-axis must intersect the axis somewhere in between.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[thm:bolzano-intermediate-value]{Bolzano's Intermediate Value Theorem}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Bolzano's IVT
+% Theorem --- Bolzano's IVT
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bolzano's Intermediate Value Theorem)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Bolzano's Intermediate Value Theorem]
 \label{thm:bolzano-intermediate-value}
-$\operatorname{ContinuousOn}(f,I)$, $a,b\in I$,
-$f(a)<k<f(b)$ $\Rightarrow\exists c$ between $a$ and $b$: $f(c)=k$.
-
-\smallskip\noindent
-\hyperref[prf:bolzano-ivt]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval, let $f \colon I \to \mathbb{R}$ be continuous on $I$, and choose $a,b \in I$ with $f(a) < k < f(b)$. Then there exists $c \in I$ such that $\min\{a,b\} < c < \max\{a,b\}$ and $f(c) = k$. \hyperref[prf:bolzano-ivt]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{ContinuousOn}(f,I),\;a,b\in I,\;f(a)<k<f(b)
-  \;\Rightarrow\;
-  \exists c\in I:\min\{a,b\}<c<\max\{a,b\}\wedge f(c)=k.
+\forall I\subseteq\mathbb{R}\;\forall f:I\to\mathbb{R}\;\forall a,b\in I\;\forall k\in\mathbb{R}\;
+\Bigl[
+\operatorname{Interval}(I)\land\operatorname{ContinuousOn}(f,I)\land f(a)<k<f(b)
+\Rightarrow
+\exists c\in I\;\bigl(\min\{a,b\}<c<\max\{a,b\}\land f(c)=k\bigr)
+\Bigr].
 \]
 \end{remark*}
 
-\begin{remark*}[Interpretation]
-Continuous functions on intervals do not skip intermediate values.
-Reduces to Location of Roots via $g=f-k$.
+\begin{remark*}[Failure modes]
+The conclusion can fail only if the continuity-on-an-interval hypothesis
+breaks down, or if the proposed level $k$ is not strictly between the two
+attained endpoint values.
 \end{remark*}
 
+\begin{remark*}[Interpretation]
+A continuous real-valued function on an interval cannot skip any intermediate scalar between two attained values, so the graph must cross every horizontal level that lies strictly between $f(a)$ and $f(b)$. The conclusion provides an interior point $c$ whose image equals the prescribed level $k$, ensuring root-finding for $f-k$. If the hypothesis fails, either $f$ is not continuous or the level $k$ does not lie between the endpoint values, and no such interior point need exist.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Image of Closed Bounded Interval
+% Theorem --- Image of Closed Bounded Interval
 % ---------------------------------------------------------
 
 \begin{theorem}[Image of Closed Bounded Interval Is Closed Bounded Interval]
 \label{thm:image-of-closed-bounded-interval}
-$\operatorname{ContinuousOn}(f,[a,b])
-\Rightarrow f([a,b])=[\min f,\max f]$.
-
-\smallskip\noindent
-\hyperref[prf:image-of-closed-bounded-interval]{\textit{Go to proof.}}
+Let $f:[a,b]\to\mathbb{R}$ be continuous. Then $f([a,b])=[\min_{[a,b]} f,\max_{[a,b]} f]$.
+\hyperref[prf:image-of-closed-bounded-interval-is-interval]{Go to proof.}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{ContinuousOn}(f,[a,b])
-  \;\Rightarrow\;
-  f([a,b])=[\min_{[a,b]}f,\,\max_{[a,b]}f].
+\begin{aligned}
+&\text{Let } f:[a,b]\to\mathbb{R} \text{ be continuous.}\\
+&f([a,b])=[\min_{[a,b]} f,\max_{[a,b]} f].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \Longrightarrow f([a,b])=[\min_{[a,b]} f,\max_{[a,b]} f].
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Synthesises boundedness, EVT, and IVT. The image is exactly the
-closed interval $[\min f,\max f]$ --- no gaps, both endpoints included.
+The statement combines the extreme value theorem, which supplies both a minimum and a maximum on $[a,b]$, with the intermediate value theorem, which fills in every intermediate value between them. Consequently the image $f([a,b])$ is a closed interval with endpoints given by the absolute extremal values of $f$ on $[a,b]$, showing that continuous functions map compact intervals onto compact intervals without introducing gaps.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[thm:extreme-value-theorem]{Extreme Value Theorem},
+\hyperref[thm:bolzano-intermediate-value]{Bolzano's Intermediate Value Theorem}
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Preservation of Intervals
+% Theorem --- Preservation of Intervals
 % ---------------------------------------------------------
 
 \begin{theorem}[Preservation of Intervals]
 \label{thm:preservation-of-intervals}
-$I$ an interval, $\operatorname{ContinuousOn}(f,I)$
-$\Rightarrow f(I)$ is an interval.
-
-\smallskip\noindent
-\hyperref[prf:preservation-of-intervals]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval and let $f:I \to \mathbb{R}$ be continuous. Then $f(I)$ is an interval.
+\hyperref[prf:preservation-of-intervals]{Go to proof.}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  I\text{ interval},\;
-  \operatorname{ContinuousOn}(f,I)
-  \;\Rightarrow\;
-  f(I)\text{ is an interval.}
+\begin{aligned}
+&\text{Let } I \subseteq \mathbb{R} \text{ be an interval and } f:I \to \mathbb{R} \text{ be continuous}.\\
+&\forall y_1,y_2 \in f(I)\; \forall y \in \mathbb{R}\;
+\bigl(y_1 < y < y_2 \Rightarrow y \in f(I)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,I)
+\Longrightarrow
+\operatorname{Interval}(f(I)).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-General form of IVT: no compactness required. Continuous image of
-any interval is an interval.
+Continuous functions cannot tear gaps open inside their images of intervals. Once the function achieves two output values, continuity and the Intermediate Value Theorem force every intermediate value to occur as well, so the image remains an interval even when $I$ is unbounded or half-open. Failure occurs precisely when continuity breaks, because discontinuities can skip intermediate heights and leave disconnected image sets.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[thm:bolzano-intermediate-value]{thm:bolzano-intermediate-value}
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Darboux Property
+% Theorem --- Darboux Property
 % ---------------------------------------------------------
 
 \begin{theorem}[Darboux Property]
 \label{thm:darboux-property}
-$\operatorname{ContinuousOn}(f,[a,b])$,
-$\forall x\in[a,b]:f(x)\neq c$
-$\Rightarrow(f>c$ on $[a,b])$ or $(f<c$ on $[a,b])$.
-
-\smallskip\noindent
-\hyperref[prf:darboux-property]{\textit{Go to proof.}}
+Let a,b\in\mathbb{R} satisfy a<b, let f:[a,b]\to\mathbb{R} be continuous, and fix c\in\mathbb{R}. If f(x)\neq c for every x\in[a,b], then either f(x)>c for all x\in[a,b] or f(x)<c for all x\in[a,b].
+\hyperref[prf:darboux-property]{Go to proof.}
 \end{theorem}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{ContinuousOn}(f,[a,b])
-  \;\wedge\;
-  \forall x\in[a,b]:f(x)\neq c
-  \;\Rightarrow\;
-  \bigl(\forall x:f(x)>c\bigr)
-  \;\vee\;
-  \bigl(\forall x:f(x)<c\bigr).
+\begin{aligned}
+&\text{Let } a<b,\; f:[a,b]\to\mathbb{R} \text{ be continuous, and } c\in\mathbb{R}.\\
+&\Bigl(\forall x\in[a,b]\; f(x)\neq c\Bigr)
+\Rightarrow
+\Bigl[\bigl(\forall x\in[a,b]\; f(x)>c\bigr)\lor\bigl(\forall x\in[a,b]\; f(x)<c\bigr)\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b,\; f:[a,b]\to\mathbb{R} \text{ be continuous, and } c\in\mathbb{R}.\\
+&\Bigl(\forall x\in[a,b]\; f(x)\neq c\Bigr)
+\land
+\Bigl(\exists u\in[a,b]\; f(u)\le c\Bigr)
+\land
+\Bigl(\exists v\in[a,b]\; f(v)\ge c\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b])
+\land
+\Bigl(\forall x\in[a,b]\; f(x)\neq c\Bigr)
+\land
+\neg\Bigl[
+\bigl(\forall x\in[a,b]\; f(x)>c\bigr)
+\lor
+\bigl(\forall x\in[a,b]\; f(x)<c\bigr)
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a<b,\; f:[a,b]\to\mathbb{R} \text{ be continuous, and } c\in\mathbb{R}.\\
+&\Bigl(\exists x\in[a,b]\; f(x)\le c\Bigr)
+\land
+\Bigl(\exists y\in[a,b]\; f(y)\ge c\Bigr)
+\Rightarrow
+\exists z\in[a,b]\; f(z)=c.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b])
+\land
+\operatorname{MeetsBothSides}(f,[a,b],c)
+\Longrightarrow
+\exists z\in[a,b]\;(f(z)=c).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Contrapositive of IVT: if $c$ is not attained, $f$ lies entirely
-on one side of $c$. Used in sign-argument proofs.
+A continuous function on a compact interval cannot oscillate across a level c without actually attaining that level. Stated contrapositive fashion, if c is never taken then the entire graph lies strictly above or strictly below the horizontal line y=c. The only way this guarantee can fail is when the function produces values on both sides of c, in which case continuity forces a crossing point. Geometrically the conclusion describes the image of a connected set under a continuous map: it is an interval, so omitting c forces the image to stay in one of the open half-lines determined by c.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:bolzano-intermediate-value]{Bolzano's Intermediate Value Theorem}.
 \end{remark*}

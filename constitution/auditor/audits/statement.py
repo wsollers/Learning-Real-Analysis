@@ -61,37 +61,73 @@ def _extract_environment_and_remarks(
     if not end_match:
         return None
 
-    env_block = tex[env_start : end_match.end()]
+    block_start = env_start
+    block_end = end_match.end()
+
+    # If the formal environment is wrapped in a tcolorbox, audit the wrapper
+    # too. Otherwise the model never sees the required box and the following
+    # support remarks are hidden behind the wrapper's closing line.
+    box_start, box_end = _expand_to_enclosing_tcolorbox(tex, block_start, block_end)
+    block_start, block_end = box_start, box_end
+    env_block = tex[block_start:block_end]
 
     # Collect immediately following remark* blocks
-    rest = tex[end_match.end():]
+    rest = tex[block_end:]
     remarks = []
 
-    # Walk through rest line by line; collect contiguous remark* blocks
+    # Walk through rest; collect contiguous remark* blocks, allowing blank
+    # lines and ordinary comment separators between support remarks.
     pos = 0
-    # Skip whitespace and comments
     while pos < len(rest):
-        stripped = rest[pos:].lstrip()
-        if stripped.startswith("\\begin{remark*}"):
-            rm = _REMARK_BLOCK.match(stripped)
-            if rm:
-                remarks.append(rm.group(0))
-                pos += len(rest) - len(stripped) + rm.end()
-                continue
-        # Stop at first non-remark, non-whitespace content
-        if stripped and not stripped.startswith("%"):
+        pos = _skip_whitespace_and_comments(rest, pos)
+        rm = _REMARK_BLOCK.match(rest, pos)
+        if rm:
+            remarks.append(rm.group(0))
+            pos = rm.end()
+            continue
+        if pos < len(rest):
             break
-        # Advance past whitespace/comments
-        next_line = rest.find("\n", pos)
-        if next_line == -1:
-            break
-        pos = next_line + 1
 
     combined = env_block
     if remarks:
         combined += "\n\n" + "\n\n".join(remarks)
 
     return combined
+
+
+def _skip_whitespace_and_comments(text: str, pos: int) -> int:
+    while pos < len(text):
+        while pos < len(text) and text[pos].isspace():
+            pos += 1
+        if pos < len(text) and text[pos] == "%":
+            newline = text.find("\n", pos)
+            if newline == -1:
+                return len(text)
+            pos = newline + 1
+            continue
+        return pos
+    return pos
+
+
+def _expand_to_enclosing_tcolorbox(tex: str, start: int, end: int) -> tuple[int, int]:
+    """
+    Expands an environment span to an immediately enclosing tcolorbox, if one
+    exists. This intentionally mirrors the generated patcher span logic.
+    """
+    opens = list(re.finditer(r"\\begin\{tcolorbox\}(?:\[[^\]]*\])?", tex[:start], re.DOTALL))
+    if not opens:
+        return start, end
+
+    closes_before = list(re.finditer(r"\\end\{tcolorbox\}", tex[:start]))
+    if closes_before and closes_before[-1].start() > opens[-1].start():
+        return start, end
+
+    open_match = opens[-1]
+    close_after = re.search(r"\\end\{tcolorbox\}", tex[end:])
+    if not close_after:
+        return start, end
+
+    return open_match.start(), end + close_after.end()
 
 
 # ---------------------------------------------------------------------------

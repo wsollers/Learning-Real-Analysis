@@ -1,7 +1,7 @@
 % =========================================================
-% Monotone Functions and Continuity — Notes
+% Monotone Functions and Continuity --- Notes
 % Chapter: continuity
-% Volume III · Analysis
+% Volume III - Analysis
 % =========================================================
 
 \subsection{Monotone Functions and Continuity}
@@ -26,96 +26,393 @@
 
 \begin{theorem}[One-Sided Limits of Monotone Functions]
 \label{thm:monotone-one-sided-limits}
-Let $f$ be increasing on interval $I$, $c$ interior to $I$. Then:
-\begin{enumerate}[label=(\roman*)]
-  \item $\operatorname{LeftLimit}(f,c,\sup\{f(x):x<c\})$.
-  \item $\operatorname{RightLimit}(f,c,\inf\{f(x):x>c\})$.
-\end{enumerate}
-
-\smallskip\noindent
-\hyperref[prf:monotone-one-sided-limits]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval, let $c$ be interior to $I$, and let $f:I\to\mathbb{R}$ be increasing. Define
+\[
+L_- \coloneqq \sup\{f(x): x\in I,\; x<c\},
+\qquad
+L_+ \coloneqq \inf\{f(x): x\in I,\; c<x\}.
+\]
+Then both one-sided limits exist and satisfy
+\[
+\lim_{x\to c^-} f(x) = L_-,
+\qquad
+\lim_{x\to c^+} f(x) = L_+.
+\]
+\hyperref[prf:monotone-one-sided-limits]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Definition predicate reading]
+\begin{remark*}[Standard quantified statement]
 \[
-  f(c^-) \;:=\; \sup\{f(x):x\in I,\,x<c\},
-  \qquad
-  f(c^+) \;:=\; \inf\{f(x):x\in I,\,x>c\}.
+\begin{aligned}
+&\text{Let } I \subseteq \mathbb{R} \text{ be an interval, } f:I\to\mathbb{R} \text{ increasing, and } c\in I \text{ with } \exists a,b\in I \text{ such that } a<c<b.\\
+&\text{Let } L_- = \sup\{f(x): x\in I,\; x<c\} \text{ and } L_+ = \inf\{f(x): x\in I,\; c<x\}.\\
+&\forall \varepsilon>0\; \exists \delta_- > 0\; \forall x\in I\; \bigl((0<c-x<\delta_- \land x<c) \Rightarrow |f(x)-L_-|<\varepsilon \bigr)\\
+&\land \forall \varepsilon>0\; \exists \delta_+ > 0\; \forall x\in I\; \bigl((0<x-c<\delta_+ \land c<x) \Rightarrow |f(x)-L_+|<\varepsilon \bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\begin{aligned}
+&\text{Let } I\subseteq \mathbb{R} \text{ be an interval, } f:I\to\mathbb{R} \text{ increasing, and } c \text{ interior to } I.\\
+&\operatorname{LeftLimit}\!\Bigl(f,c,\sup\{f(x): x\in I,\; x<c\}\Bigr)
+\land
+\operatorname{RightLimit}\!\Bigl(f,c,\inf\{f(x): x\in I,\; x>c\}\Bigr).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Monotonicity forces both one-sided limits to exist as finite values.
+For an increasing function, the values just to the left of $c$ form a monotone increasing set bounded above by any right neighborhood, so their supremum matches the left-hand limit. Symmetrically, the values just to the right form a monotone increasing tail bounded below, making the infimum coincide with the right-hand limit. The theorem shows that monotonicity alone guarantees both one-sided limits exist and equals these extremal values. Failure occurs when $c$ is not an interior point or $f$ is not monotone, because the comparison sets may be empty or oscillatory, preventing the suprema or infima from governing the boundary behavior.
 \end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
 
 \begin{corollary}[Continuity Criterion for Monotone Functions]
 \label{cor:monotone-continuity-criterion}
-For $f$ increasing on $I$, $c$ interior:
-$\operatorname{ContinuousAt}(f,c)\iff f(c^-)=f(c)=f(c^+)$.
-
-\smallskip\noindent
-\hyperref[prf:monotone-continuity-criterion]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval, let $f:I \to \mathbb{R}$ be monotone increasing, and let $c$ be an interior point of $I$. Then $f$ is continuous at $c$ if and only if its one-sided limits satisfy $f(c^-)=f(c)=f(c^+)$, where $f(c^-)=\lim_{x\to c^-} f(x)$ and $f(c^+)=\lim_{x\to c^+} f(x)$.
+\hyperref[prf:monotone-continuity-criterion]{Go to proof.}
 \end{corollary}
 
-\begin{tcolorbox}[title={Definition --- Jump of a Function}]
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } I \subseteq \mathbb{R} \text{ be an interval, } f:I\to\mathbb{R} \text{ monotone increasing, and } c \text{ an interior point of } I.\\
+&\bigl(f \text{ is continuous at } c\bigr)
+\Longleftrightarrow
+\left(\lim_{x\to c^-} f(x) = f(c) = \lim_{x\to c^+} f(x)\right).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousAt}(f,c)
+\Longleftrightarrow
+\bigl(\operatorname{LeftLimit}(f,c,f(c)) \land \operatorname{RightLimit}(f,c,f(c))\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } I \subseteq \mathbb{R} \text{ be an interval, } f:I\to\mathbb{R} \text{ monotone increasing, and } c \text{ an interior point of } I.\\
+&\neg\bigl(f \text{ is continuous at } c\bigr)
+\Longleftrightarrow
+\left(\lim_{x\to c^-} f(x) < f(c)\right)
+\lor
+\left(f(c) < \lim_{x\to c^+} f(x)\right).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{ContinuousAt}(f,c)
+\Longleftrightarrow
+\left(\exists L^{-}\,[\operatorname{LeftLimit}(f,c,L^{-}) \land L^{-} < f(c)]\right)
+\lor
+\left(\exists L^{+}\,[\operatorname{RightLimit}(f,c,L^{+}) \land f(c) < L^{+}]\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Continuity can fail only through a jump: either the graph arrives at $c$ from the left strictly below $f(c)$, or it departs to the right strictly above $f(c)$. Both jumps reflect the inability of the one-sided limits to match the function value at the interior point.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\operatorname{ContinuousAt}(f,c)
+=
+\underbrace{\left(\exists L^{-}\,[\operatorname{LeftLimit}(f,c,L^{-}) \land L^{-} < f(c)]\right)}_{\text{left jump at } c}
+\lor
+\underbrace{\left(\exists L^{+}\,[\operatorname{RightLimit}(f,c,L^{+}) \land f(c) < L^{+}]\right)}_{\text{right jump at } c}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A monotone graph possesses finite one-sided limits at every interior point. Continuity at $c$ demands that these approach values exactly meet the function value, so the graph neither overshoots nor undershoots when passing through $c$. Any failure manifests as a jump discontinuity: the graph either leaps upward at $c$ or remains below the right-hand approach. This criterion is indispensable when classifying discontinuities of monotone functions, since it converts continuity into a simple equality check between the function value and the adjacent plateau levels.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:continuous-at-point]{Definition~\ref*{def:continuous-at-point}}; \hyperref[thm:monotone-one-sided-limits]{Theorem~\ref*{thm:monotone-one-sided-limits}}.
+\end{remark*}
+
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Jump of a Function)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Jump of a Function]
 \label{def:jump-of-function}
-For $f$ increasing on $I$, $c\in I$:
-$j_f(c):=f(c^+)-f(c^-)$.
-$\operatorname{ContinuousAt}(f,c)\iff j_f(c)=0$.
+Let $I \subseteq \mathbb{R}$ be an interval, let $f:I\to\mathbb{R}$ be
+increasing, and let $c$ be an interior point of $I$. If the one-sided
+limits $f(c^-)$ and $f(c^+)$ exist, the jump of $f$ at $c$ is
+\[
+j_f(c)\coloneqq f(c^+)-f(c^-).
+\]
 \end{definition}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall I\subseteq\mathbb{R}\;\forall f:I\to\mathbb{R}\;\forall c\in I\;\forall j\in\mathbb{R}\\
+&\Bigl[\operatorname{Interval}(I)\land \operatorname{InteriorPoint}(c,I)
+\land \operatorname{Increasing}(f,I)
+\land f(c^-)\text{ exists}\land f(c^+)\text{ exists}\Bigr]\\
+&\qquad\Rightarrow
+\bigl(j=j_f(c)\Longleftrightarrow j=f(c^+)-f(c^-)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{JumpOfFunction}(f,c,j)
+\coloneqq
+j=f(c^+)-f(c^-).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\neg\bigl(j=j_f(c)\bigr)
+\Longleftrightarrow
+\neg\bigl(f(c^-)\text{ exists}\bigr)
+\lor
+\neg\bigl(f(c^+)\text{ exists}\bigr)
+\lor
+j\ne f(c^+)-f(c^-).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{JumpOfFunction}(f,c,j)
+\Longleftrightarrow
+\neg\bigl(f(c^-)\text{ exists}\bigr)
+\lor
+\neg\bigl(f(c^+)\text{ exists}\bigr)
+\lor
+j\ne f(c^+)-f(c^-).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed jump value fails when a required one-sided limit does not
+exist, or when both one-sided limits exist but the proposed value is not
+their difference.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\neg\bigl(f(c^-)\text{ exists}\bigr)}_{\text{missing left limit}}
+\lor
+\underbrace{\neg\bigl(f(c^+)\text{ exists}\bigr)}_{\text{missing right limit}}
+\lor
+\underbrace{j\ne f(c^+)-f(c^-)}_{\text{incorrect jump magnitude}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+For a monotone function the one-sided limits exist at every interior
+point, and their difference measures the vertical gap in the graph at
+that point. A zero jump means the two limiting heights agree; a positive
+jump records a discontinuity of first kind.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:monotone-one-sided-limits]{Theorem~\ref*{thm:monotone-one-sided-limits}}.
+\end{remark*}
+
 \begin{proposition}[Discontinuities of a Monotone Function Are of First Kind]
 \label{prop:monotone-discontinuities-first-kind}
-$\operatorname{MonotoneFunction}(f,E)\wedge\operatorname{DiscontinuousAt}(f,a)
-\Rightarrow$ both $f(a^-)$, $f(a^+)$ exist finitely.
-
-\smallskip\noindent
-\hyperref[prf:monotone-discontinuities-first-kind]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval, let $f:I \to \mathbb{R}$ be monotone, and let $a \in I$ be such that there exist points of $I$ strictly less and strictly greater than $a$. If $f$ is discontinuous at $a$, then both one-sided limits $\lim_{x\uparrow a} f(x)$ and $\lim_{x\downarrow a} f(x)$ exist in $\mathbb{R}$.
+\hyperref[prf:monotone-discontinuities-first-kind]{Go to proof.}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } I \subseteq \mathbb{R} \text{ be an interval, } f:I \to \mathbb{R} \text{ monotone, and } a \in I \text{ interior to } I.\\
+&\bigl[f \text{ is discontinuous at } a\bigr]
+\Longrightarrow
+\exists L^{-},L^{+} \in \mathbb{R} :
+\begin{cases}
+\displaystyle \lim_{x \uparrow a} f(x) = L^{-},\\[4pt]
+\displaystyle \lim_{x \downarrow a} f(x) = L^{+}.
+\end{cases}
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{MonotoneFunction}(f,I) \land \operatorname{DiscontinuousAt}(f,a) \Longrightarrow \exists L^{-},L^{+} \in \mathbb{R} \; \bigl(\operatorname{LeftLimit}(f,a,L^{-}) \land \operatorname{RightLimit}(f,a,L^{+})\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A monotone graph can jump only by settling on distinct finite one-sided limits; it cannot oscillate wildly or blow up to infinity at a point of discontinuity. Thus every discontinuity of a monotone function is a jump discontinuity of the first kind, which explains why such functions are easy to integrate and why their exceptional sets are well behaved. Geometrically, the graph approaches a finite height from the left and another finite height from the right before making the jump.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:point-of-discontinuity]{Definition~\ref{def:point-of-discontinuity}}
+\end{remark*}
+
 
 \begin{corollary}[Jump Intervals Are Disjoint]
 \label{cor:jump-intervals-for-monotone-discontinuities}
-For $f$ nondecreasing, distinct discontinuities $a\neq b$:
-$(f(a^-),f(a^+))\cap(f(b^-),f(b^+))=\emptyset$.
-
-\smallskip\noindent
-\hyperref[prf:jump-intervals-for-monotone-discontinuities]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval and let $f:I \to \mathbb{R}$ be nondecreasing. If $a,b \in I$ are distinct points of discontinuity of $f$, then the open intervals $(f(a^-),f(a^+))$ and $(f(b^-),f(b^+))$ are disjoint.%
+\hyperref[prf:jump-intervals-for-monotone-discontinuities]{Go to proof.}
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b\in I\;
+\Bigl[
+a\ne b\land
+\neg\operatorname{ContinuousAt}(f,a)\land
+\neg\operatorname{ContinuousAt}(f,b)
+\Rightarrow
+(f(a^-),f(a^+))\cap(f(b^-),f(b^+))=\varnothing
+\Bigr].
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{MonotoneFunction}(f,I)\land
+\begin{cases}
+a,b\in I,\\
+a\neq b,\\
+\operatorname{DiscontinuousAt}(f,a),\\
+\operatorname{DiscontinuousAt}(f,b)
+\end{cases}
+\Longrightarrow
+(f(a^-),f(a^+))\cap(f(b^-),f(b^+))=\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The corollary states that a nondecreasing function assigns disjoint open value intervals to distinct jump discontinuities. Because the function never reverses direction, the lower one-sided limit at the later point cannot drop below the upper one-sided limit at the earlier point, so the corresponding ranges cannot overlap. This distinction of jump intervals ensures that the cumulative vertical jumps of a monotone function stay separated, preventing the graph from revisiting the same band of values via different discontinuities.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:jump-of-function]{Definition~\ref*{def:jump-of-function}}; \hyperref[prop:monotone-discontinuities-first-kind]{Proposition~\ref*{prop:monotone-discontinuities-first-kind}}
+\end{remark*}
+
 
 \begin{theorem}[Discontinuities of a Monotone Function Are Countable]
 \label{thm:monotone-discontinuities-countable}
-$\operatorname{MonotoneFunction}(f,I)
-\Rightarrow|\{c\in I:\operatorname{DiscontinuousAt}(f,c)\}|\leq\aleph_0$.
-
-\smallskip\noindent
-\hyperref[prf:monotone-discontinuities-countable]{\textit{Go to proof.}}
+Let $I \subseteq \mathbb{R}$ be an interval and let $f:I\to\mathbb{R}$ be monotone. Then the set $D_f \coloneqq \{c \in I : f \text{ is discontinuous at } c\}$ is at most countable. \hyperref[prf:monotone-discontinuities-countable]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Interpretation]
-At each discontinuity $c$ the jump interval $(f(c^-),f(c^+))$ is
-nonempty, open, and contains a rational. These intervals are pairwise
-disjoint, giving an injection $D_f\hookrightarrow\mathbb{Q}$.
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } I \subseteq \mathbb{R} \text{ be an interval and } f:I\to\mathbb{R} \text{ be monotone}.\\
+&\#\{c \in I : f \text{ fails to be continuous at } c\} \le \aleph_0.
+\end{aligned}
+\]
 \end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{MonotoneFunction}(f,I) \Longrightarrow \#\{c \in I : \operatorname{DiscontinuousAt}(f,c)\} \le \aleph_0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every discontinuity of a monotone function is a jump discontinuity with a nondegenerate vertical gap $(f(c^-),f(c^+))$. Distinct discontinuities yield pairwise disjoint gaps, and each such interval contains a rational number. Associating to every discontinuity the rational number inside its gap produces an injection of the discontinuity set into $\mathbb{Q}$, forcing the set to be countable. The only way the conclusion could fail would be the existence of uncountably many disjoint jump intervals, which is impossible because the rationals are countable.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:monotone-one-sided-limits]{Theorem~\ref{thm:monotone-one-sided-limits}} and \hyperref[cor:jump-intervals-for-monotone-discontinuities]{Corollary~\ref{cor:jump-intervals-for-monotone-discontinuities}}.
+\end{remark*}
+
 
 \begin{corollary}[Monotone Function Is Continuous on a Dense Set]
 \label{cor:monotone-continuous-on-dense-set}
-$\operatorname{MonotoneFunction}(f,[a,b])
-\Rightarrow\{x:\operatorname{ContinuousAt}(f,x)\}$ is dense in $[a,b]$.
-
-\smallskip\noindent
-\hyperref[prf:monotone-continuous-on-dense-set]{\textit{Go to proof.}}
+Let $f:[a,b]\to\mathbb{R}$ be monotone. Then the set $\{x\in[a,b]:f \text{ is continuous at } x\}$ is dense in $[a,b]$.
+\hyperref[prf:monotone-continuous-on-dense-set]{Go to proof.}
 \end{corollary}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } f:[a,b]\to\mathbb{R} \text{ be monotone.}\\
+&\forall u,v\in[a,b] \; (u<v \Rightarrow \exists c\in(u,v)\text{ such that }f \text{ is continuous at } c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{MonotoneFunction}(f,[a,b])
+\Longrightarrow
+\operatorname{DenseSubset}\bigl(\{x\in[a,b]:\operatorname{ContinuousAt}(f,x)\},[a,b]\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\exists u,v\in[a,b]\;
+\Bigl(u<v \land
+\forall c\in(u,v)\;\neg\operatorname{ContinuousAt}(f,c)\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A monotone function on a closed interval can only jump at most countably many times, so the points of discontinuity leave room inside every subinterval for a continuity point. Thus, although the function may fail to be continuous at isolated or countably many locations, continuity still occurs throughout any interval one inspects. This property ensures that monotone functions retain many features of continuous functions when arguments depend only on dense sets of continuity points.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:monotone-discontinuities-countable]{Discontinuities of a Monotone Function Are Countable}
+\end{remark*}
+
 
 \begin{proposition}[Continuous Injective Is Strictly Monotone]
 \label{prop:continuous-injective-iff-strictly-monotone}
-$\operatorname{ContinuousOn}(f,[a,b])$:
-$\operatorname{Injective}(f)\iff f$ strictly monotone.
-
-\smallskip\noindent
-\hyperref[prf:continuous-injective-is-strictly-monotone]{\textit{Go to proof.}}
+Let $f:[a,b]\to\mathbb{R}$ be continuous on $[a,b]$. Then $f$ is injective if and only if $f$ is strictly monotone on $[a,b]$.
+\hyperref[prf:continuous-injective-iff-strictly-monotone]{Go to proof.}
 \end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } f:[a,b]\to\mathbb{R} \text{ be continuous on } [a,b].\\
+&\bigl[\forall x,y\in[a,b]\;(f(x)=f(y)\Rightarrow x=y)\bigr] \Longleftrightarrow
+\bigl[\forall x,y\in[a,b]\;(x<y\Rightarrow f(x)<f(y))\bigr]\\
+&\qquad\qquad\qquad\quad\lor
+\bigl[\forall x,y\in[a,b]\,(x<y\Rightarrow f(y)<f(x))\bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \Longrightarrow
+\bigl(\operatorname{Injective}(f) \Longleftrightarrow
+\operatorname{StrictlyMonotone}(f,[a,b])\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A continuous function on a closed interval cannot reverse direction without repeating a value, so injectivity enforces a single increasing or decreasing trend across the entire domain. Conversely any strictly monotone map is automatically injective. The result emphasizes that topological constraints supplied by continuity interact with order-theoretic injectivity to force global monotonicity; failure occurs precisely when the graph turns back on itself, producing repeated values. Geometrically the continuous injective graph must cross each horizontal line at most once, which is only possible when the graph rises everywhere or falls everywhere.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:bolzano-intermediate-value]{Bolzano's Intermediate Value Theorem}.
+\end{remark*}
+
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -123,18 +420,26 @@ $\operatorname{Injective}(f)\iff f$ strictly monotone.
   fonttitle=\small\bfseries]
 \begin{theorem}[Continuous Inverse Theorem]
 \label{thm:continuous-inverse-theorem}
-$I$ an interval, $f$ strictly monotone and $\operatorname{ContinuousOn}(f,I)$
-$\Rightarrow f^{-1}$ exists, is strictly monotone, and
-$\operatorname{ContinuousOn}(f^{-1},f(I))$.
-
-\smallskip\noindent
-\hyperref[prf:inverse-strictly-monotone]{\textit{Go to proof.}}
+Let $I\subseteq\mathbb{R}$ be an interval and let $f:I\to\mathbb{R}$ be strictly monotone and continuous on $I$. Then the inverse function $f^{-1}:f(I)\to I$ exists, is strictly monotone, and is continuous on $f(I)$.
+\hyperref[prf:continuous-inverse-theorem]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } I\subseteq\mathbb{R} \text{ be an interval and } f:I\to\mathbb{R}.\\
+&\Bigl[(\forall x,y\in I)(x<y \Rightarrow f(x)<f(y)) \land \forall c\in I\;\forall \varepsilon>0\;\exists \delta>0\;\forall x\in I\bigl(|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon\bigr)\Bigr]\\
+&\quad\Longrightarrow \Bigl[\exists g:f(I)\to I \text{ such that } (\forall x\in I)\, g(f(x))=x \land (\forall y\in f(I))\, f(g(y))=y\\
+&\qquad\land (\forall u,v\in f(I))(u<v \Rightarrow g(u)<g(v)) \land \forall y\in f(I)\;\forall \varepsilon>0\;\exists \eta>0\;\forall u\in f(I)\bigl(|u-y|<\eta \Rightarrow |g(u)-g(y)|<\varepsilon\bigr)\Bigr].
+\end{aligned}
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-Continuity on $I$ forces $f(I)$ to be an interval. A jump
-discontinuity of $f^{-1}$ would create a gap in $f(I)$ ---
-contradiction. Hence $f^{-1}$ is continuous.
+A continuous strictly monotone function on an interval never reverses the order of points, so it is automatically bijective onto its image. This theorem records that the inverse map retains the same order orientation and inherits continuity, reflecting the fact that no sudden jumps can occur when the original graph crosses each horizontal line exactly once. Failure would require either loss of monotonicity or a discontinuity, either of which would create a flat spot or a jump preventing the existence of a continuous inverse. Geometrically, the graph of $f^{-1}$ is the reflection of the graph of $f$ across the diagonal line $y=x$, so the smoothness and strict increase or decrease are visibly preserved by symmetry.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
 \end{remark*}

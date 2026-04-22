@@ -35,6 +35,17 @@ RESTATEMENT_BLOCKS = {
     "proof_layer_restated_theorem",
 }
 
+PROOF_LABEL_BLOCKS = {
+    "layer3_proof_label",
+    "layer_proof_label",
+    "layer_prooflabel",
+    "proof_label_layer",
+    "proof_layer_label",
+    "proof_label",
+    "proof_layer_proof_label",
+    "layer_proof_label",
+}
+
 BOX_COLORS = {
     "def": ("defbox", "defborder", "Definition"),
     "thm": ("thmbox", "thmborder", "Theorem"),
@@ -351,7 +362,7 @@ def _handle_proof_violation(
         result.applied.append(PatchEvent(label, block_id, "normalize_restatement_to_theorem_star", str(path), f"{env}* -> theorem*"))
         return
 
-    if block_id == "layer3_proof_label":
+    if block_id in PROOF_LABEL_BLOCKS:
         theorem_label = entry.get("theorem_label")
         if not theorem_label:
             result.manual.append(PatchEvent(label, block_id, "manual", str(path), "No theorem_label in chapter.yaml."))

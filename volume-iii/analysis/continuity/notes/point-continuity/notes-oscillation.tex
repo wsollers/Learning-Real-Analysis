@@ -1,7 +1,7 @@
 % =========================================================
-% Oscillation — Notes
+% Oscillation --- Notes
 % Chapter: continuity
-% Volume III · Analysis
+% Volume III - Analysis
 % =========================================================
 
 \subsection{Oscillation}
@@ -23,33 +23,74 @@
 \end{tcolorbox}
 
 % ---------------------------------------------------------
-% Definition — Oscillation on a Set
+% Definition --- Oscillation on a Set
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Oscillation on a Set}]
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Oscillation on a Set)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Oscillation on a Set]
 \label{def:oscillation-on-a-set}
-$\operatorname{OscillationOn}(f,E,\omega)$:
+Let $A\subseteq\mathbb{R}$, let $f:A\to\mathbb{R}$, and let
+$E\subseteq A$. The oscillation of $f$ on $E$ is the extended real number
 \[
-  \omega(f;E) \;:=\; \sup_{x_1,x_2\in E}|f(x_1)-f(x_2)|
-  \;=\; \operatorname{diam}(f(E)).
+\omega(f;E)\coloneqq
+\sup\{\,|f(x_1)-f(x_2)|:x_1,x_2\in E\,\}
+=\mathrm{diam}(f(E)).
 \]
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \omega(f;E)
-  = \sup\{|f(x_1)-f(x_2)|:x_1,x_2\in E\}.
+\begin{aligned}
+&\text{Let } A\subseteq\mathbb{R},\; f:A\to\mathbb{R},\; E\subseteq A,\;
+\omega\in[0,\infty].\\
+&\omega(f;E)=\omega
+\Longleftrightarrow
+\omega=\sup\{\,|f(x_1)-f(x_2)|:x_1,x_2\in E\,\}.
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{OscillationOn}(f,E,\omega)
-  \;\colonequiv\;
-  \omega = \operatorname{diam}(f(E))
-  = \sup_{x_1,x_2\in E}|f(x_1)-f(x_2)|.
+\operatorname{OscillationOn}(f,E,\omega)
+\coloneqq
+\omega=\sup\{\,|f(x_1)-f(x_2)|:x_1,x_2\in E\,\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A\subseteq\mathbb{R},\; f:A\to\mathbb{R},\; E\subseteq A,\;
+\omega\in[0,\infty].\\
+&\omega(f;E)\ne\omega
+\Longleftrightarrow
+\omega\ne\sup\{\,|f(x_1)-f(x_2)|:x_1,x_2\in E\,\}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{OscillationOn}(f,E,\omega)
+\Longleftrightarrow
+\omega\ne\sup\{\,|f(x_1)-f(x_2)|:x_1,x_2\in E\,\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The only failure mode for a proposed oscillation value is that it does
+not equal the supremum of all pairwise differences of function values on
+$E$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\omega\ne\sup\{\,|f(x_1)-f(x_2)|:x_1,x_2\in E\,\}}_{\text{incorrect oscillation magnitude}}.
 \]
 \end{remark*}
 
@@ -59,56 +100,98 @@ of $f(E)$. Small oscillation means all values of $f$ on $E$ lie
 close together. Zero oscillation means $f$ is constant on $E$.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
 % ---------------------------------------------------------
-% Definition — Oscillation at a Point
+% Definition --- Oscillation at a Point
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Oscillation at a Point}]
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Oscillation at a Point)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Oscillation at a Point]
 \label{def:oscillation-at-a-point}
-$\operatorname{OscillationAt}(f,x_0,\omega)$:
+Let $E \subseteq \mathbb{R}$, let $f:E \to \mathbb{R}$, and let $x_0 \in \mathbb{R}$ satisfy $U_\delta(x_0)\cap E \neq \varnothing$ for every $\delta>0$, where $U_\delta(x_0)=\{x \in \mathbb{R}: |x-x_0|<\delta\}$. The oscillation of $f$ at $x_0$ is the extended real number
 \[
-  \omega(f;x_0) \;:=\;
-  \lim_{\delta\to 0^+}
-  \omega\bigl(f;\,U_\delta(x_0)\cap E\bigr),
+\omega(f;x_0)
+=
+\lim_{\delta \to 0^+}
+\omega\bigl(f;\,U_\delta(x_0)\cap E\bigr),
 \]
-where $U_\delta(x_0)=\{x:|x-x_0|<\delta\}$.
+with $\omega(f;A)$ denoting the oscillation of $f$ on the set $A$. Because the function $\delta \mapsto \omega\bigl(f;\,U_\delta(x_0)\cap E\bigr)$ is nonincreasing, this right-hand limit exists (possibly $+\infty$).
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \omega(f;x_0)
-  = \lim_{\delta\to 0^+}
-    \sup\bigl\{|f(x_1)-f(x_2)|:x_1,x_2\in U_\delta(x_0)\cap E\bigr\}.
+\begin{aligned}
+&\text{Let } E \subseteq \mathbb{R},\, f:E \to \mathbb{R},\, x_0 \in \mathbb{R},\, \omega \in [0,\infty].\\
+&\bigl[(\forall \delta>0:\, U_\delta(x_0)\cap E \neq \varnothing)\ \land\ \omega(f;x_0)=\omega\bigr]\\
+&\Longleftrightarrow
+\forall \varepsilon>0\; \exists \delta>0\; \forall r\;(0<r<\delta \Rightarrow |\omega(f;U_r(x_0)\cap E)-\omega|<\varepsilon).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Definition predicate reading]
 \[
-  \operatorname{OscillationAt}(f,x_0,\omega)
-  \;\colonequiv\;
-  \omega = \inf_{\delta>0}\operatorname{OscillationOn}(f,U_\delta(x_0)\cap E,\cdot).
+\operatorname{OscillationAt}(f,x_0,\omega) \coloneqq
+\lim_{\delta \to 0^+} \omega\bigl(f;\,U_\delta(x_0)\cap E\bigr) = \omega,
+\quad U_\delta(x_0)=\{x \in \mathbb{R}: |x-x_0|<\delta\}.
 \]
 \end{remark*}
 
-\begin{remark*}[The limit exists]
-$U_{\delta_1}\subseteq U_{\delta_2}$ for $\delta_1<\delta_2$, so
-$\omega(f;U_{\delta_1}\cap E)\leq\omega(f;U_{\delta_2}\cap E)$.
-The function $\delta\mapsto\omega(f;U_\delta\cap E)$ is nonincreasing
-and bounded below by $0$, so its limit as $\delta\to 0^+$ exists.
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } E \subseteq \mathbb{R},\, f:E \to \mathbb{R},\, x_0 \in \mathbb{R},\, \omega \in [0,\infty].\\
+&\neg\bigl[(\forall \delta>0:\, U_\delta(x_0)\cap E \neq \varnothing)\ \land\ \omega(f;x_0)=\omega\bigr]\\
+&\Longleftrightarrow
+\Bigl[\exists \delta_0>0:\, U_{\delta_0}(x_0)\cap E = \varnothing\Bigr]\\
+&\qquad\lor
+\Bigl(\exists \varepsilon_0>0\; \forall \delta>0\; \exists r\;(0<r<\delta \land |\omega(f;U_r(x_0)\cap E)-\omega| \ge \varepsilon_0)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{OscillationAt}(f,x_0,\omega)
+\Longleftrightarrow
+\Bigl[\exists \delta_0>0:\, U_{\delta_0}(x_0)\cap E = \varnothing\Bigr]
+\lor
+\Bigl(\exists \varepsilon_0>0\; \forall \delta>0\; \exists r\;(0<r<\delta \land |\omega(f;U_r(x_0)\cap E)-\omega| \ge \varepsilon_0)\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The definition fails in two distinct ways: either the point $x_0$ has a punctured neighborhood missing $E$, so there are no arbitrarily small samples to measure, or the local oscillation values near $x_0$ refuse to stabilize, preventing the limit from existing.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\operatorname{OscillationAt}(f,x_0,\omega)
+=
+\underbrace{\exists \delta_0>0:\, U_{\delta_0}(x_0)\cap E = \varnothing}_{\text{no nearby sample points}}
+\;\lor\;
+\underbrace{\exists \varepsilon_0>0\; \forall \delta>0\; \exists r\;(0<r<\delta \land |\omega(f;U_r(x_0)\cap E)-\omega| \ge \varepsilon_0)}_{\text{oscillation limit does not exist}}.
+\]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The oscillation at $x_0$ measures the residual spread of nearby
-values as the neighbourhood shrinks to the point. Zero oscillation
-means $f$ collapses to a single cluster near $x_0$. Positive
-oscillation means a positive spread persists --- $f$ is discontinuous
-at $x_0$.
+Oscillation at $x_0$ measures the largest possible jump in function values that survives after one zooms in arbitrarily tightly around $x_0$. The shrinking neighborhoods $U_r(x_0)\cap E$ supply finer and finer samples, and the oscillation on each such set records the spread of $f$ there. If these spreads settle to a single number, that number captures the local variability; it is zero precisely when $f$ becomes arbitrarily close to a single value, i.e., when $f$ is continuous at $x_0$. Failure occurs either because $x_0$ has no nearby domain points or because the spreads fluctuate indefinitely, reflecting wild local behavior.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[def:oscillation-on-a-set]{Definition~\ref*{def:oscillation-on-a-set}}
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Theorem — Continuity iff Zero Oscillation
+% Theorem --- Continuity iff Zero Oscillation
 % ---------------------------------------------------------
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
@@ -117,88 +200,155 @@ at $x_0$.
   fonttitle=\small\bfseries]
 \begin{theorem}[Continuity Characterised by Oscillation]
 \label{thm:continuity-iff-zero-oscillation}
-$\operatorname{ContinuousAt}(f,x_0)\iff\omega(f;x_0)=0$.
-
-\smallskip\noindent
-\hyperref[prf:continuity-iff-zero-oscillation]{\textit{Go to proof.}}
+Let $A \subseteq \mathbb{R}$, let $f \colon A \to \mathbb{R}$, and let $c \in A$. Then $f$ is continuous at $c$ if and only if $\omega(f;c)=0$.
+\hyperref[prf:continuity-iff-zero-oscillation]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
-
 \begin{remark*}[Standard quantified statement]
 \[
-  \operatorname{ContinuousAt}(f,x_0)
-  \;\iff\;
-  \operatorname{OscillationAt}(f,x_0,0).
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; c \in A.\\
+&\left(\forall \varepsilon>0 \; \exists \delta>0 \; \forall x \in A \; \bigl(|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon\bigr)\right)\\
+&\Longleftrightarrow\\
+&\left(\inf_{\delta>0} \sup \bigl\{|f(x)-f(y)| : x,y \in A,\; |x-c|<\delta,\; |y-c|<\delta \bigr\} = 0\right).
+\end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Definition predicate reading]
+\begin{remark*}[Predicate reading]
 \[
-  \operatorname{ContinuousAt}(f,x_0)
-  \;\colonequiv\;
-  \operatorname{OscillationAt}(f,x_0,0)
-  \;\colonequiv\;
-  \inf_{\delta>0}\omega(f;U_\delta(x_0)\cap E)=0.
+\operatorname{ContinuousAt}(f,c) \Longleftrightarrow \operatorname{OscillationAt}(f,c,0).
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-  \operatorname{DiscontinuousAt}(f,x_0)
-  \;\iff\;
-  \omega(f;x_0)>0.
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f \colon A \to \mathbb{R},\; c \in A.\\
+&\Bigl(\forall \varepsilon>0 \; \exists \delta>0 \; \forall x \in A \; (|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon)\Bigr)
+\land \Bigl(\inf_{\delta>0}\sup\{\cdots\}>0\Bigr)\\
+&\qquad \lor\\
+&\Bigl(\exists \varepsilon_0>0 \; \forall \delta>0 \; \exists x \in A \; (|x-c|<\delta \land |f(x)-f(c)| \ge \varepsilon_0)\Bigr)
+\land \Bigl(\inf_{\delta>0}\sup\{\cdots\}=0\Bigr),
+\end{aligned}
+\]
+where $\sup\{\cdots\}$ abbreviates $\sup\{|f(x)-f(y)| : x,y \in A,\; |x-c|<\delta,\; |y-c|<\delta\}$.
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\bigl(\operatorname{ContinuousAt}(f,c) \Longleftrightarrow \operatorname{OscillationAt}(f,c,0)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The equivalence fails precisely in two mutually exclusive ways: either $f$ remains continuous at $c$ while the oscillation retains a positive lower bound, or $\omega(f;c)$ vanishes even though $f$ does not satisfy the $\varepsilon$-$\delta$ continuity condition at $c$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\operatorname{ContinuousAt}(f,c) \land \neg \operatorname{OscillationAt}(f,c,0)}_{\text{Positive oscillation despite continuity}}
+\;\lor\;
+\underbrace{\neg \operatorname{ContinuousAt}(f,c) \land \operatorname{OscillationAt}(f,c,0)}_{\text{Zero oscillation without continuity}}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The $\varepsilon$-$\delta$ definition controls all nearby values
-relative to $f(x_0)$. The oscillation formulation is symmetric:
-it controls the spread between any two nearby values. The equivalence
-holds because once all nearby values are close to each other, and
-$x_0$ is one of those nearby points, all nearby values must be close
-to $f(x_0)$. Continuity collapses to the vanishing of a single
-local invariant.
+The theorem states that measuring the oscillation of $f$ near $c$ captures exactly the same local regularity as the classical $\varepsilon$-$\delta$ definition of continuity. If oscillation collapses to zero, every pair of nearby function values becomes arbitrarily close, forcing $f(x)$ to approach $f(c)$. Conversely, any discontinuity manifests as a nonzero oscillation, because nearby points can produce separated outputs. The standard failure therefore arises from detecting a residual jump or oscillatory behavior in arbitrarily small neighborhoods of $c$.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\hyperref[def:continuous-at-point]{Definition~\ref*{def:continuous-at-point}},
+\hyperref[def:oscillation-at-a-point]{Definition~\ref*{def:oscillation-at-a-point}}.
+\end{remark*}
+
+
 % ---------------------------------------------------------
-% Proposition — Discontinuity Set via Oscillation
+% Proposition --- Discontinuity Set via Oscillation
 % ---------------------------------------------------------
 
 \begin{proposition}[Discontinuity Set via Oscillation]
 \label{prop:discontinuity-set-via-oscillation}
-$D(f):=\{x\in E:\operatorname{DiscontinuousAt}(f,x)\}
-=\{x\in E:\omega(f;x)>0\}
-=\bigcup_{n=1}^\infty\{x\in E:\omega(f;x)\geq 1/n\}$.
-
-\smallskip\noindent
-\hyperref[prf:discontinuity-set-via-oscillation]{\textit{Go to proof.}}
+Let $f:E\to\mathbb{R}$. Then
+\[
+D(f):=\{x\in E: f \text{ is discontinuous at } x\}
+=\{x\in E: \omega(f;x)>0\}
+=\bigcup_{n=1}^{\infty} \{x\in E: \omega(f;x)\ge 1/n\}.
+\]
+\hyperref[prf:discontinuity-set-via-oscillation]{Go to proof.}
 \end{proposition}
 
 \begin{remark*}[Standard quantified statement]
 \[
-  \forall x\in E:\;
-  x\in D(f)
-  \;\iff\;
-  \omega(f;x)>0
-  \;\iff\;
-  \exists n\in\mathbb{N}:\omega(f;x)\geq 1/n.
+\begin{aligned}
+&\text{Let } f:E\to\mathbb{R}.\\
+&\forall x\in E:\;
+x\in D(f)
+\Longleftrightarrow \omega(f;x)>0
+\Longleftrightarrow
+\exists n\in\mathbb{N}:\; \omega(f;x)\ge \tfrac1n.
+\end{aligned}
 \]
 \end{remark*}
 
-\begin{remark*}[Definition predicate reading]
+\begin{remark*}[Predicate reading]
 \[
-  D(f)
-  \;=\;
-  \bigcup_{n=1}^\infty
-  \bigl\{x\in E:\operatorname{OscillationAt}(f,x,\omega)\wedge\omega\geq 1/n\bigr\}.
+\begin{aligned}
+&x\in D(f)
+\Longleftrightarrow
+\operatorname{DiscontinuousAt}(f,x)\\
+&\Longleftrightarrow
+\exists \omega\;(\operatorname{OscillationAt}(f,x,\omega)\land \omega>0)\\
+&\Longleftrightarrow
+\exists n\in\mathbb{N}\;\exists \omega\;(\operatorname{OscillationAt}(f,x,\omega)\land \omega\ge \tfrac1n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } f:E\to\mathbb{R}.\\
+&\neg\Bigl[\forall x\in E\;\bigl(x\in D(f)\Longleftrightarrow \omega(f;x)>0 \Longleftrightarrow \exists n\in\mathbb{N}\; \omega(f;x)\ge \tfrac1n\bigr)\Bigr]\\
+&\Longleftrightarrow \exists x\in E\;\Bigl((x\in D(f)\land \omega(f;x)=0)\lor(x\notin D(f)\land \omega(f;x)>0)\\
+&\qquad\qquad\lor(\omega(f;x)>0\land \forall n\in\mathbb{N}\; \omega(f;x)<\tfrac1n)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\begin{aligned}
+\exists x\in E\;\Bigl(
+&\exists \omega\;(\operatorname{DiscontinuousAt}(f,x)\land \operatorname{OscillationAt}(f,x,\omega)\land \omega=0)\;\lor\\
+&\exists \omega\;(\neg\operatorname{DiscontinuousAt}(f,x)\land \operatorname{OscillationAt}(f,x,\omega)\land \omega>0)\;\lor\\
+&\exists \omega\;(\operatorname{OscillationAt}(f,x,\omega)\land \omega>0\land \forall n\in\mathbb{N}\; \omega<\tfrac1n)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The proposition fails precisely when some $x\in E$ is marked as discontinuous although its oscillation vanishes, or when $x$ is declared continuous despite a positive oscillation, or when a positive oscillation never exceeds any reciprocal integer, contradicting the Archimedean step that converts $\omega(f;x)>0$ into the countable union description.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\exists x\in E\;
+\begin{cases}
+x\in D(f)\land \omega(f;x)=0 & \text{(Type I)},\\[4pt]
+x\notin D(f)\land \omega(f;x)>0 & \text{(Type II)},\\[4pt]
+\omega(f;x)>0\land \forall n\in\mathbb{N}\; \omega(f;x)<\tfrac1n & \text{(Type III)}.
+\end{cases}
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-Each threshold set $\{x:\omega(f;x)\geq 1/n\}$ is closed (the
-oscillation function is upper semicontinuous). Hence $D(f)$ is
-$F_\sigma$ --- a countable union of closed sets. This is the starting
-point for the Riemann integrability criterion: a bounded function is
-Riemann integrable iff $D(f)$ has Lebesgue measure zero.
+Oscillation detects discontinuity quantitatively: every discontinuity forces $\omega(f;x)$ to stay above some positive threshold, and conversely the vanishing of oscillation characterises continuity. Because each set $\{x\in E:\omega(f;x)\ge 1/n\}$ is closed, the discontinuity set $D(f)$ is an $F_{\sigma}$, a countable union of closed sets. This structural description is the gateway to measure-theoretic criteria such as the Lebesgue characterisation of Riemann integrability, where the size of $D(f)$ controls integrability.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:point-of-discontinuity]{Definition~\ref*{def:point-of-discontinuity}};
+\hyperref[def:oscillation-at-a-point]{Definition~\ref*{def:oscillation-at-a-point}}.
 \end{remark*}
