@@ -80,6 +80,26 @@ def cmd_plan_toolkits(args: argparse.Namespace) -> None:
     plan_toolkits(chapter_path=Path(args.path))
 
 
+def cmd_plan_proofs_to_do(args: argparse.Namespace) -> None:
+    from auditor.plans.proofs_to_do import (
+        DEFAULT_TYPES,
+        find_proofs_to_do,
+        write_proofs_to_do_markdown,
+    )
+
+    repo_root = config.REPO_ROOT
+    types = set(args.types or DEFAULT_TYPES)
+    todos = find_proofs_to_do(
+        repo_root,
+        types=types,
+        include_existing_todo=not args.ignore_existing_todo,
+    )
+    output_path = Path(args.out) if args.out else repo_root / "proofs-to-do.md"
+    written = write_proofs_to_do_markdown(todos, repo_root, output_path)
+    print(f"Proofs to do: {len(todos)}")
+    print(f"Written: {written}")
+
+
 def cmd_patch_safe(args: argparse.Namespace) -> None:
     from auditor.patchers.safe_auto import safe_autopatch
     result = safe_autopatch(
@@ -537,6 +557,21 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("path", help="Path to the chapter directory")
     p.set_defaults(func=cmd_plan_toolkits)
 
+    p = plan_sub.add_parser("proofs-to-do", help="Write root proofs-to-do.md from chapter.yaml manifests")
+    p.add_argument(
+        "--types",
+        nargs="+",
+        default=sorted(["thm", "lem", "prop", "cor"]),
+        help="Environment types to include. Defaults to thm lem prop cor.",
+    )
+    p.add_argument(
+        "--ignore-existing-todo",
+        action="store_true",
+        help="Only report missing/unlisted proof files; ignore TODO markers inside existing proof files.",
+    )
+    p.add_argument("--out", help="Output markdown path. Defaults to <repo>/proofs-to-do.md")
+    p.set_defaults(func=cmd_plan_proofs_to_do)
+
     # ---- patch ----
     patch = sub.add_parser("patch", help="Deterministic source patch operations")
     patch_sub = patch.add_subparsers(dest="patch_target", required=True)
@@ -697,9 +732,10 @@ def main() -> None:
         parser.error("one of {audit,plan,patch,validate,index,scan,trueup,generate} is required unless -test is supplied")
 
     generate_target = getattr(args, "gen_target", "")
+    deterministic_plan = args.command == "plan" and getattr(args, "plan_target", "") == "proofs-to-do"
     require_ai = args.test or (args.command == "generate" and generate_target != "proof-stubs") or (
         args.command == "audit" and getattr(args, "audit_target", "") not in {"toolkits"}
-    ) or args.command == "plan"
+    ) or (args.command == "plan" and not deterministic_plan)
     errors = validate_config(ai_provider=args.ai, require_ai=require_ai)
     hard_errors = [e for e in errors if not e.startswith("WARNING")]
     warnings    = [e for e in errors if e.startswith("WARNING")]
