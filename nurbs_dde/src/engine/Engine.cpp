@@ -4,6 +4,7 @@
 
 #include "engine/Engine.hpp"
 #include "app/Scene.hpp"
+#include "app/SurfaceSimScene.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <format>
 #include <iostream>
@@ -17,7 +18,9 @@ namespace ndde {
 Engine::Engine() = default;
 
 Engine::~Engine() {
+    m_sim_scene.reset();
     m_scene.reset();
+    m_second_win.destroy();
     m_renderer.destroy();
     m_buffer_manager.destroy();
     m_swapchain.destroy();
@@ -43,7 +46,41 @@ void Engine::start(const std::string& config_path) {
 
     m_buffer_manager.init(m_vk.device(), m_vk.physical_device(),
                           m_config.simulation.arena_size_mb);
-    m_scene = std::make_unique<Scene>(make_api());
+
+    // Second window for the 2D contour view.
+    // Place it to the right of the primary window. glfwGetMonitors lets us
+    // find the second monitor; fall back to primary + offset if only one.
+    {
+        int   mon_count = 0;
+        GLFWmonitor** monitors = glfwGetMonitors(&mon_count);
+        int x = 0, y = 0;
+        if (mon_count >= 2) {
+            // Put second window on second monitor
+            int mx=0, my=0;
+            glfwGetMonitorPos(monitors[1], &mx, &my);
+            const GLFWvidmode* vm = glfwGetVideoMode(monitors[1]);
+            x = mx; y = my;
+            m_second_win.init(m_vk, x, y,
+                static_cast<u32>(vm->width),
+                static_cast<u32>(vm->height),
+                "Contour 2D", SHADER_DIR);
+        } else {
+            // Single monitor: place second window at right half
+            int mx=0, my=0;
+            glfwGetMonitorPos(monitors[0], &mx, &my);
+            const GLFWvidmode* vm = glfwGetVideoMode(monitors[0]);
+            const u32 hw = static_cast<u32>(vm->width / 2);
+            m_second_win.init(m_vk, mx + static_cast<int>(hw), my,
+                hw, static_cast<u32>(vm->height),
+                "Contour 2D", SHADER_DIR);
+        }
+    }
+
+    // Also maximise the primary window to fill its half / first monitor
+    glfwMaximizeWindow(m_glfw.window());
+
+    m_scene     = std::make_unique<Scene>(make_api());
+    m_sim_scene = std::make_unique<SurfaceSimScene>(make_api());
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
@@ -69,13 +106,11 @@ void Engine::run_frame() {
 
     m_buffer_manager.reset();
 
+    // ── Primary window (3D surface + ImGui) ─────────────────────────────────
     if (!m_renderer.begin_frame(m_swapchain)) { handle_resize(); return; }
     m_renderer.imgui_new_frame();
 
-    // ── Populate DebugStats before Scene::on_frame() sees them ────────────────
-    // draw_call_count() reflects the *previous* frame (latched in end_frame),
-    // which is the correct value to display — the current frame hasn't
-    // submitted any draw calls yet at this point.
+    // ── Populate DebugStats ───────────────────────────────────────────────────
     const auto& sc_ext = m_swapchain.extent();
     m_debug_stats = DebugStats{
         .arena_bytes_used   = m_buffer_manager.bytes_used(),   // 0 after reset — updated lazily
@@ -89,7 +124,19 @@ void Engine::run_frame() {
         .fps                = fps,
     };
 
-    m_scene->on_frame();
+    // Run only the surface simulation scene.
+    // m_scene->on_frame();  // original conics scene — re-enable to switch
+
+    // ── Second window begin ──────────────────────────────────────────────────────
+    const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
+
+    m_sim_scene->on_frame(frame_ms / 1000.f);
+
+    // ── Second window end ─────────────────────────────────────────────────────
+    if (second_ok) {
+        const bool present_ok = m_second_win.end_frame();
+        if (!present_ok) { /* resize handled internally */ }
+    }
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_buffer_manager.bytes_used();
@@ -126,12 +173,26 @@ EngineAPI Engine::make_api() {
         });
     };
 
+    api.submit2 = [this](const memory::ArenaSlice& slice,
+                         Topology topology, DrawMode mode, Vec4 color, Mat4 mvp) {
+        if (m_second_win.valid())
+            m_second_win.draw(renderer::DrawCall{
+                .slice = slice, .topology = topology,
+                .mode  = mode,  .color    = color, .mvp = mvp
+            });
+    };
+
     api.math_font_body  = [this]() -> ImFont* { return m_renderer.font_math_body();  };
     api.math_font_small = [this]() -> ImFont* { return m_renderer.font_math_small(); };
     api.config          = [this]() -> const AppConfig& { return m_config; };
     api.viewport_size   = [this]() -> Vec2 {
         return Vec2{ static_cast<f32>(m_glfw.width()),
                      static_cast<f32>(m_glfw.height()) };
+    };
+    api.viewport_size2  = [this]() -> Vec2 {
+        if (!m_second_win.valid()) return {};
+        return Vec2{ static_cast<f32>(m_second_win.width()),
+                     static_cast<f32>(m_second_win.height()) };
     };
     api.debug_stats     = [this]() -> const DebugStats& { return m_debug_stats; };
 

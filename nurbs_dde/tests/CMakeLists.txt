@@ -4,6 +4,7 @@ enable_testing()
 add_executable(ndde_tests
     test_conics.cpp
     test_axes.cpp
+    test_numeric.cpp
 )
 
 target_include_directories(ndde_tests PRIVATE
@@ -12,6 +13,7 @@ target_include_directories(ndde_tests PRIVATE
 
 target_link_libraries(ndde_tests PRIVATE
     ndde_math
+    ndde_numeric
     GTest::gtest_main
     glm::glm
 )

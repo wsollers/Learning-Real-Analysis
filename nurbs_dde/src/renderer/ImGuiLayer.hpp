@@ -5,7 +5,7 @@
 
 #include <volk.h>
 #include <imgui.h>
-#include "math/Types.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <string>
 
 struct GLFWwindow;

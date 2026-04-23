@@ -236,8 +236,11 @@ void Scene::update_camera() {
     const ImGuiIO& io = ImGui::GetIO();
     if (io.WantCaptureMouse) return;
 
+    // Correct for ViewportsEnable: MousePos is absolute screen coords.
+    const Vec2 wm = Viewport::screen_to_window(io.MousePos.x, io.MousePos.y);
+
     if (std::abs(io.MouseWheel) > 0.f)
-        m_vp.zoom_toward(io.MousePos.x, io.MousePos.y, io.MouseWheel);
+        m_vp.zoom_toward(wm.x, wm.y, io.MouseWheel);
 
     if (io.MouseDelta.x == 0.f && io.MouseDelta.y == 0.f) return;
 
@@ -261,7 +264,10 @@ void Scene::update_hover() {
     if (io.MousePos.x < 0.f || io.MousePos.y < 0.f) return;
     if (ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered()) return;
 
-    const Vec2  mw = m_vp.pixel_to_world(io.MousePos.x, io.MousePos.y);
+    // When ViewportsEnable is active MousePos is absolute screen coords.
+    // Convert to window-relative before passing to pixel_to_world.
+    const Vec2 win_mouse = Viewport::screen_to_window(io.MousePos.x, io.MousePos.y);
+    const Vec2  mw = m_vp.pixel_to_world(win_mouse.x, win_mouse.y);
     const float world_per_px = (m_vp.dp_h > 0.f)
         ? (m_vp.top() - m_vp.bottom()) / m_vp.dp_h : 0.01f;
     const float snap_r_world = m_analysis_panel.get_snap_px_radius() * world_per_px;

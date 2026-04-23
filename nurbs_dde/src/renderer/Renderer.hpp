@@ -7,7 +7,7 @@
 #include "renderer/Pipeline.hpp"
 #include "renderer/ImGuiLayer.hpp"
 #include "memory/ArenaSlice.hpp"
-#include "math/Types.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <glm/glm.hpp>
 #include <string>
 

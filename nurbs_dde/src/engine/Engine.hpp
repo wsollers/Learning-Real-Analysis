@@ -7,6 +7,7 @@
 #include "platform/VulkanContext.hpp"
 #include "renderer/Swapchain.hpp"
 #include "renderer/Renderer.hpp"
+#include "renderer/SecondWindow.hpp"
 #include "memory/BufferManager.hpp"
 #include <memory>
 #include <string>
@@ -14,6 +15,7 @@
 namespace ndde {
 
 class Scene;
+class SurfaceSimScene;
 
 class Engine {
 public:
@@ -35,7 +37,9 @@ private:
     renderer::Swapchain     m_swapchain;
     renderer::Renderer      m_renderer;
     memory::BufferManager   m_buffer_manager;
-    std::unique_ptr<Scene>  m_scene;
+    std::unique_ptr<Scene>           m_scene;
+    std::unique_ptr<SurfaceSimScene> m_sim_scene;
+    renderer::SecondWindow           m_second_win;   ///< 2D contour window
     bool                    m_running       = false;
 
     // ── Per-frame state ───────────────────────────────────────────────────────

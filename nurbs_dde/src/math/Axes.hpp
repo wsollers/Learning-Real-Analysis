@@ -5,7 +5,8 @@
 //   build_grid()          — legacy, bounded by AxesConfig::extent
 //   build_grid_viewport() — covers the visible view exactly; use this for 2D
 
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <span>
 #include <cmath>
 

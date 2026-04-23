@@ -3,7 +3,7 @@
 // Engine configuration, loaded from engine_config.json at startup.
 // All fields have defaults — a missing JSON file is not an error.
 
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
 #include <string>
 
 namespace ndde {

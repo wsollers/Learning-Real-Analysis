@@ -6,7 +6,7 @@
 
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
 
 #include <imgui.h>
 #include <string>
