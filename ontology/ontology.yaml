@@ -1,0 +1,28 @@
+version: 1
+profile: lra-math-ontology-v3
+
+design:
+  canonical_names_required: true
+  polymorphic_entities: true
+  optional_parameter_convention: true
+  separate_terms_predicates_operators: true
+  generated_outputs:
+    - knowledge.json
+    - graph-edges.json
+
+default_context:
+  scalar_field: \mathbb{R}
+  ambient_set: \mathbb{R}
+  metric_space: \mathbb{R}
+  metric: usual-metric
+  topology: euclidean-topology
+
+rules:
+  - Predicates are truth-valued only.
+  - Terms denote mathematical objects only.
+  - Operators take predicates, scope conditions, or asymptotic conditions as inputs.
+  - Constructors belong in terms.yaml, not predicates.yaml.
+  - Legacy aliases may exist, but each concept has one canonical id.
+  - Explorer output may flatten relation kinds to depends_on for compatibility.
+  - Optional context arguments must be omitted rather than encoded into separate predicate names.
+  - Use canonical operator names in TeX and map legacy names through migration.yaml.

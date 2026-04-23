@@ -269,7 +269,21 @@ def extract_dependencies_from_blocks(blocks: list[dict[str, Any]]) -> list[str]:
     return extract_relationships_from_blocks(blocks)["dependencies"]
 
 
+def proof_blocks_are_todo_stub(blocks: list[dict[str, Any]]) -> bool:
+    for blk in blocks:
+        if blk.get("env_name") != "proof":
+            continue
+        raw = decode_b64(blk.get("raw_latex_b64", ""))
+        body = strip_comments(extract_body_from_env(raw)).strip().lower()
+        if "todo" in body:
+            return True
+    return False
+
+
 def summarize_proof_blocks(blocks: list[dict[str, Any]], node_id: str, proof_source_path: str) -> tuple[str, list[str], str, str, str, str, dict[str, Any] | None]:
+    if proof_blocks_are_todo_stub(blocks):
+        return "", [], "todo_stub_skipped", "", "", "", None
+
     proof_texts: list[str] = []
     proof_structure = ""
     method = ""
@@ -668,6 +682,7 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
     node["implies_ids"] = note_relationships["implies_ids"]
     node["equivalent_to_ids"] = note_relationships["equivalent_to_ids"]
 
+    proof_is_todo_stub = proof_blocks_are_todo_stub(seed_node.get("proof_file_blocks", []))
     proof_sketch, proof_steps, proof_sketch_source, proof_idea, proof_type, method, error = summarize_proof_blocks(
         seed_node.get("proof_file_blocks", []),
         node_id=node["id"],
@@ -680,7 +695,7 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
     node["proof_type"] = proof_type
     node["method"] = method
 
-    deps = extract_dependencies_from_blocks(seed_node.get("proof_file_blocks", []))
+    deps = [] if proof_is_todo_stub else extract_dependencies_from_blocks(seed_node.get("proof_file_blocks", []))
     node["uses_text"] = ", ".join(deps)
 
     node["raw_latex_b64"] = seed_node.get("raw_latex_b64", "")

@@ -1,0 +1,85 @@
+version: 1
+operators:
+  - id: op:eventually
+    name: Eventually
+    kind: operator
+    category: asymptotic
+    input_kind: predicate_on_n
+    returns: truth_value
+    dual: op:frequently
+    expansion: '\exists N \in \mathbb{N} \; \forall n \ge N \; P(n)'
+    negation_law: '\neg Eventually(P) \Longleftrightarrow Frequently(\neg P)'
+
+  - id: op:frequently
+    name: Frequently
+    kind: operator
+    category: asymptotic
+    input_kind: predicate_on_n
+    returns: truth_value
+    dual: op:eventually
+    expansion: '\forall N \in \mathbb{N} \; \exists n \ge N \; P(n)'
+    negation_law: '\neg Frequently(P) \Longleftrightarrow Eventually(\neg P)'
+
+  - id: op:at-point
+    name: AtPoint
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, c]
+    returns: truth_value
+
+  - id: op:on-set
+    name: OnSet
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, A]
+    returns: truth_value
+
+  - id: op:pointwise-on
+    name: PointwiseOn
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, A]
+    returns: truth_value
+
+  - id: op:uniformly-on
+    name: UniformlyOn
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, A]
+    returns: truth_value
+
+  - id: op:locally-at
+    name: LocallyAt
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, c]
+    returns: truth_value
+
+  - id: op:locally-on
+    name: LocallyOn
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, A]
+    returns: truth_value
+
+  - id: op:globally-on
+    name: GloballyOn
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, A]
+    returns: truth_value
+
+  - id: op:relatively-in
+    name: RelativelyIn
+    kind: operator
+    category: scope
+    input_kind: predicate
+    arguments: [P, A]
+    returns: truth_value

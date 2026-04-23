@@ -1,0 +1,403 @@
+version: 1
+predicates:
+  - id: pred:nonempty-set
+    name: NonemptySet
+    kind: predicate
+    category: set
+    arguments: [A]
+    returns: truth_value
+    formal: 'A \neq \varnothing'
+
+  - id: pred:subset
+    name: Subset
+    kind: predicate
+    category: set
+    arguments: [A, S]
+    returns: truth_value
+    formal: 'A \subseteq S'
+
+  - id: pred:upper-bound
+    name: UpperBound
+    kind: predicate
+    category: bounding
+    arguments: [u, A]
+    returns: truth_value
+    formal: '\forall x \in A \; (x \le u)'
+
+  - id: pred:lower-bound
+    name: LowerBound
+    kind: predicate
+    category: bounding
+    arguments: [l, A]
+    returns: truth_value
+    formal: '\forall x \in A \; (l \le x)'
+
+  - id: pred:bounded-above
+    name: BoundedAbove
+    kind: predicate
+    category: bounding
+    arguments: [A]
+    returns: truth_value
+    formal: '\exists u \; UpperBound(u, A)'
+
+  - id: pred:bounded-below
+    name: BoundedBelow
+    kind: predicate
+    category: bounding
+    arguments: [A]
+    returns: truth_value
+    formal: '\exists l \; LowerBound(l, A)'
+
+  - id: pred:bounded-set
+    name: BoundedSet
+    kind: predicate
+    category: bounding
+    arguments: [A]
+    returns: truth_value
+    formal: 'BoundedAbove(A) \land BoundedBelow(A)'
+
+  - id: pred:maximum
+    name: Maximum
+    kind: predicate
+    category: bounding
+    arguments: [m, A]
+    returns: truth_value
+    formal: '(m \in A) \land \forall x \in A \; (x \le m)'
+
+  - id: pred:minimum
+    name: Minimum
+    kind: predicate
+    category: bounding
+    arguments: [m, A]
+    returns: truth_value
+    formal: '(m \in A) \land \forall x \in A \; (m \le x)'
+
+  - id: pred:supremum
+    name: Supremum
+    kind: predicate
+    category: completeness
+    arguments: [s, A]
+    returns: truth_value
+    formal: 'UpperBound(s,A) \land \forall u \; (UpperBound(u,A) \rightarrow s \le u)'
+
+  - id: pred:infimum
+    name: Infimum
+    kind: predicate
+    category: completeness
+    arguments: [t, A]
+    returns: truth_value
+    formal: 'LowerBound(t,A) \land \forall l \; (LowerBound(l,A) \rightarrow l \le t)'
+
+  - id: pred:least-upper-bound-property
+    name: LeastUpperBoundProperty
+    kind: predicate
+    category: completeness
+    arguments: []
+    returns: truth_value
+    formal: '\forall A \subseteq \mathbb{R} \; ((NonemptySet(A) \land BoundedAbove(A)) \rightarrow \exists s \; Supremum(s,A))'
+
+  - id: pred:interval
+    name: Interval
+    kind: predicate
+    category: set-class
+    arguments: [A]
+    returns: truth_value
+
+  - id: pred:open-set
+    name: OpenSet
+    kind: predicate
+    category: topology
+    arguments: [A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:closed-set
+    name: ClosedSet
+    kind: predicate
+    category: topology
+    arguments: [A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:interior-point
+    name: InteriorPoint
+    kind: predicate
+    category: topology
+    arguments: [x, A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:adherent-point
+    name: AdherentPoint
+    kind: predicate
+    category: topology
+    arguments: [x, A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:boundary-point
+    name: BoundaryPoint
+    kind: predicate
+    category: topology
+    arguments: [x, A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:cluster-point
+    name: ClusterPoint
+    kind: predicate
+    category: topology
+    arguments: [x, A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:isolated-point
+    name: IsolatedPoint
+    kind: predicate
+    category: topology
+    arguments: [x, A]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:dense-in
+    name: DenseIn
+    kind: predicate
+    category: topology
+    arguments: [D, S]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:in-neighborhood-of
+    name: InNeighborhoodOf
+    kind: predicate
+    category: region
+    arguments: [x, c, \delta]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:in-deleted-neighborhood-of
+    name: InDeletedNeighborhoodOf
+    kind: predicate
+    category: region
+    arguments: [x, c, \delta]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:in-relative-neighborhood-of
+    name: InRelativeNeighborhoodOf
+    kind: predicate
+    category: region
+    arguments: [x, A, c, \delta]
+    optional_arguments: [X, tau]
+    returns: truth_value
+
+  - id: pred:left-of-near
+    name: LeftOfNear
+    kind: predicate
+    category: region
+    arguments: [x, c, \delta]
+    returns: truth_value
+
+  - id: pred:right-of-near
+    name: RightOfNear
+    kind: predicate
+    category: region
+    arguments: [x, c, \delta]
+    returns: truth_value
+
+  - id: pred:sequence
+    name: Sequence
+    kind: predicate
+    category: sequences
+    arguments: [x_n, X]
+    returns: truth_value
+    formal: 'x:\mathbb{N}\to X'
+
+  - id: pred:subsequence
+    name: Subsequence
+    kind: predicate
+    category: sequences
+    arguments: ['x_{n_k}', x_n]
+    returns: truth_value
+
+  - id: pred:tail-sequence
+    name: TailSequence
+    kind: predicate
+    category: sequence-tail
+    arguments: [x_n, M, y_k]
+    returns: truth_value
+    formal: '\forall k \in \mathbb{N}\;(y_k=x_{M+k-1})'
+
+  - id: pred:convergent-sequence
+    name: ConvergentSequence
+    kind: predicate
+    category: sequences
+    arguments: [x_n, L]
+    optional_arguments: [d]
+    returns: truth_value
+
+  - id: pred:not-convergent-to
+    name: NotConvergentTo
+    kind: predicate
+    category: sequences
+    arguments: [x_n, L]
+    optional_arguments: [d]
+    returns: truth_value
+
+  - id: pred:bounded-sequence
+    name: BoundedSequence
+    kind: predicate
+    category: sequences
+    arguments: [x_n]
+    optional_arguments: [d]
+    returns: truth_value
+
+  - id: pred:cauchy-sequence
+    name: CauchySequence
+    kind: predicate
+    category: sequences
+    arguments: [x_n]
+    optional_arguments: [d]
+    returns: truth_value
+
+  - id: pred:monotone-increasing-sequence
+    name: MonotoneIncreasingSequence
+    kind: predicate
+    category: sequences
+    arguments: [x_n]
+    returns: truth_value
+
+  - id: pred:monotone-decreasing-sequence
+    name: MonotoneDecreasingSequence
+    kind: predicate
+    category: sequences
+    arguments: [x_n]
+    returns: truth_value
+
+  - id: pred:eventually-in
+    name: EventuallyIn
+    kind: predicate
+    category: sequence-tail
+    derived_from: op:eventually
+    arguments: [x_n, A]
+    returns: truth_value
+
+  - id: pred:frequently-in
+    name: FrequentlyIn
+    kind: predicate
+    category: sequence-tail
+    derived_from: op:frequently
+    arguments: [x_n, A]
+    returns: truth_value
+
+  - id: pred:eventually-within
+    name: EventuallyWithin
+    kind: predicate
+    category: sequence-tail
+    derived_from: op:eventually
+    arguments: [x_n, L, \varepsilon]
+    returns: truth_value
+
+  - id: pred:frequently-outside
+    name: FrequentlyOutside
+    kind: predicate
+    category: sequence-tail
+    derived_from: op:frequently
+    arguments: [x_n, L, \varepsilon]
+    returns: truth_value
+
+  - id: pred:function-limit
+    name: FunctionLimit
+    kind: predicate
+    category: analysis
+    arguments: [f, c, L]
+    optional_arguments: [A, d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:left-limit
+    name: LeftLimit
+    kind: predicate
+    category: analysis
+    arguments: [f, c, L]
+    optional_arguments: [A, d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:right-limit
+    name: RightLimit
+    kind: predicate
+    category: analysis
+    arguments: [f, c, L]
+    optional_arguments: [A, d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:continuous-at
+    name: ContinuousAt
+    kind: predicate
+    category: analysis
+    arguments: [f, c]
+    optional_arguments: [A, d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:continuous-on
+    name: ContinuousOn
+    kind: predicate
+    category: analysis
+    arguments: [f, A]
+    optional_arguments: [d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:uniformly-continuous-on
+    name: UniformlyContinuousOn
+    kind: predicate
+    category: analysis
+    arguments: [f, A]
+    optional_arguments: [d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:lipschitz-on
+    name: LipschitzOn
+    kind: predicate
+    category: analysis
+    arguments: [f, A]
+    optional_arguments: [K, d_dom, d_cod]
+    returns: truth_value
+    formal: 'K \ge 0 \land \forall x,u \in A\; OutputVariation(f,x,u) \le K InputSeparation(x,u)'
+    interpretation: 'Output variation is bounded by a fixed scaling of input separation.'
+
+  - id: pred:pointwise-convergent-to
+    name: PointwiseConvergentTo
+    kind: predicate
+    category: function-sequences
+    arguments: [f_n, f, A]
+    optional_arguments: [d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:uniformly-convergent-to
+    name: UniformlyConvergentTo
+    kind: predicate
+    category: function-sequences
+    arguments: [f_n, f, A]
+    optional_arguments: [d_dom, d_cod]
+    returns: truth_value
+
+  - id: pred:riemann-integrable-on
+    name: RiemannIntegrableOn
+    kind: predicate
+    category: integration
+    arguments: [f, I]
+    returns: truth_value
+
+  - id: pred:delta-fine
+    name: DeltaFine
+    kind: predicate
+    category: integration
+    arguments: [P, \delta]
+    optional_arguments: [I]
+    returns: truth_value
+
+  - id: pred:refinement-of
+    name: RefinementOf
+    kind: predicate
+    category: integration
+    arguments: [Q, P]
+    returns: truth_value

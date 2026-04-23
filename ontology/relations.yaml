@@ -1,0 +1,200 @@
+version: 1
+
+direction_rules:
+  depends_on: 'from concept to prerequisite'
+  implies: 'from stronger statement to weaker consequence'
+  specializes: 'from special case to general concept'
+  instantiates: 'from constructor or concrete concept to class predicate'
+  characterizes: 'from characterization to characterized concept'
+
+edge_kinds:
+  - characterizes
+  - depends_on
+  - dual_to
+  - implies
+  - instantiates
+  - negates
+  - specializes
+  - uses_operator
+  - uses_term
+
+relations:
+  - from: pred:bounded-above
+    to: pred:upper-bound
+    kind: depends_on
+
+  - from: pred:bounded-below
+    to: pred:lower-bound
+    kind: depends_on
+
+  - from: pred:bounded-set
+    to: pred:bounded-above
+    kind: depends_on
+
+  - from: pred:bounded-set
+    to: pred:bounded-below
+    kind: depends_on
+
+  - from: pred:supremum
+    to: pred:upper-bound
+    kind: depends_on
+
+  - from: pred:infimum
+    to: pred:lower-bound
+    kind: depends_on
+
+  - from: pred:least-upper-bound-property
+    to: pred:nonempty-set
+    kind: depends_on
+
+  - from: pred:least-upper-bound-property
+    to: pred:bounded-above
+    kind: depends_on
+
+  - from: pred:least-upper-bound-property
+    to: pred:supremum
+    kind: depends_on
+
+  - from: pred:continuous-at
+    to: pred:function-limit
+    kind: depends_on
+    note: ContinuousAt(f,c) is FunctionLimit(f,c,f(c)) in the relevant domain.
+
+  - from: pred:continuous-on
+    to: pred:continuous-at
+    kind: depends_on
+
+  - from: pred:uniformly-continuous-on
+    to: pred:continuous-on
+    kind: implies
+    context: every-domain
+
+  - from: pred:uniformly-continuous-on
+    to: term:input-separation
+    kind: uses_term
+
+  - from: pred:uniformly-continuous-on
+    to: term:output-variation
+    kind: uses_term
+
+  - from: pred:lipschitz-on
+    to: pred:uniformly-continuous-on
+    kind: implies
+
+  - from: pred:lipschitz-on
+    to: term:input-separation
+    kind: uses_term
+
+  - from: pred:lipschitz-on
+    to: term:output-variation
+    kind: uses_term
+
+  - from: pred:left-limit
+    to: pred:function-limit
+    kind: specializes
+
+  - from: pred:right-limit
+    to: pred:function-limit
+    kind: specializes
+
+  - from: pred:interior-point
+    to: pred:open-set
+    kind: depends_on
+
+  - from: pred:adherent-point
+    to: pred:closed-set
+    kind: depends_on
+
+  - from: pred:boundary-point
+    to: pred:interior-point
+    kind: depends_on
+
+  - from: pred:isolated-point
+    to: pred:cluster-point
+    kind: negates
+
+  - from: pred:convergent-sequence
+    to: pred:cauchy-sequence
+    kind: implies
+    context: every-metric-space
+
+  - from: pred:cauchy-sequence
+    to: pred:convergent-sequence
+    kind: characterizes
+    context: complete-space
+
+  - from: pred:not-convergent-to
+    to: pred:convergent-sequence
+    kind: negates
+
+  - from: pred:eventually-in
+    to: op:eventually
+    kind: uses_operator
+
+  - from: pred:frequently-in
+    to: op:frequently
+    kind: uses_operator
+
+  - from: pred:eventually-within
+    to: op:eventually
+    kind: uses_operator
+
+  - from: pred:frequently-outside
+    to: op:frequently
+    kind: uses_operator
+
+  - from: op:eventually
+    to: op:frequently
+    kind: dual_to
+
+  - from: pred:convergent-sequence
+    to: pred:eventually-within
+    kind: depends_on
+
+  - from: pred:not-convergent-to
+    to: pred:frequently-outside
+    kind: depends_on
+
+  - from: pred:uniformly-convergent-to
+    to: pred:pointwise-convergent-to
+    kind: implies
+
+  - from: pred:uniformly-convergent-to
+    to: pred:pointwise-convergent-to
+    kind: depends_on
+
+  - from: term:interval-open
+    to: pred:interval
+    kind: instantiates
+
+  - from: term:interval-closed
+    to: pred:interval
+    kind: instantiates
+
+  - from: term:interval-half-open-left
+    to: pred:interval
+    kind: instantiates
+
+  - from: term:interval-half-open-right
+    to: pred:interval
+    kind: instantiates
+
+  - from: pred:riemann-integrable-on
+    to: term:partition
+    kind: depends_on
+
+  - from: pred:riemann-integrable-on
+    to: term:upper-sum
+    kind: depends_on
+
+  - from: pred:riemann-integrable-on
+    to: term:lower-sum
+    kind: depends_on
+
+  - from: pred:delta-fine
+    to: term:tagged-partition
+    kind: depends_on
+
+  - from: pred:delta-fine
+    to: pred:riemann-integrable-on
+    kind: depends_on

@@ -1,4 +1,8 @@
 \begin{bpnew}{propborder}{Definition: $M$-Tail of a Sequence}
+% ---------------------------------------------------------
+% Definition: $M$-Tail of a Sequence
+% Label: def:m-tail
+% ---------------------------------------------------------
 \begin{definition}[$M$-Tail of a Sequence]
 \label{def:m-tail}
 
@@ -14,8 +18,16 @@ Let $(x_n) \subseteq \mathbb{R}$ and let $M \in \mathbb{N}$. The
 \[
 \forall (x_n) \subseteq \mathbb{R} \;\forall M \in \mathbb{N}
 \;\Bigl(
-    (x_n)_{n \ge M} = \{x_n : n \ge M\}
+    (x_n)_{n \ge M} = (x_M,x_{M+1},x_{M+2},\ldots)
 \Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{TailSequence}(x_n,M,y_k)
+\;:=\;
+\forall k \in \mathbb{N}\;\bigl(y_k = x_{M+k-1}\bigr).
 \]
 \end{remark*}
 
@@ -31,9 +43,19 @@ only in finitely many initial values which convergence arguments
 discard entirely.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:sequence]{Definition of sequence}
+\end{itemize}
+\end{remark*}
+
 
 
 \begin{bpnew}{thmborder}{Theorem: Convergence of a Tail}
+% ---------------------------------------------------------
+% Theorem: Convergence of a Tail
+% Label: thm:convergence-of-tail
+% ---------------------------------------------------------
 \begin{theorem}[Convergence of a Tail]
 \label{thm:convergence-of-tail}
 
@@ -60,9 +82,21 @@ $(x_n)$ converges. Moreover, in this case,
     (x_n) \text{ converges}
 \Bigr)\\
 &\quad\land\;\Bigl(
+    (x_n) \text{ converges}
+    \;\Longrightarrow\;
     \lim_{n\to\infty} x_{m+n} = \lim_{n\to\infty} x_n
 \Bigr).
 \end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{TailConvergenceInvariant}(x_n,m)
+\;:=\;
+\Bigl(\exists L\in\mathbb{R}\,\operatorname{ConvergentSequence}(x_n,L)\Bigr)
+\Longleftrightarrow
+\Bigl(\exists L\in\mathbb{R}\,\operatorname{ConvergentSequence}(x_{m+n},L)\Bigr).
 \]
 \end{remark*}
 
@@ -79,6 +113,14 @@ $(x_n)$ converges. Moreover, in this case,
 \]
 \end{remark*}
 
+\begin{remark*}[Contrapositive predicate reading]
+\[
+\lnot\operatorname{TailConvergenceInvariant}(x_n,m)
+\;:=\;
+\bigl((x_n)\text{ diverges}\Longleftrightarrow (x_{m+n})_{n\in\mathbb{N}}\text{ diverges}\bigr).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
 Convergence is a \emph{tail property}: it depends only on the
 eventual behavior of the sequence, not on any finite initial
@@ -88,11 +130,19 @@ exactly. This theorem formalizes the informal principle that
 finitely many terms are irrelevant to asymptotic behavior. It is
 the rigorous justification for the common proof move of assuming
 without loss of generality that $n$ is large enough for some
-auxiliary condition to hold — one simply passes to a suitable
+auxiliary condition to hold: one simply passes to a suitable
 $m$-tail, applies the argument there, and concludes for the full
 sequence by this theorem. The contrapositive is equally useful:
 to show $(x_n)$ diverges it suffices to show that some $m$-tail
 diverges.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+  \item \hyperref[def:m-tail]{$M$-Tail of a Sequence}
+  \item \hyperref[thm:uniqueness-of-limits]{Uniqueness of Limits}
+\end{itemize}
 \end{remark*}
 
 
@@ -104,6 +154,10 @@ diverges.
 
 
 \begin{bpnew}{thmborder}{Theorem: Convergence by Domination}
+% ---------------------------------------------------------
+% Theorem: Convergence by Domination
+% Label: thm:convergence-by-domination
+% ---------------------------------------------------------
 \begin{theorem}[Convergence by Domination]
 \label{thm:convergence-by-domination}
 
@@ -126,13 +180,13 @@ then $\displaystyle\lim_{n \to \infty} x_n = L$.
 \[
 \begin{aligned}
 &\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}
- \;\forall (a_n) \subseteq (0, \infty) \;\forall c > 0
- \;\forall m \in \mathbb{N}\\
+ \;\forall (a_n) \subseteq (0, \infty)\\
 &\quad\Bigl(
     \Bigl(
         \lim_{n \to \infty} a_n = 0
         \;\land\;
-        \forall n \ge m \;\bigl(|x_n - L| \le c\, a_n\bigr)
+        \exists c > 0 \;\exists m \in \mathbb{N}
+        \;\forall n \ge m \;\bigl(|x_n - L| \le c\, a_n\bigr)
     \Bigr)
     \;\Longrightarrow\;
     \lim_{n \to \infty} x_n = L
@@ -145,23 +199,34 @@ then $\displaystyle\lim_{n \to \infty} x_n = L$.
 \[
 \begin{aligned}
 &\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}
- \;\forall (a_n) \subseteq (0,\infty) \;\forall c > 0
- \;\forall m \in \mathbb{N}\\
+ \;\forall (a_n) \subseteq (0,\infty)\\
 &\quad\Bigl(
     \lim_{n \to \infty} x_n \neq L
     \;\Longrightarrow\;
     \lim_{n \to \infty} a_n \neq 0
     \;\lor\;
-    \exists n \ge m \;\bigl(|x_n - L| > c\, a_n\bigr)
+    \forall c > 0 \;\forall m \in \mathbb{N}
+    \;\exists n \ge m \;\bigl(|x_n - L| > c\, a_n\bigr)
 \Bigr).
 \end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\[
+\operatorname{NotDominatedByNullError}(x_n,L,a_n)
+\;:=\;
+\lim_{n\to\infty}a_n\neq 0
+\lor
+\forall c>0\,\forall m\in\mathbb{N}\,\exists n\ge m
+\bigl(|x_n-L|>c\,a_n\bigr).
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
 The theorem is a \emph{domination principle}: it is not necessary to
 verify the $\varepsilon$-$N$ condition directly for $(x_n)$. It
-suffices to find a null sequence $(a_n)$ — one converging to zero —
+suffices to find a null sequence $(a_n)$ -- one converging to zero --
 that dominates the error $|x_n - L|$ on some tail, up to a fixed
 scalar $c$. The scalar $c$ is irrelevant to the conclusion: since
 $a_n \to 0$, the product $c\, a_n \to 0$ regardless of the size of
@@ -173,3 +238,9 @@ $a_n = 1/n$, where domination by $c/n$ is sufficient to conclude
 convergence to $L$.
 \end{remark*}
 
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+  \item \hyperref[def:m-tail]{$M$-Tail of a Sequence}
+\end{itemize}
+\end{remark*}

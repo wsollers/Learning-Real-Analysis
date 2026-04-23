@@ -159,6 +159,27 @@ def cmd_patch_generated_batch(args: argparse.Namespace) -> None:
         sys.exit(2)
 
 
+def cmd_patch_comment_blocks(args: argparse.Namespace) -> None:
+    from auditor.patchers.comment_blocks import add_theorem_comment_blocks
+
+    result = add_theorem_comment_blocks(
+        path=Path(args.path),
+        repo_root=config.REPO_ROOT,
+        apply=args.apply,
+        include_exercises=args.include_exercises,
+    )
+    mode = "applied" if args.apply else "planned"
+    print(
+        f"Comment blocks {mode}: "
+        f"{result.blocks_added} blocks across {result.files_changed} files "
+        f"({result.files_seen} files scanned)."
+    )
+    for changed_file in result.changed_files:
+        print(f"  {changed_file}")
+    if not args.apply and result.blocks_added:
+        print("Run again with --apply to write these headers.")
+
+
 def cmd_index_labels(args: argparse.Namespace) -> None:
     from auditor.indexes.labels import build_label_index, write_label_index
     index = build_label_index(Path(args.path))
@@ -298,6 +319,27 @@ def cmd_validate_generated(args: argparse.Namespace) -> None:
         print(f"\nValidation report written to: {out_path}")
 
     if report["result"] != "PASS":
+        sys.exit(2)
+
+
+def cmd_validate_ontology(args: argparse.Namespace) -> None:
+    from auditor.report import write_report
+    from auditor.validators.ontology import (
+        format_ontology_validation_markdown,
+        validate_ontology,
+    )
+
+    ontology_dir = Path(args.path) if args.path else config.REPO_ROOT / "ontology"
+    result = validate_ontology(ontology_dir)
+    markdown = format_ontology_validation_markdown(result)
+    print(markdown)
+
+    if args.out:
+        out_path = Path(args.out)
+        write_report(markdown, out_path)
+        print(f"\nOntology validation report written to: {out_path}")
+
+    if not result.clean:
         sys.exit(2)
 
 
@@ -597,6 +639,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--apply", action="store_true", help="Apply validated generated replacements to live source")
     p.set_defaults(func=cmd_patch_generated_batch)
 
+    p = patch_sub.add_parser("comment-blocks", help="Insert readable comment blocks before theorem-like environments")
+    p.add_argument("path", help="Chapter directory, source directory, or .tex file")
+    p.add_argument("--apply", action="store_true", help="Apply the comment headers to live source")
+    p.add_argument(
+        "--include-exercises",
+        action="store_true",
+        help="Also process exercise and capstone files. By default these are skipped.",
+    )
+    p.set_defaults(func=cmd_patch_comment_blocks)
+
     # ---- validate ----
     validate = sub.add_parser("validate", help="Deterministic validation operations")
     validate_sub = validate.add_subparsers(dest="validate_target", required=True)
@@ -607,6 +659,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--label", help="Expected canonical label")
     p.add_argument("--out", help="Optional markdown report output path")
     p.set_defaults(func=cmd_validate_generated)
+
+    p = validate_sub.add_parser("ontology", help="Validate ontology YAML registries and migration targets")
+    p.add_argument("path", nargs="?", help="Ontology directory. Defaults to <repo>/ontology")
+    p.add_argument("--out", help="Optional markdown report output path")
+    p.set_defaults(func=cmd_validate_ontology)
 
     # ---- index ----
     index = sub.add_parser("index", help="Generated repository indexes")

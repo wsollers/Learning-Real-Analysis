@@ -1,6 +1,6 @@
 # Proofs To Do
 
-Generated: 2026-04-22 20:08:39
+Generated: 2026-04-22 22:54:03
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
@@ -145,7 +145,7 @@ Chapter: `volume-iii/analysis/sequences`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
-| thm | `thm:convergence-by-domination` | Convergence by Domination | No proof file listed in chapter.yaml. | `notes\sequences\notes-sequences-definitions.tex` | `(none)` |
-| thm | `thm:convergence-of-tail` | Convergence of a Tail | No proof file listed in chapter.yaml. | `notes\sequences\notes-sequences-definitions.tex` | `(none)` |
-| thm | `thm:equivalence-of-convergence-formulations` | Equivalence of Convergence Formulations | No proof file listed in chapter.yaml. | `notes\sequences\notes-sequences-definitions.tex` | `(none)` |
-| thm | `thm:uniqueness-of-limits` | Uniqueness of Limits | No proof file listed in chapter.yaml. | `notes\sequences\notes-sequences-definitions.tex` | `(none)` |
+| thm | `thm:equivalence-of-convergence-formulations` | Equivalence of Convergence Formulations | Proof file exists but still contains a TODO marker. | `notes\convergence\notes-convergence.tex` | `proofs\notes\prf-equivalence-of-convergence-formulations.tex` |
+| thm | `thm:uniqueness-of-limits` | Uniqueness of Limits | Proof file exists but still contains a TODO marker. | `notes\convergence\notes-limits.tex` | `proofs\notes\prf-uniqueness-of-limits.tex` |
+| thm | `thm:convergence-by-domination` | Convergence by Domination | Proof file exists but still contains a TODO marker. | `notes\tails\notes-tails.tex` | `proofs\notes\prf-convergence-by-domination.tex` |
+| thm | `thm:convergence-of-tail` | Convergence of a Tail | Proof file exists but still contains a TODO marker. | `notes\tails\notes-tails.tex` | `proofs\notes\prf-convergence-of-tail.tex` |

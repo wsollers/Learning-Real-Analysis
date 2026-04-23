@@ -64,10 +64,10 @@ def _extract_environment_and_remarks(
     block_start = env_start
     block_end = end_match.end()
 
-    # If the formal environment is wrapped in a tcolorbox, audit the wrapper
+    # If the formal environment is wrapped in a display box, audit the wrapper
     # too. Otherwise the model never sees the required box and the following
     # support remarks are hidden behind the wrapper's closing line.
-    box_start, box_end = _expand_to_enclosing_tcolorbox(tex, block_start, block_end)
+    box_start, box_end = _expand_to_enclosing_display_box(tex, block_start, block_end)
     block_start, block_end = box_start, box_end
     env_block = tex[block_start:block_end]
 
@@ -109,25 +109,36 @@ def _skip_whitespace_and_comments(text: str, pos: int) -> int:
     return pos
 
 
-def _expand_to_enclosing_tcolorbox(tex: str, start: int, end: int) -> tuple[int, int]:
+def _expand_to_enclosing_display_box(tex: str, start: int, end: int) -> tuple[int, int]:
     """
-    Expands an environment span to an immediately enclosing tcolorbox, if one
-    exists. This intentionally mirrors the generated patcher span logic.
+    Expands an environment span to an immediately enclosing display box, if
+    one exists. This intentionally mirrors the generated patcher span logic.
     """
-    opens = list(re.finditer(r"\\begin\{tcolorbox\}(?:\[[^\]]*\])?", tex[:start], re.DOTALL))
-    if not opens:
-        return start, end
+    candidates = [
+        (r"\\begin\{tcolorbox\}(?:\[[^\]]*\])?", r"\\end\{tcolorbox\}"),
+        (r"\\begin\{bpnew\}\{[^}]*\}\{[^}]*\}", r"\\end\{bpnew\}"),
+    ]
 
-    closes_before = list(re.finditer(r"\\end\{tcolorbox\}", tex[:start]))
-    if closes_before and closes_before[-1].start() > opens[-1].start():
-        return start, end
+    best: tuple[int, int] | None = None
+    for open_re, close_re in candidates:
+        opens = list(re.finditer(open_re, tex[:start], re.DOTALL))
+        if not opens:
+            continue
 
-    open_match = opens[-1]
-    close_after = re.search(r"\\end\{tcolorbox\}", tex[end:])
-    if not close_after:
-        return start, end
+        closes_before = list(re.finditer(close_re, tex[:start]))
+        if closes_before and closes_before[-1].start() > opens[-1].start():
+            continue
 
-    return open_match.start(), end + close_after.end()
+        open_match = opens[-1]
+        close_after = re.search(close_re, tex[end:])
+        if not close_after:
+            continue
+
+        candidate = (open_match.start(), end + close_after.end())
+        if best is None or candidate[0] > best[0]:
+            best = candidate
+
+    return best if best is not None else (start, end)
 
 
 # ---------------------------------------------------------------------------
