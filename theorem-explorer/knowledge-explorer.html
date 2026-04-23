@@ -105,6 +105,9 @@ code{background:#111827;padding:1px 5px;border-radius:6px}
       <button id="zoomOutBtn">Zoom out</button>
       <button id="resetBtn">Reset</button>
     </div>
+    <div class="row" style="margin-top:10px">
+      <label class="chk"><input type="checkbox" id="dependencyTreeMode"/>Dependency Tree</label>
+    </div>
   </div>
 </aside>
 <main class="main" id="graphWrap">
@@ -135,7 +138,7 @@ const state = {
   dragging: null,
   suppressNextClick: false,
   renderedGraph: null,
-  filters: {search:'',showDefinitions:true,showAxioms:true,showResults:true,showDepends:true,showUses:true,showImplies:true,deck:'All'}
+  filters: {search:'',showDefinitions:true,showAxioms:true,showResults:true,showDepends:true,showUses:true,showImplies:true,deck:'All',dependencyTreeMode:false}
 };
 
 const els = {
@@ -152,6 +155,7 @@ const els = {
   showDepends: document.getElementById('showDepends'),
   showUses: document.getElementById('showUses'),
   showImplies: document.getElementById('showImplies'),
+  dependencyTreeMode: document.getElementById('dependencyTreeMode'),
   deckFilter: document.getElementById('deckFilter'),
   detailEmpty: document.getElementById('detailEmpty'),
   detailContent: document.getElementById('detailContent'),
@@ -416,6 +420,9 @@ function syncDecks(nodes) {
 function visibleGraph() {
   const nodes = getNodes();
   syncDecks(nodes);
+  if (state.filters.dependencyTreeMode && state.selectedId) {
+    return dependencyTreeGraph(nodes, state.edges, state.selectedId);
+  }
   const q = state.filters.search.trim().toLowerCase();
   const visible = new Map();
   for (const n of nodes) {
@@ -436,6 +443,36 @@ function visibleGraph() {
        ((kind === 'implies' || kind === 'equivalent_to') && state.filters.showImplies));
   });
   return {nodes: outNodes, edges: outEdges};
+}
+
+function dependencyTreeGraph(nodes, edges, selectedId) {
+  const byId = new Map(nodes.map(n => [n.id, n]));
+  if (!byId.has(selectedId)) return {nodes: [], edges: []};
+  const depEdges = edges.filter(e => {
+    const kind = normalizeEdgeKind(e.kind);
+    return kind === 'depends_on' || kind === 'prereq';
+  });
+  const incoming = new Map(nodes.map(n => [n.id, []]));
+  depEdges.forEach(e => {
+    if (byId.has(e.from) && byId.has(e.to)) incoming.get(e.to).push(e);
+  });
+  const seen = new Set([selectedId]);
+  const treeEdges = [];
+  const q = [selectedId];
+  while (q.length) {
+    const id = q.shift();
+    for (const e of incoming.get(id) || []) {
+      treeEdges.push(e);
+      if (!seen.has(e.from)) {
+        seen.add(e.from);
+        q.push(e.from);
+      }
+    }
+  }
+  return {
+    nodes: [...seen].map(id => byId.get(id)).filter(Boolean),
+    edges: treeEdges
+  };
 }
 
 function chooseGraphAnchor(nodes, edges) {
@@ -464,7 +501,9 @@ function relationLayers(nodes, edges) {
   });
   const layer = new Map();
   const orderedIds = nodes.map(n=>n.id);
-  const anchorId = chooseGraphAnchor(nodes, edges) || orderedIds[0];
+  const anchorId = state.filters.dependencyTreeMode && state.selectedId && ids.has(state.selectedId)
+    ? state.selectedId
+    : (chooseGraphAnchor(nodes, edges) || orderedIds[0]);
   const seeds = [anchorId, ...orderedIds.filter(id => id !== anchorId)];
   let firstComponent = true;
   for (const seed of seeds) {
@@ -666,27 +705,30 @@ function renderDetails(n) {
     }
   }
   blocks.push(`<div class="card"><div class="label">Title</div><div class="value"><strong>${esc(n.name)}</strong></div><div class="tiny" style="margin-top:8px">${esc(n.kind)} · ${esc(n.deck)} · ${esc(n.id)}</div></div>`);
+  const formalStatement = n.fully_quantified_form || n.formal || '';
+  const predicateStatement = n.formal && n.fully_quantified_form && n.formal !== n.fully_quantified_form
+    ? n.formal
+    : (n.proposition || '');
   add('Statement', n.statement_display);
-  add('Proposition', n.proposition);
-  add('Formal', n.formal || n.fully_quantified_form);
-  add('Proof type', n.proof_type);
-  add('Proof idea', n.proof_idea);
-  addProofSketch();
-  add('Method', n.method);
-  add('Depends on', (n.depends_on_ids||[]).join(', '));
-  add('Used by', (n.used_by_ids||[]).join(', '));
-  add('Uses text', n.uses_text);
+  add('Formal logic statement', formalStatement);
+  add('Predicate logic statement', predicateStatement);
   add('Negation', n.negation_formal || n.negation_display, true);
   add('Negation predicate', n.negation_predicate, true);
   add('Failure modes', n.failure_modes, true);
   add('Failure mode decomposition', n.failure_mode_decomposition, true);
   add('Contrapositive', n.contrapositive, true);
+  add('Proof type', n.proof_type);
+  add('Proof idea', n.proof_idea);
+  addProofSketch();
+  add('Depends on', (n.depends_on_ids||[]).join(', '));
+  add('Used by', (n.used_by_ids||[]).join(', '));
+  add('Source', n.source);
+  add('Proof source', n.proof_source);
+  add('Method', n.method);
   add('Implies', (n.implies_ids||[]).join(', '));
   add('Aliases', (n.aliases||[]).join(', '));
   add('Tags', (n.tags||[]).join(', '));
   add('Symbol', n.symbol);
-  add('Source', n.source);
-  add('Proof source', n.proof_source);
   if(cards.length) add('Cards present', cards.map(c=>c.card_type).join(', '));
   els.detailContent.innerHTML = blocks.join('');
   renderMathInElementSafe(els.detailContent);
@@ -781,6 +823,7 @@ els.showResults.onchange = e => { state.filters.showResults=e.target.checked; re
 els.showDepends.onchange = e => { state.filters.showDepends=e.target.checked; render(); };
 els.showUses.onchange = e => { state.filters.showUses=e.target.checked; render(); };
 els.showImplies.onchange = e => { state.filters.showImplies=e.target.checked; render(); };
+els.dependencyTreeMode.onchange = e => { state.filters.dependencyTreeMode=e.target.checked; state.nodePositions={}; render(); };
 els.deckFilter.onchange = e => { state.filters.deck=e.target.value; render(); };
 els.zoomInBtn.onclick = ()=>{ state.zoom=Math.min(2.4, +(state.zoom+0.1).toFixed(2)); render(); };
 els.zoomOutBtn.onclick = ()=>{ state.zoom=Math.max(0.45, +(state.zoom-0.1).toFixed(2)); render(); };

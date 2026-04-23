@@ -1,188 +1,364 @@
-# =========================================================
-# chapter.yaml — Differentiation
-# volume-iii/analysis/differentiation/
-#
-# Machine-readable card data for all labelled environments.
-# Replaces Flash macros in .tex files.
-# =========================================================
-
-chapter: differentiation
+subject: differentiation
 volume: volume-iii
 path: volume-iii/analysis/differentiation
-
-entries:
-
-  # =======================================================
-  # Section: Derivative Definition
-  # source: notes/derivative-definition/notes-derivative-definition.tex
-  # =======================================================
-
-  def:derivative-at-point:
-    name: Derivative at a Point
-    type: definition
-    section: Derivative Definition
-    source: notes/derivative-definition/notes-derivative-definition.tex
-
-    q: "What is the derivative of $f$ at a point $c$?"
-    a: >
-      $f'(c) = \lim_{x \to c} \dfrac{f(x) - f(c)}{x - c}$,
-      provided this limit exists as a finite real number.
-      Equivalently, $f'(c) = \lim_{h \to 0} \dfrac{f(c+h) - f(c)}{h}$.
-    hint: >
-      The difference quotient is the slope of the secant line through
-      $(c, f(c))$ and $(x, f(x))$. The derivative is the limit of
-      those slopes as $x \to c$ — the slope of the tangent line.
-    neg: >
-      $f(x) = |x|$ is not differentiable at $0$: the left difference
-      quotient limits to $-1$ and the right to $+1$, so no limit exists.
-
-    fqf: >
-      $f$ is differentiable at $c$ with derivative $L$ if and only if
-      there exists $L \in \mathbb{R}$ such that for every $\varepsilon > 0$
-      there exists $\delta > 0$ such that for every $x \in I$ with
-      $0 < |x - c| < \delta$, one has
-      $\left|\frac{f(x)-f(c)}{x-c} - L\right| < \varepsilon$.
-    predicate: "DerivativeAt(f, c, L) :iff FunctionLimit(lambda x. (f(x)-f(c))/(x-c), c, L)"
-    neg_formal: >
-      \forall L \in \mathbb{R},\; \exists \varepsilon > 0,\;
-      \forall \delta > 0,\; \exists x \in I,\;
-      0 < |x-c| < \delta
-      \;\land\;
-      \left|\frac{f(x)-f(c)}{x-c} - L\right| \ge \varepsilon.
-    contra: ~
-
-    depends_on: [def:function-limit]
-    implies:
-      - def:differentiable-on-interval
-      - thm:differentiable-implies-continuous
-      - thm:caratheodory-factorization
-    equivalent_to: []
-
-    tags: [differentiation, limit, secant-tangent, difference-quotient]
-    category: differentiation
-    aliases: [derivative, instantaneous rate of change, tangent slope]
-    proof_type: definition
-    method: ~
-
-
-  def:differentiable-on-interval:
-    name: Differentiable on an Interval
-    type: definition
-    section: Derivative Definition
-    source: notes/derivative-definition/notes-derivative-definition.tex
-
-    q: "What does it mean for $f$ to be differentiable on an interval?"
-    a: >
-      On an open interval $(a,b)$: $f$ is differentiable at every point.
-      On a closed interval $[a,b]$: differentiable on $(a,b)$, plus the
-      right derivative at $a$ and left derivative at $b$ both exist.
-    hint: >
-      Open interval — no endpoint conditions.
-      Closed interval — one-sided derivatives required at the endpoints.
-    neg: >
-      $f(x) = |x|$ is differentiable on $(0,\infty)$ and on $(-\infty,0)$
-      but not on any open interval containing $0$.
-
-    fqf: >
-      $f$ is differentiable on $(a,b)$ if and only if for every $c \in (a,b)$,
-      $\operatorname{DerivativeAt}(f, c, f'(c))$ holds.
-    predicate: "DifferentiableAt(f, c) :iff exists L in R, DerivativeAt(f, c, L)"
-    neg_formal: >
-      \exists c \in I,\; \lnot\operatorname{DifferentiableAt}(f, c).
-    contra: ~
-
-    depends_on: [def:derivative-at-point]
-    implies: []
-    equivalent_to: []
-
-    tags: [differentiation, interval]
-    category: differentiation
-    aliases: [differentiable function]
-    proof_type: definition
-    method: ~
-
-
-  thm:differentiable-implies-continuous:
-    name: Differentiable Implies Continuous
-    type: theorem
-    section: Derivative Definition
-    source: notes/derivative-definition/notes-derivative-definition.tex
-
-    q: "What does differentiability at $c$ guarantee about continuity?"
-    a: >
-      If $f$ is differentiable at $c$, then $f$ is continuous at $c$.
-    hint: >
-      Write $f(x) - f(c) = \frac{f(x)-f(c)}{x-c} \cdot (x-c)$.
-      As $x \to c$: first factor $\to f'(c)$, second factor $\to 0$.
-      Product $\to 0$, so $f(x) \to f(c)$.
-    neg: >
-      Continuity does not imply differentiability: $|x|$ is continuous
-      at $0$ but not differentiable there. The Weierstrass function is
-      continuous everywhere and differentiable nowhere.
-
-    fqf: >
-      For every open interval $I$ and every $c \in I$: if $f$ is
-      differentiable at $c$ then $\lim_{x \to c} f(x) = f(c)$.
-    predicate: "DifferentiableAt(f, c) => ContinuousAt(f, c)"
-    neg_formal: >
-      \operatorname{ContinuousAt}(f, c)
-      \;\land\; \lnot\operatorname{DifferentiableAt}(f, c).
-    contra: >
-      If $f$ is not continuous at $c$, then $f$ is not differentiable at $c$.
-
-    depends_on: [def:derivative-at-point, def:continuous-at]
-    implies: []
-    equivalent_to: []
-
-    tags: [differentiation, continuity, implication]
-    category: differentiation
-    aliases: []
-    proof_type: direct
-    method: difference-quotient
-
-
-  thm:caratheodory-factorization:
-    name: Carathéodory Factorization
-    type: theorem
-    section: Derivative Definition
-    source: notes/derivative-definition/notes-derivative-definition.tex
-
-    q: "State the Carathéodory factorization of the derivative."
-    a: >
-      $f$ is differentiable at $c$ with $f'(c) = L$ if and only if
-      there exists $\varphi : I \to \mathbb{R}$, continuous at $c$
-      with $\varphi(c) = L$, such that
-      $f(x) - f(c) = \varphi(x)(x - c)$ for all $x \in I$.
-    hint: >
-      $\varphi$ is just the difference quotient extended continuously:
-      $\varphi(x) = \frac{f(x)-f(c)}{x-c}$ for $x \neq c$, $\varphi(c) = L$.
-      No division by zero — the limit condition becomes a continuity condition.
-    neg: >
-      If no continuous extension of the difference quotient to $c$ exists,
-      then $f$ is not differentiable at $c$.
-
-    fqf: >
-      $f$ is differentiable at $c$ with derivative $L$ if and only if
-      there exists $\varphi : I \to \mathbb{R}$, continuous at $c$ with
-      $\varphi(c) = L$, such that $f(x) - f(c) = \varphi(x)(x-c)$
-      for all $x \in I$.
-    predicate: >
-      DerivativeAt(f, c, L) iff
-      exists phi : I -> R, (ContinuousAt(phi, c) land phi(c) = L
-      land forall x in I, f(x) - f(c) = phi(x)*(x-c))
-    neg_formal: >
-      \forall \varphi : I \to \mathbb{R},\;
-      \lnot\bigl(\operatorname{ContinuousAt}(\varphi,c)
-      \land \varphi(c) = L
-      \land \forall x \in I,\; f(x)-f(c)=\varphi(x)(x-c)\bigr).
-    contra: ~
-
-    depends_on: [def:derivative-at-point, def:continuous-at]
-    implies: []
-    equivalent_to: [def:derivative-at-point]
-
-    tags: [differentiation, caratheodory-factorization, chain-rule, product-rule]
-    category: differentiation
-    aliases: [Carathéodory criterion, multiplicative factorization of derivative]
-    proof_type: direct iff proof
-    method: caratheodory-factorization
+display_title: ''
+status: in-progress
+dependencies:
+  prior: ''
+  next: ''
+environments:
+- label: thm:constant-multiple-rule
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Constant Multiple Rule
+  proof_file: proofs\notes\prf-constant-multiple.tex
+- label: thm:sum-rule
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Sum Rule
+  proof_file: proofs\notes\prf-sum-rule.tex
+- label: thm:product-rule
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Product Rule
+  proof_file: proofs\notes\prf-product-rule.tex
+- label: thm:quotient-rule
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Quotient Rule
+  proof_file: proofs\notes\prf-quotient-rule.tex
+- label: cor:finite-sum-rule
+  type: cor
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Finite Sum Rule
+  proof_file: proofs\notes\prf-finite-sum-rule.tex
+- label: cor:extended-product-rule
+  type: cor
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Extended Product Rule
+  proof_file: proofs\notes\prf-finite-product-rule.tex
+- label: cor:power-rule-special-case
+  type: cor
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Power Rule for Integer Powers of a Function
+  proof_file: proofs\notes\prf-special-case-product-rule.tex
+- label: thm:finite-linear-combination-rule
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Finite Linear Combination Rule
+  proof_file: proofs\notes\prf-finite-linear-combination.tex
+- label: thm:constant-multiple-rule-interval
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Constant Multiple Rule on an Interval
+  proof_file: null
+- label: thm:sum-rule-interval
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Sum Rule on an Interval
+  proof_file: null
+- label: thm:product-rule-interval
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Product Rule on an Interval
+  proof_file: null
+- label: thm:quotient-rule-interval
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Quotient Rule on an Interval
+  proof_file: null
+- label: cor:finite-sum-rule-interval
+  type: cor
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Finite Sum Rule on an Interval
+  proof_file: null
+- label: cor:extended-product-rule-interval
+  type: cor
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Extended Product Rule on an Interval
+  proof_file: null
+- label: cor:power-rule-special-case-interval
+  type: cor
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Power Rule for Integer Powers of a Function on an Interval
+  proof_file: null
+- label: thm:finite-linear-combination-rule-interval
+  type: thm
+  file: notes\algebra-of-derivatives\notes-algebra-of-derivatives.tex
+  display_title: Finite Linear Combination Rule on an Interval
+  proof_file: proofs\notes\prf-differentiation-on-set.tex
+- label: def:caratheodory-factorization
+  type: def
+  file: notes\chain-rule\notes-caratheodory.tex
+  display_title: Carathéodory Factorization
+  proof_file: null
+- label: thm:caratheodory-characterization-of-differentiability
+  type: thm
+  file: notes\chain-rule\notes-caratheodory.tex
+  display_title: Carathéodory Characterization of Differentiability
+  proof_file: null
+- label: thm:chain-rule
+  type: thm
+  file: notes\chain-rule\notes-caratheodory.tex
+  display_title: Chain Rule
+  proof_file: proofs\notes\prf-chain-rule.tex
+- label: def:derivative-at-a-point
+  type: def
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Derivative at a Point
+  proof_file: null
+- label: def:topological-definition-of-derivative-at-a-point
+  type: def
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Topological Definition of Derivative at a Point
+  proof_file: null
+- label: def:sequential-definition-of-derivative-at-a-point
+  type: def
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Sequential Definition of Derivative at a Point
+  proof_file: null
+- label: thm:derivative-equivalence
+  type: thm
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Equivalence of Definitions of the Derivative at a Point
+  proof_file: proofs\notes\prf-derivative-equivalence.tex
+- label: prop:derivative-h-form-equivalence
+  type: prop
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: 'Derivative: $h$-Form Equivalence'
+  proof_file: proofs\notes\prf-increment-definition-derivative.tex
+- label: thm:differentiable-implies-continuous
+  type: thm
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Differentiable Implies Continuous
+  proof_file: proofs\notes\prf-differentiable-implies-continuous.tex
+- label: thm:uniqueness-of-the-derivative
+  type: thm
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Uniqueness of the Derivative
+  proof_file: proofs\notes\prf-uniqueness-of-derivative.tex
+- label: prop:derivative-of-the-identity
+  type: prop
+  file: notes\derivative-definition\notes-derivative-definition.tex
+  display_title: Derivative of the Identity
+  proof_file: proofs\notes\prf-derivative-of-the-identity.tex
+- label: def:relative-minimum
+  type: def
+  file: notes\derivative-geometry\notes-derivative-geometry.tex
+  display_title: Relative Minimum
+  proof_file: null
+- label: def:relative-maximum
+  type: def
+  file: notes\derivative-geometry\notes-derivative-geometry.tex
+  display_title: Relative Maximum
+  proof_file: null
+- label: def:relative-extremum
+  type: def
+  file: notes\derivative-geometry\notes-derivative-geometry.tex
+  display_title: Relative Extremum
+  proof_file: null
+- label: thm:interior-extremum-theorem
+  type: thm
+  file: notes\derivative-geometry\notes-derivative-geometry.tex
+  display_title: Interior Extremum Theorem
+  proof_file: proofs\notes\prf-interior-extremum-theorem.tex
+- label: thm:necessary-condition-extremum
+  type: thm
+  file: notes\derivative-geometry\notes-derivative-geometry.tex
+  display_title: Necessary Condition for an Interior Extremum
+  proof_file: null
+- label: cor:necessary-condition-extremum
+  type: cor
+  file: notes\derivative-geometry\notes-derivative-geometry.tex
+  display_title: Necessary Condition for an Extremum
+  proof_file: proofs\notes\prf-relative-extremum-derivatives-equal-0-or-dont-exist.tex
+- label: def:increasing-at-a-point
+  type: def
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Increasing at a Point
+  proof_file: null
+- label: def:decreasing-at-a-point
+  type: def
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Decreasing at a Point
+  proof_file: null
+- label: thm:zero-derivative-implies-constant
+  type: thm
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Zero Derivative Implies Constant
+  proof_file: proofs\notes\prf-zero-derivative-implies-constant.tex
+- label: cor:equal-derivatives-constant-difference
+  type: cor
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Equal Derivatives Imply Difference Is Constant
+  proof_file: proofs\notes\prf-equal-derivatives-constant-difference.tex
+- label: thm:nondecreasing-iff-nonneg-derivative
+  type: thm
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Nondecreasing Iff Nonnegative Derivative
+  proof_file: proofs\notes\prf-nondecreasing-iff-nonneg-derivative.tex
+- label: thm:nonincreasing-iff-nonpos-derivative
+  type: thm
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Nonincreasing Iff Nonpositive Derivative
+  proof_file: proofs\notes\prf-nonincreasing-iff-nonpos-derivative.tex
+- label: lem:positive-derivative-implies-locally-increasing
+  type: lem
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Positive Derivative Implies Locally Increasing
+  proof_file: proofs\notes\prf-positive-derivative-implies-locally-increasing.tex
+- label: lem:negative-derivative-implies-locally-decreasing
+  type: lem
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Negative Derivative Implies Locally Decreasing
+  proof_file: proofs\notes\prf-negative-derivative-implies-locally-decreasing.tex
+- label: thm:first-derivative-test-maximum
+  type: thm
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: 'First Derivative Test: Relative Maximum'
+  proof_file: proofs\notes\prf-first-derivative-test-maximum.tex
+- label: thm:first-derivative-test-minimum
+  type: thm
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: 'First Derivative Test: Relative Minimum'
+  proof_file: proofs\notes\prf-first-derivative-test-minimum.tex
+- label: thm:darboux
+  type: thm
+  file: notes\derivative-geometry\notes-understanding-derivatives.tex
+  display_title: Darboux's Theorem
+  proof_file: proofs\notes\prf-darboux.tex
+- label: thm:rolles-theorem
+  type: thm
+  file: notes\mean-value-theorem\notes-mean-value-theorem.tex
+  display_title: Rolle's Theorem
+  proof_file: proofs\notes\prf-rolles-theorem.tex
+- label: thm:mean-value-theorem
+  type: thm
+  file: notes\mean-value-theorem\notes-mean-value-theorem.tex
+  display_title: Mean Value Theorem
+  proof_file: proofs\notes\prf-mean-value-theorem.tex
+- label: def:left-hand-derivative
+  type: def
+  file: notes\one-sided-derivatives\notes-one-sided-derivatives.tex
+  display_title: Left-Hand Derivative
+  proof_file: null
+- label: def:right-hand-derivative
+  type: def
+  file: notes\one-sided-derivatives\notes-one-sided-derivatives.tex
+  display_title: Right-Hand Derivative
+  proof_file: null
+- label: thm:differentiability-and-one-sided-derivatives
+  type: thm
+  file: notes\one-sided-derivatives\notes-one-sided-derivatives.tex
+  display_title: Differentiability and One-Sided Derivatives
+  proof_file: proofs\notes\prf-differentiability-two-sided-limits.tex
+- label: def:secant-line
+  type: def
+  file: notes\secant-tangent\notes-secant-tangent.tex
+  display_title: Secant Line
+  proof_file: null
+- label: def:tangent-line
+  type: def
+  file: notes\secant-tangent\notes-secant-tangent.tex
+  display_title: Tangent Line
+  proof_file: null
+proof_files:
+- label: prf:caratheodory-theorem
+  file: proofs\notes\prf-caratheodory-theorem.tex
+  theorem_label: thm:caratheodory
+- label: prf:chain-rule
+  file: proofs\notes\prf-chain-rule.tex
+  theorem_label: thm:chain-rule
+- label: prf:constant-multiple
+  file: proofs\notes\prf-constant-multiple.tex
+  theorem_label: thm:constant-multiple-rule
+- label: prf:darboux
+  file: proofs\notes\prf-darboux.tex
+  theorem_label: thm:darboux
+- label: prf:derivative-equivalence
+  file: proofs\notes\prf-derivative-equivalence.tex
+  theorem_label: thm:derivative-equivalence
+- label: prf:derivative-h-form-equivalence
+  file: proofs\notes\prf-derivative-h-form-equivalence.tex
+  theorem_label: prop:derivative-h-form-equivalence
+- label: prf:derivative-inverse-function-at-point
+  file: proofs\notes\prf-derivative-inverse-function-at-point.tex
+  theorem_label: thm:inverse-function-theorem-monotone
+- label: prf:derivative-inverse-function-on-interval
+  file: proofs\notes\prf-derivative-inverse-function-on-interval.tex
+  theorem_label: thm:inverse-function-theorem-global
+- label: prf:derivative-of-the-identity
+  file: proofs\notes\prf-derivative-of-the-identity.tex
+  theorem_label: prop:derivative-of-the-identity
+- label: prf:differentiability-and-one-sided-derivatives
+  file: proofs\notes\prf-differentiability-two-sided-limits.tex
+  theorem_label: thm:differentiability-and-one-sided-derivatives
+- label: prf:differentiable-implies-continuous
+  file: proofs\notes\prf-differentiable-implies-continuous.tex
+  theorem_label: thm:differentiable-implies-continuous
+- label: prf:differentiation-on-set
+  file: proofs\notes\prf-differentiation-on-set.tex
+  theorem_label: thm:finite-linear-combination-rule-interval
+- label: prf:equal-derivatives-constant-difference
+  file: proofs\notes\prf-equal-derivatives-constant-difference.tex
+  theorem_label: cor:equal-derivatives-constant-difference
+- label: prf:finite-linear-combination
+  file: proofs\notes\prf-finite-linear-combination.tex
+  theorem_label: thm:finite-linear-combination-rule
+- label: prf:finite-product-rule
+  file: proofs\notes\prf-finite-product-rule.tex
+  theorem_label: cor:extended-product-rule
+- label: prf:finite-sum-rule
+  file: proofs\notes\prf-finite-sum-rule.tex
+  theorem_label: cor:finite-sum-rule
+- label: prf:first-derivative-test-maximum
+  file: proofs\notes\prf-first-derivative-test-maximum.tex
+  theorem_label: thm:first-derivative-test-maximum
+- label: prf:first-derivative-test-minimum
+  file: proofs\notes\prf-first-derivative-test-minimum.tex
+  theorem_label: thm:first-derivative-test-minimum
+- label: prf:increment-definition-derivative
+  file: proofs\notes\prf-increment-definition-derivative.tex
+  theorem_label: prop:derivative-h-form-equivalence
+- label: prf:interior-extremum-theorem
+  file: proofs\notes\prf-interior-extremum-theorem.tex
+  theorem_label: thm:interior-extremum-theorem
+- label: prf:mean-value-theorem
+  file: proofs\notes\prf-mean-value-theorem.tex
+  theorem_label: thm:mean-value-theorem
+- label: prf:negative-derivative-implies-locally-decreasing
+  file: proofs\notes\prf-negative-derivative-implies-locally-decreasing.tex
+  theorem_label: lem:negative-derivative-implies-locally-decreasing
+- label: prf:nondecreasing-iff-nonneg-derivative
+  file: proofs\notes\prf-nondecreasing-iff-nonneg-derivative.tex
+  theorem_label: thm:nondecreasing-iff-nonneg-derivative
+- label: prf:nonincreasing-iff-nonpos-derivative
+  file: proofs\notes\prf-nonincreasing-iff-nonpos-derivative.tex
+  theorem_label: thm:nonincreasing-iff-nonpos-derivative
+- label: prf:positive-derivative-implies-locally-increasing
+  file: proofs\notes\prf-positive-derivative-implies-locally-increasing.tex
+  theorem_label: lem:positive-derivative-implies-locally-increasing
+- label: prf:product-rule
+  file: proofs\notes\prf-product-rule.tex
+  theorem_label: thm:product-rule
+- label: prf:quotient-rule
+  file: proofs\notes\prf-quotient-rule.tex
+  theorem_label: thm:quotient-rule
+- label: prf:relative-extremum-derivatives-equal-0-or-dont-exist
+  file: proofs\notes\prf-relative-extremum-derivatives-equal-0-or-dont-exist.tex
+  theorem_label: cor:necessary-condition-extremum
+- label: prf:rolles-theorem
+  file: proofs\notes\prf-rolles-theorem.tex
+  theorem_label: thm:rolles-theorem
+- label: prf:special-case-product-rule
+  file: proofs\notes\prf-special-case-product-rule.tex
+  theorem_label: cor:power-rule-special-case
+- label: prf:sum-rule
+  file: proofs\notes\prf-sum-rule.tex
+  theorem_label: thm:sum-rule
+- label: prf:uniqueness-of-derivative
+  file: proofs\notes\prf-uniqueness-of-derivative.tex
+  theorem_label: thm:uniqueness-of-the-derivative
+- label: prf:zero-derivative-implies-constant
+  file: proofs\notes\prf-zero-derivative-implies-constant.tex
+  theorem_label: thm:zero-derivative-implies-constant

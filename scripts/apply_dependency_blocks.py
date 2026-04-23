@@ -55,24 +55,24 @@ HYPERREF_PATTERN = re.compile(r"\\hyperref\[([^\]]+)\]")
 
 DEPENDENCY_OVERRIDES: dict[str, list[str]] = {
     "def:deleted-epsilon-neighbourhood": ["def:epsilon-neighbourhood"],
-    "def:cluster-point-R": ["def:deleted-epsilon-neighbourhood"],
-    "thm:cluster-point-sequential": ["def:cluster-point-R"],
-    "def:adherent-point-R": ["def:epsilon-neighbourhood"],
-    "def:isolated-point-R": ["def:adherent-point-R", "def:cluster-point-R"],
-    "def:interior-point-R": ["def:epsilon-neighbourhood"],
-    "def:boundary-point-R": ["def:epsilon-neighbourhood"],
-    "def:interior-R": ["def:interior-point-R"],
-    "def:boundary-R": ["def:boundary-point-R"],
-    "def:closure-R": ["def:adherent-point-R"],
-    "lem:closure-elementary": ["def:closure-R"],
-    "def:closed-set-R": ["def:closure-R"],
-    "cor:closed-iff-seq-limits": ["def:closed-set-R", "thm:cluster-point-sequential"],
-    "cor:interval-all-limit-points": ["def:cluster-point-R"],
-    "thm:heine-borel": ["def:closed-set-R", "def:bounded-set-R"],
+    "def:cluster-point-r": ["def:deleted-epsilon-neighbourhood"],
+    "thm:cluster-point-sequential": ["def:cluster-point-r"],
+    "def:adherent-point-r": ["def:epsilon-neighbourhood"],
+    "def:isolated-point-r": ["def:adherent-point-r", "def:cluster-point-r"],
+    "def:interior-point-r": ["def:epsilon-neighbourhood"],
+    "def:boundary-point-r": ["def:epsilon-neighbourhood"],
+    "def:interior-r": ["def:interior-point-r"],
+    "def:boundary-r": ["def:boundary-point-r"],
+    "def:closure-r": ["def:adherent-point-r"],
+    "lem:closure-elementary": ["def:closure-r"],
+    "def:closed-set-r": ["def:closure-r"],
+    "cor:closed-iff-seq-limits": ["def:closed-set-r", "thm:cluster-point-sequential"],
+    "cor:interval-all-limit-points": ["def:cluster-point-r"],
+    "thm:heine-borel": ["def:closed-set-r", "def:bounded-set-r"],
     "def:true-near": ["def:epsilon-neighbourhood"],
     "def:delta-close-function": ["def:eps-close-function"],
-    "def:limit-function": ["def:cluster-point-R"],
-    "def:limit-function-sequential": ["def:limit-function", "def:cluster-point-R"],
+    "def:limit-function": ["def:cluster-point-r"],
+    "def:limit-function-sequential": ["def:limit-function", "def:cluster-point-r"],
     "prop:limit-neighbourhood-equiv": [
         "def:limit-function",
         "def:epsilon-neighbourhood",
@@ -98,8 +98,8 @@ DEPENDENCY_OVERRIDES: dict[str, list[str]] = {
         "def:right-hand-limit",
     ],
     "prop:cauchy-criterion-limits": ["def:limit-function"],
-    "def:right-hand-limit": ["def:limit-function", "def:cluster-point-R"],
-    "def:left-hand-limit": ["def:limit-function", "def:cluster-point-R"],
+    "def:right-hand-limit": ["def:limit-function", "def:cluster-point-r"],
+    "def:left-hand-limit": ["def:limit-function", "def:cluster-point-r"],
     "thm:sequential-criterion-right-hand-limit": [
         "def:right-hand-limit",
         "def:limit-function-sequential",
@@ -267,8 +267,8 @@ def infer_dependencies(request: dict[str, Any], label_catalog: dict[str, dict[st
     if "\\lim" in source or "lim_" in source_clean:
         if label != "def:limit-function":
             candidates.append("def:limit-function")
-    if "cluster point" in source_clean and label != "def:cluster-point-R":
-        candidates.append("def:cluster-point-R")
+    if "cluster point" in source_clean and label != "def:cluster-point-r":
+        candidates.append("def:cluster-point-r")
     if "neighbourhood" in source_clean or "neighborhood" in source_clean:
         candidates.append("def:epsilon-neighbourhood")
     if "deleted" in source_clean and "neighbourhood" in source_clean:
@@ -277,7 +277,7 @@ def infer_dependencies(request: dict[str, Any], label_catalog: dict[str, dict[st
         "bounded" in source_clean
         and label != "def:function-bounded"
         and not label.startswith("def:function-bounded-")
-        and label != "def:bounded-set-R"
+        and label != "def:bounded-set-r"
     ):
         candidates.append("def:function-bounded")
     if "monotone" in source_clean and label != "def:function-monotone":

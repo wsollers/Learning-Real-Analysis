@@ -838,19 +838,6 @@ def build_edges(nodes: list[dict[str, Any]], edge_seed: list[dict[str, Any]]) ->
             source_node = by_id.get(to) or by_id.get(frm)
             add(frm, to, kind, source_node)
 
-    operator_defs: dict[str, str] = {}
-    for n in nodes:
-        if not str(n.get("kind", "")).lower().startswith("definition"):
-            continue
-        for op in sorted(predicate_candidates_from_definition(n)):
-            operator_defs.setdefault(op, n["id"])
-
-    for n in nodes:
-        for op in sorted(operators_used_by_node(n)):
-            def_id = operator_defs.get(op)
-            if def_id:
-                add(def_id, n["id"], "depends_on", n, warn_missing=False)
-
     edges.sort(key=lambda e: (e["kind"], e["from"], e["to"]))
     unique_warnings: list[dict[str, Any]] = []
     warning_seen: set[tuple[str, str, str]] = set()

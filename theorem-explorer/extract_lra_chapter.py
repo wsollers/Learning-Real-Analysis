@@ -322,13 +322,21 @@ def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]]
     for path in gather_tex_files(proof_root):
         text = read_file(path)
         labels = LABEL_RE.findall(text)
-        return_targets = HYPERREF_RE.findall(text)
-        return_theorem_targets = sorted({t for t in return_targets if t.startswith(("def:", "thm:", "lem:", "prop:", "cor:", "ax:"))})
         envs = parse_env_tree(text)
+        return_theorem_targets: list[str] = []
         file_blocks: list[dict[str, Any]] = []
         for env in envs:
             if env.name in TARGET_ENVS or env.name in {"proof", REMARK_ENV}:
                 title, _ = extract_optional_arg(text, env.begin_end)
+                if env.name == REMARK_ENV and title.strip().lower() == "return":
+                    return_targets = HYPERREF_RE.findall(env.raw(text))
+                    return_theorem_targets = sorted(
+                        {
+                            t
+                            for t in return_targets
+                            if t.startswith(("def:", "thm:", "lem:", "prop:", "cor:", "ax:"))
+                        }
+                    )
                 file_blocks.append(
                     {
                         "env_name": env.name,
@@ -450,17 +458,18 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
             )
 
             matched_proof = None
-            for prf in proof_refs:
-                if prf in proof_catalog:
-                    matched_proof = proof_catalog[prf]
-                    break
-            if not matched_proof and label and label in theorem_return_to_proof:
-                proof_path = theorem_return_to_proof[label]
-                # recover full proof record by matching path in catalog
-                for rec in proof_catalog.values():
-                    if rec["proof_source_path"] == proof_path:
-                        matched_proof = rec
+            if env.name != "definition":
+                for prf in proof_refs:
+                    if prf in proof_catalog:
+                        matched_proof = proof_catalog[prf]
                         break
+                if not matched_proof and label and label in theorem_return_to_proof:
+                    proof_path = theorem_return_to_proof[label]
+                    # recover full proof record by matching path in catalog
+                    for rec in proof_catalog.values():
+                        if rec["proof_source_path"] == proof_path:
+                            matched_proof = rec
+                            break
             if matched_proof:
                 item.proof_source_path = matched_proof["proof_source_path"]
                 item.proof_labels = matched_proof["proof_labels"]
