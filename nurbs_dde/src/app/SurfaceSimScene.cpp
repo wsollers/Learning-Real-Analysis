@@ -81,7 +81,14 @@ void SurfaceSimScene::on_frame(f32 dt) {
     draw_surface_3d_window();
     // draw_contour_2d_window() removed — 2D view lives in the second OS window
     submit_contour_second_window();  // Vulkan geometry on second OS window
+    // Provide a minimal stub conics list so CoordDebugPanel::update() compiles.
+    // SurfaceSimScene has no IConic curves — the snap cache section will be empty.
+    struct StubConic { std::string name; std::vector<int> snap_cache; };
+    const std::vector<StubConic> no_conics;
+    m_coord_debug.update(m_vp3d, m_hover, no_conics, m_api.viewport_size());
     m_coord_debug.draw();
+    // Sync close-button state back so handle_hotkeys() doesn’t re-open it.
+    m_debug_open = m_coord_debug.visible();
     m_perf.draw(m_api.debug_stats());
 }
 
@@ -97,10 +104,13 @@ void SurfaceSimScene::advance_simulation(f32 dt) {
 void SurfaceSimScene::handle_hotkeys() {
     const ImGuiIO& io = ImGui::GetIO();
     const bool ctrl_d = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_D);
-    if (ctrl_d && !m_ctrl_d_prev)
+    if (ctrl_d && !m_ctrl_d_prev) {
         m_debug_open = !m_debug_open;
+        m_coord_debug.visible() = m_debug_open;
+    }
     m_ctrl_d_prev = ctrl_d;
-    m_coord_debug.visible() = m_debug_open;
+    // Do NOT write visible() here every frame — that would fight the X close button.
+    // The sync happens after draw() in on_frame() instead.
 }
 
 // ── canvas_mvp_3d ─────────────────────────────────────────────────────────────
