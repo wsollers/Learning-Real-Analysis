@@ -1,0 +1,256 @@
+\begin{bpnew}{propborder}{Definition: Convergence of a Sequence}
+\begin{definition}[Convergence of a Sequence]
+\label{def:convergent-sequence}
+
+Let $(x_n) \subseteq \mathbb{R}$. The sequence $(x_n)$ \textbf{converges}
+to $L \in \mathbb{R}$ if
+\[
+    \forall \varepsilon > 0 \;\exists N \in \mathbb{N} \;\forall n \ge N
+    \;\bigl(|x_n - L| < \varepsilon\bigr).
+\]
+The value $L$ is called the \textbf{limit} of $(x_n)$, written
+$x_n \to L$ or $\displaystyle\lim_{n \to \infty} x_n = L$.
+A sequence that converges to some $L \in \mathbb{R}$ is called
+\textbf{convergent}; otherwise it is called \textbf{divergent}.
+\end{definition}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}\\
+&\quad\Bigl(
+    x_n \to L
+    \;\Longleftrightarrow\;
+    \forall \varepsilon > 0 \;\exists N \in \mathbb{N} \;\forall n \ge N
+    \;\bigl(|x_n - L| < \varepsilon\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConvergentSequence}(x_n, L)
+\;:=\;
+\forall \varepsilon > 0 \;\exists N \in \mathbb{N} \;\forall n \ge N
+\;\operatorname{OutputTolerance}(x_n, L, \varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+x_n \not\to L
+\;\Longleftrightarrow\;
+&\;\exists \varepsilon > 0 \;\forall N \in \mathbb{N} \;\exists n \ge N\\
+&\quad\bigl(|x_n - L| \ge \varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{DivergentSequence}(x_n)
+\;:=\;
+\exists \varepsilon > 0 \;\forall N \in \mathbb{N} \;\exists n \ge N
+\;\bigl(|x_n - L| \ge \varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+The negation decomposes into a single structural obstruction:
+\[
+\underbrace{\exists \varepsilon > 0}_{\text{a fixed tolerance}}
+\;\underbrace{\forall N \in \mathbb{N}}_{\text{no tail suffices}}
+\;\underbrace{\exists n \ge N}_{\text{terms escape infinitely often}}
+\;\underbrace{|x_n - L| \ge \varepsilon}_{\text{outside the target interval}}.
+\]
+The sequence fails to converge to $L$ not by drifting away once, but
+by returning outside the $\varepsilon$-interval infinitely often regardless
+of how far along the tail one looks.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The quantifier order $\forall \varepsilon \;\exists N \;\forall n \ge N$
+encodes a strict dependency: $N$ is permitted to depend on $\varepsilon$,
+but not on $n$. This asymmetry is load-bearing. Reversing the outer
+quantifiers to $\exists N \;\forall \varepsilon$ would assert that a
+single index $N$ controls all tolerances simultaneously, which is a
+strictly stronger and generally false condition. The condition
+$|x_n - L| < \varepsilon$ is the membership assertion $x_n \in (L -
+\varepsilon,\, L + \varepsilon)$; convergence is therefore the statement
+that the tail of the sequence is eventually contained in every
+$\varepsilon$-neighborhood of $L$.
+\end{remark*}
+
+\begin{bpnew}{propborder}{Definition: Convergence --- Neighborhood Formulation}
+\begin{definition}[Convergence --- Neighborhood Formulation]
+\label{def:convergent-sequence-neighborhood}
+
+Let $(x_n) \subseteq \mathbb{R}$ and let $L \in \mathbb{R}$. The sequence
+$(x_n)$ \textbf{converges} to $L$ if for every $\varepsilon > 0$ the
+$\varepsilon$-neighborhood
+\[
+    V_\varepsilon(L) \;:=\; (L - \varepsilon,\, L + \varepsilon)
+\]
+contains all but finitely many terms of $(x_n)$; that is,
+\[
+    \forall \varepsilon > 0 \;\exists N \in \mathbb{N} \;\forall n \ge N
+    \;\bigl(x_n \in V_\varepsilon(L)\bigr).
+\]
+\end{definition}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}\\
+&\quad\Bigl(
+    x_n \to L
+    \;\Longleftrightarrow\;
+    \forall \varepsilon > 0 \;\exists N \in \mathbb{N} \;\forall n \ge N
+    \;\bigl(x_n \in V_\varepsilon(L)\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConvergentSequence}(x_n, L)
+\;:=\;
+\forall \varepsilon > 0 \;\exists N \in \mathbb{N} \;\forall n \ge N
+\;\bigl(x_n \in V_\varepsilon(L)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+x_n \not\to L
+\;\Longleftrightarrow\;
+&\;\exists \varepsilon > 0 \;\forall N \in \mathbb{N} \;\exists n \ge N\\
+&\quad\bigl(x_n \notin V_\varepsilon(L)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{DivergentSequence}(x_n)
+\;:=\;
+\exists \varepsilon > 0 \;\forall N \in \mathbb{N} \;\exists n \ge N
+\;\bigl(x_n \notin V_\varepsilon(L)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\exists \varepsilon > 0}_{\text{a fixed neighborhood}}
+\;\underbrace{\forall N \in \mathbb{N}}_{\text{no tail suffices}}
+\;\underbrace{\exists n \ge N}_{\text{terms escape infinitely often}}
+\;\underbrace{x_n \notin V_\varepsilon(L)}_{\text{outside every candidate neighborhood}}.
+\]
+The sequence fails to converge to $L$ precisely when some neighborhood
+of $L$ contains only finitely many terms: infinitely many terms lie
+permanently outside it.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The neighborhood formulation reframes convergence as a set-containment
+condition rather than an inequality condition. The assertion $x_n \in
+V_\varepsilon(L)$ is identical to $|x_n - L| < \varepsilon$; the two
+definitions are logically equivalent and the choice between them is one
+of language, not content. The neighborhood language is the natural
+bridge to the topological formulation: in a general topological space,
+open sets replace $\varepsilon$-neighborhoods and the definition reads
+identically with $V_\varepsilon(L)$ replaced by any open set $U$
+containing $L$. The phrase \emph{all but finitely many terms} is the
+canonical prose compression of the quantifier block $\exists N \in
+\mathbb{N} \;\forall n \ge N$, and is standard in the literature.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+\begin{bpnew}{thmborder}{Theorem: Equivalence of Convergence Formulations}
+\begin{theorem}[Equivalence of Convergence Formulations]
+\label{thm:equivalence-of-convergence-formulations}
+
+Let $(x_n) \subseteq \mathbb{R}$ and let $L \in \mathbb{R}$. The following
+statements are equivalent.
+\begin{enumerate}[label=\textup{(\alph*)}]
+    \item $x_n \to L$.
+    \item $\forall \varepsilon > 0 \;\exists K \in \mathbb{N} \;\forall n \ge K
+          \;\bigl(|x_n - L| < \varepsilon\bigr)$.
+    \item $\forall \varepsilon > 0 \;\exists K \in \mathbb{N} \;\forall n \ge K
+          \;\bigl(L - \varepsilon < x_n < L + \varepsilon\bigr)$.
+    \item $\forall \varepsilon > 0 \;\exists K \in \mathbb{N} \;\forall n \ge K
+          \;\bigl(x_n \in V_\varepsilon(L)\bigr)$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\hyperref[prf:equivalence-of-convergence-formulations]{\textit{Go to proof.}}
+\end{theorem}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}\\
+&\quad\Bigl(
+    (a) \;\Longleftrightarrow\; (b)
+         \;\Longleftrightarrow\; (c)
+         \;\Longleftrightarrow\; (d)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The four conditions are the same geometric fact written in four
+notational registers. Condition (a) is the informal assertion.
+Condition (b) is the canonical $\varepsilon$-$K$ definition: the
+absolute value formulation. Condition (c) makes the interval
+structure explicit by expanding $|x_n - L| < \varepsilon$ into its
+equivalent double inequality $L - \varepsilon < x_n < L +
+\varepsilon$; this is useful in proofs where upper and lower bounds
+are handled separately. Condition (d) is the neighborhood
+formulation: $x_n \in V_\varepsilon(L)$ is identical to conditions
+(b) and (c) but frames convergence as set membership, which is the
+natural language for the topological generalization. The index $K$
+plays the same role as $N$ in the base definition
+\hyperref[def:convergent-sequence]{Definition~\ref*{def:convergent-sequence}};
+the letter changes here to signal that $K$ is the tail offset in
+the sense of \hyperref[def:m-tail]{Definition~\ref*{def:m-tail}}.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,175 @@
+\begin{bpnew}{propborder}{Definition: $M$-Tail of a Sequence}
+\begin{definition}[$M$-Tail of a Sequence]
+\label{def:m-tail}
+
+Let $(x_n) \subseteq \mathbb{R}$ and let $M \in \mathbb{N}$. The
+\textbf{$M$-tail} of $(x_n)$ is the sequence
+\[
+    (x_n)_{n \ge M} \;:=\; \bigl(x_M,\, x_{M+1},\, x_{M+2},\, \ldots\bigr).
+\]
+\end{definition}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n) \subseteq \mathbb{R} \;\forall M \in \mathbb{N}
+\;\Bigl(
+    (x_n)_{n \ge M} = \{x_n : n \ge M\}
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The $M$-tail discards the first $M - 1$ terms and retains everything
+from index $M$ onward. It is the formal object underlying the phrase
+\emph{all but finitely many terms}: to say that all but finitely many
+terms of $(x_n)$ satisfy a property $P$ is precisely to say that some
+$M$-tail of $(x_n)$ satisfies $P$ termwise. The index $M$ is an offset
+into the sequence, not a bound on the terms themselves; two sequences
+with identical $M$-tails share all asymptotic properties, differing
+only in finitely many initial values which convergence arguments
+discard entirely.
+\end{remark*}
+
+
+
+\begin{bpnew}{thmborder}{Theorem: Convergence of a Tail}
+\begin{theorem}[Convergence of a Tail]
+\label{thm:convergence-of-tail}
+
+Let $(x_n) \subseteq \mathbb{R}$ and let $m \in \mathbb{N}$. The
+$m$-tail $(x_{m+n})_{n \in \mathbb{N}}$ converges if and only if
+$(x_n)$ converges. Moreover, in this case,
+\[
+    \lim_{n \to \infty} x_{m+n} \;=\; \lim_{n \to \infty} x_n.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:convergence-of-tail]{\textit{Go to proof.}}
+\end{theorem}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall m \in \mathbb{N}\\
+&\quad\Bigl(
+    \bigl(x_{m+n}\bigr)_{n \in \mathbb{N}} \text{ converges}
+    \;\Longleftrightarrow\;
+    (x_n) \text{ converges}
+\Bigr)\\
+&\quad\land\;\Bigl(
+    \lim_{n\to\infty} x_{m+n} = \lim_{n\to\infty} x_n
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall m \in \mathbb{N}\\
+&\quad\Bigl(
+    \bigl(x_{m+n}\bigr)_{n \in \mathbb{N}} \text{ diverges}
+    \;\Longleftrightarrow\;
+    (x_n) \text{ diverges}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Convergence is a \emph{tail property}: it depends only on the
+eventual behavior of the sequence, not on any finite initial
+segment. Discarding the first $m$ terms neither creates nor
+destroys convergence, and when the limit exists it is preserved
+exactly. This theorem formalizes the informal principle that
+finitely many terms are irrelevant to asymptotic behavior. It is
+the rigorous justification for the common proof move of assuming
+without loss of generality that $n$ is large enough for some
+auxiliary condition to hold — one simply passes to a suitable
+$m$-tail, applies the argument there, and concludes for the full
+sequence by this theorem. The contrapositive is equally useful:
+to show $(x_n)$ diverges it suffices to show that some $m$-tail
+diverges.
+\end{remark*}
+
+
+
+
+
+
+
+
+
+\begin{bpnew}{thmborder}{Theorem: Convergence by Domination}
+\begin{theorem}[Convergence by Domination]
+\label{thm:convergence-by-domination}
+
+Let $(x_n) \subseteq \mathbb{R}$ and let $L \in \mathbb{R}$. Let
+$(a_n)$ be a sequence of positive real numbers with
+$\displaystyle\lim_{n \to \infty} a_n = 0$. If there exist a constant
+$c > 0$ and an index $m \in \mathbb{N}$ such that
+\[
+    |x_n - L| \;\le\; c\, a_n \qquad \forall n \ge m,
+\]
+then $\displaystyle\lim_{n \to \infty} x_n = L$.
+
+\smallskip
+\noindent
+\hyperref[prf:convergence-by-domination]{\textit{Go to proof.}}
+\end{theorem}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}
+ \;\forall (a_n) \subseteq (0, \infty) \;\forall c > 0
+ \;\forall m \in \mathbb{N}\\
+&\quad\Bigl(
+    \Bigl(
+        \lim_{n \to \infty} a_n = 0
+        \;\land\;
+        \forall n \ge m \;\bigl(|x_n - L| \le c\, a_n\bigr)
+    \Bigr)
+    \;\Longrightarrow\;
+    \lim_{n \to \infty} x_n = L
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n) \subseteq \mathbb{R} \;\forall L \in \mathbb{R}
+ \;\forall (a_n) \subseteq (0,\infty) \;\forall c > 0
+ \;\forall m \in \mathbb{N}\\
+&\quad\Bigl(
+    \lim_{n \to \infty} x_n \neq L
+    \;\Longrightarrow\;
+    \lim_{n \to \infty} a_n \neq 0
+    \;\lor\;
+    \exists n \ge m \;\bigl(|x_n - L| > c\, a_n\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The theorem is a \emph{domination principle}: it is not necessary to
+verify the $\varepsilon$-$N$ condition directly for $(x_n)$. It
+suffices to find a null sequence $(a_n)$ — one converging to zero —
+that dominates the error $|x_n - L|$ on some tail, up to a fixed
+scalar $c$. The scalar $c$ is irrelevant to the conclusion: since
+$a_n \to 0$, the product $c\, a_n \to 0$ regardless of the size of
+$c$, and any $\varepsilon > 0$ is eventually beaten by $c\, a_n$.
+This theorem is the rigorous engine behind the common proof pattern
+of bounding $|x_n - L|$ by a simpler expression and observing that
+the simpler expression tends to zero. The canonical instance is
+$a_n = 1/n$, where domination by $c/n$ is sufficient to conclude
+convergence to $L$.
+\end{remark*}
+
