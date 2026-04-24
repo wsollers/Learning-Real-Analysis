@@ -40,10 +40,13 @@ void ImGuiLayer::init(GLFWwindow* window,
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // NOTE: ViewportsEnable is intentionally NOT set.
-    // With viewports, MousePos is in absolute screen coords which breaks
-    // our pixel_to_world conversion (it expects window-relative coords).
-    // We don't need floating ImGui windows outside the main window.
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    // ViewportsEnable is intentionally disabled: it creates separate OS windows
+    // with their own swapchains managed by ImGui's backend, which conflicts with
+    // our single-swapchain Vulkan renderer and makes canvas NDC remapping
+    // unreliable. DockingEnable alone gives full docking/undocking within the
+    // main window, which is sufficient for the two-panel surface view.
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     ImGui::StyleColorsDark();
 
     ImGuiStyle& style  = ImGui::GetStyle();
@@ -115,7 +118,6 @@ void ImGuiLayer::new_frame() {
 void ImGuiLayer::render(VkCommandBuffer cmd) {
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
-    // No UpdatePlatformWindows — viewports are disabled
 }
 
 void ImGuiLayer::on_swapchain_recreated(const Swapchain&) {}

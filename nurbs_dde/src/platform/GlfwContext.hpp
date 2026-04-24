@@ -4,7 +4,7 @@
 // All methods must be called from the main thread (GLFW requirement).
 // check_resize() is the one exception — safe from any thread.
 
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
 #include <atomic>
 #include <string>
 

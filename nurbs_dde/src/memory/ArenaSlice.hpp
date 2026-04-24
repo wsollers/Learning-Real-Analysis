@@ -1,11 +1,12 @@
 #pragma once
 // memory/ArenaSlice.hpp
 // The "receipt" returned by BufferManager::acquire().
-// Kept separate so the math layer never needs to include BufferManager.hpp
-// (which would pull in Vulkan headers into pure math translation units).
+// Includes renderer/GpuTypes.hpp (not math/Scalars.hpp) because ArenaSlice
+// exposes Vertex* — a GPU-contract type. Pure-math and ndde_numeric code
+// must never include this header.
 
 #include <volk.h>
-#include "math/Types.hpp"
+#include "renderer/GpuTypes.hpp"
 
 namespace ndde::memory {
 

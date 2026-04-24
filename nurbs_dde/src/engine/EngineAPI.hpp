@@ -5,7 +5,7 @@
 
 #include "memory/ArenaSlice.hpp"
 #include "engine/AppConfig.hpp"
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
 #include <functional>
 
 struct ImFont;
@@ -40,11 +40,24 @@ struct EngineAPI {
     std::function<memory::ArenaSlice(u32 vertex_count)> acquire;
 
     // Submit a populated slice for rendering this frame.
+    // submit   → primary window (3D surface view)
+    // submit2  → second window  (2D contour view)
+    // Both functions are safe to call even if the second window is not open.
     std::function<void(const memory::ArenaSlice& slice,
                        Topology  topology,
                        DrawMode  mode,
                        Vec4      color,
                        Mat4      mvp)> submit;
+
+    std::function<void(const memory::ArenaSlice& slice,
+                       Topology  topology,
+                       DrawMode  mode,
+                       Vec4      color,
+                       Mat4      mvp)> submit2;
+
+    // Dimensions of each window's framebuffer.
+    std::function<Vec2()> viewport_size;   ///< primary window (3D)
+    std::function<Vec2()> viewport_size2;  ///< second  window (2D)
 
     // STIX math font handles. Guard: if (font) ImGui::PushFont(font);
     std::function<ImFont*()> math_font_body;
@@ -52,9 +65,6 @@ struct EngineAPI {
 
     // Read-only access to the loaded config. Lifetime owned by Engine.
     std::function<const AppConfig&()> config;
-
-    // Live window dimensions — updated on every resize.
-    std::function<Vec2()> viewport_size;
 
     // Per-frame debug statistics — arena, renderer, timing.
     // Populated by Engine just before Scene::on_frame() is called.

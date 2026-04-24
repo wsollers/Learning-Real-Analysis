@@ -16,7 +16,8 @@
 // coordinates must guard against this.  Use mouse_valid() before
 // calling pixel_to_world / zoom_toward / pan_by_pixels.
 
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
+#include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 #include <cmath>
@@ -86,9 +87,15 @@ struct Viewport {
     }
 
     // ── Coordinate transforms ─────────────────────────────────────────────────
-    // Always call mouse_valid(lx, ly) before pixel_to_world when the source
-    // is ImGui::GetIO().MousePos — the sentinel is (-FLT_MAX, -FLT_MAX).
+    // MousePos from ImGui::GetIO() is always window-relative (ViewportsEnable
+    // is disabled). No screen-to-window conversion needed.
 
+    // Passthrough: kept for call-site compatibility after the viewports revert.
+    [[nodiscard]] static Vec2 screen_to_window(float sx, float sy) noexcept {
+        return { sx, sy };
+    }
+
+    // pixel_to_world: lx/ly are window-relative logical pixels.
     [[nodiscard]] Vec2 pixel_to_world(float lx, float ly) const noexcept {
         if (dp_w <= 0.f || dp_h <= 0.f) return {};
         if (!mouse_valid(lx, ly))        return {};  // guard against ImGui sentinel

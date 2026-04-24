@@ -1,5 +1,20 @@
 # src/CMakeLists.txt
 
+# ── ndde_numeric ─────────────────────────────────────────────────────────────
+# Zero external dependencies. Safe to link from Python bindings.
+# All headers are in src/numeric/*.hpp (header-only; the .cpp stub exists to
+# give CMake a translation unit and to hold future non-inline implementations).
+add_library(ndde_numeric INTERFACE)
+target_include_directories(ndde_numeric INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_numeric INTERFACE glm::glm)
+
+# Optional: flip to std:: / GLM oracle for validation.
+# cmake -DNDDE_USE_BUILTIN_MATH=ON ..
+option(NDDE_USE_BUILTIN_MATH "Use std/GLM oracle backend instead of ndde::numeric" OFF)
+if(NDDE_USE_BUILTIN_MATH)
+    target_compile_definitions(ndde_numeric INTERFACE NDDE_USE_BUILTIN_MATH=1)
+endif()
+
 # ── ndde_math ─────────────────────────────────────────────────────────────────
 add_library(ndde_math STATIC
     math/Conics.cpp
@@ -9,7 +24,7 @@ add_library(ndde_math STATIC
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(ndde_math PUBLIC VK_NO_PROTOTYPES)
 target_include_directories(ndde_math PUBLIC ${volk_SOURCE_DIR})
-target_link_libraries(ndde_math PUBLIC glm::glm Vulkan::Headers)
+target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm Vulkan::Headers)
 
 # ── ndde_memory ───────────────────────────────────────────────────────────────
 add_library(ndde_memory STATIC
@@ -32,6 +47,7 @@ add_library(ndde_renderer STATIC
     renderer/Pipeline.cpp
     renderer/ImGuiLayer.cpp
     renderer/Renderer.cpp
+    renderer/SecondWindow.cpp
 )
 target_include_directories(ndde_renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_renderer PUBLIC
@@ -60,6 +76,8 @@ add_executable(nurbs_dde
     app/main.cpp
     app/Scene.cpp
     app/AnalysisPanel.cpp
+    app/GaussianSurface.cpp
+    app/SurfaceSimScene.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(nurbs_dde PRIVATE ndde_engine imgui)

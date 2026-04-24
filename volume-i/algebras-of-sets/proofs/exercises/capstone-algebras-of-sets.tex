@@ -10,32 +10,129 @@
 Chapter capstone --- synthesises Sections 2, 3, and 4.
 \end{remark*}
 
-\begin{proof}
-The claim is that $(\mathcal{P}(X), \mathbin{\triangle}, \cap)$
-is a Boolean ring: a commutative ring with unity in which every
-element satisfies $A \cap A = A$.
+\begin{remark*}[Capstone Problem]
+Let $X$ be a set. Prove that $(\mathcal{P}(X), \mathbin{\triangle}, \cap)$
+is a Boolean ring, where $\triangle$ denotes symmetric difference and $\cap$
+denotes intersection.
 
-Specifically, we must verify:
-\begin{enumerate}
+Specifically, verify:
+\begin{enumerate}[label=(\roman*)]
   \item $(\mathcal{P}(X), \triangle)$ is an abelian group with
         identity $\emptyset$.
   \item $(\mathcal{P}(X), \cap)$ is a commutative monoid with
         identity $X$.
   \item $\cap$ distributes over $\triangle$.
-  \item Every element is idempotent under $\cap$.
+  \item Every element is idempotent under $\cap$: $A \cap A = A$.
 \end{enumerate}
 
-% TODO: proof to be filled using the named propositions from Section 2.
-% Each ring axiom should cite the corresponding named proposition by
-% \ByThm{} --- do not re-prove; assemble.
+Do not re-prove the named propositions; assemble them.
+\end{remark*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+
+We verify each condition in turn, assembling the named propositions
+referenced in the Dependencies block.
+
+\medskip
+\noindent\textbf{(i) $(\mathcal{P}(X), \triangle)$ is an abelian group with
+identity $\emptyset$.}
+
+\begin{itemize}
+  \item \textit{Closure.} For any $A, B \in \mathcal{P}(X)$,
+    $A \triangle B = (A \setminus B) \cup (B \setminus A) \subseteq X$,
+    so $A \triangle B \in \mathcal{P}(X)$.
+  \item \textit{Commutativity.} By \texttt{prop:symmdiff-comm}:
+    $A \triangle B = B \triangle A$.
+  \item \textit{Associativity.} By \texttt{prop:symmdiff-assoc}:
+    $(A \triangle B) \triangle C = A \triangle (B \triangle C)$.
+  \item \textit{Identity.} By \texttt{prop:symmdiff-empty}:
+    $A \triangle \emptyset = A$. So $\emptyset$ is the additive identity.
+  \item \textit{Inverse.} By \texttt{prop:symmdiff-self}:
+    $A \triangle A = \emptyset$. So every element is its own inverse,
+    confirming characteristic~2 directly.
+\end{itemize}
+
+Therefore $(\mathcal{P}(X), \triangle, \emptyset)$ is an abelian group.
+
+\medskip
+\noindent\textbf{(ii) $(\mathcal{P}(X), \cap)$ is a commutative monoid
+with identity $X$.}
+
+\begin{itemize}
+  \item \textit{Closure.} For $A, B \in \mathcal{P}(X)$, $A \cap B \subseteq
+    A \subseteq X$, so $A \cap B \in \mathcal{P}(X)$.
+  \item \textit{Associativity.} By \texttt{prop:assoc-intersection}:
+    $(A \cap B) \cap C = A \cap (B \cap C)$.
+  \item \textit{Commutativity.} By \texttt{prop:comm-intersection}:
+    $A \cap B = B \cap A$.
+  \item \textit{Identity.} By \texttt{prop:identity-intersection}:
+    $A \cap X = A$. So $X$ is the multiplicative identity.
+\end{itemize}
+
+Therefore $(\mathcal{P}(X), \cap, X)$ is a commutative monoid.
+
+\medskip
+\noindent\textbf{(iii) $\cap$ distributes over $\triangle$.}
+
+By \texttt{prop:cap-dist-symmdiff}: for all $A, B, C \in \mathcal{P}(X)$,
+\[
+A \cap (B \triangle C) = (A \cap B) \triangle (A \cap C).
+\]
+Since $\cap$ is commutative, right distributivity follows:
+$(B \triangle C) \cap A = A \cap (B \triangle C) = (A \cap B) \triangle
+(A \cap C) = (B \cap A) \triangle (C \cap A)$. Both distributive laws hold.
+
+\medskip
+\noindent\textbf{(iv) Every element is idempotent under $\cap$.}
+
+By \texttt{prop:idempotence-intersection}: $A \cap A = A$ for every
+$A \in \mathcal{P}(X)$.
+
+\medskip
+\noindent\textbf{Conclusion.} Parts (i)--(iii) establish the ring axioms
+(1)--(3),(5)--(9) of Halmos--Givant. Part (iv) is axiom~(11) (multiplicative
+idempotence). The ring is commutative by \texttt{prop:comm-intersection}
+(already used in (ii)), and $X$ serves as the multiplicative unit. Therefore
+$(\mathcal{P}(X), \triangle, \cap)$ is a commutative Boolean ring with unit.
 \end{proof}
 
 \begin{remark*}[Proof shape]
-% TODO: outline once proof is written.
+The proof is a direct assembly. Each of the four conditions maps onto
+a named proposition in the notes. The key insight is the correspondence:
+\[
+\text{symmetric difference} \;\longleftrightarrow\; \text{addition},
+\qquad
+\text{intersection} \;\longleftrightarrow\; \text{multiplication},
+\]
+\[
+\emptyset \;\longleftrightarrow\; 0,
+\qquad
+X \;\longleftrightarrow\; 1.
+\]
+The characteristic~2 property ($A \triangle A = \emptyset$, i.e., every
+element is its own additive inverse) means the ring axiom~(7) follows from
+axiom~(11) (idempotence), exactly as the Self Additive Inverse lemma shows
+in the abstract setting. The power set ring is therefore the canonical
+model that makes the Boolean ring abstraction concrete.
+
+\smallskip
+\noindent\textit{Connection to simulation.} In the Brownian motion
+simulation on the torus, the event algebra tracking which particles have
+met (or are within a threshold distance) forms precisely such a Boolean
+ring of subsets under symmetric difference and intersection. The
+characteristic~2 property has a concrete meaning: asking whether two
+events $A \triangle A$ have occurred reduces immediately to $\emptyset$
+--- the vacuous event. The ring structure is what makes the event-algebra
+queries compositionally well-typed.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
-% TODO
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:ring]{Definition: Ring}
+  \item \hyperref[def:boolean-ring]{Definition: Boolean Ring}
+  \item \hyperref[def:idempotent-element]{Definition: Idempotent Element}
+\end{itemize}
 
 \FlashUses{prop:symmdiff-assoc, prop:symmdiff-comm, prop:symmdiff-self,
   prop:symmdiff-empty, prop:assoc-intersection, prop:comm-intersection,

@@ -3,7 +3,8 @@
 // Parametric curve interface and concrete conic sections + space curves.
 // Zero-copy design: tessellate() writes directly into GPU-visible memory.
 
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <span>
 #include <stdexcept>
 #include <cmath>

@@ -6,7 +6,7 @@
 #include <volk.h>
 #include <VkBootstrap.h>
 #include "platform/VulkanContext.hpp"
-#include "math/Types.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <vector>
 
 namespace ndde::renderer {

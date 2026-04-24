@@ -1,10 +1,10 @@
 #pragma once
 // renderer/Pipeline.hpp
 // Owns one Vulkan graphics pipeline. One instance per topology.
-// The math layer never sees this — it uses the Topology enum from Types.hpp.
+// The math layer never sees this — it uses the Topology enum from Scalars.hpp.
 
 #include <volk.h>
-#include "math/Types.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <string>
 #include <vector>
 

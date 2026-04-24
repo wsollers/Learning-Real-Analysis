@@ -8,7 +8,7 @@
 
 #include <atomic>
 #include <volk.h>
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
 #include "memory/ArenaSlice.hpp"
 
 namespace ndde::memory {

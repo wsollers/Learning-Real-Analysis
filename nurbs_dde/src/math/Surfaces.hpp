@@ -21,7 +21,8 @@
 // See math/Conics.hpp for IConic curves that lie on these surfaces.
 // See app/Scene for rendering wiring.
 
-#include "math/Types.hpp"
+#include "math/Scalars.hpp"
+#include "renderer/GpuTypes.hpp"
 #include <span>
 #include <stdexcept>
 #include <cmath>
