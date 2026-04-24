@@ -1,0 +1,443 @@
+% =========================================================
+% Section: IEEE 754 Floating-Point Formats
+% =========================================================
+
+\subsection{IEEE 754 Floating-Point Formats}
+
+\begin{tcolorbox}[colback=gray!8!white,colframe=gray!50!black,title={Toolkit --- Floating-Point Representation}]
+This section develops the structural language of IEEE 754 binary floating-point
+representation. The key ideas are:
+
+\begin{itemize}
+    \item every binary floating-point datum is organized into sign, exponent, and fraction fields,
+    \item the exponent field determines whether the encoding is normalized, subnormal, zero, infinity, or NaN,
+    \item the fraction field determines the significant bits of the represented value,
+    \item each standard format is determined by its total bit width together with its exponent width, fraction width, and exponent bias.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=gray!5!white,colframe=gray!50!black,title={Breadcrumb}]
+Volume IV $\to$ Computational Mathematics $\to$ Floating-Point Arithmetic $\to$ IEEE 754 Formats
+\end{tcolorbox}
+
+\begin{remark*}[Structural roadmap]
+We begin with the general structure of an IEEE 754 binary floating-point datum.
+We then define the principal interpretation classes: normalized numbers, subnormal
+numbers, infinities, and NaNs. After that, we define the standard binary interchange
+formats binary16, binary32, binary64, and binary128, and display the bit layout of
+each format using a common TikZ layout macro.
+\end{remark*}
+
+% =========================================================
+% Reusable TikZ macro
+% =========================================================
+
+\newcommand{\IEEEFloatLayout}[8]{%
+% #1 = x scale
+% #2 = sign width
+% #3 = exponent width
+% #4 = fraction width
+% #5 = leftmost bit index
+% #6 = exponent rightmost bit index
+% #7 = fraction leftmost bit index
+% #8 = label (optional description not used inside drawing)
+\begin{center}
+\begin{tikzpicture}[x=#1 cm,y=0.8cm]
+    \pgfmathsetmacro{\SignEnd}{#2}
+    \pgfmathsetmacro{\ExpEnd}{#2 + #3}
+    \pgfmathsetmacro{\FracEnd}{#2 + #3 + #4}
+
+    \draw (0,0) rectangle (\SignEnd,1);
+    \draw (\SignEnd,0) rectangle (\ExpEnd,1);
+    \draw (\ExpEnd,0) rectangle (\FracEnd,1);
+
+    \node at ({\SignEnd/2},0.5) {\small $s$};
+    \node at ({(\SignEnd+\ExpEnd)/2},0.5) {\small exponent};
+    \node at ({(\ExpEnd+\FracEnd)/2},0.5) {\small fraction};
+
+    \node[above] at (0.5,1) {\scriptsize #5};
+    \node[above] at ({\SignEnd+0.5},1) {\scriptsize \numexpr #5-1\relax};
+    \node[above] at ({\ExpEnd-0.5},1) {\scriptsize #6};
+    \node[above] at ({\ExpEnd+0.5},1) {\scriptsize #7};
+    \node[above] at ({\FracEnd-0.5},1) {\scriptsize 0};
+\end{tikzpicture}
+\end{center}
+}
+
+% =========================================================
+% General structure
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 Binary Floating-Point Datum}]
+\begin{definition}[IEEE 754 Binary Floating-Point Datum]
+An \emph{IEEE 754 binary floating-point datum} is a binary encoding partitioned into
+three fields:
+
+\begin{itemize}
+    \item a \emph{sign field} consisting of one bit,
+    \item an \emph{exponent field} consisting of a fixed number of bits,
+    \item a \emph{fraction field} consisting of a fixed number of bits.
+\end{itemize}
+
+Its interpretation depends on the exponent-field pattern and the fraction-field pattern.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+IEEE 754 does not interpret a floating-point bit string as a plain binary integer.
+Instead, the sign field determines sign, the exponent field determines scale and
+special cases, and the fraction field records the significant bits of the encoded value.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{IEEEBinaryFloatDatum}(x)
+\Longleftrightarrow
+\operatorname{HasSignField}(x)
+\land
+\operatorname{HasExponentField}(x)
+\land
+\operatorname{HasFractionField}(x).
+\]
+\end{remark*}
+
+% =========================================================
+% Normalized numbers
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- Normalized IEEE 754 Binary Number}]
+\begin{definition}[Normalized IEEE 754 Binary Number]
+Let an IEEE 754 binary floating-point format have exponent bias $\mathrm{bias}$.
+A finite encoded datum is called \emph{normalized} if its exponent field is neither
+all zeros nor all ones.
+
+If $s$ is the sign bit, if $e$ is the unsigned integer determined by the exponent field,
+and if $f$ is the binary fraction determined by the fraction field, then the represented
+value is
+\[
+(-1)^s (1.f)_2 2^{e-\mathrm{bias}}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+In a normalized encoding, the leading binary digit of the significand is implicitly $1$.
+This hidden leading bit is what gives normalized numbers one more bit of effective
+precision than the stored fraction field alone.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{NormalizedIEEEBinaryNumber}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{ExponentFieldNeitherAllZerosNorAllOnes}(x).
+\]
+\end{remark*}
+
+% =========================================================
+% Subnormal numbers
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- Subnormal IEEE 754 Binary Number}]
+\begin{definition}[Subnormal IEEE 754 Binary Number]
+Let an IEEE 754 binary floating-point format have exponent bias $\mathrm{bias}$.
+A finite encoded datum is called \emph{subnormal} if its exponent field is all zeros
+and its fraction field is not all zeros.
+
+If $s$ is the sign bit and if $f$ is the binary fraction determined by the fraction field,
+then the represented value is
+\[
+(-1)^s (0.f)_2 2^{1-\mathrm{bias}}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Subnormal numbers fill the gap between zero and the smallest positive normalized number.
+They preserve gradual underflow by allowing the leading significand bit to be $0$ instead
+of the implicit $1$ used for normalized numbers.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{SubnormalIEEEBinaryNumber}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{ExponentFieldAllZeros}(x)
+\land
+\neg \operatorname{FractionFieldAllZeros}(x).
+\]
+\end{remark*}
+
+% =========================================================
+% Infinity
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 Infinity Encoding}]
+\begin{definition}[IEEE 754 Infinity Encoding]
+An IEEE 754 binary floating-point datum encodes \emph{infinity} if its exponent field
+is all ones and its fraction field is all zeros.
+
+The sign bit determines whether the represented value is $+\infty$ or $-\infty$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Infinity is a distinguished non-finite encoding used to represent overflow and certain
+limit-like arithmetic results. The sign field still matters, so IEEE 754 distinguishes
+positive infinity from negative infinity.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{IEEEInfinityEncoding}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{ExponentFieldAllOnes}(x)
+\land
+\operatorname{FractionFieldAllZeros}(x).
+\]
+\end{remark*}
+
+% =========================================================
+% NaN
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 NaN Encoding}]
+\begin{definition}[IEEE 754 NaN Encoding]
+An IEEE 754 binary floating-point datum encodes \emph{NaN} (Not a Number) if its
+exponent field is all ones and its fraction field is not all zeros.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+A NaN encoding represents an undefined or invalid numerical result rather than a real number.
+For example, NaNs arise from operations such as invalid indeterminate forms or from the
+propagation of an already invalid datum through later computations.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{IEEENaNEncoding}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{ExponentFieldAllOnes}(x)
+\land
+\neg \operatorname{FractionFieldAllZeros}(x).
+\]
+\end{remark*}
+
+% =========================================================
+% Binary16
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 Binary16 Format}]
+\begin{definition}[IEEE 754 Binary16 Format]
+The \emph{IEEE 754 binary16 format} is the 16-bit binary floating-point interchange format
+with the following field layout:
+
+\begin{itemize}
+    \item $1$ sign bit,
+    \item $5$ exponent bits,
+    \item $10$ fraction bits,
+    \item exponent bias $15$.
+\end{itemize}
+
+For a normalized finite binary16 datum, the represented value is
+\[
+(-1)^s (1.f)_2 2^{e-15}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Binary16 is commonly called \emph{half precision}. It is useful when reduced storage
+and bandwidth matter more than wide dynamic range or high precision.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Binary16}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{BitWidth}(x,16)
+\land
+\operatorname{SignWidth}(x,1)
+\land
+\operatorname{ExponentWidth}(x,5)
+\land
+\operatorname{FractionWidth}(x,10)
+\land
+\operatorname{ExponentBias}(x,15).
+\]
+\end{remark*}
+
+\IEEEFloatLayout{0.55}{1}{5}{10}{15}{10}{9}{binary16}
+
+% =========================================================
+% Binary32
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 Binary32 Format}]
+\begin{definition}[IEEE 754 Binary32 Format]
+The \emph{IEEE 754 binary32 format} is the 32-bit binary floating-point interchange format
+with the following field layout:
+
+\begin{itemize}
+    \item $1$ sign bit,
+    \item $8$ exponent bits,
+    \item $23$ fraction bits,
+    \item exponent bias $127$.
+\end{itemize}
+
+For a normalized finite binary32 datum, the represented value is
+\[
+(-1)^s (1.f)_2 2^{e-127}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Binary32 is commonly called \emph{single precision}. It is the standard 32-bit floating-point
+format used broadly in scientific computing, computer graphics, simulation, and machine learning.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Binary32}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{BitWidth}(x,32)
+\land
+\operatorname{SignWidth}(x,1)
+\land
+\operatorname{ExponentWidth}(x,8)
+\land
+\operatorname{FractionWidth}(x,23)
+\land
+\operatorname{ExponentBias}(x,127).
+\]
+\end{remark*}
+
+\IEEEFloatLayout{0.28}{1}{8}{23}{31}{23}{22}{binary32}
+
+% =========================================================
+% Binary64
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 Binary64 Format}]
+\begin{definition}[IEEE 754 Binary64 Format]
+The \emph{IEEE 754 binary64 format} is the 64-bit binary floating-point interchange format
+with the following field layout:
+
+\begin{itemize}
+    \item $1$ sign bit,
+    \item $11$ exponent bits,
+    \item $52$ fraction bits,
+    \item exponent bias $1023$.
+\end{itemize}
+
+For a normalized finite binary64 datum, the represented value is
+\[
+(-1)^s (1.f)_2 2^{e-1023}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Binary64 is commonly called \emph{double precision}. It is the standard high-precision
+floating-point format for much of scientific and engineering computation.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Binary64}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{BitWidth}(x,64)
+\land
+\operatorname{SignWidth}(x,1)
+\land
+\operatorname{ExponentWidth}(x,11)
+\land
+\operatorname{FractionWidth}(x,52)
+\land
+\operatorname{ExponentBias}(x,1023).
+\]
+\end{remark*}
+
+\IEEEFloatLayout{0.14}{1}{11}{52}{63}{52}{51}{binary64}
+
+% =========================================================
+% Binary128
+% =========================================================
+
+\begin{tcolorbox}[title={Definition --- IEEE 754 Binary128 Format}]
+\begin{definition}[IEEE 754 Binary128 Format]
+The \emph{IEEE 754 binary128 format} is the 128-bit binary floating-point interchange format
+with the following field layout:
+
+\begin{itemize}
+    \item $1$ sign bit,
+    \item $15$ exponent bits,
+    \item $112$ fraction bits,
+    \item exponent bias $16383$.
+\end{itemize}
+
+For a normalized finite binary128 datum, the represented value is
+\[
+(-1)^s (1.f)_2 2^{e-16383}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Binary128 is commonly called \emph{quadruple precision}. It provides substantially greater
+range and precision than binary64 at substantially greater storage and computational cost.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Binary128}(x)
+\Longleftrightarrow
+\operatorname{IEEEBinaryFloatDatum}(x)
+\land
+\operatorname{BitWidth}(x,128)
+\land
+\operatorname{SignWidth}(x,1)
+\land
+\operatorname{ExponentWidth}(x,15)
+\land
+\operatorname{FractionWidth}(x,112)
+\land
+\operatorname{ExponentBias}(x,16383).
+\]
+\end{remark*}
+
+\IEEEFloatLayout{0.08}{1}{15}{112}{127}{112}{111}{binary128}
+
+% =========================================================
+% Summary
+% =========================================================
+
+\begin{remark*}[Summary]
+The four standard IEEE 754 basic binary interchange formats considered here are:
+\[
+\text{binary16 }(1,5,10),\qquad
+\text{binary32 }(1,8,23),\qquad
+\text{binary64 }(1,11,52),\qquad
+\text{binary128 }(1,15,112),
+\]
+where each triple records
+\[
+(\text{sign bits},\text{ exponent bits},\text{ fraction bits}).
+\]
+\end{remark*}
