@@ -47,17 +47,9 @@ sequence.
 Every convergent sequence in $\mathbb{Q}$ is a Cauchy sequence.
 \end{theorem}
 
-\begin{proof}
-Suppose $x_n\to x\in\mathbb{Q}$.  Let $\varepsilon>0$.  Choose $N$ such that
-\[
-n\ge N \Rightarrow |x_n-x|<\varepsilon/2.
-\]
-Then if $m,n\ge N$,
-\[
-|x_m-x_n|\le |x_m-x|+|x_n-x|<\varepsilon.
-\]
-Hence $(x_n)$ is Cauchy.
-\end{proof}
+\begin{remark*}[Proof]
+\hyperref[prf:convergent-implies-cauchy-q]{Go to proof.}
+\end{remark*}
 
 \begin{remark}
 The converse is the issue.  In a complete space every Cauchy sequence converges.  The rational
@@ -75,16 +67,105 @@ numbers are not complete, and so this converse can fail.
 \end{enumerate}
 \end{remark}
 
-\begin{theorem}
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number]
 \label{thm:cauchy-not-convergent-q}
 There exist Cauchy sequences in $\mathbb{Q}$ that do not converge to a rational number.
 \end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\exists (x_n)_{n\in\mathbb{N}}\subseteq \mathbb{Q}\;
+\Bigl(
+\operatorname{CauchySequence}(x_n)
+\land
+\forall q\in\mathbb{Q}\;\neg\operatorname{ConvergesTo}(x_n,q)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\exists (x_n)\;
+\bigl(
+\operatorname{RationalSequence}(x_n)
+\land
+\operatorname{CauchySequence}(x_n)
+\land
+\neg\exists q\in\mathbb{Q}\;\operatorname{ConvergesTo}(x_n,q)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\forall (x_n)_{n\in\mathbb{N}}\subseteq \mathbb{Q}\;
+\bigl(
+\operatorname{CauchySequence}(x_n)
+\Longrightarrow
+\exists q\in\mathbb{Q}\;\operatorname{ConvergesTo}(x_n,q)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\forall (x_n)\;
+\bigl(
+\operatorname{RationalSequence}(x_n)\land \operatorname{CauchySequence}(x_n)
+\Longrightarrow
+\exists q\in\mathbb{Q}\;\operatorname{ConvergesTo}(x_n,q)
+\bigr)
+\]
+would be the false completeness claim for $\mathbb{Q}$.
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The theorem would fail only if every Cauchy sequence of rationals converged to
+some rational limit. The decimal approximations to $\sqrt{2}$ show that this is
+not so.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+1,\;1.4,\;1.41,\;1.414,\;1.4142,\dots
+\]
+is Cauchy in $\mathbb{Q}$, but its limit in $\mathbb{R}$ is $\sqrt{2}$, and
+\hyperref[thm:sqrt2-irrational]{Theorem~\ref*{thm:sqrt2-irrational}} says that
+$\sqrt{2}\notin\mathbb{Q}$.
+\end{remark*}
 
 \begin{remark}
 The second example above converges to $\sqrt{2}$ in $\mathbb{R}$, but $\sqrt{2}\notin\mathbb{Q}$.  Thus
 $\mathbb{Q}$ already contains enough arithmetic to define the sequence, but not enough numbers to
 contain its limit.
 \end{remark}
+
+\begin{remark*}[Interpretation]
+Internal coherence is not enough. A rational sequence can have terms that
+settle down relative to one another and still fail to land on a rational
+number. This is the structural incompleteness of $\mathbb{Q}$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:cauchy-rational]{Cauchy sequence in $\mathbb{Q}$},
+the decimal approximation example above, and
+\hyperref[thm:sqrt2-irrational]{Theorem~\ref*{thm:sqrt2-irrational}}.
+\end{remark*}
+
+\begin{remark*}[Proof idea]
+Take the rational decimal truncations of $\sqrt{2}$. Show that they form a
+Cauchy sequence in $\mathbb{Q}$, then use irrationality of $\sqrt{2}$ to rule
+out convergence to a rational limit.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:cauchy-not-convergent-q]{Go to proof.}
+\end{remark*}
 
 \subsection{Consequences}
 

@@ -12,7 +12,7 @@ Usage:
     python scripts/extract-cards.py . --verbose
 """
 
-import re, json, argparse, sys, datetime
+import re, json, argparse, sys, datetime, yaml
 from pathlib import Path
 from collections import defaultdict
 
@@ -39,6 +39,8 @@ SKIP_DIRS  = {'.git', 'node_modules', '_minted', '_archive'}
 SKIP_FILES = {'main.tex', 'preamble.tex', 'macros.tex',
               'environments.tex', 'boxes.tex', 'colors.tex'}
 
+_CHAPTER_EXTRACTION_CACHE = {}
+
 # Flash fields: (macro_name, required_for_theorem_like, required_for_definition)
 FLASH_FIELDS = [
     ('FlashQ',       True,  True),
@@ -56,6 +58,33 @@ PROOF_FLASH_FIELDS = [
 ]
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
+def chapter_extraction_enabled(tex_file, root):
+    """Honor chapter.yaml extraction.enabled flags for notes under a chapter."""
+    current = tex_file.parent.resolve()
+    root = root.resolve()
+
+    while True:
+        yaml_path = current / 'chapter.yaml'
+        if yaml_path.exists():
+            if yaml_path in _CHAPTER_EXTRACTION_CACHE:
+                return _CHAPTER_EXTRACTION_CACHE[yaml_path]
+            try:
+                data = yaml.safe_load(yaml_path.read_text(encoding='utf-8')) or {}
+            except Exception:
+                enabled = True
+            else:
+                extraction = data.get('extraction', {})
+                if isinstance(extraction, dict) and 'enabled' in extraction:
+                    enabled = bool(extraction.get('enabled'))
+                else:
+                    enabled = True
+            _CHAPTER_EXTRACTION_CACHE[yaml_path] = enabled
+            return enabled
+
+        if current == root or current.parent == current:
+            return True
+        current = current.parent.resolve()
 
 def clean_name(raw):
     if not raw: return ''
@@ -454,6 +483,10 @@ def main():
         if any(p in SKIP_DIRS for p in rel.parts): continue
         if tex_file.name in SKIP_FILES: continue
         if not path_ok(rel): continue
+        if not chapter_extraction_enabled(tex_file, root):
+            if args.verbose:
+                print(f"  skip {rel} (chapter extraction disabled)")
+            continue
         file_count += 1
         cards, audit = process_file(tex_file, root, env_filter, args.verbose)
         if cards and args.verbose:

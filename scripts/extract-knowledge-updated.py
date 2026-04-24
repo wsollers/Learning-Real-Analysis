@@ -28,6 +28,7 @@ import datetime as _dt
 import base64
 import json
 import re
+import yaml
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -214,6 +215,37 @@ def parse_predicates_from_formal(formal: str, statement: str = "", proposition: 
 # ---------------------------------------------------------------------------
 # Cleaning helpers
 # ---------------------------------------------------------------------------
+
+_CHAPTER_EXTRACTION_CACHE: Dict[Path, bool] = {}
+
+
+def chapter_extraction_enabled(tex_file: Path, root: Path) -> bool:
+    """Honor chapter.yaml extraction.enabled flags for notes under a chapter."""
+    current = tex_file.parent.resolve()
+    root = root.resolve()
+
+    while True:
+        yaml_path = current / "chapter.yaml"
+        if yaml_path.exists():
+            cached = _CHAPTER_EXTRACTION_CACHE.get(yaml_path)
+            if cached is not None:
+                return cached
+            try:
+                data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                enabled = True
+            else:
+                extraction = data.get("extraction", {})
+                if isinstance(extraction, dict) and "enabled" in extraction:
+                    enabled = bool(extraction.get("enabled"))
+                else:
+                    enabled = True
+            _CHAPTER_EXTRACTION_CACHE[yaml_path] = enabled
+            return enabled
+
+        if current == root or current.parent == current:
+            return True
+        current = current.parent.resolve()
 
 
 def clean_name(raw: str) -> str:
@@ -771,6 +803,10 @@ def main():
             if any(part in SKIP_DIRS for part in rel.parts):
                 continue
             if not file_is_note(tex_file):
+                continue
+            if not chapter_extraction_enabled(tex_file, root):
+                if args.verbose:
+                    print(f"  - skip {rel} (chapter extraction disabled)")
                 continue
             nodes, audits = process_note_file(tex_file, root, env_filter, roots, args.verbose)
             all_nodes.extend(nodes)

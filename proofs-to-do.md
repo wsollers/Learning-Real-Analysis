@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-23 22:48:56
+Generated: 2026-04-24 14:27:57
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 120
+Total: 163
 
 ## volume-ii / rationals
 
@@ -12,13 +12,56 @@ Chapter: `volume-ii/rationals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
-| thm | `thm:cauchy-not-convergent-q` | There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number | Proof file exists but still contains a TODO marker. | `notes\notes-rational-cauchy.tex` | `proofs\notes\prf-cauchy-not-convergent-q.tex` |
-| cor | `cor:q-dense-in-itself` | $\mathbb{Q}$ Is Dense in Itself | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-dense-in-itself.tex` |
-| cor | `cor:q-has-no-adjacent-points` | The Rational Numbers Have No Adjacent Points | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-adjacent-points.tex` |
-| lem | `lem:rational-perturbation-lemma` | Rational Perturbation Lemma | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-perturbation-lemma.tex` |
-| lem | `lem:rational-upper-lower-perturbation` | Upper/Lower Perturbation Lemma, Rational Version | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-upper-lower-perturbation.tex` |
-| thm | `thm:between-any-two-rationals-is-a-rational` | Between Any Two Rational Numbers Lies Another Rational | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-between-any-two-rationals-is-a-rational.tex` |
-| thm | `thm:q-has-no-minimum-positive-element` | $\mathbb{Q}$ Has No Minimum Positive Element | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-minimum-positive-element.tex` |
+| thm | `thm:cauchy-not-convergent-q` | There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number | Proof file exists but still contains a TODO marker. | `notes\cauchy-sequences-in-q\notes-rational-cauchy.tex` | `proofs\notes\prf-cauchy-not-convergent-q.tex` |
+| thm | `thm:convergent-implies-cauchy-q` | Every Convergent Rational Sequence Is Cauchy | Proof file exists but still contains a TODO marker. | `notes\cauchy-sequences-in-q\notes-rational-cauchy.tex` | `proofs\notes\prf-convergent-implies-cauchy-q.tex` |
+| lem | `lem:rational-addition-well-defined` | Addition Is Well-Defined on Rational Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-rational-addition-well-defined.tex` |
+| lem | `lem:rational-multiplication-well-defined` | Multiplication Is Well-Defined on Rational Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-rational-multiplication-well-defined.tex` |
+| thm | `thm:fraction-pair-equivalence` | The Fraction-Pair Relation Is an Equivalence Relation | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-fraction-pair-equivalence.tex` |
+| cor | `cor:infinitely-many-rationals-between` | Infinitely Many Rational Numbers Lie Between Two Distinct Reals | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-density-of-rationals.tex` | `proofs\notes\prf-infinitely-many-rationals-between.tex` |
+| thm | `thm:archimedean-q` | Archimedean Property of $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-density-of-rationals.tex` | `proofs\notes\prf-archimedean-q.tex` |
+| thm | `thm:q-dense-in-r` | Density of $\mathbb{Q}$ in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-density-of-rationals.tex` | `proofs\notes\prf-q-dense-in-r.tex` |
+| cor | `cor:q-dense-in-itself` | $\mathbb{Q}$ Is Dense in Itself | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-dense-in-itself.tex` |
+| cor | `cor:q-has-no-adjacent-points` | The Rational Numbers Have No Adjacent Points | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-adjacent-points.tex` |
+| lem | `lem:rational-perturbation-lemma` | Rational Perturbation Lemma | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-perturbation-lemma.tex` |
+| lem | `lem:rational-upper-lower-perturbation` | Upper/Lower Perturbation Lemma, Rational Version | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-upper-lower-perturbation.tex` |
+| thm | `thm:between-any-two-rationals-is-a-rational` | Between Any Two Rational Numbers Lies Another Rational | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-between-any-two-rationals-is-a-rational.tex` |
+| thm | `thm:q-has-no-minimum-positive-element` | $\mathbb{Q}$ Has No Minimum Positive Element | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-minimum-positive-element.tex` |
+| thm | `thm:rational-chain-with-small-steps` | Rational Chain with Uniformly Small Steps | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-chain-with-small-steps.tex` |
+| thm | `thm:mediant-inequality` | Mediant Inequality | Proof file exists but still contains a TODO marker. | `notes\density-of-q\mediants-stern-brocot\notes-mediant.tex` | `proofs\notes\prf-mediant-inequality.tex` |
+| thm | `thm:finite-integral-domain-is-field` | Every Finite Integral Domain Is a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-finite-integral-domain-is-field.tex` |
+| thm | `thm:integer-exponent-addition-law` | Integer Exponent Addition Law | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-integer-exponent-addition-law.tex` |
+| thm | `thm:negative-exponents-agree-with-inverse-power` | Negative Exponents Agree with Inverse Powers | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-negative-exponents-agree-with-inverse-power.tex` |
+| thm | `thm:power-of-a-power-in-field` | Power of a Power in a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-power-of-a-power-in-field.tex` |
+| thm | `thm:power-of-product-in-field` | Power of a Product in a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-power-of-product-in-field.tex` |
+| thm | `thm:q-is-field` | $\mathbb{Q}$ Is a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-q-is-field.tex` |
+| thm | `thm:q-is-integral-domain` | $\mathbb{Q}$ Is an Integral Domain | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-q-is-integral-domain.tex` |
+| lem | `lem:rational-square-bracketing` | Rational Square Bracketing | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-rational-square-bracketing.tex` |
+| thm | `thm:rational-square-approximation-from-above` | Rational Square Approximation from Above | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-rational-square-approximation-from-above.tex` |
+| thm | `thm:sqrt2-irrational` | No Rational Number Has Square $2$ | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-sqrt2-irrational.tex` |
+| cor | `cor:n-positive` | Natural Numbers Are Positive | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-n-positive.tex` |
+| thm | `thm:fraction-order-comparison-general` | General Fraction Comparison in an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-fraction-order-comparison-general.tex` |
+| thm | `thm:fraction-order-comparison-positive-denominator-product` | Fraction Comparison When the Denominator Product Is Positive | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-fraction-order-comparison-positive-denominator-product.tex` |
+| thm | `thm:inverse-positive` | Positive Elements Have Positive Inverses | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-inverse-positive.tex` |
+| thm | `thm:multiply-negative` | Multiplication by a Negative Element Reverses Order | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-multiply-negative.tex` |
+| thm | `thm:multiply-positive` | Multiplication by a Positive Element Preserves Order | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-multiply-positive.tex` |
+| thm | `thm:one-positive` | $1$ Is Positive | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-one-positive.tex` |
+| thm | `thm:ordered-fields-are-densely-ordered` | Ordered Fields Are Densely Ordered | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-ordered-fields-are-densely-ordered.tex` |
+| thm | `thm:positive-fraction-iff-positive-product` | Positivity of a Quotient via the Product $ab$ | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-positive-fraction-iff-positive-product.tex` |
+| thm | `thm:q-is-ordered-field` | $\mathbb{Q}$ Is an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-q-is-ordered-field.tex` |
+| thm | `thm:reciprocal-order-for-positive-elements` | Reciprocal Order for Positive Elements | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-reciprocal-order-for-positive-elements.tex` |
+| thm | `thm:squares-nonnegative` | Squares Are Nonnegative | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-squares-nonnegative.tex` |
+| thm | `thm:one-inverse-is-one` | The Reciprocal of $1$ Is $1$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-one-inverse-is-one.tex` |
+| thm | `thm:rational-cross-multiplication` | Cross-Multiplication Criterion for Rational Equality | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-cross-multiplication.tex` |
+| thm | `thm:rational-division-by-one` | Division by One in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-division-by-one.tex` |
+| thm | `thm:rational-fraction-addition` | Fraction Addition Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-addition.tex` |
+| thm | `thm:rational-fraction-multiplication` | Fraction Multiplication Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-multiplication.tex` |
+| thm | `thm:rational-fraction-negation` | Negation Rule for Rational Fractions | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-negation.tex` |
+| thm | `thm:rational-fraction-reciprocal` | Reciprocal of a Nonzero Rational Fraction | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-reciprocal.tex` |
+| thm | `thm:rational-fraction-scaling` | Scaling Numerator and Denominator by the Same Nonzero Rational | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-scaling.tex` |
+| thm | `thm:rational-fraction-subtraction` | Fraction Subtraction Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-subtraction.tex` |
+| thm | `thm:rational-quotient-zero-iff-numerator-zero` | A Rational Quotient Is Zero Exactly When Its Numerator Is Zero | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-quotient-zero-iff-numerator-zero.tex` |
+| thm | `thm:dirichlet-approx` | Dirichlet's Approximation Theorem | Proof file exists but still contains a TODO marker. | `notes\rational-approximation\notes-rational-approximation.tex` | `proofs\notes\prf-dirichlet-approx.tex` |
+| thm | `thm:rational-approximation` | Rational Approximation | Proof file exists but still contains a TODO marker. | `notes\rational-approximation\notes-rational-approximation.tex` | `proofs\notes\prf-rational-approximation.tex` |
 
 ## volume-ii / reals
 
