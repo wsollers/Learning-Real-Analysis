@@ -75,6 +75,37 @@ COMMON_TITLE_WORDS = {
     "methods",
     "introduction",
 }
+TITLE_BLACKLIST_TOKENS = (
+    ".pdf",
+    ".indd",
+    "printpdf",
+    "book_printpdf",
+    "department of mathematics",
+    "faculty of",
+    "autumn term",
+    "spring term",
+    "winter term",
+    "summer term",
+    "math 5",
+    "math 4",
+    "lecture notes",
+    "course notes",
+    "uni00",
+)
+AUTHOR_BLACKLIST_TOKENS = (
+    "edition",
+    "board",
+    "readings",
+    "editor",
+    "editors",
+    "series",
+    "department",
+    "faculty",
+    "university",
+    ".pdf",
+    ".indd",
+    "uni00",
+)
 LECTURE_NOTE_KINDS = {
     "lecture_notes",
     "course_notes",
@@ -369,6 +400,7 @@ def pick_title_lines(lines: list[str], author_index: int | None) -> list[str]:
 def infer_front_matter(pages: list[dict[str, Any]], metadata: dict[str, str]) -> dict[str, Any]:
     cleaned_pages: list[list[str]] = []
     lines: list[str] = []
+    selected_page_index: int | None = None
     for page in pages[:6]:
         page_lines = [split_stuck_words(part) for part in page.get("text", "").splitlines()]
         page_lines = [line for line in page_lines if line]
@@ -385,7 +417,7 @@ def infer_front_matter(pages: list[dict[str, Any]], metadata: dict[str, str]) ->
     if metadata_title and len(metadata_title) > 3:
         inferred_title = metadata_title
     else:
-        for page_lines in cleaned_pages[:5]:
+        for page_index, page_lines in enumerate(cleaned_pages[:5]):
             if not page_lines or len(page_lines) > 12:
                 continue
             if any("editor" in line.lower() for line in page_lines):
@@ -406,9 +438,11 @@ def infer_front_matter(pages: list[dict[str, Any]], metadata: dict[str, str]) ->
                 ]
                 if author_candidates and title_candidates:
                     inferred_title = collapse_ws(" ".join(title_candidates[:3]))
+                    selected_page_index = page_index
                     break
             if title_lines:
                 inferred_title = collapse_ws(" ".join(title_lines[:3]))
+                selected_page_index = page_index
                 break
         if not inferred_title:
             title_candidates = [line for line in lines[:40] if looks_like_title_line(line)]
@@ -427,7 +461,21 @@ def infer_front_matter(pages: list[dict[str, Any]], metadata: dict[str, str]) ->
     if metadata_author:
         inferred_authors = [name.strip() for name in re.split(r"\s*(?:,|;| and )\s*", metadata_author) if name.strip()]
     else:
-        for page_lines in cleaned_pages[:5]:
+        candidate_page_sets: list[list[str]] = []
+        if selected_page_index is not None:
+            candidate_page_sets.append(cleaned_pages[selected_page_index])
+            if selected_page_index + 1 < len(cleaned_pages):
+                candidate_page_sets.append(cleaned_pages[selected_page_index + 1])
+        candidate_page_sets.extend(cleaned_pages[:5])
+
+        seen_keys: set[tuple[str, ...]] = set()
+        for page_lines in candidate_page_sets:
+            key = tuple(page_lines)
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+            if any("editor" in line.lower() for line in page_lines):
+                continue
             author_lines = [line for line in page_lines if looks_like_author_line(line)]
             if author_lines:
                 inferred_authors = [author_lines[0]]
@@ -577,6 +625,24 @@ def compact_title(title: str) -> str:
     return title
 
 
+def is_plausible_book_title(title: str) -> bool:
+    title = compact_title(title)
+    lowered = title.lower()
+    if not title or len(title) < 4:
+        return False
+    if any(token in lowered for token in TITLE_BLACKLIST_TOKENS):
+        return False
+    if re.match(r"^(97[89]|[0-9_./-]+$)", lowered):
+        return False
+    if re.search(r"\b\d{4}\b", title) and len(title.split()) <= 4:
+        return False
+    if sum(ch.isalpha() for ch in title) < 4:
+        return False
+    if len(title.split()) == 1 and re.fullmatch(r"[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?", title):
+        return False
+    return True
+
+
 def compact_edition(edition: str) -> str:
     edition = fix_mojibake(edition)
     if not edition:
@@ -617,9 +683,26 @@ def normalize_author_segment(authors: list[str]) -> str:
     return surname
 
 
+def is_plausible_author_name(name: str) -> bool:
+    name = fix_mojibake(name)
+    lowered = name.lower()
+    if not name or len(name) < 3 or len(name) > 60:
+        return False
+    if any(token in lowered for token in AUTHOR_BLACKLIST_TOKENS):
+        return False
+    if re.search(r"\d", name):
+        return False
+    words = [word for word in re.split(r"\s+", name) if word]
+    if not 2 <= len(words) <= 5:
+        return False
+    if words[-1].lower().strip(".") in COMMON_TITLE_WORDS:
+        return False
+    return True
+
+
 def has_strong_rename_metadata(data: dict[str, Any]) -> bool:
     kind = collapse_ws(str(data.get("kind", "") or "")).lower()
-    title = fix_mojibake(str(data.get("title", "") or ""))
+    title = compact_title(str(data.get("title", "") or ""))
     authors = normalize_string_list(data.get("authors", []))
     confidence = float(data.get("confidence", 0.0) or 0.0)
     metadata_sources = data.get("metadata_sources", {}) or {}
@@ -633,6 +716,10 @@ def has_strong_rename_metadata(data: dict[str, Any]) -> bool:
     if not title or not authors:
         return False
     if title_src == "filename" or author_src == "filename":
+        return False
+    if not is_plausible_book_title(title):
+        return False
+    if not any(is_plausible_author_name(author) for author in authors):
         return False
     return True
 
@@ -692,6 +779,10 @@ def should_skip_rename(data: dict[str, Any]) -> tuple[bool, list[str]]:
         reasons.append("missing_title")
     if not authors:
         reasons.append("missing_authors")
+    if title and not is_plausible_book_title(title):
+        reasons.append("implausible_title")
+    if authors and not any(is_plausible_author_name(author) for author in authors):
+        reasons.append("implausible_authors")
     if edition and len(edition) > 40:
         reasons.append("edition_looks_unreliable")
 
@@ -713,7 +804,12 @@ def build_target_filename(data: dict[str, Any]) -> str | None:
     title = sanitize_filename_part(compact_title(str(data.get("title", "") or "")), MAX_TITLE_LEN)
     edition = sanitize_filename_part(compact_edition(str(data.get("edition", "") or "")), 10)
     author = sanitize_filename_part(normalize_author_segment(data.get("authors", []) or []), MAX_AUTHOR_LEN)
+    authors = normalize_string_list(data.get("authors", []))
     if not title or not author:
+        return None
+    if not is_plausible_book_title(title):
+        return None
+    if not any(is_plausible_author_name(name) for name in authors):
         return None
     pieces = [title]
     if edition:
