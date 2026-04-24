@@ -1,10 +1,49 @@
 # Proofs To Do
 
-Generated: 2026-04-22 22:54:03
+Generated: 2026-04-23 22:48:56
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 95
+Total: 120
+
+## volume-ii / rationals
+
+Chapter: `volume-ii/rationals`
+
+| Type | Label | Title | Reason | Source | Proof file |
+| --- | --- | --- | --- | --- | --- |
+| thm | `thm:cauchy-not-convergent-q` | There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number | Proof file exists but still contains a TODO marker. | `notes\notes-rational-cauchy.tex` | `proofs\notes\prf-cauchy-not-convergent-q.tex` |
+| cor | `cor:q-dense-in-itself` | $\mathbb{Q}$ Is Dense in Itself | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-dense-in-itself.tex` |
+| cor | `cor:q-has-no-adjacent-points` | The Rational Numbers Have No Adjacent Points | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-adjacent-points.tex` |
+| lem | `lem:rational-perturbation-lemma` | Rational Perturbation Lemma | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-perturbation-lemma.tex` |
+| lem | `lem:rational-upper-lower-perturbation` | Upper/Lower Perturbation Lemma, Rational Version | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-upper-lower-perturbation.tex` |
+| thm | `thm:between-any-two-rationals-is-a-rational` | Between Any Two Rational Numbers Lies Another Rational | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-between-any-two-rationals-is-a-rational.tex` |
+| thm | `thm:q-has-no-minimum-positive-element` | $\mathbb{Q}$ Has No Minimum Positive Element | Proof file exists but still contains a TODO marker. | `notes\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-minimum-positive-element.tex` |
+
+## volume-ii / reals
+
+Chapter: `volume-ii/reals`
+
+| Type | Label | Title | Reason | Source | Proof file |
+| --- | --- | --- | --- | --- | --- |
+| cor | `cor:irrationals-are-not-a-field` | The Irrationals Are Not a Field | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-are-not-a-field.tex` |
+| cor | `cor:irrationals-are-not-an-ordered-field` | The Irrationals Are Not an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-are-not-an-ordered-field.tex` |
+| cor | `cor:irrationals-not-closed-under-addition` | The Irrationals Are Not Closed Under Addition | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-not-closed-under-addition.tex` |
+| cor | `cor:irrationals-not-closed-under-multiplication` | The Irrationals Are Not Closed Under Multiplication | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-not-closed-under-multiplication.tex` |
+| thm | `thm:nonzero-rational-times-irrational-is-irrational` | Nonzero Rational Times Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-nonzero-rational-times-irrational-is-irrational.tex` |
+| thm | `thm:quotient-by-nonzero-rational-preserves-irrationality` | Quotient by Nonzero Rational Preserves Irrationality | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-quotient-by-nonzero-rational-preserves-irrationality.tex` |
+| thm | `thm:rational-minus-irrational-is-irrational` | Rational Minus Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-rational-minus-irrational-is-irrational.tex` |
+| thm | `thm:rational-plus-irrational-is-irrational` | Rational Plus Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-rational-plus-irrational-is-irrational.tex` |
+| cor | `cor:every-irrational-can-be-approximated-by-rationals` | Every Irrational Can Be Approximated by Rationals | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-every-irrational-can-be-approximated-by-rationals.tex` |
+| cor | `cor:every-rational-can-be-approximated-by-irrationals` | Every Rational Can Be Approximated by Irrationals | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-every-rational-can-be-approximated-by-irrationals.tex` |
+| cor | `cor:irrationals-dense-in-r` | The Irrationals Are Dense in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-irrationals-dense-in-r.tex` |
+| cor | `cor:q-not-closed-in-r` | $\mathbb{Q}$ Is Not Closed in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-closed-in-r.tex` |
+| cor | `cor:q-not-discrete-in-r` | $\mathbb{Q}$ Is Not Discrete in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-discrete-in-r.tex` |
+| cor | `cor:q-not-open-in-r` | $\mathbb{Q}$ Is Not Open in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-open-in-r.tex` |
+| thm | `thm:between-any-two-reals-is-an-irrational` | Between Any Two Real Numbers Lies an Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-between-any-two-reals-is-an-irrational.tex` |
+| thm | `thm:closure-of-q-is-r` | Closure of $\mathbb{Q}$ in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-closure-of-q-is-r.tex` |
+| thm | `thm:irrationals-not-complete-as-ordered-set` | The Irrationals Are Not Complete as an Ordered Set | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-irrationals-not-complete-as-ordered-set.tex` |
+| thm | `thm:irrationals-uncountable` | The Irrationals Are Uncountable | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-irrationals-uncountable.tex` |
 
 ## volume-iii / bounding
 

@@ -11,32 +11,73 @@ The rational numbers are dense and Archimedean, yet they are not complete.  This
 are real-number locations that can be approached arbitrarily closely by rationals but are not
 occupied by any rational number.  The most famous example is $\sqrt{2}$.
 
-\begin{theorem}
+% ---------------------------------------------------------
+% Theorem: No Rational Number Has Square 2
+% Label: thm:sqrt2-irrational
+% ---------------------------------------------------------
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (No Rational Number Has Square $2$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[No Rational Number Has Square $2$]
 \label{thm:sqrt2-irrational}
 There is no rational number whose square is $2$.
 \end{theorem}
+\end{tcolorbox}
 
-\begin{proof}
-Suppose, for contradiction, that
+\begin{remark*}[Standard quantified statement]
 \[
-\sqrt{2}=\frac{p}{q}
+\neg\exists r\in\mathbb{Q}\;\bigl(r^2=2\bigr).
 \]
-for integers $p$ and $q$ in lowest terms.
-Squaring gives
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
 \[
-p^2=2q^2.
+\operatorname{HasSquareEqualToTwo}(r)\coloneqq (r^2=2),
+\qquad
+\forall r\in\mathbb{Q}\;\neg\operatorname{HasSquareEqualToTwo}(r).
 \]
-Thus $p^2$ is even, so $p$ is even.  Write $p=2k$.  Then
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
 \[
-4k^2=2q^2,
+\exists r\in\mathbb{Q}\;\bigl(r^2=2\bigr).
 \]
-and therefore
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
 \[
-q^2=2k^2.
+\exists r\in\mathbb{Q}\;\operatorname{HasSquareEqualToTwo}(r).
 \]
-Hence $q$ is even as well.  This contradicts the assumption that $p/q$ was in lowest terms.
-Therefore $\sqrt{2}\notin\mathbb{Q}$.
-\end{proof}
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The theorem would fail exactly if some rational number were an exact square root of $2$.  The proof shows that any such rational, written in lowest terms, would force both numerator and denominator to be even, which is impossible.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\bigl(\forall r\in\mathbb{Q}\;\neg(r^2=2)\bigr)
+\Longleftrightarrow
+\exists r\in\mathbb{Q}\;(r^2=2).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the first visible gap in $\mathbb{Q}$.  Rational numbers can approximate $\sqrt{2}$ arbitrarily well, but no rational number lands exactly on it.  The obstruction is arithmetic: squaring a reduced rational cannot produce $2$ without violating the parity structure of the integers.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[rem:reduced-rational]{Remark~\ref*{rem:reduced-rational}} for reduced-form representatives of rational numbers, together with elementary parity facts for integers.
+\end{remark*}
+
+\begin{remark*}[Proof idea]
+Argue by contradiction.  Assume $\sqrt{2}=p/q$ with $p/q$ in lowest terms.  Then $p^2=2q^2$, so $p$ is even; substituting $p=2k$ shows $q$ is even as well.  That contradicts the reduced-form assumption.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:sqrt2-irrational]{Go to proof.}
+\end{remark*}
 
 \begin{remark}[The gap at $\sqrt{2}$]
 Consider the sets

@@ -9,13 +9,22 @@
 namespace ndde {
 
 // ── GaussianSurface::eval ─────────────────────────────────────────────────────
+// Option C: 6-Gaussian asymmetric + double sinusoidal ripple.
+// Domain expanded to [-6,6]×[-6,6] for more surface real estate.
+// Z range approximately [-1.8, 2.0] — see Z_MIN / Z_MAX in the header.
 
 f32 GaussianSurface::eval(f32 x, f32 y) noexcept {
-    const f32 g0 =  1.2f * std::exp(-((x-1.5f)*(x-1.5f) + (y-0.5f)*(y-0.5f)));
-    const f32 g1 = -0.9f * std::exp(-((x+1.2f)*(x+1.2f)/0.7f + (y+1.0f)*(y+1.0f)/1.4f));
-    const f32 g2 =  0.7f * std::exp(-((x-0.3f)*(x-0.3f)/1.8f + (y-1.7f)*(y-1.7f)/0.6f));
-    const f32 s  =  0.15f* std::sin(2.f*x) * std::sin(2.f*y);
-    return g0 + g1 + g2 + s;
+    // Six Gaussians of alternating sign — different widths give varied curvature
+    const f32 g0 =  1.6f * std::exp(-((x-1.5f)*(x-1.5f)/0.6f  + (y-0.4f)*(y-0.4f)/0.9f));
+    const f32 g1 = -1.3f * std::exp(-((x+1.3f)*(x+1.3f)/0.8f  + (y+1.1f)*(y+1.1f)/0.5f));
+    const f32 g2 =  1.1f * std::exp(-((x+0.2f)*(x+0.2f)/1.2f  + (y-2.0f)*(y-2.0f)/0.4f));
+    const f32 g3 = -0.8f * std::exp(-((x-2.5f)*(x-2.5f)/0.5f  + (y+0.7f)*(y+0.7f)/1.0f));
+    const f32 g4 =  0.7f * std::exp(-((x-0.8f)*(x-0.8f)/0.7f  + (y+2.3f)*(y+2.3f)/0.6f));
+    const f32 g5 = -0.5f * std::exp(-((x+2.8f)*(x+2.8f)/0.3f  + (y-1.4f)*(y-1.4f)/0.8f));
+    // Two sinusoidal terms with phase offsets for non-repeating organic ripple
+    const f32 s0 =  0.15f * std::sin(2.0f*x) * std::sin(3.0f*y);
+    const f32 s1 =  0.12f * std::cos(1.5f*x - 1.0f) * std::sin(2.5f*y + 0.7f);
+    return g0 + g1 + g2 + g3 + g4 + g5 + s0 + s1;
 }
 
 // ── GaussianSurface::grad ─────────────────────────────────────────────────────
@@ -194,9 +203,17 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
 // AnimatedCurve
 // ═══════════════════════════════════════════════════════════════════════════════
 
+AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y, u32 colour_id)
+    : m_colour_id(colour_id)
+    , m_start_x(start_x)
+    , m_start_y(start_y)
+{
+    m_walk = WalkState{ start_x, start_y };
+}
+
 void AnimatedCurve::reset() {
     m_trail.clear();
-    m_walk = WalkState{};
+    m_walk = WalkState{ m_start_x, m_start_y };
 }
 
 void AnimatedCurve::advance(f32 dt, f32 speed_scale) {
@@ -301,6 +318,22 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
     return fr;
 }
 
+Vec4 AnimatedCurve::trail_colour(u32 id, f32 age_t) noexcept {
+    // Six distinct hues, each fading from dim at tail to bright at head.
+    // age_t = 0 (oldest) → 1 (newest head).
+    const f32 bright = 0.25f + 0.75f * age_t;
+    const f32 alpha  = 0.25f + 0.75f * age_t;
+    switch (id % MAX_COLOURS) {
+        case 0: return {bright,        bright*0.8f,    1.f,    alpha}; // blue-white
+        case 1: return {1.f,           bright*0.4f,    bright*0.1f, alpha}; // orange-red
+        case 2: return {bright*0.3f,   1.f,            bright*0.4f, alpha}; // green
+        case 3: return {1.f,           bright,         bright*0.05f,alpha}; // yellow
+        case 4: return {bright*0.8f,   bright*0.2f,    1.f,    alpha}; // violet
+        case 5: return {bright*0.1f,   1.f,            1.f,    alpha}; // cyan
+        default: return {bright, bright, bright, alpha};
+    }
+}
+
 u32 AnimatedCurve::trail_vertex_count() const noexcept {
     return static_cast<u32>(m_trail.size());
 }
@@ -308,11 +341,9 @@ u32 AnimatedCurve::trail_vertex_count() const noexcept {
 void AnimatedCurve::tessellate_trail(std::span<Vertex> out) const {
     const u32 n = trail_vertex_count();
     if (out.size() < n) return;
-    // Colour trail by age: older points fade to dark, head is white
     for (u32 i = 0; i < n; ++i) {
-        const f32 t     = static_cast<f32>(i) / static_cast<f32>(n > 1 ? n-1 : 1);
-        const Vec4 col  = {t, t*0.8f + 0.2f, 1.f, 0.3f + 0.7f*t};
-        out[i] = { m_trail[i], col };
+        const f32 t = static_cast<f32>(i) / static_cast<f32>(n > 1 ? n-1 : 1);
+        out[i] = { m_trail[i], trail_colour(m_colour_id, t) };
     }
 }
 
