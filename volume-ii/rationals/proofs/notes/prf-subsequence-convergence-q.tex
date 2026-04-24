@@ -1,0 +1,69 @@
+% =========================================================
+% Proof: Subsequences of Convergent Sequences Converge to the Same Limit
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:subsequence-convergence-q}
+
+\begin{remark*}[Return]
+\hyperref[thm:subsequence-convergence-q]{Return to Theorem~\ref*{thm:subsequence-convergence-q}.}
+\end{remark*}
+
+\begin{theorem*}[Subsequences of convergent sequences converge to the same limit]
+Let $(x_n)$ be a sequence of rational numbers with $x_n \to a \in \mathbb{Q}$.
+Then every subsequence $(x_{k_n})$ converges to $a$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+Let $(x_{k_n})$ be any subsequence of $(x_n)$.  Let $\varepsilon > 0$.
+Since $x_n \to a$, there exists $N \in \mathbb{N}$ such that
+$|x_n - a| < \varepsilon$ for all $n \geq N$.
+We claim $k_n \geq n$ for all $n \in \mathbb{N}$.
+Indeed, $k_1 \geq 1$ since $(k_n) \subseteq \mathbb{N}$, and if
+$k_n \geq n$ then $k_{n+1} > k_n \geq n$, so $k_{n+1} \geq n+1$.
+By induction, $k_n \geq n$ for all $n$.
+Therefore, for all $n \geq N$ we have $k_n \geq n \geq N$, hence
+$|x_{k_n} - a| < \varepsilon$.
+Since $\varepsilon > 0$ was arbitrary, $x_{k_n} \to a$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Establish the key lemma $k_n \geq n$.}
+We prove by induction that $k_n \geq n$ for all $n \in \mathbb{N}$.
+
+\emph{Base case:} $k_1 \in \mathbb{N}$, so $k_1 \geq 1$.
+
+\emph{Inductive step:} Suppose $k_n \geq n$ for some $n$.
+Since the sequence $(k_n)$ is strictly increasing, $k_{n+1} > k_n$.
+Since $k_{n+1}$ is a natural number and $k_{n+1} > k_n \geq n$,
+we get $k_{n+1} \geq n + 1$.
+
+By induction, $k_n \geq n$ for all $n \in \mathbb{N}$.
+
+\textbf{Step 2: Use the convergence of $(x_n)$.}
+Let $\varepsilon > 0$.  Since $x_n \to a$, there exists $N \in \mathbb{N}$
+such that $|x_n - a| < \varepsilon$ for all $n \geq N$.
+
+\textbf{Step 3: Verify the subsequence condition.}
+For any $n \geq N$: by Step~1, $k_n \geq n \geq N$.
+Therefore $|x_{k_n} - a| < \varepsilon$ by the choice of $N$.
+
+\textbf{Step 4: Conclude.}
+Since $\varepsilon > 0$ was arbitrary, we have shown that for each
+$\varepsilon > 0$ there is an $N$ such that $|x_{k_n} - a| < \varepsilon$
+for all $n \geq N$.  By definition, $x_{k_n} \to a$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The structural key is the lemma $k_n \geq n$: it ensures that every
+subsequence index eventually exceeds any given threshold $N$, allowing
+us to transfer the convergence bound from $(x_n)$ to $(x_{k_n})$.
+The induction is the only non-trivial step; everything else is definition-unwinding.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:convergent-rational-sequence]{Convergence of a rational sequence},
+\hyperref[def:subsequence-q]{Subsequence},
+induction on $\mathbb{N}$.
+\end{remark*}

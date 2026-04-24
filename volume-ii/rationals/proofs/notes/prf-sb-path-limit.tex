@@ -1,0 +1,67 @@
+% =========================================================
+% Proof: Every Infinite SB Path Converges to Its Target
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:sb-path-limit}
+
+\begin{remark*}[Return]
+\hyperref[cor:sb-path-limit]{Return to Corollary~\ref*{cor:sb-path-limit}.}
+\end{remark*}
+
+\begin{theorem*}[Every infinite Stern--Brocot path converges to its target]
+Let $x > 0$ and let $(I_n)$ be the SB refinement sequence targeting $x$.
+Then $a_n/b_n \to x$ and $c_n/d_n \to x$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+By \hyperref[prop:sb-unique-point]{Proposition~\ref*{prop:sb-unique-point}},
+there is a unique $\xi \in \bigcap I_n$ and both endpoint sequences
+converge to $\xi$.  By the construction rule, $x \in I_n$ for every $n$
+(at each step, the endpoint on the same side as the mediant relative to
+$x$ is replaced, keeping $x$ in the new interval).  Therefore
+$x \in \bigcap I_n$.  By uniqueness, $\xi = x$.  Hence both endpoint
+sequences converge to $x$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Apply the Unique Point Proposition.}
+By \hyperref[prop:sb-unique-point]{Proposition~\ref*{prop:sb-unique-point}},
+$\bigcap I_n = \{\xi\}$ for some $\xi \in \mathbb{R}$, and both
+$(a_n/b_n)$ and $(c_n/d_n)$ converge to $\xi$.
+
+\textbf{Step 2: Verify $x \in I_n$ for every $n$.}
+The construction rule is: at each step, compare $x$ to the mediant $m$.
+If $x < m$, replace the right endpoint by $m$ (so the new interval is
+$[a_n/b_n, m]$ and $x < m$ means $x$ is still in the left part).
+If $x > m$, replace the left endpoint (similarly).
+If $x = m$, the process terminates (but we are in the infinite-path
+case, so $x \neq m$ at every step).
+In either case, $x$ lies in the updated interval.  By induction, $x \in I_n$
+for all $n$.
+
+\textbf{Step 3: Conclude $\xi = x$.}
+Since $x \in I_n$ for all $n$, we have $x \in \bigcap I_n = \{\xi\}$.
+Therefore $x = \xi$.
+
+\textbf{Step 4: State the convergence.}
+Both sequences converge to $\xi = x$:
+\[
+\lim_{n\to\infty} \frac{a_n}{b_n} = x,
+\qquad
+\lim_{n\to\infty} \frac{c_n}{d_n} = x.
+\qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Proof structure]
+A one-step corollary: the unique point in $\bigcap I_n$ is $\xi$; the
+target $x$ lies in every $I_n$ by the construction rule; uniqueness forces
+$\xi = x$.  All the work is done by the Unique Point Proposition.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[prop:sb-unique-point]{Nested SB intervals contain a unique point},
+the Stern--Brocot construction rule.
+\end{remark*}

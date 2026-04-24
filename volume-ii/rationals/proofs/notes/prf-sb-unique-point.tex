@@ -1,0 +1,98 @@
+% =========================================================
+% Proof: Nested SB Intervals Contain a Unique Limit Point
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:sb-unique-point}
+
+\begin{remark*}[Return]
+\hyperref[prop:sb-unique-point]{Return to Proposition~\ref*{prop:sb-unique-point}.}
+\end{remark*}
+
+\begin{theorem*}[Nested Stern--Brocot intervals contain a unique limit point]
+Let $(I_n)$ with $I_n = [a_n/b_n, c_n/d_n]$ be the nested closed rational
+intervals from the SB refinement process.  Then $\bigcap_{n=0}^{\infty} I_n$
+contains exactly one real number.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+\textbf{Existence.} The sequence $(a_n/b_n)$ is monotone increasing and
+bounded above by $c_0/d_0$; the sequence $(c_n/d_n)$ is monotone decreasing
+and bounded below by $a_0/b_0$.  By the Monotone Convergence Theorem in
+$\mathbb{R}$, both sequences converge:
+\[
+\alpha = \lim_{n\to\infty} \frac{a_n}{b_n} \in \mathbb{R},
+\qquad
+\beta = \lim_{n\to\infty} \frac{c_n}{d_n} \in \mathbb{R}.
+\]
+Since $a_n/b_n \leq c_n/d_n$ for all $n$, we have $\alpha \leq \beta$.
+But
+\[
+0 \leq \beta - \alpha \leq \ell_n = \frac{1}{b_n d_n}
+\]
+for all $n$, and $\ell_n \to 0$
+by \hyperref[lem:sb-length-zero]{Lemma~\ref*{lem:sb-length-zero}}.
+Therefore $\alpha = \beta$.  Set $\xi = \alpha = \beta$; then
+$a_n/b_n \leq \xi \leq c_n/d_n$ for all $n$, so $\xi \in \bigcap I_n$.
+
+\textbf{Uniqueness.} If $\xi, \xi' \in \bigcap I_n$, then for every $n$:
+\[
+|\xi - \xi'| \leq \ell_n \to 0.
+\]
+Therefore $\xi = \xi'$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Show the left endpoints form a bounded increasing sequence.}
+By the Stern--Brocot construction rule, the left endpoint is either
+unchanged or replaced by the mediant, which lies strictly to the right of
+the previous left endpoint (by the Mediant Inequality).  So $(a_n/b_n)$
+is non-decreasing.  It is bounded above by $c_0/d_0$ since $a_n/b_n <
+c_n/d_n \leq c_0/d_0$ at every step.
+
+\textbf{Step 2: Show the right endpoints form a bounded decreasing sequence.}
+Symmetrically, $(c_n/d_n)$ is non-increasing and bounded below by $a_0/b_0$.
+
+\textbf{Step 3: Both sequences converge in $\mathbb{R}$.}
+By the Monotone Convergence Theorem in $\mathbb{R}$ (which requires the
+completeness of $\mathbb{R}$):
+\[
+\alpha = \sup_n \frac{a_n}{b_n} \in \mathbb{R}, \qquad
+\beta = \inf_n \frac{c_n}{d_n} \in \mathbb{R}.
+\]
+
+\textbf{Step 4: The two limits coincide.}
+For every $n$: $\alpha \leq \beta$ (since $a_n/b_n \leq c_n/d_n$ for
+all $n$, and $\alpha, \beta$ are the respective limiting extremes).
+Also:
+\[
+0 \leq \beta - \alpha \leq \frac{c_n}{d_n} - \frac{a_n}{b_n} = \ell_n.
+\]
+Since $\ell_n \to 0$ by \hyperref[lem:sb-length-zero]{Lemma~\ref*{lem:sb-length-zero}},
+the squeeze theorem gives $\beta - \alpha = 0$, so $\alpha = \beta$.
+Set $\xi = \alpha = \beta$.
+
+\textbf{Step 5: Establish $\xi \in \bigcap I_n$.}
+For every $n$: $a_n/b_n \leq \xi \leq c_n/d_n$, so $\xi \in I_n$.
+Therefore $\xi \in \bigcap_{n=0}^{\infty} I_n$.
+
+\textbf{Step 6: Uniqueness.}
+Suppose $\xi, \xi' \in \bigcap I_n$.  For every $n$, both lie in $I_n$,
+so $|\xi - \xi'| \leq \ell_n$.  Since $\ell_n \to 0$, we have
+$|\xi - \xi'| = 0$, hence $\xi = \xi'$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+A nested intervals argument in $\mathbb{R}$: monotone bounded sequences
+converge, the two limits must coincide because the gaps shrink to zero,
+and uniqueness is a direct squeeze.  The completeness of $\mathbb{R}$
+(via the Monotone Convergence Theorem) is essential — this argument
+fails in $\mathbb{Q}$ because $\xi$ need not be rational.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+Monotone Convergence Theorem in $\mathbb{R}$ (requires completeness of $\mathbb{R}$),
+\hyperref[lem:sb-length-zero]{Stern--Brocot interval lengths shrink to zero},
+\hyperref[thm:mediant-inequality]{Mediant inequality}.
+\end{remark*}

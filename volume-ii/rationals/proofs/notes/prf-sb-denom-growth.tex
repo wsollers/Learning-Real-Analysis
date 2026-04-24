@@ -1,0 +1,81 @@
+% =========================================================
+% Proof: Denominator Growth on Infinite Stern--Brocot Paths
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:sb-denom-growth}
+
+\begin{remark*}[Return]
+\hyperref[lem:sb-denom-growth]{Return to Lemma~\ref*{lem:sb-denom-growth}.}
+\end{remark*}
+
+\begin{theorem*}[Denominator growth on infinite Stern--Brocot paths]
+Along any infinite path in the Stern--Brocot tree, the denominators of
+the successive endpoint fractions form a strictly increasing sequence
+tending to infinity.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+At each step, the path occupies an interval $[a_n/b_n, c_n/d_n]$ where
+$b_n c_n - a_n d_n = 1$ by the Farey Neighbor Theorem.  The mediant
+inserted at step $n+1$ has denominator $b_n + d_n$.  One endpoint of the
+new interval is this mediant; the other is whichever of $a_n/b_n$ or
+$c_n/d_n$ was not replaced.
+
+In either case, the new boundary denominator is $b_n + d_n$, which
+strictly exceeds both $b_n$ and $d_n$ since $b_n, d_n \geq 1$.  By
+induction, the denominators along the path are strictly increasing.
+Since they are positive integers and strictly increasing, they are
+unbounded: $b_n \to \infty$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: State the inductive claim.}
+We show that if the current boundary fractions are $a_n/b_n$ and
+$c_n/d_n$ with $b_n, d_n \geq 1$, then after one mediant insertion the
+new denominator strictly exceeds the replaced denominator.
+
+\textbf{Step 2: Base case.}
+The tree starts from $0/1$ and $1/0$ (the sentinel fractions).
+After the first mediant insertion, the fraction $1/1$ is introduced with
+denominator $1 + 1 = 2$.  The active boundary has denominator at least
+$1$, which is consistent with $b_0 = 1$.
+
+\textbf{Step 3: Inductive step.}
+Suppose at level $n$ the interval is $[a_n/b_n, c_n/d_n]$ with
+$b_n \geq 1$ and $d_n \geq 1$.  The mediant $(a_n + c_n)/(b_n + d_n)$
+has denominator $b_n + d_n$.
+
+Since $b_n \geq 1$ and $d_n \geq 1$:
+\[
+b_n + d_n > b_n \quad \text{and} \quad b_n + d_n > d_n.
+\]
+The new boundary fraction on the replaced side has denominator $b_n + d_n$,
+which strictly exceeds the old denominator on that side.
+
+\textbf{Step 4: Strict monotonicity implies divergence.}
+Since the active boundary denominators are a strictly increasing sequence
+of positive integers, they are unbounded.  Formally, for any $M > 0$,
+the Archimedean property (\hyperref[thm:archimedean-q]{Theorem~\ref*{thm:archimedean-q}})
+gives $N \in \mathbb{N}$ with $N > M$; since $b_n \geq n$ for all $n$
+(by strict monotonicity from a starting value of $1$), we have
+$b_n > M$ for all $n \geq N$.  Therefore $b_n \to \infty$.
+
+\textbf{Step 5: Conclude.}
+Both sequences of boundary denominators are strictly increasing and
+diverge to infinity.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Induction on depth, with the key computation $b_n + d_n > b_n$ requiring
+only that $d_n \geq 1$.  The divergence to infinity is immediate from
+strict monotonicity of a positive-integer sequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:farey-neighbor-theorem]{Farey Neighbor Theorem},
+\hyperref[cor:n-positive]{natural numbers are positive},
+\hyperref[thm:archimedean-q]{Archimedean property of $\mathbb{Q}$},
+induction on $\mathbb{N}$.
+\end{remark*}

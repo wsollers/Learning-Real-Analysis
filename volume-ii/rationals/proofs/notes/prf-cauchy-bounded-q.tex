@@ -1,0 +1,82 @@
+% =========================================================
+% Proof: Cauchy Sequences Are Bounded
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:cauchy-bounded-q}
+
+\begin{remark*}[Return]
+\hyperref[thm:cauchy-bounded-q]{Return to Theorem~\ref*{thm:cauchy-bounded-q}.}
+\end{remark*}
+
+\begin{theorem*}[Cauchy sequences are bounded]
+Every Cauchy sequence of rational numbers is bounded.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+Let $(x_n)$ be a Cauchy sequence of rational numbers.
+Apply the Cauchy condition with $\varepsilon = 1$: there exists
+$N \in \mathbb{N}$ such that $|x_m - x_n| < 1$ for all $m, n \geq N$.
+Taking $n = N + 1$, we get $|x_m - x_{N+1}| < 1$ for all $m \geq N$,
+so $|x_m| \leq |x_m - x_{N+1}| + |x_{N+1}| < 1 + |x_{N+1}|$
+for all $m \geq N$.
+Define
+\[
+\Gamma = \max\{|x_1|, \ldots, |x_N|, 1 + |x_{N+1}|\}.
+\]
+Then $|x_n| \leq \Gamma$ for all $n \in \mathbb{N}$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Apply the Cauchy condition with $\varepsilon = 1$.}
+By \hyperref[def:cauchy-rational]{Definition~\ref*{def:cauchy-rational}},
+there exists $N \in \mathbb{N}$ such that
+$|x_m - x_n| < 1$ for all $m, n \geq N$.
+
+\textbf{Step 2: Anchor the tail to a single term.}
+Fix $n = N + 1$.  For every $m \geq N$ we have $n = N + 1 \geq N$, so
+\[
+|x_m - x_{N+1}| < 1.
+\]
+
+\textbf{Step 3: Bound each tail term via the triangle inequality.}
+For any $m \geq N$:
+\[
+|x_m| = |x_m - x_{N+1} + x_{N+1}|
+\leq |x_m - x_{N+1}| + |x_{N+1}|
+< 1 + |x_{N+1}|.
+\]
+
+\textbf{Step 4: Handle the initial segment.}
+The terms $x_1, \ldots, x_N$ are finitely many, so
+$\max\{|x_1|, \ldots, |x_N|\}$ is a well-defined rational number.
+
+\textbf{Step 5: Combine.}
+Set
+\[
+\Gamma = \max\{|x_1|, \ldots, |x_N|, 1 + |x_{N+1}|\}.
+\]
+For $n \leq N$: $|x_n| \leq \Gamma$.
+For $n > N$ (which implies $n \geq N$): $|x_n| < 1 + |x_{N+1}| \leq \Gamma$.
+Therefore $|x_n| \leq \Gamma$ for all $n \in \mathbb{N}$.
+
+\textbf{Step 6: Conclude.}
+By \hyperref[def:bounded-sequence-q]{Definition~\ref*{def:bounded-sequence-q}},
+$(x_n)$ is bounded.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The architecture is identical to the proof that convergent sequences are bounded,
+with one substitution: instead of anchoring the tail to the limit $a$, we anchor
+it to the single term $x_{N+1}$.  The Cauchy condition controls
+$|x_m - x_{N+1}|$ for all $m \geq N$ in exactly the same way that convergence
+controlled $|x_m - a|$.  This structural parallel is not a coincidence: the
+Cauchy condition is convergence without a named limit.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:cauchy-rational]{Cauchy sequence in $\mathbb{Q}$},
+\hyperref[def:bounded-sequence-q]{Bounded sequence},
+the triangle inequality in $\mathbb{Q}$.
+\end{remark*}

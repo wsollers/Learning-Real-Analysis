@@ -1,0 +1,95 @@
+% =========================================================
+% Proof: The Cauchy Equivalence Relation on Q^c
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:cauchy-equivalence-is-equivalence}
+
+\begin{remark*}[Return]
+\hyperref[thm:cauchy-equivalence-is-equivalence]{Return to Theorem~\ref*{thm:cauchy-equivalence-is-equivalence}.}
+\end{remark*}
+
+\begin{theorem*}[The relation $\sim$ is an equivalence relation on $\mathbb{Q}^c$]
+Define $(x_n) \sim (y_n)$ if and only if $\lim_{n\to\infty}|x_n - y_n| = 0$.
+Then $\sim$ is an equivalence relation on the set $\mathbb{Q}^c$ of all
+Cauchy sequences in $\mathbb{Q}$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+\textbf{Reflexivity.}
+For any $(x_n) \in \mathbb{Q}^c$: $|x_n - x_n| = 0 < \varepsilon$ for all
+$\varepsilon > 0$ and all $n$, so $(x_n) \sim (x_n)$.
+
+\textbf{Symmetry.}
+If $(x_n) \sim (y_n)$ then $|x_n - y_n| \to 0$.
+Since $|y_n - x_n| = |x_n - y_n|$, we have $|y_n - x_n| \to 0$, so
+$(y_n) \sim (x_n)$.
+
+\textbf{Transitivity.}
+Suppose $(x_n) \sim (y_n)$ and $(y_n) \sim (z_n)$.
+Let $\varepsilon > 0$.  There exist $N_1, N_2 \in \mathbb{N}$ such that
+$|x_n - y_n| < \varepsilon/2$ for $n \geq N_1$ and
+$|y_n - z_n| < \varepsilon/2$ for $n \geq N_2$.
+For all $n \geq \max\{N_1, N_2\}$:
+\[
+|x_n - z_n|
+\leq |x_n - y_n| + |y_n - z_n|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\]
+Therefore $(x_n) \sim (z_n)$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+We verify the three axioms of an equivalence relation.
+
+\textbf{Step 1: Reflexivity — $(x_n) \sim (x_n)$.}
+We need: $\forall \varepsilon > 0$, $\exists N$ such that
+$|x_n - x_n| < \varepsilon$ for all $n \geq N$.
+Since $x_n - x_n = 0$ for every $n$, we have $|x_n - x_n| = 0 < \varepsilon$
+for every $n$ and every $\varepsilon > 0$.  Any $N = 1$ works.
+
+\textbf{Step 2: Symmetry — $(x_n) \sim (y_n)$ implies $(y_n) \sim (x_n)$.}
+Suppose $(x_n) \sim (y_n)$.  Let $\varepsilon > 0$.  There exists $N$ such
+that $|x_n - y_n| < \varepsilon$ for all $n \geq N$.
+Since $|y_n - x_n| = |-(x_n - y_n)| = |x_n - y_n|$, we have
+$|y_n - x_n| < \varepsilon$ for all $n \geq N$.
+Therefore $(y_n) \sim (x_n)$.
+
+\textbf{Step 3: Transitivity — $(x_n) \sim (y_n)$ and $(y_n) \sim (z_n)$
+implies $(x_n) \sim (z_n)$.}
+Suppose $(x_n) \sim (y_n)$ and $(y_n) \sim (z_n)$.
+Let $\varepsilon > 0$.
+
+\emph{Extract witnesses.}  Since $(x_n) \sim (y_n)$, there exists $N_1$
+such that $|x_n - y_n| < \varepsilon/2$ for all $n \geq N_1$.
+Since $(y_n) \sim (z_n)$, there exists $N_2$ such that
+$|y_n - z_n| < \varepsilon/2$ for all $n \geq N_2$.
+
+\emph{Combine.}  Set $N = \max\{N_1, N_2\}$.  For all $n \geq N$:
+\[
+|x_n - z_n|
+= |x_n - y_n + y_n - z_n|
+\leq |x_n - y_n| + |y_n - z_n|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2}
+= \varepsilon.
+\]
+
+Therefore $(x_n) \sim (z_n)$.
+
+\textbf{Step 4: Conclude.}
+All three axioms hold, so $\sim$ is an equivalence relation on $\mathbb{Q}^c$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This proof is a direct three-part verification.  Reflexivity is trivial.
+Symmetry follows from $|a - b| = |b - a|$.  Transitivity is a
+$2\varepsilon$ split via the triangle inequality — structurally identical
+to the proof of uniqueness of limits and the proof that convergent
+sequences are Cauchy.  All three proofs share a single master template.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:cauchy-equivalence]{Equivalence of Cauchy sequences},
+triangle inequality in $\mathbb{Q}$.
+\end{remark*}

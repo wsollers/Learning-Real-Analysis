@@ -1,0 +1,125 @@
+% =========================================================
+% Proof: Cauchy Sequences Are Closed Under Addition and Multiplication
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:cauchy-closed-operations-q}
+
+\begin{remark*}[Return]
+\hyperref[thm:cauchy-closed-operations-q]{Return to Theorem~\ref*{thm:cauchy-closed-operations-q}.}
+\end{remark*}
+
+\begin{theorem*}[Cauchy sequences are closed under addition and multiplication]
+If $(x_n)$ and $(y_n)$ are Cauchy sequences of rational numbers, then so
+are $(x_n + y_n)$ and $(x_n y_n)$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+\textbf{Addition.}
+Let $\varepsilon > 0$.  Since $(x_n)$ and $(y_n)$ are Cauchy, there exist
+$N_1, N_2 \in \mathbb{N}$ such that
+$|x_m - x_n| < \varepsilon/2$ for all $m,n \geq N_1$ and
+$|y_m - y_n| < \varepsilon/2$ for all $m,n \geq N_2$.
+Set $N = \max\{N_1, N_2\}$.  For $m, n \geq N$:
+\[
+|(x_m + y_m) - (x_n + y_n)|
+\leq |x_m - x_n| + |y_m - y_n|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\]
+
+\textbf{Multiplication.}
+By \hyperref[thm:cauchy-bounded-q]{Theorem~\ref*{thm:cauchy-bounded-q}},
+both sequences are bounded; let $\Lambda > 0$ satisfy $|x_n| \leq \Lambda$
+and $|y_n| \leq \Lambda$ for all $n$.
+Let $\varepsilon > 0$.  Choose $N_1, N_2$ such that
+$|x_m - x_n| < \varepsilon/(2\Lambda)$ for $m,n \geq N_1$ and
+$|y_m - y_n| < \varepsilon/(2\Lambda)$ for $m,n \geq N_2$.
+Set $N = \max\{N_1, N_2\}$.  For $m, n \geq N$:
+\[
+|x_m y_m - x_n y_n|
+= |x_m y_m - x_n y_m + x_n y_m - x_n y_n|
+\leq |y_m||x_m - x_n| + |x_n||y_m - y_n|
+< \Lambda \cdot \frac{\varepsilon}{2\Lambda} + \Lambda \cdot \frac{\varepsilon}{2\Lambda}
+= \varepsilon.
+\]
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Part I: Addition.}
+
+\textbf{Step 1: Set up the $\varepsilon/2$ split.}
+Let $\varepsilon > 0$.  We need $|(x_m+y_m)-(x_n+y_n)| < \varepsilon$
+for all sufficiently large $m,n$.  We will achieve this by keeping both
+$|x_m-x_n|$ and $|y_m-y_n|$ smaller than $\varepsilon/2$.
+
+\textbf{Step 2: Extract witnesses.}
+Since $(x_n)$ is Cauchy, $\exists N_1$ such that $|x_m-x_n|<\varepsilon/2$
+for all $m,n \geq N_1$.
+Since $(y_n)$ is Cauchy, $\exists N_2$ such that $|y_m-y_n|<\varepsilon/2$
+for all $m,n \geq N_2$.
+
+\textbf{Step 3: Combine and apply the triangle inequality.}
+Set $N = \max\{N_1, N_2\}$.  For all $m, n \geq N$:
+\[
+|(x_m + y_m) - (x_n + y_n)|
+= |(x_m - x_n) + (y_m - y_n)|
+\leq |x_m - x_n| + |y_m - y_n|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\]
+
+\textbf{Part II: Multiplication.}
+
+\textbf{Step 4: Invoke boundedness.}
+By \hyperref[thm:cauchy-bounded-q]{Theorem~\ref*{thm:cauchy-bounded-q}},
+$(x_n)$ and $(y_n)$ are bounded.  Let $\Lambda_1, \Lambda_2 > 0$ satisfy
+$|x_n| \leq \Lambda_1$ and $|y_n| \leq \Lambda_2$ for all $n$.
+Set $\Lambda = \max\{\Lambda_1, \Lambda_2\} > 0$, so both $|x_n| \leq \Lambda$
+and $|y_n| \leq \Lambda$ for all $n$.
+
+\textbf{Step 5: Algebraically separate the two sources of error.}
+Add and subtract the cross-term $x_n y_m$:
+\[
+x_m y_m - x_n y_n
+= (x_m - x_n)y_m + x_n(y_m - y_n).
+\]
+By the triangle inequality:
+\[
+|x_m y_m - x_n y_n|
+\leq |y_m||x_m - x_n| + |x_n||y_m - y_n|
+\leq \Lambda|x_m - x_n| + \Lambda|y_m - y_n|.
+\]
+
+\textbf{Step 6: Choose the Cauchy witnesses to compensate for $\Lambda$.}
+Let $\varepsilon > 0$.  Choose $N_1$ such that $|x_m-x_n| < \varepsilon/(2\Lambda)$
+for all $m, n \geq N_1$, and $N_2$ such that $|y_m-y_n| < \varepsilon/(2\Lambda)$
+for all $m, n \geq N_2$.
+
+\textbf{Step 7: Combine.}
+Set $N = \max\{N_1, N_2\}$.  For all $m, n \geq N$:
+\[
+|x_m y_m - x_n y_n|
+\leq \Lambda \cdot \frac{\varepsilon}{2\Lambda} + \Lambda \cdot \frac{\varepsilon}{2\Lambda}
+= \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\]
+
+\textbf{Step 8: Conclude.}
+Both $(x_n + y_n)$ and $(x_n y_n)$ satisfy the Cauchy condition.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Both parts are $\varepsilon$-splitting arguments.  The addition case is a
+direct two-term triangle inequality.  The multiplication case adds one
+layer of difficulty: the product does not split cleanly, so one must first
+algebraically separate the two sources of error (the $x$-difference and
+the $y$-difference) using the cross-term trick, then compensate for the
+bounds $\Lambda$ by scaling the tolerance down to $\varepsilon/(2\Lambda)$
+before extracting the Cauchy witnesses.  This $\Lambda$-compensation pattern
+recurs throughout analysis wherever products of sequences appear.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:cauchy-rational]{Cauchy sequence in $\mathbb{Q}$},
+\hyperref[thm:cauchy-bounded-q]{Cauchy sequences are bounded},
+the triangle inequality in $\mathbb{Q}$.
+\end{remark*}

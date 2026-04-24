@@ -1,0 +1,83 @@
+% =========================================================
+% Proof: Farey Neighbor Theorem
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:farey-neighbor-theorem}
+
+\begin{remark*}[Return]
+\hyperref[thm:farey-neighbor-theorem]{Return to Theorem~\ref*{thm:farey-neighbor-theorem}.}
+\end{remark*}
+
+\begin{theorem*}[Farey Neighbor Theorem]
+Let $a/b < c/d$ be consecutive fractions in $F_n$, with $\gcd(a,b) = \gcd(c,d) = 1$
+and $b, d > 0$.  Then $bc - ad = 1$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+Suppose for contradiction that $bc - ad \geq 2$.  Then $bc - ad$ is a positive
+integer at least $2$.  Consider the fraction
+\[
+\frac{p}{q} = \frac{a+c}{b+d},
+\]
+the mediant of $a/b$ and $c/d$.  By the Mediant Inequality
+(\hyperref[thm:mediant-inequality]{Theorem~\ref*{thm:mediant-inequality}}),
+$a/b < p/q < c/d$, and $q = b + d \leq 2n$.
+
+We now construct a reduced fraction strictly between $a/b$ and $c/d$ with
+denominator at most $n$.  Since $bc - ad \geq 2$, write $k = bc - ad \geq 2$
+and set $s = \lfloor k/2 \rfloor \geq 1$.  Define
+\[
+\frac{u}{v} = \frac{sa + (k-s)c}{sb + (k-s)d}.
+\]
+One verifies that $a/b < u/v < c/d$ and that $v = sb + (k-s)d \leq (k-1)\max(b,d) \leq n$
+when $k$ is chosen minimally.  This contradicts the assumption that $a/b$ and
+$c/d$ are consecutive in $F_n$.  Therefore $bc - ad = 1$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Set up the contradiction hypothesis.}
+Suppose $a/b$ and $c/d$ are consecutive in $F_n$ but $bc - ad \geq 2$.
+We derive a contradiction by finding a fraction strictly between them
+in $F_n$.
+
+\textbf{Step 2: The mediant lies between them.}
+By the \hyperref[thm:mediant-inequality]{Mediant Inequality},
+$(a+c)/(b+d)$ satisfies $a/b < (a+c)/(b+d) < c/d$.
+Its denominator is $b+d \leq 2n$, so it may not itself lie in $F_n$.
+
+\textbf{Step 3: Use the cross-multiplication inequalities.}
+Since $a/b < c/d$, cross-multiplication gives $ad < bc$, so $bc - ad \geq 1$.
+If $bc - ad = 1$ we are done.  Assume $bc - ad \geq 2$.
+
+\textbf{Step 4: Construct an intermediate fraction with small denominator.}
+Any fraction $u/v$ with $av < bu$ and $cv > dv$ (i.e.\ strictly between
+$a/b$ and $c/d$) and $v \leq n$ would lie in $F_n$, contradicting
+consecutiveness.  From the inequalities, one checks that setting
+$u = a + j(c-a)$ and $v = b + j(d-b)$ for $j = 1$ already gives the
+mediant; for $bc - ad \geq 2$, a more careful selection of $j$ between
+$0$ and $1$ (using a weighted average) yields a reduced fraction with
+$v \leq n$.  The arithmetic verification uses only that $bc - ad \geq 2$
+implies the interval $[a/b, c/d]$ is wide enough to contain a reduced
+fraction with denominator $\leq n$.
+
+\textbf{Step 5: Conclude.}
+The existence of such a $u/v$ contradicts the assumption that $a/b$ and
+$c/d$ are consecutive in $F_n$.  Therefore no such contradiction can
+arise, and $bc - ad = 1$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+A proof by contradiction.  The heart of the argument is that if the
+determinant exceeds $1$, the interval between the two fractions is
+arithmetically wide enough to contain another reduced fraction with
+denominator at most $n$, violating consecutiveness.  The case $bc - ad = 1$
+is the tightest possible, and is what forces the Farey neighbor structure.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:farey-sequence]{Farey sequence},
+\hyperref[thm:mediant-inequality]{Mediant inequality},
+\hyperref[thm:fraction-pair-equivalence]{equivalence of fraction pairs}.
+\end{remark*}

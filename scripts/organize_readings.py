@@ -53,6 +53,28 @@ DEFAULT_SUMMARY = REPO_ROOT / "reports" / "reading-catalog.md"
 MAX_TITLE_LEN = 140
 MAX_AUTHOR_LEN = 80
 INVALID_FILENAME_CHARS = r'[<>:"/\\|?*]'
+SUSPICIOUS_FILENAME_PATTERNS = (
+    "bok%3a",
+    "preview-",
+    "mbk-",
+    "lecturenotes",
+    "intro",
+    "numbers",
+)
+COMMON_TITLE_WORDS = {
+    "analysis",
+    "algebra",
+    "topology",
+    "geometry",
+    "integral",
+    "measure",
+    "theory",
+    "calculus",
+    "probability",
+    "statistics",
+    "methods",
+    "introduction",
+}
 LECTURE_NOTE_KINDS = {
     "lecture_notes",
     "course_notes",
@@ -63,6 +85,12 @@ LECTURE_NOTE_KINDS = {
     "draft_notes",
     "unpublished_notes",
     "unknown",
+}
+RENAMEABLE_KINDS = {
+    "textbook",
+    "monograph",
+    "reference",
+    "paper",
 }
 
 
@@ -152,9 +180,27 @@ def collapse_ws(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def fix_mojibake(text: str) -> str:
+    text = collapse_ws(text)
+    if not text:
+        return ""
+    suspicious = ("Ã", "â", "Ð", "Ñ", "�")
+    if not any(marker in text for marker in suspicious):
+        return text
+    for source, target in (("latin-1", "utf-8"), ("cp1252", "utf-8")):
+        try:
+            repaired = text.encode(source).decode(target)
+        except Exception:
+            continue
+        if repaired and repaired != text:
+            text = repaired
+            break
+    return collapse_ws(text)
+
+
 def stringify_note(value: Any) -> str:
     if isinstance(value, str):
-        return collapse_ws(value)
+        return fix_mojibake(value)
     if isinstance(value, (int, float, bool)) or value is None:
         return collapse_ws(str(value))
     if isinstance(value, list):
@@ -178,32 +224,274 @@ def normalize_string_list(values: Any) -> list[str]:
     return [value for value in normalized if value]
 
 
+def filename_looks_suspicious(path: Path) -> bool:
+    lowered = path.name.lower()
+    return any(token in lowered for token in SUSPICIOUS_FILENAME_PATTERNS)
+
+
+def normalize_page_text(text: str) -> str:
+    text = text.replace("\x00", " ")
+    text = text.replace("\ufb01", "fi").replace("\ufb02", "fl")
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def split_stuck_words(text: str) -> str:
+    text = text.replace("ﬁ", "fi").replace("ﬂ", "fl")
+    text = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
+    text = re.sub(r"(?<=\.)(?=[A-Z])", " ", text)
+    text = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", text)
+    return collapse_ws(text)
+
+
+def extract_isbns(text: str) -> list[str]:
+    matches = re.findall(r"97[89][-\s]?\d[-\s]?\d{2,5}[-\s]?\d{2,7}[-\s]?\d{1,7}[-\s]?\d", text)
+    found: list[str] = []
+    for match in matches:
+        cleaned = re.sub(r"\s+", "", match)
+        if cleaned not in found:
+            found.append(cleaned)
+    return found[:4]
+
+
+def looks_like_title_line(line: str) -> bool:
+    line = split_stuck_words(line)
+    if not line or len(line) < 4 or len(line) > 160:
+        return False
+    lowered = line.lower()
+    blacklist = (
+        "springer",
+        "issn",
+        "isbn",
+        "doi",
+        "mathematics subject classification",
+        "copyright",
+        "compact textbooks in mathematics",
+        "under exclusive license",
+        "faculty of",
+        "university",
+        "the editor",
+        "editor",
+        "editors",
+        "series",
+    )
+    if any(token in lowered for token in blacklist):
+        return False
+    if lowered.startswith("with "):
+        return False
+    if re.search(r"[{}\[\]=<>]|\\", line):
+        return False
+    if any(symbol in line for symbol in ("∈", "≤", "≥", "→", "↦")):
+        return False
+    if sum(ch.isalpha() for ch in line) < 4:
+        return False
+    return True
+
+
+def is_series_line(line: str) -> bool:
+    lowered = split_stuck_words(line).lower()
+    return any(
+        token in lowered
+        for token in (
+            "compact textbooks in mathematics",
+            "springer",
+            "birkhäuser advanced texts",
+            "basler lehrbücher",
+            "basler lehrbucher",
+            "undergraduate texts in mathematics",
+            "graduate texts in mathematics",
+            "lecture notes",
+            "series",
+        )
+    )
+
+
+def looks_like_author_line(line: str) -> bool:
+    line = split_stuck_words(line)
+    if not line or len(line) > 80:
+        return False
+    lowered = line.lower()
+    if is_series_line(line):
+        return False
+    if any(
+        token in lowered
+        for token in (
+            "faculty of",
+            "department of",
+            "university",
+            "isbn",
+            "issn",
+            "copyright",
+            "introduction",
+            "contents",
+        )
+    ):
+        return False
+    words = [word for word in re.split(r"\s+", line) if word]
+    if not 2 <= len(words) <= 5:
+        return False
+    if not all(re.match(r"^[A-Z][A-Za-z.'-]*$", word) for word in words):
+        return False
+    if words[-1].lower().strip(".") in COMMON_TITLE_WORDS:
+        return False
+    return sum(1 for word in words if len(word) > 1) >= 2
+
+
+def is_edition_line(line: str) -> bool:
+    lowered = split_stuck_words(line).lower()
+    if "edition" in lowered:
+        return True
+    return False
+
+
+def pick_title_lines(lines: list[str], author_index: int | None) -> list[str]:
+    indexed = [(idx, split_stuck_words(line)) for idx, line in enumerate(lines)]
+    filtered = [
+        (idx, line)
+        for idx, line in indexed
+        if looks_like_title_line(line) and not looks_like_author_line(line) and not is_series_line(line)
+    ]
+    if not filtered:
+        return []
+
+    if author_index is not None:
+        after = [line for idx, line in filtered if author_index < idx <= author_index + 3]
+        if after:
+            return after[:3]
+        before = [line for idx, line in filtered if author_index - 3 <= idx < author_index]
+        if before:
+            return before[-3:]
+
+    return [line for _, line in filtered[:3]]
+
+
+def infer_front_matter(pages: list[dict[str, Any]], metadata: dict[str, str]) -> dict[str, Any]:
+    cleaned_pages: list[list[str]] = []
+    lines: list[str] = []
+    for page in pages[:6]:
+        page_lines = [split_stuck_words(part) for part in page.get("text", "").splitlines()]
+        page_lines = [line for line in page_lines if line]
+        cleaned_pages.append(page_lines)
+        lines.extend(page_lines)
+
+    inferred_title = ""
+    inferred_authors: list[str] = []
+    inferred_edition = ""
+
+    metadata_title = fix_mojibake(metadata.get("title", ""))
+    metadata_author = fix_mojibake(metadata.get("author", ""))
+
+    if metadata_title and len(metadata_title) > 3:
+        inferred_title = metadata_title
+    else:
+        for page_lines in cleaned_pages[:5]:
+            if not page_lines or len(page_lines) > 12:
+                continue
+            if any("editor" in line.lower() for line in page_lines):
+                continue
+            filtered_lines = [line for line in page_lines if not is_series_line(line)]
+            if not filtered_lines:
+                continue
+            edition_indices = [i for i, line in enumerate(filtered_lines) if is_edition_line(line)]
+            author_index = next((i for i, line in enumerate(filtered_lines) if looks_like_author_line(line)), None)
+            title_lines = pick_title_lines(filtered_lines, author_index)
+            if edition_indices:
+                non_edition = [line for line in filtered_lines if not is_edition_line(line)]
+                author_candidates = [line for line in non_edition if looks_like_author_line(line)]
+                title_candidates = [
+                    line
+                    for line in non_edition
+                    if looks_like_title_line(line) and not looks_like_author_line(line)
+                ]
+                if author_candidates and title_candidates:
+                    inferred_title = collapse_ws(" ".join(title_candidates[:3]))
+                    break
+            if title_lines:
+                inferred_title = collapse_ws(" ".join(title_lines[:3]))
+                break
+        if not inferred_title:
+            title_candidates = [line for line in lines[:40] if looks_like_title_line(line)]
+            ranked = sorted(
+                title_candidates,
+                key=lambda line: (
+                    line.istitle(),
+                    2 <= len(line.split()) <= 8,
+                    len(line),
+                ),
+                reverse=True,
+            )
+            if ranked:
+                inferred_title = ranked[0]
+
+    if metadata_author:
+        inferred_authors = [name.strip() for name in re.split(r"\s*(?:,|;| and )\s*", metadata_author) if name.strip()]
+    else:
+        for page_lines in cleaned_pages[:5]:
+            author_lines = [line for line in page_lines if looks_like_author_line(line)]
+            if author_lines:
+                inferred_authors = [author_lines[0]]
+                break
+
+    joined = "\n".join(lines)
+    edition_match = re.search(r"\b(\d+)(?:st|nd|rd|th)?\s+Edition\b", joined, re.IGNORECASE)
+    if edition_match:
+        inferred_edition = edition_match.group(0)
+    else:
+        word_match = re.search(
+            r"\b(First|Second|Third|Fourth|Fifth|Sixth|Seventh|Eighth|Ninth|Tenth)\s+Edition\b",
+            joined,
+            re.IGNORECASE,
+        )
+        if word_match:
+            inferred_edition = word_match.group(0)
+
+    return {
+        "title": fix_mojibake(inferred_title),
+        "authors": [fix_mojibake(author) for author in inferred_authors if fix_mojibake(author)],
+        "edition": fix_mojibake(inferred_edition),
+        "isbns": extract_isbns(joined),
+    }
+
+
 def extract_pdf_payload(path: Path, max_pages: int, max_chars: int) -> dict[str, Any]:
     reader = PdfReader(str(path))
     metadata = reader.metadata or {}
+    page_limit = max_pages
+    char_limit = max_chars
+    if filename_looks_suspicious(path):
+        page_limit = max(page_limit, 15)
+        char_limit = max(char_limit, 25000)
+
     pages = []
-    for page in reader.pages[:max_pages]:
+    page_records: list[dict[str, Any]] = []
+    for i, page in enumerate(reader.pages[:page_limit], start=1):
         try:
-            text = page.extract_text() or ""
+            text = normalize_page_text(page.extract_text() or "")
         except Exception:
             text = ""
         if text:
             pages.append(text)
+            page_records.append({"page": i, "text": text[:4000]})
         joined = "\n\n".join(pages)
-        if len(joined) >= max_chars:
+        if len(joined) >= char_limit:
             break
 
-    text_sample = "\n\n".join(pages)[:max_chars]
+    text_sample = "\n\n".join(pages)[:char_limit]
+    normalized_metadata = {
+        "title": fix_mojibake(str(metadata.get("/Title", "") or "")),
+        "author": fix_mojibake(str(metadata.get("/Author", "") or "")),
+        "subject": fix_mojibake(str(metadata.get("/Subject", "") or "")),
+        "creator": fix_mojibake(str(metadata.get("/Creator", "") or "")),
+        "producer": fix_mojibake(str(metadata.get("/Producer", "") or "")),
+    }
+    front_matter = infer_front_matter(page_records, normalized_metadata)
     return {
         "path": str(path),
         "filename": path.name,
-        "metadata": {
-            "title": collapse_ws(str(metadata.get("/Title", "") or "")),
-            "author": collapse_ws(str(metadata.get("/Author", "") or "")),
-            "subject": collapse_ws(str(metadata.get("/Subject", "") or "")),
-            "creator": collapse_ws(str(metadata.get("/Creator", "") or "")),
-            "producer": collapse_ws(str(metadata.get("/Producer", "") or "")),
-        },
+        "metadata": normalized_metadata,
+        "front_matter": front_matter,
+        "page_samples": page_records[:8],
         "text_sample": text_sample,
     }
 
@@ -241,7 +529,9 @@ def build_prompt(payload: dict[str, Any]) -> str:
         - if edition is missing or uncertain, return an empty string for edition
         - do not invent edition data
         - do not invent author names
-        - prefer extracted text and PDF metadata over filename guesses
+        - prefer front_matter, extracted text, and PDF metadata over filename guesses
+        - for book-like PDFs with clear title pages and copyright pages, set rename_recommended=true even if the filename is garbage
+        - Springer-style ebooks often reveal their best metadata on title and copyright pages; use those pages heavily
 
         JSON schema guidance:
         {json.dumps(schema, indent=2)}
@@ -276,7 +566,7 @@ def sanitize_filename_part(text: str, max_len: int) -> str:
 
 
 def compact_title(title: str) -> str:
-    title = collapse_ws(title)
+    title = fix_mojibake(title)
     if not title:
         return ""
     title = re.split(r"\s*[:\-]\s*", title, maxsplit=1)[0]
@@ -288,7 +578,7 @@ def compact_title(title: str) -> str:
 
 
 def compact_edition(edition: str) -> str:
-    edition = collapse_ws(edition)
+    edition = fix_mojibake(edition)
     if not edition:
         return ""
     lowered = edition.lower()
@@ -314,7 +604,7 @@ def compact_edition(edition: str) -> str:
 
 
 def normalize_author_segment(authors: list[str]) -> str:
-    clean = [collapse_ws(a) for a in authors if collapse_ws(a)]
+    clean = [fix_mojibake(a) for a in authors if fix_mojibake(a)]
     if not clean:
         return ""
     def last_name(name: str) -> str:
@@ -327,18 +617,74 @@ def normalize_author_segment(authors: list[str]) -> str:
     return surname
 
 
+def has_strong_rename_metadata(data: dict[str, Any]) -> bool:
+    kind = collapse_ws(str(data.get("kind", "") or "")).lower()
+    title = fix_mojibake(str(data.get("title", "") or ""))
+    authors = normalize_string_list(data.get("authors", []))
+    confidence = float(data.get("confidence", 0.0) or 0.0)
+    metadata_sources = data.get("metadata_sources", {}) or {}
+    title_src = collapse_ws(str(metadata_sources.get("title", "unknown"))).lower()
+    author_src = collapse_ws(str(metadata_sources.get("authors", "unknown"))).lower()
+
+    if kind not in RENAMEABLE_KINDS:
+        return False
+    if confidence < 0.85:
+        return False
+    if not title or not authors:
+        return False
+    if title_src == "filename" or author_src == "filename":
+        return False
+    return True
+
+
+def enrich_model_output(data: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
+    enriched = dict(data)
+    front_matter = payload.get("front_matter", {}) or {}
+    metadata_sources = dict(enriched.get("metadata_sources", {}) or {})
+
+    title = fix_mojibake(str(enriched.get("title", "") or ""))
+    if not title and front_matter.get("title"):
+        enriched["title"] = front_matter["title"]
+        metadata_sources["title"] = "front_matter"
+
+    authors = normalize_string_list(enriched.get("authors", []))
+    if not authors and front_matter.get("authors"):
+        enriched["authors"] = front_matter["authors"]
+        metadata_sources["authors"] = "front_matter"
+
+    edition = fix_mojibake(str(enriched.get("edition", "") or ""))
+    if not edition and front_matter.get("edition"):
+        enriched["edition"] = front_matter["edition"]
+        metadata_sources["edition"] = "front_matter"
+
+    kind = collapse_ws(str(enriched.get("kind", "") or "")).lower()
+    if not kind and front_matter.get("title") and front_matter.get("authors"):
+        enriched["kind"] = "textbook"
+
+    confidence = float(enriched.get("confidence", 0.0) or 0.0)
+    if confidence < 0.5 and front_matter.get("title") and front_matter.get("authors"):
+        enriched["confidence"] = 0.9
+
+    if not enriched.get("rename_reason") and front_matter.get("title") and front_matter.get("authors"):
+        enriched["rename_reason"] = "Strong front-matter metadata extracted from title and copyright pages"
+
+    enriched["metadata_sources"] = metadata_sources
+    return enriched
+
+
 def should_skip_rename(data: dict[str, Any]) -> tuple[bool, list[str]]:
     reasons = []
     kind = collapse_ws(str(data.get("kind", "") or "")).lower()
-    title = collapse_ws(str(data.get("title", "") or ""))
-    edition = collapse_ws(str(data.get("edition", "") or ""))
+    title = fix_mojibake(str(data.get("title", "") or ""))
+    edition = fix_mojibake(str(data.get("edition", "") or ""))
     authors = data.get("authors", []) or []
     confidence = float(data.get("confidence", 0.0) or 0.0)
     rename_recommended = bool(data.get("rename_recommended", False))
+    strong_metadata = has_strong_rename_metadata(data)
 
     if kind in LECTURE_NOTE_KINDS:
         reasons.append(f"kind={kind}")
-    if not rename_recommended:
+    if not rename_recommended and not strong_metadata:
         reasons.append("model_did_not_recommend_rename")
     if confidence < 0.78:
         reasons.append(f"low_confidence={confidence:.2f}")
@@ -355,6 +701,10 @@ def should_skip_rename(data: dict[str, Any]) -> tuple[bool, list[str]]:
         reasons.append("title_from_filename_only")
     if author_src == "filename":
         reasons.append("authors_from_filename_only")
+
+    if strong_metadata and "model_did_not_recommend_rename" in reasons:
+        reasons = [reason for reason in reasons if reason != "model_did_not_recommend_rename"]
+        reasons.append("heuristic_override_strong_metadata")
 
     return (len(reasons) > 0, reasons)
 
@@ -436,19 +786,19 @@ def to_record(path: Path, data: dict[str, Any], rename_target: str | None, renam
     return ReadingRecord(
         path=str(path),
         original_name=path.name,
-        title=collapse_ws(str(data.get("title", "") or "")),
-        edition=collapse_ws(str(data.get("edition", "") or "")) or None,
+        title=fix_mojibake(str(data.get("title", "") or "")),
+        edition=fix_mojibake(str(data.get("edition", "") or "")) or None,
         authors=normalize_string_list(data.get("authors", [])),
         kind=collapse_ws(str(data.get("kind", "") or "")),
         primary_topic=collapse_ws(str(data.get("primary_topic", "") or "")),
         secondary_topics=normalize_string_list(data.get("secondary_topics", [])),
         level=collapse_ws(str(data.get("level", "") or "")),
         prerequisites=normalize_string_list(data.get("prerequisites", [])),
-        summary=collapse_ws(str(data.get("summary", "") or "")),
-        recommended_for=collapse_ws(str(data.get("recommended_for", "") or "")),
+        summary=fix_mojibake(str(data.get("summary", "") or "")),
+        recommended_for=fix_mojibake(str(data.get("recommended_for", "") or "")),
         confidence=float(data.get("confidence", 0.0) or 0.0),
         rename_recommended=bool(data.get("rename_recommended", False)),
-        rename_reason=collapse_ws(str(data.get("rename_reason", "") or "")),
+        rename_reason=fix_mojibake(str(data.get("rename_reason", "") or "")),
         rename_target=rename_target,
         rename_applied=rename_applied,
         metadata_sources={
@@ -534,6 +884,7 @@ def main() -> int:
             if not payload["text_sample"] and not any(payload["metadata"].values()):
                 notes.append("no_extractable_text_or_metadata")
             data = call_ollama(args.model, payload)
+            data = enrich_model_output(data, payload)
             skip_rename, skip_reasons = should_skip_rename(data)
             notes.extend(skip_reasons)
             if not skip_rename:
