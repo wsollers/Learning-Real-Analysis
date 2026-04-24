@@ -1,0 +1,116 @@
+% =========================================================
+% Proof: Cauchy Equivalence Is Preserved Under Addition and Multiplication
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:cauchy-equiv-preserved-operations}
+
+\begin{remark*}[Return]
+\hyperref[thm:cauchy-equiv-preserved-operations]{Return to Theorem~\ref*{thm:cauchy-equiv-preserved-operations}.}
+\end{remark*}
+
+\begin{theorem*}[Cauchy equivalence is preserved under addition and multiplication]
+Let $(x_n),(y_n),(u_n),(v_n) \in \mathbb{Q}^c$.
+If $(x_n) \sim (u_n)$ and $(y_n) \sim (v_n)$, then
+$(x_n + y_n) \sim (u_n + v_n)$ and $(x_n y_n) \sim (u_n v_n)$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+\textbf{Addition.}
+Let $\varepsilon > 0$.  Since $(x_n) \sim (u_n)$, there exists $N_1$ with
+$|x_n - u_n| < \varepsilon/2$ for $n \geq N_1$.
+Since $(y_n) \sim (v_n)$, there exists $N_2$ with
+$|y_n - v_n| < \varepsilon/2$ for $n \geq N_2$.
+For $n \geq \max\{N_1, N_2\}$:
+\[
+|(x_n + y_n) - (u_n + v_n)|
+\leq |x_n - u_n| + |y_n - v_n|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon.
+\]
+
+\textbf{Multiplication.}
+By \hyperref[thm:cauchy-bounded-q]{Theorem~\ref*{thm:cauchy-bounded-q}},
+all four sequences are bounded; let $\Lambda > 0$ satisfy $|x_n|, |y_n|, |u_n|, |v_n| \leq \Lambda$.
+Let $\varepsilon > 0$.  Choose $N_1$ with $|x_n - u_n| < \varepsilon/(2\Lambda)$ for $n \geq N_1$,
+and $N_2$ with $|y_n - v_n| < \varepsilon/(2\Lambda)$ for $n \geq N_2$.
+Write:
+\[
+x_n y_n - u_n v_n
+= (x_n - u_n)y_n + u_n(y_n - v_n).
+\]
+For $n \geq \max\{N_1, N_2\}$:
+\[
+|x_n y_n - u_n v_n|
+\leq |y_n||x_n - u_n| + |u_n||y_n - v_n|
+< \Lambda \cdot \frac{\varepsilon}{2\Lambda} + \Lambda \cdot \frac{\varepsilon}{2\Lambda}
+= \varepsilon.
+\]
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Part I: Addition.}
+
+\textbf{Step 1.}  We want $|(x_n+y_n)-(u_n+v_n)| \to 0$.
+
+\textbf{Step 2.}  Let $\varepsilon > 0$.  Since $(x_n) \sim (u_n)$:
+$\exists N_1$ with $|x_n - u_n| < \varepsilon/2$ for $n \geq N_1$.
+Since $(y_n) \sim (v_n)$: $\exists N_2$ with $|y_n - v_n| < \varepsilon/2$
+for $n \geq N_2$.
+
+\textbf{Step 3.}  For $n \geq \max\{N_1, N_2\}$, by the triangle inequality:
+\[
+|(x_n+y_n)-(u_n+v_n)|
+\leq |x_n-u_n| + |y_n-v_n|
+< \frac{\varepsilon}{2}+\frac{\varepsilon}{2} = \varepsilon.
+\]
+
+\textbf{Part II: Multiplication.}
+
+\textbf{Step 4: Establish a common bound.}
+All four sequences are Cauchy, hence bounded.
+Let $\Lambda > 0$ satisfy $|x_n| \leq \Lambda$, $|y_n| \leq \Lambda$,
+$|u_n| \leq \Lambda$, $|v_n| \leq \Lambda$ for all $n$.
+
+\textbf{Step 5: Algebraic decomposition.}
+\[
+x_n y_n - u_n v_n
+= x_n y_n - u_n y_n + u_n y_n - u_n v_n
+= (x_n - u_n)y_n + u_n(y_n - v_n).
+\]
+
+\textbf{Step 6.}  By the triangle inequality:
+\[
+|x_n y_n - u_n v_n|
+\leq |y_n||x_n - u_n| + |u_n||y_n - v_n|
+\leq \Lambda|x_n - u_n| + \Lambda|y_n - v_n|.
+\]
+
+\textbf{Step 7.}  Let $\varepsilon > 0$.  Choose $N_1$ with
+$|x_n - u_n| < \varepsilon/(2\Lambda)$ for $n \geq N_1$, and $N_2$ with
+$|y_n - v_n| < \varepsilon/(2\Lambda)$ for $n \geq N_2$.
+
+\textbf{Step 8.}  For $n \geq \max\{N_1, N_2\}$:
+\[
+|x_n y_n - u_n v_n|
+\leq \Lambda \cdot \frac{\varepsilon}{2\Lambda} + \Lambda \cdot \frac{\varepsilon}{2\Lambda}
+= \varepsilon.
+\]
+
+\textbf{Conclude:} $(x_n+y_n) \sim (u_n+v_n)$ and $(x_n y_n) \sim (u_n v_n)$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is a well-definedness proof.  The addition part is a direct triangle
+inequality split.  The multiplication part uses the same cross-term
+decomposition as in the closure-under-multiplication proof, but now the
+two sequences being ``moved'' are the equivalence hypotheses $(x_n - u_n)$
+and $(y_n - v_n)$, while $\Lambda$ bounds the coefficients $y_n$ and $u_n$.
+The $\Lambda$-compensation pattern is the same in both proofs.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:cauchy-equivalence]{Equivalence of Cauchy sequences},
+\hyperref[thm:cauchy-bounded-q]{Cauchy sequences are bounded},
+triangle inequality in $\mathbb{Q}$.
+\end{remark*}

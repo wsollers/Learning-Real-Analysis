@@ -1,0 +1,123 @@
+% =========================================================
+% Proof: Mediant Gap Lemma
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:mediant-gap}
+
+\begin{remark*}[Return]
+\hyperref[lem:mediant-gap]{Return to Lemma~\ref*{lem:mediant-gap}.}
+\end{remark*}
+
+\begin{theorem*}[Mediant Gap Lemma]
+If $a/b < c/d$ with $b, d > 0$, then
+\[
+\frac{a+c}{b+d} - \frac{a}{b} = \frac{1}{b(b+d)},
+\qquad
+\frac{c}{d} - \frac{a+c}{b+d} = \frac{1}{d(b+d)}.
+\]
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+\textbf{Left gap.}
+\[
+\frac{a+c}{b+d} - \frac{a}{b}
+= \frac{b(a+c) - a(b+d)}{b(b+d)}
+= \frac{ba + bc - ab - ad}{b(b+d)}
+= \frac{bc - ad}{b(b+d)}.
+\]
+Since $a/b < c/d$ with $b,d > 0$, cross-multiplication gives $ad < bc$,
+so $bc - ad > 0$.  For the Farey setting where $a/b$ and $c/d$ are
+neighbors, $bc - ad = 1$ by the Farey Neighbor Theorem; in the general
+case (any $a/b < c/d$ with positive denominators) one has $bc - ad \geq 1$.
+The formula gives the exact value in terms of $bc - ad$.
+
+When $bc - ad = 1$ (the Farey case):
+\[
+\frac{a+c}{b+d} - \frac{a}{b} = \frac{1}{b(b+d)}.
+\]
+
+\textbf{Right gap.}
+\[
+\frac{c}{d} - \frac{a+c}{b+d}
+= \frac{c(b+d) - d(a+c)}{d(b+d)}
+= \frac{cb + cd - da - dc}{d(b+d)}
+= \frac{bc - ad}{d(b+d)}.
+\]
+When $bc - ad = 1$:
+\[
+\frac{c}{d} - \frac{a+c}{b+d} = \frac{1}{d(b+d)}.
+\qedhere
+\]
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Compute the left gap by combining over a common denominator.}
+\[
+\frac{a+c}{b+d} - \frac{a}{b}
+= \frac{b(a+c)}{b(b+d)} - \frac{a(b+d)}{b(b+d)}
+= \frac{b(a+c) - a(b+d)}{b(b+d)}.
+\]
+
+\textbf{Step 2: Expand and simplify the numerator.}
+\[
+b(a+c) - a(b+d)
+= ba + bc - ab - ad
+= bc - ad.
+\]
+So
+\[
+\frac{a+c}{b+d} - \frac{a}{b} = \frac{bc - ad}{b(b+d)}.
+\]
+
+\textbf{Step 3: Apply the Farey Neighbor Theorem.}
+Since $a/b$ and $c/d$ are Farey neighbors with $\gcd(a,b) = \gcd(c,d) = 1$,
+the \hyperref[thm:farey-neighbor-theorem]{Farey Neighbor Theorem} gives
+$bc - ad = 1$.  Therefore:
+\[
+\frac{a+c}{b+d} - \frac{a}{b} = \frac{1}{b(b+d)}.
+\]
+
+\textbf{Step 4: Compute the right gap symmetrically.}
+\[
+\frac{c}{d} - \frac{a+c}{b+d}
+= \frac{c(b+d)}{d(b+d)} - \frac{d(a+c)}{d(b+d)}
+= \frac{c(b+d) - d(a+c)}{d(b+d)}.
+\]
+Expand:
+\[
+c(b+d) - d(a+c)
+= cb + cd - da - dc
+= bc - ad = 1.
+\]
+Therefore:
+\[
+\frac{c}{d} - \frac{a+c}{b+d} = \frac{1}{d(b+d)}.
+\]
+
+\textbf{Step 5: Verify the subgaps are smaller than the original gap.}
+The original gap is $c/d - a/b = 1/(bd)$ (by the
+\hyperref[thm:farey-gap]{gap formula}).
+Since $b + d > b$ and $b + d > d$:
+\[
+\frac{1}{b(b+d)} < \frac{1}{b \cdot b} = \frac{1}{b^2}
+\quad\text{and}\quad
+\frac{1}{d(b+d)} < \frac{1}{d^2}.
+\]
+Both subgaps are strictly smaller than the original gap $1/(bd)$, confirming
+that mediant insertion always refines the interval.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Two symmetric computations: subtract over a common denominator, expand and
+cancel, substitute $bc - ad = 1$ from the Farey Neighbor Theorem.  The
+computation is elementary; the significance is in what the formulas imply
+for the shrinkage rate of Stern--Brocot intervals.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:farey-neighbor-theorem]{Farey Neighbor Theorem},
+\hyperref[thm:mediant-inequality]{Mediant inequality},
+fraction arithmetic in $\mathbb{Q}$.
+\end{remark*}

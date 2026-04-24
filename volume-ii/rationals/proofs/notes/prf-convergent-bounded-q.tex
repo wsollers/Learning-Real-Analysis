@@ -1,0 +1,72 @@
+% =========================================================
+% Proof: Convergent Sequences Are Bounded
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:convergent-bounded-q}
+
+\begin{remark*}[Return]
+\hyperref[thm:convergent-bounded-q]{Return to Theorem~\ref*{thm:convergent-bounded-q}.}
+\end{remark*}
+
+\begin{theorem*}[Convergent sequences are bounded]
+Every convergent sequence of rational numbers is bounded.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+Let $(x_n)$ be a sequence of rational numbers with $x_n \to a \in \mathbb{Q}$.
+Apply the definition of convergence with $\varepsilon = 1$: there exists
+$N \in \mathbb{N}$ such that $|x_n - a| < 1$ for all $n \geq N$.
+By the triangle inequality, $|x_n| \leq |x_n - a| + |a| < 1 + |a|$
+for all $n \geq N$.
+Define
+\[
+\Gamma = \max\{|x_1|, |x_2|, \ldots, |x_N|, 1 + |a|\}.
+\]
+Then $|x_n| \leq \Gamma$ for all $n \in \mathbb{N}$, so $(x_n)$ is bounded.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Control the tail using convergence.}
+Since $x_n \to a$, choose $\varepsilon = 1$.  There exists $N \in \mathbb{N}$
+such that $|x_n - a| < 1$ for all $n \geq N$.
+
+\textbf{Step 2: Bound each tail term.}
+For any $n \geq N$, apply the triangle inequality:
+\[
+|x_n| = |x_n - a + a| \leq |x_n - a| + |a| < 1 + |a|.
+\]
+
+\textbf{Step 3: Handle the initial segment.}
+The terms $x_1, x_2, \ldots, x_N$ are finitely many rational numbers,
+each with a finite absolute value.  Their maximum $\max\{|x_1|,\ldots,|x_N|\}$
+is a well-defined rational number.
+
+\textbf{Step 4: Combine into a single bound.}
+Set
+\[
+\Gamma = \max\bigl\{|x_1|, |x_2|, \ldots, |x_N|,\; 1 + |a|\bigr\}.
+\]
+For $n \leq N$: $|x_n| \leq \max\{|x_1|,\ldots,|x_N|\} \leq \Gamma$.
+For $n > N$: $|x_n| < 1 + |a| \leq \Gamma$.
+Therefore $|x_n| \leq \Gamma$ for all $n \in \mathbb{N}$.
+
+\textbf{Step 5: Conclude.}
+By \hyperref[def:bounded-sequence-q]{Definition~\ref*{def:bounded-sequence-q}},
+$(x_n)$ is bounded.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof splits the sequence into two parts: a finite initial segment
+(handled by taking a maximum of finitely many values) and a tail
+(controlled by convergence with $\varepsilon = 1$).  The choice
+$\varepsilon = 1$ is not special — any positive $\varepsilon$ works — but
+$1$ keeps the arithmetic clean.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:convergent-rational-sequence]{Convergence of a rational sequence},
+\hyperref[def:bounded-sequence-q]{Bounded sequence},
+the triangle inequality in $\mathbb{Q}$.
+\end{remark*}

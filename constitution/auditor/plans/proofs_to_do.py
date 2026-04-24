@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
+import re
 
 import yaml
 
@@ -17,6 +18,9 @@ class ProofTodo:
     volume: str
     chapter: str
     chapter_path: Path
+    chapter_order: int
+    note_order: int
+    label_order: int
     label: str
     kind: str
     title: str
@@ -44,12 +48,14 @@ def find_proofs_to_do(
         environments = data.get("environments") or []
         if not isinstance(environments, list):
             continue
+        note_order_map = _build_note_order_map(chapter_root)
+        label_order_cache: dict[tuple[str, str], int] = {}
 
         chapter_path = _chapter_display_path(repo_root, chapter_root)
         volume = str(data.get("volume") or _infer_volume(repo_root, chapter_root))
         chapter = str(data.get("subject") or chapter_root.name)
 
-        for entry in environments:
+        for index, entry in enumerate(environments):
             if not isinstance(entry, dict):
                 continue
             kind = str(entry.get("type") or "").strip()
@@ -60,6 +66,13 @@ def find_proofs_to_do(
             title = str(entry.get("display_title") or "").strip()
             source_file = str(entry.get("file") or "").strip()
             proof_file = str(entry.get("proof_file") or "").strip()
+            note_order = note_order_map.get(_norm_rel_path(source_file), index)
+            label_order = _find_label_order(
+                chapter_root,
+                source_file,
+                label,
+                cache=label_order_cache,
+            )
 
             if _is_capstoneish(label, title, source_file, proof_file):
                 continue
@@ -82,6 +95,9 @@ def find_proofs_to_do(
                     volume=volume,
                     chapter=chapter,
                     chapter_path=chapter_path,
+                    chapter_order=index,
+                    note_order=note_order,
+                    label_order=label_order,
                     label=label,
                     kind=kind,
                     title=title,
@@ -131,7 +147,16 @@ def format_proofs_to_do_markdown(todos: list[ProofTodo]) -> str:
             "| Type | Label | Title | Reason | Source | Proof file |",
             "| --- | --- | --- | --- | --- | --- |",
         ]
-        for item in sorted(items, key=lambda x: (x.source_file, x.label)):
+        for item in sorted(
+            items,
+            key=lambda x: (
+                x.note_order,
+                x.label_order,
+                x.chapter_order,
+                x.source_file,
+                x.label,
+            ),
+        ):
             lines.append(
                 "| "
                 + " | ".join(
@@ -184,3 +209,84 @@ def _chapter_display_path(repo_root: Path, chapter_root: Path) -> Path:
 
 def _md(value: str) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def _norm_rel_path(path: str) -> str:
+    return path.replace("\\", "/").strip()
+
+
+def _build_note_order_map(chapter_root: Path) -> dict[str, int]:
+    notes_index = chapter_root / "notes" / "index.tex"
+    if not notes_index.exists():
+        return {}
+    ordered_files: list[str] = []
+    seen: set[str] = set()
+    _collect_note_inputs(chapter_root, notes_index, ordered_files, seen)
+    return {rel: i for i, rel in enumerate(ordered_files)}
+
+
+_INPUT_RE = re.compile(r"\\input\{([^}]+)\}")
+
+
+def _collect_note_inputs(
+    chapter_root: Path,
+    tex_file: Path,
+    ordered_files: list[str],
+    seen: set[str],
+) -> None:
+    try:
+        text = tex_file.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return
+    for match in _INPUT_RE.finditer(text):
+        raw = match.group(1).strip()
+        if not raw:
+            continue
+        rel = raw if raw.endswith(".tex") else f"{raw}.tex"
+        rel = _norm_rel_path(rel)
+        abs_path = chapter_root.parent.parent / rel if rel.startswith("volume-") else chapter_root / rel
+        try:
+            rel_to_chapter = _norm_rel_path(str(abs_path.relative_to(chapter_root)))
+        except ValueError:
+            rel_to_chapter = rel
+        if not abs_path.exists():
+            continue
+        if abs_path.name == "index.tex":
+            key = f"index::{rel_to_chapter}"
+            if key in seen:
+                continue
+            seen.add(key)
+            _collect_note_inputs(chapter_root, abs_path, ordered_files, seen)
+            continue
+        if rel_to_chapter not in seen:
+            seen.add(rel_to_chapter)
+            ordered_files.append(rel_to_chapter)
+
+
+def _find_label_order(
+    chapter_root: Path,
+    source_file: str,
+    label: str,
+    *,
+    cache: dict[tuple[str, str], int],
+) -> int:
+    key = (_norm_rel_path(source_file), label)
+    if key in cache:
+        return cache[key]
+    if not source_file or not label:
+        cache[key] = 10**9
+        return cache[key]
+    path = chapter_root / source_file
+    if not path.exists():
+        cache[key] = 10**9
+        return cache[key]
+    needle = f"\\label{{{label}}}"
+    try:
+        for lineno, line in enumerate(path.read_text(encoding='utf-8', errors='ignore').splitlines()):
+            if needle in line:
+                cache[key] = lineno
+                return lineno
+    except OSError:
+        pass
+    cache[key] = 10**9
+    return cache[key]

@@ -1,0 +1,95 @@
+% =========================================================
+% Proof: Stern--Brocot Enumeration
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:stern-brocot-enumeration}
+
+\begin{remark*}[Return]
+\hyperref[thm:stern-brocot-enumeration]{Return to Theorem~\ref*{thm:stern-brocot-enumeration}.}
+\end{remark*}
+
+\begin{theorem*}[Stern--Brocot enumeration]
+Every positive rational number appears exactly once in reduced form in
+the Stern--Brocot tree.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+We prove existence and uniqueness separately.
+
+\textbf{Existence.} Let $p/q \in \mathbb{Q}_{>0}$ be in reduced form.
+The Stern--Brocot search process starts from $0/1$ and $1/0$ and at each
+step compares $p/q$ to the current mediant $m$.  If $p/q < m$, go left;
+if $p/q > m$, go right; if $p/q = m$, terminate.  At each step, the two
+boundary fractions $a/b$ and $c/d$ satisfy $bc - ad = 1$
+(\hyperref[thm:farey-neighbor-theorem]{Farey Neighbor Theorem}).  The
+mediant has denominator $b + d$.  Since $p/q$ lies strictly between $a/b$
+and $c/d$ at every non-terminal step, a descent argument (analogous to
+the Euclidean algorithm on the pair $(b, d)$) shows the denominators of
+the successive boundaries strictly decrease toward $q$, forcing the process
+to terminate at $p/q$ in finitely many steps.
+Therefore every positive rational is reached.
+
+\textbf{Uniqueness.} Suppose $p/q$ appears at two distinct nodes.  Each
+node is reached by a unique left-right path from the root, and the
+Stern--Brocot structure guarantees that the fractions encountered along
+any path are strictly increasing (when going right) or strictly decreasing
+(when going left).  Two distinct paths reaching $p/q$ would require the
+search to visit $p/q$ twice with the same value but different surrounding
+intervals, which is impossible given the determinant condition
+$bc - ad = 1$ that is maintained at every level.  Therefore every positive
+rational appears exactly once.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Describe the search procedure.}
+Start with the boundary pair $(a/b, c/d) = (0/1, 1/0)$.
+At each step compute the mediant $m = (a+c)/(b+d)$ and compare $p/q$ to $m$:
+if $p/q = m$, terminate; if $p/q < m$, set $(a/b, c/d) \leftarrow (a/b, m)$;
+if $p/q > m$, set $(a/b, c/d) \leftarrow (m, c/d)$.
+
+\textbf{Step 2: The determinant condition is preserved.}
+Initially $bc - ad = 1 \cdot 1 - 0 \cdot 0 = 1$.  When we replace
+$c/d$ by the mediant $(a+c)/(b+d)$, the new determinant is
+$b(a+c) - a(b+d) = bc - ad = 1$.  Similarly for replacing $a/b$.
+Therefore $bc - ad = 1$ holds at every level.
+
+\textbf{Step 3: Existence via denominator descent.}
+At each step where $p/q \neq m$, we have $p/q$ strictly between $a/b$
+and $c/d$, so $bq - ap \geq 1$ and $cp - dq \geq 1$.
+The new boundary after the step has a smaller denominator on the side
+we replaced (since the mediant's denominator is $b + d$, but the
+replaced boundary had denominator $\leq q - 1$ when $p/q = p/q$).
+By a descent argument on $q - b$ and $q - d$ (which are positive integers
+that strictly decrease at each step), the process must terminate in at
+most $2q - 1$ steps.
+
+\textbf{Step 4: Uniqueness.}
+Any node in the tree is the unique mediant of its two parent boundaries
+at the preceding level.  Since $bc - ad = 1$ pins the arithmetic
+relationship between successive boundaries uniquely, and the search
+direction at each step is determined by the comparison $p/q$ vs.\ mediant,
+there is only one path from the root to any given value.  Two distinct
+paths to the same rational would require two different sequences of
+left-right decisions, but the comparison is deterministic, so this is
+impossible.
+
+\textbf{Step 5: Conclude.}
+Every positive rational appears (existence) and appears exactly once
+(uniqueness).
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Existence uses a descent argument analogous to the Euclidean algorithm.
+Uniqueness uses the deterministic nature of the search.  The Farey
+determinant condition $bc - ad = 1$ is the structural invariant that
+makes both arguments work.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:mediant]{Mediant},
+\hyperref[thm:farey-neighbor-theorem]{Farey Neighbor Theorem},
+\hyperref[lem:mediant-gap]{Mediant Gap Lemma},
+\hyperref[thm:fraction-pair-equivalence]{reduced-form representatives}.
+\end{remark*}

@@ -1,0 +1,80 @@
+% =========================================================
+% Proof: Limits of Rational Sequences Are Unique
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:limit-unique-q}
+
+\begin{remark*}[Return]
+\hyperref[thm:limit-unique-q]{Return to Theorem~\ref*{thm:limit-unique-q}.}
+\end{remark*}
+
+\begin{theorem*}[Limits of rational sequences are unique]
+If $(x_n)$ is a sequence of rational numbers and
+$\lim_{n\to\infty} x_n = a$ and $\lim_{n\to\infty} x_n = b$
+with $a,b \in \mathbb{Q}$, then $a = b$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+Suppose $\lim_{n\to\infty} x_n = a$ and $\lim_{n\to\infty} x_n = b$.
+Let $\varepsilon > 0$.
+By convergence to $a$, there exists $N_1 \in \mathbb{N}$ such that
+$|x_n - a| < \varepsilon/2$ for all $n \geq N_1$.
+By convergence to $b$, there exists $N_2 \in \mathbb{N}$ such that
+$|x_n - b| < \varepsilon/2$ for all $n \geq N_2$.
+Set $N = \max\{N_1, N_2\}$ and choose any $n \geq N$.  By the triangle inequality,
+\[
+|a - b|
+= |a - x_n + x_n - b|
+\leq |a - x_n| + |x_n - b|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2}
+= \varepsilon.
+\]
+Since $\varepsilon > 0$ was arbitrary and $|a - b| < \varepsilon$ for all
+$\varepsilon > 0$, we conclude $|a - b| = 0$, hence $a = b$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Set up the goal.}
+We want to prove $a = b$, or equivalently $|a - b| = 0$.
+Since $|a - b| \geq 0$ always holds, it suffices to show $|a - b| < \varepsilon$
+for every $\varepsilon > 0$, because the only nonnegative rational smaller
+than every positive rational is zero.
+
+\textbf{Step 2: Extract witnesses from each convergence hypothesis.}
+Let $\varepsilon > 0$.  The hypothesis $x_n \to a$ supplies $N_1 \in \mathbb{N}$
+with $|x_n - a| < \varepsilon/2$ for all $n \geq N_1$.
+The hypothesis $x_n \to b$ supplies $N_2 \in \mathbb{N}$
+with $|x_n - b| < \varepsilon/2$ for all $n \geq N_2$.
+
+\textbf{Step 3: Choose a single index that satisfies both.}
+Set $N = \max\{N_1, N_2\}$.  For $n \geq N$ we have both $n \geq N_1$
+and $n \geq N_2$, so both estimates hold simultaneously.
+
+\textbf{Step 4: Apply the triangle inequality.}
+For any $n \geq N$:
+\[
+|a - b|
+= |a - x_n + x_n - b|
+\leq |a - x_n| + |x_n - b|
+< \frac{\varepsilon}{2} + \frac{\varepsilon}{2}
+= \varepsilon.
+\]
+
+\textbf{Step 5: Conclude.}
+Since $\varepsilon > 0$ was arbitrary and $|a - b| < \varepsilon$ for
+all such $\varepsilon$, we have $|a - b| = 0$, so $a = b$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+This is the standard $2\varepsilon$ squeeze argument: make both approximation
+errors small by halving $\varepsilon$, then combine via the triangle inequality.
+The key move is choosing $N$ large enough to activate both convergence witnesses
+simultaneously.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:convergent-rational-sequence]{Convergence of a rational sequence},
+the triangle inequality in $\mathbb{Q}$.
+\end{remark*}

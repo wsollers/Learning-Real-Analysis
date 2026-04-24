@@ -1,0 +1,86 @@
+% =========================================================
+% Proof: Stern--Brocot Interval Refinement
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:stern-brocot-refinement}
+
+\begin{remark*}[Return]
+\hyperref[thm:stern-brocot-refinement]{Return to Theorem~\ref*{thm:stern-brocot-refinement}.}
+\end{remark*}
+
+\begin{theorem*}[Stern--Brocot interval refinement]
+Let $x > 0$.  Starting from $a/b < x < c/d$ with $b,d > 0$, repeatedly
+insert the mediant $(a+c)/(b+d)$ and replace whichever endpoint keeps $x$
+in the interval.  This generates a nested sequence of rational intervals
+each containing $x$.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+We show by induction that at every step $n$, the interval
+$I_n = [a_n/b_n, c_n/d_n]$ satisfies $a_n/b_n < x < c_n/d_n$.
+
+\textbf{Base case.} $a_0/b_0 = a/b < x < c/d = c_0/d_0$ by hypothesis.
+
+\textbf{Inductive step.} Suppose $a_n/b_n < x < c_n/d_n$.  The mediant
+$m_n = (a_n + c_n)/(b_n + d_n)$ satisfies $a_n/b_n < m_n < c_n/d_n$ by the
+Mediant Inequality.  Compare $x$ to $m_n$:
+\begin{itemize}
+  \item If $x < m_n$: set $I_{n+1} = [a_n/b_n, m_n]$.  Then
+        $a_n/b_n < x < m_n = c_{n+1}/d_{n+1}$.
+  \item If $x > m_n$: set $I_{n+1} = [m_n, c_n/d_n]$.  Then
+        $m_n = a_{n+1}/b_{n+1} < x < c_n/d_n$.
+\end{itemize}
+(Since $x$ is irrational in the case of an infinite path, $x = m_n$
+cannot occur.)  In both cases $I_{n+1} \subsetneq I_n$ and $x \in I_{n+1}$.
+
+By induction, $x \in I_n$ for all $n$ and $I_0 \supseteq I_1 \supseteq \cdots$.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Step 1: Induction statement.}
+We claim: for all $n \in \mathbb{N}$, $a_n/b_n < x < c_n/d_n$.
+
+\textbf{Step 2: Base case ($n = 0$).}
+$a_0/b_0 = a/b < x < c/d = c_0/d_0$ by the hypothesis of the theorem.
+
+\textbf{Step 3: Inductive step.}
+Assume $a_n/b_n < x < c_n/d_n$.
+
+Form the mediant $m_n = (a_n + c_n)/(b_n + d_n)$.  By the
+\hyperref[thm:mediant-inequality]{Mediant Inequality}:
+\[
+\frac{a_n}{b_n} < m_n < \frac{c_n}{d_n}.
+\]
+
+Compare $x$ to $m_n$:
+\begin{itemize}
+  \item \textbf{Case $x < m_n$:} Define $a_{n+1}/b_{n+1} = a_n/b_n$ and
+        $c_{n+1}/d_{n+1} = m_n$.  Then $a_n/b_n < x < m_n$, so
+        $a_{n+1}/b_{n+1} < x < c_{n+1}/d_{n+1}$.  Also
+        $I_{n+1} = [a_n/b_n, m_n] \subset [a_n/b_n, c_n/d_n] = I_n$.
+  \item \textbf{Case $x > m_n$:} Define $a_{n+1}/b_{n+1} = m_n$ and
+        $c_{n+1}/d_{n+1} = c_n/d_n$.  Then $m_n < x < c_n/d_n$, so
+        $a_{n+1}/b_{n+1} < x < c_{n+1}/d_{n+1}$.  Also
+        $I_{n+1} = [m_n, c_n/d_n] \subset [a_n/b_n, c_n/d_n] = I_n$.
+\end{itemize}
+In both cases the inductive claim holds at $n+1$ and $I_{n+1} \subsetneq I_n$.
+
+\textbf{Step 4: Conclude.}
+By induction, $x \in I_n$ for all $n$ and $(I_n)$ is a nested sequence of
+rational intervals.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+An induction on steps, with the Mediant Inequality as the key tool at each
+level.  The containment $x \in I_{n+1}$ follows by a two-case split on
+whether $x < m_n$ or $x > m_n$; in both cases $x$ is retained in the
+updated interval.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:mediant-inequality]{Mediant inequality},
+\hyperref[def:mediant]{Mediant},
+order properties of $\mathbb{R}$.
+\end{remark*}

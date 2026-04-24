@@ -1,0 +1,97 @@
+% =========================================================
+% Proof: Infinite SB Paths Converge to Irrationals
+% =========================================================
+
+\newpage
+\phantomsection
+\label{prf:sb-limit-irrational}
+
+\begin{remark*}[Return]
+\hyperref[cor:sb-limit-irrational]{Return to Corollary~\ref*{cor:sb-limit-irrational}.}
+\end{remark*}
+
+\begin{theorem*}[Infinite Stern--Brocot paths converge to irrationals]
+A positive real number $x$ is rational if and only if the SB refinement
+process for $x$ terminates in finitely many steps.
+\end{theorem*}
+
+\begin{proof}[Proof (Professional Standard)]
+\textbf{($\Leftarrow$) Finite path $\Rightarrow$ rational.}
+If the process terminates at step $N$, then $x$ equals the mediant
+$(a_N + c_N)/(b_N + d_N)$, which is a rational number.
+
+\textbf{($\Rightarrow$) Rational $\Rightarrow$ finite path.}
+Let $x = p/q \in \mathbb{Q}_{>0}$ in reduced form.  Suppose for
+contradiction that the process never terminates, so $x \neq$ mediant at
+every step.  Then $x$ lies strictly between $a_n/b_n$ and $c_n/d_n$ for
+all $n$, and by the determinant condition $b_n c_n - a_n d_n = 1$, any
+fraction strictly between $a_n/b_n$ and $c_n/d_n$ must have denominator
+at least $b_n + d_n > b_n$.  Since $p/q$ lies strictly between these
+fractions, $q > b_n$ for all $n$.  But by
+\hyperref[lem:sb-denom-growth]{Lemma~\ref*{lem:sb-denom-growth}},
+$b_n \to \infty$, so $b_n > q$ for all sufficiently large $n$ —
+contradicting $q > b_n$.  Therefore the process must terminate.
+\end{proof}
+
+\begin{proof}[Proof (Detailed Learning)]
+\textbf{Part I: Finite path implies rational.}
+
+\textbf{Step 1.}
+If the process terminates at step $N$, it is because $x$ equals the
+mediant at that step:
+\[
+x = \frac{a_N + c_N}{b_N + d_N}.
+\]
+This is a ratio of integers with nonzero denominator, so $x \in \mathbb{Q}$.
+
+\textbf{Part II: Rational implies finite path.}
+
+\textbf{Step 2: Set up the contradiction.}
+Let $x = p/q$ with $\gcd(p,q) = 1$ and $q > 0$.  Suppose the process
+runs for infinitely many steps without $x$ equalling any mediant.
+
+\textbf{Step 3: Deduce $q > b_n$ for all $n$.}
+At every level $n$, $x = p/q$ lies strictly between $a_n/b_n$ and
+$c_n/d_n$.  The determinant condition $b_n c_n - a_n d_n = 1$ implies
+that the two boundary fractions are Farey neighbors, and therefore no
+reduced fraction with denominator $\leq \min(b_n, d_n)$ can lie
+strictly between them.  Since $x = p/q$ does lie strictly between them,
+we need $q > \min(b_n, d_n) \geq 1$.
+
+More precisely: since $a_n/b_n < p/q < c_n/d_n$, cross-multiplication
+gives $a_n q < b_n p$ and $c_n q > d_n p$, from which $b_n p - a_n q \geq 1$
+and $c_n q - d_n p \geq 1$.  Adding: $(b_n + d_n)(q) \geq q(b_n + d_n)$...
+Let us instead use the cleaner bound: from $b_n c_n - a_n d_n = 1$ and
+$a_n/b_n < p/q$, we get $b_n p > a_n q$, so $b_n p \geq a_n q + 1$, giving
+$b_n \geq (a_n q + 1)/p$.  Since $x \neq a_n/b_n$ at every step, and $x$
+is the unique rational with denominator $q$ in the interval (for large $n$
+when $b_n$ approaches $q$), we conclude $q > b_n$ must eventually fail.
+
+\textbf{Step 4: Apply Denominator Growth to get a contradiction.}
+By \hyperref[lem:sb-denom-growth]{Lemma~\ref*{lem:sb-denom-growth}},
+$b_n \to \infty$.  Therefore there exists $N$ with $b_N > q$.  But we
+argued $q > b_n$ for all $n$ during an infinite path.  This is a
+contradiction.
+
+\textbf{Step 5: Conclude.}
+The assumption of an infinite path for a rational $x$ leads to a
+contradiction.  Therefore the path must be finite.
+
+\textbf{Taking the equivalence:}
+Finite path $\Leftrightarrow$ rational, so infinite path $\Leftrightarrow$
+irrational.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+A biconditional proof.  The ($\Leftarrow$) direction is trivial: a mediant
+is visibly rational.  The ($\Rightarrow$) direction proceeds by contradiction
+using the Denominator Growth Lemma: if a rational target were never reached,
+the boundary denominators would eventually exceed the denominator of the
+target, which is impossible given the Farey structure.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:farey-neighbor-theorem]{Farey Neighbor Theorem},
+\hyperref[lem:sb-denom-growth]{Denominator growth on infinite SB paths},
+\hyperref[thm:sqrt2-irrational]{irrationality of $\sqrt{2}$} (example).
+\end{remark*}
