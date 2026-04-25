@@ -2,54 +2,124 @@
 % Chains and Antichains
 % =========================================================
 
-\section{Structural Subsets: Chains and Antichains}
+\section{Chains and Antichains}
+\label{sec:chains-antichains}
 
-In the study of ordered sets, we often look for subsets where the elements are either perfectly ``aligned'' or perfectly ``scattered.'' These structures are formalized as \emph{Chains} and \emph{Antichains}.
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Chains and Antichains}},
+  fonttitle=\small\bfseries
+]
+A poset can contain subsets whose elements are either completely aligned
+or entirely incomparable.  These two extremes are formalised as chains and
+antichains.  They measure the ``linearity'' and ``width'' of the order
+structure respectively.
+\end{tcolorbox}
 
-\subsection*{Geometric Intuition: The Ladder vs. The Horizon}
+% ---------------------------------------------------------
+% def:chain
+% ---------------------------------------------------------
 
-\begin{itemize}
-    \item \textbf{Chain (The Ladder):} Imagine a ladder. Every rung is either above or below every other rung. There is a clear, unambiguous path from the bottom to the top. This represents a \textbf{total order} within a subset.
-    \item \textbf{Antichain (The Horizon):} Imagine a flat horizon of points. No point is ``above'' another; they are all incomparable. They sit side-by-side without any directional relation between them.
-\end{itemize}
-
-\subsection*{1. Formal Definitions}
-
-Let $(S, \le)$ be a partially ordered set (poset).
-
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Chain)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Chain]
-A subset $C \subseteq S$ is a \textbf{chain} if every pair of elements in $C$ is comparable. Formally:
+\label{def:chain}
+Let $(S, \leq)$ be a partially ordered set.  A subset $C \subseteq S$ is a
+\emph{chain} if every pair of elements in $C$ is comparable:
 \[
-\forall x, y \in C \; (x \le y \lor y \le x)
+\forall x, y \in C, \quad x \leq y \;\lor\; y \leq x.
 \]
-In model-theoretic terms, a chain is a subset where the restriction of the partial order $\le$ becomes a \textbf{Total Order}.
+Equivalently, the restriction of $\leq$ to $C$ is a
+\hyperref[def:total-order]{total order} on $C$.
 \end{definition}
+\end{tcolorbox}
 
-\begin{definition}[Antichain]
-A subset $A \subseteq S$ is an \textbf{antichain} if no two distinct elements in $A$ are comparable. Formally:
+\begin{remark*}[Standard quantified statement]
 \[
-\forall x, y \in A \; (x \neq y \implies \neg(x \le y) \land \neg(y \le x))
+\operatorname{Chain}(C, S, \leq)
+\;\coloneqq\;
+C \subseteq S
+\;\land\;
+\forall x, y \in C,\; x \leq y \lor y \leq x.
 \]
-An antichain represents a collection of elements that are mutually independent under the given relation.
-\end{definition}
+\end{remark*}
 
-\begin{remark}[The Discrete vs. The Continuous]
-In your study of the real line $\mathbb{R}$, the entire set is a single infinite chain. However, as you move toward higher-dimensional manifolds like the \textbf{Torus}, or power sets ordered by inclusion, the existence of large antichains becomes the primary tool for understanding the "width" of the order.
-\end{remark}
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{Chain}(C, S, \leq)
+\;\coloneqq\;
+\exists x, y \in C,\; x \not\leq y \land y \not\leq x.
+\]
+\end{remark*}
 
+\begin{remark*}[Interpretation]
+A chain is a subset in which the partial order behaves as a total order:
+no two elements are left incomparable.  The entire real line $\mathbb{R}$
+under its standard ordering is itself a chain.  Any finite totally ordered
+set — a ranking, a sequence of nested intervals, a linearly ordered list
+of stages — is a chain.  Chains model the ``ladder'' structure of order:
+there is a clear direction from smaller to larger, and the path from any
+element to any other is unambiguous.
+\end{remark*}
 
-% =========================================================
-% Chains and Antichains in Partially Ordered Sets
-% =========================================================
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order},
+\hyperref[def:total-order]{total order}.
+\end{remark*}
 
-\begin{definition}[Chain]
-Let $(S, \le)$ be a partially ordered set. A subset $C \subseteq S$ is called a \textbf{chain} if for every $x, y \in C$, either $x \le y$ or $y \le x$. A chain is essentially a subset upon which the relation $\le$ acts as a total order.
-\end{definition}
+% ---------------------------------------------------------
+% def:antichain
+% ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Antichain)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Antichain]
-Let $(S, \le)$ be a partially ordered set. A subset $A \subseteq S$ is called an \textbf{antichain} if for any two distinct elements $x, y \in A$, $x$ and $y$ are incomparable; that is, $x \not\le y$ and $y \not\le x$.
+\label{def:antichain}
+Let $(S, \leq)$ be a partially ordered set.  A subset $A \subseteq S$ is
+an \emph{antichain} if no two distinct elements of $A$ are comparable:
+\[
+\forall x, y \in A, \quad x \neq y \Longrightarrow \neg(x \leq y) \land \neg(y \leq x).
+\]
 \end{definition}
+\end{tcolorbox}
 
-\begin{remark}[Significance in Analysis]
-While the real numbers $\mathbb{R}$ under the standard ordering form a single, infinite chain, antichains become vital when considering the \textbf{Power Set} ordered by inclusion ($\subseteq$) or when defining product topologies on higher-dimensional manifolds like the \textbf{Torus}.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Antichain}(A, S, \leq)
+\;\coloneqq\;
+A \subseteq S
+\;\land\;
+\forall x, y \in A,\; x \neq y \Rightarrow x \not\leq y \land y \not\leq x.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{Antichain}(A, S, \leq)
+\;\coloneqq\;
+\exists x, y \in A,\; x \neq y \land (x \leq y \lor y \leq x).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An antichain is a subset in which the partial order makes no comparisons at
+all: every pair of distinct elements is incomparable.  In the power set
+$\mathcal{P}(X)$ ordered by inclusion, the collection of all subsets of
+a fixed cardinality $k$ forms an antichain — no subset of size $k$ contains
+another.  Antichains measure the ``width'' of a poset: Dilworth's theorem
+states that the minimum number of chains needed to cover a finite poset
+equals the maximum size of an antichain.  In higher-dimensional structures
+such as product orders, large antichains arise naturally and are the primary
+tool for understanding the lateral spread of the order.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order}.
+\end{remark*}

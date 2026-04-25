@@ -1,0 +1,94 @@
+% =========================================================
+% Partial and Total Maps
+% =========================================================
+
+\section{Partial and Total Maps}
+\label{sec:partial-total-maps}
+
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Partial and Total Maps}},
+  fonttitle=\small\bfseries
+]
+Before studying maps that preserve order structure, the foundational
+function types are recorded: a partial map need not be defined everywhere,
+while a total map is defined on every input.  These are the base layer
+upon which the order-theoretic notions rest.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% def:partial-map
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partial Map)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Partial Map]
+\label{def:partial-map}
+Let $A$ and $B$ be sets.  A \emph{partial map} $f : A \rightharpoonup B$
+is a relation $f \subseteq A \times B$ such that every element of $A$ has
+at most one image:
+\[
+\forall x \in A,\; \forall y_1, y_2 \in B,\quad
+(x, y_1) \in f \;\land\; (x, y_2) \in f
+\;\Longrightarrow\; y_1 = y_2.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{PartialMap}(f, A, B)
+\;\coloneqq\;
+f \subseteq A \times B
+\;\land\;
+\forall x \in A,\; \forall y_1, y_2 \in B,\;
+(x,y_1) \in f \land (x,y_2) \in f \Rightarrow y_1 = y_2.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A partial map assigns to each element of $A$ at most one element of $B$.
+Its domain of definition
+$\operatorname{dom}(f) = \{x \in A : \exists y \in B,\, (x,y) \in f\}$
+may be a proper subset of $A$.  Partial maps arise in order theory when
+a function is well-defined only on elements satisfying some order-theoretic
+condition — for example, on elements that admit an upper bound.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:total-map
+% ---------------------------------------------------------
+
+\begin{definition}[Total Map]
+\label{def:total-map}
+A \hyperref[def:partial-map]{partial map} $f : A \rightharpoonup B$ is a
+\emph{total map} if it is defined on every element of $A$:
+\[
+\forall x \in A,\; \exists y \in B,\quad (x, y) \in f.
+\]
+A total map is written $f : A \to B$ and is precisely a function in the
+usual sense.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{TotalMap}(f, A, B)
+\;\coloneqq\;
+\operatorname{PartialMap}(f, A, B)
+\;\land\;
+\forall x \in A,\; \exists y \in B,\; (x, y) \in f.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-map]{Partial map}.
+\end{remark*}

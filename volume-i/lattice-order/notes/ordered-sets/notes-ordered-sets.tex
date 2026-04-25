@@ -1,50 +1,185 @@
-
-\begin{remark}[The Relational Nature of Order]
-It is a fundamental insight of formal ontology that \emph{order} is not an intrinsic property or an inherent quality of a mathematical object; rather, it is a \textbf{relation} between objects. In the context of a set $S$, an order is a subset of the Cartesian product $S \times S$, effectively a collection of ordered pairs $(a, b)$ that satisfy a specific structural rule. To function as an ordering principle, this relation must satisfy two essential algebraic criteria:
-\begin{enumerate}
-    \item \textbf{Transitivity:} If the relation holds for $(a, b)$ and $(b, c)$, it must necessarily hold for $(a, c)$. Geometrically, this provides the directed "flow" or "line" of the number system, ensuring a consistent progression.
-    \item \textbf{Anti-symmetry:} If the relation holds for both $(a, b)$ and $(b, a)$, then it must be that $a = b$. This property prevents cycles and is the logical engine behind the "Squeeze" arguments in analysis; it ensures that if an element is bounded both above and below by the same value, it is identical to that value.
-\end{enumerate}
-By treating order as an external relation rather than an internal trait, we recognize that the same set of objects can support various distinct orderings (e.g., standard, reverse, or lexicographical), each defining a different "geometric truth" for the space.
-\end{remark}
-
 % =========================================================
-% Formal Definitions of Order Structures
+% Ordered Sets: Partial, Strict, and Total Orders
 % =========================================================
 
-\subsection*{The Formal Definition of an Order}
+\section{Ordered Sets}
+\label{sec:ordered-sets}
 
-In the context of a set $S$, an \textbf{order} is a binary relation that establishes a directional comparison between elements. Formally, we define these through the following structural hierarchies:
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Ordered Sets}},
+  fonttitle=\small\bfseries
+]
+Order is a relation, not a property.  A set carries no intrinsic ordering;
+an order is an additional structure imposed on the set by specifying which
+pairs of elements stand in the ordering relation.  The same underlying set
+can support many distinct orders simultaneously.  The atomic notions
+developed here are:
+\begin{itemize}
+  \item the \textbf{partial order} — the minimal framework in which order
+        makes sense;
+  \item the \textbf{strict partial order} — the asymmetric companion to the
+        partial order, and the native language of open-ball conditions and
+        limits;
+  \item the \textbf{total order} — the specialisation in which every pair of
+        elements is comparable.
+\end{itemize}
+\end{tcolorbox}
 
-\begin{definition}[Partial Order (Non-Strict)]
-A relation $\le$ on a set $S$ is a \textbf{partial order} if, for all $a, b, c \in S$, it satisfies:
+% ---------------------------------------------------------
+% def:partial-order
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Partial Order)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Partial Order]
+\label{def:partial-order}
+A relation $\leq$ on a set $S$ is a \emph{partial order} if it satisfies,
+for all $a, b, c \in S$:
 \begin{enumerate}
-    \item \textbf{Reflexivity:} $a \le a$.
-    \item \textbf{Anti-symmetry:} If $a \le b$ and $b \le a$, then $a = b$.
-    \item \textbf{Transitivity:} If $a \le b$ and $b \le c$, then $a \le c$.
+  \item \textbf{Reflexivity:} $a \leq a$.
+  \item \textbf{Anti-symmetry:} $a \leq b \land b \leq a \Longrightarrow a = b$.
+  \item \textbf{Transitivity:} $a \leq b \land b \leq c \Longrightarrow a \leq c$.
 \end{enumerate}
+The pair $(S, \leq)$ is called a \emph{partially ordered set}, or \emph{poset}.
 \end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{PartialOrder}(S, \leq)
+\;\coloneqq\;
+\bigl(\forall a \in S,\; a \leq a\bigr)
+\;\land\;
+\bigl(\forall a,b \in S,\; a \leq b \land b \leq a \Rightarrow a = b\bigr)
+\;\land\;
+\bigl(\forall a,b,c \in S,\; a \leq b \land b \leq c \Rightarrow a \leq c\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{PartialOrder}(S, \leq)
+\;\coloneqq\;
+\bigl(\exists a \in S,\; a \not\leq a\bigr)
+\;\lor\;
+\bigl(\exists a,b \in S,\; a \leq b \land b \leq a \land a \neq b\bigr)
+\;\lor\;
+\bigl(\exists a,b,c \in S,\; a \leq b \land b \leq c \land a \not\leq c\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Order is not an intrinsic quality of a set's elements — it is an external
+binary relation.  The three axioms together enforce that the relation be a
+consistent, cycle-free, directed comparison.  Reflexivity says every element
+is at least as large as itself.  Anti-symmetry is the formal engine behind
+squeeze arguments: if $a \leq b$ and $b \leq a$ then $a$ and $b$ cannot
+be distinct.  Transitivity ensures that the ordering chains: comparisons
+can be composed without breaking consistency.  The same set of objects can
+carry many distinct partial orders simultaneously — standard, reverse,
+or lexicographic — each defining a different relational geometry.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:strict-partial-order
+% ---------------------------------------------------------
 
 \begin{definition}[Strict Partial Order]
-A relation $<$ on a set $S$ is a \textbf{strict partial order} if it satisfies:
+\label{def:strict-partial-order}
+A relation $<$ on a set $S$ is a \emph{strict partial order} if it satisfies,
+for all $a, b, c \in S$:
 \begin{enumerate}
-    \item \textbf{Irreflexivity:} $\neg(a < a)$.
-    \item \textbf{Asymmetry:} If $a < b$, then $\neg(b < a)$.
-    \item \textbf{Transitivity:} If $a < b$ and $b < c$, then $a < c$.
+  \item \textbf{Irreflexivity:} $\neg(a < a)$.
+  \item \textbf{Asymmetry:} $a < b \Longrightarrow \neg(b < a)$.
+  \item \textbf{Transitivity:} $a < b \land b < c \Longrightarrow a < c$.
 \end{enumerate}
 \end{definition}
 
-\begin{remark}[The Logical Bridge]
-The relationship between strict and non-strict orders is governed by the following equivalences:
-\begin{itemize}
-    \item $a \le b \iff (a < b \lor a = b)$
-    \item $a < b \iff (a \le b \land a \neq b)$
-\end{itemize}
-While non-strict orders are essential for defining \textbf{Upper Bounds} and \textbf{Suprema}, strict orders are the primary language of \textbf{Open Balls} and \textbf{Limits} in metric spaces.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{StrictPartialOrder}(S, {<})
+\;\coloneqq\;
+\bigl(\forall a \in S,\; \neg(a < a)\bigr)
+\;\land\;
+\bigl(\forall a,b \in S,\; a < b \Rightarrow \neg(b < a)\bigr)
+\;\land\;
+\bigl(\forall a,b,c \in S,\; a < b \land b < c \Rightarrow a < c\bigr).
+\]
+\end{remark*}
 
-\begin{definition}[Total (Linear) Order]
-A partial order $\le$ is a \textbf{total order} (or linear order) if it additionally satisfies the \textbf{Law of Trichotomy}:
-\[ \forall a, b \in S, \text{ exactly one of } a < b, \ a = b, \text{ or } b < a \text{ holds.} \]
-The rational numbers $\mathbb{Q}$ and real numbers $\mathbb{R}$ are standard examples of totally ordered fields.
+\begin{remark*}[Interpretation]
+The strict order is the companion of the non-strict order, eliminating
+reflexivity and replacing anti-symmetry with the stronger asymmetry.
+Every strict partial order determines a partial order by
+$a \leq b \Longleftrightarrow (a < b \lor a = b)$, and every partial order
+determines a strict partial order by $a < b \Longleftrightarrow (a \leq b
+\land a \neq b)$.  In metric spaces and analysis, strict orders are the
+natural language of open conditions: open balls, open intervals, and limit
+definitions all use $<$ rather than $\leq$ to exclude boundary contact.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+No local dependencies.  The relationship with
+\hyperref[def:partial-order]{partial orders} is established by the two
+equivalences in the interpretation above.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:total-order
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Total Order)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Total Order]
+\label{def:total-order}
+A \hyperref[def:partial-order]{partial order} $\leq$ on a set $S$ is a
+\emph{total order} (or \emph{linear order}) if it additionally satisfies
+the \emph{law of trichotomy}: for all $a, b \in S$, exactly one of
+\[
+a < b, \qquad a = b, \qquad b < a
+\]
+holds.  The pair $(S, \leq)$ is called a \emph{totally ordered set}
+or a \emph{chain}.
 \end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{TotalOrder}(S, \leq)
+\;\coloneqq\;
+\operatorname{PartialOrder}(S, \leq)
+\;\land\;
+\forall a, b \in S,\;
+(a < b) \oplus (a = b) \oplus (b < a),
+\]
+where $\oplus$ denotes exclusive or.  Equivalently, comparability suffices:
+$\forall a,b \in S,\; a \leq b \lor b \leq a$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A partial order permits elements to be incomparable: it is possible that
+neither $a \leq b$ nor $b \leq a$.  A total order removes this
+possibility entirely — every pair of elements is forced to be comparable.
+The rational numbers $\mathbb{Q}$ and real numbers $\mathbb{R}$ under their
+standard orderings are totally ordered fields.  By contrast, the power
+set $\mathcal{P}(X)$ of any set $X$ with more than one element, ordered
+by inclusion, is typically not a total order: the singletons $\{a\}$ and
+$\{b\}$ with $a \neq b$ are incomparable.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order},
+\hyperref[def:strict-partial-order]{strict partial order}.
+\end{remark*}

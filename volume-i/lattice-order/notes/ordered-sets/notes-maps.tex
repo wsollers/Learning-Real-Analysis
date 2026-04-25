@@ -1,594 +1,188 @@
 % =========================================================
-% Partiality, Totality, and Consistency
-% =========================================================
-
-\section{Maps and Order-Theoretic Notions}
-
-We record several basic notions concerning partiality, totality, and compatibility, formulated in a way suitable for ordered structures.
-
-% ---------------------------------------------------------
-% Partial and Total Maps
-% ---------------------------------------------------------
-
-\begin{definition}[Partial and Total Maps]
-Let $A$ and $B$ be sets.
-\begin{itemize}
-    \item A \textbf{partial map} $f : A \rightharpoonup B$ is a relation $f \subseteq A \times B$ such that for all $x \in A$ and $y_1,y_2 \in B$,
-    \[
-    (x,y_1) \in f \;\land\; (x,y_2) \in f \;\Longrightarrow\; y_1 = y_2.
-    \]
-    \item A \textbf{total map} $f : A \to B$ is a partial map such that for every $x \in A$ there exists $y \in B$ with $(x,y) \in f$.
-\end{itemize}
-Thus a total map is precisely a function in the usual sense.
-\end{definition}
-
-% ---------------------------------------------------------
-% Consistency (Compatibility)
-% ---------------------------------------------------------
-
-\begin{definition}[Consistency / Compatibility]
-Let $(S,\le)$ be a partially ordered set. Elements $x,y \in S$ are said to be \textbf{consistent} (or \textbf{compatible}) if they admit a common upper bound; that is,
-\[
-\exists z \in S \;\bigl(x \le z \;\land\; y \le z\bigr).
-\]
-\end{definition}
-
-\begin{remark}[Order-theoretic interpretation]
-Consistency expresses that $x$ and $y$ can be extended to a common refinement. In lattice-theoretic settings, this condition is automatic if binary joins exist, since one may take $z = x \vee y$.
-\end{remark}
-
-% ---------------------------------------------------------
-% Maximal (Total) Elements
-% ---------------------------------------------------------
-
-\begin{definition}[Maximal Element]
-Let $(S,\le)$ be a partially ordered set. An element $x \in S$ is \textbf{maximal} if
-\[
-\forall y \in S, \quad x \le y \;\Longrightarrow\; x = y.
-\]
-\end{definition}
-
-\begin{remark}[Terminology]
-In some contexts (notably domain theory), maximal elements are referred to as \emph{total objects}, reflecting the idea that they represent completed or fully specified states.
-\end{remark}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% ---------------------------------------------------------
-% Definition — Covering Relation
-% ---------------------------------------------------------
-
-\begin{definition}[Covering Relation]
-Let $(P,\le)$ be a partially ordered set, and let $x,y \in P$ with $x < y$. We say that $y$ \textbf{covers} $x$ (or that $x$ is \textbf{covered by} $y$) if
-\[
-\forall z \in P, \quad (x \le z \le y \;\Longrightarrow\; z = x \;\text{or}\; z = y).
-\]
-Equivalently, $y$ covers $x$ if there is no element $z \in P$ such that
-\[
-x < z < y.
-\]
-\end{definition}
-
-\begin{remark}[Finite posets]
-If $P$ is finite, then for any $x,y \in P$ with $x < y$, there exists a finite sequence
-\[
-x = x_0 \prec x_1 \prec \cdots \prec x_n = y,
-\]
-where each $x_{i+1}$ covers $x_i$. Consequently, in a finite poset the order relation $\le$ is completely determined by the covering relation, and conversely the covering relation determines the order.
-\end{remark}
-
-% ---------------------------------------------------------
-% Lemma — Characterizations of Order-Isomorphisms (Finite Case)
-% ---------------------------------------------------------
-
-\begin{lemma}[Characterizations of Order-Isomorphisms for Finite Posets]
-Let $(P,\le_P)$ and $(Q,\le_Q)$ be finite partially ordered sets, and let $\varphi : P \to Q$ be a bijection. The following are equivalent:
-\begin{enumerate}
-    \item $\varphi$ is an order-isomorphism;
-    
-    \item for all $x,y \in P$,
-    \[
-    x <_P y \;\Longleftrightarrow\; \varphi(x) <_Q \varphi(y);
-    \]
-    
-    \item for all $x,y \in P$,
-    \[
-    x \prec y \;\Longleftrightarrow\; \varphi(x) \prec \varphi(y),
-    \]
-    where $\prec$ denotes the covering relation.
-\end{enumerate}
-\end{lemma}
-
-% ---------------------------------------------------------
-% Proposition — Hasse Diagram Characterization
-% ---------------------------------------------------------
-
-\begin{proposition}[Hasse Diagram Characterization for Finite Posets]
-Let $(P,\le_P)$ and $(Q,\le_Q)$ be finite partially ordered sets. Then $P$ and $Q$ are order-isomorphic if and only if their Hasse diagrams are identical up to relabeling of elements.
-\end{proposition}
-
-\begin{remark}[Interpretation]
-In a finite poset, the order relation is completely determined by the covering relation. The Hasse diagram encodes precisely this covering structure. Consequently, two finite posets are order-isomorphic exactly when there exists a bijection between their elements that preserves the covering relation, equivalently, when their diagrams coincide up to relabeling.
-\end{remark}
-
-% ---------------------------------------------------------
-% Definition — Dual of a Poset
-% ---------------------------------------------------------
-
-\begin{definition}[Dual of an Ordered Set]
-Let $(P,\le)$ be a partially ordered set. The \textbf{dual} (or \textbf{opposite}) poset, denoted $P^{\mathrm{op}}$, is the set $P$ equipped with the order relation defined by
-\[
-x \le_{P^{\mathrm{op}}} y \;\Longleftrightarrow\; y \le_P x.
-\]
-\end{definition}
-
-\begin{remark}[Diagrammatic interpretation]
-If $P$ is finite, the Hasse diagram of $P^{\mathrm{op}}$ is obtained from that of $P$ by reversing all order relations. Equivalently, one may obtain it by turning the diagram of $P$ upside down.
-\end{remark}
-
-% ---------------------------------------------------------
-% Principle — Duality
-% ---------------------------------------------------------
-
-\begin{proposition}[Duality Principle]
-Let $\mathcal{S}$ be a statement about partially ordered sets expressed in terms of the order relation $\le$. If $\mathcal{S}$ holds in every partially ordered set, then the \emph{dual statement}, obtained by replacing each occurrence of $\le$ with $\ge$ (equivalently, reversing the order), also holds in every partially ordered set.
-\end{proposition}
-
-\begin{remark}[Interpretation]
-The dual statement of $\mathcal{S}$ is obtained by systematically reversing all order-theoretic notions, such as exchanging upper bounds with lower bounds, suprema with infima, and maxima with minima. The principle reflects the fact that every partially ordered set $P$ has a dual $P^{\mathrm{op}}$, and any statement valid for all posets remains valid when applied to their duals.
-\end{remark}
-
-% ---------------------------------------------------------
-% Definitions — Bottom and Top Elements
-% ---------------------------------------------------------
-
-\begin{definition}[Bottom and Top Elements]
-Let $(P,\le)$ be a partially ordered set.
-
-\begin{itemize}
-    \item A \textbf{bottom element} (or \textbf{least element}) is an element $\bot \in P$ such that
-    \[
-    \forall x \in P, \quad \bot \le x.
-    \]
-
-    \item A \textbf{top element} (or \textbf{greatest element}) is an element $\top \in P$ such that
-    \[
-    \forall x \in P, \quad x \le \top.
-    \]
-\end{itemize}
-\end{definition}
-
-\begin{remark}[Uniqueness]
-If a bottom element exists, it is unique. Likewise, if a top element exists, it is unique.
-\end{remark}
-
-\begin{example}[Bottom and Top Elements]
-\begin{enumerate}
-    \item In the poset $(\mathcal{P}(X), \subseteq)$, the bottom element is $\varnothing$ and the top element is $X$.
-
-    \item Every finite chain has both a bottom element and a top element.
-
-    \item An infinite chain need not have both. For example:
-    \begin{itemize}
-        \item The chain $(\mathbb{N}, \le)$ has a bottom element (namely $1$ or $0$, depending on convention), but no top element.
-        \item The chain $(\mathbb{Z}, \le)$ has neither a bottom element nor a top element.
-    \end{itemize}
-
-    \item An antichain with more than one element has neither a bottom element nor a top element.
-\end{enumerate}
-\end{example}
-
-
-\begin{remark}[Lifting]
-Many results in order theory require the existence of a bottom element. Given a poset $(P,\le)$, one can adjoin a new element $\bot \notin P$ to obtain the \textbf{lifted poset} $P_\bot := P \cup \{\bot\}$, where the order is defined by
-\[
-\bot \le x \quad \text{for all } x \in P_\bot,
-\]
-and the original order on $P$ is preserved.
-
-In particular, any set $S$ can be viewed as an antichain and then lifted to form a poset with a bottom element. Posets obtained in this way are called \textbf{flat}, since all elements of $S$ are incomparable above $\bot$.
-\end{remark}
-
-
-% ---------------------------------------------------------
-% Definition — Lifting
-% ---------------------------------------------------------
-
-\begin{definition}[Lifting]
-Let $(P,\le)$ be a partially ordered set. The \textbf{lifting} of $P$ is the poset $P_{\bot} := P \cup \{\bot\}$, where $\bot \notin P$, equipped with the order relation defined by
-\[
-\bot \le x \quad \text{for all } x \in P_{\bot},
-\]
-and
-\[
-x \le_{P_{\bot}} y \;\Longleftrightarrow\; x \le_P y \quad \text{for all } x,y \in P.
-\]
-Thus $P_{\bot}$ is obtained by adjoining a new bottom element to $P$.
-\end{definition}
-
-\begin{remark}
-The element $\bot$ is the unique bottom element of $P_{\bot}$. This construction is often used to ensure the existence of a least element, for example in domain theory where $\bot$ represents an undefined or initial state.
-\end{remark}
-
-% ---------------------------------------------------------
-% Definition — Co-Lifting
-% ---------------------------------------------------------
-
-\begin{definition}[Co-Lifting]
-Let $(P,\le)$ be a partially ordered set. The \textbf{co-lifting} of $P$ is the poset
-\[
-P^{\top} := P \cup \{\top\},
-\]
-where $\top \notin P$, equipped with the order relation defined by
-\[
-x \le \top \quad \text{for all } x \in P^{\top},
-\]
-and
-\[
-x \le_{P^{\top}} y
-\;\Longleftrightarrow\;
-x \le_P y
-\quad \text{for all } x,y \in P.
-\]
-Thus $P^{\top}$ is obtained by adjoining a new top element to $P$.
-\end{definition}
-
-\begin{remark}
-The element $\top$ is the unique top element of $P^{\top}$. This construction is dual to lifting, which adjoins a bottom element.
-\end{remark}
-
-
-% ---------------------------------------------------------
-% Definitions — Maximal and Minimal Elements
-% ---------------------------------------------------------
-
-\begin{definition}[Maximal and Minimal Elements]
-Let $(P,\le)$ be a partially ordered set and let $Q \subseteq P$.
-
-\begin{itemize}
-    \item An element $a \in Q$ is \textbf{maximal in $Q$} if
-    \[
-    \forall x \in Q, \quad a \le x \;\Longrightarrow\; a = x.
-    \]
-    The set of maximal elements of $Q$ is denoted $\operatorname{Max}(Q)$.
-
-    \item An element $a \in Q$ is \textbf{minimal in $Q$} if
-    \[
-    \forall x \in Q, \quad x \le a \;\Longrightarrow\; x = a.
-    \]
-\end{itemize}
-\end{definition}
-
-\begin{definition}[Greatest and Least Elements]
-Let $(P,\le)$ be a partially ordered set and let $Q \subseteq P$.
-
-\begin{itemize}
-    \item An element $m \in Q$ is the \textbf{greatest element} (or \textbf{maximum}) of $Q$ if
-    \[
-    \forall x \in Q, \quad x \le m.
-    \]
-    If it exists, it is unique and denoted $\max Q$.
-
-    \item An element $m \in Q$ is the \textbf{least element} (or \textbf{minimum}) of $Q$ if
-    \[
-    \forall x \in Q, \quad m \le x.
-    \]
-    If it exists, it is unique and denoted $\min Q$.
-\end{itemize}
-\end{definition}
-
-\begin{remark}[Maximal vs.\ Maximum]
-A maximal element need not be comparable with all elements of $Q$, whereas a greatest element must dominate all elements of $Q$. Thus:
-\[
-\max Q \;\text{exists} \;\Longrightarrow\; \operatorname{Max}(Q) = \{\max Q\},
-\]
-but the converse need not hold.
-\end{remark}
-
-\begin{proposition}[Finite Posets]
-Let $(P,\le)$ be a finite partially ordered set.
-\begin{itemize}
-    \item Every nonempty subset $Q \subseteq P$ has at least one maximal element.
-    \item For every $x \in P$, there exists $y \in \operatorname{Max}(P)$ such that $x \le y$.
-\end{itemize}
-\end{proposition}
-
-\begin{remark}[Examples and Behavior]
-\begin{itemize}
-    \item A subset of $(\mathbb{N},\le)$ has a maximal element if and only if it is nonempty and finite.
-    \item A subset may have many maximal elements, one, or none.
-    \item For example, in $\mathcal{P}(\mathbb{N}) \setminus \{\mathbb{N}\}$, there is no greatest element, but each set of the form $\mathbb{N} \setminus \{n\}$ is maximal.
-    \item The collection of all finite subsets of $\mathbb{N}$ has no maximal elements.
-\end{itemize}
-\end{remark}
-
-\begin{remark}[Interpretation]
-When the order models information, maximal elements often correspond to fully specified (or total) objects, while non-maximal elements represent partial or incomplete information.
-\end{remark}
-
-% =========================================================
-% Maps Between Ordered Sets
+% Order-Preserving Maps, Embeddings, and Isomorphisms
 % =========================================================
 
 \section{Maps Between Ordered Sets}
+\label{sec:maps-ordered-sets}
 
-This section introduces the structure-preserving maps between ordered sets. In particular, it provides the language needed to decide when two ordered sets have the same order-theoretic structure.
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Maps Between Ordered Sets}},
+  fonttitle=\small\bfseries
+]
+The structure-preserving maps between posets form a hierarchy of increasing
+strength.  An order-preserving map carries the direction of the order
+forward.  An order-embedding carries it in both directions.  An
+order-isomorphism is a surjective order-embedding — a perfect structural
+identification between two posets.
+\end{tcolorbox}
 
 % ---------------------------------------------------------
-% Definitions — Order-Preserving Maps, Embeddings, Isomorphisms
+% def:order-preserving-map
 % ---------------------------------------------------------
 
-\begin{definition}[Order-Preserving Map, Order-Embedding, and Order-Isomorphism]
-Let $(P,\le_P)$ and $(Q,\le_Q)$ be partially ordered sets, and let
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Order-Preserving Map)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Order-Preserving Map]
+\label{def:order-preserving-map}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be partially ordered sets.  A map
+$\varphi : P \to Q$ is \emph{order-preserving} (or \emph{monotone}) if
 \[
-\varphi : P \to Q
+\forall x, y \in P, \quad
+x \leq_P y \;\Longrightarrow\; \varphi(x) \leq_Q \varphi(y).
 \]
-be a map.
-
-\begin{enumerate}
-    \item The map $\varphi$ is \textbf{order-preserving} (or \textbf{monotone}) if, for all $x,y \in P$,
-    \[
-    x \le_P y \;\Longrightarrow\; \varphi(x) \le_Q \varphi(y).
-    \]
-
-    \item The map $\varphi$ is an \textbf{order-embedding} if, for all $x,y \in P$,
-    \[
-    x \le_P y \;\Longleftrightarrow\; \varphi(x) \le_Q \varphi(y).
-    \]
-
-    \item The map $\varphi$ is an \textbf{order-isomorphism} if it is an order-embedding and is onto $Q$.
-\end{enumerate}
 \end{definition}
+\end{tcolorbox}
 
-\begin{remark}[Notation]
-When $\varphi : P \to Q$ is an order-embedding, we write
+\begin{remark*}[Standard quantified statement]
 \[
-\varphi : P \hookrightarrow Q.
+\operatorname{OrderPreserving}(\varphi, P, Q)
+\;\coloneqq\;
+\forall x, y \in P,\;
+x \leq_P y \Rightarrow \varphi(x) \leq_Q \varphi(y).
 \]
-When there exists an order-isomorphism from $P$ to $Q$, we say that $P$ and $Q$ are \textbf{order-isomorphic} and write
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
 \[
-P \cong Q.
+\neg\operatorname{OrderPreserving}(\varphi, P, Q)
+\;\coloneqq\;
+\exists x, y \in P,\;
+x \leq_P y \land \varphi(x) \not\leq_Q \varphi(y).
 \]
-\end{remark}
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An order-preserving map carries the direction of the order from $P$ into
+$Q$: whenever $x$ is at or below $y$ in $P$, $\varphi(x)$ is at or below
+$\varphi(y)$ in $Q$.  The implication is one-directional — order-preserving
+maps need not reflect the order back.  Two order-preserving maps compose
+to an order-preserving map, making order-preserving maps the morphisms
+of the category of posets.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order}.
+\end{remark*}
 
 % ---------------------------------------------------------
-% Remarks — Basic Properties of Order-Preserving Maps
+% def:order-embedding
 % ---------------------------------------------------------
 
-\begin{remark}[Composition of Order-Preserving Maps]
-Let $\varphi : P \to Q$ and $\psi : Q \to R$ be order-preserving maps. Then the composite map
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Order-Embedding)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Order-Embedding]
+\label{def:order-embedding}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be partially ordered sets.  A map
+$\varphi : P \to Q$ is an \emph{order-embedding} if
 \[
-\psi \circ \varphi : P \to R,
-\qquad
-(\psi \circ \varphi)(x) = \psi(\varphi(x)),
+\forall x, y \in P, \quad
+x \leq_P y \;\Longleftrightarrow\; \varphi(x) \leq_Q \varphi(y).
 \]
-is order-preserving.
+When $\varphi$ is an order-embedding, one writes $\varphi : P \hookrightarrow Q$.
+\end{definition}
+\end{tcolorbox}
 
-More generally, any finite composite of order-preserving maps is order-preserving, whenever the composite is defined.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderEmbedding}(\varphi, P, Q)
+\;\coloneqq\;
+\forall x, y \in P,\;
+x \leq_P y \Longleftrightarrow \varphi(x) \leq_Q \varphi(y).
+\]
+\end{remark*}
 
-\begin{remark}[Image of an Order-Embedding]
-Let $\varphi : P \to Q$ be an order-embedding, and let
-\[
-\varphi(P) := \{\varphi(x) : x \in P\}
-\]
-be its image. Then
-\[
-P \cong \varphi(P),
-\]
-where $\varphi(P)$ is ordered by the order inherited from $Q$.
-\end{remark}
+\begin{remark*}[Interpretation]
+An order-embedding both preserves and reflects the order: the order
+structure of $P$ is faithfully copied into $Q$ without distortion.
+Unlike mere preservation, reflection means that order-relations between
+images in $Q$ genuinely originate from order-relations in $P$.  Every
+order-embedding is injective
+(\hyperref[lem:order-embedding-injective]{Lemma~\ref*{lem:order-embedding-injective}})
+and identifies $P$ order-isomorphically with its image in $Q$.
+\end{remark*}
 
-\begin{remark}[Order-Embeddings are Injective]
-Every order-embedding is injective.
-
-Indeed, if $\varphi : P \to Q$ is an order-embedding and $\varphi(x)=\varphi(y)$, then
-\[
-\varphi(x) \le_Q \varphi(y)
-\qquad\text{and}\qquad
-\varphi(y) \le_Q \varphi(x).
-\]
-By order reflection,
-\[
-x \le_P y
-\qquad\text{and}\qquad
-y \le_P x.
-\]
-By antisymmetry in $P$, it follows that $x=y$.
-\end{remark}
-
-\begin{remark}[Order-Isomorphisms and Inverses]
-Ordered sets $P$ and $Q$ are order-isomorphic if and only if there exist order-preserving maps
-\[
-\varphi : P \to Q
-\qquad\text{and}\qquad
-\psi : Q \to P
-\]
-such that
-\[
-\psi \circ \varphi = \operatorname{id}_P
-\qquad\text{and}\qquad
-\varphi \circ \psi = \operatorname{id}_Q.
-\]
-\end{remark}
+\begin{remark*}[Dependencies]
+\hyperref[def:order-preserving-map]{Order-preserving map}.
+\end{remark*}
 
 % ---------------------------------------------------------
-% Lemma — Finite Characterizations of Order-Isomorphisms
+% def:order-isomorphism
 % ---------------------------------------------------------
 
-\begin{lemma}[Finite Characterizations of Order-Isomorphisms]
-Let $(P,\le_P)$ and $(Q,\le_Q)$ be finite partially ordered sets, and let
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Order-Isomorphism)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Order-Isomorphism]
+\label{def:order-isomorphism}
+An \hyperref[def:order-embedding]{order-embedding} $\varphi : P \to Q$
+that is surjective is an \emph{order-isomorphism}.  When an
+order-isomorphism exists, $P$ and $Q$ are said to be
+\emph{order-isomorphic}, written $P \cong Q$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
 \[
-\varphi : P \to Q
+\operatorname{OrderIso}(\varphi, P, Q)
+\;\coloneqq\;
+\operatorname{OrderEmbedding}(\varphi, P, Q)
+\;\land\;
+\forall q \in Q,\; \exists p \in P,\; \varphi(p) = q.
 \]
-be a bijection. The following are equivalent:
-\begin{enumerate}
-    \item $\varphi$ is an order-isomorphism.
+\end{remark*}
 
-    \item For all $x,y \in P$,
-    \[
-    x <_P y
-    \;\Longleftrightarrow\;
-    \varphi(x) <_Q \varphi(y).
-    \]
+\begin{remark*}[Interpretation]
+An order-isomorphism is a bijection that perfectly translates the order
+of $P$ into $Q$ and back.  Two order-isomorphic posets are
+order-theoretically identical: any statement about $P$ expressed purely
+in terms of $\leq_P$ translates to an equally valid statement about $Q$
+under $\varphi$.  Order-isomorphism is the correct notion of equality
+for posets.
+\end{remark*}
 
-    \item For all $x,y \in P$,
-    \[
-    x \prec_P y
-    \;\Longleftrightarrow\;
-    \varphi(x) \prec_Q \varphi(y),
-    \]
-    where $\prec$ denotes the covering relation.
-\end{enumerate}
+\begin{remark*}[Dependencies]
+\hyperref[def:order-embedding]{Order-embedding}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% lem:order-embedding-injective
+% ---------------------------------------------------------
+
+\begin{lemma}[Every Order-Embedding Is Injective]
+\label{lem:order-embedding-injective}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be partially ordered sets, and let
+$\varphi : P \to Q$ be an order-embedding.  Then $\varphi$ is injective.
 \end{lemma}
 
-\begin{proof}
-The equivalence of (i) and (ii) follows immediately from the definitions.
-
-Assume (ii), and suppose $x \prec_P y$. Then $x <_P y$, so by (ii),
+\begin{remark*}[Standard quantified statement]
 \[
-\varphi(x) <_Q \varphi(y).
+\operatorname{OrderEmbedding}(\varphi, P, Q)
+\;\Longrightarrow\;
+\forall x, y \in P,\; \varphi(x) = \varphi(y) \Rightarrow x = y.
 \]
-Suppose there exists $w \in Q$ such that
-\[
-\varphi(x) <_Q w <_Q \varphi(y).
-\]
-Since $\varphi$ is onto, there exists $u \in P$ such that $w=\varphi(u)$. By (ii),
-\[
-x <_P u <_P y,
-\]
-contradicting $x \prec_P y$. Hence
-\[
-\varphi(x) \prec_Q \varphi(y).
-\]
-The reverse implication is proved in the same way, using bijectivity of $\varphi$. Thus (iii) holds.
+\end{remark*}
 
-Now assume (iii), and suppose $x <_P y$. Since $P$ is finite, there exists a finite chain of covering relations
-\[
-x=x_0 \prec_P x_1 \prec_P \cdots \prec_P x_n=y.
-\]
-By (iii),
-\[
-\varphi(x_0) \prec_Q \varphi(x_1) \prec_Q \cdots \prec_Q \varphi(x_n).
-\]
-Therefore
-\[
-\varphi(x) <_Q \varphi(y).
-\]
-The reverse implication is proved similarly, using that $\varphi$ is onto. Hence (ii) holds.
-\end{proof}
+\begin{remark*}[Interpretation]
+Injectivity follows automatically from the biconditional in the embedding
+definition.  If $\varphi(x) = \varphi(y)$, the image is simultaneously
+$\leq$ and $\geq$ itself in $Q$; order-reflection pulls this back to $P$,
+and anti-symmetry then forces $x = y$.
+\end{remark*}
 
-% ---------------------------------------------------------
-% Proposition — Hasse Diagram Characterization
-% ---------------------------------------------------------
+\begin{remark*}[Dependencies]
+\hyperref[def:order-embedding]{Order-embedding},
+\hyperref[def:partial-order]{anti-symmetry of partial orders}.
+\end{remark*}
 
-\begin{proposition}[Hasse Diagram Characterization for Finite Posets]
-Let $(P,\le_P)$ and $(Q,\le_Q)$ be finite partially ordered sets. Then $P$ and $Q$ are order-isomorphic if and only if their Hasse diagrams are identical up to relabeling of elements.
-\end{proposition}
-
-\begin{remark}[Interpretation]
-For a finite poset, the order relation is determined by the covering relation. The Hasse diagram records exactly this covering relation. Thus two finite ordered sets are order-isomorphic precisely when their diagrams have the same covering structure, up to relabeling.
-\end{remark}
-
-% =========================================================
-% The Duality Principle
-% =========================================================
-
-% ---------------------------------------------------------
-% Definition — Dual Ordered Set
-% ---------------------------------------------------------
-
-\begin{definition}[Dual Ordered Set]
-Let $(P,\le_P)$ be a partially ordered set. The \textbf{dual} ordered set, denoted $P^{\partial}$ or $P^{\mathrm{op}}$, has the same underlying set as $P$, with order relation defined by
-\[
-x \le_{P^{\partial}} y
-\;\Longleftrightarrow\;
-y \le_P x.
-\]
-\end{definition}
-
-\begin{remark}[Diagrammatic Interpretation]
-If $P$ is finite, a Hasse diagram for $P^{\partial}$ is obtained from a Hasse diagram for $P$ by turning the diagram upside down.
-\end{remark}
-
-% ---------------------------------------------------------
-% Principle — Duality
-% ---------------------------------------------------------
-
-\begin{proposition}[Duality Principle]
-Let $\Phi$ be a statement about ordered sets that is true for all ordered sets. Then the dual statement $\Phi^{\partial}$, obtained by reversing the order, is also true for all ordered sets.
-\end{proposition}
-
-\begin{proof}
-Let $P$ be an ordered set. Since $P^{\partial}$ is also an ordered set, the statement $\Phi$ holds in $P^{\partial}$. Translating this statement back into the order of $P$ gives precisely the dual statement $\Phi^{\partial}$ in $P$.
-\end{proof}
-
-% =========================================================
-% Down-Sets and Up-Sets
-% =========================================================
-
-\section{Down-Sets and Up-Sets}
-
-Associated with any ordered set are two important families of subsets: down-sets and up-sets.
-
-% ---------------------------------------------------------
-% Definitions — Down-Sets and Up-Sets
-% ---------------------------------------------------------
-
-\begin{definition}[Down-Set and Up-Set]
-Let $(P,\le)$ be a partially ordered set, and let $Q \subseteq P$.
-
-\begin{enumerate}
-    \item The subset $Q$ is a \textbf{down-set} if, whenever $x \in Q$, $y \in P$, and $y \le x$, one has
-    \[
-    y \in Q.
-    \]
-    Equivalently,
-    \[
-    x \in Q \;\land\; y \le x
-    \;\Longrightarrow\;
-    y \in Q.
-    \]
-    A down-set is also called a \textbf{decreasing set} or an \textbf{order ideal}.
-
-    \item Dually, the subset $Q$ is an \textbf{up-set} if, whenever $x \in Q$, $y \in P$, and $x \le y$, one has
-    \[
-    y \in Q.
-    \]
-    Equivalently,
-    \[
-    x \in Q \;\land\; x \le y
-    \;\Longrightarrow\;
-    y \in Q.
-    \]
-    An up-set is also called an \textbf{increasing set} or an \textbf{order filter}.
-\end{enumerate}
-\end{definition}
+\begin{remark*}[Proof]
+\hyperref[prf:order-embedding-injective]{Go to proof.}
+\end{remark*}

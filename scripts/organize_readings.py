@@ -45,6 +45,11 @@ try:
 except ImportError:  # pragma: no cover - import guard
     PdfReader = None
 
+try:
+    import fitz
+except ImportError:  # pragma: no cover - import guard
+    fitz = None
+
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ROOT = Path(r"D:\Readings")
@@ -286,6 +291,23 @@ def extract_isbns(text: str) -> list[str]:
     return found[:4]
 
 
+def normalize_outline_title(title: str) -> str:
+    title = split_stuck_words(title)
+    title = title.strip(" .-")
+    return title
+
+
+def useful_outline_title(title: str) -> bool:
+    lowered = normalize_outline_title(title).lower()
+    if not lowered:
+        return False
+    if lowered in {"introduction", "contents", "table of contents", "list of figures", "preface", "index"}:
+        return False
+    if lowered.startswith("chapter "):
+        return False
+    return True
+
+
 def looks_like_title_line(line: str) -> bool:
     line = split_stuck_words(line)
     if not line or len(line) < 4 or len(line) > 160:
@@ -502,44 +524,249 @@ def infer_front_matter(pages: list[dict[str, Any]], metadata: dict[str, str]) ->
     }
 
 
+def extract_layout_payload(path: Path, page_limit: int, char_limit: int) -> dict[str, Any] | None:
+    if fitz is None:
+        return None
+
+    doc = fitz.open(path)
+    page_records: list[dict[str, Any]] = []
+    text_parts: list[str] = []
+    outline_titles: list[str] = []
+
+    try:
+        toc = doc.get_toc(simple=True)
+    except Exception:
+        toc = []
+
+    for entry in toc[:20]:
+        if len(entry) >= 2:
+            title = normalize_outline_title(str(entry[1]))
+            if useful_outline_title(title) and title not in outline_titles:
+                outline_titles.append(title)
+
+    for index in range(min(page_limit, doc.page_count)):
+        page = doc.load_page(index)
+        text = normalize_page_text(page.get_text("text") or "")
+        if text:
+            text_parts.append(text)
+
+        lines: list[dict[str, Any]] = []
+        try:
+            page_dict = page.get_text("dict")
+        except Exception:
+            page_dict = {}
+        for block in page_dict.get("blocks", []):
+            if block.get("type") != 0:
+                continue
+            for line in block.get("lines", []):
+                spans = [span for span in line.get("spans", []) if collapse_ws(str(span.get("text", "") or ""))]
+                if not spans:
+                    continue
+                line_text = split_stuck_words(" ".join(collapse_ws(str(span.get("text", "") or "")) for span in spans))
+                if not line_text:
+                    continue
+                bbox = line.get("bbox") or block.get("bbox") or (0, 0, 0, 0)
+                lines.append(
+                    {
+                        "text": line_text,
+                        "size": max(float(span.get("size", 0.0) or 0.0) for span in spans),
+                        "y0": float(bbox[1]),
+                    }
+                )
+        lines.sort(key=lambda item: (item["y0"], -item["size"]))
+        page_records.append(
+            {
+                "page": index + 1,
+                "text": text[:4000],
+                "lines": lines[:60],
+            }
+        )
+        if len("\n\n".join(text_parts)) >= char_limit:
+            break
+
+    metadata = {
+        "title": fix_mojibake(str(doc.metadata.get("title", "") or "")),
+        "author": fix_mojibake(str(doc.metadata.get("author", "") or "")),
+        "subject": fix_mojibake(str(doc.metadata.get("subject", "") or "")),
+        "creator": fix_mojibake(str(doc.metadata.get("creator", "") or "")),
+        "producer": fix_mojibake(str(doc.metadata.get("producer", "") or "")),
+    }
+
+    front_matter = infer_front_matter_from_layout(page_records, metadata, outline_titles)
+    return {
+        "metadata": metadata,
+        "page_records": page_records,
+        "outline_titles": outline_titles[:8],
+        "text_sample": "\n\n".join(text_parts)[:char_limit],
+        "front_matter": front_matter,
+    }
+
+
+def infer_front_matter_from_layout(
+    pages: list[dict[str, Any]],
+    metadata: dict[str, str],
+    outline_titles: list[str],
+) -> dict[str, Any]:
+    inferred_title = ""
+    inferred_authors: list[str] = []
+    inferred_edition = ""
+
+    metadata_title = fix_mojibake(metadata.get("title", ""))
+    metadata_author = fix_mojibake(metadata.get("author", ""))
+
+    if metadata_title and is_plausible_book_title(metadata_title):
+        inferred_title = metadata_title
+
+    selected_page_index: int | None = None
+    if not inferred_title:
+        best_score = float("-inf")
+        best_title_lines: list[str] = []
+        for page_index, page in enumerate(pages[:5]):
+            lines = page.get("lines", []) or []
+            if not lines:
+                continue
+            page_texts = [str(item.get("text", "") or "") for item in lines]
+            if any("editor" in text.lower() for text in page_texts):
+                continue
+            filtered = [item for item in lines if not is_series_line(str(item.get("text", "") or ""))]
+            if not filtered:
+                continue
+            max_size = max(float(item.get("size", 0.0) or 0.0) for item in filtered)
+            title_candidates = [
+                item
+                for item in filtered
+                if looks_like_title_line(str(item.get("text", "") or ""))
+                and not looks_like_author_line(str(item.get("text", "") or ""))
+            ]
+            if not title_candidates:
+                continue
+            prominent = [item for item in title_candidates if float(item.get("size", 0.0) or 0.0) >= max_size - 1.0]
+            if not prominent:
+                prominent = sorted(title_candidates, key=lambda item: float(item.get("size", 0.0) or 0.0), reverse=True)[:3]
+            prominent.sort(key=lambda item: float(item.get("y0", 0.0) or 0.0))
+            title_lines = [split_stuck_words(str(item.get("text", "") or "")) for item in prominent[:3]]
+            candidate_title = collapse_ws(" ".join(title_lines))
+            if not is_plausible_book_title(candidate_title):
+                continue
+            score = max(float(item.get("size", 0.0) or 0.0) for item in prominent) - page_index * 0.5
+            if any(is_edition_line(text) for text in page_texts):
+                score += 1.0
+            if score > best_score:
+                best_score = score
+                best_title_lines = title_lines
+                selected_page_index = page_index
+        if best_title_lines:
+            inferred_title = collapse_ws(" ".join(best_title_lines))
+
+    if not inferred_title:
+        for title in outline_titles:
+            if is_plausible_book_title(title):
+                inferred_title = title
+                break
+
+    if metadata_author:
+        author_candidates = [part.strip() for part in re.split(r"\s*(?:,|;| and )\s*", metadata_author) if part.strip()]
+        good = [part for part in author_candidates if is_plausible_author_name(part)]
+        if good:
+            inferred_authors = good
+
+    if not inferred_authors:
+        candidate_pages: list[dict[str, Any]] = []
+        if selected_page_index is not None and selected_page_index < len(pages):
+            candidate_pages.append(pages[selected_page_index])
+            if selected_page_index + 1 < len(pages):
+                candidate_pages.append(pages[selected_page_index + 1])
+        candidate_pages.extend(pages[:5])
+
+        seen: set[int] = set()
+        for page in candidate_pages:
+            page_no = int(page.get("page", 0) or 0)
+            if page_no in seen:
+                continue
+            seen.add(page_no)
+            lines = page.get("lines", []) or []
+            page_texts = [str(item.get("text", "") or "") for item in lines]
+            if any("editor" in text.lower() for text in page_texts):
+                continue
+            author_lines = [
+                split_stuck_words(str(item.get("text", "") or ""))
+                for item in lines
+                if looks_like_author_line(str(item.get("text", "") or ""))
+            ]
+            plausible = [line for line in author_lines if is_plausible_author_name(line)]
+            if plausible:
+                inferred_authors = [plausible[0]]
+                break
+
+    combined_text = "\n".join(page.get("text", "") for page in pages[:8])
+    edition_match = re.search(r"\b(\d+)(?:st|nd|rd|th)?\s+Edition\b", combined_text, re.IGNORECASE)
+    if edition_match:
+        inferred_edition = edition_match.group(0)
+    else:
+        word_match = re.search(
+            r"\b(First|Second|Third|Fourth|Fifth|Sixth|Seventh|Eighth|Ninth|Tenth)\s+Edition\b",
+            combined_text,
+            re.IGNORECASE,
+        )
+        if word_match:
+            inferred_edition = word_match.group(0)
+
+    return {
+        "title": fix_mojibake(inferred_title),
+        "authors": [fix_mojibake(author) for author in inferred_authors if fix_mojibake(author)],
+        "edition": fix_mojibake(inferred_edition),
+        "isbns": extract_isbns(combined_text),
+    }
+
+
 def extract_pdf_payload(path: Path, max_pages: int, max_chars: int) -> dict[str, Any]:
-    reader = PdfReader(str(path))
-    metadata = reader.metadata or {}
     page_limit = max_pages
     char_limit = max_chars
     if filename_looks_suspicious(path):
         page_limit = max(page_limit, 15)
         char_limit = max(char_limit, 25000)
 
-    pages = []
-    page_records: list[dict[str, Any]] = []
-    for i, page in enumerate(reader.pages[:page_limit], start=1):
-        try:
-            text = normalize_page_text(page.extract_text() or "")
-        except Exception:
-            text = ""
-        if text:
-            pages.append(text)
-            page_records.append({"page": i, "text": text[:4000]})
-        joined = "\n\n".join(pages)
-        if len(joined) >= char_limit:
-            break
+    layout_payload = extract_layout_payload(path, page_limit, char_limit)
+    if layout_payload is not None:
+        normalized_metadata = layout_payload["metadata"]
+        page_records = layout_payload["page_records"]
+        text_sample = layout_payload["text_sample"]
+        front_matter = layout_payload["front_matter"]
+        outline_titles = layout_payload["outline_titles"]
+    else:
+        reader = PdfReader(str(path))
+        metadata = reader.metadata or {}
+        pages = []
+        page_records = []
+        for i, page in enumerate(reader.pages[:page_limit], start=1):
+            try:
+                text = normalize_page_text(page.extract_text() or "")
+            except Exception:
+                text = ""
+            if text:
+                pages.append(text)
+                page_records.append({"page": i, "text": text[:4000]})
+            joined = "\n\n".join(pages)
+            if len(joined) >= char_limit:
+                break
 
-    text_sample = "\n\n".join(pages)[:char_limit]
-    normalized_metadata = {
-        "title": fix_mojibake(str(metadata.get("/Title", "") or "")),
-        "author": fix_mojibake(str(metadata.get("/Author", "") or "")),
-        "subject": fix_mojibake(str(metadata.get("/Subject", "") or "")),
-        "creator": fix_mojibake(str(metadata.get("/Creator", "") or "")),
-        "producer": fix_mojibake(str(metadata.get("/Producer", "") or "")),
-    }
-    front_matter = infer_front_matter(page_records, normalized_metadata)
+        text_sample = "\n\n".join(pages)[:char_limit]
+        normalized_metadata = {
+            "title": fix_mojibake(str(metadata.get("/Title", "") or "")),
+            "author": fix_mojibake(str(metadata.get("/Author", "") or "")),
+            "subject": fix_mojibake(str(metadata.get("/Subject", "") or "")),
+            "creator": fix_mojibake(str(metadata.get("/Creator", "") or "")),
+            "producer": fix_mojibake(str(metadata.get("/Producer", "") or "")),
+        }
+        front_matter = infer_front_matter(page_records, normalized_metadata)
+        outline_titles = []
     return {
         "path": str(path),
         "filename": path.name,
         "metadata": normalized_metadata,
         "front_matter": front_matter,
         "page_samples": page_records[:8],
+        "outline_titles": outline_titles,
         "text_sample": text_sample,
     }
 
@@ -577,9 +804,10 @@ def build_prompt(payload: dict[str, Any]) -> str:
         - if edition is missing or uncertain, return an empty string for edition
         - do not invent edition data
         - do not invent author names
-        - prefer front_matter, extracted text, and PDF metadata over filename guesses
+        - prefer front_matter, outline_titles, extracted text, and PDF metadata over filename guesses
         - for book-like PDFs with clear title pages and copyright pages, set rename_recommended=true even if the filename is garbage
         - Springer-style ebooks often reveal their best metadata on title and copyright pages; use those pages heavily
+        - outline_titles usually come from the PDF bookmarks/table of contents and can help confirm the subject, but title pages still dominate title/author extraction
 
         JSON schema guidance:
         {json.dumps(schema, indent=2)}

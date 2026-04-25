@@ -1,50 +1,94 @@
-\subsection{Families of Sets}
-%TODO CLEANUP
-Let $X$ be a set. The \textbf{power set} $\mathcal{P}(X)$, consisting of all subsets of $X$, is naturally ordered by inclusion: for $A, B \in \mathcal{P}(X)$, we define
+% =========================================================
+% Families of Sets as Ordered Sets
+% =========================================================
+
+\section{Families of Sets}
+\label{sec:families-of-sets}
+
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Families of Sets}},
+  fonttitle=\small\bfseries
+]
+The power set of any set is naturally ordered by inclusion.  Every
+collection of subsets — whether arising from algebra, topology, or logic
+— inherits this order.  The key observation is that subsets correspond
+exactly to predicates via their characteristic functions, and that this
+correspondence is an order-isomorphism.
+\end{tcolorbox}
+
+Let $X$ be a set.  The \emph{power set} $\mathcal{P}(X)$, consisting of
+all subsets of $X$, is ordered by inclusion: for $A, B \in \mathcal{P}(X)$,
 \[
-A \le B \quad \Longleftrightarrow \quad A \subseteq B.
+A \leq B \;\Longleftrightarrow\; A \subseteq B.
 \]
+Any subcollection of $\mathcal{P}(X)$ inherits this order.  Such a
+collection is called a \emph{family of sets}.
 
-Any subset of $\mathcal{P}(X)$ inherits this order. Such a collection is called a \emph{family of sets}. Families may be specified purely set-theoretically—for example, the collection of all finite subsets of an infinite set $X$.
+Families of sets arise naturally when $X$ carries additional structure.
+If $X$ is a group $G$, the set $\operatorname{Sub}(G)$ of all subgroups
+and the set $\operatorname{NSub}(G)$ of all normal subgroups are each
+ordered by inclusion.  If $X$ is a vector space $V$, the set
+$\operatorname{Sub}(V)$ of all subspaces is ordered by inclusion.  If $X$
+is a ring $R$, the sets of all subrings and of all ideals of $R$ are
+similarly ordered.  If $(X, \mathcal{T})$ is a topological space, the
+collections of open sets, closed sets, and clopen sets are each families
+of sets ordered by inclusion.
 
-More commonly, families of sets arise when $X$ carries additional structure. For instance, if $X$ has an algebraic structure, such as a group, vector space, or ring, then the following collections form ordered sets under inclusion:
-\begin{itemize}
-    \item the set of all subgroups of a group $G$, denoted $\operatorname{Sub}(G)$, and the set of all normal subgroups, denoted $\operatorname{NSub}(G)$;
-    \item the set of all subspaces of a vector space $V$, denoted $\operatorname{Sub}(V)$;
-    \item the set of all subrings of a ring $R$, and the set of all ideals of $R$.
-\end{itemize}
-
-Families of sets also arise in other contexts. For example, if $(X, \mathcal{T})$ is a topological space, then the collections of open sets, closed sets, and \emph{clopen} sets (those that are both open and closed) are each ordered by inclusion.
-
-A particularly important example is the family $\mathcal{O}(P)$ of \emph{down-sets} of a partially ordered set $P$, which will be introduced later.
+A particularly important example is the family $\mathcal{O}(P)$ of all
+\hyperref[def:down-set]{down-sets} of a partially ordered set $P$,
+ordered by inclusion.
 
 \medskip
 
-The ordered set $(\mathcal{P}(X), \subseteq)$ admits an equivalent formulation in terms of predicates. A \textbf{predicate} on $X$ is a function
+The ordered set $(\mathcal{P}(X), \subseteq)$ admits an equivalent
+formulation in terms of predicates.  A \emph{predicate} on $X$ is a
+function
 \[
 p : X \to \{T, F\},
 \]
-where $T$ and $F$ denote truth values. For example, the function $p : \mathbb{R} \to \{T, F\}$ defined by
+where $T$ and $F$ denote truth values.  Let $\mathcal{P}^*(X)$ denote
+the set of all predicates on $X$, ordered by implication:
 \[
-p(x) =
-\begin{cases}
-T & \text{if } x > 0, \\
-F & \text{otherwise}
-\end{cases}
-\]
-is a predicate on $\mathbb{R}$.
-
-Let $\mathcal{P}^*(X)$ denote the set of all predicates on $X$. We order $\mathcal{P}^*(X)$ by implication:
-\[
-p \le q \quad \Longleftrightarrow \quad \{x \in X : p(x) = T\} \subseteq \{x \in X : q(x) = T\}.
+p \leq q
+\;\Longleftrightarrow\;
+\{x \in X : p(x) = T\} \subseteq \{x \in X : q(x) = T\}.
 \]
 
-Define a map
+Define the map
 \[
-\Phi : \mathcal{P}^*(X) \to \mathcal{P}(X), \quad \Phi(p) := \{x \in X : p(x) = T\}.
+\Phi : \mathcal{P}^*(X) \to \mathcal{P}(X),
+\qquad
+\Phi(p) \coloneqq \{x \in X : p(x) = T\}.
 \]
-Then $\Phi$ is an order-isomorphism between $(\mathcal{P}^*(X), \le)$ and $(\mathcal{P}(X), \subseteq)$.
 
-\begin{remark}
-The identification of subsets with predicates is fundamental in logic and computer science, where sets are often represented via their characteristic functions.
-\end{remark}
+\begin{proposition}[Predicates and Power Sets Are Order-Isomorphic]
+\label{prop:predicates-power-sets-iso}
+The map $\Phi : (\mathcal{P}^*(X), \leq) \to (\mathcal{P}(X), \subseteq)$
+is an \hyperref[def:order-isomorphism]{order-isomorphism}.
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderIso}(\Phi, \mathcal{P}^*(X), \mathcal{P}(X)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every subset of $X$ can be represented as the truth set of a predicate,
+and every predicate determines a subset.  The correspondence is bijective
+and order-preserving in both directions: $p \leq q$ if and only if the
+truth set of $p$ is contained in the truth set of $q$, which is exactly
+the inclusion order on $\mathcal{P}(X)$.  This identification is
+fundamental in logic, where sets and their characteristic predicates are
+treated as interchangeable, and in computer science, where sets are
+often implemented via their membership tests.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:order-isomorphism]{Order-isomorphism},
+\hyperref[def:partial-order]{partial order}.
+\end{remark*}
