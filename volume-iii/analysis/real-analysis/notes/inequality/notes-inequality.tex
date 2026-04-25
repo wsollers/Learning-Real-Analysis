@@ -1,0 +1,605 @@
+% =========================================================
+% Inequality: Algebra of Strict and Nonstrict Inequalities
+% =========================================================
+
+\section{Inequality}
+\label{sec:inequality}
+
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Inequality}},
+  fonttitle=\small\bfseries
+]
+The algebra of inequalities governs how strict and nonstrict order
+relations behave under addition, multiplication, reciprocation, and
+composition.  The atomic notions formalised below are:
+\begin{itemize}
+  \item \textbf{addition on both sides} --- adding the same term preserves
+        strict and nonstrict inequalities;
+  \item \textbf{addition of inequalities} --- strict, nonstrict, and mixed
+        pairwise addition;
+  \item \textbf{multiplication by a positive scalar} --- preserves direction;
+  \item \textbf{multiplication by a negative scalar} --- reverses direction;
+  \item \textbf{nonstrict multiplication by a nonneg scalar} --- the zero
+        edge case;
+  \item \textbf{squeeze theorem} --- equality forced by double bounding;
+  \item \textbf{transitivity} --- strict and mixed chaining;
+  \item \textbf{reciprocal inequalities} --- order reversal under
+        reciprocation of positive quantities;
+  \item \textbf{square monotonicity} --- ordering of squares for
+        nonneg inputs;
+  \item \textbf{square-root monotonicity} --- ordering of square roots
+        (requires \texttt{def:square-root});
+  \item \textbf{AM-GM for two terms} --- arithmetic--geometric mean
+        inequality;
+  \item \textbf{Bernoulli's inequality} --- $(1+x)^n \ge 1 + nx$.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% thm:ineq-add-both-sides
+% ---------------------------------------------------------
+
+\begin{theorem}[Addition Preserves Strict Inequality]
+\label{thm:ineq-add-both-sides}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a < b \;\Rightarrow\; a + c < b + c.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a < b \;\Rightarrow\; a + c < b + c.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:q-is-ordered-field]{ordered field axioms},
+\hyperref[thm:additive-cancellation]{additive cancellation}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-add-both-sides]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-nonstrict-add-both-sides
+% ---------------------------------------------------------
+
+\begin{theorem}[Addition Preserves Nonstrict Inequality]
+\label{thm:ineq-nonstrict-add-both-sides}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a \le b \;\Rightarrow\; a + c \le b + c.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a \le b \;\Rightarrow\; a + c \le b + c.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:ineq-add-both-sides]{addition preserves strict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-nonstrict-add-both-sides]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-add-inequalities
+% ---------------------------------------------------------
+
+\begin{theorem}[Addition of Strict Inequalities]
+\label{thm:ineq-add-inequalities}
+For all $a, b, c, d \in \mathbb{R}$,
+\[
+  a < b \;\land\; c < d \;\Rightarrow\; a + c < b + d.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c, d \in \mathbb{R},\quad
+  a < b \;\land\; c < d \;\Rightarrow\; a + c < b + d.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:ineq-add-both-sides]{addition preserves strict inequality},
+\hyperref[thm:ineq-transitivity-strict]{transitivity of strict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-add-inequalities]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-nonstrict-add-inequalities
+% ---------------------------------------------------------
+
+\begin{theorem}[Addition of Nonstrict Inequalities]
+\label{thm:ineq-nonstrict-add-inequalities}
+For all $a, b, c, d \in \mathbb{R}$,
+\[
+  a \le b \;\land\; c \le d \;\Rightarrow\; a + c \le b + d.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c, d \in \mathbb{R},\quad
+  a \le b \;\land\; c \le d \;\Rightarrow\; a + c \le b + d.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:ineq-nonstrict-add-both-sides]{addition preserves nonstrict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-nonstrict-add-inequalities]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-mixed-add
+% ---------------------------------------------------------
+
+\begin{theorem}[Mixed Addition of Inequalities]
+\label{thm:ineq-mixed-add}
+For all $a, b, c, d \in \mathbb{R}$,
+\[
+  a \le b \;\land\; c < d \;\Rightarrow\; a + c < b + d.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c, d \in \mathbb{R},\quad
+  a \le b \;\land\; c < d \;\Rightarrow\; a + c < b + d.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:ineq-nonstrict-add-both-sides]{addition preserves nonstrict inequality},
+\hyperref[thm:ineq-add-both-sides]{addition preserves strict inequality},
+\hyperref[thm:ineq-transitivity-mixed]{mixed transitivity}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-mixed-add]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-multiply-positive
+% ---------------------------------------------------------
+
+\begin{theorem}[Multiplication by a Positive Scalar Preserves Strict Inequality]
+\label{thm:ineq-multiply-positive}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a < b \;\land\; 0 < c \;\Rightarrow\; ac < bc.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a < b \;\land\; 0 < c \;\Rightarrow\; ac < bc.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:multiply-positive]{multiply positive},
+\hyperref[def:positive-cone]{positive cone}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-multiply-positive]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-multiply-negative
+% ---------------------------------------------------------
+
+\begin{theorem}[Multiplication by a Negative Scalar Reverses Strict Inequality]
+\label{thm:ineq-multiply-negative}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a < b \;\land\; c < 0 \;\Rightarrow\; ac > bc.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a < b \;\land\; c < 0 \;\Rightarrow\; ac > bc.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:multiply-negative]{multiply negative},
+\hyperref[def:positive-cone]{positive cone}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-multiply-negative]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-nonstrict-multiply-positive
+% ---------------------------------------------------------
+
+\begin{theorem}[Multiplication by a Positive Scalar Preserves Nonstrict Inequality]
+\label{thm:ineq-nonstrict-multiply-positive}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a \le b \;\land\; 0 < c \;\Rightarrow\; ac \le bc.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a \le b \;\land\; 0 < c \;\Rightarrow\; ac \le bc.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:ineq-multiply-positive]{multiplication by positive preserves strict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-nonstrict-multiply-positive]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-nonstrict-multiply-nonneg
+% ---------------------------------------------------------
+
+\begin{theorem}[Multiplication by a Nonneg Scalar Preserves Nonstrict Inequality]
+\label{thm:ineq-nonstrict-multiply-nonneg}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a \le b \;\land\; 0 \le c \;\Rightarrow\; ac \le bc.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a \le b \;\land\; 0 \le c \;\Rightarrow\; ac \le bc.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This extends
+\hyperref[thm:ineq-nonstrict-multiply-positive]{the positive-scalar result}
+to include $c = 0$, where both sides become $0$ and the inequality holds
+trivially.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:ineq-nonstrict-multiply-positive]{multiplication by positive preserves nonstrict inequality},
+\hyperref[def:ordered-field]{ordered field}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-nonstrict-multiply-nonneg]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-squeeze
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Squeeze)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Squeeze]
+\label{thm:ineq-squeeze}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a \le b \le c \;\land\; a = c \;\Rightarrow\; b = a.
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a \le b \le c \;\land\; a = c \;\Rightarrow\; b = a.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The squeeze principle forces equality when a value is simultaneously
+bounded above and below by equal quantities.  The continuous analogue
+(if $f(x) \le g(x) \le h(x)$ and $f(x) \to L$ and $h(x) \to L$ then
+$g(x) \to L$) is the central tool for computing limits.  The algebraic
+version stated here is its foundation.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:additive-cancellation]{additive cancellation}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-squeeze]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-transitivity-strict
+% ---------------------------------------------------------
+
+\begin{theorem}[Transitivity of Strict Inequality]
+\label{thm:ineq-transitivity-strict}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a < b \;\land\; b < c \;\Rightarrow\; a < c.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a < b \;\land\; b < c \;\Rightarrow\; a < c.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[def:positive-cone]{positive cone}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-transitivity-strict]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-transitivity-mixed
+% ---------------------------------------------------------
+
+\begin{theorem}[Mixed Transitivity]
+\label{thm:ineq-transitivity-mixed}
+For all $a, b, c \in \mathbb{R}$,
+\[
+  a \le b \;\land\; b < c \;\Rightarrow\; a < c.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b, c \in \mathbb{R},\quad
+  a \le b \;\land\; b < c \;\Rightarrow\; a < c.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:ineq-transitivity-strict]{transitivity of strict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-transitivity-mixed]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-reciprocal-positive
+% ---------------------------------------------------------
+
+\begin{theorem}[Reciprocal Reverses Strict Inequality for Positives]
+\label{thm:ineq-reciprocal-positive}
+For all $a, b \in \mathbb{R}$,
+\[
+  0 < a < b \;\Rightarrow\; 0 < \frac{1}{b} < \frac{1}{a}.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b \in \mathbb{R},\quad
+  0 < a < b \;\Rightarrow\;
+  0 < \tfrac{1}{b} < \tfrac{1}{a}.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:inverse-positive]{inverse positive},
+\hyperref[thm:reciprocal-order-for-positive-elements]{reciprocal order for positive elements},
+\hyperref[thm:ineq-multiply-positive]{multiplication by positive preserves strict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-reciprocal-positive]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-reciprocal-flip
+% ---------------------------------------------------------
+
+\begin{theorem}[Reciprocal Equivalence for Positives]
+\label{thm:ineq-reciprocal-flip}
+For all $a, b \in \mathbb{R}$ with $a > 0$ and $b > 0$,
+\[
+  a < b \iff \frac{1}{b} < \frac{1}{a}.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b \in \mathbb{R},\;
+  a > 0 \;\land\; b > 0 \;\Rightarrow\;
+  \bigl(a < b \iff \tfrac{1}{b} < \tfrac{1}{a}\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:ineq-reciprocal-positive]{reciprocal reverses strict inequality for positives},
+\hyperref[thm:reciprocal-order-for-positive-elements]{reciprocal order for positive elements}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-reciprocal-flip]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-square-monotone
+% ---------------------------------------------------------
+
+\begin{theorem}[Square Is Strictly Monotone on Nonneg Reals]
+\label{thm:ineq-square-monotone}
+For all $a, b \in \mathbb{R}$,
+\[
+  0 \le a < b \;\Rightarrow\; a^2 < b^2.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b \in \mathbb{R},\quad
+  0 \le a < b \;\Rightarrow\; a^2 < b^2.
+\]
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:ineq-add-inequalities]{addition of strict inequalities},
+\hyperref[thm:ineq-multiply-positive]{multiplication by positive preserves strict inequality},
+\hyperref[thm:squares-nonnegative]{squares are nonnegative}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-square-monotone]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-square-root-monotone
+% ---------------------------------------------------------
+
+\begin{theorem}[Square Root Is Monotone on Nonneg Reals]
+\label{thm:ineq-square-root-monotone}
+For all $a, b \in \mathbb{R}$,
+\[
+  0 \le a \le b \;\Rightarrow\; \sqrt{a} \le \sqrt{b}.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b \in \mathbb{R},\quad
+  0 \le a \le b \;\Rightarrow\; \sqrt{a} \le \sqrt{b}.
+\]
+\end{remark*}
+
+\begin{remark*}[Audit note]
+This theorem depends on \texttt{def:square-root}, which does not yet
+appear in the repository label inventory.  That definition must be
+created and registered before this result can be fully formalised.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\texttt{def:square-root} (not yet registered --- see audit note above),
+\hyperref[thm:ineq-square-monotone]{square is strictly monotone on nonneg reals}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-square-root-monotone]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-am-gm-two
+% ---------------------------------------------------------
+
+\begin{theorem}[AM-GM Inequality for Two Terms]
+\label{thm:ineq-am-gm-two}
+For all $a, b \ge 0$,
+\[
+  \sqrt{ab} \le \frac{a + b}{2}.
+\]
+\end{theorem}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall a, b \in \mathbb{R},\;
+  a \ge 0 \;\land\; b \ge 0 \;\Rightarrow\;
+  \sqrt{ab} \le \frac{a + b}{2}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The arithmetic--geometric mean inequality for two terms is the simplest
+case of the AM-GM family.  The standard proof proceeds by squaring both
+sides (using
+\hyperref[thm:ineq-square-monotone]{square monotonicity}) and reducing
+to $(\sqrt{a} - \sqrt{b})^2 \ge 0$, which follows from
+\hyperref[thm:squares-nonnegative]{squares being nonnegative}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[thm:squares-nonnegative]{squares are nonnegative},
+\hyperref[thm:ineq-square-monotone]{square is strictly monotone on nonneg reals},
+\texttt{def:square-root} (not yet registered --- see audit note in
+\hyperref[thm:ineq-square-root-monotone]{square root monotonicity}).
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-am-gm-two]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% thm:ineq-bernoulli
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bernoulli's Inequality)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Bernoulli's Inequality]
+\label{thm:ineq-bernoulli}
+For all $x \in \mathbb{R}$ with $x \ge -1$ and all $n \in \mathbb{N}$,
+\[
+  (1 + x)^n \ge 1 + nx.
+\]
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+  \forall x \in \mathbb{R},\;
+  \forall n \in \mathbb{N},\;
+  x \ge -1 \;\Rightarrow\;
+  (1 + x)^n \ge 1 + nx.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bernoulli's inequality is proved by induction and is a key estimate in
+analysis: it provides a linear lower bound for exponential growth and
+is used to establish the divergence of the harmonic series, bounds on
+compound interest, and properties of the exponential function.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:ordered-field]{Ordered field},
+\hyperref[thm:ineq-nonstrict-multiply-nonneg]{multiplication by nonneg preserves nonstrict inequality},
+\hyperref[thm:ineq-nonstrict-add-both-sides]{addition preserves nonstrict inequality}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ineq-bernoulli]{Go to proof.}
+\end{remark*}
