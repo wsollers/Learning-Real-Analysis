@@ -1,0 +1,284 @@
+% =========================================================
+% Extremal Elements
+% =========================================================
+
+\section{Extremal Elements}
+\label{sec:extremal-elements}
+
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Extremal Elements}},
+  fonttitle=\small\bfseries
+]
+A poset may contain elements that sit at the boundary of the order.  There
+are two distinct senses of ``extreme'': an element can be extreme
+\emph{locally} (nothing in the poset exceeds it, though it may be
+incomparable with some elements) or extreme \emph{globally} (it dominates
+or is dominated by every element).  The definitions below make these
+distinctions precise, proceeding from global extremes of the whole poset,
+through local extremes of a subset, to the proposition that finite posets
+always contain the local kind.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% def:bottom-element
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bottom Element)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Bottom Element]
+\label{def:bottom-element}
+Let $(P, \leq)$ be a partially ordered set.  An element $\bot \in P$ is
+a \emph{bottom element} (or \emph{least element}) of $P$ if
+\[
+\forall x \in P, \quad \bot \leq x.
+\]
+If a bottom element exists it is unique; it is denoted $\bot_P$ or
+simply $\bot$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Bottom}(\bot, P, \leq)
+\;\coloneqq\;
+\bot \in P \;\land\; \forall x \in P,\; \bot \leq x.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A bottom element is below every element of the poset without exception.
+In $(\mathcal{P}(X), \subseteq)$ the bottom element is $\varnothing$.
+The natural numbers have a bottom element; the integers do not.
+An antichain with more than one element has no bottom element, since no
+member is below any other.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:top-element
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Top Element)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Top Element]
+\label{def:top-element}
+Let $(P, \leq)$ be a partially ordered set.  An element $\top \in P$ is
+a \emph{top element} (or \emph{greatest element}) of $P$ if
+\[
+\forall x \in P, \quad x \leq \top.
+\]
+If a top element exists it is unique; it is denoted $\top_P$ or simply
+$\top$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Top}(\top, P, \leq)
+\;\coloneqq\;
+\top \in P \;\land\; \forall x \in P,\; x \leq \top.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Dual to the bottom element via the
+\hyperref[prop:duality-principle]{Duality Principle}.
+In $(\mathcal{P}(X), \subseteq)$ the top element is $X$ itself.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:bottom-element]{Bottom element},
+\hyperref[prop:duality-principle]{duality principle}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:maximal-element
+% ---------------------------------------------------------
+
+\begin{definition}[Maximal Element]
+\label{def:maximal-element}
+Let $(P, \leq)$ be a partially ordered set and let $Q \subseteq P$.  An
+element $a \in Q$ is \emph{maximal in $Q$} if no element of $Q$ strictly
+exceeds it:
+\[
+\forall x \in Q, \quad a \leq x \;\Longrightarrow\; a = x.
+\]
+The set of maximal elements of $Q$ is denoted $\operatorname{Max}(Q)$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Maximal}(a, Q, \leq)
+\;\coloneqq\;
+a \in Q \;\land\; \forall x \in Q,\; a \leq x \Rightarrow a = x.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{Maximal}(a, Q, \leq)
+\;\coloneqq\;
+\exists x \in Q,\; a < x,
+\]
+that is, some element of $Q$ strictly exceeds $a$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A maximal element asserts only that nothing in $Q$ strictly dominates it.
+It need not be comparable with every element of $Q$, so a poset can have
+multiple maximal elements simultaneously.  In domain theory, maximal
+elements correspond to fully-specified or total objects.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:minimal-element
+% ---------------------------------------------------------
+
+\begin{definition}[Minimal Element]
+\label{def:minimal-element}
+Let $(P, \leq)$ be a partially ordered set and let $Q \subseteq P$.  An
+element $a \in Q$ is \emph{minimal in $Q$} if no element of $Q$ is
+strictly below it:
+\[
+\forall x \in Q, \quad x \leq a \;\Longrightarrow\; x = a.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Minimal}(a, Q, \leq)
+\;\coloneqq\;
+a \in Q \;\land\; \forall x \in Q,\; x \leq a \Rightarrow x = a.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Dual to maximal element via the
+\hyperref[prop:duality-principle]{Duality Principle}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:maximal-element]{Maximal element},
+\hyperref[prop:duality-principle]{duality principle}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:greatest-element
+% ---------------------------------------------------------
+
+\begin{definition}[Greatest Element]
+\label{def:greatest-element}
+Let $(P, \leq)$ be a partially ordered set and let $Q \subseteq P$.  An
+element $m \in Q$ is the \emph{greatest element} (or \emph{maximum}) of
+$Q$ if it dominates every element of $Q$:
+\[
+\forall x \in Q, \quad x \leq m.
+\]
+If it exists it is unique; it is denoted $\max Q$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Greatest}(m, Q, \leq)
+\;\coloneqq\;
+m \in Q \;\land\; \forall x \in Q,\; x \leq m.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A greatest element is a maximal element that is additionally comparable
+with every element of $Q$.  When $\max Q$ exists,
+$\operatorname{Max}(Q) = \{\max Q\}$, but the converse fails: a unique
+maximal element need not dominate every element.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:maximal-element]{Maximal element}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:least-element
+% ---------------------------------------------------------
+
+\begin{definition}[Least Element]
+\label{def:least-element}
+Let $(P, \leq)$ be a partially ordered set and let $Q \subseteq P$.  An
+element $m \in Q$ is the \emph{least element} (or \emph{minimum}) of $Q$
+if it lies below every element of $Q$:
+\[
+\forall x \in Q, \quad m \leq x.
+\]
+If it exists it is unique; it is denoted $\min Q$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Least}(m, Q, \leq)
+\;\coloneqq\;
+m \in Q \;\land\; \forall x \in Q,\; m \leq x.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Dual to greatest element.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:greatest-element]{Greatest element},
+\hyperref[prop:duality-principle]{duality principle}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% prop:finite-poset-maximal
+% ---------------------------------------------------------
+
+\begin{proposition}[Every Nonempty Finite Poset Has a Maximal Element]
+\label{prop:finite-poset-maximal}
+Let $(P, \leq)$ be a finite partially ordered set.  Then every nonempty
+subset $Q \subseteq P$ has at least one maximal element.  Furthermore,
+for every $x \in P$ there exists $y \in \operatorname{Max}(P)$ with
+$x \leq y$.
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+P \text{ finite},\; Q \subseteq P,\; Q \neq \varnothing
+\;\Longrightarrow\;
+\operatorname{Max}(Q) \neq \varnothing.
+\]
+\[
+\forall x \in P,\; \exists y \in \operatorname{Max}(P),\; x \leq y.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Finiteness is essential.  The collection of all finite subsets of
+$\mathbb{N}$, ordered by inclusion, is infinite and has no maximal
+element.  In a finite poset one can always ascend from any element to
+a ceiling.  This property is the finite shadow of Zorn's Lemma and
+underlies ascending chain arguments throughout algebra and order theory.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:maximal-element]{Maximal element},
+\hyperref[def:partial-order]{partial order}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:finite-poset-maximal]{Go to proof.}
+\end{remark*}

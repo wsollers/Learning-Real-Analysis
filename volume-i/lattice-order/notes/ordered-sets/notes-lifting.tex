@@ -1,0 +1,107 @@
+% =========================================================
+% Lifting and Co-Lifting
+% =========================================================
+
+\section{Lifting and Co-Lifting}
+\label{sec:lifting}
+
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: Lifting and Co-Lifting}},
+  fonttitle=\small\bfseries
+]
+A poset that lacks a bottom or top element can be given one by adjoining
+a new universal bound.  Lifting adjoins a bottom; co-lifting adjoins a
+top.  These constructions are dual to each other and are used throughout
+domain theory, where a bottom element represents an undefined state.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% def:lifting
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Lifting)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Lifting]
+\label{def:lifting}
+Let $(P, \leq)$ be a partially ordered set.  The \emph{lifting} of $P$
+is the poset $P_{\bot} \coloneqq P \cup \{\bot\}$, where $\bot \notin P$,
+with the order:
+\[
+\bot \leq x \quad \text{for all } x \in P_{\bot},
+\qquad
+x \leq_{P_{\bot}} y \;\Longleftrightarrow\; x \leq_P y
+\quad \text{for all } x, y \in P.
+\]
+Thus $P_{\bot}$ is $P$ with a new
+\hyperref[def:bottom-element]{bottom element} $\bot$ adjoined.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+P_{\bot} = P \cup \{\bot\},\quad
+\bot \notin P,\quad
+\forall x \in P_{\bot},\; \bot \leq x,\quad
+\forall x,y \in P,\; x \leq_{P_\bot} y \Leftrightarrow x \leq_P y.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Lifting adjoins a universal lower bound to a poset that may not have one.
+In domain theory $\bot$ represents an undefined, divergent, or
+unspecified state.  Any set $S$ viewed as an antichain can be lifted to
+the \emph{flat poset} $S_{\bot}$, in which all elements of $S$ are
+incomparable above $\bot$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order},
+\hyperref[def:bottom-element]{bottom element}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:co-lifting
+% ---------------------------------------------------------
+
+\begin{definition}[Co-Lifting]
+\label{def:co-lifting}
+Let $(P, \leq)$ be a partially ordered set.  The \emph{co-lifting} of $P$
+is the poset $P^{\top} \coloneqq P \cup \{\top\}$, where $\top \notin P$,
+with the order:
+\[
+x \leq \top \quad \text{for all } x \in P^{\top},
+\qquad
+x \leq_{P^{\top}} y \;\Longleftrightarrow\; x \leq_P y
+\quad \text{for all } x, y \in P.
+\]
+Thus $P^{\top}$ is $P$ with a new
+\hyperref[def:top-element]{top element} $\top$ adjoined.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+P^{\top} = P \cup \{\top\},\quad
+\top \notin P,\quad
+\forall x \in P^{\top},\; x \leq \top,\quad
+\forall x,y \in P,\; x \leq_{P^\top} y \Leftrightarrow x \leq_P y.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Dual to lifting via the
+\hyperref[prop:duality-principle]{Duality Principle}: co-lifting adjoins
+a universal upper bound.  The co-lifting of an antichain produces a flat
+poset in which all elements are incomparable below $\top$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lifting]{Lifting},
+\hyperref[def:top-element]{top element},
+\hyperref[prop:duality-principle]{duality principle}.
+\end{remark*}

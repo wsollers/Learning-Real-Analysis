@@ -1,0 +1,159 @@
+% =========================================================
+% The Covering Relation and Hasse Diagrams
+% =========================================================
+
+\section{The Covering Relation}
+\label{sec:covering-relation}
+
+\begin{tcolorbox}[
+  colback=gray!6,
+  colframe=gray!40,
+  arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Toolkit: The Covering Relation}},
+  fonttitle=\small\bfseries
+]
+The covering relation identifies the irreducible steps of a partial order:
+$y$ covers $x$ when $x < y$ and there is nothing strictly between them.
+In a finite poset the entire order is determined by its covering relation,
+which is encoded exactly by the Hasse diagram.
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% def:covering-relation
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Covering Relation)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Covering Relation]
+\label{def:covering-relation}
+Let $(P, \leq)$ be a partially ordered set and let $x, y \in P$ with
+$x < y$.  The element $y$ \emph{covers} $x$, written $x \prec y$, if
+there is no element of $P$ strictly between them:
+\[
+x \prec y
+\;\coloneqq\;
+x < y
+\;\land\;
+\neg\,\bigl(\exists z \in P,\; x < z < y\bigr).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+x \prec y
+\;\coloneqq\;
+x < y
+\;\land\;
+\forall z \in P,\; x < z \leq y \Longrightarrow z = y.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg(x \prec y)
+\;\coloneqq\;
+x \not< y \;\lor\; \exists z \in P,\; x < z < y.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The covering relation captures the direct steps of the order — the
+comparisons that cannot be decomposed further.  In a finite poset every
+strict comparison $x < y$ can be resolved into a finite chain of covers
+$x = x_0 \prec x_1 \prec \cdots \prec x_n = y$, so the covering relation
+alone determines the full order.  The Hasse diagram of a finite poset is
+exactly the directed graph of the covering relation.  In a dense order
+such as $\mathbb{Q}$ or $\mathbb{R}$, no element covers any other: between
+any two elements there is always a third.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:partial-order]{Partial order},
+\hyperref[def:strict-partial-order]{strict partial order}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% lem:order-iso-finite-characterizations
+% ---------------------------------------------------------
+
+\begin{lemma}[Characterizations of Order-Isomorphisms for Finite Posets]
+\label{lem:order-iso-finite-characterizations}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be finite partially ordered sets and
+let $\varphi : P \to Q$ be a bijection.  The following are equivalent:
+\begin{enumerate}
+  \item $\varphi$ is an order-isomorphism.
+  \item For all $x, y \in P$:\; $x <_P y \;\Longleftrightarrow\; \varphi(x) <_Q \varphi(y)$.
+  \item For all $x, y \in P$:\; $x \prec_P y \;\Longleftrightarrow\; \varphi(x) \prec_Q \varphi(y)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderIso}(\varphi, P, Q)
+\;\Longleftrightarrow\;
+\bigl(\forall x,y \in P,\; x <_P y \Leftrightarrow \varphi(x) <_Q \varphi(y)\bigr)
+\;\Longleftrightarrow\;
+\bigl(\forall x,y \in P,\; x \prec_P y \Leftrightarrow \varphi(x) \prec_Q \varphi(y)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+In a finite poset the order relation, the strict order, and the covering
+relation each determine the others completely.  This lemma shows that an
+order-isomorphism can be detected at any one of these three levels.  The
+covering characterisation is the most useful in practice: since Hasse
+diagrams encode exactly the covering relation, two finite posets are
+order-isomorphic precisely when their diagrams are isomorphic as directed
+graphs.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:order-isomorphism]{Order-isomorphism},
+\hyperref[def:covering-relation]{covering relation}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:order-iso-finite-characterizations]{Go to proof.}
+\end{remark*}
+
+% ---------------------------------------------------------
+% prop:hasse-diagram-characterization
+% ---------------------------------------------------------
+
+\begin{proposition}[Hasse Diagram Characterization for Finite Posets]
+\label{prop:hasse-diagram-characterization}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be finite partially ordered sets.
+Then $P$ and $Q$ are order-isomorphic if and only if their Hasse diagrams
+are isomorphic as directed graphs — that is, identical up to relabeling
+of elements.
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+P \cong Q
+\;\Longleftrightarrow\;
+\exists \varphi : P \xrightarrow{\;\sim\;} Q,\;
+\forall x, y \in P,\;
+x \prec_P y \Leftrightarrow \varphi(x) \prec_Q \varphi(y).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Hasse diagram is a complete invariant of the order structure of a
+finite poset.  Checking order-isomorphism between finite posets reduces
+to a graph isomorphism problem on the covering graphs — two finite posets
+with non-isomorphic Hasse diagrams cannot be order-isomorphic.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[lem:order-iso-finite-characterizations]{Characterizations of order-isomorphisms for finite posets},
+\hyperref[def:covering-relation]{covering relation}.
+\end{remark*}
+
+\begin{remark*}[Proof]
+\hyperref[prf:hasse-diagram-characterization]{Go to proof.}
+\end{remark*}
