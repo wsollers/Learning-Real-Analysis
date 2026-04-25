@@ -17,17 +17,111 @@ is a field.
 \end{theorem*}
 
 \begin{proof}
-TODO.
+\textbf{Professional Standard Proof.}~\\
+By the integral domain theorem, $(\mathbb{Q},+,\cdot,0,1)$ is already an
+integral domain. It remains only to verify that every nonzero element has a
+multiplicative inverse.
+
+Let $[(a,b)]\in\mathbb{Q}$ with $[(a,b)]\neq 0$. By the zero class
+criterion, $a\neq 0$. Since $a\neq 0$ and $b\neq 0$, the pair $(b,a)\in W$,
+so $[(b,a)]\in\mathbb{Q}$.
+
+Compute:
+\[
+[(a,b)]\cdot[(b,a)]
+= [(ab,\;ba)]
+= [(ab,\;ab)].
+\]
+Since $ab\neq 0$, we have $(ab,ab)\sim(1,1)$ (as $ab\cdot 1 = 1\cdot ab$),
+so $[(ab,ab)] = 1$.
+
+Therefore $[(a,b)]\cdot[(b,a)] = 1$, which means $[(b,a)]$ is the
+multiplicative inverse of $[(a,b)]$.
+
+Since every nonzero element of $\mathbb{Q}$ has a multiplicative inverse,
+$(\mathbb{Q},+,\cdot,0,1)$ is a field.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Recall what must be shown.
+
+By the field definition, a field is an integral domain in which every
+nonzero element has a multiplicative inverse. We have already established
+that $\mathbb{Q}$ is an integral domain. It therefore suffices to show:
+\[
+\forall\, [(a,b)]\in\mathbb{Q},\quad [(a,b)]\neq 0
+\;\Longrightarrow\;
+\exists\, y\in\mathbb{Q},\; [(a,b)]\cdot y = 1.
+\]
+
+\textbf{Step 2.} Let $[(a,b)]\in\mathbb{Q}$ be nonzero.
+
+By the zero class criterion, $[(a,b)] = 0$ iff $a = 0$. Since we assumed
+$[(a,b)]\neq 0$, we have $a\neq 0$.
+
+\textbf{Step 3.} Propose the candidate inverse.
+
+Define $y := [(b,a)]$. We must first check this is well-formed: since
+$a\neq 0$ (established in Step 2) and $b\neq 0$ (since $(a,b)\in W$),
+the pair $(b,a)\in W$, so $[(b,a)]\in\mathbb{Q}$.
+
+\textbf{Step 4.} Verify that $[(a,b)]\cdot[(b,a)] = 1$.
+
+By the multiplication formula:
+\[
+[(a,b)]\cdot[(b,a)]
+= [(a\cdot b,\; b\cdot a)]
+= [(ab,\; ab)].
+\]
+We check $(ab,ab)\sim(1,1)$: by the definition of $\sim$, this requires
+$ab\cdot 1 = ab\cdot 1$, which is trivially true.
+
+Also, $ab\neq 0$ since $a\neq 0$ and $b\neq 0$ and $\mathbb{Z}$ has no
+zero divisors. So $(ab,ab)\in W$ and the class $[(ab,ab)]$ is well-formed.
+
+Since $(ab,ab)\sim(1,1)$, we have $[(ab,ab)] = [(1,1)] = 1$.
+
+Therefore:
+\[
+[(a,b)]\cdot[(b,a)] = 1.
+\]
+
+\textbf{Step 5.} Conclude.
+
+We have exhibited an element $y = [(b,a)]\in\mathbb{Q}$ such that
+$[(a,b)]\cdot y = 1$. Since $[(a,b)]$ was an arbitrary nonzero element
+of $\mathbb{Q}$, every nonzero element of $\mathbb{Q}$ has a multiplicative
+inverse.
+
+Combined with the integral domain theorem, $(\mathbb{Q},+,\cdot,0,1)$ is
+a field.
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The proof has a single substantive step: showing that for a nonzero
+$[(a,b)]$, the ``swapped'' class $[(b,a)]$ is a multiplicative inverse.
+The key computation is that $[(ab,ab)] = 1$, which follows from the
+trivial equivalence $(ab,ab)\sim(1,1)$. The nonvanishing of $ab$ requires
+that both $a\neq 0$ (from the nonzero hypothesis) and $b\neq 0$ (from the
+well-formedness of the fraction-pair).
+
+The proof builds on the integral domain theorem, which carries all of the
+axiom-checking work. The field proof adds only one condition to that package.
 \end{remark*}
 
 \begin{remark*}[Dependencies]~\\
 \begin{itemize}
   \item \hyperref[def:field]{Definition~\ref*{def:field}}
   \item \hyperref[thm:q-is-integral-domain]{Theorem~\ref*{thm:q-is-integral-domain}}
+        \textnormal{($\mathbb{Q}$ is an integral domain)}
+  \item \hyperref[thm:ec-zero-numerator]{Theorem~\ref*{thm:ec-zero-numerator}}
+        \textnormal{(zero class criterion: $[(a,b)] = 0 \Leftrightarrow a = 0$)}
   \item \hyperref[def:rational-operations]{Definition~\ref*{def:rational-operations}}
+        \textnormal{(multiplication formula)}
+  \item \hyperref[def:rational-distinguished]{Definition~\ref*{def:rational-distinguished}}
+        \textnormal{($1 = [(1,1)]$)}
+  \item $\mathbb{Z}$ has no zero divisors (so $a\neq 0$ and $b\neq 0$ implies $ab\neq 0$)
 \end{itemize}
 \end{remark*}

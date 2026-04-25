@@ -14,11 +14,88 @@ For every $[(a,b)]\in\mathbb{Q}$ with $a\neq 0$,
 \end{theorem*}
 
 \begin{proof}
-TODO.
+\textbf{Professional Standard Proof.}~\\
+Let $[(a,b)]\in\mathbb{Q}$ with $a\neq 0$. Then $a,b\in\mathbb{Z}$ with
+$a\neq 0$ and $b\neq 0$. Since $a\neq 0$, the pair $(b,a)$ is an
+admissible fraction-pair, so $[(b,a)]\in\mathbb{Q}$.
+
+Compute the product using the definition of multiplication:
+\[
+[(a,b)]\cdot[(b,a)]
+= [(ab,\,ba)]
+= [(ab,\,ab)].
+\]
+Since $ab \neq 0$, we check $(ab,ab)\sim(1,1)$: indeed $ab\cdot 1 = 1\cdot ab$.
+Therefore $[(ab,ab)] = [(1,1)] = 1$.
+
+So $[(a,b)]\cdot[(b,a)] = 1$. By the uniqueness of multiplicative inverses
+in a field, $[(a,b)]^{-1} = [(b,a)]$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Verify that $[(b,a)]$ is a well-formed element of $\mathbb{Q}$.
+
+Since $(a,b)\in W$, we have $b\neq 0$. By hypothesis $a\neq 0$. Therefore
+$(b,a)\in W$ (the denominator $a$ is nonzero), so $[(b,a)]\in\mathbb{Q}$.
+
+\textbf{Step 2.} Recall the definition of multiplicative inverse.
+
+The multiplicative inverse of a nonzero element $x\in\mathbb{Q}$ is the
+unique element $x^{-1}\in\mathbb{Q}$ satisfying
+\[
+x\cdot x^{-1} = 1 = [(1,1)].
+\]
+Multiplicative inverses are unique in any field. We verify this for
+$x = [(a,b)]$ and $x^{-1} = [(b,a)]$.
+
+\textbf{Step 3.} Verify that $[(a,b)]\neq 0$.
+
+By the zero class criterion, $[(a,b)] = 0$ iff $a = 0$. By hypothesis
+$a\neq 0$, so $[(a,b)]\neq 0$, confirming that its inverse is defined.
+
+\textbf{Step 4.} Compute the product $[(a,b)]\cdot[(b,a)]$.
+
+By the definition of rational multiplication,
+\[
+[(a,b)]\cdot[(b,a)]
+= [(a\cdot b,\; b\cdot a)]
+= [(ab,\; ab)].
+\]
+
+\textbf{Step 5.} Show that $[(ab,ab)] = [(1,1)]$.
+
+By the definition of $\sim$, $(ab,ab)\sim(1,1)$ iff
+\[
+(ab)\cdot 1 = ab\cdot 1,
+\]
+which is $ab = ab$, trivially true. Since $ab\neq 0$ (both $a$ and $b$
+are nonzero), the pair $(ab,ab)$ is admissible, and thus
+\[
+[(ab,ab)] = [(1,1)] = 1.
+\]
+
+\textbf{Step 6.} Conclude that $[(a,b)]^{-1} = [(b,a)]$.
+
+We have shown $[(a,b)]\cdot[(b,a)] = 1$. By uniqueness of multiplicative
+inverses in $\mathbb{Q}$,
+\[
+[(a,b)]^{-1} = [(b,a)]. \qedhere
+\]
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The proof is a direct verification. The candidate $[(b,a)]$ is the
+``swapped'' fraction-pair. The product $[(a,b)]\cdot[(b,a)]$ evaluates
+to $[(ab,ab)]$ by the multiplication formula, and $(ab,ab)\sim(1,1)$ since
+the cross-product $ab\cdot 1 = 1\cdot ab$ is trivially true. Uniqueness of
+multiplicative inverses then pins down $[(b,a)]$ as the inverse.
+
+Note the logical dependency: this proof invokes uniqueness of multiplicative
+inverses, which is a field-structure fact. This is why the reciprocal theorem
+properly belongs \emph{after} $\mathbb{Q}$ has been established as a field,
+not inside the construction section.
 \end{remark*}
 
 \begin{remark*}[Dependencies]~\\
@@ -28,7 +105,9 @@ TODO.
   \item \hyperref[thm:ec-multiplication]{Theorem~\ref*{thm:ec-multiplication}}
   \item \hyperref[def:rational-distinguished]{Definition~\ref*{def:rational-distinguished}}
         \textnormal{($1 = [(1,1)]$)}
-  \item \hyperref[thm:q-is-field]{Theorem~\ref*{thm:q-is-field}}
-        \textnormal{(uniqueness of multiplicative inverse)}
+  \item \hyperref[thm:ec-zero-numerator]{Theorem~\ref*{thm:ec-zero-numerator}}
+        \textnormal{(to confirm $[(a,b)]\neq 0$)}
+  \item \hyperref[thm:uniqueness-of-multiplicative-inverse]{Theorem~\ref*{thm:uniqueness-of-multiplicative-inverse}}
+        \textnormal{(uniqueness of multiplicative inverse in $\mathbb{Q}$)}
 \end{itemize}
 \end{remark*}

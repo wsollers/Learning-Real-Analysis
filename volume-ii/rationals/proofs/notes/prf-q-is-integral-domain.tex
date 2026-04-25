@@ -17,11 +17,215 @@ is an integral domain.
 \end{theorem*}
 
 \begin{proof}
-TODO.
+\textbf{Professional Standard Proof.}~\\
+We verify the five conditions of the integral domain definition.
+
+\textbf{(1) $(\mathbb{Q},+,0)$ is a commutative group.}
+
+\emph{Closure.} If $[(a,b)],[(c,d)]\in\mathbb{Q}$ then
+$[(ad+bc,bd)]\in\mathbb{Q}$ since $bd\neq 0$.
+
+\emph{Associativity.} Let $p = [(a,b)]$, $q = [(c,d)]$, $r = [(e,f)]$.
+Then
+\begin{align*}
+(p+q)+r &= [(ad+bc,bd)] + [(e,f)] = [((ad+bc)f + bd\cdot e,\; bdf)], \\
+p+(q+r) &= [(a,b)] + [(cf+de,df)] = [(a\cdot df + b(cf+de),\; bdf)].
+\end{align*}
+The numerators are $(adf + bcf + bde)$ in both cases, so the sums are equal.
+
+\emph{Identity.} $[(a,b)] + [(0,1)] = [(a\cdot 1 + b\cdot 0, b\cdot 1)] = [(a,b)]$.
+
+\emph{Inverses.} $[(a,b)] + [(-a,b)] = [(ab - ab, b^2)] = [(0,b^2)] = 0$,
+since $(0,b^2)\sim(0,1)$.
+
+\emph{Commutativity.} $[(a,b)]+[(c,d)] = [(ad+bc,bd)] = [(cb+da,db)] = [(c,d)]+[(a,b)]$.
+
+\textbf{(2) Multiplication is associative and commutative.}
+
+\emph{Associativity.}
+$([(a,b)]\cdot[(c,d)])\cdot[(e,f)] = [(ac,bd)]\cdot[(e,f)] = [(ace,bdf)]$.
+$[(a,b)]\cdot([(c,d)]\cdot[(e,f)]) = [(a,b)]\cdot[(ce,df)] = [(ace,bdf)]$.
+
+\emph{Commutativity.}
+$[(a,b)]\cdot[(c,d)] = [(ac,bd)] = [(ca,db)] = [(c,d)]\cdot[(a,b)]$.
+
+\textbf{(3) $1\neq 0$ and $1$ is the multiplicative identity.}
+
+$[(1,1)]\neq[(0,1)]$ since $1\cdot 1 = 1\neq 0 = 0\cdot 1$.
+$[(1,1)]\cdot[(a,b)] = [(1\cdot a, 1\cdot b)] = [(a,b)]$.
+
+\textbf{(4) Multiplication distributes over addition.}
+
+\begin{align*}
+[(a,b)]\cdot([(c,d)]+[(e,f)])
+&= [(a,b)]\cdot[(cf+de,df)] \\
+&= [(a(cf+de),\; b\cdot df)] \\
+&= [(acf+ade,\; bdf)].
+\end{align*}
+\begin{align*}
+[(a,b)]\cdot[(c,d)] + [(a,b)]\cdot[(e,f)]
+&= [(ac,bd)] + [(ae,bf)] \\
+&= [(ac\cdot bf + bd\cdot ae,\; bd\cdot bf)] \\
+&= [(abcf + abde,\; b^2df)].
+\end{align*}
+These two classes are equal iff $(acf+ade)(b^2df) = (abcf+abde)(bdf)$,
+which simplifies to $ab^2df(cf+de) = ab(bdf)(cf+de)$, i.e.\ $b^2df = b^2df$.
+True.
+
+\textbf{(5) $\mathbb{Q}$ has no zero divisors.}
+
+Suppose $[(a,b)]\cdot[(c,d)] = 0$. Then $[(ac,bd)] = [(0,1)]$, so
+$(ac,bd)\sim(0,1)$, meaning $ac\cdot 1 = bd\cdot 0 = 0$. Thus $ac = 0$.
+Since $\mathbb{Z}$ is an integral domain, $a=0$ or $c=0$. By the zero class
+criterion, $a=0$ iff $[(a,b)] = 0$ and $c=0$ iff $[(c,d)] = 0$.
+Therefore $[(a,b)]=0$ or $[(c,d)]=0$.
+
+Since all five conditions hold, $(\mathbb{Q},+,\cdot,0,1)$ is an integral domain.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+We check each condition of the integral domain definition in turn.
+
+\textbf{Condition 1: $(\mathbb{Q},+,0)$ is a commutative group.}
+
+We must verify five sub-properties.
+
+\emph{(1a) Closure under addition.}
+Let $[(a,b)],[(c,d)]\in\mathbb{Q}$. The sum is $[(ad+bc,\,bd)]$. Since
+$b\neq 0$ and $d\neq 0$, we have $bd\neq 0$, so $(ad+bc,bd)\in W$ and
+$[(ad+bc,bd)]\in\mathbb{Q}$.
+
+\emph{(1b) Associativity of addition.}
+Let $[(a,b)],[(c,d)],[(e,f)]\in\mathbb{Q}$. We compute both bracketings
+directly:
+\[
+([(a,b)]+[(c,d)])+[(e,f)]
+= [(ad+bc,bd)]+[(e,f)]
+= [((ad+bc)f+bd\cdot e,\; bdf)]
+= [(adf+bcf+bde,\; bdf)].
+\]
+\[
+[(a,b)]+([(c,d)]+[(e,f)])
+= [(a,b)]+[(cf+de,df)]
+= [(a\cdot df + b(cf+de),\; bdf)]
+= [(adf+bcf+bde,\; bdf)].
+\]
+The numerators and denominators are identical, so
+$([(a,b)]+[(c,d)])+[(e,f)] = [(a,b)]+([(c,d)]+[(e,f)])$.
+
+\emph{(1c) Additive identity.}
+$0 = [(0,1)]$. Compute:
+\[
+[(a,b)] + [(0,1)]
+= [(a\cdot 1 + b\cdot 0,\; b\cdot 1)]
+= [(a,b)].
+\]
+Similarly $[(0,1)] + [(a,b)] = [(a,b)]$ by commutativity of integer addition.
+
+\emph{(1d) Additive inverses.}
+The candidate inverse of $[(a,b)]$ is $[(-a,b)]$ (see the negation theorem).
+We have already verified this: $[(a,b)]+[(-a,b)] = [(0,b^2)] = 0$.
+
+\emph{(1e) Commutativity of addition.}
+\[
+[(a,b)]+[(c,d)] = [(ad+bc,bd)] = [(cb+da,db)] = [(c,d)]+[(a,b)],
+\]
+where we used commutativity of integer addition ($ad+bc = cb+da$) and
+commutativity of integer multiplication ($bd = db$).
+
+\textbf{Condition 2: Multiplication is associative and commutative.}
+
+\emph{(2a) Associativity.}
+\[
+([(a,b)]\cdot[(c,d)])\cdot[(e,f)]
+= [(ac,bd)]\cdot[(e,f)]
+= [(ace,bdf)].
+\]
+\[
+[(a,b)]\cdot([(c,d)]\cdot[(e,f)])
+= [(a,b)]\cdot[(ce,df)]
+= [(ace,bdf)].
+\]
+Both equal $[(ace,bdf)]$, so multiplication is associative.
+
+\emph{(2b) Commutativity.}
+$[(a,b)]\cdot[(c,d)] = [(ac,bd)] = [(ca,db)] = [(c,d)]\cdot[(a,b)]$,
+using commutativity in $\mathbb{Z}$.
+
+\textbf{Condition 3: $1\neq 0$ and $1$ is the multiplicative identity.}
+
+$1 = [(1,1)]$ and $0 = [(0,1)]$. These are not equal: $(1,1)\sim(0,1)$
+would require $1\cdot 1 = 0\cdot 1$, i.e.\ $1 = 0$, which is false in
+$\mathbb{Z}$. So $1\neq 0$.
+
+For the identity property:
+\[
+[(1,1)]\cdot[(a,b)]
+= [(1\cdot a,\; 1\cdot b)]
+= [(a,b)].
+\]
+Commutativity gives $[(a,b)]\cdot[(1,1)] = [(a,b)]$ as well.
+
+\textbf{Condition 4: Distributivity.}
+
+We show $[(a,b)]\cdot([(c,d)]+[(e,f)]) = [(a,b)]\cdot[(c,d)] + [(a,b)]\cdot[(e,f)]$.
+
+Left-hand side:
+\[
+[(a,b)]\cdot[(cf+de,\;df)]
+= [(a(cf+de),\;bdf)]
+= [(acf+ade,\;bdf)].
+\]
+Right-hand side:
+\[
+[(ac,bd)] + [(ae,bf)]
+= [(ac\cdot bf + bd\cdot ae,\; bd\cdot bf)]
+= [(abcf+abde,\; b^2df)].
+\]
+We must check $[(acf+ade,bdf)] = [(abcf+abde,b^2df)]$.
+By the definition of $\sim$:
+\[
+(acf+ade)(b^2df) \stackrel{?}{=} (bdf)(abcf+abde).
+\]
+Left: $b^2df(acf+ade) = ab^2df(cf+de)$.\\
+Right: $bdf\cdot ab(cf+de) = ab^2df(cf+de)$.\\
+These are equal. Therefore distributivity holds.
+
+\textbf{Condition 5: No zero divisors.}
+
+Let $[(a,b)],[(c,d)]\in\mathbb{Q}$ and suppose
+\[
+[(a,b)]\cdot[(c,d)] = 0.
+\]
+By the multiplication formula, $[(ac,bd)] = [(0,1)]$.
+By the zero class criterion applied to $[(ac,bd)]$, this means $ac = 0$.
+Since $\mathbb{Z}$ is an integral domain (integers have no zero divisors),
+$ac = 0$ implies $a = 0$ or $c = 0$.
+
+If $a = 0$, then by the zero class criterion $[(a,b)] = 0$.\\
+If $c = 0$, then by the zero class criterion $[(c,d)] = 0$.
+
+Therefore at least one of the factors is zero in $\mathbb{Q}$, and $\mathbb{Q}$
+has no zero divisors.
+
+\textbf{Conclusion.}
+
+All five conditions of the integral domain definition are satisfied.
+Therefore $(\mathbb{Q},+,\cdot,0,1)$ is an integral domain.
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The proof is a systematic verification of each axiom. The substantive
+content lies in three places: the associativity of addition (which requires
+expanding both sides and comparing numerators), the distributivity check
+(which reduces to a cross-multiplication equality), and the no-zero-divisors
+property (which reduces $\mathbb{Q}$-level zeroes to the corresponding fact
+in $\mathbb{Z}$, which is an integral domain by construction).
+
+All other axioms are direct computations from the operation definitions and
+the arithmetic of $\mathbb{Z}$.
 \end{remark*}
 
 \begin{remark*}[Dependencies]~\\
@@ -30,5 +234,8 @@ TODO.
   \item \hyperref[def:rational-distinguished]{Definition~\ref*{def:rational-distinguished}}
   \item \hyperref[def:rational-operations]{Definition~\ref*{def:rational-operations}}
   \item \hyperref[def:integral-domain]{Definition~\ref*{def:integral-domain}}
+  \item \hyperref[thm:ec-zero-numerator]{Theorem~\ref*{thm:ec-zero-numerator}}
+        \textnormal{(zero class criterion, used in Condition 5)}
+  \item $\mathbb{Z}$ is an integral domain (no zero divisors in $\mathbb{Z}$)
 \end{itemize}
 \end{remark*}
