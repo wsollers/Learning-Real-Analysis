@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-24 15:17:07
+Generated: 2026-04-25 03:02:29
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 163
+Total: 196
 
 ## volume-ii / rationals
 
@@ -12,20 +12,24 @@ Chapter: `volume-ii/rationals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
-| thm | `thm:fraction-pair-equivalence` | The Fraction-Pair Relation Is an Equivalence Relation | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-fraction-pair-equivalence.tex` |
-| lem | `lem:rational-addition-well-defined` | Addition Is Well-Defined on Rational Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-rational-addition-well-defined.tex` |
-| lem | `lem:rational-multiplication-well-defined` | Multiplication Is Well-Defined on Rational Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-rational-multiplication-well-defined.tex` |
+| thm | `thm:ec-multiplication` | Multiplication of Equivalence Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-multiplication.tex` |
+| thm | `thm:ec-negation` | Negation of an Equivalence Class | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-negation.tex` |
+| thm | `thm:ec-subtraction` | Subtraction of Equivalence Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-subtraction.tex` |
 | thm | `thm:q-is-integral-domain` | $\mathbb{Q}$ Is an Integral Domain | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-q-is-integral-domain.tex` |
 | thm | `thm:q-is-field` | $\mathbb{Q}$ Is a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-q-is-field.tex` |
+| thm | `thm:ec-division-by-one` | Division by the Class of One | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-division-by-one.tex` |
+| thm | `thm:ec-reciprocal` | Reciprocal of a Nonzero Equivalence Class | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-reciprocal.tex` |
 | thm | `thm:negative-exponents-agree-with-inverse-power` | Negative Exponents Agree with Inverse Powers | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-negative-exponents-agree-with-inverse-power.tex` |
-| thm | `thm:power-of-product-in-field` | Power of a Product in a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-power-of-product-in-field.tex` |
 | thm | `thm:integer-exponent-addition-law` | Integer Exponent Addition Law | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-integer-exponent-addition-law.tex` |
 | thm | `thm:power-of-a-power-in-field` | Power of a Power in a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-power-of-a-power-in-field.tex` |
 | thm | `thm:finite-integral-domain-is-field` | Every Finite Integral Domain Is a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-finite-integral-domain-is-field.tex` |
-| thm | `thm:rational-division-by-one` | Division by One in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-division-by-one.tex` |
-| thm | `thm:rational-quotient-zero-iff-numerator-zero` | A Rational Quotient Is Zero Exactly When Its Numerator Is Zero | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-quotient-zero-iff-numerator-zero.tex` |
-| thm | `thm:rational-cross-multiplication` | Cross-Multiplication Criterion for Rational Equality | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-cross-multiplication.tex` |
-| thm | `thm:rational-fraction-scaling` | Scaling Numerator and Denominator by the Same Nonzero Rational | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-scaling.tex` |
+| thm | `thm:zero-product` | Zero Product | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-zero-product.tex` |
+| thm | `thm:additive-cancellation` | Additive Cancellation | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-additive-cancellation.tex` |
+| thm | `thm:double-negation` | Double Negation | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-double-negation.tex` |
+| thm | `thm:negation-of-product` | Negation of a Product | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-negation-of-product.tex` |
+| cor | `cor:product-of-negatives` | Product of Negatives | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-product-of-negatives.tex` |
+| thm | `thm:multiplicative-cancellation` | Multiplicative Cancellation | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-multiplicative-cancellation.tex` |
+| thm | `thm:uniqueness-of-multiplicative-inverse` | Uniqueness of Multiplicative Inverse | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-uniqueness-of-multiplicative-inverse.tex` |
 | thm | `thm:rational-fraction-addition` | Fraction Addition Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-addition.tex` |
 | thm | `thm:rational-fraction-subtraction` | Fraction Subtraction Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-subtraction.tex` |
 | thm | `thm:rational-fraction-multiplication` | Fraction Multiplication Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-multiplication.tex` |
@@ -44,24 +48,23 @@ Chapter: `volume-ii/rationals`
 | thm | `thm:fraction-order-comparison-positive-denominator-product` | Fraction Comparison When the Denominator Product Is Positive | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-fraction-order-comparison-positive-denominator-product.tex` |
 | thm | `thm:reciprocal-order-for-positive-elements` | Reciprocal Order for Positive Elements | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-reciprocal-order-for-positive-elements.tex` |
 | thm | `thm:ordered-fields-are-densely-ordered` | Ordered Fields Are Densely Ordered | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-ordered-fields-are-densely-ordered.tex` |
-| thm | `thm:archimedean-q` | Archimedean Property of $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-density-of-rationals.tex` | `proofs\notes\prf-archimedean-q.tex` |
 | thm | `thm:q-dense-in-r` | Density of $\mathbb{Q}$ in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-density-of-rationals.tex` | `proofs\notes\prf-q-dense-in-r.tex` |
 | cor | `cor:infinitely-many-rationals-between` | Infinitely Many Rational Numbers Lie Between Two Distinct Reals | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-density-of-rationals.tex` | `proofs\notes\prf-infinitely-many-rationals-between.tex` |
+| thm | `thm:rational-chain-with-small-steps` | Rational Chain with Uniformly Small Steps | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-chain-with-small-steps.tex` |
+| thm | `thm:mediant-inequality` | Mediant Inequality | Proof file exists but still contains a TODO marker. | `notes\density-of-q\mediants-stern-brocot\notes-mediant.tex` | `proofs\notes\prf-mediant-inequality.tex` |
+| thm | `thm:sqrt2-irrational` | No Rational Number Has Square $2$ | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-sqrt2-irrational.tex` |
+| thm | `thm:rational-approximation` | Rational Approximation | Proof file exists but still contains a TODO marker. | `notes\rational-approximation\notes-rational-approximation.tex` | `proofs\notes\prf-rational-approximation.tex` |
+| thm | `thm:dirichlet-approx` | Dirichlet's Approximation Theorem | Proof file exists but still contains a TODO marker. | `notes\rational-approximation\notes-rational-approximation.tex` | `proofs\notes\prf-dirichlet-approx.tex` |
+| thm | `thm:convergent-implies-cauchy-q` | Every Convergent Rational Sequence Is Cauchy | Proof file exists but still contains a TODO marker. | `notes\cauchy-sequences-in-q\notes-rational-cauchy.tex` | `proofs\notes\prf-convergent-implies-cauchy-q.tex` |
+| thm | `thm:cauchy-not-convergent-q` | There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number | Proof file exists but still contains a TODO marker. | `notes\cauchy-sequences-in-q\notes-rational-cauchy.tex` | `proofs\notes\prf-cauchy-not-convergent-q.tex` |
 | thm | `thm:between-any-two-rationals-is-a-rational` | Between Any Two Rational Numbers Lies Another Rational | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-between-any-two-rationals-is-a-rational.tex` |
 | cor | `cor:q-dense-in-itself` | $\mathbb{Q}$ Is Dense in Itself | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-dense-in-itself.tex` |
 | cor | `cor:q-has-no-adjacent-points` | The Rational Numbers Have No Adjacent Points | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-adjacent-points.tex` |
 | thm | `thm:q-has-no-minimum-positive-element` | $\mathbb{Q}$ Has No Minimum Positive Element | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-minimum-positive-element.tex` |
 | lem | `lem:rational-upper-lower-perturbation` | Upper/Lower Perturbation Lemma, Rational Version | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-upper-lower-perturbation.tex` |
 | lem | `lem:rational-perturbation-lemma` | Rational Perturbation Lemma | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-perturbation-lemma.tex` |
-| thm | `thm:rational-chain-with-small-steps` | Rational Chain with Uniformly Small Steps | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-chain-with-small-steps.tex` |
-| thm | `thm:mediant-inequality` | Mediant Inequality | Proof file exists but still contains a TODO marker. | `notes\density-of-q\mediants-stern-brocot\notes-mediant.tex` | `proofs\notes\prf-mediant-inequality.tex` |
-| thm | `thm:rational-approximation` | Rational Approximation | Proof file exists but still contains a TODO marker. | `notes\rational-approximation\notes-rational-approximation.tex` | `proofs\notes\prf-rational-approximation.tex` |
-| thm | `thm:dirichlet-approx` | Dirichlet's Approximation Theorem | Proof file exists but still contains a TODO marker. | `notes\rational-approximation\notes-rational-approximation.tex` | `proofs\notes\prf-dirichlet-approx.tex` |
-| thm | `thm:sqrt2-irrational` | No Rational Number Has Square $2$ | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-sqrt2-irrational.tex` |
 | lem | `lem:rational-square-bracketing` | Rational Square Bracketing | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-rational-square-bracketing.tex` |
 | thm | `thm:rational-square-approximation-from-above` | Rational Square Approximation from Above | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-rational-square-approximation-from-above.tex` |
-| thm | `thm:convergent-implies-cauchy-q` | Every Convergent Rational Sequence Is Cauchy | Proof file exists but still contains a TODO marker. | `notes\cauchy-sequences-in-q\notes-rational-cauchy.tex` | `proofs\notes\prf-convergent-implies-cauchy-q.tex` |
-| thm | `thm:cauchy-not-convergent-q` | There Exist Cauchy Sequences in $\mathbb{Q}$ That Do Not Converge to a Rational Number | Proof file exists but still contains a TODO marker. | `notes\cauchy-sequences-in-q\notes-rational-cauchy.tex` | `proofs\notes\prf-cauchy-not-convergent-q.tex` |
 
 ## volume-ii / reals
 
@@ -69,22 +72,22 @@ Chapter: `volume-ii/reals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
+| cor | `cor:irrationals-not-closed-under-multiplication` | The Irrationals Are Not Closed Under Multiplication | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-not-closed-under-multiplication.tex` |
+| cor | `cor:every-irrational-can-be-approximated-by-rationals` | Every Irrational Can Be Approximated by Rationals | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-every-irrational-can-be-approximated-by-rationals.tex` |
+| thm | `thm:closure-of-q-is-r` | Closure of $\mathbb{Q}$ in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-closure-of-q-is-r.tex` |
+| cor | `cor:q-not-closed-in-r` | $\mathbb{Q}$ Is Not Closed in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-closed-in-r.tex` |
+| cor | `cor:q-not-discrete-in-r` | $\mathbb{Q}$ Is Not Discrete in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-discrete-in-r.tex` |
 | thm | `thm:rational-plus-irrational-is-irrational` | Rational Plus Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-rational-plus-irrational-is-irrational.tex` |
 | thm | `thm:rational-minus-irrational-is-irrational` | Rational Minus Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-rational-minus-irrational-is-irrational.tex` |
 | thm | `thm:nonzero-rational-times-irrational-is-irrational` | Nonzero Rational Times Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-nonzero-rational-times-irrational-is-irrational.tex` |
 | thm | `thm:quotient-by-nonzero-rational-preserves-irrationality` | Quotient by Nonzero Rational Preserves Irrationality | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-quotient-by-nonzero-rational-preserves-irrationality.tex` |
 | cor | `cor:irrationals-not-closed-under-addition` | The Irrationals Are Not Closed Under Addition | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-not-closed-under-addition.tex` |
-| cor | `cor:irrationals-not-closed-under-multiplication` | The Irrationals Are Not Closed Under Multiplication | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-not-closed-under-multiplication.tex` |
 | cor | `cor:irrationals-are-not-a-field` | The Irrationals Are Not a Field | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-are-not-a-field.tex` |
 | cor | `cor:irrationals-are-not-an-ordered-field` | The Irrationals Are Not an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-are-not-an-ordered-field.tex` |
 | thm | `thm:between-any-two-reals-is-an-irrational` | Between Any Two Real Numbers Lies an Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-between-any-two-reals-is-an-irrational.tex` |
 | cor | `cor:irrationals-dense-in-r` | The Irrationals Are Dense in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-irrationals-dense-in-r.tex` |
-| cor | `cor:every-irrational-can-be-approximated-by-rationals` | Every Irrational Can Be Approximated by Rationals | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-every-irrational-can-be-approximated-by-rationals.tex` |
 | cor | `cor:every-rational-can-be-approximated-by-irrationals` | Every Rational Can Be Approximated by Irrationals | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-every-rational-can-be-approximated-by-irrationals.tex` |
-| thm | `thm:closure-of-q-is-r` | Closure of $\mathbb{Q}$ in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-closure-of-q-is-r.tex` |
-| cor | `cor:q-not-closed-in-r` | $\mathbb{Q}$ Is Not Closed in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-closed-in-r.tex` |
 | cor | `cor:q-not-open-in-r` | $\mathbb{Q}$ Is Not Open in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-open-in-r.tex` |
-| cor | `cor:q-not-discrete-in-r` | $\mathbb{Q}$ Is Not Discrete in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-discrete-in-r.tex` |
 | thm | `thm:irrationals-uncountable` | The Irrationals Are Uncountable | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-irrationals-uncountable.tex` |
 | thm | `thm:irrationals-not-complete-as-ordered-set` | The Irrationals Are Not Complete as an Ordered Set | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-irrationals-not-complete-as-ordered-set.tex` |
 
@@ -220,6 +223,36 @@ Chapter: `volume-iii/analysis/real-analysis`
 | prop | `prop:ivt-bisection` | Intermediate Value Theorem | No proof file listed in chapter.yaml. | `notes\proof-techniques\04-bisection-nested-intervals.tex` | `(none)` |
 | prop | `prop:r-uncountable` | prop:r-uncountable | No proof file listed in chapter.yaml. | `notes\proof-techniques\04-bisection-nested-intervals.tex` | `(none)` |
 | prop | `prop:residue-divergence` | Residue divergence criterion | No proof file listed in chapter.yaml. | `notes\proof-techniques\05-residue-partition.tex` | `(none)` |
+| thm | `thm:absolute-value-nonneg` | Absolute Value Is Nonnegative | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-nonneg.tex` |
+| thm | `thm:absolute-value-zero-iff-zero` | Absolute Value Zero Iff Zero | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-zero-iff-zero.tex` |
+| thm | `thm:absolute-value-self-or-neg` | Absolute Value Equals Self or Negation | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-self-or-neg.tex` |
+| thm | `thm:absolute-value-symmetric` | Absolute Value Is Symmetric | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-symmetric.tex` |
+| thm | `thm:absolute-value-product` | Absolute Value of a Product | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-product.tex` |
+| thm | `thm:absolute-value-quotient` | Absolute Value of a Quotient | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-quotient.tex` |
+| thm | `thm:absolute-value-bounds` | Bound by Modulus | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-bounds.tex` |
+| thm | `thm:absolute-value-le-iff` | Nonstrict Modulus Inequality | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-le-iff.tex` |
+| thm | `thm:absolute-value-lt-iff` | Strict Modulus Inequality | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-lt-iff.tex` |
+| thm | `thm:triangle-inequality` | Triangle Inequality | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-triangle-inequality.tex` |
+| thm | `thm:reverse-triangle-inequality` | Reverse Triangle Inequality | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-reverse-triangle-inequality.tex` |
+| thm | `thm:absolute-value-sum-bound` | Generalised Triangle Inequality | Proof file exists but still contains a TODO marker. | `notes\modulus\notes-modulus.tex` | `proofs\notes\prf-absolute-value-sum-bound.tex` |
+| thm | `thm:ineq-add-both-sides` | Addition Preserves Strict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-add-both-sides.tex` |
+| thm | `thm:ineq-nonstrict-add-both-sides` | Addition Preserves Nonstrict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-nonstrict-add-both-sides.tex` |
+| thm | `thm:ineq-nonstrict-add-inequalities` | Addition of Nonstrict Inequalities | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-nonstrict-add-inequalities.tex` |
+| thm | `thm:ineq-multiply-positive` | Multiplication by a Positive Scalar Preserves Strict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-multiply-positive.tex` |
+| thm | `thm:ineq-multiply-negative` | Multiplication by a Negative Scalar Reverses Strict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-multiply-negative.tex` |
+| thm | `thm:ineq-nonstrict-multiply-positive` | Multiplication by a Positive Scalar Preserves Nonstrict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-nonstrict-multiply-positive.tex` |
+| thm | `thm:ineq-nonstrict-multiply-nonneg` | Multiplication by a Nonneg Scalar Preserves Nonstrict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-nonstrict-multiply-nonneg.tex` |
+| thm | `thm:ineq-squeeze` | Squeeze | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-squeeze.tex` |
+| thm | `thm:ineq-transitivity-strict` | Transitivity of Strict Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-transitivity-strict.tex` |
+| thm | `thm:ineq-add-inequalities` | Addition of Strict Inequalities | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-add-inequalities.tex` |
+| thm | `thm:ineq-transitivity-mixed` | Mixed Transitivity | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-transitivity-mixed.tex` |
+| thm | `thm:ineq-mixed-add` | Mixed Addition of Inequalities | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-mixed-add.tex` |
+| thm | `thm:ineq-reciprocal-positive` | Reciprocal Reverses Strict Inequality for Positives | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-reciprocal-positive.tex` |
+| thm | `thm:ineq-reciprocal-flip` | Reciprocal Equivalence for Positives | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-reciprocal-flip.tex` |
+| thm | `thm:ineq-square-monotone` | Square Is Strictly Monotone on Nonneg Reals | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-square-monotone.tex` |
+| thm | `thm:ineq-square-root-monotone` | Square Root Is Monotone on Nonneg Reals | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-square-root-monotone.tex` |
+| thm | `thm:ineq-am-gm-two` | AM-GM Inequality for Two Terms | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-am-gm-two.tex` |
+| thm | `thm:ineq-bernoulli` | Bernoulli's Inequality | Proof file exists but still contains a TODO marker. | `notes\inequality\notes-inequality.tex` | `proofs\notes\prf-ineq-bernoulli.tex` |
 
 ## volume-iii / sequences
 

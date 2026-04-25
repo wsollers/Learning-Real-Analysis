@@ -8,26 +8,24 @@
 
 namespace ndde {
 
-// ── GaussianSurface::eval ─────────────────────────────────────────────────────
+// == GaussianSurface::eval ====================================================
 // Option C: 6-Gaussian asymmetric + double sinusoidal ripple.
-// Domain expanded to [-6,6]×[-6,6] for more surface real estate.
-// Z range approximately [-1.8, 2.0] — see Z_MIN / Z_MAX in the header.
+// Domain expanded to [-6,6]x[-6,6] for more surface real estate.
+// Z range approximately [-1.8, 2.0] -- see Z_MIN / Z_MAX in the header.
 
 f32 GaussianSurface::eval(f32 x, f32 y) noexcept {
-    // Six Gaussians of alternating sign — different widths give varied curvature
     const f32 g0 =  1.6f * std::exp(-((x-1.5f)*(x-1.5f)/0.6f  + (y-0.4f)*(y-0.4f)/0.9f));
     const f32 g1 = -1.3f * std::exp(-((x+1.3f)*(x+1.3f)/0.8f  + (y+1.1f)*(y+1.1f)/0.5f));
     const f32 g2 =  1.1f * std::exp(-((x+0.2f)*(x+0.2f)/1.2f  + (y-2.0f)*(y-2.0f)/0.4f));
     const f32 g3 = -0.8f * std::exp(-((x-2.5f)*(x-2.5f)/0.5f  + (y+0.7f)*(y+0.7f)/1.0f));
     const f32 g4 =  0.7f * std::exp(-((x-0.8f)*(x-0.8f)/0.7f  + (y+2.3f)*(y+2.3f)/0.6f));
     const f32 g5 = -0.5f * std::exp(-((x+2.8f)*(x+2.8f)/0.3f  + (y-1.4f)*(y-1.4f)/0.8f));
-    // Two sinusoidal terms with phase offsets for non-repeating organic ripple
     const f32 s0 =  0.15f * std::sin(2.0f*x) * std::sin(3.0f*y);
     const f32 s1 =  0.12f * std::cos(1.5f*x - 1.0f) * std::sin(2.5f*y + 0.7f);
     return g0 + g1 + g2 + g3 + g4 + g5 + s0 + s1;
 }
 
-// ── GaussianSurface::grad ─────────────────────────────────────────────────────
+// == GaussianSurface::grad ====================================================
 
 GaussianSurface::Grad GaussianSurface::grad(f32 x, f32 y) noexcept {
     constexpr f32 h = 1e-3f;
@@ -37,7 +35,7 @@ GaussianSurface::Grad GaussianSurface::grad(f32 x, f32 y) noexcept {
     };
 }
 
-// ── GaussianSurface::unit_normal ──────────────────────────────────────────────
+// == GaussianSurface::unit_normal =============================================
 
 Vec3 GaussianSurface::unit_normal(f32 x, f32 y) noexcept {
     const auto [fx, fy] = grad(x, y);
@@ -45,7 +43,7 @@ Vec3 GaussianSurface::unit_normal(f32 x, f32 y) noexcept {
     return { -fx/len, -fy/len, 1.f/len };
 }
 
-// ── GaussianSurface::gaussian_curvature ───────────────────────────────────────
+// == GaussianSurface::gaussian_curvature ======================================
 
 f32 GaussianSurface::gaussian_curvature(f32 x, f32 y) noexcept {
     constexpr f32 h = 1e-3f;
@@ -60,7 +58,7 @@ f32 GaussianSurface::gaussian_curvature(f32 x, f32 y) noexcept {
     return std::abs(denom) < 1e-10f ? 0.f : (L*N2 - M*M) / denom;
 }
 
-// ── GaussianSurface::mean_curvature ──────────────────────────────────────────
+// == GaussianSurface::mean_curvature ==========================================
 
 f32 GaussianSurface::mean_curvature(f32 x, f32 y) noexcept {
     constexpr f32 h = 1e-3f;
@@ -75,11 +73,10 @@ f32 GaussianSurface::mean_curvature(f32 x, f32 y) noexcept {
     return std::abs(denom) < 1e-10f ? 0.f : (E*N2 + G*L - 2.f*F*M) / denom;
 }
 
-// ── GaussianSurface::height_color ─────────────────────────────────────────────
+// == GaussianSurface::height_color ============================================
 
 Vec4 GaussianSurface::height_color(f32 z) noexcept {
     const f32 t = std::clamp((z - Z_MIN) / (Z_MAX - Z_MIN), 0.f, 1.f);
-    // 7-stop heatmap: deep-blue → blue → cyan → green → yellow → orange → red
     struct Stop { f32 pos; Vec3 rgb; };
     static constexpr Stop stops[] = {
         {0.00f, {0.165f, 0.000f, 0.431f}},
@@ -102,14 +99,14 @@ Vec4 GaussianSurface::height_color(f32 z) noexcept {
     return {c.x, c.y, c.z, 1.f};
 }
 
-// ── GaussianSurface::wireframe_vertex_count ───────────────────────────────────
+// == GaussianSurface::wireframe_vertex_count ==================================
 
 u32 GaussianSurface::wireframe_vertex_count(u32 u_lines, u32 v_lines) noexcept {
     return (u_lines + 1u) * v_lines * 2u +
            (v_lines + 1u) * u_lines * 2u;
 }
 
-// ── GaussianSurface::tessellate_wireframe ─────────────────────────────────────
+// == GaussianSurface::tessellate_wireframe ====================================
 
 void GaussianSurface::tessellate_wireframe(std::span<Vertex> out,
                                             u32 u_lines, u32 v_lines) {
@@ -121,7 +118,6 @@ void GaussianSurface::tessellate_wireframe(std::span<Vertex> out,
     const f32 ys = (YMAX - YMIN) / static_cast<f32>(v_lines);
     u32 idx = 0;
 
-    // Lines of constant x (vary y)
     for (u32 i = 0; i <= u_lines; ++i) {
         const f32 x = XMIN + static_cast<f32>(i) * xs;
         for (u32 j = 0; j < v_lines; ++j) {
@@ -133,7 +129,6 @@ void GaussianSurface::tessellate_wireframe(std::span<Vertex> out,
             out[idx++] = { Vec3{x, yb, zb}, height_color(zb) };
         }
     }
-    // Lines of constant y (vary x)
     for (u32 j = 0; j <= v_lines; ++j) {
         const f32 y = YMIN + static_cast<f32>(j) * ys;
         for (u32 i = 0; i < u_lines; ++i) {
@@ -147,13 +142,13 @@ void GaussianSurface::tessellate_wireframe(std::span<Vertex> out,
     }
 }
 
-// ── GaussianSurface::contour_max_vertices ────────────────────────────────────
+// == GaussianSurface::contour_max_vertices ====================================
 
 u32 GaussianSurface::contour_max_vertices(u32 grid_n, u32 n_levels) noexcept {
     return grid_n * grid_n * 4u * n_levels;
 }
 
-// ── GaussianSurface::tessellate_contours ─────────────────────────────────────
+// == GaussianSurface::tessellate_contours =====================================
 // Marching-squares to extract level sets as line segments (LineList).
 
 u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
@@ -175,7 +170,6 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
                 const f32 v00 = eval(x0,y0), v10 = eval(x1,y0);
                 const f32 v01 = eval(x0,y1), v11 = eval(x1,y1);
 
-                // Collect crossing points on the 4 edges
                 f32 pts[8]; u32 np = 0;
                 auto seg = [&](f32 va, f32 vb, f32 xa, f32 ya, f32 xb, f32 yb) {
                     if ((va-lv)*(vb-lv) < 0.f) {
@@ -199,9 +193,9 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
     return idx;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
+// =============================================================================
 // AnimatedCurve
-// ═══════════════════════════════════════════════════════════════════════════════
+// =============================================================================
 
 AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y, u32 colour_id)
     : m_colour_id(colour_id)
@@ -229,19 +223,14 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
     f32& phase = m_walk.phase;
     f32& angle = m_walk.angle;
 
-    // Walk direction: mostly perpendicular to gradient (level-curve following)
-    // with a slow sinusoidal steering component so it crosses the surface.
     const auto [fx, fy] = GaussianSurface::grad(x, y);
     const f32 gn = std::sqrt(fx*fx + fy*fy) + 1e-5f;
 
-    // Perpendicular to gradient (level-curve tangent)
     const f32 perp_x = -fy / gn;
     const f32 perp_y =  fx / gn;
 
-    // Steer toward desired angle
     const f32 steer   = std::sin(phase * 0.4f) * 0.55f;
     const f32 desired = std::atan2(perp_y, perp_x) + steer;
-    // Smooth angle tracking
     f32 da = desired - angle;
     while (da >  std::numbers::pi_v<f32>) da -= 2.f*std::numbers::pi_v<f32>;
     while (da < -std::numbers::pi_v<f32>) da += 2.f*std::numbers::pi_v<f32>;
@@ -251,7 +240,6 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
     f32 nx = x + std::cos(angle) * sp * dt;
     f32 ny = y + std::sin(angle) * sp * dt;
 
-    // Soft boundary reflection
     const f32 margin = 0.3f;
     if (nx < GaussianSurface::XMIN + margin) { nx = GaussianSurface::XMIN + margin; angle = std::numbers::pi_v<f32> - angle; }
     if (nx > GaussianSurface::XMAX - margin) { nx = GaussianSurface::XMAX - margin; angle = std::numbers::pi_v<f32> - angle; }
@@ -271,10 +259,41 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
     }
 }
 
+// == AnimatedCurve::frenet_at =================================================
+//
+// Computes T, N, B, kappa, and tau at trail point idx using finite differences
+// on the discrete trail.
+//
+// CURVATURE (kappa):
+//   Uses three consecutive points: m_trail[idx-1], [idx], [idx+1].
+//   T1 = (p0 - pm) / l1,  T2 = (pp - p0) / l2
+//   N = normalize(T2 - T1),  kappa = |T2 - T1| / l1
+//
+// TORSION (tau) -- discrete signed-angle formula:
+//   Requires FOUR points: m_trail[idx-2..idx+1].
+//   Three edge-tangents:
+//     T0 = (pm  - m_trail[idx-2]) / la    <- previous segment
+//     T1 = (p0  - pm)             / l1    <- already computed above
+//     T2 = (pp  - p0)             / l2    <- already computed above
+//   Discrete binormals (osculating-plane normals):
+//     B01 = normalize(T0 x T1)
+//     B12 = normalize(T1 x T2)
+//   Signed rotation of the osculating plane from [idx-1] to [idx]:
+//     cos_a = clamp(B01 . B12, -1, 1)
+//     alpha = acos(cos_a)                          (unsigned angle)
+//     sign  = sgn( (B01 x B12) . T1 )             (right-hand about T1)
+//     tau   = sign * alpha / ds,  ds = 0.5*(la + l1)
+//
+// INDEX BOUNDS at the head idx = n-2 (where the panel reads):
+//   idx >= 2    =>  n-2 >= 2  =>  n >= 4   (enforced by early-exit n<4)
+//   idx+1 < n   =>  n-1 < n               (always true)
+//   Both satisfied -- this was the root cause of tau = 0 at the head.
+
 FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
     FrenetFrame fr;
     const u32 n = static_cast<u32>(m_trail.size());
-    if (n < 3 || idx < 1 || idx >= n-1) return fr;
+    // Need n>=4 so that idx=n-2 can access m_trail[idx-2]=m_trail[n-4]
+    if (n < 4 || idx < 1 || idx >= n-1) return fr;
 
     const Vec3& pm = m_trail[idx-1];
     const Vec3& p0 = m_trail[idx];
@@ -288,7 +307,7 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
 
     const Vec3 T1 = v1 / l1;
     const Vec3 T2 = v2 / l2;
-    fr.T = glm::normalize(T1 + T2);  // average tangent
+    fr.T     = glm::normalize(T1 + T2);  // average tangent at idx
     fr.speed = (l1 + l2) * 0.5f;
 
     const Vec3 dT  = T2 - T1;
@@ -297,39 +316,51 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
         fr.N     = dT / dTl;
         fr.kappa = dTl / l1;
     } else {
-        // Degenerate: use surface normal as N
         fr.N     = GaussianSurface::unit_normal(p0.x, p0.y);
         fr.kappa = 0.f;
     }
     fr.B = glm::normalize(glm::cross(fr.T, fr.N));
 
-    // Torsion: (T1 x T2) . (T_prev x T_curr) / ...
-    if (idx >= 2 && idx < n-2) {
-        const Vec3& ppp = m_trail[idx+2];
-        const Vec3  v3  = ppp - pp;
-        const f32   l3  = glm::length(v3);
-        if (l3 > 1e-9f) {
-            const Vec3 T3    = v3 / l3;
-            const Vec3 cross = glm::cross(T2, T3);
-            const f32  clen  = glm::length(cross);
-            fr.tau = clen / (l2 + 1e-9f);
+    // Torsion: signed angle between consecutive binormals, divided by arc-length.
+    if (idx >= 2) {
+        const Vec3& pmm = m_trail[idx - 2];
+        const Vec3  va  = pm - pmm;          // prev segment: pmm -> pm
+        const f32   la  = glm::length(va);
+        if (la > 1e-9f) {
+            const Vec3 T0      = va / la;
+            const Vec3 B01_raw = glm::cross(T0, T1);  // binormal at (idx-1)
+            const Vec3 B12_raw = glm::cross(T1, T2);  // binormal at  idx
+            const f32  b01l    = glm::length(B01_raw);
+            const f32  b12l    = glm::length(B12_raw);
+
+            if (b01l > 1e-9f && b12l > 1e-9f) {
+                const Vec3 B01  = B01_raw / b01l;
+                const Vec3 B12  = B12_raw / b12l;
+                const f32 cos_a = std::clamp(glm::dot(B01, B12), -1.f, 1.f);
+                const f32 alpha = std::acos(cos_a);
+                // Right-hand sign: (B01 x B12) . T1
+                const f32 s    = glm::dot(glm::cross(B01, B12), T1);
+                const f32 sign = (s >= 0.f) ? 1.f : -1.f;
+                const f32 ds   = 0.5f * (la + l1);
+                fr.tau = sign * alpha / (ds + 1e-9f);
+            }
         }
     }
     return fr;
 }
 
+// == AnimatedCurve::trail_colour ==============================================
+
 Vec4 AnimatedCurve::trail_colour(u32 id, f32 age_t) noexcept {
-    // Six distinct hues, each fading from dim at tail to bright at head.
-    // age_t = 0 (oldest) → 1 (newest head).
     const f32 bright = 0.25f + 0.75f * age_t;
     const f32 alpha  = 0.25f + 0.75f * age_t;
     switch (id % MAX_COLOURS) {
-        case 0: return {bright,        bright*0.8f,    1.f,    alpha}; // blue-white
-        case 1: return {1.f,           bright*0.4f,    bright*0.1f, alpha}; // orange-red
-        case 2: return {bright*0.3f,   1.f,            bright*0.4f, alpha}; // green
-        case 3: return {1.f,           bright,         bright*0.05f,alpha}; // yellow
-        case 4: return {bright*0.8f,   bright*0.2f,    1.f,    alpha}; // violet
-        case 5: return {bright*0.1f,   1.f,            1.f,    alpha}; // cyan
+        case 0: return {bright,        bright*0.8f,    1.f,         alpha};
+        case 1: return {1.f,           bright*0.4f,    bright*0.1f, alpha};
+        case 2: return {bright*0.3f,   1.f,            bright*0.4f, alpha};
+        case 3: return {1.f,           bright,         bright*0.05f,alpha};
+        case 4: return {bright*0.8f,   bright*0.2f,    1.f,         alpha};
+        case 5: return {bright*0.1f,   1.f,            1.f,         alpha};
         default: return {bright, bright, bright, alpha};
     }
 }

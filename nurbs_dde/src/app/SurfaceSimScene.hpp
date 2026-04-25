@@ -7,6 +7,7 @@
 //   Ctrl+D  — toggle surface frame (Dx, Dy tangents + κ_n / κ_g readout)
 //   Ctrl+P  — toggle normal plane patch at particle
 //   Ctrl+Q  — toggle coordinate debug panel
+//   Ctrl+T  — toggle torsion visualisation (τ ribbon + signed readout)
 
 #include "engine/EngineAPI.hpp"
 #include "app/GaussianSurface.hpp"
@@ -54,6 +55,7 @@ private:
     bool m_show_frenet       = true;   ///< Ctrl+F
     bool m_show_dir_deriv    = false;  ///< Ctrl+D — surface frame Dx/Dy
     bool m_show_normal_plane = false;  ///< Ctrl+P — normal plane patch
+    bool m_show_torsion      = false;  ///< Ctrl+T — torsion τ ribbon
     bool m_debug_open        = false;  ///< Ctrl+Q
 
     // Frenet sub-toggles (Simulation panel checkboxes)
@@ -66,6 +68,7 @@ private:
     bool m_ctrl_f_prev = false;
     bool m_ctrl_d_prev = false;
     bool m_ctrl_p_prev = false;
+    bool m_ctrl_t_prev = false;  ///< Ctrl+T: torsion ribbon
     bool m_ctrl_q_prev = false;
     bool m_ctrl_l_prev = false;  ///< Ctrl+L: spawn new particle
 
@@ -97,6 +100,7 @@ private:
     void submit_osc_circle_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
     void submit_surface_frame_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
     void submit_normal_plane_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
+    void submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
 
     void submit_contour_second_window();
 

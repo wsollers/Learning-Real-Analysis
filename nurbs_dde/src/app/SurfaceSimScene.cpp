@@ -102,6 +102,7 @@ void SurfaceSimScene::handle_hotkeys() {
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_F), m_ctrl_f_prev, m_show_frenet);
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_D), m_ctrl_d_prev, m_show_dir_deriv);
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_P), m_ctrl_p_prev, m_show_normal_plane);
+    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_T), m_ctrl_t_prev, m_show_torsion);  // NEW
 
     // Ctrl+L: spawn a new particle offset from curve 0's head.
     const bool ctrl_l = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_L);
@@ -197,10 +198,45 @@ void SurfaceSimScene::draw_simulation_panel() {
     ImGui::EndDisabled();
     ImGui::Checkbox("Contour lines",&m_show_contours);
 
+    // ── Overlays ──────────────────────────────────────────────────────────────
     ImGui::SeparatorText("Overlays");
     ImGui::Checkbox("Frenet frame  [Ctrl+F]",   &m_show_frenet);
     ImGui::Checkbox("Surface frame [Ctrl+D]",   &m_show_dir_deriv);
     ImGui::Checkbox("Normal plane  [Ctrl+P]",   &m_show_normal_plane);
+    ImGui::Checkbox("Torsion ribbon [Ctrl+T]",  &m_show_torsion);
+
+    // ── Torsion readout (live, appears under toggle when active) ──────────────
+    // Geometric intuition:
+    //   Torsion tau measures how fast B rotates about T: dB/ds = -tau * N.
+    //   tau > 0: right-hand corkscrew (positive twist about T)
+    //   tau < 0: left-hand corkscrew  (negative twist)
+    //   tau = 0: curve is instantaneously planar (B constant => no twist)
+    //   Formula: tau = (p'xp'').p''' / |p'xp''|^2   (Differentiator::torsion)
+    if (m_show_torsion && !m_curves.empty() && m_curves[0].has_trail()) {
+        const AnimatedCurve& c0 = m_curves[0];
+        const u32 hi = c0.trail_size() > 2 ? c0.trail_size()-2 : 0;
+        const FrenetFrame fr = c0.frenet_at(hi);
+        const f32 tau = fr.tau;
+
+        const ImVec4 tau_col =
+            tau >  1e-4f ? ImVec4(1.f,  0.55f, 0.1f, 1.f)   // orange: right twist
+          : tau < -1e-4f ? ImVec4(0.45f,0.8f,  1.f,  1.f)   // cyan:   left twist
+                         : ImVec4(0.7f, 0.7f,  0.7f, 1.f);  // grey:   planar
+        ImGui::Indent(8.f);
+        // \xcf\x84 = UTF-8 tau
+        ImGui::TextColored(tau_col, "\xcf\x84 = %+.6f", tau);
+        ImGui::SameLine();
+        if      (tau >  1e-4f) ImGui::TextDisabled("(right twist)");
+        else if (tau < -1e-4f) ImGui::TextDisabled("(left twist)");
+        else                   ImGui::TextDisabled("(planar)");
+        if (fr.kappa > 1e-5f) {
+            // |tau/kappa| = 1 for a circular helix — useful shape discriminant
+            // \xcf\x84 = tau, \xce\xba = kappa
+            ImGui::TextDisabled("|\xcf\x84/\xce\xba| = %.4f", std::abs(tau) / fr.kappa);
+        }
+        ImGui::Unindent(8.f);
+    }
+
     ImGui::Separator();
     ImGui::TextDisabled("Particles: %zu  [Ctrl+L to add]", m_curves.size());
     ImGui::SameLine();
@@ -324,6 +360,7 @@ void SurfaceSimScene::draw_surface_3d_window() {
         }
         if (m_show_dir_deriv)    submit_surface_frame_3d(c, sidx, mvp3d);
         if (m_show_normal_plane) submit_normal_plane_3d(c, sidx, mvp3d);
+        if (m_show_torsion)      submit_torsion_3d(c, sidx, mvp3d);  // NEW
     }
 
     // Text overlay
@@ -545,6 +582,86 @@ void SurfaceSimScene::submit_normal_plane_3d(const AnimatedCurve& c, u32 trail_i
     m_api.submit(diag, Topology::LineList, DrawMode::VertexColor, col, mvp);
 }
 
+// ── submit_torsion_3d ─────────────────────────────────────────────────────────
+// Geometric meaning:
+//   Torsion tau = (p' x p'') . p''' / |p' x p''|^2  measures how fast the
+//   osculating plane rotates about the tangent T as we walk along the curve.
+//   Equivalently, dB/ds = -tau * N (third Frenet-Serret equation).
+//
+// Visualisation strategy:
+//   A short "twist ribbon" in the osculating plane (spanned by T and N) that
+//   fans from B toward -B proportionally to |tau|.
+//   Colour: orange for tau > 0 (right-hand twist), cyan for tau < 0 (left).
+//   Additionally, a signed dB/ds arrow along N (since dB/ds = -tau*N):
+//     - it points in +N when tau < 0, and in -N when tau > 0.
+//   Both pieces are off when tau is essentially zero (|tau| < 1e-4).
+
+void SurfaceSimScene::submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx,
+                                         const Mat4& mvp) {
+    if (!c.has_trail() || trail_idx == 0) return;
+    const FrenetFrame fr = c.frenet_at(trail_idx);
+
+    // Nothing meaningful to draw when curvature is zero (B is undefined)
+    // or torsion is essentially zero (no twist to show).
+    if (fr.kappa < 1e-5f) return;
+
+    const Vec3 o = c.trail_pt(trail_idx);
+    const f32  tau    = fr.tau;
+    const f32  scl    = m_frame_scale;
+
+    // ── Colour encoding: orange = right twist, cyan = left twist ─────────────
+    const Vec4 col = tau > 0.f
+        ? Vec4{1.f, 0.55f, 0.1f, 0.9f}    // orange: positive torsion
+        : Vec4{0.3f, 0.8f, 1.f,  0.9f};   // cyan:   negative torsion
+
+    // ── (1) dB/ds arrow — direction is -tau*N ────────────────────────────────
+    // Frenet-Serret: dB/ds = -tau * N
+    // So the arrow points along -N when tau > 0, along +N when tau < 0.
+    // Length proportional to |tau|, clamped for visual clarity.
+    const f32  dB_len  = std::clamp(std::abs(tau) * scl * 2.f, 0.02f, 1.5f);
+    const Vec3 dB_dir  = fr.N * (tau > 0.f ? -1.f : 1.f);  // -tau*N normalised
+    submit_arrow(o, dB_dir, col, dB_len, mvp);
+
+    // ── (2) Twist fan in the osculating plane (T-N plane) ────────────────────
+    // The fan sweeps from N toward B, representing the rotation of the
+    // osculating plane about T.  The opening angle is:
+    //   alpha = atan(|tau| / kappa) — the helix angle for a helix with this
+    //   curvature and torsion ratio.  Clamped to at most pi/3 for clarity.
+    if (std::abs(tau) < 1e-4f) return;  // truly planar — skip the fan
+
+    const f32  helix_angle = std::atan(std::abs(tau) / fr.kappa);
+    const f32  fan_angle   = std::clamp(helix_angle, 0.01f, std::numbers::pi_v<f32> / 3.f);
+    const f32  fan_r       = scl * 0.7f;
+    constexpr u32 FAN_SEG  = 20;
+
+    // Fan vertices: origin + arc from N toward (tau>0: -B, tau<0: +B)
+    // Convention: positive tau rotates the osculating plane in the T x N = B
+    // direction, so the fan opens toward -B for tau > 0.
+    const Vec3 side = tau > 0.f ? -fr.B : fr.B;
+
+    auto fan = m_api.acquire(FAN_SEG + 2);
+    Vertex* vf = fan.vertices();
+    vf[0] = { o, col };   // hub at curve point
+    for (u32 i = 0; i <= FAN_SEG; ++i) {
+        const f32 a = (static_cast<f32>(i) / FAN_SEG) * fan_angle;
+        // Rotate from N toward side by angle a in the osculating plane
+        const Vec3 spoke = std::cos(a) * fr.N + std::sin(a) * side;
+        vf[i + 1] = { o + spoke * fan_r, {col.r, col.g, col.b, 0.45f} };
+    }
+    m_api.submit(fan, Topology::TriangleList, DrawMode::VertexColor, col, mvp);
+
+    // Fan outline (line strip) — sharper boundary
+    auto outline = m_api.acquire(FAN_SEG + 2);
+    Vertex* vo   = outline.vertices();
+    vo[0] = { o, col };
+    for (u32 i = 0; i <= FAN_SEG; ++i) {
+        const f32 a    = (static_cast<f32>(i) / FAN_SEG) * fan_angle;
+        const Vec3 sp  = std::cos(a) * fr.N + std::sin(a) * side;
+        vo[i + 1] = { o + sp * fan_r, col };
+    }
+    m_api.submit(outline, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
+}
+
 // ── submit_contour_second_window ──────────────────────────────────────────────
 // Sends heatmap + contours + all particle trails to the second OS window.
 
@@ -608,7 +725,7 @@ void SurfaceSimScene::submit_contour_second_window() {
         m_api.submit2(slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp2);
     }
 
-    // ── Frenet arrows on active curve (curve 0 or snapped) ────────────────────
+    // ── Frenet + torsion overlays on active curve (curve 0 or snapped) ────────
     {
         const int ci = (m_snap_on_curve && m_snap_curve >= 0 &&
                         m_snap_curve < static_cast<int>(m_curves.size()))
@@ -646,6 +763,29 @@ void SurfaceSimScene::submit_contour_second_window() {
                     }
                     m_api.submit2(sc2, Topology::LineStrip, DrawMode::VertexColor,
                                   {0.7f,0.3f,1.f,0.65f}, mvp2);
+                }
+
+                // ── 2D torsion indicator: dB/ds arrow projected onto the xy-plane ──
+                // In the 2D contour view the z-axis is invisible, so we project
+                // the dB/ds = -tau*N vector into the xy-plane.
+                // The result is a short arrow along N_xy coloured by torsion sign.
+                if (m_show_torsion && fr.kappa > 1e-5f && std::abs(fr.tau) > 1e-4f) {
+                    const Vec4 tau_col = fr.tau > 0.f
+                        ? Vec4{1.f, 0.55f, 0.1f, 0.9f}   // orange: right twist
+                        : Vec4{0.3f, 0.8f, 1.f,  0.9f};  // cyan:   left twist
+                    // dB/ds = -tau * N  =>  project to xy
+                    const Vec3 dBds_xy = { -fr.tau * fr.N.x, -fr.tau * fr.N.y, 0.f };
+                    arr(dBds_xy, tau_col);  // reuse arr lambda
+
+                    // Label: small dot at tip coloured by sign
+                    const f32 len = std::clamp(std::abs(fr.tau) * scl * 2.f, 0.02f, 1.5f);
+                    const Vec3 tip_dir = glm::length(dBds_xy) > 1e-6f
+                        ? glm::normalize(dBds_xy) : Vec3{0,1,0};
+                    const Vec3 tip = o + tip_dir * len;
+                    auto dot = m_api.acquire(1);
+                    dot.vertices()[0] = { tip, tau_col };
+                    m_api.submit2(dot, Topology::LineStrip, DrawMode::UniformColor,
+                                  tau_col, mvp2);
                 }
             }
         }
