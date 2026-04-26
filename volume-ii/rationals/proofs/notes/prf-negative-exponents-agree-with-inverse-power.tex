@@ -7,25 +7,138 @@
 \end{remark*}
 
 \begin{theorem*}[Negative Exponents Agree with Inverse Powers]
-Let $F$ be a field, let $x\in F$ with $x\neq 0$, and let $m,n\in\mathbb{Z}$.
+Let $F$ be a field, let $x\in F$ with $x\neq 0$, and let $m\in\mathbb{N}$.
 Then
 \[
-x^{-m}=(x^{-1})^m=(x^m)^{-1}.
+x^{-m} = (x^{-1})^m = (x^m)^{-1}.
 \]
-Moreover, the usual laws of exponents continue to hold for integer exponents.
 \end{theorem*}
 
 \begin{proof}
-TODO.
+\textbf{Professional Standard Proof.}~\\
+The first equality $x^{-m} = (x^{-1})^m$ is the definition of negative
+integer exponents.
+
+For $x^{-m} = (x^m)^{-1}$, we proceed by induction on $m$.
+
+\emph{Base case} $m=0$: $x^0 = 1$ and $(x^0)^{-1} = 1^{-1} = 1$, so
+$x^{-0} = 1 = (x^0)^{-1}$.
+
+\emph{Inductive step}: Assume $(x^k)^{-1} = x^{-k}$ for some $k\in\mathbb{N}$.
+Then
+\[
+(x^{k+1})^{-1}
+= (x^k\cdot x)^{-1}
+= x^{-1}\cdot (x^k)^{-1}
+= x^{-1}\cdot x^{-k}
+= (x^{-1})^1\cdot(x^{-1})^k
+= (x^{-1})^{k+1}
+= x^{-(k+1)}.
+\]
+By induction, $(x^m)^{-1} = x^{-m}$ for all $m\in\mathbb{N}$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+We prove the two equalities separately.
+
+\textbf{Part A: $x^{-m} = (x^{-1})^m$.}
+
+This is immediate from the definition of negative integer exponents
+(\hyperref[def:negative-integer-exponents]{Definition~\ref*{def:negative-integer-exponents}}),
+which states:
+\[
+x^{-m} := (x^{-1})^m
+\]
+for $x\neq 0$ and $m\in\mathbb{N}$.  No computation is required; this equality
+holds by definition.
+
+\textbf{Part B: $x^{-m} = (x^m)^{-1}$.}
+
+We prove $(x^m)^{-1} = (x^{-1})^m$ by induction on $m\in\mathbb{N}$, which
+combined with Part A gives $x^{-m} = (x^m)^{-1}$.
+
+\textbf{Base case} $m = 0$:
+
+By the nonnegative exponent definition, $x^0 = 1$.  Therefore
+$(x^0)^{-1} = 1^{-1} = 1$ by \hyperref[thm:one-inverse-is-one]{Theorem~\ref*{thm:one-inverse-is-one}}.
+Also $(x^{-1})^0 = 1$ by the nonnegative exponent definition applied to $x^{-1}$.
+So $(x^0)^{-1} = 1 = (x^{-1})^0$, establishing the base case.
+
+\textbf{Inductive step}:
+
+Assume the statement holds for some $k\in\mathbb{N}$, i.e.\ $(x^k)^{-1} = (x^{-1})^k$.
+We must show $(x^{k+1})^{-1} = (x^{-1})^{k+1}$.
+
+\textbf{Step B1.} Expand $x^{k+1}$ using the recursive definition.
+
+By \hyperref[def:nonneg-integer-exponents-field]{Definition~\ref*{def:nonneg-integer-exponents-field}},
+\[
+x^{k+1} = x^k \cdot x.
+\]
+
+\textbf{Step B2.} Invert the product.
+
+By the field theorem on the inverse of a product (the inverse reverses order:
+$(a\cdot b)^{-1} = b^{-1}\cdot a^{-1}$, which equals $a^{-1}\cdot b^{-1}$
+by commutativity of multiplication),
+\[
+(x^{k+1})^{-1} = (x^k\cdot x)^{-1} = x^{-1}\cdot (x^k)^{-1}.
+\]
+
+\textbf{Step B3.} Apply the inductive hypothesis.
+
+By the inductive hypothesis, $(x^k)^{-1} = (x^{-1})^k$.  Substituting:
+\[
+x^{-1}\cdot(x^k)^{-1} = x^{-1}\cdot(x^{-1})^k.
+\]
+
+\textbf{Step B4.} Collapse using the recursive definition applied to $x^{-1}$.
+
+By \hyperref[def:nonneg-integer-exponents-field]{Definition~\ref*{def:nonneg-integer-exponents-field}}
+applied to the base element $x^{-1}$:
+\[
+(x^{-1})^{k+1} = (x^{-1})^k \cdot x^{-1} = x^{-1}\cdot(x^{-1})^k.
+\]
+(using commutativity of multiplication for the last step).  Therefore:
+\[
+(x^{k+1})^{-1} = (x^{-1})^{k+1}.
+\]
+
+\textbf{Step B5.} Close the induction.
+
+By the principle of mathematical induction, $(x^m)^{-1} = (x^{-1})^m$ for
+all $m\in\mathbb{N}$.  Combined with Part A:
+\[
+x^{-m} = (x^{-1})^m = (x^m)^{-1}. \qedhere
+\]
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The first equality is definitional.  The second requires induction because
+it asks about the relationship between two independently defined operations:
+natural-number exponentiation $x^m$ (built by repeated multiplication) and
+the field inverse $(-)^{-1}$ (an axiomatically given operation).  The inductive
+step turns on the product-inversion identity $(ab)^{-1} = b^{-1}a^{-1}$, which
+lets the inversion distribute through one factor at a time, consuming $x^k$
+via the inductive hypothesis.  The base case $m=0$ requires
+\hyperref[thm:one-inverse-is-one]{Theorem~\ref*{thm:one-inverse-is-one}} to
+identify $1^{-1} = 1$.
 \end{remark*}
 
 \begin{remark*}[Dependencies]~\\
 \begin{itemize}
   \item \hyperref[def:negative-integer-exponents]{Definition~\ref*{def:negative-integer-exponents}}
+        \textnormal{($x^{-m} := (x^{-1})^m$; this is the first equality)}
+  \item \hyperref[def:nonneg-integer-exponents-field]{Definition~\ref*{def:nonneg-integer-exponents-field}}
+        \textnormal{(recursive definition $x^{k+1} = x^k\cdot x$, used in inductive step)}
   \item \hyperref[def:field]{Definition~\ref*{def:field}}
+        \textnormal{(multiplicative inverse; commutativity of multiplication)}
+  \item \hyperref[thm:one-inverse-is-one]{Theorem~\ref*{thm:one-inverse-is-one}}
+        \textnormal{($1^{-1} = 1$; used in base case)}
+  \item \hyperref[thm:uniqueness-of-multiplicative-inverse]{Theorem~\ref*{thm:uniqueness-of-multiplicative-inverse}}
+        \textnormal{(inverse of a product: $(ab)^{-1} = b^{-1}a^{-1}$)}
+  \item Principle of mathematical induction on $\mathbb{N}$
 \end{itemize}
 \end{remark*}

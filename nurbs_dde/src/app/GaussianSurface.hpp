@@ -3,12 +3,14 @@
 // Option C surface: 6-Gaussian asymmetric + double sinusoidal ripple.
 // Domain: [-6,6]x[-6,6].  Z range: approx [-2.0, +2.2].
 //
-// ── What this provides ────────────────────────────────────────────────────────
-// 1. f(x,y)   — scalar surface height (Option C)
-// 2. grad     — gradient via central FD
-// 3. K, H     — Gaussian / mean curvature via second fundamental form
-// 4. SurfaceFrame — coordinate tangent frame + κ_n / κ_g decomposition
-// 5. AnimatedCurve — one walker particle; SurfaceSimScene owns a vector of them
+// -- What this provides -------------------------------------------------------
+// 1. f(x,y)     -- scalar surface height (Option C)
+// 2. grad       -- gradient via central FD
+// 3. K, H       -- Gaussian / mean curvature via second fundamental form
+// 4. SurfaceFrame -- coordinate tangent frame + kappa_n / kappa_g decomposition
+// 5. AnimatedCurve -- one walker particle; SurfaceSimScene owns a vector of them
+//    Role::Leader  -> shades of blue trail
+//    Role::Chaser  -> shades of red  trail
 // 6. Wireframe + contour tessellation for the two views
 
 #include "math/Scalars.hpp"
@@ -20,7 +22,7 @@
 
 namespace ndde {
 
-// ── GaussianSurface ───────────────────────────────────────────────────────────
+// == GaussianSurface ==========================================================
 
 class GaussianSurface {
 public:
@@ -52,36 +54,36 @@ public:
     static constexpr f32 Z_MAX =  2.2f;
 };
 
-// ── FrenetFrame ───────────────────────────────────────────────────────────────
+// == FrenetFrame ==============================================================
 
 struct FrenetFrame {
     Vec3 T = {1.f, 0.f, 0.f};  ///< unit tangent
     Vec3 N = {0.f, 1.f, 0.f};  ///< principal normal
     Vec3 B = {0.f, 0.f, 1.f};  ///< binormal
-    f32  kappa = 0.f;            ///< curvature κ
-    f32  tau   = 0.f;            ///< torsion τ
+    f32  kappa = 0.f;            ///< curvature kappa
+    f32  tau   = 0.f;            ///< torsion tau
     f32  speed = 0.f;            ///< |p'(t)|
 };
 
-// ── SurfaceFrame ──────────────────────────────────────────────────────────────
+// == SurfaceFrame =============================================================
 // Coordinate tangent frame of p(x,y) = (x,y,f(x,y)) at a foot-point.
 //
-//   Dx = ∂p/∂x = (1, 0, f_x)   |Dx|² = E
-//   Dy = ∂p/∂y = (0, 1, f_y)   |Dy|² = G     Dx·Dy = F
+//   Dx = dp/dx = (1, 0, f_x)   |Dx|^2 = E
+//   Dy = dp/dy = (0, 1, f_y)   |Dy|^2 = G     Dx.Dy = F
 //   n  = unit surface normal
 //
 // With FrenetFrame:
-//   κ_n = κ·(N·n)                  normal curvature   (surface property)
-//   κ_g = κ·|N − (N·n)n|           geodesic curvature (curve-on-surface)
-//   κ²  = κ_n² + κ_g²              Meusnier–Pythagorean identity
+//   kappa_n = kappa*(N.n)              normal curvature   (surface property)
+//   kappa_g = kappa*|N - (N.n)n|      geodesic curvature (curve-on-surface)
+//   kappa^2 = kappa_n^2 + kappa_g^2   Meusnier-Pythagorean identity
 
 struct SurfaceFrame {
-    Vec3 Dx;              ///< ∂p/∂x — unnormalized
-    Vec3 Dy;              ///< ∂p/∂y — unnormalized
+    Vec3 Dx;              ///< dp/dx -- unnormalized
+    Vec3 Dy;              ///< dp/dy -- unnormalized
     Vec3 normal;          ///< unit surface normal
-    f32  E = 0.f;         ///< |Dx|²
-    f32  F = 0.f;         ///< Dx·Dy
-    f32  G = 0.f;         ///< |Dy|²
+    f32  E = 0.f;         ///< |Dx|^2
+    f32  F = 0.f;         ///< Dx.Dy
+    f32  G = 0.f;         ///< |Dy|^2
     f32  kappa_n = 0.f;   ///< normal curvature in T-direction
     f32  kappa_g = 0.f;   ///< geodesic curvature
 };
@@ -98,27 +100,35 @@ make_surface_frame(f32 x, f32 y, const FrenetFrame* fr = nullptr) noexcept
     sf.G      = glm::dot(sf.Dy, sf.Dy);
     sf.normal = GaussianSurface::unit_normal(x, y);
     if (fr && fr->kappa > 1e-6f) {
-        const f32  NdotN = glm::dot(fr->N, sf.normal);
+        const f32 NdotN = glm::dot(fr->N, sf.normal);
         sf.kappa_n = fr->kappa * NdotN;
         sf.kappa_g = fr->kappa * glm::length(fr->N - NdotN * sf.normal);
     }
     return sf;
 }
 
-// ── AnimatedCurve ─────────────────────────────────────────────────────────────
+// == AnimatedCurve ============================================================
 // One walker particle on the surface.
 // SurfaceSimScene owns a std::vector<AnimatedCurve>.
-// Ctrl+L appends a new one at a caller-specified start position.
-// colour_id (0-5) selects the trail hue so particles are distinguishable.
+//
+// Role::Leader  -- Ctrl+L spawns these; trail drawn in shades of blue.
+// Role::Chaser  -- Ctrl+C spawns these; trail drawn in shades of red.
+//
+// colour_slot (0..MAX_SLOTS-1) picks which shade within the role's palette.
+// The scene increments separate counters for leaders and chasers so each new
+// particle gets the next shade in its own palette, cycling if necessary.
 
 class AnimatedCurve {
 public:
-    static constexpr u32  MAX_TRAIL   = 1200;
-    static constexpr f32  WALK_SPEED  = 0.9f;
-    static constexpr u32  MAX_COLOURS = 6u;
+    enum class Role : u8 { Leader, Chaser };
 
+    static constexpr u32 MAX_TRAIL   = 1200;
+    static constexpr f32 WALK_SPEED  = 0.9f;
+    static constexpr u32 MAX_SLOTS   = 4u;   ///< shades per role (4 blues, 4 reds)
+
+    // colour_slot: index within the role's palette (0 = brightest).
     explicit AnimatedCurve(f32 start_x = -4.5f, f32 start_y = -4.0f,
-                           u32 colour_id = 0);
+                           Role role = Role::Leader, u32 colour_slot = 0);
 
     void reset();
     void advance(f32 dt, f32 speed_scale = 1.f);
@@ -130,19 +140,27 @@ public:
     [[nodiscard]] Vec3 head_world() const noexcept;
 
     [[nodiscard]] u32  trail_size()    const noexcept { return static_cast<u32>(m_trail.size()); }
-    [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 3; }
+    [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 4; }
     [[nodiscard]] Vec3 trail_pt(u32 i) const noexcept { return m_trail[i]; }
-    [[nodiscard]] u32  colour_id()     const noexcept { return m_colour_id; }
+    [[nodiscard]] Role role()          const noexcept { return m_role; }
+    [[nodiscard]] u32  colour_slot()   const noexcept { return m_colour_slot; }
 
-    // Trail colour: age_t ∈ [0,1] (0=oldest, 1=head).
-    [[nodiscard]] static Vec4 trail_colour(u32 id, f32 age_t) noexcept;
+    // Trail colour: age_t in [0,1]  (0 = oldest/dim, 1 = head/bright).
+    // Blues for leaders, reds for chasers.  Each slot is a distinct shade.
+    [[nodiscard]] static Vec4 trail_colour(Role role, u32 slot, f32 age_t) noexcept;
+
+    // Convenience: head-dot colour (fully bright, full alpha).
+    [[nodiscard]] Vec4 head_colour() const noexcept {
+        return trail_colour(m_role, m_colour_slot, 1.f);
+    }
 
 private:
     struct WalkState { f32 x, y, phase = 0.f, angle = 0.f; };
 
     WalkState         m_walk;
     std::vector<Vec3> m_trail;
-    u32               m_colour_id;
+    Role              m_role;
+    u32               m_colour_slot;
     f32               m_start_x, m_start_y;
 
     void step(f32 dt, f32 speed_scale);

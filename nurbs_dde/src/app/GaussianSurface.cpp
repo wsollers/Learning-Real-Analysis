@@ -10,8 +10,6 @@ namespace ndde {
 
 // == GaussianSurface::eval ====================================================
 // Option C: 6-Gaussian asymmetric + double sinusoidal ripple.
-// Domain expanded to [-6,6]x[-6,6] for more surface real estate.
-// Z range approximately [-1.8, 2.0] -- see Z_MIN / Z_MAX in the header.
 
 f32 GaussianSurface::eval(f32 x, f32 y) noexcept {
     const f32 g0 =  1.6f * std::exp(-((x-1.5f)*(x-1.5f)/0.6f  + (y-0.4f)*(y-0.4f)/0.9f));
@@ -123,8 +121,7 @@ void GaussianSurface::tessellate_wireframe(std::span<Vertex> out,
         for (u32 j = 0; j < v_lines; ++j) {
             const f32 ya = YMIN + static_cast<f32>(j)   * ys;
             const f32 yb = YMIN + static_cast<f32>(j+1) * ys;
-            const f32 za = eval(x, ya);
-            const f32 zb = eval(x, yb);
+            const f32 za = eval(x, ya), zb = eval(x, yb);
             out[idx++] = { Vec3{x, ya, za}, height_color(za) };
             out[idx++] = { Vec3{x, yb, zb}, height_color(zb) };
         }
@@ -134,8 +131,7 @@ void GaussianSurface::tessellate_wireframe(std::span<Vertex> out,
         for (u32 i = 0; i < u_lines; ++i) {
             const f32 xa = XMIN + static_cast<f32>(i)   * xs;
             const f32 xb = XMIN + static_cast<f32>(i+1) * xs;
-            const f32 za = eval(xa, y);
-            const f32 zb = eval(xb, y);
+            const f32 za = eval(xa, y), zb = eval(xb, y);
             out[idx++] = { Vec3{xa, y, za}, height_color(za) };
             out[idx++] = { Vec3{xb, y, zb}, height_color(zb) };
         }
@@ -149,7 +145,6 @@ u32 GaussianSurface::contour_max_vertices(u32 grid_n, u32 n_levels) noexcept {
 }
 
 // == GaussianSurface::tessellate_contours =====================================
-// Marching-squares to extract level sets as line segments (LineList).
 
 u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
                                           u32 grid_n,
@@ -197,8 +192,10 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
 // AnimatedCurve
 // =============================================================================
 
-AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y, u32 colour_id)
-    : m_colour_id(colour_id)
+AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
+                             Role role, u32 colour_slot)
+    : m_role(role)
+    , m_colour_slot(colour_slot % MAX_SLOTS)
     , m_start_x(start_x)
     , m_start_y(start_y)
 {
@@ -259,40 +256,70 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
     }
 }
 
+// == AnimatedCurve::trail_colour ==============================================
+//
+// Leaders -> blue family.   Chasers -> red family.
+// slot 0 = brightest/most-saturated, slot 3 = softer/more-muted.
+// age_t in [0,1]: 0 = oldest trail point (dim), 1 = head (full brightness).
+//
+// Colour design:
+//   Leaders (blue):
+//     slot 0 -- bright sky-blue      (0.35, 0.75, 1.00)
+//     slot 1 -- royal blue           (0.15, 0.45, 1.00)
+//     slot 2 -- steel blue           (0.30, 0.60, 0.90)
+//     slot 3 -- periwinkle           (0.55, 0.65, 1.00)
+//   Chasers (red):
+//     slot 0 -- bright coral-red     (1.00, 0.25, 0.20)
+//     slot 1 -- crimson              (1.00, 0.05, 0.15)
+//     slot 2 -- tomato               (1.00, 0.40, 0.30)
+//     slot 3 -- rose                 (1.00, 0.35, 0.55)
+
+Vec4 AnimatedCurve::trail_colour(Role role, u32 slot, f32 age_t) noexcept {
+    // Base RGB for each slot, at full brightness.
+    static constexpr Vec3 leader_base[MAX_SLOTS] = {
+        {0.35f, 0.75f, 1.00f},   // slot 0: sky-blue
+        {0.15f, 0.45f, 1.00f},   // slot 1: royal blue
+        {0.30f, 0.60f, 0.90f},   // slot 2: steel blue
+        {0.55f, 0.65f, 1.00f},   // slot 3: periwinkle
+    };
+    static constexpr Vec3 chaser_base[MAX_SLOTS] = {
+        {1.00f, 0.25f, 0.20f},   // slot 0: coral-red
+        {1.00f, 0.05f, 0.15f},   // slot 1: crimson
+        {1.00f, 0.40f, 0.30f},   // slot 2: tomato
+        {1.00f, 0.35f, 0.55f},   // slot 3: rose
+    };
+
+    const u32  s    = slot % MAX_SLOTS;
+    const Vec3 base = (role == Role::Leader) ? leader_base[s] : chaser_base[s];
+
+    // Dim the tail: scale RGB down to ~20% at age=0, full at age=1.
+    const f32 bright = 0.20f + 0.80f * age_t;
+    const f32 alpha  = 0.30f + 0.70f * age_t;
+    return { base.x * bright, base.y * bright, base.z * bright, alpha };
+}
+
 // == AnimatedCurve::frenet_at =================================================
 //
-// Computes T, N, B, kappa, and tau at trail point idx using finite differences
-// on the discrete trail.
+// Computes T, N, B, kappa, tau at trail[idx] using finite differences.
 //
-// CURVATURE (kappa):
-//   Uses three consecutive points: m_trail[idx-1], [idx], [idx+1].
-//   T1 = (p0 - pm) / l1,  T2 = (pp - p0) / l2
-//   N = normalize(T2 - T1),  kappa = |T2 - T1| / l1
+// CURVATURE: 3-point stencil  [idx-1, idx, idx+1]
+//   T1 = normalize(p0 - pm),  T2 = normalize(pp - p0)
+//   N  = normalize(T2 - T1),  kappa = |T2 - T1| / l1
 //
-// TORSION (tau) -- discrete signed-angle formula:
-//   Requires FOUR points: m_trail[idx-2..idx+1].
-//   Three edge-tangents:
-//     T0 = (pm  - m_trail[idx-2]) / la    <- previous segment
-//     T1 = (p0  - pm)             / l1    <- already computed above
-//     T2 = (pp  - p0)             / l2    <- already computed above
-//   Discrete binormals (osculating-plane normals):
-//     B01 = normalize(T0 x T1)
-//     B12 = normalize(T1 x T2)
-//   Signed rotation of the osculating plane from [idx-1] to [idx]:
-//     cos_a = clamp(B01 . B12, -1, 1)
-//     alpha = acos(cos_a)                          (unsigned angle)
-//     sign  = sgn( (B01 x B12) . T1 )             (right-hand about T1)
-//     tau   = sign * alpha / ds,  ds = 0.5*(la + l1)
+// TORSION: 4-point stencil  [idx-2, idx-1, idx, idx+1]
+//   Three edge-tangents T0, T1, T2.
+//   B01 = normalize(T0 x T1),  B12 = normalize(T1 x T2)
+//   tau = signed_angle(B01, B12, T1) / ds
+//   sign = sgn( (B01 x B12).T1 )   [right-hand rule]
+//   ds   = 0.5*(|seg_0| + |seg_1|)
 //
-// INDEX BOUNDS at the head idx = n-2 (where the panel reads):
-//   idx >= 2    =>  n-2 >= 2  =>  n >= 4   (enforced by early-exit n<4)
-//   idx+1 < n   =>  n-1 < n               (always true)
-//   Both satisfied -- this was the root cause of tau = 0 at the head.
+// Index bounds at the head (idx = n-2):
+//   idx-2 = n-4 >= 0  requires n >= 4  (enforced by early-exit guard).
+//   idx+1 = n-1 < n   always true.
 
 FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
     FrenetFrame fr;
     const u32 n = static_cast<u32>(m_trail.size());
-    // Need n>=4 so that idx=n-2 can access m_trail[idx-2]=m_trail[n-4]
     if (n < 4 || idx < 1 || idx >= n-1) return fr;
 
     const Vec3& pm = m_trail[idx-1];
@@ -307,7 +334,7 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
 
     const Vec3 T1 = v1 / l1;
     const Vec3 T2 = v2 / l2;
-    fr.T     = glm::normalize(T1 + T2);  // average tangent at idx
+    fr.T     = glm::normalize(T1 + T2);
     fr.speed = (l1 + l2) * 0.5f;
 
     const Vec3 dT  = T2 - T1;
@@ -321,27 +348,25 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
     }
     fr.B = glm::normalize(glm::cross(fr.T, fr.N));
 
-    // Torsion: signed angle between consecutive binormals, divided by arc-length.
+    // Torsion -- signed rotation of the binormal per unit arc-length.
     if (idx >= 2) {
         const Vec3& pmm = m_trail[idx - 2];
-        const Vec3  va  = pm - pmm;          // prev segment: pmm -> pm
+        const Vec3  va  = pm - pmm;
         const f32   la  = glm::length(va);
         if (la > 1e-9f) {
             const Vec3 T0      = va / la;
-            const Vec3 B01_raw = glm::cross(T0, T1);  // binormal at (idx-1)
-            const Vec3 B12_raw = glm::cross(T1, T2);  // binormal at  idx
+            const Vec3 B01_raw = glm::cross(T0, T1);
+            const Vec3 B12_raw = glm::cross(T1, T2);
             const f32  b01l    = glm::length(B01_raw);
             const f32  b12l    = glm::length(B12_raw);
-
             if (b01l > 1e-9f && b12l > 1e-9f) {
                 const Vec3 B01  = B01_raw / b01l;
                 const Vec3 B12  = B12_raw / b12l;
                 const f32 cos_a = std::clamp(glm::dot(B01, B12), -1.f, 1.f);
                 const f32 alpha = std::acos(cos_a);
-                // Right-hand sign: (B01 x B12) . T1
-                const f32 s    = glm::dot(glm::cross(B01, B12), T1);
-                const f32 sign = (s >= 0.f) ? 1.f : -1.f;
-                const f32 ds   = 0.5f * (la + l1);
+                const f32 s     = glm::dot(glm::cross(B01, B12), T1);
+                const f32 sign  = (s >= 0.f) ? 1.f : -1.f;
+                const f32 ds    = 0.5f * (la + l1);
                 fr.tau = sign * alpha / (ds + 1e-9f);
             }
         }
@@ -349,21 +374,7 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
     return fr;
 }
 
-// == AnimatedCurve::trail_colour ==============================================
-
-Vec4 AnimatedCurve::trail_colour(u32 id, f32 age_t) noexcept {
-    const f32 bright = 0.25f + 0.75f * age_t;
-    const f32 alpha  = 0.25f + 0.75f * age_t;
-    switch (id % MAX_COLOURS) {
-        case 0: return {bright,        bright*0.8f,    1.f,         alpha};
-        case 1: return {1.f,           bright*0.4f,    bright*0.1f, alpha};
-        case 2: return {bright*0.3f,   1.f,            bright*0.4f, alpha};
-        case 3: return {1.f,           bright,         bright*0.05f,alpha};
-        case 4: return {bright*0.8f,   bright*0.2f,    1.f,         alpha};
-        case 5: return {bright*0.1f,   1.f,            1.f,         alpha};
-        default: return {bright, bright, bright, alpha};
-    }
-}
+// == AnimatedCurve::trail_vertex_count / tessellate_trail / head_world ========
 
 u32 AnimatedCurve::trail_vertex_count() const noexcept {
     return static_cast<u32>(m_trail.size());
@@ -374,7 +385,7 @@ void AnimatedCurve::tessellate_trail(std::span<Vertex> out) const {
     if (out.size() < n) return;
     for (u32 i = 0; i < n; ++i) {
         const f32 t = static_cast<f32>(i) / static_cast<f32>(n > 1 ? n-1 : 1);
-        out[i] = { m_trail[i], trail_colour(m_colour_id, t) };
+        out[i] = { m_trail[i], trail_colour(m_role, m_colour_slot, t) };
     }
 }
 

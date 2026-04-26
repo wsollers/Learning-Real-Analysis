@@ -3,11 +3,13 @@
 // Gaussian surface simulation scene.
 //
 // Hotkeys:
-//   Ctrl+F  — toggle Frenet frame  (T, N, B arrows + osculating circle)
-//   Ctrl+D  — toggle surface frame (Dx, Dy tangents + κ_n / κ_g readout)
-//   Ctrl+P  — toggle normal plane patch at particle
-//   Ctrl+Q  — toggle coordinate debug panel
-//   Ctrl+T  — toggle torsion visualisation (τ ribbon + signed readout)
+//   Ctrl+L  -- spawn a new Leader particle  (blue trail)
+//   Ctrl+C  -- spawn a new Chaser particle  (red trail)
+//   Ctrl+F  -- toggle Frenet frame  (T, N, B arrows + osculating circle)
+//   Ctrl+D  -- toggle surface frame (Dx, Dy tangents + kappa_n / kappa_g readout)
+//   Ctrl+P  -- toggle normal plane patch at particle
+//   Ctrl+Q  -- toggle coordinate debug panel
+//   Ctrl+T  -- toggle torsion visualisation (tau ribbon + signed readout)
 
 #include "engine/EngineAPI.hpp"
 #include "app/GaussianSurface.hpp"
@@ -68,9 +70,14 @@ private:
     bool m_ctrl_f_prev = false;
     bool m_ctrl_d_prev = false;
     bool m_ctrl_p_prev = false;
-    bool m_ctrl_t_prev = false;  ///< Ctrl+T: torsion ribbon
+    bool m_ctrl_t_prev = false;
     bool m_ctrl_q_prev = false;
-    bool m_ctrl_l_prev = false;  ///< Ctrl+L: spawn new particle
+    bool m_ctrl_l_prev = false;  ///< Ctrl+L: spawn Leader
+    bool m_ctrl_c_prev = false;  ///< Ctrl+C: spawn Chaser
+
+    // Counters for colour-slot cycling within each role
+    u32 m_leader_count = 0;
+    u32 m_chaser_count = 0;
 
     // ── Hover / snap ──────────────────────────────────────────────────────────
     int  m_snap_curve   = 0;     ///< which curve the snap belongs to

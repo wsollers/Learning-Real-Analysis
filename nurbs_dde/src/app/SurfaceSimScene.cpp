@@ -28,8 +28,9 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     m_vp2d.pan_x       = 0.f;
     m_vp2d.pan_y       = 0.f;
 
-    // First particle — pre-warm so it has a trail on first frame.
-    m_curves.emplace_back(-4.5f, -4.0f, 0u);
+    // First particle is a Leader, slot 0 (brightest blue), pre-warmed.
+    m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u);
+    m_leader_count = 1;
     for (int i = 0; i < 400; ++i)
         m_curves[0].advance(1.f/60.f, 1.f);
 }
@@ -104,21 +105,49 @@ void SurfaceSimScene::handle_hotkeys() {
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_P), m_ctrl_p_prev, m_show_normal_plane);
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_T), m_ctrl_t_prev, m_show_torsion);  // NEW
 
-    // Ctrl+L: spawn a new particle offset from curve 0's head.
+    // Ctrl+L: spawn a new Leader (blue trail).
     const bool ctrl_l = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_L);
-    if (ctrl_l && !m_ctrl_l_prev && !m_curves.empty()) {
-        const Vec3 head = m_curves[0].head_world();
-        const f32  off  = 1.5f;
-        const u32  id   = static_cast<u32>(m_curves.size()) % AnimatedCurve::MAX_COLOURS;
-        const f32 sx = std::clamp(head.x + off * std::cos(static_cast<f32>(id) * 1.1f),
-                                  GaussianSurface::XMIN + 0.5f, GaussianSurface::XMAX - 0.5f);
-        const f32 sy = std::clamp(head.y + off * std::sin(static_cast<f32>(id) * 1.1f),
-                                  GaussianSurface::YMIN + 0.5f, GaussianSurface::YMAX - 0.5f);
-        m_curves.emplace_back(sx, sy, id);
+    if (ctrl_l && !m_ctrl_l_prev) {
+        const Vec3 ref = m_curves.empty()
+            ? Vec3{0.f, 0.f, 0.f}
+            : m_curves[0].head_world();
+        const f32 off = 1.5f;
+        const f32 ang = static_cast<f32>(m_leader_count) * 1.1f;
+        const f32 sx  = std::clamp(ref.x + off * std::cos(ang),
+                                   GaussianSurface::XMIN + 0.5f,
+                                   GaussianSurface::XMAX - 0.5f);
+        const f32 sy  = std::clamp(ref.y + off * std::sin(ang),
+                                   GaussianSurface::YMIN + 0.5f,
+                                   GaussianSurface::YMAX - 0.5f);
+        const u32 slot = m_leader_count % AnimatedCurve::MAX_SLOTS;
+        m_curves.emplace_back(sx, sy, AnimatedCurve::Role::Leader, slot);
+        ++m_leader_count;
         for (int i = 0; i < 60; ++i)
             m_curves.back().advance(1.f/60.f, m_sim_speed);
     }
     m_ctrl_l_prev = ctrl_l;
+
+    // Ctrl+C: spawn a new Chaser (red trail).
+    const bool ctrl_c = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_C);
+    if (ctrl_c && !m_ctrl_c_prev) {
+        const Vec3 ref = m_curves.empty()
+            ? Vec3{0.f, 0.f, 0.f}
+            : m_curves[0].head_world();
+        const f32 off = 2.0f;
+        const f32 ang = static_cast<f32>(m_chaser_count) * 1.3f + 0.5f;
+        const f32 sx  = std::clamp(ref.x + off * std::cos(ang),
+                                   GaussianSurface::XMIN + 0.5f,
+                                   GaussianSurface::XMAX - 0.5f);
+        const f32 sy  = std::clamp(ref.y + off * std::sin(ang),
+                                   GaussianSurface::YMIN + 0.5f,
+                                   GaussianSurface::YMAX - 0.5f);
+        const u32 slot = m_chaser_count % AnimatedCurve::MAX_SLOTS;
+        m_curves.emplace_back(sx, sy, AnimatedCurve::Role::Chaser, slot);
+        ++m_chaser_count;
+        for (int i = 0; i < 60; ++i)
+            m_curves.back().advance(1.f/60.f, m_sim_speed);
+    }
+    m_ctrl_c_prev = ctrl_c;
 
     const bool ctrl_q = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_Q);
     if (ctrl_q && !m_ctrl_q_prev) {
@@ -238,11 +267,15 @@ void SurfaceSimScene::draw_simulation_panel() {
     }
 
     ImGui::Separator();
-    ImGui::TextDisabled("Particles: %zu  [Ctrl+L to add]", m_curves.size());
+    ImGui::TextDisabled("Particles: %zu  (L=%u  C=%u)  [Ctrl+L leader  Ctrl+C chaser]",
+        m_curves.size(), m_leader_count, m_chaser_count);
     ImGui::SameLine();
     if (ImGui::SmallButton("Clear all")) {
         m_curves.clear();
-        m_curves.emplace_back(-4.5f, -4.0f, 0u);
+        m_leader_count = 0;
+        m_chaser_count = 0;
+        m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u);
+        m_leader_count = 1;
     }
 
     ImGui::SeparatorText("At head  (particle 0)");
@@ -488,7 +521,7 @@ void SurfaceSimScene::submit_trail_3d(const AnimatedCurve& c, const Mat4& mvp) {
 
 void SurfaceSimScene::submit_head_dot_3d(const AnimatedCurve& c, const Mat4& mvp) {
     const Vec3 hp  = c.head_world();
-    const Vec4 col = AnimatedCurve::trail_colour(c.colour_id(), 1.f);
+    const Vec4 col = c.head_colour();
     auto slice = m_api.acquire(1);
     slice.vertices()[0] = { hp, col };
     m_api.submit(slice, Topology::LineStrip, DrawMode::UniformColor, col, mvp);
@@ -720,7 +753,7 @@ void SurfaceSimScene::submit_contour_second_window() {
         for (u32 i = 0; i < nt; ++i) {
             const Vec3 pt = c.trail_pt(i);
             const f32  t  = static_cast<f32>(i)/static_cast<f32>(nt-1);
-            vt[i] = { Vec3{pt.x,pt.y,0}, AnimatedCurve::trail_colour(c.colour_id(), t) };
+            vt[i] = { Vec3{pt.x,pt.y,0}, AnimatedCurve::trail_colour(c.role(), c.colour_slot(), t) };
         }
         m_api.submit2(slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp2);
     }

@@ -7,24 +7,239 @@
 \end{remark*}
 
 \begin{theorem*}[Integer Exponent Addition Law]
-Let $(F,+,\cdot,0,1)$ be a field, let $q\in F\setminus\{0\}$, and let
-$a,b\in\mathbb{Z}$. Then
+Let $F$ be a field, let $q\in F\setminus\{0\}$, and let $a,b\in\mathbb{Z}$.
+Then
 \[
-q^a q^b=q^{a+b}.
+q^a\cdot q^b = q^{a+b}.
 \]
 \end{theorem*}
 
 \begin{proof}
-TODO.
+\textbf{Professional Standard Proof.}~\\
+We split on the signs of $a$ and $b$.  Write $a = \varepsilon_a|a|$ and
+$b = \varepsilon_b|b|$ where $\varepsilon_a,\varepsilon_b\in\{+1,-1\}$ and
+$|a|,|b|\in\mathbb{N}$.
+
+\emph{Case 1: $a,b\geq 0$.}
+This is the natural-number exponent addition law, proved by induction on $b$:
+the base case $q^a\cdot q^0 = q^a\cdot 1 = q^a = q^{a+0}$ is immediate, and
+the inductive step
+$q^a\cdot q^{b+1} = q^a\cdot(q^b\cdot q) = (q^a\cdot q^b)\cdot q
+= q^{a+b}\cdot q = q^{(a+b)+1} = q^{a+(b+1)}$ follows by associativity and
+the inductive hypothesis.
+
+\emph{Case 2: $a\geq 0$, $b<0$.}
+Write $b = -n$ with $n\in\mathbb{N}$, $n\geq 1$.  Sub-case $a\geq n$:
+\[
+q^a\cdot q^{-n}
+= q^a\cdot(q^n)^{-1}
+= q^{a-n}\cdot q^n\cdot(q^n)^{-1}
+= q^{a-n}\cdot 1
+= q^{a-n}
+= q^{a+b},
+\]
+where $q^a = q^{a-n}\cdot q^n$ is the natural-number law from Case 1.
+Sub-case $a < n$:
+\[
+q^a\cdot q^{-n}
+= q^a\cdot(q^n)^{-1}
+= (q^a)^{-1}\cdot\bigl((q^a)^{-1}\bigr)^{-1}\cdot q^a\cdot(q^n)^{-1}
+\]
+Alternatively, note $q^{-n} = (q^{-1})^n$ and use
+\[
+q^a\cdot(q^{-1})^n = (q^{-1})^{n-a}\cdot\bigl(q^a\cdot(q^{-1})^a\bigr)
+= (q^{-1})^{n-a}\cdot 1^{\,} = q^{-(n-a)} = q^{a-n} = q^{a+b}.
+\]
+
+\emph{Case 3: $a<0$, $b\geq 0$.}  Symmetric to Case 2 by commutativity of
+multiplication.
+
+\emph{Case 4: $a,b<0$.}  Write $a = -m$, $b = -n$ with $m,n\in\mathbb{N}$,
+$m,n\geq 1$.  Then
+\[
+q^{-m}\cdot q^{-n}
+= (q^m)^{-1}\cdot(q^n)^{-1}
+= (q^n\cdot q^m)^{-1}
+= (q^{m+n})^{-1}
+= q^{-(m+n)}
+= q^{a+b}.
+\]
+In all cases $q^a\cdot q^b = q^{a+b}$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+The integers $a,b$ each have a sign, giving four combinations.  We handle
+each one explicitly.  Throughout, $q\in F\setminus\{0\}$ is fixed, so all
+powers of $q$ and $q^{-1}$ are well-defined.
+
+\textbf{Preliminary lemma (natural-number law).}
+
+Before splitting on signs we record the natural-number case as a lemma, since
+all other cases reduce to it.
+
+\begin{quote}
+\textit{Claim}: For all $a,b\in\mathbb{N}$, $q^a\cdot q^b = q^{a+b}$.
+\end{quote}
+
+\textit{Proof of claim by induction on $b$}.
+
+\textit{Base case} $b=0$:
+\[
+q^a\cdot q^0 = q^a\cdot 1 = q^a = q^{a+0}.
+\]
+Here $q^0 = 1$ by \hyperref[def:nonneg-integer-exponents-field]{Definition~\ref*{def:nonneg-integer-exponents-field}},
+and $q^a\cdot 1 = q^a$ by the multiplicative identity axiom.
+
+\textit{Inductive step}: Assume $q^a\cdot q^k = q^{a+k}$ for some $k\in\mathbb{N}$.
+Then
+\[
+q^a\cdot q^{k+1}
+= q^a\cdot(q^k\cdot q)
+= (q^a\cdot q^k)\cdot q
+= q^{a+k}\cdot q
+= q^{(a+k)+1}
+= q^{a+(k+1)}.
+\]
+Step 1 uses $q^{k+1} = q^k\cdot q$ from the recursive definition.
+Step 2 uses associativity of multiplication.
+Step 3 uses the inductive hypothesis.
+Step 4 uses the recursive definition again.
+Step 5 uses associativity of addition in $\mathbb{N}$.
+
+By induction, the natural-number law holds for all $a,b\in\mathbb{N}$.
+$\square$
+
+\medskip
+
+We now proceed through the four sign cases for $a,b\in\mathbb{Z}$.
+
+\medskip
+
+\textbf{Case 1: $a\geq 0$ and $b\geq 0$.}
+
+This is the natural-number law just proved.  $q^a\cdot q^b = q^{a+b}$.
+
+\medskip
+
+\textbf{Case 2: $a\geq 0$ and $b < 0$.}
+
+Write $b = -n$ where $n\in\mathbb{N}$, $n\geq 1$.
+
+\textbf{Sub-case 2a: $a\geq n$.}
+
+Write $a = (a-n) + n$ with $a-n\in\mathbb{N}$.  Then by the natural-number law,
+$q^a = q^{a-n}\cdot q^n$.  Therefore:
+\[
+q^a\cdot q^{-n}
+= q^{a-n}\cdot q^n\cdot(q^n)^{-1}
+= q^{a-n}\cdot\bigl(q^n\cdot(q^n)^{-1}\bigr)
+= q^{a-n}\cdot 1
+= q^{a-n}
+= q^{a+(-n)}
+= q^{a+b}.
+\]
+Step 1 uses $q^{-n} = (q^n)^{-1}$
+(\hyperref[thm:negative-exponents-agree-with-inverse-power]{Theorem~\ref*{thm:negative-exponents-agree-with-inverse-power}}).
+Step 2 uses associativity.
+Step 3 uses the multiplicative inverse axiom $q^n\cdot(q^n)^{-1} = 1$.
+Step 4 uses the multiplicative identity axiom.
+
+\textbf{Sub-case 2b: $a < n$.}
+
+Write $n = a + (n-a)$ with $n-a\in\mathbb{N}$, $n-a\geq 1$.  Then by the
+natural-number law, $q^n = q^a\cdot q^{n-a}$.  Therefore:
+\[
+q^a\cdot q^{-n}
+= q^a\cdot(q^a\cdot q^{n-a})^{-1}
+= q^a\cdot(q^{n-a})^{-1}\cdot(q^a)^{-1}
+= \bigl(q^a\cdot(q^a)^{-1}\bigr)\cdot(q^{n-a})^{-1}
+= 1\cdot(q^{n-a})^{-1}
+= q^{-(n-a)}
+= q^{a-n}
+= q^{a+b}.
+\]
+Step 1 uses $q^{-n} = (q^n)^{-1}$ and $q^n = q^a\cdot q^{n-a}$.
+Step 2 uses the product-inversion identity $(uv)^{-1} = v^{-1}u^{-1}$.
+Step 3 uses commutativity and associativity to regroup.
+Step 4 uses the multiplicative inverse axiom.
+Step 5 uses $q^{-(n-a)} = (q^{n-a})^{-1}$ and that $a + b = a - n = -(n-a)$.
+
+\textbf{Sub-case 2c: $a = n$.}
+
+\[
+q^a\cdot q^{-n} = q^n\cdot(q^n)^{-1} = 1 = q^0 = q^{n+(-n)} = q^{a+b}.
+\]
+
+\medskip
+
+\textbf{Case 3: $a < 0$ and $b\geq 0$.}
+
+Write $a = -m$ where $m\in\mathbb{N}$, $m\geq 1$.  By commutativity of
+multiplication, $q^a\cdot q^b = q^b\cdot q^a$.  This reduces to Case 2
+with the roles of $a$ and $b$ swapped (and $a+b = b+a$).  Therefore
+$q^a\cdot q^b = q^{a+b}$.
+
+\medskip
+
+\textbf{Case 4: $a < 0$ and $b < 0$.}
+
+Write $a = -m$ and $b = -n$ where $m,n\in\mathbb{N}$, $m,n\geq 1$.  Then:
+\[
+q^{-m}\cdot q^{-n}
+= (q^m)^{-1}\cdot(q^n)^{-1}
+= (q^n\cdot q^m)^{-1}
+= (q^{m+n})^{-1}
+= q^{-(m+n)}
+= q^{(-m)+(-n)}
+= q^{a+b}.
+\]
+Step 1 uses \hyperref[thm:negative-exponents-agree-with-inverse-power]{Theorem~\ref*{thm:negative-exponents-agree-with-inverse-power}}
+twice.
+Step 2 uses the product-inversion identity $(uv)^{-1} = v^{-1}u^{-1}$ and
+commutativity of multiplication.
+Step 3 uses the natural-number law on $q^n\cdot q^m = q^{m+n}$.
+Step 4 uses \hyperref[thm:negative-exponents-agree-with-inverse-power]{Theorem~\ref*{thm:negative-exponents-agree-with-inverse-power}}.
+Step 5 uses $-(m+n) = (-m)+(-n)$ in $\mathbb{Z}$.
+
+\textbf{Conclusion.}
+
+In all four cases $q^a\cdot q^b = q^{a+b}$. \qedhere
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The proof is a case split on $\mathrm{sgn}(a)$ and $\mathrm{sgn}(b)$, giving
+four main cases (Case 2 further splits into three sub-cases by comparing $a$
+and $n = -b$).  The natural-number case is the inductive spine; every other
+case reduces to it plus the identity $(q^n)^{-1} = q^{-n}$ and the
+product-inversion identity $(uv)^{-1} = v^{-1}u^{-1}$.
+
+The key insight in Case 2 is that $q^a\cdot(q^n)^{-1}$ requires cancelling
+$q^{\min(a,n)}$ factors, leaving either a positive or negative residual power
+depending on whether $a\geq n$ or $a < n$.  Case 4 is cleaner: two negative
+exponents convert to two inverses, whose product inverts as a whole via the
+product-inversion identity, and the natural-number law handles the sum of the
+absolute values.
 \end{remark*}
 
 \begin{remark*}[Dependencies]~\\
 \begin{itemize}
+  \item \hyperref[def:nonneg-integer-exponents-field]{Definition~\ref*{def:nonneg-integer-exponents-field}}
+        \textnormal{(recursive definition: $q^0=1$, $q^{k+1}=q^k\cdot q$)}
   \item \hyperref[def:negative-integer-exponents]{Definition~\ref*{def:negative-integer-exponents}}
+        \textnormal{($q^{-n} := (q^{-1})^n$)}
+  \item \hyperref[thm:negative-exponents-agree-with-inverse-power]{Theorem~\ref*{thm:negative-exponents-agree-with-inverse-power}}
+        \textnormal{($q^{-n} = (q^n)^{-1}$; used in Cases 2, 3, 4)}
   \item \hyperref[def:field]{Definition~\ref*{def:field}}
+        \textnormal{(associativity and commutativity of multiplication;
+        multiplicative inverse axiom; multiplicative identity axiom)}
+  \item \hyperref[thm:uniqueness-of-multiplicative-inverse]{Theorem~\ref*{thm:uniqueness-of-multiplicative-inverse}}
+        \textnormal{(product-inversion identity $(uv)^{-1} = v^{-1}u^{-1}$;
+        used in Sub-case 2b and Case 4)}
+  \item Principle of mathematical induction on $\mathbb{N}$
+        \textnormal{(used in the preliminary natural-number lemma)}
+  \item Arithmetic of $\mathbb{Z}$: $-(m+n) = (-m)+(-n)$, associativity of
+        integer addition
 \end{itemize}
 \end{remark*}
