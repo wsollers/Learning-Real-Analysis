@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-27 13:39:25
+Generated: 2026-04-27 18:07:17
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 174
+Total: 170
 
 ## volume-ii / rationals
 
@@ -12,11 +12,7 @@ Chapter: `volume-ii/rationals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
-| thm | `thm:rational-fraction-negation` | Negation Rule for Rational Fractions | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-negation.tex` |
-| thm | `thm:rational-fraction-reciprocal` | Reciprocal of a Nonzero Rational Fraction | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-reciprocal.tex` |
 | thm | `thm:q-is-ordered-field` | $\mathbb{Q}$ Is an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-q-is-ordered-field.tex` |
-| thm | `thm:squares-nonnegative` | Squares Are Nonnegative | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-squares-nonnegative.tex` |
-| thm | `thm:inverse-positive` | Positive Elements Have Positive Inverses | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-inverse-positive.tex` |
 | thm | `thm:multiply-positive` | Multiplication by a Positive Element Preserves Order | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-multiply-positive.tex` |
 | thm | `thm:multiply-negative` | Multiplication by a Negative Element Reverses Order | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-multiply-negative.tex` |
 | thm | `thm:one-positive` | $1$ Is Positive | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-one-positive.tex` |
