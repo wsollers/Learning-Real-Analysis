@@ -1,0 +1,224 @@
+% ---------------------------------------------------------
+% Definition — Differential Equation
+% ---------------------------------------------------------
+
+\begin{definition}[Differential Equation]
+A \textbf{differential equation} is an equation whose unknown is a function and whose terms involve one or more derivatives of that function.
+
+For an unknown function $y=y(t)$, a differential equation may be written in the form
+\[
+F(t,y,y',y'',\dots,y^{(n)})=0.
+\]
+Here $t$ is the independent variable, $y(t)$ is the unknown function, and
+\[
+y',y'',\dots,y^{(n)}
+\]
+are derivatives of $y$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+At the computational level, a differential equation describes how a quantity changes. Instead of giving the function $y(t)$ directly, it gives a relation involving the rate of change of $y(t)$, and possibly higher-order rates of change.
+\end{remark*}
+
+\begin{example}[A First Differential Equation]
+The equation
+\[
+y'=3y
+\]
+is a differential equation because it relates the unknown function $y$ to its derivative $y'$.
+
+A solution is
+\[
+y(t)=Ce^{3t},
+\]
+where $C$ is a constant. Indeed,
+\[
+y'(t)=3Ce^{3t}=3y(t).
+\]
+\end{example}
+
+% ---------------------------------------------------------
+% Definition — Order of a Differential Equation
+% ---------------------------------------------------------
+
+\begin{definition}[Order of a Differential Equation]
+The \textbf{order} of a differential equation is the highest derivative of the unknown function that appears in the equation.
+
+For example, if an equation involving an unknown function $y=y(t)$ can be written in the form
+\[
+F(t,y,y',y'',\dots,y^{(n)})=0
+\]
+and $y^{(n)}$ is the highest derivative that appears, then the differential equation has \textbf{order} $n$.
+\end{definition}
+
+\begin{example}[Orders of Differential Equations]
+The equation
+\[
+y'=3y
+\]
+is first order, since the highest derivative appearing is $y'$.
+
+The equation
+\[
+y''+4y'+5y=0
+\]
+is second order, since the highest derivative appearing is $y''$.
+
+The equation
+\[
+y^{(4)}-t y''+y=0
+\]
+is fourth order, since the highest derivative appearing is $y^{(4)}$.
+\end{example}
+
+% ---------------------------------------------------------
+% Definition — Solution of a Differential Equation
+% ---------------------------------------------------------
+
+\begin{definition}[Solution of a Differential Equation]
+A \textbf{solution} of a differential equation is a function that satisfies the equation on a specified interval.
+
+More precisely, if a differential equation is written in the form
+\[
+F(t,y,y',y'',\dots,y^{(n)})=0,
+\]
+then a solution on an interval $I$ is a function $y:I\to\mathbb{R}$ such that $y$ has all derivatives required by the equation and
+\[
+F(t,y(t),y'(t),y''(t),\dots,y^{(n)}(t))=0
+\]
+for every $t\in I$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A solution is not a number; it is a function. The function solves the differential equation when substituting the function and its derivatives into the equation makes the equation true for every point in the interval under consideration.
+\end{remark*}
+
+\begin{example}[Checking a Solution]
+The function
+\[
+y(t)=Ce^{3t}
+\]
+is a solution of
+\[
+y'=3y
+\]
+on $\mathbb{R}$, because
+\[
+y'(t)=3Ce^{3t}=3y(t)
+\]
+for every $t\in\mathbb{R}$.
+\end{example}
+
+
+
+% ---------------------------------------------------------
+% Definition — Autonomous Differential Equation
+% ---------------------------------------------------------
+
+\begin{definition}[Autonomous Differential Equation]
+An \textbf{autonomous differential equation} is a differential equation in which the independent variable does not appear explicitly.
+
+For a first-order ordinary differential equation, an autonomous equation has the form
+\[
+y'=f(y),
+\]
+where the rate of change of $y$ depends only on the current value of $y$, not directly on time $t$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+An autonomous differential equation describes a system whose rule of evolution does not change with time. If the system is in the same state $y$ at two different times, then the differential equation assigns the same rate of change at both times.
+\end{remark*}
+
+\begin{example}[Autonomous Equations]
+The equation
+\[
+y'=3y
+\]
+is autonomous, since the right-hand side depends only on $y$.
+
+The equation
+\[
+y'=t+y
+\]
+is not autonomous, since the independent variable $t$ appears explicitly.
+\end{example}
+
+
+% ---------------------------------------------------------
+% Definition — Non-Autonomous Differential Equation
+% ---------------------------------------------------------
+
+\begin{definition}[Non-Autonomous Differential Equation]
+A \textbf{non-autonomous differential equation} is a differential equation in which the independent variable appears explicitly.
+
+For a first-order ordinary differential equation, a non-autonomous equation has the form
+\[
+y'=f(t,y),
+\]
+where the rate of change of $y$ may depend both on the current value of $y$ and on the independent variable $t$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A non-autonomous differential equation describes a system whose rule of evolution may change over time. Even if the system has the same state $y$ at two different times, the differential equation may assign different rates of change because the value of $t$ may be different.
+\end{remark*}
+
+\begin{example}[Non-Autonomous Equations]
+The equation
+\[
+y'=t+y
+\]
+is non-autonomous, since the independent variable $t$ appears explicitly.
+
+The equation
+\[
+y'=3y
+\]
+is autonomous, not non-autonomous, since the right-hand side depends only on $y$.
+\end{example}
+
+
+% ---------------------------------------------------------
+% Definition — Linear Differential Equation
+% ---------------------------------------------------------
+
+\begin{definition}[Linear Differential Equation]
+A differential equation is called \textbf{linear} if the unknown function and its derivatives appear only to the first power and are not multiplied together.
+
+An $n$th-order linear ordinary differential equation for an unknown function $y=y(t)$ has the form
+\[
+a_n(t)y^{(n)}+a_{n-1}(t)y^{(n-1)}+\cdots+a_1(t)y'+a_0(t)y=g(t),
+\]
+where the coefficient functions
+\[
+a_0(t),a_1(t),\dots,a_n(t)
+\]
+and the forcing term $g(t)$ are given functions of the independent variable $t$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+Linearity means that the equation is linear in the unknown function $y$ and its derivatives. The coefficients may depend on $t$, but they may not depend on $y$ or its derivatives. Thus terms such as $y^2$, $yy'$, $\sin(y)$, and $(y')^2$ make an equation nonlinear.
+\end{remark*}
+
+\begin{example}[Linear and Nonlinear Equations]
+The equation
+\[
+y''+3t y'+2y=\sin t
+\]
+is linear.
+
+The equation
+\[
+y''+y^2=0
+\]
+is nonlinear because it contains the term $y^2$.
+
+The equation
+\[
+y'+yy'=t
+\]
+is nonlinear because it contains the product $yy'$.
+\end{example}
+
+
+
+
