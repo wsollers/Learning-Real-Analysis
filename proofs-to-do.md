@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-27 13:15:34
+Generated: 2026-04-27 13:39:25
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 175
+Total: 174
 
 ## volume-ii / rationals
 
@@ -12,7 +12,6 @@ Chapter: `volume-ii/rationals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
-| thm | `thm:rational-fraction-multiplication` | Fraction Multiplication Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-multiplication.tex` |
 | thm | `thm:rational-fraction-negation` | Negation Rule for Rational Fractions | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-negation.tex` |
 | thm | `thm:rational-fraction-reciprocal` | Reciprocal of a Nonzero Rational Fraction | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-reciprocal.tex` |
 | thm | `thm:q-is-ordered-field` | $\mathbb{Q}$ Is an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-q-is-ordered-field.tex` |
