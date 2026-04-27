@@ -11,6 +11,12 @@ import yaml
 
 DEFAULT_TYPES = {"thm", "lem", "prop", "cor"}
 TODO_MARKERS = ("TODO", "TBD", "proof omitted", "to be written")
+TODO_REGEXES = [
+    re.compile(r"\bTODO\b", re.IGNORECASE),
+    re.compile(r"\bTBD\b", re.IGNORECASE),
+    re.compile(r"\bproof omitted\b", re.IGNORECASE),
+    re.compile(r"\bto be written\b", re.IGNORECASE),
+]
 
 
 @dataclass(frozen=True)
@@ -181,8 +187,7 @@ def format_proofs_to_do_markdown(todos: list[ProofTodo]) -> str:
 
 def _contains_todo_marker(path: Path) -> bool:
     text = path.read_text(encoding="utf-8", errors="ignore")
-    lowered = text.lower()
-    return any(marker.lower() in lowered for marker in TODO_MARKERS)
+    return any(pattern.search(text) for pattern in TODO_REGEXES)
 
 
 def _skip_path(path: Path) -> bool:

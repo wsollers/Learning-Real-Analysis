@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-25 03:02:29
+Generated: 2026-04-27 13:15:34
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 196
+Total: 175
 
 ## volume-ii / rationals
 
@@ -12,30 +12,9 @@ Chapter: `volume-ii/rationals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
-| thm | `thm:ec-multiplication` | Multiplication of Equivalence Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-multiplication.tex` |
-| thm | `thm:ec-negation` | Negation of an Equivalence Class | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-negation.tex` |
-| thm | `thm:ec-subtraction` | Subtraction of Equivalence Classes | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-subtraction.tex` |
-| thm | `thm:q-is-integral-domain` | $\mathbb{Q}$ Is an Integral Domain | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-q-is-integral-domain.tex` |
-| thm | `thm:q-is-field` | $\mathbb{Q}$ Is a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-q-is-field.tex` |
-| thm | `thm:ec-division-by-one` | Division by the Class of One | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-division-by-one.tex` |
-| thm | `thm:ec-reciprocal` | Reciprocal of a Nonzero Equivalence Class | Proof file exists but still contains a TODO marker. | `notes\construction-of-rationals\notes-construction-of-rationals.tex` | `proofs\notes\prf-ec-reciprocal.tex` |
-| thm | `thm:negative-exponents-agree-with-inverse-power` | Negative Exponents Agree with Inverse Powers | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-negative-exponents-agree-with-inverse-power.tex` |
-| thm | `thm:integer-exponent-addition-law` | Integer Exponent Addition Law | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-integer-exponent-addition-law.tex` |
-| thm | `thm:power-of-a-power-in-field` | Power of a Power in a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-power-of-a-power-in-field.tex` |
-| thm | `thm:finite-integral-domain-is-field` | Every Finite Integral Domain Is a Field | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-finite-integral-domain-is-field.tex` |
-| thm | `thm:zero-product` | Zero Product | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-zero-product.tex` |
-| thm | `thm:additive-cancellation` | Additive Cancellation | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-additive-cancellation.tex` |
-| thm | `thm:double-negation` | Double Negation | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-double-negation.tex` |
-| thm | `thm:negation-of-product` | Negation of a Product | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-negation-of-product.tex` |
-| cor | `cor:product-of-negatives` | Product of Negatives | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-product-of-negatives.tex` |
-| thm | `thm:multiplicative-cancellation` | Multiplicative Cancellation | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-multiplicative-cancellation.tex` |
-| thm | `thm:uniqueness-of-multiplicative-inverse` | Uniqueness of Multiplicative Inverse | Proof file exists but still contains a TODO marker. | `notes\field-structure\notes-field-structure.tex` | `proofs\notes\prf-uniqueness-of-multiplicative-inverse.tex` |
-| thm | `thm:rational-fraction-addition` | Fraction Addition Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-addition.tex` |
-| thm | `thm:rational-fraction-subtraction` | Fraction Subtraction Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-subtraction.tex` |
 | thm | `thm:rational-fraction-multiplication` | Fraction Multiplication Rule in $\mathbb{Q}$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-multiplication.tex` |
 | thm | `thm:rational-fraction-negation` | Negation Rule for Rational Fractions | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-negation.tex` |
 | thm | `thm:rational-fraction-reciprocal` | Reciprocal of a Nonzero Rational Fraction | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-rational-fraction-reciprocal.tex` |
-| thm | `thm:one-inverse-is-one` | The Reciprocal of $1$ Is $1$ | Proof file exists but still contains a TODO marker. | `notes\rational-algebra\notes-rational-algebra.tex` | `proofs\notes\prf-one-inverse-is-one.tex` |
 | thm | `thm:q-is-ordered-field` | $\mathbb{Q}$ Is an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-q-is-ordered-field.tex` |
 | thm | `thm:squares-nonnegative` | Squares Are Nonnegative | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-squares-nonnegative.tex` |
 | thm | `thm:inverse-positive` | Positive Elements Have Positive Inverses | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-inverse-positive.tex` |
