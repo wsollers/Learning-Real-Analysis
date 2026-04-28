@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-27 23:32:06
+Generated: 2026-04-28 11:10:17
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 158
+Total: 156
 
 ## volume-ii / rationals
 
@@ -13,8 +13,6 @@ Chapter: `volume-ii/rationals`
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
 | thm | `thm:q-is-ordered-field` | $\mathbb{Q}$ Is an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-q-is-ordered-field.tex` |
-| thm | `thm:ordered-fields-are-densely-ordered` | Ordered Fields Are Densely Ordered | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-ordered-fields-are-densely-ordered.tex` |
-| cor | `cor:q-has-no-adjacent-points` | The Rational Numbers Have No Adjacent Points | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-adjacent-points.tex` |
 | lem | `lem:rational-perturbation-lemma` | Rational Perturbation Lemma | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-perturbation-lemma.tex` |
 | thm | `thm:rational-chain-with-small-steps` | Rational Chain with Uniformly Small Steps | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-chain-with-small-steps.tex` |
 | thm | `thm:sqrt2-irrational` | No Rational Number Has Square $2$ | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-sqrt2-irrational.tex` |
