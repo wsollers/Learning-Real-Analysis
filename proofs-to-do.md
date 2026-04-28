@@ -1,10 +1,10 @@
 # Proofs To Do
 
-Generated: 2026-04-27 23:00:09
+Generated: 2026-04-27 23:32:06
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 160
+Total: 158
 
 ## volume-ii / rationals
 
@@ -15,11 +15,8 @@ Chapter: `volume-ii/rationals`
 | thm | `thm:q-is-ordered-field` | $\mathbb{Q}$ Is an Ordered Field | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-q-is-ordered-field.tex` |
 | thm | `thm:ordered-fields-are-densely-ordered` | Ordered Fields Are Densely Ordered | Proof file exists but still contains a TODO marker. | `notes\order-axioms\notes-order-axioms.tex` | `proofs\notes\prf-ordered-fields-are-densely-ordered.tex` |
 | cor | `cor:q-has-no-adjacent-points` | The Rational Numbers Have No Adjacent Points | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-adjacent-points.tex` |
-| thm | `thm:q-has-no-minimum-positive-element` | $\mathbb{Q}$ Has No Minimum Positive Element | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-q-has-no-minimum-positive-element.tex` |
-| lem | `lem:rational-upper-lower-perturbation` | Upper/Lower Perturbation Lemma, Rational Version | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-upper-lower-perturbation.tex` |
 | lem | `lem:rational-perturbation-lemma` | Rational Perturbation Lemma | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-perturbation-lemma.tex` |
 | thm | `thm:rational-chain-with-small-steps` | Rational Chain with Uniformly Small Steps | Proof file exists but still contains a TODO marker. | `notes\density-of-q\archimedean-property\notes-rational-density-and-order.tex` | `proofs\notes\prf-rational-chain-with-small-steps.tex` |
-| thm | `thm:mediant-inequality` | Mediant Inequality | Proof file exists but still contains a TODO marker. | `notes\density-of-q\mediants-stern-brocot\notes-mediant.tex` | `proofs\notes\prf-mediant-inequality.tex` |
 | thm | `thm:sqrt2-irrational` | No Rational Number Has Square $2$ | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-sqrt2-irrational.tex` |
 | lem | `lem:rational-square-bracketing` | Rational Square Bracketing | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-rational-square-bracketing.tex` |
 | thm | `thm:rational-square-approximation-from-above` | Rational Square Approximation from Above | Proof file exists but still contains a TODO marker. | `notes\gaps-sqrt2\notes-gaps-in-rationals.tex` | `proofs\notes\prf-rational-square-approximation-from-above.tex` |
@@ -34,6 +31,7 @@ Chapter: `volume-ii/reals`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
+| thm | `thm:real-upper-lower-perturbation` | Upper/Lower Perturbation Lemma in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\foundations\notes-intervals.tex` | `proofs\notes\prf-real-upper-lower-perturbation.tex` |
 | cor | `cor:irrationals-not-closed-under-multiplication` | The Irrationals Are Not Closed Under Multiplication | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-irrationals-not-closed-under-multiplication.tex` |
 | cor | `cor:q-not-discrete-in-r` | $\mathbb{Q}$ Is Not Discrete in $\mathbb{R}$ | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrationals-as-a-subset.tex` | `proofs\notes\prf-q-not-discrete-in-r.tex` |
 | thm | `thm:rational-plus-irrational-is-irrational` | Rational Plus Irrational Is Irrational | Proof file exists but still contains a TODO marker. | `notes\irrationals\notes-irrational-arithmetic.tex` | `proofs\notes\prf-rational-plus-irrational-is-irrational.tex` |
