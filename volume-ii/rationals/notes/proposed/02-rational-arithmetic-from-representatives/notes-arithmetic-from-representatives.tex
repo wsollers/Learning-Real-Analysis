@@ -1,0 +1,266 @@
+% =========================================================
+% Defining Rational Arithmetic from Representatives
+% =========================================================
+
+\section{Defining Rational Arithmetic from Representatives}
+\label{sec:rational-arithmetic-from-representatives}
+
+This section begins where the quotient construction leaves off: operations are first written using representatives, and then their well-definedness is proved so that they descend to genuine operations on rational numbers.
+
+\begin{definition}[Addition and multiplication]
+\label{def:rational-operations}
+
+Let $[(a,b)],[(c,d)]\in\mathbb{Q}$, where $(a,b),(c,d)\in W$.  Define
+\[
+[(a,b)] + [(c,d)] := [(ad+bc,bd)]
+\]
+and
+\[
+[(a,b)]\cdot[(c,d)] := [(ac,bd)].
+\]
+
+\end{definition}
+
+\begin{lemma}[Addition Is Well-Defined on Rational Classes]
+\label{lem:rational-addition-well-defined}
+Let $a,b,c,d,e,f,g,h\in\mathbb{Z}$ with $bdfh\neq 0$. If
+\[
+(a,b)\sim(e,f)
+\qquad\text{and}\qquad
+(c,d)\sim(g,h),
+\]
+then
+\[
+(ad+bc,bd)\sim(eh+fg,fh).
+\]
+\end{lemma}
+
+\begin{remark*}[Proof]
+\hyperref[prf:rational-addition-well-defined]{Go to proof.}
+\end{remark*}
+
+\begin{lemma}[Multiplication Is Well-Defined on Rational Classes]
+\label{lem:rational-multiplication-well-defined}
+Let $a,b,c,d,e,f,g,h\in\mathbb{Z}$ with $bdfh\neq 0$. If
+\[
+(a,b)\sim(e,f)
+\qquad\text{and}\qquad
+(c,d)\sim(g,h),
+\]
+then
+\[
+(ac,bd)\sim(eg,fh).
+\]
+\end{lemma}
+
+\begin{remark*}[Proof]
+\hyperref[prf:rational-multiplication-well-defined]{Go to proof.}
+\end{remark*}
+
+\begin{remark}[Why well-definedness matters]
+\label{rem:well-definedness-matters}
+
+These formulas are written in terms of representatives.  Because one rational number has many
+representatives, it must be proved that choosing different representatives leads to the same
+resulting equivalence class.  This is the first serious instance of a very common pattern in
+mathematics:
+\[
+\text{representatives}
+\longrightarrow
+\text{operations}
+\longrightarrow
+\text{well-defined operations on equivalence classes}.
+\]
+
+\end{remark}
+
+\begin{remark}[Three levels of representation]
+\label{rem:rational-three-levels}
+
+When working with rational numbers, it is essential to distinguish among the following three objects.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Object} & \textbf{Lives in} & \textbf{Meaning} \\
+\midrule
+$(a,b)$ & $W$ & raw integer pair \\
+$[(a,b)]$ & $\mathbb{Q}$ & rational number \\
+$\dfrac{a}{b}$ & notation & informal representation of $[(a,b)]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The pair $(a,b)$ is not itself a rational number.  The rational number is the entire equivalence
+class
+\[
+[(a,b)] = \{(c,d)\in W : ad = bc\}.
+\]
+
+\end{remark}
+
+\begin{remark}[A rational number is an infinite set]
+\label{rem:rational-infinite-set}
+
+For every nonzero integer $k$,
+\[
+(ka,kb)\sim(a,b).
+\]
+Hence the class $[(a,b)]$ contains infinitely many representatives:
+\[
+(a,b),(2a,2b),(3a,3b),\dots,(-a,-b),(-2a,-2b),\dots
+\]
+Thus every rational number is an infinite set.
+\end{remark}
+
+\begin{remark}[Canonical representative]
+\label{rem:reduced-rational}
+
+Although a rational number has infinitely many representatives, each nonzero rational number can be
+written uniquely in the form
+\[
+\frac{a}{b}
+\qquad\text{with}\qquad
+\gcd(a,b)=1,
+\quad b>0.
+\]
+This is the \emph{reduced form} of the rational number.
+
+\end{remark}
+
+\subsection{Consequences}
+
+\begin{remark}[Quotient structures]
+\label{rem:quotient-pattern}
+
+The construction of $\mathbb{Q}$ is the first major example in these notes of the general pattern
+\[
+\text{set} + \text{equivalence relation} \longrightarrow \text{quotient structure}.
+\]
+The same pattern later appears in modular arithmetic, quotient groups, quotient rings, quotient
+spaces, and projective geometry.
+
+\end{remark}
+
+\subsection{Algebra of Equivalence Classes}
+
+\begin{remark}[Role of the equivalence-class arithmetic theorems]
+\label{rem:ec-arithmetic-role}
+
+The theorems in this subsection work entirely at the level of
+equivalence classes and integer arithmetic.  They require nothing
+beyond \hyperref[def:rational-operations]{Definition~\ref*{def:rational-operations}},
+the well-definedness lemmas, and facts about $\mathbb{Z}$.
+
+In particular, \hyperref[thm:ec-negation]{Theorem~\ref*{thm:ec-negation}}
+and \hyperref[thm:ec-reciprocal]{Theorem~\ref*{thm:ec-reciprocal}} do
+not appeal to field axioms.  They \emph{establish}, by direct
+computation, that $[(-a,b)]$ and $[(b,a)]$ satisfy the defining
+conditions for additive and multiplicative inverses respectively.
+These facts are therefore \emph{inputs to} the proof that $\mathbb{Q}$
+is a field, not consequences of it.  The field proof can cite them
+rather than repeat the computation.
+
+The later \hyperref[sec:rational-algebra]{rational algebra section}
+re-expresses the same identities using fraction notation $a/b$ inside
+the already-established field.  Those re-derivations are about
+\emph{notation and usability}, not about new mathematical content.
+
+\end{remark}
+
+\begin{theorem}[Integer embedding preserves addition]
+\label{thm:ec-integer-embedding-add}
+For all $m,n\in\mathbb{Z}$,
+\[
+[(m,1)] + [(n,1)] = [(m+n,\,1)].
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-integer-embedding-add]{Go to proof.}
+\end{remark*}
+
+\begin{theorem}[Integer embedding preserves multiplication]
+\label{thm:ec-integer-embedding-mul}
+For all $m,n\in\mathbb{Z}$,
+\[
+[(m,1)] \cdot [(n,1)] = [(mn,\,1)].
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-integer-embedding-mul]{Go to proof.}
+\end{remark*}
+
+\begin{remark}[The integer embedding]
+\label{rem:integer-embedding}
+These two theorems establish that the map $n\mapsto[(n,1)]$ is a ring
+homomorphism from $\mathbb{Z}$ into $\mathbb{Q}$: it sends the integer
+operations to the rational operations.  Moreover $[(m,1)]=[(n,1)]$ if
+and only if $m=n$, so the map is injective and $\mathbb{Z}$ sits inside
+$\mathbb{Q}$ as a subring.  We therefore identify each integer $n$ with
+the rational class $[(n,1)]$ and write $n$ for $[(n,1)]$ without further
+comment.
+\end{remark}
+
+\begin{theorem}[Zero class criterion]
+\label{thm:ec-zero-numerator}
+For every $[(a,b)]\in\mathbb{Q}$,
+\[
+[(a,b)] = [(0,1)]
+\quad\Longleftrightarrow\quad
+a = 0.
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-zero-numerator]{Go to proof.}
+\end{remark*}
+
+\begin{theorem}[Scaling of equivalence classes]
+\label{thm:ec-scaling}
+For every $[(a,b)]\in\mathbb{Q}$ and every nonzero integer $e\neq 0$,
+\[
+[(a,b)] = [(ae,be)].
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-scaling]{Go to proof.}
+\end{remark*}
+
+\begin{theorem}[Negation of an equivalence class]
+\label{thm:ec-negation}
+For every $[(a,b)]\in\mathbb{Q}$,
+\[
+-[(a,b)] = [(-a,b)] = [(a,-b)].
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-negation]{Go to proof.}
+\end{remark*}
+
+\begin{theorem}[Subtraction of equivalence classes]
+\label{thm:ec-subtraction}
+For every $[(a,b)],[(c,d)]\in\mathbb{Q}$,
+\[
+[(a,b)] - [(c,d)] = [(ad-bc,\,bd)].
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-subtraction]{Go to proof.}
+\end{remark*}
+
+\begin{theorem}[Reciprocal of a nonzero equivalence class]
+\label{thm:ec-reciprocal}
+For every $[(a,b)]\in\mathbb{Q}$ with $a\neq 0$,
+\[
+[(a,b)]^{-1} = [(b,a)].
+\]
+\end{theorem}
+
+\begin{remark*}[Proof]
+\hyperref[prf:ec-reciprocal]{Go to proof.}
+\end{remark*}
