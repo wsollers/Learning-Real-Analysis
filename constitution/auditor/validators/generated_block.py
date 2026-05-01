@@ -36,6 +36,7 @@ _BAD_TEXT_PUNCTUATION = re.compile(r"(?:â|ï»¿|�|“|”|‘|’|—|–)")
 _BARE_PREDICATE_MACRO = re.compile(
     r"\\(UpperBound|LowerBound|Maximum|Minimum|Supremum|Infimum)\b"
 )
+_NO_LOCAL_DEPENDENCIES = re.compile(r"\\NoLocalDependencies\b")
 
 
 _EXPECTED_BOX_COLORS = {
@@ -283,6 +284,8 @@ def _validate_definition(tex: str, env_body: str) -> list[Finding]:
     if "% MISSING_PREDICATE:" in tex:
         required.discard("definition predicate reading")
         required.discard("negation predicate reading")
+    if _NO_LOCAL_DEPENDENCIES.search(tex):
+        required.discard("dependencies")
 
     missing = sorted(required - titles)
     for title in missing:
@@ -351,6 +354,9 @@ def _validate_common_latex(tex: str) -> list[Finding]:
 
 def _validate_dependencies(tex: str) -> list[Finding]:
     findings: list[Finding] = []
+    if _NO_LOCAL_DEPENDENCIES.search(tex):
+        return findings
+
     dependencies = [
         body for title, body in _REMARK.findall(tex)
         if _normalize_title(title) == "dependencies"

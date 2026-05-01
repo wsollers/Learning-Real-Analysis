@@ -439,7 +439,7 @@ void Scene::submit_surfaces() {
         const u32   n     = entry.surface->wireframe_vertex_count(entry.u_lines, entry.v_lines);
         auto        slice = m_api.acquire(n);
         entry.surface->tessellate_wireframe({ slice.vertices(), n },
-                                             entry.u_lines, entry.v_lines, entry.color);
+                                             entry.u_lines, entry.v_lines, 0.f, entry.color);
         m_api.submit(slice, Topology::LineList, DrawMode::VertexColor, entry.color, mvp);
     }
 }

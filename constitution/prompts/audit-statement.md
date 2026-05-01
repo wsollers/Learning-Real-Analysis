@@ -134,10 +134,11 @@ exposition may satisfy the interpretation requirement.
   exposition that performs the interpretive work. If none found, flag as FAIL.
 
 ### dependencies
-- remark* titled "Dependencies"?
+- remark* titled "Dependencies" or silent `\NoLocalDependencies` marker?
 - All \hyperref links point to formal items (def / thm / lem / prop / cor / ax)?
 - No links to proof labels (prf:)?
-- If foundational: states "No local dependencies"?
+- If foundational and no local dependencies are displayed: uses
+  `\NoLocalDependencies` or, in legacy material, states "No local dependencies."?
 
 ## Notation Checks (apply to all blocks)
 

@@ -160,6 +160,27 @@ items.
 
 ---
 
+## Dependency Rendering Policy
+
+Dependency tracking is structurally important, but empty local dependency
+notices should not clutter note prose.
+
+- If a statement-level item has substantive local dependencies, record them in
+  a visible `\begin{remark*}[Dependencies] ... \end{remark*}` block.
+- If a statement-level item is foundational within the current local note
+  scope and has no local dependencies to display, do not print a visible
+  dependencies remark that says `No local dependencies.`.
+- In that foundational case, use the silent marker `\NoLocalDependencies`
+  instead.
+- `\NoLocalDependencies` is a structural repository marker only. It renders
+  nothing in the compiled notes.
+- The silent marker is for note-body statement artifacts. It does not change
+  the existing practice for proof-file dependency remarks.
+- Generation and audit rules must treat `\NoLocalDependencies` as satisfying
+  the dependency requirement for foundational local items.
+
+---
+
 ## Topic-Level Structural Policy
 
 The repository supports an optional local structural container called a

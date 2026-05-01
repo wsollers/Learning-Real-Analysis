@@ -1,5 +1,7 @@
 // app/SurfaceSimScene.cpp
 #include "app/SurfaceSimScene.hpp"
+#include "sim/GradientWalker.hpp"   // Step 4: default particle equation
+#include "sim/EulerIntegrator.hpp"   // Step 5: Euler integration scheme
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,6 +16,7 @@ namespace ndde {
 
 SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     : m_api(std::move(api))
+    , m_surface(std::make_unique<GaussianSurface>())  // Step 3: surface owned here
 {
     // 3D camera: dist = base_extent/zoom * 3 = 6/1.0*3 = 18.
     // Surface spans ±6 in XY; 45° FOV, dist 18 → half-angle tangent 6/18 = 0.33 → fits well.
@@ -29,7 +32,8 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     m_vp2d.pan_y       = 0.f;
 
     // First particle is a Leader, slot 0 (brightest blue), pre-warmed.
-    m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u);
+    // Step 2: pass &m_gaussian_surface so the particle uses ISurface polymorphism.
+    m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u, m_surface.get(), &m_equation, &m_integrator);
     m_leader_count = 1;
     for (int i = 0; i < 400; ++i)
         m_curves[0].advance(1.f/60.f, 1.f);
@@ -82,12 +86,62 @@ void SurfaceSimScene::on_frame(f32 dt) {
     m_perf.draw(m_api.debug_stats());
 }
 
+// ── swap_surface ─────────────────────────────────────────────────────────────
+void SurfaceSimScene::swap_surface(SurfaceType type) {
+    switch (type) {
+        case SurfaceType::Gaussian:
+            m_surface = std::make_unique<GaussianSurface>();
+            break;
+        case SurfaceType::Torus:
+            m_surface = std::make_unique<ndde::math::Torus>(m_torus_R, m_torus_r);
+            break;
+        case SurfaceType::GaussianRipple: {
+            auto s = std::make_unique<GaussianRipple>(m_ripple_params);
+            m_surface = std::move(s);
+            break;
+        }
+    }
+    m_surface_type = type;
+    m_sim_time     = 0.f;  // reset accumulated time for the new surface
+
+    // Spread particles across the new domain using a golden-ratio sequence.
+    const u32 n    = static_cast<u32>(m_curves.size());
+    const f32 u0   = m_surface->u_min(), u1 = m_surface->u_max();
+    const f32 v0   = m_surface->v_min(), v1 = m_surface->v_max();
+    const f32 um   = m_surface->is_periodic_u() ? 0.f : (u1-u0)*0.08f;
+    const f32 vm   = m_surface->is_periodic_v() ? 0.f : (v1-v0)*0.08f;
+    const f32 u_lo = u0+um, u_hi = u1-um;
+    const f32 v_lo = v0+vm, v_hi = v1-vm;
+
+    for (u32 i = 0; i < n; ++i) {
+        const f32 su = (static_cast<f32>(i)+0.5f)/static_cast<f32>(std::max(n,1u));
+        const f32 sv = std::fmod(su * 2.618033988f, 1.f);  // golden ratio
+        AnimatedCurve fresh(u_lo + su*(u_hi-u_lo), v_lo + sv*(v_hi-v_lo),
+                            m_curves[i].role(), m_curves[i].colour_slot(),
+                            m_surface.get(), &m_equation, &m_integrator);
+        for (int w = 0; w < 120; ++w)
+            fresh.advance(1.f/60.f, m_sim_speed);
+        m_curves[i] = std::move(fresh);
+    }
+}
+
 // ── advance_simulation ────────────────────────────────────────────────────────
 
 void SurfaceSimScene::advance_simulation(f32 dt) {
-    if (!m_sim_paused)
+    if (!m_sim_paused) {
+        // Tick deformable surfaces BEFORE particle integration.
+        if (auto* def = dynamic_cast<ndde::math::IDeformableSurface*>(m_surface.get()))
+            def->advance(dt * m_sim_speed);
+        m_sim_time += dt * m_sim_speed;
+
         for (auto& c : m_curves)
             c.advance(dt, m_sim_speed);
+
+        // Step 10: push history for any particle that has recording enabled.
+        // This must happen AFTER advance() so the pushed position is current.
+        for (auto& c : m_curves)
+            c.push_history(m_sim_time);
+    }
 }
 
 // ── handle_hotkeys ────────────────────────────────────────────────────────────
@@ -114,13 +168,13 @@ void SurfaceSimScene::handle_hotkeys() {
         const f32 off = 1.5f;
         const f32 ang = static_cast<f32>(m_leader_count) * 1.1f;
         const f32 sx  = std::clamp(ref.x + off * std::cos(ang),
-                                   GaussianSurface::XMIN + 0.5f,
-                                   GaussianSurface::XMAX - 0.5f);
+                                   m_surface->u_min() + 0.5f,
+                                   m_surface->u_max() - 0.5f);
         const f32 sy  = std::clamp(ref.y + off * std::sin(ang),
-                                   GaussianSurface::YMIN + 0.5f,
-                                   GaussianSurface::YMAX - 0.5f);
+                                   m_surface->v_min() + 0.5f,
+                                   m_surface->v_max() - 0.5f);
         const u32 slot = m_leader_count % AnimatedCurve::MAX_SLOTS;
-        m_curves.emplace_back(sx, sy, AnimatedCurve::Role::Leader, slot);
+        m_curves.emplace_back(sx, sy, AnimatedCurve::Role::Leader, slot, m_surface.get(), &m_equation, &m_integrator);
         ++m_leader_count;
         for (int i = 0; i < 60; ++i)
             m_curves.back().advance(1.f/60.f, m_sim_speed);
@@ -136,18 +190,91 @@ void SurfaceSimScene::handle_hotkeys() {
         const f32 off = 2.0f;
         const f32 ang = static_cast<f32>(m_chaser_count) * 1.3f + 0.5f;
         const f32 sx  = std::clamp(ref.x + off * std::cos(ang),
-                                   GaussianSurface::XMIN + 0.5f,
-                                   GaussianSurface::XMAX - 0.5f);
+                                   m_surface->u_min() + 0.5f,
+                                   m_surface->u_max() - 0.5f);
         const f32 sy  = std::clamp(ref.y + off * std::sin(ang),
-                                   GaussianSurface::YMIN + 0.5f,
-                                   GaussianSurface::YMAX - 0.5f);
+                                   m_surface->v_min() + 0.5f,
+                                   m_surface->v_max() - 0.5f);
         const u32 slot = m_chaser_count % AnimatedCurve::MAX_SLOTS;
-        m_curves.emplace_back(sx, sy, AnimatedCurve::Role::Chaser, slot);
+        m_curves.emplace_back(sx, sy, AnimatedCurve::Role::Chaser, slot, m_surface.get(), &m_equation, &m_integrator);
         ++m_chaser_count;
         for (int i = 0; i < 60; ++i)
             m_curves.back().advance(1.f/60.f, m_sim_speed);
     }
     m_ctrl_c_prev = ctrl_c;
+
+    // Ctrl+B: spawn a Brownian motion particle (owns its equation, uses Milstein).
+    const bool ctrl_b = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_B);
+    if (ctrl_b && !m_ctrl_b_prev) {
+        const Vec3 ref = m_curves.empty()
+            ? Vec3{0.f, 0.f, 0.f}
+            : m_curves[0].head_world();
+        // Place slightly offset from the reference particle
+        const f32 ang = static_cast<f32>(m_chaser_count + m_leader_count) * 0.7f + 1.0f;
+        const f32 off = 1.8f;
+        const f32 sx  = std::clamp(ref.x + off * std::cos(ang),
+                                   m_surface->u_min() + 0.5f,
+                                   m_surface->u_max() - 0.5f);
+        const f32 sy  = std::clamp(ref.y + off * std::sin(ang),
+                                   m_surface->v_min() + 0.5f,
+                                   m_surface->v_max() - 0.5f);
+        const u32 slot = m_chaser_count % AnimatedCurve::MAX_SLOTS;
+        // Spawn with owned BrownianMotion equation using current UI params.
+        m_curves.push_back(
+            AnimatedCurve::with_equation(
+                sx, sy,
+                AnimatedCurve::Role::Chaser, slot,
+                m_surface.get(),
+                std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
+                &m_milstein));
+        ++m_chaser_count;
+        for (int i = 0; i < 60; ++i)
+            m_curves.back().advance(1.f/60.f, m_sim_speed);
+    }
+    m_ctrl_b_prev = ctrl_b;
+
+    // Ctrl+R: spawn a delay-pursuit chaser targeting curve 0 (the Leader).
+    // The chaser pursues where the leader WAS tau seconds ago.
+    const bool ctrl_r = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_R);
+    if (ctrl_r && !m_ctrl_r_prev) {
+        if (!m_curves.empty()) {
+            // Ensure the leader has history recording enabled.
+            if (m_curves[0].history() == nullptr) {
+                // capacity covers tau * 120fps + 50% margin
+                const std::size_t cap =
+                    static_cast<std::size_t>(
+                        std::ceil(m_dp_params.tau * 120.f * 1.5f)) + 256;
+                m_curves[0].enable_history(cap, 1.f / 120.f);
+            }
+
+            // Spawn the chaser offset from the leader's current head.
+            const Vec3 ref = m_curves[0].head_world();
+            const f32 ang  = static_cast<f32>(m_dp_count) * 1.1f + 0.3f;
+            const f32 sx   = std::clamp(ref.x + 2.f * std::cos(ang),
+                                        m_surface->u_min() + 0.5f,
+                                        m_surface->u_max() - 0.5f);
+            const f32 sy   = std::clamp(ref.y + 2.f * std::sin(ang),
+                                        m_surface->v_min() + 0.5f,
+                                        m_surface->v_max() - 0.5f);
+            const u32 slot = m_chaser_count % AnimatedCurve::MAX_SLOTS;
+            // The delay-pursuit equation holds a non-owning pointer to the
+            // leader's HistoryBuffer.  The leader is m_curves[0] and must
+            // not be erased while this chaser lives.
+            m_curves.push_back(
+                AnimatedCurve::with_equation(
+                    sx, sy,
+                    AnimatedCurve::Role::Chaser, slot,
+                    m_surface.get(),
+                    std::make_unique<ndde::sim::DelayPursuitEquation>(
+                        m_curves[0].history(), m_surface.get(), m_dp_params),
+                    &m_milstein));
+            ++m_chaser_count;
+            ++m_dp_count;
+            // No pre-warm: the chaser needs the leader to accumulate history
+            // before it can start pursuing, so it spawns cold.
+        }
+    }
+    m_ctrl_r_prev = ctrl_r;
 
     const bool ctrl_q = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_Q);
     if (ctrl_q && !m_ctrl_q_prev) {
@@ -203,6 +330,57 @@ void SurfaceSimScene::draw_simulation_panel() {
     ImGui::SetNextWindowBgAlpha(0.88f);
     ImGui::Begin("Simulation");
 
+    ImGui::SeparatorText("Surface");
+    {
+        // Surface selector: radio buttons, one per type.
+        // Switching calls swap_surface() which rebuilds m_surface and resets
+        // all particle positions into the new domain.
+        int sel = static_cast<int>(m_surface_type);
+        bool changed = false;
+        changed |= ImGui::RadioButton("Gaussian", &sel, 0);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton("Torus",    &sel, 1);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton("Ripple",   &sel, 2);
+        if (changed)
+            swap_surface(static_cast<SurfaceType>(sel));
+
+        if (m_surface_type == SurfaceType::Torus) {
+            bool tp = false;
+            tp |= ImGui::SliderFloat("R##torus", &m_torus_R, 0.5f, 5.f, "%.2f");
+            tp |= ImGui::SliderFloat("r##torus", &m_torus_r, 0.1f,
+                                     m_torus_R - 0.05f, "%.2f");
+            if (tp) swap_surface(SurfaceType::Torus);
+        }
+
+        if (m_surface_type == SurfaceType::GaussianRipple) {
+            // Live parameter sliders -- changes sync to the active surface.
+            auto& p  = m_ripple_params;
+            bool  rp = false;
+            rp |= ImGui::SliderFloat("Amplitude##r",  &p.amplitude,  0.05f, 2.f,  "%.2f");
+            rp |= ImGui::SliderFloat("Damping##r",    &p.damping,    0.05f, 2.f,  "%.3f");
+            rp |= ImGui::SliderFloat("Wavelength##r", &p.wavelength, 0.3f,  5.f,  "%.2f");
+            rp |= ImGui::SliderFloat("Speed##r",      &p.speed,      0.1f,  6.f,  "%.2f");
+            rp |= ImGui::SliderFloat("Sigma##r",      &p.sigma,      0.3f,  6.f,  "%.2f");
+            if (rp) {
+                // Sync new params into the live surface without rebuilding.
+                if (auto* gr = dynamic_cast<GaussianRipple*>(m_surface.get()))
+                    gr->params() = p;
+            }
+            ImGui::TextDisabled("Epicentre: (%.2f, %.2f)  t=%.2f",
+                p.epicentre_u, p.epicentre_v, m_sim_time);
+            ImGui::SameLine();
+            if (ImGui::SmallButton("Re-trigger")) {
+                // Re-trigger at the head of particle 0
+                const Vec3 h = m_curves.empty() ? Vec3{0,0,0} : m_curves[0].head_world();
+                p.epicentre_u = h.x;  p.epicentre_v = h.y;
+                if (auto* gr = dynamic_cast<GaussianRipple*>(m_surface.get()))
+                    gr->set_epicentre(h.x, h.y);
+                m_sim_time = 0.f;
+            }
+        }
+    }
+
     ImGui::SeparatorText("Curve");
     ImGui::Checkbox("Paused", &m_sim_paused);
     ImGui::SameLine();
@@ -233,6 +411,88 @@ void SurfaceSimScene::draw_simulation_panel() {
     ImGui::Checkbox("Surface frame [Ctrl+D]",   &m_show_dir_deriv);
     ImGui::Checkbox("Normal plane  [Ctrl+P]",   &m_show_normal_plane);
     ImGui::Checkbox("Torsion ribbon [Ctrl+T]",  &m_show_torsion);
+
+    ImGui::SeparatorText("Brownian motion  [Ctrl+B]");
+    {
+        // Brownian motion parameters (used when Ctrl+B spawns a new particle).
+        // Each Brownian particle owns its BrownianMotion equation; these sliders
+        // set the params for the NEXT spawned particle only.
+        // Existing Brownian particles keep their own params.
+        auto& p = m_bm_params;
+        ImGui::SliderFloat("Sigma##bm",         &p.sigma,          0.01f, 2.f,   "%.3f");
+        ImGui::SliderFloat("Drift##bm",          &p.drift_strength, -1.f,  1.f,  "%.3f");
+        if (ImGui::SmallButton("Spawn Brownian [Ctrl+B]")) {
+            // Same logic as hotkey, duplicated for the button.
+            const Vec3 ref = m_curves.empty()
+                ? Vec3{0.f, 0.f, 0.f} : m_curves[0].head_world();
+            const f32 ang = static_cast<f32>(m_chaser_count + m_leader_count) * 0.7f + 1.0f;
+            const f32 sx  = std::clamp(ref.x + 1.8f*std::cos(ang),
+                                       m_surface->u_min()+0.5f, m_surface->u_max()-0.5f);
+            const f32 sy  = std::clamp(ref.y + 1.8f*std::sin(ang),
+                                       m_surface->v_min()+0.5f, m_surface->v_max()-0.5f);
+            m_curves.push_back(
+                AnimatedCurve::with_equation(
+                    sx, sy,
+                    AnimatedCurve::Role::Chaser,
+                    m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                    m_surface.get(),
+                    std::make_unique<ndde::sim::BrownianMotion>(p),
+                    &m_milstein));
+            ++m_chaser_count;
+            for (int i = 0; i < 60; ++i)
+                m_curves.back().advance(1.f/60.f, m_sim_speed);
+        }
+        ImGui::TextDisabled("Milstein integrator (strong order 1.0)");
+    }
+
+    ImGui::SeparatorText("Delay Pursuit  [Ctrl+R]");
+    {
+        // Delay-pursuit parameters.
+        // Ctrl+R spawns a chaser targeting where curve 0 WAS tau seconds ago.
+        // IMPORTANT: the chaser's history pointer targets m_curves[0].
+        // Do not remove curve 0 while delay-pursuit chasers are active.
+        auto& p = m_dp_params;
+        ImGui::SliderFloat("Tau (delay)##dp",   &p.tau,           0.1f, 10.f, "%.2f s");
+        ImGui::SliderFloat("Speed##dp",          &p.pursuit_speed, 0.1f,  3.f, "%.2f");
+        ImGui::SliderFloat("Noise sigma##dp",    &p.noise_sigma,   0.f,   1.f, "%.3f");
+        if (ImGui::SmallButton("Spawn Pursuer [Ctrl+R]")) {
+            if (!m_curves.empty()) {
+                if (m_curves[0].history() == nullptr) {
+                    const std::size_t cap =
+                        static_cast<std::size_t>(
+                            std::ceil(p.tau * 120.f * 1.5f)) + 256;
+                    m_curves[0].enable_history(cap, 1.f / 120.f);
+                }
+                const Vec3 ref = m_curves[0].head_world();
+                const f32 ang  = static_cast<f32>(m_dp_count) * 1.1f + 0.3f;
+                const f32 sx   = std::clamp(ref.x + 2.f * std::cos(ang),
+                                            m_surface->u_min()+0.5f, m_surface->u_max()-0.5f);
+                const f32 sy   = std::clamp(ref.y + 2.f * std::sin(ang),
+                                            m_surface->v_min()+0.5f, m_surface->v_max()-0.5f);
+                m_curves.push_back(
+                    AnimatedCurve::with_equation(
+                        sx, sy,
+                        AnimatedCurve::Role::Chaser,
+                        m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                        m_surface.get(),
+                        std::make_unique<ndde::sim::DelayPursuitEquation>(
+                            m_curves[0].history(), m_surface.get(), p),
+                        &m_milstein));
+                ++m_chaser_count;  ++m_dp_count;
+            }
+        }
+        if (m_curves.empty() || m_curves[0].history() == nullptr)
+            ImGui::TextDisabled("(leader has no history yet -- spawn first)");
+        else {
+            const auto* h = m_curves[0].history();
+            const float window = h->newest_t() - h->oldest_t();
+            ImGui::TextDisabled("History: %.1fs window  %zu records",
+                window, h->size());
+            if (window < p.tau)
+                ImGui::TextColored({1.f,0.8f,0.1f,1.f},
+                    "Warming up: %.1f/%.1fs", window, p.tau);
+        }
+    }
 
     // ── Torsion readout (live, appears under toggle when active) ──────────────
     // Geometric intuition:
@@ -267,14 +527,14 @@ void SurfaceSimScene::draw_simulation_panel() {
     }
 
     ImGui::Separator();
-    ImGui::TextDisabled("Particles: %zu  (L=%u  C=%u)  [Ctrl+L leader  Ctrl+C chaser]",
+    ImGui::TextDisabled("Particles: %zu  (L=%u  C=%u)  [Ctrl+L leader  Ctrl+C chaser  Ctrl+B brownian]",
         m_curves.size(), m_leader_count, m_chaser_count);
     ImGui::SameLine();
     if (ImGui::SmallButton("Clear all")) {
         m_curves.clear();
         m_leader_count = 0;
         m_chaser_count = 0;
-        m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u);
+        m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u, m_surface.get(), &m_equation, &m_integrator);
         m_leader_count = 1;
     }
 
@@ -284,7 +544,14 @@ void SurfaceSimScene::draw_simulation_panel() {
         const u32 hi = c0.trail_size() > 2 ? c0.trail_size()-2 : 0;
         const FrenetFrame fr = c0.frenet_at(hi);
         const Vec3 hp = c0.head_world();
-        ImGui::TextDisabled("f(x,y) = %.4f", GaussianSurface::eval(hp.x, hp.y));
+        // Surface-aware height readout.
+        if (m_surface_type == SurfaceType::Gaussian)
+            ImGui::TextDisabled("f(x,y) = %.4f", m_surface->evaluate(hp.x, hp.y, m_sim_time).z);
+        else
+            ImGui::TextDisabled("p = (%.3f, %.3f, %.3f)",
+                m_surface->evaluate(hp.x, hp.y, m_sim_time).x,
+                m_surface->evaluate(hp.x, hp.y, m_sim_time).y,
+                m_surface->evaluate(hp.x, hp.y, m_sim_time).z);
         ImGui::TextColored(ImVec4(1.f,0.5f,0.1f,1.f),
             "T (%.3f, %.3f, %.3f)", fr.T.x, fr.T.y, fr.T.z);
         ImGui::TextColored(ImVec4(0.2f,1.f,0.4f,1.f),
@@ -294,10 +561,10 @@ void SurfaceSimScene::draw_simulation_panel() {
         ImGui::TextDisabled("kappa = %.5f  tau = %.5f", fr.kappa, fr.tau);
         const f32 osc_r = fr.kappa > 1e-5f ? 1.f/fr.kappa : 0.f;
         ImGui::TextDisabled("osc. radius = %.4f", osc_r);
-        const f32 K = GaussianSurface::gaussian_curvature(hp.x, hp.y);
-        const f32 H = GaussianSurface::mean_curvature(hp.x, hp.y);
+        const f32 K = m_surface->gaussian_curvature(hp.x, hp.y, m_sim_time);
+        const f32 H = m_surface->mean_curvature(hp.x, hp.y, m_sim_time);
         ImGui::TextDisabled("K = %.5f  H = %.5f", K, H);
-        const SurfaceFrame sf = make_surface_frame(hp.x, hp.y, &fr);
+        const SurfaceFrame sf = make_surface_frame(*m_surface, hp.x, hp.y, m_sim_time, &fr);
         ImGui::Separator();
         ImGui::TextDisabled("E=%.4f  F=%.4f  G=%.4f", sf.E, sf.F, sf.G);
         ImGui::TextDisabled("\xce\xba_n=%.5f  \xce\xba_g=%.5f", sf.kappa_n, sf.kappa_g);
@@ -500,10 +767,12 @@ void SurfaceSimScene::submit_arrow(Vec3 origin, Vec3 dir, Vec4 color,
 // ── submit_wireframe_3d ───────────────────────────────────────────────────────
 
 void SurfaceSimScene::submit_wireframe_3d(const Mat4& mvp) {
-    const u32 n = GaussianSurface::wireframe_vertex_count(m_grid_lines, m_grid_lines);
+    // Step 3: use ISurface interface instead of GaussianSurface:: statics.
+    const u32 n = m_surface->wireframe_vertex_count(m_grid_lines, m_grid_lines);
     auto slice  = m_api.acquire(n);
-    GaussianSurface::tessellate_wireframe({slice.vertices(), n},
-                                           m_grid_lines, m_grid_lines);
+    // Pass m_sim_time: deforming surfaces use it; static surfaces ignore it.
+    m_surface->tessellate_wireframe({slice.vertices(), n},
+                                    m_grid_lines, m_grid_lines, m_sim_time);
     m_api.submit(slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
@@ -567,7 +836,7 @@ void SurfaceSimScene::submit_surface_frame_3d(const AnimatedCurve& c, u32 trail_
                                                const Mat4& mvp) {
     if (!c.has_trail() || trail_idx == 0) return;
     const Vec3 p  = c.trail_pt(trail_idx);
-    const SurfaceFrame sf = make_surface_frame(p.x, p.y);
+    const SurfaceFrame sf = make_surface_frame(*m_surface, p.x, p.y, m_sim_time);
     const f32 scale = m_frame_scale;
 
     submit_arrow(p, glm::normalize(sf.Dx), {0.1f, 0.9f, 0.9f, 1.f},
@@ -593,7 +862,7 @@ void SurfaceSimScene::submit_normal_plane_3d(const AnimatedCurve& c, u32 trail_i
     if (!c.has_trail() || trail_idx == 0) return;
     const Vec3        p   = c.trail_pt(trail_idx);
     const FrenetFrame fr  = c.frenet_at(trail_idx);
-    const SurfaceFrame sf = make_surface_frame(p.x, p.y, &fr);
+    const SurfaceFrame sf = make_surface_frame(*m_surface, p.x, p.y, m_sim_time, &fr);
 
     const f32 osc_r  = (fr.kappa > 1e-5f) ? 1.f / fr.kappa : 2.f;
     const f32 half_T = std::clamp(osc_r * 0.3f * m_frame_scale, 0.04f, 1.2f);
@@ -702,7 +971,9 @@ void SurfaceSimScene::submit_contour_second_window() {
     const Vec2 sz2 = m_api.viewport_size2();
     if (sz2.x <= 0.f || sz2.y <= 0.f) return;
 
-    const f32 domain = GaussianSurface::XMAX;   // 6.0
+    // Ortho MVP for the 2D contour window.
+    // Use the surface's u-domain half-extent as the view scale.
+    const f32 domain = m_surface->u_max();
     const f32 aspect = sz2.x / sz2.y;
     const f32 half_y = domain / m_vp2d.zoom;
     const f32 half_x = half_y * aspect;
@@ -711,16 +982,23 @@ void SurfaceSimScene::submit_contour_second_window() {
         m_vp2d.pan_y - half_y, m_vp2d.pan_y + half_y,
         -10.f, 10.f);
 
-    // ── Heatmap (triangle mesh) ────────────────────────────────────────────────
-    {
+    // ── Heatmap + contour lines (graph-surface specific) ──────────────────────
+    // These renderings depend on height_color() and tessellate_contours() which
+    // are properties of a height-field (z = f(x,y)) surface.
+    // dynamic_cast returns non-null only when m_surface IS a GaussianSurface.
+    // For other surfaces (torus, sphere) this block is silently skipped.
+    // A generic heat/contour approach will replace this in a later step.
+    const auto* gs = dynamic_cast<const GaussianSurface*>(m_surface.get());
+    if (gs) {
+        // ── Heatmap (triangle mesh) ──────────────────────────────────────────
         constexpr u32 NX=80, NY=80;
         auto slice = m_api.acquire(NX*NY*6);
         Vertex* v  = slice.vertices(); u32 idx = 0;
-        const f32 dx = (GaussianSurface::XMAX-GaussianSurface::XMIN)/NX;
-        const f32 dy = (GaussianSurface::YMAX-GaussianSurface::YMIN)/NY;
+        const f32 dx = (gs->u_max()-gs->u_min())/NX;
+        const f32 dy = (gs->v_max()-gs->v_min())/NY;
         for (u32 i=0;i<NX;++i) for (u32 j=0;j<NY;++j) {
-            const f32 x0=GaussianSurface::XMIN+i*dx, x1=x0+dx;
-            const f32 y0=GaussianSurface::YMIN+j*dy, y1=y0+dy;
+            const f32 x0=gs->u_min()+i*dx, x1=x0+dx;
+            const f32 y0=gs->v_min()+j*dy, y1=y0+dy;
             const Vec4 c00=GaussianSurface::height_color(GaussianSurface::eval(x0,y0));
             const Vec4 c10=GaussianSurface::height_color(GaussianSurface::eval(x1,y0));
             const Vec4 c01=GaussianSurface::height_color(GaussianSurface::eval(x0,y1));
@@ -730,19 +1008,19 @@ void SurfaceSimScene::submit_contour_second_window() {
         }
         memory::ArenaSlice tr=slice; tr.vertex_count=idx;
         m_api.submit2(tr, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
-    }
 
-    // ── Contour lines ─────────────────────────────────────────────────────────
-    if (m_show_contours) {
-        const u32 max_v = GaussianSurface::contour_max_vertices(100u, k_n_levels);
-        auto slice = m_api.acquire(max_v);
-        const u32 actual = GaussianSurface::tessellate_contours(
-            {slice.vertices(),max_v}, 100u, k_levels, k_n_levels, {1,1,1,0.8f});
-        if (actual > 0) {
-            memory::ArenaSlice tr=slice; tr.vertex_count=actual;
-            m_api.submit2(tr, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+        // ── Contour lines ────────────────────────────────────────────────────
+        if (m_show_contours) {
+            const u32 max_v = GaussianSurface::contour_max_vertices(100u, k_n_levels);
+            auto cslice = m_api.acquire(max_v);
+            const u32 actual = GaussianSurface::tessellate_contours(
+                {cslice.vertices(),max_v}, 100u, k_levels, k_n_levels, {1,1,1,0.8f});
+            if (actual > 0) {
+                memory::ArenaSlice tr2=cslice; tr2.vertex_count=actual;
+                m_api.submit2(tr2, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+            }
         }
-    }
+    } // end gs block
 
     // ── Trails — all particles ─────────────────────────────────────────────────
     for (const AnimatedCurve& c : m_curves) {

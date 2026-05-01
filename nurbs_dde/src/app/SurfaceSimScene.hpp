@@ -1,6 +1,10 @@
 #pragma once
 // app/SurfaceSimScene.hpp
-// Gaussian surface simulation scene.
+// Particle simulation scene rendered on a parametric surface.
+//
+// Step 3: the scene now owns the surface as unique_ptr<ISurface>.
+// Particles hold a non-owning ISurface* obtained from m_surface.get().
+// Adding a new surface = one line in the constructor. No other files change.
 //
 // Hotkeys:
 //   Ctrl+L  -- spawn a new Leader particle  (blue trail)
@@ -13,10 +17,18 @@
 
 #include "engine/EngineAPI.hpp"
 #include "app/GaussianSurface.hpp"
+#include "app/GaussianRipple.hpp"
+#include "sim/GradientWalker.hpp"
+#include "sim/EulerIntegrator.hpp"
+#include "sim/BrownianMotion.hpp"
+#include "sim/MilsteinIntegrator.hpp"
+#include "sim/HistoryBuffer.hpp"
+#include "sim/DelayPursuitEquation.hpp"
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
 #include "app/PerformancePanel.hpp"
 #include "app/CoordDebugPanel.hpp"
+#include "math/Surfaces.hpp"
 
 #include <imgui.h>
 #include <memory>
@@ -33,8 +45,15 @@ public:
     void on_frame(f32 dt);
 
 private:
-    EngineAPI        m_api;
-    std::vector<AnimatedCurve> m_curves;  ///< all active particles; Ctrl+L adds one
+    EngineAPI                              m_api;
+    std::unique_ptr<ndde::math::ISurface>  m_surface;   // Step 3: owns the surface
+    ndde::sim::GradientWalker              m_equation;    // Step 4: default equation
+    ndde::sim::EulerIntegrator             m_integrator;  // Step 5: Euler scheme
+    ndde::sim::MilsteinIntegrator          m_milstein;    // Step 9: Milstein for SDEs
+    ndde::sim::BrownianMotion::Params      m_bm_params;   // Step 9: Brownian UI params
+    ndde::sim::DelayPursuitEquation::Params m_dp_params;  // Step 10: delay-pursuit params
+    u32 m_dp_count = 0;                                   // Step 10: spawn counter
+    std::vector<AnimatedCurve>             m_curves;    ///< all active particles
     PerformancePanel m_perf;
     CoordDebugPanel  m_coord_debug;
 
@@ -45,6 +64,21 @@ private:
     // Canvas rect for the 3D window (updated each frame)
     ImVec2 m_canvas3d_pos{};
     ImVec2 m_canvas3d_sz{};
+
+    // ── Surface selector ──────────────────────────────────────────────────────
+    enum class SurfaceType : u8 { Gaussian = 0, Torus = 1, GaussianRipple = 2 };
+    SurfaceType m_surface_type = SurfaceType::Gaussian;
+    f32 m_torus_R = 2.0f;
+    f32 m_torus_r = 0.7f;
+    GaussianRipple::Params m_ripple_params;  ///< UI-editable ripple parameters
+
+    void swap_surface(SurfaceType type);
+
+    // ── Simulation time ───────────────────────────────────────────────────────
+    // Accumulated wall-clock simulation time (paused when m_sim_paused).
+    // Passed to ISurface geometry queries and wireframe tessellation
+    // for deforming surfaces (is_time_varying() == true).
+    f32 m_sim_time = 0.f;
 
     // ── Simulation state ──────────────────────────────────────────────────────
     f32  m_sim_speed     = 1.f;
@@ -74,6 +108,8 @@ private:
     bool m_ctrl_q_prev = false;
     bool m_ctrl_l_prev = false;  ///< Ctrl+L: spawn Leader
     bool m_ctrl_c_prev = false;  ///< Ctrl+C: spawn Chaser
+    bool m_ctrl_b_prev = false;  ///< Ctrl+B: spawn Brownian particle
+    bool m_ctrl_r_prev = false;  ///< Ctrl+R: spawn delay-pursuit chaser
 
     // Counters for colour-slot cycling within each role
     u32 m_leader_count = 0;

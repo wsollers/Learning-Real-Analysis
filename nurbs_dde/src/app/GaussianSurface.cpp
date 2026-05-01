@@ -8,10 +8,11 @@
 
 namespace ndde {
 
-// == GaussianSurface::eval ====================================================
-// Option C: 6-Gaussian asymmetric + double sinusoidal ripple.
+// == GaussianSurface::eval_static ============================================
+// Renamed from eval() -- identical computation.
+// The static alias eval() in the header forwards here.
 
-f32 GaussianSurface::eval(f32 x, f32 y) noexcept {
+f32 GaussianSurface::eval_static(f32 x, f32 y) noexcept {
     const f32 g0 =  1.6f * std::exp(-((x-1.5f)*(x-1.5f)/0.6f  + (y-0.4f)*(y-0.4f)/0.9f));
     const f32 g1 = -1.3f * std::exp(-((x+1.3f)*(x+1.3f)/0.8f  + (y+1.1f)*(y+1.1f)/0.5f));
     const f32 g2 =  1.1f * std::exp(-((x+0.2f)*(x+0.2f)/1.2f  + (y-2.0f)*(y-2.0f)/0.4f));
@@ -31,6 +32,22 @@ GaussianSurface::Grad GaussianSurface::grad(f32 x, f32 y) noexcept {
         (eval(x+h,y) - eval(x-h,y)) / (2.f*h),
         (eval(x,y+h) - eval(x,y-h)) / (2.f*h)
     };
+}
+
+// == GaussianSurface::du / dv ================================================
+// ISurface overrides -- central finite difference on the height field.
+// p(u,v) = (u, v, f(u,v)), so:
+//   du = (1, 0, df/du)   and   dv = (0, 1, df/dv)
+// We compute df/du and df/dv via the existing grad() central-difference.
+
+Vec3 GaussianSurface::du(float u, float v, float /*t*/) const {
+    const auto [fx, fy] = grad(u, v);
+    return Vec3{1.f, 0.f, fx};
+}
+
+Vec3 GaussianSurface::dv(float u, float v, float /*t*/) const {
+    const auto [fx, fy] = grad(u, v);
+    return Vec3{0.f, 1.f, fy};
 }
 
 // == GaussianSurface::unit_normal =============================================
@@ -193,13 +210,36 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
 // =============================================================================
 
 AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
-                             Role role, u32 colour_slot)
-    : m_role(role)
+                             Role role, u32 colour_slot,
+                             const ndde::math::ISurface*  surface,
+                             ndde::sim::IEquation*         equation,
+                             const ndde::sim::IIntegrator* integrator)
+    : m_surface(surface)
+    , m_equation(equation)
+    , m_owned_equation(nullptr)   // shared equation -- ownership is external
+    , m_integrator(integrator)
+    , m_role(role)
     , m_colour_slot(colour_slot % MAX_SLOTS)
     , m_start_x(start_x)
     , m_start_y(start_y)
 {
     m_walk = WalkState{ start_x, start_y };
+}
+
+// static factory: particle owns its equation
+// static
+AnimatedCurve AnimatedCurve::with_equation(
+    f32 start_x, f32 start_y,
+    Role role, u32 colour_slot,
+    const ndde::math::ISurface*           surface,
+    std::unique_ptr<ndde::sim::IEquation> owned_equation,
+    const ndde::sim::IIntegrator*         integrator)
+{
+    AnimatedCurve c(start_x, start_y, role, colour_slot,
+                    surface, owned_equation.get(), integrator);
+    c.m_owned_equation = std::move(owned_equation);
+    // m_equation already points to m_owned_equation.get() via the constructor
+    return c;
 }
 
 void AnimatedCurve::reset() {
@@ -215,45 +255,72 @@ void AnimatedCurve::advance(f32 dt, f32 speed_scale) {
 }
 
 void AnimatedCurve::step(f32 dt, f32 speed_scale) {
-    f32& x     = m_walk.x;
-    f32& y     = m_walk.y;
-    f32& phase = m_walk.phase;
-    f32& angle = m_walk.angle;
+    // Step 5: build ParticleState, delegate entirely to the integrator.
+    // The integrator calls m_equation->velocity(state, ...) with mutable state,
+    // so GradientWalker updates state.angle in place -- no const_cast needed.
+    ndde::sim::ParticleState ps;
+    ps.uv    = { m_walk.x, m_walk.y };
+    ps.phase = m_walk.phase;
+    ps.angle = m_walk.angle;
 
-    const auto [fx, fy] = GaussianSurface::grad(x, y);
-    const f32 gn = std::sqrt(fx*fx + fy*fy) + 1e-5f;
+    m_integrator->step(ps, *m_equation, *m_surface, 0.f, dt * speed_scale);
 
-    const f32 perp_x = -fy / gn;
-    const f32 perp_y =  fx / gn;
+    // Sync angle back (equation updated it during velocity() call in integrator)
+    m_walk.angle = ps.angle;
 
-    const f32 steer   = std::sin(phase * 0.4f) * 0.55f;
-    const f32 desired = std::atan2(perp_y, perp_x) + steer;
-    f32 da = desired - angle;
-    while (da >  std::numbers::pi_v<f32>) da -= 2.f*std::numbers::pi_v<f32>;
-    while (da < -std::numbers::pi_v<f32>) da += 2.f*std::numbers::pi_v<f32>;
-    angle += std::clamp(da, -2.f*dt, 2.f*dt);
+    // Boundary handling on the integrator's proposed position.
+    constexpr f32 margin = 0.3f;
+    const f32 u0     = m_surface->u_min();
+    const f32 u1     = m_surface->u_max();
+    const f32 v0     = m_surface->v_min();
+    const f32 v1     = m_surface->v_max();
+    const f32 u_span = u1 - u0;
+    const f32 v_span = v1 - v0;
 
-    const f32 sp = WALK_SPEED * speed_scale;
-    f32 nx = x + std::cos(angle) * sp * dt;
-    f32 ny = y + std::sin(angle) * sp * dt;
+    if (m_surface->is_periodic_u()) {
+        while (ps.uv.x < u0) ps.uv.x += u_span;
+        while (ps.uv.x >= u1) ps.uv.x -= u_span;
+    } else {
+        if (ps.uv.x < u0 + margin) { ps.uv.x = u0 + margin; m_walk.angle = std::numbers::pi_v<f32> - m_walk.angle; }
+        if (ps.uv.x > u1 - margin) { ps.uv.x = u1 - margin; m_walk.angle = std::numbers::pi_v<f32> - m_walk.angle; }
+    }
+    if (m_surface->is_periodic_v()) {
+        while (ps.uv.y < v0) ps.uv.y += v_span;
+        while (ps.uv.y >= v1) ps.uv.y -= v_span;
+    } else {
+        if (ps.uv.y < v0 + margin) { ps.uv.y = v0 + margin; m_walk.angle = -m_walk.angle; }
+        if (ps.uv.y > v1 - margin) { ps.uv.y = v1 - margin; m_walk.angle = -m_walk.angle; }
+    }
 
-    const f32 margin = 0.3f;
-    if (nx < GaussianSurface::XMIN + margin) { nx = GaussianSurface::XMIN + margin; angle = std::numbers::pi_v<f32> - angle; }
-    if (nx > GaussianSurface::XMAX - margin) { nx = GaussianSurface::XMAX - margin; angle = std::numbers::pi_v<f32> - angle; }
-    if (ny < GaussianSurface::YMIN + margin) { ny = GaussianSurface::YMIN + margin; angle = -angle; }
-    if (ny > GaussianSurface::YMAX - margin) { ny = GaussianSurface::YMAX - margin; angle = -angle; }
+    // Commit
+    m_walk.x     = ps.uv.x;
+    m_walk.y     = ps.uv.y;
+    m_walk.phase = ps.phase;
 
-    x = nx; y = ny;
-    phase += sp * dt * 1.5f;
-
-    const f32 z = GaussianSurface::eval(x, y);
-    const Vec3 pt = {x, y, z};
-
+    const Vec3 pt = m_surface->evaluate(m_walk.x, m_walk.y);
     if (m_trail.empty() || glm::length(pt - m_trail.back()) > 0.015f) {
         m_trail.push_back(pt);
         if (m_trail.size() > MAX_TRAIL)
             m_trail.erase(m_trail.begin());
     }
+}
+
+// == AnimatedCurve::history methods ==========================================
+
+void AnimatedCurve::enable_history(std::size_t capacity, float dt_min) {
+    m_history = std::make_unique<ndde::sim::HistoryBuffer>(capacity, dt_min);
+}
+
+void AnimatedCurve::push_history(float t) {
+    if (!m_history) return;
+    // Push the current parameter-space position (the walk state, not the trail).
+    // The trail stores world-space Vec3; we need the (u,v) pair for the DDE.
+    m_history->push(t, { m_walk.x, m_walk.y });
+}
+
+glm::vec2 AnimatedCurve::query_history(float t_past) const {
+    if (!m_history) return { m_walk.x, m_walk.y };  // fallback: current pos
+    return m_history->query(t_past);
 }
 
 // == AnimatedCurve::trail_colour ==============================================
@@ -343,7 +410,13 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
         fr.N     = dT / dTl;
         fr.kappa = dTl / l1;
     } else {
-        fr.N     = GaussianSurface::unit_normal(p0.x, p0.y);
+        // Degenerate: curve is locally straight (zero discrete curvature).
+        // Use the surface normal as a fallback N so B = T x N is well-defined.
+        // We pass t=0.f here because trail points are world-space snapshots
+        // without timestamps -- the exact surface time at push is not stored.
+        // For static surfaces this is exact; for deforming surfaces it is an
+        // approximation (the fallback path is rare in practice).
+        fr.N     = m_surface->unit_normal(p0.x, p0.y, 0.f);
         fr.kappa = 0.f;
     }
     fr.B = glm::normalize(glm::cross(fr.T, fr.N));
@@ -390,7 +463,7 @@ void AnimatedCurve::tessellate_trail(std::span<Vertex> out) const {
 }
 
 Vec3 AnimatedCurve::head_world() const noexcept {
-    if (m_trail.empty()) return {m_walk.x, m_walk.y, GaussianSurface::eval(m_walk.x, m_walk.y)};
+    if (m_trail.empty()) return m_surface->evaluate(m_walk.x, m_walk.y);
     return m_trail.back();
 }
 

@@ -104,7 +104,7 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 13. remark*[Contrapositive quantified statement] (thm/lem/prop/cor only, if proof_usage = true)
 14. remark*[Contrapositive predicate reading] (if step 13 generated)
 15. remark*[Interpretation]
-16. remark*[Dependencies]
+16. remark*[Dependencies] or \NoLocalDependencies
 ```
 
 ## Environment Body
@@ -225,13 +225,16 @@ Use this option shape:
 
 ## Dependencies
 
-- Use `\begin{remark*}[Dependencies]`.
+- Use `\begin{remark*}[Dependencies]` when there are substantive local
+  dependencies to display.
 - A dependency is a formal mathematical item only: definition, theorem, lemma,
   proposition, corollary, or axiom.
 - Do not link to proof labels, remarks, examples, exercises, figures, sections,
   or proof files.
-- If the statement is foundational, write exactly:
-  `No local dependencies.`
+- If the statement is foundational within the current local note scope and
+  there are no local dependencies to display, emit exactly:
+  `\NoLocalDependencies`
+  and do not emit a visible dependencies remark.
 - If the Formal Mathematical Label Index is provided, every dependency label
   must be selected from that index. Do not invent labels.
 - If a needed mathematical dependency is absent from the index, do not emit a
