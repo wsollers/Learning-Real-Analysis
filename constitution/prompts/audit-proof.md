@@ -95,6 +95,12 @@ Flag MACRO_VIOLATION for any occurrence of:
 - Proof-structuring macros
 - Any custom macro not from the standard LaTeX kernel or house preamble
 
+## Topic Structure Check
+
+- Proof files must not contain `topicbox` environments.
+- Proof files must not contain `exposition` environments.
+- If either appears, flag as NONCOMPLIANT.
+
 ## Notation Check
 
 - Professional proof and detailed proof use house notation from notation.yaml?

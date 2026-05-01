@@ -63,3 +63,8 @@ chosen for the two rational numbers.
         \textnormal{(well-definedness of multiplication)}
 \end{itemize}
 \end{remark*}
+
+Do not use `topicbox` containers in proof files.
+Do not use `exposition` environments in proof files.
+Proof files must preserve the existing two-layer proof structure:
+professional proof first, detailed learning proof second.

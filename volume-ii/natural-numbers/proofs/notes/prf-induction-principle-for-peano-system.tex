@@ -1,0 +1,164 @@
+\newpage
+\phantomsection
+\label{prf:induction-principle-for-peano-system}
+
+\begin{remark*}[Return]
+\hyperref[thm:induction-principle-for-peano-system]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Induction Principle for a Peano System]
+Let $(P,S,1)$ be a Peano system, and let $\varphi$ be a predicate on $P$.
+If
+\[
+\varphi(1)
+\qquad\text{and}\qquad
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n))),
+\]
+then
+\[
+\forall n \in P\;\varphi(n).
+\]
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let
+\[
+A:=\{n \in P : \varphi(n)\}.
+\]
+We will verify that $A$ satisfies the hypotheses of the induction axiom
+for the Peano system $(P,S,1)$.
+
+Because $\varphi(1)$ holds, we have
+\[
+1 \in A.
+\]
+
+Now let $n \in P$ and suppose that $n \in A$. By the definition of $A$,
+this means that $\varphi(n)$ holds. By the inductive hypothesis
+\[
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n))),
+\]
+it follows that $\varphi(S(n))$ holds. Therefore
+\[
+S(n) \in A.
+\]
+So
+\[
+\forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\]
+
+Since $(P,S,1)$ is a Peano system, Axiom~\ref*{ax:peano-induction} applies.
+Hence
+\[
+A=P.
+\]
+
+Finally, let $n \in P$. Because $A=P$, we have $n \in A$. By the definition
+of $A$, this means that $\varphi(n)$ holds. Since $n \in P$ was arbitrary,
+we conclude that
+\[
+\forall n \in P\;\varphi(n).
+\]
+This is exactly the desired conclusion.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1.} Build the subset that corresponds to the predicate.
+
+The induction axiom in the definition of a Peano system is stated for subsets
+of the underlying set $P$, while the theorem we want is stated for a
+predicate $\varphi$ on $P$. To connect these two forms, define
+\[
+A:=\{n \in P : \varphi(n)\}.
+\]
+So $A$ is exactly the set of elements of $P$ for which the property
+$\varphi$ holds.
+
+\textbf{Step 2.} Check the base case in subset language.
+
+We are given that
+\[
+\varphi(1)
+\]
+holds. By the definition of $A$, that means precisely that
+\[
+1 \in A.
+\]
+So the first hypothesis required by the induction axiom is satisfied.
+
+\textbf{Step 3.} Check closure under successor in subset language.
+
+Now let $n \in P$ and assume that
+\[
+n \in A.
+\]
+By the definition of $A$, this means that
+\[
+\varphi(n)
+\]
+holds. But the theorem also assumes that
+\[
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n))).
+\]
+Therefore $\varphi(S(n))$ holds, and so again by the definition of $A$ we get
+\[
+S(n) \in A.
+\]
+Since $n \in P$ was arbitrary, we have shown that
+\[
+\forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\]
+Thus $A$ is closed under the successor operation.
+
+\textbf{Step 4.} Apply the induction axiom of the Peano system.
+
+We have now proved both hypotheses needed for
+\hyperref[ax:peano-induction]{Axiom~\ref*{ax:peano-induction}}:
+\[
+1 \in A
+\qquad\text{and}\qquad
+\forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\]
+Because $(P,S,1)$ is a Peano system, the induction axiom tells us that
+\[
+A=P.
+\]
+
+\textbf{Step 5.} Translate back to the predicate form.
+
+To prove the desired conclusion, let $n \in P$. Since $A=P$, we must have
+\[
+n \in A.
+\]
+By the definition of $A$, this means that $\varphi(n)$ holds.
+
+Because $n \in P$ was arbitrary, we conclude that
+\[
+\forall n \in P\;\varphi(n).
+\]
+
+\textbf{Conclusion.} The subset-form induction axiom implies the usual
+predicate-form induction principle.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof converts the predicate $\varphi$ into the subset
+\[
+A=\{n \in P : \varphi(n)\}.
+\]
+The base case $\varphi(1)$ becomes the statement $1 \in A$, and the
+successor step for $\varphi$ becomes closure of $A$ under the successor map.
+Once these two facts are established, the induction axiom for the Peano
+system forces $A=P$. Translating back from membership in $A$ to truth of
+$\varphi$ yields the predicate-form induction principle.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Definition~\ref*{def:peano-system}}
+  \item \hyperref[ax:peano-induction]{Axiom~\ref*{ax:peano-induction}}
+\end{itemize}
+\end{remark*}

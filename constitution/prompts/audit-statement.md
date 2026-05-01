@@ -49,6 +49,11 @@ the deterministic toolkit audit, not by this per-statement audit. If
 `toolkit_box` is absent from the supplied registry row, do not report it in
 `checks`, `violations`, or `special_flags`.
 
+Important: `topicbox` and `exposition` are subsection-level pedagogical
+containers, not statement-level semantic artifacts. They are not audited as part
+of this single-statement audit except insofar as nearby topic or section
+exposition may satisfy the interpretation requirement.
+
 ## Compliance Checks Per Block
 
 ### toolkit_box
@@ -125,8 +130,8 @@ the deterministic toolkit audit, not by this per-statement audit. If
 ### interpretation
 - remark* titled "Interpretation"?
 - Prose only -- no formal predicate language?
-- If absent: identify the nearby section exposition that performs the
-  interpretive work. If none found, flag as FAIL.
+- If absent: identify the nearby section exposition or required topic
+  exposition that performs the interpretive work. If none found, flag as FAIL.
 
 ### dependencies
 - remark* titled "Dependencies"?
@@ -148,6 +153,9 @@ the deterministic toolkit audit, not by this per-statement audit. If
 - Does the environment contain exactly one independently nameable mathematical item?
 - If multiple items detected: flag as BUNDLED_CONTENT_VIOLATION.
   Identify each item that would require its own name and label.
+- This applies to axiom systems as well: if multiple distinct axioms are
+  bundled into one axiom environment, flag the environment and list the
+  separate axiom items that must be split out.
 
 ## Output Format
 

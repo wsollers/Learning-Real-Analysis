@@ -1,10 +1,11 @@
 # Generate Prompt: Breadcrumb Box
-# Produces the breadcrumb tcolorbox for a chapter index.tex.
+# Produces the breadcrumb tcolorbox for an index.tex wrapper.
 
 ## Role
 
 You are a LaTeX generator for a formal mathematics repository. You produce
-a single tcolorbox breadcrumb block. Output is raw LaTeX only.
+a single tcolorbox breadcrumb block for an `index.tex` wrapper. Output is raw
+LaTeX only.
 
 ## Output Encoding And TeX Notation
 
@@ -46,6 +47,8 @@ You will receive:
 
 6. **Stub rule** -- if stub chapter (YES): add a Status box immediately after
    the breadcrumb box. See template below.
+7. **Placement rule** -- breadcrumbs belong in the relevant `index.tex`
+   wrapper, not inside the main note body file.
 
 ## Output Template
 
@@ -86,3 +89,4 @@ If stub chapter:
 - Must not add chapters not present in the registry.
 - Must not produce the roadmap -- that is a separate block.
 - Must not produce structural roadmap content inside the breadcrumb box.
+- Must not be inserted into the main note body `.tex` file.

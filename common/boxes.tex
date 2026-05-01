@@ -4,7 +4,7 @@
 \usepackage{xcolor}
 \usepackage{mdframed}
 \usepackage{tcolorbox}
-\tcbuselibrary{skins}
+\tcbuselibrary{skins,breakable}
 
 % ============================================================
 % TikZ
@@ -267,3 +267,24 @@ depedgelab/.style={
 %   % Legend (place manually where it fits)
 %   \node[anchor=north east] at (6.0,0.2) {\DependencyLegend};
 % \end{tikzpicture}
+
+% =========================================================
+% Topic-level pedagogical containers
+% =========================================================
+
+\newtcolorbox{topicbox}[1]{
+  enhanced,
+  breakable,
+  colback=gray!4,
+  colframe=gray!55,
+  arc=2pt,
+  boxrule=0.6pt,
+  title={\textbf{Topic: #1}},
+  fonttitle=\bfseries,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  before skip=8pt, after skip=8pt
+}
+
+\NewDocumentEnvironment{exposition}{}%
+  {\par\smallskip\noindent\ignorespaces}%
+  {\par\smallskip}

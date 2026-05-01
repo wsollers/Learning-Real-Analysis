@@ -57,6 +57,7 @@ Structure in this exact order:
 - Current chapter bolded: \textbf{...}.
 - Neighbors from chapter registry only -- do not invent.
 - Fits in box; at most two lines.
+- Breadcrumb belongs in this `index.tex` wrapper, not in a note body file.
 
 **2. Status Box**
 ```latex
