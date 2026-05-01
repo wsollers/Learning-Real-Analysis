@@ -6,6 +6,7 @@
 #include <imgui_internal.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
+#include <cstring>
 #include <numbers>
 #include <format>
 #include <algorithm>
@@ -103,7 +104,8 @@ void SurfaceSimScene::swap_surface(SurfaceType type) {
         }
     }
     m_surface_type = type;
-    m_sim_time     = 0.f;  // reset accumulated time for the new surface
+    m_sim_time     = 0.f;
+    m_wireframe_dirty = true;  // surface geometry changed -- cache must be rebuilt
 
     // Spread particles across the new domain using a golden-ratio sequence.
     const u32 n    = static_cast<u32>(m_curves.size());
@@ -157,8 +159,16 @@ void SurfaceSimScene::handle_hotkeys() {
 
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_F), m_ctrl_f_prev, m_show_frenet);
     toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_D), m_ctrl_d_prev, m_show_dir_deriv);
-    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_P), m_ctrl_p_prev, m_show_normal_plane);
-    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_T), m_ctrl_t_prev, m_show_torsion);  // NEW
+    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_N), m_ctrl_n_prev, m_show_normal_plane);  // Ctrl+N: normal plane (was Ctrl+P)
+    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_T), m_ctrl_t_prev, m_show_torsion);
+
+    // Ctrl+P: pause / unpause the simulation.
+    // advance_simulation() is gated on m_sim_paused, so hover, tooltip snap,
+    // and all ImGui drawing continue unaffected -- only particle integration stops.
+    const bool ctrl_p = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_P);
+    if (ctrl_p && !m_ctrl_p_prev)
+        m_sim_paused = !m_sim_paused;
+    m_ctrl_p_prev = ctrl_p;
 
     // Ctrl+L: spawn a new Leader (blue trail).
     const bool ctrl_l = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_L);
@@ -368,8 +378,11 @@ void SurfaceSimScene::draw_hotkey_panel() {
     ImGui::SeparatorText("Overlays");
     row("Ctrl+F", "Frenet frame  (T, N, B)");
     row("Ctrl+D", "Surface frame  (Dx, Dy)");
-    row("Ctrl+P", "Normal plane patch");
+    row("Ctrl+N", "Normal plane patch");
     row("Ctrl+T", "Torsion ribbon");
+
+    ImGui::SeparatorText("Simulation");
+    row("Ctrl+P", "Pause / unpause");
 
     ImGui::SeparatorText("Panels");
     row("Ctrl+Q", "Coordinate debug");
@@ -466,7 +479,7 @@ void SurfaceSimScene::draw_simulation_panel() {
     ImGui::SeparatorText("Overlays");
     ImGui::Checkbox("Frenet frame  [Ctrl+F]",   &m_show_frenet);
     ImGui::Checkbox("Surface frame [Ctrl+D]",   &m_show_dir_deriv);
-    ImGui::Checkbox("Normal plane  [Ctrl+P]",   &m_show_normal_plane);
+    ImGui::Checkbox("Normal plane  [Ctrl+N]",   &m_show_normal_plane);
     ImGui::Checkbox("Torsion ribbon [Ctrl+T]",  &m_show_torsion);
 
     ImGui::SeparatorText("Brownian motion  [Ctrl+B]");
@@ -633,6 +646,38 @@ void SurfaceSimScene::draw_simulation_panel() {
     }
 
     ImGui::SeparatorText("3D camera");
+    // Surface display mode
+    {
+        int mode = static_cast<int>(m_surface_display);
+        bool changed = false;
+        changed |= ImGui::RadioButton("Wireframe", &mode, 0);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton("Filled",    &mode, 1);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton("Both",      &mode, 2);
+        if (changed) {
+            m_surface_display = static_cast<SurfaceDisplay>(mode);
+            m_wireframe_dirty = true;  // ensure filled cache is built if switching to it
+        }
+        // Curvature scale -- only meaningful for Filled/Both
+        if (m_surface_display != SurfaceDisplay::Wireframe) {
+            if (ImGui::SliderFloat("K scale##curv", &m_curv_scale, 0.01f, 20.f, "%.2f"))
+                m_wireframe_dirty = true;  // recolour the filled mesh
+            ImGui::SameLine();
+            ImGui::TextDisabled("curvature range");
+        }
+    }
+    // Grid density slider -- controls wireframe smoothness.
+    // Vertex count = 4*N*(N+1). N=64->~17k, N=128->~66k, N=256->~262k.
+    // CPU evaluation is the limit at N>200 on complex surfaces.
+    {
+        int gl = static_cast<int>(m_grid_lines);
+        if (ImGui::SliderInt("Grid lines##surface", &gl, 8, 256))
+            m_grid_lines = static_cast<u32>(std::max(gl, 8));
+        ImGui::SameLine();
+        ImGui::TextDisabled("~%uk verts",
+            (4u * m_grid_lines * (m_grid_lines + 1u)) / 1000u);
+    }
     ImGui::SliderFloat("Yaw",   &m_vp3d.yaw,   -std::numbers::pi_v<f32>, std::numbers::pi_v<f32>, "%.2f");
     ImGui::SliderFloat("Pitch", &m_vp3d.pitch,  -1.5f, 1.5f, "%.2f");
     ImGui::SliderFloat("Zoom##3d", &m_vp3d.zoom, 0.1f, 5.f, "%.2f");
@@ -693,7 +738,21 @@ void SurfaceSimScene::draw_surface_3d_window() {
     }
 
     const Mat4 mvp3d = canvas_mvp_3d(cpos, csz);
-    submit_wireframe_3d(mvp3d);
+
+    // Dispatch based on surface display mode.
+    // Both: filled first (back to front), wireframe on top at reduced opacity.
+    switch (m_surface_display) {
+        case SurfaceDisplay::Wireframe:
+            submit_wireframe_3d(mvp3d);
+            break;
+        case SurfaceDisplay::Filled:
+            submit_filled_3d(mvp3d);
+            break;
+        case SurfaceDisplay::Both:
+            submit_filled_3d(mvp3d);
+            submit_wireframe_3d(mvp3d);   // drawn on top; alpha blended by the renderer
+            break;
+    }
 
     for (u32 ci = 0; ci < static_cast<u32>(m_curves.size()); ++ci) {
         const AnimatedCurve& c = m_curves[ci];
@@ -725,6 +784,13 @@ void SurfaceSimScene::draw_surface_3d_window() {
     dl->AddText(ImVec2(cpos.x+8, cpos.y+6),
         IM_COL32(200,200,200,180),
         "Right-drag: orbit   Scroll: zoom   Ctrl+L: add particle");
+
+    // Pause indicator -- prominent so the user can't miss it.
+    if (m_sim_paused) {
+        dl->AddText(ImVec2(cpos.x+8, cpos.y+24),
+            IM_COL32(255, 210, 60, 240),
+            "PAUSED  [Ctrl+P to resume]");
+    }
 
     if (m_snap_on_curve && m_snap_idx >= 0 && m_snap_curve >= 0 &&
         m_snap_curve < static_cast<int>(m_curves.size()))
@@ -823,14 +889,180 @@ void SurfaceSimScene::submit_arrow(Vec3 origin, Vec3 dir, Vec4 color,
 
 // ── submit_wireframe_3d ───────────────────────────────────────────────────────
 
-void SurfaceSimScene::submit_wireframe_3d(const Mat4& mvp) {
-    // Step 3: use ISurface interface instead of GaussianSurface:: statics.
+void SurfaceSimScene::rebuild_wireframe_cache_if_needed() {
+    const bool resolution_changed = (m_grid_lines != m_cached_grid_lines);
+    const bool time_varying       = m_surface->is_time_varying();
+
+    // Static surface, same resolution, not explicitly dirtied: cache is valid.
+    if (!m_wireframe_dirty && !resolution_changed && !time_varying)
+        return;
+
     const u32 n = m_surface->wireframe_vertex_count(m_grid_lines, m_grid_lines);
-    auto slice  = m_api.acquire(n);
-    // Pass m_sim_time: deforming surfaces use it; static surfaces ignore it.
-    m_surface->tessellate_wireframe({slice.vertices(), n},
-                                    m_grid_lines, m_grid_lines, m_sim_time);
+
+    // High-watermark resize: never shrink.
+    // When the user drags the grid slider down and back up, we reuse the
+    // existing allocation without any heap activity.
+    if (m_wireframe_cache.size() < static_cast<std::size_t>(n))
+        m_wireframe_cache.resize(n);
+
+    m_surface->tessellate_wireframe(
+        std::span<Vertex>{ m_wireframe_cache.data(), n },
+        m_grid_lines, m_grid_lines,
+        m_sim_time);   // snapshot at current simulation time
+
+    m_wireframe_vcount  = n;
+    m_cached_grid_lines = m_grid_lines;
+    m_wireframe_dirty   = false;
+    // For time_varying surfaces: m_wireframe_dirty stays false here;
+    // the is_time_varying() branch above ensures they rebuild every frame
+    // without any external dirty-set.
+}
+
+// ── curvature_color ─────────────────────────────────────────────────────────────
+// Maps Gaussian curvature K to a perceptually meaningful colour.
+//
+// Geometric intuition:
+//   K > 0  -- elliptic region (sphere-like, positively curved)
+//             The surface bends the same way in all directions.
+//             Warm colour (amber -> red) reads as "convex tension".
+//   K = 0  -- parabolic region (flat or cylindrical, one principal curvature is zero)
+//             Mid-grey: neutral, no net Gaussian bending.
+//   K < 0  -- hyperbolic region (saddle-like, negatively curved)
+//             The surface curves opposite ways in perpendicular directions.
+//             Cool colour (teal -> blue) reads as "saddle tension".
+//
+// This encoding is standard in differential geometry visualisation
+// (e.g. Ken Brakke's Surface Evolver, Rhino Curvature Analysis).
+//
+// scale: the |K| value that saturates the colour (maps to full red or blue).
+//         Larger scale = more colour contrast for low-curvature surfaces.
+// Opacity: 0.82 -- slightly transparent so trails remain visible through
+//          the filled surface.
+
+// static
+Vec4 SurfaceSimScene::curvature_color(float K, float scale) noexcept {
+    // Normalise K to [-1, 1]
+    const float t = std::clamp(K / (scale + 1e-9f), -1.f, 1.f);
+
+    if (t >= 0.f) {
+        // Positive K: grey(0) -> amber(0.5) -> red(1)
+        //   at t=0:   (0.50, 0.50, 0.50)  -- mid grey
+        //   at t=0.5: (0.92, 0.60, 0.12)  -- amber
+        //   at t=1:   (0.85, 0.12, 0.08)  -- red
+        const float r = 0.50f + t * 0.35f;
+        const float g = 0.50f - t * 0.38f;
+        const float b = 0.50f - t * 0.42f;
+        return { r, g, b, 0.82f };
+    } else {
+        // Negative K: grey(0) -> teal(-0.5) -> blue(-1)
+        //   at t=0:    (0.50, 0.50, 0.50)  -- mid grey
+        //   at t=-0.5: (0.12, 0.68, 0.72)  -- teal
+        //   at t=-1:   (0.10, 0.22, 0.85)  -- blue
+        const float s = -t;  // s in [0,1]
+        const float r = 0.50f - s * 0.40f;
+        const float g = 0.50f + s * 0.18f - s * s * 0.46f;
+        const float b = 0.50f + s * 0.35f;
+        return { r, g, b, 0.82f };
+    }
+}
+
+// ── rebuild_filled_cache_if_needed ───────────────────────────────────────────────
+void SurfaceSimScene::rebuild_filled_cache_if_needed() {
+    const bool resolution_changed = (m_grid_lines != m_cached_grid_lines);
+    const bool time_varying       = m_surface->is_time_varying();
+
+    if (!m_wireframe_dirty && !resolution_changed && !time_varying)
+        return;
+
+    const u32 N   = m_grid_lines;       // grid cells per axis
+    const u32 n   = N * N * 6;         // 2 triangles * 3 vertices per cell
+
+    if (m_filled_cache.size() < static_cast<std::size_t>(n))
+        m_filled_cache.resize(n);
+
+    const float u0 = m_surface->u_min(m_sim_time);
+    const float u1 = m_surface->u_max(m_sim_time);
+    const float v0 = m_surface->v_min(m_sim_time);
+    const float v1 = m_surface->v_max(m_sim_time);
+    const float du = (u1 - u0) / static_cast<float>(N);
+    const float dv = (v1 - v0) / static_cast<float>(N);
+
+    u32 idx = 0;
+    for (u32 i = 0; i < N; ++i) {
+        const float ua = u0 + static_cast<float>(i)   * du;
+        const float ub = u0 + static_cast<float>(i+1) * du;
+        for (u32 j = 0; j < N; ++j) {
+            const float va = v0 + static_cast<float>(j)   * dv;
+            const float vb = v0 + static_cast<float>(j+1) * dv;
+
+            // Evaluate the four corners of this (u,v) cell
+            const Vec3 p00 = m_surface->evaluate(ua, va, m_sim_time);
+            const Vec3 p10 = m_surface->evaluate(ub, va, m_sim_time);
+            const Vec3 p01 = m_surface->evaluate(ua, vb, m_sim_time);
+            const Vec3 p11 = m_surface->evaluate(ub, vb, m_sim_time);
+
+            // Sample curvature at the cell centre for colour.
+            // One sample per cell is correct -- curvature varies smoothly
+            // and this avoids 4x the gaussian_curvature() calls.
+            const float uc = (ua + ub) * 0.5f;
+            const float vc = (va + vb) * 0.5f;
+            const float K  = m_surface->gaussian_curvature(uc, vc, m_sim_time);
+            const Vec4  col = curvature_color(K, m_curv_scale);
+
+            // Triangle 1: (00, 10, 11)
+            m_filled_cache[idx++] = { p00, col };
+            m_filled_cache[idx++] = { p10, col };
+            m_filled_cache[idx++] = { p11, col };
+
+            // Triangle 2: (00, 11, 01)
+            m_filled_cache[idx++] = { p00, col };
+            m_filled_cache[idx++] = { p11, col };
+            m_filled_cache[idx++] = { p01, col };
+        }
+    }
+
+    m_filled_vcount = idx;
+    // Note: we do NOT update m_cached_grid_lines or m_wireframe_dirty here;
+    // that is the wireframe cache's responsibility.  Both caches share the
+    // same invalidation condition -- whichever is built second sees the flag
+    // already cleared by whichever was built first.
+    // In practice: wireframe is always built before filled (call order in
+    // draw_surface_3d_window), so by the time rebuild_filled runs,
+    // m_wireframe_dirty == false and the check above falls through only via
+    // the resolution_changed or time_varying branches.
+    //
+    // To handle the case where filled is the ONLY thing being built
+    // (mode == Filled), we also clear the grid-line cache sentinel here:
+    m_cached_grid_lines = m_grid_lines;
+    m_wireframe_dirty   = false;
+}
+
+void SurfaceSimScene::submit_wireframe_3d(const Mat4& mvp) {
+    // Ensure the CPU cache is current.  For static surfaces this is a near-free
+    // early-out (one bool check).  For deforming surfaces it re-tessellates
+    // into a pre-allocated system-RAM buffer.
+    rebuild_wireframe_cache_if_needed();
+    if (m_wireframe_vcount == 0) return;
+
+    // Acquire a GPU arena slice and memcpy the cached vertices in.
+    // Hot path: one arena bump + one contiguous memcpy, no evaluate() calls.
+    auto slice = m_api.acquire(m_wireframe_vcount);
+    std::memcpy(slice.vertices(),
+                m_wireframe_cache.data(),
+                m_wireframe_vcount * sizeof(Vertex));
     m_api.submit(slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+}
+
+// ── submit_filled_3d ───────────────────────────────────────────────────────
+void SurfaceSimScene::submit_filled_3d(const Mat4& mvp) {
+    rebuild_filled_cache_if_needed();
+    if (m_filled_vcount == 0) return;
+
+    auto slice = m_api.acquire(m_filled_vcount);
+    std::memcpy(slice.vertices(),
+                m_filled_cache.data(),
+                m_filled_vcount * sizeof(Vertex));
+    m_api.submit(slice, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 // ── submit_trail_3d ───────────────────────────────────────────────────────────

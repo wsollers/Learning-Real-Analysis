@@ -13,7 +13,8 @@
 //   Ctrl+R  -- spawn a delay-pursuit chaser targeting curve 0
 //   Ctrl+F  -- toggle Frenet frame  (T, N, B arrows + osculating circle)
 //   Ctrl+D  -- toggle surface frame (Dx, Dy tangents + kappa_n / kappa_g readout)
-//   Ctrl+P  -- toggle normal plane patch at particle
+//   Ctrl+N  -- toggle normal plane patch at particle  (was Ctrl+P)
+//   Ctrl+P  -- pause / unpause simulation  (hover + tooltips still active)
 //   Ctrl+T  -- toggle torsion visualisation (tau ribbon + signed readout)
 //   Ctrl+Q  -- toggle coordinate debug panel
 //   Ctrl+H  -- toggle hotkey reference panel
@@ -87,7 +88,7 @@ private:
     f32  m_sim_speed     = 1.f;
     bool m_sim_paused    = false;
     f32  m_frame_scale   = 0.25f;
-    u32  m_grid_lines    = 28;
+    u32  m_grid_lines    = 64;
     bool m_show_contours = true;
 
     // ── Visibility toggles (hotkeys) ──────────────────────────────────────────
@@ -107,7 +108,8 @@ private:
     // ── Hotkey edge-detection state ───────────────────────────────────────────
     bool m_ctrl_f_prev = false;
     bool m_ctrl_d_prev = false;
-    bool m_ctrl_p_prev = false;
+    bool m_ctrl_n_prev = false;  ///< Ctrl+N: toggle normal plane patch
+    bool m_ctrl_p_prev = false;  ///< Ctrl+P: pause / unpause simulation
     bool m_ctrl_t_prev = false;
     bool m_ctrl_q_prev = false;
     bool m_ctrl_l_prev = false;  ///< Ctrl+L: spawn Leader
@@ -126,8 +128,60 @@ private:
     bool m_snap_on_curve= false;
     HoverResult m_hover;
 
-    bool m_wireframe_dirty   = true;
+    // ── Surface display mode ──────────────────────────────────────────────────
+    // Wireframe: line grid (LineList)  -- the existing mode
+    // Filled:    triangle mesh coloured by Gaussian curvature K
+    // Both:      filled mesh with wireframe overlaid at reduced opacity
+    enum class SurfaceDisplay : u8 { Wireframe = 0, Filled = 1, Both = 2 };
+    SurfaceDisplay m_surface_display = SurfaceDisplay::Wireframe;
+
+    // ── Filled surface curvature colour scale ─────────────────────────────────
+    // K > 0 (elliptic / sphere-like)  → warm   (amber → red)
+    // K = 0 (flat / parabolic)        → neutral (grey)
+    // K < 0 (hyperbolic / saddle)     → cool   (teal → blue)
+    // k_curv_scale: maps K to [−1, 1].  Adjust per-surface so the full range
+    // of colour is used.  Exposed as a UI slider.
+    f32 m_curv_scale = 2.f;   ///< world units⁻² per unit colour range
+
+    bool m_wireframe_dirty   = true;  ///< set true to force rebuild of both caches
     u32  m_cached_grid_lines = 0;
+
+    // ── Wireframe geometry cache ───────────────────────────────────────────────
+    // Stores the tessellated line-list vertices in system RAM.
+    // Rebuilt only when the surface changes, the grid resolution changes,
+    // or the surface is time-varying (is_time_varying() == true).
+    // Each frame the cache is memcpy'd into the GPU arena -- no evaluate() calls.
+    //
+    // Invalidation rules:
+    //   m_wireframe_dirty = true   →  rebuild unconditionally next frame
+    //   m_grid_lines != m_cached_grid_lines  →  resolution changed
+    //   m_surface->is_time_varying()         →  geometry moves, always rebuild
+    //
+    // swap_surface() sets m_wireframe_dirty = true.
+    // advance_simulation() does NOT touch the cache; the surface's t
+    // is passed into rebuild_wireframe_cache() so the snapshot is current.
+    std::vector<Vertex> m_wireframe_cache;   ///< cached line-list vertices
+    u32                 m_wireframe_vcount = 0; ///< valid vertex count in cache
+
+    // Rebuild the cache if dirty or time-varying, then return the vertex count.
+    // Called at the top of submit_wireframe_3d() each frame.
+    void rebuild_wireframe_cache_if_needed();
+
+    // ── Filled surface geometry cache ───────────────────────────────────────────
+    // Same invalidation rules as the wireframe cache.
+    // Vertex layout: TriangleList, two triangles per (u,v) cell.
+    // Vertex count  = m_grid_lines * m_grid_lines * 6.
+    // Colour        = curvature_color(K(u,v), m_curv_scale).
+    std::vector<Vertex> m_filled_cache;
+    u32                 m_filled_vcount = 0;
+
+    void rebuild_filled_cache_if_needed();
+
+    // Map Gaussian curvature K to a colour.
+    // K > 0 → warm (amber→red), K = 0 → mid-grey, K < 0 → cool (teal→blue).
+    // scale: the K value that maps to full saturation.
+    [[nodiscard]] static Vec4 curvature_color(float K, float scale) noexcept;
+
     bool m_dock_built        = false;
 
     // ── Internal methods ──────────────────────────────────────────────────────
@@ -143,6 +197,7 @@ private:
     void draw_contour_2d_window();   ///< ImDrawList overlay on primary window
 
     void submit_wireframe_3d(const Mat4& mvp);
+    void submit_filled_3d(const Mat4& mvp);
     void submit_trail_3d(const AnimatedCurve& c, const Mat4& mvp);
     void submit_head_dot_3d(const AnimatedCurve& c, const Mat4& mvp);
     void submit_frenet_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
