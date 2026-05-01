@@ -77,6 +77,7 @@ void SurfaceSimScene::on_frame(f32 dt) {
     draw_simulation_panel();
     draw_surface_3d_window();
     submit_contour_second_window();
+    draw_hotkey_panel();
 
     struct StubConic { std::string name; std::vector<int> snap_cache; };
     const std::vector<StubConic> no_conics;
@@ -282,6 +283,12 @@ void SurfaceSimScene::handle_hotkeys() {
         m_coord_debug.visible() = m_debug_open;
     }
     m_ctrl_q_prev = ctrl_q;
+
+    // Ctrl+H: toggle the hotkey reference panel.
+    const bool ctrl_h = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_H);
+    if (ctrl_h && !m_ctrl_h_prev)
+        m_hotkey_panel_open = !m_hotkey_panel_open;
+    m_ctrl_h_prev = ctrl_h;
 }
 
 // ── canvas_mvp_3d ─────────────────────────────────────────────────────────────
@@ -324,6 +331,56 @@ Mat4 SurfaceSimScene::canvas_mvp_3d(const ImVec2& cpos, const ImVec2& csz) const
 
 // ── draw_simulation_panel ─────────────────────────────────────────────────────
 
+// ── draw_hotkey_panel ─────────────────────────────────────────────────────────
+void SurfaceSimScene::draw_hotkey_panel() {
+    if (!m_hotkey_panel_open) return;
+
+    const ImGuiViewport* vp = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(
+        { vp->WorkPos.x + vp->WorkSize.x - 320.f, vp->WorkPos.y + 40.f },
+        ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize({ 300.f, 0.f }, ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+
+    constexpr ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_AlwaysAutoResize;
+
+    if (!ImGui::Begin("Hotkeys  [Ctrl+H]", &m_hotkey_panel_open, flags)) {
+        ImGui::End();
+        return;
+    }
+
+    // Two-column layout: key on the left, description on the right.
+    auto row = [](const char* key, const char* desc) {
+        ImGui::TextDisabled("%s", key);
+        ImGui::SameLine(90.f);
+        ImGui::TextUnformatted(desc);
+    };
+
+    ImGui::SeparatorText("Spawn particles");
+    row("Ctrl+L", "Leader particle  (blue)");
+    row("Ctrl+C", "Chaser particle  (red)");
+    row("Ctrl+B", "Brownian particle  (Milstein)");
+    row("Ctrl+R", "Delay-pursuit chaser");
+
+    ImGui::SeparatorText("Overlays");
+    row("Ctrl+F", "Frenet frame  (T, N, B)");
+    row("Ctrl+D", "Surface frame  (Dx, Dy)");
+    row("Ctrl+P", "Normal plane patch");
+    row("Ctrl+T", "Torsion ribbon");
+
+    ImGui::SeparatorText("Panels");
+    row("Ctrl+Q", "Coordinate debug");
+    row("Ctrl+H", "This panel");
+
+    ImGui::Spacing();
+    ImGui::TextDisabled("Ctrl+H or close button to dismiss.");
+    ImGui::End();
+}
+
+// ── draw_simulation_panel ───────────────────────────────────────────────────────
 void SurfaceSimScene::draw_simulation_panel() {
     ImGui::SetNextWindowPos(ImVec2(20.f, 20.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(310.f, 0.f), ImGuiCond_FirstUseEver);

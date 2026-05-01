@@ -9,11 +9,14 @@
 // Hotkeys:
 //   Ctrl+L  -- spawn a new Leader particle  (blue trail)
 //   Ctrl+C  -- spawn a new Chaser particle  (red trail)
+//   Ctrl+B  -- spawn a Brownian motion particle (Milstein integrator)
+//   Ctrl+R  -- spawn a delay-pursuit chaser targeting curve 0
 //   Ctrl+F  -- toggle Frenet frame  (T, N, B arrows + osculating circle)
 //   Ctrl+D  -- toggle surface frame (Dx, Dy tangents + kappa_n / kappa_g readout)
 //   Ctrl+P  -- toggle normal plane patch at particle
-//   Ctrl+Q  -- toggle coordinate debug panel
 //   Ctrl+T  -- toggle torsion visualisation (tau ribbon + signed readout)
+//   Ctrl+Q  -- toggle coordinate debug panel
+//   Ctrl+H  -- toggle hotkey reference panel
 
 #include "engine/EngineAPI.hpp"
 #include "app/GaussianSurface.hpp"
@@ -93,6 +96,7 @@ private:
     bool m_show_normal_plane = false;  ///< Ctrl+P — normal plane patch
     bool m_show_torsion      = false;  ///< Ctrl+T — torsion τ ribbon
     bool m_debug_open        = false;  ///< Ctrl+Q
+    bool m_hotkey_panel_open  = false;  ///< Ctrl+H
 
     // Frenet sub-toggles (Simulation panel checkboxes)
     bool m_show_T   = true;
@@ -110,6 +114,7 @@ private:
     bool m_ctrl_c_prev = false;  ///< Ctrl+C: spawn Chaser
     bool m_ctrl_b_prev = false;  ///< Ctrl+B: spawn Brownian particle
     bool m_ctrl_r_prev = false;  ///< Ctrl+R: spawn delay-pursuit chaser
+    bool m_ctrl_h_prev = false;  ///< Ctrl+H: toggle hotkey reference panel
 
     // Counters for colour-slot cycling within each role
     u32 m_leader_count = 0;
@@ -133,6 +138,7 @@ private:
                                       const ImVec2& csz) const noexcept;
 
     void draw_simulation_panel();
+    void draw_hotkey_panel();          ///< Ctrl+H — floating hotkey reference
     void draw_surface_3d_window();
     void draw_contour_2d_window();   ///< ImDrawList overlay on primary window
 

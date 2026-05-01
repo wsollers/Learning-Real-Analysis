@@ -199,7 +199,14 @@ public:
 
     [[nodiscard]] u32  trail_vertex_count() const noexcept;
     void tessellate_trail(std::span<Vertex> out) const;
-    [[nodiscard]] Vec3 head_world() const noexcept;
+    [[nodiscard]] Vec3      head_world() const noexcept;
+
+    // head_uv: the particle's current position in parameter space (u,v).
+    // Used by DirectPursuitEquation to steer toward the leader's live position.
+    // Note: this is the navigation target, not the world-space position --
+    // the pursuer aims at the parameter-space coordinate, not the peak itself.
+    // Arrival is detected by neighbourhood radius, not exact equality.
+    [[nodiscard]] glm::vec2  head_uv()    const noexcept { return { m_walk.x, m_walk.y }; }
 
     [[nodiscard]] u32  trail_size()    const noexcept { return static_cast<u32>(m_trail.size()); }
     [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 4; }

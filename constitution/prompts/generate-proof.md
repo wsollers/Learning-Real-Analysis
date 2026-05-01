@@ -68,3 +68,11 @@ Do not use `topicbox` containers in proof files.
 Do not use `exposition` environments in proof files.
 Proof files must preserve the existing two-layer proof structure:
 professional proof first, detailed learning proof second.
+At the top of every proof file, emit:
+- `\newpage`
+- `\phantomsection`
+- a proof label of the form `\label{prf-...}`
+- `\begin{remark*}[Return] ... \end{remark*}` with a hyperref back to the
+  source theorem/corollary/lemma/proposition
+Use starred statement environments in proof files, e.g. `theorem*` or
+`corollary*`, not the numbered statement environments from the note body.
