@@ -222,14 +222,27 @@ If a subsection uses a `topicbox`, that topic must begin with a required
 `exposition` environment.
 
 - The exposition is mandatory, not optional.
-- The exposition explains why the material has been grouped into that topic
-  and what conceptual work the topic is doing.
+- The exposition explains the mathematical role of the concept cluster: what
+  structure, principle, formulation, or distinction is being isolated there.
+- The exposition should describe what the topic establishes, axiomatizes,
+  characterizes, or prepares for mathematically, not merely announce that the
+  material has been grouped together.
 - The exposition environment is intentionally not boxed.
-- The exposition may be short, but it must perform real orienting work rather
-  than decorative throat-clearing.
+- The exposition may be short, but it must perform real mathematical
+  orienting work rather than decorative throat-clearing or transition prose.
 - Do not duplicate that same orienting work in a separate pre-topic blurb in
   the subsection body unless there is genuinely broader subsection-level
   context that covers multiple topics at once.
+- Prefer mathematically substantive opening sentences such as:
+  "These axioms characterize ...",
+  "This theorem identifies ...",
+  "This topic isolates the distinction between ...",
+  "This formulation makes precise ...".
+- Avoid weak meta-introductions such as:
+  "This topic gathers ...",
+  "The grouping matters because ...",
+  or similar prose that mainly comments on the organization instead of the
+  mathematics.
 
 Preferred local order inside a `topicbox`:
 
