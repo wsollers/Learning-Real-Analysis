@@ -232,6 +232,11 @@ public:
         return m_history.get();
     }
 
+    // Non-owning access to the equation (owned or shared).
+    // Callers can dynamic_cast to a concrete type to mutate params live.
+    // e.g. dynamic_cast<ndde::sim::BrownianMotion*>(c.equation())
+    [[nodiscard]] ndde::sim::IEquation* equation() noexcept { return m_equation; }
+
     [[nodiscard]] static Vec4 trail_colour(Role role, u32 slot, f32 age_t) noexcept;
 
     [[nodiscard]] Vec4 head_colour() const noexcept {

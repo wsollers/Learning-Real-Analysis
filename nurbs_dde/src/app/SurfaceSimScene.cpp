@@ -513,6 +513,26 @@ void SurfaceSimScene::draw_simulation_panel() {
                 m_curves.back().advance(1.f/60.f, m_sim_speed);
         }
         ImGui::TextDisabled("Milstein integrator (strong order 1.0)");
+
+        // Live tuning for already-spawned Brownian particles.
+        // Scans m_curves for any particle whose equation is BrownianMotion
+        // and exposes its params inline.  Changes take effect next step.
+        int bm_idx = 0;
+        for (auto& c : m_curves) {
+            auto* bm = dynamic_cast<ndde::sim::BrownianMotion*>(c.equation());
+            if (!bm) continue;
+            ImGui::PushID(bm_idx++);
+            ImGui::TextDisabled("Particle %d", bm_idx);
+            ImGui::SameLine();
+            float sig = bm->params().sigma;
+            float dft = bm->params().drift_strength;
+            bool ch = false;
+            ch |= ImGui::SliderFloat("s##bmlive",  &sig, 0.01f, 2.f,  "%.3f");
+            ImGui::SameLine();
+            ch |= ImGui::SliderFloat("d##bmlive",  &dft, -1.f,  1.f,  "%.3f");
+            if (ch) { bm->params().sigma = sig; bm->params().drift_strength = dft; }
+            ImGui::PopID();
+        }
     }
 
     ImGui::SeparatorText("Delay Pursuit  [Ctrl+R]");

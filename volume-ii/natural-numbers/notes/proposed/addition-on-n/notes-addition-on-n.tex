@@ -1,10 +1,111 @@
 \section{Addition on \texorpdfstring{$\mathbb{N}$}{N}}
 
-This section should define addition recursively and then develop its first
-consequences: addition by zero, addition by successor, successor as adding
-one, cancellation, associativity, commutativity, and the additive identity.
+\begin{topicbox}{Recursive Definition of Addition}
+\begin{exposition}
+Addition on a Peano system is defined from the successor primitive by
+recursion. For each fixed left input $m$, the map $n \mapsto m+n$ is generated
+from the initial value $S(m)$ and the successor operator on the same Peano
+system. This definition makes addition a derived operation rather than an
+independent axiom.
+\end{exposition}
 
-\begin{remark}[Local focus]
-This is the additive lawbook for $\mathbb{N}$. It should stay close to the
-recursive definition and build the arithmetic from there.
-\end{remark}
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Addition on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Addition on a Peano System]
+\label{def:addition-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For each $m \in P$, define the function
+\[
+f_m : P \to P
+\]
+to be the unique function satisfying
+\[
+f_m(1)=S(m)
+\qquad\text{and}\qquad
+\forall n \in P\;(f_m(S(n))=S(f_m(n))).
+\]
+For $m,n \in P$, define
+\[
+m+n \coloneqq f_m(n).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system. For each } m \in P,
+\text{ let } f_m : P \to P \text{ satisfy}\\
+&f_m(1)=S(m)
+\qquad\text{and}\qquad
+\forall n \in P\;(f_m(S(n))=S(f_m(n))).\\
+&\text{Then for all } m,n \in P,\quad m+n \coloneqq f_m(n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Addition is introduced by fixing the left input and recursively generating the
+right-input map. The value $m+1$ is set to be the successor of $m$, and each
+further successor step in the right input advances the output by one more
+successor. This makes addition repeated succession.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[thm:peano-iterator-theorem]{Peano Iterator Theorem}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Addition Is Well-Defined on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Addition Is Well-Defined on a Peano System]
+\label{thm:addition-well-defined-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For every $m \in P$, there exists a unique
+function
+\[
+f_m : P \to P
+\]
+such that
+\[
+f_m(1)=S(m)
+\qquad\text{and}\qquad
+\forall n \in P\;(f_m(S(n))=S(f_m(n))).
+\]
+Consequently the rule
+\[
+(m,n) \longmapsto m+n \coloneqq f_m(n)
+\]
+defines a unique binary operation on $P$.
+\hyperref[prf-addition-well-defined-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall m \in P\;\exists! f_m : P \to P\;
+\Bigl(f_m(1)=S(m) \land
+\forall n \in P\;(f_m(S(n))=S(f_m(n)))\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The theorem shows that the recursive clauses for addition determine exactly one
+right-input map for each fixed left input. The addition operation is therefore
+not assumed; it is constructed from the successor map by recursion.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:addition-on-peano-system]{Addition on a Peano System}
+  \item \hyperref[thm:peano-iterator-theorem]{Peano Iterator Theorem}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

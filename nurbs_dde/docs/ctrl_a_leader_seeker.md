@@ -2,15 +2,27 @@
 
 ## What this feature does
 
-Pressing Ctrl+A spawns a **leader particle** governed by a new equation,
-`LeaderSeekerEquation`, on a new surface type, `ExtremumSurface`.  The leader
-is a state machine: it climbs toward the global maximum of `f(x,y)`, pauses when
-the gradient is nearly flat, then switches goal to the global minimum, and so on,
-with Brownian noise perturbing its path throughout.
+Pressing Ctrl+A spawns a **leader particle** governed by a choice of two
+equations on the `ExtremumSurface`:
+
+- **`LeaderSeekerEquation`** — a deterministic state machine that climbs toward
+  the global maximum, detects arrival by gradient flatness, then switches goal to
+  the global minimum and repeats.  Small Brownian noise prevents it from getting
+  stuck on ridgelines.
+
+- **`BiasedBrownianLeader`** — a stochastic leader with no hard goal-switching.
+  It diffuses freely (pure Brownian motion) but with a tunable drift bias that
+  points toward whichever extremum is currently active as its goal.  The goal
+  still flips on gradient flatness, but the path is genuinely random rather than
+  deterministic-with-noise.  This is the physically correct model of a particle
+  in a potential well subject to thermal fluctuations.
+
+Both share the same `ExtremumTable` and the same pursuit particle machinery.
+The choice between them is a spawn-time UI option.
 
 Pressing Ctrl+A again spawns **pursuit particles** at random locations on the
-surface.  Each pursuer runs a different bearing strategy toward the leader, and the
-strategy is selected at spawn time so different runs can compare behaviours.
+surface.  Each pursuer runs a different bearing strategy toward the leader, and
+the strategy is selected at spawn time so different runs can compare behaviours.
 
 ---
 
@@ -39,11 +51,9 @@ warning at construction time if the sampled extrema are degenerate.
 
 ### The extremum lookup table
 
-Every time a surface is **constructed or deformed** (i.e., whenever
-`swap_surface()` is called, or when a deforming surface's `advance(dt)` produces
-a geometry change that might shift the extrema), the extremum table is rebuilt:
+Every time a surface is **constructed or deformed**, the extremum table is rebuilt:
 
-```
+```cpp
 struct ExtremumTable {
     glm::vec2 max_uv;    // parameter-space location of the global max
     float     max_z;     // f(max_uv)
@@ -54,27 +64,27 @@ struct ExtremumTable {
 ```
 
 **Building the table** — a grid search over the parameter domain at resolution
-`(N x N)` where `N = 64` by default finds the candidate extrema, then a short
-gradient ascent/descent refines each to sub-pixel accuracy.  The whole operation
-is O(N²) = O(4096) evaluations — cheap enough to run synchronously on surface
-swap.
+`(N x N)` where `N = 64` finds the candidate extrema, then a short gradient
+ascent/descent refines each to sub-pixel accuracy.  The whole operation is
+O(N²) = O(4096) evaluations — cheap enough to run synchronously on surface swap.
 
-For `IDeformableSurface` the table is rebuilt at a lower rate (every `k` frames,
-configurable) since a deforming surface's extrema drift slowly.
+For `IDeformableSurface` the table is rebuilt every `k = 30` frames (0.5 s at
+60fps) since the extrema drift slowly with the deformation.
 
-**Why a lookup table and not just re-search every step?**  The leader queries
-`max_uv` and `min_uv` every frame.  A full grid search every frame at 60fps and
-4096 evaluations each would cost ~245k `f(x,y)` calls per second — negligible
-for a simple polynomial surface but wasteful.  Caching the result and invalidating
-only on geometry change is the correct pattern.
+```cpp
+// We rebuild the extremum table periodically rather than every frame.
+// The leader steers toward a neighbourhood of the extremum, not the exact
+// peak, so a slightly stale table is acceptable.  The rebuild rate k=30
+// (every 0.5s at 60fps) keeps the target position smooth.
+```
 
 ---
 
-## The leader: `LeaderSeekerEquation`
+## The deterministic leader: `LeaderSeekerEquation`
 
 ### State machine
 
-```
+```cpp
 enum class Goal { SeekMax, SeekMin };
 ```
 
@@ -87,49 +97,252 @@ current position falls below a threshold:
 |∇f(u,v)| < epsilon
 ```
 
-where `epsilon` defaults to `0.1` and is exposed as a UI slider so it can be
-adjusted between runs without recompiling.  The condition `|f'(x,y) - 1| < 0.1`
-from the original spec is a special case: it measures how close the gradient
-magnitude is to 1 rather than to 0.  Both are supported as variants of the same
-slider — a `target_grad_magnitude` parameter whose default is `0.0` (flat) and
-whose threshold half-width is `epsilon`.
+where `epsilon` defaults to `0.1` and is exposed as a UI slider.  The condition
+`|f'(x,y) - 1| < 0.1` is a special case: it measures how close the gradient
+magnitude is to 1 rather than 0.  Both are supported as variants of the same
+slider — a `target_grad_magnitude` parameter (default `0.0` = flat) with
+threshold half-width `epsilon`.
 
 ```cpp
 struct Params {
-    float target_grad_magnitude = 0.f;  // 0 = flat summit/pit, 1 = unit-gradient contour
+    float target_grad_magnitude = 0.f;  // 0 = flat summit/pit
     float epsilon               = 0.1f; // half-width of the flatness band
-    float pursuit_speed         = 0.8f; // approach speed toward extremum (param-units/s)
-    float noise_sigma           = 0.15f;// Brownian perturbation
+    float pursuit_speed         = 0.8f; // approach speed (param-units/s)
+    float noise_sigma           = 0.15f;// Brownian perturbation (keeps it off ridges)
 };
-
-bool near_target_gradient(float grad_mag) const {
-    return std::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon;
-}
 ```
 
 ### `velocity()` logic
 
 ```
 1. query ExtremumTable -> goal_uv  (max_uv if SeekMax, min_uv if SeekMin)
-2. delta = goal_uv - state.uv       (wrapping if periodic, straight if not)
-3. dist  = |delta|
-4. if dist < arrival_radius: flip goal  (already there — transition early)
-5. bearing = delta / dist * pursuit_speed
-6. if near_target_gradient(grad_mag): flip goal
-7. return bearing
+2. delta = goal_uv - state.uv
+3. if dist < arrival_radius: flip goal
+4. bearing = delta / dist * pursuit_speed
+5. if near_target_gradient(grad_mag): flip goal
+6. return bearing
 ```
 
-`noise_coefficient()` returns `{noise_sigma, noise_sigma}`, so the
-`MilsteinIntegrator` adds Brownian kicks that prevent the leader from getting
-stuck on a ridge line on the way to the extremum.
+`noise_coefficient()` returns `{noise_sigma, noise_sigma}` so the
+`MilsteinIntegrator` adds Brownian kicks preventing ridge-lock.
 
-### Why Milstein for the leader?
+---
 
-The leader uses noise to avoid degeneracy.  For constant `noise_sigma` the
-Milstein correction is zero (identical to Euler-Maruyama), so there is no
-computational overhead.  But once curvature-adaptive noise is added — making
-`sigma` vary with `K(u,v)` — Milstein provides the correct strong-order-1 path,
-which matters for a particle whose behaviour is being visually inspected.
+## The stochastic leader: `BiasedBrownianLeader`
+
+### Physical intuition
+
+A `LeaderSeekerEquation` particle is deterministic with noise sprinkled on top.
+A `BiasedBrownianLeader` is the opposite: it is fundamentally stochastic, with a
+deterministic drift bias pointing it toward its current goal.
+
+The Itô SDE governing its parameter-space position is:
+
+```
+dX_t = mu(X_t) dt + sigma dW_t
+```
+
+where:
+- `dW_t ~ N(0, dt·I)` is the 2D Wiener increment — genuine thermal noise
+- `sigma` is the isotropic diffusion coefficient — controls how "hot" the particle is
+- `mu(X_t)` is the drift — points toward the current goal extremum
+
+This is the Smoluchowski equation for a particle in a potential well subject to
+thermal fluctuations.  In the limit `sigma → 0` the path converges to the
+deterministic gradient-descent solution.  In the limit `drift_strength → 0` with
+`sigma > 0` you recover pure Brownian motion with no preferred direction.
+
+### The drift vector
+
+The drift `mu` is the unit vector from the current position toward the goal
+extremum, scaled by `drift_strength`:
+
+```cpp
+mu(X) = drift_strength * (goal_uv - X.uv) / |goal_uv - X.uv|
+```
+
+This is *not* the surface gradient — it is a straight line in parameter space
+toward the target.  For the `ExtremumSurface` where the extrema are well-separated,
+this gives clean directed diffusion.
+
+**Comparison with `BrownianMotion::drift_strength`:**
+The existing `BrownianMotion` equation has a `drift_strength` parameter that
+biases the walk *along the surface gradient* — it goes uphill or downhill.
+`BiasedBrownianLeader` is different: it biases the walk *toward a specific
+parameter-space target* (the max or min UV coordinates), regardless of which
+direction is uphill at the current position.  These are two different drift
+geometries:
+
+```
+BrownianMotion:       mu = drift * grad(f) / |grad(f)|
+                      (follows the slope; knows nothing about the global extremum)
+
+BiasedBrownianLeader: mu = drift * (goal_uv - uv) / |goal_uv - uv|
+                      (points at the target directly; ignores local slope)
+```
+
+You could combine them: a `BiasedBrownianLeader` with both a goal-directed drift
+and a gradient-following drift.  See the `Params` struct below.
+
+### Goal-switching
+
+The goal flip condition is identical to `LeaderSeekerEquation`:
+
+```cpp
+if (std::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon)
+    flip_goal();
+```
+
+The difference is what happens immediately after flipping.  In
+`LeaderSeekerEquation`, the bearing snaps to the new target instantly.  In
+`BiasedBrownianLeader`, the drift vector rotates smoothly to point at the new
+target on the next `velocity()` call — there is no discontinuity, because the
+drift is just one component of a noisy SDE.
+
+### Steady-state distribution
+
+The Fokker-Planck equation for this SDE has a stationary solution:
+
+```
+p_∞(x) ∝ exp( 2 * drift_strength * phi(x) / sigma^2 )
+```
+
+where `phi(x) = -|goal_uv - x|` is the negative distance to the goal (acting
+as a potential).  This means:
+- High `drift_strength / sigma^2` → particle concentrates tightly near the goal
+- Low ratio → particle diffuses broadly, goal has weak pull
+- `drift_strength = 0` → uniform distribution (pure Brownian motion)
+
+The ratio `drift_strength / sigma^2` is the **Péclet number** for this flow.
+You can tune it with the two sliders independently.
+
+### Implementation
+
+```cpp
+// sim/BiasedBrownianLeader.hpp
+
+class BiasedBrownianLeader final : public IEquation {
+public:
+    struct Params {
+        float sigma              = 0.3f;  // diffusion coefficient
+        float drift_strength     = 0.6f;  // goal-directed drift magnitude (param-units/s)
+        float gradient_drift     = 0.0f;  // optional additional gradient-following drift
+                                          // (positive = uphill, negative = downhill)
+                                          // set to 0 for pure goal-directed diffusion
+        float target_grad_magnitude = 0.f;
+        float epsilon               = 0.1f;
+        float arrival_radius        = 0.4f;
+    };
+
+    // Constructor takes a non-owning pointer to the scene's ExtremumTable.
+    // The table address is stable (value member of SurfaceSimScene) so this
+    // pointer survives swap_surface() and vector reallocation.
+    explicit BiasedBrownianLeader(const ExtremumTable* table, Params p = {});
+
+    glm::vec2 velocity(ParticleState& state,
+                       const ISurface& surface,
+                       float t) const override;
+
+    glm::vec2 noise_coefficient(const ParticleState&,
+                                const ISurface&,
+                                float) const override
+    {
+        return { m_p.sigma, m_p.sigma };
+    }
+
+    float phase_rate() const override { return 0.f; }
+    std::string name() const override { return "BiasedBrownianLeader"; }
+
+    Params& params() noexcept { return m_p; }
+
+private:
+    const ExtremumTable* m_table;
+    Params               m_p;
+    mutable Goal         m_goal = Goal::SeekMax;  // mutable: toggled in velocity()
+};
+```
+
+### `velocity()` implementation
+
+```cpp
+glm::vec2 BiasedBrownianLeader::velocity(
+    ParticleState& state, const ISurface& surface, float t) const
+{
+    if (!m_table || !m_table->valid) return {0.f, 0.f};
+
+    const glm::vec2 goal_uv = (m_goal == Goal::SeekMax)
+        ? m_table->max_uv : m_table->min_uv;
+
+    glm::vec2 delta = goal_uv - state.uv;
+
+    // Shortest-path wrap for periodic surfaces (torus)
+    if (surface.is_periodic_u()) {
+        const float span = surface.u_max() - surface.u_min();
+        if (delta.x >  span * 0.5f) delta.x -= span;
+        if (delta.x < -span * 0.5f) delta.x += span;
+    }
+    if (surface.is_periodic_v()) {
+        const float span = surface.v_max() - surface.v_min();
+        if (delta.y >  span * 0.5f) delta.y -= span;
+        if (delta.y < -span * 0.5f) delta.y += span;
+    }
+
+    const float dist = glm::length(delta);
+
+    // Goal flip: arrival neighbourhood
+    if (dist < m_p.arrival_radius) {
+        m_goal = (m_goal == Goal::SeekMax) ? Goal::SeekMin : Goal::SeekMax;
+        return {0.f, 0.f};  // pause for one step at the goal
+    }
+
+    // Goal flip: gradient flatness
+    const glm::vec3 du_vec = surface.du(state.uv.x, state.uv.y);
+    const glm::vec3 dv_vec = surface.dv(state.uv.x, state.uv.y);
+    const float grad_mag = std::sqrt(du_vec.z*du_vec.z + dv_vec.z*dv_vec.z);
+    if (std::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon) {
+        m_goal = (m_goal == Goal::SeekMax) ? Goal::SeekMin : Goal::SeekMax;
+    }
+
+    // Goal-directed drift: unit vector toward goal, scaled by drift_strength
+    glm::vec2 mu = (delta / dist) * m_p.drift_strength;
+
+    // Optional gradient drift (same as BrownianMotion::drift_strength)
+    if (std::abs(m_p.gradient_drift) > 1e-7f) {
+        const float fu = du_vec.z;
+        const float fv = dv_vec.z;
+        const float gn = std::sqrt(fu*fu + fv*fv) + 1e-7f;
+        mu += glm::vec2{ m_p.gradient_drift * fu / gn,
+                         m_p.gradient_drift * fv / gn };
+    }
+
+    return mu;
+}
+```
+
+### Relationship to existing `BrownianMotion`
+
+The existing `BrownianMotion` equation (in `src/sim/BrownianMotion.hpp`) is a
+general-purpose SDE with an optional gradient-following drift.  It does not know
+about the `ExtremumTable` or goal-switching.
+
+`BiasedBrownianLeader` is a specialisation with goal-directed drift and a built-in
+state machine.  Its `velocity()` is the drift `mu`; the noise term `sigma * dW`
+is handled by `MilsteinIntegrator` via `noise_coefficient()`.
+
+The two are composable: set `BiasedBrownianLeader::Params::gradient_drift` to a
+nonzero value and the particle simultaneously drifts toward the goal *and* uphill
+(or downhill).  This creates interesting competition between local and global
+information: the gradient drift knows the local slope; the goal drift knows where
+the global target is.
+
+### Integrator choice
+
+`BiasedBrownianLeader` must be used with `MilsteinIntegrator` (not
+`EulerIntegrator`).  The sigma is constant so the Milstein correction is zero
+(identical to Euler-Maruyama for the stochastic part), but the distinction matters
+once you add curvature-adaptive noise (`sigma ~ 1/sqrt(K(u,v))`), where the
+correction term is significant.  Using Milstein from the start means no integrator
+swap is needed when you upgrade the noise model.
 
 ---
 
@@ -137,80 +350,48 @@ which matters for a particle whose behaviour is being visually inspected.
 
 Each strategy is a distinct `IEquation` implementation.  The strategy is chosen
 at spawn time by a dropdown in the Simulation panel ("Pursuit mode"), so
-different runs can be compared without restarting.
+different runs can compare behaviours.
 
 ### Strategy A — Direct bearing
 
 ```cpp
-// DirectPursuitEquation
 velocity(state, surface, t):
-    target = leader.head_uv()           // current leader position in (u,v)
+    target = leader.head_uv()
     delta  = shortest_path(target, state.uv, surface)
     return (delta / |delta|) * speed
 ```
 
-The shortest-path wrapping from `DelayPursuitEquation` is reused verbatim.
-This is the baseline: the pursuer always knows where the leader is right now.
+Baseline: the pursuer always knows where the leader is right now.
 
-### Strategy B — Delayed bearing (n steps ago)
+### Strategy B — Delayed bearing
 
 ```cpp
-// DelayedBearingEquation
 velocity(state, surface, t):
-    t_past = t - tau                    // tau seconds of delay
-    target = leader.history().query(t_past)
+    target = leader.history().query(t - tau)
     delta  = shortest_path(target, state.uv, surface)
     return (delta / |delta|) * speed
 ```
 
-This reuses `HistoryBuffer` directly — the same mechanism as
-`DelayPursuitEquation`.  The difference from the existing delay-pursuit is that
-this pursuer targets the *leader seeker* rather than a generic curve 0.
-
-**Adjustable parameter**: `tau` in seconds (maps to `n` steps via
-`tau = n * sim_dt`).  Exposed as a slider: "Delay (s)".
-
-**Geometric note**: as `tau` grows relative to the leader's transit time between
-extrema, the pursuer's target lags behind by more and more.  At `tau` close to
-the transit time the pursuer is heading toward the previous extremum while the
-leader has already reached the next one.  This creates the characteristic spirals
-visible in multi-agent delay-pursuit on bounded domains.
+Reuses `HistoryBuffer`.  As `tau` grows relative to the leader's transit time
+between extrema, the pursuer heads toward the previous extremum while the leader
+has already left — creating characteristic spirals in multi-agent pursuit.
 
 ### Strategy C — Averaged-history bearing (momentum extrapolation)
 
-This strategy does not steer toward a past *position* of the leader.  Instead
-it estimates the leader's recent *velocity vector* by differencing recent history
-entries, averages that velocity over a short window, and steers in the direction
-that velocity is pointing — i.e., toward where the leader is *going*, not where
-it was.
-
 ```cpp
-// MomentumBearingEquation
 velocity(state, surface, t):
-    // collect k history samples spanning window_sec seconds
-    v_avg = {0, 0}
-    for i in 0..k-1:
-        p0 = history.query(t - (i+1)*sample_dt)
-        p1 = history.query(t - i    *sample_dt)
-        v_avg += shortest_path(p1, p0, surface) / sample_dt
-    v_avg /= k
-
-    // steer in the direction the leader is moving
-    if |v_avg| < 1e-5: return {0,0}   // leader is stationary
+    v_avg = average of k velocity samples over window_sec seconds
     return (v_avg / |v_avg|) * speed
 ```
 
-**Adjustable parameters**:
-- `window_sec`: how far back the average looks (default 0.5 s)
-- `k`: number of samples in the average (default 8)
-- `speed`: pursuit speed scalar
+The pursuer infers the leader's *goal* from its *trajectory*.  If the leader is
+heading toward the maximum, this strategy points the pursuer there too, without
+needing to know the maximum's location.
 
-**Why this is interesting**: if the leader is heading toward the maximum in a
-straight line, Strategy C points the pursuer at the maximum too — without
-needing to know where the maximum is.  The pursuer is inferring the leader's
-*goal* from its *behaviour*.  If the leader has just flipped goal and is now
-heading to the minimum, the pursuer's averaged bearing will lag by `window_sec`
-before correcting — a kind of informational inertia.
+**Note**: when the leader is a `BiasedBrownianLeader`, its path is noisy.
+Strategy C's moving average smooths that noise before extrapolating — `window_sec`
+acts as the bandwidth of a low-pass filter on the leader's velocity.  Longer
+windows give cleaner direction estimates but slower response to goal flips.
 
 ---
 
@@ -219,127 +400,55 @@ before correcting — a kind of informational inertia.
 ### New files
 
 ```
-src/math/ExtremumSurface.hpp      — bimodal Gaussian ISurface + analytic grad
-src/math/ExtremumTable.hpp        — ExtremumTable struct + grid-search builder
-src/sim/LeaderSeekerEquation.hpp  — state-machine IEquation
-src/sim/DirectPursuitEquation.hpp — Strategy A
+src/math/ExtremumSurface.hpp        — bimodal Gaussian ISurface + analytic grad
+src/math/ExtremumTable.hpp          — ExtremumTable struct + grid-search builder
+src/sim/LeaderSeekerEquation.hpp    — deterministic state-machine IEquation
+src/sim/BiasedBrownianLeader.hpp    — stochastic SDE leader with goal drift
+src/sim/DirectPursuitEquation.hpp   — Strategy A
 src/sim/MomentumBearingEquation.hpp — Strategy C
-                                     (Strategy B reuses DelayPursuitEquation)
-```
-
-`ExtremumTable` is built by a free function:
-
-```cpp
-namespace ndde::math {
-ExtremumTable build_extremum_table(const ISurface& surface,
-                                   u32 grid_n = 64,
-                                   float t    = 0.f);
-}
+                                      (Strategy B reuses DelayPursuitEquation)
 ```
 
 ### Changes to existing files
 
-#### `SurfaceSimScene.hpp`
+#### `SurfaceSimScene.hpp` — new members
 
 ```cpp
-// New members
-SurfaceType    m_surface_type;        // gains ExtremumSurface = 3
-ExtremumTable  m_extremum_table;      // cached extrema, rebuilt on swap
-LeaderSeekerEquation::Params m_ls_params;
-PursuitMode    m_pursuit_mode;        // enum {Direct, Delayed, Momentum}
-float          m_pursuit_tau;         // delay for Strategy B
-float          m_pursuit_window;      // window for Strategy C
-bool           m_ctrl_a_prev;
-
-// New methods
-void rebuild_extremum_table();
-void spawn_leader_seeker();           // Ctrl+A, first press
-void spawn_pursuit_particle();        // Ctrl+A, subsequent presses
+SurfaceType                    m_surface_type;       // gains ExtremumSurface = 3
+ExtremumTable                  m_extremum_table;     // owned by scene, stable address
+LeaderSeekerEquation::Params   m_ls_params;
+BiasedBrownianLeader::Params   m_bbl_params;
+enum class LeaderMode { Deterministic, StochasticBiased };
+LeaderMode                     m_leader_mode = LeaderMode::Deterministic;
+PursuitMode                    m_pursuit_mode;
+float                          m_pursuit_tau;
+float                          m_pursuit_window;
+bool                           m_ctrl_a_prev;
 ```
-
-`rebuild_extremum_table()` is called inside `swap_surface()` after the surface
-pointer is updated, and also once per `k` frames when the active surface
-`is_time_varying()`.
-
-#### `SurfaceSimScene.cpp` — `handle_hotkeys()`
-
-```cpp
-const bool ctrl_a = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_A);
-if (ctrl_a && !m_ctrl_a_prev) {
-    if (m_curves.empty() || !has_leader_seeker()) {
-        spawn_leader_seeker();
-    } else {
-        spawn_pursuit_particle();
-    }
-}
-m_ctrl_a_prev = ctrl_a;
-```
-
-`has_leader_seeker()` scans `m_curves` for a particle whose equation name is
-`"LeaderSeeker"`.
 
 #### `spawn_leader_seeker()`
 
 ```cpp
 void SurfaceSimScene::spawn_leader_seeker() {
-    // Place at a mid-domain position (not at the max — let it navigate there)
     const float u_mid = 0.5f*(m_surface->u_min() + m_surface->u_max());
     const float v_mid = 0.5f*(m_surface->v_min() + m_surface->v_max());
 
-    // Enable history so pursuit particles can query it
+    std::unique_ptr<IEquation> eq;
+    if (m_leader_mode == LeaderMode::Deterministic)
+        eq = std::make_unique<LeaderSeekerEquation>(&m_extremum_table, m_ls_params);
+    else
+        eq = std::make_unique<BiasedBrownianLeader>(&m_extremum_table, m_bbl_params);
+
     AnimatedCurve c = AnimatedCurve::with_equation(
-        u_mid, v_mid,
-        AnimatedCurve::Role::Leader, m_leader_count % AnimatedCurve::MAX_SLOTS,
-        m_surface.get(),
-        std::make_unique<LeaderSeekerEquation>(&m_extremum_table, m_ls_params),
-        &m_milstein);
+        u_mid, v_mid, Role::Leader,
+        m_leader_count % AnimatedCurve::MAX_SLOTS,
+        m_surface.get(), std::move(eq), &m_milstein);
 
-    const std::size_t cap = static_cast<std::size_t>(
-        std::ceil(m_pursuit_tau * 120.f * 1.5f)) + 256;
+    const std::size_t cap =
+        static_cast<std::size_t>(std::ceil(m_pursuit_tau * 120.f * 1.5f)) + 256;
     c.enable_history(cap, 1.f / 120.f);
-
     m_curves.push_back(std::move(c));
     ++m_leader_count;
-}
-```
-
-#### `spawn_pursuit_particle()`
-
-```cpp
-void SurfaceSimScene::spawn_pursuit_particle() {
-    // Find the leader seeker
-    AnimatedCurve* leader = find_leader_seeker();
-    if (!leader || !leader->history()) return;
-
-    // Random spawn location
-    thread_local std::mt19937 rng{std::random_device{}()};
-    std::uniform_real_distribution<float>
-        ru(m_surface->u_min(), m_surface->u_max()),
-        rv(m_surface->v_min(), m_surface->v_max());
-    const float sx = ru(rng), sy = rv(rng);
-
-    std::unique_ptr<ndde::sim::IEquation> eq;
-    switch (m_pursuit_mode) {
-        case PursuitMode::Direct:
-            eq = std::make_unique<DirectPursuitEquation>(
-                leader, m_surface.get(), m_dp_params);
-            break;
-        case PursuitMode::Delayed:
-            eq = std::make_unique<DelayPursuitEquation>(
-                leader->history(), m_surface.get(), m_dp_params);
-            break;
-        case PursuitMode::Momentum:
-            eq = std::make_unique<MomentumBearingEquation>(
-                leader->history(), m_surface.get(),
-                m_pursuit_window, m_dp_params.pursuit_speed);
-            break;
-    }
-
-    m_curves.push_back(AnimatedCurve::with_equation(
-        sx, sy,
-        AnimatedCurve::Role::Chaser, m_chaser_count % AnimatedCurve::MAX_SLOTS,
-        m_surface.get(), std::move(eq), &m_milstein));
-    ++m_chaser_count;
 }
 ```
 
@@ -348,17 +457,25 @@ void SurfaceSimScene::spawn_pursuit_particle() {
 New section "Leader seeker [Ctrl+A]":
 
 ```
-[ ExtremumSurface radio button ]
-Target gradient magnitude:  [slider 0.0 – 2.0]   default 0.0
-Flatness epsilon:           [slider 0.01 – 0.5]   default 0.10
-Leader noise sigma:         [slider 0.0  – 1.0]   default 0.15
+Leader mode:   (o) Deterministic   ( ) Stochastic (biased Brownian)
+
+-- Deterministic params (visible when Deterministic selected) --
+Target gradient magnitude:  [slider 0.0 – 2.0]  default 0.0
+Flatness epsilon:           [slider 0.01 – 0.5]  default 0.10
+Leader noise sigma:         [slider 0.0  – 1.0]  default 0.15
+
+-- Stochastic params (visible when Stochastic selected) --
+Sigma (diffusion):          [slider 0.01 – 2.0]  default 0.30
+Goal drift strength:        [slider 0.0  – 2.0]  default 0.60
+Gradient drift:             [slider -1.0 – 1.0]  default 0.00
+Flatness epsilon:           [slider 0.01 – 0.5]  default 0.10
+Arrival radius:             [slider 0.1  – 2.0]  default 0.40
+  Péclet number:  [readout: drift_strength / sigma^2]
 
 [ Spawn leader [Ctrl+A] ]   [ Spawn pursuer [Ctrl+A] ]
 
 Pursuit mode:  (o) Direct   ( ) Delayed   ( ) Momentum
-Delay tau (s): [slider]     (visible for Delayed)
-Window (s):    [slider]     (visible for Momentum)
-Pursuit speed: [slider]
+...
 
 Extremum table:
   max at (u= X.XX, v= X.XX)  z = X.XX
@@ -366,134 +483,83 @@ Extremum table:
   [ Rebuild now ]
 ```
 
+The Péclet number readout `Pe = drift_strength / sigma^2` is the single most
+useful diagnostic: it tells you at a glance whether the particle is in the
+diffusion-dominated regime (Pe << 1, random walk with weak bias) or the
+drift-dominated regime (Pe >> 1, nearly deterministic approach to the goal).
+
 ---
 
 ## Ownership and pointer safety
 
-`LeaderSeekerEquation` holds a `const ExtremumTable*` pointing into
+`BiasedBrownianLeader` holds a `const ExtremumTable*` pointing into
 `SurfaceSimScene::m_extremum_table`.  `m_extremum_table` is a value member of
-the scene — its address never changes regardless of `swap_surface()`.  When the
-table is rebuilt (its contents change), the pointer remains valid; the equation
-simply reads the new values on the next `velocity()` call.  This is safe.
+the scene — its address is invariant regardless of `swap_surface()`.  When the
+table contents are updated, the pointer remains valid.
 
-`DirectPursuitEquation` holds an `AnimatedCurve*` to the leader, not a raw
-`ParticleState*`.  It calls `leader->head_uv()` (a new accessor that returns
-`{m_walk.x, m_walk.y}`) each frame.  The leader must not be erased while pursuit
-particles reference it — the same contract as `DelayPursuitEquation`.
-
-`MomentumBearingEquation` holds a `const HistoryBuffer*` into the leader's
-`m_history`.  This is the same pointer-stability argument as `DelayPursuitEquation`:
-`unique_ptr<HistoryBuffer>` move does not move the heap object, so the pointer
-survives vector reallocation.
+`BiasedBrownianLeader` also holds `mutable Goal m_goal` for the state machine.
+This is the same pattern as `GradientWalker::state.angle` — mutable state that
+the integrator owns conceptually but the equation stores for continuity across
+steps.  It is safe because `AnimatedCurve` owns one `BiasedBrownianLeader`
+instance per particle and they are never shared.
 
 ---
 
 ## Stability notes
 
-**Goal-flip with no global extremum**: if the surface does not have a well-defined
-global max (e.g., a flat plane), the leader will reach the `arrival_radius` of
-wherever the grid search placed `max_uv` and flip.  The `arrival_radius` is
-configurable (`default = 0.3` param-units).  For degenerate surfaces the leader
-will oscillate between two nearby points — noisy but not a crash.
+**Pe >> 1 (drift dominated)**: the path looks nearly deterministic, converging
+smoothly to the goal.  Noise produces small meanders.  Goal-flip is sharp because
+the particle reliably reaches the arrival neighbourhood.
 
-**Flatness condition without a true maximum**: the condition
-`|∇f| < epsilon` can trigger mid-slope on a very shallow surface.  Setting
-`target_grad_magnitude` to the typical mid-slope value (say 0.3) and `epsilon`
-to 0.05 gives a tighter band that only fires near true saddle points or at the
-summit.  The slider makes this directly controllable.
+**Pe ~ 1**: the path is genuinely stochastic.  The particle may circle the goal
+before arriving, or occasionally drift toward the wrong extremum before correcting.
+This is the most visually interesting regime.
 
-**Strategy C with a stationary leader**: if the leader has just arrived at an
-extremum and its averaged velocity is nearly zero, `MomentumBearingEquation`
-returns `{0,0}` rather than a garbage direction from dividing by a near-zero
-magnitude.  The pursuer coasts under its own inertia (no velocity update) until
-the leader moves again.
+**Pe << 1 (diffusion dominated)**: the particle performs a near-random walk with
+a very weak bias.  It will eventually reach the goal by random chance but may
+explore large portions of the domain first.  Goal-flip is unreliable because the
+arrival condition may never be triggered.  The `arrival_radius` slider helps:
+increasing it makes goal-flip more likely even when the particle never quite
+reaches the exact extremum.
 
----
-
-## Resolved decisions
-
-### Q1 — ExtremumSurface as a standalone ISurface subclass
-
-Yes, standalone.  `ExtremumSurface` is a new concrete class in
-`src/math/ExtremumSurface.hpp`, not an extension of `GaussianSurface`.
-Reason: single responsibility.  `GaussianSurface` is already a
-specific landscape function; folding peak-and-pit parameterisation into it
-would conflate two unrelated shapes.  A new type in the surface selector
-(`SurfaceType::Extremum = 3`) is the correct expression of the fact that this
-is a different surface.
-
-### Q2 — head_uv() accessor
-
-Added to `AnimatedCurve` in `GaussianSurface.hpp`:
-
-```cpp
-// head_uv: the particle's current position in parameter space (u,v).
-// Used by DirectPursuitEquation to steer toward the leader's live position.
-// Note: this is the navigation target, not the world-space position --
-// the pursuer aims at the parameter-space coordinate, not the peak itself.
-// Arrival is detected by neighbourhood radius, not exact equality.
-[[nodiscard]] glm::vec2 head_uv() const noexcept { return { m_walk.x, m_walk.y }; }
-```
-
-The comment is explicit that the pursuer is not seeking the exact
-extremum — it is steering toward the *leader's current position*, which
-is itself navigating toward the extremum.  Arrival uses a neighbourhood
-radius (`arrival_radius` param), not exact equality, precisely because
-there is no global max/min guarantee on every surface.
-
-### Q3 — Extremum table rebuild rate for deforming surfaces
-
-The k=30 frame rebuild (0.5s at 60fps) is acceptable.  For `GaussianRipple`,
-the extrema shift by at most `amplitude * dt_rebuild / domain_size` per cycle,
-which is a small fraction of the domain for typical parameter values.  The
-leader is navigating toward a *neighbourhood* of the extremum anyway, so
-a slowly drifting target just adds a gentle steering correction — it is a
-feature, not a bug.
-
-Code comment to add in the rebuild logic:
-```cpp
-// We rebuild the extremum table periodically rather than every frame.
-// The leader steers toward a neighbourhood of the extremum, not the exact
-// peak, so a slightly stale table is acceptable.  The rebuild rate k=30
-// (every 0.5s at 60fps) keeps the target position smooth.
-```
-
-### Q4 — MomentumBearingEquation query cost
-
-Accepted as-is.  32 binary searches per frame per pursuer at particle
-counts below 50 is immaterial on a modern GPU workstation.  Profile first,
-optimise if needed.  If it ever becomes a hotspot, the fix is a one-line
-cache: store the averaged velocity and recompute it only once per frame
-rather than once per sub-step.
+**Goal-flip on a deforming surface (`GaussianRipple`)**: the extremum table is
+rebuilt every k=30 frames.  Between rebuilds, the goal UV drifts.  The leader
+steers toward a moving target, which produces spiral or orbiting paths around the
+true extremum.  This is a feature — it makes the biased Brownian leader's path
+qualitatively richer on deforming surfaces than on static ones.
 
 ---
 
-## Ctrl+H — hotkey reference panel
+## Resolved decisions (from previous session)
 
-Added as part of this implementation.  Ctrl+H toggles a floating,
-non-docked ImGui panel positioned top-right on first open.  It lists
-every hotkey grouped by category (spawn, overlays, panels).
+### Q1 — ExtremumSurface: standalone subclass
+Yes. `src/math/ExtremumSurface.hpp`, `SurfaceType::Extremum = 3`.
 
-**Implementation**: `draw_hotkey_panel()` in `SurfaceSimScene.cpp`,
-declared in `SurfaceSimScene.hpp`.  The panel uses `ImGuiWindowFlags_AlwaysAutoResize`
-so it grows/shrinks as hotkeys are added.  `ImGuiCond_FirstUseEver` on
-position means the user can drag it and it will stay put.
+### Q2 — `head_uv()` accessor
+Added to `AnimatedCurve`.  Returns `{m_walk.x, m_walk.y}`.  Comment clarifies
+the pursuer targets the leader's position, not the extremum directly.
 
-New hotkeys added to the comment block in `SurfaceSimScene.hpp`:
-- `Ctrl+B` — Brownian particle (was already implemented, now documented)
-- `Ctrl+R` — delay-pursuit chaser (same)
-- `Ctrl+H` — hotkey reference panel (new)
+### Q3 — Extremum table rebuild rate
+k=30 frames (0.5s at 60fps) is acceptable.  The leader navigates to a
+neighbourhood, not the exact point, so a stale table is fine.
+
+### Q4 — `MomentumBearingEquation` query cost
+Accepted as-is.  Profile before optimising.
 
 ---
 
-## Files changed in this session
+## Files to create / change
 
 ```
-src/app/GaussianSurface.hpp    head_uv() added with comment
-src/app/SurfaceSimScene.hpp    hotkey comment block, m_hotkey_panel_open,
-                               m_ctrl_h_prev, draw_hotkey_panel() decl
-src/app/SurfaceSimScene.cpp    Ctrl+H handling in handle_hotkeys(),
-                               draw_hotkey_panel() call in on_frame(),
-                               draw_hotkey_panel() implementation
-docs/ctrl_a_leader_seeker.md   this file, open questions resolved
+src/math/ExtremumSurface.hpp          new
+src/math/ExtremumTable.hpp            new
+src/sim/LeaderSeekerEquation.hpp      new
+src/sim/BiasedBrownianLeader.hpp      new   ← this session
+src/sim/DirectPursuitEquation.hpp     new
+src/sim/MomentumBearingEquation.hpp   new
+src/app/GaussianSurface.hpp           head_uv() added (done)
+src/app/SurfaceSimScene.hpp           LeaderMode enum, m_bbl_params, m_leader_mode
+src/app/SurfaceSimScene.cpp           spawn_leader_seeker() branches on mode,
+                                      panel UI: leader mode radio + stochastic params
+docs/ctrl_a_leader_seeker.md          this file
 ```
