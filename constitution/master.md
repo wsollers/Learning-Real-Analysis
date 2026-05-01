@@ -209,6 +209,12 @@ level.
 10. Topicboxes are not used in proof files. Proof files keep the existing
     professional-standard / detailed-learning structure without topic
     containers.
+11. The topic title is the concept title itself. Do not prefix topic titles
+    with decorative labels such as `Topic:`.
+12. When a subsection begins immediately with a `topicbox`, do not add a
+    separate introductory prose block that merely repeats the exposition that
+    belongs inside the topic. The topic exposition is the primary local
+    framing device.
 
 ### Required Topic Exposition
 
@@ -221,6 +227,9 @@ If a subsection uses a `topicbox`, that topic must begin with a required
 - The exposition environment is intentionally not boxed.
 - The exposition may be short, but it must perform real orienting work rather
   than decorative throat-clearing.
+- Do not duplicate that same orienting work in a separate pre-topic blurb in
+  the subsection body unless there is genuinely broader subsection-level
+  context that covers multiple topics at once.
 
 Preferred local order inside a `topicbox`:
 
