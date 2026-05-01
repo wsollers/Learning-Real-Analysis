@@ -1,6 +1,6 @@
 # Proofs To Do
 
-Generated: 2026-05-01 13:35:48
+Generated: 2026-05-01 15:51:22
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
