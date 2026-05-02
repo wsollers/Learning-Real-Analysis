@@ -187,7 +187,7 @@ B1  [ ]  Split GaussianSurface.hpp into AnimatedCurve.hpp, FrenetFrame.hpp, math
 C4  [ ]  Ctrl+A feature — ExtremumSurface, ExtremumTable, LeaderSeekerEquation, BiasedBrownianLeader,
              DirectPursuitEquation, MomentumBearingEquation (designed in docs/ctrl_a_leader_seeker.md)
 D1  [x]  Rename IEquation::velocity() -> update() (signals mutation, not pure computation)
-D2  [ ]  Replace submit/submit2 with named render targets
+D2  [DONE]  Replace submit/submit2 with named render targets
 E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/ (dead code, m_scene->on_frame() is commented out)
 
 ### New items from architecture review
@@ -203,7 +203,7 @@ C2  [DONE]  IConstraint + DomainConfinement
 C3  [DONE]  IPairConstraint + MinDistConstraint
 C4  [DONE]  Ctrl+A feature
 D1  [DONE]  Rename IEquation::velocity() -> update()
-D2  [ ]  Replace submit/submit2 with named render targets
+D2  [DONE]  Replace submit/submit2 with named render targets
 E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/
 
 ---
@@ -305,7 +305,7 @@ src/app/SpawnStrategy.hpp     ndde::spawn namespace: SpawnContext, reference_uv,
 ### Key invariants preserved
 
 - EngineAPI is a value type (std::function members) -- ParticleRenderer holds its own copy safely
-- submit() -> primary 3D window, submit2() -> contour second window (ParticleRenderer uses submit only)
+- submit_to("3d", ...) -> primary 3D window, submit_to("contour", ...) -> second window (ParticleRenderer uses "3d" only)
 - Delay-pursuit chasers spawned with prewarm=false (must wait for leader history)
 - AnimatedCurve.hpp does NOT include GaussianSurface.hpp (no circular dependency)
 - GaussianSurface.hpp includes AnimatedCurve.hpp transitively via the split headers
@@ -356,3 +356,141 @@ BiasedBrownianLeader's goal flip) to persist state without `const_cast`.
 ### Verification
 
 Grep of `src/` for `\.velocity(` returned zero matches after all edits.
+
+---
+
+## Category D — D2 DONE
+
+### Files touched
+
+```
+src/engine/EngineAPI.hpp         Added #include <string_view>
+                                  Removed: std::function<void(slice, topology, mode, color, mvp)> submit
+                                  Removed: std::function<void(slice, topology, mode, color, mvp)> submit2
+                                  Added:   std::function<void(string_view target, slice, topology,
+                                                              mode, color, mvp)> submit_to
+                                  Doc comment: explains "3d" and "contour" as known targets;
+                                  unknown target or closed window is a no-op
+src/engine/Engine.cpp            make_api(): replaced two separate lambda assignments
+                                  (api.submit = ..., api.submit2 = ...) with a single
+                                  api.submit_to = ... lambda dispatching on target string:
+                                    "3d"      -> m_renderer.draw(...)
+                                    "contour" -> m_second_win.draw(...) (guarded by valid())
+                                    else      -> no-op
+src/app/ParticleRenderer.hpp     Updated doc comment: submit() -> submit_to("3d", ...),
+                                  submit2() -> submit_to("contour", ...)
+src/app/ParticleRenderer.cpp     9 call sites migrated to submit_to("3d", ...):
+                                    submit_arrow (1), submit_trail_3d (1),
+                                    submit_head_dot_3d (1), submit_osc_circle_3d (1),
+                                    submit_normal_plane_3d (2), submit_torsion_3d (2)
+src/app/SurfaceSimScene.cpp      9 call sites migrated:
+                                    submit_wireframe_3d -> submit_to("3d", ...) x1
+                                    submit_filled_3d    -> submit_to("3d", ...) x1
+                                    submit_contour_second_window -> submit_to("contour", ...) x7
+                                      (background triangles, contour lines, per-curve trails,
+                                       inline arr lambda for 2D Frenet arrows,
+                                       osculating circle, torsion tip dot)
+src/app/Scene.cpp                13 call sites migrated to submit_to("3d", ...):
+                                    submit_surfaces (1), submit_epsilon_ball (1),
+                                    submit_epsilon_sphere (1), submit_frenet_frame (1),
+                                    submit_osc_circle (1), submit_interval_lines (1),
+                                    submit_secant_line (1), submit_tangent_line (1),
+                                    submit_grid (2), submit_axes (1), submit_conics (2)
+```
+
+### Invariant
+
+`submit_to()` dispatches by string name; unknown targets are silent no-ops;
+window count is not encoded in the API. Adding a third render window requires
+only a new `else if (target == "new_name")` branch in `Engine::make_api()` —
+no `EngineAPI` field additions, no call-site changes anywhere in scene code.
+
+### Verification
+
+Grep of all `.cpp` files in `src/` for `\.submit(` and `\.submit2(` (excluding
+`submit_to`) returned zero matches after all edits.
+
+---
+
+## Category D — D3 DONE
+
+### Files touched
+
+```
+src/engine/EngineAPI.hpp         Removed struct ImFont; forward-declaration (no longer needed
+                                  in the API header)
+                                  Removed: std::function<ImFont*()> math_font_body
+                                  Removed: std::function<ImFont*()> math_font_small
+                                  Added:   std::function<void(bool small)> push_math_font
+                                  Added:   std::function<void()>           pop_math_font
+                                  Doc comment explains push/pop contract and null-safety
+src/engine/Engine.cpp            make_api(): replaced two raw-pointer lambdas with:
+                                    push_math_font: selects body vs small font via bool,
+                                      guards on nullptr before PushFont (safe no-op if
+                                      font asset failed to load)
+                                    pop_math_font: unconditional ImGui::PopFont()
+                                  ImFont* stays entirely inside the engine layer
+src/app/AnalysisPanel.hpp        Replaced #include <imgui.h> with #include "engine/EngineAPI.hpp"
+                                  draw(hover, ImFont*)          -> draw(hover, EngineAPI&)
+                                  draw_readout_panel(hover, ImFont*) -> draw_readout_panel(hover, EngineAPI&)
+src/app/AnalysisPanel.cpp        draw() and draw_readout_panel() signatures updated
+                                  4 if (font) ImGui::PushFont/PopFont patterns replaced with
+                                    api.push_math_font(false) / api.pop_math_font()
+src/app/Scene.cpp                m_analysis_panel.draw(m_hover, m_api.math_font_body())
+                                    -> m_analysis_panel.draw(m_hover, m_api)
+                                  submit_interval_labels(): ImFont* font local variable removed;
+                                    3x if(font)PushFont/PopFont pairs replaced with
+                                    m_api.push_math_font(true) / m_api.pop_math_font()
+```
+
+### Invariant
+
+`ImFont*` does not appear in any `EngineAPI` field. The app layer (Scene,
+AnalysisPanel) calls `push_math_font` / `pop_math_font` and never handles a
+raw ImGui font pointer. The engine layer selects the correct font internally.
+
+### Verification
+
+Grep of `src/` for `math_font_body` and `math_font_small` returns zero matches.
+The only surviving `ImFont*` is the local variable inside `Engine::make_api()`'s
+`push_math_font` lambda — correct and intentional.
+
+---
+
+## Category E — E1, E3 DONE
+
+### E1 — Move Scene.cpp / AnalysisPanel.cpp to legacy/
+
+```
+src/app/legacy/                  Created (new directory)
+src/app/legacy/README.md         Explains what is here, why, and how to re-enable
+src/app/legacy/Scene.cpp         Full Scene implementation (fully updated: submit_to, push_math_font)
+src/app/legacy/AnalysisPanel.cpp Full AnalysisPanel implementation (fully updated: EngineAPI& api)
+src/app/legacy/Scene_on_frame_patch.bak  Historical patch fragment, preserved
+src/app/Scene.cpp                Replaced with #error tombstone (compiler guard)
+src/app/AnalysisPanel.cpp        Replaced with #error tombstone (compiler guard)
+src/app/Scene_on_frame_patch.bak Replaced with single redirect comment
+src/CMakeLists.txt               Removed app/Scene.cpp and app/AnalysisPanel.cpp
+                                  from add_executable(nurbs_dde ...) source list
+```
+
+**Why tombstones instead of deletion:** The Filesystem tools don't expose a
+delete operation. The `#error` directive in the stub files means that if
+anyone accidentally re-adds the files to CMakeLists, the build fails loudly
+with a clear message rather than silently compiling stale code.
+
+**Headers remain in place:** `Scene.hpp` and `AnalysisPanel.hpp` stay at
+`src/app/` because `Engine.cpp` includes `Scene.hpp` for the `Scene` type
+definition needed by `std::unique_ptr<Scene> m_scene` in `Engine.hpp`.
+
+### E3 — Add equation() accessor note to AnimatedCurve comment block
+
+```
+src/app/AnimatedCurve.hpp        Added "Live equation access" subsection to the file-level
+                                  block comment, immediately after the "History recording"
+                                  subsection. Documents:
+                                    - what equation() returns
+                                    - how to dynamic_cast to a concrete type
+                                    - example using BrownianMotion
+                                    - that this is the live Brownian tuning mechanism
+```

@@ -924,7 +924,7 @@ void SurfaceSimScene::submit_filled_3d(const Mat4& mvp) {
     auto slice = m_api.acquire(m_filled_vcount);
     std::memcpy(slice.vertices(), m_filled_cache.data(),
                 m_filled_vcount * sizeof(Vertex));
-    m_api.submit(slice, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+    m_api.submit_to("3d", slice, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 // ── submit_contour_second_window ──────────────────────────────────────────────
@@ -960,7 +960,7 @@ void SurfaceSimScene::submit_contour_second_window() {
             v[idx++]={Vec3{x0,y0,0},c00}; v[idx++]={Vec3{x1,y1,0},c11}; v[idx++]={Vec3{x0,y1,0},c01};
         }
         memory::ArenaSlice tr=slice; tr.vertex_count=idx;
-        m_api.submit2(tr, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+        m_api.submit_to("contour", tr, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
 
         if (m_show_contours) {
             const u32 max_v = GaussianSurface::contour_max_vertices(100u, k_n_levels);
@@ -969,7 +969,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                 {cslice.vertices(),max_v}, 100u, k_levels, k_n_levels, {1,1,1,0.8f});
             if (actual > 0) {
                 memory::ArenaSlice tr2=cslice; tr2.vertex_count=actual;
-                m_api.submit2(tr2, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+                m_api.submit_to("contour", tr2, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
             }
         }
     }
@@ -985,7 +985,7 @@ void SurfaceSimScene::submit_contour_second_window() {
             vt[i] = { Vec3{pt.x,pt.y,0},
                       AnimatedCurve::trail_colour(c.role(), c.colour_slot(), t) };
         }
-        m_api.submit2(slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+        m_api.submit_to("contour", slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp2);
     }
 
     {
@@ -1009,7 +1009,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                     auto s = m_api.acquire(2);
                     s.vertices()[0] = {o, col};
                     s.vertices()[1] = {o + glm::normalize(dir)*scl, col};
-                    m_api.submit2(s, Topology::LineList, DrawMode::VertexColor, col, mvp2);
+                    m_api.submit_to("contour", s, Topology::LineList, DrawMode::VertexColor, col, mvp2);
                 };
                 if (m_show_T) arr({fr.T.x,fr.T.y,0},{1.f,0.35f,0.05f,1.f});
                 if (m_show_N) arr({fr.N.x,fr.N.y,0},{0.15f,1.f,0.3f,1.f});
@@ -1023,7 +1023,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                         const f32 th = (static_cast<f32>(k)/SEG)*2.f*std::numbers::pi_v<f32>;
                         vc[k] = { ctr+Vec3{std::cos(th)*R,std::sin(th)*R,0}, {0.7f,0.3f,1.f,0.65f} };
                     }
-                    m_api.submit2(sc2, Topology::LineStrip, DrawMode::VertexColor,
+                    m_api.submit_to("contour", sc2, Topology::LineStrip, DrawMode::VertexColor,
                                   {0.7f,0.3f,1.f,0.65f}, mvp2);
                 }
                 if (m_show_torsion && fr.kappa > 1e-5f && std::abs(fr.tau) > 1e-4f) {
@@ -1038,7 +1038,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                     const Vec3 tip = o + tip_dir * len;
                     auto dot = m_api.acquire(1);
                     dot.vertices()[0] = { tip, tau_col };
-                    m_api.submit2(dot, Topology::LineStrip, DrawMode::UniformColor, tau_col, mvp2);
+                    m_api.submit_to("contour", dot, Topology::LineStrip, DrawMode::UniformColor, tau_col, mvp2);
                 }
             }
         }

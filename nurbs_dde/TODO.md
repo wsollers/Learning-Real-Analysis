@@ -61,8 +61,8 @@ Low urgency, no feature blocked by these.
 | # | Status | Item | Effort |
 |---|--------|------|--------|
 | D1 | [x] | **Rename `IEquation::velocity()` → `update()`** | `velocity()` implies a pure function. The method mutates `ParticleState&` (GradientWalker persists angle). `update()` is honest. ~30 min. |
-| D2 | [ ] | **Replace `submit` / `submit2` with named render targets** | `submit2` is "the second window" — a leaky abstraction. `api.submit_to("contour", ...)` is cleaner and won't need `submit3` when a third window is added. ~2 hrs. |
-| D3 | [ ] | **Wrap `math_font_body` / `math_font_small` in helper methods** | `EngineAPI` exposes raw `ImFont*` — an ImGui type — into the app layer. Replace with `api.push_math_font(bool small)` / `api.pop_math_font()`. ~30 min. |
+| D2 | [x] | **Replace `submit` / `submit2` with named render targets** | `submit2` is "the second window" — a leaky abstraction. `api.submit_to("contour", ...)` is cleaner and won't need `submit3` when a third window is added. ~2 hrs. |
+| D3 | [x] | **Wrap `math_font_body` / `math_font_small` in helper methods** | `EngineAPI` exposes raw `ImFont*` — an ImGui type — into the app layer. Replace with `api.push_math_font(bool small)` / `api.pop_math_font()`. ~30 min. |
 
 ---
 
@@ -70,9 +70,9 @@ Low urgency, no feature blocked by these.
 
 | # | Status | Item | Effort |
 |---|--------|------|--------|
-| E1 | [ ] | **Move `Scene.cpp` / `AnalysisPanel.cpp` to `legacy/`** | Both are compiled but `m_scene->on_frame()` is commented out in `Engine::run_frame()`. Dead weight in the build. ~15 min. |
+| E1 | [x] | **Move `Scene.cpp` / `AnalysisPanel.cpp` to `legacy/`** | Both are compiled but `m_scene->on_frame()` is commented out in `Engine::run_frame()`. Dead weight in the build. ~15 min. |
 | E2 | [x] | **Add `HistoryBuffer::to_vector()` accessor** | See A2. Also needed for display / debugging independent of export. |
-| E3 | [ ] | **Add `equation()` accessor note to `AnimatedCurve` comment block** | `equation()` was added for live Brownian tuning but the class comment doesn't mention it. ~5 min. |
+| E3 | [x] | **Add `equation()` accessor note to `AnimatedCurve` comment block** | `equation()` was added for live Brownian tuning but the class comment doesn't mention it. ~5 min. |
 
 ---
 

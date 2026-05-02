@@ -9,8 +9,6 @@
 #include <functional>
 #include <string_view>
 
-struct ImFont;
-
 namespace ndde {
 
 // ── Debug statistics ──────────────────────────────────────────────────────────
@@ -54,9 +52,12 @@ struct EngineAPI {
     std::function<Vec2()> viewport_size;   ///< primary window (3D)
     std::function<Vec2()> viewport_size2;  ///< second  window (2D)
 
-    // STIX math font handles. Guard: if (font) ImGui::PushFont(font);
-    std::function<ImFont*()> math_font_body;
-    std::function<ImFont*()> math_font_small;
+    // Push/pop the STIX math font for the current ImGui scope.
+    // push_math_font(false) -> body size  push_math_font(true) -> small size
+    // Always pair every push with a pop before the frame ends.
+    // No-op if the font asset failed to load (safe to call unconditionally).
+    std::function<void(bool small)> push_math_font;
+    std::function<void()>           pop_math_font;
 
     // Read-only access to the loaded config. Lifetime owned by Engine.
     std::function<const AppConfig&()> config;

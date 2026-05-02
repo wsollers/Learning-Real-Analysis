@@ -184,8 +184,11 @@ EngineAPI Engine::make_api() {
         // else: unknown target — no-op
     };
 
-    api.math_font_body  = [this]() -> ImFont* { return m_renderer.font_math_body();  };
-    api.math_font_small = [this]() -> ImFont* { return m_renderer.font_math_small(); };
+    api.push_math_font = [this](bool small) {
+        ImFont* f = small ? m_renderer.font_math_small() : m_renderer.font_math_body();
+        if (f) ImGui::PushFont(f);
+    };
+    api.pop_math_font = []() { ImGui::PopFont(); };
     api.config          = [this]() -> const AppConfig& { return m_config; };
     api.viewport_size   = [this]() -> Vec2 {
         return Vec2{ static_cast<f32>(m_glfw.width()),

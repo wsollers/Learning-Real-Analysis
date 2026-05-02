@@ -24,6 +24,15 @@
 // current parameter-space position after each advance() call.  query_history()
 // interpolates to an arbitrary past time.  The buffer pointer is stable across
 // vector reallocations (unique_ptr move does not change heap address).
+//
+// Live equation access
+// ─────────────────────
+// equation() returns a non-owning pointer to the active IEquation (owned or
+// shared).  Callers may dynamic_cast to a concrete type to mutate parameters
+// at runtime without respawning the particle:
+//   if (auto* bm = dynamic_cast<ndde::sim::BrownianMotion*>(c.equation()))
+//       bm->params().sigma = 0.2f;
+// This is the mechanism used by the live Brownian tuning sliders in the UI.
 
 #include "math/Scalars.hpp"
 #include "math/Surfaces.hpp"

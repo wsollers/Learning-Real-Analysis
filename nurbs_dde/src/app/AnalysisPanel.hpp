@@ -1,14 +1,14 @@
 #pragma once
 // app/AnalysisPanel.hpp
 
-#include <imgui.h>
+#include "engine/EngineAPI.hpp"
 #include "app/HoverResult.hpp"
 
 namespace ndde {
 
 class AnalysisPanel {
 public:
-    void draw(const HoverResult& hover, ImFont* math_font);
+    void draw(const HoverResult& hover, EngineAPI& api);
 
     // ── Feature visibility ────────────────────────────────────────────────────
     bool show_epsilon_ball()    const { return m_show_epsilon_ball; }
@@ -75,7 +75,7 @@ private:
     float m_osc_colour[3]        = { 1.f,  0.7f, 0.2f };  // orange
 
     void draw_control_panel(const HoverResult& hover);
-    void draw_readout_panel(const HoverResult& hover, ImFont* math_font);
+    void draw_readout_panel(const HoverResult& hover, EngineAPI& api);
 };
 
 } // namespace ndde

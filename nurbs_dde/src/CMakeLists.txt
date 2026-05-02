@@ -75,8 +75,6 @@ target_link_libraries(ndde_engine PUBLIC
 # ── nurbs_dde executable ──────────────────────────────────────────────────────
 add_executable(nurbs_dde
     app/main.cpp
-    app/Scene.cpp
-    app/AnalysisPanel.cpp
     app/GaussianSurface.cpp
     app/SurfaceSimScene.cpp
     app/ParticleRenderer.cpp
