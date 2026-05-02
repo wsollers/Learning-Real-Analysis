@@ -23,6 +23,61 @@ Step 8  [ ]    Shrink SurfaceSimScene to orchestrator
 
 ---
 
+## Category A -- DONE
+
+### A1 / C1 -- Retire WalkState; store ParticleState directly in AnimatedCurve
+
+- `src/app/GaussianSurface.hpp`
+    - Deleted `struct WalkState { f32 x, y, phase, angle; }`
+    - Replaced `WalkState m_walk` with `ndde::sim::ParticleState m_walk`
+    - `head_uv()` now returns `m_walk.uv` (was `{ m_walk.x, m_walk.y }`)
+    - Added `const` overload of `equation()` accessor (required for `export_session` const-correctness)
+
+- `src/app/GaussianSurface.cpp`
+    - Constructor: `m_walk = ndde::sim::ParticleState{ glm::vec2{start_x, start_y}, 0.f, 0.f }`
+    - `reset()`: sets `m_walk.uv / phase / angle` individually (was `m_walk = WalkState{...}`)
+    - `step()`: passes `m_walk` directly to integrator; eliminated intermediate `ps` copy-in/copy-out
+    - All `m_walk.x / m_walk.y` replaced with `m_walk.uv.x / m_walk.uv.y` throughout
+    - `push_history()`: `m_history->push(t, m_walk.uv)`
+    - `query_history()`: fallback returns `m_walk.uv`
+    - `head_world()`: `m_surface->evaluate(m_walk.uv.x, m_walk.uv.y)`
+
+### A2 / E2 -- HistoryBuffer::to_vector()
+
+- `src/sim/HistoryBuffer.hpp`
+    - Added `[[nodiscard]] std::vector<Record> to_vector() const` after `clear()`
+    - Iterates `(m_head + i) % m_capacity` when wrapped; simple copy when not
+    - O(n) time and space; doc-commented as export/debug only
+
+### A3 -- SurfaceSimScene::export_session()
+
+- `src/app/SurfaceSimScene.hpp`
+    - Declared `void export_session(const std::string& path) const` in private methods
+
+- `src/app/SurfaceSimScene.cpp`
+    - Added `#include <fstream>` and `#include <iomanip>`
+    - Implemented `export_session()`: writes CSV with columns
+      `particle_id, role, equation, record_type, step, a, b, c`
+      Two record types: `trail` (world xyz) and `history` (sim_t, param_u, param_v)
+    - Added `Export CSV` SmallButton after `Clear all` in `draw_simulation_panel()`
+      Filename: `session_{N}p_{T}s.csv` in working directory
+      Tooltip: "Write trail + history data to CSV in working directory"
+
+### A4 -- Capture RNG seed in MilsteinIntegrator
+
+- `src/sim/MilsteinIntegrator.hpp`
+    - Added `static void set_global_seed(uint64_t seed)`, `global_seed()`, `seed_is_fixed()`
+    - Added `inline static uint64_t s_global_seed = 0` and `inline static bool s_seed_set = false`
+    - Updated `normal2()`: thread_local lambda initialises `mt19937` from `s_global_seed` when
+      fixed, else from `std::random_device{}()`
+
+- `src/app/SurfaceSimScene.cpp`
+    - Added "RNG reproducibility" subsection in Brownian motion panel:
+      `InputInt` for seed, `Apply` button calls `set_global_seed()`,
+      green text when seed is fixed, greyed text when hardware-random
+
+---
+
 ## Step 10 -- DONE
 
 ### Files created
@@ -125,9 +180,9 @@ Step 8   [ ]  Shrink SurfaceSimScene to thin orchestrator (~200 lines)
 
 ### New items from architecture review
 
-A2  [ ]  HistoryBuffer::to_vector() — linearise ring buffer for export and iteration (10 lines)
-A3  [ ]  SurfaceSimScene::export_session() — CSV/JSON export of trail + history + metadata (50 lines)
-A4  [ ]  RNG seed capture in MilsteinIntegrator — expose global_seed in config + export metadata
+A2  [x]  HistoryBuffer::to_vector() -- linearise ring buffer for export and iteration (10 lines)
+A3  [x]  SurfaceSimScene::export_session() -- CSV/JSON export of trail + history + metadata (50 lines)
+A4  [x]  RNG seed capture in MilsteinIntegrator -- expose global_seed in config + export metadata
 B1  [ ]  Split GaussianSurface.hpp into AnimatedCurve.hpp, FrenetFrame.hpp, math/GaussianSurface.hpp
 C4  [ ]  Ctrl+A feature — ExtremumSurface, ExtremumTable, LeaderSeekerEquation, BiasedBrownianLeader,
              DirectPursuitEquation, MomentumBearingEquation (designed in docs/ctrl_a_leader_seeker.md)
@@ -135,4 +190,124 @@ D1  [ ]  Rename IEquation::velocity() -> update() (signals mutation, not pure co
 D2  [ ]  Replace submit/submit2 with named render targets
 E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/ (dead code, m_scene->on_frame() is commented out)
 
-### Full priority order — see TODO.md at repo root
+### New items from architecture review
+
+A2  [DONE]  HistoryBuffer::to_vector()
+A3  [DONE]  SurfaceSimScene::export_session()
+A4  [DONE]  RNG seed capture in MilsteinIntegrator
+B1  [DONE]  Split GaussianSurface.hpp -> FrenetFrame.hpp, AnimatedCurve.hpp, GaussianSurface.hpp
+B2  [DONE]  Extract ParticleRenderer (all submit_* methods + submit_all loop)
+B3  [DONE]  Extract SpawnStrategy (ndde::spawn namespace, header-only)
+B4  [DONE]  SurfaceSimScene shrunk to orchestrator (~520 lines, panel UI is inherently long)
+C2  [DONE]  IConstraint + DomainConfinement
+C3  [DONE]  IPairConstraint + MinDistConstraint
+C4  [DONE]  Ctrl+A feature
+D1  [ ]  Rename IEquation::velocity() -> update()
+D2  [ ]  Replace submit/submit2 with named render targets
+E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/
+
+---
+
+## Category C -- DONE
+
+### New files created
+
+```
+src/sim/IConstraint.hpp          IConstraint (per-particle) + IPairConstraint (pairwise) interfaces
+src/sim/DomainConfinement.hpp    Concrete IConstraint: reflect/wrap existing boundary logic
+src/sim/MinDistConstraint.hpp    Concrete IPairConstraint: elastic midpoint push in parameter space
+src/math/ExtremumTable.hpp       ExtremumTable struct declaration
+src/math/ExtremumTable.cpp       ExtremumTable::build() -- grid search + gradient refinement
+src/math/ExtremumSurface.hpp     Bimodal Gaussian height field; unique global max + min; analytic grad
+src/sim/LeaderSeekerEquation.hpp Deterministic 2-state (SeekMax/SeekMin) leader equation
+src/sim/BiasedBrownianLeader.hpp Stochastic SDE leader: goal-directed drift + Wiener noise
+src/sim/DirectPursuitEquation.hpp  Strategy A: pursuer steers toward leader's current uv
+src/sim/MomentumBearingEquation.hpp Strategy C: pursuer infers leader goal from velocity history window
+```
+
+### Existing files modified
+
+```
+src/sim/IConstraint.hpp          (new -- both interfaces in one header)
+src/app/AnimatedCurve.hpp        + #include IConstraint.hpp
+                                  + m_constraints vector<unique_ptr<IConstraint>>
+                                  + add_constraint() public method
+                                  + walk_state() mutable accessor for pairwise constraints
+src/app/GaussianSurface.cpp      + #include DomainConfinement.hpp
+                                  + constructor body: push DomainConfinement into m_constraints
+                                  + with_equation factory: same
+                                  + step(): replaced 20-line if/while block with constraint loop
+src/app/SurfaceSimScene.hpp      + #include IConstraint.hpp, MinDistConstraint.hpp,
+                                    ExtremumTable.hpp, ExtremumSurface.hpp,
+                                    LeaderSeekerEquation.hpp, BiasedBrownianLeader.hpp,
+                                    DirectPursuitEquation.hpp, MomentumBearingEquation.hpp
+                                  + SurfaceType::Extremum = 3
+                                  + m_pair_constraints, m_pair_collision, m_min_dist
+                                  + m_extremum_table (value member, stable address)
+                                  + m_extremum_rebuild_countdown
+                                  + LeaderMode enum + m_leader_mode
+                                  + m_ls_params, m_bbl_params
+                                  + PursuitMode enum + m_pursuit_mode
+                                  + m_pursuit_tau, m_pursuit_window
+                                  + m_spawning_pursuer, m_ctrl_a_prev
+                                  + apply_pairwise_constraints(), spawn_leader_seeker(),
+                                    spawn_pursuit_particle(), rebuild_extremum_table_if_needed(),
+                                    draw_leader_seeker_panel() declarations
+src/app/SurfaceSimScene.cpp      + swap_surface(): Extremum case + m_spawning_pursuer reset
+                                  + advance_simulation(): rebuild_extremum_table_if_needed() call
+                                  + advance_simulation(): apply_pairwise_constraints() call
+                                  + apply_pairwise_constraints() implementation
+                                  + handle_hotkeys(): Ctrl+A two-phase edge logic
+                                  + draw_simulation_panel(): Extremum radio button
+                                  + draw_simulation_panel(): Collision avoidance UI section
+                                  + draw_simulation_panel(): draw_leader_seeker_panel() call
+                                  + draw_simulation_panel(): m_spawning_pursuer reset in Clear all
+                                  + rebuild_extremum_table_if_needed() implementation
+                                  + spawn_leader_seeker() implementation
+                                  + spawn_pursuit_particle() implementation
+                                  + draw_leader_seeker_panel() implementation
+src/CMakeLists.txt               + math/ExtremumTable.cpp added to ndde_math STATIC sources
+```
+
+### Key invariants
+
+- **DomainConfinement is always-on.** Every AnimatedCurve (both constructor paths)
+  pushes a DomainConfinement into m_constraints at construction time. No particle
+  can ever escape the domain regardless of which equation or integrator is used.
+
+- **ExtremumTable address is invariant.** m_extremum_table is a value member of
+  SurfaceSimScene, not a unique_ptr. Pointers held by LeaderSeekerEquation and
+  BiasedBrownianLeader survive swap_surface() and m_curves vector reallocation.
+
+- **m_goal is mutable in both leader equations.** The equations are const-correct
+  at the IEquation interface level (velocity() is const), but the goal-switching
+  state must persist across velocity() calls. The pattern mirrors GradientWalker's
+  state.angle update.
+
+- **Leader must exist before pursuers.** spawn_pursuit_particle() checks
+  m_curves.empty() and returns immediately if there is no leader.
+
+- **Ctrl+A is two-phase.** First press: spawn leader (m_spawning_pursuer = true).
+  All subsequent presses: spawn pursuers. m_spawning_pursuer resets to false on
+  swap_surface() and on the Clear all button.
+
+### New files created in Category B
+
+```
+src/app/FrenetFrame.hpp       FrenetFrame, SurfaceFrame, make_surface_frame
+src/app/AnimatedCurve.hpp     AnimatedCurve class (full declaration + inline methods)
+src/app/ParticleRenderer.hpp  ParticleRenderer class declaration
+src/app/ParticleRenderer.cpp  All submit_* implementations + submit_all()
+src/app/SpawnStrategy.hpp     ndde::spawn namespace: SpawnContext, reference_uv,
+                               offset_spawn, spawn_shared, spawn_owned
+```
+
+### Key invariants preserved
+
+- EngineAPI is a value type (std::function members) -- ParticleRenderer holds its own copy safely
+- submit() -> primary 3D window, submit2() -> contour second window (ParticleRenderer uses submit only)
+- Delay-pursuit chasers spawned with prewarm=false (must wait for leader history)
+- AnimatedCurve.hpp does NOT include GaussianSurface.hpp (no circular dependency)
+- GaussianSurface.hpp includes AnimatedCurve.hpp transitively via the split headers
+
+### Full priority order -- see TODO.md at repo root

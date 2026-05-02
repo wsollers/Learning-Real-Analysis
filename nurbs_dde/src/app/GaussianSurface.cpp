@@ -1,5 +1,11 @@
 // app/GaussianSurface.cpp
 #include "app/GaussianSurface.hpp"
+#include "app/AnimatedCurve.hpp"
+#include "app/FrenetFrame.hpp"
+#include "sim/IEquation.hpp"
+#include "sim/IIntegrator.hpp"
+#include "sim/HistoryBuffer.hpp"
+#include "sim/DomainConfinement.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
@@ -223,7 +229,8 @@ AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
     , m_start_x(start_x)
     , m_start_y(start_y)
 {
-    m_walk = WalkState{ start_x, start_y };
+    m_walk = ndde::sim::ParticleState{ glm::vec2{start_x, start_y}, 0.f, 0.f };
+    m_constraints.push_back(std::make_unique<ndde::sim::DomainConfinement>());
 }
 
 // static factory: particle owns its equation
@@ -239,12 +246,15 @@ AnimatedCurve AnimatedCurve::with_equation(
                     surface, owned_equation.get(), integrator);
     c.m_owned_equation = std::move(owned_equation);
     // m_equation already points to m_owned_equation.get() via the constructor
+    c.m_constraints.push_back(std::make_unique<ndde::sim::DomainConfinement>());
     return c;
 }
 
 void AnimatedCurve::reset() {
     m_trail.clear();
-    m_walk = WalkState{ m_start_x, m_start_y };
+    m_walk.uv    = { m_start_x, m_start_y };
+    m_walk.phase = 0.f;
+    m_walk.angle = 0.f;
 }
 
 void AnimatedCurve::advance(f32 dt, f32 speed_scale) {
@@ -255,49 +265,16 @@ void AnimatedCurve::advance(f32 dt, f32 speed_scale) {
 }
 
 void AnimatedCurve::step(f32 dt, f32 speed_scale) {
-    // Step 5: build ParticleState, delegate entirely to the integrator.
+    // Step 5 / A1: pass m_walk directly to the integrator (no copy-in/copy-out).
     // The integrator calls m_equation->velocity(state, ...) with mutable state,
     // so GradientWalker updates state.angle in place -- no const_cast needed.
-    ndde::sim::ParticleState ps;
-    ps.uv    = { m_walk.x, m_walk.y };
-    ps.phase = m_walk.phase;
-    ps.angle = m_walk.angle;
+    m_integrator->step(m_walk, *m_equation, *m_surface, 0.f, dt * speed_scale);
 
-    m_integrator->step(ps, *m_equation, *m_surface, 0.f, dt * speed_scale);
+    // Apply constraints (boundary handling, pairwise, etc.)
+    for (const auto& c : m_constraints)
+        c->apply(m_walk, *m_surface);
 
-    // Sync angle back (equation updated it during velocity() call in integrator)
-    m_walk.angle = ps.angle;
-
-    // Boundary handling on the integrator's proposed position.
-    constexpr f32 margin = 0.3f;
-    const f32 u0     = m_surface->u_min();
-    const f32 u1     = m_surface->u_max();
-    const f32 v0     = m_surface->v_min();
-    const f32 v1     = m_surface->v_max();
-    const f32 u_span = u1 - u0;
-    const f32 v_span = v1 - v0;
-
-    if (m_surface->is_periodic_u()) {
-        while (ps.uv.x < u0) ps.uv.x += u_span;
-        while (ps.uv.x >= u1) ps.uv.x -= u_span;
-    } else {
-        if (ps.uv.x < u0 + margin) { ps.uv.x = u0 + margin; m_walk.angle = std::numbers::pi_v<f32> - m_walk.angle; }
-        if (ps.uv.x > u1 - margin) { ps.uv.x = u1 - margin; m_walk.angle = std::numbers::pi_v<f32> - m_walk.angle; }
-    }
-    if (m_surface->is_periodic_v()) {
-        while (ps.uv.y < v0) ps.uv.y += v_span;
-        while (ps.uv.y >= v1) ps.uv.y -= v_span;
-    } else {
-        if (ps.uv.y < v0 + margin) { ps.uv.y = v0 + margin; m_walk.angle = -m_walk.angle; }
-        if (ps.uv.y > v1 - margin) { ps.uv.y = v1 - margin; m_walk.angle = -m_walk.angle; }
-    }
-
-    // Commit
-    m_walk.x     = ps.uv.x;
-    m_walk.y     = ps.uv.y;
-    m_walk.phase = ps.phase;
-
-    const Vec3 pt = m_surface->evaluate(m_walk.x, m_walk.y);
+    const Vec3 pt = m_surface->evaluate(m_walk.uv.x, m_walk.uv.y);
     if (m_trail.empty() || glm::length(pt - m_trail.back()) > 0.015f) {
         m_trail.push_back(pt);
         if (m_trail.size() > MAX_TRAIL)
@@ -315,11 +292,11 @@ void AnimatedCurve::push_history(float t) {
     if (!m_history) return;
     // Push the current parameter-space position (the walk state, not the trail).
     // The trail stores world-space Vec3; we need the (u,v) pair for the DDE.
-    m_history->push(t, { m_walk.x, m_walk.y });
+    m_history->push(t, m_walk.uv);
 }
 
 glm::vec2 AnimatedCurve::query_history(float t_past) const {
-    if (!m_history) return { m_walk.x, m_walk.y };  // fallback: current pos
+    if (!m_history) return m_walk.uv;  // fallback: current pos
     return m_history->query(t_past);
 }
 
@@ -463,7 +440,7 @@ void AnimatedCurve::tessellate_trail(std::span<Vertex> out) const {
 }
 
 Vec3 AnimatedCurve::head_world() const noexcept {
-    if (m_trail.empty()) return m_surface->evaluate(m_walk.x, m_walk.y);
+    if (m_trail.empty()) return m_surface->evaluate(m_walk.uv.x, m_walk.uv.y);
     return m_trail.back();
 }
 

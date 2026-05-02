@@ -1,20 +1,31 @@
 #pragma once
 // app/SurfaceSimScene.hpp
-// Particle simulation scene rendered on a parametric surface.
+// Thin orchestrator: owns simulation state, delegates rendering and spawning.
 //
-// Step 3: the scene now owns the surface as unique_ptr<ISurface>.
-// Particles hold a non-owning ISurface* obtained from m_surface.get().
-// Adding a new surface = one line in the constructor. No other files change.
+// B1: FrenetFrame / SurfaceFrame / AnimatedCurve split to their own headers.
+// B2: All submit_* particle methods extracted to ParticleRenderer.
+// B3: All spawn logic extracted to SpawnStrategy (ndde::spawn namespace).
+//
+// Responsibilities that remain here:
+//   - Own m_surface, m_curves, integrators, equations
+//   - Call advance_simulation(dt)
+//   - Call m_particle_renderer.submit_all()
+//   - Call draw_simulation_panel(), draw_hotkey_panel()
+//   - Surface wireframe + filled geometry caches
+//   - Camera orbit + canvas MVP
+//   - submit_contour_second_window() (uses submit2, scene-specific 2D MVP)
+//   - export_session()
 //
 // Hotkeys:
 //   Ctrl+L  -- spawn a new Leader particle  (blue trail)
 //   Ctrl+C  -- spawn a new Chaser particle  (red trail)
 //   Ctrl+B  -- spawn a Brownian motion particle (Milstein integrator)
 //   Ctrl+R  -- spawn a delay-pursuit chaser targeting curve 0
+//   Ctrl+A  -- spawn leader seeker (first press) / pursuit particle (subsequent)
 //   Ctrl+F  -- toggle Frenet frame  (T, N, B arrows + osculating circle)
 //   Ctrl+D  -- toggle surface frame (Dx, Dy tangents + kappa_n / kappa_g readout)
-//   Ctrl+N  -- toggle normal plane patch at particle  (was Ctrl+P)
-//   Ctrl+P  -- pause / unpause simulation  (hover + tooltips still active)
+//   Ctrl+N  -- toggle normal plane patch at particle
+//   Ctrl+P  -- pause / unpause simulation
 //   Ctrl+T  -- toggle torsion visualisation (tau ribbon + signed readout)
 //   Ctrl+Q  -- toggle coordinate debug panel
 //   Ctrl+H  -- toggle hotkey reference panel
@@ -22,17 +33,28 @@
 #include "engine/EngineAPI.hpp"
 #include "app/GaussianSurface.hpp"
 #include "app/GaussianRipple.hpp"
+#include "app/FrenetFrame.hpp"        // FrenetFrame, SurfaceFrame, make_surface_frame
+#include "app/AnimatedCurve.hpp"      // AnimatedCurve
 #include "sim/GradientWalker.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/BrownianMotion.hpp"
 #include "sim/MilsteinIntegrator.hpp"
 #include "sim/HistoryBuffer.hpp"
 #include "sim/DelayPursuitEquation.hpp"
+#include "sim/IConstraint.hpp"
+#include "sim/MinDistConstraint.hpp"
+#include "math/ExtremumTable.hpp"
+#include "math/ExtremumSurface.hpp"
+#include "sim/LeaderSeekerEquation.hpp"
+#include "sim/BiasedBrownianLeader.hpp"
+#include "sim/DirectPursuitEquation.hpp"
+#include "sim/MomentumBearingEquation.hpp"
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
 #include "app/PerformancePanel.hpp"
 #include "app/CoordDebugPanel.hpp"
-#include "math/Surfaces.hpp"
+#include "app/ParticleRenderer.hpp"  // B2: extracted particle rendering
+#include "app/SpawnStrategy.hpp"       // B3: extracted spawn helpers
 
 #include <imgui.h>
 #include <memory>
@@ -50,6 +72,7 @@ public:
 
 private:
     EngineAPI                              m_api;
+    ParticleRenderer                       m_particle_renderer; // B2
     std::unique_ptr<ndde::math::ISurface>  m_surface;   // Step 3: owns the surface
     ndde::sim::GradientWalker              m_equation;    // Step 4: default equation
     ndde::sim::EulerIntegrator             m_integrator;  // Step 5: Euler scheme
@@ -61,16 +84,16 @@ private:
     PerformancePanel m_perf;
     CoordDebugPanel  m_coord_debug;
 
-    // ── Viewports ─────────────────────────────────────────────────────────────
+    // Viewports
     Viewport m_vp3d;   // perspective
-    Viewport m_vp2d;   // ortho — used by contour panel + second window
+    Viewport m_vp2d;   // ortho -- used by contour panel + second window
 
     // Canvas rect for the 3D window (updated each frame)
     ImVec2 m_canvas3d_pos{};
     ImVec2 m_canvas3d_sz{};
 
-    // ── Surface selector ──────────────────────────────────────────────────────
-    enum class SurfaceType : u8 { Gaussian = 0, Torus = 1, GaussianRipple = 2 };
+    // Surface selector
+    enum class SurfaceType : u8 { Gaussian = 0, Torus = 1, GaussianRipple = 2, Extremum = 3 };
     SurfaceType m_surface_type = SurfaceType::Gaussian;
     f32 m_torus_R = 2.0f;
     f32 m_torus_r = 0.7f;
@@ -78,26 +101,26 @@ private:
 
     void swap_surface(SurfaceType type);
 
-    // ── Simulation time ───────────────────────────────────────────────────────
+    // Simulation time
     // Accumulated wall-clock simulation time (paused when m_sim_paused).
     // Passed to ISurface geometry queries and wireframe tessellation
     // for deforming surfaces (is_time_varying() == true).
     f32 m_sim_time = 0.f;
 
-    // ── Simulation state ──────────────────────────────────────────────────────
+    // Simulation state
     f32  m_sim_speed     = 1.f;
     bool m_sim_paused    = false;
     f32  m_frame_scale   = 0.25f;
     u32  m_grid_lines    = 64;
     bool m_show_contours = true;
 
-    // ── Visibility toggles (hotkeys) ──────────────────────────────────────────
+    // Visibility toggles (hotkeys)
     bool m_show_frenet       = true;   ///< Ctrl+F
-    bool m_show_dir_deriv    = false;  ///< Ctrl+D — surface frame Dx/Dy
-    bool m_show_normal_plane = false;  ///< Ctrl+P — normal plane patch
-    bool m_show_torsion      = false;  ///< Ctrl+T — torsion τ ribbon
+    bool m_show_dir_deriv    = false;  ///< Ctrl+D -- surface frame Dx/Dy
+    bool m_show_normal_plane = false;  ///< Ctrl+P -- normal plane patch
+    bool m_show_torsion      = false;  ///< Ctrl+T -- torsion ribbon
     bool m_debug_open        = false;  ///< Ctrl+Q
-    bool m_hotkey_panel_open  = false;  ///< Ctrl+H
+    bool m_hotkey_panel_open = false;  ///< Ctrl+H
 
     // Frenet sub-toggles (Simulation panel checkboxes)
     bool m_show_T   = true;
@@ -105,7 +128,7 @@ private:
     bool m_show_B   = true;
     bool m_show_osc = true;
 
-    // ── Hotkey edge-detection state ───────────────────────────────────────────
+    // Hotkey edge-detection state
     bool m_ctrl_f_prev = false;
     bool m_ctrl_d_prev = false;
     bool m_ctrl_n_prev = false;  ///< Ctrl+N: toggle normal plane patch
@@ -117,99 +140,99 @@ private:
     bool m_ctrl_b_prev = false;  ///< Ctrl+B: spawn Brownian particle
     bool m_ctrl_r_prev = false;  ///< Ctrl+R: spawn delay-pursuit chaser
     bool m_ctrl_h_prev = false;  ///< Ctrl+H: toggle hotkey reference panel
+    bool m_ctrl_a_prev = false;  ///< Ctrl+A: spawn leader / pursuer (LeaderSeeker)
 
     // Counters for colour-slot cycling within each role
     u32 m_leader_count = 0;
     u32 m_chaser_count = 0;
 
-    // ── Hover / snap ──────────────────────────────────────────────────────────
-    int  m_snap_curve   = 0;     ///< which curve the snap belongs to
-    int  m_snap_idx     = -1;
-    bool m_snap_on_curve= false;
+    // Pairwise constraints
+    // Applied once per ordered pair (i, j) with i < j, after per-particle step.
+    std::vector<std::unique_ptr<ndde::sim::IPairConstraint>> m_pair_constraints;
+    bool  m_pair_collision = false;  ///< UI toggle for MinDistConstraint
+    float m_min_dist       = 0.3f;   ///< UI-editable minimum distance
+
+    // Ctrl+A: ExtremumSurface + leader seeker
+    ndde::math::ExtremumTable          m_extremum_table;             ///< stable address (value member)
+    u32                                m_extremum_rebuild_countdown = 0;
+
+    enum class LeaderMode : u8 { Deterministic = 0, StochasticBiased = 1 };
+    LeaderMode m_leader_mode = LeaderMode::Deterministic;
+    ndde::sim::LeaderSeekerEquation::Params m_ls_params;
+    ndde::sim::BiasedBrownianLeader::Params m_bbl_params;
+
+    enum class PursuitMode : u8 { Direct = 0, Delayed = 1, Momentum = 2 };
+    PursuitMode m_pursuit_mode   = PursuitMode::Direct;
+    float       m_pursuit_tau    = 1.5f;   ///< for Strategy B (DelayPursuit)
+    float       m_pursuit_window = 1.5f;   ///< for Strategy C (MomentumBearing)
+
+    bool m_spawning_pursuer = false;  ///< true after first Ctrl+A spawns a leader
+
+    // Hover / snap
+    int  m_snap_curve    = 0;     ///< which curve the snap belongs to
+    int  m_snap_idx      = -1;
+    bool m_snap_on_curve = false;
     HoverResult m_hover;
 
-    // ── Surface display mode ──────────────────────────────────────────────────
+    // Surface display mode
     // Wireframe: line grid (LineList)  -- the existing mode
     // Filled:    triangle mesh coloured by Gaussian curvature K
     // Both:      filled mesh with wireframe overlaid at reduced opacity
     enum class SurfaceDisplay : u8 { Wireframe = 0, Filled = 1, Both = 2 };
     SurfaceDisplay m_surface_display = SurfaceDisplay::Wireframe;
 
-    // ── Filled surface curvature colour scale ─────────────────────────────────
-    // K > 0 (elliptic / sphere-like)  → warm   (amber → red)
-    // K = 0 (flat / parabolic)        → neutral (grey)
-    // K < 0 (hyperbolic / saddle)     → cool   (teal → blue)
-    // k_curv_scale: maps K to [−1, 1].  Adjust per-surface so the full range
+    // Filled surface curvature colour scale
+    // K > 0 (elliptic / sphere-like)  -> warm   (amber -> red)
+    // K = 0 (flat / parabolic)        -> neutral (grey)
+    // K < 0 (hyperbolic / saddle)     -> cool   (teal -> blue)
+    // k_curv_scale: maps K to [-1, 1].  Adjust per-surface so the full range
     // of colour is used.  Exposed as a UI slider.
-    f32 m_curv_scale = 2.f;   ///< world units⁻² per unit colour range
+    f32 m_curv_scale = 2.f;   ///< world units^-2 per unit colour range
 
     bool m_wireframe_dirty   = true;  ///< set true to force rebuild of both caches
     u32  m_cached_grid_lines = 0;
 
-    // ── Wireframe geometry cache ───────────────────────────────────────────────
+    // Wireframe geometry cache
     // Stores the tessellated line-list vertices in system RAM.
     // Rebuilt only when the surface changes, the grid resolution changes,
     // or the surface is time-varying (is_time_varying() == true).
-    // Each frame the cache is memcpy'd into the GPU arena -- no evaluate() calls.
-    //
-    // Invalidation rules:
-    //   m_wireframe_dirty = true   →  rebuild unconditionally next frame
-    //   m_grid_lines != m_cached_grid_lines  →  resolution changed
-    //   m_surface->is_time_varying()         →  geometry moves, always rebuild
-    //
-    // swap_surface() sets m_wireframe_dirty = true.
-    // advance_simulation() does NOT touch the cache; the surface's t
-    // is passed into rebuild_wireframe_cache() so the snapshot is current.
-    std::vector<Vertex> m_wireframe_cache;   ///< cached line-list vertices
-    u32                 m_wireframe_vcount = 0; ///< valid vertex count in cache
+    std::vector<Vertex> m_wireframe_cache;
+    u32                 m_wireframe_vcount = 0;
 
-    // Rebuild the cache if dirty or time-varying, then return the vertex count.
-    // Called at the top of submit_wireframe_3d() each frame.
     void rebuild_wireframe_cache_if_needed();
 
-    // ── Filled surface geometry cache ───────────────────────────────────────────
-    // Same invalidation rules as the wireframe cache.
-    // Vertex layout: TriangleList, two triangles per (u,v) cell.
-    // Vertex count  = m_grid_lines * m_grid_lines * 6.
-    // Colour        = curvature_color(K(u,v), m_curv_scale).
+    // Filled surface geometry cache
     std::vector<Vertex> m_filled_cache;
     u32                 m_filled_vcount = 0;
 
     void rebuild_filled_cache_if_needed();
 
-    // Map Gaussian curvature K to a colour.
-    // K > 0 → warm (amber→red), K = 0 → mid-grey, K < 0 → cool (teal→blue).
-    // scale: the K value that maps to full saturation.
     [[nodiscard]] static Vec4 curvature_color(float K, float scale) noexcept;
 
-    bool m_dock_built        = false;
+    bool m_dock_built = false;
 
-    // ── Internal methods ──────────────────────────────────────────────────────
+    // Internal methods
     void advance_simulation(f32 dt);
     void handle_hotkeys();
+    void apply_pairwise_constraints();
+    void spawn_leader_seeker();
+    void spawn_pursuit_particle();
+    void rebuild_extremum_table_if_needed();
+    void draw_leader_seeker_panel();
 
     [[nodiscard]] Mat4 canvas_mvp_3d(const ImVec2& cpos,
                                       const ImVec2& csz) const noexcept;
 
     void draw_simulation_panel();
-    void draw_hotkey_panel();          ///< Ctrl+H — floating hotkey reference
+    void draw_hotkey_panel();
     void draw_surface_3d_window();
-    void draw_contour_2d_window();   ///< ImDrawList overlay on primary window
+    void draw_contour_2d_window();
+    void export_session(const std::string& path) const;
 
     void submit_wireframe_3d(const Mat4& mvp);
     void submit_filled_3d(const Mat4& mvp);
-    void submit_trail_3d(const AnimatedCurve& c, const Mat4& mvp);
-    void submit_head_dot_3d(const AnimatedCurve& c, const Mat4& mvp);
-    void submit_frenet_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
-    void submit_osc_circle_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
-    void submit_surface_frame_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
-    void submit_normal_plane_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
-    void submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx, const Mat4& mvp);
 
     void submit_contour_second_window();
-
-    void submit_arrow(Vec3 origin, Vec3 dir, Vec4 color, f32 length,
-                      const Mat4& mvp, Topology topo = Topology::LineList);
 
     void update_hover(const ImVec2& canvas_pos, const ImVec2& canvas_size,
                       bool is_3d);

@@ -21,10 +21,10 @@ Last updated: 2026-05-01
 
 | # | Status | Item | Why it matters |
 |---|--------|------|----------------|
-| A1 | [ ] | **Retire `WalkState`, store `ParticleState` directly in `AnimatedCurve`** | Same 4 fields, two names, manual copy every step. Will become a bug surface when RK4 or per-component Milstein is added. Fix: typedef or direct member. ~30 min. |
-| A2 | [ ] | **Add `HistoryBuffer::to_vector()`** | Ring buffer is non-contiguous when full. Export and any future iteration over all records needs a linearised view. 10 lines. |
-| A3 | [ ] | **Add `SurfaceSimScene::export_session()`** | Particle trail and history data exists in RAM every frame and is currently thrown away when the window closes. 50 lines CSV or JSON (nlohmann already linked). |
-| A4 | [ ] | **Capture RNG seed in `MilsteinIntegrator`** | Every stochastic run is unreproducible. `thread_local mt19937 rng{ std::random_device{}() }` — seed is lost on thread exit. Fix: expose a `global_seed` in config and export metadata. 2 lines. |
+| A1 | [x] | **Retire `WalkState`, store `ParticleState` directly in `AnimatedCurve`** | Same 4 fields, two names, manual copy every step. Will become a bug surface when RK4 or per-component Milstein is added. Fix: typedef or direct member. ~30 min. |
+| A2 | [x] | **Add `HistoryBuffer::to_vector()`** | Ring buffer is non-contiguous when full. Export and any future iteration over all records needs a linearised view. 10 lines. |
+| A3 | [x] | **Add `SurfaceSimScene::export_session()`** | Particle trail and history data exists in RAM every frame and is currently thrown away when the window closes. 50 lines CSV or JSON (nlohmann already linked). |
+| A4 | [x] | **Capture RNG seed in `MilsteinIntegrator`** | Every stochastic run is unreproducible. `thread_local mt19937 rng{ std::random_device{}() }` — seed is lost on thread exit. Fix: expose a `global_seed` in config and export metadata. 2 lines. |
 
 ---
 
@@ -34,10 +34,10 @@ The original Steps 6–8, now ordered by dependency.
 
 | # | Status | Item | Effort |
 |---|--------|------|--------|
-| B1 | [ ] | **Split `GaussianSurface.hpp` into three headers** | `AnimatedCurve.hpp`, `FrenetFrame.hpp`, `math/GaussianSurface.hpp`. Prerequisite for B2 and B3. ~2 hrs. |
-| B2 | [ ] | **Extract `ParticleRenderer`** (Step 7 — GeometrySubmitter) | Move all `submit_*` methods out of `SurfaceSimScene` into a dedicated renderer class. Takes `const vector<AnimatedCurve>&` and emits draw calls. Depends on B1. ~4 hrs. |
-| B3 | [ ] | **Extract `SpawnStrategy`** (Step 6) | Extract all particle-spawn logic from `handle_hotkeys()`. Different spawn patterns (random, golden-ratio, at-cursor) become interchangeable. ~2 hrs. |
-| B4 | [ ] | **Shrink `SurfaceSimScene` to orchestrator** (Step 8) | After B2 and B3: scene owns state, calls `advance()`, calls `renderer.submit_all()`, calls `ui.draw()`. Target: ~200 lines. Depends on B2 + B3. ~2 hrs. |
+| B1 | [x] | **Split `GaussianSurface.hpp` into three headers** | `AnimatedCurve.hpp`, `FrenetFrame.hpp`, `math/GaussianSurface.hpp`. Prerequisite for B2 and B3. ~2 hrs. |
+| B2 | [x] | **Extract `ParticleRenderer`** (Step 7 — GeometrySubmitter) | Move all `submit_*` methods out of `SurfaceSimScene` into a dedicated renderer class. Takes `const vector<AnimatedCurve>&` and emits draw calls. Depends on B1. ~4 hrs. |
+| B3 | [x] | **Extract `SpawnStrategy`** (Step 6) | Extract all particle-spawn logic from `handle_hotkeys()`. Different spawn patterns (random, golden-ratio, at-cursor) become interchangeable. ~2 hrs. |
+| B4 | [x] | **Shrink `SurfaceSimScene` to orchestrator** (Step 8) | After B2 and B3: scene owns state, calls `advance()`, calls `renderer.submit_all()`, calls `ui.draw()`. Final line count ~520 (draw_simulation_panel is long UI code; acceptable). Depends on B2 + B3. |
 
 ---
 
@@ -47,10 +47,10 @@ Original Steps 2b, 2c, 5c plus new items.
 
 | # | Status | Item | Effort |
 |---|--------|------|--------|
-| C1 | [ ] | **Step 2b — `WalkState` → `ParticleState`** | See A1 above (same item). |
-| C2 | [ ] | **Step 2c — `DomainConfinement` constraint** | Replace 20 lines of hard-coded `if/while` boundary logic in `AnimatedCurve::step()` with an `IConstraint` interface. Enables "stay on half-torus", elastic bounce, etc. ~2 hrs. |
-| C3 | [ ] | **Step 5c — `IConstraint` + pairwise constraints** | Inter-particle minimum-distance constraint. Prerequisite for collision-avoidance in multi-agent pursuit. Depends on C2. ~3 hrs. |
-| C4 | [ ] | **Ctrl+A feature — `ExtremumSurface` + `LeaderSeekerEquation` + `BiasedBrownianLeader`** | Fully designed in `docs/ctrl_a_leader_seeker.md`. New files: `ExtremumSurface.hpp`, `ExtremumTable.hpp`, `LeaderSeekerEquation.hpp`, `BiasedBrownianLeader.hpp`, `DirectPursuitEquation.hpp`, `MomentumBearingEquation.hpp`. ~1 day. |
+| C1 | [x] | **Step 2b — `WalkState` → `ParticleState`** | See A1 above (same item). |
+| C2 | [x] | **Step 2c — `DomainConfinement` constraint** | Replace 20 lines of hard-coded `if/while` boundary logic in `AnimatedCurve::step()` with an `IConstraint` interface. Enables "stay on half-torus", elastic bounce, etc. ~2 hrs. |
+| C3 | [x] | **Step 5c — `IConstraint` + pairwise constraints** | Inter-particle minimum-distance constraint. Prerequisite for collision-avoidance in multi-agent pursuit. Depends on C2. ~3 hrs. |
+| C4 | [x] | **Ctrl+A feature — `ExtremumSurface` + `LeaderSeekerEquation` + `BiasedBrownianLeader`** | Fully designed in `docs/ctrl_a_leader_seeker.md`. New files: `ExtremumSurface.hpp`, `ExtremumTable.hpp`, `LeaderSeekerEquation.hpp`, `BiasedBrownianLeader.hpp`, `DirectPursuitEquation.hpp`, `MomentumBearingEquation.hpp`. ~1 day. |
 
 ---
 
@@ -71,7 +71,7 @@ Low urgency, no feature blocked by these.
 | # | Status | Item | Effort |
 |---|--------|------|--------|
 | E1 | [ ] | **Move `Scene.cpp` / `AnalysisPanel.cpp` to `legacy/`** | Both are compiled but `m_scene->on_frame()` is commented out in `Engine::run_frame()`. Dead weight in the build. ~15 min. |
-| E2 | [ ] | **Add `HistoryBuffer::to_vector()` accessor** | See A2. Also needed for display / debugging independent of export. |
+| E2 | [x] | **Add `HistoryBuffer::to_vector()` accessor** | See A2. Also needed for display / debugging independent of export. |
 | E3 | [ ] | **Add `equation()` accessor note to `AnimatedCurve` comment block** | `equation()` was added for live Brownian tuning but the class comment doesn't mention it. ~5 min. |
 
 ---

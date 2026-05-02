@@ -60,6 +60,16 @@ public:
     // Smaller h = more accurate but more noise-sensitive.
     explicit MilsteinIntegrator(float fd_h = 1e-3f) : m_fd_h(fd_h) {}
 
+    // Set the seed used by all MilsteinIntegrator instances in this process.
+    // Call before spawning any Brownian particles for a reproducible run.
+    // Default: 0 = use std::random_device (non-reproducible).
+    static void set_global_seed(uint64_t seed) noexcept {
+        s_global_seed = seed;
+        s_seed_set    = (seed != 0);
+    }
+    [[nodiscard]] static uint64_t global_seed()    noexcept { return s_global_seed; }
+    [[nodiscard]] static bool     seed_is_fixed()  noexcept { return s_seed_set; }
+
     void step(ParticleState&              state,
               IEquation&                  equation,
               const ndde::math::ISurface& surface,
@@ -94,9 +104,13 @@ private:
     float m_fd_h;
 
     // Box-Muller transform: generate two independent N(0,1) samples.
-    // thread_local RNG ensures independent streams per thread.
+    // thread_local RNG: uses s_global_seed when fixed, else hardware entropy.
     [[nodiscard]] static glm::vec2 normal2() {
-        thread_local std::mt19937                        rng{ std::random_device{}() };
+        thread_local std::mt19937 rng{ []() -> uint32_t {
+            if (s_seed_set)
+                return static_cast<uint32_t>(s_global_seed);
+            return std::random_device{}();
+        }() };
         thread_local std::uniform_real_distribution<float> uniform(1e-7f, 1.f);
 
         const float u1 = uniform(rng);
@@ -105,6 +119,9 @@ private:
         const float th = 2.f * std::numbers::pi_v<float> * u2;
         return { r * std::cos(th), r * std::sin(th) };
     }
+
+    inline static uint64_t s_global_seed = 0;
+    inline static bool     s_seed_set    = false;
 
     // Central finite-difference estimate of d sigma/d(u,v) at current position.
     // Uses the diagonal components: d(sigma_u)/du and d(sigma_v)/dv.

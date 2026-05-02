@@ -20,6 +20,7 @@ add_library(ndde_math STATIC
     math/Conics.cpp
     math/Surfaces.cpp
     math/Axes.cpp
+    math/ExtremumTable.cpp
 )
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(ndde_math PUBLIC VK_NO_PROTOTYPES)
@@ -78,6 +79,7 @@ add_executable(nurbs_dde
     app/AnalysisPanel.cpp
     app/GaussianSurface.cpp
     app/SurfaceSimScene.cpp
+    app/ParticleRenderer.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(nurbs_dde PRIVATE ndde_engine imgui)

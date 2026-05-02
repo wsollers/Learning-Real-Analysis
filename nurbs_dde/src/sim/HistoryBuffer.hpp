@@ -128,6 +128,23 @@ public:
         m_last_push_t = -1e30f;
     }
 
+    // Return all records in chronological order (oldest first).
+    // When the buffer has not yet wrapped: a simple copy of m_records.
+    // When wrapped: reorders the two halves around m_head.
+    // Cost: O(n) time and space.  Only call for export/debug, not per-frame.
+    [[nodiscard]] std::vector<Record> to_vector() const {
+        std::vector<Record> out;
+        const std::size_t n = m_records.size();
+        out.reserve(n);
+        for (std::size_t i = 0; i < n; ++i) {
+            if (n < m_capacity)
+                out.push_back(m_records[i]);           // not yet wrapped
+            else
+                out.push_back(m_records[(m_head + i) % m_capacity]);  // wrapped
+        }
+        return out;   // already chronological by construction
+    }
+
 private:
     std::size_t       m_capacity;
     float             m_dt_min;
