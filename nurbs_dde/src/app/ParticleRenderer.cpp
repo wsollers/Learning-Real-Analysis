@@ -21,7 +21,7 @@ void ParticleRenderer::submit_arrow(Vec3 origin, Vec3 dir, Vec4 color,
     Vertex* v  = slice.vertices();
     v[0] = { origin,              color };
     v[1] = { origin + dir*length, color };
-    m_api.submit_to("3d", slice, topo, DrawMode::VertexColor, color, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, topo, DrawMode::VertexColor, color, mvp);
 }
 
 // ── submit_trail_3d ───────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ void ParticleRenderer::submit_trail_3d(const AnimatedCurve& c, const Mat4& mvp) 
     if (n < 2) return;
     auto slice = m_api.acquire(n);
     c.tessellate_trail({slice.vertices(), n});
-    m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 // ── submit_head_dot_3d ────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ void ParticleRenderer::submit_head_dot_3d(const AnimatedCurve& c, const Mat4& mv
     const Vec4 col = c.head_colour();
     auto slice = m_api.acquire(1);
     slice.vertices()[0] = { hp, col };
-    m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::UniformColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::UniformColor, col, mvp);
 }
 
 // ── submit_frenet_3d ──────────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ void ParticleRenderer::submit_osc_circle_3d(const AnimatedCurve& c, u32 trail_id
         const float theta = (static_cast<float>(i)/SEG)*2.f*std::numbers::pi_v<float>;
         v[i] = { centre + R*(-std::cos(theta)*fr.N + std::sin(theta)*fr.T), col };
     }
-    m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
 }
 
 // ── submit_surface_frame_3d ───────────────────────────────────────────────────
@@ -132,12 +132,12 @@ void ParticleRenderer::submit_normal_plane_3d(const AnimatedCurve&        c,
     auto slice = m_api.acquire(5);
     Vertex* v  = slice.vertices();
     for (u32 i = 0; i < 5; ++i) v[i] = { corners[i], col };
-    m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
 
     auto diag = m_api.acquire(2);
     diag.vertices()[0] = { p-a+b, {col.r, col.g, col.b, 0.5f} };
     diag.vertices()[1] = { p+a-b, {col.r, col.g, col.b, 0.5f} };
-    m_api.submit_to("3d", diag, Topology::LineList, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, diag, Topology::LineList, DrawMode::VertexColor, col, mvp);
 }
 
 // ── submit_torsion_3d ─────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ void ParticleRenderer::submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx,
         const Vec3  spoke = std::cos(a) * fr.N + std::sin(a) * side;
         vf[i + 1] = { o + spoke * fan_r, {col.r, col.g, col.b, 0.45f} };
     }
-    m_api.submit_to("3d", fan, Topology::TriangleList, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, fan, Topology::TriangleList, DrawMode::VertexColor, col, mvp);
 
     auto outline = m_api.acquire(FAN_SEG + 2);
     Vertex* vo   = outline.vertices();
@@ -191,7 +191,7 @@ void ParticleRenderer::submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx,
         const Vec3  sp  = std::cos(a) * fr.N + std::sin(a) * side;
         vo[i + 1] = { o + sp * fan_r, col };
     }
-    m_api.submit_to("3d", outline, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, outline, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
 }
 
 // ── submit_all ────────────────────────────────────────────────────────────────

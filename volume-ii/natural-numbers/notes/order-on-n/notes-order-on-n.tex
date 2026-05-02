@@ -1,11 +1,472 @@
 \section{Order on \texorpdfstring{$\mathbb{N}$}{N}}
 
-This section should define \(m \le n\) by the existence of an additive
-difference and then build the full order toolkit: reflexivity, antisymmetry,
-transitivity, trichotomy, and compatibility with addition and multiplication.
+\begin{topicbox}{Strict and Non-Strict Order}
+\begin{exposition}
+Order on a Peano system is extracted from addition. Since the chapter is using
+the distinguished first element $1$ rather than an additive zero, the strict
+order is the cleaner primitive notion: $a<b$ means that $b$ is reached from
+$a$ by adding a nontrivial amount. The non-strict order is then obtained by
+allowing equality in addition to strict increase.
+\end{exposition}
 
-\begin{remark}[Why this precedes structural packaging]
-Order on $\mathbb{N}$ is concrete arithmetic structure, not a later abstract
-summary. It deserves to be developed before the chapter steps back to name
-the overall algebraic object.
-\end{remark}
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Strict Less Than on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Strict Less Than on a Peano System]
+\label{def:strict-less-than-on-peano-system}
+Let $(P,S,1)$ be a Peano system, and let $a,b \in P$. One writes
+\[
+a<b
+\]
+exactly when there exists $c \in P$ such that
+\[
+b=a+c.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } a,b \in P.\\
+&a<b
+\Longleftrightarrow
+\exists c \in P\;(b=a+c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } a,b \in P.\\
+&a \not< b
+\Longleftrightarrow
+\forall c \in P\;(b \neq a+c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Strict inequality fails exactly when no additive witness in $P$ carries $a$ to
+$b$. In that case, every nontrivial additive step from $a$ misses $b$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } a,b \in P.\\
+&a \not< b
+\Longleftrightarrow
+\underbrace{\forall c \in P\;(b \neq a+c)}_{\text{every proposed additive witness fails}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The strict order records whether $b$ lies genuinely ahead of $a$ in the
+counting structure. The witness $c$ is the amount of additive displacement
+needed to move from $a$ to $b$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:addition-on-peano-system]{Addition on a Peano System}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Less Than or Equal on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Less Than or Equal on a Peano System]
+\label{def:less-than-or-equal-on-peano-system}
+Let $(P,S,1)$ be a Peano system, and let $a,b \in P$. One writes
+\[
+a \le b
+\]
+exactly when
+\[
+a<b
+\qquad\text{or}\qquad
+a=b.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } a,b \in P.\\
+&a \le b
+\Longleftrightarrow
+\bigl(a<b \lor a=b\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } a,b \in P.\\
+&a \not\le b
+\Longleftrightarrow
+\bigl(a \not< b \land a \neq b\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The non-strict order fails in exactly two simultaneous ways: $a$ is not
+strictly below $b$, and $a$ is not equal to $b$. Thus $b$ neither lies ahead
+of $a$ nor coincides with it.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } a,b \in P.\\
+&a \not\le b
+\Longleftrightarrow
+\underbrace{a \not< b}_{\text{no strict additive witness}}
+\land
+\underbrace{a \neq b}_{\text{equality also fails}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The relation $a \le b$ allows either equality or a genuine forward step from
+$a$ to $b$. It is the additive order relation derived from the strict witness
+definition.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Basic Order Laws}
+\begin{exposition}
+Once the order relations have been defined, the first task is to show that
+they satisfy the expected structural laws: reflexivity, transitivity, and
+antisymmetry. These are the properties that make the additive comparison
+relation behave as an honest order rather than a merely suggestive notation.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Order Is Reflexive on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Order Is Reflexive on a Peano System]
+\label{thm:order-reflexive-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For every $a \in P$,
+\[
+a \le a.
+\]
+\hyperref[prf-order-reflexive-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a \in P\;(a \le a).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every element is comparable to itself. Reflexivity supplies the equality case
+inside the non-strict order.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Order Is Transitive on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Order Is Transitive on a Peano System]
+\label{thm:order-transitive-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For every $a,b,c \in P$,
+\[
+\bigl(a \le b \land b \le c\bigr)
+\Longrightarrow
+a \le c.
+\]
+\hyperref[prf-order-transitive-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,c \in P\;
+\bigl((a \le b \land b \le c) \Longrightarrow a \le c\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+If $b$ lies at or beyond $a$, and $c$ lies at or beyond $b$, then $c$ also
+lies at or beyond $a$. Transitivity expresses the consistency of additive
+comparison along a chain.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+  \item \hyperref[thm:addition-associative]{Addition Is Associative}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Order Is Antisymmetric on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Order Is Antisymmetric on a Peano System]
+\label{thm:order-antisymmetric-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For every $a,b \in P$,
+\[
+\bigl(a \le b \land b \le a\bigr)
+\Longrightarrow
+a=b.
+\]
+\hyperref[prf-order-antisymmetric-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;
+\bigl((a \le b \land b \le a) \Longrightarrow a=b\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;
+\bigl(a \neq b \Longrightarrow \neg(a \le b \land b \le a)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Two distinct elements cannot each lie at or beyond the other. Antisymmetry
+separates genuine equality from bidirectional comparability.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+  \item \hyperref[thm:addition-left-cancellation]{Left Cancellation for Addition}
+  \item \hyperref[thm:addition-associative]{Addition Is Associative}
+  \item \hyperref[thm:no-object-is-its-own-successor]{No Object Is Its Own Successor}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Compatibility with Addition}
+\begin{exposition}
+The order on a Peano system is built from addition, so it must interact
+coherently with addition. The next theorems show that adding the same element
+to both sides preserves the comparison relation, regardless of whether the
+common summand is placed on the right or on the left.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Addition Preserves Order on the Right)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Addition Preserves Order on the Right]
+\label{thm:addition-preserves-order-on-right}
+Let $(P,S,1)$ be a Peano system. For every $a,b,c \in P$,
+\[
+a \le b
+\Longrightarrow
+a+c \le b+c.
+\]
+\hyperref[prf-addition-preserves-order-on-right]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,c \in P\;
+\bigl(a \le b \Longrightarrow a+c \le b+c\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Adding the same quantity to two comparable elements does not disturb their
+order. The additive witness for $a \le b$ survives after both sides are shifted
+by the same summand.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+  \item \hyperref[thm:addition-associative]{Addition Is Associative}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Addition Preserves Order on the Left)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Addition Preserves Order on the Left]
+\label{thm:addition-preserves-order-on-left}
+Let $(P,S,1)$ be a Peano system. For every $a,b,c \in P$,
+\[
+a \le b
+\Longrightarrow
+c+a \le c+b.
+\]
+\hyperref[prf-addition-preserves-order-on-left]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,c \in P\;
+\bigl(a \le b \Longrightarrow c+a \le c+b\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The same order preservation holds when the common summand is added on the
+left. This is the left-handed form of the additive compatibility law.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:addition-preserves-order-on-right]{Addition Preserves Order on the Right}
+  \item \hyperref[thm:addition-commutative]{Addition Is Commutative}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Successor Characterization and Trichotomy}
+\begin{exposition}
+Strict inequality can be recast in terms of stepping one successor beyond the
+smaller element. This successor reformulation sharpens the order relation and
+leads to trichotomy, which states that any two elements are linearly
+comparable.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Strict Order Successor Characterization)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Strict Order Successor Characterization]
+\label{thm:strict-order-successor-characterization}
+Let $(P,S,1)$ be a Peano system. For every $a,b \in P$,
+\[
+a<b
+\Longleftrightarrow
+S(a) \le b.
+\]
+\hyperref[prf-strict-order-successor-characterization]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;
+\bigl(a<b \Longleftrightarrow S(a) \le b\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+To say that $b$ is strictly larger than $a$ is to say that $b$ lies at or
+beyond the first successor step past $a$. This theorem converts strict order
+into a non-strict comparison involving successor.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+  \item \hyperref[thm:addition-with-one]{Addition With $1$}
+  \item \hyperref[thm:addition-successor-on-right]{Addition Successor on the Right}
+  \item \hyperref[thm:addition-associative]{Addition Is Associative}
+  \item \hyperref[thm:addition-commutative]{Addition Is Commutative}
+  \item \hyperref[thm:every-element-is-one-or-a-successor]{Every Element Is Either $1$ or a Successor}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Trichotomy on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Trichotomy on a Peano System]
+\label{thm:trichotomy-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For every $a,b \in P$, exactly one of the
+following holds:
+\[
+a<b,\qquad a=b,\qquad b<a.
+\]
+\hyperref[prf-trichotomy-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;
+\Bigl(
+(a<b \lor a=b \lor b<a) \land {}\\
+&\qquad\neg(a<b \land a=b) \land
+\neg(a<b \land b<a) \land
+\neg(a=b \land b<a)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Any two elements of a Peano system are linearly comparable: one lies below the
+other, or they coincide. Trichotomy is the theorem that upgrades the additive
+comparison relation from a partial-order structure to a total order.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+  \item \hyperref[thm:order-reflexive-on-peano-system]{Order Is Reflexive on a Peano System}
+  \item \hyperref[thm:order-transitive-on-peano-system]{Order Is Transitive on a Peano System}
+  \item \hyperref[thm:order-antisymmetric-on-peano-system]{Order Is Antisymmetric on a Peano System}
+  \item \hyperref[thm:strict-order-successor-characterization]{Strict Order Successor Characterization}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

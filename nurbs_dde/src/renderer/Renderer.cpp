@@ -22,7 +22,7 @@ void Renderer::init(const platform::VulkanContext& ctx,
     m_present_queue  = ctx.present_queue();
 
     create_command_objects(ctx.queue_families().graphics);
-    create_sync_objects();
+    create_sync_objects(swapchain.image_count());
     init_pipelines(swapchain.format(), shader_dir);
     m_imgui.init(window, ctx, swapchain, assets_dir);
 
@@ -40,13 +40,15 @@ void Renderer::destroy() {
     m_pipeline_triangle_list.destroy();
 
     if (m_render_fence    != VK_NULL_HANDLE) vkDestroyFence(m_device, m_render_fence, nullptr);
-    if (m_image_available != VK_NULL_HANDLE) vkDestroySemaphore(m_device, m_image_available, nullptr);
-    if (m_render_finished != VK_NULL_HANDLE) vkDestroySemaphore(m_device, m_render_finished, nullptr);
+    for (auto& sem : m_image_available)
+        vkDestroySemaphore(m_device, sem, nullptr);
+    m_image_available.clear();
+    for (auto& sem : m_render_finished)
+        vkDestroySemaphore(m_device, sem, nullptr);
+    m_render_finished.clear();
     if (m_cmd_pool        != VK_NULL_HANDLE) vkDestroyCommandPool(m_device, m_cmd_pool, nullptr);
 
     m_render_fence    = VK_NULL_HANDLE;
-    m_image_available = VK_NULL_HANDLE;
-    m_render_finished = VK_NULL_HANDLE;
     m_cmd_pool        = VK_NULL_HANDLE;
     m_cmd             = VK_NULL_HANDLE;
     m_device          = VK_NULL_HANDLE;
@@ -57,11 +59,13 @@ bool Renderer::begin_frame(const Swapchain& swapchain) {
 
     VkResult acquire = vkAcquireNextImageKHR(
         m_device, swapchain.swapchain(), UINT64_MAX,
-        m_image_available, VK_NULL_HANDLE, &m_image_index);
+        m_image_available[m_image_index], VK_NULL_HANDLE, &m_image_index);
 
     if (acquire == VK_ERROR_OUT_OF_DATE_KHR) return false;
     if (acquire != VK_SUCCESS && acquire != VK_SUBOPTIMAL_KHR)
         throw std::runtime_error("[Renderer] vkAcquireNextImageKHR failed");
+
+    // Now m_image_index is valid — the correct per-image semaphore was used above.
 
     vkResetFences(m_device, 1, &m_render_fence);
     vkResetCommandBuffer(m_cmd, 0);
@@ -156,15 +160,17 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
         throw std::runtime_error("[Renderer] vkEndCommandBuffer failed");
 
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    VkSemaphore wait_sem   = m_image_available[m_image_index];
+    VkSemaphore signal_sem = m_render_finished[m_image_index];
     VkSubmitInfo submit{
         .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount   = 1,
-        .pWaitSemaphores      = &m_image_available,
+        .pWaitSemaphores      = &wait_sem,
         .pWaitDstStageMask    = &wait_stage,
         .commandBufferCount   = 1,
         .pCommandBuffers      = &m_cmd,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores    = &m_render_finished
+        .pSignalSemaphores    = &signal_sem
     };
     if (vkQueueSubmit(m_graphics_queue, 1, &submit, m_render_fence) != VK_SUCCESS)
         throw std::runtime_error("[Renderer] vkQueueSubmit failed");
@@ -173,7 +179,7 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
     VkPresentInfoKHR present{
         .sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores    = &m_render_finished,
+        .pWaitSemaphores    = &signal_sem,
         .swapchainCount     = 1,
         .pSwapchains        = &sc,
         .pImageIndices      = &m_image_index
@@ -189,6 +195,31 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
 
 void Renderer::on_swapchain_recreated(const Swapchain& swapchain) {
     m_imgui.on_swapchain_recreated(swapchain);
+}
+
+void Renderer::reset_frame_state() {
+    // Called after vkDeviceWaitIdle (guaranteed by switch_scene).
+    // Destroy and recreate both semaphore vectors so every slot is
+    // cleanly unsignaled before the new scene's first acquire.
+    const VkSemaphoreCreateInfo si{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
+    for (auto& sem : m_image_available) {
+        if (sem != VK_NULL_HANDLE) vkDestroySemaphore(m_device, sem, nullptr);
+        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+    }
+    for (auto& sem : m_render_finished) {
+        if (sem != VK_NULL_HANDLE) vkDestroySemaphore(m_device, sem, nullptr);
+        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+    }
+    // Recreate the fence in signaled state so begin_frame's WaitForFences
+    // returns immediately on the first frame of the new scene.
+    const VkFenceCreateInfo fi{
+        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        .flags = VK_FENCE_CREATE_SIGNALED_BIT
+    };
+    vkDestroyFence(m_device, m_render_fence, nullptr);
+    vkCreateFence(m_device, &fi, nullptr, &m_render_fence);
+    m_image_index = 0;
+    m_frame_open  = false;
 }
 
 void Renderer::create_command_objects(u32 graphics_queue_family) {
@@ -210,7 +241,7 @@ void Renderer::create_command_objects(u32 graphics_queue_family) {
         throw std::runtime_error("[Renderer] vkAllocateCommandBuffers failed");
 }
 
-void Renderer::create_sync_objects() {
+void Renderer::create_sync_objects(u32 image_count) {
     VkFenceCreateInfo fence_info{
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
@@ -219,9 +250,20 @@ void Renderer::create_sync_objects() {
         throw std::runtime_error("[Renderer] vkCreateFence failed");
 
     VkSemaphoreCreateInfo sem_info{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
-    if (vkCreateSemaphore(m_device, &sem_info, nullptr, &m_image_available) != VK_SUCCESS ||
-        vkCreateSemaphore(m_device, &sem_info, nullptr, &m_render_finished)  != VK_SUCCESS)
-        throw std::runtime_error("[Renderer] vkCreateSemaphore failed");
+
+    // One acquire semaphore per swapchain image so each image slot has its
+    // own semaphore. This prevents the validation error where the same
+    // semaphore is re-signalled by vkAcquireNextImageKHR before presentation
+    // has finished consuming it from the previous frame.
+    m_image_available.resize(image_count, VK_NULL_HANDLE);
+    for (auto& sem : m_image_available)
+        if (vkCreateSemaphore(m_device, &sem_info, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("[Renderer] vkCreateSemaphore (image_available) failed");
+
+    m_render_finished.resize(image_count, VK_NULL_HANDLE);
+    for (auto& sem : m_render_finished)
+        if (vkCreateSemaphore(m_device, &sem_info, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("[Renderer] vkCreateSemaphore (render_finished) failed");
 }
 
 void Renderer::init_pipelines(VkFormat color_format, const std::string& shader_dir) {

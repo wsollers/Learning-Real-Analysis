@@ -65,8 +65,10 @@ private:
     VkCommandPool   m_cmd_pool        = VK_NULL_HANDLE;
     VkCommandBuffer m_cmd             = VK_NULL_HANDLE;
     VkFence         m_render_fence    = VK_NULL_HANDLE;
-    VkSemaphore     m_image_available = VK_NULL_HANDLE;
-    VkSemaphore     m_render_finished = VK_NULL_HANDLE;
+    // One semaphore per swapchain image — prevents reuse-before-consumed races
+    // for both acquire and render-finished signals.
+    std::vector<VkSemaphore> m_image_available;
+    std::vector<VkSemaphore> m_render_finished;
     u32             m_image_index     = 0;
     bool            m_frame_open      = false;
     bool            m_initialised     = false;

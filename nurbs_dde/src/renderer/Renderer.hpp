@@ -10,6 +10,7 @@
 #include "renderer/GpuTypes.hpp"
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 
 struct GLFWwindow;
 
@@ -46,6 +47,12 @@ public:
     [[nodiscard]] bool end_frame(const Swapchain& swapchain);
     void on_swapchain_recreated(const Swapchain& swapchain);
 
+    // Call after vkDeviceWaitIdle (e.g. during scene switch) to put all
+    // per-frame sync objects back into a clean known state. This destroys
+    // and recreates the image_available semaphores so none are in a
+    // pending-signal state from the previous scene's last acquire.
+    void reset_frame_state();
+
     [[nodiscard]] ImFont* font_math_body()  const noexcept { return m_imgui.font_math_body();  }
     [[nodiscard]] ImFont* font_math_small() const noexcept { return m_imgui.font_math_small(); }
 
@@ -60,9 +67,11 @@ private:
     VkQueue         m_present_queue  = VK_NULL_HANDLE;
     VkCommandPool   m_cmd_pool       = VK_NULL_HANDLE;
     VkCommandBuffer m_cmd            = VK_NULL_HANDLE;
-    VkFence         m_render_fence   = VK_NULL_HANDLE;
-    VkSemaphore     m_image_available = VK_NULL_HANDLE;
-    VkSemaphore     m_render_finished = VK_NULL_HANDLE;
+    VkFence         m_render_fence    = VK_NULL_HANDLE;
+    // One semaphore per swapchain image prevents reuse-before-consumed races
+    // for both the acquire signal and the render-finished signal.
+    std::vector<VkSemaphore> m_image_available;  ///< signalled by vkAcquireNextImageKHR
+    std::vector<VkSemaphore> m_render_finished;  ///< signalled by vkQueueSubmit, waited by present
     u32             m_image_index    = 0;
     bool            m_frame_open     = false;
 
@@ -76,7 +85,7 @@ private:
     ImGuiLayer m_imgui;
 
     void create_command_objects(u32 graphics_queue_family);
-    void create_sync_objects();
+    void create_sync_objects(u32 image_count);
     void init_pipelines(VkFormat color_format, const std::string& shader_dir);
     void transition_image(VkImage image, VkImageLayout from, VkImageLayout to);
     [[nodiscard]] Pipeline& pipeline_for(Topology topo);

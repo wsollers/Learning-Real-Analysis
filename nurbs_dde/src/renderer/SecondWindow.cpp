@@ -68,8 +68,12 @@ void SecondWindow::destroy() {
     m_pipeline_triangle_list.destroy();
 
     if (m_render_fence    != VK_NULL_HANDLE) vkDestroyFence    (m_device, m_render_fence,    nullptr);
-    if (m_image_available != VK_NULL_HANDLE) vkDestroySemaphore(m_device, m_image_available, nullptr);
-    if (m_render_finished != VK_NULL_HANDLE) vkDestroySemaphore(m_device, m_render_finished, nullptr);
+    for (auto& sem : m_image_available)
+        vkDestroySemaphore(m_device, sem, nullptr);
+    m_image_available.clear();
+    for (auto& sem : m_render_finished)
+        vkDestroySemaphore(m_device, sem, nullptr);
+    m_render_finished.clear();
     if (m_cmd_pool        != VK_NULL_HANDLE) vkDestroyCommandPool(m_device, m_cmd_pool, nullptr);
 
     destroy_swapchain();
@@ -77,8 +81,7 @@ void SecondWindow::destroy() {
     if (m_window) { glfwDestroyWindow(m_window); m_window = nullptr; }
 
     m_render_fence    = VK_NULL_HANDLE;
-    m_image_available  = VK_NULL_HANDLE;
-    m_render_finished  = VK_NULL_HANDLE;
+    // m_image_available and m_render_finished already cleared above
     m_cmd_pool     = VK_NULL_HANDLE;
     m_surface      = VK_NULL_HANDLE;
     m_initialised  = false;
@@ -92,7 +95,7 @@ bool SecondWindow::begin_frame() {
     vkWaitForFences(m_device, 1, &m_render_fence, VK_TRUE, UINT64_MAX);
 
     VkResult acq = vkAcquireNextImageKHR(
-        m_device, m_sc_raw, UINT64_MAX, m_image_available, VK_NULL_HANDLE, &m_image_index);
+        m_device, m_sc_raw, UINT64_MAX, m_image_available[m_image_index], VK_NULL_HANDLE, &m_image_index);
     if (acq == VK_ERROR_OUT_OF_DATE_KHR) { on_resize(); return false; }
     if (acq != VK_SUCCESS && acq != VK_SUBOPTIMAL_KHR) return false;
 
@@ -168,22 +171,24 @@ bool SecondWindow::end_frame() {
     vkEndCommandBuffer(m_cmd);
 
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    VkSemaphore wait_sem   = m_image_available[m_image_index];
+    VkSemaphore signal_sem = m_render_finished[m_image_index];
     VkSubmitInfo submit{
         .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount   = 1,
-        .pWaitSemaphores      = &m_image_available,
+        .pWaitSemaphores      = &wait_sem,
         .pWaitDstStageMask    = &wait_stage,
         .commandBufferCount   = 1,
         .pCommandBuffers      = &m_cmd,
         .signalSemaphoreCount = 1,
-        .pSignalSemaphores    = &m_render_finished
+        .pSignalSemaphores    = &signal_sem
     };
     vkQueueSubmit(m_gfx_queue, 1, &submit, m_render_fence);
 
     VkPresentInfoKHR present{
         .sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores    = &m_render_finished,
+        .pWaitSemaphores    = &signal_sem,
         .swapchainCount     = 1,
         .pSwapchains        = &m_sc_raw,
         .pImageIndices      = &m_image_index
@@ -265,8 +270,13 @@ void SecondWindow::create_sync_objects() {
     };
     vkCreateFence(m_device, &fi, nullptr, &m_render_fence);
     VkSemaphoreCreateInfo si{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
-    vkCreateSemaphore(m_device, &si, nullptr, &m_image_available);
-    vkCreateSemaphore(m_device, &si, nullptr, &m_render_finished);
+    // One semaphore per swapchain image — m_sc_images is already populated.
+    m_image_available.resize(m_sc_images.size(), VK_NULL_HANDLE);
+    for (auto& sem : m_image_available)
+        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+    m_render_finished.resize(m_sc_images.size(), VK_NULL_HANDLE);
+    for (auto& sem : m_render_finished)
+        vkCreateSemaphore(m_device, &si, nullptr, &sem);
 }
 
 void SecondWindow::init_pipelines(const std::string& shader_dir) {

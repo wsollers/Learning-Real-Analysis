@@ -31,6 +31,7 @@
 //   Ctrl+H  -- toggle hotkey reference panel
 
 #include "engine/EngineAPI.hpp"
+#include "engine/IScene.hpp"
 #include "app/GaussianSurface.hpp"
 #include "app/GaussianRipple.hpp"
 #include "app/FrenetFrame.hpp"        // FrenetFrame, SurfaceFrame, make_surface_frame
@@ -64,12 +65,13 @@
 
 namespace ndde {
 
-class SurfaceSimScene {
+class SurfaceSimScene : public IScene {
 public:
     explicit SurfaceSimScene(EngineAPI api);
     ~SurfaceSimScene() = default;
 
-    void on_frame(f32 dt);
+    void on_frame(f32 dt) override;
+    [[nodiscard]] std::string_view name() const override { return "Surface Simulation"; }
 
 private:
     EngineAPI                              m_api;
@@ -197,9 +199,7 @@ private:
 
     [[nodiscard]] static Vec4 curvature_color(float K, float scale) noexcept;
 
-    bool m_dock_built = false;
 
-    // Internal methods
     void advance_simulation(f32 dt);
     void apply_pairwise_constraints();
     void spawn_leader_seeker();
@@ -210,7 +210,14 @@ private:
     [[nodiscard]] Mat4 canvas_mvp_3d(const ImVec2& cpos,
                                       const ImVec2& csz) const noexcept;
 
-    void draw_simulation_panel();
+    void draw_panel_surface();    ///< surface selector + display mode
+    void draw_panel_particles();  ///< pause, speed, spawn counts, clear, export
+    void draw_panel_overlays();   ///< Frenet toggles, overlay checkboxes, torsion readout
+    void draw_panel_brownian();   ///< sigma, drift, RNG, live sliders
+    void draw_panel_pursuit();    ///< delay pursuit + collision + leader seeker
+    void draw_panel_geometry();   ///< at-head Frenet / curvature / 1st-fund-form readout
+    void draw_panel_camera();     ///< yaw, pitch, zoom, reset
+    void draw_panel_debug();      ///< coord debug, perf, fps, scene switch
     void draw_hotkey_panel();
     void draw_surface_3d_window();
     void draw_contour_2d_window();

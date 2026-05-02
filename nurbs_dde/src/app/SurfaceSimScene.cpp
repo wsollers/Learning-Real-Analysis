@@ -5,11 +5,11 @@
 // src/app/ParticleRenderer.cpp.  This file now delegates particle
 // rendering to m_particle_renderer.submit_all().
 #include "app/SurfaceSimScene.hpp"
+#include "app/AnalysisScene.hpp"
 #include "sim/GradientWalker.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/MilsteinIntegrator.hpp"
 #include <imgui.h>
-#include <imgui_internal.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
 #include <cstring>
@@ -168,19 +168,16 @@ void SurfaceSimScene::on_frame(f32 dt) {
     ImGui::PopStyleVar(3);
     const ImGuiID dock_id = ImGui::GetID("MainDockSpace");
     ImGui::DockSpace(dock_id, ImVec2(0.f, 0.f), ImGuiDockNodeFlags_None);
-
-    if (!m_dock_built) {
-        m_dock_built = true;
-        ImGui::DockBuilderRemoveNode(dock_id);
-        ImGui::DockBuilderAddNode(dock_id,
-            static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_DockSpace));
-        ImGui::DockBuilderSetNodeSize(dock_id, vp->WorkSize);
-        ImGui::DockBuilderDockWindow("Surface 3D", dock_id);
-        ImGui::DockBuilderFinish(dock_id);
-    }
     ImGui::End();
 
-    draw_simulation_panel();
+    draw_panel_surface();
+    draw_panel_particles();
+    draw_panel_overlays();
+    draw_panel_brownian();
+    draw_panel_pursuit();
+    draw_panel_geometry();
+    draw_panel_camera();
+    draw_panel_debug();
     draw_surface_3d_window();
     submit_contour_second_window();
     draw_hotkey_panel();
@@ -260,7 +257,7 @@ void SurfaceSimScene::advance_simulation(f32 dt) {
     }
 }
 
-// ── apply_pairwise_constraints ───────────────────────────────────────────────────
+// ── apply_pairwise_constraints ────────────────────────────────────────────────
 
 void SurfaceSimScene::apply_pairwise_constraints() {
     const std::size_t n = m_curves.size();
@@ -319,23 +316,23 @@ void SurfaceSimScene::draw_hotkey_panel() {
     m_hotkeys.draw_panel("Hotkeys  [Ctrl+H]", m_hotkey_panel_open);
 }
 
-// ── draw_simulation_panel ─────────────────────────────────────────────────────
+// ── draw_panel_surface ────────────────────────────────────────────────────────
 
-void SurfaceSimScene::draw_simulation_panel() {
-    ImGui::SetNextWindowPos(ImVec2(20.f, 20.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(310.f, 0.f), ImGuiCond_FirstUseEver);
+void SurfaceSimScene::draw_panel_surface() {
+    ImGui::SetNextWindowPos(ImVec2(20.f, 20.f),   ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 220.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowBgAlpha(0.88f);
-    ImGui::Begin("Simulation");
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Surface")) { ImGui::End(); return; }
 
-    ImGui::SeparatorText("Surface");
+    ImGui::SeparatorText("Surface type");
     {
         int sel = static_cast<int>(m_surface_type);
         bool changed = false;
-        changed |= ImGui::RadioButton("Gaussian", &sel, 0);
+        changed |= ImGui::RadioButton("Gaussian",       &sel, 0);
         ImGui::SameLine();
-        changed |= ImGui::RadioButton("Torus",    &sel, 1);
+        changed |= ImGui::RadioButton("Torus",          &sel, 1);
         ImGui::SameLine();
-        changed |= ImGui::RadioButton("Ripple",   &sel, 2);
+        changed |= ImGui::RadioButton("Ripple",         &sel, 2);
         ImGui::SameLine();
         changed |= ImGui::RadioButton("Extremum##surf", &sel, 3);
         if (changed) swap_surface(static_cast<SurfaceType>(sel));
@@ -372,169 +369,53 @@ void SurfaceSimScene::draw_simulation_panel() {
         }
     }
 
-    ImGui::SeparatorText("Curve");
-    ImGui::Checkbox("Paused", &m_sim_paused);
-    ImGui::SameLine();
-    if (ImGui::Button("Reset") && !m_curves.empty()) m_curves[0].reset();
-    ImGui::SliderFloat("Speed##sim",  &m_sim_speed,   0.1f, 5.f, "%.2f");
-    ImGui::SliderFloat("Arrow scale", &m_frame_scale, 0.05f,0.8f,"%.2f");
+    ImGui::SeparatorText("Display");
     {
-        int gl = static_cast<int>(m_grid_lines);
-        if (ImGui::SliderInt("Grid lines", &gl, 8, 60)) {
-            m_grid_lines = static_cast<u32>(gl);
+        int mode = static_cast<int>(m_surface_display);
+        bool changed = false;
+        changed |= ImGui::RadioButton("Wireframe", &mode, 0);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton("Filled",    &mode, 1);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton("Both",      &mode, 2);
+        if (changed) {
+            m_surface_display = static_cast<SurfaceDisplay>(mode);
             m_wireframe_dirty = true;
         }
-    }
-
-    ImGui::SeparatorText("Frenet frame  [Ctrl+F]");
-    ImGui::BeginDisabled(!m_show_frenet);
-    ImGui::Checkbox("T (tangent)",  &m_show_T);
-    ImGui::SameLine();
-    ImGui::Checkbox("N (normal)",   &m_show_N);
-    ImGui::SameLine();
-    ImGui::Checkbox("B (binormal)", &m_show_B);
-    ImGui::Checkbox("Osc. circle",  &m_show_osc);
-    ImGui::EndDisabled();
-    ImGui::Checkbox("Contour lines",&m_show_contours);
-
-    ImGui::SeparatorText("Overlays");
-    ImGui::Checkbox("Frenet frame  [Ctrl+F]",   &m_show_frenet);
-    ImGui::Checkbox("Surface frame [Ctrl+D]",   &m_show_dir_deriv);
-    ImGui::Checkbox("Normal plane  [Ctrl+N]",   &m_show_normal_plane);
-    ImGui::Checkbox("Torsion ribbon [Ctrl+T]",  &m_show_torsion);
-
-    ImGui::SeparatorText("Brownian motion  [Ctrl+B]");
-    {
-        auto& p = m_bm_params;
-        ImGui::SliderFloat("Sigma##bm",  &p.sigma,          0.01f, 2.f,  "%.3f");
-        ImGui::SliderFloat("Drift##bm",  &p.drift_strength, -1.f,  1.f,  "%.3f");
-        if (ImGui::SmallButton("Spawn Brownian [Ctrl+B]")) {
-            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                           &m_integrator, &m_milstein, m_sim_speed };
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
-                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
-                *m_surface);
-            m_curves.push_back(spawn::spawn_owned(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
-                ctx));
-            ++m_chaser_count;
+        if (m_surface_display != SurfaceDisplay::Wireframe) {
+            if (ImGui::SliderFloat("K scale##curv", &m_curv_scale, 0.01f, 20.f, "%.2f"))
+                m_wireframe_dirty = true;
         }
-        ImGui::TextDisabled("Milstein integrator (strong order 1.0)");
-
-        ImGui::SeparatorText("RNG reproducibility");
         {
-            static int seed_input = 0;
-            ImGui::InputInt("Seed (0=random)##rng", &seed_input);
-            ImGui::SameLine();
-            if (ImGui::SmallButton("Apply##rng"))
-                ndde::sim::MilsteinIntegrator::set_global_seed(
-                    static_cast<uint64_t>(seed_input));
-            if (ndde::sim::MilsteinIntegrator::seed_is_fixed())
-                ImGui::TextColored({0.4f,1.f,0.4f,1.f}, "Seed fixed: %llu",
-                    (unsigned long long)ndde::sim::MilsteinIntegrator::global_seed());
-            else
-                ImGui::TextDisabled("Seed: random (hardware)");
-            ImGui::TextDisabled("Set seed BEFORE spawning Brownian particles.");
-        }
-
-        int bm_idx = 0;
-        for (auto& c : m_curves) {
-            auto* bm = dynamic_cast<ndde::sim::BrownianMotion*>(c.equation());
-            if (!bm) continue;
-            ImGui::PushID(bm_idx++);
-            ImGui::TextDisabled("Particle %d", bm_idx);
-            ImGui::SameLine();
-            float sig = bm->params().sigma;
-            float dft = bm->params().drift_strength;
-            bool ch = false;
-            ch |= ImGui::SliderFloat("s##bmlive", &sig, 0.01f, 2.f, "%.3f");
-            ImGui::SameLine();
-            ch |= ImGui::SliderFloat("d##bmlive", &dft, -1.f, 1.f, "%.3f");
-            if (ch) { bm->params().sigma = sig; bm->params().drift_strength = dft; }
-            ImGui::PopID();
-        }
-    }
-
-    ImGui::SeparatorText("Delay Pursuit  [Ctrl+R]");
-    {
-        auto& p = m_dp_params;
-        ImGui::SliderFloat("Tau (delay)##dp",  &p.tau,           0.1f, 10.f, "%.2f s");
-        ImGui::SliderFloat("Speed##dp",         &p.pursuit_speed, 0.1f,  3.f, "%.2f");
-        ImGui::SliderFloat("Noise sigma##dp",   &p.noise_sigma,   0.f,   1.f, "%.3f");
-        if (ImGui::SmallButton("Spawn Pursuer [Ctrl+R]")) {
-            if (!m_curves.empty()) {
-                if (m_curves[0].history() == nullptr) {
-                    const std::size_t cap =
-                        static_cast<std::size_t>(std::ceil(p.tau * 120.f * 1.5f)) + 256;
-                    m_curves[0].enable_history(cap, 1.f / 120.f);
-                }
-                const Vec3 ref = m_curves[0].head_world();
-                const f32 ang  = static_cast<f32>(m_dp_count) * 1.1f + 0.3f;
-                const f32 sx   = std::clamp(ref.x + 2.f*std::cos(ang), m_surface->u_min()+0.5f, m_surface->u_max()-0.5f);
-                const f32 sy   = std::clamp(ref.y + 2.f*std::sin(ang), m_surface->v_min()+0.5f, m_surface->v_max()-0.5f);
-                m_curves.push_back(AnimatedCurve::with_equation(
-                    sx, sy, AnimatedCurve::Role::Chaser,
-                    m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                    m_surface.get(),
-                    std::make_unique<ndde::sim::DelayPursuitEquation>(
-                        m_curves[0].history(), m_surface.get(), p),
-                    &m_milstein));
-                ++m_chaser_count;  ++m_dp_count;
+            int gl = static_cast<int>(m_grid_lines);
+            if (ImGui::SliderInt("Grid lines##surface", &gl, 8, 256)) {
+                m_grid_lines = static_cast<u32>(std::max(gl, 8));
+                m_wireframe_dirty = true;
             }
-        }
-        if (m_curves.empty() || m_curves[0].history() == nullptr)
-            ImGui::TextDisabled("(leader has no history yet -- spawn first)");
-        else {
-            const auto* h = m_curves[0].history();
-            const float window = h->newest_t() - h->oldest_t();
-            ImGui::TextDisabled("History: %.1fs window  %zu records", window, h->size());
-            if (window < p.tau)
-                ImGui::TextColored({1.f,0.8f,0.1f,1.f}, "Warming up: %.1f/%.1fs", window, p.tau);
+            ImGui::SameLine();
+            ImGui::TextDisabled("~%uk verts", (4u * m_grid_lines * (m_grid_lines + 1u)) / 1000u);
         }
     }
+    ImGui::End();
+}
 
-    ImGui::SeparatorText("Collision avoidance");
-    {
-        bool changed = ImGui::Checkbox("Min-distance push##col", &m_pair_collision);
-        if (m_pair_collision) {
-            changed |= ImGui::SliderFloat("Min dist##col", &m_min_dist, 0.05f, 2.f, "%.2f");
-        }
-        if (changed) {
-            m_pair_constraints.clear();
-            if (m_pair_collision)
-                m_pair_constraints.push_back(
-                    std::make_unique<ndde::sim::MinDistConstraint>(m_min_dist));
-        }
-    }
+// ── draw_panel_particles ──────────────────────────────────────────────────────
 
-    draw_leader_seeker_panel();
+void SurfaceSimScene::draw_panel_particles() {
+    ImGui::SetNextWindowPos(ImVec2(20.f, 250.f),  ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 180.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Particles")) { ImGui::End(); return; }
 
-    // Torsion readout
-    if (m_show_torsion && !m_curves.empty() && m_curves[0].has_trail()) {
-        const AnimatedCurve& c0 = m_curves[0];
-        const u32 hi = c0.trail_size() > 2 ? c0.trail_size()-2 : 0;
-        const FrenetFrame fr = c0.frenet_at(hi);
-        const f32 tau = fr.tau;
-        const ImVec4 tau_col =
-            tau >  1e-4f ? ImVec4(1.f,  0.55f, 0.1f, 1.f)
-          : tau < -1e-4f ? ImVec4(0.45f,0.8f,  1.f,  1.f)
-                         : ImVec4(0.7f, 0.7f,  0.7f, 1.f);
-        ImGui::Indent(8.f);
-        ImGui::TextColored(tau_col, "\xcf\x84 = %+.6f", tau);
-        ImGui::SameLine();
-        if      (tau >  1e-4f) ImGui::TextDisabled("(right twist)");
-        else if (tau < -1e-4f) ImGui::TextDisabled("(left twist)");
-        else                   ImGui::TextDisabled("(planar)");
-        if (fr.kappa > 1e-5f)
-            ImGui::TextDisabled("|\xcf\x84/\xce\xba| = %.4f", std::abs(tau) / fr.kappa);
-        ImGui::Unindent(8.f);
-    }
+    ImGui::Checkbox("Paused  [Ctrl+P]", &m_sim_paused);
+    ImGui::SameLine();
+    if (ImGui::Button("Reset") && !m_curves.empty()) m_curves[0].reset();
+    ImGui::SliderFloat("Speed##sim",  &m_sim_speed,   0.1f, 5.f,  "%.2f");
+    ImGui::SliderFloat("Arrow scale", &m_frame_scale, 0.05f,0.8f, "%.2f");
+    ImGui::Checkbox("Contour lines",  &m_show_contours);
 
     ImGui::Separator();
-    ImGui::TextDisabled("Particles: %zu  (L=%u  C=%u)  [Ctrl+L leader  Ctrl+C chaser  Ctrl+B brownian]",
+    ImGui::TextDisabled("%zu particles  (L=%u  C=%u)",
         m_curves.size(), m_leader_count, m_chaser_count);
     ImGui::SameLine();
     if (ImGui::SmallButton("Clear all")) {
@@ -556,75 +437,275 @@ void SurfaceSimScene::draw_simulation_panel() {
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Write trail + history data to CSV in working directory");
 
-    ImGui::SeparatorText("At head  (particle 0)");
-    if (!m_curves.empty() && m_curves[0].has_trail()) {
+    ImGui::TextDisabled("Ctrl+L leader  Ctrl+C chaser  Ctrl+B brownian");
+    ImGui::End();
+}
+
+// ── draw_panel_overlays ───────────────────────────────────────────────────────
+
+void SurfaceSimScene::draw_panel_overlays() {
+    ImGui::SetNextWindowPos(ImVec2(20.f, 440.f),  ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 240.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Overlays")) { ImGui::End(); return; }
+
+    ImGui::SeparatorText("Frenet frame  [Ctrl+F]");
+    ImGui::Checkbox("Show Frenet", &m_show_frenet);
+    ImGui::BeginDisabled(!m_show_frenet);
+    ImGui::SameLine(); ImGui::Checkbox("T##ft", &m_show_T);
+    ImGui::SameLine(); ImGui::Checkbox("N##fn", &m_show_N);
+    ImGui::SameLine(); ImGui::Checkbox("B##fb", &m_show_B);
+    ImGui::Checkbox("Osculating circle", &m_show_osc);
+    ImGui::EndDisabled();
+
+    ImGui::SeparatorText("Other overlays");
+    ImGui::Checkbox("Surface frame  [Ctrl+D]", &m_show_dir_deriv);
+    ImGui::Checkbox("Normal plane   [Ctrl+N]", &m_show_normal_plane);
+    ImGui::Checkbox("Torsion ribbon [Ctrl+T]", &m_show_torsion);
+
+    // Torsion live readout when active
+    if (m_show_torsion && !m_curves.empty() && m_curves[0].has_trail()) {
         const AnimatedCurve& c0 = m_curves[0];
         const u32 hi = c0.trail_size() > 2 ? c0.trail_size()-2 : 0;
         const FrenetFrame fr = c0.frenet_at(hi);
-        const Vec3 hp = c0.head_world();
-        if (m_surface_type == SurfaceType::Gaussian)
-            ImGui::TextDisabled("f(x,y) = %.4f", m_surface->evaluate(hp.x, hp.y, m_sim_time).z);
+        const f32 tau = fr.tau;
+        const ImVec4 tau_col =
+            tau >  1e-4f ? ImVec4(1.f,  0.55f, 0.1f, 1.f)
+          : tau < -1e-4f ? ImVec4(0.45f,0.8f,  1.f,  1.f)
+                         : ImVec4(0.7f, 0.7f,  0.7f, 1.f);
+        ImGui::Indent(8.f);
+        ImGui::TextColored(tau_col, "\xcf\x84 = %+.6f", tau);
+        ImGui::SameLine();
+        if      (tau >  1e-4f) ImGui::TextDisabled("(right twist)");
+        else if (tau < -1e-4f) ImGui::TextDisabled("(left twist)");
+        else                   ImGui::TextDisabled("(planar)");
+        if (fr.kappa > 1e-5f)
+            ImGui::TextDisabled("|\xcf\x84/\xce\xba| = %.4f", std::abs(tau) / fr.kappa);
+        ImGui::Unindent(8.f);
+    }
+    ImGui::End();
+}
+
+// ── draw_panel_brownian ───────────────────────────────────────────────────────
+
+void SurfaceSimScene::draw_panel_brownian() {
+    ImGui::SetNextWindowPos(ImVec2(20.f, 690.f),  ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 260.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Brownian  [Ctrl+B]")) { ImGui::End(); return; }
+
+    auto& p = m_bm_params;
+    ImGui::SliderFloat("Sigma##bm", &p.sigma,          0.01f, 2.f, "%.3f");
+    ImGui::SliderFloat("Drift##bm", &p.drift_strength, -1.f,  1.f, "%.3f");
+    if (ImGui::Button("Spawn Brownian  [Ctrl+B]", ImVec2(-1.f, 0.f))) {
+        const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
+                                       &m_integrator, &m_milstein, m_sim_speed };
+        const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+        const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
+            static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
+            *m_surface);
+        m_curves.push_back(spawn::spawn_owned(uv,
+            AnimatedCurve::Role::Chaser,
+            m_chaser_count % AnimatedCurve::MAX_SLOTS,
+            std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
+            ctx));
+        ++m_chaser_count;
+    }
+    ImGui::TextDisabled("Milstein integrator (strong order 1.0)");
+
+    ImGui::SeparatorText("RNG reproducibility");
+    {
+        static int seed_input = 0;
+        ImGui::SetNextItemWidth(140.f);
+        ImGui::InputInt("Seed (0=random)##rng", &seed_input);
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Apply##rng"))
+            ndde::sim::MilsteinIntegrator::set_global_seed(
+                static_cast<uint64_t>(seed_input));
+        if (ndde::sim::MilsteinIntegrator::seed_is_fixed())
+            ImGui::TextColored({0.4f,1.f,0.4f,1.f}, "Seed fixed: %llu",
+                (unsigned long long)ndde::sim::MilsteinIntegrator::global_seed());
         else
-            ImGui::TextDisabled("p = (%.3f, %.3f, %.3f)",
-                m_surface->evaluate(hp.x, hp.y, m_sim_time).x,
-                m_surface->evaluate(hp.x, hp.y, m_sim_time).y,
-                m_surface->evaluate(hp.x, hp.y, m_sim_time).z);
-        ImGui::TextColored(ImVec4(1.f,0.5f,0.1f,1.f), "T (%.3f, %.3f, %.3f)", fr.T.x, fr.T.y, fr.T.z);
-        ImGui::TextColored(ImVec4(0.2f,1.f,0.4f,1.f), "N (%.3f, %.3f, %.3f)", fr.N.x, fr.N.y, fr.N.z);
-        ImGui::TextColored(ImVec4(0.3f,0.6f,1.f,1.f), "B (%.3f, %.3f, %.3f)", fr.B.x, fr.B.y, fr.B.z);
-        ImGui::TextDisabled("kappa = %.5f  tau = %.5f", fr.kappa, fr.tau);
-        const f32 osc_r = fr.kappa > 1e-5f ? 1.f/fr.kappa : 0.f;
-        ImGui::TextDisabled("osc. radius = %.4f", osc_r);
-        const f32 K = m_surface->gaussian_curvature(hp.x, hp.y, m_sim_time);
-        const f32 H = m_surface->mean_curvature(hp.x, hp.y, m_sim_time);
-        ImGui::TextDisabled("K = %.5f  H = %.5f", K, H);
-        const SurfaceFrame sf = make_surface_frame(*m_surface, hp.x, hp.y, m_sim_time, &fr);
-        ImGui::Separator();
-        ImGui::TextDisabled("E=%.4f  F=%.4f  G=%.4f", sf.E, sf.F, sf.G);
-        ImGui::TextDisabled("\xce\xba_n=%.5f  \xce\xba_g=%.5f", sf.kappa_n, sf.kappa_g);
-        const f32 k2    = fr.kappa*fr.kappa;
-        const f32 check = sf.kappa_n*sf.kappa_n + sf.kappa_g*sf.kappa_g;
-        const bool ok   = std::abs(k2-check) < 1e-4f || k2 < 1e-8f;
-        ImGui::TextColored(ok ? ImVec4(.4f,1.f,.4f,1.f) : ImVec4(1.f,.3f,.3f,1.f),
-            "\xce\xba\xc2\xb2=\xce\xba_n\xc2\xb2+\xce\xba_g\xc2\xb2 %s", ok ? "\xe2\x9c\x93" : "!");
+            ImGui::TextDisabled("Seed: random (hardware)");
+        ImGui::TextDisabled("Set seed BEFORE spawning Brownian particles.");
     }
 
-    ImGui::SeparatorText("3D camera");
+    ImGui::SeparatorText("Live tuning");
+    int bm_idx = 0;
+    for (auto& c : m_curves) {
+        auto* bm = dynamic_cast<ndde::sim::BrownianMotion*>(c.equation());
+        if (!bm) continue;
+        ImGui::PushID(bm_idx++);
+        ImGui::TextDisabled("Particle %d", bm_idx);
+        ImGui::SameLine();
+        float sig = bm->params().sigma;
+        float dft = bm->params().drift_strength;
+        bool ch = false;
+        ch |= ImGui::SliderFloat("s##bmlive", &sig, 0.01f, 2.f, "%.3f");
+        ImGui::SameLine();
+        ch |= ImGui::SliderFloat("d##bmlive", &dft, -1.f, 1.f, "%.3f");
+        if (ch) { bm->params().sigma = sig; bm->params().drift_strength = dft; }
+        ImGui::PopID();
+    }
+    if (bm_idx == 0)
+        ImGui::TextDisabled("No Brownian particles active.");
+    ImGui::End();
+}
+
+// ── draw_panel_pursuit ────────────────────────────────────────────────────────
+
+void SurfaceSimScene::draw_panel_pursuit() {
+    ImGui::SetNextWindowPos(ImVec2(330.f, 700.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(310.f, 320.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Pursuit")) { ImGui::End(); return; }
+
+    ImGui::SeparatorText("Delay pursuit  [Ctrl+R]");
     {
-        int mode = static_cast<int>(m_surface_display);
-        bool changed = false;
-        changed |= ImGui::RadioButton("Wireframe", &mode, 0);
-        ImGui::SameLine();
-        changed |= ImGui::RadioButton("Filled",    &mode, 1);
-        ImGui::SameLine();
-        changed |= ImGui::RadioButton("Both",      &mode, 2);
+        auto& p = m_dp_params;
+        ImGui::SliderFloat("Tau (delay)##dp", &p.tau,           0.1f, 10.f, "%.2f s");
+        ImGui::SliderFloat("Speed##dp",        &p.pursuit_speed, 0.1f,  3.f, "%.2f");
+        ImGui::SliderFloat("Noise sigma##dp",  &p.noise_sigma,   0.f,   1.f, "%.3f");
+        if (ImGui::Button("Spawn pursuer  [Ctrl+R]", ImVec2(-1.f, 0.f))) {
+            if (!m_curves.empty()) {
+                if (m_curves[0].history() == nullptr) {
+                    const std::size_t cap =
+                        static_cast<std::size_t>(std::ceil(p.tau * 120.f * 1.5f)) + 256;
+                    m_curves[0].enable_history(cap, 1.f / 120.f);
+                }
+                const Vec3 ref = m_curves[0].head_world();
+                const f32 ang  = static_cast<f32>(m_dp_count) * 1.1f + 0.3f;
+                const f32 sx   = std::clamp(ref.x + 2.f*std::cos(ang),
+                    m_surface->u_min()+0.5f, m_surface->u_max()-0.5f);
+                const f32 sy   = std::clamp(ref.y + 2.f*std::sin(ang),
+                    m_surface->v_min()+0.5f, m_surface->v_max()-0.5f);
+                m_curves.push_back(AnimatedCurve::with_equation(
+                    sx, sy, AnimatedCurve::Role::Chaser,
+                    m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                    m_surface.get(),
+                    std::make_unique<ndde::sim::DelayPursuitEquation>(
+                        m_curves[0].history(), m_surface.get(), p),
+                    &m_milstein));
+                ++m_chaser_count;  ++m_dp_count;
+            }
+        }
+        if (m_curves.empty() || m_curves[0].history() == nullptr)
+            ImGui::TextDisabled("(leader has no history yet -- spawn first)");
+        else {
+            const auto* h = m_curves[0].history();
+            const float window = h->newest_t() - h->oldest_t();
+            ImGui::TextDisabled("History: %.1fs  %zu records", window, h->size());
+            if (window < p.tau)
+                ImGui::TextColored({1.f,0.8f,0.1f,1.f},
+                    "Warming up: %.1f/%.1fs", window, p.tau);
+        }
+    }
+
+    ImGui::SeparatorText("Collision avoidance");
+    {
+        bool changed = ImGui::Checkbox("Min-distance push##col", &m_pair_collision);
+        if (m_pair_collision)
+            changed |= ImGui::SliderFloat("Min dist##col", &m_min_dist, 0.05f, 2.f, "%.2f");
         if (changed) {
-            m_surface_display = static_cast<SurfaceDisplay>(mode);
-            m_wireframe_dirty = true;
-        }
-        if (m_surface_display != SurfaceDisplay::Wireframe) {
-            if (ImGui::SliderFloat("K scale##curv", &m_curv_scale, 0.01f, 20.f, "%.2f"))
-                m_wireframe_dirty = true;
-            ImGui::SameLine();
-            ImGui::TextDisabled("curvature range");
+            m_pair_constraints.clear();
+            if (m_pair_collision)
+                m_pair_constraints.push_back(
+                    std::make_unique<ndde::sim::MinDistConstraint>(m_min_dist));
         }
     }
-    {
-        int gl = static_cast<int>(m_grid_lines);
-        if (ImGui::SliderInt("Grid lines##surface", &gl, 8, 256))
-            m_grid_lines = static_cast<u32>(std::max(gl, 8));
-        ImGui::SameLine();
-        ImGui::TextDisabled("~%uk verts", (4u * m_grid_lines * (m_grid_lines + 1u)) / 1000u);
-    }
-    ImGui::SliderFloat("Yaw",      &m_vp3d.yaw,   -std::numbers::pi_v<f32>, std::numbers::pi_v<f32>, "%.2f");
+
+    // Leader seeker section: only visible on Extremum surface
+    draw_leader_seeker_panel();
+
+    ImGui::End();
+}
+
+// ── draw_panel_geometry ───────────────────────────────────────────────────────
+
+void SurfaceSimScene::draw_panel_geometry() {
+    if (m_curves.empty() || !m_curves[0].has_trail()) return;
+    ImGui::SetNextWindowPos(ImVec2(650.f, 700.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(310.f, 280.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Geometry")) { ImGui::End(); return; }
+
+    const AnimatedCurve& c0 = m_curves[0];
+    const u32 hi = c0.trail_size() > 2 ? c0.trail_size()-2 : 0;
+    const FrenetFrame fr = c0.frenet_at(hi);
+    const Vec3 hp = c0.head_world();
+
+    ImGui::SeparatorText("At head (particle 0)");
+    if (m_surface_type == SurfaceType::Gaussian)
+        ImGui::TextDisabled("f(x,y) = %.4f", m_surface->evaluate(hp.x, hp.y, m_sim_time).z);
+    else
+        ImGui::TextDisabled("p = (%.3f, %.3f, %.3f)",
+            m_surface->evaluate(hp.x, hp.y, m_sim_time).x,
+            m_surface->evaluate(hp.x, hp.y, m_sim_time).y,
+            m_surface->evaluate(hp.x, hp.y, m_sim_time).z);
+
+    ImGui::SeparatorText("Frenet\xe2\x80\x93Serret");
+    ImGui::TextColored(ImVec4(1.f,0.5f,0.1f,1.f), "T (%.3f, %.3f, %.3f)", fr.T.x, fr.T.y, fr.T.z);
+    ImGui::TextColored(ImVec4(0.2f,1.f,0.4f,1.f), "N (%.3f, %.3f, %.3f)", fr.N.x, fr.N.y, fr.N.z);
+    ImGui::TextColored(ImVec4(0.3f,0.6f,1.f,1.f), "B (%.3f, %.3f, %.3f)", fr.B.x, fr.B.y, fr.B.z);
+    ImGui::TextDisabled("\xce\xba = %.5f  osc.r = %.4f",
+        fr.kappa, fr.kappa > 1e-5f ? 1.f/fr.kappa : 0.f);
+    ImGui::TextDisabled("\xcf\x84 = %.5f", fr.tau);
+
+    ImGui::SeparatorText("Curvature");
+    const f32 K = m_surface->gaussian_curvature(hp.x, hp.y, m_sim_time);
+    const f32 H = m_surface->mean_curvature(hp.x, hp.y, m_sim_time);
+    ImGui::TextDisabled("K = %.5f  H = %.5f", K, H);
+
+    ImGui::SeparatorText("First fundamental form");
+    const SurfaceFrame sf = make_surface_frame(*m_surface, hp.x, hp.y, m_sim_time, &fr);
+    ImGui::TextDisabled("E=%.4f  F=%.4f  G=%.4f", sf.E, sf.F, sf.G);
+    ImGui::TextDisabled("\xce\xba_n=%.5f  \xce\xba_g=%.5f", sf.kappa_n, sf.kappa_g);
+    const f32 k2    = fr.kappa*fr.kappa;
+    const f32 check = sf.kappa_n*sf.kappa_n + sf.kappa_g*sf.kappa_g;
+    const bool ok   = std::abs(k2-check) < 1e-4f || k2 < 1e-8f;
+    ImGui::TextColored(ok ? ImVec4(.4f,1.f,.4f,1.f) : ImVec4(1.f,.3f,.3f,1.f),
+        "\xce\xba\xc2\xb2=\xce\xba_n\xc2\xb2+\xce\xba_g\xc2\xb2 %s", ok ? "\xe2\x9c\x93" : "!");
+    ImGui::End();
+}
+
+// ── draw_panel_camera ─────────────────────────────────────────────────────────
+
+void SurfaceSimScene::draw_panel_camera() {
+    ImGui::SetNextWindowPos(ImVec2(330.f, 20.f),   ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(310.f, 170.f),  ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Camera")) { ImGui::End(); return; }
+
+    ImGui::SliderFloat("Yaw",      &m_vp3d.yaw,
+                       -std::numbers::pi_v<f32>, std::numbers::pi_v<f32>, "%.2f");
     ImGui::SliderFloat("Pitch",    &m_vp3d.pitch,  -1.5f, 1.5f, "%.2f");
     ImGui::SliderFloat("Zoom##3d", &m_vp3d.zoom,   0.1f,  5.f,  "%.2f");
     if (ImGui::Button("Reset 3D")) m_vp3d.reset();
     ImGui::SameLine();
     if (ImGui::Button("Reset 2D")) m_vp2d.reset();
+    ImGui::End();
+}
 
-    ImGui::SeparatorText("Debug");
-    if (ImGui::Button("Coord Debug (Ctrl+Q)")) m_debug_open = !m_debug_open;
+// ── draw_panel_debug ──────────────────────────────────────────────────────────
+
+void SurfaceSimScene::draw_panel_debug() {
+    ImGui::SetNextWindowPos(ImVec2(330.f, 200.f),  ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(310.f, 130.f),  ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.88f);
+    if (!ImGui::Begin("Sim \xe2\x80\x93 Debug")) { ImGui::End(); return; }
+
+    ImGui::SeparatorText("Scene");
+    if (ImGui::Button("Switch to Analysis Scene", ImVec2(-1.f, 0.f))) {
+        m_api.switch_scene([](EngineAPI api) -> std::unique_ptr<IScene> {
+            return std::make_unique<AnalysisScene>(std::move(api));
+        });
+    }
+
+    ImGui::SeparatorText("Tools");
+    if (ImGui::Button("Coord Debug  [Ctrl+Q]")) {
+        m_debug_open = !m_debug_open;
+        m_coord_debug.visible() = m_debug_open;
+    }
     ImGui::SameLine();
     if (ImGui::Button("Perf")) m_perf.visible() = !m_perf.visible();
     const auto& s = m_api.debug_stats();
@@ -633,7 +714,6 @@ void SurfaceSimScene::draw_simulation_panel() {
                                     : ImVec4(1.f,0.3f,0.3f,1.f);
     ImGui::SameLine();
     ImGui::TextColored(fc, "%.0f fps", s.fps);
-
     ImGui::End();
 }
 
@@ -858,7 +938,7 @@ void SurfaceSimScene::submit_wireframe_3d(const Mat4& mvp) {
     auto slice = m_api.acquire(m_wireframe_vcount);
     std::memcpy(slice.vertices(), m_wireframe_cache.data(),
                 m_wireframe_vcount * sizeof(Vertex));
-    m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 void SurfaceSimScene::submit_filled_3d(const Mat4& mvp) {
@@ -867,7 +947,7 @@ void SurfaceSimScene::submit_filled_3d(const Mat4& mvp) {
     auto slice = m_api.acquire(m_filled_vcount);
     std::memcpy(slice.vertices(), m_filled_cache.data(),
                 m_filled_vcount * sizeof(Vertex));
-    m_api.submit_to("3d", slice, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 // ── submit_contour_second_window ──────────────────────────────────────────────
@@ -903,7 +983,7 @@ void SurfaceSimScene::submit_contour_second_window() {
             v[idx++]={Vec3{x0,y0,0},c00}; v[idx++]={Vec3{x1,y1,0},c11}; v[idx++]={Vec3{x0,y1,0},c01};
         }
         memory::ArenaSlice tr=slice; tr.vertex_count=idx;
-        m_api.submit_to("contour", tr, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+        m_api.submit_to(RenderTarget::Contour2D, tr, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
 
         if (m_show_contours) {
             const u32 max_v = GaussianSurface::contour_max_vertices(100u, k_n_levels);
@@ -912,7 +992,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                 {cslice.vertices(),max_v}, 100u, k_levels, k_n_levels, {1,1,1,0.8f});
             if (actual > 0) {
                 memory::ArenaSlice tr2=cslice; tr2.vertex_count=actual;
-                m_api.submit_to("contour", tr2, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+                m_api.submit_to(RenderTarget::Contour2D, tr2, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp2);
             }
         }
     }
@@ -928,7 +1008,7 @@ void SurfaceSimScene::submit_contour_second_window() {
             vt[i] = { Vec3{pt.x,pt.y,0},
                       AnimatedCurve::trail_colour(c.role(), c.colour_slot(), t) };
         }
-        m_api.submit_to("contour", slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp2);
+        m_api.submit_to(RenderTarget::Contour2D, slice, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp2);
     }
 
     {
@@ -952,7 +1032,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                     auto s = m_api.acquire(2);
                     s.vertices()[0] = {o, col};
                     s.vertices()[1] = {o + glm::normalize(dir)*scl, col};
-                    m_api.submit_to("contour", s, Topology::LineList, DrawMode::VertexColor, col, mvp2);
+                    m_api.submit_to(RenderTarget::Contour2D, s, Topology::LineList, DrawMode::VertexColor, col, mvp2);
                 };
                 if (m_show_T) arr({fr.T.x,fr.T.y,0},{1.f,0.35f,0.05f,1.f});
                 if (m_show_N) arr({fr.N.x,fr.N.y,0},{0.15f,1.f,0.3f,1.f});
@@ -966,7 +1046,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                         const f32 th = (static_cast<f32>(k)/SEG)*2.f*std::numbers::pi_v<f32>;
                         vc[k] = { ctr+Vec3{std::cos(th)*R,std::sin(th)*R,0}, {0.7f,0.3f,1.f,0.65f} };
                     }
-                    m_api.submit_to("contour", sc2, Topology::LineStrip, DrawMode::VertexColor,
+                    m_api.submit_to(RenderTarget::Contour2D, sc2, Topology::LineStrip, DrawMode::VertexColor,
                                   {0.7f,0.3f,1.f,0.65f}, mvp2);
                 }
                 if (m_show_torsion && fr.kappa > 1e-5f && std::abs(fr.tau) > 1e-4f) {
@@ -981,14 +1061,14 @@ void SurfaceSimScene::submit_contour_second_window() {
                     const Vec3 tip = o + tip_dir * len;
                     auto dot = m_api.acquire(1);
                     dot.vertices()[0] = { tip, tau_col };
-                    m_api.submit_to("contour", dot, Topology::LineStrip, DrawMode::UniformColor, tau_col, mvp2);
+                    m_api.submit_to(RenderTarget::Contour2D, dot, Topology::LineStrip, DrawMode::UniformColor, tau_col, mvp2);
                 }
             }
         }
     }
 }
 
-// ── export_session ────────────────────────────────────────────────────────────
+// ── Extremum helpers ──────────────────────────────────────────────────────────
 
 void SurfaceSimScene::rebuild_extremum_table_if_needed() {
     if (m_surface_type != SurfaceType::Extremum) return;
@@ -1143,6 +1223,8 @@ void SurfaceSimScene::draw_leader_seeker_panel() {
         ImGui::TextColored({1.f,0.6f,0.1f,1.f}, "Table invalid -- switch to Extremum surface");
     }
 }
+
+// ── export_session ────────────────────────────────────────────────────────────
 
 void SurfaceSimScene::export_session(const std::string& path) const {
     std::ofstream f(path);

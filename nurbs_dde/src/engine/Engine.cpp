@@ -5,6 +5,7 @@
 #include "engine/Engine.hpp"
 #include "app/Scene.hpp"
 #include "app/SurfaceSimScene.hpp"
+#include "app/AnalysisScene.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <format>
 #include <iostream>
@@ -18,7 +19,7 @@ namespace ndde {
 Engine::Engine() = default;
 
 Engine::~Engine() {
-    m_sim_scene.reset();
+    m_active.reset();
     m_scene.reset();
     m_second_win.destroy();
     m_renderer.destroy();
@@ -79,16 +80,29 @@ void Engine::start(const std::string& config_path) {
     // Also maximise the primary window to fill its half / first monitor
     glfwMaximizeWindow(m_glfw.window());
 
-    m_sim_scene = std::make_unique<SurfaceSimScene>(make_api());
+    m_active = std::make_unique<SurfaceSimScene>(make_api());
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
     std::cout << "[Engine] Ready.\n";
 }
 
+void Engine::switch_scene(SceneFactory factory) {
+    vkDeviceWaitIdle(m_vk.device());
+    // Reset renderer per-frame sync state so the new scene's first frame
+    // acquires with clean, unsignaled semaphores and a signaled fence.
+    m_renderer.reset_frame_state();
+    auto next = factory(make_api());
+    m_active  = std::move(next);
+}
+
 void Engine::run() {
     while (m_running && !m_glfw.should_close()) {
         m_glfw.poll_events();
+        if (m_second_win.should_close()) {
+            vkDeviceWaitIdle(m_vk.device());
+            m_second_win.destroy();
+        }
         if (m_glfw.check_resize()) { handle_resize(); continue; }
         run_frame();
     }
@@ -129,7 +143,7 @@ void Engine::run_frame() {
     // ── Second window begin ──────────────────────────────────────────────────────
     const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
-    m_sim_scene->on_frame(frame_ms / 1000.f);
+    m_active->on_frame(frame_ms / 1000.f);
 
     // ── Second window end ─────────────────────────────────────────────────────
     if (second_ok) {
@@ -145,6 +159,15 @@ void Engine::run_frame() {
 
     m_renderer.imgui_render();
     if (!m_renderer.end_frame(m_swapchain)) handle_resize();
+
+    apply_pending_scene_switch();
+}
+
+void Engine::apply_pending_scene_switch() {
+    if (!m_pending_scene_switch) return;
+    auto factory = std::move(m_pending_scene_switch);
+    m_pending_scene_switch = {};
+    switch_scene(std::move(factory));
 }
 
 void Engine::handle_resize() {
@@ -164,23 +187,22 @@ EngineAPI Engine::make_api() {
         return m_buffer_manager.acquire(n);
     };
 
-    api.submit_to = [this](std::string_view target,
+    api.submit_to = [this](RenderTarget target,
                              const memory::ArenaSlice& slice,
                              Topology topology, DrawMode mode,
                              Vec4 color, Mat4 mvp) {
-        if (target == "3d") {
-            m_renderer.draw(renderer::DrawCall{
-                .slice = slice, .topology = topology,
-                .mode  = mode,  .color    = color, .mvp = mvp
-            });
-        } else if (target == "contour") {
-            if (m_second_win.valid())
-                m_second_win.draw(renderer::DrawCall{
-                    .slice = slice, .topology = topology,
-                    .mode  = mode,  .color    = color, .mvp = mvp
-                });
+        renderer::DrawCall dc{
+            .slice = slice, .topology = topology,
+            .mode  = mode,  .color    = color, .mvp = mvp
+        };
+        switch (target) {
+            case RenderTarget::Primary3D:
+                m_renderer.draw(dc);
+                break;
+            case RenderTarget::Contour2D:
+                if (m_second_win.valid()) m_second_win.draw(dc);
+                break;
         }
-        // else: unknown target — no-op
     };
 
     api.push_math_font = [this](bool small) {
@@ -199,6 +221,10 @@ EngineAPI Engine::make_api() {
                      static_cast<f32>(m_second_win.height()) };
     };
     api.debug_stats     = [this]() -> const DebugStats& { return m_debug_stats; };
+
+    api.switch_scene = [this](SceneFactory factory) {
+        m_pending_scene_switch = std::move(factory);
+    };
 
     return api;
 }

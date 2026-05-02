@@ -24,13 +24,14 @@ void ImGuiLayer::init(GLFWwindow* window,
     m_device = ctx.device();
 
     VkDescriptorPoolSize pool_sizes[] = {
-        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32 }
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32 },
+        { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          32 },
     };
     VkDescriptorPoolCreateInfo pool_info{
         .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-        .maxSets       = 32,
-        .poolSizeCount = 1,
+        .maxSets       = 64,
+        .poolSizeCount = 2,
         .pPoolSizes    = pool_sizes
     };
     if (vkCreateDescriptorPool(m_device, &pool_info, nullptr, &m_pool) != VK_SUCCESS)

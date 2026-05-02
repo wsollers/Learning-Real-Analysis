@@ -12,8 +12,8 @@
 // and then calls submit_all().  The renderer is stateless between frames
 // (it holds no particle data, only the API handle and visibility flags).
 //
-// Note: this renderer uses m_api.submit_to("3d", ...) (primary 3D window) only.
-// The 2D contour second window (m_api.submit_to("contour", ...)) stays in SurfaceSimScene
+// Note: this renderer uses RenderTarget::Primary3D only.
+// The 2D contour second window (RenderTarget::Contour2D) stays in SurfaceSimScene
 // because it has its own MVP and scene-specific rendering logic.
 
 #include "engine/EngineAPI.hpp"
