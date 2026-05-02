@@ -87,8 +87,8 @@ public:
         }
 
         // Goal flip: gradient flatness
-        const ndde::math::Vec3 du_v = surface.du(state.uv.x, state.uv.y);
-        const ndde::math::Vec3 dv_v = surface.dv(state.uv.x, state.uv.y);
+        const Vec3 du_v = surface.du(state.uv.x, state.uv.y);
+        const Vec3 dv_v = surface.dv(state.uv.x, state.uv.y);
         const float grad_mag = std::sqrt(du_v.z*du_v.z + dv_v.z*dv_v.z);
         if (std::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon)
             m_goal = (m_goal == Goal::SeekMax) ? Goal::SeekMin : Goal::SeekMax;

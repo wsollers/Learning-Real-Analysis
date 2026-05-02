@@ -79,7 +79,6 @@ void Engine::start(const std::string& config_path) {
     // Also maximise the primary window to fill its half / first monitor
     glfwMaximizeWindow(m_glfw.window());
 
-    m_scene     = std::make_unique<Scene>(make_api());
     m_sim_scene = std::make_unique<SurfaceSimScene>(make_api());
 
     m_last_frame_time = glfwGetTime();

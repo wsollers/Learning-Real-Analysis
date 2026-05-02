@@ -43,12 +43,113 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     m_leader_count = 1;
     for (int i = 0; i < 400; ++i)
         m_curves[0].advance(1.f/60.f, 1.f);
+
+    // ── Register hotkeys ──────────────────────────────────────────────────────
+    // Each registration stores its own edge-detection state internally.
+    // Groups appear as section headers in draw_hotkey_panel().
+
+    // Overlays
+    m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_F), "Frenet frame  (T, N, B)",
+                               m_show_frenet,       "Overlays");
+    m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_D), "Surface frame  (Dx, Dy)",
+                               m_show_dir_deriv,    "Overlays");
+    m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_N), "Normal plane patch",
+                               m_show_normal_plane, "Overlays");
+    m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_T), "Torsion ribbon",
+                               m_show_torsion,      "Overlays");
+
+    // Simulation
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_P), "Pause / unpause",
+        [this]{ m_sim_paused = !m_sim_paused; }, "Simulation");
+
+    // Spawn
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_L), "Leader particle  (blue)",
+        [this]{
+            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
+                                           &m_integrator, &m_milstein, m_sim_speed };
+            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.5f,
+                static_cast<float>(m_leader_count) * 1.1f, *m_surface);
+            m_curves.push_back(spawn::spawn_shared(uv,
+                AnimatedCurve::Role::Leader,
+                m_leader_count % AnimatedCurve::MAX_SLOTS, ctx));
+            ++m_leader_count;
+        }, "Spawn");
+
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_C), "Chaser particle  (red)",
+        [this]{
+            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
+                                           &m_integrator, &m_milstein, m_sim_speed };
+            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
+                static_cast<float>(m_chaser_count) * 1.3f + 0.5f, *m_surface);
+            m_curves.push_back(spawn::spawn_shared(uv,
+                AnimatedCurve::Role::Chaser,
+                m_chaser_count % AnimatedCurve::MAX_SLOTS, ctx));
+            ++m_chaser_count;
+        }, "Spawn");
+
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_B), "Brownian particle  (Milstein)",
+        [this]{
+            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
+                                           &m_integrator, &m_milstein, m_sim_speed };
+            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
+                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
+                *m_surface);
+            m_curves.push_back(spawn::spawn_owned(uv,
+                AnimatedCurve::Role::Chaser,
+                m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
+                ctx));
+            ++m_chaser_count;
+        }, "Spawn");
+
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_R), "Delay-pursuit chaser",
+        [this]{
+            if (m_curves.empty()) return;
+            if (m_curves[0].history() == nullptr) {
+                const std::size_t cap =
+                    static_cast<std::size_t>(std::ceil(m_dp_params.tau * 120.f * 1.5f)) + 256;
+                m_curves[0].enable_history(cap, 1.f / 120.f);
+            }
+            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
+                                           &m_integrator, &m_milstein, m_sim_speed };
+            const glm::vec2 ref = m_curves[0].head_uv();
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
+                static_cast<float>(m_dp_count) * 1.1f + 0.3f, *m_surface);
+            m_curves.push_back(spawn::spawn_owned(uv,
+                AnimatedCurve::Role::Chaser,
+                m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                std::make_unique<ndde::sim::DelayPursuitEquation>(
+                    m_curves[0].history(), m_surface.get(), m_dp_params),
+                ctx,
+                false));  // no prewarm -- chaser needs leader history first
+            ++m_chaser_count;
+            ++m_dp_count;
+        }, "Spawn");
+
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_A), "Leader seeker / pursuer  [Ctrl+A]",
+        [this]{
+            if (!m_spawning_pursuer) spawn_leader_seeker();
+            else                     spawn_pursuit_particle();
+        }, "Spawn");
+
+    // Panels
+    m_hotkeys.register_action(Chord::ctrl(ImGuiKey_Q), "Coordinate debug panel",
+        [this]{
+            m_debug_open = !m_debug_open;
+            m_coord_debug.visible() = m_debug_open;
+        }, "Panels");
+
+    m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_H), "This hotkey panel",
+                               m_hotkey_panel_open, "Panels");
 }
 
 // ── on_frame ──────────────────────────────────────────────────────────────────
 
 void SurfaceSimScene::on_frame(f32 dt) {
-    handle_hotkeys();
+    m_hotkeys.dispatch();
     advance_simulation(dt);
 
     const ImGuiViewport* vp = ImGui::GetMainViewport();
@@ -174,122 +275,8 @@ void SurfaceSimScene::apply_pairwise_constraints() {
 }
 
 // ── handle_hotkeys ────────────────────────────────────────────────────────────
-
-void SurfaceSimScene::handle_hotkeys() {
-    const ImGuiIO& io = ImGui::GetIO();
-
-    auto toggle = [](bool cur, bool& prev, bool& flag) {
-        if (cur && !prev) flag = !flag;
-        prev = cur;
-    };
-
-    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_F), m_ctrl_f_prev, m_show_frenet);
-    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_D), m_ctrl_d_prev, m_show_dir_deriv);
-    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_N), m_ctrl_n_prev, m_show_normal_plane);
-    toggle(io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_T), m_ctrl_t_prev, m_show_torsion);
-
-    const bool ctrl_p = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_P);
-    if (ctrl_p && !m_ctrl_p_prev)
-        m_sim_paused = !m_sim_paused;
-    m_ctrl_p_prev = ctrl_p;
-
-    // Ctrl+L: spawn Leader
-    const bool ctrl_l = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_L);
-    if (ctrl_l && !m_ctrl_l_prev) {
-        const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                       &m_integrator, &m_milstein, m_sim_speed };
-        const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-        const glm::vec2 uv  = spawn::offset_spawn(ref, 1.5f,
-            static_cast<float>(m_leader_count) * 1.1f, *m_surface);
-        m_curves.push_back(spawn::spawn_shared(uv,
-            AnimatedCurve::Role::Leader,
-            m_leader_count % AnimatedCurve::MAX_SLOTS, ctx));
-        ++m_leader_count;
-    }
-    m_ctrl_l_prev = ctrl_l;
-
-    // Ctrl+C: spawn Chaser
-    const bool ctrl_c = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_C);
-    if (ctrl_c && !m_ctrl_c_prev) {
-        const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                       &m_integrator, &m_milstein, m_sim_speed };
-        const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-        const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-            static_cast<float>(m_chaser_count) * 1.3f + 0.5f, *m_surface);
-        m_curves.push_back(spawn::spawn_shared(uv,
-            AnimatedCurve::Role::Chaser,
-            m_chaser_count % AnimatedCurve::MAX_SLOTS, ctx));
-        ++m_chaser_count;
-    }
-    m_ctrl_c_prev = ctrl_c;
-
-    // Ctrl+B: spawn Brownian
-    const bool ctrl_b = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_B);
-    if (ctrl_b && !m_ctrl_b_prev) {
-        const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                       &m_integrator, &m_milstein, m_sim_speed };
-        const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-        const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
-            static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
-            *m_surface);
-        m_curves.push_back(spawn::spawn_owned(uv,
-            AnimatedCurve::Role::Chaser,
-            m_chaser_count % AnimatedCurve::MAX_SLOTS,
-            std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
-            ctx));
-        ++m_chaser_count;
-    }
-    m_ctrl_b_prev = ctrl_b;
-
-    // Ctrl+R: spawn delay-pursuit chaser
-    const bool ctrl_r = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_R);
-    if (ctrl_r && !m_ctrl_r_prev) {
-        if (!m_curves.empty()) {
-            if (m_curves[0].history() == nullptr) {
-                const std::size_t cap =
-                    static_cast<std::size_t>(std::ceil(m_dp_params.tau * 120.f * 1.5f)) + 256;
-                m_curves[0].enable_history(cap, 1.f / 120.f);
-            }
-            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                           &m_integrator, &m_milstein, m_sim_speed };
-            const glm::vec2 ref = m_curves[0].head_uv();
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-                static_cast<float>(m_dp_count) * 1.1f + 0.3f, *m_surface);
-            m_curves.push_back(spawn::spawn_owned(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                std::make_unique<ndde::sim::DelayPursuitEquation>(
-                    m_curves[0].history(), m_surface.get(), m_dp_params),
-                ctx,
-                false));  // no prewarm -- chaser needs leader history first
-            ++m_chaser_count;
-            ++m_dp_count;
-        }
-    }
-    m_ctrl_r_prev = ctrl_r;
-
-    const bool ctrl_q = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_Q);
-    if (ctrl_q && !m_ctrl_q_prev) {
-        m_debug_open = !m_debug_open;
-        m_coord_debug.visible() = m_debug_open;
-    }
-    m_ctrl_q_prev = ctrl_q;
-
-    const bool ctrl_h = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_H);
-    if (ctrl_h && !m_ctrl_h_prev)
-        m_hotkey_panel_open = !m_hotkey_panel_open;
-    m_ctrl_h_prev = ctrl_h;
-
-    // Ctrl+A: spawn leader seeker (first press) / pursuit particle (subsequent)
-    const bool ctrl_a = io.KeyCtrl && ImGui::IsKeyDown(ImGuiKey_A);
-    if (ctrl_a && !m_ctrl_a_prev) {
-        if (!m_spawning_pursuer)
-            spawn_leader_seeker();
-        else
-            spawn_pursuit_particle();
-    }
-    m_ctrl_a_prev = ctrl_a;
-}
+// Removed: hotkey dispatch is now owned by m_hotkeys (HotkeyManager).
+// All registrations happen in the constructor. Call m_hotkeys.dispatch() per frame.
 
 // ── canvas_mvp_3d ─────────────────────────────────────────────────────────────
 
@@ -327,53 +314,9 @@ Mat4 SurfaceSimScene::canvas_mvp_3d(const ImVec2& cpos, const ImVec2& csz) const
 // ── draw_hotkey_panel ─────────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_hotkey_panel() {
-    if (!m_hotkey_panel_open) return;
-
-    const ImGuiViewport* vp = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(
-        { vp->WorkPos.x + vp->WorkSize.x - 320.f, vp->WorkPos.y + 40.f },
-        ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize({ 300.f, 0.f }, ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-
-    constexpr ImGuiWindowFlags flags =
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_AlwaysAutoResize;
-
-    if (!ImGui::Begin("Hotkeys  [Ctrl+H]", &m_hotkey_panel_open, flags)) {
-        ImGui::End();
-        return;
-    }
-
-    auto row = [](const char* key, const char* desc) {
-        ImGui::TextDisabled("%s", key);
-        ImGui::SameLine(90.f);
-        ImGui::TextUnformatted(desc);
-    };
-
-    ImGui::SeparatorText("Spawn particles");
-    row("Ctrl+L", "Leader particle  (blue)");
-    row("Ctrl+C", "Chaser particle  (red)");
-    row("Ctrl+B", "Brownian particle  (Milstein)");
-    row("Ctrl+R", "Delay-pursuit chaser");
-
-    ImGui::SeparatorText("Overlays");
-    row("Ctrl+F", "Frenet frame  (T, N, B)");
-    row("Ctrl+D", "Surface frame  (Dx, Dy)");
-    row("Ctrl+N", "Normal plane patch");
-    row("Ctrl+T", "Torsion ribbon");
-
-    ImGui::SeparatorText("Simulation");
-    row("Ctrl+P", "Pause / unpause");
-
-    ImGui::SeparatorText("Panels");
-    row("Ctrl+Q", "Coordinate debug");
-    row("Ctrl+H", "This panel");
-
-    ImGui::Spacing();
-    ImGui::TextDisabled("Ctrl+H or close button to dismiss.");
-    ImGui::End();
+    // Delegate entirely to HotkeyManager. The panel lists every registered
+    // binding in group order; no hardcoded row table needed here.
+    m_hotkeys.draw_panel("Hotkeys  [Ctrl+H]", m_hotkey_panel_open);
 }
 
 // ── draw_simulation_panel ─────────────────────────────────────────────────────

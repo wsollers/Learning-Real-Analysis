@@ -56,6 +56,7 @@
 #include "app/ParticleRenderer.hpp"  // B2: extracted particle rendering
 #include "app/SpawnStrategy.hpp"       // B3: extracted spawn helpers
 
+#include "app/HotkeyManager.hpp"  // decoupled hotkey registration and dispatch
 #include <imgui.h>
 #include <memory>
 #include <vector>
@@ -72,6 +73,7 @@ public:
 
 private:
     EngineAPI                              m_api;
+    HotkeyManager                          m_hotkeys;           // registered in constructor
     ParticleRenderer                       m_particle_renderer; // B2
     std::unique_ptr<ndde::math::ISurface>  m_surface;   // Step 3: owns the surface
     ndde::sim::GradientWalker              m_equation;    // Step 4: default equation
@@ -127,20 +129,6 @@ private:
     bool m_show_N   = true;
     bool m_show_B   = true;
     bool m_show_osc = true;
-
-    // Hotkey edge-detection state
-    bool m_ctrl_f_prev = false;
-    bool m_ctrl_d_prev = false;
-    bool m_ctrl_n_prev = false;  ///< Ctrl+N: toggle normal plane patch
-    bool m_ctrl_p_prev = false;  ///< Ctrl+P: pause / unpause simulation
-    bool m_ctrl_t_prev = false;
-    bool m_ctrl_q_prev = false;
-    bool m_ctrl_l_prev = false;  ///< Ctrl+L: spawn Leader
-    bool m_ctrl_c_prev = false;  ///< Ctrl+C: spawn Chaser
-    bool m_ctrl_b_prev = false;  ///< Ctrl+B: spawn Brownian particle
-    bool m_ctrl_r_prev = false;  ///< Ctrl+R: spawn delay-pursuit chaser
-    bool m_ctrl_h_prev = false;  ///< Ctrl+H: toggle hotkey reference panel
-    bool m_ctrl_a_prev = false;  ///< Ctrl+A: spawn leader / pursuer (LeaderSeeker)
 
     // Counters for colour-slot cycling within each role
     u32 m_leader_count = 0;
@@ -213,7 +201,6 @@ private:
 
     // Internal methods
     void advance_simulation(f32 dt);
-    void handle_hotkeys();
     void apply_pairwise_constraints();
     void spawn_leader_seeker();
     void spawn_pursuit_particle();
