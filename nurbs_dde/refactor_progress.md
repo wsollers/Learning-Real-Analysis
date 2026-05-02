@@ -112,11 +112,27 @@ Step 8  [ ]    Shrink SurfaceSimScene to orchestrator
 
 ---
 
-## Remaining steps (plumbing)
+## Remaining steps
 
-Step 2b  Particle state moves to parameter space (uv)
-Step 2c  DomainConfinement constraint
-Step 5c  IConstraint + pairwise constraints
-Step 6   SpawnStrategy
-Step 7   Extract GeometrySubmitter
-Step 8   Shrink SurfaceSimScene to orchestrator
+### Original roadmap (plumbing)
+
+Step 2b  [ ]  Particle state moves to parameter space — retire WalkState, store ParticleState directly
+Step 2c  [ ]  DomainConfinement IConstraint replaces hard-coded boundary reflection
+Step 5c  [ ]  IConstraint + pairwise minimum-distance constraints
+Step 6   [ ]  SpawnStrategy — extract spawn logic from handle_hotkeys()
+Step 7   [ ]  Extract GeometrySubmitter (ParticleRenderer + SurfaceRenderer)
+Step 8   [ ]  Shrink SurfaceSimScene to thin orchestrator (~200 lines)
+
+### New items from architecture review
+
+A2  [ ]  HistoryBuffer::to_vector() — linearise ring buffer for export and iteration (10 lines)
+A3  [ ]  SurfaceSimScene::export_session() — CSV/JSON export of trail + history + metadata (50 lines)
+A4  [ ]  RNG seed capture in MilsteinIntegrator — expose global_seed in config + export metadata
+B1  [ ]  Split GaussianSurface.hpp into AnimatedCurve.hpp, FrenetFrame.hpp, math/GaussianSurface.hpp
+C4  [ ]  Ctrl+A feature — ExtremumSurface, ExtremumTable, LeaderSeekerEquation, BiasedBrownianLeader,
+             DirectPursuitEquation, MomentumBearingEquation (designed in docs/ctrl_a_leader_seeker.md)
+D1  [ ]  Rename IEquation::velocity() -> update() (signals mutation, not pure computation)
+D2  [ ]  Replace submit/submit2 with named render targets
+E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/ (dead code, m_scene->on_frame() is commented out)
+
+### Full priority order — see TODO.md at repo root
