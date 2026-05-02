@@ -915,7 +915,7 @@ void SurfaceSimScene::submit_wireframe_3d(const Mat4& mvp) {
     auto slice = m_api.acquire(m_wireframe_vcount);
     std::memcpy(slice.vertices(), m_wireframe_cache.data(),
                 m_wireframe_vcount * sizeof(Vertex));
-    m_api.submit(slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+    m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 void SurfaceSimScene::submit_filled_3d(const Mat4& mvp) {

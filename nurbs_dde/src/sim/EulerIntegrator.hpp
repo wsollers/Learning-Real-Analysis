@@ -32,7 +32,7 @@ namespace ndde::sim {
 class EulerIntegrator final : public IIntegrator {
 public:
     // step(): explicit Euler advance.
-    // Calls equation.velocity(state, surface, t) with mutable state so
+    // Calls equation.update(state, surface, t) with mutable state so
     // the equation can update state.angle freely (no const_cast needed).
     void step(ParticleState&              state,
               IEquation&                  equation,
@@ -41,7 +41,7 @@ public:
               float                       dt) const override
     {
         // Velocity in parameter space: (du/dt, dv/dt)
-        const glm::vec2 vel = equation.velocity(state, surface, t);
+        const glm::vec2 vel = equation.update(state, surface, t);
 
         // Euler position update
         state.uv += vel * dt;

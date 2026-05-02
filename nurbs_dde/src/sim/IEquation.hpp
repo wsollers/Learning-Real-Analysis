@@ -6,18 +6,18 @@
 // ──────
 // An equation provides (du/dt, dv/dt) in parameter space given the current
 // particle state and the surface it lives on.  The integrator (Step 5) calls
-// velocity() once per sub-step and uses the result to advance the state.
+// update() once per sub-step and uses the result to advance the state.
 //
 // Three equation families are planned:
-//   ODE  -- velocity() is a deterministic function of state.
+//   ODE  -- update() is a deterministic function of state.
 //            noise_coefficient() returns {0,0} (the default).
 //
-//   SDE  -- velocity() is the drift term f(x,t).
+//   SDE  -- update() is the drift term f(x,t).
 //            noise_coefficient() is the diffusion coefficient g(x).
 //            The integrator handles the Wiener increment dW.
 //            Example: BrownianMotion (Step 9).
 //
-//   DDE  -- velocity() reads a history buffer at time t - tau.
+//   DDE  -- update() reads a history buffer at time t - tau.
 //            Example: DelayPursuit (Step 10).
 //
 // Geometric note
@@ -51,7 +51,7 @@ struct ParticleState {
 
 // ── IEquation ─────────────────────────────────────────────────────────────────
 // Velocity field for a particle on a parametric surface.
-// The integrator calls velocity() each sub-step and Euler-advances the state.
+// The integrator calls update() each sub-step and Euler-advances the state.
 // For SDEs the integrator also calls noise_coefficient() and generates dW.
 
 class IEquation {
@@ -64,12 +64,12 @@ public:
     // state is mutable so stateful equations (e.g. GradientWalker's turn-rate
     // limiter) can update state.angle without a const_cast.  The integrator
     // is the only caller and it owns the ParticleState.
-    [[nodiscard]] virtual glm::vec2 velocity(
+    [[nodiscard]] virtual glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& surface,
         float                       t) const = 0;
 
-    // Diffusion coefficient for SDEs: returns per-axis g(x) for dX = f*dt + g*dW.
+    // Diffusion coefficient for SDEs: returns per-axis g(x) for dX = update()*dt + g*dW.
     // Default: {0,0} -- no noise, pure ODE.
     [[nodiscard]] virtual glm::vec2 noise_coefficient(
         const ParticleState&        /*state*/,

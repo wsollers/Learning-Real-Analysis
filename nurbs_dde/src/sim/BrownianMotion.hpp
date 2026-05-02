@@ -57,7 +57,7 @@ public:
     explicit BrownianMotion(Params p = {}) : m_p(p) {}
 
     // Drift: zero for pure Brownian motion, or gradient-aligned bias.
-    [[nodiscard]] glm::vec2 velocity(
+    [[nodiscard]] glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& surface,
         float                       t) const override

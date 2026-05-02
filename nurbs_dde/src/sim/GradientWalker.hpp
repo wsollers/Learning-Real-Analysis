@@ -50,13 +50,13 @@ public:
         , m_turn_rate(turn_rate)
     {}
 
-    // ── IEquation::velocity (mutable state) ───────────────────────────────────
+    // ── IEquation::update (mutable state) ───────────────────────────────────
     // Computes (du/dt, dv/dt) and updates state.angle in place.
     // The angle update is intentionally stateful: it implements a first-order
     // low-pass filter (rate limiter) on the heading direction.  This requires
     // reading and writing state.angle across calls.
     // Step 5: state is now mutable -- no const_cast needed.
-    [[nodiscard]] glm::vec2 velocity(
+    [[nodiscard]] glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& surface,
         float                       /*t*/) const override

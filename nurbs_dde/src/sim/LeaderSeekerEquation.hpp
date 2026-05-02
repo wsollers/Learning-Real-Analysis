@@ -51,7 +51,7 @@ public:
         : m_table(table), m_p(p)
     {}
 
-    [[nodiscard]] glm::vec2 velocity(
+    [[nodiscard]] glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& surface,
         float                       /*t*/) const override

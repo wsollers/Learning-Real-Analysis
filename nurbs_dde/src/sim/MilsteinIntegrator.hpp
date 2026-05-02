@@ -77,7 +77,7 @@ public:
               float                       dt) const override
     {
         // ── Drift ─────────────────────────────────────────────────────────────
-        const glm::vec2 mu    = equation.velocity(state, surface, t);
+        const glm::vec2 mu    = equation.update(state, surface, t);
 
         // ── Diffusion at current position ─────────────────────────────────────
         const glm::vec2 sigma = equation.noise_coefficient(state, surface, t);

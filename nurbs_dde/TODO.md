@@ -60,7 +60,7 @@ Low urgency, no feature blocked by these.
 
 | # | Status | Item | Effort |
 |---|--------|------|--------|
-| D1 | [ ] | **Rename `IEquation::velocity()` → `update()`** | `velocity()` implies a pure function. The method mutates `ParticleState&` (GradientWalker persists angle). `update()` is honest. ~30 min. |
+| D1 | [x] | **Rename `IEquation::velocity()` → `update()`** | `velocity()` implies a pure function. The method mutates `ParticleState&` (GradientWalker persists angle). `update()` is honest. ~30 min. |
 | D2 | [ ] | **Replace `submit` / `submit2` with named render targets** | `submit2` is "the second window" — a leaky abstraction. `api.submit_to("contour", ...)` is cleaner and won't need `submit3` when a third window is added. ~2 hrs. |
 | D3 | [ ] | **Wrap `math_font_body` / `math_font_small` in helper methods** | `EngineAPI` exposes raw `ImFont*` — an ImGui type — into the app layer. Replace with `api.push_math_font(bool small)` / `api.pop_math_font()`. ~30 min. |
 

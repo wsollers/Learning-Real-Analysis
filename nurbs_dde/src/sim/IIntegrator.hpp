@@ -40,7 +40,7 @@ public:
 
     // Advance state by dt seconds using the equation's velocity field.
     // Mutates state in place -- the caller owns the ParticleState.
-    // t: current simulation time (passed through to equation.velocity)
+    // t: current simulation time (passed through to equation.update)
     // dt: time step (seconds)
     virtual void step(ParticleState&              state,
                       IEquation&                  equation,

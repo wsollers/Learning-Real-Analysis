@@ -186,7 +186,7 @@ A4  [x]  RNG seed capture in MilsteinIntegrator -- expose global_seed in config 
 B1  [ ]  Split GaussianSurface.hpp into AnimatedCurve.hpp, FrenetFrame.hpp, math/GaussianSurface.hpp
 C4  [ ]  Ctrl+A feature — ExtremumSurface, ExtremumTable, LeaderSeekerEquation, BiasedBrownianLeader,
              DirectPursuitEquation, MomentumBearingEquation (designed in docs/ctrl_a_leader_seeker.md)
-D1  [ ]  Rename IEquation::velocity() -> update() (signals mutation, not pure computation)
+D1  [x]  Rename IEquation::velocity() -> update() (signals mutation, not pure computation)
 D2  [ ]  Replace submit/submit2 with named render targets
 E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/ (dead code, m_scene->on_frame() is commented out)
 
@@ -202,7 +202,7 @@ B4  [DONE]  SurfaceSimScene shrunk to orchestrator (~520 lines, panel UI is inhe
 C2  [DONE]  IConstraint + DomainConfinement
 C3  [DONE]  IPairConstraint + MinDistConstraint
 C4  [DONE]  Ctrl+A feature
-D1  [ ]  Rename IEquation::velocity() -> update()
+D1  [DONE]  Rename IEquation::velocity() -> update()
 D2  [ ]  Replace submit/submit2 with named render targets
 E1  [ ]  Move Scene.cpp / AnalysisPanel.cpp to legacy/
 
@@ -311,3 +311,48 @@ src/app/SpawnStrategy.hpp     ndde::spawn namespace: SpawnContext, reference_uv,
 - GaussianSurface.hpp includes AnimatedCurve.hpp transitively via the split headers
 
 ### Full priority order -- see TODO.md at repo root
+
+---
+
+## Category D — D1 DONE
+
+### Files touched
+
+```
+src/sim/IEquation.hpp              virtual update() replaces velocity() (pure virtual declaration)
+                                    Block comment: velocity() -> update() (3 occurrences)
+                                    noise_coefficient doc: "dX = update()*dt + g*dW"
+src/sim/IIntegrator.hpp            Doc comment: "equation.velocity" -> "equation.update" (1 occurrence)
+src/sim/EulerIntegrator.hpp        Call site: equation.velocity() -> equation.update()
+                                    Inline comment updated to match
+src/sim/MilsteinIntegrator.hpp     Call site (drift): equation.velocity() -> equation.update()
+                                    (sigma_gradient uses noise_coefficient only -- no change needed)
+src/sim/GradientWalker.hpp         Override declaration + section banner comment
+src/sim/BrownianMotion.hpp         Override declaration
+src/sim/DelayPursuitEquation.hpp   Override declaration + section banner comment
+src/sim/LeaderSeekerEquation.hpp   Override declaration
+src/sim/BiasedBrownianLeader.hpp   Override declaration + method doc comment
+src/sim/DirectPursuitEquation.hpp  Override declaration
+src/sim/MomentumBearingEquation.hpp Override declaration
+```
+
+### Invariant
+
+`IEquation::update()` is the single point of mutation for `ParticleState` per
+integrator sub-step.  The integrator is the only caller; it owns the
+`ParticleState` and passes it as a mutable reference, allowing stateful equations
+(GradientWalker's turn-rate limiter, LeaderSeekerEquation's goal flip,
+BiasedBrownianLeader's goal flip) to persist state without `const_cast`.
+
+### What was NOT changed
+
+- `noise_coefficient()` -- name unchanged
+- `phase_rate()` -- name unchanged
+- Local variables named `vel`, `velocity`, `mu` inside method bodies -- left alone
+- Prose comments using "velocity" as a mathematical concept (e.g. "velocity field",
+  "velocity history window" in MomentumBearingEquation) -- left alone; the word
+  is mathematically correct, only the C++ method name changed
+
+### Verification
+
+Grep of `src/` for `\.velocity(` returned zero matches after all edits.

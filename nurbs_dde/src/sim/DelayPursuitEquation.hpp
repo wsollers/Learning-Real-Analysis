@@ -78,9 +78,9 @@ public:
         : m_history(history), m_surface(surface), m_p(p)
     {}
 
-    // ── IEquation::velocity ───────────────────────────────────────────────────
+    // ── IEquation::update ───────────────────────────────────────────────────
     // Deterministic pursuit toward X_l(t - tau).
-    [[nodiscard]] glm::vec2 velocity(
+    [[nodiscard]] glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& /*surface*/,   // surface context unused here
         float                       t) const override

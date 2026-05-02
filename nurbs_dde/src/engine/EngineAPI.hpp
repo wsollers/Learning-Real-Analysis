@@ -7,6 +7,7 @@
 #include "engine/AppConfig.hpp"
 #include "math/Scalars.hpp"
 #include <functional>
+#include <string_view>
 
 struct ImFont;
 
@@ -39,21 +40,15 @@ struct EngineAPI {
     // Allocate vertex_count Vertex slots from the per-frame arena.
     std::function<memory::ArenaSlice(u32 vertex_count)> acquire;
 
-    // Submit a populated slice for rendering this frame.
-    // submit   → primary window (3D surface view)
-    // submit2  → second window  (2D contour view)
-    // Both functions are safe to call even if the second window is not open.
-    std::function<void(const memory::ArenaSlice& slice,
-                       Topology  topology,
-                       DrawMode  mode,
-                       Vec4      color,
-                       Mat4      mvp)> submit;
-
-    std::function<void(const memory::ArenaSlice& slice,
-                       Topology  topology,
-                       DrawMode  mode,
-                       Vec4      color,
-                       Mat4      mvp)> submit2;
+    // Submit a populated slice to a named render target.
+    // Known targets: "3d" (primary window), "contour" (second window).
+    // Submitting to an unknown target or a closed window is a no-op.
+    std::function<void(std::string_view             target,
+                       const memory::ArenaSlice&    slice,
+                       Topology                     topology,
+                       DrawMode                     mode,
+                       Vec4                         color,
+                       Mat4                         mvp)> submit_to;
 
     // Dimensions of each window's framebuffer.
     std::function<Vec2()> viewport_size;   ///< primary window (3D)

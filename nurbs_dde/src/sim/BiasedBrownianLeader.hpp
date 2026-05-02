@@ -51,9 +51,9 @@ public:
         : m_table(table), m_p(p)
     {}
 
-    // velocity() implementation from design doc (ctrl_a_leader_seeker.md),
+    // update() implementation from design doc (ctrl_a_leader_seeker.md),
     // copied verbatim.
-    [[nodiscard]] glm::vec2 velocity(
+    [[nodiscard]] glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& surface,
         float                       /*t*/) const override

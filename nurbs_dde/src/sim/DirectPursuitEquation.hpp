@@ -31,7 +31,7 @@ public:
         : m_leader_uv_fn(std::move(leader_uv_fn)), m_p(p)
     {}
 
-    [[nodiscard]] glm::vec2 velocity(
+    [[nodiscard]] glm::vec2 update(
         ParticleState&              state,
         const ndde::math::ISurface& surface,
         float                       /*t*/) const override

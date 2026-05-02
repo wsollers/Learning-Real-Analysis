@@ -165,21 +165,23 @@ EngineAPI Engine::make_api() {
         return m_buffer_manager.acquire(n);
     };
 
-    api.submit = [this](const memory::ArenaSlice& slice,
-                        Topology topology, DrawMode mode, Vec4 color, Mat4 mvp) {
-        m_renderer.draw(renderer::DrawCall{
-            .slice = slice, .topology = topology,
-            .mode  = mode,  .color    = color, .mvp = mvp
-        });
-    };
-
-    api.submit2 = [this](const memory::ArenaSlice& slice,
-                         Topology topology, DrawMode mode, Vec4 color, Mat4 mvp) {
-        if (m_second_win.valid())
-            m_second_win.draw(renderer::DrawCall{
+    api.submit_to = [this](std::string_view target,
+                             const memory::ArenaSlice& slice,
+                             Topology topology, DrawMode mode,
+                             Vec4 color, Mat4 mvp) {
+        if (target == "3d") {
+            m_renderer.draw(renderer::DrawCall{
                 .slice = slice, .topology = topology,
                 .mode  = mode,  .color    = color, .mvp = mvp
             });
+        } else if (target == "contour") {
+            if (m_second_win.valid())
+                m_second_win.draw(renderer::DrawCall{
+                    .slice = slice, .topology = topology,
+                    .mode  = mode,  .color    = color, .mvp = mvp
+                });
+        }
+        // else: unknown target — no-op
     };
 
     api.math_font_body  = [this]() -> ImFont* { return m_renderer.font_math_body();  };
