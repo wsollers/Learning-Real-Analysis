@@ -346,6 +346,31 @@ private:
             m_api.submit_to(RenderTarget::Contour2D, wl, Topology::LineList,
                             DrawMode::VertexColor, {1,1,1,1}, mvp);
         }
+
+        for (const auto& curve : m_curves) {
+            const u32 n = curve.trail_vertex_count();
+            if (n < 2) continue;
+
+            auto tr = m_api.acquire(n);
+            curve.tessellate_trail({tr.vertices(), n});
+            for (u32 i = 0; i < n; ++i) {
+                tr.vertices()[i].pos.z = 0.f;
+                tr.vertices()[i].color.a = std::max(tr.vertices()[i].color.a, 0.65f);
+            }
+            m_api.submit_to(RenderTarget::Contour2D, tr, Topology::LineStrip,
+                            DrawMode::VertexColor, {1,1,1,1}, mvp);
+
+            const glm::vec2 uv = curve.head_uv();
+            constexpr float r = 0.055f;
+            auto dot = m_api.acquire(4);
+            const Vec4 col = curve.head_colour();
+            dot.vertices()[0] = {{uv.x - r, uv.y, 0.f}, col};
+            dot.vertices()[1] = {{uv.x + r, uv.y, 0.f}, col};
+            dot.vertices()[2] = {{uv.x, uv.y - r, 0.f}, col};
+            dot.vertices()[3] = {{uv.x, uv.y + r, 0.f}, col};
+            m_api.submit_to(RenderTarget::Contour2D, dot, Topology::LineList,
+                            DrawMode::VertexColor, {1,1,1,1}, mvp);
+        }
     }
 
     [[nodiscard]] Vec3 project_analysis_point(Vec3 p) const noexcept {
@@ -362,6 +387,55 @@ private:
         const float depth    = sp * yr + cp * zr;
         const float inv_zoom = 1.f / std::max(m_vp3d.zoom, 0.05f);
         return {xr * inv_zoom, screen_y * inv_zoom, depth * 0.01f};
+    }
+
+    [[nodiscard]] static ImU32 to_imgui_color(Vec4 c) noexcept {
+        const auto u8c = [](float v) -> int {
+            return static_cast<int>(std::clamp(v, 0.f, 1.f) * 255.f + 0.5f);
+        };
+        return IM_COL32(u8c(c.r), u8c(c.g), u8c(c.b), u8c(c.a));
+    }
+
+    [[nodiscard]] ImVec2 projected_to_canvas(Vec3 p, const ImVec2& cpos, const ImVec2& csz) const noexcept {
+        const float ext = m_surface->extent();
+        const float aspect = csz.x / std::max(csz.y, 1.f);
+        const float half_x = aspect >= 1.f ? ext * aspect : ext;
+        const float half_y = aspect >= 1.f ? ext : ext / aspect;
+        const float nx = (p.x + half_x) / (2.f * half_x);
+        const float ny = 1.f - ((p.y + half_y) / (2.f * half_y));
+        return {cpos.x + nx * csz.x, cpos.y + ny * csz.y};
+    }
+
+    void draw_projected_imgui_surface(const ImVec2& cpos, const ImVec2& csz) {
+        rebuild_geometry_if_needed();
+        ImDrawList* dl = ImGui::GetWindowDrawList();
+        dl->PushClipRect(cpos, ImVec2(cpos.x + csz.x, cpos.y + csz.y), true);
+
+        for (u32 i = 0; i + 2 < m_fill_vcount; i += 3) {
+            const Vertex& a = m_fill_cache[i + 0];
+            const Vertex& b = m_fill_cache[i + 1];
+            const Vertex& c = m_fill_cache[i + 2];
+            const ImVec2 pa = projected_to_canvas(project_analysis_point(a.pos), cpos, csz);
+            const ImVec2 pb = projected_to_canvas(project_analysis_point(b.pos), cpos, csz);
+            const ImVec2 pc = projected_to_canvas(project_analysis_point(c.pos), cpos, csz);
+            dl->AddTriangleFilled(pa, pb, pc, to_imgui_color(a.color));
+        }
+
+        const ImU32 wire_col = IM_COL32(215, 235, 255, 105);
+        for (u32 i = 0; i + 1 < m_wire_vcount; i += 2) {
+            const ImVec2 a = projected_to_canvas(project_analysis_point(m_wire_cache[i + 0].pos), cpos, csz);
+            const ImVec2 b = projected_to_canvas(project_analysis_point(m_wire_cache[i + 1].pos), cpos, csz);
+            dl->AddLine(a, b, wire_col, 1.0f);
+        }
+
+        for (const auto& curve : m_curves) {
+            if (!curve.has_trail()) continue;
+            const Vec3 hp = curve.head_world();
+            const ImVec2 p = projected_to_canvas(project_analysis_point(hp), cpos, csz);
+            dl->AddCircleFilled(p, 4.f, IM_COL32(255, 230, 80, 235), 16);
+        }
+
+        dl->PopClipRect();
     }
 
     void submit_projected_primary(const Mat4& mvp) {
@@ -424,7 +498,7 @@ private:
         }
 
         const Mat4 mvp = canvas_mvp(cpos, csz);
-        submit_projected_primary(mvp);
+        draw_projected_imgui_surface(cpos, csz);
 
         // Particles
         m_particle_renderer.show_frenet = false;

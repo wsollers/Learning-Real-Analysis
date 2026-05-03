@@ -246,7 +246,6 @@ AnimatedCurve AnimatedCurve::with_equation(
                     surface, owned_equation.get(), integrator);
     c.m_owned_equation = std::move(owned_equation);
     // m_equation already points to m_owned_equation.get() via the constructor
-    c.m_constraints.push_back(std::make_unique<ndde::sim::DomainConfinement>());
     return c;
 }
 
