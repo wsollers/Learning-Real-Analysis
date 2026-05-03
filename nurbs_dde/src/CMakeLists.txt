@@ -88,6 +88,7 @@ add_executable(nurbs_dde
     app/SurfaceSimScenePanels.cpp
     app/SurfaceSimSceneRender.cpp
     app/SurfaceSimSceneSimulation.cpp
+    app/SurfaceSimView.cpp
     app/ParticleRenderer.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

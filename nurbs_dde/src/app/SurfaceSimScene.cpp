@@ -15,7 +15,7 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     , m_surface(std::make_unique<GaussianSurface>())
     , m_particles(m_surface.get())
     , m_curves(m_particles.particles())
-    , m_particle_renderer(m_api)  // B2: owns a copy of EngineAPI (value type)
+    , m_view(m_api)
 {
     m_vp3d.base_extent = 6.f;
     m_vp3d.zoom        = 1.0f;

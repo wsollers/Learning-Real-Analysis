@@ -9,7 +9,7 @@
 // Responsibilities that remain here:
 //   - Own m_surface, m_curves, integrators, equations
 //   - Call advance_simulation(dt)
-//   - Call m_particle_renderer.submit_all()
+//   - Delegate surface and particle drawing to SurfaceSimView
 //   - Call scene-specific PanelHost panels + draw_hotkey_panel()
 //   - Surface wireframe + filled geometry caches
 //   - Camera orbit + canvas MVP
@@ -53,9 +53,9 @@
 #include "app/CoordDebugPanel.hpp"
 #include "app/PanelHost.hpp"
 #include "app/ParticleInspectorPanel.hpp"
-#include "app/ParticleRenderer.hpp"  // B2: extracted particle rendering
 #include "app/ParticleSystem.hpp"
 #include "app/SurfaceSimSceneState.hpp"
+#include "app/SurfaceSimView.hpp"
 
 #include "app/HotkeyManager.hpp"  // decoupled hotkey registration and dispatch
 #include <imgui.h>
@@ -80,7 +80,7 @@ private:
     std::unique_ptr<ndde::math::ISurface>  m_surface;   // Step 3: owns the surface
     ParticleSystem                         m_particles;
     std::vector<AnimatedCurve>&            m_curves;    ///< all active particles
-    ParticleRenderer                       m_particle_renderer; // B2
+    SurfaceSimView                         m_view;
     PanelHost m_panels;
     CoordDebugPanel  m_coord_debug;
 
@@ -115,8 +115,7 @@ private:
     void register_bindings();
     void register_panels();
 
-    [[nodiscard]] Mat4 canvas_mvp_3d(const ImVec2& cpos,
-                                      const ImVec2& csz) const noexcept;
+    [[nodiscard]] SurfaceSimViewContext view_context() noexcept;
 
     void draw_panel_surface();    ///< surface selector + display mode body
     void draw_panel_particles();  ///< pause, speed, spawn counts, clear, export body
@@ -130,18 +129,7 @@ private:
     void draw_contour_2d_window();
     void export_session(const std::string& path) const;
 
-    void submit_wireframe_3d(const Mat4& mvp);
-    void submit_filled_3d(const Mat4& mvp);
-
     void submit_contour_second_window();
-
-    void update_hover(const ImVec2& canvas_pos, const ImVec2& canvas_size,
-                      bool is_3d);
-
-    static constexpr f32 k_levels[] = {
-        -1.2f,-0.9f,-0.6f,-0.3f, 0.f, 0.3f, 0.6f, 0.9f, 1.2f
-    };
-    static constexpr u32 k_n_levels = 9u;
 };
 
 } // namespace ndde

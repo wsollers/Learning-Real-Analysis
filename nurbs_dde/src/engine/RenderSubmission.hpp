@@ -3,8 +3,10 @@
 // Small renderer-neutral helpers over EngineAPI arena allocation/submission.
 
 #include "engine/EngineAPI.hpp"
+#include "engine/PrimitiveRenderer.hpp"
 
 #include <algorithm>
+#include <utility>
 #include <span>
 
 namespace ndde {
@@ -20,10 +22,9 @@ inline void submit_generated_vertices(EngineAPI& api,
                                       WriteVertex&& write_vertex)
 {
     if (vertex_count == 0) return;
-    auto slice = api.acquire(vertex_count);
-    for (u32 i = 0; i < vertex_count; ++i)
-        write_vertex(slice.vertices()[i], i);
-    api.submit_to(target, slice, topology, mode, color, mvp);
+    PrimitiveRenderer primitives(api);
+    primitives.generated(target, vertex_count, topology, mode, color, mvp,
+                         std::forward<WriteVertex>(write_vertex));
 }
 
 inline void submit_vertices(EngineAPI& api,
@@ -36,10 +37,8 @@ inline void submit_vertices(EngineAPI& api,
                             Mat4 mvp)
 {
     const u32 count = std::min(vertex_count, static_cast<u32>(vertices.size()));
-    submit_generated_vertices(api, target, count, topology, mode, color, mvp,
-        [&vertices](Vertex& out, u32 i) {
-            out = vertices[i];
-        });
+    PrimitiveRenderer primitives(api);
+    primitives.vertices(target, vertices, count, topology, mode, color, mvp);
 }
 
 template <class TransformVertex>
