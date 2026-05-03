@@ -5,6 +5,7 @@
 #include "app/ProjectedParticleOverlay.hpp"
 #include "app/SurfaceMeshCache.hpp"
 #include "app/Viewport.hpp"
+#include "engine/CanvasInput.hpp"
 #include "numeric/ops.hpp"
 
 #include <imgui.h>
@@ -35,34 +36,30 @@ public:
                      const ParticleSystem& particles,
                      const ProjectedSurfaceCanvasOptions& options)
     {
-        const ImVec2 cpos = ImGui::GetCursorScreenPos();
         const ImVec2 csz = ImGui::GetContentRegionAvail();
+        const CanvasInputFrame canvas = begin_canvas_input(options.canvas_id, csz);
+        const ImVec2 cpos = canvas.pos;
         viewport.fb_w = csz.x; viewport.fb_h = csz.y;
         viewport.dp_w = csz.x; viewport.dp_h = csz.y;
 
-        ImGui::InvisibleButton(options.canvas_id, csz,
-            ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_MouseButtonMiddle);
-
-        if (ImGui::IsItemHovered()) {
-            const ImGuiIO& io = ImGui::GetIO();
-            if (ops::abs(io.MouseWheel) > 0.f)
-                viewport.zoom = ops::clamp(viewport.zoom * (1.f + 0.12f * io.MouseWheel), 0.05f, 20.f);
-            if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) || ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
-                viewport.orbit(io.MouseDelta.x, io.MouseDelta.y);
+        if (canvas.hovered) {
+            if (ops::abs(canvas.mouse_wheel) > 0.f)
+                viewport.zoom = ops::clamp(viewport.zoom * (1.f + 0.12f * canvas.mouse_wheel), 0.05f, 20.f);
+            if (canvas.orbit_drag)
+                viewport.orbit(canvas.mouse_delta.x, canvas.mouse_delta.y);
         }
 
         rebuild(surface, mesh, options);
         draw_surface(mesh, viewport, surface.extent(), cpos, csz);
 
         ImDrawList* dl = ImGui::GetWindowDrawList();
-        const bool hovered = ImGui::IsItemHovered();
         [[maybe_unused]] const ProjectedParticleOverlayResult overlay =
             draw_projected_particle_overlay(dl, particles.particles(), cpos, csz,
                 [&viewport, ext = surface.extent(), cpos, csz](Vec3 p) {
                     return projected_to_canvas(project_point(p, viewport), cpos, csz, ext);
                 },
                 ProjectedParticleOverlayOptions{
-                    .hover_enabled = hovered,
+                    .hover_enabled = canvas.hovered,
                     .show_frenet = options.show_frenet,
                     .show_osculating_circle = options.show_osculating_circle,
                     .frame_scale = options.overlay_frame_scale
