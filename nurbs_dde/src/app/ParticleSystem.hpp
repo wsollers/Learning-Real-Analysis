@@ -24,6 +24,7 @@ public:
     {}
 
     void set_surface(const ndde::math::ISurface* surface) noexcept { m_surface = surface; }
+    [[nodiscard]] const ndde::math::ISurface* surface() const noexcept { return m_surface; }
 
     [[nodiscard]] ParticleFactory factory() const noexcept { return ParticleFactory(m_surface); }
     [[nodiscard]] std::mt19937& rng() noexcept { return m_rng; }

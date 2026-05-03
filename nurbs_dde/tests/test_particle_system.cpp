@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "app/ParticleBehaviors.hpp"
+#include "app/ParticleSwarmFactory.hpp"
 #include "app/ParticleSystem.hpp"
 #include "math/Surfaces.hpp"
 
@@ -133,4 +134,202 @@ TEST(ParticleSystem, FiniteTrailTruncatesAndPersistentTrailDoesNot) {
     for (int i = 0; i < 12; ++i)
         persistent_system.update(0.1f, 1.f, static_cast<float>(i + 1) * 0.1f);
     EXPECT_GT(persistent.trail_vertex_count(), 3u);
+}
+
+TEST(ParticleSwarmFactory, BrownianCloudSpawnsRequestedCount) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 7u);
+    ndde::ParticleSwarmFactory swarms(system);
+
+    const ndde::SwarmBuildResult result = swarms.brownian_cloud({
+        .count = 12u,
+        .center = {0.f, 0.f},
+        .radius = 1.f,
+        .role = ParticleRole::Avoider,
+        .label = "Test Cloud"
+    });
+
+    EXPECT_EQ(result.size(), 12u);
+    EXPECT_EQ(system.size(), 12u);
+    EXPECT_EQ(system.particles().front().particle_role(), ParticleRole::Avoider);
+    EXPECT_NE(system.particles().front().metadata_label().find("Brownian"), std::string::npos);
+}
+
+TEST(ParticleSwarmFactory, LeaderPursuitAddsLeadersChasersAndCaptureGoal) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 8u);
+    ndde::ParticleSwarmFactory swarms(system);
+
+    const ndde::SwarmBuildResult result = swarms.leader_pursuit({
+        .leader_count = 2u,
+        .chaser_count = 5u,
+        .center = {0.f, 0.f},
+        .capture_radius = 0.25f
+    });
+
+    EXPECT_EQ(result.size(), 7u);
+    EXPECT_EQ(system.size(), 7u);
+    EXPECT_EQ(system.particles()[0].particle_role(), ParticleRole::Leader);
+    EXPECT_EQ(system.particles()[2].particle_role(), ParticleRole::Chaser);
+    EXPECT_EQ(system.evaluate_goals(0.f), ndde::GoalStatus::Running);
+}
+
+TEST(ParticleSwarmFactory, ContourBandBuildsLevelCurveParticles) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 9u);
+    ndde::ParticleSwarmFactory swarms(system);
+
+    ndde::sim::LevelCurveWalker::Params walker;
+    walker.epsilon = 0.20f;
+    walker.walk_speed = 0.4f;
+
+    const ndde::SwarmBuildResult result = swarms.contour_band({
+        .count = 6u,
+        .center = {0.f, 0.f},
+        .radius = 0.8f,
+        .role = ParticleRole::Leader,
+        .walker = walker,
+        .label = "Test Contour"
+    });
+
+    EXPECT_EQ(result.size(), 6u);
+    EXPECT_EQ(system.size(), 6u);
+    EXPECT_NE(system.particles().front().metadata_label().find("LevelCurveWalker"), std::string::npos);
+}
+
+TEST(ParticleSystem, GradientDriftMovesDownhillOnParaboloid) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 10u);
+
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({2.f, 0.f})
+        .with_behavior<ndde::GradientDriftBehavior>(ndde::GradientDriftBehavior::Params{
+            .mode = ndde::GradientDriftBehavior::Mode::Downhill,
+            .speed = 1.f
+        }));
+
+    const float before = particle.head_uv().x;
+    system.update(0.1f, 1.f, 0.1f);
+    EXPECT_LT(particle.head_uv().x, before);
+}
+
+TEST(ParticleSystem, OrbitBehaviorCorrectsTowardRadius) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 11u);
+
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({3.f, 0.f})
+        .with_behavior<ndde::OrbitBehavior>(ndde::OrbitBehavior::Params{
+            .center = {0.f, 0.f},
+            .radius = 1.f,
+            .angular_speed = 0.f,
+            .radial_strength = 1.f
+        }));
+
+    const float before = particle.head_uv().x;
+    system.update(0.1f, 1.f, 0.1f);
+    EXPECT_LT(particle.head_uv().x, before);
+}
+
+TEST(ParticleSystem, SlopeVelocityTransformScalesFinalVelocityPerParticle) {
+    auto surface = ndde::math::Paraboloid(0.25f, 10.f, -10.f, 10.f);
+
+    ndde::ParticleSystem baseline_system(&surface, 12u);
+    ndde::Particle& baseline = baseline_system.spawn(baseline_system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({1.f, 0.f})
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{1.f, 0.f}));
+
+    ndde::ParticleSystem transformed_system(&surface, 13u);
+    ndde::Particle& transformed = transformed_system.spawn(transformed_system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({1.f, 0.f})
+        .slope_velocity_transform(ndde::SlopeVelocityTransform{
+            .enabled = true,
+            .intercept = 1.f,
+            .slope_gain = 1.f,
+            .min_scale = 0.1f,
+            .max_scale = 3.f
+        })
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{1.f, 0.f}));
+
+    baseline_system.update(0.1f, 1.f, 0.1f);
+    transformed_system.update(0.1f, 1.f, 0.1f);
+
+    EXPECT_GT(transformed.head_uv().x - 1.f, baseline.head_uv().x - 1.f);
+    EXPECT_NE(transformed.metadata_label().find("Slope Velocity Transform"), std::string::npos);
+}
+
+TEST(ParticleSwarmFactory, GradientAvoidCentroidOrbitAndFlockingFamiliesBuild) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 12u);
+    ndde::ParticleSwarmFactory swarms(system);
+
+    const auto gradient = swarms.gradient_drift({
+        .count = 4u,
+        .center = {0.f, 0.f},
+        .radius = 0.6f,
+        .gradient = {.mode = ndde::GradientDriftBehavior::Mode::LevelTangent, .speed = 0.4f},
+        .label = "Test Gradient"
+    });
+
+    system.spawn(system.factory().particle()
+        .role(ParticleRole::Chaser)
+        .at({0.f, 0.f})
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{0.f, 0.f}));
+
+    const auto avoid = swarms.avoidance_swarm({
+        .count = 3u,
+        .center = {0.f, 0.f},
+        .radius = 0.8f,
+        .avoid_role = ParticleRole::Chaser,
+        .label = "Test Avoid"
+    });
+
+    const auto centroid = swarms.centroid_swarm({
+        .count = 3u,
+        .center = {1.f, 0.f},
+        .radius = 0.7f,
+        .role = ParticleRole::Leader,
+        .target_role = ParticleRole::Chaser,
+        .label = "Test Centroid"
+    });
+
+    const auto orbit = swarms.ring_orbit({
+        .count = 5u,
+        .center = {0.f, 0.f},
+        .radius = 1.1f,
+        .label = "Test Orbit"
+    });
+
+    const auto flock = swarms.flocking_swarm({
+        .count = 5u,
+        .center = {0.f, 0.f},
+        .radius = 1.2f,
+        .role = ParticleRole::Neutral,
+        .label = "Test Flock"
+    });
+
+    EXPECT_EQ(gradient.size(), 4u);
+    EXPECT_EQ(avoid.size(), 3u);
+    EXPECT_EQ(centroid.size(), 3u);
+    EXPECT_EQ(orbit.size(), 5u);
+    EXPECT_EQ(flock.size(), 5u);
+
+    bool saw_gradient = false, saw_avoid = false, saw_centroid = false, saw_orbit = false, saw_flock = false;
+    for (const ndde::Particle& particle : system.particles()) {
+        const std::string label = particle.metadata_label();
+        saw_gradient = saw_gradient || label.find("Gradient Level Tangent") != std::string::npos;
+        saw_avoid = saw_avoid || label.find("Avoid") != std::string::npos;
+        saw_centroid = saw_centroid || label.find("Centroid Seek") != std::string::npos;
+        saw_orbit = saw_orbit || label.find("Orbit") != std::string::npos;
+        saw_flock = saw_flock || label.find("Flocking") != std::string::npos;
+    }
+    EXPECT_TRUE(saw_gradient);
+    EXPECT_TRUE(saw_avoid);
+    EXPECT_TRUE(saw_centroid);
+    EXPECT_TRUE(saw_orbit);
+    EXPECT_TRUE(saw_flock);
 }

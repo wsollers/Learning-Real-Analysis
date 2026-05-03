@@ -112,6 +112,8 @@ void Engine::start(const std::string& config_path) {
         "Sine-Rational Analysis", make_analysis_scene));
     m_simulations.add(std::make_unique<SceneSimulationRuntime>(
         "Multi-Well Centroid", make_multiwell_scene));
+    m_simulations.add(std::make_unique<SceneSimulationRuntime>(
+        "Wave Predator-Prey", make_wave_predator_prey_scene));
 
     for (std::size_t i = 0; i < m_simulations.size(); ++i)
         if (auto* sim = m_simulations.get(i))
@@ -296,6 +298,10 @@ void Engine::on_key_event(int key, int action, int mods) {
     }
     if (ctrl && !shift && key == GLFW_KEY_3) {
         m_pending_sim = 2;
+        return;
+    }
+    if (ctrl && !shift && key == GLFW_KEY_4) {
+        m_pending_sim = 3;
         return;
     }
     if (!ctrl && !shift && key == GLFW_KEY_F12) {

@@ -6,6 +6,7 @@
 #include "sim/IEquation.hpp"
 #include "numeric/ops.hpp"
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -234,6 +235,93 @@ private:
     Params m_p;
 };
 
+class GradientDriftBehavior final : public IParticleBehavior {
+public:
+    enum class Mode : u8 {
+        Uphill,
+        Downhill,
+        LevelTangent
+    };
+
+    struct Params {
+        Mode mode = Mode::Uphill;
+        float speed = 0.6f;
+    };
+
+    explicit GradientDriftBehavior(Params p = {}) : m_p(p) {}
+
+    [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
+                                     const ndde::math::ISurface& surface,
+                                     float,
+                                     const SimulationContext&,
+                                     ParticleId) const override;
+
+    [[nodiscard]] std::string metadata_label() const override;
+
+private:
+    Params m_p;
+};
+
+class OrbitBehavior final : public IParticleBehavior {
+public:
+    struct Params {
+        glm::vec2 center{0.f, 0.f};
+        float radius = 1.f;
+        float angular_speed = 0.7f;
+        float radial_strength = 0.45f;
+        bool clockwise = false;
+    };
+
+    explicit OrbitBehavior(Params p = {}) : m_p(p) {}
+
+    [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
+                                     const ndde::math::ISurface& surface,
+                                     float,
+                                     const SimulationContext&,
+                                     ParticleId) const override;
+
+    [[nodiscard]] std::string metadata_label() const override { return "Orbit"; }
+
+private:
+    Params m_p;
+};
+
+class FlockingBehavior final : public IParticleBehavior {
+public:
+    struct Params {
+        ParticleRole role = ParticleRole::Neutral;
+        float neighbor_radius = 1.2f;
+        float separation_radius = 0.35f;
+        float separation_weight = 1.0f;
+        float cohesion_weight = 0.45f;
+        float alignment_weight = 0.35f;
+        float speed = 0.65f;
+    };
+
+    explicit FlockingBehavior(Params p = {}) : m_p(p) {}
+
+    [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
+                                     const ndde::math::ISurface& surface,
+                                     float,
+                                     const SimulationContext& context,
+                                     ParticleId owner) const override;
+
+    [[nodiscard]] std::string metadata_label() const override { return "Flocking"; }
+
+private:
+    Params m_p;
+};
+
+struct SlopeVelocityTransform {
+    bool enabled = false;
+    float intercept = 1.f;
+    float slope_gain = 0.f;
+    float min_scale = 0.f;
+    float max_scale = std::numeric_limits<float>::infinity();
+
+    [[nodiscard]] static SlopeVelocityTransform identity() noexcept { return {}; }
+};
+
 class BehaviorStack final : public ndde::sim::IEquation {
 public:
     BehaviorStack() = default;
@@ -249,6 +337,10 @@ public:
         m_behaviors.push_back({std::move(behavior), weight});
     }
 
+    void set_velocity_transform(SlopeVelocityTransform transform) noexcept {
+        m_velocity_transform = transform;
+    }
+
     [[nodiscard]] glm::vec2 update(ndde::sim::ParticleState& state,
                                    const ndde::math::ISurface& surface,
                                    float t) const override {
@@ -256,7 +348,7 @@ public:
         glm::vec2 sum{0.f, 0.f};
         for (const auto& entry : m_behaviors)
             sum += entry.weight * entry.behavior->velocity(state, surface, t, *m_context, m_owner);
-        return sum;
+        return apply_velocity_transform(sum, state, surface);
     }
 
     [[nodiscard]] glm::vec2 noise_coefficient(const ndde::sim::ParticleState& state,
@@ -310,6 +402,25 @@ private:
     std::vector<Entry> m_behaviors;
     const SimulationContext* m_context = nullptr;
     ParticleId m_owner = 0;
+    SlopeVelocityTransform m_velocity_transform{};
+
+    [[nodiscard]] glm::vec2 apply_velocity_transform(glm::vec2 velocity,
+                                                     const ndde::sim::ParticleState& state,
+                                                     const ndde::math::ISurface& surface) const noexcept {
+        if (!m_velocity_transform.enabled) return velocity;
+        const float speed = ops::length(velocity);
+        if (speed < 1e-7f) return velocity;
+
+        const glm::vec2 dir = velocity / speed;
+        const glm::vec3 du = surface.du(state.uv.x, state.uv.y);
+        const glm::vec3 dv = surface.dv(state.uv.x, state.uv.y);
+        const float directional_derivative = du.z * dir.x + dv.z * dir.y;
+        const float scale = ops::clamp(
+            m_velocity_transform.intercept + m_velocity_transform.slope_gain * directional_derivative,
+            m_velocity_transform.min_scale,
+            m_velocity_transform.max_scale);
+        return velocity * scale;
+    }
 };
 
 } // namespace ndde

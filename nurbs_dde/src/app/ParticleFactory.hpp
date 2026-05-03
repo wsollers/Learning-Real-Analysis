@@ -9,6 +9,7 @@
 #include "sim/IConstraint.hpp"
 #include "sim/MilsteinIntegrator.hpp"
 #include <memory>
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -76,6 +77,36 @@ public:
     }
     ParticleBuilder&& stochastic(bool enabled = true) && noexcept {
         this->stochastic(enabled);
+        return std::move(*this);
+    }
+
+    ParticleBuilder& slope_velocity_transform(SlopeVelocityTransform transform) & noexcept {
+        transform.enabled = true;
+        m_stack.set_velocity_transform(transform);
+        return *this;
+    }
+    ParticleBuilder&& slope_velocity_transform(SlopeVelocityTransform transform) && noexcept {
+        this->slope_velocity_transform(transform);
+        return std::move(*this);
+    }
+
+    ParticleBuilder& slope_velocity_transform(float intercept,
+                                              float slope_gain,
+                                              float min_scale = 0.f,
+                                              float max_scale = std::numeric_limits<float>::infinity()) & noexcept {
+        return slope_velocity_transform(SlopeVelocityTransform{
+            .enabled = true,
+            .intercept = intercept,
+            .slope_gain = slope_gain,
+            .min_scale = min_scale,
+            .max_scale = max_scale
+        });
+    }
+    ParticleBuilder&& slope_velocity_transform(float intercept,
+                                               float slope_gain,
+                                               float min_scale = 0.f,
+                                               float max_scale = std::numeric_limits<float>::infinity()) && noexcept {
+        this->slope_velocity_transform(intercept, slope_gain, min_scale, max_scale);
         return std::move(*this);
     }
 

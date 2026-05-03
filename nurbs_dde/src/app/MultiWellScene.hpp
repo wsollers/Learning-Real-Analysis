@@ -6,65 +6,33 @@
 #include "app/HotkeyManager.hpp"
 #include "app/PanelHost.hpp"
 #include "app/SimulationSceneBase.hpp"
+#include "app/ContourWindowRenderer.hpp"
 #include "app/ParticleBehaviors.hpp"
 #include "app/ParticleInspectorPanel.hpp"
-#include "app/ParticleRenderer.hpp"
+#include "app/ProjectedSurfaceCanvas.hpp"
 #include "app/ParticleSystem.hpp"
+#include "app/SurfaceRegistry.hpp"
 #include "app/SurfaceMeshCache.hpp"
 #include "app/Viewport.hpp"
-#include "math/Surfaces.hpp"
 #include "math/GeometryTypes.hpp"
 #include "numeric/ops.hpp"
 
 #include <imgui.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
-#include <cstring>
 #include <memory>
 #include <numbers>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
-
-class MultiWellWaveSurface final : public ndde::math::ISurface {
-public:
-    explicit MultiWellWaveSurface(float extent = 4.f) : m_extent(extent) {}
-
-    [[nodiscard]] Vec3 evaluate(float x, float y, float = 0.f) const override {
-        return {x, y, height(x, y)};
-    }
-
-    [[nodiscard]] float height(float x, float y) const noexcept {
-        const float g0 = 1.15f * ops::exp(-((x - 1.4f) * (x - 1.4f) + (y - 0.6f) * (y - 0.6f)));
-        const float g1 = -0.85f * ops::exp(-(((x + 1.2f) * (x + 1.2f)) / 0.8f
-                                            + ((y + 1.0f) * (y + 1.0f)) / 1.4f));
-        const float g2 = 0.65f * ops::exp(-(((x - 0.2f) * (x - 0.2f)) / 1.8f
-                                           + ((y - 1.6f) * (y - 1.6f)) / 0.6f));
-        const float w0 = 0.18f * ops::sin(2.f * x) * ops::cos(2.f * y);
-        const float w1 = 0.08f * ops::sin(4.f * x + y) * ops::cos(3.f * y - x);
-        return g0 + g1 + g2 + w0 + w1;
-    }
-
-    [[nodiscard]] float u_min(float = 0.f) const override { return -m_extent; }
-    [[nodiscard]] float u_max(float = 0.f) const override { return  m_extent; }
-    [[nodiscard]] float v_min(float = 0.f) const override { return -m_extent; }
-    [[nodiscard]] float v_max(float = 0.f) const override { return  m_extent; }
-    [[nodiscard]] float extent() const noexcept { return m_extent; }
-
-private:
-    float m_extent = 4.f;
-};
 
 class MultiWellScene final : public SimulationSceneBase {
 public:
     explicit MultiWellScene(EngineAPI api)
         : m_api(std::move(api))
-        , m_surface(std::make_unique<MultiWellWaveSurface>(4.f))
+        , m_surface(SurfaceRegistry::make_multi_well(4.f))
         , m_particles(m_surface.get())
-        , m_particle_renderer(m_api)
     {
         m_vp3d.base_extent = 5.f;
         m_vp3d.zoom = 1.f;
@@ -79,6 +47,10 @@ public:
             [this]{ spawn_showcase_service(); }, "Simulation");
         m_hotkeys.register_action(Chord::ctrl(ImGuiKey_P), "Pause / unpause",
             [this]{ m_paused = !m_paused; }, "Simulation");
+        m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_F), "Hover Frenet frame",
+            m_show_frenet, "Overlays");
+        m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_O), "Hover osculating circle",
+            m_show_osc, "Overlays");
         m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_H), "Hotkey panel",
             m_show_hotkeys, "Panels");
 
@@ -108,6 +80,8 @@ public:
             case GLFW_KEY_C: spawn_centroid_seeker(); break;
             case GLFW_KEY_R: spawn_showcase_service(); break;
             case GLFW_KEY_P: m_paused = !m_paused; break;
+            case GLFW_KEY_F: m_show_frenet = !m_show_frenet; break;
+            case GLFW_KEY_O: m_show_osc = !m_show_osc; break;
             case GLFW_KEY_H: m_show_hotkeys = !m_show_hotkeys; break;
             default: break;
         }
@@ -117,7 +91,6 @@ private:
     EngineAPI m_api;
     std::unique_ptr<MultiWellWaveSurface> m_surface;
     ParticleSystem m_particles;
-    ParticleRenderer m_particle_renderer;
     HotkeyManager m_hotkeys;
     PanelHost m_panels;
     Viewport m_vp3d;
@@ -125,6 +98,8 @@ private:
     u32 m_grid_lines = 70;
     float m_color_scale = 1.25f;
     u32 m_spawn_count = 0;
+    bool m_show_frenet = true;
+    bool m_show_osc = true;
 
     SurfaceMeshCache m_mesh;
 
@@ -233,82 +208,6 @@ private:
         });
     }
 
-    [[nodiscard]] Vec3 project_point(Vec3 p) const noexcept {
-        const float cy = ops::cos(m_vp3d.yaw);
-        const float sy = ops::sin(m_vp3d.yaw);
-        const float cp = ops::cos(m_vp3d.pitch);
-        const float sp = ops::sin(m_vp3d.pitch);
-        const float xr = cy * p.x - sy * p.y;
-        const float yr = sy * p.x + cy * p.y;
-        const float screen_y = cp * yr - sp * p.z;
-        const float inv_zoom = 1.f / ops::clamp(m_vp3d.zoom, 0.05f, 20.f);
-        return {xr * inv_zoom, screen_y * inv_zoom, (sp * yr + cp * p.z) * 0.01f};
-    }
-
-    [[nodiscard]] ImVec2 projected_to_canvas(Vec3 p, const ImVec2& cpos, const ImVec2& csz) const noexcept {
-        const float ext = m_surface->extent();
-        const float aspect = csz.x / std::max(csz.y, 1.f);
-        const float half_x = aspect >= 1.f ? ext * aspect : ext;
-        const float half_y = aspect >= 1.f ? ext : ext / aspect;
-        const float nx = (p.x + half_x) / (2.f * half_x);
-        const float ny = 1.f - ((p.y + half_y) / (2.f * half_y));
-        return {cpos.x + nx * csz.x, cpos.y + ny * csz.y};
-    }
-
-    [[nodiscard]] static ImU32 to_imgui_color(Vec4 c) noexcept {
-        const auto u8 = [](float v) { return static_cast<int>(ops::clamp(v, 0.f, 1.f) * 255.f + 0.5f); };
-        return IM_COL32(u8(c.r), u8(c.g), u8(c.b), u8(c.a));
-    }
-
-    void draw_projected_surface(const ImVec2& cpos, const ImVec2& csz) {
-        rebuild_geometry_if_needed();
-        ImDrawList* dl = ImGui::GetWindowDrawList();
-        dl->PushClipRect(cpos, ImVec2(cpos.x + csz.x, cpos.y + csz.y), true);
-        for (u32 i = 0; i + 2 < m_mesh.fill_count(); i += 3) {
-            const Vertex& a = m_mesh.fill_vertices()[i];
-            const Vertex& b = m_mesh.fill_vertices()[i + 1];
-            const Vertex& c = m_mesh.fill_vertices()[i + 2];
-            dl->AddTriangleFilled(
-                projected_to_canvas(project_point(a.pos), cpos, csz),
-                projected_to_canvas(project_point(b.pos), cpos, csz),
-                projected_to_canvas(project_point(c.pos), cpos, csz),
-                to_imgui_color(a.color));
-        }
-        for (u32 i = 0; i + 1 < m_mesh.wire_count(); i += 2) {
-            dl->AddLine(projected_to_canvas(project_point(m_mesh.wire_vertices()[i].pos), cpos, csz),
-                        projected_to_canvas(project_point(m_mesh.wire_vertices()[i + 1].pos), cpos, csz),
-                        IM_COL32(235, 245, 255, 88), 1.f);
-        }
-        for (const Particle& particle : m_particles.particles()) {
-            if (!particle.has_trail()) continue;
-            const ImVec2 p = projected_to_canvas(project_point(particle.head_world()), cpos, csz);
-            dl->AddCircleFilled(p, 4.f, to_imgui_color(particle.head_colour()), 16);
-        }
-        dl->PopClipRect();
-    }
-
-    [[nodiscard]] Mat4 canvas_mvp(const ImVec2& cpos, const ImVec2& csz) const noexcept {
-        const Vec2 sw = m_api.viewport_size();
-        const float swx = sw.x > 0.f ? sw.x : 1.f;
-        const float swy = sw.y > 0.f ? sw.y : 1.f;
-        const float cw = csz.x > 0.f ? csz.x : 1.f;
-        const float ch = csz.y > 0.f ? csz.y : 1.f;
-        const ImVec2 vp0 = ImGui::GetMainViewport()->Pos;
-        const float sx = cw / swx;
-        const float sy = ch / swy;
-        const float bx = 2.f * (cpos.x - vp0.x) / swx + sx - 1.f;
-        const float by = -(2.f * (cpos.y - vp0.y) / swy + sy - 1.f);
-        Mat4 remap(0.f);
-        remap[0][0] = sx; remap[1][1] = sy; remap[2][2] = 1.f;
-        remap[3][0] = bx; remap[3][1] = by; remap[3][3] = 1.f;
-        const float ext = m_surface->extent();
-        const float aspect = cw / ch;
-        const Mat4 ortho = aspect >= 1.f
-            ? glm::ortho(-ext * aspect, ext * aspect, -ext, ext, -10.f, 10.f)
-            : glm::ortho(-ext, ext, -ext / aspect, ext / aspect, -10.f, 10.f);
-        return remap * ortho;
-    }
-
     void draw_canvas_3d() {
         ImGui::SetNextWindowPos(ImVec2(330.f, 20.f), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(850.f, 700.f), ImGuiCond_FirstUseEver);
@@ -316,57 +215,26 @@ private:
         constexpr ImGuiWindowFlags flags =
             ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBackground;
         ImGui::Begin("Multi-Well 3D", nullptr, flags);
-        const ImVec2 cpos = ImGui::GetCursorScreenPos();
-        const ImVec2 csz = ImGui::GetContentRegionAvail();
-        ImGui::InvisibleButton("multiwell_canvas", csz,
-            ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_MouseButtonMiddle);
-        if (ImGui::IsItemHovered()) {
-            const ImGuiIO& io = ImGui::GetIO();
-            if (ops::abs(io.MouseWheel) > 0.f)
-                m_vp3d.zoom = ops::clamp(m_vp3d.zoom * (1.f + 0.12f * io.MouseWheel), 0.05f, 20.f);
-            if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) || ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
-                m_vp3d.orbit(io.MouseDelta.x, io.MouseDelta.y);
-        }
-        const Mat4 mvp = canvas_mvp(cpos, csz);
-        draw_projected_surface(cpos, csz);
-        m_particle_renderer.show_frenet = false;
-        m_particle_renderer.submit_all(m_particles.particles(), *m_surface, m_sim_time, mvp, -1, -1, false);
-        ImDrawList* dl = ImGui::GetWindowDrawList();
-        dl->AddText(ImVec2(cpos.x + 8.f, cpos.y + 6.f), IM_COL32(220, 220, 220, 190),
-            "Right-drag: orbit   Scroll: zoom   Ctrl+A: avoider   Ctrl+C: centroid seeker");
-        if (m_paused)
-            dl->AddText(ImVec2(cpos.x + 8.f, cpos.y + 26.f), IM_COL32(255, 210, 60, 240), "PAUSED  [Ctrl+P]");
+        ProjectedSurfaceCanvas::draw(*m_surface, m_mesh, m_vp3d, m_particles, ProjectedSurfaceCanvasOptions{
+            .grid_lines = m_grid_lines,
+            .color_scale = m_color_scale,
+            .wire_color = {0.92f, 0.96f, 1.f, 0.32f},
+            .show_frenet = m_show_frenet,
+            .show_osculating_circle = m_show_osc,
+            .overlay_frame_scale = 0.34f,
+            .canvas_id = "multiwell_canvas",
+            .help_text = "Right-drag: orbit   Scroll: zoom   Ctrl+A: avoider   Ctrl+C: centroid seeker",
+            .paused = m_paused
+        });
         ImGui::End();
     }
 
     void submit_contour_second_window() {
-        const Vec2 sz = m_api.viewport_size2();
-        if (sz.x <= 0.f || sz.y <= 0.f) return;
         rebuild_geometry_if_needed();
-        const float ext = m_surface->extent();
-        const float aspect = sz.x / std::max(sz.y, 1.f);
-        const Mat4 mvp = aspect >= 1.f
-            ? glm::ortho(-ext * aspect, ext * aspect, -ext, ext, -1.f, 1.f)
-            : glm::ortho(-ext, ext, -ext / aspect, ext / aspect, -1.f, 1.f);
-
-        auto fill = m_api.acquire(m_mesh.contour_count());
-        for (u32 i = 0; i < m_mesh.contour_count(); ++i) {
-            fill.vertices()[i] = m_mesh.contour_vertices()[i];
-            fill.vertices()[i].pos.z = 0.f;
-        }
-        m_api.submit_to(RenderTarget::Contour2D, fill, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
-
-        for (const Particle& particle : m_particles.particles()) {
-            const u32 n = particle.trail_vertex_count();
-            if (n < 2) continue;
-            auto trail = m_api.acquire(n);
-            particle.tessellate_trail({trail.vertices(), n});
-            for (u32 i = 0; i < n; ++i) {
-                trail.vertices()[i].pos.z = 0.f;
-                trail.vertices()[i].color.a = std::max(trail.vertices()[i].color.a, 0.70f);
-            }
-            m_api.submit_to(RenderTarget::Contour2D, trail, Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp);
-        }
+        submit_contour_window(m_api, m_mesh, m_particles, ContourWindowOptions{
+            .extent = m_surface->extent(),
+            .trail_alpha_floor = 0.70f
+        });
     }
 
     void draw_particles_body() {
@@ -378,6 +246,8 @@ private:
             m_mesh.mark_dirty();
         }
         ImGui::SliderFloat("Color scale##mw", &m_color_scale, 0.2f, 4.f, "%.2f");
+        ImGui::Checkbox("Hover Frenet  [Ctrl+F]", &m_show_frenet);
+        ImGui::Checkbox("Osculating circle  [Ctrl+O]", &m_show_osc);
         if (ImGui::Button("Spawn avoider  [Ctrl+A]", ImVec2(-1.f, 0.f))) spawn_avoider();
         if (ImGui::Button("Spawn centroid seeker  [Ctrl+C]", ImVec2(-1.f, 0.f))) spawn_centroid_seeker();
         if (ImGui::Button("Reset showcase  [Ctrl+R]", ImVec2(-1.f, 0.f))) spawn_showcase_service();

@@ -33,6 +33,7 @@
 #include "app/HotkeyManager.hpp"
 #include "app/PanelHost.hpp"
 #include "app/ParticleInspectorPanel.hpp"
+#include "app/ProjectedParticleOverlay.hpp"
 #include "app/SurfaceMeshCache.hpp"
 #include "app/Viewport.hpp"
 #include "app/ParticleSystem.hpp"
@@ -76,6 +77,10 @@ public:
             [this]{ spawn_walker(); }, "Walkers");
         m_hotkeys.register_action(Chord::ctrl(ImGuiKey_P), "Pause / unpause",
             [this]{ m_paused = !m_paused; }, "Simulation");
+        m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_F), "Hover Frenet frame",
+            m_show_frenet, "Overlays");
+        m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_O), "Hover osculating circle",
+            m_show_osc, "Overlays");
         m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_H), "Hotkey panel",
             m_show_hotkeys, "Panels");
 
@@ -104,6 +109,8 @@ public:
         switch (key) {
             case GLFW_KEY_W: spawn_walker(); break;
             case GLFW_KEY_P: m_paused = !m_paused; break;
+            case GLFW_KEY_F: m_show_frenet = !m_show_frenet; break;
+            case GLFW_KEY_O: m_show_osc = !m_show_osc; break;
             case GLFW_KEY_H: m_show_hotkeys = !m_show_hotkeys; break;
             default: break;
         }
@@ -125,6 +132,8 @@ private:
     std::vector<Vertex> m_projected_wire_cache;
     u32               m_grid_lines  = 60;
     float             m_curv_scale  = 3.f;
+    bool              m_show_frenet = true;
+    bool              m_show_osc = true;
 
     // Spawn params
     float m_epsilon    = 0.15f;
@@ -505,10 +514,19 @@ private:
         const Mat4 mvp = canvas_mvp(cpos, csz);
         draw_projected_imgui_surface(cpos, csz);
 
-        // Particles
-        m_particle_renderer.show_frenet = false;
-        m_particle_renderer.submit_all(m_particles.particles(), *m_surface, m_sim_time,
-                                       mvp, -1, -1, false);
+        ImDrawList* dl = ImGui::GetWindowDrawList();
+        const bool canvas_hovered = ImGui::IsItemHovered();
+        [[maybe_unused]] const ProjectedParticleOverlayResult overlay =
+            draw_projected_particle_overlay(dl, m_particles.particles(), cpos, csz,
+                [this, cpos, csz](Vec3 p) {
+                    return projected_to_canvas(project_analysis_point(p), cpos, csz);
+                },
+                ProjectedParticleOverlayOptions{
+                    .hover_enabled = canvas_hovered,
+                    .show_frenet = m_show_frenet,
+                    .show_osculating_circle = m_show_osc,
+                    .frame_scale = 0.32f
+                });
 
         // Level-band indicator lines per walker
         for (const auto& c : m_particles.particles()) {
@@ -528,7 +546,6 @@ private:
             }
         }
 
-        ImDrawList* dl = ImGui::GetWindowDrawList();
         dl->AddText(ImVec2(cpos.x+8, cpos.y+6),
             IM_COL32(200,200,200,180),
             "Right-drag: orbit   Scroll: zoom   Ctrl+W: add walker");
@@ -560,6 +577,8 @@ private:
             if (ImGui::SliderFloat("Color scale##as", &m_curv_scale, 0.1f, 10.f, "%.2f"))
                 m_mesh.mark_dirty();
             ImGui::TextDisabled("~%u k verts", (4u*m_grid_lines*(m_grid_lines+1u))/1000u);
+            ImGui::Checkbox("Hover Frenet  [Ctrl+F]", &m_show_frenet);
+            ImGui::Checkbox("Osculating circle  [Ctrl+O]", &m_show_osc);
         }
 
         ImGui::SeparatorText("At cursor (u,v)");
