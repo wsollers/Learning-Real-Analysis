@@ -45,8 +45,6 @@
 #include "numeric/ops.hpp"
 
 #include <imgui.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 #include <memory>
 #include <vector>
 #include <string>
@@ -100,18 +98,7 @@ public:
 
     [[nodiscard]] std::string_view name() const override { return "Analysis – Sine-Rational"; }
     void on_key_event(int key, int action, int mods) override {
-        if (action != GLFW_PRESS) return;
-        const bool ctrl = (mods & GLFW_MOD_CONTROL) != 0;
-        const bool shift = (mods & GLFW_MOD_SHIFT) != 0;
-        if (!ctrl || shift) return;
-        switch (key) {
-            case GLFW_KEY_W: spawn_walker(); break;
-            case GLFW_KEY_P: m_paused = !m_paused; break;
-            case GLFW_KEY_F: m_show_frenet = !m_show_frenet; break;
-            case GLFW_KEY_O: m_show_osc = !m_show_osc; break;
-            case GLFW_KEY_H: m_show_hotkeys = !m_show_hotkeys; break;
-            default: break;
-        }
+        (void)m_hotkeys.handle_key_event(key, action, mods);
     }
 
 private:
@@ -164,19 +151,11 @@ private:
     }
 
     [[nodiscard]] static ndde::sim::LevelCurveWalker* level_walker(AnimatedCurve& c) noexcept {
-        if (auto* eq = dynamic_cast<ndde::sim::LevelCurveWalker*>(c.equation()))
-            return eq;
-        if (auto* stack = dynamic_cast<BehaviorStack*>(c.equation()))
-            return stack->find_equation<ndde::sim::LevelCurveWalker>();
-        return nullptr;
+        return c.find_equation<ndde::sim::LevelCurveWalker>();
     }
 
     [[nodiscard]] static const ndde::sim::LevelCurveWalker* level_walker(const AnimatedCurve& c) noexcept {
-        if (const auto* eq = dynamic_cast<const ndde::sim::LevelCurveWalker*>(c.equation()))
-            return eq;
-        if (const auto* stack = dynamic_cast<const BehaviorStack*>(c.equation()))
-            return stack->find_equation<ndde::sim::LevelCurveWalker>();
-        return nullptr;
+        return c.find_equation<ndde::sim::LevelCurveWalker>();
     }
 
     void spawn_showcase_service() {

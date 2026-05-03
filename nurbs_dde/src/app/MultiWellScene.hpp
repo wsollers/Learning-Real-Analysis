@@ -18,8 +18,6 @@
 #include "numeric/ops.hpp"
 
 #include <imgui.h>
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 #include <algorithm>
 #include <memory>
 #include <numbers>
@@ -71,20 +69,7 @@ public:
     [[nodiscard]] std::string_view name() const override { return "Multi-Well Centroid"; }
 
     void on_key_event(int key, int action, int mods) override {
-        if (action != GLFW_PRESS) return;
-        const bool ctrl = (mods & GLFW_MOD_CONTROL) != 0;
-        const bool shift = (mods & GLFW_MOD_SHIFT) != 0;
-        if (!ctrl || shift) return;
-        switch (key) {
-            case GLFW_KEY_A: spawn_avoider(); break;
-            case GLFW_KEY_C: spawn_centroid_seeker(); break;
-            case GLFW_KEY_R: spawn_showcase_service(); break;
-            case GLFW_KEY_P: m_paused = !m_paused; break;
-            case GLFW_KEY_F: m_show_frenet = !m_show_frenet; break;
-            case GLFW_KEY_O: m_show_osc = !m_show_osc; break;
-            case GLFW_KEY_H: m_show_hotkeys = !m_show_hotkeys; break;
-            default: break;
-        }
+        (void)m_hotkeys.handle_key_event(key, action, mods);
     }
 
 private:

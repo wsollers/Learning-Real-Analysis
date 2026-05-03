@@ -38,13 +38,18 @@ bool SceneSimulationRuntime::paused() const noexcept {
 }
 
 SimulationSnapshot SceneSimulationRuntime::snapshot() const {
-    return m_context.snapshot();
+    return m_snapshots.snapshot();
 }
 
 void SceneSimulationRuntime::publish() {
-    m_context.publish(SimulationSnapshot{
+    if (m_scene) {
+        m_snapshots.publish(m_scene->snapshot());
+        return;
+    }
+    m_snapshots.publish(SimulationSnapshot{
         .name = m_name,
-        .paused = paused()
+        .paused = true,
+        .status = "Not instantiated"
     });
 }
 

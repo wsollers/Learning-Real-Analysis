@@ -25,4 +25,15 @@ std::unique_ptr<IScene> make_wave_predator_prey_scene(EngineAPI api) {
     return std::make_unique<WavePredatorPreyScene>(std::move(api));
 }
 
+void register_default_simulations(SimulationRegistry& registry) {
+    registry.add(std::make_unique<SceneSimulationRuntime>(
+        "Surface Simulation", make_surface_sim_scene));
+    registry.add(std::make_unique<SceneSimulationRuntime>(
+        "Sine-Rational Analysis", make_analysis_scene));
+    registry.add(std::make_unique<SceneSimulationRuntime>(
+        "Multi-Well Centroid", make_multiwell_scene));
+    registry.add(std::make_unique<SceneSimulationRuntime>(
+        "Wave Predator-Prey", make_wave_predator_prey_scene));
+}
+
 } // namespace ndde

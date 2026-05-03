@@ -6,11 +6,13 @@
 #include "app/ParticleFactory.hpp"
 #include "app/ParticleGoals.hpp"
 #include "app/SimulationContext.hpp"
+#include "engine/IScene.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/IConstraint.hpp"
 #include "sim/MilsteinIntegrator.hpp"
 #include <memory>
 #include <random>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -34,6 +36,26 @@ public:
     [[nodiscard]] bool empty() const noexcept { return m_particles.empty(); }
     [[nodiscard]] std::size_t size() const noexcept { return m_particles.size(); }
 
+    [[nodiscard]] std::vector<ParticleSnapshot> snapshot_particles() const {
+        std::vector<ParticleSnapshot> out;
+        out.reserve(m_particles.size());
+        for (const auto& particle : m_particles) {
+            const glm::vec2 uv = particle.head_uv();
+            const Vec3 head = particle.head_world();
+            out.push_back(ParticleSnapshot{
+                .id = particle.id(),
+                .role = std::string(role_name(particle.particle_role())),
+                .label = particle.metadata_label(),
+                .u = uv.x,
+                .v = uv.y,
+                .x = head.x,
+                .y = head.y,
+                .z = head.z
+            });
+        }
+        return out;
+    }
+
     Particle& spawn(ParticleBuilder builder) {
         m_particles.push_back(builder.build(&m_euler, &m_milstein));
         return m_particles.back();
@@ -41,6 +63,7 @@ public:
 
     void clear() { m_particles.clear(); }
     void clear_goals() { m_goals.clear(); }
+    void clear_pair_constraints() { m_pair_constraints.clear(); }
     void clear_all() {
         m_particles.clear();
         m_pair_constraints.clear();

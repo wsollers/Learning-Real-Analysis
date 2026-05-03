@@ -295,7 +295,7 @@ void Renderer::on_swapchain_recreated(const Swapchain& swapchain) {
 }
 
 void Renderer::reset_frame_state() {
-    // Called after vkDeviceWaitIdle (guaranteed by switch_scene).
+    // Called after vkDeviceWaitIdle when the active simulation changes.
     // Destroy and recreate both semaphore vectors so every slot is
     // cleanly unsignaled before the new scene's first acquire.
     const VkSemaphoreCreateInfo si{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };

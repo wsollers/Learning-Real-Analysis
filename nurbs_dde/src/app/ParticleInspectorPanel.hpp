@@ -56,12 +56,12 @@ private:
             draw_trail_controls(particle);
 
         if (options.show_level_curve_controls) {
-            if (auto* level = find_equation<ndde::sim::LevelCurveWalker>(particle))
+            if (auto* level = particle.find_equation<ndde::sim::LevelCurveWalker>())
                 draw_level_curve_controls(*level, h.z);
         }
 
         if (options.show_brownian_controls) {
-            if (auto* brownian = find_equation<ndde::sim::BrownianMotion>(particle))
+            if (auto* brownian = particle.find_equation<ndde::sim::BrownianMotion>())
                 draw_brownian_controls(*brownian);
         }
     }
@@ -117,15 +117,6 @@ private:
         ImGui::SameLine();
         ImGui::SetNextItemWidth(120.f);
         ImGui::SliderFloat("drift##bm", &p.drift_strength, -1.f, 1.f, "%.3f");
-    }
-
-    template <class Equation>
-    static Equation* find_equation(AnimatedCurve& particle) {
-        if (auto* eq = dynamic_cast<Equation*>(particle.equation()))
-            return eq;
-        if (auto* stack = dynamic_cast<BehaviorStack*>(particle.equation()))
-            return stack->find_equation<Equation>();
-        return nullptr;
     }
 
     static ImVec4 role_color(ParticleRole role) noexcept {

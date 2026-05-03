@@ -8,11 +8,8 @@
 #include "math/Scalars.hpp"
 #include <cstddef>
 #include <functional>
-#include <memory>
 
 namespace ndde {
-
-class IScene; // forward-declared so EngineAPI can reference it without pulling IScene.hpp
 
 enum class RenderTarget : u8 {
     Primary3D,
@@ -72,11 +69,6 @@ struct EngineAPI {
     // Per-frame debug statistics — arena, renderer, timing.
     // Populated by Engine just before Scene::on_frame() is called.
     std::function<const DebugStats&()> debug_stats;
-
-    // Request a scene switch at the end of the current frame.
-    // factory receives a fresh EngineAPI and returns the new scene.
-    // The engine flushes the GPU before destroying the old scene.
-    std::function<void(std::function<std::unique_ptr<IScene>(EngineAPI)>)> switch_scene;
 
     // Request a first-class simulation switch by registry index.
     // Index 0 is Ctrl+1, index 1 is Ctrl+2, etc.

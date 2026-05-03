@@ -4,7 +4,8 @@
 
 #include "engine/EngineAPI.hpp"
 
-#include <vector>
+#include <algorithm>
+#include <span>
 
 namespace ndde {
 
@@ -27,14 +28,15 @@ inline void submit_generated_vertices(EngineAPI& api,
 
 inline void submit_vertices(EngineAPI& api,
                             RenderTarget target,
-                            const std::vector<Vertex>& vertices,
+                            std::span<const Vertex> vertices,
                             u32 vertex_count,
                             Topology topology,
                             DrawMode mode,
                             Vec4 color,
                             Mat4 mvp)
 {
-    submit_generated_vertices(api, target, vertex_count, topology, mode, color, mvp,
+    const u32 count = std::min(vertex_count, static_cast<u32>(vertices.size()));
+    submit_generated_vertices(api, target, count, topology, mode, color, mvp,
         [&vertices](Vertex& out, u32 i) {
             out = vertices[i];
         });
@@ -43,7 +45,7 @@ inline void submit_vertices(EngineAPI& api,
 template <class TransformVertex>
 inline void submit_transformed_vertices(EngineAPI& api,
                                         RenderTarget target,
-                                        const std::vector<Vertex>& vertices,
+                                        std::span<const Vertex> vertices,
                                         u32 vertex_count,
                                         Topology topology,
                                         DrawMode mode,
@@ -51,7 +53,8 @@ inline void submit_transformed_vertices(EngineAPI& api,
                                         Mat4 mvp,
                                         TransformVertex&& transform_vertex)
 {
-    submit_generated_vertices(api, target, vertex_count, topology, mode, color, mvp,
+    const u32 count = std::min(vertex_count, static_cast<u32>(vertices.size()));
+    submit_generated_vertices(api, target, count, topology, mode, color, mvp,
         [&vertices, &transform_vertex](Vertex& out, u32 i) {
             out = vertices[i];
             transform_vertex(out, i);

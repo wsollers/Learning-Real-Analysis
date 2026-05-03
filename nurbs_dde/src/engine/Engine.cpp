@@ -3,7 +3,6 @@
 #include <volk.h>
 
 #include "engine/Engine.hpp"
-#include "app/Scene.hpp"
 #include "app/SceneFactories.hpp"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -44,8 +43,6 @@ Engine::Engine() = default;
 
 Engine::~Engine() {
     uninstall_global_hotkeys();
-    m_active.reset();
-    m_scene.reset();
     m_second_win.destroy();
     m_renderer.destroy();
     m_buffer_manager.destroy();
@@ -106,14 +103,7 @@ void Engine::start(const std::string& config_path) {
     // Also maximise the primary window to fill its half / first monitor
     glfwMaximizeWindow(m_glfw.window());
 
-    m_simulations.add(std::make_unique<SceneSimulationRuntime>(
-        "Surface Simulation", make_surface_sim_scene));
-    m_simulations.add(std::make_unique<SceneSimulationRuntime>(
-        "Sine-Rational Analysis", make_analysis_scene));
-    m_simulations.add(std::make_unique<SceneSimulationRuntime>(
-        "Multi-Well Centroid", make_multiwell_scene));
-    m_simulations.add(std::make_unique<SceneSimulationRuntime>(
-        "Wave Predator-Prey", make_wave_predator_prey_scene));
+    register_default_simulations(m_simulations);
 
     for (std::size_t i = 0; i < m_simulations.size(); ++i)
         if (auto* sim = m_simulations.get(i))
@@ -146,15 +136,6 @@ void Engine::uninstall_global_hotkeys() noexcept {
     if (!window) return;
     g_hotkey_engines.erase(window);
     glfwSetKeyCallback(window, nullptr);
-}
-
-void Engine::switch_scene(SceneFactory factory) {
-    vkDeviceWaitIdle(m_vk.device());
-    // Reset renderer per-frame sync state so the new scene's first frame
-    // acquires with clean, unsignaled semaphores and a signaled fence.
-    m_renderer.reset_frame_state();
-    auto next = factory(make_api());
-    m_active  = std::move(next);
 }
 
 void Engine::switch_simulation(std::size_t index) {
@@ -208,13 +189,11 @@ void Engine::run_frame() {
         .fps                = fps,
     };
 
-    // Run only the surface simulation scene.
-    // m_scene->on_frame();  // original conics scene — re-enable to switch
-
     // ── Second window begin ──────────────────────────────────────────────────────
     const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
     active_runtime().scene().on_frame(frame_ms / 1000.f);
+    active_runtime().publish();
     draw_global_panels();
 
     // ── Update arena stats after scene geometry has been written ─────────────
@@ -236,7 +215,6 @@ void Engine::run_frame() {
 
     if (!primary_ok) handle_resize();
 
-    apply_pending_scene_switch();
     apply_pending_simulation_switch();
 }
 
@@ -256,6 +234,14 @@ void Engine::draw_global_panels() {
     }
 
     ImGui::SeparatorText("Stats");
+    const auto sim_snapshot = active_runtime().snapshot();
+    ImGui::TextDisabled("%s   %s", sim_snapshot.name.c_str(), sim_snapshot.status.c_str());
+    if (sim_snapshot.sim_speed > 0.f || sim_snapshot.particle_count > 0) {
+        ImGui::TextDisabled("t %.2f   speed %.2f   %llu particles",
+            sim_snapshot.sim_time,
+            sim_snapshot.sim_speed,
+            static_cast<unsigned long long>(sim_snapshot.particle_count));
+    }
     ImGui::TextDisabled("%.1f ms   %.0f fps", m_debug_stats.frame_ms, m_debug_stats.fps);
     ImGui::TextDisabled("%llu verts   %llu / %llu bytes",
         static_cast<unsigned long long>(m_debug_stats.arena_vertex_count),
@@ -263,13 +249,6 @@ void Engine::draw_global_panels() {
         static_cast<unsigned long long>(m_debug_stats.arena_bytes_total));
     ImGui::TextDisabled("F12 capture   Ctrl+Shift+P pause+capture");
     ImGui::End();
-}
-
-void Engine::apply_pending_scene_switch() {
-    if (!m_pending_scene_switch) return;
-    auto factory = std::move(m_pending_scene_switch);
-    m_pending_scene_switch = {};
-    switch_scene(std::move(factory));
 }
 
 void Engine::apply_pending_simulation_switch() {
@@ -411,10 +390,6 @@ EngineAPI Engine::make_api() {
                      static_cast<f32>(m_second_win.height()) };
     };
     api.debug_stats     = [this]() -> const DebugStats& { return m_debug_stats; };
-
-    api.switch_scene = [this](SceneFactory factory) {
-        m_pending_scene_switch = std::move(factory);
-    };
 
     api.switch_simulation = [this](std::size_t index) {
         m_pending_sim = index;

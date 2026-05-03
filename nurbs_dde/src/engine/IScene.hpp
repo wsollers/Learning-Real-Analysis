@@ -26,9 +26,34 @@
 // type-erased construction without coupling it to scene headers.
 
 #include "math/Scalars.hpp"  // f32
+#include <cstddef>
+#include <cstdint>
+#include <string>
 #include <string_view>
+#include <vector>
 
 namespace ndde {
+
+struct ParticleSnapshot {
+    std::uint64_t id = 0;
+    std::string role;
+    std::string label;
+    float u = 0.f;
+    float v = 0.f;
+    float x = 0.f;
+    float y = 0.f;
+    float z = 0.f;
+};
+
+struct SceneSnapshot {
+    std::string name;
+    bool paused = false;
+    float sim_time = 0.f;
+    float sim_speed = 0.f;
+    std::size_t particle_count = 0;
+    std::string status;
+    std::vector<ParticleSnapshot> particles;
+};
 
 class IScene {
 public:
@@ -47,6 +72,14 @@ public:
 
     // Short human-readable identifier used in the scene selector UI.
     [[nodiscard]] virtual std::string_view name() const = 0;
+
+    [[nodiscard]] virtual SceneSnapshot snapshot() const {
+        return SceneSnapshot{
+            .name = std::string(name()),
+            .paused = paused(),
+            .status = "Scene"
+        };
+    }
 
     // Simulation controls. Scenes that own simulation state override these;
     // static/read-only scenes can keep the defaults.

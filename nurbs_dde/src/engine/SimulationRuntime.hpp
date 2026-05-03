@@ -13,12 +13,9 @@
 
 namespace ndde {
 
-struct SimulationSnapshot {
-    std::string name;
-    bool paused = false;
-};
+using SimulationSnapshot = SceneSnapshot;
 
-class SimulationContext {
+class SimulationSnapshotStore {
 public:
     void publish(SimulationSnapshot snapshot) {
         std::scoped_lock lock(m_mutex);
@@ -46,6 +43,7 @@ public:
     virtual void start() = 0;
     virtual void pause() = 0;
     virtual void resume() = 0;
+    virtual void publish() = 0;
     [[nodiscard]] virtual bool paused() const noexcept = 0;
     [[nodiscard]] virtual SimulationSnapshot snapshot() const = 0;
 };
@@ -65,6 +63,7 @@ public:
     void start() override;
     void pause() override;
     void resume() override;
+    void publish() override;
     [[nodiscard]] bool paused() const noexcept override;
     [[nodiscard]] SimulationSnapshot snapshot() const override;
 
@@ -72,9 +71,8 @@ private:
     std::string m_name;
     SceneFactory m_factory;
     std::unique_ptr<IScene> m_scene;
-    SimulationContext m_context;
+    SimulationSnapshotStore m_snapshots;
 
-    void publish();
 };
 
 class SimulationRegistry {

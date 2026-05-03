@@ -40,6 +40,7 @@
 #include "sim/IIntegrator.hpp"
 #include "sim/IConstraint.hpp"
 #include "sim/HistoryBuffer.hpp"
+#include "app/ParticleBehaviors.hpp"
 #include "app/FrenetFrame.hpp"
 #include "app/ParticleTypes.hpp"
 #include "math/GeometryTypes.hpp"
@@ -135,6 +136,24 @@ public:
     //   dynamic_cast<ndde::sim::BrownianMotion*>(c.equation())
     [[nodiscard]] ndde::sim::IEquation*       equation()       noexcept { return m_equation; }
     [[nodiscard]] const ndde::sim::IEquation* equation() const noexcept { return m_equation; }
+
+    template <class Equation>
+    [[nodiscard]] Equation* find_equation() noexcept {
+        if (auto* eq = dynamic_cast<Equation*>(m_equation))
+            return eq;
+        if (auto* stack = dynamic_cast<BehaviorStack*>(m_equation))
+            return stack->find_equation<Equation>();
+        return nullptr;
+    }
+
+    template <class Equation>
+    [[nodiscard]] const Equation* find_equation() const noexcept {
+        if (const auto* eq = dynamic_cast<const Equation*>(m_equation))
+            return eq;
+        if (const auto* stack = dynamic_cast<const BehaviorStack*>(m_equation))
+            return stack->find_equation<Equation>();
+        return nullptr;
+    }
 
     // Add a constraint applied after every integration sub-step.
     // AnimatedCurve owns the constraint via unique_ptr.
