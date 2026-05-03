@@ -1,20 +1,13 @@
 #pragma once
 // renderer/GpuTypes.hpp
-// GPU-interface types: vertex layout, push constants, and Vulkan input
-// description helpers.
+// Vulkan-specific GPU layout helpers and push constants.
 //
 // ── Why this file exists ──────────────────────────────────────────────────────
 // math/Scalars.hpp is the pure-math scalar/vector header. It has zero Vulkan
 // dependency and is safe to include from ndde_numeric and Python bindings.
 //
-// This file extends those types with the Vulkan-specific GPU contract:
-//   - Vertex   — the per-vertex data layout as seen by SPIR-V (binding 0)
-//   - PushConstants — the push-constant block (<= 128 bytes, Vulkan spec minimum)
-//   - Convenience helpers that return VkVertexInput* descriptors
-//
-// Include this ONLY from files that already carry a Vulkan dependency
-// (renderer/*, memory/ArenaSlice.hpp, memory/BufferManager.hpp).
-// Never include it from math/* or from ndde_numeric.
+// math/GeometryTypes.hpp defines Vertex without any Vulkan dependency.
+// This file adds the Vulkan interpretation of that layout.
 //
 // ── Vertex layout ─────────────────────────────────────────────────────────────
 // Binding 0, stride = sizeof(Vertex) = 28 bytes (no padding — packed f32s)
@@ -34,39 +27,34 @@
 // The Vulkan spec guarantees at least 128 bytes of push constant space on
 // every conformant device. The static_assert below enforces we never exceed it.
 
-#include "math/Scalars.hpp"
+#include "math/GeometryTypes.hpp"
 #include <array>
 #include <volk.h>
 
 namespace ndde {
 
-// ── Vertex ────────────────────────────────────────────────────────────────────
+// ── Vertex Vulkan Layout ─────────────────────────────────────────────────────
 
-struct Vertex {
-    Vec3 pos;
-    Vec4 color;
+[[nodiscard]] inline VkVertexInputBindingDescription
+vertex_binding_description() noexcept {
+    return {
+        .binding   = 0,
+        .stride    = sizeof(Vertex),
+        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
+    };
+}
 
-    [[nodiscard]] static VkVertexInputBindingDescription
-    binding_description() noexcept {
-        return {
-            .binding   = 0,
-            .stride    = sizeof(Vertex),
-            .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
-        };
-    }
-
-    [[nodiscard]] static std::array<VkVertexInputAttributeDescription, 2>
-    attribute_descriptions() noexcept {
-        return {{
-            { .location = 0, .binding = 0,
-              .format = VK_FORMAT_R32G32B32_SFLOAT,
-              .offset = offsetof(Vertex, pos)   },
-            { .location = 1, .binding = 0,
-              .format = VK_FORMAT_R32G32B32A32_SFLOAT,
-              .offset = offsetof(Vertex, color) }
-        }};
-    }
-};
+[[nodiscard]] inline std::array<VkVertexInputAttributeDescription, 2>
+vertex_attribute_descriptions() noexcept {
+    return {{
+        { .location = 0, .binding = 0,
+          .format = VK_FORMAT_R32G32B32_SFLOAT,
+          .offset = offsetof(Vertex, pos)   },
+        { .location = 1, .binding = 0,
+          .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+          .offset = offsetof(Vertex, color) }
+    }};
+}
 
 // ── PushConstants ─────────────────────────────────────────────────────────────
 

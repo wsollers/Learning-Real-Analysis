@@ -23,9 +23,7 @@ add_library(ndde_math STATIC
     math/ExtremumTable.cpp
 )
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_definitions(ndde_math PUBLIC VK_NO_PROTOTYPES)
-target_include_directories(ndde_math PUBLIC ${volk_SOURCE_DIR})
-target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm Vulkan::Headers)
+target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm)
 
 # ── ndde_memory ───────────────────────────────────────────────────────────────
 add_library(ndde_memory STATIC
@@ -76,6 +74,7 @@ target_link_libraries(ndde_engine PUBLIC
 add_executable(nurbs_dde
     app/main.cpp
     app/GaussianSurface.cpp
+    app/SceneFactories.cpp
     app/SurfaceSimScene.cpp
     app/ParticleRenderer.cpp
 )

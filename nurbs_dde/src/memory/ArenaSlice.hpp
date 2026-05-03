@@ -1,12 +1,10 @@
 #pragma once
 // memory/ArenaSlice.hpp
 // The "receipt" returned by BufferManager::acquire().
-// Includes renderer/GpuTypes.hpp (not math/Scalars.hpp) because ArenaSlice
-// exposes Vertex* — a GPU-contract type. Pure-math and ndde_numeric code
-// must never include this header.
+// Exposes Vertex* without depending on Vulkan-specific layout helpers.
 
 #include <volk.h>
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"
 
 namespace ndde::memory {
 

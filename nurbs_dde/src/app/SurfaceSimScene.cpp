@@ -5,7 +5,7 @@
 // src/app/ParticleRenderer.cpp.  This file now delegates particle
 // rendering to m_particle_renderer.submit_all().
 #include "app/SurfaceSimScene.hpp"
-#include "app/AnalysisScene.hpp"
+#include "app/SceneFactories.hpp"
 #include "sim/GradientWalker.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/MilsteinIntegrator.hpp"
@@ -696,9 +696,7 @@ void SurfaceSimScene::draw_panel_debug() {
 
     ImGui::SeparatorText("Scene");
     if (ImGui::Button("Switch to Analysis Scene", ImVec2(-1.f, 0.f))) {
-        m_api.switch_scene([](EngineAPI api) -> std::unique_ptr<IScene> {
-            return std::make_unique<AnalysisScene>(std::move(api));
-        });
+        m_api.switch_scene(make_analysis_scene);
     }
 
     ImGui::SeparatorText("Tools");

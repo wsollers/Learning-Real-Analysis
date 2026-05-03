@@ -41,7 +41,7 @@
 #include "sim/IConstraint.hpp"
 #include "sim/HistoryBuffer.hpp"
 #include "app/FrenetFrame.hpp"
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"
 #include <glm/glm.hpp>
 #include <vector>
 #include <span>

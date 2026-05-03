@@ -27,8 +27,8 @@ void Pipeline::init(VkDevice device, VkFormat color_format,
           .stage  = VK_SHADER_STAGE_FRAGMENT_BIT, .module = frag_mod, .pName = "main" }
     }};
 
-    auto binding = Vertex::binding_description();
-    auto attribs = Vertex::attribute_descriptions();
+    auto binding = vertex_binding_description();
+    auto attribs = vertex_attribute_descriptions();
 
     VkPipelineVertexInputStateCreateInfo vert_input{
         .sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,

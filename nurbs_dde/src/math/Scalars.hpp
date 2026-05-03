@@ -12,8 +12,9 @@
 //   - Any platform header (GLFW, Win32, etc.)
 //   - Any renderer or memory header
 //
-// GPU-specific types (Vertex, PushConstants, VkVertexInput*) live in
-// renderer/GpuTypes.hpp, which includes this file and adds Vulkan on top.
+// Renderer-neutral geometry payloads live in math/GeometryTypes.hpp.
+// Vulkan-specific push constants and VkVertexInput helpers live in
+// renderer/GpuTypes.hpp.
 //
 // ── Scalar aliases ────────────────────────────────────────────────────────────
 //   f32 / f64  — IEEE-754 single/double, native on every x64 target we care

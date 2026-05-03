@@ -73,6 +73,8 @@ private:
     std::vector<VkSemaphore> m_image_available;  ///< signalled by vkAcquireNextImageKHR
     std::vector<VkSemaphore> m_render_finished;  ///< signalled by vkQueueSubmit, waited by present
     u32             m_image_index    = 0;
+    u32             m_sync_index     = 0;
+    u32             m_frame_sync     = 0;
     bool            m_frame_open     = false;
 
     // Draw call counters: current frame accumulates; last frame is readable.

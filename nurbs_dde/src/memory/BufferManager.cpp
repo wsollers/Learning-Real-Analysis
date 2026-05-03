@@ -38,8 +38,21 @@ void BufferManager::init(VkDevice device, VkPhysicalDevice physical_device, u32 
         throw std::runtime_error("[BufferManager] vkAllocateMemory failed");
     }
 
-    vkBindBufferMemory(device, m_buffer, m_memory, 0);
-    vkMapMemory(device, m_memory, 0, m_pool_size, 0, &m_mapped_base);
+    if (vkBindBufferMemory(device, m_buffer, m_memory, 0) != VK_SUCCESS) {
+        vkFreeMemory(device, m_memory, nullptr);
+        vkDestroyBuffer(device, m_buffer, nullptr);
+        m_memory = VK_NULL_HANDLE;
+        m_buffer = VK_NULL_HANDLE;
+        throw std::runtime_error("[BufferManager] vkBindBufferMemory failed");
+    }
+
+    if (vkMapMemory(device, m_memory, 0, m_pool_size, 0, &m_mapped_base) != VK_SUCCESS) {
+        vkFreeMemory(device, m_memory, nullptr);
+        vkDestroyBuffer(device, m_buffer, nullptr);
+        m_memory = VK_NULL_HANDLE;
+        m_buffer = VK_NULL_HANDLE;
+        throw std::runtime_error("[BufferManager] vkMapMemory failed");
+    }
 
     m_initialised = true;
     std::cout << std::format("[BufferManager] Arena: {} MiB\n", size_mb);

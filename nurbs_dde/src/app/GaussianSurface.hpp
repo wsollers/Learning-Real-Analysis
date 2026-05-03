@@ -13,7 +13,7 @@
 
 #include "math/Scalars.hpp"
 #include "math/Surfaces.hpp"    // ISurface base class
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"
 #include "app/FrenetFrame.hpp"   // FrenetFrame, SurfaceFrame, make_surface_frame
 #include "app/AnimatedCurve.hpp" // AnimatedCurve
 #include <glm/glm.hpp>

@@ -25,7 +25,7 @@
 
 #include "engine/IScene.hpp"
 #include "engine/EngineAPI.hpp"
-#include "app/SurfaceSimScene.hpp"
+#include "app/SceneFactories.hpp"
 #include "app/AnimatedCurve.hpp"
 #include "app/FrenetFrame.hpp"
 #include "app/ParticleRenderer.hpp"
@@ -38,7 +38,7 @@
 #include "sim/MilsteinIntegrator.hpp"
 #include "sim/BrownianMotion.hpp"
 #include "sim/IConstraint.hpp"
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"
 
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -491,9 +491,7 @@ private:
 
         ImGui::SeparatorText("Scene");
         if (ImGui::Button("Switch to Surface Sim", ImVec2(-1.f, 0.f))) {
-            m_api.switch_scene([](EngineAPI api) -> std::unique_ptr<IScene> {
-                return std::make_unique<SurfaceSimScene>(std::move(api));
-            });
+            m_api.switch_scene(make_surface_sim_scene);
         }
         ImGui::Spacing();
         ImGui::SeparatorText("Stats");

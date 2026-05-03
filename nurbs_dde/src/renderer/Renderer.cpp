@@ -57,15 +57,15 @@ void Renderer::destroy() {
 bool Renderer::begin_frame(const Swapchain& swapchain) {
     vkWaitForFences(m_device, 1, &m_render_fence, VK_TRUE, UINT64_MAX);
 
+    m_frame_sync = m_sync_index;
+    VkSemaphore acquire_sem = m_image_available[m_frame_sync];
     VkResult acquire = vkAcquireNextImageKHR(
         m_device, swapchain.swapchain(), UINT64_MAX,
-        m_image_available[m_image_index], VK_NULL_HANDLE, &m_image_index);
+        acquire_sem, VK_NULL_HANDLE, &m_image_index);
 
     if (acquire == VK_ERROR_OUT_OF_DATE_KHR) return false;
     if (acquire != VK_SUCCESS && acquire != VK_SUBOPTIMAL_KHR)
         throw std::runtime_error("[Renderer] vkAcquireNextImageKHR failed");
-
-    // Now m_image_index is valid — the correct per-image semaphore was used above.
 
     vkResetFences(m_device, 1, &m_render_fence);
     vkResetCommandBuffer(m_cmd, 0);
@@ -160,8 +160,8 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
         throw std::runtime_error("[Renderer] vkEndCommandBuffer failed");
 
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSemaphore wait_sem   = m_image_available[m_image_index];
-    VkSemaphore signal_sem = m_render_finished[m_image_index];
+    VkSemaphore wait_sem   = m_image_available[m_frame_sync];
+    VkSemaphore signal_sem = m_render_finished[m_frame_sync];
     VkSubmitInfo submit{
         .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount   = 1,
@@ -187,6 +187,7 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
 
     VkResult pr = vkQueuePresentKHR(m_present_queue, &present);
     m_frame_open = false;
+    m_sync_index = (m_sync_index + 1u) % static_cast<u32>(m_image_available.size());
 
     if (pr == VK_ERROR_OUT_OF_DATE_KHR || pr == VK_SUBOPTIMAL_KHR) return false;
     if (pr != VK_SUCCESS) throw std::runtime_error("[Renderer] vkQueuePresentKHR failed");
@@ -204,11 +205,13 @@ void Renderer::reset_frame_state() {
     const VkSemaphoreCreateInfo si{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
     for (auto& sem : m_image_available) {
         if (sem != VK_NULL_HANDLE) vkDestroySemaphore(m_device, sem, nullptr);
-        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+        if (vkCreateSemaphore(m_device, &si, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("[Renderer] vkCreateSemaphore (image_available reset) failed");
     }
     for (auto& sem : m_render_finished) {
         if (sem != VK_NULL_HANDLE) vkDestroySemaphore(m_device, sem, nullptr);
-        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+        if (vkCreateSemaphore(m_device, &si, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("[Renderer] vkCreateSemaphore (render_finished reset) failed");
     }
     // Recreate the fence in signaled state so begin_frame's WaitForFences
     // returns immediately on the first frame of the new scene.
@@ -217,8 +220,11 @@ void Renderer::reset_frame_state() {
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
     vkDestroyFence(m_device, m_render_fence, nullptr);
-    vkCreateFence(m_device, &fi, nullptr, &m_render_fence);
+    if (vkCreateFence(m_device, &fi, nullptr, &m_render_fence) != VK_SUCCESS)
+        throw std::runtime_error("[Renderer] vkCreateFence (reset) failed");
     m_image_index = 0;
+    m_sync_index  = 0;
+    m_frame_sync  = 0;
     m_frame_open  = false;
 }
 

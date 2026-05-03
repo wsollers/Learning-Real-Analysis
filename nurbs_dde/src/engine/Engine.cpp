@@ -4,8 +4,7 @@
 
 #include "engine/Engine.hpp"
 #include "app/Scene.hpp"
-#include "app/SurfaceSimScene.hpp"
-#include "app/AnalysisScene.hpp"
+#include "app/SceneFactories.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <format>
 #include <iostream>
@@ -80,7 +79,7 @@ void Engine::start(const std::string& config_path) {
     // Also maximise the primary window to fill its half / first monitor
     glfwMaximizeWindow(m_glfw.window());
 
-    m_active = std::make_unique<SurfaceSimScene>(make_api());
+    m_active = make_surface_sim_scene(make_api());
 
     m_last_frame_time = glfwGetTime();
     m_running = true;

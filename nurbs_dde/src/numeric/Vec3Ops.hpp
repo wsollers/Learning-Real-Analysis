@@ -109,7 +109,7 @@ struct Vec3Ops {
         const V& fallback = V{T{1}, T{0}, T{0}}) noexcept
     {
         const T len = glm::length(v);
-        return (len < MathTraits<T>::near_zero(len) ? fallback : v / len);
+        return MathTraits<T>::near_zero(len) ? fallback : v / len;
     }
 
     // ── Scalar projection ─────────────────────────────────────────────────────
@@ -125,7 +125,7 @@ struct Vec3Ops {
     // The component of u parallel to v.
     [[nodiscard]] static V proj(const V& u, const V& v) noexcept {
         const T denom = glm::dot(v, v);
-        if (denom < MathTraits<T>::near_zero(denom)) return V{T{0}};
+        if (MathTraits<T>::near_zero(denom)) return V{T{0}};
         return (glm::dot(u, v) / denom) * v;
     }
 

@@ -7,7 +7,7 @@
 //
 // New code should include:
 //   "math/Scalars.hpp"    — for scalar/vector types (f32, Vec3, Mat4, …)
-//   "renderer/GpuTypes.hpp" — for Vertex and PushConstants (Vulkan-aware)
+//   "math/GeometryTypes.hpp" — for renderer-neutral Vertex
 //
 // Do NOT add new content here. Do NOT include this from ndde_numeric or from
 // any translation unit that must remain Vulkan-free (Python bindings, tests).
@@ -18,4 +18,4 @@
 // by the split.
 
 #include "math/Scalars.hpp"
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"

@@ -6,7 +6,7 @@
 //   build_grid_viewport() — covers the visible view exactly; use this for 2D
 
 #include "math/Scalars.hpp"
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"
 #include <span>
 #include <cmath>
 

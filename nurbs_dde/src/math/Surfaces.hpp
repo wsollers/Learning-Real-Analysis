@@ -16,7 +16,7 @@
 //   K = cos(v) / (r*(R + r*cos(v)))  -- positive outer, negative inner
 
 #include "math/Scalars.hpp"
-#include "renderer/GpuTypes.hpp"
+#include "math/GeometryTypes.hpp"
 #include <span>
 #include <stdexcept>
 #include <cmath>

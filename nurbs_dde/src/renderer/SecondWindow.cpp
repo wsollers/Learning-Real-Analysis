@@ -94,8 +94,10 @@ bool SecondWindow::begin_frame() {
 
     vkWaitForFences(m_device, 1, &m_render_fence, VK_TRUE, UINT64_MAX);
 
+    m_frame_sync = m_sync_index;
+    VkSemaphore acquire_sem = m_image_available[m_frame_sync];
     VkResult acq = vkAcquireNextImageKHR(
-        m_device, m_sc_raw, UINT64_MAX, m_image_available[m_image_index], VK_NULL_HANDLE, &m_image_index);
+        m_device, m_sc_raw, UINT64_MAX, acquire_sem, VK_NULL_HANDLE, &m_image_index);
     if (acq == VK_ERROR_OUT_OF_DATE_KHR) { on_resize(); return false; }
     if (acq != VK_SUCCESS && acq != VK_SUBOPTIMAL_KHR) return false;
 
@@ -106,7 +108,8 @@ bool SecondWindow::begin_frame() {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
     };
-    vkBeginCommandBuffer(m_cmd, &begin);
+    if (vkBeginCommandBuffer(m_cmd, &begin) != VK_SUCCESS)
+        throw std::runtime_error("[SecondWindow] vkBeginCommandBuffer failed");
 
     transition_image(m_sc_images[m_image_index],
                      VK_IMAGE_LAYOUT_UNDEFINED,
@@ -168,11 +171,12 @@ bool SecondWindow::end_frame() {
     transition_image(m_sc_images[m_image_index],
                      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-    vkEndCommandBuffer(m_cmd);
+    if (vkEndCommandBuffer(m_cmd) != VK_SUCCESS)
+        throw std::runtime_error("[SecondWindow] vkEndCommandBuffer failed");
 
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    VkSemaphore wait_sem   = m_image_available[m_image_index];
-    VkSemaphore signal_sem = m_render_finished[m_image_index];
+    VkSemaphore wait_sem   = m_image_available[m_frame_sync];
+    VkSemaphore signal_sem = m_render_finished[m_frame_sync];
     VkSubmitInfo submit{
         .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount   = 1,
@@ -183,7 +187,8 @@ bool SecondWindow::end_frame() {
         .signalSemaphoreCount = 1,
         .pSignalSemaphores    = &signal_sem
     };
-    vkQueueSubmit(m_gfx_queue, 1, &submit, m_render_fence);
+    if (vkQueueSubmit(m_gfx_queue, 1, &submit, m_render_fence) != VK_SUCCESS)
+        throw std::runtime_error("[SecondWindow] vkQueueSubmit failed");
 
     VkPresentInfoKHR present{
         .sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -195,6 +200,7 @@ bool SecondWindow::end_frame() {
     };
     VkResult pr = vkQueuePresentKHR(m_present_queue, &present);
     m_frame_open = false;
+    m_sync_index = (m_sync_index + 1u) % static_cast<u32>(m_image_available.size());
     if (pr == VK_ERROR_OUT_OF_DATE_KHR || pr == VK_SUBOPTIMAL_KHR) { on_resize(); return false; }
     return pr == VK_SUCCESS;
 }
@@ -206,8 +212,23 @@ void SecondWindow::on_resize() {
     glfwGetFramebufferSize(m_window, &fw, &fh);
     if (fw==0 || fh==0) return;
     vkDeviceWaitIdle(m_device);
+    if (m_render_fence != VK_NULL_HANDLE) {
+        vkDestroyFence(m_device, m_render_fence, nullptr);
+        m_render_fence = VK_NULL_HANDLE;
+    }
+    for (auto& sem : m_image_available)
+        if (sem != VK_NULL_HANDLE) vkDestroySemaphore(m_device, sem, nullptr);
+    m_image_available.clear();
+    for (auto& sem : m_render_finished)
+        if (sem != VK_NULL_HANDLE) vkDestroySemaphore(m_device, sem, nullptr);
+    m_render_finished.clear();
     destroy_swapchain();
     build_swapchain(static_cast<u32>(fw), static_cast<u32>(fh));
+    create_sync_objects();
+    m_image_index = 0;
+    m_sync_index  = 0;
+    m_frame_sync  = 0;
+    m_frame_open  = false;
 }
 
 bool SecondWindow::should_close() const noexcept {
@@ -253,14 +274,16 @@ void SecondWindow::create_cmd_objects() {
         .flags            = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
         .queueFamilyIndex = m_gfx_family
     };
-    vkCreateCommandPool(m_device, &ci, nullptr, &m_cmd_pool);
+    if (vkCreateCommandPool(m_device, &ci, nullptr, &m_cmd_pool) != VK_SUCCESS)
+        throw std::runtime_error("[SecondWindow] vkCreateCommandPool failed");
     VkCommandBufferAllocateInfo ai{
         .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
         .commandPool        = m_cmd_pool,
         .level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
         .commandBufferCount = 1
     };
-    vkAllocateCommandBuffers(m_device, &ai, &m_cmd);
+    if (vkAllocateCommandBuffers(m_device, &ai, &m_cmd) != VK_SUCCESS)
+        throw std::runtime_error("[SecondWindow] vkAllocateCommandBuffers failed");
 }
 
 void SecondWindow::create_sync_objects() {
@@ -268,15 +291,18 @@ void SecondWindow::create_sync_objects() {
         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
         .flags = VK_FENCE_CREATE_SIGNALED_BIT
     };
-    vkCreateFence(m_device, &fi, nullptr, &m_render_fence);
+    if (vkCreateFence(m_device, &fi, nullptr, &m_render_fence) != VK_SUCCESS)
+        throw std::runtime_error("[SecondWindow] vkCreateFence failed");
     VkSemaphoreCreateInfo si{ .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
     // One semaphore per swapchain image — m_sc_images is already populated.
     m_image_available.resize(m_sc_images.size(), VK_NULL_HANDLE);
     for (auto& sem : m_image_available)
-        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+        if (vkCreateSemaphore(m_device, &si, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("[SecondWindow] vkCreateSemaphore (image_available) failed");
     m_render_finished.resize(m_sc_images.size(), VK_NULL_HANDLE);
     for (auto& sem : m_render_finished)
-        vkCreateSemaphore(m_device, &si, nullptr, &sem);
+        if (vkCreateSemaphore(m_device, &si, nullptr, &sem) != VK_SUCCESS)
+            throw std::runtime_error("[SecondWindow] vkCreateSemaphore (render_finished) failed");
 }
 
 void SecondWindow::init_pipelines(const std::string& shader_dir) {

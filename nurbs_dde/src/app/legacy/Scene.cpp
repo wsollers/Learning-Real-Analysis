@@ -440,7 +440,7 @@ void Scene::submit_surfaces() {
         auto        slice = m_api.acquire(n);
         entry.surface->tessellate_wireframe({ slice.vertices(), n },
                                              entry.u_lines, entry.v_lines, 0.f, entry.color);
-        m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, entry.color, mvp);
+        m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, entry.color, mvp);
     }
 }
 
@@ -459,7 +459,7 @@ void Scene::submit_epsilon_ball() {
                         m_hover.world_y + r*std::sin(theta), 0.f }, col };
     }
     v[seg] = v[0];
-    m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, col, m_vp.ortho_mvp());
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, col, m_vp.ortho_mvp());
 }
 
 // ── submit_epsilon_sphere (3D) ────────────────────────────────────────────────
@@ -493,7 +493,7 @@ void Scene::submit_epsilon_sphere() {
     }
     memory::ArenaSlice trimmed = slice;
     trimmed.vertex_count = idx;
-    m_api.submit_to("3d", trimmed, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, trimmed, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
 }
 
 // ── submit_frenet_frame ───────────────────────────────────────────────────────
@@ -524,7 +524,7 @@ void Scene::submit_frenet_frame() {
         v[1] = { Vec3{ o.x + arrows[i].dx*scale,
                         o.y + arrows[i].dy*scale,
                         o.z + arrows[i].dz*scale }, col };
-        m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, col, mvp);
+        m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, col, mvp);
     }
 }
 
@@ -551,7 +551,7 @@ void Scene::submit_osc_circle() {
         const Vec3  pt    = centre + R * (-std::cos(theta) * N + std::sin(theta) * T);
         v[i] = { pt, col };
     }
-    m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
 }
 
 // ── submit_interval_lines ─────────────────────────────────────────────────────
@@ -576,7 +576,7 @@ void Scene::submit_interval_lines() {
     push(cx-tk,0.f,cx+tk,0.f,col); push(0.f,cy-tk,0.f,cy+tk,col);
     push(cx-eps,0.f,cx-eps,tk*2.f,col); push(cx+eps,0.f,cx+eps,tk*2.f,col);
     push(0.f,cy-eps,tk*2.f,cy-eps,col); push(0.f,cy+eps,tk*2.f,cy+eps,col);
-    m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, col, m_vp.ortho_mvp());
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, col, m_vp.ortho_mvp());
 }
 
 // ── submit_interval_labels ────────────────────────────────────────────────────
@@ -647,7 +647,7 @@ void Scene::submit_secant_line() {
     auto    slice = m_api.acquire(2);
     Vertex* v     = slice.vertices();
     v[0]={Vec3{x0,y0,0.f},col}; v[1]={Vec3{x1,y1,0.f},col};
-    m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, col, m_vp.ortho_mvp());
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, col, m_vp.ortho_mvp());
 }
 
 // ── submit_tangent_line ───────────────────────────────────────────────────────
@@ -663,7 +663,7 @@ void Scene::submit_tangent_line() {
     auto    slice = m_api.acquire(2);
     Vertex* v     = slice.vertices();
     v[0]={Vec3{x0,y0,0.f},col}; v[1]={Vec3{x1,y1,0.f},col};
-    m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, col, m_vp.ortho_mvp());
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, col, m_vp.ortho_mvp());
 }
 
 // ── submit_grid ───────────────────────────────────────────────────────────────
@@ -677,7 +677,7 @@ void Scene::submit_grid() {
         if (!count) return;
         auto slice = m_api.acquire(count);
         math::build_grid({ slice.vertices(), count }, cfg3d);
-        m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+        m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
     } else {
         const float vl=m_vp.left(),vr=m_vp.right(),vb=m_vp.bottom(),vt=m_vp.top();
         const u32 max_v = math::grid_vp_max_vertices(vl,vr,vb,vt,m_axes_cfg.minor_step);
@@ -689,7 +689,7 @@ void Scene::submit_grid() {
         if (!actual) return;
         memory::ArenaSlice trimmed = slice;
         trimmed.vertex_count = actual;
-        m_api.submit_to("3d", trimmed, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+        m_api.submit_to(RenderTarget::Primary3D, trimmed, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
     }
 }
 
@@ -712,7 +712,7 @@ void Scene::submit_axes() {
         v[i++]={Vec3{0.f,m_vp.bottom(),0.f},math::colors::Y_AXIS};
         v[i++]={Vec3{0.f,m_vp.top(),   0.f},math::colors::Y_AXIS};
     }
-    m_api.submit_to("3d", slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
+    m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 // ── submit_conics ─────────────────────────────────────────────────────────────
@@ -729,12 +729,12 @@ void Scene::submit_conics() {
             const u32 n = hyp->two_branch_vertex_count(entry.tessellation);
             auto slice  = m_api.acquire(n);
             hyp->tessellate_two_branch({slice.vertices(),n}, entry.tessellation, entry.color);
-            m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, entry.color, mvp);
+            m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, entry.color, mvp);
         } else {
             const u32 n = entry.conic->vertex_count(entry.tessellation);
             auto slice  = m_api.acquire(n);
             entry.conic->tessellate({slice.vertices(),n}, entry.tessellation, entry.color);
-            m_api.submit_to("3d", slice, Topology::LineStrip, DrawMode::VertexColor, entry.color, mvp);
+            m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, entry.color, mvp);
         }
     }
 }

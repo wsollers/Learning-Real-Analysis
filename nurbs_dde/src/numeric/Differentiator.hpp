@@ -74,10 +74,10 @@ struct Differentiator {
     // Default relative step sizes, chosen to balance truncation and roundoff.
     static constexpr T k_h1_rel = (sizeof(T) == 4) ? T{5e-3f} : T{6e-6};  ///< for 1st deriv
     static constexpr T k_h2_rel = (sizeof(T) == 4) ? T{1e-2f} : T{1e-4};  ///< for 2nd deriv
-    static constexpr T k_h3_rel = (sizeof(T) == 4) ? T{2e-2f} : T{1e-3};  ///< for 3rd deriv
+    static constexpr T k_h3_rel = (sizeof(T) == 4) ? T{2e-2f} : T{6e-5};  ///< for 3rd deriv
 
-    // ── First derivative — central difference, O(h²) ─────────────────────────
-    // f'(t) ≈ [f(t+h) − f(t−h)] / (2h)
+    // ── First derivative — five-point central stencil, O(h⁴) ────────────────
+    // f'(t) ≈ [-f(t+2h) + 8f(t+h) − 8f(t−h) + f(t−2h)] / (12h)
     // t is clamped to [t_min, t_max] at both probe points.
     [[nodiscard]] static V d1(
         const Func& f,
@@ -86,13 +86,21 @@ struct Differentiator {
     {
         const T span = t_max - t_min;
         const T h    = span * h_rel;
+        const T tm2  = t - T{2} * h;
+        const T tm1  = t - h;
+        const T tp1  = t + h;
+        const T tp2  = t + T{2} * h;
+        if (tm2 >= t_min && tp2 <= t_max) {
+            return (-f(tp2) + T{8} * f(tp1) - T{8} * f(tm1) + f(tm2)) /
+                   (T{12} * h);
+        }
         const T tl   = MathTraits<T>::max(t - h, t_min);
         const T tr   = MathTraits<T>::min(t + h, t_max);
         return (f(tr) - f(tl)) / static_cast<T>(tr - tl);
     }
 
-    // ── Second derivative — central difference, O(h²) ────────────────────────
-    // f''(t) ≈ [f(t+h) − 2f(t) + f(t−h)] / h²
+    // ── Second derivative — five-point central stencil, O(h⁴) ───────────────
+    // f''(t) ≈ [-f(t+2h) + 16f(t+h) − 30f(t) + 16f(t−h) − f(t−2h)] / (12h²)
     [[nodiscard]] static V d2(
         const Func& f,
         T t, T t_min, T t_max,
@@ -100,15 +108,24 @@ struct Differentiator {
     {
         const T span = t_max - t_min;
         const T h    = span * h_rel;
+        const T tm2  = t - T{2} * h;
+        const T tm1  = t - h;
+        const T tp1  = t + h;
+        const T tp2  = t + T{2} * h;
+        if (tm2 >= t_min && tp2 <= t_max) {
+            return (-f(tp2) + T{16} * f(tp1) - T{30} * f(t) +
+                    T{16} * f(tm1) - f(tm2)) / (T{12} * h * h);
+        }
         const T tl   = MathTraits<T>::max(t - h, t_min);
         const T tr   = MathTraits<T>::min(t + h, t_max);
         // Use h as denominator even when clamped — consistent with IConic base
         return (f(tr) - f(t) * T{2} + f(tl)) / (h * h);
     }
 
-    // ── Third derivative — central difference of second derivative, O(h²) ────
-    // f'''(t) ≈ [f''(t+h) − f''(t−h)] / (2h)
-    // Computed by calling d2 twice — noisier but avoids four extra evaluations.
+    // ── Third derivative — five-point central stencil, O(h²) ────────────────
+    // f'''(t) ≈ [f(t+2h) − 2f(t+h) + 2f(t−h) − f(t−2h)] / (2h³)
+    // This avoids differentiating a finite-difference second derivative, which
+    // amplifies roundoff enough to bias torsion estimates.
     [[nodiscard]] static V d3(
         const Func& f,
         T t, T t_min, T t_max,
@@ -116,10 +133,18 @@ struct Differentiator {
     {
         const T span = t_max - t_min;
         const T h    = span * h_rel;
-        const T tl   = MathTraits<T>::max(t - h, t_min);
-        const T tr   = MathTraits<T>::min(t + h, t_max);
-        const auto d2_at = [&](T s){ return d2(f, s, t_min, t_max, h_rel); };
-        return (d2_at(tr) - d2_at(tl)) / static_cast<T>(tr - tl);
+        const T tm2  = t - T{2} * h;
+        const T tm1  = t - h;
+        const T tp1  = t + h;
+        const T tp2  = t + T{2} * h;
+        if (tm2 < t_min || tp2 > t_max) {
+            const T tl = MathTraits<T>::max(t - h, t_min);
+            const T tr = MathTraits<T>::min(t + h, t_max);
+            const auto d2_at = [&](T s){ return d2(f, s, t_min, t_max, h_rel); };
+            return (d2_at(tr) - d2_at(tl)) / static_cast<T>(tr - tl);
+        }
+        return (f(tp2) - T{2} * f(tp1) + T{2} * f(tm1) - f(tm2)) /
+               (T{2} * h * h * h);
     }
 
     // ── Curvature — scalar, from first and second derivatives ─────────────────

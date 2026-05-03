@@ -70,6 +70,8 @@ private:
     std::vector<VkSemaphore> m_image_available;
     std::vector<VkSemaphore> m_render_finished;
     u32             m_image_index     = 0;
+    u32             m_sync_index      = 0;
+    u32             m_frame_sync      = 0;
     bool            m_frame_open      = false;
     bool            m_initialised     = false;
 
