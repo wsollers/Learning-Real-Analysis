@@ -2,6 +2,7 @@
 
 #include "app/AnimatedCurve.hpp"
 #include "app/ParticleGoals.hpp"
+#include "app/ParticleSwarmFactory.hpp"
 #include "app/ParticleSystem.hpp"
 #include "math/SineRationalSurface.hpp"
 
@@ -19,9 +20,9 @@ public:
                     float& sim_speed,
                     GoalStatus& goal_status) noexcept;
 
-    void spawn_showcase_service();
-    void spawn_walker();
-    void clear_all() noexcept;
+    [[nodiscard]] SwarmBuildResult spawn_showcase_service();
+    [[nodiscard]] SwarmBuildResult spawn_walker();
+    [[nodiscard]] SwarmBuildResult clear_all() noexcept;
 
 private:
     ndde::math::SineRationalSurface& m_surface;

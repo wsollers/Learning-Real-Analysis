@@ -1,6 +1,7 @@
 #pragma once
 
 #include "app/ParticleGoals.hpp"
+#include "app/ParticleSwarmFactory.hpp"
 #include "app/ParticleSystem.hpp"
 
 namespace ndde {
@@ -12,12 +13,12 @@ public:
                      float& sim_time,
                      GoalStatus& goal_status) noexcept;
 
-    void spawn_showcase_service();
-    void spawn_avoider();
-    void spawn_centroid_seeker();
+    [[nodiscard]] SwarmBuildResult spawn_showcase_service();
+    [[nodiscard]] SwarmBuildResult spawn_avoider();
+    [[nodiscard]] SwarmBuildResult spawn_centroid_seeker();
     void spawn_avoider_at(glm::vec2 uv, glm::vec2 drift);
     void spawn_centroid_seeker_at(glm::vec2 uv);
-    void clear_all() noexcept;
+    [[nodiscard]] SwarmBuildResult clear_all() noexcept;
 
 private:
     ParticleSystem& m_particles;

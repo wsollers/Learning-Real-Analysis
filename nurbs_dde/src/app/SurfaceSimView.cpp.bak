@@ -1,6 +1,8 @@
 #include "app/SurfaceSimView.hpp"
 
 #include "app/GaussianSurface.hpp"
+#include "app/ProjectedParticleOverlay.hpp"
+#include "app/ProjectedSurfaceCanvas.hpp"
 #include "engine/CanvasInput.hpp"
 #include "numeric/ops.hpp"
 
@@ -29,6 +31,58 @@ constexpr f32 k_levels[] = {
     -1.2f,-0.9f,-0.6f,-0.3f, 0.f, 0.3f, 0.6f, 0.9f, 1.2f
 };
 constexpr u32 k_n_levels = 9u;
+
+[[nodiscard]] float surface_extent(const ndde::math::ISurface& surface, float time) noexcept {
+    const float u0 = surface.u_min(time);
+    const float u1 = surface.u_max(time);
+    const float v0 = surface.v_min(time);
+    const float v1 = surface.v_max(time);
+    return std::max({std::abs(u0), std::abs(u1), std::abs(v0), std::abs(v1), 1.f});
+}
+
+[[nodiscard]] ImVec2 project_to_canvas(Vec3 p,
+                                       const Viewport& viewport,
+                                       const ImVec2& cpos,
+                                       const ImVec2& csz,
+                                       float extent) noexcept {
+    return ProjectedSurfaceCanvas::projected_to_canvas(
+        ProjectedSurfaceCanvas::project_point(p, viewport), cpos, csz, extent);
+}
+
+void draw_projected_surface_mesh(const SurfaceMeshCache& mesh,
+                                 const Viewport& viewport,
+                                 SurfaceDisplay mode,
+                                 const ImVec2& cpos,
+                                 const ImVec2& csz,
+                                 float extent) {
+    ImDrawList* dl = ImGui::GetWindowDrawList();
+    dl->PushClipRect(cpos, ImVec2(cpos.x + csz.x, cpos.y + csz.y), true);
+
+    if (mode == SurfaceDisplay::Filled || mode == SurfaceDisplay::Both) {
+        for (u32 i = 0; i + 2 < mesh.fill_count(); i += 3) {
+            const Vertex& a = mesh.fill_vertices()[i];
+            const Vertex& b = mesh.fill_vertices()[i + 1];
+            const Vertex& c = mesh.fill_vertices()[i + 2];
+            dl->AddTriangleFilled(
+                project_to_canvas(a.pos, viewport, cpos, csz, extent),
+                project_to_canvas(b.pos, viewport, cpos, csz, extent),
+                project_to_canvas(c.pos, viewport, cpos, csz, extent),
+                ProjectedSurfaceCanvas::imgui_color(a.color));
+        }
+    }
+
+    if (mode == SurfaceDisplay::Wireframe || mode == SurfaceDisplay::Both) {
+        for (u32 i = 0; i + 1 < mesh.wire_count(); i += 2) {
+            dl->AddLine(
+                project_to_canvas(mesh.wire_vertices()[i].pos, viewport, cpos, csz, extent),
+                project_to_canvas(mesh.wire_vertices()[i + 1].pos, viewport, cpos, csz, extent),
+                ProjectedSurfaceCanvas::imgui_color(mesh.wire_vertices()[i].color),
+                1.f);
+        }
+    }
+
+    dl->PopClipRect();
+}
 
 } // namespace
 
@@ -68,29 +122,29 @@ void SurfaceSimView::draw_surface_3d_window(SurfaceSimViewContext ctx) {
         ctx.hover.snap_idx      = -1;
     }
 
-    const Mat4 mvp3d = canvas_mvp_3d(ctx.vp3d, cpos, csz);
+    ctx.display.mesh.rebuild_if_needed(ctx.surface,
+        surface_mesh_options(ctx.display.grid_lines, ctx.sim_time, ctx.display.curv_scale));
 
-    switch (ctx.display.mode) {
-        case SurfaceDisplay::Wireframe: submit_wireframe_3d(ctx, mvp3d); break;
-        case SurfaceDisplay::Filled:    submit_filled_3d(ctx, mvp3d);    break;
-        case SurfaceDisplay::Both:
-            submit_filled_3d(ctx, mvp3d);
-            submit_wireframe_3d(ctx, mvp3d);
-            break;
-    }
+    const float extent = surface_extent(ctx.surface, ctx.sim_time);
+    draw_projected_surface_mesh(ctx.display.mesh, ctx.vp3d, ctx.display.mode, cpos, csz, extent);
 
-    m_particles.show_frenet       = ctx.overlays.show_frenet;
-    m_particles.show_T            = ctx.overlays.show_T;
-    m_particles.show_N            = ctx.overlays.show_N;
-    m_particles.show_B            = ctx.overlays.show_B;
-    m_particles.show_osc          = ctx.overlays.show_osc;
-    m_particles.show_dir_deriv    = ctx.overlays.show_dir_deriv;
-    m_particles.show_normal_plane = ctx.overlays.show_normal_plane;
-    m_particles.show_torsion      = ctx.overlays.show_torsion;
-    m_particles.frame_scale       = ctx.display.frame_scale;
-    m_particles.submit_all(ctx.curves, ctx.surface, ctx.sim_time,
-                           mvp3d, ctx.hover.snap_curve, ctx.hover.snap_idx,
-                           ctx.hover.snap_on_curve);
+    const auto project = [&ctx, cpos, csz, extent](Vec3 p) {
+        return project_to_canvas(p, ctx.vp3d, cpos, csz, extent);
+    };
+    const ProjectedParticleOverlayResult snap = draw_projected_particle_overlay(
+        ImGui::GetWindowDrawList(), ctx.curves, cpos, csz, project,
+        ProjectedParticleOverlayOptions{
+            .hover_enabled = canvas.hovered,
+            .show_frenet = ctx.overlays.show_frenet,
+            .show_osculating_circle = ctx.overlays.show_osc,
+            .show_T = ctx.overlays.show_T,
+            .show_N = ctx.overlays.show_N,
+            .show_B = ctx.overlays.show_B,
+            .frame_scale = ctx.display.frame_scale
+        });
+    ctx.hover.snap_on_curve = snap.snapped;
+    ctx.hover.snap_curve = snap.curve;
+    ctx.hover.snap_idx = snap.trail_idx;
 
     ImDrawList* dl = ImGui::GetWindowDrawList();
     dl->AddText(ImVec2(cpos.x+8, cpos.y+6),

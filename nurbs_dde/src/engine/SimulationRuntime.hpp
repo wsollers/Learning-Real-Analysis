@@ -1,9 +1,10 @@
 #pragma once
 // engine/SimulationRuntime.hpp
-// First-class switchable simulation runtime.
+// ISimulation-only runtime.  The old IScene adapter path is intentionally gone.
 
-#include "engine/EngineAPI.hpp"
-#include "engine/IScene.hpp"
+#include "engine/ISimulation.hpp"
+#include "engine/SimulationHost.hpp"
+
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -32,59 +33,51 @@ private:
     SimulationSnapshot m_snapshot;
 };
 
-class ISimulationRuntime {
+class SimulationRuntime final {
 public:
-    virtual ~ISimulationRuntime() = default;
+    using SimulationFactory = std::function<std::unique_ptr<ISimulation>()>;
 
-    [[nodiscard]] virtual std::string_view name() const = 0;
-    [[nodiscard]] virtual IScene& scene() = 0;
-    [[nodiscard]] virtual const IScene& scene() const = 0;
+    SimulationRuntime(std::string name, SimulationFactory factory);
+    ~SimulationRuntime();
 
-    virtual void start() = 0;
-    virtual void pause() = 0;
-    virtual void resume() = 0;
-    virtual void publish() = 0;
-    [[nodiscard]] virtual bool paused() const noexcept = 0;
-    [[nodiscard]] virtual SimulationSnapshot snapshot() const = 0;
-};
+    SimulationRuntime(const SimulationRuntime&) = delete;
+    SimulationRuntime& operator=(const SimulationRuntime&) = delete;
 
-class SceneSimulationRuntime final : public ISimulationRuntime {
-public:
-    using SceneFactory = std::function<std::unique_ptr<IScene>(EngineAPI)>;
+    void instantiate(SimulationHost& host);
+    void start();
+    void stop();
+    void pause();
+    void resume();
+    void tick(TickInfo tick);
+    void publish();
 
-    SceneSimulationRuntime(std::string name, SceneFactory factory);
-
-    void instantiate(EngineAPI api);
-
-    [[nodiscard]] std::string_view name() const override { return m_name; }
-    [[nodiscard]] IScene& scene() override { return *m_scene; }
-    [[nodiscard]] const IScene& scene() const override { return *m_scene; }
-
-    void start() override;
-    void pause() override;
-    void resume() override;
-    void publish() override;
-    [[nodiscard]] bool paused() const noexcept override;
-    [[nodiscard]] SimulationSnapshot snapshot() const override;
+    [[nodiscard]] std::string_view name() const noexcept { return m_name; }
+    [[nodiscard]] bool paused() const noexcept { return m_paused; }
+    [[nodiscard]] bool instantiated() const noexcept { return static_cast<bool>(m_simulation); }
+    [[nodiscard]] ISimulation& simulation();
+    [[nodiscard]] const ISimulation& simulation() const;
+    [[nodiscard]] SimulationSnapshot snapshot() const;
+    [[nodiscard]] SimulationMetadata metadata() const;
 
 private:
     std::string m_name;
-    SceneFactory m_factory;
-    std::unique_ptr<IScene> m_scene;
+    SimulationFactory m_factory;
+    std::unique_ptr<ISimulation> m_simulation;
     SimulationSnapshotStore m_snapshots;
-
+    bool m_started = false;
+    bool m_paused = true;
 };
 
 class SimulationRegistry {
 public:
-    void add(std::unique_ptr<SceneSimulationRuntime> runtime);
+    void add(std::unique_ptr<SimulationRuntime> runtime);
 
     [[nodiscard]] std::size_t size() const noexcept { return m_runtimes.size(); }
-    [[nodiscard]] SceneSimulationRuntime* get(std::size_t index) noexcept;
-    [[nodiscard]] const SceneSimulationRuntime* get(std::size_t index) const noexcept;
+    [[nodiscard]] SimulationRuntime* get(std::size_t index) noexcept;
+    [[nodiscard]] const SimulationRuntime* get(std::size_t index) const noexcept;
 
 private:
-    std::vector<std::unique_ptr<SceneSimulationRuntime>> m_runtimes;
+    std::vector<std::unique_ptr<SimulationRuntime>> m_runtimes;
 };
 
 } // namespace ndde

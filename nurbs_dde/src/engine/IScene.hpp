@@ -20,10 +20,8 @@
 // the actual replacement until the current frame has fully ended. All Vulkan
 // work is flushed before destruction.
 //
-// EngineAPI is passed at construction time (not through the interface) so
-// scenes are free to choose their own constructor signature.  The factory
-// pattern (make_surface_sim_scene, make_analysis_scene, ...) gives Engine
-// type-erased construction without coupling it to scene headers.
+// Legacy note: this interface is retained while older scene components are
+// migrated.  New simulation runtime code uses ISimulation.
 
 #include "math/Scalars.hpp"  // f32
 #include <cstddef>

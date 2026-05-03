@@ -7,6 +7,19 @@
 
 namespace ndde {
 
+namespace {
+SwarmBuildResult make_multiwell_result(std::string name, u32 count,
+                                       std::vector<ParticleRole> roles,
+                                       bool goal = false) {
+    return SwarmBuildResult{.metadata = SwarmRecipeMetadata{
+        .family_name = std::move(name),
+        .requested_count = count,
+        .roles_emitted = std::move(roles),
+        .goals_added = goal
+    }};
+}
+}
+
 MultiWellSpawner::MultiWellSpawner(ParticleSystem& particles,
                                    u32& spawn_count,
                                    float& sim_time,
@@ -17,15 +30,16 @@ MultiWellSpawner::MultiWellSpawner(ParticleSystem& particles,
     , m_goal_status(goal_status)
 {}
 
-void MultiWellSpawner::clear_all() noexcept {
+SwarmBuildResult MultiWellSpawner::clear_all() noexcept {
     m_particles.clear();
     m_particles.clear_goals();
     m_spawn_count = 0;
     m_goal_status = GoalStatus::Running;
+    return make_multiwell_result("Multi-Well Clear", 0u, {});
 }
 
-void MultiWellSpawner::spawn_showcase_service() {
-    clear_all();
+SwarmBuildResult MultiWellSpawner::spawn_showcase_service() {
+    (void)clear_all();
     m_sim_time = 0.f;
 
     spawn_avoider_at({-2.15f, -1.15f}, {0.18f, 0.05f});
@@ -43,13 +57,16 @@ void MultiWellSpawner::spawn_showcase_service() {
         .radius = 0.20f
     });
     m_goal_status = GoalStatus::Running;
+    return make_multiwell_result("Multi-Well Avoider/Centroid Showcase",
+        m_spawn_count, {ParticleRole::Avoider, ParticleRole::Chaser}, true);
 }
 
-void MultiWellSpawner::spawn_avoider() {
+SwarmBuildResult MultiWellSpawner::spawn_avoider() {
     const float a = static_cast<float>(m_spawn_count) * 1.73f;
     const float r = 1.3f + 0.25f * static_cast<float>(m_spawn_count % 3u);
     spawn_avoider_at({r * ops::cos(a), r * ops::sin(a)},
                      {0.10f * ops::cos(a + 1.f), 0.10f * ops::sin(a + 1.f)});
+    return make_multiwell_result("Multi-Well Avoider", 1u, {ParticleRole::Avoider});
 }
 
 void MultiWellSpawner::spawn_avoider_at(glm::vec2 uv, glm::vec2 drift) {
@@ -75,8 +92,9 @@ void MultiWellSpawner::spawn_avoider_at(glm::vec2 uv, glm::vec2 drift) {
     ++m_spawn_count;
 }
 
-void MultiWellSpawner::spawn_centroid_seeker() {
+SwarmBuildResult MultiWellSpawner::spawn_centroid_seeker() {
     spawn_centroid_seeker_at({0.f, 0.f});
+    return make_multiwell_result("Multi-Well Centroid Seeker", 1u, {ParticleRole::Chaser});
 }
 
 void MultiWellSpawner::spawn_centroid_seeker_at(glm::vec2 uv) {

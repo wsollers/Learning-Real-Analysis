@@ -33,7 +33,7 @@
 //   the leading and trailing edges of each ring.
 //
 // Usage:
-//   auto* ripple = new GaussianRipple();
+//   GaussianRipple ripple;
 //   ripple->set_epicentre(u0, v0);   // place impact at (u0,v0)
 //   // each frame:
 //   ripple->advance(dt);             // tick internal clock
@@ -74,17 +74,19 @@ public:
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     [[nodiscard]] Vec3 evaluate(float u, float v, float t = 0.f) const override {
-        return Vec3{ u, v, height(u, v, t) };
+        return Vec3{ u, v, height(u, v, effective_time(t)) };
     }
 
     // Central FD on height -- exact same structure as GaussianSurface::du/dv
     [[nodiscard]] Vec3 du(float u, float v, float t = 0.f) const override {
         constexpr float h = 1e-3f;
-        return Vec3{ 1.f, 0.f, (height(u+h,v,t) - height(u-h,v,t)) / (2.f*h) };
+        const float te = effective_time(t);
+        return Vec3{ 1.f, 0.f, (height(u+h,v,te) - height(u-h,v,te)) / (2.f*h) };
     }
     [[nodiscard]] Vec3 dv(float u, float v, float t = 0.f) const override {
         constexpr float h = 1e-3f;
-        return Vec3{ 0.f, 1.f, (height(u,v+h,t) - height(u,v-h,t)) / (2.f*h) };
+        const float te = effective_time(t);
+        return Vec3{ 0.f, 1.f, (height(u,v+h,te) - height(u,v-h,te)) / (2.f*h) };
     }
 
     // ── Deformation control ───────────────────────────────────────────────────
@@ -104,6 +106,10 @@ public:
 
 private:
     Params m_p;
+
+    [[nodiscard]] float effective_time(float t) const noexcept {
+        return t > 0.f ? t : m_time;
+    }
 
     // f_base(u,v) + f_ripple(u,v,t)
     [[nodiscard]] float height(float u, float v, float t) const noexcept {

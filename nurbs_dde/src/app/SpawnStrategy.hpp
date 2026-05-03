@@ -1,7 +1,6 @@
 #pragma once
 // app/SpawnStrategy.hpp
-// Lightweight spawn helpers extracted from SurfaceSimScene::handle_hotkeys()
-// (B3 refactor).
+// Lightweight legacy spawn helpers kept for older AnimatedCurve-based paths.
 //
 // All functions are header-only (short, inline).  No .cpp needed.
 //

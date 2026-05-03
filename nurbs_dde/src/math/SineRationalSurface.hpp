@@ -65,7 +65,7 @@ public:
     [[nodiscard]] bool is_periodic_u() const override { return false; }
     [[nodiscard]] bool is_periodic_v() const override { return false; }
 
-    // ── Public scalar helpers (used by AnalysisScene for confinement) ─────────
+    // ── Public scalar helpers used by analysis simulations ───────────────────
 
     [[nodiscard]] float height(float u, float v) const noexcept { return f(u, v); }
 

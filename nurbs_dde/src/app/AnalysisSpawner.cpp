@@ -30,15 +30,27 @@ AnalysisSpawner::AnalysisSpawner(ndde::math::SineRationalSurface& surface,
     , m_goal_status(goal_status)
 {}
 
-void AnalysisSpawner::clear_all() noexcept {
+namespace {
+SwarmBuildResult make_analysis_result(std::string name, u32 count, bool goal) {
+    return SwarmBuildResult{.metadata = SwarmRecipeMetadata{
+        .family_name = std::move(name),
+        .requested_count = count,
+        .roles_emitted = {ParticleRole::Leader, ParticleRole::Chaser},
+        .goals_added = goal
+    }};
+}
+}
+
+SwarmBuildResult AnalysisSpawner::clear_all() noexcept {
     m_particles.clear();
     m_particles.clear_goals();
     m_spawn_count = 0;
     m_goal_status = GoalStatus::Running;
+    return make_analysis_result("Analysis Clear", 0u, false);
 }
 
-void AnalysisSpawner::spawn_showcase_service() {
-    clear_all();
+SwarmBuildResult AnalysisSpawner::spawn_showcase_service() {
+    (void)clear_all();
     m_sim_time = 0.f;
 
     ndde::sim::LevelCurveWalker::Params p;
@@ -95,9 +107,10 @@ void AnalysisSpawner::spawn_showcase_service() {
         .radius = 0.18f
     });
     m_goal_status = GoalStatus::Running;
+    return make_analysis_result("Analysis Leader/Delayed Seeker", m_spawn_count, true);
 }
 
-void AnalysisSpawner::spawn_walker() {
+SwarmBuildResult AnalysisSpawner::spawn_walker() {
     std::uniform_real_distribution<float> du(m_surface.u_min() + 0.5f, m_surface.u_max() - 0.5f);
     std::uniform_real_distribution<float> dv(m_surface.v_min() + 0.5f, m_surface.v_max() - 0.5f);
 
@@ -136,6 +149,7 @@ void AnalysisSpawner::spawn_walker() {
         c.advance(1.f / 60.f, m_sim_speed);
     }
     ++m_spawn_count;
+    return make_analysis_result("Analysis Level Walker", 1u, false);
 }
 
 } // namespace ndde

@@ -3,7 +3,7 @@
 // FrenetFrame, SurfaceFrame, and make_surface_frame.
 //
 // Moved from GaussianSurface.hpp (B1 refactor) so that AnimatedCurve.hpp
-// and ParticleRenderer.hpp can include these types without dragging in the
+// and particle overlay helpers can include these types without dragging in the
 // full GaussianSurface definition.
 //
 // Mathematical context

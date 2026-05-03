@@ -1,0 +1,273 @@
+#include "app/SimulationSurfaceGaussian.hpp"
+#include "app/SimulationRenderPackets.hpp"
+
+#include <imgui.h>
+#include <algorithm>
+#include <span>
+#include <utility>
+#include <vector>
+
+namespace ndde {
+
+SimulationSurfaceGaussian::SimulationSurfaceGaussian()
+    : m_surface(std::make_unique<GaussianRipple>())
+    , m_particles(m_surface.get(), 1337u)
+    , m_spawner(m_particles, m_sim_time, m_goal_status)
+{
+    sync_context();
+}
+
+void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
+    m_host = &host;
+    m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
+        .title = "Sim - Controls",
+        .category = "Simulation",
+        .scope = PanelScope::Simulation,
+        .draw = [this] { draw_control_panel(); }
+    }));
+    m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
+        .title = "Sim - Swarms",
+        .category = "Simulation",
+        .scope = PanelScope::Simulation,
+        .draw = [this] { draw_swarm_panel(); }
+    }));
+    m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
+        .title = "Sim - Particles",
+        .category = "Simulation",
+        .scope = PanelScope::Simulation,
+        .draw = [this] { draw_particle_panel(); }
+    }));
+    m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
+        .title = "Sim - Goals",
+        .category = "Simulation",
+        .scope = PanelScope::Simulation,
+        .draw = [this] { draw_goal_panel(); }
+    }));
+    m_reset_hotkey = host.hotkeys().register_action(HotkeyDescriptor{
+        .chord = {.key = 'R', .mods = 2},
+        .label = "Reset Gaussian pursuit",
+        .category = "Simulation",
+        .callback = [this] { reset_showcase(); }
+    });
+    m_cloud_hotkey = host.hotkeys().register_action(HotkeyDescriptor{
+        .chord = {.key = 'B', .mods = 2},
+        .label = "Gaussian Brownian cloud",
+        .category = "Simulation",
+        .callback = [this] { spawn_cloud(); }
+    });
+    m_main_view_handle = host.render().register_view(RenderViewDescriptor{
+        .title = "Surface 3D",
+        .kind = RenderViewKind::Main,
+        .overlays = {
+            .show_axes = true,
+            .show_grid = true,
+            .show_frame = false,
+            .show_labels = false,
+            .show_hover_frenet = true,
+            .show_osculating_circle = true
+        }
+    }, &m_main_view);
+    m_alternate_view_handle = host.render().register_view(RenderViewDescriptor{
+        .title = "Surface Alternate",
+        .kind = RenderViewKind::Alternate,
+        .alternate_mode = AlternateViewMode::Contour,
+        .projection = CameraProjection::Orthographic,
+        .overlays = {
+            .show_axes = true,
+            .show_grid = false,
+            .show_frame = false,
+            .show_labels = false,
+            .show_hover_frenet = false,
+            .show_osculating_circle = false
+        }
+    }, &m_alternate_view);
+}
+
+void SimulationSurfaceGaussian::on_start() {
+    reset_showcase();
+}
+
+void SimulationSurfaceGaussian::on_tick(const TickInfo& tick) {
+    apply_surface_commands();
+
+    if (tick.paused || m_paused) {
+        m_context.set_tick(TickInfo{.tick_index = tick.tick_index, .dt = 0.f, .time = m_sim_time, .paused = true});
+        submit_geometry();
+        m_context.commands().clear();
+        return;
+    }
+
+    m_sim_time = tick.time;
+    m_context.set_tick(tick);
+    m_surface->advance(tick.dt);
+    m_particles.update(tick.dt, m_sim_speed, m_sim_time);
+    m_context.dirty().mark_particles_changed();
+    m_context.math_cache().bump_particles();
+
+    submit_geometry();
+    m_context.commands().clear();
+}
+
+void SimulationSurfaceGaussian::on_stop() {
+    m_panel_handles.clear();
+    m_reset_hotkey.reset();
+    m_cloud_hotkey.reset();
+    m_main_view_handle.reset();
+    m_alternate_view_handle.reset();
+    m_host = nullptr;
+}
+
+SceneSnapshot SimulationSurfaceGaussian::snapshot() const {
+    return SceneSnapshot{
+        .name = std::string(name()),
+        .paused = m_paused,
+        .sim_time = m_sim_time,
+        .sim_speed = m_sim_speed,
+        .particle_count = m_particles.size(),
+        .status = m_goal_status == GoalStatus::Succeeded ? "Succeeded" : "Running",
+        .particles = m_particles.snapshot_particles()
+    };
+}
+
+void SimulationSurfaceGaussian::reset_showcase() {
+    m_last_swarm = m_spawner.spawn_showcase();
+    sync_context();
+    m_context.dirty().mark_particles_changed();
+    m_context.math_cache().bump_particles();
+}
+
+void SimulationSurfaceGaussian::spawn_cloud() {
+    m_last_swarm = m_spawner.spawn_brownian_cloud();
+    sync_context();
+    m_context.dirty().mark_particles_changed();
+    m_context.math_cache().bump_particles();
+}
+
+void SimulationSurfaceGaussian::spawn_contour_band() {
+    m_last_swarm = m_spawner.spawn_contour_band();
+    sync_context();
+    m_context.dirty().mark_particles_changed();
+    m_context.math_cache().bump_particles();
+}
+
+SimulationMetadata SimulationSurfaceGaussian::metadata() const {
+    return SimulationMetadata{
+        .name = std::string(name()),
+        .surface_name = "Gaussian Ripple",
+        .surface_formula = "base Gaussian field + decaying radial perturbation",
+        .status = m_goal_status == GoalStatus::Succeeded ? "Succeeded" : "Running",
+        .sim_time = m_sim_time,
+        .sim_speed = m_sim_speed,
+        .particle_count = m_particles.size(),
+        .paused = m_paused,
+        .goal_succeeded = m_goal_status == GoalStatus::Succeeded
+    };
+}
+
+void SimulationSurfaceGaussian::draw_control_panel() {
+    ImGui::SetNextWindowPos(ImVec2(24.f, 72.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 210.f), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Sim - Controls")) { ImGui::End(); return; }
+    SimulationControlPanel::draw(metadata(), SimulationControls{
+        .paused = &m_paused,
+        .sim_speed = &m_sim_speed,
+        .reset = [this] { reset_showcase(); }
+    });
+    ImGui::End();
+}
+
+void SimulationSurfaceGaussian::draw_swarm_panel() {
+    ImGui::SetNextWindowPos(ImVec2(24.f, 300.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 230.f), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Sim - Swarms")) { ImGui::End(); return; }
+    std::vector<SwarmRecipeAction> actions{
+        {.label = "Reset pursuit", .hotkey = "Ctrl+R", .spawn = [this] { reset_showcase(); return m_last_swarm; }},
+        {.label = "Brownian cloud", .hotkey = "Ctrl+B", .spawn = [this] { spawn_cloud(); return m_last_swarm; }},
+        {.label = "Contour band", .hotkey = "", .spawn = [this] { spawn_contour_band(); return m_last_swarm; }}
+    };
+    SwarmRecipePanel::draw(SwarmRecipePanelState{}, actions, m_particles, m_goal_status, &m_last_swarm,
+        SwarmRecipePanelOptions{
+            .show_level_curve_controls = false,
+            .show_brownian_controls = false,
+            .show_trail_controls = false,
+            .show_sim_controls = false,
+            .show_particle_inspector = false,
+            .goal_success_text = "Pursuit captured"
+        });
+    ImGui::End();
+}
+
+void SimulationSurfaceGaussian::draw_particle_panel() {
+    ImGui::SetNextWindowPos(ImVec2(342.f, 72.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(420.f, 480.f), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Sim - Particles")) { ImGui::End(); return; }
+    ParticleInspectorPanel::draw(m_particles.particles(), ParticleInspectorOptions{
+        .label = "Particles",
+        .show_level_curve_controls = true,
+        .show_brownian_controls = true,
+        .show_trail_controls = true
+    });
+    ImGui::End();
+}
+
+void SimulationSurfaceGaussian::draw_goal_panel() {
+    ImGui::SetNextWindowPos(ImVec2(24.f, 548.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300.f, 130.f), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Sim - Goals")) { ImGui::End(); return; }
+    GoalStatusPanel::draw(metadata());
+    ImGui::End();
+}
+
+void SimulationSurfaceGaussian::submit_geometry() {
+    if (!m_host || m_main_view == 0 || m_alternate_view == 0) return;
+
+    submit_surface_sim_packets(m_host->render(), m_main_view, m_alternate_view,
+        *m_surface, m_mesh, m_particles, SurfaceMeshOptions{
+        .grid_lines = 32u,
+        .time = m_surface->time(),
+        .color_scale = 1.75f,
+        .wire_color = {0.92f, 0.96f, 1.f, 0.34f},
+        .fill_color_mode = SurfaceFillColorMode::HeightCell,
+        .build_contour = true
+    });
+}
+
+void SimulationSurfaceGaussian::apply_surface_commands() {
+    if (!m_host || m_main_view == 0) return;
+
+    for (const SurfacePerturbCommand& command : m_host->render().consume_surface_perturbations(m_main_view)) {
+        Vec2 uv = command.uv;
+        if (command.use_ray_pick) {
+            if (auto picked = pick_surface_uv_by_ray(*m_surface, m_host->render().descriptor(m_main_view),
+                                                     command.screen_ndc, m_surface->time())) {
+                uv = *picked;
+            }
+        }
+        const float sign = (command.seed % 2u == 0u) ? 1.f : -1.f;
+        auto& params = m_surface->params();
+        params.amplitude = sign * std::max(0.05f, command.amplitude);
+        params.sigma = std::max(0.25f, command.radius);
+        params.wavelength = std::max(0.5f, command.radius * 2.1f);
+        params.damping = std::max(0.05f, 0.35f * command.falloff);
+        m_surface->set_epicentre(uv.x, uv.y);
+        m_mesh.mark_dirty();
+        m_context.queue_perturbation(SurfacePerturbation{
+            .uv = uv,
+            .amplitude = params.amplitude,
+            .radius = command.radius,
+            .falloff = command.falloff,
+            .seed = command.seed
+        });
+        m_context.math_cache().bump_surface();
+    }
+}
+
+void SimulationSurfaceGaussian::sync_context() {
+    m_particles.set_surface(m_surface.get());
+    m_context.set_surface(m_surface.get());
+    m_context.set_particles(&m_particles.particles());
+    m_context.set_rng(&m_particles.rng());
+    m_context.set_time(m_sim_time);
+}
+
+} // namespace ndde

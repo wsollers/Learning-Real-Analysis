@@ -3,7 +3,7 @@
 // ExtremumTable: cached locations of the global max and min of a surface.
 //
 // Built by a grid search followed by gradient refinement.
-// Owned by SurfaceSimScene as a value member (stable address).
+// Cached by simulations that need extremum lookup tables.
 // Non-owning pointers to it are held by LeaderSeekerEquation and
 // BiasedBrownianLeader -- safe because the scene outlives all particles.
 

@@ -2,7 +2,7 @@
 // app/AnimatedCurve.hpp
 // AnimatedCurve: one walker particle on a parametric surface.
 //
-// Moved from GaussianSurface.hpp (B1 refactor) so that ParticleRenderer and
+// Moved from GaussianSurface.hpp (B1 refactor) so that particle helpers and
 // SpawnStrategy can include this type without pulling in GaussianSurface.
 //
 // Ownership model
@@ -163,7 +163,7 @@ public:
     }
 
     // Mutable access to the particle state for pairwise constraint application.
-    // Called only by SurfaceSimScene::apply_pairwise_constraints().
+    // Prefer ParticleSystem for new simulation code.
     // Do not use from equation or integrator code.
     [[nodiscard]] ndde::sim::ParticleState& walk_state() noexcept { return m_walk; }
 

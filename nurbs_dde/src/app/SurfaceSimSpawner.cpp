@@ -1,258 +1,94 @@
 #include "app/SurfaceSimSpawner.hpp"
 
-#include "app/ParticleBehaviors.hpp"
-#include "app/SimulationContext.hpp"
-#include "numeric/ops.hpp"
-#include "sim/BrownianMotion.hpp"
-#include "sim/DelayPursuitEquation.hpp"
-#include "sim/DirectPursuitEquation.hpp"
-#include "sim/GradientWalker.hpp"
-#include "sim/MomentumBearingEquation.hpp"
-
-#include <algorithm>
-#include <cmath>
+#include "sim/LevelCurveWalker.hpp"
 
 namespace ndde {
 
-SurfaceSimSpawner::SurfaceSimSpawner(std::unique_ptr<ndde::math::ISurface>& surface,
-                                     ParticleSystem& particles,
-                                     std::vector<AnimatedCurve>& curves,
-                                     SurfaceBehaviorParams& behavior,
-                                     SurfacePursuitState& pursuit,
-                                     SurfaceSpawnState& spawn,
-                                     GoalStatus& goal_status,
+SurfaceSimSpawner::SurfaceSimSpawner(ParticleSystem& particles,
                                      float& sim_time,
-                                     float& sim_speed) noexcept
-    : m_surface(surface)
-    , m_particles(particles)
-    , m_curves(curves)
-    , m_behavior(behavior)
-    , m_pursuit(pursuit)
-    , m_spawn(spawn)
-    , m_goal_status(goal_status)
+                                     GoalStatus& goal_status) noexcept
+    : m_particles(particles)
     , m_sim_time(sim_time)
-    , m_sim_speed(sim_speed)
+    , m_goal_status(goal_status)
 {}
 
-glm::vec2 SurfaceSimSpawner::reference_uv() const noexcept {
-    if (m_curves.empty())
-        return {(m_surface->u_min() + m_surface->u_max()) * 0.5f,
-                (m_surface->v_min() + m_surface->v_max()) * 0.5f};
-    return m_curves[0].head_uv();
-}
-
-glm::vec2 SurfaceSimSpawner::offset_spawn(glm::vec2 ref_uv, float radius, float angle) const noexcept {
-    constexpr float margin = 0.5f;
-    return {
-        std::clamp(ref_uv.x + radius * ops::cos(angle),
-                   m_surface->u_min() + margin, m_surface->u_max() - margin),
-        std::clamp(ref_uv.y + radius * ops::sin(angle),
-                   m_surface->v_min() + margin, m_surface->v_max() - margin)
-    };
-}
-
-void SurfaceSimSpawner::prewarm_particle(AnimatedCurve& particle, int frames) {
-    SimulationContext context = m_particles.context(m_sim_time);
-    particle.set_behavior_context(&context);
-    for (int i = 0; i < frames; ++i) {
-        context.set_time(m_sim_time + static_cast<float>(i) / 60.f);
-        particle.advance(1.f / 60.f, m_sim_speed);
-    }
-    particle.set_behavior_context(nullptr);
-}
-
-void SurfaceSimSpawner::spawn_gradient_particle(ParticleRole role, glm::vec2 uv) {
-    ParticleBuilder builder = m_particles.factory().particle();
-    builder
-        .named(std::string(role_name(role)) + " - Gradient Walker")
-        .role(role)
-        .at(uv)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .with_equation(std::make_unique<ndde::sim::GradientWalker>());
-
-    AnimatedCurve& particle = m_particles.spawn(std::move(builder));
-    prewarm_particle(particle);
-
-    if (role == ParticleRole::Leader) ++m_spawn.leader_count;
-    else if (role == ParticleRole::Chaser) ++m_spawn.chaser_count;
-}
-
-void SurfaceSimSpawner::spawn_brownian_particle(glm::vec2 uv) {
-    ParticleBuilder builder = m_particles.factory().particle();
-    builder
-        .named("Chaser - Brownian")
-        .role(ParticleRole::Chaser)
-        .at(uv)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .stochastic()
-        .with_equation(std::make_unique<ndde::sim::BrownianMotion>(m_behavior.brownian));
-
-    AnimatedCurve& particle = m_particles.spawn(std::move(builder));
-    prewarm_particle(particle);
-    ++m_spawn.chaser_count;
-}
-
-void SurfaceSimSpawner::spawn_delay_pursuit_particle(glm::vec2 uv) {
-    if (m_curves.empty()) return;
-    if (m_curves[0].history() == nullptr) {
-        const std::size_t cap =
-            static_cast<std::size_t>(std::ceil(m_behavior.delay_pursuit.tau * 120.f * 1.5f)) + 256;
-        m_curves[0].enable_history(cap, 1.f / 120.f);
-    }
-
-    ParticleBuilder builder = m_particles.factory().particle();
-    builder
-        .named("Chaser - Delay Pursuit")
-        .role(ParticleRole::Chaser)
-        .at(uv)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .stochastic()
-        .with_equation(std::make_unique<ndde::sim::DelayPursuitEquation>(
-            m_curves[0].history(), m_surface.get(), m_behavior.delay_pursuit));
-    m_particles.spawn(std::move(builder));
-    ++m_spawn.chaser_count;
-    ++m_spawn.delay_pursuit_count;
-}
-
-void SurfaceSimSpawner::spawn_showcase_service() {
-    m_curves.clear();
+void SurfaceSimSpawner::reset_particles() noexcept {
+    m_particles.clear();
     m_particles.clear_goals();
-    m_spawn.leader_count = 0;
-    m_spawn.chaser_count = 0;
-    m_spawn.delay_pursuit_count = 0;
-    m_spawn.spawning_pursuer = true;
+    m_goal_status = GoalStatus::Running;
+    m_sim_time = 0.f;
+}
 
-    const std::size_t history_cap =
-        static_cast<std::size_t>(std::ceil(2.0f * 120.f * 1.5f)) + 256;
+SwarmBuildResult SurfaceSimSpawner::clear_all() noexcept {
+    reset_particles();
+    return SwarmBuildResult{.metadata = SwarmRecipeMetadata{
+        .family_name = "Clear All",
+        .requested_count = 0u,
+        .roles_emitted = {},
+        .goals_added = false
+    }};
+}
 
-    ParticleBuilder leader_builder = m_particles.factory().particle();
-    leader_builder
-        .named("Leader - Brownian - Bias Drift")
-        .role(ParticleRole::Leader)
-        .at({-4.5f, -4.0f})
-        .history(history_cap, 1.f / 120.f)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .stochastic()
-        .with_behavior<ConstantDriftBehavior>(0.75f, glm::vec2{0.55f, 0.28f})
-        .with_behavior<BrownianBehavior>(BrownianBehavior::Params{
-            .sigma = 0.16f,
-            .drift_strength = 0.08f
-        });
-    AnimatedCurve& leader = m_particles.spawn(std::move(leader_builder));
-    ++m_spawn.leader_count;
+SwarmBuildResult SurfaceSimSpawner::spawn_showcase() {
+    reset_particles();
+    ParticleSwarmFactory swarms(m_particles);
+    SwarmBuildResult swarm = swarms.leader_pursuit(ParticleSwarmFactory::LeaderPursuitParams{
+        .leader_count = 2u,
+        .chaser_count = 6u,
+        .center = {-0.25f, 0.20f},
+        .leader_radius = 0.90f,
+        .chaser_radius = 3.10f,
+        .leader_speed = 0.52f,
+        .chaser_speed = 0.84f,
+        .delay_seconds = 0.55f,
+        .capture_radius = 0.20f,
+        .leader_noise = {.sigma = 0.08f, .drift_strength = -0.03f},
+        .chaser_noise = {.sigma = 0.045f, .drift_strength = 0.f},
+        .leader_trail = {TrailMode::Persistent, 2200u, 0.010f},
+        .chaser_trail = {TrailMode::Finite, 1400u, 0.012f},
+        .add_capture_goal = true,
+        .leader_label = "Leader - Gaussian Drift - Brownian",
+        .chaser_label = "Chaser - Delayed Pursuit - Brownian"
+    });
 
-    for (int i = 0; i < 240; ++i) {
+    for (int i = 0; i < 120; ++i) {
         m_sim_time += 1.f / 60.f;
         m_particles.update(1.f / 60.f, 1.f, m_sim_time);
     }
+    return swarm;
+}
 
-    ndde::SeekParticleBehavior::Params seek;
-    seek.target = TargetSelector::nearest(ParticleRole::Leader);
-    seek.speed = 0.95f;
-    seek.delay_seconds = 1.0f;
-
-    const glm::vec2 uv = offset_spawn(leader.head_uv(), 2.3f, 0.4f);
-    ParticleBuilder seeker_builder = m_particles.factory().particle();
-    seeker_builder
-        .named("Chaser - Delayed Seek - Brownian")
-        .role(ParticleRole::Chaser)
-        .at(uv)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .stochastic()
-        .with_behavior<SeekParticleBehavior>(seek)
-        .with_behavior<BrownianBehavior>(0.25f, BrownianBehavior::Params{
-            .sigma = 0.06f,
-            .drift_strength = 0.f
-        });
-    m_particles.spawn(std::move(seeker_builder));
-    ++m_spawn.chaser_count;
-    ++m_spawn.delay_pursuit_count;
-
-    m_particles.add_goal<CaptureGoal>(CaptureGoal::Params{
-        .seeker_role = ParticleRole::Chaser,
-        .target_role = ParticleRole::Leader,
-        .radius = 0.22f
+SwarmBuildResult SurfaceSimSpawner::spawn_brownian_cloud() {
+    ParticleSwarmFactory swarms(m_particles);
+    return swarms.brownian_cloud(ParticleSwarmFactory::BrownianCloudParams{
+        .count = 16u,
+        .center = {0.f, 0.f},
+        .radius = 2.75f,
+        .role = ParticleRole::Neutral,
+        .brownian = {.sigma = 0.12f, .drift_strength = 0.025f},
+        .trail = {TrailMode::Finite, 950u, 0.014f},
+        .label = "Neutral - Gaussian Brownian Cloud"
     });
-    m_goal_status = GoalStatus::Running;
 }
 
-void SurfaceSimSpawner::spawn_leader_seeker() {
-    const float u_mid = 0.5f*(m_surface->u_min() + m_surface->u_max());
-    const float v_mid = 0.5f*(m_surface->v_min() + m_surface->v_max());
-
-    std::unique_ptr<ndde::sim::IEquation> eq;
-    if (m_pursuit.leader_mode == LeaderMode::Deterministic)
-        eq = std::make_unique<ndde::sim::LeaderSeekerEquation>(
-                &m_pursuit.extremum_table, m_pursuit.leader_seeker);
-    else
-        eq = std::make_unique<ndde::sim::BiasedBrownianLeader>(
-                &m_pursuit.extremum_table, m_pursuit.biased_brownian_leader);
-
-    const std::size_t cap =
-        static_cast<std::size_t>(std::ceil(m_pursuit.pursuit_tau * 120.f * 1.5f)) + 256;
-
-    auto builder = m_particles.factory().particle();
-    builder
-        .named(m_pursuit.leader_mode == LeaderMode::Deterministic
-            ? "Leader - Extremum Seeker"
-            : "Leader - Biased Brownian")
-        .role(ParticleRole::Leader)
-        .at({u_mid, v_mid})
-        .history(cap, 1.f / 120.f)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .stochastic()
-        .with_equation(std::move(eq));
-    m_particles.spawn(std::move(builder));
-    ++m_spawn.leader_count;
-    m_spawn.spawning_pursuer = true;
-}
-
-void SurfaceSimSpawner::spawn_pursuit_particle() {
-    if (m_curves.empty()) return;
-
-    if (m_curves[0].history() == nullptr) {
-        const std::size_t cap =
-            static_cast<std::size_t>(std::ceil(m_pursuit.pursuit_tau * 120.f * 1.5f)) + 256;
-        m_curves[0].enable_history(cap, 1.f / 120.f);
-    }
-
-    const glm::vec2 ref = m_curves[0].head_uv();
-    const glm::vec2 uv  = offset_spawn(ref, 2.0f,
-        static_cast<float>(m_spawn.delay_pursuit_count) * 1.1f + 0.3f);
-
-    std::unique_ptr<ndde::sim::IEquation> eq;
-    switch (m_pursuit.pursuit_mode) {
-        case PursuitMode::Direct:
-            eq = std::make_unique<ndde::sim::DirectPursuitEquation>(
-                [this]{ return m_curves[0].head_uv(); },
-                ndde::sim::DirectPursuitEquation::Params{
-                    m_pursuit.leader_seeker.pursuit_speed, 0.f });
-            break;
-        case PursuitMode::Delayed:
-            eq = std::make_unique<ndde::sim::DelayPursuitEquation>(
-                m_curves[0].history(), m_surface.get(),
-                ndde::sim::DelayPursuitEquation::Params{
-                    m_pursuit.pursuit_tau, m_pursuit.leader_seeker.pursuit_speed, 0.f });
-            break;
-        case PursuitMode::Momentum:
-            eq = std::make_unique<ndde::sim::MomentumBearingEquation>(
-                m_curves[0].history(),
-                ndde::sim::MomentumBearingEquation::Params{
-                    m_pursuit.leader_seeker.pursuit_speed, m_pursuit.pursuit_window, 0.f });
-            break;
-    }
-
-    auto builder = m_particles.factory().particle();
-    builder
-        .named("Chaser - Pursuit")
-        .role(ParticleRole::Chaser)
-        .at(uv)
-        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .stochastic()
-        .with_equation(std::move(eq));
-    m_particles.spawn(std::move(builder));
-    ++m_spawn.chaser_count;
-    ++m_spawn.delay_pursuit_count;
+SwarmBuildResult SurfaceSimSpawner::spawn_contour_band() {
+    ParticleSwarmFactory swarms(m_particles);
+    ndde::sim::LevelCurveWalker::Params walker;
+    walker.epsilon = 0.14f;
+    walker.walk_speed = 0.58f;
+    walker.turn_rate = 2.6f;
+    walker.tangent_floor = 0.42f;
+    return swarms.contour_band(ParticleSwarmFactory::ContourBandParams{
+        .count = 10u,
+        .center = {0.f, 0.f},
+        .radius = 2.1f,
+        .shared_level = true,
+        .role = ParticleRole::Leader,
+        .walker = walker,
+        .noise = {.sigma = 0.016f, .drift_strength = 0.f},
+        .trail = {TrailMode::Persistent, 2200u, 0.010f},
+        .label = "Leader - Gaussian Contour Band"
+    });
 }
 
 } // namespace ndde

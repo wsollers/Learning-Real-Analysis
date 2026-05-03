@@ -39,6 +39,9 @@ struct SwarmRecipePanelOptions {
     bool show_level_curve_controls = true;
     bool show_brownian_controls = true;
     bool show_trail_controls = true;
+    bool show_sim_controls = true;
+    bool show_particle_inspector = true;
+    bool show_recipe_metadata = true;
     const char* goal_success_text = nullptr;
 };
 
@@ -53,22 +56,22 @@ public:
     {
         if (options.surface_formula)
             ImGui::TextDisabled("%s", options.surface_formula);
-        if (state.paused)
+        if (options.show_sim_controls && state.paused)
             ImGui::Checkbox("Paused  [Ctrl+P]", state.paused);
-        if (state.sim_speed)
+        if (options.show_sim_controls && state.sim_speed)
             ImGui::SliderFloat("Sim speed", state.sim_speed, 0.1f, 5.f, "%.2f");
-        if (state.grid_lines) {
+        if (options.show_sim_controls && state.grid_lines) {
             int grid = static_cast<int>(*state.grid_lines);
             if (ImGui::SliderInt(options.grid_label, &grid, options.min_grid, options.max_grid)) {
                 *state.grid_lines = static_cast<u32>(std::max(grid, options.min_grid));
                 if (state.mesh) state.mesh->mark_dirty();
             }
         }
-        if (state.color_scale)
+        if (options.show_sim_controls && state.color_scale)
             ImGui::SliderFloat(options.color_scale_label, state.color_scale, 0.2f, 4.f, "%.2f");
-        if (state.show_frenet)
+        if (options.show_sim_controls && state.show_frenet)
             ImGui::Checkbox("Hover Frenet  [Ctrl+F]", state.show_frenet);
-        if (state.show_osculating_circle)
+        if (options.show_sim_controls && state.show_osculating_circle)
             ImGui::Checkbox("Osculating circle  [Ctrl+O]", state.show_osculating_circle);
 
         ImGui::SeparatorText("Recipes");
@@ -81,7 +84,7 @@ public:
                 *last_result = action.spawn();
         }
 
-        if (last_result && !last_result->empty()) {
+        if (options.show_recipe_metadata && last_result && !last_result->empty()) {
             ImGui::SeparatorText("Last recipe");
             ImGui::TextDisabled("%s", last_result->metadata.family_name.c_str());
             ImGui::TextDisabled("count: %u", last_result->metadata.requested_count);
@@ -92,12 +95,14 @@ public:
         if (goal_status == GoalStatus::Succeeded && options.goal_success_text)
             ImGui::TextColored({0.4f, 1.f, 0.4f, 1.f}, "%s", options.goal_success_text);
 
-        ParticleInspectorPanel::draw(particles.particles(), ParticleInspectorOptions{
-            .label = "Active particles",
-            .show_level_curve_controls = options.show_level_curve_controls,
-            .show_brownian_controls = options.show_brownian_controls,
-            .show_trail_controls = options.show_trail_controls
-        });
+        if (options.show_particle_inspector) {
+            ParticleInspectorPanel::draw(particles.particles(), ParticleInspectorOptions{
+                .label = "Active particles",
+                .show_level_curve_controls = options.show_level_curve_controls,
+                .show_brownian_controls = options.show_brownian_controls,
+                .show_trail_controls = options.show_trail_controls
+            });
+        }
     }
 };
 

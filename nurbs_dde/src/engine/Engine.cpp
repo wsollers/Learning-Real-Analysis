@@ -31,6 +31,21 @@ namespace ndde {
 namespace {
 std::unordered_map<GLFWwindow*, Engine*> g_hotkey_engines;
 
+std::string_view render_kind_name(RenderViewKind kind) noexcept {
+    return kind == RenderViewKind::Main ? "Main" : "Alternate";
+}
+
+std::string_view alternate_mode_name(AlternateViewMode mode) noexcept {
+    switch (mode) {
+        case AlternateViewMode::Contour: return "Contour";
+        case AlternateViewMode::LevelCurves: return "Level Curves";
+        case AlternateViewMode::VectorField: return "Vector Field";
+        case AlternateViewMode::Isoclines: return "Isoclines";
+        case AlternateViewMode::Flow: return "Flow";
+    }
+    return "Unknown";
+}
+
 } // namespace
 
 void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -39,7 +54,8 @@ void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, 
         it->second->on_key_event(key, action, mods);
 }
 
-Engine::Engine() = default;
+Engine::Engine()
+    : m_simulation_host(m_services.simulation_host()) {}
 
 Engine::~Engine() {
     uninstall_global_hotkeys();
@@ -103,17 +119,16 @@ void Engine::start(const std::string& config_path) {
     // Also maximise the primary window to fill its half / first monitor
     glfwMaximizeWindow(m_glfw.window());
 
+    register_global_panels();
     register_default_simulations(m_simulations);
 
-    for (std::size_t i = 0; i < m_simulations.size(); ++i)
-        if (auto* sim = m_simulations.get(i))
-            sim->instantiate(make_api());
-
     m_active_sim = 0;
+    active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
+    m_event_log.push_back("Engine ready");
     std::cout << "[Engine] Ready.\n";
 }
 
@@ -142,8 +157,12 @@ void Engine::switch_simulation(std::size_t index) {
     if (index >= m_simulations.size() || index == m_active_sim) return;
     vkDeviceWaitIdle(m_vk.device());
     m_renderer.reset_frame_state();
+    active_runtime().stop();
+    m_services.render().clear_packets();
     m_active_sim = index;
+    active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
+    m_event_log.push_back(std::format("Switched simulation: {}", active_runtime().name()));
     std::cout << std::format("[Engine] Active simulation: {}\n", active_runtime().name());
 }
 
@@ -174,6 +193,7 @@ void Engine::run_frame() {
     if (!m_renderer.begin_frame(m_swapchain)) { handle_resize(); return; }
     m_renderer.imgui_new_frame();
     dispatch_global_hotkeys();
+    update_render_view_input();
 
     // ── Populate DebugStats ───────────────────────────────────────────────────
     const auto& sc_ext = m_swapchain.extent();
@@ -192,9 +212,10 @@ void Engine::run_frame() {
     // ── Second window begin ──────────────────────────────────────────────────────
     const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
-    active_runtime().scene().on_frame(frame_ms / 1000.f);
-    active_runtime().publish();
-    draw_global_panels();
+    m_services.render().clear_packets();
+    active_runtime().tick(m_services.clock().next(frame_ms / 1000.f, active_runtime().paused()));
+    flush_render_service();
+    m_services.panels().draw_registered_panels();
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_buffer_manager.bytes_used();
@@ -218,7 +239,35 @@ void Engine::run_frame() {
     apply_pending_simulation_switch();
 }
 
-void Engine::draw_global_panels() {
+void Engine::register_global_panels() {
+    m_global_panels.clear();
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Engine - Global",
+        .category = "Engine",
+        .scope = PanelScope::Global,
+        .draw = [this] { draw_global_status_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Debug - Coordinates",
+        .category = "Debug",
+        .scope = PanelScope::Global,
+        .draw = [this] { draw_debug_coordinates_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Simulation - Metadata",
+        .category = "Debug",
+        .scope = PanelScope::Global,
+        .draw = [this] { draw_simulation_metadata_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Engine - Log",
+        .category = "Engine",
+        .scope = PanelScope::Global,
+        .draw = [this] { draw_event_log_panel(); }
+    }));
+}
+
+void Engine::draw_global_status_panel() {
     ImGui::SetNextWindowPos(ImVec2(12.f, 34.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(260.f, 150.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowBgAlpha(0.86f);
@@ -248,6 +297,100 @@ void Engine::draw_global_panels() {
         static_cast<unsigned long long>(m_debug_stats.arena_bytes_used),
         static_cast<unsigned long long>(m_debug_stats.arena_bytes_total));
     ImGui::TextDisabled("F12 capture   Ctrl+Shift+P pause+capture");
+    bool axes = m_services.render().axes_visible();
+    if (ImGui::Checkbox("Axes", &axes))
+        m_services.render().set_axes_visible(axes);
+    ImGui::TextDisabled("RMB drag orbit   MMB/Shift+RMB pan   Wheel zoom");
+    ImGui::TextDisabled("Double-click surface perturb");
+    ImGui::End();
+}
+
+void Engine::draw_debug_coordinates_panel() {
+    ImGui::SetNextWindowPos(ImVec2(290.f, 34.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(340.f, 220.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.86f);
+    if (!ImGui::Begin("Debug - Coordinates")) { ImGui::End(); return; }
+
+    const ImGuiIO& io = ImGui::GetIO();
+    const Vec2 fb{static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())};
+    ImGui::SeparatorText("Mouse");
+    ImGui::TextDisabled("display %.0f x %.0f", io.DisplaySize.x, io.DisplaySize.y);
+    ImGui::TextDisabled("framebuffer %.0f x %.0f", fb.x, fb.y);
+    ImGui::TextDisabled("mouse %.1f, %.1f", io.MousePos.x, io.MousePos.y);
+
+    const RenderViewId main = m_services.render().first_active_main_view();
+    if (main != 0) {
+        const RenderViewDomain d = m_services.render().view_domain(main);
+        const float nx = io.DisplaySize.x > 0.f ? std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f) : 0.f;
+        const float ny = io.DisplaySize.y > 0.f ? std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f) : 0.f;
+        const Vec2 uv{
+            d.u_min + nx * (d.u_max - d.u_min),
+            d.v_max - ny * (d.v_max - d.v_min)
+        };
+        ImGui::SeparatorText("Active Main View");
+        ImGui::TextDisabled("domain u[%.2f, %.2f] v[%.2f, %.2f]", d.u_min, d.u_max, d.v_min, d.v_max);
+        ImGui::TextDisabled("mapped uv %.3f, %.3f", uv.x, uv.y);
+        if (const auto* desc = m_services.render().descriptor(main)) {
+            const auto& cam = desc->camera;
+            ImGui::TextDisabled("camera yaw %.2f pitch %.2f zoom %.2f", cam.yaw, cam.pitch, cam.zoom);
+            ImGui::TextDisabled("target %.2f, %.2f, %.2f", cam.target.x, cam.target.y, cam.target.z);
+        }
+    }
+    ImGui::End();
+}
+
+void Engine::draw_simulation_metadata_panel() {
+    ImGui::SetNextWindowPos(ImVec2(650.f, 34.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(380.f, 420.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.86f);
+    if (!ImGui::Begin("Simulation - Metadata")) { ImGui::End(); return; }
+
+    const SimulationMetadata metadata = active_runtime().metadata();
+    const SceneSnapshot snapshot = active_runtime().snapshot();
+    ImGui::SeparatorText("Simulation");
+    ImGui::TextDisabled("%s", metadata.name.c_str());
+    if (!metadata.surface_name.empty())
+        ImGui::TextDisabled("%s", metadata.surface_name.c_str());
+    if (!metadata.surface_formula.empty())
+        ImGui::TextDisabled("%s", metadata.surface_formula.c_str());
+    ImGui::TextDisabled("status %s   paused %s", metadata.status.c_str(), metadata.paused ? "yes" : "no");
+    ImGui::TextDisabled("t %.2f   speed %.2f   particles %llu",
+        metadata.sim_time,
+        metadata.sim_speed,
+        static_cast<unsigned long long>(metadata.particle_count));
+
+    ImGui::SeparatorText("Render Views");
+    for (const RenderViewSnapshot& view : m_services.render().active_view_snapshots()) {
+        if (ImGui::TreeNode(std::format("{}##view{}", view.title, view.id).c_str())) {
+            ImGui::TextDisabled("id %llu   %s", static_cast<unsigned long long>(view.id), render_kind_name(view.kind).data());
+            if (view.kind == RenderViewKind::Alternate)
+                ImGui::TextDisabled("mode %s", alternate_mode_name(view.alternate_mode).data());
+            ImGui::TextDisabled("domain u[%.2f, %.2f] v[%.2f, %.2f]",
+                view.domain.u_min, view.domain.u_max, view.domain.v_min, view.domain.v_max);
+            ImGui::TextDisabled("axes %s   hover %s   osc %s",
+                view.overlays.show_axes ? "on" : "off",
+                view.overlays.show_hover_frenet ? "on" : "off",
+                view.overlays.show_osculating_circle ? "on" : "off");
+            ImGui::TreePop();
+        }
+    }
+
+    ImGui::SeparatorText("Particles");
+    for (const auto& particle : snapshot.particles) {
+        ImGui::TextDisabled("#%llu %s", static_cast<unsigned long long>(particle.id), particle.label.c_str());
+        ImGui::SameLine();
+        ImGui::TextDisabled("(%.2f, %.2f, %.2f)", particle.x, particle.y, particle.z);
+    }
+    ImGui::End();
+}
+
+void Engine::draw_event_log_panel() {
+    ImGui::SetNextWindowPos(ImVec2(1048.f, 34.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(320.f, 180.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.86f);
+    if (!ImGui::Begin("Engine - Log")) { ImGui::End(); return; }
+    for (const auto& line : m_event_log)
+        ImGui::TextDisabled("%s", line.c_str());
     ImGui::End();
 }
 
@@ -292,7 +435,7 @@ void Engine::on_key_event(int key, int action, int mods) {
         return;
     }
 
-    active_runtime().scene().on_key_event(key, action, mods);
+    (void)m_services.hotkeys().dispatch(KeyChord{.key = key, .mods = mods});
 }
 
 void Engine::dispatch_global_hotkeys() {
@@ -301,9 +444,51 @@ void Engine::dispatch_global_hotkeys() {
     // future event queue draining, but no longer polls key state.
 }
 
+void Engine::update_render_view_input() {
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.DisplaySize.y > 0.f)
+        m_services.render().set_main_view_aspect(io.DisplaySize.x / io.DisplaySize.y);
+    if (io.WantCaptureMouse) return;
+
+    if (io.MouseWheel != 0.f)
+        m_services.render().zoom_main_cameras(io.MouseWheel);
+
+    const bool right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right);
+    const bool middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle);
+    const bool shift = io.KeyShift;
+    if (right_drag && !shift)
+        m_services.render().orbit_main_cameras(io.MouseDelta.x, io.MouseDelta.y);
+    if (middle_drag || (right_drag && shift))
+        m_services.render().pan_main_cameras(io.MouseDelta.x, io.MouseDelta.y);
+
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+        const RenderViewId view = m_services.render().first_active_main_view();
+        if (view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
+            const RenderViewDomain domain = m_services.render().view_domain(view);
+            const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
+            const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
+            m_services.render().queue_surface_perturbation(SurfacePerturbCommand{
+                .view = view,
+                .uv = {
+                    domain.u_min + nx * (domain.u_max - domain.u_min),
+                    domain.v_max - ny * (domain.v_max - domain.v_min)
+                },
+                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
+                .viewport_aspect = io.DisplaySize.y > 0.f ? io.DisplaySize.x / io.DisplaySize.y : 16.f / 9.f,
+                .amplitude = 0.25f,
+                .radius = 1.0f,
+                .falloff = 1.f,
+                .seed = m_surface_perturb_seed++,
+                .use_ray_pick = true
+            });
+        }
+    }
+}
+
 void Engine::request_capture(bool pause_first) {
     if (pause_first)
         active_runtime().pause();
+    m_event_log.push_back("PNG capture requested");
     m_renderer.request_png_capture(make_capture_path());
 }
 
@@ -327,16 +512,46 @@ std::filesystem::path Engine::make_capture_path() const {
     return std::filesystem::path{NDDE_PROJECT_DIR} / "captures" / (name + "_" + stamp.str() + ".png");
 }
 
-SceneSimulationRuntime& Engine::active_runtime() {
+SimulationRuntime& Engine::active_runtime() {
     auto* runtime = m_simulations.get(m_active_sim);
     if (!runtime) throw std::runtime_error("[Engine] No active simulation runtime");
     return *runtime;
 }
 
-const SceneSimulationRuntime& Engine::active_runtime() const {
+const SimulationRuntime& Engine::active_runtime() const {
     const auto* runtime = m_simulations.get(m_active_sim);
     if (!runtime) throw std::runtime_error("[Engine] No active simulation runtime");
     return *runtime;
+}
+
+void Engine::flush_render_service() {
+    for (const RenderPacket& packet : m_services.render().packets()) {
+        if (packet.vertices.empty()) continue;
+        auto slice = m_buffer_manager.acquire(static_cast<u32>(packet.vertices.size()));
+        auto verts = slice.vertices();
+        for (u32 i = 0; i < static_cast<u32>(packet.vertices.size()); ++i)
+            verts[i] = packet.vertices[i];
+
+        renderer::DrawCall dc{
+            .slice = slice,
+            .topology = packet.topology,
+            .mode = packet.mode,
+            .color = packet.color,
+            .mvp = packet.mvp
+        };
+
+        const RenderTarget target = m_services.render().view_kind(packet.view) == RenderViewKind::Alternate
+            ? RenderTarget::Contour2D
+            : RenderTarget::Primary3D;
+        switch (target) {
+            case RenderTarget::Primary3D:
+                m_renderer.draw(dc);
+                break;
+            case RenderTarget::Contour2D:
+                if (m_second_win.valid()) m_second_win.draw(dc);
+                break;
+        }
+    }
 }
 
 void Engine::handle_resize() {

@@ -2,14 +2,29 @@
 enable_testing()
 
 add_executable(ndde_tests
+    test_all_simulations.cpp
     test_conics.cpp
     test_axes.cpp
     test_numeric.cpp
     test_particle_system.cpp
     test_surface_mesh_cache.cpp
+    test_engine_services.cpp
+    test_simulation_context.cpp
+    test_simulation_runtime.cpp
+    test_simulation_surface_gaussian.cpp
     ${CMAKE_SOURCE_DIR}/src/app/GaussianSurface.cpp
     ${CMAKE_SOURCE_DIR}/src/app/ParticleSystem.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AnalysisSpawner.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SceneFactories.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/MultiWellSpawner.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationAnalysis.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationMultiWell.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationSurfaceGaussian.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationWavePredatorPrey.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SurfaceMeshCache.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SurfaceSimSpawner.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/WavePredatorPreySpawner.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
 )
 
 target_include_directories(ndde_tests PRIVATE
@@ -19,6 +34,8 @@ target_include_directories(ndde_tests PRIVATE
 target_link_libraries(ndde_tests PRIVATE
     ndde_math
     ndde_numeric
+    volk
+    imgui
     GTest::gtest_main
     glm::glm
 )
@@ -43,3 +60,8 @@ endif()
 
 include(GoogleTest)
 gtest_discover_tests(ndde_tests)
+
+add_test(
+    NAME allocation_policy
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/check_allocation_policy.py
+)

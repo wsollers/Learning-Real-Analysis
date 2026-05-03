@@ -4,9 +4,7 @@
 // Implements ndde::math::ISurface -- p(u,v) = (u, v, f(u,v)).
 //
 // Static helpers (grad, unit_normal, curvature, tessellate_*, height_color)
-// remain for the graph-surface-specific rendering in SurfaceSimScene
-// (heatmap, contour lines).  They are guarded by dynamic_cast in Step 3.
-// They will be progressively removed as the rendering layer is refactored.
+// remain for graph-surface rendering helpers such as heatmaps and contours.
 //
 // FrenetFrame, SurfaceFrame, make_surface_frame, AnimatedCurve are defined
 // here temporarily.  They will move to their own headers in later steps.
@@ -50,6 +48,7 @@ public:
     [[nodiscard]] float u_max(float = 0.f) const override { return XMAX; }
     [[nodiscard]] float v_min(float = 0.f) const override { return YMIN; }
     [[nodiscard]] float v_max(float = 0.f) const override { return YMAX; }
+    [[nodiscard]] float extent() const noexcept { return XMAX; }
 
     // ── Static helpers (unchanged -- existing call sites keep working) ─────────
     // eval_static() is the renamed form of the old eval().
