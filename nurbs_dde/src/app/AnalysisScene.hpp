@@ -27,17 +27,17 @@
 #include "app/SceneFactories.hpp"
 #include "app/SimulationSceneBase.hpp"
 #include "app/AnimatedCurve.hpp"
+#include "app/ContourWindowRenderer.hpp"
 #include "app/FrenetFrame.hpp"
-#include "app/ParticleRenderer.hpp"
 #include "app/ParticleFactory.hpp"
 #include "app/HotkeyManager.hpp"
 #include "app/PanelHost.hpp"
 #include "app/ParticleInspectorPanel.hpp"
-#include "app/ProjectedParticleOverlay.hpp"
+#include "app/ProjectedSurfaceCanvas.hpp"
+#include "app/SurfaceRegistry.hpp"
 #include "app/SurfaceMeshCache.hpp"
 #include "app/Viewport.hpp"
 #include "app/ParticleSystem.hpp"
-#include "math/SineRationalSurface.hpp"
 #include "sim/LevelCurveWalker.hpp"
 #include "sim/BrownianMotion.hpp"
 #include "sim/IConstraint.hpp"
@@ -47,7 +47,6 @@
 #include <imgui.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -63,9 +62,8 @@ class AnalysisScene final : public SimulationSceneBase {
 public:
     explicit AnalysisScene(EngineAPI api)
         : m_api(std::move(api))
-        , m_surface(std::make_unique<ndde::math::SineRationalSurface>(4.f))
+        , m_surface(SurfaceRegistry::make_sine_rational(4.f))
         , m_particles(m_surface.get())
-        , m_particle_renderer(m_api)
     {
         m_vp3d.base_extent = 5.f;
         m_vp3d.zoom        = 1.f;
@@ -121,15 +119,12 @@ private:
     EngineAPI                                       m_api;
     std::unique_ptr<ndde::math::SineRationalSurface> m_surface;
     ParticleSystem                                  m_particles;
-    ParticleRenderer                                m_particle_renderer;
     HotkeyManager                                   m_hotkeys;
     PanelHost                                       m_panels;
     Viewport                                        m_vp3d;
 
     // Geometry cache
     SurfaceMeshCache  m_mesh;
-    std::vector<Vertex> m_projected_fill_cache;
-    std::vector<Vertex> m_projected_wire_cache;
     u32               m_grid_lines  = 60;
     float             m_curv_scale  = 3.f;
     bool              m_show_frenet = true;
@@ -291,35 +286,6 @@ private:
         ++m_spawn_count;
     }
 
-    // ── MVP ───────────────────────────────────────────────────────────────────
-
-    [[nodiscard]] Mat4 canvas_mvp(const ImVec2& cpos, const ImVec2& csz) const noexcept {
-        const Vec2  sw   = m_api.viewport_size();
-        const float swx  = sw.x > 0.f ? sw.x : 1.f;
-        const float swy  = sw.y > 0.f ? sw.y : 1.f;
-        const float cw   = csz.x > 0.f ? csz.x : 1.f;
-        const float ch   = csz.y > 0.f ? csz.y : 1.f;
-
-        const float sx = cw / swx;
-        const float sy = ch / swy;
-        const ImVec2 vp0 = ImGui::GetMainViewport()->Pos;
-        const float cx = cpos.x - vp0.x;
-        const float cy = cpos.y - vp0.y;
-        const float bx =  2.f*cx/swx + sx - 1.f;
-        const float by = -(2.f*cy/swy + sy - 1.f);
-
-        Mat4 remap(0.f);
-        remap[0][0] = sx;  remap[1][1] = sy;  remap[2][2] = 1.f;
-        remap[3][0] = bx;  remap[3][1] = by;  remap[3][3] = 1.f;
-
-        const float ext = m_surface->extent();
-        const float aspect = cw / ch;
-        const Mat4 ortho = aspect >= 1.f
-            ? glm::ortho(-ext * aspect, ext * aspect, -ext, ext, -10.f, 10.f)
-            : glm::ortho(-ext, ext, -ext / aspect, ext / aspect, -10.f, 10.f);
-        return remap * ortho;
-    }
-
     // ── Surface geometry ──────────────────────────────────────────────────────
 
     void rebuild_geometry_if_needed() {
@@ -334,150 +300,14 @@ private:
     }
 
     void submit_contour_second_window() {
-        const Vec2 sz = m_api.viewport_size2();
-        if (sz.x <= 0.f || sz.y <= 0.f) return;
         rebuild_geometry_if_needed();
-        if (m_mesh.contour_count() == 0) return;
-
-        const float ext = m_surface->extent();
-        const float aspect = sz.x / std::max(sz.y, 1.f);
-        const Mat4 mvp = aspect >= 1.f
-            ? glm::ortho(-ext * aspect, ext * aspect, -ext, ext, -1.f, 1.f)
-            : glm::ortho(-ext, ext, -ext / aspect, ext / aspect, -1.f, 1.f);
-
-        auto sl = m_api.acquire(m_mesh.contour_count());
-        std::memcpy(sl.vertices(), m_mesh.contour_vertices().data(), m_mesh.contour_count()*sizeof(Vertex));
-        m_api.submit_to(RenderTarget::Contour2D, sl, Topology::TriangleList,
-                        DrawMode::VertexColor, {1,1,1,1}, mvp);
-
-        if (m_mesh.wire_count() > 0) {
-            auto wl = m_api.acquire(m_mesh.wire_count());
-            std::memcpy(wl.vertices(), m_mesh.wire_vertices().data(), m_mesh.wire_count()*sizeof(Vertex));
-            for (u32 i = 0; i < m_mesh.wire_count(); ++i) {
-                wl.vertices()[i].pos.z = 0.f;
-                wl.vertices()[i].color = {0.95f, 0.95f, 1.f, 0.32f};
-            }
-            m_api.submit_to(RenderTarget::Contour2D, wl, Topology::LineList,
-                            DrawMode::VertexColor, {1,1,1,1}, mvp);
-        }
-
-        for (const auto& curve : m_particles.particles()) {
-            const u32 n = curve.trail_vertex_count();
-            if (n < 2) continue;
-
-            auto tr = m_api.acquire(n);
-            curve.tessellate_trail({tr.vertices(), n});
-            for (u32 i = 0; i < n; ++i) {
-                tr.vertices()[i].pos.z = 0.f;
-                tr.vertices()[i].color.a = std::max(tr.vertices()[i].color.a, 0.65f);
-            }
-            m_api.submit_to(RenderTarget::Contour2D, tr, Topology::LineStrip,
-                            DrawMode::VertexColor, {1,1,1,1}, mvp);
-
-            const glm::vec2 uv = curve.head_uv();
-            constexpr float r = 0.055f;
-            auto dot = m_api.acquire(4);
-            const Vec4 col = curve.head_colour();
-            dot.vertices()[0] = {{uv.x - r, uv.y, 0.f}, col};
-            dot.vertices()[1] = {{uv.x + r, uv.y, 0.f}, col};
-            dot.vertices()[2] = {{uv.x, uv.y - r, 0.f}, col};
-            dot.vertices()[3] = {{uv.x, uv.y + r, 0.f}, col};
-            m_api.submit_to(RenderTarget::Contour2D, dot, Topology::LineList,
-                            DrawMode::VertexColor, {1,1,1,1}, mvp);
-        }
-    }
-
-    [[nodiscard]] Vec3 project_analysis_point(Vec3 p) const noexcept {
-        const float cy = ops::cos(m_vp3d.yaw);
-        const float sy = ops::sin(m_vp3d.yaw);
-        const float cp = ops::cos(m_vp3d.pitch);
-        const float sp = ops::sin(m_vp3d.pitch);
-
-        const float xr = cy * p.x - sy * p.y;
-        const float yr = sy * p.x + cy * p.y;
-        const float zr = p.z;
-
-        const float screen_y = cp * yr - sp * zr;
-        const float depth    = sp * yr + cp * zr;
-        const float inv_zoom = 1.f / std::max(m_vp3d.zoom, 0.05f);
-        return {xr * inv_zoom, screen_y * inv_zoom, depth * 0.01f};
-    }
-
-    [[nodiscard]] static ImU32 to_imgui_color(Vec4 c) noexcept {
-        const auto u8c = [](float v) -> int {
-            return static_cast<int>(std::clamp(v, 0.f, 1.f) * 255.f + 0.5f);
-        };
-        return IM_COL32(u8c(c.r), u8c(c.g), u8c(c.b), u8c(c.a));
-    }
-
-    [[nodiscard]] ImVec2 projected_to_canvas(Vec3 p, const ImVec2& cpos, const ImVec2& csz) const noexcept {
-        const float ext = m_surface->extent();
-        const float aspect = csz.x / std::max(csz.y, 1.f);
-        const float half_x = aspect >= 1.f ? ext * aspect : ext;
-        const float half_y = aspect >= 1.f ? ext : ext / aspect;
-        const float nx = (p.x + half_x) / (2.f * half_x);
-        const float ny = 1.f - ((p.y + half_y) / (2.f * half_y));
-        return {cpos.x + nx * csz.x, cpos.y + ny * csz.y};
-    }
-
-    void draw_projected_imgui_surface(const ImVec2& cpos, const ImVec2& csz) {
-        rebuild_geometry_if_needed();
-        ImDrawList* dl = ImGui::GetWindowDrawList();
-        dl->PushClipRect(cpos, ImVec2(cpos.x + csz.x, cpos.y + csz.y), true);
-
-        for (u32 i = 0; i + 2 < m_mesh.fill_count(); i += 3) {
-            const Vertex& a = m_mesh.fill_vertices()[i + 0];
-            const Vertex& b = m_mesh.fill_vertices()[i + 1];
-            const Vertex& c = m_mesh.fill_vertices()[i + 2];
-            const ImVec2 pa = projected_to_canvas(project_analysis_point(a.pos), cpos, csz);
-            const ImVec2 pb = projected_to_canvas(project_analysis_point(b.pos), cpos, csz);
-            const ImVec2 pc = projected_to_canvas(project_analysis_point(c.pos), cpos, csz);
-            dl->AddTriangleFilled(pa, pb, pc, to_imgui_color(a.color));
-        }
-
-        const ImU32 wire_col = IM_COL32(215, 235, 255, 105);
-        for (u32 i = 0; i + 1 < m_mesh.wire_count(); i += 2) {
-            const ImVec2 a = projected_to_canvas(project_analysis_point(m_mesh.wire_vertices()[i + 0].pos), cpos, csz);
-            const ImVec2 b = projected_to_canvas(project_analysis_point(m_mesh.wire_vertices()[i + 1].pos), cpos, csz);
-            dl->AddLine(a, b, wire_col, 1.0f);
-        }
-
-        for (const auto& curve : m_particles.particles()) {
-            if (!curve.has_trail()) continue;
-            const Vec3 hp = curve.head_world();
-            const ImVec2 p = projected_to_canvas(project_analysis_point(hp), cpos, csz);
-            dl->AddCircleFilled(p, 4.f, IM_COL32(255, 230, 80, 235), 16);
-        }
-
-        dl->PopClipRect();
-    }
-
-    void submit_projected_primary(const Mat4& mvp) {
-        rebuild_geometry_if_needed();
-        if (m_mesh.fill_count() > 0) {
-            m_projected_fill_cache.resize(m_mesh.fill_count());
-            for (u32 i = 0; i < m_mesh.fill_count(); ++i) {
-                m_projected_fill_cache[i] = m_mesh.fill_vertices()[i];
-                m_projected_fill_cache[i].pos = project_analysis_point(m_mesh.fill_vertices()[i].pos);
-            }
-            auto sl = m_api.acquire(m_mesh.fill_count());
-            std::memcpy(sl.vertices(), m_projected_fill_cache.data(), m_mesh.fill_count()*sizeof(Vertex));
-            m_api.submit_to(RenderTarget::Primary3D, sl, Topology::TriangleList,
-                            DrawMode::VertexColor, {1,1,1,1}, mvp);
-        }
-
-        if (m_mesh.wire_count() > 0) {
-            m_projected_wire_cache.resize(m_mesh.wire_count());
-            for (u32 i = 0; i < m_mesh.wire_count(); ++i) {
-                m_projected_wire_cache[i] = m_mesh.wire_vertices()[i];
-                m_projected_wire_cache[i].pos = project_analysis_point(m_mesh.wire_vertices()[i].pos);
-                m_projected_wire_cache[i].color = {0.90f, 0.95f, 1.f, 0.50f};
-            }
-            auto sl = m_api.acquire(m_mesh.wire_count());
-            std::memcpy(sl.vertices(), m_projected_wire_cache.data(), m_mesh.wire_count()*sizeof(Vertex));
-            m_api.submit_to(RenderTarget::Primary3D, sl, Topology::LineList,
-                            DrawMode::VertexColor, {1,1,1,1}, mvp);
-        }
+        submit_contour_window(m_api, m_mesh, m_particles, ContourWindowOptions{
+            .extent = m_surface->extent(),
+            .draw_wire = true,
+            .wire_color = {0.95f, 0.95f, 1.f, 0.32f},
+            .trail_alpha_floor = 0.65f,
+            .draw_heads = true
+        });
     }
 
     // ── 3D canvas window ──────────────────────────────────────────────────────
@@ -492,41 +322,22 @@ private:
             ImGuiWindowFlags_NoBackground;
         ImGui::Begin("Analysis 3D", nullptr, flags);
 
-        const ImVec2 cpos = ImGui::GetCursorScreenPos();
-        const ImVec2 csz  = ImGui::GetContentRegionAvail();
-        m_vp3d.fb_w = csz.x; m_vp3d.fb_h = csz.y;
-        m_vp3d.dp_w = csz.x; m_vp3d.dp_h = csz.y;
-
-        ImGui::InvisibleButton("3d_canvas", csz,
-            ImGuiButtonFlags_MouseButtonLeft |
-            ImGuiButtonFlags_MouseButtonRight |
-            ImGuiButtonFlags_MouseButtonMiddle);
-
-        if (ImGui::IsItemHovered()) {
-            const ImGuiIO& io = ImGui::GetIO();
-            if (std::abs(io.MouseWheel) > 0.f)
-                m_vp3d.zoom = std::clamp(m_vp3d.zoom*(1.f+0.12f*io.MouseWheel), 0.05f, 20.f);
-            if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) ||
-                ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
-                m_vp3d.orbit(io.MouseDelta.x, io.MouseDelta.y);
-        }
-
-        const Mat4 mvp = canvas_mvp(cpos, csz);
-        draw_projected_imgui_surface(cpos, csz);
+        ProjectedSurfaceCanvas::draw(*m_surface, m_mesh, m_vp3d, m_particles, ProjectedSurfaceCanvasOptions{
+            .grid_lines = m_grid_lines,
+            .color_scale = m_curv_scale,
+            .wire_color = {0.3f, 0.6f, 0.9f, 0.55f},
+            .show_frenet = m_show_frenet,
+            .show_osculating_circle = m_show_osc,
+            .overlay_frame_scale = 0.32f,
+            .canvas_id = "3d_canvas",
+            .help_text = "Right-drag: orbit   Scroll: zoom   Ctrl+W: add walker",
+            .subtitle = "3D projected surface preview",
+            .paused = m_paused
+        });
 
         ImDrawList* dl = ImGui::GetWindowDrawList();
-        const bool canvas_hovered = ImGui::IsItemHovered();
-        [[maybe_unused]] const ProjectedParticleOverlayResult overlay =
-            draw_projected_particle_overlay(dl, m_particles.particles(), cpos, csz,
-                [this, cpos, csz](Vec3 p) {
-                    return projected_to_canvas(project_analysis_point(p), cpos, csz);
-                },
-                ProjectedParticleOverlayOptions{
-                    .hover_enabled = canvas_hovered,
-                    .show_frenet = m_show_frenet,
-                    .show_osculating_circle = m_show_osc,
-                    .frame_scale = 0.32f
-                });
+        const ImVec2 cpos = ImGui::GetItemRectMin();
+        const ImVec2 csz = ImGui::GetItemRectSize();
 
         // Level-band indicator lines per walker
         for (const auto& c : m_particles.particles()) {
@@ -536,25 +347,18 @@ private:
                 const float eps = eq->params().epsilon;
                 // Draw small dot at head coloured by how close we are to z0
                 const Vec3 hp = c.head_world();
-                const Vec3 pp = project_analysis_point(hp);
+                const ImVec2 pp = ProjectedSurfaceCanvas::projected_to_canvas(
+                    ProjectedSurfaceCanvas::project_point(hp, m_vp3d), cpos, csz, m_surface->extent());
                 const float dz = std::abs(hp.z - z0);
                 const float t  = std::clamp(dz / (eps + 1e-6f), 0.f, 1.f);
-                const Vec4 col = {1.f - t, 0.3f + 0.5f*(1.f-t), t*0.8f, 1.f};
-                auto sl = m_api.acquire(1);
-                sl.vertices()[0] = {pp, col};
-                m_api.submit_to(RenderTarget::Primary3D, sl, Topology::LineStrip, DrawMode::UniformColor, col, mvp);
+                dl->AddCircleFilled(pp, 3.5f,
+                    IM_COL32(static_cast<int>((1.f - t) * 255.f),
+                             static_cast<int>((0.3f + 0.5f * (1.f - t)) * 255.f),
+                             static_cast<int>(t * 0.8f * 255.f),
+                             255),
+                    14);
             }
         }
-
-        dl->AddText(ImVec2(cpos.x+8, cpos.y+6),
-            IM_COL32(200,200,200,180),
-            "Right-drag: orbit   Scroll: zoom   Ctrl+W: add walker");
-        dl->AddText(ImVec2(cpos.x+8, cpos.y+24),
-            IM_COL32(160,210,255,180),
-            "3D projected surface preview");
-        if (m_paused)
-            dl->AddText(ImVec2(cpos.x+8, cpos.y+42),
-                IM_COL32(255,210,60,240), "PAUSED  [Ctrl+P]");
 
         ImGui::End();
     }

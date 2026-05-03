@@ -150,6 +150,10 @@ TEST(ParticleSwarmFactory, BrownianCloudSpawnsRequestedCount) {
     });
 
     EXPECT_EQ(result.size(), 12u);
+    EXPECT_EQ(result.metadata.family_name, "Test Cloud");
+    EXPECT_EQ(result.metadata.requested_count, 12u);
+    EXPECT_EQ(result.metadata.roles_label(), "Avoider");
+    EXPECT_FALSE(result.metadata.goals_added);
     EXPECT_EQ(system.size(), 12u);
     EXPECT_EQ(system.particles().front().particle_role(), ParticleRole::Avoider);
     EXPECT_NE(system.particles().front().metadata_label().find("Brownian"), std::string::npos);
@@ -168,6 +172,10 @@ TEST(ParticleSwarmFactory, LeaderPursuitAddsLeadersChasersAndCaptureGoal) {
     });
 
     EXPECT_EQ(result.size(), 7u);
+    EXPECT_EQ(result.metadata.family_name, "Leader Pursuit");
+    EXPECT_EQ(result.metadata.requested_count, 7u);
+    EXPECT_EQ(result.metadata.roles_label(), "Leader, Chaser");
+    EXPECT_TRUE(result.metadata.goals_added);
     EXPECT_EQ(system.size(), 7u);
     EXPECT_EQ(system.particles()[0].particle_role(), ParticleRole::Leader);
     EXPECT_EQ(system.particles()[2].particle_role(), ParticleRole::Chaser);
@@ -193,6 +201,8 @@ TEST(ParticleSwarmFactory, ContourBandBuildsLevelCurveParticles) {
     });
 
     EXPECT_EQ(result.size(), 6u);
+    EXPECT_EQ(result.metadata.family_name, "Test Contour");
+    EXPECT_EQ(result.metadata.roles_label(), "Leader");
     EXPECT_EQ(system.size(), 6u);
     EXPECT_NE(system.particles().front().metadata_label().find("LevelCurveWalker"), std::string::npos);
 }
@@ -317,6 +327,11 @@ TEST(ParticleSwarmFactory, GradientAvoidCentroidOrbitAndFlockingFamiliesBuild) {
     EXPECT_EQ(centroid.size(), 3u);
     EXPECT_EQ(orbit.size(), 5u);
     EXPECT_EQ(flock.size(), 5u);
+    EXPECT_EQ(gradient.metadata.family_name, "Test Gradient");
+    EXPECT_EQ(avoid.metadata.roles_label(), "Avoider");
+    EXPECT_EQ(centroid.metadata.roles_label(), "Leader");
+    EXPECT_EQ(orbit.metadata.family_name, "Test Orbit");
+    EXPECT_EQ(flock.metadata.family_name, "Test Flock");
 
     bool saw_gradient = false, saw_avoid = false, saw_centroid = false, saw_orbit = false, saw_flock = false;
     for (const ndde::Particle& particle : system.particles()) {

@@ -7,7 +7,9 @@
 #include "app/SurfaceMeshCache.hpp"
 
 #include <imgui.h>
+#include <algorithm>
 #include <functional>
+#include <string>
 #include <vector>
 
 namespace ndde {
