@@ -41,6 +41,7 @@
 
 #include "math/Surfaces.hpp"       // IDeformableSurface
 #include "app/GaussianSurface.hpp" // eval_static, XMIN/XMAX/YMIN/YMAX
+#include "numeric/ops.hpp"
 #include <cmath>
 
 namespace ndde {
@@ -110,14 +111,14 @@ private:
 
         const float du_  = u - m_p.epicentre_u;
         const float dv_  = v - m_p.epicentre_v;
-        const float r    = std::sqrt(du_*du_ + dv_*dv_);
+        const float r    = ops::sqrt(du_*du_ + dv_*dv_);
 
         // Decaying radial wave with Gaussian spatial envelope
         const float wave =
             m_p.amplitude
-            * std::exp(-m_p.damping * t)
-            * std::sin(2.f * 3.14159265f * r / m_p.wavelength - m_p.speed * t)
-            * std::exp(-0.5f * r * r / (m_p.sigma * m_p.sigma));
+            * ops::exp(-m_p.damping * t)
+            * ops::sin(ops::two_pi_v<float> * r / m_p.wavelength - m_p.speed * t)
+            * ops::exp(-0.5f * r * r / (m_p.sigma * m_p.sigma));
 
         return z_base + wave;
     }

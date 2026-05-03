@@ -10,5 +10,6 @@ namespace ndde {
 
 [[nodiscard]] std::unique_ptr<IScene> make_surface_sim_scene(EngineAPI api);
 [[nodiscard]] std::unique_ptr<IScene> make_analysis_scene(EngineAPI api);
+[[nodiscard]] std::unique_ptr<IScene> make_multiwell_scene(EngineAPI api);
 
 } // namespace ndde

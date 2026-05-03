@@ -4,13 +4,13 @@
 //
 // B1: FrenetFrame / SurfaceFrame / AnimatedCurve split to their own headers.
 // B2: All submit_* particle methods extracted to ParticleRenderer.
-// B3: All spawn logic extracted to SpawnStrategy (ndde::spawn namespace).
+// Particle spawning now flows through ParticleSystem / ParticleFactory.
 //
 // Responsibilities that remain here:
 //   - Own m_surface, m_curves, integrators, equations
 //   - Call advance_simulation(dt)
 //   - Call m_particle_renderer.submit_all()
-//   - Call draw_simulation_panel(), draw_hotkey_panel()
+//   - Call scene-specific PanelHost panels + draw_hotkey_panel()
 //   - Surface wireframe + filled geometry caches
 //   - Camera orbit + canvas MVP
 //   - submit_contour_second_window() (uses submit2, scene-specific 2D MVP)
@@ -36,8 +36,6 @@
 #include "app/GaussianRipple.hpp"
 #include "app/FrenetFrame.hpp"        // FrenetFrame, SurfaceFrame, make_surface_frame
 #include "app/AnimatedCurve.hpp"      // AnimatedCurve
-#include "sim/GradientWalker.hpp"
-#include "sim/EulerIntegrator.hpp"
 #include "sim/BrownianMotion.hpp"
 #include "sim/MilsteinIntegrator.hpp"
 #include "sim/HistoryBuffer.hpp"
@@ -52,10 +50,12 @@
 #include "sim/MomentumBearingEquation.hpp"
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
-#include "app/PerformancePanel.hpp"
 #include "app/CoordDebugPanel.hpp"
+#include "app/PanelHost.hpp"
+#include "app/ParticleInspectorPanel.hpp"
 #include "app/ParticleRenderer.hpp"  // B2: extracted particle rendering
-#include "app/SpawnStrategy.hpp"       // B3: extracted spawn helpers
+#include "app/ParticleSystem.hpp"
+#include "app/SurfaceMeshCache.hpp"
 
 #include "app/HotkeyManager.hpp"  // decoupled hotkey registration and dispatch
 #include <imgui.h>
@@ -79,16 +79,14 @@ public:
 private:
     EngineAPI                              m_api;
     HotkeyManager                          m_hotkeys;           // registered in constructor
-    ParticleRenderer                       m_particle_renderer; // B2
     std::unique_ptr<ndde::math::ISurface>  m_surface;   // Step 3: owns the surface
-    ndde::sim::GradientWalker              m_equation;    // Step 4: default equation
-    ndde::sim::EulerIntegrator             m_integrator;  // Step 5: Euler scheme
-    ndde::sim::MilsteinIntegrator          m_milstein;    // Step 9: Milstein for SDEs
+    ParticleSystem                         m_particles;
+    std::vector<AnimatedCurve>&            m_curves;    ///< all active particles
+    ParticleRenderer                       m_particle_renderer; // B2
     ndde::sim::BrownianMotion::Params      m_bm_params;   // Step 9: Brownian UI params
     ndde::sim::DelayPursuitEquation::Params m_dp_params;  // Step 10: delay-pursuit params
     u32 m_dp_count = 0;                                   // Step 10: spawn counter
-    std::vector<AnimatedCurve>             m_curves;    ///< all active particles
-    PerformancePanel m_perf;
+    PanelHost m_panels;
     CoordDebugPanel  m_coord_debug;
 
     // Viewports
@@ -160,6 +158,7 @@ private:
     float       m_pursuit_window = 1.5f;   ///< for Strategy C (MomentumBearing)
 
     bool m_spawning_pursuer = false;  ///< true after first Ctrl+A spawns a leader
+    GoalStatus m_goal_status = GoalStatus::Running;
 
     // Hover / snap
     int  m_snap_curve    = 0;     ///< which curve the snap belongs to
@@ -182,45 +181,34 @@ private:
     // of colour is used.  Exposed as a UI slider.
     f32 m_curv_scale = 2.f;   ///< world units^-2 per unit colour range
 
-    bool m_wireframe_dirty   = true;  ///< set true to force rebuild of both caches
-    u32  m_cached_grid_lines = 0;
-
-    // Wireframe geometry cache
-    // Stores the tessellated line-list vertices in system RAM.
-    // Rebuilt only when the surface changes, the grid resolution changes,
-    // or the surface is time-varying (is_time_varying() == true).
-    std::vector<Vertex> m_wireframe_cache;
-    u32                 m_wireframe_vcount = 0;
-
-    void rebuild_wireframe_cache_if_needed();
-
-    // Filled surface geometry cache
-    std::vector<Vertex> m_filled_cache;
-    u32                 m_filled_vcount = 0;
-
-    void rebuild_filled_cache_if_needed();
-
-    [[nodiscard]] static Vec4 curvature_color(float K, float scale) noexcept;
+    SurfaceMeshCache m_mesh;
 
 
     void advance_simulation(f32 dt);
     void apply_pairwise_constraints();
+    void spawn_showcase_service();
+    [[nodiscard]] glm::vec2 reference_uv() const noexcept;
+    [[nodiscard]] glm::vec2 offset_spawn(glm::vec2 ref_uv, float radius, float angle) const noexcept;
+    void prewarm_particle(AnimatedCurve& particle, int frames = 60);
+    void spawn_gradient_particle(ParticleRole role, glm::vec2 uv);
+    void spawn_brownian_particle(glm::vec2 uv);
+    void spawn_delay_pursuit_particle(glm::vec2 uv);
     void spawn_leader_seeker();
     void spawn_pursuit_particle();
     void rebuild_extremum_table_if_needed();
     void draw_leader_seeker_panel();
+    void register_panels();
 
     [[nodiscard]] Mat4 canvas_mvp_3d(const ImVec2& cpos,
                                       const ImVec2& csz) const noexcept;
 
-    void draw_panel_surface();    ///< surface selector + display mode
-    void draw_panel_particles();  ///< pause, speed, spawn counts, clear, export
-    void draw_panel_overlays();   ///< Frenet toggles, overlay checkboxes, torsion readout
-    void draw_panel_brownian();   ///< sigma, drift, RNG, live sliders
-    void draw_panel_pursuit();    ///< delay pursuit + collision + leader seeker
-    void draw_panel_geometry();   ///< at-head Frenet / curvature / 1st-fund-form readout
-    void draw_panel_camera();     ///< yaw, pitch, zoom, reset
-    void draw_panel_debug();      ///< coord debug, perf, fps, scene switch
+    void draw_panel_surface();    ///< surface selector + display mode body
+    void draw_panel_particles();  ///< pause, speed, spawn counts, clear, export body
+    void draw_panel_overlays();   ///< Frenet toggles, overlay checkboxes, torsion readout body
+    void draw_panel_brownian();   ///< sigma, drift, RNG, live sliders body
+    void draw_panel_pursuit();    ///< delay pursuit + collision + leader seeker body
+    void draw_panel_geometry();   ///< at-head Frenet / curvature / 1st-fund-form readout body
+    void draw_panel_camera();     ///< yaw, pitch, zoom, reset body
     void draw_hotkey_panel();
     void draw_surface_3d_window();
     void draw_contour_2d_window();

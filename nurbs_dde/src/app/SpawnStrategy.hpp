@@ -17,6 +17,7 @@
 //   Delay-pursuit chaser:  prewarm = false (must wait for leader history)
 
 #include "app/AnimatedCurve.hpp"
+#include "numeric/ops.hpp"
 #include "math/Surfaces.hpp"
 #include "sim/IEquation.hpp"
 #include "sim/IIntegrator.hpp"
@@ -67,9 +68,9 @@ struct SpawnContext {
 {
     constexpr float margin = 0.5f;
     return {
-        std::clamp(ref_uv.x + offset_radius * std::cos(angle),
+        std::clamp(ref_uv.x + offset_radius * ops::cos(angle),
                    surface.u_min() + margin, surface.u_max() - margin),
-        std::clamp(ref_uv.y + offset_radius * std::sin(angle),
+        std::clamp(ref_uv.y + offset_radius * ops::sin(angle),
                    surface.v_min() + margin, surface.v_max() - margin)
     };
 }

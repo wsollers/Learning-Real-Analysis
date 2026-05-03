@@ -6,9 +6,9 @@
 // rendering to m_particle_renderer.submit_all().
 #include "app/SurfaceSimScene.hpp"
 #include "app/SceneFactories.hpp"
+#include "app/ParticleBehaviors.hpp"
+#include "numeric/ops.hpp"
 #include "sim/GradientWalker.hpp"
-#include "sim/EulerIntegrator.hpp"
-#include "sim/MilsteinIntegrator.hpp"
 #include <imgui.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -27,8 +27,10 @@ namespace ndde {
 
 SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     : m_api(std::move(api))
-    , m_particle_renderer(m_api)  // B2: owns a copy of EngineAPI (value type)
     , m_surface(std::make_unique<GaussianSurface>())
+    , m_particles(m_surface.get())
+    , m_curves(m_particles.particles())
+    , m_particle_renderer(m_api)  // B2: owns a copy of EngineAPI (value type)
 {
     m_vp3d.base_extent = 6.f;
     m_vp3d.zoom        = 1.0f;
@@ -40,11 +42,8 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     m_vp2d.pan_x       = 0.f;
     m_vp2d.pan_y       = 0.f;
 
-    m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u,
-                           m_surface.get(), &m_equation, &m_integrator);
-    m_leader_count = 1;
-    for (int i = 0; i < 400; ++i)
-        m_curves[0].advance(1.f/60.f, 1.f);
+    register_panels();
+    spawn_showcase_service();
 
     // ── Register hotkeys ──────────────────────────────────────────────────────
     // Each registration stores its own edge-detection state internally.
@@ -67,44 +66,20 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     // Spawn
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_L), "Leader particle  (blue)",
         [this]{
-            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                           &m_integrator, &m_milstein, m_sim_speed };
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.5f,
-                static_cast<float>(m_leader_count) * 1.1f, *m_surface);
-            m_curves.push_back(spawn::spawn_shared(uv,
-                AnimatedCurve::Role::Leader,
-                m_leader_count % AnimatedCurve::MAX_SLOTS, ctx));
-            ++m_leader_count;
+            spawn_gradient_particle(ParticleRole::Leader,
+                offset_spawn(reference_uv(), 1.5f, static_cast<float>(m_leader_count) * 1.1f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_C), "Chaser particle  (red)",
         [this]{
-            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                           &m_integrator, &m_milstein, m_sim_speed };
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-                static_cast<float>(m_chaser_count) * 1.3f + 0.5f, *m_surface);
-            m_curves.push_back(spawn::spawn_shared(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS, ctx));
-            ++m_chaser_count;
+            spawn_gradient_particle(ParticleRole::Chaser,
+                offset_spawn(reference_uv(), 2.0f, static_cast<float>(m_chaser_count) * 1.3f + 0.5f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_B), "Brownian particle  (Milstein)",
         [this]{
-            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                           &m_integrator, &m_milstein, m_sim_speed };
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
-                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
-                *m_surface);
-            m_curves.push_back(spawn::spawn_owned(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
-                ctx));
-            ++m_chaser_count;
+            spawn_brownian_particle(offset_spawn(reference_uv(), 1.8f,
+                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_R), "Delay-pursuit chaser",
@@ -115,20 +90,9 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
                     static_cast<std::size_t>(std::ceil(m_dp_params.tau * 120.f * 1.5f)) + 256;
                 m_curves[0].enable_history(cap, 1.f / 120.f);
             }
-            const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                           &m_integrator, &m_milstein, m_sim_speed };
             const glm::vec2 ref = m_curves[0].head_uv();
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-                static_cast<float>(m_dp_count) * 1.1f + 0.3f, *m_surface);
-            m_curves.push_back(spawn::spawn_owned(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                std::make_unique<ndde::sim::DelayPursuitEquation>(
-                    m_curves[0].history(), m_surface.get(), m_dp_params),
-                ctx,
-                false));  // no prewarm -- chaser needs leader history first
-            ++m_chaser_count;
-            ++m_dp_count;
+            spawn_delay_pursuit_particle(offset_spawn(ref, 2.0f,
+                static_cast<float>(m_dp_count) * 1.1f + 0.3f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_A), "Leader seeker / pursuer  [Ctrl+A]",
@@ -152,6 +116,9 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
 
 void SurfaceSimScene::on_frame(f32 dt) {
     advance_simulation(dt);
+    m_goal_status = m_particles.evaluate_goals(m_sim_time);
+    if (m_goal_status == GoalStatus::Succeeded)
+        m_sim_paused = true;
 
     const ImGuiViewport* vp = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(vp->WorkPos);
@@ -171,14 +138,7 @@ void SurfaceSimScene::on_frame(f32 dt) {
     ImGui::DockSpace(dock_id, ImVec2(0.f, 0.f), ImGuiDockNodeFlags_None);
     ImGui::End();
 
-    draw_panel_surface();
-    draw_panel_particles();
-    draw_panel_overlays();
-    draw_panel_brownian();
-    draw_panel_pursuit();
-    draw_panel_geometry();
-    draw_panel_camera();
-    draw_panel_debug();
+    m_panels.draw_all();
     draw_surface_3d_window();
     submit_contour_second_window();
     draw_hotkey_panel();
@@ -188,7 +148,6 @@ void SurfaceSimScene::on_frame(f32 dt) {
     m_coord_debug.update(m_vp3d, m_hover, no_conics, m_api.viewport_size());
     m_coord_debug.draw();
     m_debug_open = m_coord_debug.visible();
-    m_perf.draw(m_api.debug_stats());
 }
 
 void SurfaceSimScene::on_key_event(int key, int action, int mods) {
@@ -196,9 +155,6 @@ void SurfaceSimScene::on_key_event(int key, int action, int mods) {
     const bool ctrl = (mods & GLFW_MOD_CONTROL) != 0;
     const bool shift = (mods & GLFW_MOD_SHIFT) != 0;
     if (!ctrl || shift) return;
-
-    const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                   &m_integrator, &m_milstein, m_sim_speed };
 
     switch (key) {
         case GLFW_KEY_F: m_show_frenet = !m_show_frenet; break;
@@ -212,36 +168,18 @@ void SurfaceSimScene::on_key_event(int key, int action, int mods) {
             m_coord_debug.visible() = m_debug_open;
             break;
         case GLFW_KEY_L: {
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.5f,
-                static_cast<float>(m_leader_count) * 1.1f, *m_surface);
-            m_curves.push_back(spawn::spawn_shared(uv,
-                AnimatedCurve::Role::Leader,
-                m_leader_count % AnimatedCurve::MAX_SLOTS, ctx));
-            ++m_leader_count;
+            spawn_gradient_particle(ParticleRole::Leader,
+                offset_spawn(reference_uv(), 1.5f, static_cast<float>(m_leader_count) * 1.1f));
             break;
         }
         case GLFW_KEY_C: {
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-                static_cast<float>(m_chaser_count) * 1.3f + 0.5f, *m_surface);
-            m_curves.push_back(spawn::spawn_shared(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS, ctx));
-            ++m_chaser_count;
+            spawn_gradient_particle(ParticleRole::Chaser,
+                offset_spawn(reference_uv(), 2.0f, static_cast<float>(m_chaser_count) * 1.3f + 0.5f));
             break;
         }
         case GLFW_KEY_B: {
-            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
-                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
-                *m_surface);
-            m_curves.push_back(spawn::spawn_owned(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
-                ctx));
-            ++m_chaser_count;
+            spawn_brownian_particle(offset_spawn(reference_uv(), 1.8f,
+                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f));
             break;
         }
         case GLFW_KEY_R: {
@@ -252,17 +190,8 @@ void SurfaceSimScene::on_key_event(int key, int action, int mods) {
                 m_curves[0].enable_history(cap, 1.f / 120.f);
             }
             const glm::vec2 ref = m_curves[0].head_uv();
-            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-                static_cast<float>(m_dp_count) * 1.1f + 0.3f, *m_surface);
-            m_curves.push_back(spawn::spawn_owned(uv,
-                AnimatedCurve::Role::Chaser,
-                m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                std::make_unique<ndde::sim::DelayPursuitEquation>(
-                    m_curves[0].history(), m_surface.get(), m_dp_params),
-                ctx,
-                false));
-            ++m_chaser_count;
-            ++m_dp_count;
+            spawn_delay_pursuit_particle(offset_spawn(ref, 2.0f,
+                static_cast<float>(m_dp_count) * 1.1f + 0.3f));
             break;
         }
         case GLFW_KEY_A:
@@ -295,11 +224,20 @@ void SurfaceSimScene::swap_surface(SurfaceType type) {
             break;
     }
     m_surface_type    = type;
+    m_particles.set_surface(m_surface.get());
     m_sim_time        = 0.f;
-    m_wireframe_dirty = true;
+    m_mesh.mark_dirty();
     m_spawning_pursuer = false;
 
-    const u32 n  = static_cast<u32>(m_curves.size());
+    std::vector<ParticleRole> roles;
+    roles.reserve(m_curves.size());
+    for (const auto& curve : m_curves)
+        roles.push_back(curve.particle_role());
+    m_particles.clear();
+    m_leader_count = 0;
+    m_chaser_count = 0;
+
+    const u32 n  = static_cast<u32>(roles.size());
     const f32 u0 = m_surface->u_min(), u1 = m_surface->u_max();
     const f32 v0 = m_surface->v_min(), v1 = m_surface->v_max();
     const f32 um = m_surface->is_periodic_u() ? 0.f : (u1-u0)*0.08f;
@@ -310,12 +248,8 @@ void SurfaceSimScene::swap_surface(SurfaceType type) {
     for (u32 i = 0; i < n; ++i) {
         const f32 su = (static_cast<f32>(i)+0.5f)/static_cast<f32>(std::max(n,1u));
         const f32 sv = std::fmod(su * 2.618033988f, 1.f);
-        AnimatedCurve fresh(u_lo + su*(u_hi-u_lo), v_lo + sv*(v_hi-v_lo),
-                            m_curves[i].role(), m_curves[i].colour_slot(),
-                            m_surface.get(), &m_equation, &m_integrator);
-        for (int w = 0; w < 120; ++w)
-            fresh.advance(1.f/60.f, m_sim_speed);
-        m_curves[i] = std::move(fresh);
+        spawn_gradient_particle(roles[i], {u_lo + su*(u_hi-u_lo), v_lo + sv*(v_hi-v_lo)});
+        prewarm_particle(m_curves.back(), 60);
     }
 }
 
@@ -329,15 +263,11 @@ void SurfaceSimScene::advance_simulation(f32 dt) {
 
         rebuild_extremum_table_if_needed();
 
-        for (auto& c : m_curves)
-            c.advance(dt, m_sim_speed);
+        m_particles.update(dt, m_sim_speed, m_sim_time);
 
         // Apply pairwise constraints (e.g. min-distance collision avoidance)
         if (!m_pair_constraints.empty())
             apply_pairwise_constraints();
-
-        for (auto& c : m_curves)
-            c.push_history(m_sim_time);
     }
 }
 
@@ -353,6 +283,148 @@ void SurfaceSimScene::apply_pairwise_constraints() {
                            *m_surface);
         }
     }
+}
+
+glm::vec2 SurfaceSimScene::reference_uv() const noexcept {
+    if (m_curves.empty())
+        return {(m_surface->u_min() + m_surface->u_max()) * 0.5f,
+                (m_surface->v_min() + m_surface->v_max()) * 0.5f};
+    return m_curves[0].head_uv();
+}
+
+glm::vec2 SurfaceSimScene::offset_spawn(glm::vec2 ref_uv, float radius, float angle) const noexcept {
+    constexpr float margin = 0.5f;
+    return {
+        std::clamp(ref_uv.x + radius * ops::cos(angle),
+                   m_surface->u_min() + margin, m_surface->u_max() - margin),
+        std::clamp(ref_uv.y + radius * ops::sin(angle),
+                   m_surface->v_min() + margin, m_surface->v_max() - margin)
+    };
+}
+
+void SurfaceSimScene::prewarm_particle(AnimatedCurve& particle, int frames) {
+    SimulationContext context = m_particles.context(m_sim_time);
+    particle.set_behavior_context(&context);
+    for (int i = 0; i < frames; ++i) {
+        context.set_time(m_sim_time + static_cast<float>(i) / 60.f);
+        particle.advance(1.f / 60.f, m_sim_speed);
+    }
+    particle.set_behavior_context(nullptr);
+}
+
+void SurfaceSimScene::spawn_gradient_particle(ParticleRole role, glm::vec2 uv) {
+    ParticleBuilder builder = m_particles.factory().particle();
+    builder
+        .named(std::string(role_name(role)) + " - Gradient Walker")
+        .role(role)
+        .at(uv)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .with_equation(std::make_unique<ndde::sim::GradientWalker>());
+
+    AnimatedCurve& particle = m_particles.spawn(std::move(builder));
+    prewarm_particle(particle);
+
+    if (role == ParticleRole::Leader) ++m_leader_count;
+    else if (role == ParticleRole::Chaser) ++m_chaser_count;
+}
+
+void SurfaceSimScene::spawn_brownian_particle(glm::vec2 uv) {
+    ParticleBuilder builder = m_particles.factory().particle();
+    builder
+        .named("Chaser - Brownian")
+        .role(ParticleRole::Chaser)
+        .at(uv)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .stochastic()
+        .with_equation(std::make_unique<ndde::sim::BrownianMotion>(m_bm_params));
+
+    AnimatedCurve& particle = m_particles.spawn(std::move(builder));
+    prewarm_particle(particle);
+    ++m_chaser_count;
+}
+
+void SurfaceSimScene::spawn_delay_pursuit_particle(glm::vec2 uv) {
+    if (m_curves.empty()) return;
+    if (m_curves[0].history() == nullptr) {
+        const std::size_t cap =
+            static_cast<std::size_t>(std::ceil(m_dp_params.tau * 120.f * 1.5f)) + 256;
+        m_curves[0].enable_history(cap, 1.f / 120.f);
+    }
+
+    ParticleBuilder builder = m_particles.factory().particle();
+    builder
+        .named("Chaser - Delay Pursuit")
+        .role(ParticleRole::Chaser)
+        .at(uv)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .stochastic()
+        .with_equation(std::make_unique<ndde::sim::DelayPursuitEquation>(
+            m_curves[0].history(), m_surface.get(), m_dp_params));
+    m_particles.spawn(std::move(builder));
+    ++m_chaser_count;
+    ++m_dp_count;
+}
+
+void SurfaceSimScene::spawn_showcase_service() {
+    m_curves.clear();
+    m_particles.clear_goals();
+    m_leader_count = 0;
+    m_chaser_count = 0;
+    m_dp_count = 0;
+    m_spawning_pursuer = true;
+
+    const std::size_t history_cap =
+        static_cast<std::size_t>(std::ceil(2.0f * 120.f * 1.5f)) + 256;
+
+    ParticleBuilder leader_builder = m_particles.factory().particle();
+    leader_builder
+        .named("Leader - Brownian - Bias Drift")
+        .role(ParticleRole::Leader)
+        .at({-4.5f, -4.0f})
+        .history(history_cap, 1.f / 120.f)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .stochastic()
+        .with_behavior<ConstantDriftBehavior>(0.75f, glm::vec2{0.55f, 0.28f})
+        .with_behavior<BrownianBehavior>(BrownianBehavior::Params{
+            .sigma = 0.16f,
+            .drift_strength = 0.08f
+        });
+    AnimatedCurve& leader = m_particles.spawn(std::move(leader_builder));
+    ++m_leader_count;
+
+    for (int i = 0; i < 240; ++i) {
+        m_sim_time += 1.f / 60.f;
+        m_particles.update(1.f / 60.f, 1.f, m_sim_time);
+    }
+
+    ndde::SeekParticleBehavior::Params seek;
+    seek.target = TargetSelector::nearest(ParticleRole::Leader);
+    seek.speed = 0.95f;
+    seek.delay_seconds = 1.0f;
+
+    const glm::vec2 uv = offset_spawn(leader.head_uv(), 2.3f, 0.4f);
+    ParticleBuilder seeker_builder = m_particles.factory().particle();
+    seeker_builder
+        .named("Chaser - Delayed Seek - Brownian")
+        .role(ParticleRole::Chaser)
+        .at(uv)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .stochastic()
+        .with_behavior<SeekParticleBehavior>(seek)
+        .with_behavior<BrownianBehavior>(0.25f, BrownianBehavior::Params{
+            .sigma = 0.06f,
+            .drift_strength = 0.f
+        });
+    m_particles.spawn(std::move(seeker_builder));
+    ++m_chaser_count;
+    ++m_dp_count;
+
+    m_particles.add_goal<CaptureGoal>(CaptureGoal::Params{
+        .seeker_role = ParticleRole::Chaser,
+        .target_role = ParticleRole::Leader,
+        .radius = 0.22f
+    });
+    m_goal_status = GoalStatus::Running;
 }
 
 // ── handle_hotkeys ────────────────────────────────────────────────────────────
@@ -382,9 +454,9 @@ Mat4 SurfaceSimScene::canvas_mvp_3d(const ImVec2& cpos, const ImVec2& csz) const
 
     const f32  aspect = cw / ch;
     const f32  dist   = m_vp3d.base_extent / m_vp3d.zoom * 3.f;
-    const f32  ex     = m_vp3d.pan_x + dist*std::cos(m_vp3d.pitch)*std::sin(m_vp3d.yaw);
-    const f32  ey     = m_vp3d.pan_y + dist*std::sin(m_vp3d.pitch);
-    const f32  ez     =                dist*std::cos(m_vp3d.pitch)*std::cos(m_vp3d.yaw);
+    const f32  ex     = m_vp3d.pan_x + dist*ops::cos(m_vp3d.pitch)*ops::sin(m_vp3d.yaw);
+    const f32  ey     = m_vp3d.pan_y + dist*ops::sin(m_vp3d.pitch);
+    const f32  ez     =                dist*ops::cos(m_vp3d.pitch)*ops::cos(m_vp3d.yaw);
     const Mat4 proj   = glm::perspective(glm::radians(45.f), aspect, 0.01f, 500.f);
     const Mat4 view   = glm::lookAt(
         glm::vec3(ex, ey, ez),
@@ -395,6 +467,59 @@ Mat4 SurfaceSimScene::canvas_mvp_3d(const ImVec2& cpos, const ImVec2& csz) const
 
 // ── draw_hotkey_panel ─────────────────────────────────────────────────────────
 
+void SurfaceSimScene::register_panels() {
+    m_panels.clear();
+    m_panels.add({
+        .title = "Sim - Surface",
+        .default_pos = {20.f, 20.f},
+        .default_size = {300.f, 220.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_surface(); }
+    });
+    m_panels.add({
+        .title = "Sim - Particles",
+        .default_pos = {20.f, 250.f},
+        .default_size = {300.f, 180.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_particles(); }
+    });
+    m_panels.add({
+        .title = "Sim - Overlays",
+        .default_pos = {20.f, 440.f},
+        .default_size = {300.f, 240.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_overlays(); }
+    });
+    m_panels.add({
+        .title = "Sim - Brownian  [Ctrl+B]",
+        .default_pos = {20.f, 690.f},
+        .default_size = {300.f, 260.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_brownian(); }
+    });
+    m_panels.add({
+        .title = "Sim - Pursuit",
+        .default_pos = {330.f, 700.f},
+        .default_size = {310.f, 320.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_pursuit(); }
+    });
+    m_panels.add({
+        .title = "Sim - Geometry",
+        .default_pos = {650.f, 700.f},
+        .default_size = {310.f, 280.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_geometry(); }
+    });
+    m_panels.add({
+        .title = "Sim - Camera",
+        .default_pos = {330.f, 20.f},
+        .default_size = {310.f, 170.f},
+        .bg_alpha = 0.88f,
+        .draw_body = [this] { draw_panel_camera(); }
+    });
+}
+
 void SurfaceSimScene::draw_hotkey_panel() {
     // Delegate entirely to HotkeyManager. The panel lists every registered
     // binding in group order; no hardcoded row table needed here.
@@ -404,11 +529,6 @@ void SurfaceSimScene::draw_hotkey_panel() {
 // ── draw_panel_surface ────────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_surface() {
-    ImGui::SetNextWindowPos(ImVec2(20.f, 20.f),   ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(300.f, 220.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Surface")) { ImGui::End(); return; }
-
     ImGui::SeparatorText("Surface type");
     {
         int sel = static_cast<int>(m_surface_type);
@@ -465,36 +585,33 @@ void SurfaceSimScene::draw_panel_surface() {
         changed |= ImGui::RadioButton("Both",      &mode, 2);
         if (changed) {
             m_surface_display = static_cast<SurfaceDisplay>(mode);
-            m_wireframe_dirty = true;
+            m_mesh.mark_dirty();
         }
         if (m_surface_display != SurfaceDisplay::Wireframe) {
             if (ImGui::SliderFloat("K scale##curv", &m_curv_scale, 0.01f, 20.f, "%.2f"))
-                m_wireframe_dirty = true;
+                m_mesh.mark_dirty();
         }
         {
             int gl = static_cast<int>(m_grid_lines);
             if (ImGui::SliderInt("Grid lines##surface", &gl, 8, 256)) {
                 m_grid_lines = static_cast<u32>(std::max(gl, 8));
-                m_wireframe_dirty = true;
+                m_mesh.mark_dirty();
             }
             ImGui::SameLine();
             ImGui::TextDisabled("~%uk verts", (4u * m_grid_lines * (m_grid_lines + 1u)) / 1000u);
         }
     }
-    ImGui::End();
 }
 
 // ── draw_panel_particles ──────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_particles() {
-    ImGui::SetNextWindowPos(ImVec2(20.f, 250.f),  ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(300.f, 180.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Particles")) { ImGui::End(); return; }
-
     ImGui::Checkbox("Paused  [Ctrl+P]", &m_sim_paused);
     ImGui::SameLine();
-    if (ImGui::Button("Reset") && !m_curves.empty()) m_curves[0].reset();
+    if (ImGui::Button("Reset")) {
+        m_sim_time = 0.f;
+        spawn_showcase_service();
+    }
     ImGui::SliderFloat("Speed##sim",  &m_sim_speed,   0.1f, 5.f,  "%.2f");
     ImGui::SliderFloat("Arrow scale", &m_frame_scale, 0.05f,0.8f, "%.2f");
     ImGui::Checkbox("Contour lines",  &m_show_contours);
@@ -504,13 +621,8 @@ void SurfaceSimScene::draw_panel_particles() {
         m_curves.size(), m_leader_count, m_chaser_count);
     ImGui::SameLine();
     if (ImGui::SmallButton("Clear all")) {
-        m_curves.clear();
-        m_leader_count = 0;
-        m_chaser_count = 0;
-        m_spawning_pursuer = false;
-        m_curves.emplace_back(-4.5f, -4.0f, AnimatedCurve::Role::Leader, 0u,
-                               m_surface.get(), &m_equation, &m_integrator);
-        m_leader_count = 1;
+        m_sim_time = 0.f;
+        spawn_showcase_service();
     }
     ImGui::SameLine();
     if (ImGui::SmallButton("Export CSV")) {
@@ -523,17 +635,19 @@ void SurfaceSimScene::draw_panel_particles() {
         ImGui::SetTooltip("Write trail + history data to CSV in working directory");
 
     ImGui::TextDisabled("Ctrl+L leader  Ctrl+C chaser  Ctrl+B brownian");
-    ImGui::End();
+    if (m_goal_status == GoalStatus::Succeeded)
+        ImGui::TextColored({0.4f, 1.f, 0.4f, 1.f}, "Capture reached - paused");
+    ParticleInspectorPanel::draw(m_particles.particles(), ParticleInspectorOptions{
+        .label = "Active particles",
+        .show_level_curve_controls = false,
+        .show_brownian_controls = true,
+        .show_trail_controls = true
+    });
 }
 
 // ── draw_panel_overlays ───────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_overlays() {
-    ImGui::SetNextWindowPos(ImVec2(20.f, 440.f),  ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(300.f, 240.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Overlays")) { ImGui::End(); return; }
-
     ImGui::SeparatorText("Frenet frame  [Ctrl+F]");
     ImGui::Checkbox("Show Frenet", &m_show_frenet);
     ImGui::BeginDisabled(!m_show_frenet);
@@ -568,33 +682,17 @@ void SurfaceSimScene::draw_panel_overlays() {
             ImGui::TextDisabled("|\xcf\x84/\xce\xba| = %.4f", std::abs(tau) / fr.kappa);
         ImGui::Unindent(8.f);
     }
-    ImGui::End();
 }
 
 // ── draw_panel_brownian ───────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_brownian() {
-    ImGui::SetNextWindowPos(ImVec2(20.f, 690.f),  ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(300.f, 260.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Brownian  [Ctrl+B]")) { ImGui::End(); return; }
-
     auto& p = m_bm_params;
     ImGui::SliderFloat("Sigma##bm", &p.sigma,          0.01f, 2.f, "%.3f");
     ImGui::SliderFloat("Drift##bm", &p.drift_strength, -1.f,  1.f, "%.3f");
     if (ImGui::Button("Spawn Brownian  [Ctrl+B]", ImVec2(-1.f, 0.f))) {
-        const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                       &m_integrator, &m_milstein, m_sim_speed };
-        const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
-        const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
-            static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
-            *m_surface);
-        m_curves.push_back(spawn::spawn_owned(uv,
-            AnimatedCurve::Role::Chaser,
-            m_chaser_count % AnimatedCurve::MAX_SLOTS,
-            std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
-            ctx));
-        ++m_chaser_count;
+        spawn_brownian_particle(offset_spawn(reference_uv(), 1.8f,
+            static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f));
     }
     ImGui::TextDisabled("Milstein integrator (strong order 1.0)");
 
@@ -615,36 +713,12 @@ void SurfaceSimScene::draw_panel_brownian() {
         ImGui::TextDisabled("Set seed BEFORE spawning Brownian particles.");
     }
 
-    ImGui::SeparatorText("Live tuning");
-    int bm_idx = 0;
-    for (auto& c : m_curves) {
-        auto* bm = dynamic_cast<ndde::sim::BrownianMotion*>(c.equation());
-        if (!bm) continue;
-        ImGui::PushID(bm_idx++);
-        ImGui::TextDisabled("Particle %d", bm_idx);
-        ImGui::SameLine();
-        float sig = bm->params().sigma;
-        float dft = bm->params().drift_strength;
-        bool ch = false;
-        ch |= ImGui::SliderFloat("s##bmlive", &sig, 0.01f, 2.f, "%.3f");
-        ImGui::SameLine();
-        ch |= ImGui::SliderFloat("d##bmlive", &dft, -1.f, 1.f, "%.3f");
-        if (ch) { bm->params().sigma = sig; bm->params().drift_strength = dft; }
-        ImGui::PopID();
-    }
-    if (bm_idx == 0)
-        ImGui::TextDisabled("No Brownian particles active.");
-    ImGui::End();
+    ImGui::TextDisabled("Per-particle Brownian tuning is in Sim - Particles.");
 }
 
 // ── draw_panel_pursuit ────────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_pursuit() {
-    ImGui::SetNextWindowPos(ImVec2(330.f, 700.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(310.f, 320.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Pursuit")) { ImGui::End(); return; }
-
     ImGui::SeparatorText("Delay pursuit  [Ctrl+R]");
     {
         auto& p = m_dp_params;
@@ -660,17 +734,20 @@ void SurfaceSimScene::draw_panel_pursuit() {
                 }
                 const Vec3 ref = m_curves[0].head_world();
                 const f32 ang  = static_cast<f32>(m_dp_count) * 1.1f + 0.3f;
-                const f32 sx   = std::clamp(ref.x + 2.f*std::cos(ang),
+                const f32 sx   = std::clamp(ref.x + 2.f*ops::cos(ang),
                     m_surface->u_min()+0.5f, m_surface->u_max()-0.5f);
-                const f32 sy   = std::clamp(ref.y + 2.f*std::sin(ang),
+                const f32 sy   = std::clamp(ref.y + 2.f*ops::sin(ang),
                     m_surface->v_min()+0.5f, m_surface->v_max()-0.5f);
-                m_curves.push_back(AnimatedCurve::with_equation(
-                    sx, sy, AnimatedCurve::Role::Chaser,
-                    m_chaser_count % AnimatedCurve::MAX_SLOTS,
-                    m_surface.get(),
-                    std::make_unique<ndde::sim::DelayPursuitEquation>(
-                        m_curves[0].history(), m_surface.get(), p),
-                    &m_milstein));
+                auto builder = m_particles.factory().particle();
+                builder
+                    .named("Chaser - Delay Pursuit")
+                    .role(ParticleRole::Chaser)
+                    .at({sx, sy})
+                    .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+                    .stochastic()
+                    .with_equation(std::make_unique<ndde::sim::DelayPursuitEquation>(
+                        m_curves[0].history(), m_surface.get(), p));
+                m_particles.spawn(std::move(builder));
                 ++m_chaser_count;  ++m_dp_count;
             }
         }
@@ -702,18 +779,12 @@ void SurfaceSimScene::draw_panel_pursuit() {
     // Leader seeker section: only visible on Extremum surface
     draw_leader_seeker_panel();
 
-    ImGui::End();
 }
 
 // ── draw_panel_geometry ───────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_geometry() {
     if (m_curves.empty() || !m_curves[0].has_trail()) return;
-    ImGui::SetNextWindowPos(ImVec2(650.f, 700.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(310.f, 280.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Geometry")) { ImGui::End(); return; }
-
     const AnimatedCurve& c0 = m_curves[0];
     const u32 hi = c0.trail_size() > 2 ? c0.trail_size()-2 : 0;
     const FrenetFrame fr = c0.frenet_at(hi);
@@ -750,17 +821,11 @@ void SurfaceSimScene::draw_panel_geometry() {
     const bool ok   = std::abs(k2-check) < 1e-4f || k2 < 1e-8f;
     ImGui::TextColored(ok ? ImVec4(.4f,1.f,.4f,1.f) : ImVec4(1.f,.3f,.3f,1.f),
         "\xce\xba\xc2\xb2=\xce\xba_n\xc2\xb2+\xce\xba_g\xc2\xb2 %s", ok ? "\xe2\x9c\x93" : "!");
-    ImGui::End();
 }
 
 // ── draw_panel_camera ─────────────────────────────────────────────────────────
 
 void SurfaceSimScene::draw_panel_camera() {
-    ImGui::SetNextWindowPos(ImVec2(330.f, 20.f),   ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(310.f, 170.f),  ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Camera")) { ImGui::End(); return; }
-
     ImGui::SliderFloat("Yaw",      &m_vp3d.yaw,
                        -std::numbers::pi_v<f32>, std::numbers::pi_v<f32>, "%.2f");
     ImGui::SliderFloat("Pitch",    &m_vp3d.pitch,  -1.5f, 1.5f, "%.2f");
@@ -768,36 +833,6 @@ void SurfaceSimScene::draw_panel_camera() {
     if (ImGui::Button("Reset 3D")) m_vp3d.reset();
     ImGui::SameLine();
     if (ImGui::Button("Reset 2D")) m_vp2d.reset();
-    ImGui::End();
-}
-
-// ── draw_panel_debug ──────────────────────────────────────────────────────────
-
-void SurfaceSimScene::draw_panel_debug() {
-    ImGui::SetNextWindowPos(ImVec2(330.f, 200.f),  ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(310.f, 130.f),  ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.88f);
-    if (!ImGui::Begin("Sim \xe2\x80\x93 Debug")) { ImGui::End(); return; }
-
-    ImGui::SeparatorText("Scene");
-    if (ImGui::Button("Switch to Analysis Scene", ImVec2(-1.f, 0.f))) {
-        m_api.switch_simulation(1);
-    }
-
-    ImGui::SeparatorText("Tools");
-    if (ImGui::Button("Coord Debug  [Ctrl+Q]")) {
-        m_debug_open = !m_debug_open;
-        m_coord_debug.visible() = m_debug_open;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("Perf")) m_perf.visible() = !m_perf.visible();
-    const auto& s = m_api.debug_stats();
-    const ImVec4 fc = s.fps >= 55.f ? ImVec4(0.4f,1.f,0.4f,1.f)
-                    : s.fps >= 30.f ? ImVec4(1.f,0.8f,0.f,1.f)
-                                    : ImVec4(1.f,0.3f,0.3f,1.f);
-    ImGui::SameLine();
-    ImGui::TextColored(fc, "%.0f fps", s.fps);
-    ImGui::End();
 }
 
 // ── draw_surface_3d_window ────────────────────────────────────────────────────
@@ -945,93 +980,36 @@ void SurfaceSimScene::update_hover(const ImVec2& canvas_pos,
 
 // ── Surface geometry caches ───────────────────────────────────────────────────
 
-void SurfaceSimScene::rebuild_wireframe_cache_if_needed() {
-    const bool resolution_changed = (m_grid_lines != m_cached_grid_lines);
-    const bool time_varying       = m_surface->is_time_varying();
-    if (!m_wireframe_dirty && !resolution_changed && !time_varying) return;
+namespace {
 
-    const u32 n = m_surface->wireframe_vertex_count(m_grid_lines, m_grid_lines);
-    if (m_wireframe_cache.size() < static_cast<std::size_t>(n))
-        m_wireframe_cache.resize(n);
-
-    m_surface->tessellate_wireframe(
-        std::span<Vertex>{ m_wireframe_cache.data(), n },
-        m_grid_lines, m_grid_lines, m_sim_time);
-
-    m_wireframe_vcount  = n;
-    m_cached_grid_lines = m_grid_lines;
-    m_wireframe_dirty   = false;
+SurfaceMeshOptions surface_mesh_options(u32 grid_lines, float time, float color_scale) {
+    return SurfaceMeshOptions{
+        .grid_lines = grid_lines,
+        .time = time,
+        .color_scale = color_scale,
+        .wire_color = {1.f, 1.f, 1.f, 1.f},
+        .fill_color_mode = SurfaceFillColorMode::GaussianCurvatureCell,
+        .build_contour = false
+    };
 }
 
-// static
-Vec4 SurfaceSimScene::curvature_color(float K, float scale) noexcept {
-    const float t = std::clamp(K / (scale + 1e-9f), -1.f, 1.f);
-    if (t >= 0.f) {
-        return { 0.50f + t*0.35f, 0.50f - t*0.38f, 0.50f - t*0.42f, 0.82f };
-    } else {
-        const float s = -t;
-        return { 0.50f - s*0.40f, 0.50f + s*0.18f - s*s*0.46f, 0.50f + s*0.35f, 0.82f };
-    }
-}
-
-void SurfaceSimScene::rebuild_filled_cache_if_needed() {
-    const bool resolution_changed = (m_grid_lines != m_cached_grid_lines);
-    const bool time_varying       = m_surface->is_time_varying();
-    if (!m_wireframe_dirty && !resolution_changed && !time_varying) return;
-
-    const u32 N = m_grid_lines;
-    const u32 n = N * N * 6;
-    if (m_filled_cache.size() < static_cast<std::size_t>(n))
-        m_filled_cache.resize(n);
-
-    const float u0 = m_surface->u_min(m_sim_time), u1 = m_surface->u_max(m_sim_time);
-    const float v0 = m_surface->v_min(m_sim_time), v1 = m_surface->v_max(m_sim_time);
-    const float du = (u1 - u0) / static_cast<float>(N);
-    const float dv = (v1 - v0) / static_cast<float>(N);
-
-    u32 idx = 0;
-    for (u32 i = 0; i < N; ++i) {
-        const float ua = u0 + static_cast<float>(i)   * du;
-        const float ub = u0 + static_cast<float>(i+1) * du;
-        for (u32 j = 0; j < N; ++j) {
-            const float va = v0 + static_cast<float>(j)   * dv;
-            const float vb = v0 + static_cast<float>(j+1) * dv;
-            const Vec3 p00 = m_surface->evaluate(ua, va, m_sim_time);
-            const Vec3 p10 = m_surface->evaluate(ub, va, m_sim_time);
-            const Vec3 p01 = m_surface->evaluate(ua, vb, m_sim_time);
-            const Vec3 p11 = m_surface->evaluate(ub, vb, m_sim_time);
-            const float uc = (ua + ub) * 0.5f;
-            const float vc = (va + vb) * 0.5f;
-            const float K  = m_surface->gaussian_curvature(uc, vc, m_sim_time);
-            const Vec4  col = curvature_color(K, m_curv_scale);
-            m_filled_cache[idx++] = { p00, col };
-            m_filled_cache[idx++] = { p10, col };
-            m_filled_cache[idx++] = { p11, col };
-            m_filled_cache[idx++] = { p00, col };
-            m_filled_cache[idx++] = { p11, col };
-            m_filled_cache[idx++] = { p01, col };
-        }
-    }
-    m_filled_vcount     = idx;
-    m_cached_grid_lines = m_grid_lines;
-    m_wireframe_dirty   = false;
-}
+} // namespace
 
 void SurfaceSimScene::submit_wireframe_3d(const Mat4& mvp) {
-    rebuild_wireframe_cache_if_needed();
-    if (m_wireframe_vcount == 0) return;
-    auto slice = m_api.acquire(m_wireframe_vcount);
-    std::memcpy(slice.vertices(), m_wireframe_cache.data(),
-                m_wireframe_vcount * sizeof(Vertex));
+    m_mesh.rebuild_if_needed(*m_surface, surface_mesh_options(m_grid_lines, m_sim_time, m_curv_scale));
+    if (m_mesh.wire_count() == 0) return;
+    auto slice = m_api.acquire(m_mesh.wire_count());
+    std::memcpy(slice.vertices(), m_mesh.wire_vertices().data(),
+                m_mesh.wire_count() * sizeof(Vertex));
     m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
 void SurfaceSimScene::submit_filled_3d(const Mat4& mvp) {
-    rebuild_filled_cache_if_needed();
-    if (m_filled_vcount == 0) return;
-    auto slice = m_api.acquire(m_filled_vcount);
-    std::memcpy(slice.vertices(), m_filled_cache.data(),
-                m_filled_vcount * sizeof(Vertex));
+    m_mesh.rebuild_if_needed(*m_surface, surface_mesh_options(m_grid_lines, m_sim_time, m_curv_scale));
+    if (m_mesh.fill_count() == 0) return;
+    auto slice = m_api.acquire(m_mesh.fill_count());
+    std::memcpy(slice.vertices(), m_mesh.fill_vertices().data(),
+                m_mesh.fill_count() * sizeof(Vertex));
     m_api.submit_to(RenderTarget::Primary3D, slice, Topology::TriangleList, DrawMode::VertexColor, {1,1,1,1}, mvp);
 }
 
@@ -1129,7 +1107,7 @@ void SurfaceSimScene::submit_contour_second_window() {
                     const Vec3 ctr = {o3.x+fr.N.x*R, o3.y+fr.N.y*R, 0};
                     for (u32 k=0; k<=SEG; ++k) {
                         const f32 th = (static_cast<f32>(k)/SEG)*2.f*std::numbers::pi_v<f32>;
-                        vc[k] = { ctr+Vec3{std::cos(th)*R,std::sin(th)*R,0}, {0.7f,0.3f,1.f,0.65f} };
+                        vc[k] = { ctr+Vec3{ops::cos(th)*R,ops::sin(th)*R,0}, {0.7f,0.3f,1.f,0.65f} };
                     }
                     m_api.submit_to(RenderTarget::Contour2D, sc2, Topology::LineStrip, DrawMode::VertexColor,
                                   {0.7f,0.3f,1.f,0.65f}, mvp2);
@@ -1177,18 +1155,22 @@ void SurfaceSimScene::spawn_leader_seeker() {
         eq = std::make_unique<ndde::sim::BiasedBrownianLeader>(
                 &m_extremum_table, m_bbl_params);
 
-    AnimatedCurve c = AnimatedCurve::with_equation(
-        u_mid, v_mid,
-        AnimatedCurve::Role::Leader,
-        m_leader_count % AnimatedCurve::MAX_SLOTS,
-        m_surface.get(), std::move(eq), &m_milstein);
-
     // Enable history so pursuers can use it
     const std::size_t cap =
         static_cast<std::size_t>(std::ceil(m_pursuit_tau * 120.f * 1.5f)) + 256;
-    c.enable_history(cap, 1.f / 120.f);
 
-    m_curves.push_back(std::move(c));
+    auto builder = m_particles.factory().particle();
+    builder
+        .named(m_leader_mode == LeaderMode::Deterministic
+            ? "Leader - Extremum Seeker"
+            : "Leader - Biased Brownian")
+        .role(ParticleRole::Leader)
+        .at({u_mid, v_mid})
+        .history(cap, 1.f / 120.f)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .stochastic()
+        .with_equation(std::move(eq));
+    m_particles.spawn(std::move(builder));
     ++m_leader_count;
     m_spawning_pursuer = true;
 }
@@ -1203,11 +1185,9 @@ void SurfaceSimScene::spawn_pursuit_particle() {
         m_curves[0].enable_history(cap, 1.f / 120.f);
     }
 
-    const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
-                                   &m_integrator, &m_milstein, m_sim_speed };
     const glm::vec2 ref = m_curves[0].head_uv();
-    const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
-        static_cast<float>(m_dp_count) * 1.1f + 0.3f, *m_surface);
+    const glm::vec2 uv  = offset_spawn(ref, 2.0f,
+        static_cast<float>(m_dp_count) * 1.1f + 0.3f);
 
     std::unique_ptr<ndde::sim::IEquation> eq;
     switch (m_pursuit_mode) {
@@ -1231,11 +1211,15 @@ void SurfaceSimScene::spawn_pursuit_particle() {
             break;
     }
 
-    m_curves.push_back(spawn::spawn_owned(uv,
-        AnimatedCurve::Role::Chaser,
-        m_chaser_count % AnimatedCurve::MAX_SLOTS,
-        std::move(eq), ctx,
-        false));
+    auto builder = m_particles.factory().particle();
+    builder
+        .named("Chaser - Pursuit")
+        .role(ParticleRole::Chaser)
+        .at(uv)
+        .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+        .stochastic()
+        .with_equation(std::move(eq));
+    m_particles.spawn(std::move(builder));
     ++m_chaser_count;
     ++m_dp_count;
 }

@@ -7,6 +7,7 @@
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
 #include "math/Scalars.hpp"
+#include "numeric/ops.hpp"
 
 #include <imgui.h>
 #include <string>
@@ -295,7 +296,7 @@ private:
     }
 
     static void row_err(const char* label, float a, float b) {
-        const float mag = std::sqrt(a*a + b*b);
+        const float mag = ops::sqrt(a*a + b*b);
         const ImVec4 col = (mag < 0.5f)
             ? ImVec4(0.5f, 1.f, 0.5f, 1.f)
             : (mag < 2.f)

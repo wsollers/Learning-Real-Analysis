@@ -2,10 +2,12 @@
 #include "app/GaussianSurface.hpp"
 #include "app/AnimatedCurve.hpp"
 #include "app/FrenetFrame.hpp"
+#include "app/ParticleBehaviors.hpp"
 #include "sim/IEquation.hpp"
 #include "sim/IIntegrator.hpp"
 #include "sim/HistoryBuffer.hpp"
 #include "sim/DomainConfinement.hpp"
+#include "numeric/ops.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
@@ -19,14 +21,14 @@ namespace ndde {
 // The static alias eval() in the header forwards here.
 
 f32 GaussianSurface::eval_static(f32 x, f32 y) noexcept {
-    const f32 g0 =  1.6f * std::exp(-((x-1.5f)*(x-1.5f)/0.6f  + (y-0.4f)*(y-0.4f)/0.9f));
-    const f32 g1 = -1.3f * std::exp(-((x+1.3f)*(x+1.3f)/0.8f  + (y+1.1f)*(y+1.1f)/0.5f));
-    const f32 g2 =  1.1f * std::exp(-((x+0.2f)*(x+0.2f)/1.2f  + (y-2.0f)*(y-2.0f)/0.4f));
-    const f32 g3 = -0.8f * std::exp(-((x-2.5f)*(x-2.5f)/0.5f  + (y+0.7f)*(y+0.7f)/1.0f));
-    const f32 g4 =  0.7f * std::exp(-((x-0.8f)*(x-0.8f)/0.7f  + (y+2.3f)*(y+2.3f)/0.6f));
-    const f32 g5 = -0.5f * std::exp(-((x+2.8f)*(x+2.8f)/0.3f  + (y-1.4f)*(y-1.4f)/0.8f));
-    const f32 s0 =  0.15f * std::sin(2.0f*x) * std::sin(3.0f*y);
-    const f32 s1 =  0.12f * std::cos(1.5f*x - 1.0f) * std::sin(2.5f*y + 0.7f);
+    const f32 g0 =  1.6f * ops::exp(-((x-1.5f)*(x-1.5f)/0.6f  + (y-0.4f)*(y-0.4f)/0.9f));
+    const f32 g1 = -1.3f * ops::exp(-((x+1.3f)*(x+1.3f)/0.8f  + (y+1.1f)*(y+1.1f)/0.5f));
+    const f32 g2 =  1.1f * ops::exp(-((x+0.2f)*(x+0.2f)/1.2f  + (y-2.0f)*(y-2.0f)/0.4f));
+    const f32 g3 = -0.8f * ops::exp(-((x-2.5f)*(x-2.5f)/0.5f  + (y+0.7f)*(y+0.7f)/1.0f));
+    const f32 g4 =  0.7f * ops::exp(-((x-0.8f)*(x-0.8f)/0.7f  + (y+2.3f)*(y+2.3f)/0.6f));
+    const f32 g5 = -0.5f * ops::exp(-((x+2.8f)*(x+2.8f)/0.3f  + (y-1.4f)*(y-1.4f)/0.8f));
+    const f32 s0 =  0.15f * ops::sin(2.0f*x) * ops::sin(3.0f*y);
+    const f32 s1 =  0.12f * ops::cos(1.5f*x - 1.0f) * ops::sin(2.5f*y + 0.7f);
     return g0 + g1 + g2 + g3 + g4 + g5 + s0 + s1;
 }
 
@@ -60,7 +62,7 @@ Vec3 GaussianSurface::dv(float u, float v, float /*t*/) const {
 
 Vec3 GaussianSurface::unit_normal(f32 x, f32 y) noexcept {
     const auto [fx, fy] = grad(x, y);
-    const f32 len = std::sqrt(fx*fx + fy*fy + 1.f);
+    const f32 len = ops::sqrt(fx*fx + fy*fy + 1.f);
     return { -fx/len, -fy/len, 1.f/len };
 }
 
@@ -73,10 +75,10 @@ f32 GaussianSurface::gaussian_curvature(f32 x, f32 y) noexcept {
     const f32 fyy = (eval(x,y+h) - 2.f*eval(x,y) + eval(x,y-h)) / (h*h);
     const f32 fxy = (eval(x+h,y+h) - eval(x+h,y-h) - eval(x-h,y+h) + eval(x-h,y-h)) / (4.f*h*h);
     const f32 E = 1.f+fx*fx, F = fx*fy, G = 1.f+fy*fy;
-    const f32 n = std::sqrt(1.f + fx*fx + fy*fy);
+    const f32 n = ops::sqrt(1.f + fx*fx + fy*fy);
     const f32 L = fxx/n, M = fxy/n, N2 = fyy/n;
     const f32 denom = E*G - F*F;
-    return std::abs(denom) < 1e-10f ? 0.f : (L*N2 - M*M) / denom;
+    return ops::abs(denom) < 1e-10f ? 0.f : (L*N2 - M*M) / denom;
 }
 
 // == GaussianSurface::mean_curvature ==========================================
@@ -88,10 +90,10 @@ f32 GaussianSurface::mean_curvature(f32 x, f32 y) noexcept {
     const f32 fyy = (eval(x,y+h) - 2.f*eval(x,y) + eval(x,y-h)) / (h*h);
     const f32 fxy = (eval(x+h,y+h) - eval(x+h,y-h) - eval(x-h,y+h) + eval(x-h,y-h)) / (4.f*h*h);
     const f32 E = 1.f+fx*fx, F = fx*fy, G = 1.f+fy*fy;
-    const f32 n = std::sqrt(1.f + fx*fx + fy*fy);
+    const f32 n = ops::sqrt(1.f + fx*fx + fy*fy);
     const f32 L = fxx/n, M = fxy/n, N2 = fyy/n;
     const f32 denom = 2.f*(E*G - F*F);
-    return std::abs(denom) < 1e-10f ? 0.f : (E*N2 + G*L - 2.f*F*M) / denom;
+    return ops::abs(denom) < 1e-10f ? 0.f : (E*N2 + G*L - 2.f*F*M) / denom;
 }
 
 // == GaussianSurface::height_color ============================================
@@ -230,6 +232,7 @@ AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
     , m_start_y(start_y)
 {
     m_walk = ndde::sim::ParticleState{ glm::vec2{start_x, start_y}, 0.f, 0.f };
+    m_particle_role = role == Role::Leader ? ParticleRole::Leader : ParticleRole::Chaser;
     m_constraints.push_back(std::make_unique<ndde::sim::DomainConfinement>());
 }
 
@@ -274,11 +277,52 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
         c->apply(m_walk, *m_surface);
 
     const Vec3 pt = m_surface->evaluate(m_walk.uv.x, m_walk.uv.y);
-    if (m_trail.empty() || glm::length(pt - m_trail.back()) > 0.015f) {
+    if (m_trail_config.mode != TrailMode::None &&
+        (m_trail.empty() || glm::length(pt - m_trail.back()) > m_trail_config.min_spacing)) {
         m_trail.push_back(pt);
-        if (m_trail.size() > MAX_TRAIL)
+        const std::size_t max_points = m_trail_config.max_points > 0
+            ? static_cast<std::size_t>(m_trail_config.max_points)
+            : static_cast<std::size_t>(MAX_TRAIL);
+        if (m_trail_config.mode == TrailMode::Finite && m_trail.size() > max_points)
             m_trail.erase(m_trail.begin());
     }
+}
+
+void AnimatedCurve::bind_behavior_stack() noexcept {
+    if (auto* stack = dynamic_cast<BehaviorStack*>(m_equation))
+        stack->set_owner(m_id);
+}
+
+void AnimatedCurve::set_behavior_context(const SimulationContext* context) noexcept {
+    if (auto* stack = dynamic_cast<BehaviorStack*>(m_equation))
+        stack->set_context(context);
+}
+
+ParticleMetadata AnimatedCurve::metadata() const {
+    ParticleMetadata md;
+    md.role = std::string(role_name(m_particle_role));
+    if (auto* stack = dynamic_cast<const BehaviorStack*>(m_equation)) {
+        md.behaviors = stack->behavior_labels();
+    } else if (m_equation) {
+        md.behaviors.push_back(m_equation->name());
+    }
+    md.constraints.reserve(m_constraints.size());
+    for (const auto& constraint : m_constraints) {
+        if (constraint) md.constraints.push_back(constraint->name());
+    }
+    md.label = metadata_label();
+    return md;
+}
+
+std::string AnimatedCurve::metadata_label() const {
+    std::string out = m_label.empty() ? std::string(role_name(m_particle_role)) : m_label;
+    if (auto* stack = dynamic_cast<const BehaviorStack*>(m_equation)) {
+        for (const std::string& label : stack->behavior_labels())
+            out += " - " + label;
+    } else if (m_equation) {
+        out += " - " + m_equation->name();
+    }
+    return out;
 }
 
 // == AnimatedCurve::history methods ==========================================
@@ -412,7 +456,7 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
                 const Vec3 B01  = B01_raw / b01l;
                 const Vec3 B12  = B12_raw / b12l;
                 const f32 cos_a = std::clamp(glm::dot(B01, B12), -1.f, 1.f);
-                const f32 alpha = std::acos(cos_a);
+                const f32 alpha = ops::acos(cos_a);
                 const f32 s     = glm::dot(glm::cross(B01, B12), T1);
                 const f32 sign  = (s >= 0.f) ? 1.f : -1.f;
                 const f32 ds    = 0.5f * (la + l1);

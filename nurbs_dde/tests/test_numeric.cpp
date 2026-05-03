@@ -14,6 +14,7 @@
 #include <gtest/gtest.h>
 #include "numeric/Constants.hpp"
 #include "numeric/MathTraits.hpp"
+#include "numeric/ops.hpp"
 #include "numeric/Vec3Ops.hpp"
 #include "numeric/Differentiator.hpp"
 #include <cmath>
@@ -74,6 +75,36 @@ TEST(MathTraits, CosF32VsStd) {
 TEST(MathTraits, SinF64VsStd) {
     for (double t : {0.0, 0.3, 0.7, 1.1, 2.2, 3.1}) {
         EXPECT_NEAR(MathTraits<f64>::sin(t), std::sin(t), 1e-14) << "t=" << t;
+    }
+}
+
+TEST(MathTraits, TaylorSinF64VsStdOnReducedDomain) {
+    for (double t : {-Constants<f64>::PI, -2.4, -1.7, -1.0, -0.3,
+                      0.0, 0.3, 1.0, 1.7, 2.4, Constants<f64>::PI}) {
+        EXPECT_NEAR(MathTraits<f64>::taylor_sin(t), std::sin(t), 5e-15) << "t=" << t;
+    }
+}
+
+TEST(MathTraits, TaylorSinF32VsStdAcrossSimulationAngles) {
+    for (float t : {-50.f, -17.25f, -6.2f, -3.1415926f, -1.0f,
+                     0.f, 1.0f, 3.1415926f, 6.2f, 17.25f, 50.f}) {
+        EXPECT_NEAR(MathTraits<f32>::taylor_sin(t), std::sin(t), 2e-6f) << "t=" << t;
+    }
+}
+
+TEST(MathTraits, TaylorSinIsOdd) {
+    for (double t : {0.1, 0.7, 1.3, 2.2, 8.0}) {
+        EXPECT_NEAR(MathTraits<f64>::taylor_sin(-t), -MathTraits<f64>::taylor_sin(t), 1e-14)
+            << "t=" << t;
+    }
+}
+
+TEST(MathTraits, OpsSinUsesTaylorWhenConfigured) {
+    const f64 x = 1.2345;
+    if constexpr (!ndde::use_builtin_math && ndde::use_taylor_sin) {
+        EXPECT_EQ(ops::sin(x), MathTraits<f64>::taylor_sin(x));
+    } else {
+        EXPECT_NEAR(ops::sin(x), std::sin(x), 1e-14);
     }
 }
 

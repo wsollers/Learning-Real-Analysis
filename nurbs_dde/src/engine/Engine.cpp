@@ -18,6 +18,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
+#include <vector>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -109,6 +110,8 @@ void Engine::start(const std::string& config_path) {
         "Surface Simulation", make_surface_sim_scene));
     m_simulations.add(std::make_unique<SceneSimulationRuntime>(
         "Sine-Rational Analysis", make_analysis_scene));
+    m_simulations.add(std::make_unique<SceneSimulationRuntime>(
+        "Multi-Well Centroid", make_multiwell_scene));
 
     for (std::size_t i = 0; i < m_simulations.size(); ++i)
         if (auto* sim = m_simulations.get(i))
@@ -210,6 +213,7 @@ void Engine::run_frame() {
     const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
     active_runtime().scene().on_frame(frame_ms / 1000.f);
+    draw_global_panels();
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_buffer_manager.bytes_used();
@@ -232,6 +236,31 @@ void Engine::run_frame() {
 
     apply_pending_scene_switch();
     apply_pending_simulation_switch();
+}
+
+void Engine::draw_global_panels() {
+    ImGui::SetNextWindowPos(ImVec2(12.f, 34.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(260.f, 150.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.86f);
+    if (!ImGui::Begin("Engine - Global")) { ImGui::End(); return; }
+
+    ImGui::SeparatorText("Simulations");
+    for (std::size_t i = 0; i < m_simulations.size(); ++i) {
+        auto* sim = m_simulations.get(i);
+        if (!sim) continue;
+        const std::string label = std::format("Ctrl+{}  {}", i + 1, sim->name());
+        if (ImGui::Selectable(label.c_str(), i == m_active_sim))
+            m_pending_sim = i;
+    }
+
+    ImGui::SeparatorText("Stats");
+    ImGui::TextDisabled("%.1f ms   %.0f fps", m_debug_stats.frame_ms, m_debug_stats.fps);
+    ImGui::TextDisabled("%llu verts   %llu / %llu bytes",
+        static_cast<unsigned long long>(m_debug_stats.arena_vertex_count),
+        static_cast<unsigned long long>(m_debug_stats.arena_bytes_used),
+        static_cast<unsigned long long>(m_debug_stats.arena_bytes_total));
+    ImGui::TextDisabled("F12 capture   Ctrl+Shift+P pause+capture");
+    ImGui::End();
 }
 
 void Engine::apply_pending_scene_switch() {
@@ -263,6 +292,10 @@ void Engine::on_key_event(int key, int action, int mods) {
     }
     if (ctrl && !shift && key == GLFW_KEY_2) {
         m_pending_sim = 1;
+        return;
+    }
+    if (ctrl && !shift && key == GLFW_KEY_3) {
+        m_pending_sim = 2;
         return;
     }
     if (!ctrl && !shift && key == GLFW_KEY_F12) {

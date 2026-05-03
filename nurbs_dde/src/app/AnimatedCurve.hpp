@@ -41,13 +41,18 @@
 #include "sim/IConstraint.hpp"
 #include "sim/HistoryBuffer.hpp"
 #include "app/FrenetFrame.hpp"
+#include "app/ParticleTypes.hpp"
 #include "math/GeometryTypes.hpp"
 #include <glm/glm.hpp>
 #include <vector>
 #include <span>
 #include <memory>
+#include <atomic>
+#include <string>
 
 namespace ndde {
+
+class SimulationContext;
 
 class AnimatedCurve {
 public:
@@ -96,6 +101,17 @@ public:
     // Note: this is the navigation coordinate -- arrival is detected by
     // neighbourhood radius, not exact equality.
     [[nodiscard]] glm::vec2 head_uv() const noexcept { return m_walk.uv; }
+    [[nodiscard]] ParticleId id() const noexcept { return m_id; }
+    [[nodiscard]] ParticleRole particle_role() const noexcept { return m_particle_role; }
+    void set_particle_role(ParticleRole role) noexcept { m_particle_role = role; }
+    void set_label(std::string label) { m_label = std::move(label); }
+    void set_trail_config(TrailConfig cfg) noexcept { m_trail_config = cfg; }
+    [[nodiscard]] const TrailConfig& trail_config() const noexcept { return m_trail_config; }
+
+    void bind_behavior_stack() noexcept;
+    void set_behavior_context(const SimulationContext* context) noexcept;
+    [[nodiscard]] ParticleMetadata metadata() const;
+    [[nodiscard]] std::string metadata_label() const;
 
     [[nodiscard]] u32  trail_size()    const noexcept { return static_cast<u32>(m_trail.size()); }
     [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 4; }
@@ -150,8 +166,17 @@ private:
     Role                                     m_role;
     u32                                      m_colour_slot;
     f32                                      m_start_x, m_start_y;
+    ParticleId                               m_id = next_id();
+    ParticleRole                             m_particle_role = ParticleRole::Neutral;
+    TrailConfig                              m_trail_config{};
+    std::string                              m_label;
 
     void step(f32 dt, f32 speed_scale);
+
+    [[nodiscard]] static ParticleId next_id() noexcept {
+        static std::atomic<ParticleId> id{0};
+        return ++id;
+    }
 };
 
 } // namespace ndde

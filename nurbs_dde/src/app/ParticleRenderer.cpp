@@ -4,6 +4,7 @@
 // lived inside draw_surface_3d_window().
 
 #include "app/ParticleRenderer.hpp"
+#include "numeric/ops.hpp"
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <cmath>
@@ -71,8 +72,8 @@ void ParticleRenderer::submit_osc_circle_3d(const AnimatedCurve& c, u32 trail_id
     auto slice = m_api.acquire(SEG+1);
     Vertex* v  = slice.vertices();
     for (u32 i = 0; i <= SEG; ++i) {
-        const float theta = (static_cast<float>(i)/SEG)*2.f*std::numbers::pi_v<float>;
-        v[i] = { centre + R*(-std::cos(theta)*fr.N + std::sin(theta)*fr.T), col };
+        const float theta = (static_cast<float>(i)/SEG)*ops::two_pi_v<float>;
+        v[i] = { centre + R*(-ops::cos(theta)*fr.N + ops::sin(theta)*fr.T), col };
     }
     m_api.submit_to(RenderTarget::Primary3D, slice, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
 }
@@ -122,7 +123,7 @@ void ParticleRenderer::submit_normal_plane_3d(const AnimatedCurve&        c,
 
     const float osc_r  = (fr.kappa > 1e-5f) ? 1.f / fr.kappa : 2.f;
     const float half_T = std::clamp(osc_r * 0.3f * frame_scale, 0.04f, 1.2f);
-    const float half_n = std::clamp(std::sqrt(sf.E) * frame_scale, 0.04f, 1.2f);
+    const float half_n = std::clamp(ops::sqrt(sf.E) * frame_scale, 0.04f, 1.2f);
 
     const Vec3 a = fr.T      * half_T;
     const Vec3 b = sf.normal * half_n;
@@ -167,8 +168,8 @@ void ParticleRenderer::submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx,
     // (2) Twist fan in the osculating plane
     if (std::abs(tau) < 1e-4f) return;
 
-    const float helix_angle = std::atan(std::abs(tau) / fr.kappa);
-    const float fan_angle   = std::clamp(helix_angle, 0.01f, std::numbers::pi_v<float> / 3.f);
+    const float helix_angle = ops::atan(std::abs(tau) / fr.kappa);
+    const float fan_angle   = std::clamp(helix_angle, 0.01f, ops::pi_v<float> / 3.f);
     const float fan_r       = scl * 0.7f;
     constexpr u32 FAN_SEG   = 20;
     const Vec3 side = tau > 0.f ? -fr.B : fr.B;
@@ -178,7 +179,7 @@ void ParticleRenderer::submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx,
     vf[0] = { o, col };
     for (u32 i = 0; i <= FAN_SEG; ++i) {
         const float a    = (static_cast<float>(i) / FAN_SEG) * fan_angle;
-        const Vec3  spoke = std::cos(a) * fr.N + std::sin(a) * side;
+        const Vec3  spoke = ops::cos(a) * fr.N + ops::sin(a) * side;
         vf[i + 1] = { o + spoke * fan_r, {col.r, col.g, col.b, 0.45f} };
     }
     m_api.submit_to(RenderTarget::Primary3D, fan, Topology::TriangleList, DrawMode::VertexColor, col, mvp);
@@ -188,7 +189,7 @@ void ParticleRenderer::submit_torsion_3d(const AnimatedCurve& c, u32 trail_idx,
     vo[0] = { o, col };
     for (u32 i = 0; i <= FAN_SEG; ++i) {
         const float a   = (static_cast<float>(i) / FAN_SEG) * fan_angle;
-        const Vec3  sp  = std::cos(a) * fr.N + std::sin(a) * side;
+        const Vec3  sp  = ops::cos(a) * fr.N + ops::sin(a) * side;
         vo[i + 1] = { o + sp * fan_r, col };
     }
     m_api.submit_to(RenderTarget::Primary3D, outline, Topology::LineStrip, DrawMode::VertexColor, col, mvp);
@@ -215,8 +216,6 @@ void ParticleRenderer::submit_all(const std::vector<AnimatedCurve>& curves,
         // Overlays on the snapped curve, or curve 0 when nothing is snapped.
         const bool is_active = (snap_on_curve && snap_curve == static_cast<int>(ci))
                             || (!snap_on_curve && ci == 0);
-        if (!is_active) continue;
-
         const u32 sidx = (snap_on_curve && snap_curve == static_cast<int>(ci)
                           && snap_idx >= 0)
             ? static_cast<u32>(snap_idx)
@@ -226,6 +225,8 @@ void ParticleRenderer::submit_all(const std::vector<AnimatedCurve>& curves,
             submit_frenet_3d(c, sidx, mvp);
             if (show_osc) submit_osc_circle_3d(c, sidx, mvp);
         }
+
+        if (!is_active) continue;
         if (show_dir_deriv)    submit_surface_frame_3d(c, sidx, mvp, surface, sim_time);
         if (show_normal_plane) submit_normal_plane_3d(c, sidx, mvp, surface, sim_time);
         if (show_torsion)      submit_torsion_3d(c, sidx, mvp);

@@ -27,10 +27,10 @@
 // convert it to a constexpr bool. Everywhere else in the codebase, use the
 // constexpr bool — never the macro directly.
 //
-// ── Current status ────────────────────────────────────────────────────────────
-// Both paths currently delegate to std:: / GLM. The ndde path will diverge
-// as MathTraits receives in-house Taylor / CORDIC implementations, which will
-// be validated against the std:: oracle by running tests with both flags.
+// ── Approximation switches ───────────────────────────────────────────────────
+// NDDE_USE_TAYLOR_SIN=1 routes MathTraits<T>::sin through the in-house Taylor
+// implementation when NDDE_USE_BUILTIN_MATH is OFF. The approximation remains
+// callable directly either way as MathTraits<T>::taylor_sin(x).
 
 namespace ndde {
 
@@ -38,6 +38,14 @@ namespace ndde {
 /// False → ndde::numeric in-house backend (default, curriculum target).
 inline constexpr bool use_builtin_math =
 #if defined(NDDE_USE_BUILTIN_MATH) && NDDE_USE_BUILTIN_MATH
+    true;
+#else
+    false;
+#endif
+
+/// True → route numeric sine through the in-house Taylor approximation.
+inline constexpr bool use_taylor_sin =
+#if defined(NDDE_USE_TAYLOR_SIN) && NDDE_USE_TAYLOR_SIN
     true;
 #else
     false;

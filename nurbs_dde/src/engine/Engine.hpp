@@ -72,6 +72,7 @@ private:
     void handle_resize();
     void apply_pending_scene_switch();
     void apply_pending_simulation_switch();
+    void draw_global_panels();
     void install_global_hotkeys();
     void uninstall_global_hotkeys() noexcept;
     void on_key_event(int key, int action, int mods);

@@ -15,6 +15,11 @@ if(NDDE_USE_BUILTIN_MATH)
     target_compile_definitions(ndde_numeric INTERFACE NDDE_USE_BUILTIN_MATH=1)
 endif()
 
+option(NDDE_USE_TAYLOR_SIN "Route ndde::numeric sine through the Taylor approximation" OFF)
+if(NDDE_USE_TAYLOR_SIN)
+    target_compile_definitions(ndde_numeric INTERFACE NDDE_USE_TAYLOR_SIN=1)
+endif()
+
 # ── ndde_math ─────────────────────────────────────────────────────────────────
 add_library(ndde_math STATIC
     math/Conics.cpp
@@ -75,7 +80,9 @@ target_link_libraries(ndde_engine PUBLIC
 add_executable(nurbs_dde
     app/main.cpp
     app/GaussianSurface.cpp
+    app/ParticleSystem.cpp
     app/SceneFactories.cpp
+    app/SurfaceMeshCache.cpp
     app/SurfaceSimScene.cpp
     app/ParticleRenderer.cpp
 )

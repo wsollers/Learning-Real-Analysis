@@ -17,28 +17,31 @@
 //   "Analysis – Surface"    surface geometry readout (K, H, grad, z at cursor)
 //   "Analysis – Walkers"    spawn controls, per-walker params (z₀, ε, speed)
 //   "Analysis – Camera"     yaw/pitch/zoom, reset
-//   "Analysis – Debug"      PerformancePanel + CoordDebugPanel toggles
+//   Engine-global panel owns simulation switching and frame stats.
 //
 // The 3D canvas ("Analysis 3D") fills the dockspace exactly as in
 // SurfaceSimScene. The second window shows a 2D heat/contour view of the same
 // height field so the level-curve walkers have a planar reference.
 
-#include "engine/IScene.hpp"
 #include "engine/EngineAPI.hpp"
 #include "app/SceneFactories.hpp"
+#include "app/SimulationSceneBase.hpp"
 #include "app/AnimatedCurve.hpp"
 #include "app/FrenetFrame.hpp"
 #include "app/ParticleRenderer.hpp"
+#include "app/ParticleFactory.hpp"
 #include "app/HotkeyManager.hpp"
-#include "app/PerformancePanel.hpp"
+#include "app/PanelHost.hpp"
+#include "app/ParticleInspectorPanel.hpp"
+#include "app/SurfaceMeshCache.hpp"
 #include "app/Viewport.hpp"
+#include "app/ParticleSystem.hpp"
 #include "math/SineRationalSurface.hpp"
 #include "sim/LevelCurveWalker.hpp"
-#include "sim/EulerIntegrator.hpp"
-#include "sim/MilsteinIntegrator.hpp"
 #include "sim/BrownianMotion.hpp"
 #include "sim/IConstraint.hpp"
 #include "math/GeometryTypes.hpp"
+#include "numeric/ops.hpp"
 
 #include <imgui.h>
 #define GLFW_INCLUDE_NONE
@@ -55,13 +58,13 @@
 
 namespace ndde {
 
-class AnalysisScene final : public IScene {
+class AnalysisScene final : public SimulationSceneBase {
 public:
     explicit AnalysisScene(EngineAPI api)
         : m_api(std::move(api))
         , m_surface(std::make_unique<ndde::math::SineRationalSurface>(4.f))
+        , m_particles(m_surface.get())
         , m_particle_renderer(m_api)
-        , m_rng(std::random_device{}())
     {
         m_vp3d.base_extent = 5.f;
         m_vp3d.zoom        = 1.f;
@@ -76,51 +79,23 @@ public:
         m_hotkeys.register_toggle(Chord::ctrl(ImGuiKey_H), "Hotkey panel",
             m_show_hotkeys, "Panels");
 
-        // Pre-warm with one walker
-        spawn_walker();
+        register_panels();
+        spawn_showcase_service();
     }
 
     // ── IScene ────────────────────────────────────────────────────────────────
 
     void on_frame(f32 dt) override {
-        if (!m_paused) {
-            m_sim_time += dt;
-            for (auto& c : m_curves)
-                c.advance(dt, m_sim_speed);
-        }
-
-        // Dockspace root
-        const ImGuiViewport* vp = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(vp->WorkPos);
-        ImGui::SetNextWindowSize(vp->WorkSize);
-        ImGui::SetNextWindowViewport(vp->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding,  0.f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize,0.f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,   ImVec2(0.f, 0.f));
-        constexpr ImGuiWindowFlags dock_flags =
-            ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
-        ImGui::Begin("##analysis_dock", nullptr, dock_flags);
-        ImGui::PopStyleVar(3);
-        const ImGuiID dock_id = ImGui::GetID("AnalysisDockSpace");
-        ImGui::DockSpace(dock_id, ImVec2(0.f, 0.f), ImGuiDockNodeFlags_None);
-        ImGui::End();
+        advance_particles(m_particles, dt);
+        draw_dockspace_root("##analysis_dock", "AnalysisDockSpace");
 
         draw_canvas_3d();
-        draw_panel_surface();
-        draw_panel_walkers();
-        draw_panel_camera();
-        draw_panel_debug();
+        m_panels.draw_all();
         submit_contour_second_window();
-        m_hotkeys.draw_panel("Hotkeys  [Ctrl+H]", m_show_hotkeys);
-        m_perf.draw(m_api.debug_stats());
+        draw_hotkey_panel(m_hotkeys);
     }
 
     [[nodiscard]] std::string_view name() const override { return "Analysis – Sine-Rational"; }
-    void set_paused(bool paused) override { m_paused = paused; }
-    [[nodiscard]] bool paused() const noexcept override { return m_paused; }
     void on_key_event(int key, int action, int mods) override {
         if (action != GLFW_PRESS) return;
         const bool ctrl = (mods & GLFW_MOD_CONTROL) != 0;
@@ -138,29 +113,14 @@ private:
     // ── Core state ────────────────────────────────────────────────────────────
     EngineAPI                                       m_api;
     std::unique_ptr<ndde::math::SineRationalSurface> m_surface;
-    ndde::sim::EulerIntegrator                      m_integrator;
-    ndde::sim::MilsteinIntegrator                   m_milstein;
-    std::vector<AnimatedCurve>                      m_curves;
+    ParticleSystem                                  m_particles;
     ParticleRenderer                                m_particle_renderer;
     HotkeyManager                                   m_hotkeys;
-    PerformancePanel                                m_perf;
+    PanelHost                                       m_panels;
     Viewport                                        m_vp3d;
-    std::mt19937                                    m_rng;
-
-    float m_sim_time  = 0.f;
-    float m_sim_speed = 1.f;
-    bool  m_paused       = false;
-    bool  m_show_hotkeys = false;
 
     // Geometry cache
-    bool              m_wire_dirty = true;
-    u32               m_cached_grid = 0;
-    std::vector<Vertex> m_wire_cache;
-    u32               m_wire_vcount = 0;
-    std::vector<Vertex> m_fill_cache;
-    u32               m_fill_vcount = 0;
-    std::vector<Vertex> m_contour_cache;
-    u32               m_contour_vcount = 0;
+    SurfaceMeshCache  m_mesh;
     std::vector<Vertex> m_projected_fill_cache;
     std::vector<Vertex> m_projected_wire_cache;
     u32               m_grid_lines  = 60;
@@ -174,6 +134,109 @@ private:
 
     // ── Spawn ─────────────────────────────────────────────────────────────────
 
+    void register_panels() {
+        m_panels.clear();
+        m_panels.add({
+            .title = "Analysis - Surface",
+            .default_pos = {20.f, 20.f},
+            .default_size = {290.f, 340.f},
+            .bg_alpha = 0.88f,
+            .draw_body = [this] { draw_surface_body(); }
+        });
+        m_panels.add({
+            .title = "Analysis - Walkers",
+            .default_pos = {20.f, 370.f},
+            .default_size = {290.f, 380.f},
+            .bg_alpha = 0.88f,
+            .draw_body = [this] { draw_walkers_body(); }
+        });
+        m_panels.add({
+            .title = "Analysis - Camera",
+            .default_pos = {20.f, 760.f},
+            .default_size = {290.f, 160.f},
+            .bg_alpha = 0.88f,
+            .draw_body = [this] { draw_camera_body(); }
+        });
+    }
+
+    [[nodiscard]] static ndde::sim::LevelCurveWalker* level_walker(AnimatedCurve& c) noexcept {
+        if (auto* eq = dynamic_cast<ndde::sim::LevelCurveWalker*>(c.equation()))
+            return eq;
+        if (auto* stack = dynamic_cast<BehaviorStack*>(c.equation()))
+            return stack->find_equation<ndde::sim::LevelCurveWalker>();
+        return nullptr;
+    }
+
+    [[nodiscard]] static const ndde::sim::LevelCurveWalker* level_walker(const AnimatedCurve& c) noexcept {
+        if (const auto* eq = dynamic_cast<const ndde::sim::LevelCurveWalker*>(c.equation()))
+            return eq;
+        if (const auto* stack = dynamic_cast<const BehaviorStack*>(c.equation()))
+            return stack->find_equation<ndde::sim::LevelCurveWalker>();
+        return nullptr;
+    }
+
+    void spawn_showcase_service() {
+        m_particles.clear();
+        m_particles.clear_goals();
+        m_spawn_count = 0;
+        reset_simulation_clock();
+
+        ndde::sim::LevelCurveWalker::Params p;
+        p.z0 = m_surface->height(-1.25f, 0.65f);
+        p.epsilon = 0.18f;
+        p.walk_speed = 0.72f;
+        p.tangent_floor = 0.42f;
+
+        ParticleBuilder leader_builder = m_particles.factory().particle();
+        leader_builder
+            .named("Leader - Level Curve - Brownian")
+            .role(ParticleRole::Leader)
+            .at({-1.25f, 0.65f})
+            .history(640, 1.f / 120.f)
+            .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.012f})
+            .stochastic()
+            .with_equation(std::make_unique<ndde::sim::LevelCurveWalker>(p))
+            .with_behavior<BrownianBehavior>(0.20f, BrownianBehavior::Params{
+                .sigma = 0.045f,
+                .drift_strength = 0.f
+            });
+        AnimatedCurve& leader = m_particles.spawn(std::move(leader_builder));
+        ++m_spawn_count;
+
+        for (int i = 0; i < 180; ++i) {
+            m_sim_time += 1.f / 60.f;
+            m_particles.update(1.f / 60.f, 1.f, m_sim_time);
+        }
+
+        SeekParticleBehavior::Params seek;
+        seek.target = TargetSelector::nearest(ParticleRole::Leader);
+        seek.speed = 0.86f;
+        seek.delay_seconds = 0.85f;
+
+        const glm::vec2 leader_uv = leader.head_uv();
+        ParticleBuilder seeker_builder = m_particles.factory().particle();
+        seeker_builder
+            .named("Chaser - Delayed Seek - Brownian")
+            .role(ParticleRole::Chaser)
+            .at({leader_uv.x + 1.0f, leader_uv.y - 0.75f})
+            .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.012f})
+            .stochastic()
+            .with_behavior<SeekParticleBehavior>(seek)
+            .with_behavior<BrownianBehavior>(0.18f, BrownianBehavior::Params{
+                .sigma = 0.035f,
+                .drift_strength = 0.f
+            });
+        m_particles.spawn(std::move(seeker_builder));
+        ++m_spawn_count;
+
+        m_particles.add_goal<CaptureGoal>(CaptureGoal::Params{
+            .seeker_role = ParticleRole::Chaser,
+            .target_role = ParticleRole::Leader,
+            .radius = 0.18f
+        });
+        m_goal_status = GoalStatus::Running;
+    }
+
     void spawn_walker() {
         // Pick a random position in the domain
         std::uniform_real_distribution<float> du(
@@ -181,8 +244,8 @@ private:
         std::uniform_real_distribution<float> dv(
             m_surface->v_min() + 0.5f, m_surface->v_max() - 0.5f);
 
-        const float u0 = du(m_rng);
-        const float v0 = dv(m_rng);
+        const float u0 = du(m_particles.rng());
+        const float v0 = dv(m_particles.rng());
         const float z0 = m_surface->height(u0, v0);
 
         ndde::sim::LevelCurveWalker::Params p;
@@ -190,26 +253,32 @@ private:
         p.epsilon    = m_epsilon;
         p.walk_speed = m_walk_speed;
 
-        auto eq = std::make_unique<ndde::sim::LevelCurveWalker>(p);
+        ParticleBuilder builder = m_particles.factory().particle();
+        builder.named("Walker")
+            .role(ParticleRole::Leader)
+            .at({u0, v0})
+            .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
+            .with_equation(std::make_unique<ndde::sim::LevelCurveWalker>(p));
 
-        // Optionally add Brownian noise on top via a composed approach:
-        // for now the walker handles its own dynamics; noise can be layered
-        // by using MilsteinIntegrator with noise_coefficient.
-        const ndde::sim::IIntegrator* integrator = (m_noise_sigma > 1e-6f)
-            ? static_cast<const ndde::sim::IIntegrator*>(&m_milstein)
-            : static_cast<const ndde::sim::IIntegrator*>(&m_integrator);
+        if (m_noise_sigma > 1e-6f) {
+            builder.stochastic()
+                .with_behavior<BrownianBehavior>(BrownianBehavior::Params{
+                    .sigma = m_noise_sigma,
+                    .drift_strength = 0.f
+                });
+        }
 
-        AnimatedCurve c = AnimatedCurve::with_equation(
-            u0, v0,
-            AnimatedCurve::Role::Leader,
-            m_spawn_count % AnimatedCurve::MAX_SLOTS,
-            m_surface.get(), std::move(eq), integrator);
+        AnimatedCurve& c = m_particles.spawn(std::move(builder));
+
+        SimulationContext context = m_particles.context(m_sim_time);
+        context.set_time(m_sim_time);
+        c.set_behavior_context(&context);
 
         // Pre-warm 120 frames so trail is visible immediately
-        for (int i = 0; i < 120; ++i)
+        for (int i = 0; i < 120; ++i) {
+            context.set_time(m_sim_time + static_cast<float>(i) / 60.f);
             c.advance(1.f/60.f, m_sim_speed);
-
-        m_curves.push_back(std::move(c));
+        }
         ++m_spawn_count;
     }
 
@@ -244,86 +313,22 @@ private:
 
     // ── Surface geometry ──────────────────────────────────────────────────────
 
-    static Vec4 height_color(float z, float scale) noexcept {
-        const float t = std::clamp(z / (scale + 1e-9f), -1.f, 1.f);
-        if (t >= 0.f)
-            return {0.50f + t*0.35f, 0.50f - t*0.38f, 0.50f - t*0.42f, 0.82f};
-        const float s = -t;
-        return {0.50f - s*0.40f, 0.50f + s*0.18f - s*s*0.46f, 0.50f + s*0.35f, 0.82f};
-    }
-
     void rebuild_geometry_if_needed() {
-        const bool dirty = m_wire_dirty || (m_grid_lines != m_cached_grid);
-        if (!dirty) return;
-
-        // Wireframe
-        const u32 wn = m_surface->wireframe_vertex_count(m_grid_lines, m_grid_lines);
-        m_wire_cache.resize(wn);
-        m_surface->tessellate_wireframe({m_wire_cache.data(), wn},
-                                         m_grid_lines, m_grid_lines, 0.f,
-                                         {0.3f, 0.6f, 0.9f, 0.55f});
-        m_wire_vcount = wn;
-
-        // Filled (curvature-coloured)
-        const u32 N = m_grid_lines;
-        const u32 fn = N * N * 6;
-        m_fill_cache.resize(fn);
-        const float u0 = m_surface->u_min(), u1 = m_surface->u_max();
-        const float v0 = m_surface->v_min(), v1 = m_surface->v_max();
-        const float du = (u1-u0)/static_cast<float>(N);
-        const float dv = (v1-v0)/static_cast<float>(N);
-        u32 idx = 0;
-        for (u32 i = 0; i < N; ++i) {
-            const float ua = u0 + static_cast<float>(i)*du;
-            const float ub = ua + du;
-            for (u32 j = 0; j < N; ++j) {
-                const float va = v0 + static_cast<float>(j)*dv;
-                const float vb = va + dv;
-                const Vec3 p00 = m_surface->evaluate(ua,va);
-                const Vec3 p10 = m_surface->evaluate(ub,va);
-                const Vec3 p01 = m_surface->evaluate(ua,vb);
-                const Vec3 p11 = m_surface->evaluate(ub,vb);
-                const float z   = m_surface->height((ua+ub)*.5f,(va+vb)*.5f);
-                const Vec4  col = height_color(z, m_curv_scale);
-                m_fill_cache[idx++]={p00,col}; m_fill_cache[idx++]={p10,col};
-                m_fill_cache[idx++]={p11,col}; m_fill_cache[idx++]={p00,col};
-                m_fill_cache[idx++]={p11,col}; m_fill_cache[idx++]={p01,col};
-            }
-        }
-        m_fill_vcount = idx;
-
-        m_contour_cache.resize(fn);
-        idx = 0;
-        for (u32 i = 0; i < N; ++i) {
-            const float ua = u0 + static_cast<float>(i)*du;
-            const float ub = ua + du;
-            for (u32 j = 0; j < N; ++j) {
-                const float va = v0 + static_cast<float>(j)*dv;
-                const float vb = va + dv;
-                const Vec3 p00 = {ua, va, 0.f};
-                const Vec3 p10 = {ub, va, 0.f};
-                const Vec3 p01 = {ua, vb, 0.f};
-                const Vec3 p11 = {ub, vb, 0.f};
-                const Vec4 c00 = height_color(m_surface->height(ua, va), m_curv_scale);
-                const Vec4 c10 = height_color(m_surface->height(ub, va), m_curv_scale);
-                const Vec4 c01 = height_color(m_surface->height(ua, vb), m_curv_scale);
-                const Vec4 c11 = height_color(m_surface->height(ub, vb), m_curv_scale);
-                m_contour_cache[idx++]={p00,c00}; m_contour_cache[idx++]={p10,c10};
-                m_contour_cache[idx++]={p11,c11}; m_contour_cache[idx++]={p00,c00};
-                m_contour_cache[idx++]={p11,c11}; m_contour_cache[idx++]={p01,c01};
-            }
-        }
-        m_contour_vcount = idx;
-
-        m_cached_grid = m_grid_lines;
-        m_wire_dirty  = false;
+        m_mesh.rebuild_if_needed(*m_surface, SurfaceMeshOptions{
+            .grid_lines = m_grid_lines,
+            .time = 0.f,
+            .color_scale = m_curv_scale,
+            .wire_color = {0.3f, 0.6f, 0.9f, 0.55f},
+            .fill_color_mode = SurfaceFillColorMode::HeightCell,
+            .build_contour = true
+        });
     }
 
     void submit_contour_second_window() {
         const Vec2 sz = m_api.viewport_size2();
         if (sz.x <= 0.f || sz.y <= 0.f) return;
         rebuild_geometry_if_needed();
-        if (m_contour_vcount == 0) return;
+        if (m_mesh.contour_count() == 0) return;
 
         const float ext = m_surface->extent();
         const float aspect = sz.x / std::max(sz.y, 1.f);
@@ -331,15 +336,15 @@ private:
             ? glm::ortho(-ext * aspect, ext * aspect, -ext, ext, -1.f, 1.f)
             : glm::ortho(-ext, ext, -ext / aspect, ext / aspect, -1.f, 1.f);
 
-        auto sl = m_api.acquire(m_contour_vcount);
-        std::memcpy(sl.vertices(), m_contour_cache.data(), m_contour_vcount*sizeof(Vertex));
+        auto sl = m_api.acquire(m_mesh.contour_count());
+        std::memcpy(sl.vertices(), m_mesh.contour_vertices().data(), m_mesh.contour_count()*sizeof(Vertex));
         m_api.submit_to(RenderTarget::Contour2D, sl, Topology::TriangleList,
                         DrawMode::VertexColor, {1,1,1,1}, mvp);
 
-        if (m_wire_vcount > 0) {
-            auto wl = m_api.acquire(m_wire_vcount);
-            std::memcpy(wl.vertices(), m_wire_cache.data(), m_wire_vcount*sizeof(Vertex));
-            for (u32 i = 0; i < m_wire_vcount; ++i) {
+        if (m_mesh.wire_count() > 0) {
+            auto wl = m_api.acquire(m_mesh.wire_count());
+            std::memcpy(wl.vertices(), m_mesh.wire_vertices().data(), m_mesh.wire_count()*sizeof(Vertex));
+            for (u32 i = 0; i < m_mesh.wire_count(); ++i) {
                 wl.vertices()[i].pos.z = 0.f;
                 wl.vertices()[i].color = {0.95f, 0.95f, 1.f, 0.32f};
             }
@@ -347,7 +352,7 @@ private:
                             DrawMode::VertexColor, {1,1,1,1}, mvp);
         }
 
-        for (const auto& curve : m_curves) {
+        for (const auto& curve : m_particles.particles()) {
             const u32 n = curve.trail_vertex_count();
             if (n < 2) continue;
 
@@ -374,10 +379,10 @@ private:
     }
 
     [[nodiscard]] Vec3 project_analysis_point(Vec3 p) const noexcept {
-        const float cy = std::cos(m_vp3d.yaw);
-        const float sy = std::sin(m_vp3d.yaw);
-        const float cp = std::cos(m_vp3d.pitch);
-        const float sp = std::sin(m_vp3d.pitch);
+        const float cy = ops::cos(m_vp3d.yaw);
+        const float sy = ops::sin(m_vp3d.yaw);
+        const float cp = ops::cos(m_vp3d.pitch);
+        const float sp = ops::sin(m_vp3d.pitch);
 
         const float xr = cy * p.x - sy * p.y;
         const float yr = sy * p.x + cy * p.y;
@@ -411,10 +416,10 @@ private:
         ImDrawList* dl = ImGui::GetWindowDrawList();
         dl->PushClipRect(cpos, ImVec2(cpos.x + csz.x, cpos.y + csz.y), true);
 
-        for (u32 i = 0; i + 2 < m_fill_vcount; i += 3) {
-            const Vertex& a = m_fill_cache[i + 0];
-            const Vertex& b = m_fill_cache[i + 1];
-            const Vertex& c = m_fill_cache[i + 2];
+        for (u32 i = 0; i + 2 < m_mesh.fill_count(); i += 3) {
+            const Vertex& a = m_mesh.fill_vertices()[i + 0];
+            const Vertex& b = m_mesh.fill_vertices()[i + 1];
+            const Vertex& c = m_mesh.fill_vertices()[i + 2];
             const ImVec2 pa = projected_to_canvas(project_analysis_point(a.pos), cpos, csz);
             const ImVec2 pb = projected_to_canvas(project_analysis_point(b.pos), cpos, csz);
             const ImVec2 pc = projected_to_canvas(project_analysis_point(c.pos), cpos, csz);
@@ -422,13 +427,13 @@ private:
         }
 
         const ImU32 wire_col = IM_COL32(215, 235, 255, 105);
-        for (u32 i = 0; i + 1 < m_wire_vcount; i += 2) {
-            const ImVec2 a = projected_to_canvas(project_analysis_point(m_wire_cache[i + 0].pos), cpos, csz);
-            const ImVec2 b = projected_to_canvas(project_analysis_point(m_wire_cache[i + 1].pos), cpos, csz);
+        for (u32 i = 0; i + 1 < m_mesh.wire_count(); i += 2) {
+            const ImVec2 a = projected_to_canvas(project_analysis_point(m_mesh.wire_vertices()[i + 0].pos), cpos, csz);
+            const ImVec2 b = projected_to_canvas(project_analysis_point(m_mesh.wire_vertices()[i + 1].pos), cpos, csz);
             dl->AddLine(a, b, wire_col, 1.0f);
         }
 
-        for (const auto& curve : m_curves) {
+        for (const auto& curve : m_particles.particles()) {
             if (!curve.has_trail()) continue;
             const Vec3 hp = curve.head_world();
             const ImVec2 p = projected_to_canvas(project_analysis_point(hp), cpos, csz);
@@ -440,27 +445,27 @@ private:
 
     void submit_projected_primary(const Mat4& mvp) {
         rebuild_geometry_if_needed();
-        if (m_fill_vcount > 0) {
-            m_projected_fill_cache.resize(m_fill_vcount);
-            for (u32 i = 0; i < m_fill_vcount; ++i) {
-                m_projected_fill_cache[i] = m_fill_cache[i];
-                m_projected_fill_cache[i].pos = project_analysis_point(m_fill_cache[i].pos);
+        if (m_mesh.fill_count() > 0) {
+            m_projected_fill_cache.resize(m_mesh.fill_count());
+            for (u32 i = 0; i < m_mesh.fill_count(); ++i) {
+                m_projected_fill_cache[i] = m_mesh.fill_vertices()[i];
+                m_projected_fill_cache[i].pos = project_analysis_point(m_mesh.fill_vertices()[i].pos);
             }
-            auto sl = m_api.acquire(m_fill_vcount);
-            std::memcpy(sl.vertices(), m_projected_fill_cache.data(), m_fill_vcount*sizeof(Vertex));
+            auto sl = m_api.acquire(m_mesh.fill_count());
+            std::memcpy(sl.vertices(), m_projected_fill_cache.data(), m_mesh.fill_count()*sizeof(Vertex));
             m_api.submit_to(RenderTarget::Primary3D, sl, Topology::TriangleList,
                             DrawMode::VertexColor, {1,1,1,1}, mvp);
         }
 
-        if (m_wire_vcount > 0) {
-            m_projected_wire_cache.resize(m_wire_vcount);
-            for (u32 i = 0; i < m_wire_vcount; ++i) {
-                m_projected_wire_cache[i] = m_wire_cache[i];
-                m_projected_wire_cache[i].pos = project_analysis_point(m_wire_cache[i].pos);
+        if (m_mesh.wire_count() > 0) {
+            m_projected_wire_cache.resize(m_mesh.wire_count());
+            for (u32 i = 0; i < m_mesh.wire_count(); ++i) {
+                m_projected_wire_cache[i] = m_mesh.wire_vertices()[i];
+                m_projected_wire_cache[i].pos = project_analysis_point(m_mesh.wire_vertices()[i].pos);
                 m_projected_wire_cache[i].color = {0.90f, 0.95f, 1.f, 0.50f};
             }
-            auto sl = m_api.acquire(m_wire_vcount);
-            std::memcpy(sl.vertices(), m_projected_wire_cache.data(), m_wire_vcount*sizeof(Vertex));
+            auto sl = m_api.acquire(m_mesh.wire_count());
+            std::memcpy(sl.vertices(), m_projected_wire_cache.data(), m_mesh.wire_count()*sizeof(Vertex));
             m_api.submit_to(RenderTarget::Primary3D, sl, Topology::LineList,
                             DrawMode::VertexColor, {1,1,1,1}, mvp);
         }
@@ -502,13 +507,13 @@ private:
 
         // Particles
         m_particle_renderer.show_frenet = false;
-        m_particle_renderer.submit_all(m_curves, *m_surface, m_sim_time,
+        m_particle_renderer.submit_all(m_particles.particles(), *m_surface, m_sim_time,
                                        mvp, -1, -1, false);
 
         // Level-band indicator lines per walker
-        for (const auto& c : m_curves) {
+        for (const auto& c : m_particles.particles()) {
             if (!c.has_trail()) continue;
-            if (const auto* eq = dynamic_cast<const ndde::sim::LevelCurveWalker*>(c.equation())) {
+            if (const auto* eq = level_walker(c)) {
                 const float z0  = eq->params().z0;
                 const float eps = eq->params().epsilon;
                 // Draw small dot at head coloured by how close we are to z0
@@ -539,12 +544,7 @@ private:
 
     // ── Panels ────────────────────────────────────────────────────────────────
 
-    void draw_panel_surface() {
-        ImGui::SetNextWindowPos(ImVec2(20.f, 20.f),   ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(290.f, 340.f), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowBgAlpha(0.88f);
-        if (!ImGui::Begin("Analysis \xe2\x80\x93 Surface")) { ImGui::End(); return; }
-
+    void draw_surface_body() {
         ImGui::SeparatorText("Function");
         ImGui::TextDisabled("f(x,y) = [3/(1+(x+y+1)\xc2\xb2)] sin(2x)cos(2y)");
         ImGui::TextDisabled("       + 0.1 sin(5x) sin(5y)");
@@ -555,10 +555,10 @@ private:
             int gl = static_cast<int>(m_grid_lines);
             if (ImGui::SliderInt("Grid lines##as", &gl, 8, 120)) {
                 m_grid_lines = static_cast<u32>(gl);
-                m_wire_dirty = true;
+                m_mesh.mark_dirty();
             }
             if (ImGui::SliderFloat("Color scale##as", &m_curv_scale, 0.1f, 10.f, "%.2f"))
-                m_wire_dirty = true;
+                m_mesh.mark_dirty();
             ImGui::TextDisabled("~%u k verts", (4u*m_grid_lines*(m_grid_lines+1u))/1000u);
         }
 
@@ -577,7 +577,7 @@ private:
             const float z  = m_surface->height(probe_u, probe_v);
             const float gx = m_surface->du(probe_u, probe_v).z;
             const float gy = m_surface->dv(probe_u, probe_v).z;
-            const float gm = std::sqrt(gx*gx + gy*gy);
+            const float gm = ops::sqrt(gx*gx + gy*gy);
             const float K  = m_surface->gaussian_curvature(probe_u, probe_v);
             const float H  = m_surface->mean_curvature(probe_u, probe_v);
 
@@ -590,16 +590,9 @@ private:
             const float perpy =  gx / (gm + 1e-9f);
             ImGui::TextDisabled("level-tangent = (%.3f, %.3f)", perpx, perpy);
         }
-
-        ImGui::End();
     }
 
-    void draw_panel_walkers() {
-        ImGui::SetNextWindowPos(ImVec2(20.f, 370.f),  ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(290.f, 380.f), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowBgAlpha(0.88f);
-        if (!ImGui::Begin("Analysis \xe2\x80\x93 Walkers")) { ImGui::End(); return; }
-
+    void draw_walkers_body() {
         ImGui::SeparatorText("Spawn parameters");
         ImGui::SliderFloat("Epsilon (band)##w",  &m_epsilon,    0.02f, 1.f,  "%.3f");
         ImGui::SliderFloat("Walk speed##w",       &m_walk_speed, 0.1f,  2.f,  "%.2f");
@@ -609,51 +602,26 @@ private:
 
         if (ImGui::Button("Spawn walker  [Ctrl+W]", ImVec2(-1.f, 0.f)))
             spawn_walker();
+        if (ImGui::Button("Reset showcase", ImVec2(-1.f, 0.f)))
+            spawn_showcase_service();
         if (ImGui::Button("Clear all", ImVec2(-1.f, 0.f))) {
-            m_curves.clear();
+            m_particles.clear();
+            m_particles.clear_goals();
             m_spawn_count = 0;
+            m_goal_status = GoalStatus::Running;
         }
 
-        ImGui::SeparatorText("Active walkers");
-        ImGui::TextDisabled("%zu walker(s)", m_curves.size());
-        ImGui::Spacing();
-
-        // Per-walker live readout and editable params
-        for (u32 wi = 0; wi < static_cast<u32>(m_curves.size()); ++wi) {
-            ImGui::PushID(static_cast<int>(wi));
-            auto& c = m_curves[wi];
-            auto* eq = dynamic_cast<ndde::sim::LevelCurveWalker*>(c.equation());
-            if (!eq) { ImGui::PopID(); continue; }
-
-            auto& p = eq->params();
-            const Vec3 hp = c.head_world();
-            const float dz = hp.z - p.z0;
-
-            const ImVec4 col = std::abs(dz) < p.epsilon
-                ? ImVec4(0.4f,1.f,0.4f,1.f) : ImVec4(1.f,0.5f,0.2f,1.f);
-            ImGui::TextColored(col, "Walker %u  z=%.3f  dz=%+.3f", wi, hp.z, dz);
-
-            ImGui::SetNextItemWidth(120.f);
-            ImGui::SliderFloat("z0##lw",  &p.z0,         -2.f,  2.f, "%.3f");
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(100.f);
-            ImGui::SliderFloat("eps##lw", &p.epsilon,     0.02f, 1.f, "%.3f");
-
-            ImGui::SetNextItemWidth(120.f);
-            ImGui::SliderFloat("spd##lw", &p.walk_speed,  0.1f,  2.f, "%.2f");
-
-            ImGui::PopID();
-            ImGui::Separator();
-        }
-        ImGui::End();
+        if (m_goal_status == GoalStatus::Succeeded)
+            ImGui::TextColored({0.4f, 1.f, 0.4f, 1.f}, "Capture reached - paused");
+        ParticleInspectorPanel::draw(m_particles.particles(), ParticleInspectorOptions{
+            .label = "Active walkers",
+            .show_level_curve_controls = true,
+            .show_brownian_controls = true,
+            .show_trail_controls = true
+        });
     }
 
-    void draw_panel_camera() {
-        ImGui::SetNextWindowPos(ImVec2(20.f, 760.f),  ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(290.f, 160.f), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowBgAlpha(0.88f);
-        if (!ImGui::Begin("Analysis \xe2\x80\x93 Camera")) { ImGui::End(); return; }
-
+    void draw_camera_body() {
         ImGui::SliderFloat("Yaw##ac",   &m_vp3d.yaw,
                            -std::numbers::pi_v<float>, std::numbers::pi_v<float>, "%.2f");
         ImGui::SliderFloat("Pitch##ac", &m_vp3d.pitch, -1.5f, 1.5f, "%.2f");
@@ -662,30 +630,8 @@ private:
 
         ImGui::SeparatorText("Pause");
         ImGui::Checkbox("Paused  [Ctrl+P]", &m_paused);
-        ImGui::End();
     }
 
-    void draw_panel_debug() {
-        ImGui::SetNextWindowPos(ImVec2(20.f, 930.f),  ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(290.f, 100.f),  ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowBgAlpha(0.88f);
-        if (!ImGui::Begin("Analysis \xe2\x80\x93 Debug")) { ImGui::End(); return; }
-
-        ImGui::SeparatorText("Scene");
-        if (ImGui::Button("Switch to Surface Sim", ImVec2(-1.f, 0.f))) {
-            m_api.switch_simulation(0);
-        }
-        ImGui::Spacing();
-        ImGui::SeparatorText("Stats");
-        if (ImGui::Button("Perf stats")) m_perf.visible() = !m_perf.visible();
-        const auto& s = m_api.debug_stats();
-        const ImVec4 fc = s.fps >= 55.f ? ImVec4(0.4f,1.f,0.4f,1.f)
-                        : s.fps >= 30.f ? ImVec4(1.f,0.8f,0.f,1.f)
-                                        : ImVec4(1.f,0.3f,0.3f,1.f);
-        ImGui::SameLine();
-        ImGui::TextColored(fc, "%.0f fps", s.fps);
-        ImGui::End();
-    }
 };
 
 } // namespace ndde

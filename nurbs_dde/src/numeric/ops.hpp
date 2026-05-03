@@ -45,6 +45,7 @@ template<typename T> [[nodiscard]] inline T sin(T x)  noexcept { return numeric:
 template<typename T> [[nodiscard]] inline T tan(T x)  noexcept { return numeric::MathTraits<T>::tan(x);  }
 template<typename T> [[nodiscard]] inline T acos(T x) noexcept { return numeric::MathTraits<T>::acos(x); }
 template<typename T> [[nodiscard]] inline T asin(T x) noexcept { return numeric::MathTraits<T>::asin(x); }
+template<typename T> [[nodiscard]] inline T atan(T x) noexcept { return numeric::MathTraits<T>::atan(x); }
 template<typename T> [[nodiscard]] inline T atan2(T y, T x) noexcept { return numeric::MathTraits<T>::atan2(y, x); }
 template<typename T> [[nodiscard]] inline T cosh(T x) noexcept { return numeric::MathTraits<T>::cosh(x); }
 template<typename T> [[nodiscard]] inline T sinh(T x) noexcept { return numeric::MathTraits<T>::sinh(x); }
