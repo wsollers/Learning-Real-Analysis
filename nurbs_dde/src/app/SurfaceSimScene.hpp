@@ -8,9 +8,9 @@
 //
 // Responsibilities that remain here:
 //   - Own m_surface, m_curves, integrators, equations
-//   - Call advance_simulation(dt)
+//   - Ask SurfaceSimController to advance simulation
 //   - Delegate surface and particle drawing to SurfaceSimView
-//   - Call scene-specific PanelHost panels + draw_hotkey_panel()
+//   - Call scene-specific SurfaceSimPanels + draw_hotkey_panel()
 //   - Surface wireframe + filled geometry caches
 //   - Camera orbit + canvas MVP
 //   - submit_contour_second_window() (uses submit2, scene-specific 2D MVP)
@@ -51,10 +51,11 @@
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
 #include "app/CoordDebugPanel.hpp"
-#include "app/PanelHost.hpp"
-#include "app/ParticleInspectorPanel.hpp"
 #include "app/ParticleSystem.hpp"
+#include "app/SurfaceSimController.hpp"
+#include "app/SurfaceSimPanels.hpp"
 #include "app/SurfaceSimSceneState.hpp"
+#include "app/SurfaceSimSpawner.hpp"
 #include "app/SurfaceSimView.hpp"
 
 #include "app/HotkeyManager.hpp"  // decoupled hotkey registration and dispatch
@@ -80,8 +81,10 @@ private:
     std::unique_ptr<ndde::math::ISurface>  m_surface;   // Step 3: owns the surface
     ParticleSystem                         m_particles;
     std::vector<AnimatedCurve>&            m_curves;    ///< all active particles
+    SurfaceSimSpawner                      m_spawner;
+    SurfaceSimController                   m_controller;
+    SurfaceSimPanels                       m_panels;
     SurfaceSimView                         m_view;
-    PanelHost m_panels;
     CoordDebugPanel  m_coord_debug;
 
     // Viewports
@@ -97,33 +100,10 @@ private:
     SurfacePursuitState   m_pursuit;
     SurfaceHoverState     m_hover_state;
 
-    void swap_surface(SurfaceType type);
-
-    void advance_simulation(f32 dt);
-    void sync_pairwise_constraints();
-    void spawn_showcase_service();
-    [[nodiscard]] glm::vec2 reference_uv() const noexcept;
-    [[nodiscard]] glm::vec2 offset_spawn(glm::vec2 ref_uv, float radius, float angle) const noexcept;
-    void prewarm_particle(AnimatedCurve& particle, int frames = 60);
-    void spawn_gradient_particle(ParticleRole role, glm::vec2 uv);
-    void spawn_brownian_particle(glm::vec2 uv);
-    void spawn_delay_pursuit_particle(glm::vec2 uv);
-    void spawn_leader_seeker();
-    void spawn_pursuit_particle();
-    void rebuild_extremum_table_if_needed();
-    void draw_leader_seeker_panel();
     void register_bindings();
-    void register_panels();
 
     [[nodiscard]] SurfaceSimViewContext view_context() noexcept;
 
-    void draw_panel_surface();    ///< surface selector + display mode body
-    void draw_panel_particles();  ///< pause, speed, spawn counts, clear, export body
-    void draw_panel_overlays();   ///< Frenet toggles, overlay checkboxes, torsion readout body
-    void draw_panel_brownian();   ///< sigma, drift, RNG, live sliders body
-    void draw_panel_pursuit();    ///< delay pursuit + collision + leader seeker body
-    void draw_panel_geometry();   ///< at-head Frenet / curvature / 1st-fund-form readout body
-    void draw_panel_camera();     ///< yaw, pitch, zoom, reset body
     void draw_hotkey_panel();
     void draw_surface_3d_window();
     void draw_contour_2d_window();

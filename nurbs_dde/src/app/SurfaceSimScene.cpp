@@ -15,6 +15,15 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     , m_surface(std::make_unique<GaussianSurface>())
     , m_particles(m_surface.get())
     , m_curves(m_particles.particles())
+    , m_spawner(m_surface, m_particles, m_curves, m_behavior_params, m_pursuit,
+                m_spawn, m_goal_status, m_sim_time, m_sim_speed)
+    , m_controller(m_surface, m_particles, m_curves, m_surface_state, m_display,
+                   m_pursuit, m_spawn, m_spawner, m_paused, m_sim_time, m_sim_speed)
+    , m_panels(m_surface, m_particles, m_curves, m_vp3d, m_vp2d, m_hotkeys,
+               m_surface_state, m_display, m_overlays, m_ui, m_spawn,
+               m_behavior_params, m_pursuit, m_spawner, m_controller,
+               m_paused, m_sim_time, m_sim_speed, m_goal_status,
+               [this](const std::string& path) { export_session(path); })
     , m_view(m_api)
 {
     m_vp3d.base_extent = 6.f;
@@ -27,8 +36,7 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
     m_vp2d.pan_x       = 0.f;
     m_vp2d.pan_y       = 0.f;
 
-    register_panels();
-    spawn_showcase_service();
+    m_spawner.spawn_showcase_service();
 
     register_bindings();
 }
@@ -36,7 +44,8 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
 // ── on_frame ──────────────────────────────────────────────────────────────────
 
 void SurfaceSimScene::on_frame(f32 dt) {
-    advance_simulation(dt);
+    m_controller.advance_simulation(dt);
+    update_snapshot_particles(m_particles);
     m_goal_status = m_particles.evaluate_goals(m_sim_time);
     if (m_goal_status == GoalStatus::Succeeded)
         m_paused = true;

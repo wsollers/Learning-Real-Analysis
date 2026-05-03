@@ -1,6 +1,5 @@
 #include "app/SurfaceSimScene.hpp"
 #include <imgui.h>
-#include <cmath>
 
 namespace ndde {
 
@@ -25,39 +24,34 @@ void SurfaceSimScene::register_bindings() {
     // Spawn
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_L), "Leader particle  (blue)",
         [this]{
-            spawn_gradient_particle(ParticleRole::Leader,
-                offset_spawn(reference_uv(), 1.5f, static_cast<float>(m_spawn.leader_count) * 1.1f));
+            m_spawner.spawn_gradient_particle(ParticleRole::Leader,
+                m_spawner.offset_spawn(m_spawner.reference_uv(), 1.5f, static_cast<float>(m_spawn.leader_count) * 1.1f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_C), "Chaser particle  (red)",
         [this]{
-            spawn_gradient_particle(ParticleRole::Chaser,
-                offset_spawn(reference_uv(), 2.0f, static_cast<float>(m_spawn.chaser_count) * 1.3f + 0.5f));
+            m_spawner.spawn_gradient_particle(ParticleRole::Chaser,
+                m_spawner.offset_spawn(m_spawner.reference_uv(), 2.0f, static_cast<float>(m_spawn.chaser_count) * 1.3f + 0.5f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_B), "Brownian particle  (Milstein)",
         [this]{
-            spawn_brownian_particle(offset_spawn(reference_uv(), 1.8f,
+            m_spawner.spawn_brownian_particle(m_spawner.offset_spawn(m_spawner.reference_uv(), 1.8f,
                 static_cast<float>(m_spawn.chaser_count + m_spawn.leader_count) * 0.7f + 1.0f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_R), "Delay-pursuit chaser",
         [this]{
             if (m_curves.empty()) return;
-            if (m_curves[0].history() == nullptr) {
-                const std::size_t cap =
-                    static_cast<std::size_t>(std::ceil(m_behavior_params.delay_pursuit.tau * 120.f * 1.5f)) + 256;
-                m_curves[0].enable_history(cap, 1.f / 120.f);
-            }
             const glm::vec2 ref = m_curves[0].head_uv();
-            spawn_delay_pursuit_particle(offset_spawn(ref, 2.0f,
+            m_spawner.spawn_delay_pursuit_particle(m_spawner.offset_spawn(ref, 2.0f,
                 static_cast<float>(m_spawn.delay_pursuit_count) * 1.1f + 0.3f));
         }, "Spawn");
 
     m_hotkeys.register_action(Chord::ctrl(ImGuiKey_A), "Leader seeker / pursuer  [Ctrl+A]",
         [this]{
-            if (!m_spawn.spawning_pursuer) spawn_leader_seeker();
-            else                     spawn_pursuit_particle();
+            if (!m_spawn.spawning_pursuer) m_spawner.spawn_leader_seeker();
+            else                           m_spawner.spawn_pursuit_particle();
         }, "Spawn");
 
     // Panels

@@ -88,6 +88,9 @@ add_executable(nurbs_dde
     app/SurfaceSimScenePanels.cpp
     app/SurfaceSimSceneRender.cpp
     app/SurfaceSimSceneSimulation.cpp
+    app/SurfaceSimController.cpp
+    app/SurfaceSimPanels.cpp
+    app/SurfaceSimSpawner.cpp
     app/SurfaceSimView.cpp
     app/ParticleRenderer.cpp
 )
