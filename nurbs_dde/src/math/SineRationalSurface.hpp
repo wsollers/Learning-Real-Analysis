@@ -64,6 +64,17 @@ public:
 
     [[nodiscard]] bool is_periodic_u() const override { return false; }
     [[nodiscard]] bool is_periodic_v() const override { return false; }
+    [[nodiscard]] SurfaceMetadata metadata(float t = 0.f) const override {
+        SurfaceMetadata data = ISurface::metadata(t);
+        data.name = "Sine-Rational Surface";
+        data.formula = "z=(3/(1+(x+y+1)^2)) sin(2x) cos(2y)+0.1 sin(5x) sin(5y)";
+        data.has_analytic_derivatives = true;
+        data.parameters = {{
+            {.name = "extent", .value = m_ext, .description = "square domain half-width"}
+        }};
+        data.parameter_count = 1u;
+        return data;
+    }
 
     // ── Public scalar helpers used by analysis simulations ───────────────────
 

@@ -1,5 +1,6 @@
 #include "app/SimulationMultiWell.hpp"
 
+#include "app/AlternateViewPanel.hpp"
 #include "app/SimulationRenderPackets.hpp"
 
 #include <imgui.h>
@@ -67,7 +68,19 @@ void SimulationMultiWell::on_register(SimulationHost& host) {
         .kind = RenderViewKind::Alternate,
         .alternate_mode = AlternateViewMode::VectorField,
         .projection = CameraProjection::Orthographic,
-        .overlays = {.show_axes = true}
+        .overlays = {.show_axes = true},
+        .alternate = {
+            .isocline_direction_angle = -0.35f,
+            .isocline_target_slope = 0.f,
+            .isocline_tolerance = 0.6f,
+            .isocline_bands = 7u,
+            .vector_mode = VectorFieldMode::NegativeGradient,
+            .vector_samples = 22u,
+            .vector_scale = 1.15f,
+            .flow_seed_count = 10u,
+            .flow_steps = 42u,
+            .flow_step_size = 0.08f
+        }
     }, &m_alternate_view);
 }
 
@@ -108,16 +121,20 @@ SceneSnapshot SimulationMultiWell::snapshot() const {
 }
 
 SimulationMetadata SimulationMultiWell::metadata() const {
+    const ndde::math::SurfaceMetadata surface = m_surface->metadata(m_sim_time);
     return SimulationMetadata{
         .name = std::string(name()),
-        .surface_name = "Multi-Well Wave Surface",
-        .surface_formula = "three wells + sinusoidal interference terms",
+        .surface_name = std::string(surface.name),
+        .surface_formula = std::string(surface.formula),
         .status = m_goal_status == GoalStatus::Succeeded ? "Succeeded" : "Running",
         .sim_time = m_sim_time,
         .sim_speed = m_sim_speed,
         .particle_count = m_particles.size(),
         .paused = m_paused,
-        .goal_succeeded = m_goal_status == GoalStatus::Succeeded
+        .goal_succeeded = m_goal_status == GoalStatus::Succeeded,
+        .surface_has_analytic_derivatives = surface.has_analytic_derivatives,
+        .surface_deformable = surface.deformable,
+        .surface_time_varying = surface.time_varying
     };
 }
 
@@ -153,6 +170,7 @@ void SimulationMultiWell::draw_control_panel() {
         .sim_speed = &m_sim_speed,
         .reset = [this] { reset_showcase(); }
     });
+    if (m_host) AlternateViewPanel::draw(m_host->render(), m_alternate_view);
     ImGui::End();
 }
 

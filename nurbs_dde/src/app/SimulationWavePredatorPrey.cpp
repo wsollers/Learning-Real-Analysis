@@ -1,5 +1,6 @@
 #include "app/SimulationWavePredatorPrey.hpp"
 
+#include "app/AlternateViewPanel.hpp"
 #include "app/SimulationRenderPackets.hpp"
 
 #include <imgui.h>
@@ -66,7 +67,19 @@ void SimulationWavePredatorPrey::on_register(SimulationHost& host) {
         .kind = RenderViewKind::Alternate,
         .alternate_mode = AlternateViewMode::Flow,
         .projection = CameraProjection::Orthographic,
-        .overlays = {.show_axes = true}
+        .overlays = {.show_axes = true},
+        .alternate = {
+            .isocline_direction_angle = 0.25f,
+            .isocline_target_slope = 0.f,
+            .isocline_tolerance = 0.75f,
+            .isocline_bands = 9u,
+            .vector_mode = VectorFieldMode::LevelTangent,
+            .vector_samples = 20u,
+            .vector_scale = 1.1f,
+            .flow_seed_count = 11u,
+            .flow_steps = 48u,
+            .flow_step_size = 0.075f
+        }
     }, &m_alternate_view);
 }
 
@@ -107,16 +120,20 @@ SceneSnapshot SimulationWavePredatorPrey::snapshot() const {
 }
 
 SimulationMetadata SimulationWavePredatorPrey::metadata() const {
+    const ndde::math::SurfaceMetadata surface = m_surface->metadata(m_sim_time);
     return SimulationMetadata{
         .name = std::string(name()),
-        .surface_name = "Wave Predator-Prey Surface",
-        .surface_formula = "sin x + cos y + 0.5(sin 2x + cos 2y)",
+        .surface_name = std::string(surface.name),
+        .surface_formula = std::string(surface.formula),
         .status = m_goal_status == GoalStatus::Succeeded ? "Succeeded" : "Running",
         .sim_time = m_sim_time,
         .sim_speed = m_sim_speed,
         .particle_count = m_particles.size(),
         .paused = m_paused,
-        .goal_succeeded = m_goal_status == GoalStatus::Succeeded
+        .goal_succeeded = m_goal_status == GoalStatus::Succeeded,
+        .surface_has_analytic_derivatives = surface.has_analytic_derivatives,
+        .surface_deformable = surface.deformable,
+        .surface_time_varying = surface.time_varying
     };
 }
 
@@ -152,6 +169,7 @@ void SimulationWavePredatorPrey::draw_control_panel() {
         .sim_speed = &m_sim_speed,
         .reset = [this] { reset_showcase(); }
     });
+    if (m_host) AlternateViewPanel::draw(m_host->render(), m_alternate_view);
     ImGui::End();
 }
 

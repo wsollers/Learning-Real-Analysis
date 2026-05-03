@@ -1,4 +1,5 @@
 #include "app/SimulationSurfaceGaussian.hpp"
+#include "app/AlternateViewPanel.hpp"
 #include "app/SimulationRenderPackets.hpp"
 
 #include <imgui.h>
@@ -79,6 +80,18 @@ void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
             .show_labels = false,
             .show_hover_frenet = false,
             .show_osculating_circle = false
+        },
+        .alternate = {
+            .isocline_direction_angle = 0.f,
+            .isocline_target_slope = 0.f,
+            .isocline_tolerance = 0.35f,
+            .isocline_bands = 5u,
+            .vector_mode = VectorFieldMode::NegativeGradient,
+            .vector_samples = 18u,
+            .vector_scale = 1.f,
+            .flow_seed_count = 8u,
+            .flow_steps = 28u,
+            .flow_step_size = 0.10f
         }
     }, &m_alternate_view);
 }
@@ -151,16 +164,20 @@ void SimulationSurfaceGaussian::spawn_contour_band() {
 }
 
 SimulationMetadata SimulationSurfaceGaussian::metadata() const {
+    const ndde::math::SurfaceMetadata surface = m_surface->metadata(m_surface->time());
     return SimulationMetadata{
         .name = std::string(name()),
-        .surface_name = "Gaussian Ripple",
-        .surface_formula = "base Gaussian field + decaying radial perturbation",
+        .surface_name = std::string(surface.name),
+        .surface_formula = std::string(surface.formula),
         .status = m_goal_status == GoalStatus::Succeeded ? "Succeeded" : "Running",
         .sim_time = m_sim_time,
         .sim_speed = m_sim_speed,
         .particle_count = m_particles.size(),
         .paused = m_paused,
-        .goal_succeeded = m_goal_status == GoalStatus::Succeeded
+        .goal_succeeded = m_goal_status == GoalStatus::Succeeded,
+        .surface_has_analytic_derivatives = surface.has_analytic_derivatives,
+        .surface_deformable = surface.deformable,
+        .surface_time_varying = surface.time_varying
     };
 }
 
@@ -173,6 +190,7 @@ void SimulationSurfaceGaussian::draw_control_panel() {
         .sim_speed = &m_sim_speed,
         .reset = [this] { reset_showcase(); }
     });
+    if (m_host) AlternateViewPanel::draw(m_host->render(), m_alternate_view);
     ImGui::End();
 }
 

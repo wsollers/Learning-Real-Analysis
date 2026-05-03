@@ -34,6 +34,17 @@ public:
     [[nodiscard]] float u_max(float = 0.f) const override { return  m_extent; }
     [[nodiscard]] float v_min(float = 0.f) const override { return -m_extent; }
     [[nodiscard]] float v_max(float = 0.f) const override { return  m_extent; }
+    [[nodiscard]] ndde::math::SurfaceMetadata metadata(float t = 0.f) const override {
+        ndde::math::SurfaceMetadata data = ndde::math::ISurface::metadata(t);
+        data.name = "Multi-Well Wave Surface";
+        data.formula = "three Gaussian wells + 0.18 sin(2x)cos(2y) + 0.08 sin(4x+y)cos(3y-x)";
+        data.has_analytic_derivatives = false;
+        data.parameters = {{
+            {.name = "extent", .value = m_extent, .description = "square domain half-width"}
+        }};
+        data.parameter_count = 1u;
+        return data;
+    }
     [[nodiscard]] float extent() const noexcept { return m_extent; }
 
 private:
@@ -57,6 +68,17 @@ public:
     [[nodiscard]] float u_max(float = 0.f) const override { return  m_extent; }
     [[nodiscard]] float v_min(float = 0.f) const override { return -m_extent; }
     [[nodiscard]] float v_max(float = 0.f) const override { return  m_extent; }
+    [[nodiscard]] ndde::math::SurfaceMetadata metadata(float t = 0.f) const override {
+        ndde::math::SurfaceMetadata data = ndde::math::ISurface::metadata(t);
+        data.name = "Wave Predator-Prey Surface";
+        data.formula = "z = sin x + cos y + 0.5(sin 2x + cos 2y)";
+        data.has_analytic_derivatives = false;
+        data.parameters = {{
+            {.name = "extent", .value = m_extent, .description = "square domain half-width"}
+        }};
+        data.parameter_count = 1u;
+        return data;
+    }
     [[nodiscard]] float extent() const noexcept { return m_extent; }
 
 private:

@@ -49,6 +49,13 @@ struct CameraState {
     f32 zoom = 1.f;
 };
 
+enum class CameraPreset : u8 {
+    Home,
+    Top,
+    Front,
+    Side
+};
+
 struct ViewOverlayState {
     bool show_axes = false;
     bool show_grid = false;
@@ -79,6 +86,7 @@ struct RenderViewDescriptor {
     AlternateViewMode alternate_mode = AlternateViewMode::Contour;
     CameraProjection projection = CameraProjection::Perspective;
     f32 viewport_aspect = 16.f / 9.f;
+    Vec2 viewport_size{16.f, 9.f};
     CameraState camera{};
     ViewOverlayState overlays{};
     AlternateViewSettings alternate{};
@@ -111,6 +119,8 @@ struct RenderViewSnapshot {
     RenderViewKind kind = RenderViewKind::Main;
     AlternateViewMode alternate_mode = AlternateViewMode::Contour;
     CameraProjection projection = CameraProjection::Perspective;
+    f32 viewport_aspect = 16.f / 9.f;
+    Vec2 viewport_size{16.f, 9.f};
     CameraState camera{};
     ViewOverlayState overlays{};
     AlternateViewSettings alternate{};
@@ -230,6 +240,31 @@ public:
         }
     }
 
+    void set_viewport_size(RenderViewId id, Vec2 size) noexcept {
+        if (size.x <= 0.f || size.y <= 0.f) return;
+        if (auto* entry = find_active_entry(id)) {
+            entry->descriptor.viewport_size = size;
+            entry->descriptor.viewport_aspect = size.x / size.y;
+        }
+    }
+
+    void set_viewport_size(RenderViewKind kind, Vec2 size) noexcept {
+        if (size.x <= 0.f || size.y <= 0.f) return;
+        for (auto& entry : m_views) {
+            if (entry.active && entry.descriptor.kind == kind) {
+                entry.descriptor.viewport_size = size;
+                entry.descriptor.viewport_aspect = size.x / size.y;
+            }
+        }
+    }
+
+    void reset_main_cameras(CameraPreset preset = CameraPreset::Home) noexcept {
+        for (auto& entry : m_views) {
+            if (!entry.active || entry.descriptor.kind != RenderViewKind::Main) continue;
+            entry.descriptor.camera = preset_camera(preset, entry.domain);
+        }
+    }
+
     [[nodiscard]] bool axes_visible() const noexcept {
         for (const auto& entry : m_views) {
             if (entry.active && entry.descriptor.overlays.show_axes)
@@ -297,6 +332,8 @@ public:
                 .kind = entry.descriptor.kind,
                 .alternate_mode = entry.descriptor.alternate_mode,
                 .projection = entry.descriptor.projection,
+                .viewport_aspect = entry.descriptor.viewport_aspect,
+                .viewport_size = entry.descriptor.viewport_size,
                 .camera = entry.descriptor.camera,
                 .overlays = entry.descriptor.overlays,
                 .alternate = entry.descriptor.alternate,
@@ -318,6 +355,25 @@ private:
     std::vector<RenderViewEntry> m_views;
     std::vector<RenderPacket> m_packets;
     std::vector<SurfacePerturbCommand> m_surface_commands;
+
+    [[nodiscard]] static CameraState preset_camera(CameraPreset preset, RenderViewDomain domain) noexcept {
+        const Vec3 target{
+            (domain.u_min + domain.u_max) * 0.5f,
+            (domain.v_min + domain.v_max) * 0.5f,
+            (domain.z_min + domain.z_max) * 0.5f
+        };
+        switch (preset) {
+            case CameraPreset::Top:
+                return CameraState{.target = target, .yaw = 0.f, .pitch = 1.35f, .zoom = 1.f};
+            case CameraPreset::Front:
+                return CameraState{.target = target, .yaw = 1.5707963f, .pitch = 0.10f, .zoom = 1.f};
+            case CameraPreset::Side:
+                return CameraState{.target = target, .yaw = 0.f, .pitch = 0.10f, .zoom = 1.f};
+            case CameraPreset::Home:
+            default:
+                return CameraState{.target = target, .yaw = 0.72f, .pitch = 0.55f, .zoom = 1.f};
+        }
+    }
 
     [[nodiscard]] bool is_active(RenderViewId id) const noexcept {
         return std::any_of(m_views.begin(), m_views.end(),

@@ -9,6 +9,22 @@ namespace ndde::math {
 
 // ── ISurface base ─────────────────────────────────────────────────────────────
 
+SurfaceMetadata ISurface::metadata(float t) const {
+    return SurfaceMetadata{
+        .name = "Generic Surface",
+        .formula = "p(u,v)",
+        .domain = SurfaceDomainInfo{
+            .u_min = u_min(t),
+            .u_max = u_max(t),
+            .v_min = v_min(t),
+            .v_max = v_max(t)
+        },
+        .has_analytic_derivatives = false,
+        .deformable = false,
+        .time_varying = is_time_varying()
+    };
+}
+
 Vec3 ISurface::du(float u, float v, float t) const {
     constexpr float h = 1e-4f;
     return (evaluate(u + h, v, t) - evaluate(u - h, v, t)) / (2.f * h);
@@ -156,6 +172,19 @@ float Paraboloid::kappa2(float u) const noexcept {
     return 2.f*m_a / ops::sqrt(1.f + 4.f*m_a*m_a*u*u);
 }
 
+SurfaceMetadata Paraboloid::metadata(float t) const {
+    SurfaceMetadata data = ISurface::metadata(t);
+    data.name = "Paraboloid";
+    data.formula = "z = a r^2";
+    data.has_analytic_derivatives = true;
+    data.parameters = {{
+        {.name = "a", .value = m_a, .description = "curvature scale"},
+        {.name = "u_max", .value = m_umax, .description = "radial domain extent"}
+    }};
+    data.parameter_count = 2u;
+    return data;
+}
+
 // ── Torus ─────────────────────────────────────────────────────────────────────
 
 Torus::Torus(float R, float r)
@@ -200,6 +229,19 @@ float Torus::mean_curvature(float /*u*/, float v, float /*t*/) const {
     const float rho = m_R + m_r * cv;
     if (ops::abs(rho) < 1e-9f) return 0.f;
     return (m_R + 2.f * m_r * cv) / (2.f * m_r * rho);
+}
+
+SurfaceMetadata Torus::metadata(float t) const {
+    SurfaceMetadata data = ISurface::metadata(t);
+    data.name = "Torus";
+    data.formula = "((R + r cos v) cos u, (R + r cos v) sin u, r sin v)";
+    data.has_analytic_derivatives = true;
+    data.parameters = {{
+        {.name = "R", .value = m_R, .description = "major radius"},
+        {.name = "r", .value = m_r, .description = "minor radius"}
+    }};
+    data.parameter_count = 2u;
+    return data;
 }
 
 } // namespace ndde::math

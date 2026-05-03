@@ -118,4 +118,29 @@ TEST(SimulationSurfaceGaussian, RenderSurfacePerturbationCommandMarksSurfaceDirt
     EXPECT_FALSE(sim.context().has_pending_perturbations());
 }
 
+TEST(SimulationSurfaceGaussian, FrenetOverlayEmitsAdditionalMainPackets) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationSurfaceGaussian sim;
+
+    sim.on_register(host);
+    sim.on_start();
+    auto* view = services.render().descriptor(sim.main_view_id());
+    ASSERT_NE(view, nullptr);
+
+    view->overlays.show_hover_frenet = false;
+    view->overlays.show_osculating_circle = false;
+    services.render().clear_packets();
+    sim.on_tick(host.clock().next(1.f / 60.f));
+    const std::size_t without_overlay = services.render().packet_count(sim.main_view_id());
+
+    view->overlays.show_hover_frenet = true;
+    view->overlays.show_osculating_circle = true;
+    services.render().clear_packets();
+    sim.on_tick(host.clock().next(1.f / 60.f));
+    const std::size_t with_overlay = services.render().packet_count(sim.main_view_id());
+
+    EXPECT_GT(with_overlay, without_overlay);
+}
+
 } // namespace

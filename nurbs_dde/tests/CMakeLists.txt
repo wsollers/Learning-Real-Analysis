@@ -3,6 +3,7 @@ enable_testing()
 
 add_executable(ndde_tests
     test_all_simulations.cpp
+    test_alternate_view_builders.cpp
     test_conics.cpp
     test_axes.cpp
     test_numeric.cpp
@@ -12,6 +13,7 @@ add_executable(ndde_tests
     test_simulation_context.cpp
     test_simulation_runtime.cpp
     test_simulation_surface_gaussian.cpp
+    test_surface_metadata.cpp
     ${CMAKE_SOURCE_DIR}/src/app/GaussianSurface.cpp
     ${CMAKE_SOURCE_DIR}/src/app/ParticleSystem.cpp
     ${CMAKE_SOURCE_DIR}/src/app/AnalysisSpawner.cpp

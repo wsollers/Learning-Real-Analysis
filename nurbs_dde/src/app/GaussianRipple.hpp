@@ -70,6 +70,23 @@ public:
     // Non-periodic: particles reflect at the domain boundary.
     [[nodiscard]] bool is_periodic_u() const override { return false; }
     [[nodiscard]] bool is_periodic_v() const override { return false; }
+    [[nodiscard]] ndde::math::SurfaceMetadata metadata(float t = 0.f) const override {
+        ndde::math::SurfaceMetadata data = ndde::math::IDeformableSurface::metadata(t);
+        data.name = "Gaussian Ripple";
+        data.formula = "base Gaussian field + decaying radial perturbation";
+        data.has_analytic_derivatives = false;
+        data.parameters = {{
+            {.name = "amplitude", .value = m_p.amplitude, .description = "wave height"},
+            {.name = "damping", .value = m_p.damping, .description = "exponential decay rate"},
+            {.name = "wavelength", .value = m_p.wavelength, .description = "spatial period"},
+            {.name = "speed", .value = m_p.speed, .description = "wave propagation speed"},
+            {.name = "sigma", .value = m_p.sigma, .description = "Gaussian envelope width"},
+            {.name = "epicentre u", .value = m_p.epicentre_u, .description = "impact u coordinate"},
+            {.name = "epicentre v", .value = m_p.epicentre_v, .description = "impact v coordinate"}
+        }};
+        data.parameter_count = 7u;
+        return data;
+    }
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 

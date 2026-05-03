@@ -48,6 +48,13 @@ public:
     [[nodiscard]] float u_max(float = 0.f) const override { return XMAX; }
     [[nodiscard]] float v_min(float = 0.f) const override { return YMIN; }
     [[nodiscard]] float v_max(float = 0.f) const override { return YMAX; }
+    [[nodiscard]] ndde::math::SurfaceMetadata metadata(float t = 0.f) const override {
+        ndde::math::SurfaceMetadata data = ndde::math::ISurface::metadata(t);
+        data.name = "Gaussian Surface";
+        data.formula = "six Gaussian height field + sinusoidal ripple texture";
+        data.has_analytic_derivatives = true;
+        return data;
+    }
     [[nodiscard]] float extent() const noexcept { return XMAX; }
 
     // ── Static helpers (unchanged -- existing call sites keep working) ─────────

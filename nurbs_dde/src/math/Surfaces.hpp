@@ -17,11 +17,38 @@
 
 #include "math/Scalars.hpp"
 #include "math/GeometryTypes.hpp"
+#include <array>
 #include <span>
 #include <stdexcept>
 #include <cmath>
+#include <string_view>
 
 namespace ndde::math {
+
+struct SurfaceDomainInfo {
+    float u_min = 0.f;
+    float u_max = 0.f;
+    float v_min = 0.f;
+    float v_max = 0.f;
+};
+
+struct SurfaceParameterInfo {
+    std::string_view name;
+    float value = 0.f;
+    std::string_view units;
+    std::string_view description;
+};
+
+struct SurfaceMetadata {
+    std::string_view name = "Unnamed Surface";
+    std::string_view formula;
+    SurfaceDomainInfo domain{};
+    bool has_analytic_derivatives = false;
+    bool deformable = false;
+    bool time_varying = false;
+    std::array<SurfaceParameterInfo, 8> parameters{};
+    u32 parameter_count = 0;
+};
 
 // ── ISurface ──────────────────────────────────────────────────────────────────
 // Smooth parametric surface  p : D x R -> R^3.
@@ -48,6 +75,8 @@ public:
     // Is the surface time-varying?  Lets the renderer skip retessellation
     // on frames where the surface has not changed.
     [[nodiscard]] virtual bool is_time_varying() const { return false; }
+
+    [[nodiscard]] virtual SurfaceMetadata metadata(float t = 0.f) const;
 
     // First-order partial derivatives (default: central finite difference).
     // Override with analytic formulas for efficiency and accuracy.
@@ -103,6 +132,7 @@ public:
     [[nodiscard]] float v_max(float = 0.f) const override { return m_vmax; }
 
     [[nodiscard]] float a() const noexcept { return m_a; }
+    [[nodiscard]] SurfaceMetadata metadata(float t = 0.f) const override;
 
     // Analytic overrides
     [[nodiscard]] Vec3  unit_normal(float u, float v, float t = 0.f) const;
@@ -147,6 +177,7 @@ public:
 
     [[nodiscard]] float R() const noexcept { return m_R; }
     [[nodiscard]] float r() const noexcept { return m_r; }
+    [[nodiscard]] SurfaceMetadata metadata(float t = 0.f) const override;
 
     [[nodiscard]] Vec3  unit_normal(float u, float v, float t = 0.f)        const;
     [[nodiscard]] float gaussian_curvature(float u, float v, float t = 0.f) const;
@@ -179,6 +210,12 @@ class IDeformableSurface : public ISurface {
 public:
     [[nodiscard]] bool is_time_varying() const override { return true; }
     [[nodiscard]] float time() const noexcept { return m_time; }
+    [[nodiscard]] SurfaceMetadata metadata(float t = 0.f) const override {
+        SurfaceMetadata data = ISurface::metadata(t);
+        data.deformable = true;
+        data.time_varying = true;
+        return data;
+    }
 
     // Tick the surface clock.  Override for PDE-driven surfaces.
     virtual void advance(float dt) { m_time += dt; }

@@ -19,6 +19,9 @@ struct SimulationMetadata {
     std::size_t particle_count = 0;
     bool paused = false;
     bool goal_succeeded = false;
+    bool surface_has_analytic_derivatives = false;
+    bool surface_deformable = false;
+    bool surface_time_varying = false;
 };
 
 } // namespace ndde

@@ -1,5 +1,6 @@
 #include "app/SimulationAnalysis.hpp"
 
+#include "app/AlternateViewPanel.hpp"
 #include "app/SimulationRenderPackets.hpp"
 
 #include <imgui.h>
@@ -63,7 +64,19 @@ void SimulationAnalysis::on_register(SimulationHost& host) {
         .kind = RenderViewKind::Alternate,
         .alternate_mode = AlternateViewMode::LevelCurves,
         .projection = CameraProjection::Orthographic,
-        .overlays = {.show_axes = true}
+        .overlays = {.show_axes = true},
+        .alternate = {
+            .isocline_direction_angle = 0.6f,
+            .isocline_target_slope = 0.f,
+            .isocline_tolerance = 0.8f,
+            .isocline_bands = 7u,
+            .vector_mode = VectorFieldMode::LevelTangent,
+            .vector_samples = 20u,
+            .vector_scale = 1.f,
+            .flow_seed_count = 9u,
+            .flow_steps = 36u,
+            .flow_step_size = 0.09f
+        }
     }, &m_alternate_view);
 }
 
@@ -103,16 +116,20 @@ SceneSnapshot SimulationAnalysis::snapshot() const {
 }
 
 SimulationMetadata SimulationAnalysis::metadata() const {
+    const ndde::math::SurfaceMetadata surface = m_surface->metadata(m_sim_time);
     return SimulationMetadata{
         .name = std::string(name()),
-        .surface_name = "Sine-Rational Surface",
-        .surface_formula = "z=(3/(1+(x+y+1)^2)) sin(2x) cos(2y)+0.1 sin(5x) sin(5y)",
+        .surface_name = std::string(surface.name),
+        .surface_formula = std::string(surface.formula),
         .status = m_goal_status == GoalStatus::Succeeded ? "Succeeded" : "Running",
         .sim_time = m_sim_time,
         .sim_speed = m_sim_speed,
         .particle_count = m_particles.size(),
         .paused = m_paused,
-        .goal_succeeded = m_goal_status == GoalStatus::Succeeded
+        .goal_succeeded = m_goal_status == GoalStatus::Succeeded,
+        .surface_has_analytic_derivatives = surface.has_analytic_derivatives,
+        .surface_deformable = surface.deformable,
+        .surface_time_varying = surface.time_varying
     };
 }
 
@@ -147,6 +164,7 @@ void SimulationAnalysis::draw_control_panel() {
     ImGui::SliderFloat("epsilon", &m_epsilon, 0.01f, 0.5f);
     ImGui::SliderFloat("walk speed", &m_walk_speed, 0.05f, 2.f);
     ImGui::SliderFloat("noise", &m_noise_sigma, 0.f, 0.3f);
+    if (m_host) AlternateViewPanel::draw(m_host->render(), m_alternate_view);
     ImGui::End();
 }
 

@@ -300,6 +300,14 @@ void Engine::draw_global_status_panel() {
     bool axes = m_services.render().axes_visible();
     if (ImGui::Checkbox("Axes", &axes))
         m_services.render().set_axes_visible(axes);
+    ImGui::SeparatorText("Camera");
+    if (ImGui::Button("Home")) m_services.render().reset_main_cameras(CameraPreset::Home);
+    ImGui::SameLine();
+    if (ImGui::Button("Top")) m_services.render().reset_main_cameras(CameraPreset::Top);
+    ImGui::SameLine();
+    if (ImGui::Button("Front")) m_services.render().reset_main_cameras(CameraPreset::Front);
+    ImGui::SameLine();
+    if (ImGui::Button("Side")) m_services.render().reset_main_cameras(CameraPreset::Side);
     ImGui::TextDisabled("RMB drag orbit   MMB/Shift+RMB pan   Wheel zoom");
     ImGui::TextDisabled("Double-click surface perturb");
     ImGui::End();
@@ -334,6 +342,8 @@ void Engine::draw_debug_coordinates_panel() {
             const auto& cam = desc->camera;
             ImGui::TextDisabled("camera yaw %.2f pitch %.2f zoom %.2f", cam.yaw, cam.pitch, cam.zoom);
             ImGui::TextDisabled("target %.2f, %.2f, %.2f", cam.target.x, cam.target.y, cam.target.z);
+            ImGui::TextDisabled("view %.0f x %.0f aspect %.3f",
+                desc->viewport_size.x, desc->viewport_size.y, desc->viewport_aspect);
         }
     }
     ImGui::End();
@@ -353,6 +363,10 @@ void Engine::draw_simulation_metadata_panel() {
         ImGui::TextDisabled("%s", metadata.surface_name.c_str());
     if (!metadata.surface_formula.empty())
         ImGui::TextDisabled("%s", metadata.surface_formula.c_str());
+    ImGui::TextDisabled("surface: %s derivatives   %s   %s",
+        metadata.surface_has_analytic_derivatives ? "analytic" : "finite-diff",
+        metadata.surface_deformable ? "deformable" : "static",
+        metadata.surface_time_varying ? "time-varying" : "time-invariant");
     ImGui::TextDisabled("status %s   paused %s", metadata.status.c_str(), metadata.paused ? "yes" : "no");
     ImGui::TextDisabled("t %.2f   speed %.2f   particles %llu",
         metadata.sim_time,
@@ -446,8 +460,12 @@ void Engine::dispatch_global_hotkeys() {
 
 void Engine::update_render_view_input() {
     ImGuiIO& io = ImGui::GetIO();
-    if (io.DisplaySize.y > 0.f)
-        m_services.render().set_main_view_aspect(io.DisplaySize.x / io.DisplaySize.y);
+    m_services.render().set_viewport_size(RenderViewKind::Main,
+        Vec2{static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())});
+    if (m_second_win.valid()) {
+        m_services.render().set_viewport_size(RenderViewKind::Alternate,
+            Vec2{static_cast<f32>(m_second_win.width()), static_cast<f32>(m_second_win.height())});
+    }
     if (io.WantCaptureMouse) return;
 
     if (io.MouseWheel != 0.f)

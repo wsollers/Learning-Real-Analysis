@@ -124,11 +124,16 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
 
     render.set_view_domain(main_id, RenderViewDomain{.u_min = -2.f, .u_max = 2.f, .v_min = -3.f, .v_max = 3.f});
     EXPECT_FLOAT_EQ(render.view_domain(main_id).u_min, -2.f);
+    render.set_viewport_size(main_id, Vec2{1920.f, 1080.f});
+    EXPECT_FLOAT_EQ(render.descriptor(main_id)->viewport_aspect, 1920.f / 1080.f);
+    EXPECT_FLOAT_EQ(render.descriptor(main_id)->viewport_size.x, 1920.f);
     const float yaw_before = render.descriptor(main_id)->camera.yaw;
     render.orbit_main_cameras(10.f, -5.f);
     EXPECT_NE(render.descriptor(main_id)->camera.yaw, yaw_before);
     render.zoom_main_cameras(1.f);
     EXPECT_GT(render.descriptor(main_id)->camera.zoom, 1.f);
+    render.reset_main_cameras(CameraPreset::Top);
+    EXPECT_NEAR(render.descriptor(main_id)->camera.pitch, 1.35f, 1e-5f);
     render.queue_surface_perturbation(SurfacePerturbCommand{.view = main_id, .uv = {0.25f, -0.5f}, .seed = 42u});
     const auto commands = render.consume_surface_perturbations(main_id);
     ASSERT_EQ(commands.size(), 1u);
