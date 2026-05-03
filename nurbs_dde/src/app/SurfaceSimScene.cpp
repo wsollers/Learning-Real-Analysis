@@ -10,6 +10,8 @@
 #include "sim/EulerIntegrator.hpp"
 #include "sim/MilsteinIntegrator.hpp"
 #include <imgui.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <cmath>
 #include <cstring>
@@ -149,7 +151,6 @@ SurfaceSimScene::SurfaceSimScene(EngineAPI api)
 // ── on_frame ──────────────────────────────────────────────────────────────────
 
 void SurfaceSimScene::on_frame(f32 dt) {
-    m_hotkeys.dispatch();
     advance_simulation(dt);
 
     const ImGuiViewport* vp = ImGui::GetMainViewport();
@@ -188,6 +189,89 @@ void SurfaceSimScene::on_frame(f32 dt) {
     m_coord_debug.draw();
     m_debug_open = m_coord_debug.visible();
     m_perf.draw(m_api.debug_stats());
+}
+
+void SurfaceSimScene::on_key_event(int key, int action, int mods) {
+    if (action != GLFW_PRESS) return;
+    const bool ctrl = (mods & GLFW_MOD_CONTROL) != 0;
+    const bool shift = (mods & GLFW_MOD_SHIFT) != 0;
+    if (!ctrl || shift) return;
+
+    const spawn::SpawnContext ctx{ m_surface.get(), &m_equation,
+                                   &m_integrator, &m_milstein, m_sim_speed };
+
+    switch (key) {
+        case GLFW_KEY_F: m_show_frenet = !m_show_frenet; break;
+        case GLFW_KEY_D: m_show_dir_deriv = !m_show_dir_deriv; break;
+        case GLFW_KEY_N: m_show_normal_plane = !m_show_normal_plane; break;
+        case GLFW_KEY_T: m_show_torsion = !m_show_torsion; break;
+        case GLFW_KEY_P: m_sim_paused = !m_sim_paused; break;
+        case GLFW_KEY_H: m_hotkey_panel_open = !m_hotkey_panel_open; break;
+        case GLFW_KEY_Q:
+            m_debug_open = !m_debug_open;
+            m_coord_debug.visible() = m_debug_open;
+            break;
+        case GLFW_KEY_L: {
+            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.5f,
+                static_cast<float>(m_leader_count) * 1.1f, *m_surface);
+            m_curves.push_back(spawn::spawn_shared(uv,
+                AnimatedCurve::Role::Leader,
+                m_leader_count % AnimatedCurve::MAX_SLOTS, ctx));
+            ++m_leader_count;
+            break;
+        }
+        case GLFW_KEY_C: {
+            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
+                static_cast<float>(m_chaser_count) * 1.3f + 0.5f, *m_surface);
+            m_curves.push_back(spawn::spawn_shared(uv,
+                AnimatedCurve::Role::Chaser,
+                m_chaser_count % AnimatedCurve::MAX_SLOTS, ctx));
+            ++m_chaser_count;
+            break;
+        }
+        case GLFW_KEY_B: {
+            const glm::vec2 ref = spawn::reference_uv(m_curves, *m_surface);
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 1.8f,
+                static_cast<float>(m_chaser_count + m_leader_count) * 0.7f + 1.0f,
+                *m_surface);
+            m_curves.push_back(spawn::spawn_owned(uv,
+                AnimatedCurve::Role::Chaser,
+                m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                std::make_unique<ndde::sim::BrownianMotion>(m_bm_params),
+                ctx));
+            ++m_chaser_count;
+            break;
+        }
+        case GLFW_KEY_R: {
+            if (m_curves.empty()) break;
+            if (m_curves[0].history() == nullptr) {
+                const std::size_t cap =
+                    static_cast<std::size_t>(std::ceil(m_dp_params.tau * 120.f * 1.5f)) + 256;
+                m_curves[0].enable_history(cap, 1.f / 120.f);
+            }
+            const glm::vec2 ref = m_curves[0].head_uv();
+            const glm::vec2 uv  = spawn::offset_spawn(ref, 2.0f,
+                static_cast<float>(m_dp_count) * 1.1f + 0.3f, *m_surface);
+            m_curves.push_back(spawn::spawn_owned(uv,
+                AnimatedCurve::Role::Chaser,
+                m_chaser_count % AnimatedCurve::MAX_SLOTS,
+                std::make_unique<ndde::sim::DelayPursuitEquation>(
+                    m_curves[0].history(), m_surface.get(), m_dp_params),
+                ctx,
+                false));
+            ++m_chaser_count;
+            ++m_dp_count;
+            break;
+        }
+        case GLFW_KEY_A:
+            if (!m_spawning_pursuer) spawn_leader_seeker();
+            else                     spawn_pursuit_particle();
+            break;
+        default:
+            break;
+    }
 }
 
 // ── swap_surface ──────────────────────────────────────────────────────────────
@@ -283,8 +367,9 @@ Mat4 SurfaceSimScene::canvas_mvp_3d(const ImVec2& cpos, const ImVec2& csz) const
     const f32  sh    = sw_sz.y > 0.f ? sw_sz.y : 1.f;
     const f32  cw    = csz.x   > 0.f ? csz.x   : 1.f;
     const f32  ch    = csz.y   > 0.f ? csz.y   : 1.f;
-    const f32  cx    = cpos.x;
-    const f32  cy    = cpos.y;
+    const ImVec2 vp0 = ImGui::GetMainViewport()->Pos;
+    const f32  cx    = cpos.x - vp0.x;
+    const f32  cy    = cpos.y - vp0.y;
 
     const f32 sx = cw / sw;
     const f32 sy = ch / sh;
@@ -696,7 +781,7 @@ void SurfaceSimScene::draw_panel_debug() {
 
     ImGui::SeparatorText("Scene");
     if (ImGui::Button("Switch to Analysis Scene", ImVec2(-1.f, 0.f))) {
-        m_api.switch_scene(make_analysis_scene);
+        m_api.switch_simulation(1);
     }
 
     ImGui::SeparatorText("Tools");
@@ -722,7 +807,9 @@ void SurfaceSimScene::draw_surface_3d_window() {
     ImGui::SetNextWindowSize(ImVec2(750.f, 660.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowBgAlpha(0.0f);
     ImGuiWindowFlags flags =
-        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse |
+        ImGuiWindowFlags_NoBackground;
     ImGui::Begin("Surface 3D", nullptr, flags);
 
     const ImVec2 cpos = ImGui::GetCursorScreenPos();

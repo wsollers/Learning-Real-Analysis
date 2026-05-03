@@ -19,8 +19,8 @@ public:
     Swapchain(const Swapchain&)            = delete;
     Swapchain& operator=(const Swapchain&) = delete;
 
-    void init(const platform::VulkanContext& ctx, u32 width, u32 height);
-    void recreate(const platform::VulkanContext& ctx, u32 width, u32 height);
+    void init(const platform::VulkanContext& ctx, u32 width, u32 height, bool vsync);
+    void recreate(const platform::VulkanContext& ctx, u32 width, u32 height, bool vsync);
     void destroy();
 
     [[nodiscard]] VkSwapchainKHR                 swapchain()   const noexcept { return m_swapchain;   }

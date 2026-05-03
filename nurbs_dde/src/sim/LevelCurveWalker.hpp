@@ -41,8 +41,7 @@
 //               smooths direction reversals at gradient discontinuities
 
 #include "sim/IEquation.hpp"
-#include <cmath>
-#include <numbers>
+#include "numeric/ops.hpp"
 #include <algorithm>
 #include <string>
 
@@ -74,7 +73,7 @@ public:
         // Gradient components (z-components of tangent vectors for height field)
         const float gx = du_v.z;   // ∂f/∂u
         const float gy = dv_v.z;   // ∂f/∂v
-        const float gn = std::sqrt(gx*gx + gy*gy);
+        const float gn = ops::sqrt(gx*gx + gy*gy);
 
         // Level-curve tangent direction: ∇⊥f = (−gy, gx) / |∇f|
         // Gradient direction: ∇f = (gx, gy) / |∇f|
@@ -83,30 +82,30 @@ public:
             // Current height and height error
             const float z   = surface.evaluate(state.uv.x, state.uv.y).z;
             const float err = (z - m_p.z0) / std::max(m_p.epsilon, 1e-6f);
-            const float ce  = std::clamp(err, -1.f, 1.f);
-            const float te  = 1.f - std::abs(ce);  // tangent weight
+            const float ce  = ops::clamp(err, -1.f, 1.f);
+            const float te  = 1.f - ops::abs(ce);  // tangent weight
 
             // Blend tangent and corrective gradient components
             const float raw_x = te * (-gy / gn) + ce * (gx / gn);
             const float raw_y = te * ( gx / gn) + ce * (gy / gn);
-            const float rn    = std::sqrt(raw_x*raw_x + raw_y*raw_y);
+            const float rn    = ops::sqrt(raw_x*raw_x + raw_y*raw_y);
             tx = (rn > 1e-6f) ? raw_x / rn : -gy / gn;
             ty = (rn > 1e-6f) ? raw_y / rn :  gx / gn;
         } else {
             // Critical point — hold last heading
-            tx = std::cos(state.angle);
-            ty = std::sin(state.angle);
+            tx = ops::cos(state.angle);
+            ty = ops::sin(state.angle);
         }
 
         // Rate-limited heading update (same approach as GradientWalker)
-        const float desired = std::atan2(ty, tx);
+        const float desired = ops::atan2(ty, tx);
         float da = desired - state.angle;
-        while (da >  std::numbers::pi_v<float>) da -= 2.f * std::numbers::pi_v<float>;
-        while (da < -std::numbers::pi_v<float>) da += 2.f * std::numbers::pi_v<float>;
-        state.angle += std::clamp(da, -m_p.turn_rate, m_p.turn_rate);
+        while (da >  ops::pi_v<float>) da -= ops::two_pi_v<float>;
+        while (da < -ops::pi_v<float>) da += ops::two_pi_v<float>;
+        state.angle += ops::clamp(da, -m_p.turn_rate, m_p.turn_rate);
 
-        return { m_p.walk_speed * std::cos(state.angle),
-                 m_p.walk_speed * std::sin(state.angle) };
+        return { m_p.walk_speed * ops::cos(state.angle),
+                 m_p.walk_speed * ops::sin(state.angle) };
     }
 
     [[nodiscard]] float phase_rate()  const override { return 0.f; }

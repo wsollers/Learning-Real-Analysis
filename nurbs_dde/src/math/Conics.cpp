@@ -1,5 +1,6 @@
 // math/Conics.cpp
 #include "math/Conics.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 #include <stdexcept>
@@ -36,24 +37,24 @@ Vec3 IConic::third_derivative(float t) const {
 float IConic::curvature(float t) const {
     const Vec3  d1  = derivative(t);
     const Vec3  d2  = second_derivative(t);
-    const float len = glm::length(d1);
+    const float len = ops::length(d1);
     if (len < 1e-8f) return 0.f;
-    return glm::length(glm::cross(d1, d2)) / (len * len * len);
+    return ops::length(ops::cross(d1, d2)) / (len * len * len);
 }
 
 float IConic::torsion(float t) const {
     const Vec3  d1    = derivative(t);
     const Vec3  d2    = second_derivative(t);
     const Vec3  d3    = third_derivative(t);
-    const Vec3  cross = glm::cross(d1, d2);
-    const float denom = glm::dot(cross, cross);
+    const Vec3  cross = ops::cross(d1, d2);
+    const float denom = ops::dot(cross, cross);
     if (denom < 1e-12f) return 0.f;
-    return glm::dot(cross, d3) / denom;
+    return ops::dot(cross, d3) / denom;
 }
 
 Vec3 IConic::unit_tangent(float t) const {
     const Vec3  d   = derivative(t);
-    const float len = glm::length(d);
+    const float len = ops::length(d);
     if (len < 1e-8f) return Vec3{1.f, 0.f, 0.f};
     return d / len;
 }
@@ -61,18 +62,18 @@ Vec3 IConic::unit_tangent(float t) const {
 Vec3 IConic::unit_normal(float t) const {
     const Vec3  T    = unit_tangent(t);
     const Vec3  d2   = second_derivative(t);
-    const Vec3  proj = d2 - glm::dot(d2, T) * T;
-    const float len  = glm::length(proj);
+    const Vec3  proj = d2 - ops::dot(d2, T) * T;
+    const float len  = ops::length(proj);
     if (len < 1e-8f) {
-        Vec3 perp = glm::cross(T, Vec3{0.f, 0.f, 1.f});
-        if (glm::length(perp) < 1e-8f) perp = glm::cross(T, Vec3{0.f, 1.f, 0.f});
-        return glm::normalize(perp);
+        Vec3 perp = ops::cross(T, Vec3{0.f, 0.f, 1.f});
+        if (ops::length(perp) < 1e-8f) perp = ops::cross(T, Vec3{0.f, 1.f, 0.f});
+        return ops::normalize(perp);
     }
     return proj / len;
 }
 
 Vec3 IConic::unit_binormal(float t) const {
-    return glm::normalize(glm::cross(unit_tangent(t), unit_normal(t)));
+    return ops::normalize(ops::cross(unit_tangent(t), unit_normal(t)));
 }
 
 void IConic::tessellate(std::span<Vertex> out, u32 n, Vec4 color) const {
@@ -100,12 +101,12 @@ Vec3 Parabola::third_derivative(float)    const { return Vec3{ 0.f, 0.f, 0.f }; 
 
 float Parabola::curvature(float t) const {
     const float dy = 2.f * m_a * t + m_b;
-    const float d  = std::pow(1.f + dy * dy, 1.5f);
-    return (d < 1e-8f) ? 0.f : std::abs(2.f * m_a) / d;
+    const float d  = ops::pow(1.f + dy * dy, 1.5f);
+    return (d < 1e-8f) ? 0.f : ops::abs(2.f * m_a) / d;
 }
 
 Vec2 Parabola::vertex() const noexcept {
-    if (std::abs(m_a) < 1e-8f) return Vec2{0.f, m_c};
+    if (ops::abs(m_a) < 1e-8f) return Vec2{0.f, m_c};
     const float xv = -m_b / (2.f * m_a);
     return Vec2{ xv, m_a * xv * xv + m_b * xv + m_c };
 }
@@ -123,23 +124,23 @@ Hyperbola::Hyperbola(float a, float b, float h, float k,
 Vec3 Hyperbola::eval_branch(float t, bool positive) const noexcept {
     const float sign = positive ? 1.f : -1.f;
     if (m_axis == HyperbolaAxis::Horizontal)
-        return Vec3{ m_h + sign * m_a * std::cosh(t), m_k + m_b * std::sinh(t), 0.f };
+        return Vec3{ m_h + sign * m_a * ops::cosh(t), m_k + m_b * ops::sinh(t), 0.f };
     else
-        return Vec3{ m_h + m_b * std::sinh(t), m_k + sign * m_a * std::cosh(t), 0.f };
+        return Vec3{ m_h + m_b * ops::sinh(t), m_k + sign * m_a * ops::cosh(t), 0.f };
 }
 
 Vec3 Hyperbola::evaluate(float t)         const { return eval_branch(t, true); }
 Vec3 Hyperbola::derivative(float t)        const {
     if (m_axis == HyperbolaAxis::Horizontal)
-        return Vec3{ m_a*std::sinh(t), m_b*std::cosh(t), 0.f };
+        return Vec3{ m_a*ops::sinh(t), m_b*ops::cosh(t), 0.f };
     else
-        return Vec3{ m_b*std::cosh(t), m_a*std::sinh(t), 0.f };
+        return Vec3{ m_b*ops::cosh(t), m_a*ops::sinh(t), 0.f };
 }
 Vec3 Hyperbola::second_derivative(float t) const {
     if (m_axis == HyperbolaAxis::Horizontal)
-        return Vec3{ m_a*std::cosh(t), m_b*std::sinh(t), 0.f };
+        return Vec3{ m_a*ops::cosh(t), m_b*ops::sinh(t), 0.f };
     else
-        return Vec3{ m_b*std::sinh(t), m_a*std::cosh(t), 0.f };
+        return Vec3{ m_b*ops::sinh(t), m_a*ops::cosh(t), 0.f };
 }
 Vec3 Hyperbola::third_derivative(float t)  const { return derivative(t); }
 
@@ -163,17 +164,17 @@ void Hyperbola::tessellate_two_branch(std::span<Vertex> out, u32 n, Vec4 color) 
 // ── Helix ─────────────────────────────────────────────────────────────────────
 
 Helix::Helix(float r, float pitch, float tmin, float tmax)
-    : m_r(r), m_pitch(pitch), m_b(pitch / (2.f * std::numbers::pi_v<float>)),
+    : m_r(r), m_pitch(pitch), m_b(pitch / ops::two_pi_v<float>),
       m_tmin(tmin), m_tmax(tmax)
 {
     if (r <= 0.f)      throw std::invalid_argument("[Helix] radius must be > 0");
     if (tmin >= tmax)  throw std::invalid_argument("[Helix] t_min must be < t_max");
 }
 
-Vec3  Helix::evaluate(float t)          const { return Vec3{ m_r*std::cos(t), m_r*std::sin(t), m_b*t }; }
-Vec3  Helix::derivative(float t)         const { return Vec3{ -m_r*std::sin(t), m_r*std::cos(t), m_b }; }
-Vec3  Helix::second_derivative(float t)  const { return Vec3{ -m_r*std::cos(t), -m_r*std::sin(t), 0.f }; }
-Vec3  Helix::third_derivative(float t)   const { return Vec3{ m_r*std::sin(t), -m_r*std::cos(t), 0.f }; }
+Vec3  Helix::evaluate(float t)          const { return Vec3{ m_r*ops::cos(t), m_r*ops::sin(t), m_b*t }; }
+Vec3  Helix::derivative(float t)         const { return Vec3{ -m_r*ops::sin(t), m_r*ops::cos(t), m_b }; }
+Vec3  Helix::second_derivative(float t)  const { return Vec3{ -m_r*ops::cos(t), -m_r*ops::sin(t), 0.f }; }
+Vec3  Helix::third_derivative(float t)   const { return Vec3{ m_r*ops::sin(t), -m_r*ops::cos(t), 0.f }; }
 float Helix::curvature(float /*t*/)      const { return m_r / (m_r*m_r + m_b*m_b); }
 float Helix::torsion(float /*t*/)        const { return m_b / (m_r*m_r + m_b*m_b); }
 
@@ -195,7 +196,7 @@ float Helix::torsion(float /*t*/)        const { return m_b / (m_r*m_r + m_b*m_b
 
 ParaboloidCurve::ParaboloidCurve(float a, float theta, float tmin, float tmax)
     : m_a(a), m_theta(theta),
-      m_ct(std::cos(theta)), m_st(std::sin(theta)),
+      m_ct(ops::cos(theta)), m_st(ops::sin(theta)),
       m_tmin(tmin), m_tmax(tmax)
 {
     if (tmin >= tmax) throw std::invalid_argument("[ParaboloidCurve] t_min must be < t_max");
@@ -233,7 +234,7 @@ float ParaboloidCurve::curvature(float t) const {
     //
     // κ = 2|a| / (1 + 4a²t²)^(3/2)
     const float s = 1.f + 4.f * m_a * m_a * t * t;
-    return 2.f * std::abs(m_a) / std::pow(s, 1.5f);
+    return 2.f * ops::abs(m_a) / ops::pow(s, 1.5f);
 }
 
 } // namespace ndde::math

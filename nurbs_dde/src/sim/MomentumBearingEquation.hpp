@@ -20,7 +20,9 @@
 // This is Strategy C from docs/ctrl_a_leader_seeker.md.
 
 #include "sim/IEquation.hpp"
+#include "numeric/ops.hpp"
 #include "sim/HistoryBuffer.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 #include <string>
@@ -67,7 +69,7 @@ public:
             if (displacement.y < -span * 0.5f) displacement.y += span;
         }
 
-        const float len = glm::length(displacement);
+        const float len = ops::length(displacement);
         if (len < 1e-7f) return {0.f, 0.f};
         return (displacement / len) * m_p.pursuit_speed;
     }

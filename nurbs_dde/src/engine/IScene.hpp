@@ -47,6 +47,16 @@ public:
 
     // Short human-readable identifier used in the scene selector UI.
     [[nodiscard]] virtual std::string_view name() const = 0;
+
+    // Simulation controls. Scenes that own simulation state override these;
+    // static/read-only scenes can keep the defaults.
+    virtual void set_paused(bool /*paused*/) {}
+    [[nodiscard]] virtual bool paused() const noexcept { return false; }
+
+    // Raw key events forwarded by Engine from GLFW after ImGui receives them.
+    // Parameters are GLFW-style integer key/action/modifier values without
+    // requiring this interface to include GLFW headers.
+    virtual void on_key_event(int /*key*/, int /*action*/, int /*mods*/) {}
 };
 
 } // namespace ndde

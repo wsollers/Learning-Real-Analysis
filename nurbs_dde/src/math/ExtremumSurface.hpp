@@ -14,6 +14,7 @@
 // surface ideal for the ExtremumTable grid search.
 
 #include "math/Surfaces.hpp"
+#include "numeric/ops.hpp"
 #include <cmath>
 #include <glm/glm.hpp>
 
@@ -68,8 +69,8 @@ private:
         const float r2sq = du2*du2 + dv2*dv2;
         const float s1   = 2.f * m_p.peak_sigma * m_p.peak_sigma;
         const float s2   = 2.f * m_p.pit_sigma  * m_p.pit_sigma;
-        return  m_p.peak_amp * std::exp(-r1sq / s1)
-              - m_p.pit_amp  * std::exp(-r2sq / s2);
+        return  m_p.peak_amp * ops::exp(-r1sq / s1)
+              - m_p.pit_amp  * ops::exp(-r2sq / s2);
     }
 
     // Analytic df/du
@@ -80,8 +81,8 @@ private:
         const float dv2  = v - m_p.pit_centre.y;
         const float s1   = 2.f * m_p.peak_sigma * m_p.peak_sigma;
         const float s2   = 2.f * m_p.pit_sigma  * m_p.pit_sigma;
-        return (-2.f * du1 / s1) * m_p.peak_amp * std::exp(-(du1*du1+dv1*dv1)/s1)
-             + ( 2.f * du2 / s2) * m_p.pit_amp  * std::exp(-(du2*du2+dv2*dv2)/s2);
+        return (-2.f * du1 / s1) * m_p.peak_amp * ops::exp(-(du1*du1+dv1*dv1)/s1)
+             + ( 2.f * du2 / s2) * m_p.pit_amp  * ops::exp(-(du2*du2+dv2*dv2)/s2);
     }
 
     // Analytic df/dv
@@ -92,8 +93,8 @@ private:
         const float dv2  = v - m_p.pit_centre.y;
         const float s1   = 2.f * m_p.peak_sigma * m_p.peak_sigma;
         const float s2   = 2.f * m_p.pit_sigma  * m_p.pit_sigma;
-        return (-2.f * dv1 / s1) * m_p.peak_amp * std::exp(-(du1*du1+dv1*dv1)/s1)
-             + ( 2.f * dv2 / s2) * m_p.pit_amp  * std::exp(-(du2*du2+dv2*dv2)/s2);
+        return (-2.f * dv1 / s1) * m_p.peak_amp * ops::exp(-(du1*du1+dv1*dv1)/s1)
+             + ( 2.f * dv2 / s2) * m_p.pit_amp  * ops::exp(-(du2*du2+dv2*dv2)/s2);
     }
 };
 

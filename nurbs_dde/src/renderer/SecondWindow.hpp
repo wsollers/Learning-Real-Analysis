@@ -29,7 +29,8 @@ public:
     void init(const platform::VulkanContext& ctx,
               int x, int y, u32 width, u32 height,
               const std::string& title,
-              const std::string& shader_dir);
+              const std::string& shader_dir,
+              bool vsync);
 
     void destroy();
 
@@ -74,6 +75,7 @@ private:
     u32             m_frame_sync      = 0;
     bool            m_frame_open      = false;
     bool            m_initialised     = false;
+    bool            m_vsync           = true;
 
     Pipeline m_pipeline_line_list;
     Pipeline m_pipeline_line_strip;

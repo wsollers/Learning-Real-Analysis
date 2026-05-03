@@ -71,7 +71,10 @@ public:
     ~SurfaceSimScene() = default;
 
     void on_frame(f32 dt) override;
+    void on_key_event(int key, int action, int mods) override;
     [[nodiscard]] std::string_view name() const override { return "Surface Simulation"; }
+    void set_paused(bool paused) override { m_sim_paused = paused; }
+    [[nodiscard]] bool paused() const noexcept override { return m_sim_paused; }
 
 private:
     EngineAPI                              m_api;

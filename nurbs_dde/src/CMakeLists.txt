@@ -60,6 +60,7 @@ target_link_libraries(ndde_renderer PUBLIC
 add_library(ndde_engine STATIC
     engine/AppConfig.cpp
     engine/Engine.cpp
+    engine/SimulationRuntime.cpp
 )
 target_include_directories(ndde_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_engine PUBLIC
@@ -115,10 +116,12 @@ set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
 target_compile_definitions(nurbs_dde  PRIVATE
     SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
     ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+    NDDE_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
 )
 target_compile_definitions(ndde_engine PRIVATE
     SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
     ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+    NDDE_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
 )
 
 # ── Assets copy ───────────────────────────────────────────────────────────────

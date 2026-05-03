@@ -27,7 +27,9 @@
 // interface level, but goal-switching state must persist across velocity() calls.
 
 #include "sim/IEquation.hpp"
+#include "numeric/ops.hpp"
 #include "math/ExtremumTable.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 #include <string>
@@ -76,7 +78,7 @@ public:
             if (delta.y < -span * 0.5f) delta.y += span;
         }
 
-        const float dist = glm::length(delta);
+        const float dist = ops::length(delta);
 
         // 3. Arrival neighbourhood: flip goal
         if (dist < m_p.arrival_radius) {
@@ -87,8 +89,8 @@ public:
         // 4-5. Gradient flatness check: flip goal
         const Vec3 du_v = surface.du(state.uv.x, state.uv.y);
         const Vec3 dv_v = surface.dv(state.uv.x, state.uv.y);
-        const float grad_mag = std::sqrt(du_v.z*du_v.z + dv_v.z*dv_v.z);
-        if (std::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon)
+        const float grad_mag = ops::sqrt(du_v.z*du_v.z + dv_v.z*dv_v.z);
+        if (ops::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon)
             m_goal = (m_goal == Goal::SeekMax) ? Goal::SeekMin : Goal::SeekMax;
 
         // 6. Bearing: unit vector toward goal

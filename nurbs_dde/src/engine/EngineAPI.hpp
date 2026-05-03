@@ -6,6 +6,7 @@
 #include "memory/ArenaSlice.hpp"
 #include "engine/AppConfig.hpp"
 #include "math/Scalars.hpp"
+#include <cstddef>
 #include <functional>
 #include <memory>
 
@@ -76,6 +77,10 @@ struct EngineAPI {
     // factory receives a fresh EngineAPI and returns the new scene.
     // The engine flushes the GPU before destroying the old scene.
     std::function<void(std::function<std::unique_ptr<IScene>(EngineAPI)>)> switch_scene;
+
+    // Request a first-class simulation switch by registry index.
+    // Index 0 is Ctrl+1, index 1 is Ctrl+2, etc.
+    std::function<void(std::size_t)> switch_simulation;
 };
 
 } // namespace ndde

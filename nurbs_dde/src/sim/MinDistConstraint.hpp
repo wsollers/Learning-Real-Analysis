@@ -42,7 +42,7 @@ public:
             if (delta.y < -span * 0.5f) delta.y += span;
         }
 
-        const float dist = glm::length(delta);
+        const float dist = ops::length(delta);
         if (dist >= m_min_dist || dist < 1e-7f) return;
 
         // Push each particle half the overlap distance along the separation axis

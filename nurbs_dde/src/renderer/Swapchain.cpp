@@ -8,16 +8,18 @@ namespace ndde::renderer {
 
 Swapchain::~Swapchain() { destroy(); }
 
-void Swapchain::init(const platform::VulkanContext& ctx, u32 width, u32 height) {
+void Swapchain::init(const platform::VulkanContext& ctx, u32 width, u32 height, bool vsync) {
     m_device = ctx.device();
 
     vkb::SwapchainBuilder builder{ ctx.physical_device(), ctx.device(), ctx.surface() };
+    const VkPresentModeKHR present_mode =
+        vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR;
 
     auto sc_ret = builder
         .set_desired_format({ VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR })
-        .set_desired_present_mode(VK_PRESENT_MODE_FIFO_KHR)
+        .set_desired_present_mode(present_mode)
         .set_desired_extent(width, height)
-        .add_image_usage_flags(VK_IMAGE_USAGE_TRANSFER_DST_BIT)
+        .add_image_usage_flags(VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT)
         .build();
 
     if (!sc_ret)
@@ -30,13 +32,14 @@ void Swapchain::init(const platform::VulkanContext& ctx, u32 width, u32 height) 
     m_images      = vkb_sc.get_images().value();
     m_image_views = vkb_sc.get_image_views().value();
 
-    std::cout << std::format("[Swapchain] {}x{} images:{} format:{}\n",
-        m_extent.width, m_extent.height, m_images.size(), static_cast<int>(m_format));
+    std::cout << std::format("[Swapchain] {}x{} images:{} format:{} present:{}\n",
+        m_extent.width, m_extent.height, m_images.size(), static_cast<int>(m_format),
+        vsync ? "fifo" : "mailbox");
 }
 
-void Swapchain::recreate(const platform::VulkanContext& ctx, u32 width, u32 height) {
+void Swapchain::recreate(const platform::VulkanContext& ctx, u32 width, u32 height, bool vsync) {
     destroy();
-    init(ctx, width, height);
+    init(ctx, width, height, vsync);
 }
 
 void Swapchain::destroy() {

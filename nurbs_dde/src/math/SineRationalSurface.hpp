@@ -33,6 +33,7 @@
 // Both are computed exactly — no finite differences.
 
 #include "math/Surfaces.hpp"
+#include "numeric/ops.hpp"
 #include <cmath>
 
 namespace ndde::math {
@@ -85,8 +86,8 @@ private:
     [[nodiscard]] static float f(float x, float y) noexcept {
         const float s = x + y + 1.f;
         const float A = 1.f + s * s;
-        return (3.f / A) * std::sin(2.f * x) * std::cos(2.f * y)
-             + 0.1f * std::sin(5.f * x) * std::sin(5.f * y);
+        return (3.f / A) * ops::sin(2.f * x) * ops::cos(2.f * y)
+             + 0.1f * ops::sin(5.f * x) * ops::sin(5.f * y);
     }
 
     // ── Analytic ∂f/∂x ───────────────────────────────────────────────────────
@@ -99,12 +100,12 @@ private:
         const float s   = x + y + 1.f;
         const float A   = 1.f + s * s;
         const float A2  = A * A;
-        const float s2x = std::sin(2.f * x);
-        const float c2x = std::cos(2.f * x);
-        const float c2y = std::cos(2.f * y);
+        const float s2x = ops::sin(2.f * x);
+        const float c2x = ops::cos(2.f * x);
+        const float c2y = ops::cos(2.f * y);
         return (-6.f * s / A2) * s2x * c2y
              + ( 6.f / A)      * c2x * c2y
-             +   0.5f * std::cos(5.f * x) * std::sin(5.f * y);
+             +   0.5f * ops::cos(5.f * x) * ops::sin(5.f * y);
     }
 
     // ── Analytic ∂f/∂y ───────────────────────────────────────────────────────
@@ -117,12 +118,12 @@ private:
         const float s   = x + y + 1.f;
         const float A   = 1.f + s * s;
         const float A2  = A * A;
-        const float s2x = std::sin(2.f * x);
-        const float s2y = std::sin(2.f * y);
-        const float c2y = std::cos(2.f * y);
+        const float s2x = ops::sin(2.f * x);
+        const float s2y = ops::sin(2.f * y);
+        const float c2y = ops::cos(2.f * y);
         return (-6.f * s / A2) * s2x * c2y
              + (-6.f / A)      * s2x * s2y
-             +   0.5f * std::sin(5.f * x) * std::cos(5.f * y);
+             +   0.5f * ops::sin(5.f * x) * ops::cos(5.f * y);
     }
 };
 

@@ -43,6 +43,7 @@
 // Set drift_strength = 0 for pure isotropic Brownian motion.
 
 #include "sim/IEquation.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 
 namespace ndde::sim {
@@ -63,7 +64,7 @@ public:
         float                       t) const override
     {
         (void)state; (void)t;
-        if (std::abs(m_p.drift_strength) < 1e-7f)
+        if (ops::abs(m_p.drift_strength) < 1e-7f)
             return {0.f, 0.f};
 
         // Gradient direction in parameter space (z-components of tangent vectors)
@@ -71,7 +72,7 @@ public:
         const glm::vec3 dv_vec = surface.dv(state.uv.x, state.uv.y);
         const float fu = du_vec.z;
         const float fv = dv_vec.z;
-        const float gn = std::sqrt(fu*fu + fv*fv) + 1e-7f;
+        const float gn = ops::sqrt(fu*fu + fv*fv) + 1e-7f;
         return { m_p.drift_strength * fu / gn,
                  m_p.drift_strength * fv / gn };
     }

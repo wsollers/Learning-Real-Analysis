@@ -1,5 +1,6 @@
 // math/Axes.cpp
 #include "math/Axes.hpp"
+#include "numeric/ops.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <algorithm>
@@ -9,7 +10,7 @@ namespace ndde::math {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 static u32 count_lines(float extent, float step) noexcept {
-    const auto n = static_cast<u32>(std::floor(extent / step));
+    const auto n = static_cast<u32>(ops::floor(extent / step));
     return 2u * n;
 }
 
@@ -39,7 +40,7 @@ void build_grid(std::span<Vertex> out, const AxesConfig& cfg) {
     };
 
     auto grid_color = [&](float coord) -> Vec4 {
-        const float rem = std::fmod(std::abs(coord) + eps * 0.5f, cfg.major_step);
+        const float rem = ops::fmod(ops::abs(coord) + eps * 0.5f, cfg.major_step);
         return (rem < eps) ? colors::GRID_MAJOR : colors::GRID_MINOR;
     };
 
@@ -99,8 +100,8 @@ u32 grid_vp_max_vertices(float vl, float vr, float vb, float vt,
     // Count of unique integer multiples of minor_step in each axis range,
     // excluding 0 (the axis itself). Double for ±, double for both axes, 2 verts each.
     const float safe_step = std::max(minor_step, 1e-6f);
-    const u32 nx = static_cast<u32>(std::ceil((vr - vl) / safe_step)) + 2u;
-    const u32 ny = static_cast<u32>(std::ceil((vt - vb) / safe_step)) + 2u;
+    const u32 nx = static_cast<u32>(ops::ceil((vr - vl) / safe_step)) + 2u;
+    const u32 ny = static_cast<u32>(ops::ceil((vt - vb) / safe_step)) + 2u;
     return (nx + ny) * 2u;  // 2 vertices per line
 }
 
@@ -118,17 +119,17 @@ u32 build_grid_viewport(std::span<Vertex> out,
     u32         idx     = 0;
 
     // Round down to nearest grid line below/left of view
-    const float x_start = std::floor(vl / minor_step) * minor_step;
-    const float y_start = std::floor(vb / minor_step) * minor_step;
+    const float x_start = ops::floor(vl / minor_step) * minor_step;
+    const float y_start = ops::floor(vb / minor_step) * minor_step;
 
     auto is_major = [&](float coord) -> bool {
-        const float rem = std::fmod(std::abs(coord) + eps * 0.5f, major_step);
+        const float rem = ops::fmod(ops::abs(coord) + eps * 0.5f, major_step);
         return rem < eps;
     };
 
     // Vertical lines (constant X)
     for (float x = x_start; x <= vr + eps; x += minor_step) {
-        if (std::abs(x) < eps) continue;  // skip the Y-axis line (drawn separately)
+        if (ops::abs(x) < eps) continue;  // skip the Y-axis line (drawn separately)
         const Vec4 col = is_major(x) ? colors::GRID_MAJOR : colors::GRID_MINOR;
         out[idx++] = Vertex{ Vec3{ x, vb, 0.f }, col };
         out[idx++] = Vertex{ Vec3{ x, vt, 0.f }, col };
@@ -136,7 +137,7 @@ u32 build_grid_viewport(std::span<Vertex> out,
 
     // Horizontal lines (constant Y)
     for (float y = y_start; y <= vt + eps; y += minor_step) {
-        if (std::abs(y) < eps) continue;  // skip the X-axis line
+        if (ops::abs(y) < eps) continue;  // skip the X-axis line
         const Vec4 col = is_major(y) ? colors::GRID_MAJOR : colors::GRID_MINOR;
         out[idx++] = Vertex{ Vec3{ vl, y, 0.f }, col };
         out[idx++] = Vertex{ Vec3{ vr, y, 0.f }, col };

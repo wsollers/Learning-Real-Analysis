@@ -4,11 +4,11 @@
 // Zero-copy design: tessellate() writes directly into GPU-visible memory.
 
 #include "math/Scalars.hpp"
+#include "numeric/ops.hpp"
 #include "math/GeometryTypes.hpp"
 #include <span>
 #include <stdexcept>
 #include <cmath>
-#include <numbers>
 
 namespace ndde::math {
 
@@ -128,7 +128,7 @@ public:
     explicit Helix(float r     = 1.f,
                    float pitch = 0.5f,
                    float tmin  = 0.f,
-                   float tmax  = static_cast<float>(4.f * std::numbers::pi));
+                   float tmax  = 4.f * ops::pi_v<float>);
 
     [[nodiscard]] Vec3  evaluate(float t)          const override;
     [[nodiscard]] Vec3  derivative(float t)         const override;

@@ -1,9 +1,9 @@
 // math/Surfaces.cpp
 #include "math/Surfaces.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 #include <stdexcept>
-#include <numbers>
 
 namespace ndde::math {
 
@@ -20,17 +20,17 @@ Vec3 ISurface::dv(float u, float v, float t) const {
 }
 
 Vec3 ISurface::unit_normal(float u, float v, float t) const {
-    const Vec3 cross = glm::cross(du(u, v, t), dv(u, v, t));
-    const float len  = glm::length(cross);
+    const Vec3 cross = ops::cross(du(u, v, t), dv(u, v, t));
+    const float len  = ops::length(cross);
     return (len > 1e-8f) ? cross / len : Vec3{0.f, 0.f, 1.f};
 }
 
 float ISurface::gaussian_curvature(float u, float v, float t) const {
     const Vec3 fu = du(u, v, t);
     const Vec3 fv = dv(u, v, t);
-    const float E = glm::dot(fu, fu);
-    const float F = glm::dot(fu, fv);
-    const float G = glm::dot(fv, fv);
+    const float E = ops::dot(fu, fu);
+    const float F = ops::dot(fu, fv);
+    const float G = ops::dot(fv, fv);
 
     constexpr float h = 1e-3f;
     const Vec3 fuu = (evaluate(u+h,v,t) - 2.f*evaluate(u,v,t) + evaluate(u-h,v,t)) / (h*h);
@@ -39,20 +39,20 @@ float ISurface::gaussian_curvature(float u, float v, float t) const {
     const Vec3 fvv = (evaluate(u,v+h,t) - 2.f*evaluate(u,v,t) + evaluate(u,v-h,t)) / (h*h);
     const Vec3 n   = unit_normal(u, v, t);
 
-    const float L = glm::dot(fuu, n);
-    const float M = glm::dot(fuv, n);
-    const float N = glm::dot(fvv, n);
+    const float L = ops::dot(fuu, n);
+    const float M = ops::dot(fuv, n);
+    const float N = ops::dot(fvv, n);
 
     const float denom = E*G - F*F;
-    return (std::abs(denom) < 1e-12f) ? 0.f : (L*N - M*M) / denom;
+    return (ops::abs(denom) < 1e-12f) ? 0.f : (L*N - M*M) / denom;
 }
 
 float ISurface::mean_curvature(float u, float v, float t) const {
     const Vec3 fu = du(u, v, t);
     const Vec3 fv = dv(u, v, t);
-    const float E = glm::dot(fu, fu);
-    const float F = glm::dot(fu, fv);
-    const float G = glm::dot(fv, fv);
+    const float E = ops::dot(fu, fu);
+    const float F = ops::dot(fu, fv);
+    const float G = ops::dot(fv, fv);
 
     constexpr float h = 1e-3f;
     const Vec3 fuu = (evaluate(u+h,v,t) - 2.f*evaluate(u,v,t) + evaluate(u-h,v,t)) / (h*h);
@@ -61,12 +61,12 @@ float ISurface::mean_curvature(float u, float v, float t) const {
     const Vec3 fvv = (evaluate(u,v+h,t) - 2.f*evaluate(u,v,t) + evaluate(u,v-h,t)) / (h*h);
     const Vec3 n   = unit_normal(u, v, t);
 
-    const float L = glm::dot(fuu, n);
-    const float M = glm::dot(fuv, n);
-    const float N = glm::dot(fvv, n);
+    const float L = ops::dot(fuu, n);
+    const float M = ops::dot(fuv, n);
+    const float N = ops::dot(fvv, n);
 
     const float denom = 2.f * (E*G - F*F);
-    return (std::abs(denom) < 1e-12f) ? 0.f : (E*N + G*L - 2.f*F*M) / denom;
+    return (ops::abs(denom) < 1e-12f) ? 0.f : (E*N + G*L - 2.f*F*M) / denom;
 }
 
 u32 ISurface::wireframe_vertex_count(u32 u_lines, u32 v_lines) const noexcept {
@@ -120,21 +120,21 @@ Paraboloid::Paraboloid(float a, float u_max, float vmin, float vmax)
 }
 
 Vec3 Paraboloid::evaluate(float u, float v, float /*t*/) const {
-    return Vec3{ u * std::cos(v), u * std::sin(v), m_a * u * u };
+    return Vec3{ u * ops::cos(v), u * ops::sin(v), m_a * u * u };
 }
 
 Vec3 Paraboloid::du(float u, float v, float /*t*/) const {
-    return Vec3{ std::cos(v), std::sin(v), 2.f * m_a * u };
+    return Vec3{ ops::cos(v), ops::sin(v), 2.f * m_a * u };
 }
 
 Vec3 Paraboloid::dv(float u, float v, float /*t*/) const {
-    return Vec3{ -u * std::sin(v), u * std::cos(v), 0.f };
+    return Vec3{ -u * ops::sin(v), u * ops::cos(v), 0.f };
 }
 
 Vec3 Paraboloid::unit_normal(float u, float v, float /*t*/) const {
-    if (std::abs(u) < 1e-7f) return Vec3{ 0.f, 0.f, 1.f };
-    const float denom = std::abs(u) * std::sqrt(1.f + 4.f*m_a*m_a*u*u);
-    return Vec3{ -2.f*m_a*u*std::cos(v), -2.f*m_a*u*std::sin(v), u } / denom;
+    if (ops::abs(u) < 1e-7f) return Vec3{ 0.f, 0.f, 1.f };
+    const float denom = ops::abs(u) * ops::sqrt(1.f + 4.f*m_a*m_a*u*u);
+    return Vec3{ -2.f*m_a*u*ops::cos(v), -2.f*m_a*u*ops::sin(v), u } / denom;
 }
 
 float Paraboloid::gaussian_curvature(float u, float /*v*/, float /*t*/) const {
@@ -144,16 +144,16 @@ float Paraboloid::gaussian_curvature(float u, float /*v*/, float /*t*/) const {
 
 float Paraboloid::mean_curvature(float u, float /*v*/, float /*t*/) const {
     const float s = 1.f + 4.f*m_a*m_a*u*u;
-    return m_a * (2.f + 4.f*m_a*m_a*u*u) / std::pow(s, 1.5f);
+    return m_a * (2.f + 4.f*m_a*m_a*u*u) / ops::pow(s, 1.5f);
 }
 
 float Paraboloid::kappa1(float u) const noexcept {
     const float s = 1.f + 4.f*m_a*m_a*u*u;
-    return 2.f*m_a / std::pow(s, 1.5f);
+    return 2.f*m_a / ops::pow(s, 1.5f);
 }
 
 float Paraboloid::kappa2(float u) const noexcept {
-    return 2.f*m_a / std::sqrt(1.f + 4.f*m_a*m_a*u*u);
+    return 2.f*m_a / ops::sqrt(1.f + 4.f*m_a*m_a*u*u);
 }
 
 // ── Torus ─────────────────────────────────────────────────────────────────────
@@ -167,38 +167,38 @@ Torus::Torus(float R, float r)
 }
 
 Vec3 Torus::evaluate(float u, float v, float /*t*/) const {
-    const float cu = std::cos(u), su = std::sin(u);
-    const float cv = std::cos(v), sv = std::sin(v);
+    const float cu = ops::cos(u), su = ops::sin(u);
+    const float cv = ops::cos(v), sv = ops::sin(v);
     const float rho = m_R + m_r * cv;
     return Vec3{ rho * cu, rho * su, m_r * sv };
 }
 
 Vec3 Torus::du(float u, float v, float /*t*/) const {
-    const float rho = m_R + m_r * std::cos(v);
-    return Vec3{ -rho * std::sin(u), rho * std::cos(u), 0.f };
+    const float rho = m_R + m_r * ops::cos(v);
+    return Vec3{ -rho * ops::sin(u), rho * ops::cos(u), 0.f };
 }
 
 Vec3 Torus::dv(float u, float v, float /*t*/) const {
-    const float sv = std::sin(v), cv = std::cos(v);
-    const float cu = std::cos(u), su = std::sin(u);
+    const float sv = ops::sin(v), cv = ops::cos(v);
+    const float cu = ops::cos(u), su = ops::sin(u);
     return Vec3{ -m_r * sv * cu, -m_r * sv * su, m_r * cv };
 }
 
 Vec3 Torus::unit_normal(float u, float v, float /*t*/) const {
-    return Vec3{ std::cos(v)*std::cos(u), std::cos(v)*std::sin(u), std::sin(v) };
+    return Vec3{ ops::cos(v)*ops::cos(u), ops::cos(v)*ops::sin(u), ops::sin(v) };
 }
 
 float Torus::gaussian_curvature(float /*u*/, float v, float /*t*/) const {
-    const float cv  = std::cos(v);
+    const float cv  = ops::cos(v);
     const float rho = m_R + m_r * cv;
-    if (std::abs(rho) < 1e-9f) return 0.f;
+    if (ops::abs(rho) < 1e-9f) return 0.f;
     return cv / (m_r * rho);
 }
 
 float Torus::mean_curvature(float /*u*/, float v, float /*t*/) const {
-    const float cv  = std::cos(v);
+    const float cv  = ops::cos(v);
     const float rho = m_R + m_r * cv;
-    if (std::abs(rho) < 1e-9f) return 0.f;
+    if (ops::abs(rho) < 1e-9f) return 0.f;
     return (m_R + 2.f * m_r * cv) / (2.f * m_r * rho);
 }
 

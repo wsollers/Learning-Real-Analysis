@@ -9,6 +9,8 @@
 #include "memory/ArenaSlice.hpp"
 #include "renderer/GpuTypes.hpp"
 #include <glm/glm.hpp>
+#include <filesystem>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -46,6 +48,7 @@ public:
     void imgui_render()    { m_imgui.render(m_cmd); }
     [[nodiscard]] bool end_frame(const Swapchain& swapchain);
     void on_swapchain_recreated(const Swapchain& swapchain);
+    void request_png_capture(std::filesystem::path path);
 
     // Call after vkDeviceWaitIdle (e.g. during scene switch) to put all
     // per-frame sync objects back into a clean known state. This destroys
@@ -63,6 +66,7 @@ public:
 
 private:
     VkDevice        m_device         = VK_NULL_HANDLE;
+    VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
     VkQueue         m_graphics_queue = VK_NULL_HANDLE;
     VkQueue         m_present_queue  = VK_NULL_HANDLE;
     VkCommandPool   m_cmd_pool       = VK_NULL_HANDLE;
@@ -85,11 +89,13 @@ private:
     Pipeline   m_pipeline_line_strip;
     Pipeline   m_pipeline_triangle_list;
     ImGuiLayer m_imgui;
+    std::optional<std::filesystem::path> m_pending_capture;
 
     void create_command_objects(u32 graphics_queue_family);
     void create_sync_objects(u32 image_count);
     void init_pipelines(VkFormat color_format, const std::string& shader_dir);
     void transition_image(VkImage image, VkImageLayout from, VkImageLayout to);
+    [[nodiscard]] u32 find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const;
     [[nodiscard]] Pipeline& pipeline_for(Topology topo);
 };
 
