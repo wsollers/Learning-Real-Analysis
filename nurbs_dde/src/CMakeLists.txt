@@ -79,7 +79,13 @@ target_link_libraries(ndde_engine PUBLIC
 # ── nurbs_dde executable ──────────────────────────────────────────────────────
 add_executable(nurbs_dde
     app/main.cpp
+    app/AnalysisPanels.cpp
+    app/AnalysisScene.cpp
+    app/AnalysisSpawner.cpp
     app/GaussianSurface.cpp
+    app/MultiWellScene.cpp
+    app/MultiWellPanels.cpp
+    app/MultiWellSpawner.cpp
     app/ParticleSystem.cpp
     app/SceneFactories.cpp
     app/SurfaceMeshCache.cpp
@@ -92,6 +98,9 @@ add_executable(nurbs_dde
     app/SurfaceSimPanels.cpp
     app/SurfaceSimSpawner.cpp
     app/SurfaceSimView.cpp
+    app/WavePredatorPreyPanels.cpp
+    app/WavePredatorPreyScene.cpp
+    app/WavePredatorPreySpawner.cpp
     app/ParticleRenderer.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
