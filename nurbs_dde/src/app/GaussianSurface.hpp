@@ -15,7 +15,6 @@
 #include "app/FrenetFrame.hpp"   // FrenetFrame, SurfaceFrame, make_surface_frame
 #include "app/AnimatedCurve.hpp" // AnimatedCurve
 #include <glm/glm.hpp>
-#include <vector>
 #include <span>
 
 namespace ndde {

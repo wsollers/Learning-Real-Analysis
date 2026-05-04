@@ -4,12 +4,12 @@
 
 #include "engine/ServiceHandle.hpp"
 #include "math/Scalars.hpp"
+#include "memory/Containers.hpp"
 
 #include <algorithm>
 #include <functional>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -74,7 +74,7 @@ private:
     };
 
     HotkeyId m_next_id = 1;
-    std::vector<HotkeyEntry> m_hotkeys;
+    memory::PersistentVector<HotkeyEntry> m_hotkeys;
 
     void unregister(HotkeyId id) noexcept {
         for (auto& entry : m_hotkeys) {
@@ -88,4 +88,3 @@ private:
 };
 
 } // namespace ndde
-

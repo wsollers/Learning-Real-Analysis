@@ -5,12 +5,12 @@
 #include "app/ParticleInspectorPanel.hpp"
 #include "app/ParticleSwarmFactory.hpp"
 #include "app/SurfaceMeshCache.hpp"
+#include "memory/Containers.hpp"
 
 #include <imgui.h>
 #include <algorithm>
 #include <functional>
 #include <string>
-#include <vector>
 
 namespace ndde {
 
@@ -48,7 +48,7 @@ struct SwarmRecipePanelOptions {
 class SwarmRecipePanel {
 public:
     static void draw(SwarmRecipePanelState state,
-                     const std::vector<SwarmRecipeAction>& actions,
+                     const memory::FrameVector<SwarmRecipeAction>& actions,
                      ParticleSystem& particles,
                      GoalStatus goal_status,
                      SwarmBuildResult* last_result,

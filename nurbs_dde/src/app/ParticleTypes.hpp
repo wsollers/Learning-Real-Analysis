@@ -2,11 +2,11 @@
 // app/ParticleTypes.hpp
 // Shared particle vocabulary: roles, metadata, and visual trail policy.
 
+#include "memory/Containers.hpp"
 #include "math/Scalars.hpp"
 #include <cstdint>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -44,9 +44,9 @@ struct TrailConfig {
 struct ParticleMetadata {
     std::string              label;
     std::string              role;
-    std::vector<std::string> behaviors;
-    std::vector<std::string> constraints;
-    std::vector<std::string> goals;
+    memory::FrameVector<std::string> behaviors;
+    memory::FrameVector<std::string> constraints;
+    memory::FrameVector<std::string> goals;
 };
 
 } // namespace ndde

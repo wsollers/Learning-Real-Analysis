@@ -245,7 +245,7 @@ public:
     [[nodiscard]] const HoverMetadata& hover_metadata() const noexcept { return m_hover; }
 
 private:
-    memory::PersistentVector<ViewMouseState> m_mouse;
+    memory::ViewVector<ViewMouseState> m_mouse;
     memory::FrameVector<SurfacePickRequest> m_surface_requests;
     HoverMetadata m_hover{};
 

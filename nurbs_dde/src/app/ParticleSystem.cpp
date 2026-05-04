@@ -239,8 +239,8 @@ std::string BehaviorStack::name() const {
     return out;
 }
 
-std::vector<std::string> BehaviorStack::behavior_labels() const {
-    std::vector<std::string> labels;
+memory::FrameVector<std::string> BehaviorStack::behavior_labels() const {
+    memory::FrameVector<std::string> labels;
     labels.reserve(m_behaviors.size());
     for (const auto& entry : m_behaviors)
         labels.push_back(entry.behavior->metadata_label());

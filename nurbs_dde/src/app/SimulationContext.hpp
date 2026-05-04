@@ -10,11 +10,11 @@
 #include "app/ParticleTypes.hpp"
 #include "engine/SimulationClock.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/Containers.hpp"
 #include "sim/HistoryBuffer.hpp"
 #include <glm/glm.hpp>
 #include <optional>
 #include <random>
-#include <vector>
 
 namespace ndde {
 
@@ -75,7 +75,7 @@ struct SimulationMathCache {
 };
 
 struct SimulationCommandState {
-    std::vector<SurfacePerturbation> surface_perturbations;
+    memory::FrameVector<SurfacePerturbation> surface_perturbations;
 
     void push(SurfacePerturbation perturbation) {
         surface_perturbations.push_back(perturbation);
@@ -91,7 +91,7 @@ public:
     SimulationContext() = default;
 
     SimulationContext(const ndde::math::ISurface* surface,
-                      const std::vector<AnimatedCurve>* particles,
+                      const memory::SimVector<AnimatedCurve>* particles,
                       std::mt19937* rng) noexcept
         : m_surface(surface), m_particles(particles), m_rng(rng)
     {}
@@ -113,13 +113,13 @@ public:
 
     [[nodiscard]] std::mt19937& rng() const noexcept { return *m_rng; }
     void set_rng(std::mt19937* rng) noexcept { m_rng = rng; }
-    void set_particles(const std::vector<AnimatedCurve>* particles) noexcept {
+    void set_particles(const memory::SimVector<AnimatedCurve>* particles) noexcept {
         m_particles = particles;
         m_dirty.mark_particles_changed();
         m_math_cache.bump_particles();
     }
 
-    [[nodiscard]] const std::vector<AnimatedCurve>& particles() const noexcept {
+    [[nodiscard]] const memory::SimVector<AnimatedCurve>& particles() const noexcept {
         return *m_particles;
     }
 
@@ -156,7 +156,7 @@ public:
 
 private:
     const ndde::math::ISurface* m_surface = nullptr;
-    const std::vector<AnimatedCurve>* m_particles = nullptr;
+    const memory::SimVector<AnimatedCurve>* m_particles = nullptr;
     std::mt19937* m_rng = nullptr;
     float m_time = 0.f;
     TickInfo m_tick{};

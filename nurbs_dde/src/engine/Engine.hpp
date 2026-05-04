@@ -12,10 +12,10 @@
 #include "renderer/Renderer.hpp"
 #include "renderer/SecondWindow.hpp"
 #include "memory/BufferManager.hpp"
+#include "memory/Containers.hpp"
 #include <memory>
 #include <filesystem>
 #include <string>
-#include <vector>
 
 namespace ndde {
 
@@ -62,8 +62,8 @@ private:
     double     m_last_frame_time = 0.0;
     DebugStats m_debug_stats;
     u32        m_surface_perturb_seed = 1;
-    std::vector<PanelHandle> m_global_panels;
-    std::vector<std::string> m_event_log;
+    memory::PersistentVector<PanelHandle> m_global_panels;
+    memory::PersistentVector<std::string> m_event_log;
 
     void run_frame();
     void handle_resize();

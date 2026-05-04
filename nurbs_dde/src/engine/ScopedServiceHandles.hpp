@@ -2,8 +2,9 @@
 // engine/ScopedServiceHandles.hpp
 // Plain RAII owner for several service registration handles.
 
+#include "memory/Containers.hpp"
+
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
@@ -31,7 +32,7 @@ public:
     [[nodiscard]] bool empty() const noexcept { return m_handles.empty(); }
 
 private:
-    std::vector<Handle> m_handles;
+    memory::PersistentVector<Handle> m_handles;
 };
 
 } // namespace ndde

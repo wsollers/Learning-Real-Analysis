@@ -5,20 +5,20 @@
 #include "app/ParticleBehaviors.hpp"
 #include "app/ParticleGoals.hpp"
 #include "app/ParticleSystem.hpp"
+#include "memory/Containers.hpp"
 #include "sim/LevelCurveWalker.hpp"
 #include "numeric/ops.hpp"
 #include <algorithm>
 #include <random>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
 struct SwarmRecipeMetadata {
     std::string family_name;
     u32 requested_count = 0;
-    std::vector<ParticleRole> roles_emitted;
+    memory::FrameVector<ParticleRole> roles_emitted;
     bool goals_added = false;
 
     [[nodiscard]] std::string roles_label() const {
@@ -34,7 +34,7 @@ struct SwarmRecipeMetadata {
 };
 
 struct SwarmBuildResult {
-    std::vector<ParticleId> particle_ids;
+    memory::FrameVector<ParticleId> particle_ids;
     SwarmRecipeMetadata metadata;
 
     [[nodiscard]] std::size_t size() const noexcept { return particle_ids.size(); }
@@ -375,7 +375,7 @@ private:
 
     [[nodiscard]] static SwarmRecipeMetadata recipe_metadata(std::string family_name,
                                                              u32 requested_count,
-                                                             std::vector<ParticleRole> roles,
+                                                             memory::FrameVector<ParticleRole> roles,
                                                              bool goals_added)
     {
         return SwarmRecipeMetadata{

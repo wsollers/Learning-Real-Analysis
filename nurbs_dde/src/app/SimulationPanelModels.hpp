@@ -3,11 +3,11 @@
 // Lightweight view/control data shared by reusable simulation panels.
 
 #include "engine/SimulationMetadata.hpp"
+#include "memory/Containers.hpp"
 
 #include <functional>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -25,7 +25,7 @@ struct SimulationCommand {
 };
 
 struct SimulationCommandList {
-    std::vector<SimulationCommand> commands;
+    memory::PersistentVector<SimulationCommand> commands;
 
     void run(std::string_view name) const {
         for (const SimulationCommand& command : commands) {

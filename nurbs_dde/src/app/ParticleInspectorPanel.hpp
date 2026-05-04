@@ -4,13 +4,13 @@
 
 #include "app/AnimatedCurve.hpp"
 #include "app/ParticleBehaviors.hpp"
+#include "memory/Containers.hpp"
 #include "sim/BrownianMotion.hpp"
 #include "sim/LevelCurveWalker.hpp"
 
 #include <imgui.h>
 #include <algorithm>
 #include <cmath>
-#include <vector>
 
 namespace ndde {
 
@@ -23,7 +23,7 @@ struct ParticleInspectorOptions {
 
 class ParticleInspectorPanel {
 public:
-    static void draw(std::vector<AnimatedCurve>& particles,
+    static void draw(memory::SimVector<AnimatedCurve>& particles,
                      const ParticleInspectorOptions& options = {}) {
         ImGui::SeparatorText(options.label);
         ImGui::TextDisabled("%zu particle(s)", particles.size());

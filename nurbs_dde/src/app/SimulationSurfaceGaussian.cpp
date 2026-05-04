@@ -1,12 +1,12 @@
 #include "app/SimulationSurfaceGaussian.hpp"
 #include "app/AlternateViewPanel.hpp"
 #include "app/SimulationRenderPackets.hpp"
+#include "memory/Containers.hpp"
 
 #include <imgui.h>
 #include <algorithm>
 #include <span>
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
@@ -198,7 +198,7 @@ void SimulationSurfaceGaussian::draw_swarm_panel() {
     ImGui::SetNextWindowPos(ImVec2(24.f, 300.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300.f, 230.f), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin("Sim - Swarms")) { ImGui::End(); return; }
-    std::vector<SwarmRecipeAction> actions{
+    memory::FrameVector<SwarmRecipeAction> actions{
         {.label = "Reset pursuit", .hotkey = "Ctrl+R", .spawn = [this] { reset_showcase(); return m_last_swarm; }},
         {.label = "Brownian cloud", .hotkey = "Ctrl+B", .spawn = [this] { spawn_cloud(); return m_last_swarm; }},
         {.label = "Contour band", .hotkey = "", .spawn = [this] { spawn_contour_band(); return m_last_swarm; }}

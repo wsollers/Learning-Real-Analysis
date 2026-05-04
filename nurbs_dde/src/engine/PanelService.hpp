@@ -3,12 +3,12 @@
 // Engine-owned registration surface for UI panels.
 
 #include "engine/ServiceHandle.hpp"
+#include "memory/Containers.hpp"
 
 #include <algorithm>
 #include <functional>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -80,7 +80,7 @@ private:
     };
 
     PanelId m_next_id = 1;
-    std::vector<PanelEntry> m_panels;
+    memory::PersistentVector<PanelEntry> m_panels;
 
     void unregister(PanelId id) noexcept {
         for (auto& entry : m_panels) {

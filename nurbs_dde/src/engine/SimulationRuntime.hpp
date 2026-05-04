@@ -4,13 +4,13 @@
 
 #include "engine/ISimulation.hpp"
 #include "engine/SimulationHost.hpp"
+#include "memory/Containers.hpp"
 
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -77,7 +77,7 @@ public:
     [[nodiscard]] const SimulationRuntime* get(std::size_t index) const noexcept;
 
 private:
-    std::vector<std::unique_ptr<SimulationRuntime>> m_runtimes;
+    memory::PersistentVector<std::unique_ptr<SimulationRuntime>> m_runtimes;
 };
 
 } // namespace ndde

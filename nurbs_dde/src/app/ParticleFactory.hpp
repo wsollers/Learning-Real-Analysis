@@ -4,6 +4,7 @@
 
 #include "app/AnimatedCurve.hpp"
 #include "app/ParticleBehaviors.hpp"
+#include "memory/Containers.hpp"
 #include "sim/DomainConfinement.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/IConstraint.hpp"
@@ -12,7 +13,6 @@
 #include <limits>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
@@ -165,7 +165,7 @@ private:
     float m_history_dt_min = 1.f / 120.f;
     bool m_stochastic = false;
     BehaviorStack m_stack;
-    std::vector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints;
+    memory::SimVector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints;
 };
 
 class ParticleFactory {

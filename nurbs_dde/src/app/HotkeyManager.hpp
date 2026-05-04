@@ -73,9 +73,9 @@
 #include <imgui.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "memory/Containers.hpp"
 #include <functional>
 #include <string>
-#include <vector>
 #include <cstdint>
 #include <algorithm>
 
@@ -267,7 +267,7 @@ public:
         }
 
         // Collect group order (insertion order of first appearance).
-        std::vector<std::string> group_order;
+        memory::FrameVector<std::string> group_order;
         for (const auto& e : m_entries) {
             const bool seen = std::any_of(group_order.begin(), group_order.end(),
                                           [&](const std::string& g){ return g == e.group; });
@@ -310,7 +310,7 @@ private:
         bool                  prev = false;  ///< previous-frame key state (edge detection)
     };
 
-    std::vector<Entry> m_entries;
+    memory::SimVector<Entry> m_entries;
     HotkeyID           m_next_id = 0u;
 
     [[nodiscard]] static uint8_t mods_from_glfw(int mods) noexcept {

@@ -7,6 +7,7 @@
 #include "app/ParticleGoals.hpp"
 #include "app/SimulationContext.hpp"
 #include "engine/IScene.hpp"
+#include "memory/Containers.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/IConstraint.hpp"
 #include "sim/MilsteinIntegrator.hpp"
@@ -14,7 +15,6 @@
 #include <random>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
@@ -31,13 +31,13 @@ public:
     [[nodiscard]] ParticleFactory factory() const noexcept { return ParticleFactory(m_surface); }
     [[nodiscard]] std::mt19937& rng() noexcept { return m_rng; }
 
-    [[nodiscard]] std::vector<Particle>& particles() noexcept { return m_particles; }
-    [[nodiscard]] const std::vector<Particle>& particles() const noexcept { return m_particles; }
+    [[nodiscard]] memory::SimVector<Particle>& particles() noexcept { return m_particles; }
+    [[nodiscard]] const memory::SimVector<Particle>& particles() const noexcept { return m_particles; }
     [[nodiscard]] bool empty() const noexcept { return m_particles.empty(); }
     [[nodiscard]] std::size_t size() const noexcept { return m_particles.size(); }
 
-    [[nodiscard]] std::vector<ParticleSnapshot> snapshot_particles() const {
-        std::vector<ParticleSnapshot> out;
+    [[nodiscard]] memory::FrameVector<ParticleSnapshot> snapshot_particles() const {
+        memory::FrameVector<ParticleSnapshot> out;
         out.reserve(m_particles.size());
         for (const auto& particle : m_particles) {
             const glm::vec2 uv = particle.head_uv();
@@ -119,9 +119,9 @@ private:
     const ndde::math::ISurface* m_surface = nullptr;
     ndde::sim::EulerIntegrator m_euler;
     ndde::sim::MilsteinIntegrator m_milstein;
-    std::vector<Particle> m_particles;
-    std::vector<std::unique_ptr<ndde::sim::IPairConstraint>> m_pair_constraints;
-    std::vector<std::unique_ptr<IParticleGoal>> m_goals;
+    memory::SimVector<Particle> m_particles;
+    memory::SimVector<std::unique_ptr<ndde::sim::IPairConstraint>> m_pair_constraints;
+    memory::SimVector<std::unique_ptr<IParticleGoal>> m_goals;
     std::mt19937 m_rng;
 
     void apply_pair_constraints() {

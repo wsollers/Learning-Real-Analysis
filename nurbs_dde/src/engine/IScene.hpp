@@ -24,11 +24,11 @@
 // migrated.  New simulation runtime code uses ISimulation.
 
 #include "math/Scalars.hpp"  // f32
+#include "memory/Containers.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -50,7 +50,7 @@ struct SceneSnapshot {
     float sim_speed = 0.f;
     std::size_t particle_count = 0;
     std::string status;
-    std::vector<ParticleSnapshot> particles;
+    memory::FrameVector<ParticleSnapshot> particles;
 };
 
 class IScene {

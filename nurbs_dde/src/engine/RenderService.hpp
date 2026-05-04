@@ -370,7 +370,7 @@ private:
     };
 
     RenderViewId m_next_id = 1;
-    memory::PersistentVector<RenderViewEntry> m_views;
+    memory::ViewVector<RenderViewEntry> m_views;
     memory::FrameVector<RenderPacket> m_packets;
     memory::FrameVector<SurfacePerturbCommand> m_surface_commands;
 

@@ -1,6 +1,7 @@
 #include "app/MultiWellSpawner.hpp"
 
 #include "app/ParticleBehaviors.hpp"
+#include "memory/Containers.hpp"
 #include "numeric/ops.hpp"
 
 #include <utility>
@@ -9,7 +10,7 @@ namespace ndde {
 
 namespace {
 SwarmBuildResult make_multiwell_result(std::string name, u32 count,
-                                       std::vector<ParticleRole> roles,
+                                       memory::FrameVector<ParticleRole> roles,
                                        bool goal = false) {
     return SwarmBuildResult{.metadata = SwarmRecipeMetadata{
         .family_name = std::move(name),

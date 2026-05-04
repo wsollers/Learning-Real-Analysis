@@ -2,12 +2,13 @@
 // app/PanelHost.hpp
 // Small ImGui panel helper for scene-specific panels.
 
+#include "memory/Containers.hpp"
+
 #include <imgui.h>
 #include <functional>
 #include <string>
 #include <string_view>
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
@@ -43,7 +44,7 @@ public:
     }
 
 private:
-    std::vector<PanelSpec> m_panels;
+    memory::ViewVector<PanelSpec> m_panels;
 
     static void draw(PanelSpec& panel) {
         if (panel.visible && !*panel.visible) return;

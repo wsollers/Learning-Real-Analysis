@@ -4,11 +4,11 @@
 
 #include "app/AnimatedCurve.hpp"
 #include "app/ParticleFactory.hpp"
+#include "memory/Containers.hpp"
 #include "numeric/ops.hpp"
 #include <imgui.h>
 #include <algorithm>
 #include <cstdio>
-#include <vector>
 
 namespace ndde {
 
@@ -57,7 +57,7 @@ inline void draw_projected_arrow(ImDrawList* dl,
 template <class ProjectFn>
 [[nodiscard]] inline ProjectedParticleOverlayResult draw_projected_particle_overlay(
     ImDrawList* dl,
-    const std::vector<Particle>& particles,
+    const memory::SimVector<Particle>& particles,
     const ImVec2& cpos,
     const ImVec2& csz,
     ProjectFn project,

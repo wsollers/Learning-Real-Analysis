@@ -2,10 +2,10 @@
 
 #include "app/AlternateViewPanel.hpp"
 #include "app/SimulationRenderPackets.hpp"
+#include "memory/Containers.hpp"
 
 #include <imgui.h>
 #include <utility>
-#include <vector>
 
 namespace ndde {
 
@@ -172,7 +172,7 @@ void SimulationAnalysis::draw_swarm_panel() {
     ImGui::SetNextWindowPos(ImVec2(24.f, 350.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300.f, 180.f), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin("Sim - Swarms")) { ImGui::End(); return; }
-    std::vector<SwarmRecipeAction> actions{
+    memory::FrameVector<SwarmRecipeAction> actions{
         {.label = "Spawn walker", .hotkey = "Ctrl+W", .spawn = [this] { spawn_walker(); return m_last_swarm; }},
         {.label = "Reset analysis", .hotkey = "Ctrl+R", .spawn = [this] { reset_showcase(); return m_last_swarm; }}
     };

@@ -6,11 +6,11 @@
 #include "app/HotkeyManager.hpp"
 #include "app/ParticleGoals.hpp"
 #include "app/ParticleSystem.hpp"
+#include "memory/Containers.hpp"
 
 #include <imgui.h>
 #include <cstddef>
 #include <string>
-#include <vector>
 
 namespace ndde {
 
@@ -38,7 +38,7 @@ protected:
     bool m_show_hotkeys = false;
     GoalStatus m_goal_status = GoalStatus::Running;
     std::size_t m_snapshot_particle_count = 0;
-    std::vector<ParticleSnapshot> m_snapshot_particles;
+    memory::FrameVector<ParticleSnapshot> m_snapshot_particles;
 
     void reset_simulation_clock() noexcept {
         m_sim_time = 0.f;

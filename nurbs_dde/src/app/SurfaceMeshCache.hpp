@@ -2,10 +2,9 @@
 // app/SurfaceMeshCache.hpp
 // Shared CPU-side tessellation cache for scene surface previews.
 
+#include "memory/Containers.hpp"
 #include "math/GeometryTypes.hpp"
 #include "math/Surfaces.hpp"
-
-#include <vector>
 
 namespace ndde {
 
@@ -32,9 +31,9 @@ public:
     void rebuild_if_needed(const ndde::math::ISurface& surface,
                            const SurfaceMeshOptions& options);
 
-    [[nodiscard]] const std::vector<Vertex>& fill_vertices() const noexcept { return m_fill; }
-    [[nodiscard]] const std::vector<Vertex>& wire_vertices() const noexcept { return m_wire; }
-    [[nodiscard]] const std::vector<Vertex>& contour_vertices() const noexcept { return m_contour; }
+    [[nodiscard]] const memory::CacheVector<Vertex>& fill_vertices() const noexcept { return m_fill; }
+    [[nodiscard]] const memory::CacheVector<Vertex>& wire_vertices() const noexcept { return m_wire; }
+    [[nodiscard]] const memory::CacheVector<Vertex>& contour_vertices() const noexcept { return m_contour; }
 
     [[nodiscard]] u32 fill_count() const noexcept { return m_fill_count; }
     [[nodiscard]] u32 wire_count() const noexcept { return m_wire_count; }
@@ -47,9 +46,9 @@ private:
     bool m_dirty = true;
     u32 m_cached_grid = 0;
 
-    std::vector<Vertex> m_fill;
-    std::vector<Vertex> m_wire;
-    std::vector<Vertex> m_contour;
+    memory::CacheVector<Vertex> m_fill;
+    memory::CacheVector<Vertex> m_wire;
+    memory::CacheVector<Vertex> m_contour;
     u32 m_fill_count = 0;
     u32 m_wire_count = 0;
     u32 m_contour_count = 0;

@@ -6,10 +6,10 @@
 #include "app/SurfaceMeshCache.hpp"
 #include "engine/EngineAPI.hpp"
 #include "engine/RenderSubmission.hpp"
+#include "memory/Containers.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
-#include <vector>
 
 namespace ndde {
 
@@ -54,7 +54,7 @@ inline void submit_contour_window(EngineAPI& api,
         const u32 n = particle.trail_vertex_count();
         if (n < 2) continue;
 
-        std::vector<Vertex> trail_vertices(n);
+        memory::FrameVector<Vertex> trail_vertices(n);
         particle.tessellate_trail({trail_vertices.data(), n});
         submit_transformed_vertices(api, RenderTarget::Contour2D, trail_vertices, n,
             Topology::LineStrip, DrawMode::VertexColor, {1,1,1,1}, mvp,

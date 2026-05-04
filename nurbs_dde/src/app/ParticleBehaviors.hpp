@@ -3,13 +3,13 @@
 // Composable behavior stack for particle dynamics.
 
 #include "app/SimulationContext.hpp"
+#include "memory/Containers.hpp"
 #include "sim/IEquation.hpp"
 #include "numeric/ops.hpp"
 #include <algorithm>
 #include <limits>
 #include <memory>
 #include <string>
-#include <vector>
 
 namespace ndde {
 
@@ -369,7 +369,7 @@ public:
     }
 
     [[nodiscard]] std::string name() const override;
-    [[nodiscard]] std::vector<std::string> behavior_labels() const;
+    [[nodiscard]] memory::FrameVector<std::string> behavior_labels() const;
 
     template <class Equation>
     [[nodiscard]] Equation* find_equation() noexcept {
@@ -399,7 +399,7 @@ private:
         float weight = 1.f;
     };
 
-    std::vector<Entry> m_behaviors;
+    memory::SimVector<Entry> m_behaviors;
     const SimulationContext* m_context = nullptr;
     ParticleId m_owner = 0;
     SlopeVelocityTransform m_velocity_transform{};

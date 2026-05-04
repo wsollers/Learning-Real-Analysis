@@ -29,8 +29,9 @@
 //   If t_past < oldest record: return oldest record (clamp left)
 //   If t_past > newest record: return newest record (clamp right)
 
+#include "memory/Containers.hpp"
+
 #include <glm/glm.hpp>
-#include <vector>
 #include <cstddef>
 #include <cmath>
 
@@ -132,8 +133,8 @@ public:
     // When the buffer has not yet wrapped: a simple copy of m_records.
     // When wrapped: reorders the two halves around m_head.
     // Cost: O(n) time and space.  Only call for export/debug, not per-frame.
-    [[nodiscard]] std::vector<Record> to_vector() const {
-        std::vector<Record> out;
+    [[nodiscard]] memory::HistoryVector<Record> to_vector() const {
+        memory::HistoryVector<Record> out;
         const std::size_t n = m_records.size();
         out.reserve(n);
         for (std::size_t i = 0; i < n; ++i) {
@@ -148,7 +149,7 @@ public:
 private:
     std::size_t       m_capacity;
     float             m_dt_min;
-    std::vector<Record> m_records;
+    memory::HistoryVector<Record> m_records;
     std::size_t       m_head = 0;       // index of oldest record (when full)
     float             m_last_push_t = -1e30f;
 };

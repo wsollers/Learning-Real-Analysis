@@ -44,8 +44,8 @@
 #include "app/FrenetFrame.hpp"
 #include "app/ParticleTypes.hpp"
 #include "math/GeometryTypes.hpp"
+#include "memory/Containers.hpp"
 #include <glm/glm.hpp>
-#include <vector>
 #include <span>
 #include <memory>
 #include <atomic>
@@ -175,13 +175,13 @@ public:
 
 private:
     ndde::sim::ParticleState                m_walk;
-    std::vector<Vec3>                        m_trail;
+    memory::HistoryVector<Vec3>              m_trail;
     const ndde::math::ISurface*              m_surface;        // non-owning, never null
     ndde::sim::IEquation*                    m_equation;       // non-owning OR alias to m_owned_equation
     std::unique_ptr<ndde::sim::IEquation>    m_owned_equation; // null when using shared equation
     const ndde::sim::IIntegrator*            m_integrator;     // non-owning, never null
     std::unique_ptr<ndde::sim::HistoryBuffer> m_history;       // null unless enable_history() called
-    std::vector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints; // applied after each sub-step
+    memory::SimVector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints; // applied after each sub-step
     Role                                     m_role;
     u32                                      m_colour_slot;
     f32                                      m_start_x, m_start_y;

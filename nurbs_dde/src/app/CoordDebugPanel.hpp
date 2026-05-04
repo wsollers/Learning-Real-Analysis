@@ -7,11 +7,11 @@
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
 #include "math/Scalars.hpp"
+#include "memory/Containers.hpp"
 #include "numeric/ops.hpp"
 
 #include <imgui.h>
 #include <string>
-#include <vector>
 #include <utility>
 #include <cmath>
 
@@ -75,7 +75,7 @@ public:
         std::string snap_curve_name;
 
         // Curve snap cache sizes
-        std::vector<std::pair<std::string, int>> curve_cache_sizes;
+        memory::PersistentVector<std::pair<std::string, int>> curve_cache_sizes;
 
         int frame = 0;
     };

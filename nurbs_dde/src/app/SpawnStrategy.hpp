@@ -18,10 +18,10 @@
 #include "app/AnimatedCurve.hpp"
 #include "numeric/ops.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/Containers.hpp"
 #include "sim/IEquation.hpp"
 #include "sim/IIntegrator.hpp"
 #include <glm/glm.hpp>
-#include <vector>
 #include <memory>
 #include <cmath>
 #include <algorithm>
@@ -46,7 +46,7 @@ struct SpawnContext {
 // there are no curves yet.  Used as the anchor for offset_spawn().
 
 [[nodiscard]] inline glm::vec2 reference_uv(
-    const std::vector<AnimatedCurve>& curves,
+    const memory::SimVector<AnimatedCurve>& curves,
     const ndde::math::ISurface&       surface) noexcept
 {
     if (curves.empty())
