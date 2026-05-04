@@ -188,6 +188,20 @@ TEST(InteractionService, ResolvesSurfaceAndTrailHits) {
     const HoverMetadata& hover = interaction.hover_metadata();
     EXPECT_TRUE(hover.surface.hit);
     EXPECT_TRUE(hover.particle.hit);
+
+    const InteractionTarget hover_target = interaction.hover_target(5u);
+    EXPECT_EQ(hover_target.kind, InteractionTargetKind::TrailSample);
+    EXPECT_EQ(hover_target.particle_id, 12u);
+    interaction.select_current_hover(5u);
+    const InteractionTarget selected = interaction.selected_target(5u);
+    EXPECT_TRUE(selected.valid);
+    EXPECT_EQ(selected.kind, InteractionTargetKind::TrailSample);
+    EXPECT_EQ(selected.trail_index, 4u);
+
+    interaction.select_surface(surface_hit);
+    const InteractionTarget selected_surface = interaction.selected_target(5u);
+    EXPECT_EQ(selected_surface.kind, InteractionTargetKind::SurfacePoint);
+    EXPECT_NEAR(selected_surface.uv.x, 0.f, 1e-4f);
 }
 
 TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
@@ -403,6 +417,23 @@ TEST(CameraInputController, ResetUsesViewDomainCenter) {
     EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.target.z, 1.f);
 }
 
+TEST(CameraInputController, FrameSelectionMovesCameraTarget) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    RenderViewId view_id = 0;
+    const auto view = render.register_view(RenderViewDescriptor{.title = "View"}, &view_id);
+    CameraService camera;
+    camera.set_render_service(&render);
+    InteractionService interaction;
+    interaction.set_memory_service(&memory);
+
+    interaction.select_view_point(view_id, {1.5f, -2.0f}, {1.5f, -2.0f, 0.f});
+    EXPECT_TRUE(camera.frame_selection(interaction));
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.target.x, 1.5f);
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.target.y, -2.0f);
+}
+
 TEST(CameraInputController, SurfacePickOnlyEmitsForPerspectiveSurfaceProfile) {
     memory::MemoryService memory;
     RenderService render;
@@ -447,6 +478,7 @@ TEST(CameraInputController, SurfacePickOnlyEmitsForPerspectiveSurfaceProfile) {
         .profile = CameraViewProfile::PerspectiveSurface3D,
         .normalized_pixel = {0.25f, 0.75f},
         .screen_ndc = {-0.5f, -0.5f},
+        .left_click = true,
         .left_double_click = true,
         .enabled = true,
         .perturb_seed = 12u

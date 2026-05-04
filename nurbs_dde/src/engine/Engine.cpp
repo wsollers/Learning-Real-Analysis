@@ -312,6 +312,8 @@ void Engine::draw_global_status_panel() {
     if (ImGui::Button("Front")) m_services.camera().reset_main(CameraPreset::Front);
     ImGui::SameLine();
     if (ImGui::Button("Side")) m_services.camera().reset_main(CameraPreset::Side);
+    if (ImGui::Button("Frame Selection"))
+        (void)m_services.camera().frame_selection(m_services.interaction());
     ImGui::TextDisabled("RMB drag orbit   MMB/Shift+RMB pan   Wheel zoom");
     ImGui::TextDisabled("Double-click surface perturb");
     ImGui::End();
@@ -371,6 +373,37 @@ void Engine::draw_debug_coordinates_panel() {
         ImGui::TextDisabled("k %.5f   tau %.5f", hover.particle.curvature, hover.particle.torsion);
     } else {
         ImGui::TextDisabled("particle: no trail snap");
+    }
+    auto kind_name = [](InteractionTargetKind kind) {
+        switch (kind) {
+            case InteractionTargetKind::SurfacePoint: return "SurfacePoint";
+            case InteractionTargetKind::ViewPoint2D: return "ViewPoint2D";
+            case InteractionTargetKind::Particle: return "Particle";
+            case InteractionTargetKind::TrailSample: return "TrailSample";
+            case InteractionTargetKind::None:
+            default: return "None";
+        }
+    };
+    const InteractionTarget selected = m_services.interaction().selected_target();
+    ImGui::SeparatorText("Selection");
+    ImGui::TextDisabled("kind %s   view %llu",
+        kind_name(selected.kind),
+        static_cast<unsigned long long>(selected.view));
+    if (selected.valid) {
+        if (selected.kind == InteractionTargetKind::SurfacePoint) {
+            ImGui::TextDisabled("uv %.3f, %.3f", selected.uv.x, selected.uv.y);
+        }
+        if (selected.kind == InteractionTargetKind::ViewPoint2D) {
+            ImGui::TextDisabled("point %.3f, %.3f", selected.point2d.x, selected.point2d.y);
+        }
+        ImGui::TextDisabled("world %.3f, %.3f, %.3f",
+            selected.world.x, selected.world.y, selected.world.z);
+        if (selected.kind == InteractionTargetKind::TrailSample || selected.kind == InteractionTargetKind::Particle) {
+            ImGui::TextDisabled("particle %llu trail %u",
+                static_cast<unsigned long long>(selected.particle_id),
+                selected.trail_index);
+            ImGui::TextDisabled("k %.5f   tau %.5f", selected.curvature, selected.torsion);
+        }
     }
     ImGui::End();
 }
@@ -550,6 +583,7 @@ void Engine::update_render_view_input() {
                 .right_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT),
                 .middle_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE),
                 .shift = io.KeyShift,
+                .left_click = false,
                 .left_double_click = false,
                 .enabled = true
             });
@@ -560,6 +594,7 @@ void Engine::update_render_view_input() {
         const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
         const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
         const bool double_click = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        const bool left_click = ImGui::IsMouseClicked(ImGuiMouseButton_Left);
         (void)m_services.camera_input().dispatch(
             m_services.camera(),
             m_services.interaction(),
@@ -575,6 +610,7 @@ void Engine::update_render_view_input() {
                 .right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right),
                 .middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle),
                 .shift = io.KeyShift,
+                .left_click = left_click,
                 .left_double_click = double_click,
                 .enabled = true,
                 .perturb_seed = double_click ? m_surface_perturb_seed++ : 0u

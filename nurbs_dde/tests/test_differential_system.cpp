@@ -1,4 +1,5 @@
 #include "sim/DifferentialSystem.hpp"
+#include "sim/DelayDifferentialSystem.hpp"
 
 #include <gtest/gtest.h>
 
@@ -44,6 +45,10 @@ public:
         derivative[1] = -2.0 * state[1];
     }
 };
+
+void constant_history_one(f64, std::span<f64> out, void*) {
+    out[0] = 1.0;
+}
 
 TEST(DifferentialSystem, Rk4SolvesExponentialGrowthInitialValueProblem) {
     memory::MemoryService memory;
@@ -120,6 +125,127 @@ TEST(DifferentialSystem, ProblemBuffersBindToMemoryServiceScopes) {
     EXPECT_EQ(problem.history_size(), 2u);
     EXPECT_EQ(problem.initial_state()[0], 1.0);
     EXPECT_GT(problem.state()[0], problem.initial_state()[0]);
+}
+
+TEST(DelayDifferentialSystem, MetadataAndMaxDelayAreAvailable) {
+    sim::LinearDelaySystem system{0.25, 0.75, 1.5};
+    const sim::EquationSystemMetadata metadata = system.metadata();
+
+    EXPECT_EQ(metadata.name, "Linear delay");
+    EXPECT_EQ(metadata.formula, "y' = a y(t) + b y(t - tau)");
+    EXPECT_EQ(metadata.variables, "y");
+    EXPECT_EQ(system.dimension(), 1u);
+    EXPECT_DOUBLE_EQ(system.max_delay(), 1.5);
+}
+
+TEST(DelayDifferentialSystem, EulerUsesInitialHistoryFunctionBeforeDelayWindowExpires) {
+    memory::MemoryService memory;
+    sim::LinearDelaySystem system{0.0, 1.0, 1.0};
+    sim::EulerDdeSolver solver;
+    const f64 initial[] = {1.0};
+    sim::DelayInitialValueProblem problem{
+        memory,
+        system,
+        initial,
+        0.0,
+        0.05,
+        constant_history_one,
+        nullptr
+    };
+
+    for (int i = 0; i < 5; ++i)
+        problem.step(solver, 0.1);
+
+    ASSERT_EQ(problem.dimension(), 1u);
+    EXPECT_NEAR(problem.state()[0], 1.5, 1e-12);
+    EXPECT_NEAR(problem.time(), 0.5, 1e-12);
+    EXPECT_GT(problem.history_size(), 5u);
+}
+
+TEST(DelayDifferentialSystem, EulerQueriesComputedHistoryAfterDelayWindow) {
+    memory::MemoryService memory;
+    sim::LinearDelaySystem system{0.0, 1.0, 1.0};
+    sim::EulerDdeSolver solver;
+    const f64 initial[] = {1.0};
+    sim::DelayInitialValueProblem problem{
+        memory,
+        system,
+        initial,
+        0.0,
+        0.01,
+        constant_history_one,
+        nullptr
+    };
+
+    for (int i = 0; i < 150; ++i)
+        problem.step(solver, 0.01);
+
+    EXPECT_NEAR(problem.state()[0], 2.6225, 2e-3);
+    EXPECT_NEAR(problem.time(), 1.5, 1e-12);
+}
+
+TEST(DelayDifferentialSystem, QueryHistoryInterpolatesStoredSamples) {
+    memory::MemoryService memory;
+    sim::LinearDelaySystem system{0.0, 1.0, 1.0};
+    sim::EulerDdeSolver solver;
+    const f64 initial[] = {1.0};
+    sim::DelayInitialValueProblem problem{
+        memory,
+        system,
+        initial,
+        0.0,
+        0.1,
+        constant_history_one,
+        nullptr
+    };
+
+    problem.step(solver, 0.1);
+    problem.step(solver, 0.1);
+
+    f64 interpolated = 0.0;
+    problem.query_history(0.15, std::span<f64>{&interpolated, 1u});
+
+    EXPECT_NEAR(interpolated, 1.15, 1e-12);
+}
+
+TEST(DelayDifferentialSystem, ProblemBuffersBindToMemoryServiceScopes) {
+    memory::MemoryService memory;
+    sim::LinearDelaySystem system{0.0, 1.0, 0.25};
+    sim::EulerDdeSolver solver;
+    const f64 initial[] = {2.0};
+    sim::DelayInitialValueProblem problem{memory, system, initial, 0.0, 0.05};
+
+    problem.step(solver, 0.05);
+
+    EXPECT_EQ(problem.initial_state()[0], 2.0);
+    EXPECT_GT(problem.state()[0], problem.initial_state()[0]);
+    EXPECT_GT(problem.history_size(), 1u);
+    EXPECT_NEAR(problem.history_state(0)[0], 2.0, 1e-12);
+}
+
+TEST(DelayDifferentialSystem, BoundedDelayedFeedbackStaysWithinExpectedEnvelope) {
+    memory::MemoryService memory;
+    sim::BoundedDelayedFeedbackSystem system{0.8, 1.4, 1.2};
+    sim::EulerDdeSolver solver;
+    const f64 initial[] = {0.75};
+    sim::DelayInitialValueProblem problem{
+        memory,
+        system,
+        initial,
+        0.0,
+        0.02,
+        constant_history_one,
+        nullptr
+    };
+
+    f64 max_abs = 0.0;
+    for (int i = 0; i < 3000; ++i) {
+        problem.step(solver, 0.01);
+        max_abs = std::max(max_abs, std::abs(problem.state()[0]));
+    }
+
+    EXPECT_LT(max_abs, system.expected_bound() + 0.2);
+    EXPECT_GT(problem.history_size(), 3000u);
 }
 
 } // namespace

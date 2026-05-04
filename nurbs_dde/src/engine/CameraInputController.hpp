@@ -15,7 +15,8 @@ enum class CameraCommandKind : u8 {
     Zoom,
     Reset,
     PickSurface,
-    PickViewPoint
+    PickViewPoint,
+    SelectHover
 };
 
 struct CameraCommand {
@@ -40,6 +41,7 @@ struct CameraInputSample {
     bool right_drag = false;
     bool middle_drag = false;
     bool shift = false;
+    bool left_click = false;
     bool left_double_click = false;
     bool enabled = true;
     u32 perturb_seed = 0u;
@@ -72,6 +74,12 @@ public:
                 .kind = CameraCommandKind::Zoom,
                 .view = input.view,
                 .wheel_delta = input.wheel_delta
+            });
+        }
+        if (input.left_click) {
+            result.push(CameraCommand{
+                .kind = CameraCommandKind::SelectHover,
+                .view = input.view
             });
         }
 
@@ -154,6 +162,9 @@ public:
                     .screen_ndc = command.screen_ndc,
                     .seed = command.seed
                 });
+                break;
+            case CameraCommandKind::SelectHover:
+                interaction.select_current_hover(command.view);
                 break;
         }
     }

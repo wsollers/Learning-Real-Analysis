@@ -1,4 +1,5 @@
 #include "app/SimulationAnalysis.hpp"
+#include "app/SimulationDelayDifferential2D.hpp"
 #include "app/SimulationDifferential2D.hpp"
 #include "app/SimulationMultiWell.hpp"
 #include "app/SimulationSurfaceGaussian.hpp"
@@ -77,6 +78,10 @@ TEST(AllSimulations, Differential2DRegistersStartsAndEmitsPackets) {
     expect_simulation_registers_starts_and_emits_packets<SimulationDifferential2D>();
 }
 
+TEST(AllSimulations, DelayDifferential2DRegistersStartsAndEmitsPackets) {
+    expect_simulation_registers_starts_and_emits_packets<SimulationDelayDifferential2D>();
+}
+
 TEST(AllSimulations, Differential2DDoubleClickPhasePointResetsInitialCondition) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
@@ -98,21 +103,26 @@ TEST(AllSimulations, Differential2DDoubleClickPhasePointResetsInitialCondition) 
     EXPECT_NEAR(snapshot.particles.front().u, 2.2f, 0.05f);
     EXPECT_NEAR(snapshot.particles.front().v, 2.2f, 0.05f);
     EXPECT_EQ(sim.particle_count(), 1u);
+    const InteractionTarget selected = services.interaction().selected_target(sim.alternate_view_id());
+    EXPECT_EQ(selected.kind, InteractionTargetKind::ViewPoint2D);
+    EXPECT_NEAR(selected.point2d.x, 2.2f, 0.05f);
+    EXPECT_NEAR(selected.point2d.y, 2.2f, 0.05f);
 
     sim.on_stop();
 }
 
-TEST(AllSimulations, DefaultRegistryContainsFourISimulationRuntimes) {
+TEST(AllSimulations, DefaultRegistryContainsExpectedISimulationRuntimes) {
     EngineServices services;
     SimulationRegistry registry(services.memory());
     register_default_simulations(registry);
 
-    ASSERT_EQ(registry.size(), 5u);
+    ASSERT_EQ(registry.size(), 6u);
     EXPECT_EQ(registry.get(0)->name(), "Surface Simulation");
     EXPECT_EQ(registry.get(1)->name(), "Sine-Rational Analysis");
     EXPECT_EQ(registry.get(2)->name(), "Multi-Well Centroid");
     EXPECT_EQ(registry.get(3)->name(), "Wave Predator-Prey");
     EXPECT_EQ(registry.get(4)->name(), "Differential Systems");
+    EXPECT_EQ(registry.get(5)->name(), "Delay Differential Systems");
 }
 
 } // namespace

@@ -85,6 +85,7 @@ add_executable(nurbs_dde
     app/MultiWellSpawner.cpp
     app/ParticleSystem.cpp
     app/SceneFactories.cpp
+    app/SimulationDelayDifferential2D.cpp
     app/SimulationAnalysis.cpp
     app/SimulationDifferential2D.cpp
     app/SimulationMultiWell.cpp

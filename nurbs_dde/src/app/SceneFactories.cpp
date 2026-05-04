@@ -1,6 +1,7 @@
 #include "app/SceneFactories.hpp"
 
 #include "app/SimulationAnalysis.hpp"
+#include "app/SimulationDelayDifferential2D.hpp"
 #include "app/SimulationDifferential2D.hpp"
 #include "app/SimulationMultiWell.hpp"
 #include "app/SimulationSurfaceGaussian.hpp"
@@ -14,6 +15,7 @@ void register_default_simulations(SimulationRegistry& registry) {
     registry.add_runtime<SimulationMultiWell>("Multi-Well Centroid");
     registry.add_runtime<SimulationWavePredatorPrey>("Wave Predator-Prey");
     registry.add_runtime<SimulationDifferential2D>("Differential Systems");
+    registry.add_runtime<SimulationDelayDifferential2D>("Delay Differential Systems");
 }
 
 } // namespace ndde

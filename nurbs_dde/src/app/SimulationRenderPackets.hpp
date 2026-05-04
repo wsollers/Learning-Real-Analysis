@@ -561,6 +561,11 @@ inline void submit_surface_sim_packets(RenderService& render,
     const Mat4 alternate_mvp = camera_service ? camera_service->orthographic_mvp(alternate_view)
                                               : surface_alternate_mvp(surface, options.time);
     const RenderViewDescriptor* main_descriptor = render.descriptor(main_view);
+    if (interaction && main_descriptor) {
+        const ViewMouseState mouse = interaction->mouse_state(main_view);
+        if (mouse.enabled)
+            (void)interaction->resolve_surface_hit(main_view, surface, main_mvp, mouse.ndc, options.time);
+    }
     const memory::FrameVector<TrailPickSample> pick_samples =
         (interaction && main_descriptor) ? build_trail_pick_samples(particles, memory_service)
                                          : make_frame_vector<TrailPickSample>(memory_service);

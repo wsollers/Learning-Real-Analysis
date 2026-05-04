@@ -89,6 +89,24 @@ public:
             descriptor->camera = preset_camera(preset, m_render->view_domain(view));
     }
 
+    [[nodiscard]] bool frame_selection(const InteractionService& interaction,
+                                       RenderViewId view = 0) noexcept {
+        if (!m_render) return false;
+        const InteractionTarget target = interaction.selected_target(view);
+        if (!target.valid || target.view == 0)
+            return false;
+        auto* descriptor = m_render->descriptor(target.view);
+        if (!descriptor)
+            return false;
+        if (target.kind == InteractionTargetKind::ViewPoint2D) {
+            descriptor->camera.target.x = target.point2d.x;
+            descriptor->camera.target.y = target.point2d.y;
+            return true;
+        }
+        descriptor->camera.target = target.world;
+        return true;
+    }
+
     [[nodiscard]] CameraState camera(RenderViewId view) const noexcept {
         if (m_render) {
             if (const auto* descriptor = m_render->descriptor(view))

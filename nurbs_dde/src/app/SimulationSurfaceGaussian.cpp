@@ -333,8 +333,10 @@ void SimulationSurfaceGaussian::apply_surface_commands() {
         const Mat4 mvp = m_host->camera().perspective_mvp(m_main_view);
         const SurfaceHit hit = m_host->interaction().resolve_surface_hit(
             m_main_view, *m_surface, mvp, command.screen_ndc, m_surface->time());
-        if (hit.hit)
+        if (hit.hit) {
             uv = hit.uv;
+            m_host->interaction().select_surface(hit);
+        }
         const float sign = (command.seed % 2u == 0u) ? 1.f : -1.f;
         auto& params = m_surface->params();
         params.amplitude = sign * std::max(0.05f, command.amplitude);

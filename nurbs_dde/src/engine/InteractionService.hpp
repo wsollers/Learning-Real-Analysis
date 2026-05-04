@@ -77,6 +77,28 @@ struct ParticleTrailHit {
     bool hit = false;
 };
 
+enum class InteractionTargetKind : u8 {
+    None,
+    SurfacePoint,
+    ViewPoint2D,
+    Particle,
+    TrailSample
+};
+
+struct InteractionTarget {
+    InteractionTargetKind kind = InteractionTargetKind::None;
+    RenderViewId view = 0;
+    Vec2 uv{};
+    Vec2 point2d{};
+    Vec3 world{};
+    u64 particle_id = 0;
+    u32 particle_index = 0;
+    u32 trail_index = 0;
+    f32 curvature = 0.f;
+    f32 torsion = 0.f;
+    bool valid = false;
+};
+
 struct HoverMetadata {
     RenderViewId view = 0;
     Vec2 mouse_pixel{};
@@ -97,6 +119,10 @@ public:
             std::construct_at(&m_surface_requests, view_resource);
             std::destroy_at(&m_view_point_requests);
             std::construct_at(&m_view_point_requests, view_resource);
+            std::destroy_at(&m_hover_targets);
+            std::construct_at(&m_hover_targets, view_resource);
+            std::destroy_at(&m_selected_targets);
+            std::construct_at(&m_selected_targets, view_resource);
         }
     }
 
@@ -287,17 +313,79 @@ public:
     }
 
     [[nodiscard]] const HoverMetadata& hover_metadata() const noexcept { return m_hover; }
+    [[nodiscard]] InteractionTarget hover_target(RenderViewId view = 0) const noexcept {
+        if (view != 0) {
+            if (const InteractionTarget* target = target_for_view(m_hover_targets, view))
+                return *target;
+            return InteractionTarget{.view = view};
+        }
+        return m_hover_target;
+    }
 
-    void set_hover_hits(SurfaceHit surface, ParticleTrailHit particle = {}) noexcept {
+    [[nodiscard]] InteractionTarget selected_target(RenderViewId view = 0) const noexcept {
+        if (view != 0) {
+            if (const InteractionTarget* target = target_for_view(m_selected_targets, view))
+                return *target;
+            return InteractionTarget{.view = view};
+        }
+        return m_selected_target;
+    }
+
+    void set_hover_hits(SurfaceHit surface, ParticleTrailHit particle = {}) {
         set_surface_hover(surface);
         set_particle_hover(particle);
+    }
+
+    void set_hover_view_point(RenderViewId view, Vec2 point, Vec3 world = {}) {
+        if (view == 0) return;
+        set_hover_target(InteractionTarget{
+            .kind = InteractionTargetKind::ViewPoint2D,
+            .view = view,
+            .uv = point,
+            .point2d = point,
+            .world = world,
+            .valid = true
+        });
+    }
+
+    void select_current_hover(RenderViewId view = 0) {
+        InteractionTarget target = hover_target(view);
+        if (target.valid)
+            set_selected_target(target);
+    }
+
+    void select_surface(SurfaceHit hit) {
+        if (!hit.hit) return;
+        set_selected_target(InteractionTarget{
+            .kind = InteractionTargetKind::SurfacePoint,
+            .view = hit.view,
+            .uv = hit.uv,
+            .world = hit.world,
+            .valid = true
+        });
+    }
+
+    void select_view_point(RenderViewId view, Vec2 point, Vec3 world = {}) {
+        if (view == 0) return;
+        set_selected_target(InteractionTarget{
+            .kind = InteractionTargetKind::ViewPoint2D,
+            .view = view,
+            .uv = point,
+            .point2d = point,
+            .world = world,
+            .valid = true
+        });
     }
 
 private:
     memory::ViewVector<ViewMouseState> m_mouse;
     memory::ViewVector<SurfacePickRequest> m_surface_requests;
     memory::ViewVector<ViewPointPickRequest> m_view_point_requests;
+    memory::ViewVector<InteractionTarget> m_hover_targets;
+    memory::ViewVector<InteractionTarget> m_selected_targets;
     HoverMetadata m_hover{};
+    InteractionTarget m_hover_target{};
+    InteractionTarget m_selected_target{};
     memory::MemoryService* m_memory = nullptr;
 
     [[nodiscard]] static std::optional<Vec2> project_world_to_pixel(Vec3 world,
@@ -332,14 +420,68 @@ private:
         return nullptr;
     }
 
-    void set_surface_hover(SurfaceHit hit) noexcept {
+    void set_surface_hover(SurfaceHit hit) {
         m_hover.view = hit.view != 0 ? hit.view : m_hover.view;
         m_hover.surface = hit;
+        if (hit.hit) {
+            set_hover_target(InteractionTarget{
+                .kind = InteractionTargetKind::SurfacePoint,
+                .view = hit.view,
+                .uv = hit.uv,
+                .world = hit.world,
+                .valid = true
+            });
+        } else if (hit.view != 0) {
+            set_hover_target(InteractionTarget{.view = hit.view});
+        }
     }
 
-    void set_particle_hover(ParticleTrailHit hit) noexcept {
+    void set_particle_hover(ParticleTrailHit hit) {
         m_hover.view = hit.view != 0 ? hit.view : m_hover.view;
         m_hover.particle = hit;
+        if (hit.hit) {
+            set_hover_target(InteractionTarget{
+                .kind = InteractionTargetKind::TrailSample,
+                .view = hit.view,
+                .world = hit.world,
+                .particle_id = hit.particle_id,
+                .particle_index = hit.particle_index,
+                .trail_index = hit.trail_index,
+                .curvature = hit.curvature,
+                .torsion = hit.torsion,
+                .valid = true
+            });
+        }
+    }
+
+    void set_hover_target(InteractionTarget target) {
+        m_hover_target = target;
+        set_target_for_view(m_hover_targets, target);
+    }
+
+    void set_selected_target(InteractionTarget target) {
+        m_selected_target = target;
+        set_target_for_view(m_selected_targets, target);
+    }
+
+    [[nodiscard]] static const InteractionTarget* target_for_view(const memory::ViewVector<InteractionTarget>& targets,
+                                                                  RenderViewId view) noexcept {
+        for (const InteractionTarget& target : targets) {
+            if (target.view == view)
+                return &target;
+        }
+        return nullptr;
+    }
+
+    static void set_target_for_view(memory::ViewVector<InteractionTarget>& targets, InteractionTarget target) {
+        if (target.view == 0) return;
+        for (InteractionTarget& existing : targets) {
+            if (existing.view == target.view) {
+                existing = target;
+                return;
+            }
+        }
+        targets.push_back(target);
     }
 };
 

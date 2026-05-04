@@ -385,6 +385,8 @@ void SimulationDifferential2D::update_hover() {
     }
 
     interaction.set_hover_hits(surface, trail);
+    if (surface.hit)
+        interaction.set_hover_view_point(view, surface.uv, surface.world);
 }
 
 void SimulationDifferential2D::apply_phase_pick_commands() {
@@ -417,6 +419,7 @@ void SimulationDifferential2D::set_initial_from_phase_point(RenderViewId view, V
         m_initial[0] = std::max(m_initial[0], 0.05);
         m_initial[1] = std::max(m_initial[1], 0.05);
     }
+    m_host->interaction().select_view_point(view, {x, y}, {x, y, 0.f});
     reset_problem();
 }
 
