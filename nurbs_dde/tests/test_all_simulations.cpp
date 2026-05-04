@@ -77,6 +77,31 @@ TEST(AllSimulations, Differential2DRegistersStartsAndEmitsPackets) {
     expect_simulation_registers_starts_and_emits_packets<SimulationDifferential2D>();
 }
 
+TEST(AllSimulations, Differential2DDoubleClickPhasePointResetsInitialCondition) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationDifferential2D sim;
+
+    sim.on_register(host);
+    sim.on_start();
+
+    services.interaction().queue_view_point_pick(ViewPointPickRequest{
+        .view = sim.alternate_view_id(),
+        .normalized_pixel = {0.75f, 0.25f},
+        .screen_ndc = {0.5f, 0.5f},
+        .seed = 7u
+    });
+    sim.on_tick(TickInfo{.paused = true});
+
+    const SceneSnapshot snapshot = sim.snapshot();
+    ASSERT_EQ(snapshot.particles.size(), 1u);
+    EXPECT_NEAR(snapshot.particles.front().u, 2.2f, 0.05f);
+    EXPECT_NEAR(snapshot.particles.front().v, 2.2f, 0.05f);
+    EXPECT_EQ(sim.particle_count(), 1u);
+
+    sim.on_stop();
+}
+
 TEST(AllSimulations, DefaultRegistryContainsFourISimulationRuntimes) {
     EngineServices services;
     SimulationRegistry registry(services.memory());

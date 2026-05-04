@@ -49,6 +49,13 @@ struct SurfacePickRequest {
     u32 seed = 0;
 };
 
+struct ViewPointPickRequest {
+    RenderViewId view = 0;
+    Vec2 normalized_pixel{};
+    Vec2 screen_ndc{};
+    u32 seed = 0;
+};
+
 struct TrailPickSample {
     u64 particle_id = 0;
     u32 particle_index = 0;
@@ -88,6 +95,8 @@ public:
             std::construct_at(&m_mouse, view_resource);
             std::destroy_at(&m_surface_requests);
             std::construct_at(&m_surface_requests, view_resource);
+            std::destroy_at(&m_view_point_requests);
+            std::construct_at(&m_view_point_requests, view_resource);
         }
     }
 
@@ -124,6 +133,27 @@ public:
             if (it->view == view) {
                 out.push_back(*it);
                 it = m_surface_requests.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        return out;
+    }
+
+    void queue_view_point_pick(ViewPointPickRequest request) {
+        if (request.view != 0)
+            m_view_point_requests.push_back(request);
+    }
+
+    [[nodiscard]] memory::FrameVector<ViewPointPickRequest> consume_view_point_picks(RenderViewId view) {
+        memory::FrameVector<ViewPointPickRequest> out =
+            m_memory ? m_memory->frame().make_vector<ViewPointPickRequest>()
+                     : memory::FrameVector<ViewPointPickRequest>{};
+        auto it = m_view_point_requests.begin();
+        while (it != m_view_point_requests.end()) {
+            if (it->view == view) {
+                out.push_back(*it);
+                it = m_view_point_requests.erase(it);
             } else {
                 ++it;
             }
@@ -266,6 +296,7 @@ public:
 private:
     memory::ViewVector<ViewMouseState> m_mouse;
     memory::ViewVector<SurfacePickRequest> m_surface_requests;
+    memory::ViewVector<ViewPointPickRequest> m_view_point_requests;
     HoverMetadata m_hover{};
     memory::MemoryService* m_memory = nullptr;
 

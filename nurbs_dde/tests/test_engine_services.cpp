@@ -438,6 +438,9 @@ TEST(CameraInputController, SurfacePickOnlyEmitsForPerspectiveSurfaceProfile) {
         .perturb_seed = 11u
     });
     EXPECT_TRUE(interaction.consume_surface_picks(phase_view).empty());
+    const auto phase_picks = interaction.consume_view_point_picks(phase_view);
+    ASSERT_EQ(phase_picks.size(), 1u);
+    EXPECT_EQ(phase_picks.front().seed, 11u);
 
     (void)input.dispatch(camera, interaction, render, CameraInputSample{
         .view = surface_view,

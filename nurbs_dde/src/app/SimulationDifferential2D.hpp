@@ -79,6 +79,8 @@ private:
     void draw_phase_panel();
     void submit_geometry();
     void update_hover();
+    void apply_phase_pick_commands();
+    void set_initial_from_phase_point(RenderViewId view, Vec2 screen_ndc);
 
     [[nodiscard]] const sim::IOdeSolver& solver() const noexcept;
     [[nodiscard]] RenderViewDomain phase_domain() const noexcept;

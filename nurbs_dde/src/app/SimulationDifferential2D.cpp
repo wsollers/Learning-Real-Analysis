@@ -85,6 +85,7 @@ void SimulationDifferential2D::on_start() {
 }
 
 void SimulationDifferential2D::on_tick(const TickInfo& tick) {
+    apply_phase_pick_commands();
     if (!tick.paused && !m_paused && m_running) {
         const double scaled_dt = static_cast<double>(tick.dt) * m_sim_speed;
         step_problem(scaled_dt);
@@ -384,6 +385,39 @@ void SimulationDifferential2D::update_hover() {
     }
 
     interaction.set_hover_hits(surface, trail);
+}
+
+void SimulationDifferential2D::apply_phase_pick_commands() {
+    if (!m_host) return;
+    const RenderViewDomain domain = phase_domain();
+    m_host->render().set_view_domain(m_main_view, domain);
+    m_host->render().set_view_domain(m_phase_view, domain);
+    auto consume = [this](RenderViewId view) {
+        for (const ViewPointPickRequest& pick : m_host->interaction().consume_view_point_picks(view))
+            set_initial_from_phase_point(view, pick.screen_ndc);
+    };
+    consume(m_main_view);
+    consume(m_phase_view);
+}
+
+void SimulationDifferential2D::set_initial_from_phase_point(RenderViewId view, Vec2 screen_ndc) {
+    if (!m_host || view == 0) return;
+    const Mat4 inv = glm::inverse(phase_mvp(view));
+    const glm::vec4 world4 = inv * glm::vec4(screen_ndc.x, screen_ndc.y, 0.f, 1.f);
+    if (std::abs(world4.w) < 1.0e-6f)
+        return;
+
+    const Vec3 world = Vec3{world4.x, world4.y, world4.z} / world4.w;
+    const RenderViewDomain d = phase_domain();
+    const float x = std::clamp(world.x, d.u_min, d.u_max);
+    const float y = std::clamp(world.y, d.v_min, d.v_max);
+    m_initial[0] = x;
+    m_initial[1] = y;
+    if (m_system_kind == SystemKind::PredatorPrey) {
+        m_initial[0] = std::max(m_initial[0], 0.05);
+        m_initial[1] = std::max(m_initial[1], 0.05);
+    }
+    reset_problem();
 }
 
 const sim::IOdeSolver& SimulationDifferential2D::solver() const noexcept {

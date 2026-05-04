@@ -14,7 +14,8 @@ enum class CameraCommandKind : u8 {
     Pan,
     Zoom,
     Reset,
-    PickSurface
+    PickSurface,
+    PickViewPoint
 };
 
 struct CameraCommand {
@@ -94,6 +95,15 @@ public:
             case CameraViewProfile::Orthographic2D:
                 if (input.middle_drag || input.right_drag)
                     result.push(CameraCommand{.kind = CameraCommandKind::Pan, .view = input.view, .delta = input.delta});
+                if (input.left_double_click) {
+                    result.push(CameraCommand{
+                        .kind = CameraCommandKind::PickViewPoint,
+                        .view = input.view,
+                        .normalized_pixel = input.normalized_pixel,
+                        .screen_ndc = input.screen_ndc,
+                        .seed = input.perturb_seed
+                    });
+                }
                 break;
             case CameraViewProfile::FreeFlight:
             case CameraViewProfile::FollowParticle:
@@ -136,6 +146,14 @@ public:
                     command.normalized_pixel,
                     command.screen_ndc,
                     command.seed);
+                break;
+            case CameraCommandKind::PickViewPoint:
+                interaction.queue_view_point_pick(ViewPointPickRequest{
+                    .view = command.view,
+                    .normalized_pixel = command.normalized_pixel,
+                    .screen_ndc = command.screen_ndc,
+                    .seed = command.seed
+                });
                 break;
         }
     }

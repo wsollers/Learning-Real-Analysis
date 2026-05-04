@@ -5,8 +5,18 @@
 \section{The Ordered Field Structure of $\mathbb{Q}$}
 \label{sec:ordered-field-structure-q}
 
-Once the order has been defined, the main task is to prove that it is compatible with the rational field operations.
+\begin{topicbox}{$\mathbb{Q}$ as an Ordered Field}
+\begin{exposition}
+Once the order has been defined on $\mathbb{Q}$, the main task is to prove
+that it is compatible with the field operations. This compatibility is
+captured by the ordered field axioms and then deployed to derive the basic
+sign-arithmetic laws that govern inequalities in $\mathbb{Q}$.
+\end{exposition}
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($\mathbb{Q}$ Is an Ordered Field)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[$\mathbb{Q}$ Is an Ordered Field]
 \label{thm:q-is-ordered-field}
 With its usual order, the system
@@ -14,18 +24,45 @@ With its usual order, the system
 (\mathbb{Q},+,\cdot,0,1,<)
 \]
 is an ordered field.
-\end{theorem}
-
-\begin{remark*}[Proof]
 \hyperref[prf:q-is-ordered-field]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(\mathbb{Q},+,\cdot,0,1) \text{ is a field and } < \text{ is an order on } \mathbb{Q}\\
+&\text{such that for all } a,b,c\in\mathbb{Q}:\\
+&\quad (a<b \Longrightarrow a+c<b+c)\\
+&\quad \land\;(a<b \land 0<c \Longrightarrow ac<bc).
+\end{aligned}
+\]
 \end{remark*}
 
-\begin{remark}
+\begin{remark*}[Interpretation]
 This theorem records the compatibility of the rational order with the field
 operations. It is this compatibility that makes inequalities in $\mathbb{Q}$
 behave as expected under addition, subtraction, multiplication, and division
 by positive elements.
-\end{remark}
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:q-is-field]{$\mathbb{Q}$ Is a Field}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[def:positive-cone]{Positive Cone}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Sign-Arithmetic Consequences}
+\begin{exposition}
+From the ordered field axioms one derives the fundamental sign-arithmetic
+laws: squares are nonneg\-ative, positive elements have positive inverses,
+multiplication by a positive element preserves order, and multiplication by
+a negative element reverses it. These four facts are the working toolkit for
+rational inequalities.
+\end{exposition}
 
 \begin{theorem}[Squares Are Nonnegative]
 \label{thm:squares-nonnegative}
@@ -33,19 +70,64 @@ In any ordered field $F$, for every $a\in F$,
 \[
 a^2\ge 0.
 \]
+\hyperref[prf:squares-nonnegative]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:squares-nonnegative]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a\in F,\quad a^2\ge 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\forall a\in F,\quad a^2 < 0 \Longrightarrow \bot.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+No element of an ordered field has a negative square. This immediately rules
+out the existence of $\sqrt{-1}$ inside any ordered field and explains why
+complex numbers require abandoning the order structure.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[thm:q-is-ordered-field]{$\mathbb{Q}$ Is an Ordered Field}
+\end{itemize}
 \end{remark*}
 
 \begin{theorem}[Positive Elements Have Positive Inverses]
 \label{thm:inverse-positive}
 In any ordered field, if $a>0$, then $a^{-1}>0$.
+\hyperref[prf:inverse-positive]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:inverse-positive]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a\in F,\quad a>0 \Longrightarrow a^{-1}>0.
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\forall a\in F,\quad a^{-1}\le 0 \Longrightarrow a\le 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Dividing by a positive number cannot change the direction of an inequality.
+This is the formal basis for the rule that multiplying both sides of an
+inequality by a positive denominator preserves the direction.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[thm:squares-nonnegative]{Squares Are Nonnegative}
+  \item \hyperref[thm:one-positive]{$1$ Is Positive}
+\end{itemize}
 \end{remark*}
 
 \begin{theorem}[Multiplication by a Positive Element Preserves Order]
@@ -54,10 +136,25 @@ In any ordered field, if $a<b$ and $c>0$, then
 \[
 ac<bc.
 \]
+\hyperref[prf:multiply-positive]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:multiply-positive]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b,c\in F,\quad a<b \land c>0 \Longrightarrow ac<bc.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Multiplying both sides of an inequality by a positive element leaves the
+direction unchanged. This is the order-field axiom itself, stated as an
+independent theorem for citation.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+\end{itemize}
 \end{remark*}
 
 \begin{theorem}[Multiplication by a Negative Element Reverses Order]
@@ -66,22 +163,67 @@ In any ordered field, if $a<b$ and $c<0$, then
 \[
 ac>bc.
 \]
+\hyperref[prf:multiply-negative]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:multiply-negative]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b,c\in F,\quad a<b \land c<0 \Longrightarrow ac>bc.
+\]
 \end{remark*}
 
+\begin{remark*}[Interpretation]
+Multiplying both sides of an inequality by a negative element reverses the
+direction. This is the formal explanation of the familiar rule that one
+``flips the inequality sign'' when multiplying by a negative number.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[thm:multiply-positive]{Multiplication by a Positive Element Preserves Order}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Positivity of $1$ and Its Consequences}
+\begin{exposition}
+The positivity of $1$ is not an axiom but a theorem derivable from the ordered
+field structure. It then propagates to the natural numbers embedded in any
+ordered field.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($1$ Is Positive)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[$1$ Is Positive]
 \label{thm:one-positive}
 In any ordered field,
 \[
 1>0.
 \]
-\end{theorem}
-
-\begin{remark*}[Proof]
 \hyperref[prf:one-positive]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+1>0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The multiplicative identity of any ordered field is positive. This anchors
+the order structure: every natural number $n$ embedded in the field via
+repeated addition of $1$ is also positive.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[thm:squares-nonnegative]{Squares Are Nonnegative}
+\end{itemize}
 \end{remark*}
 
 \begin{corollary}[Natural Numbers Are Positive]
@@ -90,11 +232,35 @@ In any ordered field, for every natural number $n$,
 \[
 n>0.
 \]
+\hyperref[prf:n-positive]{Go to proof.}
 \end{corollary}
 
-\begin{remark*}[Proof]
-\hyperref[prf:n-positive]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall n\in\mathbb{N},\quad n>0.
+\]
 \end{remark*}
+
+\begin{remark*}[Interpretation]
+Every natural number, when embedded in an ordered field by repeated addition
+of the identity $1$, is a positive element of the field. This is the
+foundational fact behind the Archimedean property.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:one-positive]{$1$ Is Positive}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Fraction Comparison in an Ordered Field}
+\begin{exposition}
+The order on an ordered field extends to fractions via sign-arithmetic.
+The results below give explicit necessary and sufficient conditions for
+comparing two fractions and for determining the order of their reciprocals.
+\end{exposition}
 
 \begin{theorem}[Positivity of a Quotient via the Product $ab$]
 \label{thm:positive-fraction-iff-positive-product}
@@ -104,10 +270,28 @@ For any $a,b\in F$ with $b\neq 0$,
 \quad\Longleftrightarrow\quad
 0<a\cdot b.
 \]
+\hyperref[prf:positive-fraction-iff-positive-product]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:positive-fraction-iff-positive-product]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b\in F,\quad b\neq 0
+\Longrightarrow
+\Bigl(0<\tfrac{a}{b} \Longleftrightarrow 0<ab\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A fraction is positive exactly when numerator and denominator have the same
+sign — equivalently, when their product is positive. This reduces sign-testing
+of fractions to sign-testing of products.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[thm:inverse-positive]{Positive Elements Have Positive Inverses}
+\end{itemize}
 \end{remark*}
 
 \begin{theorem}[General Fraction Comparison in an Ordered Field]
@@ -118,10 +302,30 @@ For any $a,b,c,d\in F$ with $b\neq 0$ and $d\neq 0$,
 \quad\Longleftrightarrow\quad
 (a\cdot d)\cdot(b\cdot d)<(b\cdot c)\cdot(b\cdot d).
 \]
+\hyperref[prf:fraction-order-comparison-general]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:fraction-order-comparison-general]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b,c,d\in F,\quad b\neq 0\land d\neq 0
+\Longrightarrow
+\Bigl(\tfrac{a}{b}<\tfrac{c}{d}
+\Longleftrightarrow (ad)(bd)<(bc)(bd)\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This cross-multiplication criterion for fraction comparison is valid for
+arbitrary nonzero denominators, regardless of sign. It reduces fraction order
+to the order of products, which is controlled by the sign-arithmetic theorems.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[thm:multiply-positive]{Multiplication by a Positive Element Preserves Order}
+  \item \hyperref[thm:multiply-negative]{Multiplication by a Negative Element Reverses Order}
+\end{itemize}
 \end{remark*}
 
 \begin{theorem}[Fraction Comparison When the Denominator Product Is Positive]
@@ -132,42 +336,91 @@ For any $a,b,c,d\in F$, if $b\neq 0$, $d\neq 0$, and $0<b\cdot d$, then
 \quad\Longleftrightarrow\quad
 a\cdot d<b\cdot c.
 \]
+\hyperref[prf:fraction-order-comparison-positive-denominator-product]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:fraction-order-comparison-positive-denominator-product]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b,c,d\in F,\quad b\neq 0\land d\neq 0\land 0<bd
+\Longrightarrow
+\Bigl(\tfrac{a}{b}<\tfrac{c}{d} \Longleftrightarrow ad<bc\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+When the denominator product is positive — in particular when both denominators
+are positive — fraction comparison reduces to the familiar cross-multiplication
+rule: $a/b < c/d$ iff $ad < bc$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:fraction-order-comparison-general]{General Fraction Comparison in an Ordered Field}
+  \item \hyperref[thm:multiply-positive]{Multiplication by a Positive Element Preserves Order}
+\end{itemize}
 \end{remark*}
 
 \begin{theorem}[Reciprocal Order for Positive Elements]
 \label{thm:reciprocal-order-for-positive-elements}
-If $0<d<b$, then
+In any ordered field, if $0<d<b$, then
 \[
 0<\frac{1}{b}<\frac{1}{d}.
 \]
-Conversely, if
-\[
-0<\frac{1}{b}<\frac{1}{d},
-\]
-then $0<d<b$.
+Conversely, if $0<1/b<1/d$, then $0<d<b$.
+\hyperref[prf:reciprocal-order-for-positive-elements]{Go to proof.}
 \end{theorem}
 
-\begin{remark*}[Proof]
-\hyperref[prf:reciprocal-order-for-positive-elements]{Go to proof.}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall b,d\in F,\quad
+0<d<b \Longleftrightarrow 0<\tfrac{1}{b}<\tfrac{1}{d}.
+\]
 \end{remark*}
 
+\begin{remark*}[Interpretation]
+Taking reciprocals reverses the strict order among positive elements. Larger
+positive denominators produce smaller positive reciprocals. This is the formal
+basis for the rule that $1/n$ decreases as $n$ increases.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:inverse-positive]{Positive Elements Have Positive Inverses}
+  \item \hyperref[thm:multiply-positive]{Multiplication by a Positive Element Preserves Order}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Ordered Fields Are Densely Ordered)}},
+  fonttitle=\small\bfseries]
 \begin{theorem}[Ordered Fields Are Densely Ordered]
 \label{thm:ordered-fields-are-densely-ordered}
 Every ordered field is densely ordered by its order relation.
-\end{theorem}
-
-\begin{remark*}[Proof]
 \hyperref[prf:ordered-fields-are-densely-ordered]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b\in F,\quad a<b \Longrightarrow \exists c\in F\;(a<c<b).
+\]
 \end{remark*}
 
-\begin{remark}[Transition]
-\label{rem:arch-v-complete}
-The positivity of $1$ anchors the order structure and leads naturally to
-the Archimedean property. That property explains why natural numbers
-eventually outrun every fixed rational and why reciprocals like $1/n$
-become arbitrarily small.
-\end{remark}
+\begin{remark*}[Interpretation]
+In any ordered field, between any two elements there is always a third. The
+witness is $(a+b)/2$: it is rational (the field is closed under addition and
+division by $2$, which equals $1+1$) and lies strictly between $a$ and $b$
+by the sign-arithmetic laws. This is the abstract theorem that specializes to
+the density of $\mathbb{Q}$ in itself.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:ordered-field]{Ordered Field}
+  \item \hyperref[def:densely-ordered-system]{Densely Ordered System}
+  \item \hyperref[thm:multiply-positive]{Multiplication by a Positive Element Preserves Order}
+  \item \hyperref[thm:one-positive]{$1$ Is Positive}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
