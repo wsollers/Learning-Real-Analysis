@@ -123,7 +123,8 @@ void SimulationSurfaceGaussian::on_tick(const TickInfo& tick) {
     m_context.set_tick(tick);
     m_surface->advance(tick.dt);
     m_particles.update(tick.dt, m_sim_speed, m_sim_time);
-    step_differential_problem(static_cast<double>(tick.dt) * static_cast<double>(m_sim_speed));
+    if (m_ode_advance_with_sim)
+        step_differential_problem(static_cast<double>(tick.dt) * static_cast<double>(m_sim_speed));
     m_context.dirty().mark_particles_changed();
     m_context.math_cache().bump_particles();
 
@@ -267,6 +268,7 @@ void SimulationSurfaceGaussian::draw_differential_panel() {
     ImGui::Separator();
 
     ImGui::Checkbox("RK4 solver", &m_ode_use_rk4);
+    ImGui::Checkbox("Advance with sim", &m_ode_advance_with_sim);
     float step = static_cast<float>(m_ode_step_size);
     if (ImGui::SliderFloat("Step size", &step, 0.001f, 0.25f, "%.3f"))
         m_ode_step_size = static_cast<double>(step);
@@ -274,7 +276,7 @@ void SimulationSurfaceGaussian::draw_differential_panel() {
     const auto state = m_ode_problem->state();
     ImGui::Text("t = %.4f", m_ode_problem->time());
     if (!state.empty())
-        ImGui::Text("y = %.6f", state[0]);
+        ImGui::Text("y = %.6e", state[0]);
     ImGui::Text("history samples: %zu", m_ode_problem->history_size());
 
     if (ImGui::Button("Step")) step_differential_problem(m_ode_step_size);

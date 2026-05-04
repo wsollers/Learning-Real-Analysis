@@ -86,6 +86,7 @@ add_executable(nurbs_dde
     app/ParticleSystem.cpp
     app/SceneFactories.cpp
     app/SimulationAnalysis.cpp
+    app/SimulationDifferential2D.cpp
     app/SimulationMultiWell.cpp
     app/SimulationSurfaceGaussian.cpp
     app/SimulationWavePredatorPrey.cpp

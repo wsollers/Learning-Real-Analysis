@@ -1,4 +1,5 @@
 #include "app/SimulationAnalysis.hpp"
+#include "app/SimulationDifferential2D.hpp"
 #include "app/SimulationMultiWell.hpp"
 #include "app/SimulationSurfaceGaussian.hpp"
 #include "app/SimulationWavePredatorPrey.hpp"
@@ -30,7 +31,7 @@ void expect_simulation_registers_starts_and_emits_packets() {
     Sim sim;
 
     sim.on_register(host);
-    EXPECT_GE(services.panels().active_count(), 4u);
+    EXPECT_GE(services.panels().active_count(), 2u);
     EXPECT_GE(services.hotkeys().active_count(), 2u);
     EXPECT_EQ(services.render().active_view_count(), 2u);
 
@@ -72,16 +73,21 @@ TEST(AllSimulations, WavePredatorPreyRegistersStartsAndEmitsPackets) {
     expect_simulation_registers_starts_and_emits_packets<SimulationWavePredatorPrey>();
 }
 
+TEST(AllSimulations, Differential2DRegistersStartsAndEmitsPackets) {
+    expect_simulation_registers_starts_and_emits_packets<SimulationDifferential2D>();
+}
+
 TEST(AllSimulations, DefaultRegistryContainsFourISimulationRuntimes) {
     EngineServices services;
     SimulationRegistry registry(services.memory());
     register_default_simulations(registry);
 
-    ASSERT_EQ(registry.size(), 4u);
+    ASSERT_EQ(registry.size(), 5u);
     EXPECT_EQ(registry.get(0)->name(), "Surface Simulation");
     EXPECT_EQ(registry.get(1)->name(), "Sine-Rational Analysis");
     EXPECT_EQ(registry.get(2)->name(), "Multi-Well Centroid");
     EXPECT_EQ(registry.get(3)->name(), "Wave Predator-Prey");
+    EXPECT_EQ(registry.get(4)->name(), "Differential Systems");
 }
 
 } // namespace

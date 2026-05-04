@@ -72,6 +72,7 @@ private:
     sim::Rk4OdeSolver m_rk4_solver;
     double m_ode_step_size = 0.05;
     bool m_ode_use_rk4 = true;
+    bool m_ode_advance_with_sim = false;
 
     void reset_showcase();
     void spawn_cloud();

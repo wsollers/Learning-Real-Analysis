@@ -205,4 +205,117 @@ private:
     f64 m_rate = 1.0;
 };
 
+class HarmonicOscillatorSystem final : public IDifferentialSystem {
+public:
+    explicit HarmonicOscillatorSystem(f64 omega = 1.0) : m_omega(omega) {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Harmonic oscillator",
+            .formula = "x' = v, v' = -omega^2 x",
+            .variables = "x, v"
+        };
+    }
+
+    [[nodiscard]] std::size_t dimension() const override { return 2u; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        derivative[0] = state[1];
+        derivative[1] = -(m_omega * m_omega) * state[0];
+    }
+
+    [[nodiscard]] f64 omega() const noexcept { return m_omega; }
+
+private:
+    f64 m_omega = 1.0;
+};
+
+class DampedOscillatorSystem final : public IDifferentialSystem {
+public:
+    DampedOscillatorSystem(f64 omega = 1.0, f64 gamma = 0.15)
+        : m_omega(omega)
+        , m_gamma(gamma)
+    {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Damped oscillator",
+            .formula = "x' = v, v' = -2 gamma v - omega^2 x",
+            .variables = "x, v"
+        };
+    }
+
+    [[nodiscard]] std::size_t dimension() const override { return 2u; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        derivative[0] = state[1];
+        derivative[1] = -2.0 * m_gamma * state[1] - (m_omega * m_omega) * state[0];
+    }
+
+    [[nodiscard]] f64 omega() const noexcept { return m_omega; }
+    [[nodiscard]] f64 gamma() const noexcept { return m_gamma; }
+
+private:
+    f64 m_omega = 1.0;
+    f64 m_gamma = 0.15;
+};
+
+class VanDerPolSystem final : public IDifferentialSystem {
+public:
+    explicit VanDerPolSystem(f64 mu = 1.4) : m_mu(mu) {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Van der Pol oscillator",
+            .formula = "x' = v, v' = mu(1 - x^2)v - x",
+            .variables = "x, v"
+        };
+    }
+
+    [[nodiscard]] std::size_t dimension() const override { return 2u; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        derivative[0] = state[1];
+        derivative[1] = m_mu * (1.0 - state[0] * state[0]) * state[1] - state[0];
+    }
+
+    [[nodiscard]] f64 mu() const noexcept { return m_mu; }
+
+private:
+    f64 m_mu = 1.4;
+};
+
+class PredatorPreySystem final : public IDifferentialSystem {
+public:
+    PredatorPreySystem(f64 alpha = 1.1, f64 beta = 0.4, f64 delta = 0.25, f64 gamma = 0.9)
+        : m_alpha(alpha)
+        , m_beta(beta)
+        , m_delta(delta)
+        , m_gamma(gamma)
+    {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Predator-prey",
+            .formula = "prey' = alpha prey - beta prey predator, predator' = delta prey predator - gamma predator",
+            .variables = "prey, predator"
+        };
+    }
+
+    [[nodiscard]] std::size_t dimension() const override { return 2u; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        const f64 prey = state[0];
+        const f64 predator = state[1];
+        derivative[0] = m_alpha * prey - m_beta * prey * predator;
+        derivative[1] = m_delta * prey * predator - m_gamma * predator;
+    }
+
+private:
+    f64 m_alpha = 1.1;
+    f64 m_beta = 0.4;
+    f64 m_delta = 0.25;
+    f64 m_gamma = 0.9;
+};
+
 } // namespace ndde::sim

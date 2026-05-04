@@ -19,6 +19,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/app/ParticleSystem.cpp
     ${CMAKE_SOURCE_DIR}/src/app/AnalysisSpawner.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SceneFactories.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationDifferential2D.cpp
     ${CMAKE_SOURCE_DIR}/src/app/MultiWellSpawner.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SimulationAnalysis.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SimulationMultiWell.cpp

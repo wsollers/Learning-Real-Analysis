@@ -466,6 +466,10 @@ void Engine::on_key_event(int key, int action, int mods) {
         m_pending_sim = 3;
         return;
     }
+    if (ctrl && !shift && key == GLFW_KEY_5) {
+        m_pending_sim = 4;
+        return;
+    }
     if (!ctrl && !shift && key == GLFW_KEY_F12) {
         request_capture(false);
         return;
