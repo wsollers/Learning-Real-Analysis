@@ -85,10 +85,10 @@ public:
             (memory::MemoryService& memory) mutable -> memory::Unique<ISimulation> {
                 return std::apply([&memory](auto&&... unpacked) -> memory::Unique<ISimulation> {
                     if constexpr (std::is_constructible_v<Simulation, memory::MemoryService*, decltype(unpacked)...>) {
-                        return memory.simulation().make_unique<Simulation>(
+                        return memory.simulation().make_unique_as<ISimulation, Simulation>(
                             &memory, std::forward<decltype(unpacked)>(unpacked)...);
                     } else {
-                        return memory.simulation().make_unique<Simulation>(
+                        return memory.simulation().make_unique_as<ISimulation, Simulation>(
                             std::forward<decltype(unpacked)>(unpacked)...);
                     }
                 }, args_tuple);

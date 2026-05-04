@@ -93,7 +93,14 @@ public:
 
     template <class T, class... Args>
     [[nodiscard]] Unique<T> make_unique(Args&&... args) const {
-        return memory::make_unique<T>(m_resource, std::forward<Args>(args)...);
+        return memory::make_unique<T>(m_resource, &m_generation, std::forward<Args>(args)...);
+    }
+
+    template <class Base, class Derived, class... Args>
+        requires std::is_convertible_v<Derived*, Base*>
+    [[nodiscard]] Unique<Base> make_unique_as(Args&&... args) const {
+        return memory::unique_cast<Base>(
+            make_unique<Derived>(std::forward<Args>(args)...));
     }
 
 private:

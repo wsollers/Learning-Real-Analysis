@@ -62,7 +62,7 @@ TEST(SimulationRuntime, RuntimeOwnsISimulationLifecycle) {
     RuntimeDummySimulation* raw = nullptr;
     SimulationRuntime runtime("Simulation Runtime",
         [&raw](memory::MemoryService& memory) {
-            auto sim = memory.simulation().make_unique<RuntimeDummySimulation>();
+            auto sim = memory.simulation().make_unique_as<ISimulation, RuntimeDummySimulation>();
             raw = sim.get();
             return sim;
         });
@@ -107,7 +107,7 @@ TEST(SimulationRuntime, ReinstantiateRollsBackPreviousRegistrations) {
     SimulationRuntime runtime("Simulation Runtime",
         [&created](memory::MemoryService& memory) {
             ++created;
-            return memory.simulation().make_unique<RuntimeDummySimulation>();
+            return memory.simulation().make_unique_as<ISimulation, RuntimeDummySimulation>();
         });
 
     runtime.instantiate(host);

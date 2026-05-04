@@ -99,16 +99,18 @@ public:
 
     template <class Constraint, class... Args>
     Constraint& add_pair_constraint(Args&&... args) {
-        auto c = make_sim_unique<Constraint>(std::forward<Args>(args)...);
-        Constraint& ref = *c;
+        auto owned = make_sim_unique<Constraint>(std::forward<Args>(args)...);
+        Constraint& ref = *owned;
+        auto c = memory::unique_cast<ndde::sim::IPairConstraint>(std::move(owned));
         m_pair_constraints.push_back(std::move(c));
         return ref;
     }
 
     template <class Goal, class... Args>
     Goal& add_goal(Args&&... args) {
-        auto g = make_sim_unique<Goal>(std::forward<Args>(args)...);
-        Goal& ref = *g;
+        auto owned = make_sim_unique<Goal>(std::forward<Args>(args)...);
+        Goal& ref = *owned;
+        auto g = memory::unique_cast<IParticleGoal>(std::move(owned));
         m_goals.push_back(std::move(g));
         return ref;
     }
@@ -151,6 +153,14 @@ private:
     [[nodiscard]] memory::Unique<T> make_sim_unique(Args&&... args) const {
         return m_memory ? m_memory->simulation().make_unique<T>(std::forward<Args>(args)...)
                         : memory::make_unique<T>(std::pmr::get_default_resource(), std::forward<Args>(args)...);
+    }
+
+    template <class Base, class Derived, class... Args>
+    [[nodiscard]] memory::Unique<Base> make_sim_unique_as(Args&&... args) const {
+        return m_memory ? m_memory->simulation().make_unique_as<Base, Derived>(std::forward<Args>(args)...)
+                        : memory::unique_cast<Base>(
+                              memory::make_unique<Derived>(std::pmr::get_default_resource(),
+                                                           std::forward<Args>(args)...));
     }
 
     void apply_pair_constraints() {
