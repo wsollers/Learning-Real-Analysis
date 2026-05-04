@@ -17,6 +17,7 @@
 #include "engine/RenderService.hpp"
 #include "engine/ScopedServiceHandles.hpp"
 #include "memory/Unique.hpp"
+#include "sim/DifferentialSystem.hpp"
 
 #include <random>
 #include <string_view>
@@ -65,6 +66,12 @@ private:
     bool m_paused = false;
     GoalStatus m_goal_status = GoalStatus::Running;
     SwarmBuildResult m_last_swarm;
+    memory::Unique<sim::ExponentialGrowthSystem> m_ode_system;
+    memory::Unique<sim::InitialValueProblem> m_ode_problem;
+    sim::EulerOdeSolver m_euler_solver;
+    sim::Rk4OdeSolver m_rk4_solver;
+    double m_ode_step_size = 0.05;
+    bool m_ode_use_rk4 = true;
 
     void reset_showcase();
     void spawn_cloud();
@@ -73,9 +80,12 @@ private:
     void draw_swarm_panel();
     void draw_particle_panel();
     void draw_goal_panel();
+    void draw_differential_panel();
     void submit_geometry();
     void sync_context();
     void apply_surface_commands();
+    void reset_differential_problem();
+    void step_differential_problem(double dt);
 };
 
 } // namespace ndde

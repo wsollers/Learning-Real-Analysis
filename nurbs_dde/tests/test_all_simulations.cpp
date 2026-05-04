@@ -30,7 +30,7 @@ void expect_simulation_registers_starts_and_emits_packets() {
     Sim sim;
 
     sim.on_register(host);
-    EXPECT_EQ(services.panels().active_count(), 4u);
+    EXPECT_GE(services.panels().active_count(), 4u);
     EXPECT_GE(services.hotkeys().active_count(), 2u);
     EXPECT_EQ(services.render().active_view_count(), 2u);
 

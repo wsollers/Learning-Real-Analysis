@@ -46,6 +46,12 @@ void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
         .scope = PanelScope::Simulation,
         .draw = [this] { draw_goal_panel(); }
     }));
+    m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
+        .title = "Sim - Differential Eq",
+        .category = "Simulation",
+        .scope = PanelScope::Simulation,
+        .draw = [this] { draw_differential_panel(); }
+    }));
     m_reset_hotkey = host.hotkeys().register_action(HotkeyDescriptor{
         .chord = {.key = 'R', .mods = 2},
         .label = "Reset Gaussian pursuit",
@@ -96,6 +102,7 @@ void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
             .flow_step_size = 0.10f
         }
     }, &m_alternate_view);
+    reset_differential_problem();
 }
 
 void SimulationSurfaceGaussian::on_start() {
@@ -116,6 +123,7 @@ void SimulationSurfaceGaussian::on_tick(const TickInfo& tick) {
     m_context.set_tick(tick);
     m_surface->advance(tick.dt);
     m_particles.update(tick.dt, m_sim_speed, m_sim_time);
+    step_differential_problem(static_cast<double>(tick.dt) * static_cast<double>(m_sim_speed));
     m_context.dirty().mark_particles_changed();
     m_context.math_cache().bump_particles();
 
@@ -129,6 +137,8 @@ void SimulationSurfaceGaussian::on_stop() {
     m_cloud_hotkey.reset();
     m_main_view_handle.reset();
     m_alternate_view_handle.reset();
+    m_ode_problem.reset();
+    m_ode_system.reset();
     m_host = nullptr;
 }
 
@@ -238,6 +248,42 @@ void SimulationSurfaceGaussian::draw_goal_panel() {
     ImGui::End();
 }
 
+void SimulationSurfaceGaussian::draw_differential_panel() {
+    ImGui::SetNextWindowPos(ImVec2(784.f, 72.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(360.f, 220.f), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Sim - Differential Eq")) { ImGui::End(); return; }
+
+    if (!m_ode_problem) {
+        ImGui::TextUnformatted("No differential problem");
+        if (ImGui::Button("Create")) reset_differential_problem();
+        ImGui::End();
+        return;
+    }
+
+    const sim::EquationSystemMetadata meta = m_ode_problem->system().metadata();
+    ImGui::Text("System: %s", meta.name.c_str());
+    ImGui::Text("Formula: %s", meta.formula.c_str());
+    ImGui::Text("Variables: %s", meta.variables.c_str());
+    ImGui::Separator();
+
+    ImGui::Checkbox("RK4 solver", &m_ode_use_rk4);
+    float step = static_cast<float>(m_ode_step_size);
+    if (ImGui::SliderFloat("Step size", &step, 0.001f, 0.25f, "%.3f"))
+        m_ode_step_size = static_cast<double>(step);
+
+    const auto state = m_ode_problem->state();
+    ImGui::Text("t = %.4f", m_ode_problem->time());
+    if (!state.empty())
+        ImGui::Text("y = %.6f", state[0]);
+    ImGui::Text("history samples: %zu", m_ode_problem->history_size());
+
+    if (ImGui::Button("Step")) step_differential_problem(m_ode_step_size);
+    ImGui::SameLine();
+    if (ImGui::Button("Reset")) m_ode_problem->reset();
+
+    ImGui::End();
+}
+
 void SimulationSurfaceGaussian::submit_geometry() {
     if (!m_host || m_main_view == 0 || m_alternate_view == 0) return;
 
@@ -250,6 +296,29 @@ void SimulationSurfaceGaussian::submit_geometry() {
         .fill_color_mode = SurfaceFillColorMode::HeightCell,
         .build_contour = true
     }, &m_host->interaction(), &m_host->memory());
+}
+
+void SimulationSurfaceGaussian::reset_differential_problem() {
+    if (!m_host) return;
+    const f64 initial[] = {1.0};
+    m_ode_problem.reset();
+    m_ode_system = m_host->memory().simulation().make_unique<sim::ExponentialGrowthSystem>(1.0);
+    m_ode_problem = m_host->memory().simulation().make_unique<sim::InitialValueProblem>(
+        m_host->memory(), *m_ode_system, std::span<const f64>{initial});
+}
+
+void SimulationSurfaceGaussian::step_differential_problem(double dt) {
+    if (!m_ode_problem || dt <= 0.0) return;
+    const sim::IOdeSolver& solver = m_ode_use_rk4
+        ? static_cast<const sim::IOdeSolver&>(m_rk4_solver)
+        : static_cast<const sim::IOdeSolver&>(m_euler_solver);
+    const double step = m_ode_step_size > 0.0 ? m_ode_step_size : dt;
+    double remaining = dt;
+    while (remaining > 1e-12) {
+        const double h = std::min(step, remaining);
+        m_ode_problem->step(solver, h);
+        remaining -= h;
+    }
 }
 
 void SimulationSurfaceGaussian::apply_surface_commands() {

@@ -14,9 +14,11 @@
 # =============================================================
 
 param (
-    [switch]$Build,   # (Re)build the Docker image before compiling
-    [switch]$Clean,   # Run latexmk -C (full clean) before compiling
-    [switch]$Open     # Open the PDF in the default viewer on success
+    [switch]$Build,          # (Re)build the Docker image before compiling
+    [switch]$Clean,          # Run latexmk -C (full clean) before compiling
+    [switch]$Open,           # Open the PDF in the default viewer on success
+    [string]$Volume = ''     # Target a single volume: i, ii, iii, iv, v
+                             # Omit for the full book (main.tex)
 )
 
 Set-StrictMode -Version Latest
@@ -35,7 +37,26 @@ if (-not (Test-Path (Join-Path $repoRoot 'main.tex'))) {
 
 $imageName  = 'learning-real-analysis-latex'
 $dockerfile = Join-Path $scriptDir 'Dockerfile'
-$outputPdf  = Join-Path $repoRoot 'build\main.pdf'
+
+# ── Resolve target tex file and output pdf name ───────────────
+$validVolumes = @('i', 'ii', 'iii', 'iv', 'v')
+if ($Volume -ne '') {
+    if ($validVolumes -notcontains $Volume.ToLower()) {
+        Write-Error "Invalid -Volume '$Volume'. Must be one of: $($validVolumes -join ', ')"
+        exit 1
+    }
+    $Volume    = $Volume.ToLower()
+    $texFile   = "volume-$Volume-main.tex"
+    $outputPdf = Join-Path $repoRoot "build\volume-$Volume-main.pdf"
+} else {
+    $texFile   = 'main.tex'
+    $outputPdf = Join-Path $repoRoot 'build\main.pdf'
+}
+
+if (-not (Test-Path (Join-Path $repoRoot $texFile))) {
+    Write-Error "Target file not found: $texFile"
+    exit 1
+}
 
 # ── Build the Docker image ────────────────────────────────────
 if ($Build) {
@@ -66,13 +87,13 @@ if ($Clean) {
         -v "${repoRoot}:/workspace" `
         -w /workspace `
         $imageName `
-        latexmk -C main.tex
+        latexmk -C $texFile
     Write-Host "==> Clean complete." -ForegroundColor Green
 }
 
 # ── Compile ───────────────────────────────────────────────────
 Write-Host ""
-Write-Host "==> Compiling main.tex with LuaLaTeX..." -ForegroundColor Cyan
+Write-Host "==> Compiling $texFile with LuaLaTeX..." -ForegroundColor Cyan
 Write-Host "    Repo root : $repoRoot"
 Write-Host "    Output PDF: $outputPdf"
 Write-Host ""
@@ -80,7 +101,8 @@ Write-Host ""
 docker run --rm `
     -v "${repoRoot}:/workspace" `
     -w /workspace `
-    $imageName
+    $imageName `
+    latexmk -lualatex -interaction=nonstopmode -file-line-error -synctex=1 -shell-escape $texFile
 
 $exitCode = $LASTEXITCODE
 

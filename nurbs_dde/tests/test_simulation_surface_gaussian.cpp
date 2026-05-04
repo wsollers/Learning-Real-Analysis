@@ -26,13 +26,14 @@ TEST(SimulationSurfaceGaussian, RegistersPanelsHotkeysAndViews) {
 
     sim.on_register(host);
 
-    EXPECT_EQ(services.panels().active_count(), 4u);
+    EXPECT_EQ(services.panels().active_count(), 5u);
     EXPECT_EQ(services.hotkeys().active_count(), 2u);
     EXPECT_EQ(services.render().active_view_count(), 2u);
     EXPECT_TRUE(services.panels().contains("Sim - Controls"));
     EXPECT_TRUE(services.panels().contains("Sim - Swarms"));
     EXPECT_TRUE(services.panels().contains("Sim - Particles"));
     EXPECT_TRUE(services.panels().contains("Sim - Goals"));
+    EXPECT_TRUE(services.panels().contains("Sim - Differential Eq"));
     EXPECT_TRUE(services.hotkeys().contains("Reset Gaussian pursuit"));
     EXPECT_TRUE(services.render().contains_view("Surface 3D"));
     EXPECT_TRUE(services.render().contains_view("Surface Alternate"));
