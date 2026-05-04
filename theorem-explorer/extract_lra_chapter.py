@@ -8,9 +8,9 @@ What it does
 - Extracts theorem-like environments from note files, even when nested inside tcolorbox.
 - Captures immediate trailing remark* blocks attached to each theorem-like item.
 - Maps proof files to theorem-like items via:
-    * \hyperref[prf:...] links inside note blocks
-    * \label{prf:...} inside proof files
-    * \hyperref[thm:...] / return links inside proof files
+    * \\hyperref[prf:...] links inside note blocks
+    * \\label{prf:...} inside proof files
+    * \\hyperref[thm:...] / return links inside proof files
 - Stores raw LaTeX in base64 in the output JSON.
 - Emits a seed knowledge file and a minimal edge file.
 

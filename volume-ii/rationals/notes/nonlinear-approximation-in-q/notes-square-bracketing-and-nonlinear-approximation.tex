@@ -5,18 +5,17 @@
 \section{Square Bracketing and Nonlinear Approximation}
 \label{sec:square-bracketing-nonlinear-approximation}
 
-Linear approximation controls distances on the number line.  Nonlinear approximation asks for rational inputs whose images under nonlinear operations, such as squaring, bracket or approximate a target value.
+Linear approximation controls distances on the number line. Nonlinear
+approximation asks for rational inputs whose images under nonlinear
+operations, such as squaring, bracket or approximate a target value.
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Toolkit --- Square Approximation}},
-  fonttitle=\small\bfseries]
-The basic square-approximation moves are:
-\[
-a^2<r<b^2,
-\]
-then refine the bracket or choose a fine rational grid and take the first grid point whose square crosses $r$.
-\end{tcolorbox}
+\begin{topicbox}{Square Approximation Toolkit}
+\begin{exposition}
+The basic square-approximation strategy is to trap a target positive rational
+$r$ between two rational squares, $a^2 < r < b^2$, and then refine the upper
+bracket using a fine dyadic grid. The least grid point whose square crosses $r$
+gives an approximation from above with controlled overshoot.
+\end{exposition}
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -24,40 +23,87 @@ then refine the bracket or choose a fine rational grid and take the first grid p
   fonttitle=\small\bfseries]
 \begin{theorem}[Rational Square Bracketing]
 \label{thm:rational-square-bracketing}
-For every $r\in\mathbb{Q}$ with $r>0$, there exist $a,b\in\mathbb{Q}$ with $a>0$ and $b>0$ such that
+For every $r\in\mathbb{Q}$ with $r>0$, there exist $a,b\in\mathbb{Q}$ with
+$a>0$ and $b>0$ such that
 \[
 a^2<r<b^2.
 \]
+\hyperref[prf:rational-square-bracketing]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Proof idea]
-Use
+\begin{remark*}[Standard quantified statement]
 \[
-a=\frac{r}{r+1},\qquad b=r+1.
+\forall r\in\mathbb{Q},\;r>0\;\;
+\exists a,b\in\mathbb{Q},\;a>0,\;b>0\;\;
+a^2 < r < b^2.
 \]
 \end{remark*}
 
-\begin{remark*}[Status]
-Discussed and proof-checked in conversation; final proof file is not present in the uploaded notes zip.
+\begin{remark*}[Negated quantified statement]
+\[
+\exists r\in\mathbb{Q},\;r>0\;\;
+\forall a,b\in\mathbb{Q},\;a>0,\;b>0\;\;
+r\le a^2 \lor b^2\le r.
+\]
 \end{remark*}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (First Grid Point Crossing)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Interpretation]
+Every positive rational lies strictly between the squares of two positive
+rationals. The witnesses are $a = r/(r+1)$ and $b = r+1$: one checks
+$a^2 < r$ and $r < b^2$ directly from the ordered field arithmetic of
+$\mathbb{Q}$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:q-is-ordered-field]{$\mathbb{Q}$ Is an Ordered Field}
+  \item \hyperref[thm:archimedean-q]{Archimedean Property of $\mathbb{Q}$}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Grid Crossing and Approximation from Above}
+\begin{exposition}
+Given a rational target $r > 0$ and a grid of step size $1/q$, the well-ordering
+principle guarantees a least integer $p$ such that $(p/q)^2 > r$. The
+predecessor $(p-1)/q$ has square at most $r$, and the overshoot
+$(p/q)^2 - r$ is controlled by $2p/q^2$, which can be made smaller than
+any prescribed $1/n$ by taking $q$ large enough.
+\end{exposition}
+
 \begin{lemma}[First Grid Point Crossing]
 \label{lem:first-grid-point-crossing}
-Let $r\in\mathbb{Q}$ with $r>0$ and let $q\in\mathbb{N}$ with $q\ge 1$. If $K\in\mathbb{N}$ satisfies $K^2>r$, then the set
+Let $r\in\mathbb{Q}$ with $r>0$ and let $q\in\mathbb{N}$ with $q\ge 1$.
+If $K\in\mathbb{N}$ satisfies $K^2>r$, then the set
 \[
 A=\{m\in\mathbb{N}:m^2>rq^2\}
 \]
 is nonempty and therefore has a least element.
+\hyperref[prf:first-grid-point-crossing]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
 
-\begin{remark*}[Status]
-Missing final proof. This uses the well-ordering principle and the witness $Kq\in A$.
+\begin{remark*}[Standard quantified statement]
+\[
+\forall r\in\mathbb{Q},\;r>0\;\;
+\forall q\in\mathbb{N},\;q\ge1\;\;
+\bigl(\exists K\in\mathbb{N}\;(K^2>r)\bigr)
+\Longrightarrow
+\exists p_0\in\mathbb{N}\;\bigl(p_0\in A \land \forall m\in A\;(p_0\le m)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The set $A$ is nonempty because $Kq \in A$. By the Well-Ordering Principle,
+every nonempty subset of $\mathbb{N}$ has a least element. That least element
+$p$ is the first grid point $p/q$ whose square exceeds $r$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:well-ordering-principle]{Well-Ordering Principle}
+  \item \hyperref[thm:rational-square-bracketing]{Rational Square Bracketing}
+\end{itemize}
 \end{remark*}
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
@@ -66,22 +112,37 @@ Missing final proof. This uses the well-ordering principle and the witness $Kq\i
   fonttitle=\small\bfseries]
 \begin{theorem}[Rational Square Approximation from Above]
 \label{thm:rational-square-approximation-from-above}
-Let $r\in\mathbb{Q}$ with $r>0$, and let $n\in\mathbb{N}$ with $n\ge 1$. Then there exists $s\in\mathbb{Q}$ with $s>0$ such that
+Let $r\in\mathbb{Q}$ with $r>0$, and let $n\in\mathbb{N}$ with $n\ge 1$.
+Then there exists $s\in\mathbb{Q}$ with $s>0$ such that
 \[
 r<s^2<r+\frac1n.
 \]
+\hyperref[prf:rational-square-approximation-from-above]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Proof idea]
-Choose a large grid denominator $q$, then let $p$ be the least natural number such that $p^2>rq^2$.  Set $s=p/q$ and bound the overshoot using
+\begin{remark*}[Standard quantified statement]
 \[
-p^2=(p-1)^2+2p-1.
+\forall r\in\mathbb{Q},\;r>0\;\;
+\forall n\in\mathbb{N},\;n\ge1\;\;
+\exists s\in\mathbb{Q},\;s>0\;\;
+r < s^2 < r+\tfrac{1}{n}.
 \]
 \end{remark*}
 
-\begin{remark*}[Status]
-Discussed in conversation; final proof file is not present in the uploaded notes zip.
+\begin{remark*}[Interpretation]
+Choose grid denominator $q$ large enough that $2Kq^{-1} < 1/n$ where $K$ is a
+rational upper bound for $\sqrt{r}$. Let $p$ be the least natural number with
+$p^2 > rq^2$ and set $s = p/q$. Then $s^2 > r$ by construction and
+$s^2 - r = (p^2 - rq^2)/q^2 \le (2p-1)/q^2 < 2K/q < 1/n$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[lem:first-grid-point-crossing]{First Grid Point Crossing}
+  \item \hyperref[thm:archimedean-q]{Archimedean Property of $\mathbb{Q}$}
+  \item \hyperref[thm:rational-square-bracketing]{Rational Square Bracketing}
+\end{itemize}
 \end{remark*}
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
@@ -90,13 +151,33 @@ Discussed in conversation; final proof file is not present in the uploaded notes
   fonttitle=\small\bfseries]
 \begin{theorem}[Rational Square Approximation from Below]
 \label{thm:rational-square-approximation-from-below}
-Let $r\in\mathbb{Q}$ with $r>0$, and let $n\in\mathbb{N}$ with $n\ge 1$. If $r-1/n>0$, then there exists $s\in\mathbb{Q}$ with $s>0$ such that
+Let $r\in\mathbb{Q}$ with $r>0$, and let $n\in\mathbb{N}$ with $n\ge 1$.
+If $r-1/n>0$, then there exists $s\in\mathbb{Q}$ with $s>0$ such that
 \[
 r-\frac1n<s^2<r.
 \]
+\hyperref[prf:rational-square-approximation-from-below]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Status]
-Missing proof.
+\begin{remark*}[Standard quantified statement]
+\[
+\forall r\in\mathbb{Q},\;r>0\;\;
+\forall n\in\mathbb{N},\;n\ge1,\;r-\tfrac{1}{n}>0\;\;
+\exists s\in\mathbb{Q},\;s>0\;\;
+r - \tfrac{1}{n} < s^2 < r.
+\]
 \end{remark*}
+
+\begin{remark*}[Interpretation]
+The rational $r - 1/n$ is positive by hypothesis. By the Approximation from
+Above theorem applied to $r - 1/n$, there exists $s$ with
+$(r-1/n) < s^2 < (r-1/n) + 1/n = r$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:rational-square-approximation-from-above]{Rational Square Approximation from Above}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

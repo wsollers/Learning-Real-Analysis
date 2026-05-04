@@ -5,46 +5,101 @@
 \subsection{Dyadic Rational Approximation}
 \label{sec:dyadic-rational-approximation}
 
-Dyadic rationals are the rational numbers obtained by repeated halving. They are the simplest systematic approximation grid and foreshadow binary expansions, nested brackets, and Cauchy constructions.
+Dyadic rationals are the rational numbers obtained by repeated halving. They
+are the simplest systematic approximation grid and foreshadow binary
+expansions, nested brackets, and Cauchy constructions.
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Dyadic Rational)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Dyadic rational]
 \label{def:dyadic-rational}
-A rational number $d$ is called \emph{dyadic} if there exist $m\in\mathbb{Z}$ and $n\in\mathbb{N}$ such that
+A rational number $d$ is called \emph{dyadic} if there exist $m\in\mathbb{Z}$
+and $n\in\mathbb{N}$ such that
 \[
 d=\frac{m}{2^n}.
 \]
 \end{definition}
+\end{tcolorbox}
 
-\begin{remark*}[Interpretation]
-Dyadic rationals are the grid points produced by subdividing the unit interval into $2^n$ equal pieces.
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Dyadic}(d)
+\;\coloneqq\;
+\exists m\in\mathbb{Z}\;\exists n\in\mathbb{N}\;\bigl(d=m/2^n\bigr).
+\]
 \end{remark*}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Dyadic Rationals Are Rational)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{Dyadic}(d)
+\;\coloneqq\;
+\forall m\in\mathbb{Z}\;\forall n\in\mathbb{N}\;\bigl(d\neq m/2^n\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Dyadic rationals are the grid points produced by subdividing the real line
+into intervals of width $1/2^n$. They are dense in $\mathbb{Q}$ and in
+$\mathbb{R}$ and are closed under addition, subtraction, and halving.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[def:rational-numbers]{Rational Numbers}
+\end{itemize}
+\end{remark*}
+
 \begin{theorem}[Dyadic Rationals Are Rational]
 \label{thm:dyadic-rationals-are-rational}
 Every dyadic rational is an element of $\mathbb{Q}$.
+\hyperref[prf:dyadic-rationals-are-rational]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
 
-\begin{remark*}[Status]
-Missing proof. This follows from closure of $\mathbb{Q}$ under integer embedding and division by nonzero powers of $2$.
+\begin{remark*}[Standard quantified statement]
+\[
+\forall d,\quad \operatorname{Dyadic}(d) \Longrightarrow d\in\mathbb{Q}.
+\]
 \end{remark*}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Dyadic Midpoint Closure)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Interpretation]
+This is immediate from the definition: $m/2^n$ is a ratio of integers with
+nonzero denominator, hence rational. The theorem isolates the fact for
+explicit citation.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:dyadic-rational]{Dyadic Rational}
+  \item \hyperref[def:rational-numbers]{Rational Numbers}
+\end{itemize}
+\end{remark*}
+
 \begin{theorem}[Dyadic Midpoint Closure]
 \label{thm:dyadic-midpoint-closure}
 If $a$ and $b$ are dyadic rationals, then $(a+b)/2$ is dyadic.
+\hyperref[prf:dyadic-midpoint-closure]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
 
-\begin{remark*}[Status]
-Missing proof. Put the two dyadics over a common denominator $2^N$ and then divide the sum by $2$.
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b,\quad \operatorname{Dyadic}(a)\land\operatorname{Dyadic}(b)
+\Longrightarrow \operatorname{Dyadic}\!\Bigl(\frac{a+b}{2}\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The dyadic grid is closed under midpoint formation. This makes dyadic
+rationals the natural substrate for bisection algorithms.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:dyadic-rational]{Dyadic Rational}
+  \item \hyperref[thm:dyadic-rationals-are-rational]{Dyadic Rationals Are Rational}
+\end{itemize}
 \end{remark*}
 
 \begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
@@ -53,7 +108,8 @@ Missing proof. Put the two dyadics over a common denominator $2^N$ and then divi
   fonttitle=\small\bfseries]
 \begin{theorem}[Dyadic Approximation Error Bound]
 \label{thm:dyadic-approximation-error-bound}
-For every $x\in\mathbb{Q}$ and every $n\in\mathbb{N}$, there exists $m\in\mathbb{Z}$ such that
+For every $x\in\mathbb{Q}$ and every $n\in\mathbb{N}$, there exists
+$m\in\mathbb{Z}$ such that
 \[
 \frac{m}{2^n}\le x<\frac{m+1}{2^n}.
 \]
@@ -61,9 +117,29 @@ Consequently,
 \[
 0\le x-\frac{m}{2^n}<\frac{1}{2^n}.
 \]
+\hyperref[prf:dyadic-approximation-error-bound]{Go to proof.}
 \end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Status]
-Missing proof. This uses the integer floor/well-ordering step for the grid point immediately below $2^n x$.
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\in\mathbb{Q}\;\forall n\in\mathbb{N}\;\;
+\exists m\in\mathbb{Z}\;\;
+\frac{m}{2^n}\le x < \frac{m+1}{2^n}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every rational can be trapped between two consecutive dyadic grid points at
+resolution $1/2^n$. The error of approximating $x$ by the lower grid point
+$m/2^n$ is less than $1/2^n$, which by the Archimedean property can be made
+arbitrarily small.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:well-ordering-principle]{Well-Ordering Principle}
+  \item \hyperref[thm:archimedean-q]{Archimedean Property of $\mathbb{Q}$}
+  \item \hyperref[def:dyadic-rational]{Dyadic Rational}
+\end{itemize}
 \end{remark*}
