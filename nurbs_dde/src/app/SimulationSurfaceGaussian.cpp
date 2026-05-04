@@ -247,20 +247,19 @@ void SimulationSurfaceGaussian::submit_geometry() {
         .wire_color = {0.92f, 0.96f, 1.f, 0.34f},
         .fill_color_mode = SurfaceFillColorMode::HeightCell,
         .build_contour = true
-    });
+    }, &m_host->interaction());
 }
 
 void SimulationSurfaceGaussian::apply_surface_commands() {
     if (!m_host || m_main_view == 0) return;
 
-    for (const SurfacePerturbCommand& command : m_host->render().consume_surface_perturbations(m_main_view)) {
-        Vec2 uv = command.uv;
-        if (command.use_ray_pick) {
-            if (auto picked = pick_surface_uv_by_ray(*m_surface, m_host->render().descriptor(m_main_view),
-                                                     command.screen_ndc, m_surface->time())) {
-                uv = *picked;
-            }
-        }
+    for (const SurfacePickRequest& command : m_host->interaction().consume_surface_picks(m_main_view)) {
+        Vec2 uv = command.fallback_uv;
+        const Mat4 mvp = surface_main_mvp(*m_surface, m_host->render().descriptor(m_main_view), m_surface->time());
+        const SurfaceHit hit = m_host->interaction().resolve_surface_hit(
+            m_main_view, *m_surface, mvp, command.screen_ndc, m_surface->time());
+        if (hit.hit)
+            uv = hit.uv;
         const float sign = (command.seed % 2u == 0u) ? 1.f : -1.f;
         auto& params = m_surface->params();
         params.amplitude = sign * std::max(0.05f, command.amplitude);

@@ -214,7 +214,7 @@ void SimulationMultiWell::submit_geometry() {
             .wire_color = {0.92f, 0.96f, 1.f, 0.32f},
             .fill_color_mode = SurfaceFillColorMode::HeightCell,
             .build_contour = true
-        });
+        }, &m_host->interaction());
 }
 
 } // namespace ndde

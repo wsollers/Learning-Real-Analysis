@@ -6,9 +6,22 @@
 
 #include <gtest/gtest.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace {
 
 using namespace ndde;
+
+class InteractionPlaneSurface final : public ndde::math::ISurface {
+public:
+    [[nodiscard]] Vec3 evaluate(float u, float v, float = 0.f) const override {
+        return {u, v, 0.f};
+    }
+    [[nodiscard]] float u_min(float = 0.f) const override { return -2.f; }
+    [[nodiscard]] float u_max(float = 0.f) const override { return 2.f; }
+    [[nodiscard]] float v_min(float = 0.f) const override { return -2.f; }
+    [[nodiscard]] float v_max(float = 0.f) const override { return 2.f; }
+};
 
 TEST(PanelService, RegisterUnregisterPanel) {
     PanelService panels;
@@ -95,6 +108,54 @@ TEST(HotkeyService, DispatchesMatchingChord) {
     EXPECT_EQ(hotkeys.active_count(), 0u);
     EXPECT_FALSE(hotkeys.dispatch({.key = 66, .mods = 2}));
     EXPECT_EQ(calls, 1);
+}
+
+TEST(InteractionService, TracksMouseAndSurfacePickRequests) {
+    InteractionService interaction;
+    interaction.set_mouse(7u, {320.f, 240.f}, {0.f, 0.f}, true, 18.f);
+    const ViewMouseState mouse = interaction.mouse_state(7u);
+    EXPECT_TRUE(mouse.enabled);
+    EXPECT_FLOAT_EQ(mouse.pixel.x, 320.f);
+    EXPECT_FLOAT_EQ(mouse.snap_radius_px, 18.f);
+
+    interaction.queue_surface_pick(SurfacePickRequest{
+        .view = 7u,
+        .fallback_uv = {0.25f, -0.5f},
+        .screen_ndc = {0.f, 0.f},
+        .seed = 42u
+    });
+    const auto requests = interaction.consume_surface_picks(7u);
+    ASSERT_EQ(requests.size(), 1u);
+    EXPECT_FLOAT_EQ(requests.front().fallback_uv.y, -0.5f);
+    EXPECT_TRUE(interaction.consume_surface_picks(7u).empty());
+}
+
+TEST(InteractionService, ResolvesSurfaceAndTrailHits) {
+    InteractionService interaction;
+    InteractionPlaneSurface surface;
+    const Mat4 mvp = glm::perspective(glm::radians(45.f), 1.f, 0.05f, 20.f)
+        * glm::lookAt(Vec3{0.f, 0.f, 4.f}, Vec3{0.f, 0.f, 0.f}, Vec3{0.f, 1.f, 0.f});
+
+    const SurfaceHit surface_hit = interaction.resolve_surface_hit(5u, surface, mvp, {0.f, 0.f});
+    EXPECT_TRUE(surface_hit.hit);
+    EXPECT_NEAR(surface_hit.uv.x, 0.f, 1e-4f);
+    EXPECT_NEAR(surface_hit.uv.y, 0.f, 1e-4f);
+
+    interaction.set_mouse(5u, {100.f, 100.f}, {0.f, 0.f}, true, 16.f);
+    const TrailPickSample samples[] = {
+        {.particle_id = 11u, .particle_index = 0u, .trail_index = 3u, .world = {-1.f, 0.f, 0.f}, .curvature = 0.1f},
+        {.particle_id = 12u, .particle_index = 1u, .trail_index = 4u, .world = {0.f, 0.f, 0.f}, .curvature = 0.2f, .torsion = 0.3f}
+    };
+    const ParticleTrailHit trail_hit = interaction.resolve_particle_trail_hit(
+        5u, samples, mvp, {200.f, 200.f});
+    EXPECT_TRUE(trail_hit.hit);
+    EXPECT_EQ(trail_hit.particle_id, 12u);
+    EXPECT_EQ(trail_hit.trail_index, 4u);
+    EXPECT_FLOAT_EQ(trail_hit.curvature, 0.2f);
+
+    const HoverMetadata& hover = interaction.hover_metadata();
+    EXPECT_TRUE(hover.surface.hit);
+    EXPECT_TRUE(hover.particle.hit);
 }
 
 TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
@@ -194,10 +255,12 @@ TEST(SimulationHost, ExposesOnlyServiceFacade) {
         .title = "Host View",
         .kind = RenderViewKind::Main
     }, &view_id);
+    host.interaction().set_mouse(view_id, {10.f, 20.f}, {0.f, 0.f}, true);
 
     EXPECT_EQ(services.panels().active_count(), 1u);
     EXPECT_EQ(services.hotkeys().active_count(), 1u);
     EXPECT_EQ(services.render().active_view_count(), 1u);
+    EXPECT_TRUE(services.interaction().mouse_state(view_id).enabled);
     EXPECT_EQ(host.clock().next(0.1f).tick_index, 1u);
 }
 

@@ -4,8 +4,10 @@
 
 #include "app/ParticleSystem.hpp"
 #include "app/SurfaceMeshCache.hpp"
+#include "engine/InteractionService.hpp"
 #include "engine/RenderService.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/Containers.hpp"
 #include "numeric/ops.hpp"
 
 #include <algorithm>
@@ -15,7 +17,6 @@
 #include <limits>
 #include <span>
 #include <optional>
-#include <vector>
 
 namespace ndde {
 
@@ -155,7 +156,7 @@ inline std::optional<Vec2> pick_surface_uv_by_ray(const math::ISurface& surface,
     return std::nullopt;
 }
 
-inline void add_iso_segment(std::vector<Vertex>& out,
+inline void add_iso_segment(memory::FrameVector<Vertex>& out,
                             const Vec2& a, float za,
                             const Vec2& b, float zb,
                             float level,
@@ -166,7 +167,7 @@ inline void add_iso_segment(std::vector<Vertex>& out,
 }
 
 template <class ScalarSampler>
-inline std::vector<Vertex> build_scalar_isoline_vertices(const math::ISurface& surface,
+inline memory::FrameVector<Vertex> build_scalar_isoline_vertices(const math::ISurface& surface,
                                                          u32 grid,
                                                          float time,
                                                          std::span<const float> levels,
@@ -180,7 +181,7 @@ inline std::vector<Vertex> build_scalar_isoline_vertices(const math::ISurface& s
     const float du = (u1 - u0) / static_cast<float>(n);
     const float dv = (v1 - v0) / static_cast<float>(n);
 
-    std::vector<float> values((n + 1u) * (n + 1u));
+    memory::FrameVector<float> values((n + 1u) * (n + 1u));
     const auto idx = [n](u32 i, u32 j) { return i * (n + 1u) + j; };
     for (u32 i = 0; i <= n; ++i) {
         for (u32 j = 0; j <= n; ++j) {
@@ -189,7 +190,7 @@ inline std::vector<Vertex> build_scalar_isoline_vertices(const math::ISurface& s
         }
     }
 
-    std::vector<Vertex> out;
+    memory::FrameVector<Vertex> out;
     for (const float level : levels) {
         for (u32 i = 0; i < n; ++i) {
             for (u32 j = 0; j < n; ++j) {
@@ -219,7 +220,7 @@ inline std::vector<Vertex> build_scalar_isoline_vertices(const math::ISurface& s
     return out;
 }
 
-inline std::vector<Vertex> build_level_curve_vertices(const math::ISurface& surface,
+inline memory::FrameVector<Vertex> build_level_curve_vertices(const math::ISurface& surface,
                                                       u32 grid,
                                                       float time,
                                                       u32 levels,
@@ -244,7 +245,7 @@ inline std::vector<Vertex> build_level_curve_vertices(const math::ISurface& surf
     }
     if (zmax <= zmin + 1e-6f) return {};
 
-    std::vector<float> scalar_levels;
+    memory::FrameVector<float> scalar_levels;
     scalar_levels.reserve(levels);
     for (u32 l = 1; l <= levels; ++l)
         scalar_levels.push_back(zmin + (zmax - zmin) * static_cast<float>(l) / static_cast<float>(levels + 1u));
@@ -257,7 +258,7 @@ inline Vec2 surface_height_gradient(const math::ISurface& surface, float u, floa
     return Vec2{surface.du(u, v, time).z, surface.dv(u, v, time).z};
 }
 
-inline std::vector<Vertex> build_isocline_vertices(const math::ISurface& surface,
+inline memory::FrameVector<Vertex> build_isocline_vertices(const math::ISurface& surface,
                                                    u32 grid,
                                                    float time,
                                                    f32 direction_angle,
@@ -268,7 +269,7 @@ inline std::vector<Vertex> build_isocline_vertices(const math::ISurface& surface
     const Vec2 dir{ops::cos(direction_angle), ops::sin(direction_angle)};
     const u32 count = std::max(bands, 1u);
     const float tol = std::max(tolerance, 0.001f);
-    std::vector<float> levels;
+    memory::FrameVector<float> levels;
     levels.reserve(count);
     if (count == 1u) {
         levels.push_back(target_slope);
@@ -304,7 +305,7 @@ inline Vec2 surface_vector_at(const math::ISurface& surface,
     return -grad;
 }
 
-inline std::vector<Vertex> build_vector_field_vertices(const math::ISurface& surface,
+inline memory::FrameVector<Vertex> build_vector_field_vertices(const math::ISurface& surface,
                                                        u32 samples,
                                                        float time,
                                                        VectorFieldMode mode,
@@ -318,7 +319,7 @@ inline std::vector<Vertex> build_vector_field_vertices(const math::ISurface& sur
     const float du = (u1 - u0) / static_cast<float>(n);
     const float dv = (v1 - v0) / static_cast<float>(n);
     const float len = std::min(du, dv) * 0.38f;
-    std::vector<Vertex> out;
+    memory::FrameVector<Vertex> out;
     out.reserve(n * n * 2u);
     for (u32 i = 0; i < n; ++i) {
         for (u32 j = 0; j < n; ++j) {
@@ -334,10 +335,10 @@ inline std::vector<Vertex> build_vector_field_vertices(const math::ISurface& sur
     return out;
 }
 
-inline std::vector<Vertex> build_particle_velocity_vertices(const ParticleSystem& particles,
+inline memory::FrameVector<Vertex> build_particle_velocity_vertices(const ParticleSystem& particles,
                                                             float scale,
                                                             Vec4 color) {
-    std::vector<Vertex> out;
+    memory::FrameVector<Vertex> out;
     for (const AnimatedCurve& particle : particles.particles()) {
         const u32 n = particle.trail_size();
         if (n < 2u) continue;
@@ -352,7 +353,7 @@ inline std::vector<Vertex> build_particle_velocity_vertices(const ParticleSystem
     return out;
 }
 
-inline std::vector<Vertex> build_flow_vertices(const math::ISurface& surface,
+inline memory::FrameVector<Vertex> build_flow_vertices(const math::ISurface& surface,
                                                u32 seed_count,
                                                u32 steps,
                                                float step_size,
@@ -369,7 +370,7 @@ inline std::vector<Vertex> build_flow_vertices(const math::ISurface& surface,
     const float dv = (v1 - v0) / static_cast<float>(n);
     const float step = std::min(u1 - u0, v1 - v0) * std::max(step_size, 0.001f);
 
-    std::vector<Vertex> out;
+    memory::FrameVector<Vertex> out;
     out.reserve(n * n * step_count * 2u);
     for (u32 i = 0; i < n; ++i) {
         for (u32 j = 0; j < n; ++j) {
@@ -391,15 +392,16 @@ inline std::vector<Vertex> build_flow_vertices(const math::ISurface& surface,
     return out;
 }
 
-inline std::vector<Vertex> build_particle_frenet_overlay_vertices(const AnimatedCurve& particle,
+inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const AnimatedCurve& particle,
                                                                   const RenderViewDomain& domain,
+                                                                  u32 trail_idx,
                                                                   bool show_frenet,
                                                                   bool show_osculating_circle) {
-    std::vector<Vertex> out;
+    memory::FrameVector<Vertex> out;
     const u32 n = particle.trail_size();
     if (n < 4u || (!show_frenet && !show_osculating_circle)) return out;
 
-    const u32 idx = n - 2u;
+    const u32 idx = std::clamp(trail_idx, 1u, n - 2u);
     const Vec3 p = particle.trail_pt(idx);
     const FrenetFrame fr = particle.frenet_at(idx);
     const float span = std::max(domain.u_max - domain.u_min, domain.v_max - domain.v_min);
@@ -434,6 +436,28 @@ inline std::vector<Vertex> build_particle_frenet_overlay_vertices(const Animated
         }
     }
     return out;
+}
+
+inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const ParticleSystem& particles) {
+    memory::FrameVector<TrailPickSample> samples;
+    const auto& list = particles.particles();
+    for (std::size_t pi = 0; pi < list.size(); ++pi) {
+        const AnimatedCurve& particle = list[pi];
+        const u32 n = particle.trail_size();
+        if (n < 4u) continue;
+        for (u32 ti = 1u; ti + 1u < n; ++ti) {
+            const FrenetFrame fr = particle.frenet_at(ti);
+            samples.push_back(TrailPickSample{
+                .particle_id = particle.id(),
+                .particle_index = static_cast<u32>(pi),
+                .trail_index = ti,
+                .world = particle.trail_pt(ti),
+                .curvature = fr.kappa,
+                .torsion = fr.tau
+            });
+        }
+    }
+    return samples;
 }
 
 inline void submit_typed_alternate_view(RenderService& render,
@@ -477,7 +501,7 @@ inline void submit_typed_alternate_view(RenderService& render,
                 Topology::TriangleList, DrawMode::VertexColor, {1.f, 1.f, 1.f, 0.45f}, alternate_mvp);
         }
         const AlternateViewSettings settings = descriptor ? descriptor->alternate : AlternateViewSettings{};
-        std::vector<Vertex> arrows;
+        memory::FrameVector<Vertex> arrows;
         if (mode == AlternateViewMode::Flow) {
             arrows = build_flow_vertices(surface, settings.flow_seed_count, settings.flow_steps,
                 settings.flow_step_size, options.time, settings.vector_mode, {0.2f, 1.f, 0.65f, 0.82f});
@@ -499,7 +523,8 @@ inline void submit_surface_sim_packets(RenderService& render,
                                        Surface& surface,
                                        SurfaceMeshCache& mesh,
                                        const ParticleSystem& particles,
-                                       SurfaceMeshOptions options)
+                                       SurfaceMeshOptions options,
+                                       InteractionService* interaction = nullptr)
 {
     mesh.rebuild_if_needed(surface, options);
     const RenderViewDomain domain = surface_domain(surface, options.time);
@@ -509,6 +534,11 @@ inline void submit_surface_sim_packets(RenderService& render,
     const Mat4 main_mvp = surface_main_mvp(surface, render.descriptor(main_view), options.time);
     const Mat4 alternate_mvp = surface_alternate_mvp(surface, options.time);
     const RenderViewDescriptor* main_descriptor = render.descriptor(main_view);
+    const memory::FrameVector<TrailPickSample> pick_samples =
+        (interaction && main_descriptor) ? build_trail_pick_samples(particles) : memory::FrameVector<TrailPickSample>{};
+    const ParticleTrailHit hover = (interaction && main_descriptor)
+        ? interaction->resolve_particle_trail_hit(main_view, pick_samples, main_mvp, main_descriptor->viewport_size)
+        : ParticleTrailHit{};
 
     if (mesh.wire_count() > 0) {
         render.submit(main_view,
@@ -534,10 +564,12 @@ inline void submit_surface_sim_packets(RenderService& render,
 
     submit_typed_alternate_view(render, alternate_view, surface, mesh, particles, options, alternate_mvp);
 
-    for (const auto& particle : particles.particles()) {
+    const auto& particle_list = particles.particles();
+    for (std::size_t particle_index = 0; particle_index < particle_list.size(); ++particle_index) {
+        const auto& particle = particle_list[particle_index];
         const u32 count = particle.trail_vertex_count();
         if (count < 2u) continue;
-        std::vector<Vertex> trail(count);
+        memory::FrameVector<Vertex> trail(count);
         particle.tessellate_trail(std::span<Vertex>(trail.data(), trail.size()));
         const std::span<const Vertex> trail_span(trail.data(), trail.size());
         render.submit(main_view, trail_span,
@@ -547,9 +579,11 @@ inline void submit_surface_sim_packets(RenderService& render,
         render.submit(alternate_view, trail_span,
             Topology::LineStrip, DrawMode::VertexColor, {1.f, 1.f, 1.f, 1.f}, alternate_mvp);
 
-        if (main_descriptor && (main_descriptor->overlays.show_hover_frenet
-            || main_descriptor->overlays.show_osculating_circle)) {
+        if (main_descriptor && hover.hit && hover.particle_index == particle_index
+            && (main_descriptor->overlays.show_hover_frenet
+                || main_descriptor->overlays.show_osculating_circle)) {
             auto overlay = build_particle_frenet_overlay_vertices(particle, domain,
+                hover.trail_index,
                 main_descriptor->overlays.show_hover_frenet,
                 main_descriptor->overlays.show_osculating_circle);
             render.submit(main_view, overlay, Topology::LineList, DrawMode::VertexColor,

@@ -1,11 +1,23 @@
 #include "app/SimulationSurfaceGaussian.hpp"
+#include "app/SimulationRenderPackets.hpp"
 #include "engine/SimulationHost.hpp"
 
 #include <gtest/gtest.h>
 
+#include <optional>
+
 namespace {
 
 using namespace ndde;
+
+std::optional<Vec2> test_project_world_to_pixel(Vec3 world, const Mat4& mvp, Vec2 viewport_size) {
+    const glm::vec4 clip = mvp * glm::vec4(world.x, world.y, world.z, 1.f);
+    if (clip.w <= 1e-6f) return std::nullopt;
+    return Vec2{
+        (clip.x / clip.w + 1.f) * 0.5f * viewport_size.x,
+        (1.f - clip.y / clip.w) * 0.5f * viewport_size.y
+    };
+}
 
 TEST(SimulationSurfaceGaussian, RegistersPanelsHotkeysAndViews) {
     EngineServices services;
@@ -103,9 +115,10 @@ TEST(SimulationSurfaceGaussian, RenderSurfacePerturbationCommandMarksSurfaceDirt
     sim.on_start();
     sim.context().clear_frame_state();
 
-    services.render().queue_surface_perturbation(SurfacePerturbCommand{
+    services.interaction().queue_surface_pick(SurfacePickRequest{
         .view = sim.main_view_id(),
-        .uv = {0.4f, -0.6f},
+        .fallback_uv = {0.4f, -0.6f},
+        .screen_ndc = {0.f, 0.f},
         .amplitude = 0.2f,
         .radius = 0.75f,
         .falloff = 1.2f,
@@ -130,10 +143,20 @@ TEST(SimulationSurfaceGaussian, FrenetOverlayEmitsAdditionalMainPackets) {
 
     view->overlays.show_hover_frenet = false;
     view->overlays.show_osculating_circle = false;
+    services.interaction().set_mouse(sim.main_view_id(), {}, {}, false);
     services.render().clear_packets();
     sim.on_tick(host.clock().next(1.f / 60.f));
     const std::size_t without_overlay = services.render().packet_count(sim.main_view_id());
 
+    ASSERT_FALSE(sim.context().particles().empty());
+    const AnimatedCurve& particle = sim.context().particles().front();
+    ASSERT_GE(particle.trail_size(), 4u);
+    const u32 hover_idx = particle.trail_size() / 2u;
+    services.render().set_viewport_size(sim.main_view_id(), Vec2{1920.f, 1080.f});
+    const Mat4 mvp = surface_main_mvp(sim.context().surface(), view, sim.context().time());
+    const auto pixel = test_project_world_to_pixel(particle.trail_pt(hover_idx), mvp, view->viewport_size);
+    ASSERT_TRUE(pixel.has_value());
+    services.interaction().set_mouse(sim.main_view_id(), *pixel, {}, true, 24.f);
     view->overlays.show_hover_frenet = true;
     view->overlays.show_osculating_circle = true;
     services.render().clear_packets();

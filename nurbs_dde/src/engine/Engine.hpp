@@ -39,6 +39,7 @@ public:
     [[nodiscard]] const EngineServices& services() const noexcept { return m_services; }
     [[nodiscard]] PanelService& getPanelService() noexcept { return m_services.panels(); }
     [[nodiscard]] HotkeyService& getHotkeyService() noexcept { return m_services.hotkeys(); }
+    [[nodiscard]] InteractionService& getInteractionService() noexcept { return m_services.interaction(); }
     [[nodiscard]] RenderService& getRenderService() noexcept { return m_services.render(); }
     [[nodiscard]] SimulationClock& getSimulationClock() noexcept { return m_services.clock(); }
 

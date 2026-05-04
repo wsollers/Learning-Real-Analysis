@@ -346,6 +346,28 @@ void Engine::draw_debug_coordinates_panel() {
                 desc->viewport_size.x, desc->viewport_size.y, desc->viewport_aspect);
         }
     }
+    const HoverMetadata& hover = m_services.interaction().hover_metadata();
+    ImGui::SeparatorText("Hover");
+    ImGui::TextDisabled("view %llu   mouse %.1f, %.1f",
+        static_cast<unsigned long long>(hover.view),
+        hover.mouse_pixel.x,
+        hover.mouse_pixel.y);
+    if (hover.surface.hit) {
+        ImGui::TextDisabled("surface uv %.3f, %.3f", hover.surface.uv.x, hover.surface.uv.y);
+        ImGui::TextDisabled("world %.3f, %.3f, %.3f",
+            hover.surface.world.x, hover.surface.world.y, hover.surface.world.z);
+    } else {
+        ImGui::TextDisabled("surface: no hit");
+    }
+    if (hover.particle.hit) {
+        ImGui::TextDisabled("particle %llu idx %u  d %.1f px",
+            static_cast<unsigned long long>(hover.particle.particle_id),
+            hover.particle.trail_index,
+            hover.particle.pixel_distance);
+        ImGui::TextDisabled("k %.5f   tau %.5f", hover.particle.curvature, hover.particle.torsion);
+    } else {
+        ImGui::TextDisabled("particle: no trail snap");
+    }
     ImGui::End();
 }
 
@@ -466,6 +488,16 @@ void Engine::update_render_view_input() {
         m_services.render().set_viewport_size(RenderViewKind::Alternate,
             Vec2{static_cast<f32>(m_second_win.width()), static_cast<f32>(m_second_win.height())});
     }
+    const bool mouse_valid = io.MousePos.x > -3.0e37f && io.MousePos.y > -3.0e37f;
+    const RenderViewId main_view = m_services.render().first_active_main_view();
+    if (main_view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
+        const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
+        const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
+        m_services.interaction().set_mouse(main_view,
+            Vec2{io.MousePos.x, io.MousePos.y},
+            Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
+            mouse_valid && !io.WantCaptureMouse);
+    }
     if (io.WantCaptureMouse) return;
 
     if (io.MouseWheel != 0.f)
@@ -485,19 +517,17 @@ void Engine::update_render_view_input() {
             const RenderViewDomain domain = m_services.render().view_domain(view);
             const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
             const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
-            m_services.render().queue_surface_perturbation(SurfacePerturbCommand{
+            m_services.interaction().queue_surface_pick(SurfacePickRequest{
                 .view = view,
-                .uv = {
+                .fallback_uv = {
                     domain.u_min + nx * (domain.u_max - domain.u_min),
                     domain.v_max - ny * (domain.v_max - domain.v_min)
                 },
                 .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                .viewport_aspect = io.DisplaySize.y > 0.f ? io.DisplaySize.x / io.DisplaySize.y : 16.f / 9.f,
                 .amplitude = 0.25f,
                 .radius = 1.0f,
                 .falloff = 1.f,
-                .seed = m_surface_perturb_seed++,
-                .use_ray_pick = true
+                .seed = m_surface_perturb_seed++
             });
         }
     }

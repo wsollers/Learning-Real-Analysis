@@ -207,7 +207,7 @@ void SimulationAnalysis::submit_geometry() {
             .wire_color = {0.3f, 0.6f, 0.9f, 0.55f},
             .fill_color_mode = SurfaceFillColorMode::GaussianCurvatureCell,
             .build_contour = true
-        });
+        }, &m_host->interaction());
 }
 
 } // namespace ndde

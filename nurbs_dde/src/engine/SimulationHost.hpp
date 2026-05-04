@@ -3,6 +3,7 @@
 // Narrow service interface passed to simulations.
 
 #include "engine/HotkeyService.hpp"
+#include "engine/InteractionService.hpp"
 #include "engine/PanelService.hpp"
 #include "engine/RenderService.hpp"
 #include "engine/SimulationClock.hpp"
@@ -13,22 +14,26 @@ class SimulationHost {
 public:
     SimulationHost(PanelService& panels,
                    HotkeyService& hotkeys,
+                   InteractionService& interaction,
                    RenderService& render,
                    SimulationClock& clock) noexcept
         : m_panels(panels)
         , m_hotkeys(hotkeys)
+        , m_interaction(interaction)
         , m_render(render)
         , m_clock(clock)
     {}
 
     [[nodiscard]] PanelService& panels() const noexcept { return m_panels; }
     [[nodiscard]] HotkeyService& hotkeys() const noexcept { return m_hotkeys; }
+    [[nodiscard]] InteractionService& interaction() const noexcept { return m_interaction; }
     [[nodiscard]] RenderService& render() const noexcept { return m_render; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
 
 private:
     PanelService& m_panels;
     HotkeyService& m_hotkeys;
+    InteractionService& m_interaction;
     RenderService& m_render;
     SimulationClock& m_clock;
 };
@@ -37,19 +42,20 @@ class EngineServices {
 public:
     [[nodiscard]] PanelService& panels() noexcept { return m_panels; }
     [[nodiscard]] HotkeyService& hotkeys() noexcept { return m_hotkeys; }
+    [[nodiscard]] InteractionService& interaction() noexcept { return m_interaction; }
     [[nodiscard]] RenderService& render() noexcept { return m_render; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
-        return SimulationHost(m_panels, m_hotkeys, m_render, m_clock);
+        return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_clock);
     }
 
 private:
     PanelService m_panels;
     HotkeyService m_hotkeys;
+    InteractionService m_interaction;
     RenderService m_render;
     SimulationClock m_clock;
 };
 
 } // namespace ndde
-

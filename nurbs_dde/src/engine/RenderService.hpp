@@ -5,12 +5,12 @@
 #include "engine/ServiceHandle.hpp"
 #include "math/GeometryTypes.hpp"
 #include "math/Scalars.hpp"
+#include "memory/Containers.hpp"
 
 #include <algorithm>
 #include <span>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace ndde {
 
@@ -80,6 +80,12 @@ struct AlternateViewSettings {
     f32 flow_step_size = 0.14f;
 };
 
+struct ViewInteractionState {
+    Vec2 hover_pixel{};
+    bool hover_enabled = false;
+    f32 snap_radius_px = 22.f;
+};
+
 struct RenderViewDescriptor {
     std::string title;
     RenderViewKind kind = RenderViewKind::Main;
@@ -90,6 +96,7 @@ struct RenderViewDescriptor {
     CameraState camera{};
     ViewOverlayState overlays{};
     AlternateViewSettings alternate{};
+    ViewInteractionState interaction{};
 };
 
 struct RenderViewDomain {
@@ -124,6 +131,7 @@ struct RenderViewSnapshot {
     CameraState camera{};
     ViewOverlayState overlays{};
     AlternateViewSettings alternate{};
+    ViewInteractionState interaction{};
     RenderViewDomain domain{};
 };
 
@@ -133,7 +141,7 @@ struct RenderPacket {
     DrawMode mode = DrawMode::VertexColor;
     Vec4 color{1.f, 1.f, 1.f, 1.f};
     Mat4 mvp{1.f};
-    std::vector<Vertex> vertices;
+    memory::FrameVector<Vertex> vertices;
 };
 
 class RenderService {
@@ -265,6 +273,15 @@ public:
         }
     }
 
+    void set_hover_cursor(RenderViewKind kind, Vec2 pixel, bool enabled) noexcept {
+        for (auto& entry : m_views) {
+            if (entry.active && entry.descriptor.kind == kind) {
+                entry.descriptor.interaction.hover_pixel = pixel;
+                entry.descriptor.interaction.hover_enabled = enabled;
+            }
+        }
+    }
+
     [[nodiscard]] bool axes_visible() const noexcept {
         for (const auto& entry : m_views) {
             if (entry.active && entry.descriptor.overlays.show_axes)
@@ -280,8 +297,8 @@ public:
         m_surface_commands.push_back(command);
     }
 
-    [[nodiscard]] std::vector<SurfacePerturbCommand> consume_surface_perturbations(RenderViewId view) {
-        std::vector<SurfacePerturbCommand> out;
+    [[nodiscard]] memory::FrameVector<SurfacePerturbCommand> consume_surface_perturbations(RenderViewId view) {
+        memory::FrameVector<SurfacePerturbCommand> out;
         auto it = m_surface_commands.begin();
         while (it != m_surface_commands.end()) {
             if (it->view == view) {
@@ -319,10 +336,10 @@ public:
         return RenderViewKind::Main;
     }
 
-    [[nodiscard]] const std::vector<RenderPacket>& packets() const noexcept { return m_packets; }
+    [[nodiscard]] const memory::FrameVector<RenderPacket>& packets() const noexcept { return m_packets; }
 
-    [[nodiscard]] std::vector<RenderViewSnapshot> active_view_snapshots() const {
-        std::vector<RenderViewSnapshot> out;
+    [[nodiscard]] memory::FrameVector<RenderViewSnapshot> active_view_snapshots() const {
+        memory::FrameVector<RenderViewSnapshot> out;
         out.reserve(m_views.size());
         for (const auto& entry : m_views) {
             if (!entry.active) continue;
@@ -337,6 +354,7 @@ public:
                 .camera = entry.descriptor.camera,
                 .overlays = entry.descriptor.overlays,
                 .alternate = entry.descriptor.alternate,
+                .interaction = entry.descriptor.interaction,
                 .domain = entry.domain
             });
         }
@@ -352,9 +370,9 @@ private:
     };
 
     RenderViewId m_next_id = 1;
-    std::vector<RenderViewEntry> m_views;
-    std::vector<RenderPacket> m_packets;
-    std::vector<SurfacePerturbCommand> m_surface_commands;
+    memory::PersistentVector<RenderViewEntry> m_views;
+    memory::FrameVector<RenderPacket> m_packets;
+    memory::FrameVector<SurfacePerturbCommand> m_surface_commands;
 
     [[nodiscard]] static CameraState preset_camera(CameraPreset preset, RenderViewDomain domain) noexcept {
         const Vec3 target{

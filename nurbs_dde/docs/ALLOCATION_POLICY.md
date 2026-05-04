@@ -16,7 +16,9 @@ These are allowed only inside the central memory package.
 Recommended next enforcement stages:
 
 1. Keep the raw allocation ban always on.
-2. Introduce arena-backed aliases for simulation-owned dynamic arrays.
-3. Require particle/runtime/history buffers to use those aliases.
-4. Leave configuration, metadata, and panel registration on ordinary STL until their lifetime pressure justifies migration.
-5. Add a second static check that flags direct `std::vector` use under selected hot-path folders once the aliases are ready.
+2. Use the policy aliases in `memory/Containers.hpp` for hot-path dynamic arrays:
+   `FrameVector<T>`, `PersistentVector<T>`, and `SimVector<T>`.
+3. Protect migrated hot-path files with `tools/check_hot_path_container_policy.py`.
+4. Move the policy aliases from `std::vector` to arena/PMR-backed storage.
+5. Require particle/runtime/history buffers to use those aliases.
+6. Leave configuration, metadata, and panel registration on ordinary STL until their lifetime pressure justifies migration.

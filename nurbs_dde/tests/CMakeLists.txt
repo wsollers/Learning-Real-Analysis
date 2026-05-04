@@ -67,3 +67,8 @@ add_test(
     NAME allocation_policy
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/check_allocation_policy.py
 )
+
+add_test(
+    NAME hot_path_container_policy
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/check_hot_path_container_policy.py
+)
