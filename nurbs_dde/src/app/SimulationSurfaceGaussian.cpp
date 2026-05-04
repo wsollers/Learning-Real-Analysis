@@ -247,7 +247,7 @@ void SimulationSurfaceGaussian::submit_geometry() {
         .wire_color = {0.92f, 0.96f, 1.f, 0.34f},
         .fill_color_mode = SurfaceFillColorMode::HeightCell,
         .build_contour = true
-    }, &m_host->interaction());
+    }, &m_host->interaction(), &m_host->memory());
 }
 
 void SimulationSurfaceGaussian::apply_surface_commands() {

@@ -103,9 +103,25 @@ TEST(AlternateViewBuilders, FlowIntegratesThroughVectorField) {
         EXPECT_LT(vertices[i + 1u].pos.x, vertices[i].pos.x);
 }
 
+TEST(AlternateViewBuilders, BuildersBindReturnedVectorsToFrameMemoryWhenProvided) {
+    PlaneSurface surface{1.f, 0.f};
+    ndde::memory::MemoryService memory;
+    memory.begin_frame();
+
+    const auto vertices = ndde::build_vector_field_vertices(
+        surface, 4u, 0.f, ndde::VectorFieldMode::Gradient, 1.f,
+        {1.f, 1.f, 1.f, 1.f}, &memory);
+
+    ASSERT_FALSE(vertices.empty());
+    EXPECT_EQ(vertices.get_allocator().resource(), memory.frame().resource());
+}
+
 TEST(AlternateViewBuilders, TypedAlternateViewDispatchEmitsVectorPacket) {
     PlaneSurface surface{1.f, 0.f};
+    ndde::memory::MemoryService memory;
+    memory.begin_frame();
     ndde::RenderService render;
+    render.set_memory_service(&memory);
     ndde::RenderViewId view = 0;
     const auto handle = render.register_view(ndde::RenderViewDescriptor{
         .title = "test alternate",
@@ -121,10 +137,11 @@ TEST(AlternateViewBuilders, TypedAlternateViewDispatchEmitsVectorPacket) {
     ndde::SurfaceMeshCache mesh;
     ndde::ParticleSystem particles(&surface, 1u);
     ndde::submit_typed_alternate_view(render, view, surface, mesh, particles,
-        ndde::SurfaceMeshOptions{.grid_lines = 8u, .build_contour = false}, ndde::Mat4{1.f});
+        ndde::SurfaceMeshOptions{.grid_lines = 8u, .build_contour = false}, ndde::Mat4{1.f}, &memory);
 
     EXPECT_EQ(render.packet_count(view), 1u);
     ASSERT_EQ(render.packets().size(), 1u);
     EXPECT_EQ(render.packets()[0].topology, ndde::Topology::LineList);
+    EXPECT_EQ(render.packets()[0].vertices.get_allocator().resource(), memory.frame().resource());
     (void)handle;
 }

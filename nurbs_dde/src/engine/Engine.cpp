@@ -60,7 +60,7 @@ Engine::~Engine() {
     uninstall_global_hotkeys();
     m_second_win.destroy();
     m_renderer.destroy();
-    m_buffer_manager.destroy();
+    m_services.memory().destroy();
     m_swapchain.destroy();
     m_vk.destroy();
     m_glfw.destroy();
@@ -83,8 +83,8 @@ void Engine::start(const std::string& config_path) {
     m_renderer.init(m_vk, m_swapchain, SHADER_DIR, ASSETS_DIR, m_glfw.window());
     install_global_hotkeys();
 
-    m_buffer_manager.init(m_vk.device(), m_vk.physical_device(),
-                          m_config.simulation.arena_size_mb);
+    m_services.memory().init_frame_gpu_arena(m_vk.device(), m_vk.physical_device(),
+                                             m_config.simulation.arena_size_mb);
 
     // Second window for the 2D contour view.
     // Place it to the right of the primary window. glfwGetMonitors lets us
@@ -156,6 +156,9 @@ void Engine::switch_simulation(std::size_t index) {
     if (index >= m_simulations.size() || index == m_active_sim) return;
     vkDeviceWaitIdle(m_vk.device());
     m_renderer.reset_frame_state();
+    m_services.memory().reset_simulation();
+    m_services.memory().reset_cache();
+    m_services.memory().reset_history();
     active_runtime().stop();
     m_services.render().clear_packets();
     m_active_sim = index;
@@ -186,7 +189,9 @@ void Engine::run_frame() {
     const f32 frame_ms    = static_cast<f32>(delta_s * 1000.0);
     const f32 fps         = (frame_ms > 0.f) ? 1000.f / frame_ms : 0.f;
 
-    m_buffer_manager.reset();
+    // Destroy previous-frame packet payloads before releasing frame PMR memory.
+    m_services.render().clear_packets();
+    m_services.memory().begin_frame();
 
     // ── Primary window (3D surface + ImGui) ─────────────────────────────────
     if (!m_renderer.begin_frame(m_swapchain)) { handle_resize(); return; }
@@ -197,8 +202,8 @@ void Engine::run_frame() {
     // ── Populate DebugStats ───────────────────────────────────────────────────
     const auto& sc_ext = m_swapchain.extent();
     m_debug_stats = DebugStats{
-        .arena_bytes_used   = m_buffer_manager.bytes_used(),   // 0 after reset — updated lazily
-        .arena_bytes_total  = m_buffer_manager.bytes_total(),
+        .arena_bytes_used   = m_services.memory().frame_gpu_bytes_used(),   // 0 after reset — updated lazily
+        .arena_bytes_total  = m_services.memory().frame_gpu_bytes_total(),
         .arena_utilisation  = 0.f,                             // updated after scene runs
         .arena_vertex_count = 0,
         .draw_calls         = m_renderer.draw_call_count(),    // previous frame
@@ -211,16 +216,15 @@ void Engine::run_frame() {
     // ── Second window begin ──────────────────────────────────────────────────────
     const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
-    m_services.render().clear_packets();
     active_runtime().tick(m_services.clock().next(frame_ms / 1000.f, active_runtime().paused()));
     flush_render_service();
     m_services.panels().draw_registered_panels();
 
     // ── Update arena stats after scene geometry has been written ─────────────
-    m_debug_stats.arena_bytes_used   = m_buffer_manager.bytes_used();
-    m_debug_stats.arena_utilisation  = m_buffer_manager.utilisation();
+    m_debug_stats.arena_bytes_used   = m_services.memory().frame_gpu_bytes_used();
+    m_debug_stats.arena_utilisation  = m_services.memory().frame_gpu_utilisation();
     m_debug_stats.arena_vertex_count =
-        m_buffer_manager.bytes_used() / static_cast<u64>(sizeof(Vertex));
+        m_services.memory().frame_gpu_bytes_used() / static_cast<u64>(sizeof(Vertex));
 
     m_renderer.imgui_render();
     const bool primary_ok = m_renderer.end_frame(m_swapchain);
@@ -574,7 +578,7 @@ const SimulationRuntime& Engine::active_runtime() const {
 void Engine::flush_render_service() {
     for (const RenderPacket& packet : m_services.render().packets()) {
         if (packet.vertices.empty()) continue;
-        auto slice = m_buffer_manager.acquire(static_cast<u32>(packet.vertices.size()));
+        auto slice = m_services.memory().allocate_frame_vertices(static_cast<u32>(packet.vertices.size()));
         auto verts = slice.vertices();
         for (u32 i = 0; i < static_cast<u32>(packet.vertices.size()); ++i)
             verts[i] = packet.vertices[i];
@@ -615,7 +619,7 @@ EngineAPI Engine::make_api() {
     EngineAPI api;
 
     api.acquire = [this](u32 n) -> memory::ArenaSlice {
-        return m_buffer_manager.acquire(n);
+        return m_services.memory().allocate_frame_vertices(n);
     };
 
     api.submit_to = [this](RenderTarget target,

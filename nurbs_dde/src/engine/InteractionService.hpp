@@ -5,6 +5,7 @@
 #include "engine/RenderService.hpp"
 #include "math/Surfaces.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 #include "numeric/ops.hpp"
 
 #include <algorithm>
@@ -78,6 +79,10 @@ struct HoverMetadata {
 
 class InteractionService {
 public:
+    void set_memory_service(memory::MemoryService* memory) noexcept {
+        m_memory = memory;
+    }
+
     void set_mouse(RenderViewId view, Vec2 pixel, Vec2 ndc, bool enabled, f32 snap_radius_px = 22.f) {
         ViewMouseState* state = mouse_state_mut(view);
         if (!state) {
@@ -104,7 +109,8 @@ public:
     }
 
     [[nodiscard]] memory::FrameVector<SurfacePickRequest> consume_surface_picks(RenderViewId view) {
-        memory::FrameVector<SurfacePickRequest> out;
+        memory::FrameVector<SurfacePickRequest> out =
+            m_memory ? m_memory->frame().make_vector<SurfacePickRequest>() : memory::FrameVector<SurfacePickRequest>{};
         auto it = m_surface_requests.begin();
         while (it != m_surface_requests.end()) {
             if (it->view == view) {
@@ -246,8 +252,9 @@ public:
 
 private:
     memory::ViewVector<ViewMouseState> m_mouse;
-    memory::FrameVector<SurfacePickRequest> m_surface_requests;
+    memory::ViewVector<SurfacePickRequest> m_surface_requests;
     HoverMetadata m_hover{};
+    memory::MemoryService* m_memory = nullptr;
 
     [[nodiscard]] static std::optional<Vec2> project_world_to_pixel(Vec3 world,
                                                                     const Mat4& mvp,

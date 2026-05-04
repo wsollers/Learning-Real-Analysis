@@ -11,7 +11,25 @@ The current hard rule is enforced by `tools/check_allocation_policy.py`:
 
 These are allowed only inside the central memory package.
 
+The public allocation surface is `memory::MemoryService`. Lower-level objects
+such as `BufferManager`, arena resources, and future PMR resources are
+implementation details behind the service. Engine/app code should request
+storage by lifetime first:
+
+- `memory.frame()`
+- `memory.view()`
+- `memory.simulation()`
+- `memory.cache()`
+- `memory.history()`
+- `memory.persistent()`
+
 `std::vector`, `std::string`, and `std::unique_ptr` still exist in app/runtime code during the refactor. Direct `std::vector` use should keep shrinking behind the policy aliases, especially for simulation hot-path state, render packets, interaction state, and engine service registration/storage.
+
+`FrameVector<T>` is now `std::pmr::vector<T>`. Frame-owned vectors should be
+created through `memory.frame().make_vector<T>()` when they need to bind to the
+frame CPU arena. Render packet vertex payloads already do this. Temporary local
+`FrameVector` values may still default to the process default PMR resource until
+their call path receives `MemoryService`.
 
 Recommended next enforcement stages:
 

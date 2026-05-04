@@ -21,7 +21,7 @@ enum class RenderTarget : u8 {
 // No Vulkan types — safe to include from any translation unit.
 
 struct DebugStats {
-    // ── Arena (BufferManager) ─────────────────────────────────────────────────
+    // ── Frame GPU arena (MemoryService) ───────────────────────────────────────
     u64 arena_bytes_used  = 0;   ///< bytes written this frame
     u64 arena_bytes_total = 0;   ///< capacity of the arena
     f32 arena_utilisation = 0.f; ///< used / total  [0, 1]
@@ -40,7 +40,7 @@ struct DebugStats {
 // ── EngineAPI ─────────────────────────────────────────────────────────────────
 
 struct EngineAPI {
-    // Allocate vertex_count Vertex slots from the per-frame arena.
+    // Allocate vertex_count Vertex slots from the per-frame GPU arena.
     std::function<memory::ArenaSlice(u32 vertex_count)> acquire;
 
     // Submit a populated slice to a render target.

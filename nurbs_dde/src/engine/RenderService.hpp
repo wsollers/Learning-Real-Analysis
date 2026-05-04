@@ -6,6 +6,7 @@
 #include "math/GeometryTypes.hpp"
 #include "math/Scalars.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 
 #include <algorithm>
 #include <span>
@@ -146,6 +147,12 @@ struct RenderPacket {
 
 class RenderService {
 public:
+    // memory must outlive this RenderService while frame-backed packets exist.
+    // EngineServices declares memory before render so destruction order is safe.
+    void set_memory_service(memory::MemoryService* memory) noexcept {
+        m_memory = memory;
+    }
+
     [[nodiscard]] RenderViewHandle register_view(RenderViewDescriptor descriptor, RenderViewId* out_id = nullptr) {
         const RenderViewId id = m_next_id++;
         m_views.push_back(RenderViewEntry{
@@ -161,12 +168,16 @@ public:
                 Topology topology, DrawMode mode, Vec4 color, Mat4 mvp)
     {
         if (!is_active(view) || vertices.empty()) return;
-        RenderPacket packet;
-        packet.view = view;
-        packet.topology = topology;
-        packet.mode = mode;
-        packet.color = color;
-        packet.mvp = mvp;
+        memory::FrameVector<Vertex> packet_vertices =
+            m_memory ? m_memory->frame().make_vector<Vertex>() : memory::FrameVector<Vertex>{};
+        RenderPacket packet{
+            .view = view,
+            .topology = topology,
+            .mode = mode,
+            .color = color,
+            .mvp = mvp,
+            .vertices = std::move(packet_vertices)
+        };
         packet.vertices.assign(vertices.begin(), vertices.end());
         m_packets.push_back(std::move(packet));
     }
@@ -298,7 +309,9 @@ public:
     }
 
     [[nodiscard]] memory::FrameVector<SurfacePerturbCommand> consume_surface_perturbations(RenderViewId view) {
-        memory::FrameVector<SurfacePerturbCommand> out;
+        memory::FrameVector<SurfacePerturbCommand> out =
+            m_memory ? m_memory->frame().make_vector<SurfacePerturbCommand>()
+                     : memory::FrameVector<SurfacePerturbCommand>{};
         auto it = m_surface_commands.begin();
         while (it != m_surface_commands.end()) {
             if (it->view == view) {
@@ -339,7 +352,8 @@ public:
     [[nodiscard]] const memory::FrameVector<RenderPacket>& packets() const noexcept { return m_packets; }
 
     [[nodiscard]] memory::FrameVector<RenderViewSnapshot> active_view_snapshots() const {
-        memory::FrameVector<RenderViewSnapshot> out;
+        memory::FrameVector<RenderViewSnapshot> out =
+            m_memory ? m_memory->frame().make_vector<RenderViewSnapshot>() : memory::FrameVector<RenderViewSnapshot>{};
         out.reserve(m_views.size());
         for (const auto& entry : m_views) {
             if (!entry.active) continue;
@@ -372,7 +386,8 @@ private:
     RenderViewId m_next_id = 1;
     memory::ViewVector<RenderViewEntry> m_views;
     memory::FrameVector<RenderPacket> m_packets;
-    memory::FrameVector<SurfacePerturbCommand> m_surface_commands;
+    memory::ViewVector<SurfacePerturbCommand> m_surface_commands;
+    memory::MemoryService* m_memory = nullptr;
 
     [[nodiscard]] static CameraState preset_camera(CameraPreset preset, RenderViewDomain domain) noexcept {
         const Vec3 target{

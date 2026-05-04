@@ -3,6 +3,7 @@
 #include "engine/PanelService.hpp"
 #include "engine/RenderService.hpp"
 #include "engine/SimulationHost.hpp"
+#include "memory/MemoryService.hpp"
 
 #include <gtest/gtest.h>
 
@@ -111,7 +112,10 @@ TEST(HotkeyService, DispatchesMatchingChord) {
 }
 
 TEST(InteractionService, TracksMouseAndSurfacePickRequests) {
+    ndde::memory::MemoryService memory;
+    memory.begin_frame();
     InteractionService interaction;
+    interaction.set_memory_service(&memory);
     interaction.set_mouse(7u, {320.f, 240.f}, {0.f, 0.f}, true, 18.f);
     const ViewMouseState mouse = interaction.mouse_state(7u);
     EXPECT_TRUE(mouse.enabled);
@@ -126,6 +130,7 @@ TEST(InteractionService, TracksMouseAndSurfacePickRequests) {
     });
     const auto requests = interaction.consume_surface_picks(7u);
     ASSERT_EQ(requests.size(), 1u);
+    EXPECT_EQ(requests.get_allocator().resource(), memory.frame().resource());
     EXPECT_FLOAT_EQ(requests.front().fallback_uv.y, -0.5f);
     EXPECT_TRUE(interaction.consume_surface_picks(7u).empty());
 }
@@ -159,7 +164,10 @@ TEST(InteractionService, ResolvesSurfaceAndTrailHits) {
 }
 
 TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
+    ndde::memory::MemoryService memory;
+    memory.begin_frame();
     RenderService render;
+    render.set_memory_service(&memory);
     RenderViewId main_id = 0;
     RenderViewId alt_id = 0;
 
@@ -198,6 +206,7 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     render.queue_surface_perturbation(SurfacePerturbCommand{.view = main_id, .uv = {0.25f, -0.5f}, .seed = 42u});
     const auto commands = render.consume_surface_perturbations(main_id);
     ASSERT_EQ(commands.size(), 1u);
+    EXPECT_EQ(commands.get_allocator().resource(), memory.frame().resource());
     EXPECT_FLOAT_EQ(commands.front().uv.x, 0.25f);
 
     const Vertex verts[] = {
@@ -210,6 +219,10 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     EXPECT_EQ(render.packet_count(main_id), 1u);
     EXPECT_EQ(render.packet_count(alt_id), 1u);
     EXPECT_EQ(render.packets().size(), 2u);
+    EXPECT_EQ(render.packets().front().vertices.get_allocator().resource(), memory.frame().resource());
+    const auto snapshots = render.active_view_snapshots();
+    ASSERT_EQ(snapshots.size(), 2u);
+    EXPECT_EQ(snapshots.get_allocator().resource(), memory.frame().resource());
 
     main.reset();
     EXPECT_EQ(render.active_view_count(), 1u);
@@ -237,6 +250,34 @@ TEST(SimulationClock, AdvancesTickAndTimeAndPauses) {
     EXPECT_FLOAT_EQ(clock.current().time, 0.f);
 }
 
+TEST(MemoryService, TracksLifetimeScopeResetsAndCreatesPolicyVectors) {
+    ndde::memory::MemoryService memory;
+
+    const u64 frame0 = memory.frame().generation();
+    const u64 sim0 = memory.simulation().generation();
+    const u64 view0 = memory.view().generation();
+
+    auto frame_vertices = memory.frame().make_vector<Vertex>(3u);
+    auto sim_particles = memory.simulation().make_vector<int>();
+    sim_particles.push_back(42);
+
+    EXPECT_EQ(frame_vertices.size(), 3u);
+    EXPECT_EQ(sim_particles.front(), 42);
+
+    memory.begin_frame();
+    auto bound_frame_vertices = memory.frame().make_vector<Vertex>();
+    EXPECT_EQ(bound_frame_vertices.get_allocator().resource(), memory.frame().resource());
+    EXPECT_EQ(memory.frame().generation(), frame0 + 1u);
+    EXPECT_EQ(memory.simulation().generation(), sim0);
+
+    memory.reset_simulation();
+    EXPECT_EQ(memory.simulation().generation(), sim0 + 1u);
+    EXPECT_EQ(memory.view().generation(), view0);
+
+    memory.reset_view();
+    EXPECT_EQ(memory.view().generation(), view0 + 1u);
+}
+
 TEST(SimulationHost, ExposesOnlyServiceFacade) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
@@ -262,6 +303,7 @@ TEST(SimulationHost, ExposesOnlyServiceFacade) {
     EXPECT_EQ(services.render().active_view_count(), 1u);
     EXPECT_TRUE(services.interaction().mouse_state(view_id).enabled);
     EXPECT_EQ(host.clock().next(0.1f).tick_index, 1u);
+    EXPECT_EQ(&host.memory(), &services.memory());
 }
 
 class DummySimulation final : public ISimulation {

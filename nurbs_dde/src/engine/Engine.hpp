@@ -11,7 +11,6 @@
 #include "renderer/Swapchain.hpp"
 #include "renderer/Renderer.hpp"
 #include "renderer/SecondWindow.hpp"
-#include "memory/BufferManager.hpp"
 #include "memory/Containers.hpp"
 #include <memory>
 #include <filesystem>
@@ -51,7 +50,6 @@ private:
     platform::VulkanContext m_vk;
     renderer::Swapchain     m_swapchain;
     renderer::Renderer      m_renderer;
-    memory::BufferManager   m_buffer_manager;
     SimulationRegistry       m_simulations;
     std::size_t              m_active_sim = 0;
     std::size_t              m_pending_sim = static_cast<std::size_t>(-1);

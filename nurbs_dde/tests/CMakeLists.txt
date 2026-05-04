@@ -34,6 +34,7 @@ target_include_directories(ndde_tests PRIVATE
 )
 
 target_link_libraries(ndde_tests PRIVATE
+    ndde_memory
     ndde_math
     ndde_numeric
     volk

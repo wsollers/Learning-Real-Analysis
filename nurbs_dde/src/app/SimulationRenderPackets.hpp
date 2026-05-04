@@ -8,6 +8,7 @@
 #include "engine/RenderService.hpp"
 #include "math/Surfaces.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 #include "numeric/ops.hpp"
 
 #include <algorithm>
@@ -19,6 +20,16 @@
 #include <optional>
 
 namespace ndde {
+
+template <class T>
+inline memory::FrameVector<T> make_frame_vector(memory::MemoryService* memory_service) {
+    return memory_service ? memory_service->frame().make_vector<T>() : memory::FrameVector<T>{};
+}
+
+template <class T>
+inline memory::FrameVector<T> make_frame_vector(memory::MemoryService* memory_service, std::size_t count) {
+    return memory_service ? memory_service->frame().make_vector<T>(count) : memory::FrameVector<T>(count);
+}
 
 inline RenderViewDomain surface_domain(const math::ISurface& surface, float time = 0.f) {
     const float u0 = surface.u_min(time);
@@ -172,7 +183,8 @@ inline memory::FrameVector<Vertex> build_scalar_isoline_vertices(const math::ISu
                                                          float time,
                                                          std::span<const float> levels,
                                                          ScalarSampler&& sample,
-                                                         Vec4 color) {
+                                                         Vec4 color,
+                                                         memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(grid, 8u);
     const float u0 = surface.u_min(time);
     const float u1 = surface.u_max(time);
@@ -181,7 +193,7 @@ inline memory::FrameVector<Vertex> build_scalar_isoline_vertices(const math::ISu
     const float du = (u1 - u0) / static_cast<float>(n);
     const float dv = (v1 - v0) / static_cast<float>(n);
 
-    memory::FrameVector<float> values((n + 1u) * (n + 1u));
+    memory::FrameVector<float> values = make_frame_vector<float>(memory_service, (n + 1u) * (n + 1u));
     const auto idx = [n](u32 i, u32 j) { return i * (n + 1u) + j; };
     for (u32 i = 0; i <= n; ++i) {
         for (u32 j = 0; j <= n; ++j) {
@@ -190,7 +202,7 @@ inline memory::FrameVector<Vertex> build_scalar_isoline_vertices(const math::ISu
         }
     }
 
-    memory::FrameVector<Vertex> out;
+    memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     for (const float level : levels) {
         for (u32 i = 0; i < n; ++i) {
             for (u32 j = 0; j < n; ++j) {
@@ -224,7 +236,8 @@ inline memory::FrameVector<Vertex> build_level_curve_vertices(const math::ISurfa
                                                       u32 grid,
                                                       float time,
                                                       u32 levels,
-                                                      Vec4 color) {
+                                                      Vec4 color,
+                                                      memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(grid, 8u);
     const float u0 = surface.u_min(time);
     const float u1 = surface.u_max(time);
@@ -243,15 +256,15 @@ inline memory::FrameVector<Vertex> build_level_curve_vertices(const math::ISurfa
             zmax = std::max(zmax, z);
         }
     }
-    if (zmax <= zmin + 1e-6f) return {};
+    if (zmax <= zmin + 1e-6f) return make_frame_vector<Vertex>(memory_service);
 
-    memory::FrameVector<float> scalar_levels;
+    memory::FrameVector<float> scalar_levels = make_frame_vector<float>(memory_service);
     scalar_levels.reserve(levels);
     for (u32 l = 1; l <= levels; ++l)
         scalar_levels.push_back(zmin + (zmax - zmin) * static_cast<float>(l) / static_cast<float>(levels + 1u));
 
     return build_scalar_isoline_vertices(surface, grid, time, scalar_levels,
-        [&](float u, float v) { return surface.evaluate(u, v, time).z; }, color);
+        [&](float u, float v) { return surface.evaluate(u, v, time).z; }, color, memory_service);
 }
 
 inline Vec2 surface_height_gradient(const math::ISurface& surface, float u, float v, float time) {
@@ -265,11 +278,12 @@ inline memory::FrameVector<Vertex> build_isocline_vertices(const math::ISurface&
                                                    f32 target_slope,
                                                    f32 tolerance,
                                                    u32 bands,
-                                                   Vec4 color) {
+                                                   Vec4 color,
+                                                   memory::MemoryService* memory_service = nullptr) {
     const Vec2 dir{ops::cos(direction_angle), ops::sin(direction_angle)};
     const u32 count = std::max(bands, 1u);
     const float tol = std::max(tolerance, 0.001f);
-    memory::FrameVector<float> levels;
+    memory::FrameVector<float> levels = make_frame_vector<float>(memory_service);
     levels.reserve(count);
     if (count == 1u) {
         levels.push_back(target_slope);
@@ -283,7 +297,7 @@ inline memory::FrameVector<Vertex> build_isocline_vertices(const math::ISurface&
         [&](float u, float v) {
             const Vec2 grad = surface_height_gradient(surface, u, v, time);
             return glm::dot(grad, dir);
-        }, color);
+        }, color, memory_service);
 }
 
 inline Vec2 surface_vector_at(const math::ISurface& surface,
@@ -310,7 +324,8 @@ inline memory::FrameVector<Vertex> build_vector_field_vertices(const math::ISurf
                                                        float time,
                                                        VectorFieldMode mode,
                                                        float scale,
-                                                       Vec4 color) {
+                                                       Vec4 color,
+                                                       memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(samples, 4u);
     const float u0 = surface.u_min(time);
     const float u1 = surface.u_max(time);
@@ -319,7 +334,7 @@ inline memory::FrameVector<Vertex> build_vector_field_vertices(const math::ISurf
     const float du = (u1 - u0) / static_cast<float>(n);
     const float dv = (v1 - v0) / static_cast<float>(n);
     const float len = std::min(du, dv) * 0.38f;
-    memory::FrameVector<Vertex> out;
+    memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     out.reserve(n * n * 2u);
     for (u32 i = 0; i < n; ++i) {
         for (u32 j = 0; j < n; ++j) {
@@ -337,8 +352,9 @@ inline memory::FrameVector<Vertex> build_vector_field_vertices(const math::ISurf
 
 inline memory::FrameVector<Vertex> build_particle_velocity_vertices(const ParticleSystem& particles,
                                                             float scale,
-                                                            Vec4 color) {
-    memory::FrameVector<Vertex> out;
+                                                            Vec4 color,
+                                                            memory::MemoryService* memory_service = nullptr) {
+    memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     for (const AnimatedCurve& particle : particles.particles()) {
         const u32 n = particle.trail_size();
         if (n < 2u) continue;
@@ -359,7 +375,8 @@ inline memory::FrameVector<Vertex> build_flow_vertices(const math::ISurface& sur
                                                float step_size,
                                                float time,
                                                VectorFieldMode mode,
-                                               Vec4 color) {
+                                               Vec4 color,
+                                               memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(seed_count, 3u);
     const u32 step_count = std::max(steps, 1u);
     const float u0 = surface.u_min(time);
@@ -370,7 +387,7 @@ inline memory::FrameVector<Vertex> build_flow_vertices(const math::ISurface& sur
     const float dv = (v1 - v0) / static_cast<float>(n);
     const float step = std::min(u1 - u0, v1 - v0) * std::max(step_size, 0.001f);
 
-    memory::FrameVector<Vertex> out;
+    memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     out.reserve(n * n * step_count * 2u);
     for (u32 i = 0; i < n; ++i) {
         for (u32 j = 0; j < n; ++j) {
@@ -396,8 +413,9 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
                                                                   const RenderViewDomain& domain,
                                                                   u32 trail_idx,
                                                                   bool show_frenet,
-                                                                  bool show_osculating_circle) {
-    memory::FrameVector<Vertex> out;
+                                                                  bool show_osculating_circle,
+                                                                  memory::MemoryService* memory_service = nullptr) {
+    memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     const u32 n = particle.trail_size();
     if (n < 4u || (!show_frenet && !show_osculating_circle)) return out;
 
@@ -438,8 +456,9 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
     return out;
 }
 
-inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const ParticleSystem& particles) {
-    memory::FrameVector<TrailPickSample> samples;
+inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const ParticleSystem& particles,
+                                                                     memory::MemoryService* memory_service = nullptr) {
+    memory::FrameVector<TrailPickSample> samples = make_frame_vector<TrailPickSample>(memory_service);
     const auto& list = particles.particles();
     for (std::size_t pi = 0; pi < list.size(); ++pi) {
         const AnimatedCurve& particle = list[pi];
@@ -466,7 +485,8 @@ inline void submit_typed_alternate_view(RenderService& render,
                                         const SurfaceMeshCache& mesh,
                                         const ParticleSystem& particles,
                                         SurfaceMeshOptions options,
-                                        const Mat4& alternate_mvp) {
+                                        const Mat4& alternate_mvp,
+                                        memory::MemoryService* memory_service = nullptr) {
     const RenderViewDescriptor* descriptor = render.descriptor(alternate_view);
     const AlternateViewMode mode = descriptor ? descriptor->alternate_mode : AlternateViewMode::Contour;
     if (mode == AlternateViewMode::Contour && mesh.contour_count() > 0) {
@@ -482,12 +502,12 @@ inline void submit_typed_alternate_view(RenderService& render,
             auto u_lines = build_isocline_vertices(surface, options.grid_lines, options.time,
                 settings.isocline_direction_angle, settings.isocline_target_slope,
                 settings.isocline_tolerance, settings.isocline_bands,
-                {0.2f, 0.85f, 1.f, 0.82f});
+                {0.2f, 0.85f, 1.f, 0.82f}, memory_service);
             render.submit(alternate_view, u_lines, Topology::LineList, DrawMode::VertexColor,
                 {1.f, 1.f, 1.f, 1.f}, alternate_mvp);
         } else {
             auto lines = build_level_curve_vertices(surface, options.grid_lines, options.time, 10u,
-                {0.95f, 0.95f, 1.f, 0.72f});
+                {0.95f, 0.95f, 1.f, 0.72f}, memory_service);
             render.submit(alternate_view, lines, Topology::LineList, DrawMode::VertexColor,
                 {1.f, 1.f, 1.f, 1.f}, alternate_mvp);
         }
@@ -501,15 +521,16 @@ inline void submit_typed_alternate_view(RenderService& render,
                 Topology::TriangleList, DrawMode::VertexColor, {1.f, 1.f, 1.f, 0.45f}, alternate_mvp);
         }
         const AlternateViewSettings settings = descriptor ? descriptor->alternate : AlternateViewSettings{};
-        memory::FrameVector<Vertex> arrows;
+        memory::FrameVector<Vertex> arrows = make_frame_vector<Vertex>(memory_service);
         if (mode == AlternateViewMode::Flow) {
             arrows = build_flow_vertices(surface, settings.flow_seed_count, settings.flow_steps,
-                settings.flow_step_size, options.time, settings.vector_mode, {0.2f, 1.f, 0.65f, 0.82f});
+                settings.flow_step_size, options.time, settings.vector_mode, {0.2f, 1.f, 0.65f, 0.82f}, memory_service);
         } else if (settings.vector_mode == VectorFieldMode::ParticleVelocity) {
-            arrows = build_particle_velocity_vertices(particles, settings.vector_scale, {1.f, 0.55f, 0.2f, 0.9f});
+            arrows = build_particle_velocity_vertices(particles, settings.vector_scale, {1.f, 0.55f, 0.2f, 0.9f},
+                memory_service);
         } else {
             arrows = build_vector_field_vertices(surface, settings.vector_samples, options.time,
-                settings.vector_mode, settings.vector_scale, {1.f, 0.85f, 0.25f, 0.82f});
+                settings.vector_mode, settings.vector_scale, {1.f, 0.85f, 0.25f, 0.82f}, memory_service);
         }
         render.submit(alternate_view, arrows, Topology::LineList, DrawMode::VertexColor,
             {1.f, 1.f, 1.f, 1.f}, alternate_mvp);
@@ -524,7 +545,8 @@ inline void submit_surface_sim_packets(RenderService& render,
                                        SurfaceMeshCache& mesh,
                                        const ParticleSystem& particles,
                                        SurfaceMeshOptions options,
-                                       InteractionService* interaction = nullptr)
+                                       InteractionService* interaction = nullptr,
+                                       memory::MemoryService* memory_service = nullptr)
 {
     mesh.rebuild_if_needed(surface, options);
     const RenderViewDomain domain = surface_domain(surface, options.time);
@@ -535,7 +557,8 @@ inline void submit_surface_sim_packets(RenderService& render,
     const Mat4 alternate_mvp = surface_alternate_mvp(surface, options.time);
     const RenderViewDescriptor* main_descriptor = render.descriptor(main_view);
     const memory::FrameVector<TrailPickSample> pick_samples =
-        (interaction && main_descriptor) ? build_trail_pick_samples(particles) : memory::FrameVector<TrailPickSample>{};
+        (interaction && main_descriptor) ? build_trail_pick_samples(particles, memory_service)
+                                         : make_frame_vector<TrailPickSample>(memory_service);
     const ParticleTrailHit hover = (interaction && main_descriptor)
         ? interaction->resolve_particle_trail_hit(main_view, pick_samples, main_mvp, main_descriptor->viewport_size)
         : ParticleTrailHit{};
@@ -562,14 +585,14 @@ inline void submit_surface_sim_packets(RenderService& render,
             {1.f, 1.f, 1.f, 1.f}, main_mvp);
     }
 
-    submit_typed_alternate_view(render, alternate_view, surface, mesh, particles, options, alternate_mvp);
+    submit_typed_alternate_view(render, alternate_view, surface, mesh, particles, options, alternate_mvp, memory_service);
 
     const auto& particle_list = particles.particles();
     for (std::size_t particle_index = 0; particle_index < particle_list.size(); ++particle_index) {
         const auto& particle = particle_list[particle_index];
         const u32 count = particle.trail_vertex_count();
         if (count < 2u) continue;
-        memory::FrameVector<Vertex> trail(count);
+        memory::FrameVector<Vertex> trail = make_frame_vector<Vertex>(memory_service, count);
         particle.tessellate_trail(std::span<Vertex>(trail.data(), trail.size()));
         const std::span<const Vertex> trail_span(trail.data(), trail.size());
         render.submit(main_view, trail_span,
@@ -585,7 +608,8 @@ inline void submit_surface_sim_packets(RenderService& render,
             auto overlay = build_particle_frenet_overlay_vertices(particle, domain,
                 hover.trail_index,
                 main_descriptor->overlays.show_hover_frenet,
-                main_descriptor->overlays.show_osculating_circle);
+                main_descriptor->overlays.show_osculating_circle,
+                memory_service);
             render.submit(main_view, overlay, Topology::LineList, DrawMode::VertexColor,
                 {1.f, 1.f, 1.f, 1.f}, main_mvp);
         }

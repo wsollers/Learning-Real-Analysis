@@ -33,6 +33,7 @@ target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm)
 # ── ndde_memory ───────────────────────────────────────────────────────────────
 add_library(ndde_memory STATIC
     memory/BufferManager.cpp
+    memory/MemoryService.cpp
 )
 target_include_directories(ndde_memory PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_memory PUBLIC ndde_math volk)
