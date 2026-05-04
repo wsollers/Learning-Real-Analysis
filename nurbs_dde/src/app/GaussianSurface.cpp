@@ -236,8 +236,9 @@ AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
 {
     m_walk = ndde::sim::ParticleState{ glm::vec2{start_x, start_y}, 0.f, 0.f };
     m_particle_role = role == Role::Leader ? ParticleRole::Leader : ParticleRole::Chaser;
-    m_constraints.push_back(memory::make_unique<ndde::sim::DomainConfinement>(
-        m_constraints.get_allocator().resource()));
+    m_constraints.push_back(memory::unique_cast<ndde::sim::IConstraint>(
+        memory::make_unique<ndde::sim::DomainConfinement>(
+            m_constraints.get_allocator().resource())));
 }
 
 void AnimatedCurve::bind_memory(memory::MemoryService* memory) {

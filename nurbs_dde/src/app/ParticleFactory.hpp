@@ -119,7 +119,7 @@ public:
 
     template <class Behavior, class... Args>
     ParticleBuilder& with_behavior(float weight, Args&&... args) & {
-        m_stack.add(make_sim_unique<Behavior>(std::forward<Args>(args)...), weight);
+        m_stack.add(make_sim_unique_as<IParticleBehavior, Behavior>(std::forward<Args>(args)...), weight);
         return *this;
     }
     template <class Behavior, class... Args>
@@ -139,7 +139,7 @@ public:
     }
 
     ParticleBuilder& with_equation(memory::Unique<ndde::sim::IEquation> equation, float weight = 1.f) & {
-        m_stack.add(make_sim_unique<EquationBehavior>(std::move(equation)), weight);
+        m_stack.add(make_sim_unique_as<IParticleBehavior, EquationBehavior>(std::move(equation)), weight);
         return *this;
     }
     ParticleBuilder&& with_equation(memory::Unique<ndde::sim::IEquation> equation, float weight = 1.f) && {
@@ -149,7 +149,8 @@ public:
 
     template <class Equation, class... Args>
     ParticleBuilder& with_equation(float weight, Args&&... args) & {
-        return with_equation(make_sim_unique<Equation>(std::forward<Args>(args)...), weight);
+        return with_equation(make_sim_unique_as<ndde::sim::IEquation, Equation>(
+            std::forward<Args>(args)...), weight);
     }
 
     template <class Equation, class... Args>
@@ -171,7 +172,8 @@ public:
 
     template <class Constraint, class... Args>
     ParticleBuilder& with_constraint(Args&&... args) & {
-        m_constraints.push_back(make_sim_unique<Constraint>(std::forward<Args>(args)...));
+        m_constraints.push_back(make_sim_unique_as<ndde::sim::IConstraint, Constraint>(
+            std::forward<Args>(args)...));
         return *this;
     }
     template <class Constraint, class... Args>
@@ -201,6 +203,14 @@ private:
     [[nodiscard]] memory::Unique<T> make_sim_unique(Args&&... args) const {
         return m_memory ? m_memory->simulation().make_unique<T>(std::forward<Args>(args)...)
                         : memory::make_unique<T>(std::pmr::get_default_resource(), std::forward<Args>(args)...);
+    }
+
+    template <class Base, class Derived, class... Args>
+    [[nodiscard]] memory::Unique<Base> make_sim_unique_as(Args&&... args) const {
+        return m_memory ? m_memory->simulation().make_unique_as<Base, Derived>(std::forward<Args>(args)...)
+                        : memory::unique_cast<Base>(
+                              memory::make_unique<Derived>(std::pmr::get_default_resource(),
+                                                           std::forward<Args>(args)...));
     }
 };
 
