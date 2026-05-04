@@ -374,6 +374,13 @@ void Engine::draw_debug_coordinates_panel() {
     } else {
         ImGui::TextDisabled("particle: no trail snap");
     }
+    if (hover.view_point.hit) {
+        ImGui::TextDisabled("2D point %.3f, %.3f", hover.view_point.point.x, hover.view_point.point.y);
+        ImGui::TextDisabled("2D world %.3f, %.3f, %.3f",
+            hover.view_point.world.x,
+            hover.view_point.world.y,
+            hover.view_point.world.z);
+    }
     auto kind_name = [](InteractionTargetKind kind) {
         switch (kind) {
             case InteractionTargetKind::SurfacePoint: return "SurfacePoint";

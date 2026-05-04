@@ -1,5 +1,7 @@
 #include "app/SimulationDelayDifferential2D.hpp"
 
+#include "app/Curve2DOverlay.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <glm/gtc/matrix_inverse.hpp>
@@ -188,18 +190,24 @@ void SimulationDelayDifferential2D::submit_geometry() {
 
     memory::FrameVector<Vertex> time_series = memory.frame().make_vector<Vertex>();
     memory::FrameVector<Vertex> delay_phase = memory.frame().make_vector<Vertex>();
+    memory::FrameVector<Vec2> time_points = memory.frame().make_vector<Vec2>();
+    memory::FrameVector<Vec2> delay_phase_points = memory.frame().make_vector<Vec2>();
     time_series.reserve(m_problem->history_size());
     delay_phase.reserve(m_problem->history_size());
+    time_points.reserve(m_problem->history_size());
+    delay_phase_points.reserve(m_problem->history_size());
     for (std::size_t i = 0; i < m_problem->history_size(); ++i) {
         const f64 t = m_problem->history_time(i);
         if (t < time_d.u_min) continue;
         const auto sample = m_problem->history_state(i);
         if (sample.empty()) continue;
         const float x = static_cast<float>(sample[0]);
+        time_points.push_back({static_cast<float>(t), x});
         time_series.push_back(Vertex{.pos = {static_cast<float>(t), x, 0.f}, .color = {1.f, 0.72f, 0.18f, 1.f}});
 
         f64 delayed = 0.0;
         m_problem->query_history(t - m_delay, std::span<f64>{&delayed, 1u});
+        delay_phase_points.push_back({x, static_cast<float>(delayed)});
         delay_phase.push_back(Vertex{
             .pos = {x, static_cast<float>(delayed), 0.f},
             .color = {0.35f, 0.75f, 1.f, 1.f}
@@ -225,6 +233,33 @@ void SimulationDelayDifferential2D::submit_geometry() {
         add_line(phase_marker, {x, static_cast<float>(delayed) - r_phase}, {x, static_cast<float>(delayed) + r_phase}, {1.f, 0.95f, 0.20f, 1.f});
         render.submit(m_delay_phase_view, phase_marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, phase_mvp);
     }
+
+    auto submit_hover_marker = [&](RenderViewId view, const RenderViewDomain& domain, const Mat4& mvp) {
+        const InteractionTarget hover = m_host->interaction().hover_target(view);
+        if (!hover.valid || hover.kind != InteractionTargetKind::ViewPoint2D)
+            return;
+        const Vec2 p = hover.point2d;
+        const float r = std::min(domain.u_max - domain.u_min, domain.v_max - domain.v_min) * 0.015f;
+        memory::FrameVector<Vertex> hover_marker = memory.frame().make_vector<Vertex>();
+        add_line(hover_marker, p + Vec2{-r, 0.f}, p + Vec2{r, 0.f}, {0.35f, 1.f, 0.95f, 1.f});
+        add_line(hover_marker, p + Vec2{0.f, -r}, p + Vec2{0.f, r}, {0.35f, 1.f, 0.95f, 1.f});
+        render.submit(view, hover_marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+
+        const RenderViewDescriptor* desc = render.descriptor(view);
+        const auto& curve = view == m_time_view ? time_points : delay_phase_points;
+        if (desc) {
+            auto frame = build_curve2d_frenet_hover_overlay(
+                std::span<const Vec2>{curve.data(), curve.size()},
+                p,
+                domain,
+                desc->overlays.show_hover_frenet,
+                desc->overlays.show_osculating_circle,
+                &memory);
+            render.submit(view, frame, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+        }
+    };
+    submit_hover_marker(m_time_view, time_d, time_mvp);
+    submit_hover_marker(m_delay_phase_view, phase_d, phase_mvp);
 }
 
 void SimulationDelayDifferential2D::update_hover() {

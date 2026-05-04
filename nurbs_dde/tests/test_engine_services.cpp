@@ -204,6 +204,29 @@ TEST(InteractionService, ResolvesSurfaceAndTrailHits) {
     EXPECT_NEAR(selected_surface.uv.x, 0.f, 1e-4f);
 }
 
+TEST(InteractionService, TracksViewPointHoverTargets) {
+    InteractionService interaction;
+    interaction.set_hover_view_point(9u, {1.25f, -0.5f}, {1.25f, -0.5f, 0.f});
+
+    const HoverMetadata& hover = interaction.hover_metadata();
+    EXPECT_EQ(hover.view, 9u);
+    EXPECT_TRUE(hover.view_point.hit);
+    EXPECT_FLOAT_EQ(hover.view_point.point.x, 1.25f);
+    EXPECT_FLOAT_EQ(hover.view_point.point.y, -0.5f);
+
+    const InteractionTarget target = interaction.hover_target(9u);
+    EXPECT_TRUE(target.valid);
+    EXPECT_EQ(target.kind, InteractionTargetKind::ViewPoint2D);
+    EXPECT_FLOAT_EQ(target.point2d.x, 1.25f);
+    EXPECT_FLOAT_EQ(target.point2d.y, -0.5f);
+
+    interaction.select_current_hover(9u);
+    const InteractionTarget selected = interaction.selected_target(9u);
+    EXPECT_TRUE(selected.valid);
+    EXPECT_EQ(selected.kind, InteractionTargetKind::ViewPoint2D);
+    EXPECT_FLOAT_EQ(selected.point2d.x, 1.25f);
+}
+
 TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     ndde::memory::MemoryService memory;
     memory.begin_frame();

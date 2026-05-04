@@ -1,5 +1,6 @@
 #include "app/SimulationDifferential2D.hpp"
 
+#include "app/Curve2DOverlay.hpp"
 #include "app/SimulationRenderPackets.hpp"
 
 #include <algorithm>
@@ -305,10 +306,13 @@ void SimulationDifferential2D::submit_geometry() {
     render.submit(m_phase_view, field, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, phase_view_mvp);
 
     memory::FrameVector<Vertex> trajectory = memory.frame().make_vector<Vertex>();
+    memory::FrameVector<Vec2> trajectory_points = memory.frame().make_vector<Vec2>();
     trajectory.reserve(m_problem->history_size());
+    trajectory_points.reserve(m_problem->history_size());
     for (std::size_t i = 0; i < m_problem->history_size(); ++i) {
         const auto sample = m_problem->history_state(i);
         if (sample.size() < 2u) continue;
+        trajectory_points.push_back({static_cast<float>(sample[0]), static_cast<float>(sample[1])});
         trajectory.push_back(Vertex{
             .pos = {static_cast<float>(sample[0]), static_cast<float>(sample[1]), 0.f},
             .color = {1.f, 0.72f, 0.18f, 1.f}
@@ -327,6 +331,32 @@ void SimulationDifferential2D::submit_geometry() {
         render.submit(m_main_view, marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, main_mvp);
         render.submit(m_phase_view, marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, phase_view_mvp);
     }
+
+    auto submit_hover_marker = [&](RenderViewId view, const Mat4& mvp) {
+        const InteractionTarget hover = m_host->interaction().hover_target(view);
+        if (!hover.valid || hover.kind != InteractionTargetKind::ViewPoint2D)
+            return;
+        const Vec2 p = hover.point2d;
+        const float r = std::min(domain.u_max - domain.u_min, domain.v_max - domain.v_min) * 0.015f;
+        memory::FrameVector<Vertex> hover_marker = memory.frame().make_vector<Vertex>();
+        add_line(hover_marker, p + Vec2{-r, 0.f}, p + Vec2{r, 0.f}, {0.35f, 1.f, 0.95f, 1.f});
+        add_line(hover_marker, p + Vec2{0.f, -r}, p + Vec2{0.f, r}, {0.35f, 1.f, 0.95f, 1.f});
+        render.submit(view, hover_marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+
+        const RenderViewDescriptor* desc = render.descriptor(view);
+        if (desc) {
+            auto frame = build_curve2d_frenet_hover_overlay(
+                std::span<const Vec2>{trajectory_points.data(), trajectory_points.size()},
+                p,
+                domain,
+                desc->overlays.show_hover_frenet,
+                desc->overlays.show_osculating_circle,
+                &memory);
+            render.submit(view, frame, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+        }
+    };
+    submit_hover_marker(m_main_view, main_mvp);
+    submit_hover_marker(m_phase_view, phase_view_mvp);
 }
 
 void SimulationDifferential2D::update_hover() {

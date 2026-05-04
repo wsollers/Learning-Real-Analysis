@@ -1,4 +1,5 @@
 #include "app/SimulationAnalysis.hpp"
+#include "app/Curve2DOverlay.hpp"
 #include "app/SimulationDelayDifferential2D.hpp"
 #include "app/SimulationDifferential2D.hpp"
 #include "app/SimulationMultiWell.hpp"
@@ -109,6 +110,68 @@ TEST(AllSimulations, Differential2DDoubleClickPhasePointResetsInitialCondition) 
     EXPECT_NEAR(selected.point2d.y, 2.2f, 0.05f);
 
     sim.on_stop();
+}
+
+TEST(AllSimulations, Differential2DMainHoverPublishesViewPointTarget) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationDifferential2D sim;
+
+    sim.on_register(host);
+    sim.on_start();
+    services.render().set_viewport_size(sim.main_view_id(), {800.f, 600.f});
+    services.interaction().set_mouse(sim.main_view_id(), {400.f, 300.f}, {0.f, 0.f}, true);
+    sim.on_tick(TickInfo{.paused = true});
+
+    EXPECT_GE(services.render().packet_count(sim.main_view_id()), 4u);
+    const InteractionTarget hover = services.interaction().hover_target(sim.main_view_id());
+    EXPECT_TRUE(hover.valid);
+    EXPECT_EQ(hover.kind, InteractionTargetKind::ViewPoint2D);
+    EXPECT_EQ(hover.view, sim.main_view_id());
+    EXPECT_TRUE(services.interaction().hover_metadata().view_point.hit);
+
+    sim.on_stop();
+}
+
+TEST(AllSimulations, DelayDifferential2DMainHoverPublishesViewPointTarget) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationDelayDifferential2D sim;
+
+    sim.on_register(host);
+    sim.on_start();
+    services.render().set_viewport_size(sim.main_view_id(), {800.f, 600.f});
+    services.interaction().set_mouse(sim.main_view_id(), {400.f, 300.f}, {0.f, 0.f}, true);
+    sim.on_tick(TickInfo{.paused = true});
+
+    EXPECT_GE(services.render().packet_count(sim.main_view_id()), 4u);
+    const InteractionTarget hover = services.interaction().hover_target(sim.main_view_id());
+    EXPECT_TRUE(hover.valid);
+    EXPECT_EQ(hover.kind, InteractionTargetKind::ViewPoint2D);
+    EXPECT_EQ(hover.view, sim.main_view_id());
+    EXPECT_TRUE(services.interaction().hover_metadata().view_point.hit);
+
+    sim.on_stop();
+}
+
+TEST(AllSimulations, Curve2DHoverOverlayBuildsFrenetAndOsculatingGeometryNearCurve) {
+    EngineServices services;
+    const Vec2 curve[] = {
+        {-1.f, 1.f},
+        {-0.5f, 0.25f},
+        {0.f, 0.f},
+        {0.5f, 0.25f},
+        {1.f, 1.f}
+    };
+    auto overlay = build_curve2d_frenet_hover_overlay(
+        std::span<const Vec2>{curve, 5u},
+        {0.f, 0.f},
+        RenderViewDomain{.u_min = -2.f, .u_max = 2.f, .v_min = -1.f, .v_max = 2.f},
+        true,
+        true,
+        &services.memory());
+
+    EXPECT_GT(overlay.size(), 4u);
 }
 
 TEST(AllSimulations, DefaultRegistryContainsExpectedISimulationRuntimes) {

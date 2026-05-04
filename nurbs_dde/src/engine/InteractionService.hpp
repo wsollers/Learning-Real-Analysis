@@ -77,6 +77,13 @@ struct ParticleTrailHit {
     bool hit = false;
 };
 
+struct ViewPointHit {
+    RenderViewId view = 0;
+    Vec2 point{};
+    Vec3 world{};
+    bool hit = false;
+};
+
 enum class InteractionTargetKind : u8 {
     None,
     SurfacePoint,
@@ -104,6 +111,7 @@ struct HoverMetadata {
     Vec2 mouse_pixel{};
     SurfaceHit surface{};
     ParticleTrailHit particle{};
+    ViewPointHit view_point{};
 };
 
 class InteractionService {
@@ -338,6 +346,13 @@ public:
 
     void set_hover_view_point(RenderViewId view, Vec2 point, Vec3 world = {}) {
         if (view == 0) return;
+        m_hover.view = view;
+        m_hover.view_point = ViewPointHit{
+            .view = view,
+            .point = point,
+            .world = world,
+            .hit = true
+        };
         set_hover_target(InteractionTarget{
             .kind = InteractionTargetKind::ViewPoint2D,
             .view = view,
@@ -423,6 +438,8 @@ private:
     void set_surface_hover(SurfaceHit hit) {
         m_hover.view = hit.view != 0 ? hit.view : m_hover.view;
         m_hover.surface = hit;
+        if (hit.view != 0)
+            m_hover.view_point = ViewPointHit{.view = hit.view};
         if (hit.hit) {
             set_hover_target(InteractionTarget{
                 .kind = InteractionTargetKind::SurfacePoint,
