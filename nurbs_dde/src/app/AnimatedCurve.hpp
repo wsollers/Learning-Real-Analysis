@@ -11,10 +11,10 @@
 // non-owning.  All three must outlive the AnimatedCurve.
 //
 // with_equation() factory: the particle OWNS its equation via m_owned_equation
-// (unique_ptr).  m_equation is an alias to m_owned_equation.get().  This
+// (memory::Unique).  m_equation is an alias to m_owned_equation.get().  This
 // enables per-particle SDE equations (BrownianMotion, DelayPursuitEquation).
 //
-// Move semantics: AnimatedCurve is moveable but not copyable.  The unique_ptr
+// Move semantics: AnimatedCurve is moveable but not copyable.  The owned pointer
 // members (m_owned_equation, m_history) move safely; m_equation (raw pointer
 // alias) remains valid because unique_ptr move preserves the heap address.
 //
@@ -23,7 +23,7 @@
 // enable_history() allocates a ring buffer.  push_history() records the
 // current parameter-space position after each advance() call.  query_history()
 // interpolates to an arbitrary past time.  The buffer pointer is stable across
-// vector reallocations (unique_ptr move does not change heap address).
+// vector reallocations (memory::Unique move does not change object address).
 //
 // Live equation access
 // ─────────────────────
@@ -45,9 +45,10 @@
 #include "app/ParticleTypes.hpp"
 #include "math/GeometryTypes.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
+#include "memory/Unique.hpp"
 #include <glm/glm.hpp>
 #include <span>
-#include <memory>
 #include <atomic>
 #include <string>
 
@@ -70,17 +71,19 @@ public:
                            u32 colour_slot,
                            const ndde::math::ISurface*   surface,
                            ndde::sim::IEquation*          equation,
-                           const ndde::sim::IIntegrator*  integrator);
+                           const ndde::sim::IIntegrator*  integrator,
+                           memory::MemoryService*         memory = nullptr);
 
     // Factory: construct a particle that OWNS its equation.
-    // The unique_ptr is moved into m_owned_equation; m_equation is set to
+    // The owned pointer is moved into m_owned_equation; m_equation is set to
     // m_owned_equation.get().  All other pointers remain non-owning.
     static AnimatedCurve with_equation(
         f32 start_x, f32 start_y,
         Role role, u32 colour_slot,
         const ndde::math::ISurface*          surface,
-        std::unique_ptr<ndde::sim::IEquation> owned_equation,
-        const ndde::sim::IIntegrator*         integrator);
+        memory::Unique<ndde::sim::IEquation> owned_equation,
+        const ndde::sim::IIntegrator*         integrator,
+        memory::MemoryService*                memory = nullptr);
 
     // AnimatedCurve is moveable (unique_ptr members) but not copyable.
     AnimatedCurve(const AnimatedCurve&)            = delete;
@@ -156,11 +159,13 @@ public:
     }
 
     // Add a constraint applied after every integration sub-step.
-    // AnimatedCurve owns the constraint via unique_ptr.
+    // AnimatedCurve owns the constraint via memory::Unique.
     // Constraints are applied in insertion order.
-    void add_constraint(std::unique_ptr<ndde::sim::IConstraint> c) {
+    void add_constraint(memory::Unique<ndde::sim::IConstraint> c) {
         m_constraints.push_back(std::move(c));
     }
+
+    void bind_memory(memory::MemoryService* memory);
 
     // Mutable access to the particle state for pairwise constraint application.
     // Prefer ParticleSystem for new simulation code.
@@ -178,10 +183,11 @@ private:
     memory::HistoryVector<Vec3>              m_trail;
     const ndde::math::ISurface*              m_surface;        // non-owning, never null
     ndde::sim::IEquation*                    m_equation;       // non-owning OR alias to m_owned_equation
-    std::unique_ptr<ndde::sim::IEquation>    m_owned_equation; // null when using shared equation
+    memory::Unique<ndde::sim::IEquation>     m_owned_equation; // null when using shared equation
     const ndde::sim::IIntegrator*            m_integrator;     // non-owning, never null
-    std::unique_ptr<ndde::sim::HistoryBuffer> m_history;       // null unless enable_history() called
-    memory::SimVector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints; // applied after each sub-step
+    memory::Unique<ndde::sim::HistoryBuffer> m_history;        // null unless enable_history() called
+    memory::SimVector<memory::Unique<ndde::sim::IConstraint>> m_constraints; // applied after each sub-step
+    memory::MemoryService*                    m_memory = nullptr;
     Role                                     m_role;
     u32                                      m_colour_slot;
     f32                                      m_start_x, m_start_y;

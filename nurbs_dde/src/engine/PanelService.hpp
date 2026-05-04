@@ -4,6 +4,7 @@
 
 #include "engine/ServiceHandle.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -30,6 +31,15 @@ struct PanelDescriptor {
 
 class PanelService {
 public:
+    void set_memory_service(memory::MemoryService* memory) {
+        std::pmr::memory_resource* resource = memory ? memory->persistent().resource()
+                                                     : std::pmr::get_default_resource();
+        if (resource == m_panels.get_allocator().resource())
+            return;
+        std::destroy_at(&m_panels);
+        std::construct_at(&m_panels, resource);
+    }
+
     [[nodiscard]] PanelHandle register_panel(PanelDescriptor descriptor) {
         const PanelId id = m_next_id++;
         m_panels.push_back(PanelEntry{

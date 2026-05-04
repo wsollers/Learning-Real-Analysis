@@ -16,8 +16,8 @@
 #include "engine/ISimulation.hpp"
 #include "engine/RenderService.hpp"
 #include "engine/ScopedServiceHandles.hpp"
+#include "memory/Unique.hpp"
 
-#include <memory>
 #include <random>
 #include <string_view>
 
@@ -25,7 +25,7 @@ namespace ndde {
 
 class SimulationSurfaceGaussian final : public ISimulation {
 public:
-    SimulationSurfaceGaussian();
+    explicit SimulationSurfaceGaussian(memory::MemoryService* memory = nullptr);
     ~SimulationSurfaceGaussian() override = default;
 
     [[nodiscard]] std::string_view name() const override { return "Surface Simulation"; }
@@ -45,7 +45,7 @@ public:
     [[nodiscard]] std::size_t particle_count() const noexcept { return m_particles.size(); }
 
 private:
-    std::unique_ptr<GaussianRipple> m_surface;
+    memory::Unique<GaussianRipple> m_surface;
     ParticleSystem m_particles;
     SurfaceSimSpawner m_spawner;
     SimulationContext m_context;

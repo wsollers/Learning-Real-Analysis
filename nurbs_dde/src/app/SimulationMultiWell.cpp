@@ -9,8 +9,8 @@
 
 namespace ndde {
 
-SimulationMultiWell::SimulationMultiWell()
-    : m_surface(SurfaceRegistry::make_multi_well(4.f))
+SimulationMultiWell::SimulationMultiWell(memory::MemoryService* memory)
+    : m_surface(SurfaceRegistry::make_multi_well(memory, 4.f))
     , m_particles(m_surface.get(), 3103u)
     , m_spawner(m_particles, m_spawn_count, m_sim_time, m_goal_status)
 {
@@ -19,6 +19,7 @@ SimulationMultiWell::SimulationMultiWell()
 
 void SimulationMultiWell::on_register(SimulationHost& host) {
     m_host = &host;
+    sync_context();
     m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
         .title = "Sim - Controls",
         .category = "Simulation",
@@ -139,6 +140,7 @@ SimulationMetadata SimulationMultiWell::metadata() const {
 }
 
 void SimulationMultiWell::sync_context() {
+    if (m_host) m_particles.bind_memory(&m_host->memory());
     m_particles.set_surface(m_surface.get());
     m_context.set_surface(m_surface.get());
     m_context.set_particles(&m_particles.particles());

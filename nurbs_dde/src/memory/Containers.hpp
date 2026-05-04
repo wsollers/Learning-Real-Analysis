@@ -3,9 +3,8 @@
 // Central container policy aliases.
 //
 // The architectural rule is that code depends on lifetime policy names, not
-// directly on STL container choices.  FrameVector is already PMR-backed so
-// frame-local storage can bind to MemoryService::frame(); the longer-lived
-// aliases remain std-backed until their backing lifetimes are migrated.
+// directly on STL container choices.  All lifetime aliases are PMR-backed so
+// storage can bind to the matching MemoryService scope.
 
 #include <memory_resource>
 #include <vector>
@@ -16,18 +15,18 @@ template <class T>
 using FrameVector = std::pmr::vector<T>;
 
 template <class T>
-using ViewVector = std::vector<T>;
+using ViewVector = std::pmr::vector<T>;
 
 template <class T>
-using SimVector = std::vector<T>;
+using SimVector = std::pmr::vector<T>;
 
 template <class T>
-using CacheVector = std::vector<T>;
+using CacheVector = std::pmr::vector<T>;
 
 template <class T>
-using HistoryVector = std::vector<T>;
+using HistoryVector = std::pmr::vector<T>;
 
 template <class T>
-using PersistentVector = std::vector<T>;
+using PersistentVector = std::pmr::vector<T>;
 
 } // namespace ndde::memory

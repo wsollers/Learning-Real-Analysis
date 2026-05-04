@@ -4,9 +4,10 @@
 
 #include "math/SineRationalSurface.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/MemoryService.hpp"
+#include "memory/Unique.hpp"
 #include "numeric/ops.hpp"
 
-#include <memory>
 #include <string_view>
 
 namespace ndde {
@@ -115,16 +116,25 @@ public:
         }
     }
 
-    [[nodiscard]] static std::unique_ptr<ndde::math::SineRationalSurface> make_sine_rational(float extent = 4.f) {
-        return std::make_unique<ndde::math::SineRationalSurface>(extent);
+    [[nodiscard]] static memory::Unique<ndde::math::SineRationalSurface>
+    make_sine_rational(memory::MemoryService* mem = nullptr, float extent = 4.f) {
+        return mem ? mem->simulation().make_unique<ndde::math::SineRationalSurface>(extent)
+                   : memory::make_unique<ndde::math::SineRationalSurface>(
+                            std::pmr::get_default_resource(), extent);
     }
 
-    [[nodiscard]] static std::unique_ptr<MultiWellWaveSurface> make_multi_well(float extent = 4.f) {
-        return std::make_unique<MultiWellWaveSurface>(extent);
+    [[nodiscard]] static memory::Unique<MultiWellWaveSurface>
+    make_multi_well(memory::MemoryService* mem = nullptr, float extent = 4.f) {
+        return mem ? mem->simulation().make_unique<MultiWellWaveSurface>(extent)
+                   : memory::make_unique<MultiWellWaveSurface>(
+                            std::pmr::get_default_resource(), extent);
     }
 
-    [[nodiscard]] static std::unique_ptr<WavePredatorPreySurface> make_wave_predator_prey(float extent = 4.f) {
-        return std::make_unique<WavePredatorPreySurface>(extent);
+    [[nodiscard]] static memory::Unique<WavePredatorPreySurface>
+    make_wave_predator_prey(memory::MemoryService* mem = nullptr, float extent = 4.f) {
+        return mem ? mem->simulation().make_unique<WavePredatorPreySurface>(extent)
+                   : memory::make_unique<WavePredatorPreySurface>(
+                            std::pmr::get_default_resource(), extent);
     }
 };
 

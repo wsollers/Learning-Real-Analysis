@@ -1,5 +1,6 @@
 #include "app/SurfaceMeshCache.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/MemoryService.hpp"
 
 #include <gtest/gtest.h>
 
@@ -41,6 +42,22 @@ TEST(SurfaceMeshCache, DirtyRebuildCanChangeResolution) {
     });
     EXPECT_EQ(cache.fill_count(), 10u * 10u * 6u);
     EXPECT_EQ(cache.contour_count(), 10u * 10u * 6u);
+}
+
+TEST(SurfaceMeshCache, BindsVerticesToCacheMemoryScope) {
+    ndde::memory::MemoryService memory;
+    ndde::math::Paraboloid surface;
+    ndde::SurfaceMeshCache cache;
+    cache.bind_memory(&memory);
+
+    cache.rebuild_if_needed(surface, ndde::SurfaceMeshOptions{
+        .grid_lines = 8,
+        .build_contour = true
+    });
+
+    EXPECT_EQ(cache.fill_vertices().get_allocator().resource(), memory.cache().resource());
+    EXPECT_EQ(cache.wire_vertices().get_allocator().resource(), memory.cache().resource());
+    EXPECT_EQ(cache.contour_vertices().get_allocator().resource(), memory.cache().resource());
 }
 
 } // namespace

@@ -4,17 +4,15 @@
 //
 // This is the public allocation surface for engine/app code.  Lower-level
 // allocators such as BufferManager are implementation details of the service.
-// Frame-lifetime CPU vectors are PMR-backed through this service.  Longer
-// lifetime aliases still begin as std-backed containers and will migrate one
-// scope at a time.
+// Lifetime-tagged vectors are PMR-backed through this service.
 
 #include "math/GeometryTypes.hpp"
 #include "math/Scalars.hpp"
 #include "memory/ArenaSlice.hpp"
 #include "memory/BufferManager.hpp"
 #include "memory/Containers.hpp"
+#include "memory/Unique.hpp"
 
-#include <memory>
 #include <memory_resource>
 #include <string_view>
 #include <utility>
@@ -85,25 +83,17 @@ public:
 
     template <class T>
     [[nodiscard]] typename Policy::template Vector<T> make_vector() const {
-        if constexpr (Lifetime == MemoryLifetime::Frame) {
-            return typename Policy::template Vector<T>{m_resource};
-        } else {
-            return {};
-        }
+        return typename Policy::template Vector<T>{m_resource};
     }
 
     template <class T>
     [[nodiscard]] typename Policy::template Vector<T> make_vector(std::size_t count) const {
-        if constexpr (Lifetime == MemoryLifetime::Frame) {
-            return typename Policy::template Vector<T>(count, m_resource);
-        } else {
-            return typename Policy::template Vector<T>(count);
-        }
+        return typename Policy::template Vector<T>(count, m_resource);
     }
 
     template <class T, class... Args>
-    [[nodiscard]] std::unique_ptr<T> make_unique(Args&&... args) const {
-        return std::make_unique<T>(std::forward<Args>(args)...);
+    [[nodiscard]] Unique<T> make_unique(Args&&... args) const {
+        return memory::make_unique<T>(m_resource, std::forward<Args>(args)...);
     }
 
 private:
@@ -121,7 +111,7 @@ using PersistentMemoryScope = MemoryScope<MemoryLifetime::Persistent>;
 
 class MemoryService {
 public:
-    MemoryService() = default;
+    MemoryService();
     ~MemoryService() = default;
 
     MemoryService(const MemoryService&) = delete;
@@ -133,10 +123,10 @@ public:
     void destroy();
 
     void begin_frame() noexcept;
-    void reset_view() noexcept { m_view.reset(); }
-    void reset_simulation() noexcept { m_simulation.reset(); }
-    void reset_cache() noexcept { m_cache.reset(); }
-    void reset_history() noexcept { m_history.reset(); }
+    void reset_view() noexcept;
+    void reset_simulation() noexcept;
+    void reset_cache() noexcept;
+    void reset_history() noexcept;
 
     [[nodiscard]] FrameMemoryScope& frame() noexcept { return m_frame; }
     [[nodiscard]] const FrameMemoryScope& frame() const noexcept { return m_frame; }
@@ -167,6 +157,11 @@ private:
     HistoryMemoryScope m_history{"History"};
     PersistentMemoryScope m_persistent{"Persistent"};
     std::pmr::monotonic_buffer_resource m_frame_cpu{1024u * 1024u * 16u};
+    std::pmr::monotonic_buffer_resource m_view_cpu{1024u * 1024u * 8u};
+    std::pmr::monotonic_buffer_resource m_simulation_cpu{1024u * 1024u * 32u};
+    std::pmr::monotonic_buffer_resource m_cache_cpu{1024u * 1024u * 64u};
+    std::pmr::monotonic_buffer_resource m_history_cpu{1024u * 1024u * 64u};
+    std::pmr::monotonic_buffer_resource m_persistent_cpu{1024u * 1024u * 8u};
     BufferManager m_frame_gpu;
 };
 

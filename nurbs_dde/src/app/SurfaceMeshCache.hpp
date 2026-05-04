@@ -3,6 +3,7 @@
 // Shared CPU-side tessellation cache for scene surface previews.
 
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 #include "math/GeometryTypes.hpp"
 #include "math/Surfaces.hpp"
 
@@ -27,6 +28,7 @@ class SurfaceMeshCache {
 public:
     void mark_dirty() noexcept { m_dirty = true; }
     void clear();
+    void bind_memory(memory::MemoryService* memory);
 
     void rebuild_if_needed(const ndde::math::ISurface& surface,
                            const SurfaceMeshOptions& options);
@@ -45,6 +47,7 @@ public:
 private:
     bool m_dirty = true;
     u32 m_cached_grid = 0;
+    std::pmr::memory_resource* m_cache_resource = std::pmr::get_default_resource();
 
     memory::CacheVector<Vertex> m_fill;
     memory::CacheVector<Vertex> m_wire;

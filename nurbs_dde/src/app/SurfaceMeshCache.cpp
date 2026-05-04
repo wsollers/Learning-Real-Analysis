@@ -1,6 +1,7 @@
 #include "app/SurfaceMeshCache.hpp"
 
 #include <algorithm>
+#include <memory>
 
 namespace ndde {
 
@@ -8,6 +9,25 @@ void SurfaceMeshCache::clear() {
     m_fill.clear();
     m_wire.clear();
     m_contour.clear();
+    m_fill_count = 0;
+    m_wire_count = 0;
+    m_contour_count = 0;
+    m_cached_grid = 0;
+    m_dirty = true;
+}
+
+void SurfaceMeshCache::bind_memory(memory::MemoryService* memory) {
+    std::pmr::memory_resource* resource = memory ? memory->cache().resource() : std::pmr::get_default_resource();
+    if (resource == m_cache_resource)
+        return;
+
+    std::destroy_at(&m_fill);
+    std::destroy_at(&m_wire);
+    std::destroy_at(&m_contour);
+    std::construct_at(&m_fill, resource);
+    std::construct_at(&m_wire, resource);
+    std::construct_at(&m_contour, resource);
+    m_cache_resource = resource;
     m_fill_count = 0;
     m_wire_count = 0;
     m_contour_count = 0;

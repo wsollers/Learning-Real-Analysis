@@ -1,9 +1,9 @@
 #include "app/SimulationContext.hpp"
 #include "app/GaussianSurface.hpp"
+#include "memory/Containers.hpp"
 
 #include <gtest/gtest.h>
 #include <random>
-#include <vector>
 
 namespace {
 
@@ -51,7 +51,7 @@ TEST(SimulationContextState, SurfacePerturbationMarksSurfaceAndViewsDirty) {
 
 TEST(SimulationContextState, MaintainsLegacySurfaceParticleRngView) {
     GaussianSurface surface;
-    std::vector<AnimatedCurve> particles;
+    memory::SimVector<AnimatedCurve> particles;
     std::mt19937 rng(123u);
     SimulationContext context(&surface, &particles, &rng);
 
@@ -64,4 +64,3 @@ TEST(SimulationContextState, MaintainsLegacySurfaceParticleRngView) {
 }
 
 } // namespace
-

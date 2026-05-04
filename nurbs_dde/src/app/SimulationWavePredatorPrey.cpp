@@ -8,8 +8,8 @@
 
 namespace ndde {
 
-SimulationWavePredatorPrey::SimulationWavePredatorPrey()
-    : m_surface(SurfaceRegistry::make_wave_predator_prey(4.f))
+SimulationWavePredatorPrey::SimulationWavePredatorPrey(memory::MemoryService* memory)
+    : m_surface(SurfaceRegistry::make_wave_predator_prey(memory, 4.f))
     , m_particles(m_surface.get(), 4242u)
     , m_spawner(m_particles, m_sim_time, m_goal_status)
 {
@@ -18,6 +18,7 @@ SimulationWavePredatorPrey::SimulationWavePredatorPrey()
 
 void SimulationWavePredatorPrey::on_register(SimulationHost& host) {
     m_host = &host;
+    sync_context();
     m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
         .title = "Sim - Controls",
         .category = "Simulation",
@@ -138,6 +139,7 @@ SimulationMetadata SimulationWavePredatorPrey::metadata() const {
 }
 
 void SimulationWavePredatorPrey::sync_context() {
+    if (m_host) m_particles.bind_memory(&m_host->memory());
     m_particles.set_surface(m_surface.get());
     m_context.set_surface(m_surface.get());
     m_context.set_particles(&m_particles.particles());

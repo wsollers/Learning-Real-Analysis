@@ -8,18 +8,10 @@
 namespace ndde {
 
 void register_default_simulations(SimulationRegistry& registry) {
-    registry.add(std::make_unique<SimulationRuntime>(
-        "Surface Simulation",
-        [] { return std::make_unique<SimulationSurfaceGaussian>(); }));
-    registry.add(std::make_unique<SimulationRuntime>(
-        "Sine-Rational Analysis",
-        [] { return std::make_unique<SimulationAnalysis>(); }));
-    registry.add(std::make_unique<SimulationRuntime>(
-        "Multi-Well Centroid",
-        [] { return std::make_unique<SimulationMultiWell>(); }));
-    registry.add(std::make_unique<SimulationRuntime>(
-        "Wave Predator-Prey",
-        [] { return std::make_unique<SimulationWavePredatorPrey>(); }));
+    registry.add_runtime<SimulationSurfaceGaussian>("Surface Simulation");
+    registry.add_runtime<SimulationAnalysis>("Sine-Rational Analysis");
+    registry.add_runtime<SimulationMultiWell>("Multi-Well Centroid");
+    registry.add_runtime<SimulationWavePredatorPrey>("Wave Predator-Prey");
 }
 
 } // namespace ndde

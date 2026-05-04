@@ -9,8 +9,8 @@
 
 namespace ndde {
 
-SimulationAnalysis::SimulationAnalysis()
-    : m_surface(SurfaceRegistry::make_sine_rational(4.f))
+SimulationAnalysis::SimulationAnalysis(memory::MemoryService* memory)
+    : m_surface(SurfaceRegistry::make_sine_rational(memory, 4.f))
     , m_particles(m_surface.get(), 2102u)
     , m_spawner(*m_surface, m_particles, m_spawn_count, m_epsilon, m_walk_speed,
                 m_noise_sigma, m_sim_time, m_sim_speed, m_goal_status)
@@ -20,6 +20,7 @@ SimulationAnalysis::SimulationAnalysis()
 
 void SimulationAnalysis::on_register(SimulationHost& host) {
     m_host = &host;
+    sync_context();
     m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
         .title = "Sim - Controls",
         .category = "Simulation",
@@ -134,6 +135,7 @@ SimulationMetadata SimulationAnalysis::metadata() const {
 }
 
 void SimulationAnalysis::sync_context() {
+    if (m_host) m_particles.bind_memory(&m_host->memory());
     m_particles.set_surface(m_surface.get());
     m_context.set_surface(m_surface.get());
     m_context.set_particles(&m_particles.particles());

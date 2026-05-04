@@ -5,9 +5,9 @@
 
 #include <volk.h>
 #include <VkBootstrap.h>
+#include "memory/Containers.hpp"
 #include "platform/VulkanContext.hpp"
 #include "renderer/GpuTypes.hpp"
-#include <vector>
 
 namespace ndde::renderer {
 
@@ -26,8 +26,8 @@ public:
     [[nodiscard]] VkSwapchainKHR                 swapchain()   const noexcept { return m_swapchain;   }
     [[nodiscard]] VkFormat                        format()      const noexcept { return m_format;      }
     [[nodiscard]] VkExtent2D                      extent()      const noexcept { return m_extent;      }
-    [[nodiscard]] const std::vector<VkImage>&     images()      const noexcept { return m_images;      }
-    [[nodiscard]] const std::vector<VkImageView>& image_views() const noexcept { return m_image_views; }
+    [[nodiscard]] const memory::PersistentVector<VkImage>&     images()      const noexcept { return m_images;      }
+    [[nodiscard]] const memory::PersistentVector<VkImageView>& image_views() const noexcept { return m_image_views; }
     [[nodiscard]] u32 image_count() const noexcept { return static_cast<u32>(m_images.size()); }
 
 private:
@@ -35,8 +35,8 @@ private:
     VkSwapchainKHR         m_swapchain = VK_NULL_HANDLE;
     VkFormat               m_format    = VK_FORMAT_UNDEFINED;
     VkExtent2D             m_extent    = {};
-    std::vector<VkImage>   m_images;
-    std::vector<VkImageView> m_image_views;
+    memory::PersistentVector<VkImage>     m_images;
+    memory::PersistentVector<VkImageView> m_image_views;
 
     void destroy_image_views();
 };

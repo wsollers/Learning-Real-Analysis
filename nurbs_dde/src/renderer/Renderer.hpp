@@ -7,12 +7,12 @@
 #include "renderer/Pipeline.hpp"
 #include "renderer/ImGuiLayer.hpp"
 #include "memory/ArenaSlice.hpp"
+#include "memory/Containers.hpp"
 #include "renderer/GpuTypes.hpp"
 #include <glm/glm.hpp>
 #include <filesystem>
 #include <optional>
 #include <string>
-#include <vector>
 
 struct GLFWwindow;
 
@@ -74,8 +74,8 @@ private:
     VkFence         m_render_fence    = VK_NULL_HANDLE;
     // One semaphore per swapchain image prevents reuse-before-consumed races
     // for both the acquire signal and the render-finished signal.
-    std::vector<VkSemaphore> m_image_available;  ///< signalled by vkAcquireNextImageKHR
-    std::vector<VkSemaphore> m_render_finished;  ///< signalled by vkQueueSubmit, waited by present
+    memory::PersistentVector<VkSemaphore> m_image_available;  ///< signalled by vkAcquireNextImageKHR
+    memory::PersistentVector<VkSemaphore> m_render_finished;  ///< signalled by vkQueueSubmit, waited by present
     u32             m_image_index    = 0;
     u32             m_sync_index     = 0;
     u32             m_frame_sync     = 0;

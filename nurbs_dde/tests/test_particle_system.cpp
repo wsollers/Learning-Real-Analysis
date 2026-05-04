@@ -4,6 +4,7 @@
 #include "app/ParticleSwarmFactory.hpp"
 #include "app/ParticleSystem.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/MemoryService.hpp"
 
 using ndde::ParticleRole;
 using ndde::TrailMode;
@@ -37,6 +38,27 @@ TEST(ParticleSystem, MetadataIncludesRoleAndBehaviors) {
     EXPECT_NE(p.metadata_label().find("Probe"), std::string::npos);
     EXPECT_NE(p.metadata_label().find("Constant Drift"), std::string::npos);
     EXPECT_NE(p.metadata_label().find("Brownian"), std::string::npos);
+}
+
+TEST(ParticleSystem, BindsSimulationContainersToMemoryService) {
+    auto surface = flat_surface();
+    ndde::memory::MemoryService memory;
+    ndde::ParticleSystem system(&surface, 101u);
+    system.bind_memory(&memory);
+
+    EXPECT_EQ(system.particles().get_allocator().resource(), memory.simulation().resource());
+
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Leader)
+        .at({0.f, 0.f})
+        .trail(ndde::TrailConfig{.mode = TrailMode::Persistent, .min_spacing = 0.f})
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{0.1f, 0.f}));
+
+    system.update(0.1f, 1.f, 0.1f);
+    particle.enable_history(8u, 0.f);
+    particle.push_history(0.1f);
+    ASSERT_NE(particle.history(), nullptr);
+    EXPECT_EQ(particle.history()->to_vector().get_allocator().resource(), memory.history().resource());
 }
 
 TEST(ParticleSystem, SeekBehaviorMovesTowardNearestRoleTarget) {

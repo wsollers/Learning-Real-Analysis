@@ -221,11 +221,14 @@ AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
                              Role role, u32 colour_slot,
                              const ndde::math::ISurface*  surface,
                              ndde::sim::IEquation*         equation,
-                             const ndde::sim::IIntegrator* integrator)
+                             const ndde::sim::IIntegrator* integrator,
+                             memory::MemoryService*        mem)
     : m_surface(surface)
     , m_equation(equation)
     , m_owned_equation(nullptr)   // shared equation -- ownership is external
     , m_integrator(integrator)
+    , m_constraints(mem ? mem->simulation().resource() : std::pmr::get_default_resource())
+    , m_memory(mem)
     , m_role(role)
     , m_colour_slot(colour_slot % MAX_SLOTS)
     , m_start_x(start_x)
@@ -233,7 +236,35 @@ AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
 {
     m_walk = ndde::sim::ParticleState{ glm::vec2{start_x, start_y}, 0.f, 0.f };
     m_particle_role = role == Role::Leader ? ParticleRole::Leader : ParticleRole::Chaser;
-    m_constraints.push_back(std::make_unique<ndde::sim::DomainConfinement>());
+    m_constraints.push_back(memory::make_unique<ndde::sim::DomainConfinement>(
+        m_constraints.get_allocator().resource()));
+}
+
+void AnimatedCurve::bind_memory(memory::MemoryService* memory) {
+    m_memory = memory;
+    const std::pmr::memory_resource* trail_resource = m_trail.get_allocator().resource();
+    std::pmr::memory_resource* desired_trail = memory ? memory->history().resource()
+                                                      : std::pmr::get_default_resource();
+    if (trail_resource != desired_trail) {
+        memory::HistoryVector<Vec3> rebound{desired_trail};
+        rebound.reserve(m_trail.size());
+        for (Vec3& point : m_trail)
+            rebound.push_back(point);
+        std::destroy_at(&m_trail);
+        std::construct_at(&m_trail, std::move(rebound));
+    }
+
+    const std::pmr::memory_resource* constraint_resource = m_constraints.get_allocator().resource();
+    std::pmr::memory_resource* desired_constraints = memory ? memory->simulation().resource()
+                                                            : std::pmr::get_default_resource();
+    if (constraint_resource != desired_constraints) {
+        memory::SimVector<memory::Unique<ndde::sim::IConstraint>> rebound{desired_constraints};
+        rebound.reserve(m_constraints.size());
+        for (auto& constraint : m_constraints)
+            rebound.push_back(std::move(constraint));
+        std::destroy_at(&m_constraints);
+        std::construct_at(&m_constraints, std::move(rebound));
+    }
 }
 
 // static factory: particle owns its equation
@@ -242,11 +273,12 @@ AnimatedCurve AnimatedCurve::with_equation(
     f32 start_x, f32 start_y,
     Role role, u32 colour_slot,
     const ndde::math::ISurface*           surface,
-    std::unique_ptr<ndde::sim::IEquation> owned_equation,
-    const ndde::sim::IIntegrator*         integrator)
+    memory::Unique<ndde::sim::IEquation> owned_equation,
+    const ndde::sim::IIntegrator*         integrator,
+    memory::MemoryService*                mem)
 {
     AnimatedCurve c(start_x, start_y, role, colour_slot,
-                    surface, owned_equation.get(), integrator);
+                    surface, owned_equation.get(), integrator, mem);
     c.m_owned_equation = std::move(owned_equation);
     // m_equation already points to m_owned_equation.get() via the constructor
     return c;
@@ -328,7 +360,11 @@ std::string AnimatedCurve::metadata_label() const {
 // == AnimatedCurve::history methods ==========================================
 
 void AnimatedCurve::enable_history(std::size_t capacity, float dt_min) {
-    m_history = std::make_unique<ndde::sim::HistoryBuffer>(capacity, dt_min);
+    std::pmr::memory_resource* owner_resource = m_memory ? m_memory->history().resource()
+                                                         : m_trail.get_allocator().resource();
+    m_history = memory::make_unique<ndde::sim::HistoryBuffer>(
+        owner_resource,
+        capacity, dt_min, owner_resource);
 }
 
 void AnimatedCurve::push_history(float t) {

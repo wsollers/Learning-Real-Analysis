@@ -254,8 +254,10 @@ void SecondWindow::build_swapchain(u32 w, u32 h) {
     m_sc_raw    = vkb_sc.swapchain;
     m_sc_format = vkb_sc.image_format;
     m_sc_extent = vkb_sc.extent;
-    m_sc_images = vkb_sc.get_images().value();
-    m_sc_views  = vkb_sc.get_image_views().value();
+    const auto images = vkb_sc.get_images().value();
+    const auto views = vkb_sc.get_image_views().value();
+    m_sc_images.assign(images.begin(), images.end());
+    m_sc_views.assign(views.begin(), views.end());
     std::cout << std::format("[SecondWindow] Swapchain {}x{} images:{} present:{}\n",
         m_sc_extent.width, m_sc_extent.height, m_sc_images.size(),
         m_vsync ? "fifo" : "mailbox");

@@ -12,7 +12,6 @@
 #include "renderer/Renderer.hpp"
 #include "renderer/SecondWindow.hpp"
 #include "memory/Containers.hpp"
-#include <memory>
 #include <filesystem>
 #include <string>
 

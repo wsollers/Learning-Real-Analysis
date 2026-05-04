@@ -61,8 +61,8 @@ TEST(SimulationRuntime, RuntimeOwnsISimulationLifecycle) {
     SimulationHost host = services.simulation_host();
     RuntimeDummySimulation* raw = nullptr;
     SimulationRuntime runtime("Simulation Runtime",
-        [&raw] {
-            auto sim = std::make_unique<RuntimeDummySimulation>();
+        [&raw](memory::MemoryService& memory) {
+            auto sim = memory.simulation().make_unique<RuntimeDummySimulation>();
             raw = sim.get();
             return sim;
         });
@@ -105,9 +105,9 @@ TEST(SimulationRuntime, ReinstantiateRollsBackPreviousRegistrations) {
     SimulationHost host = services.simulation_host();
     int created = 0;
     SimulationRuntime runtime("Simulation Runtime",
-        [&created] {
+        [&created](memory::MemoryService& memory) {
             ++created;
-            return std::make_unique<RuntimeDummySimulation>();
+            return memory.simulation().make_unique<RuntimeDummySimulation>();
         });
 
     runtime.instantiate(host);
@@ -122,11 +122,10 @@ TEST(SimulationRuntime, ReinstantiateRollsBackPreviousRegistrations) {
 }
 
 TEST(SimulationRuntime, RegistryStoresSimulationRuntimesOnly) {
-    SimulationRegistry registry;
-    registry.add(std::make_unique<SimulationRuntime>("Simulation A",
-        [] { return std::make_unique<RuntimeDummySimulation>(); }));
-    registry.add(std::make_unique<SimulationRuntime>("Simulation B",
-        [] { return std::make_unique<RuntimeDummySimulation>(); }));
+    EngineServices services;
+    SimulationRegistry registry(services.memory());
+    registry.add_runtime<RuntimeDummySimulation>("Simulation A");
+    registry.add_runtime<RuntimeDummySimulation>("Simulation B");
 
     EXPECT_EQ(registry.size(), 2u);
     ASSERT_NE(registry.get(0), nullptr);
@@ -136,4 +135,3 @@ TEST(SimulationRuntime, RegistryStoresSimulationRuntimesOnly) {
 }
 
 } // namespace
-

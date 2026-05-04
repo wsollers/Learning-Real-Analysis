@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fail if raw dynamic allocation escapes the allocator layer.
+"""Fail if dynamic allocation escapes the allocator layer.
 
-This is intentionally narrow for now: it blocks textual `new`, `delete`,
-`malloc`, `calloc`, `realloc`, and `free` in project source files outside the
-central memory package. Higher-level ownership cleanup can move smart-pointer
-factories onto arena-aware builders without fighting this first guard.
+This blocks textual `new`, `delete`, `malloc`, `calloc`, `realloc`, `free`,
+`std::make_unique`, and direct `std::unique_ptr<T>` ownership in project source
+files outside the central memory package. App/engine ownership should go
+through MemoryService and memory::Unique.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ SOURCE_ROOTS = [ROOT / "src", ROOT / "tests"]
 ALLOW_DIRS = {
     (ROOT / "src" / "memory").resolve(),
 }
-PATTERN = re.compile(r"\b(new|delete|malloc|calloc|realloc|free)\b")
+PATTERN = re.compile(r"\b(new|delete|malloc|calloc|realloc|free)\b|std::make_unique\s*<|std::unique_ptr\s*<")
 EXTS = {".cpp", ".hpp", ".h", ".cc", ".cxx"}
 
 
@@ -46,7 +46,7 @@ def main() -> int:
                     violations.append(f"{rel}:{lineno}: {line.strip()}")
 
     if violations:
-        print("Raw allocation policy violation. Use the central allocation facility:")
+        print("Allocation policy violation. Use MemoryService / memory::Unique:")
         print("\n".join(violations))
         return 1
     return 0

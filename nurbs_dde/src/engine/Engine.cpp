@@ -54,7 +54,8 @@ void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 Engine::Engine()
-    : m_simulation_host(m_services.simulation_host()) {}
+    : m_simulation_host(m_services.simulation_host())
+    , m_simulations(m_services.memory()) {}
 
 Engine::~Engine() {
     uninstall_global_hotkeys();
@@ -156,11 +157,11 @@ void Engine::switch_simulation(std::size_t index) {
     if (index >= m_simulations.size() || index == m_active_sim) return;
     vkDeviceWaitIdle(m_vk.device());
     m_renderer.reset_frame_state();
+    active_runtime().stop();
+    m_services.render().clear_packets();
     m_services.memory().reset_simulation();
     m_services.memory().reset_cache();
     m_services.memory().reset_history();
-    active_runtime().stop();
-    m_services.render().clear_packets();
     m_active_sim = index;
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();

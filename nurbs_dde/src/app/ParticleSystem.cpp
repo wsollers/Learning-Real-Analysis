@@ -252,7 +252,7 @@ memory::FrameVector<std::string> BehaviorStack::behavior_labels() const {
 AnimatedCurve ParticleBuilder::build(const ndde::sim::IIntegrator* deterministic,
                                      const ndde::sim::IIntegrator* stochastic) {
     const ndde::sim::IIntegrator* integrator = (m_stochastic && stochastic) ? stochastic : deterministic;
-    auto stack = std::make_unique<BehaviorStack>(std::move(m_stack));
+    auto stack = make_sim_unique<BehaviorStack>(std::move(m_stack));
 
     AnimatedCurve particle = AnimatedCurve::with_equation(
         m_uv.x, m_uv.y,
@@ -260,8 +260,10 @@ AnimatedCurve ParticleBuilder::build(const ndde::sim::IIntegrator* deterministic
         0u,
         m_surface,
         std::move(stack),
-        integrator);
+        integrator,
+        m_memory);
 
+    particle.bind_memory(m_memory);
     particle.set_particle_role(m_role);
     particle.set_label(m_label);
     particle.set_trail_config(m_trail);

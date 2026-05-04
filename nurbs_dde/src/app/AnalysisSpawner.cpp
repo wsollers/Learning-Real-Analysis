@@ -67,7 +67,7 @@ SwarmBuildResult AnalysisSpawner::spawn_showcase_service() {
         .history(640, 1.f / 120.f)
         .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.012f})
         .stochastic()
-        .with_equation(std::make_unique<ndde::sim::LevelCurveWalker>(p))
+        .with_equation_type<ndde::sim::LevelCurveWalker>(p)
         .with_behavior<BrownianBehavior>(0.20f, BrownianBehavior::Params{
             .sigma = 0.045f,
             .drift_strength = 0.f
@@ -128,7 +128,7 @@ SwarmBuildResult AnalysisSpawner::spawn_walker() {
         .role(ParticleRole::Leader)
         .at({u0, v0})
         .trail({TrailMode::Finite, AnimatedCurve::MAX_TRAIL, 0.015f})
-        .with_equation(std::make_unique<ndde::sim::LevelCurveWalker>(p));
+        .with_equation_type<ndde::sim::LevelCurveWalker>(p);
 
     if (m_noise_sigma > 1e-6f) {
         builder.stochastic()

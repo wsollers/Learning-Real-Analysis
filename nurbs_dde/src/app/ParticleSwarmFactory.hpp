@@ -232,7 +232,7 @@ public:
                 .at(uv)
                 .trail(p.trail)
                 .stochastic()
-                .with_equation(std::make_unique<ndde::sim::LevelCurveWalker>(walker_params))
+                .with_equation_type<ndde::sim::LevelCurveWalker>(walker_params)
                 .with_behavior<BrownianBehavior>(0.18f, p.noise));
             result.particle_ids.push_back(particle.id());
         }

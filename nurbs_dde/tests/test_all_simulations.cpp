@@ -73,7 +73,8 @@ TEST(AllSimulations, WavePredatorPreyRegistersStartsAndEmitsPackets) {
 }
 
 TEST(AllSimulations, DefaultRegistryContainsFourISimulationRuntimes) {
-    SimulationRegistry registry;
+    EngineServices services;
+    SimulationRegistry registry(services.memory());
     register_default_simulations(registry);
 
     ASSERT_EQ(registry.size(), 4u);

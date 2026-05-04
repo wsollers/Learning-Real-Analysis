@@ -24,6 +24,22 @@ public:
     [[nodiscard]] float v_max(float = 0.f) const override { return 2.f; }
 };
 
+class ArenaOwnedBase {
+public:
+    virtual ~ArenaOwnedBase() = default;
+};
+
+class ArenaOwnedDerived final : public ArenaOwnedBase {
+public:
+    explicit ArenaOwnedDerived(int* destroyed) : m_destroyed(destroyed) {}
+    ~ArenaOwnedDerived() override {
+        if (m_destroyed) ++(*m_destroyed);
+    }
+
+private:
+    int* m_destroyed = nullptr;
+};
+
 TEST(PanelService, RegisterUnregisterPanel) {
     PanelService panels;
     int draws = 0;
@@ -257,12 +273,17 @@ TEST(MemoryService, TracksLifetimeScopeResetsAndCreatesPolicyVectors) {
     const u64 sim0 = memory.simulation().generation();
     const u64 view0 = memory.view().generation();
 
-    auto frame_vertices = memory.frame().make_vector<Vertex>(3u);
-    auto sim_particles = memory.simulation().make_vector<int>();
-    sim_particles.push_back(42);
+    {
+        auto frame_vertices = memory.frame().make_vector<Vertex>(3u);
+        auto cache_vertices = memory.cache().make_vector<Vertex>();
+        auto sim_particles = memory.simulation().make_vector<int>();
+        sim_particles.push_back(42);
 
-    EXPECT_EQ(frame_vertices.size(), 3u);
-    EXPECT_EQ(sim_particles.front(), 42);
+        EXPECT_EQ(frame_vertices.size(), 3u);
+        EXPECT_EQ(cache_vertices.get_allocator().resource(), memory.cache().resource());
+        EXPECT_EQ(sim_particles.get_allocator().resource(), memory.simulation().resource());
+        EXPECT_EQ(sim_particles.front(), 42);
+    }
 
     memory.begin_frame();
     auto bound_frame_vertices = memory.frame().make_vector<Vertex>();
@@ -276,6 +297,20 @@ TEST(MemoryService, TracksLifetimeScopeResetsAndCreatesPolicyVectors) {
 
     memory.reset_view();
     EXPECT_EQ(memory.view().generation(), view0 + 1u);
+}
+
+TEST(MemoryService, ScopeUniqueOwnsArenaConstructedPolymorphicObjects) {
+    ndde::memory::MemoryService memory;
+    int destroyed = 0;
+
+    {
+        ndde::memory::Unique<ArenaOwnedBase> owned =
+            memory.simulation().make_unique<ArenaOwnedDerived>(&destroyed);
+        ASSERT_TRUE(owned);
+        EXPECT_EQ(destroyed, 0);
+    }
+
+    EXPECT_EQ(destroyed, 1);
 }
 
 TEST(SimulationHost, ExposesOnlyServiceFacade) {

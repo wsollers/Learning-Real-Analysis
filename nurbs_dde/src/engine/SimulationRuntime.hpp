@@ -5,12 +5,15 @@
 #include "engine/ISimulation.hpp"
 #include "engine/SimulationHost.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
+#include "memory/Unique.hpp"
 
 #include <functional>
-#include <memory>
 #include <mutex>
 #include <string>
 #include <string_view>
+#include <tuple>
+#include <type_traits>
 
 namespace ndde {
 
@@ -35,7 +38,7 @@ private:
 
 class SimulationRuntime final {
 public:
-    using SimulationFactory = std::function<std::unique_ptr<ISimulation>()>;
+    using SimulationFactory = std::function<memory::Unique<ISimulation>(memory::MemoryService&)>;
 
     SimulationRuntime(std::string name, SimulationFactory factory);
     ~SimulationRuntime();
@@ -62,7 +65,7 @@ public:
 private:
     std::string m_name;
     SimulationFactory m_factory;
-    std::unique_ptr<ISimulation> m_simulation;
+    memory::Unique<ISimulation> m_simulation;
     SimulationSnapshotStore m_snapshots;
     bool m_started = false;
     bool m_paused = true;
@@ -70,14 +73,36 @@ private:
 
 class SimulationRegistry {
 public:
-    void add(std::unique_ptr<SimulationRuntime> runtime);
+    explicit SimulationRegistry(memory::MemoryService& memory) noexcept;
+
+    void add(memory::Unique<SimulationRuntime> runtime);
+
+    template <class Simulation, class... Args>
+    void add_runtime(std::string name, Args&&... args) {
+        auto runtime = m_memory.persistent().make_unique<SimulationRuntime>(
+            std::move(name),
+            [args_tuple = std::tuple<std::decay_t<Args>...>(std::forward<Args>(args)...)]
+            (memory::MemoryService& memory) mutable -> memory::Unique<ISimulation> {
+                return std::apply([&memory](auto&&... unpacked) -> memory::Unique<ISimulation> {
+                    if constexpr (std::is_constructible_v<Simulation, memory::MemoryService*, decltype(unpacked)...>) {
+                        return memory.simulation().make_unique<Simulation>(
+                            &memory, std::forward<decltype(unpacked)>(unpacked)...);
+                    } else {
+                        return memory.simulation().make_unique<Simulation>(
+                            std::forward<decltype(unpacked)>(unpacked)...);
+                    }
+                }, args_tuple);
+            });
+        add(std::move(runtime));
+    }
 
     [[nodiscard]] std::size_t size() const noexcept { return m_runtimes.size(); }
     [[nodiscard]] SimulationRuntime* get(std::size_t index) noexcept;
     [[nodiscard]] const SimulationRuntime* get(std::size_t index) const noexcept;
 
 private:
-    memory::PersistentVector<std::unique_ptr<SimulationRuntime>> m_runtimes;
+    memory::MemoryService& m_memory;
+    memory::PersistentVector<memory::Unique<SimulationRuntime>> m_runtimes;
 };
 
 } // namespace ndde

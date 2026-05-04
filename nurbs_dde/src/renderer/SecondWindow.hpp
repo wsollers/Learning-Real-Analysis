@@ -3,12 +3,12 @@
 // A second OS window with its own Vulkan surface + swapchain,
 // sharing the VkDevice/queues/pipelines of the primary window.
 
+#include "memory/Containers.hpp"
 #include "renderer/GpuTypes.hpp"
 #include "renderer/Pipeline.hpp"
 #include <volk.h>
 #include <VkBootstrap.h>
 #include <string>
-#include <vector>
 
 struct GLFWwindow;
 namespace ndde::platform { class VulkanContext; }
@@ -60,16 +60,16 @@ private:
     VkSwapchainKHR           m_sc_raw    = VK_NULL_HANDLE;
     VkFormat                 m_sc_format = VK_FORMAT_UNDEFINED;
     VkExtent2D               m_sc_extent = {};
-    std::vector<VkImage>     m_sc_images;
-    std::vector<VkImageView> m_sc_views;
+    memory::PersistentVector<VkImage>     m_sc_images;
+    memory::PersistentVector<VkImageView> m_sc_views;
 
     VkCommandPool   m_cmd_pool        = VK_NULL_HANDLE;
     VkCommandBuffer m_cmd             = VK_NULL_HANDLE;
     VkFence         m_render_fence    = VK_NULL_HANDLE;
     // One semaphore per swapchain image — prevents reuse-before-consumed races
     // for both acquire and render-finished signals.
-    std::vector<VkSemaphore> m_image_available;
-    std::vector<VkSemaphore> m_render_finished;
+    memory::PersistentVector<VkSemaphore> m_image_available;
+    memory::PersistentVector<VkSemaphore> m_render_finished;
     u32             m_image_index     = 0;
     u32             m_sync_index      = 0;
     u32             m_frame_sync      = 0;

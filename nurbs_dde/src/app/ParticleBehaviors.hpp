@@ -4,11 +4,12 @@
 
 #include "app/SimulationContext.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
+#include "memory/Unique.hpp"
 #include "sim/IEquation.hpp"
 #include "numeric/ops.hpp"
 #include <algorithm>
 #include <limits>
-#include <memory>
 #include <string>
 
 namespace ndde {
@@ -61,7 +62,7 @@ public:
 
 class EquationBehavior final : public IParticleBehavior {
 public:
-    explicit EquationBehavior(std::unique_ptr<ndde::sim::IEquation> equation)
+    explicit EquationBehavior(memory::Unique<ndde::sim::IEquation> equation)
         : m_equation(std::move(equation))
     {}
 
@@ -93,7 +94,7 @@ public:
     [[nodiscard]] const ndde::sim::IEquation* equation() const noexcept { return m_equation.get(); }
 
 private:
-    std::unique_ptr<ndde::sim::IEquation> m_equation;
+    memory::Unique<ndde::sim::IEquation> m_equation;
 };
 
 class BrownianBehavior final : public IParticleBehavior {
@@ -330,10 +331,19 @@ public:
     BehaviorStack(BehaviorStack&&) noexcept = default;
     BehaviorStack& operator=(BehaviorStack&&) noexcept = default;
 
+    void bind_memory(memory::MemoryService* memory) {
+        std::pmr::memory_resource* resource = memory ? memory->simulation().resource()
+                                                     : std::pmr::get_default_resource();
+        if (resource == m_behaviors.get_allocator().resource())
+            return;
+        std::destroy_at(&m_behaviors);
+        std::construct_at(&m_behaviors, resource);
+    }
+
     void set_context(const SimulationContext* context) noexcept { m_context = context; }
     void set_owner(ParticleId owner) noexcept { m_owner = owner; }
 
-    void add(std::unique_ptr<IParticleBehavior> behavior, float weight = 1.f) {
+    void add(memory::Unique<IParticleBehavior> behavior, float weight = 1.f) {
         m_behaviors.push_back({std::move(behavior), weight});
     }
 
@@ -395,7 +405,7 @@ public:
 
 private:
     struct Entry {
-        std::unique_ptr<IParticleBehavior> behavior;
+        memory::Unique<IParticleBehavior> behavior;
         float weight = 1.f;
     };
 

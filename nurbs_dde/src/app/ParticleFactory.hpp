@@ -5,11 +5,11 @@
 #include "app/AnimatedCurve.hpp"
 #include "app/ParticleBehaviors.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 #include "sim/DomainConfinement.hpp"
 #include "sim/EulerIntegrator.hpp"
 #include "sim/IConstraint.hpp"
 #include "sim/MilsteinIntegrator.hpp"
-#include <memory>
 #include <limits>
 #include <string>
 #include <utility>
@@ -18,7 +18,14 @@ namespace ndde {
 
 class ParticleBuilder {
 public:
-    explicit ParticleBuilder(const ndde::math::ISurface* surface) : m_surface(surface) {}
+    explicit ParticleBuilder(const ndde::math::ISurface* surface,
+                             memory::MemoryService* memory = nullptr)
+        : m_surface(surface)
+        , m_memory(memory)
+        , m_constraints(memory ? memory->simulation().resource() : std::pmr::get_default_resource())
+    {
+        m_stack.bind_memory(memory);
+    }
     ParticleBuilder(const ParticleBuilder&) = delete;
     ParticleBuilder& operator=(const ParticleBuilder&) = delete;
     ParticleBuilder(ParticleBuilder&&) noexcept = default;
@@ -112,7 +119,7 @@ public:
 
     template <class Behavior, class... Args>
     ParticleBuilder& with_behavior(float weight, Args&&... args) & {
-        m_stack.add(std::make_unique<Behavior>(std::forward<Args>(args)...), weight);
+        m_stack.add(make_sim_unique<Behavior>(std::forward<Args>(args)...), weight);
         return *this;
     }
     template <class Behavior, class... Args>
@@ -131,18 +138,40 @@ public:
         return std::move(*this);
     }
 
-    ParticleBuilder& with_equation(std::unique_ptr<ndde::sim::IEquation> equation, float weight = 1.f) & {
-        m_stack.add(std::make_unique<EquationBehavior>(std::move(equation)), weight);
+    ParticleBuilder& with_equation(memory::Unique<ndde::sim::IEquation> equation, float weight = 1.f) & {
+        m_stack.add(make_sim_unique<EquationBehavior>(std::move(equation)), weight);
         return *this;
     }
-    ParticleBuilder&& with_equation(std::unique_ptr<ndde::sim::IEquation> equation, float weight = 1.f) && {
+    ParticleBuilder&& with_equation(memory::Unique<ndde::sim::IEquation> equation, float weight = 1.f) && {
         this->with_equation(std::move(equation), weight);
+        return std::move(*this);
+    }
+
+    template <class Equation, class... Args>
+    ParticleBuilder& with_equation(float weight, Args&&... args) & {
+        return with_equation(make_sim_unique<Equation>(std::forward<Args>(args)...), weight);
+    }
+
+    template <class Equation, class... Args>
+    ParticleBuilder&& with_equation(float weight, Args&&... args) && {
+        this->with_equation<Equation>(weight, std::forward<Args>(args)...);
+        return std::move(*this);
+    }
+
+    template <class Equation, class... Args>
+    ParticleBuilder& with_equation_type(Args&&... args) & {
+        return with_equation<Equation>(1.f, std::forward<Args>(args)...);
+    }
+
+    template <class Equation, class... Args>
+    ParticleBuilder&& with_equation_type(Args&&... args) && {
+        this->with_equation_type<Equation>(std::forward<Args>(args)...);
         return std::move(*this);
     }
 
     template <class Constraint, class... Args>
     ParticleBuilder& with_constraint(Args&&... args) & {
-        m_constraints.push_back(std::make_unique<Constraint>(std::forward<Args>(args)...));
+        m_constraints.push_back(make_sim_unique<Constraint>(std::forward<Args>(args)...));
         return *this;
     }
     template <class Constraint, class... Args>
@@ -156,6 +185,7 @@ public:
 
 private:
     const ndde::math::ISurface* m_surface = nullptr;
+    memory::MemoryService* m_memory = nullptr;
     glm::vec2 m_uv{0.f, 0.f};
     ParticleRole m_role = ParticleRole::Neutral;
     std::string m_label;
@@ -165,17 +195,28 @@ private:
     float m_history_dt_min = 1.f / 120.f;
     bool m_stochastic = false;
     BehaviorStack m_stack;
-    memory::SimVector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints;
+    memory::SimVector<memory::Unique<ndde::sim::IConstraint>> m_constraints;
+
+    template <class T, class... Args>
+    [[nodiscard]] memory::Unique<T> make_sim_unique(Args&&... args) const {
+        return m_memory ? m_memory->simulation().make_unique<T>(std::forward<Args>(args)...)
+                        : memory::make_unique<T>(std::pmr::get_default_resource(), std::forward<Args>(args)...);
+    }
 };
 
 class ParticleFactory {
 public:
-    explicit ParticleFactory(const ndde::math::ISurface* surface) : m_surface(surface) {}
+    explicit ParticleFactory(const ndde::math::ISurface* surface,
+                             memory::MemoryService* memory = nullptr)
+        : m_surface(surface)
+        , m_memory(memory)
+    {}
 
-    [[nodiscard]] ParticleBuilder particle() const { return ParticleBuilder(m_surface); }
+    [[nodiscard]] ParticleBuilder particle() const { return ParticleBuilder(m_surface, m_memory); }
 
 private:
     const ndde::math::ISurface* m_surface = nullptr;
+    memory::MemoryService* m_memory = nullptr;
 };
 
 using Particle = AnimatedCurve;

@@ -548,6 +548,7 @@ inline void submit_surface_sim_packets(RenderService& render,
                                        InteractionService* interaction = nullptr,
                                        memory::MemoryService* memory_service = nullptr)
 {
+    mesh.bind_memory(memory_service);
     mesh.rebuild_if_needed(surface, options);
     const RenderViewDomain domain = surface_domain(surface, options.time);
     render.set_view_domain(main_view, domain);

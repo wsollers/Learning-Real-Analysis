@@ -18,7 +18,7 @@ SimulationRuntime::~SimulationRuntime() {
 
 void SimulationRuntime::instantiate(SimulationHost& host) {
     stop();
-    m_simulation = m_factory();
+    m_simulation = m_factory(host.memory());
     m_simulation->on_register(host);
     m_started = false;
     m_paused = true;
@@ -109,7 +109,12 @@ SimulationMetadata SimulationRuntime::metadata() const {
     return data;
 }
 
-void SimulationRegistry::add(std::unique_ptr<SimulationRuntime> runtime) {
+SimulationRegistry::SimulationRegistry(memory::MemoryService& memory) noexcept
+    : m_memory(memory)
+    , m_runtimes(memory.persistent().resource())
+{}
+
+void SimulationRegistry::add(memory::Unique<SimulationRuntime> runtime) {
     m_runtimes.push_back(std::move(runtime));
 }
 

@@ -12,15 +12,15 @@
 #include "app/SwarmRecipePanel.hpp"
 #include "engine/ISimulation.hpp"
 #include "engine/ScopedServiceHandles.hpp"
+#include "memory/Unique.hpp"
 
-#include <memory>
 #include <string_view>
 
 namespace ndde {
 
 class SimulationAnalysis final : public ISimulation {
 public:
-    SimulationAnalysis();
+    explicit SimulationAnalysis(memory::MemoryService* memory = nullptr);
     [[nodiscard]] std::string_view name() const override { return "Sine-Rational Analysis"; }
     void on_register(SimulationHost& host) override;
     void on_start() override;
@@ -34,7 +34,7 @@ public:
     [[nodiscard]] std::size_t particle_count() const noexcept { return m_particles.size(); }
 
 private:
-    std::unique_ptr<ndde::math::SineRationalSurface> m_surface;
+    memory::Unique<ndde::math::SineRationalSurface> m_surface;
     ParticleSystem m_particles;
     u32 m_spawn_count = 0;
     float m_epsilon = 0.15f;

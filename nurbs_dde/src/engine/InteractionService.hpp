@@ -81,6 +81,14 @@ class InteractionService {
 public:
     void set_memory_service(memory::MemoryService* memory) noexcept {
         m_memory = memory;
+        std::pmr::memory_resource* view_resource = memory ? memory->view().resource()
+                                                          : std::pmr::get_default_resource();
+        if (view_resource != m_mouse.get_allocator().resource()) {
+            std::destroy_at(&m_mouse);
+            std::construct_at(&m_mouse, view_resource);
+            std::destroy_at(&m_surface_requests);
+            std::construct_at(&m_surface_requests, view_resource);
+        }
     }
 
     void set_mouse(RenderViewId view, Vec2 pixel, Vec2 ndc, bool enabled, f32 snap_radius_px = 22.f) {

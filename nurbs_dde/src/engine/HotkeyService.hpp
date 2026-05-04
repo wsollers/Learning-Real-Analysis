@@ -5,6 +5,7 @@
 #include "engine/ServiceHandle.hpp"
 #include "math/Scalars.hpp"
 #include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -34,6 +35,15 @@ struct HotkeyDescriptor {
 
 class HotkeyService {
 public:
+    void set_memory_service(memory::MemoryService* memory) {
+        std::pmr::memory_resource* resource = memory ? memory->persistent().resource()
+                                                     : std::pmr::get_default_resource();
+        if (resource == m_hotkeys.get_allocator().resource())
+            return;
+        std::destroy_at(&m_hotkeys);
+        std::construct_at(&m_hotkeys, resource);
+    }
+
     [[nodiscard]] HotkeyHandle register_action(HotkeyDescriptor descriptor) {
         const HotkeyId id = m_next_id++;
         m_hotkeys.push_back(HotkeyEntry{

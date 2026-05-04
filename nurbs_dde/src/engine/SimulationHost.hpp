@@ -46,6 +46,8 @@ private:
 class EngineServices {
 public:
     EngineServices() {
+        m_panels.set_memory_service(&m_memory);
+        m_hotkeys.set_memory_service(&m_memory);
         m_interaction.set_memory_service(&m_memory);
         m_render.set_memory_service(&m_memory);
     }

@@ -12,15 +12,15 @@
 #include "app/SwarmRecipePanel.hpp"
 #include "engine/ISimulation.hpp"
 #include "engine/ScopedServiceHandles.hpp"
+#include "memory/Unique.hpp"
 
-#include <memory>
 #include <string_view>
 
 namespace ndde {
 
 class SimulationMultiWell final : public ISimulation {
 public:
-    SimulationMultiWell();
+    explicit SimulationMultiWell(memory::MemoryService* memory = nullptr);
     [[nodiscard]] std::string_view name() const override { return "Multi-Well Centroid"; }
     void on_register(SimulationHost& host) override;
     void on_start() override;
@@ -34,7 +34,7 @@ public:
     [[nodiscard]] std::size_t particle_count() const noexcept { return m_particles.size(); }
 
 private:
-    std::unique_ptr<MultiWellWaveSurface> m_surface;
+    memory::Unique<MultiWellWaveSurface> m_surface;
     ParticleSystem m_particles;
     u32 m_spawn_count = 0;
     float m_sim_time = 0.f;

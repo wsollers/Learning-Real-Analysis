@@ -10,8 +10,9 @@
 
 namespace ndde {
 
-SimulationSurfaceGaussian::SimulationSurfaceGaussian()
-    : m_surface(std::make_unique<GaussianRipple>())
+SimulationSurfaceGaussian::SimulationSurfaceGaussian(memory::MemoryService* mem)
+    : m_surface(mem ? mem->simulation().make_unique<GaussianRipple>()
+                    : memory::make_unique<GaussianRipple>(std::pmr::get_default_resource()))
     , m_particles(m_surface.get(), 1337u)
     , m_spawner(m_particles, m_sim_time, m_goal_status)
 {
@@ -20,6 +21,7 @@ SimulationSurfaceGaussian::SimulationSurfaceGaussian()
 
 void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
     m_host = &host;
+    sync_context();
     m_panel_handles.add(host.panels().register_panel(PanelDescriptor{
         .title = "Sim - Controls",
         .category = "Simulation",
@@ -280,6 +282,7 @@ void SimulationSurfaceGaussian::apply_surface_commands() {
 }
 
 void SimulationSurfaceGaussian::sync_context() {
+    if (m_host) m_particles.bind_memory(&m_host->memory());
     m_particles.set_surface(m_surface.get());
     m_context.set_surface(m_surface.get());
     m_context.set_particles(&m_particles.particles());

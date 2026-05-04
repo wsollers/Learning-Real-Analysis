@@ -22,7 +22,6 @@
 #include "sim/IEquation.hpp"
 #include "sim/IIntegrator.hpp"
 #include <glm/glm.hpp>
-#include <memory>
 #include <cmath>
 #include <algorithm>
 
@@ -101,7 +100,7 @@ struct SpawnContext {
     glm::vec2                                uv,
     AnimatedCurve::Role                      role,
     u32                                      slot,
-    std::unique_ptr<ndde::sim::IEquation>    eq,
+    memory::Unique<ndde::sim::IEquation>     eq,
     const SpawnContext&                      ctx,
     bool                                     prewarm = true)
 {

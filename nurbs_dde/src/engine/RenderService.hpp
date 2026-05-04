@@ -151,6 +151,14 @@ public:
     // EngineServices declares memory before render so destruction order is safe.
     void set_memory_service(memory::MemoryService* memory) noexcept {
         m_memory = memory;
+        std::pmr::memory_resource* view_resource = memory ? memory->view().resource()
+                                                          : std::pmr::get_default_resource();
+        if (view_resource != m_views.get_allocator().resource()) {
+            std::destroy_at(&m_views);
+            std::construct_at(&m_views, view_resource);
+            std::destroy_at(&m_surface_commands);
+            std::construct_at(&m_surface_commands, view_resource);
+        }
     }
 
     [[nodiscard]] RenderViewHandle register_view(RenderViewDescriptor descriptor, RenderViewId* out_id = nullptr) {

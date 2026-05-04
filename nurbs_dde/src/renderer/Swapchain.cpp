@@ -29,8 +29,10 @@ void Swapchain::init(const platform::VulkanContext& ctx, u32 width, u32 height, 
     m_swapchain   = vkb_sc.swapchain;
     m_format      = vkb_sc.image_format;
     m_extent      = vkb_sc.extent;
-    m_images      = vkb_sc.get_images().value();
-    m_image_views = vkb_sc.get_image_views().value();
+    const auto images = vkb_sc.get_images().value();
+    const auto image_views = vkb_sc.get_image_views().value();
+    m_images.assign(images.begin(), images.end());
+    m_image_views.assign(image_views.begin(), image_views.end());
 
     std::cout << std::format("[Swapchain] {}x{} images:{} format:{} present:{}\n",
         m_extent.width, m_extent.height, m_images.size(), static_cast<int>(m_format),
