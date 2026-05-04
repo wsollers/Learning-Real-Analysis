@@ -22,15 +22,21 @@ public:
         if (!m_render) return;
         for (const RenderViewSnapshot& view : m_render->active_view_snapshots()) {
             if (view.kind != RenderViewKind::Main) continue;
-            if (view.projection == CameraProjection::Orthographic) {
-                pan(view.id, dx, dy);
+            if (view.projection == CameraProjection::Orthographic)
                 continue;
-            }
-            if (auto* descriptor = m_render->descriptor(view.id)) {
-                descriptor->camera.yaw += dx * k_orbit_speed;
-                descriptor->camera.pitch = std::clamp(descriptor->camera.pitch + dy * k_orbit_speed,
-                                                       -1.35f, 1.35f);
-            }
+            orbit(view.id, dx, dy);
+        }
+    }
+
+    void orbit(RenderViewId view, f32 dx, f32 dy) noexcept {
+        if (!m_render) return;
+        const auto* descriptor = m_render->descriptor(view);
+        if (!descriptor || descriptor->projection == CameraProjection::Orthographic)
+            return;
+        if (auto* mutable_descriptor = m_render->descriptor(view)) {
+            mutable_descriptor->camera.yaw += dx * k_orbit_speed;
+            mutable_descriptor->camera.pitch = std::clamp(mutable_descriptor->camera.pitch + dy * k_orbit_speed,
+                                                          -1.35f, 1.35f);
         }
     }
 

@@ -1,11 +1,191 @@
 \section{Algebraic Structure of \texorpdfstring{$\mathbb{N}$}{N}}
+\label{sec:algebraic-structure-of-n}
 
-Once the arithmetic and order laws have been proved concretely, the chapter
-can finally package what kind of object $\mathbb{N}$ is: additive monoid,
-multiplicative monoid, semiring, and the structural limitations that explain
-why subtraction is not a total internal operation.
+\begin{topicbox}{$\mathbb{N}$ as a Commutative Monoid Under Addition}
+\begin{exposition}
+The arithmetic established in the preceding sections can now be packaged into
+a named algebraic structure. Under addition, $\mathbb{N}$ is a commutative
+monoid with identity $0$ --- or, in the Peano-system setting that uses $1$
+as the distinguished element with no additive identity available internally,
+the correct statement is that $(\mathbb{N}, +)$ satisfies associativity and
+commutativity. This topic states the structural conclusion that follows from
+the individual arithmetic theorems proved above.
+\end{exposition}
 
-\begin{remark}[Structural endpoint]
-This is where the chapter should say plainly what algebraic structure
-$\mathbb{N}$ has, instead of reaching for field language that does not fit.
-\end{remark}
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($\mathbb{N}$ Is Closed, Associative, and Commutative Under Addition)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[$\mathbb{N}$ Is Closed, Associative, and Commutative Under Addition]
+\label{thm:n-additive-structure}
+Let $(P,S,1)$ be a Peano system. The binary operation $+$ on $P$ satisfies:
+\begin{enumerate}
+  \item \textbf{Closure.} For all $a,b \in P$, $a+b \in P$.
+  \item \textbf{Associativity.} For all $a,b,c \in P$,
+  $(a+b)+c = a+(b+c)$.
+  \item \textbf{Commutativity.} For all $a,b \in P$, $a+b = b+a$.
+  \item \textbf{Left cancellation.} For all $a,b,c \in P$, if $a+b = a+c$ then $b=c$.
+  \item \textbf{Right cancellation.} For all $a,b,c \in P$, if $b+a = c+a$ then $b=c$.
+\end{enumerate}
+\hyperref[prf:n-additive-structure]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,c \in P:\;
+(a+b)+c = a+(b+c)
+\;\land\;
+a+b = b+a
+\;\land\;
+(a+b=a+c \Longrightarrow b=c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem is a packaging result. It names the algebraic structure that
+has been proved piece by piece: the three individual theorems on associativity,
+commutativity, and cancellation together certify that $(P,+)$ is a cancellative
+commutative semigroup. There is no additive identity in $P$ because $P$ has
+no element $0$ with $0+n=n$ for all $n$; the smallest element under addition
+is $1$, not an identity.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:addition-associative]{Addition Is Associative}
+  \item \hyperref[thm:addition-commutative]{Addition Is Commutative}
+  \item \hyperref[thm:addition-left-cancellation]{Left Cancellation for Addition}
+  \item \hyperref[thm:addition-right-cancellation]{Right Cancellation for Addition}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{$\mathbb{N}$ as a Commutative Monoid Under Multiplication}
+\begin{exposition}
+Multiplication on $P$ has a two-sided multiplicative identity, namely $1$,
+the distinguished first element. Under multiplication, $P$ is therefore a
+commutative monoid. This topic states the structural packaging for multiplication
+that parallels the additive packaging above.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($\mathbb{N}$ Is a Commutative Monoid Under Multiplication)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[$\mathbb{N}$ Is a Commutative Monoid Under Multiplication]
+\label{thm:n-multiplicative-monoid}
+Let $(P,S,1)$ be a Peano system. The binary operation $\cdot$ on $P$ satisfies:
+\begin{enumerate}
+  \item \textbf{Closure.} For all $a,b \in P$, $a \cdot b \in P$.
+  \item \textbf{Associativity.} For all $a,b,c \in P$,
+  $(a \cdot b) \cdot c = a \cdot (b \cdot c)$.
+  \item \textbf{Commutativity.} For all $a,b \in P$,
+  $a \cdot b = b \cdot a$.
+  \item \textbf{Identity.} For all $a \in P$,
+  $1 \cdot a = a = a \cdot 1$.
+\end{enumerate}
+Consequently $(P, \cdot, 1)$ is a commutative monoid.
+\hyperref[prf:n-multiplicative-monoid]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,c \in P:\;
+(a \cdot b) \cdot c = a \cdot (b \cdot c)
+\;\land\;
+a \cdot b = b \cdot a
+\;\land\;
+1 \cdot a = a.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The distinguished first element $1$ is a multiplicative identity on both
+sides, so multiplication promotes $P$ from a semigroup to a monoid. The
+absence of multiplicative inverses (other than $1^{-1} = 1$, which does not
+lie in $P$ in the usual sense) is what prevents $(P,\cdot)$ from being a
+group. The structural limitation is intrinsic: no element of $P$ other than
+$1$ has a reciprocal in $P$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:multiplication-associative]{Multiplication Is Associative}
+  \item \hyperref[thm:multiplication-commutative]{Multiplication Is Commutative}
+  \item \hyperref[thm:multiplication-with-one]{Multiplication With $1$}
+  \item \hyperref[thm:one-times-n]{One Times $n$}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{$\mathbb{N}$ as a Semiring and the Absence of Subtraction}
+\begin{exposition}
+Together, addition and multiplication on $P$ form a semiring: addition is a
+commutative semigroup, multiplication is a commutative monoid, and
+multiplication distributes over addition on both sides. The critical structural
+limitation is that subtraction is not a total operation on $P$. Since $P$
+has no additive identity and no additive inverses, the equation $a + x = b$
+has a solution in $P$ only when $b > a$; it has no solution when $b \le a$.
+This failure of internal subtraction is the reason $\mathbb{Z}$ is introduced
+immediately after $\mathbb{N}$.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($\mathbb{N}$ Is a Semiring)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[$\mathbb{N}$ Is a Semiring]
+\label{thm:n-is-semiring}
+Let $(P,S,1)$ be a Peano system. Then $(P,+,\cdot)$ satisfies:
+\begin{enumerate}
+  \item $(P,+)$ is a commutative semigroup.
+  \item $(P,\cdot,1)$ is a commutative monoid.
+  \item Multiplication distributes over addition: for all $a,b,c \in P$,
+  \[
+  a \cdot (b+c) = (a \cdot b) + (a \cdot c).
+  \]
+\end{enumerate}
+\hyperref[prf:n-is-semiring]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,c \in P:\;
+a \cdot (b+c) = (a \cdot b) + (a \cdot c)
+\;\land\;
+(a+b)+c = a+(b+c)
+\;\land\;
+a+b = b+a
+\;\land\;
+1 \cdot a = a.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A semiring packages the interaction of two operations without requiring
+additive inverses. The natural numbers are the canonical example of a semiring
+that is not a ring: they satisfy every ring axiom except the existence of
+additive inverses, which fails because there is no element $-1$ in $P$.
+The integers are the smallest ring extending $P$ that repairs this failure.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:n-additive-structure]{$\mathbb{N}$ Is Closed, Associative, and Commutative Under Addition}
+  \item \hyperref[thm:n-multiplicative-monoid]{$\mathbb{N}$ Is a Commutative Monoid Under Multiplication}
+  \item \hyperref[thm:multiplication-distributes-over-addition]{Multiplication Distributes Over Addition}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

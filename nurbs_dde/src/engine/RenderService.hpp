@@ -74,6 +74,7 @@ struct RenderViewDescriptor {
     RenderViewKind kind = RenderViewKind::Main;
     AlternateViewMode alternate_mode = AlternateViewMode::Contour;
     CameraProjection projection = CameraProjection::Perspective;
+    CameraViewProfile camera_profile = CameraViewProfile::Auto;
     f32 viewport_aspect = 16.f / 9.f;
     Vec2 viewport_size{16.f, 9.f};
     CameraState camera{};
@@ -109,6 +110,7 @@ struct RenderViewSnapshot {
     RenderViewKind kind = RenderViewKind::Main;
     AlternateViewMode alternate_mode = AlternateViewMode::Contour;
     CameraProjection projection = CameraProjection::Perspective;
+    CameraViewProfile camera_profile = CameraViewProfile::Auto;
     f32 viewport_aspect = 16.f / 9.f;
     Vec2 viewport_size{16.f, 9.f};
     CameraState camera{};
@@ -326,6 +328,7 @@ public:
                 .kind = entry.descriptor.kind,
                 .alternate_mode = entry.descriptor.alternate_mode,
                 .projection = entry.descriptor.projection,
+                .camera_profile = entry.descriptor.camera_profile,
                 .viewport_aspect = entry.descriptor.viewport_aspect,
                 .viewport_size = entry.descriptor.viewport_size,
                 .camera = entry.descriptor.camera,

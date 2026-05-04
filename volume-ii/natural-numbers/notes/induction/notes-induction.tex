@@ -1,10 +1,134 @@
 \section{Induction}
+\label{sec:induction-principles}
 
-This section should gather the main induction principles on $\mathbb{N}$:
-ordinary induction, strong induction, induction from an arbitrary starting
-point, and the equivalence of the usual formulations used later in the book.
+\begin{topicbox}{Strong Induction}
+\begin{exposition}
+Ordinary induction propagates a property from each element to its immediate
+successor. Strong induction allows the inductive step to use the property at
+every predecessor, not just the immediate one. This broader hypothesis makes
+strong induction strictly more convenient for arguments in which the successor
+step requires information from elements earlier than the immediate predecessor.
+\end{exposition}
 
-\begin{remark}[Tooling layer]
-Induction is not just another theorem in the chapter. It is part of the
-chapter's proof infrastructure and should be presented as such.
-\end{remark}
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Strong Induction on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Strong Induction on a Peano System]
+\label{thm:strong-induction-on-peano-system}
+Let $(P,S,1)$ be a Peano system, and let $\varphi$ be a predicate on $P$.
+If
+\[
+\forall n \in P\;
+\bigl(\forall k \in P\;(k < n \Longrightarrow \varphi(k))\bigr)
+\Longrightarrow \varphi(n),
+\]
+then
+\[
+\forall n \in P\;\varphi(n).
+\]
+\hyperref[prf:strong-induction-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } \varphi \text{ be a predicate on } P.\\
+&\Bigl(\forall n \in P\;
+\bigl(\forall k \in P\;(k < n \Longrightarrow \varphi(k))\bigr)
+\Longrightarrow \varphi(n)\Bigr)
+\Longrightarrow
+\forall n \in P\;\varphi(n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } \varphi \text{ be a predicate on } P.\\
+&\exists n \in P\;\neg\varphi(n)
+\Longrightarrow
+\exists n \in P\;
+\Bigl(\bigl(\forall k \in P\;(k < n \Longrightarrow \varphi(k))\bigr)
+\land \neg\varphi(n)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Strong induction grants the inductive step access to the entire history below
+$n$, not just the single predecessor. The contrapositive gives the least
+counterexample principle: if any element fails $\varphi$, there is a least
+one, and that least one has $\varphi$ holding at all its predecessors, which
+contradicts the strong-induction hypothesis. This makes strong induction and
+least-counterexample arguments two descriptions of the same logical structure.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[thm:trichotomy-on-peano-system]{Trichotomy on a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Induction from an Arbitrary Base}
+\begin{exposition}
+Ordinary and strong induction each begin at the distinguished first element
+$1$. Many arguments require starting at a later element. Induction from an
+arbitrary base $m$ restricts the claim to elements at or above $m$ and
+starts the inductive process there.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Induction from an Arbitrary Base)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Induction from an Arbitrary Base]
+\label{thm:induction-from-arbitrary-base}
+Let $(P,S,1)$ be a Peano system, let $m \in P$, and let $\varphi$ be a
+predicate on $P$. If
+\[
+\varphi(m)
+\qquad\text{and}\qquad
+\forall n \in P\;\bigl(n \ge m \land \varphi(n) \Longrightarrow \varphi(S(n))\bigr),
+\]
+then
+\[
+\forall n \in P\;\bigl(n \ge m \Longrightarrow \varphi(n)\bigr).
+\]
+\hyperref[prf:induction-from-arbitrary-base]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system, } m \in P,
+\text{ and } \varphi \text{ a predicate on } P.\\
+&\Bigl(\varphi(m) \land
+\forall n \in P\;\bigl(n \ge m \land \varphi(n)
+\Longrightarrow \varphi(S(n))\bigr)\Bigr)
+\Longrightarrow
+\forall n \in P\;\bigl(n \ge m \Longrightarrow \varphi(n)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Apply ordinary induction to the shifted predicate $\psi(n) \coloneqq
+(n \ge m \Longrightarrow \varphi(n))$, which holds vacuously below $m$
+and reduces to $\varphi$ above $m$. This theorem is the formal license for
+all arguments of the form ``for all $n \ge m$, proceed by induction.''
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

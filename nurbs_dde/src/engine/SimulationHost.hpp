@@ -2,6 +2,7 @@
 // engine/SimulationHost.hpp
 // Narrow service interface passed to simulations.
 
+#include "engine/CameraInputController.hpp"
 #include "engine/CameraService.hpp"
 #include "engine/HotkeyService.hpp"
 #include "engine/InteractionService.hpp"
@@ -63,6 +64,7 @@ public:
     [[nodiscard]] InteractionService& interaction() noexcept { return m_interaction; }
     [[nodiscard]] RenderService& render() noexcept { return m_render; }
     [[nodiscard]] CameraService& camera() noexcept { return m_camera; }
+    [[nodiscard]] CameraInputController& camera_input() noexcept { return m_camera_input; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
@@ -77,6 +79,7 @@ private:
     InteractionService m_interaction;
     RenderService m_render;
     CameraService m_camera;
+    CameraInputController m_camera_input;
     SimulationClock m_clock;
 };
 

@@ -12,6 +12,15 @@ enum class CameraProjection : u8 {
     Orthographic
 };
 
+enum class CameraViewProfile : u8 {
+    Auto,
+    PerspectiveSurface3D,
+    Orthographic2D,
+    Locked,
+    FreeFlight,
+    FollowParticle
+};
+
 struct CameraState {
     Vec3 target{0.f, 0.f, 0.f};
     f32 yaw = 0.72f;

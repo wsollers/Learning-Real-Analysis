@@ -1,10 +1,154 @@
 \section{Well-Ordering Principle}
+\label{sec:well-ordering-principle}
 
-This section should isolate least-element reasoning on $\mathbb{N}$ and make
-the equivalence between induction and well-ordering explicit. It is also the
-natural home for least counterexample and first crossing arguments.
+\begin{topicbox}{The Well-Ordering Principle}
+\begin{exposition}
+The well-ordering principle asserts that every nonempty subset of $\mathbb{N}$
+contains a least element. This is not merely a consequence of the order axioms;
+it is a property that distinguishes $\mathbb{N}$ from dense ordered sets such
+as $\mathbb{Q}$, which have no smallest positive element. The well-ordering
+principle is equivalent to ordinary induction over $\mathbb{N}$, but it
+supports a distinct proof style: to establish a universal statement, assume
+it fails for some element and derive a contradiction by examining the least
+failure.
+\end{exposition}
 
-\begin{remark}[Why this is separate]
-Well-ordering is closely related to induction, but it supports a distinct
-style of reasoning that deserves its own local toolkit.
-\end{remark}
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Well-Ordering Principle)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Well-Ordering Principle]
+\label{thm:well-ordering-principle}
+Let $(P,S,1)$ be a Peano system. Every nonempty subset of $P$ has a least
+element with respect to the order $\le$ on $P$.
+\hyperref[prf:well-ordering-principle]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall A \subseteq P\;
+\Bigl(A \neq \varnothing \Longrightarrow
+\exists m \in A\;\forall a \in A\;(m \le a)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{WellOrderingPrinciple}
+\;\coloneqq\;
+\forall A\;\bigl((A \subseteq P \land \exists a\,(a \in A))
+\Rightarrow \exists m\,(m \in A \land \forall a\,(a \in A \Rightarrow m \le a))\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists A \subseteq P\;
+\Bigl(A \neq \varnothing \land
+\forall m \in A\;\exists a \in A\;(a < m)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The well-ordering principle would fail if some nonempty subset of $P$ had no
+least element. That means for every candidate minimum, a strictly smaller
+element of the subset exists, producing an infinite strictly descending chain
+in $P$. Induction rules this out.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg\operatorname{WellOrderingPrinciple}
+\Longleftrightarrow
+\exists A \subseteq P\;
+\Bigl(\underbrace{A \neq \varnothing}_{\text{nonempty}}
+\land
+\underbrace{\forall m \in A\;\exists a \in A\;(a < m)}_{\text{no least element}}
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The well-ordering principle is the order-theoretic complement to induction.
+Induction says one can build up: start at $1$ and keep stepping forward.
+Well-ordering says one can always descend to a minimum: any nonempty set has
+a floor. Proof strategies that use well-ordering typically assume a property
+fails somewhere, form the set of failures, extract its minimum by
+well-ordering, and derive a contradiction from the minimality of that element.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[def:less-than-or-equal-on-peano-system]{Less Than or Equal on a Peano System}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+  \item \hyperref[thm:trichotomy-on-peano-system]{Trichotomy on a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Equivalence of Induction and Well-Ordering}
+\begin{exposition}
+The induction principle and the well-ordering principle are logically
+equivalent over a Peano system. Each implies the other without appealing to
+additional axioms. This equivalence matters structurally: it means that any
+argument written in the induction style can in principle be rewritten in the
+least-counterexample style, and vice versa.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Induction and Well-Ordering Are Equivalent)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Induction and Well-Ordering Are Equivalent]
+\label{thm:induction-well-ordering-equivalence}
+Let $(P,S,1)$ be a Peano system equipped with the order $\le$. The following
+are equivalent:
+\begin{enumerate}
+  \item The induction principle: for every predicate $\varphi$ on $P$, if
+  $\varphi(1)$ holds and the successor step holds, then $\varphi(n)$ holds
+  for all $n \in P$.
+  \item The well-ordering principle: every nonempty subset of $P$ has a least
+  element with respect to $\le$.
+\end{enumerate}
+\hyperref[prf:induction-well-ordering-equivalence]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\operatorname{WellOrderingPrinciple}
+\Longleftrightarrow
+\Bigl(\forall \varphi\;
+\bigl(\varphi(1) \land
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n)))
+\Longrightarrow
+\forall n \in P\;\varphi(n)\bigr)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Induction proves well-ordering by contrapositive: if a nonempty set $A$ had
+no least element, the set of non-members of $A$ would be inductive, forcing
+$A = \varnothing$, a contradiction. Well-ordering proves induction by forming
+the set of elements where $\varphi$ fails and, if nonempty, extracting a
+least failure to derive a contradiction with the successor step.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+  \item \hyperref[thm:well-ordering-principle]{Well-Ordering Principle}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

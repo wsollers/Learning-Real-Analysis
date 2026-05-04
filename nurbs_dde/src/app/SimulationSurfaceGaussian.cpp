@@ -67,6 +67,7 @@ void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
     m_main_view_handle = host.render().register_view(RenderViewDescriptor{
         .title = "Surface 3D",
         .kind = RenderViewKind::Main,
+        .camera_profile = CameraViewProfile::PerspectiveSurface3D,
         .overlays = {
             .show_axes = true,
             .show_grid = true,
@@ -81,6 +82,7 @@ void SimulationSurfaceGaussian::on_register(SimulationHost& host) {
         .kind = RenderViewKind::Alternate,
         .alternate_mode = AlternateViewMode::Contour,
         .projection = CameraProjection::Orthographic,
+        .camera_profile = CameraViewProfile::Orthographic2D,
         .overlays = {
             .show_axes = true,
             .show_grid = false,

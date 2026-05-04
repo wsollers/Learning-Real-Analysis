@@ -1,11 +1,246 @@
 \section{Powers and Growth}
+\label{sec:powers-and-growth}
 
-This section should house exponentiation together with the first major growth
-patterns on $\mathbb{N}$: power laws, factorials, binomial coefficients, the
-binomial theorem, and basic comparisons among arithmetic, polynomial, and
-exponential growth.
+\begin{topicbox}{Exponentiation by Recursion}
+\begin{exposition}
+Exponentiation is defined on a Peano system by recursion on the exponent:
+$a^1 = a$ and $a^{S(n)} = a^n \cdot a$. This makes exponentiation a derived
+operation built from multiplication in exactly the way multiplication is built
+from addition. The recursive clauses are immediately isolated as named theorems
+so that later algebraic arguments can cite them directly.
+\end{exposition}
 
-\begin{remark}[Why this stays in the chapter]
-These topics feel like the natural culmination of arithmetic on $\mathbb{N}$,
-not an unrelated enrichment.
-\end{remark}
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Exponentiation on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Exponentiation on a Peano System]
+\label{def:exponentiation-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For each $a \in P$, define the function
+\[
+h_a : P \to P
+\]
+to be the unique function satisfying
+\[
+h_a(1)=a
+\qquad\text{and}\qquad
+\forall n \in P\;(h_a(S(n))=h_a(n)\cdot a).
+\]
+For $a,n \in P$, define
+\[
+a^n \coloneqq h_a(n).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system. For each } a \in P,
+\text{ let } h_a : P \to P \text{ satisfy}\\
+&h_a(1)=a
+\qquad\text{and}\qquad
+\forall n \in P\;(h_a(S(n))=h_a(n)\cdot a).\\
+&\text{Then for all } a,n \in P,\quad a^n \coloneqq h_a(n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system. For each } a \in P,
+\text{ let } h_a : P \to P \text{ satisfy}\\
+&h_a(1)=a
+\qquad\text{and}\qquad
+\forall n \in P\;(h_a(S(n))=h_a(n)\cdot a).\\
+&\text{Then for all } a,n,x \in P,\quad
+x \neq a^n \Longleftrightarrow x \neq h_a(n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Exponentiation is repeated multiplication in the same sense that multiplication
+is repeated addition. The base $a$ is the fixed left factor; the exponent $n$
+counts how many times $a$ is multiplied together. The recursive definition
+propagates rightward: $a^1 = a$, $a^2 = a^1 \cdot a = a \cdot a$, and so on.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[thm:general-recursion-theorem-for-peano-system]{General Recursion Theorem for a Peano System}
+  \item \hyperref[def:multiplication-on-peano-system]{Multiplication on a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Exponent Laws}
+\begin{exposition}
+The recursive definition immediately yields the standard exponent laws.
+These are not assumed; they are proved from the recursive clauses by induction.
+The three primary laws are: the sum law $a^{m+n} = a^m \cdot a^n$, the
+product law $(a \cdot b)^n = a^n \cdot b^n$, and the power law $(a^m)^n =
+a^{mn}$.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Exponent Sum Law)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Exponent Sum Law]
+\label{thm:exponent-sum-law}
+Let $(P,S,1)$ be a Peano system. For all $a,m,n \in P$,
+\[
+a^{m+n} = a^m \cdot a^n.
+\]
+\hyperref[prf:exponent-sum-law]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\text{Let } (P,S,1) \text{ be a Peano system.}\quad
+\forall a,m,n \in P\;(a^{m+n} = a^m \cdot a^n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Adding exponents corresponds to concatenating the two blocks of repeated
+multiplication. The proof is induction on $n$ using the recursive clause
+$a^{S(n)} = a^n \cdot a$ and associativity of multiplication.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[thm:multiplication-associative]{Multiplication Is Associative}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Exponent Product Law)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Exponent Product Law]
+\label{thm:exponent-product-law}
+Let $(P,S,1)$ be a Peano system. For all $a,b,n \in P$,
+\[
+(a \cdot b)^n = a^n \cdot b^n.
+\]
+\hyperref[prf:exponent-product-law]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\text{Let } (P,S,1) \text{ be a Peano system.}\quad
+\forall a,b,n \in P\;((a \cdot b)^n = a^n \cdot b^n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Raising a product to a power distributes over the factors. The proof is
+induction on $n$, using commutativity and associativity of multiplication to
+rearrange the interleaved factors at each successor step.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[thm:multiplication-associative]{Multiplication Is Associative}
+  \item \hyperref[thm:multiplication-commutative]{Multiplication Is Commutative}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Exponent Power Law)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Exponent Power Law]
+\label{thm:exponent-power-law}
+Let $(P,S,1)$ be a Peano system. For all $a,m,n \in P$,
+\[
+(a^m)^n = a^{m \cdot n}.
+\]
+\hyperref[prf:exponent-power-law]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\text{Let } (P,S,1) \text{ be a Peano system.}\quad
+\forall a,m,n \in P\;((a^m)^n = a^{m \cdot n}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Raising a power to a further power multiplies the exponents. The proof is
+induction on $n$ using the exponent sum law and the recursive definition of
+multiplication.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[thm:exponent-sum-law]{Exponent Sum Law}
+  \item \hyperref[thm:multiplication-successor-on-right]{Multiplication Successor on the Right}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Exponential Growth: $n < 2^n$}
+\begin{exposition}
+The most important growth comparison on $\mathbb{N}$ is that exponential
+growth outpaces linear growth: $n < 2^n$ for all $n \in P$. This single
+inequality captures why exponential towers dwarf polynomial bounds and is
+the prototypical example of an induction argument whose inductive step uses
+both the hypothesis and a multiplicative amplification.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem ($n < 2^n$ for All $n \in \mathbb{N}$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[$n < 2^n$ for All $n \in \mathbb{N}$]
+\label{thm:n-less-than-2-to-n}
+Let $(P,S,1)$ be a Peano system, and let $2 \coloneqq S(1)$. For every $n \in P$,
+\[
+n < 2^n.
+\]
+\hyperref[prf:n-less-than-2-to-n]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } 2 \coloneqq S(1).\\
+&\forall n \in P\;(n < 2^n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The base case $1 < 2 = 2^1$ holds by definition of $2$ and the strict order.
+For the inductive step, assume $n < 2^n$. Then $2^{S(n)} = 2^n \cdot 2$.
+Since $2^n > n \ge 1$, we have $2^n \cdot 2 > n \cdot 2 = n + n > n + 1 = S(n)$,
+where the last step uses that $n \ge 1$ so $n + n > n + 1$. Hence $S(n) < 2^{S(n)}$.
+The inequality $n < 2^n$ is the threshold that distinguishes the growth regimes
+and reappears in every comparison between polynomial and exponential bounds.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[def:strict-less-than-on-peano-system]{Strict Less Than on a Peano System}
+  \item \hyperref[thm:multiplication-distributes-over-addition]{Multiplication Distributes Over Addition}
+  \item \hyperref[thm:addition-preserves-order-on-right]{Addition Preserves Order on the Right}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}

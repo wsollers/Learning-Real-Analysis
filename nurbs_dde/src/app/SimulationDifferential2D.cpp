@@ -64,6 +64,7 @@ void SimulationDifferential2D::on_register(SimulationHost& host) {
         .title = "Differential 2D",
         .kind = RenderViewKind::Main,
         .projection = CameraProjection::Orthographic,
+        .camera_profile = CameraViewProfile::Orthographic2D,
         .overlays = {.show_axes = true, .show_grid = true}
     }, &m_main_view);
     m_phase_handle = host.render().register_view(RenderViewDescriptor{
@@ -71,6 +72,7 @@ void SimulationDifferential2D::on_register(SimulationHost& host) {
         .kind = RenderViewKind::Alternate,
         .alternate_mode = AlternateViewMode::VectorField,
         .projection = CameraProjection::Orthographic,
+        .camera_profile = CameraViewProfile::Orthographic2D,
         .overlays = {.show_axes = true}
     }, &m_phase_view);
 

@@ -1,4 +1,5 @@
 #include "engine/HotkeyService.hpp"
+#include "engine/CameraInputController.hpp"
 #include "engine/CameraService.hpp"
 #include "engine/ISimulation.hpp"
 #include "engine/PanelService.hpp"
@@ -256,6 +257,202 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     EXPECT_EQ(render.active_view_count(), 1u);
     render.submit(main_id, verts, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, Mat4{1.f});
     EXPECT_EQ(render.packet_count(main_id), 1u);
+}
+
+TEST(CameraInputController, PerspectiveProfileOrbitsAndZooms) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    RenderViewId view_id = 0;
+    const auto view = render.register_view(RenderViewDescriptor{
+        .title = "Surface",
+        .kind = RenderViewKind::Main,
+        .projection = CameraProjection::Perspective
+    }, &view_id);
+    render.set_view_domain(view_id, RenderViewDomain{.u_min = -2.f, .u_max = 2.f, .v_min = -2.f, .v_max = 2.f});
+
+    CameraService camera;
+    camera.set_render_service(&render);
+    InteractionService interaction;
+    interaction.set_memory_service(&memory);
+    CameraInputController input;
+
+    const CameraState before = render.descriptor(view_id)->camera;
+    const auto result = input.dispatch(camera, interaction, render, CameraInputSample{
+        .view = view_id,
+        .profile = CameraViewProfile::PerspectiveSurface3D,
+        .delta = {12.f, -8.f},
+        .wheel_delta = 1.f,
+        .right_drag = true,
+        .enabled = true
+    });
+
+    EXPECT_GE(result.count, 2u);
+    EXPECT_NE(render.descriptor(view_id)->camera.yaw, before.yaw);
+    EXPECT_NE(render.descriptor(view_id)->camera.pitch, before.pitch);
+    EXPECT_GT(render.descriptor(view_id)->camera.zoom, before.zoom);
+}
+
+TEST(CameraInputController, OrthographicRightDragPansWithoutOrbiting) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    RenderViewId view_id = 0;
+    const auto view = render.register_view(RenderViewDescriptor{
+        .title = "Phase",
+        .kind = RenderViewKind::Alternate,
+        .projection = CameraProjection::Orthographic
+    }, &view_id);
+    render.set_view_domain(view_id, RenderViewDomain{.u_min = -4.f, .u_max = 4.f, .v_min = -3.f, .v_max = 3.f});
+
+    CameraService camera;
+    camera.set_render_service(&render);
+    InteractionService interaction;
+    interaction.set_memory_service(&memory);
+    CameraInputController input;
+
+    const CameraState before = render.descriptor(view_id)->camera;
+    const auto result = input.dispatch(camera, interaction, render, CameraInputSample{
+        .view = view_id,
+        .profile = CameraViewProfile::Orthographic2D,
+        .delta = {20.f, 10.f},
+        .right_drag = true,
+        .enabled = true
+    });
+
+    ASSERT_EQ(result.count, 1u);
+    EXPECT_EQ(result.commands[0].kind, CameraCommandKind::Pan);
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.yaw, before.yaw);
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.pitch, before.pitch);
+    EXPECT_NE(render.descriptor(view_id)->camera.target.x, before.target.x);
+}
+
+TEST(CameraInputController, DescriptorProfileOverridesProjectionDefault) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    RenderViewId view_id = 0;
+    const auto view = render.register_view(RenderViewDescriptor{
+        .title = "Locked Surface",
+        .projection = CameraProjection::Perspective,
+        .camera_profile = CameraViewProfile::Locked
+    }, &view_id);
+
+    CameraInputController input;
+    const auto result = input.build_commands(render, CameraInputSample{
+        .view = view_id,
+        .profile = CameraViewProfile::Auto,
+        .delta = {10.f, 10.f},
+        .wheel_delta = 1.f,
+        .right_drag = true,
+        .left_double_click = true,
+        .enabled = true,
+        .perturb_seed = 1u
+    });
+
+    EXPECT_EQ(result.count, 0u);
+    EXPECT_EQ(CameraInputController::resolve_profile(render, view_id, CameraViewProfile::Auto),
+              CameraViewProfile::Locked);
+}
+
+TEST(CameraInputController, WheelZoomClamps) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    RenderViewId view_id = 0;
+    const auto view = render.register_view(RenderViewDescriptor{.title = "View"}, &view_id);
+    CameraService camera;
+    camera.set_render_service(&render);
+    InteractionService interaction;
+    interaction.set_memory_service(&memory);
+    CameraInputController input;
+
+    (void)input.dispatch(camera, interaction, render, CameraInputSample{
+        .view = view_id,
+        .wheel_delta = 1000.f,
+        .enabled = true
+    });
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.zoom, 30.f);
+
+    (void)input.dispatch(camera, interaction, render, CameraInputSample{
+        .view = view_id,
+        .wheel_delta = -1000.f,
+        .enabled = true
+    });
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.zoom, 0.08f);
+}
+
+TEST(CameraInputController, ResetUsesViewDomainCenter) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    RenderViewId view_id = 0;
+    const auto view = render.register_view(RenderViewDescriptor{.title = "View"}, &view_id);
+    render.set_view_domain(view_id, RenderViewDomain{
+        .u_min = 2.f, .u_max = 6.f,
+        .v_min = -3.f, .v_max = 1.f,
+        .z_min = -2.f, .z_max = 4.f
+    });
+
+    CameraService camera;
+    camera.set_render_service(&render);
+    camera.reset(view_id, CameraPreset::Home);
+
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.target.x, 4.f);
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.target.y, -1.f);
+    EXPECT_FLOAT_EQ(render.descriptor(view_id)->camera.target.z, 1.f);
+}
+
+TEST(CameraInputController, SurfacePickOnlyEmitsForPerspectiveSurfaceProfile) {
+    memory::MemoryService memory;
+    RenderService render;
+    render.set_memory_service(&memory);
+    InteractionService interaction;
+    interaction.set_memory_service(&memory);
+    CameraService camera;
+    camera.set_render_service(&render);
+    CameraInputController input;
+
+    RenderViewId surface_view = 0;
+    const auto surface = render.register_view(RenderViewDescriptor{
+        .title = "Surface",
+        .kind = RenderViewKind::Main,
+        .projection = CameraProjection::Perspective
+    }, &surface_view);
+    render.set_view_domain(surface_view, RenderViewDomain{.u_min = -2.f, .u_max = 2.f, .v_min = -4.f, .v_max = 4.f});
+
+    RenderViewId phase_view = 0;
+    const auto phase = render.register_view(RenderViewDescriptor{
+        .title = "Phase",
+        .kind = RenderViewKind::Alternate,
+        .projection = CameraProjection::Orthographic
+    }, &phase_view);
+
+    (void)input.dispatch(camera, interaction, render, CameraInputSample{
+        .view = phase_view,
+        .profile = CameraViewProfile::Orthographic2D,
+        .normalized_pixel = {0.5f, 0.5f},
+        .screen_ndc = {0.f, 0.f},
+        .left_double_click = true,
+        .enabled = true,
+        .perturb_seed = 11u
+    });
+    EXPECT_TRUE(interaction.consume_surface_picks(phase_view).empty());
+
+    (void)input.dispatch(camera, interaction, render, CameraInputSample{
+        .view = surface_view,
+        .profile = CameraViewProfile::PerspectiveSurface3D,
+        .normalized_pixel = {0.25f, 0.75f},
+        .screen_ndc = {-0.5f, -0.5f},
+        .left_double_click = true,
+        .enabled = true,
+        .perturb_seed = 12u
+    });
+    const auto picks = interaction.consume_surface_picks(surface_view);
+    ASSERT_EQ(picks.size(), 1u);
+    EXPECT_FLOAT_EQ(picks.front().fallback_uv.x, -1.f);
+    EXPECT_FLOAT_EQ(picks.front().fallback_uv.y, -2.f);
+    EXPECT_EQ(picks.front().seed, 12u);
 }
 
 TEST(SimulationClock, AdvancesTickAndTimeAndPauses) {

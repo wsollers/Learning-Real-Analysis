@@ -531,41 +531,54 @@ void Engine::update_render_view_input() {
 
     if (io.WantCaptureMouse && !second_hovered) return;
 
-    if (io.MouseWheel != 0.f) {
-        if (second_hovered && alternate_view != 0)
-            m_services.camera().zoom(alternate_view, io.MouseWheel);
-        else
-            m_services.camera().zoom_main(io.MouseWheel);
-    }
-
     if (second_hovered && alternate_view != 0) {
-        const bool second_pan = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT)
-            || m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE);
-        if (second_pan)
-            m_services.camera().pan(alternate_view, second_delta.x, second_delta.y);
+        const Vec2 pixel = m_second_win.cursor_position();
+        const float nx = std::clamp(pixel.x / static_cast<f32>(m_second_win.width()), 0.f, 1.f);
+        const float ny = std::clamp(pixel.y / static_cast<f32>(m_second_win.height()), 0.f, 1.f);
+        (void)m_services.camera_input().dispatch(
+            m_services.camera(),
+            m_services.interaction(),
+            m_services.render(),
+            CameraInputSample{
+                .view = alternate_view,
+                .profile = CameraViewProfile::Auto,
+                .pixel = pixel,
+                .normalized_pixel = {nx, ny},
+                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
+                .delta = second_delta,
+                .wheel_delta = io.MouseWheel,
+                .right_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT),
+                .middle_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE),
+                .shift = io.KeyShift,
+                .left_double_click = false,
+                .enabled = true
+            });
         return;
     }
 
-    const bool right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right);
-    const bool middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle);
-    const bool shift = io.KeyShift;
-    if (right_drag && !shift)
-        m_services.camera().orbit_main(io.MouseDelta.x, io.MouseDelta.y);
-    if (middle_drag || (right_drag && shift))
-        m_services.camera().pan_main(io.MouseDelta.x, io.MouseDelta.y);
-
-    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-        const RenderViewId view = m_services.render().first_active_main_view();
-        if (view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
-            const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
-            const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
-            (void)m_services.camera().queue_surface_perturbation(
-                m_services.interaction(),
-                view,
-                {nx, ny},
-                {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                m_surface_perturb_seed++);
-        }
+    if (main_view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
+        const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
+        const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
+        const bool double_click = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+        (void)m_services.camera_input().dispatch(
+            m_services.camera(),
+            m_services.interaction(),
+            m_services.render(),
+            CameraInputSample{
+                .view = main_view,
+                .profile = CameraViewProfile::Auto,
+                .pixel = {io.MousePos.x, io.MousePos.y},
+                .normalized_pixel = {nx, ny},
+                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
+                .delta = {io.MouseDelta.x, io.MouseDelta.y},
+                .wheel_delta = io.MouseWheel,
+                .right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right),
+                .middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle),
+                .shift = io.KeyShift,
+                .left_double_click = double_click,
+                .enabled = true,
+                .perturb_seed = double_click ? m_surface_perturb_seed++ : 0u
+            });
     }
 }
 

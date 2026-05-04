@@ -62,6 +62,7 @@ void SimulationMultiWell::on_register(SimulationHost& host) {
     m_main_handle = host.render().register_view(RenderViewDescriptor{
         .title = "Multi-Well 3D",
         .kind = RenderViewKind::Main,
+        .camera_profile = CameraViewProfile::PerspectiveSurface3D,
         .overlays = {.show_axes = true, .show_grid = true, .show_hover_frenet = true, .show_osculating_circle = true}
     }, &m_main_view);
     m_alt_handle = host.render().register_view(RenderViewDescriptor{
@@ -69,6 +70,7 @@ void SimulationMultiWell::on_register(SimulationHost& host) {
         .kind = RenderViewKind::Alternate,
         .alternate_mode = AlternateViewMode::VectorField,
         .projection = CameraProjection::Orthographic,
+        .camera_profile = CameraViewProfile::Orthographic2D,
         .overlays = {.show_axes = true},
         .alternate = {
             .isocline_direction_angle = -0.35f,
