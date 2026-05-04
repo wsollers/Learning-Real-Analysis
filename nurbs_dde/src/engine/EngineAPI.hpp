@@ -6,12 +6,10 @@
 #include "memory/ArenaSlice.hpp"
 #include "engine/AppConfig.hpp"
 #include "math/Scalars.hpp"
+#include <cstddef>
 #include <functional>
-#include <memory>
 
 namespace ndde {
-
-class IScene; // forward-declared so EngineAPI can reference it without pulling IScene.hpp
 
 enum class RenderTarget : u8 {
     Primary3D,
@@ -23,7 +21,7 @@ enum class RenderTarget : u8 {
 // No Vulkan types — safe to include from any translation unit.
 
 struct DebugStats {
-    // ── Arena (BufferManager) ─────────────────────────────────────────────────
+    // ── Frame GPU arena (MemoryService) ───────────────────────────────────────
     u64 arena_bytes_used  = 0;   ///< bytes written this frame
     u64 arena_bytes_total = 0;   ///< capacity of the arena
     f32 arena_utilisation = 0.f; ///< used / total  [0, 1]
@@ -42,7 +40,7 @@ struct DebugStats {
 // ── EngineAPI ─────────────────────────────────────────────────────────────────
 
 struct EngineAPI {
-    // Allocate vertex_count Vertex slots from the per-frame arena.
+    // Allocate vertex_count Vertex slots from the per-frame GPU arena.
     std::function<memory::ArenaSlice(u32 vertex_count)> acquire;
 
     // Submit a populated slice to a render target.
@@ -72,10 +70,9 @@ struct EngineAPI {
     // Populated by Engine just before Scene::on_frame() is called.
     std::function<const DebugStats&()> debug_stats;
 
-    // Request a scene switch at the end of the current frame.
-    // factory receives a fresh EngineAPI and returns the new scene.
-    // The engine flushes the GPU before destroying the old scene.
-    std::function<void(std::function<std::unique_ptr<IScene>(EngineAPI)>)> switch_scene;
+    // Request a first-class simulation switch by registry index.
+    // Index 0 is Ctrl+1, index 1 is Ctrl+2, etc.
+    std::function<void(std::size_t)> switch_simulation;
 };
 
 } // namespace ndde

@@ -29,10 +29,12 @@
 //   If t_past < oldest record: return oldest record (clamp left)
 //   If t_past > newest record: return newest record (clamp right)
 
+#include "memory/Containers.hpp"
+
 #include <glm/glm.hpp>
-#include <vector>
 #include <cstddef>
 #include <cmath>
+#include <memory_resource>
 
 namespace ndde::sim {
 
@@ -46,8 +48,10 @@ public:
     // capacity: maximum number of records held simultaneously.
     // dt_min:   minimum time between stored records (rate-limiter).
     //           Records more frequent than dt_min are silently dropped.
-    explicit HistoryBuffer(std::size_t capacity = 4096, float dt_min = 0.f)
-        : m_capacity(capacity), m_dt_min(dt_min)
+    explicit HistoryBuffer(std::size_t capacity = 4096,
+                           float dt_min = 0.f,
+                           std::pmr::memory_resource* resource = std::pmr::get_default_resource())
+        : m_capacity(capacity), m_dt_min(dt_min), m_records(resource)
     {
         m_records.reserve(capacity);
     }
@@ -132,8 +136,8 @@ public:
     // When the buffer has not yet wrapped: a simple copy of m_records.
     // When wrapped: reorders the two halves around m_head.
     // Cost: O(n) time and space.  Only call for export/debug, not per-frame.
-    [[nodiscard]] std::vector<Record> to_vector() const {
-        std::vector<Record> out;
+    [[nodiscard]] memory::HistoryVector<Record> to_vector() const {
+        memory::HistoryVector<Record> out{m_records.get_allocator().resource()};
         const std::size_t n = m_records.size();
         out.reserve(n);
         for (std::size_t i = 0; i < n; ++i) {
@@ -148,7 +152,7 @@ public:
 private:
     std::size_t       m_capacity;
     float             m_dt_min;
-    std::vector<Record> m_records;
+    memory::HistoryVector<Record> m_records;
     std::size_t       m_head = 0;       // index of oldest record (when full)
     float             m_last_push_t = -1e30f;
 };

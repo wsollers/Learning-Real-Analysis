@@ -25,6 +25,7 @@
 // is eliminated in this step.
 
 #include "sim/IIntegrator.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 
 namespace ndde::sim {
@@ -48,7 +49,7 @@ public:
 
         // Phase accumulates proportional to arc-length speed.
         // phase_rate() is 0 for equations that don't use a steering phase.
-        state.phase += equation.phase_rate() * glm::length(vel) * dt;
+        state.phase += equation.phase_rate() * ops::length(vel) * dt;
     }
 
     [[nodiscard]] std::string name() const override { return "EulerIntegrator"; }

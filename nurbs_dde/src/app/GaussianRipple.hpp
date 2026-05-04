@@ -33,7 +33,7 @@
 //   the leading and trailing edges of each ring.
 //
 // Usage:
-//   auto* ripple = new GaussianRipple();
+//   GaussianRipple ripple;
 //   ripple->set_epicentre(u0, v0);   // place impact at (u0,v0)
 //   // each frame:
 //   ripple->advance(dt);             // tick internal clock
@@ -41,6 +41,7 @@
 
 #include "math/Surfaces.hpp"       // IDeformableSurface
 #include "app/GaussianSurface.hpp" // eval_static, XMIN/XMAX/YMIN/YMAX
+#include "numeric/ops.hpp"
 #include <cmath>
 
 namespace ndde {
@@ -69,21 +70,40 @@ public:
     // Non-periodic: particles reflect at the domain boundary.
     [[nodiscard]] bool is_periodic_u() const override { return false; }
     [[nodiscard]] bool is_periodic_v() const override { return false; }
+    [[nodiscard]] ndde::math::SurfaceMetadata metadata(float t = 0.f) const override {
+        ndde::math::SurfaceMetadata data = ndde::math::IDeformableSurface::metadata(t);
+        data.name = "Gaussian Ripple";
+        data.formula = "base Gaussian field + decaying radial perturbation";
+        data.has_analytic_derivatives = false;
+        data.parameters = {{
+            {.name = "amplitude", .value = m_p.amplitude, .description = "wave height"},
+            {.name = "damping", .value = m_p.damping, .description = "exponential decay rate"},
+            {.name = "wavelength", .value = m_p.wavelength, .description = "spatial period"},
+            {.name = "speed", .value = m_p.speed, .description = "wave propagation speed"},
+            {.name = "sigma", .value = m_p.sigma, .description = "Gaussian envelope width"},
+            {.name = "epicentre u", .value = m_p.epicentre_u, .description = "impact u coordinate"},
+            {.name = "epicentre v", .value = m_p.epicentre_v, .description = "impact v coordinate"}
+        }};
+        data.parameter_count = 7u;
+        return data;
+    }
 
     // ── Geometry ──────────────────────────────────────────────────────────────
 
     [[nodiscard]] Vec3 evaluate(float u, float v, float t = 0.f) const override {
-        return Vec3{ u, v, height(u, v, t) };
+        return Vec3{ u, v, height(u, v, effective_time(t)) };
     }
 
     // Central FD on height -- exact same structure as GaussianSurface::du/dv
     [[nodiscard]] Vec3 du(float u, float v, float t = 0.f) const override {
         constexpr float h = 1e-3f;
-        return Vec3{ 1.f, 0.f, (height(u+h,v,t) - height(u-h,v,t)) / (2.f*h) };
+        const float te = effective_time(t);
+        return Vec3{ 1.f, 0.f, (height(u+h,v,te) - height(u-h,v,te)) / (2.f*h) };
     }
     [[nodiscard]] Vec3 dv(float u, float v, float t = 0.f) const override {
         constexpr float h = 1e-3f;
-        return Vec3{ 0.f, 1.f, (height(u,v+h,t) - height(u,v-h,t)) / (2.f*h) };
+        const float te = effective_time(t);
+        return Vec3{ 0.f, 1.f, (height(u,v+h,te) - height(u,v-h,te)) / (2.f*h) };
     }
 
     // ── Deformation control ───────────────────────────────────────────────────
@@ -104,20 +124,24 @@ public:
 private:
     Params m_p;
 
+    [[nodiscard]] float effective_time(float t) const noexcept {
+        return t > 0.f ? t : m_time;
+    }
+
     // f_base(u,v) + f_ripple(u,v,t)
     [[nodiscard]] float height(float u, float v, float t) const noexcept {
         const float z_base = GaussianSurface::eval_static(u, v);
 
         const float du_  = u - m_p.epicentre_u;
         const float dv_  = v - m_p.epicentre_v;
-        const float r    = std::sqrt(du_*du_ + dv_*dv_);
+        const float r    = ops::sqrt(du_*du_ + dv_*dv_);
 
         // Decaying radial wave with Gaussian spatial envelope
         const float wave =
             m_p.amplitude
-            * std::exp(-m_p.damping * t)
-            * std::sin(2.f * 3.14159265f * r / m_p.wavelength - m_p.speed * t)
-            * std::exp(-0.5f * r * r / (m_p.sigma * m_p.sigma));
+            * ops::exp(-m_p.damping * t)
+            * ops::sin(ops::two_pi_v<float> * r / m_p.wavelength - m_p.speed * t)
+            * ops::exp(-0.5f * r * r / (m_p.sigma * m_p.sigma));
 
         return z_base + wave;
     }

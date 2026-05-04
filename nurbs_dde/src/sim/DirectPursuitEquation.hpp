@@ -11,6 +11,7 @@
 // In practice: [this]{ return m_curves[0].head_uv(); }
 
 #include "sim/IEquation.hpp"
+#include "numeric/ops.hpp"
 #include <functional>
 #include <glm/glm.hpp>
 #include <cmath>
@@ -51,7 +52,7 @@ public:
             if (delta.y < -span * 0.5f) delta.y += span;
         }
 
-        const float dist = glm::length(delta);
+        const float dist = ops::length(delta);
         if (dist < 1e-7f) return {0.f, 0.f};
         return (delta / dist) * m_p.pursuit_speed;
     }

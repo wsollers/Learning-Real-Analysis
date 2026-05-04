@@ -1,18 +1,17 @@
 #include "app/SceneFactories.hpp"
 
-#include "app/AnalysisScene.hpp"
-#include "app/SurfaceSimScene.hpp"
-
-#include <utility>
+#include "app/SimulationAnalysis.hpp"
+#include "app/SimulationMultiWell.hpp"
+#include "app/SimulationSurfaceGaussian.hpp"
+#include "app/SimulationWavePredatorPrey.hpp"
 
 namespace ndde {
 
-std::unique_ptr<IScene> make_surface_sim_scene(EngineAPI api) {
-    return std::make_unique<SurfaceSimScene>(std::move(api));
-}
-
-std::unique_ptr<IScene> make_analysis_scene(EngineAPI api) {
-    return std::make_unique<AnalysisScene>(std::move(api));
+void register_default_simulations(SimulationRegistry& registry) {
+    registry.add_runtime<SimulationSurfaceGaussian>("Surface Simulation");
+    registry.add_runtime<SimulationAnalysis>("Sine-Rational Analysis");
+    registry.add_runtime<SimulationMultiWell>("Multi-Well Centroid");
+    registry.add_runtime<SimulationWavePredatorPrey>("Wave Predator-Prey");
 }
 
 } // namespace ndde

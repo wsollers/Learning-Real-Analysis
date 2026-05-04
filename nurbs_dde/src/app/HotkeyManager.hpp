@@ -27,8 +27,9 @@
 //
 // Dispatch
 // ────────
-// Call dispatch() once per frame, after ImGui::NewFrame() and before
-// rendering. It reads ImGuiIO and fires callbacks on rising edges.
+// Prefer handle_key_event() from the engine/GLFW key callback for snappy,
+// guaranteed delivery. dispatch() is still available for pure ImGui polling
+// contexts.
 //
 // If ImGui has captured keyboard input (io.WantCaptureKeyboard) dispatch()
 // returns immediately and fires nothing — text fields get priority.
@@ -70,9 +71,11 @@
 //   hk.draw_panel("Hotkeys  [Ctrl+H]", m_hotkey_panel_open);
 
 #include <imgui.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include "memory/Containers.hpp"
 #include <functional>
 #include <string>
-#include <vector>
 #include <cstdint>
 #include <algorithm>
 
@@ -220,6 +223,28 @@ public:
         }
     }
 
+    // Handle a GLFW-style key callback event. Returns true when a registered
+    // hotkey consumed the event. Repeat/release events are ignored.
+    bool handle_key_event(int key, int action, int mods) {
+        if (action != GLFW_PRESS) return false;
+
+        const ImGuiIO& io = ImGui::GetIO();
+        if (io.WantTextInput) return false;
+
+        const ImGuiKey imgui_key = glfw_key_to_imgui(key);
+        if (imgui_key == ImGuiKey_None) return false;
+
+        const uint8_t chord_mods = mods_from_glfw(mods);
+        for (auto& e : m_entries) {
+            if (e.chord.key == imgui_key && e.chord.mods == chord_mods) {
+                e.callback();
+                e.prev = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ── Hotkey reference panel ─────────────────────────────────────────────────
 
     // Render a floating ImGui window listing all registered hotkeys.
@@ -242,7 +267,7 @@ public:
         }
 
         // Collect group order (insertion order of first appearance).
-        std::vector<std::string> group_order;
+        memory::FrameVector<std::string> group_order;
         for (const auto& e : m_entries) {
             const bool seen = std::any_of(group_order.begin(), group_order.end(),
                                           [&](const std::string& g){ return g == e.group; });
@@ -285,8 +310,29 @@ private:
         bool                  prev = false;  ///< previous-frame key state (edge detection)
     };
 
-    std::vector<Entry> m_entries;
+    memory::SimVector<Entry> m_entries;
     HotkeyID           m_next_id = 0u;
+
+    [[nodiscard]] static uint8_t mods_from_glfw(int mods) noexcept {
+        uint8_t out = Chord::None;
+        if ((mods & GLFW_MOD_CONTROL) != 0) out |= Chord::Ctrl;
+        if ((mods & GLFW_MOD_SHIFT) != 0) out |= Chord::Shift;
+        return out;
+    }
+
+    [[nodiscard]] static ImGuiKey glfw_key_to_imgui(int key) noexcept {
+        if (key >= GLFW_KEY_A && key <= GLFW_KEY_Z)
+            return static_cast<ImGuiKey>(ImGuiKey_A + (key - GLFW_KEY_A));
+        if (key >= GLFW_KEY_F1 && key <= GLFW_KEY_F12)
+            return static_cast<ImGuiKey>(ImGuiKey_F1 + (key - GLFW_KEY_F1));
+        switch (key) {
+            case GLFW_KEY_SPACE: return ImGuiKey_Space;
+            case GLFW_KEY_ENTER: return ImGuiKey_Enter;
+            case GLFW_KEY_TAB: return ImGuiKey_Tab;
+            case GLFW_KEY_ESCAPE: return ImGuiKey_Escape;
+            default: return ImGuiKey_None;
+        }
+    }
 };
 
 } // namespace ndde

@@ -27,7 +27,9 @@
 // goal-switching state must persist across velocity() calls.
 
 #include "sim/IEquation.hpp"
+#include "numeric/ops.hpp"
 #include "math/ExtremumTable.hpp"
+#include "numeric/ops.hpp"
 #include "sim/LeaderSeekerEquation.hpp"   // Goal enum
 #include <glm/glm.hpp>
 #include <cmath>
@@ -78,7 +80,7 @@ public:
             if (delta.y < -span * 0.5f) delta.y += span;
         }
 
-        const float dist = glm::length(delta);
+        const float dist = ops::length(delta);
 
         // Goal flip: arrival neighbourhood
         if (dist < m_p.arrival_radius) {
@@ -89,8 +91,8 @@ public:
         // Goal flip: gradient flatness
         const Vec3 du_v = surface.du(state.uv.x, state.uv.y);
         const Vec3 dv_v = surface.dv(state.uv.x, state.uv.y);
-        const float grad_mag = std::sqrt(du_v.z*du_v.z + dv_v.z*dv_v.z);
-        if (std::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon)
+        const float grad_mag = ops::sqrt(du_v.z*du_v.z + dv_v.z*dv_v.z);
+        if (ops::abs(grad_mag - m_p.target_grad_magnitude) < m_p.epsilon)
             m_goal = (m_goal == Goal::SeekMax) ? Goal::SeekMin : Goal::SeekMax;
 
         // Goal-directed drift: unit vector toward goal, scaled by drift_strength
@@ -98,10 +100,10 @@ public:
         glm::vec2 mu = (delta / dist) * m_p.drift_strength;
 
         // Optional gradient drift (same as BrownianMotion::drift_strength)
-        if (std::abs(m_p.gradient_drift) > 1e-7f) {
+        if (ops::abs(m_p.gradient_drift) > 1e-7f) {
             const float fu = du_v.z;
             const float fv = dv_v.z;
-            const float gn = std::sqrt(fu*fu + fv*fv) + 1e-7f;
+            const float gn = ops::sqrt(fu*fu + fv*fv) + 1e-7f;
             mu += glm::vec2{ m_p.gradient_drift * fu / gn,
                              m_p.gradient_drift * fv / gn };
         }

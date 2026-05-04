@@ -5,14 +5,14 @@
 //
 // ── Purpose ───────────────────────────────────────────────────────────────────
 // This header provides a stable API surface:
-//   ndde::ops::cos(x)         — scalar trig
-//   ndde::ops::length(v)      — vector norm
-//   ndde::ops::cross(u, v)    — exterior product
+//   ndde::ops::cos(x)         - scalar trig
+//   ndde::ops::length(v)      - vector norm
+//   ndde::ops::cross(u, v)    - exterior product
 //   ... etc.
 //
 // Under the hood it dispatches to either:
 //   ndde::numeric::MathTraits<T>  (NDDE_USE_BUILTIN_MATH = 0, default)
-//   std:: / GLM                    (NDDE_USE_BUILTIN_MATH = 1, oracle)
+//   platform math libraries       (NDDE_USE_BUILTIN_MATH = 1, oracle)
 //
 // Because both paths ultimately call the same functions right now, the
 // behavioural difference is zero. The value is the seam: when MathTraits
@@ -20,18 +20,22 @@
 // caller gets the new implementation automatically.
 //
 // ── Migration note ────────────────────────────────────────────────────────────
-// The math/*.cpp files currently call std:: and glm:: directly.  To migrate:
+// The math/*.cpp files should call this facade directly. To migrate:
 //   1. Replace  #include <cmath>   with  #include "numeric/ops.hpp"
-//   2. Replace  std::cos(x)        with  ops::cos(x)
-//   3. Replace  glm::length(v)     with  ops::length(v)
+//   2. Replace raw scalar calls    with  ops::cos(x)
+//   3. Replace raw vector calls    with  ops::length(v)
 //   ... and so on.
 // The math/*.hpp files should not change — they use the types from Scalars.hpp.
 
 #include "numeric/math_config.hpp"
 #include "numeric/MathTraits.hpp"
 #include "numeric/Vec3Ops.hpp"
+#include <glm/glm.hpp>
 
 namespace ndde::ops {
+
+template<typename T> inline constexpr T pi_v     = numeric::Constants<T>::PI;
+template<typename T> inline constexpr T two_pi_v = numeric::Constants<T>::TWO_PI;
 
 // ── Scalar ops ────────────────────────────────────────────────────────────────
 // All templated on T; specialise for f32 or f64.
@@ -41,6 +45,7 @@ template<typename T> [[nodiscard]] inline T sin(T x)  noexcept { return numeric:
 template<typename T> [[nodiscard]] inline T tan(T x)  noexcept { return numeric::MathTraits<T>::tan(x);  }
 template<typename T> [[nodiscard]] inline T acos(T x) noexcept { return numeric::MathTraits<T>::acos(x); }
 template<typename T> [[nodiscard]] inline T asin(T x) noexcept { return numeric::MathTraits<T>::asin(x); }
+template<typename T> [[nodiscard]] inline T atan(T x) noexcept { return numeric::MathTraits<T>::atan(x); }
 template<typename T> [[nodiscard]] inline T atan2(T y, T x) noexcept { return numeric::MathTraits<T>::atan2(y, x); }
 template<typename T> [[nodiscard]] inline T cosh(T x) noexcept { return numeric::MathTraits<T>::cosh(x); }
 template<typename T> [[nodiscard]] inline T sinh(T x) noexcept { return numeric::MathTraits<T>::sinh(x); }
@@ -75,6 +80,10 @@ template<typename T>
 template<typename T>
 [[nodiscard]] inline T length(const numeric::GlmVec3<T>& v) noexcept
 { return numeric::Vec3Ops<T>::length(v); }
+
+template<glm::length_t L, typename T, glm::qualifier Q>
+[[nodiscard]] inline T length(const glm::vec<L, T, Q>& v) noexcept
+{ return glm::length(v); }
 
 template<typename T>
 [[nodiscard]] inline T length_sq(const numeric::GlmVec3<T>& v) noexcept

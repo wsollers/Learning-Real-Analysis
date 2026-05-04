@@ -1,7 +1,7 @@
 #pragma once
 // app/HoverResult.hpp
 // Data produced each frame by curve-hover hit testing.
-// Consumed by AnalysisPanel::draw() and all geometry submission in Scene.
+// Shared hover/snap payload for geometry debug panels and render overlays.
 
 namespace ndde {
 

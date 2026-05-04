@@ -18,8 +18,7 @@
 // because those equations ignore state.angle entirely.
 
 #include "sim/IConstraint.hpp"
-#include <cmath>
-#include <numbers>
+#include "numeric/ops.hpp"
 #include <algorithm>
 
 namespace ndde::sim {
@@ -42,11 +41,11 @@ public:
             constexpr float margin = 0.3f;
             if (state.uv.x < u0 + margin) {
                 state.uv.x   = u0 + margin;
-                state.angle  = std::numbers::pi_v<float> - state.angle;
+                state.angle  = ops::pi_v<float> - state.angle;
             }
             if (state.uv.x > u1 - margin) {
                 state.uv.x   = u1 - margin;
-                state.angle  = std::numbers::pi_v<float> - state.angle;
+                state.angle  = ops::pi_v<float> - state.angle;
             }
         }
 

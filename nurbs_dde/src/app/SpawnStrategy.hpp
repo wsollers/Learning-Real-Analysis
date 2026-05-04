@@ -1,7 +1,6 @@
 #pragma once
 // app/SpawnStrategy.hpp
-// Lightweight spawn helpers extracted from SurfaceSimScene::handle_hotkeys()
-// (B3 refactor).
+// Lightweight legacy spawn helpers kept for older AnimatedCurve-based paths.
 //
 // All functions are header-only (short, inline).  No .cpp needed.
 //
@@ -17,12 +16,12 @@
 //   Delay-pursuit chaser:  prewarm = false (must wait for leader history)
 
 #include "app/AnimatedCurve.hpp"
+#include "numeric/ops.hpp"
 #include "math/Surfaces.hpp"
+#include "memory/Containers.hpp"
 #include "sim/IEquation.hpp"
 #include "sim/IIntegrator.hpp"
 #include <glm/glm.hpp>
-#include <vector>
-#include <memory>
 #include <cmath>
 #include <algorithm>
 
@@ -46,7 +45,7 @@ struct SpawnContext {
 // there are no curves yet.  Used as the anchor for offset_spawn().
 
 [[nodiscard]] inline glm::vec2 reference_uv(
-    const std::vector<AnimatedCurve>& curves,
+    const memory::SimVector<AnimatedCurve>& curves,
     const ndde::math::ISurface&       surface) noexcept
 {
     if (curves.empty())
@@ -67,9 +66,9 @@ struct SpawnContext {
 {
     constexpr float margin = 0.5f;
     return {
-        std::clamp(ref_uv.x + offset_radius * std::cos(angle),
+        std::clamp(ref_uv.x + offset_radius * ops::cos(angle),
                    surface.u_min() + margin, surface.u_max() - margin),
-        std::clamp(ref_uv.y + offset_radius * std::sin(angle),
+        std::clamp(ref_uv.y + offset_radius * ops::sin(angle),
                    surface.v_min() + margin, surface.v_max() - margin)
     };
 }
@@ -101,7 +100,7 @@ struct SpawnContext {
     glm::vec2                                uv,
     AnimatedCurve::Role                      role,
     u32                                      slot,
-    std::unique_ptr<ndde::sim::IEquation>    eq,
+    memory::Unique<ndde::sim::IEquation>     eq,
     const SpawnContext&                      ctx,
     bool                                     prewarm = true)
 {

@@ -49,9 +49,42 @@
 
 #include "math/Scalars.hpp"
 #include "numeric/Constants.hpp"
+#include "numeric/math_config.hpp"
 #include <cmath>
 
 namespace ndde::numeric {
+
+namespace detail {
+
+template<typename T>
+[[nodiscard]] inline T reduce_to_half_pi(T x) noexcept {
+    const T pi = Constants<T>::PI;
+    const T two_pi = Constants<T>::TWO_PI;
+    x = std::fmod(x, two_pi);
+    if (x > pi) x -= two_pi;
+    if (x < -pi) x += two_pi;
+    const T half_pi = pi / T{2};
+    if (x > half_pi) return pi - x;
+    if (x < -half_pi) return -pi - x;
+    return x;
+}
+
+template<typename T>
+[[nodiscard]] inline T taylor_sin_19(T x) noexcept {
+    const T y = reduce_to_half_pi(x);
+    const T y2 = y * y;
+    T term = y;
+    T sum = y;
+    for (int n = 1; n <= 9; ++n) {
+        const T a = static_cast<T>(2 * n);
+        const T b = static_cast<T>(2 * n + 1);
+        term *= -y2 / (a * b);
+        sum += term;
+    }
+    return sum;
+}
+
+} // namespace detail
 
 template<typename T>
 struct MathTraits {
@@ -69,7 +102,13 @@ struct MathTraits {
     // ── Trigonometric functions ───────────────────────────────────────────────
 
     [[nodiscard]] static T cos(T x) noexcept { return std::cos(x); }
-    [[nodiscard]] static T sin(T x) noexcept { return std::sin(x); }
+    [[nodiscard]] static T sin(T x) noexcept {
+        if constexpr (!ndde::use_builtin_math && ndde::use_taylor_sin)
+            return taylor_sin(x);
+        else
+            return std::sin(x);
+    }
+    [[nodiscard]] static T taylor_sin(T x) noexcept { return detail::taylor_sin_19(x); }
     [[nodiscard]] static T tan(T x) noexcept { return std::tan(x); }
     [[nodiscard]] static T acos(T x) noexcept { return std::acos(x); }
     [[nodiscard]] static T asin(T x) noexcept { return std::asin(x); }

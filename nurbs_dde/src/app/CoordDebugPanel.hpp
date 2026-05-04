@@ -7,10 +7,11 @@
 #include "app/Viewport.hpp"
 #include "app/HoverResult.hpp"
 #include "math/Scalars.hpp"
+#include "memory/Containers.hpp"
+#include "numeric/ops.hpp"
 
 #include <imgui.h>
 #include <string>
-#include <vector>
 #include <utility>
 #include <cmath>
 
@@ -74,7 +75,7 @@ public:
         std::string snap_curve_name;
 
         // Curve snap cache sizes
-        std::vector<std::pair<std::string, int>> curve_cache_sizes;
+        memory::PersistentVector<std::pair<std::string, int>> curve_cache_sizes;
 
         int frame = 0;
     };
@@ -295,7 +296,7 @@ private:
     }
 
     static void row_err(const char* label, float a, float b) {
-        const float mag = std::sqrt(a*a + b*b);
+        const float mag = ops::sqrt(a*a + b*b);
         const ImVec4 col = (mag < 0.5f)
             ? ImVec4(0.5f, 1.f, 0.5f, 1.f)
             : (mag < 2.f)

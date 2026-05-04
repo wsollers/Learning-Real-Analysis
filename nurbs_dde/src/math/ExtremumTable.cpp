@@ -1,6 +1,8 @@
 // math/ExtremumTable.cpp
 #include "math/ExtremumTable.hpp"
+#include "numeric/ops.hpp"
 #include "math/Surfaces.hpp"
+#include "numeric/ops.hpp"
 #include <limits>
 #include <algorithm>
 #include <cmath>
@@ -39,8 +41,8 @@ void ExtremumTable::build(const ISurface& surface, float t, u32 grid_n) {
         for (int k = 0; k < iters; ++k) {
             const Vec3 du_v = surface.du(p.x, p.y, t);
             const Vec3 dv_v = surface.dv(p.x, p.y, t);
-            p.x = std::clamp(p.x + step * du_v.z, u0, u1);
-            p.y = std::clamp(p.y + step * dv_v.z, v0, v1);
+            p.x = ops::clamp(p.x + step * du_v.z, u0, u1);
+            p.y = ops::clamp(p.y + step * dv_v.z, v0, v1);
         }
         const float z = surface.evaluate(p.x, p.y, t).z;
         if (z > max_z) { max_uv = p; max_z = z; }
@@ -52,8 +54,8 @@ void ExtremumTable::build(const ISurface& surface, float t, u32 grid_n) {
         for (int k = 0; k < iters; ++k) {
             const Vec3 du_v = surface.du(p.x, p.y, t);
             const Vec3 dv_v = surface.dv(p.x, p.y, t);
-            p.x = std::clamp(p.x - step * du_v.z, u0, u1);
-            p.y = std::clamp(p.y - step * dv_v.z, v0, v1);
+            p.x = ops::clamp(p.x - step * du_v.z, u0, u1);
+            p.y = ops::clamp(p.y - step * dv_v.z, v0, v1);
         }
         const float z = surface.evaluate(p.x, p.y, t).z;
         if (z < min_z) { min_uv = p; min_z = z; }

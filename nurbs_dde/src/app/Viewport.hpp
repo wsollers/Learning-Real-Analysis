@@ -17,6 +17,7 @@
 // calling pixel_to_world / zoom_toward / pan_by_pixels.
 
 #include "math/Scalars.hpp"
+#include "numeric/ops.hpp"
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
@@ -75,9 +76,9 @@ struct Viewport {
 
     [[nodiscard]] Mat4 perspective_mvp() const noexcept {
         const float dist = base_extent / zoom * 3.f;
-        const float cx = pan_x + dist * std::cos(pitch) * std::sin(yaw);
-        const float cy = pan_y + dist * std::sin(pitch);
-        const float cz =         dist * std::cos(pitch) * std::cos(yaw);
+        const float cx = pan_x + dist * ops::cos(pitch) * ops::sin(yaw);
+        const float cy = pan_y + dist * ops::sin(pitch);
+        const float cz =         dist * ops::cos(pitch) * ops::cos(yaw);
         const Mat4 proj = glm::perspective(glm::radians(45.f), fb_aspect(), 0.01f, 500.f);
         const Mat4 view = glm::lookAt(
             glm::vec3(cx, cy, cz),

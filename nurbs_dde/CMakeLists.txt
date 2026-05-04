@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 project(nurbs_dde VERSION 0.2.0 LANGUAGES CXX)
+enable_testing()
 
 # ── C++23 ─────────────────────────────────────────────────────────────────────
 set(CMAKE_CXX_STANDARD 23)
@@ -74,6 +75,7 @@ FetchContent_Declare(imgui
 FetchContent_MakeAvailable(imgui)
 
 find_package(Vulkan REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
 add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp

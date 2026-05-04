@@ -13,20 +13,24 @@
 // but numerical errors and discrete time steps let it drift. To maintain
 // confinement, we add a corrective term:
 //
-//   If z > z₀ + ε : steer downhill  (−∇f direction)
-//   If z < z₀ − ε : steer uphill    (+∇f direction)
-//   Otherwise      : pure level-curve tangent
+//   If z > z₀ + ε : steer mostly downhill  (−∇f direction)
+//   If z < z₀ − ε : steer mostly uphill    (+∇f direction)
+//   Otherwise      : mostly level-curve tangent
 //
 // This is a proportional controller on the height error:
 //
 //   e = (z − z₀) / ε               ∈ [−1, 1] in band, outside otherwise
-//   correction = clamp(e, −1, 1) · ∇f / |∇f|
+//   correction = -clamp(e, −1, 1) · ∇f / |∇f|
 //
 // The total velocity direction is:
 //
-//   d = (1−|clamp(e)|) · ∇⊥f/|∇f|  +  clamp(e) · ∇f/|∇f|
+//   d = max(tangent_floor, 1−|clamp(e)|) · ∇⊥f/|∇f|
+//       − clamp(e) · ∇f/|∇f|
 //
 // normalised and scaled by walk_speed.
+// Keeping a tangential floor prevents the walker from becoming a pure
+// gradient-descent/ascent particle, which can otherwise trap it in a basin
+// around local extrema.
 //
 // When |∇f| ≈ 0 (at a critical point), the particle wanders in a fixed
 // direction (the last valid heading) rather than stopping — this prevents
@@ -41,8 +45,7 @@
 //               smooths direction reversals at gradient discontinuities
 
 #include "sim/IEquation.hpp"
-#include <cmath>
-#include <numbers>
+#include "numeric/ops.hpp"
 #include <algorithm>
 #include <string>
 
@@ -55,6 +58,7 @@ public:
         float epsilon    = 0.15f;  ///< confinement half-band width
         float walk_speed = 0.7f;   ///< forward speed (param-units/s)
         float turn_rate  = 2.5f;   ///< max heading change per step (radians)
+        float tangent_floor = 0.35f; ///< minimum level-curve component
     };
 
     explicit LevelCurveWalker(Params p = {}) : m_p(p) {}
@@ -74,7 +78,7 @@ public:
         // Gradient components (z-components of tangent vectors for height field)
         const float gx = du_v.z;   // ∂f/∂u
         const float gy = dv_v.z;   // ∂f/∂v
-        const float gn = std::sqrt(gx*gx + gy*gy);
+        const float gn = ops::sqrt(gx*gx + gy*gy);
 
         // Level-curve tangent direction: ∇⊥f = (−gy, gx) / |∇f|
         // Gradient direction: ∇f = (gx, gy) / |∇f|
@@ -83,30 +87,30 @@ public:
             // Current height and height error
             const float z   = surface.evaluate(state.uv.x, state.uv.y).z;
             const float err = (z - m_p.z0) / std::max(m_p.epsilon, 1e-6f);
-            const float ce  = std::clamp(err, -1.f, 1.f);
-            const float te  = 1.f - std::abs(ce);  // tangent weight
+            const float ce  = ops::clamp(err, -1.f, 1.f);
+            const float te  = std::max(m_p.tangent_floor, 1.f - ops::abs(ce));
 
             // Blend tangent and corrective gradient components
-            const float raw_x = te * (-gy / gn) + ce * (gx / gn);
-            const float raw_y = te * ( gx / gn) + ce * (gy / gn);
-            const float rn    = std::sqrt(raw_x*raw_x + raw_y*raw_y);
+            const float raw_x = te * (-gy / gn) - ce * (gx / gn);
+            const float raw_y = te * ( gx / gn) - ce * (gy / gn);
+            const float rn    = ops::sqrt(raw_x*raw_x + raw_y*raw_y);
             tx = (rn > 1e-6f) ? raw_x / rn : -gy / gn;
             ty = (rn > 1e-6f) ? raw_y / rn :  gx / gn;
         } else {
             // Critical point — hold last heading
-            tx = std::cos(state.angle);
-            ty = std::sin(state.angle);
+            tx = ops::cos(state.angle);
+            ty = ops::sin(state.angle);
         }
 
         // Rate-limited heading update (same approach as GradientWalker)
-        const float desired = std::atan2(ty, tx);
+        const float desired = ops::atan2(ty, tx);
         float da = desired - state.angle;
-        while (da >  std::numbers::pi_v<float>) da -= 2.f * std::numbers::pi_v<float>;
-        while (da < -std::numbers::pi_v<float>) da += 2.f * std::numbers::pi_v<float>;
-        state.angle += std::clamp(da, -m_p.turn_rate, m_p.turn_rate);
+        while (da >  ops::pi_v<float>) da -= ops::two_pi_v<float>;
+        while (da < -ops::pi_v<float>) da += ops::two_pi_v<float>;
+        state.angle += ops::clamp(da, -m_p.turn_rate, m_p.turn_rate);
 
-        return { m_p.walk_speed * std::cos(state.angle),
-                 m_p.walk_speed * std::sin(state.angle) };
+        return { m_p.walk_speed * ops::cos(state.angle),
+                 m_p.walk_speed * ops::sin(state.angle) };
     }
 
     [[nodiscard]] float phase_rate()  const override { return 0.f; }

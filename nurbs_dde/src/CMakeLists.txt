@@ -15,6 +15,11 @@ if(NDDE_USE_BUILTIN_MATH)
     target_compile_definitions(ndde_numeric INTERFACE NDDE_USE_BUILTIN_MATH=1)
 endif()
 
+option(NDDE_USE_TAYLOR_SIN "Route ndde::numeric sine through the Taylor approximation" OFF)
+if(NDDE_USE_TAYLOR_SIN)
+    target_compile_definitions(ndde_numeric INTERFACE NDDE_USE_TAYLOR_SIN=1)
+endif()
+
 # ── ndde_math ─────────────────────────────────────────────────────────────────
 add_library(ndde_math STATIC
     math/Conics.cpp
@@ -28,6 +33,7 @@ target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm)
 # ── ndde_memory ───────────────────────────────────────────────────────────────
 add_library(ndde_memory STATIC
     memory/BufferManager.cpp
+    memory/MemoryService.cpp
 )
 target_include_directories(ndde_memory PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_memory PUBLIC ndde_math volk)
@@ -60,6 +66,7 @@ target_link_libraries(ndde_renderer PUBLIC
 add_library(ndde_engine STATIC
     engine/AppConfig.cpp
     engine/Engine.cpp
+    engine/SimulationRuntime.cpp
 )
 target_include_directories(ndde_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_engine PUBLIC
@@ -73,10 +80,18 @@ target_link_libraries(ndde_engine PUBLIC
 # ── nurbs_dde executable ──────────────────────────────────────────────────────
 add_executable(nurbs_dde
     app/main.cpp
+    app/AnalysisSpawner.cpp
     app/GaussianSurface.cpp
+    app/MultiWellSpawner.cpp
+    app/ParticleSystem.cpp
     app/SceneFactories.cpp
-    app/SurfaceSimScene.cpp
-    app/ParticleRenderer.cpp
+    app/SimulationAnalysis.cpp
+    app/SimulationMultiWell.cpp
+    app/SimulationSurfaceGaussian.cpp
+    app/SimulationWavePredatorPrey.cpp
+    app/SurfaceMeshCache.cpp
+    app/SurfaceSimSpawner.cpp
+    app/WavePredatorPreySpawner.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(nurbs_dde PRIVATE ndde_engine imgui)
@@ -115,10 +130,12 @@ set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
 target_compile_definitions(nurbs_dde  PRIVATE
     SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
     ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+    NDDE_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
 )
 target_compile_definitions(ndde_engine PRIVATE
     SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
     ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
+    NDDE_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
 )
 
 # ── Assets copy ───────────────────────────────────────────────────────────────

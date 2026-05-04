@@ -47,9 +47,8 @@
 //   Z2 = sqrt(-2 ln U1) * sin(2*pi*U2)   ~ N(0,1)
 
 #include "sim/IIntegrator.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
-#include <cmath>
-#include <numbers>
 #include <random>
 
 namespace ndde::sim {
@@ -83,7 +82,7 @@ public:
         const glm::vec2 sigma = equation.noise_coefficient(state, surface, t);
 
         // ── Wiener increment: dW ~ N(0, dt) ──────────────────────────────────
-        const float sqrt_dt = std::sqrt(dt);
+        const float sqrt_dt = ops::sqrt(dt);
         const glm::vec2 dW  = sqrt_dt * normal2();
 
         // ── Milstein correction: (1/2)*sigma*(d sigma/dX)*(dW^2 - dt) ────────
@@ -95,7 +94,7 @@ public:
         state.uv += mu * dt + sigma * dW + milstein;
 
         // Phase: purely deterministic (no stochastic phase accumulation).
-        state.phase += equation.phase_rate() * glm::length(mu) * dt;
+        state.phase += equation.phase_rate() * ops::length(mu) * dt;
     }
 
     [[nodiscard]] std::string name() const override { return "MilsteinIntegrator"; }
@@ -115,9 +114,9 @@ private:
 
         const float u1 = uniform(rng);
         const float u2 = uniform(rng);
-        const float r  = std::sqrt(-2.f * std::log(u1));
-        const float th = 2.f * std::numbers::pi_v<float> * u2;
-        return { r * std::cos(th), r * std::sin(th) };
+        const float r  = ops::sqrt(-2.f * ops::log(u1));
+        const float th = ops::two_pi_v<float> * u2;
+        return { r * ops::cos(th), r * ops::sin(th) };
     }
 
     inline static uint64_t s_global_seed = 0;

@@ -2,7 +2,7 @@
 // app/AnimatedCurve.hpp
 // AnimatedCurve: one walker particle on a parametric surface.
 //
-// Moved from GaussianSurface.hpp (B1 refactor) so that ParticleRenderer and
+// Moved from GaussianSurface.hpp (B1 refactor) so that particle helpers and
 // SpawnStrategy can include this type without pulling in GaussianSurface.
 //
 // Ownership model
@@ -11,10 +11,10 @@
 // non-owning.  All three must outlive the AnimatedCurve.
 //
 // with_equation() factory: the particle OWNS its equation via m_owned_equation
-// (unique_ptr).  m_equation is an alias to m_owned_equation.get().  This
+// (memory::Unique).  m_equation is an alias to m_owned_equation.get().  This
 // enables per-particle SDE equations (BrownianMotion, DelayPursuitEquation).
 //
-// Move semantics: AnimatedCurve is moveable but not copyable.  The unique_ptr
+// Move semantics: AnimatedCurve is moveable but not copyable.  The owned pointer
 // members (m_owned_equation, m_history) move safely; m_equation (raw pointer
 // alias) remains valid because unique_ptr move preserves the heap address.
 //
@@ -23,7 +23,7 @@
 // enable_history() allocates a ring buffer.  push_history() records the
 // current parameter-space position after each advance() call.  query_history()
 // interpolates to an arbitrary past time.  The buffer pointer is stable across
-// vector reallocations (unique_ptr move does not change heap address).
+// vector reallocations (memory::Unique move does not change object address).
 //
 // Live equation access
 // ─────────────────────
@@ -40,14 +40,21 @@
 #include "sim/IIntegrator.hpp"
 #include "sim/IConstraint.hpp"
 #include "sim/HistoryBuffer.hpp"
+#include "app/ParticleBehaviors.hpp"
 #include "app/FrenetFrame.hpp"
+#include "app/ParticleTypes.hpp"
 #include "math/GeometryTypes.hpp"
+#include "memory/Containers.hpp"
+#include "memory/MemoryService.hpp"
+#include "memory/Unique.hpp"
 #include <glm/glm.hpp>
-#include <vector>
 #include <span>
-#include <memory>
+#include <atomic>
+#include <string>
 
 namespace ndde {
+
+class SimulationContext;
 
 class AnimatedCurve {
 public:
@@ -64,17 +71,19 @@ public:
                            u32 colour_slot,
                            const ndde::math::ISurface*   surface,
                            ndde::sim::IEquation*          equation,
-                           const ndde::sim::IIntegrator*  integrator);
+                           const ndde::sim::IIntegrator*  integrator,
+                           memory::MemoryService*         memory = nullptr);
 
     // Factory: construct a particle that OWNS its equation.
-    // The unique_ptr is moved into m_owned_equation; m_equation is set to
+    // The owned pointer is moved into m_owned_equation; m_equation is set to
     // m_owned_equation.get().  All other pointers remain non-owning.
     static AnimatedCurve with_equation(
         f32 start_x, f32 start_y,
         Role role, u32 colour_slot,
         const ndde::math::ISurface*          surface,
-        std::unique_ptr<ndde::sim::IEquation> owned_equation,
-        const ndde::sim::IIntegrator*         integrator);
+        memory::Unique<ndde::sim::IEquation> owned_equation,
+        const ndde::sim::IIntegrator*         integrator,
+        memory::MemoryService*                memory = nullptr);
 
     // AnimatedCurve is moveable (unique_ptr members) but not copyable.
     AnimatedCurve(const AnimatedCurve&)            = delete;
@@ -96,6 +105,17 @@ public:
     // Note: this is the navigation coordinate -- arrival is detected by
     // neighbourhood radius, not exact equality.
     [[nodiscard]] glm::vec2 head_uv() const noexcept { return m_walk.uv; }
+    [[nodiscard]] ParticleId id() const noexcept { return m_id; }
+    [[nodiscard]] ParticleRole particle_role() const noexcept { return m_particle_role; }
+    void set_particle_role(ParticleRole role) noexcept { m_particle_role = role; }
+    void set_label(std::string label) { m_label = std::move(label); }
+    void set_trail_config(TrailConfig cfg) noexcept { m_trail_config = cfg; }
+    [[nodiscard]] const TrailConfig& trail_config() const noexcept { return m_trail_config; }
+
+    void bind_behavior_stack() noexcept;
+    void set_behavior_context(const SimulationContext* context) noexcept;
+    [[nodiscard]] ParticleMetadata metadata() const;
+    [[nodiscard]] std::string metadata_label() const;
 
     [[nodiscard]] u32  trail_size()    const noexcept { return static_cast<u32>(m_trail.size()); }
     [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 4; }
@@ -120,15 +140,35 @@ public:
     [[nodiscard]] ndde::sim::IEquation*       equation()       noexcept { return m_equation; }
     [[nodiscard]] const ndde::sim::IEquation* equation() const noexcept { return m_equation; }
 
+    template <class Equation>
+    [[nodiscard]] Equation* find_equation() noexcept {
+        if (auto* eq = dynamic_cast<Equation*>(m_equation))
+            return eq;
+        if (auto* stack = dynamic_cast<BehaviorStack*>(m_equation))
+            return stack->find_equation<Equation>();
+        return nullptr;
+    }
+
+    template <class Equation>
+    [[nodiscard]] const Equation* find_equation() const noexcept {
+        if (const auto* eq = dynamic_cast<const Equation*>(m_equation))
+            return eq;
+        if (const auto* stack = dynamic_cast<const BehaviorStack*>(m_equation))
+            return stack->find_equation<Equation>();
+        return nullptr;
+    }
+
     // Add a constraint applied after every integration sub-step.
-    // AnimatedCurve owns the constraint via unique_ptr.
+    // AnimatedCurve owns the constraint via memory::Unique.
     // Constraints are applied in insertion order.
-    void add_constraint(std::unique_ptr<ndde::sim::IConstraint> c) {
+    void add_constraint(memory::Unique<ndde::sim::IConstraint> c) {
         m_constraints.push_back(std::move(c));
     }
 
+    void bind_memory(memory::MemoryService* memory);
+
     // Mutable access to the particle state for pairwise constraint application.
-    // Called only by SurfaceSimScene::apply_pairwise_constraints().
+    // Prefer ParticleSystem for new simulation code.
     // Do not use from equation or integrator code.
     [[nodiscard]] ndde::sim::ParticleState& walk_state() noexcept { return m_walk; }
 
@@ -140,18 +180,28 @@ public:
 
 private:
     ndde::sim::ParticleState                m_walk;
-    std::vector<Vec3>                        m_trail;
+    memory::HistoryVector<Vec3>              m_trail;
     const ndde::math::ISurface*              m_surface;        // non-owning, never null
     ndde::sim::IEquation*                    m_equation;       // non-owning OR alias to m_owned_equation
-    std::unique_ptr<ndde::sim::IEquation>    m_owned_equation; // null when using shared equation
+    memory::Unique<ndde::sim::IEquation>     m_owned_equation; // null when using shared equation
     const ndde::sim::IIntegrator*            m_integrator;     // non-owning, never null
-    std::unique_ptr<ndde::sim::HistoryBuffer> m_history;       // null unless enable_history() called
-    std::vector<std::unique_ptr<ndde::sim::IConstraint>> m_constraints; // applied after each sub-step
+    memory::Unique<ndde::sim::HistoryBuffer> m_history;        // null unless enable_history() called
+    memory::SimVector<memory::Unique<ndde::sim::IConstraint>> m_constraints; // applied after each sub-step
+    memory::MemoryService*                    m_memory = nullptr;
     Role                                     m_role;
     u32                                      m_colour_slot;
     f32                                      m_start_x, m_start_y;
+    ParticleId                               m_id = next_id();
+    ParticleRole                             m_particle_role = ParticleRole::Neutral;
+    TrailConfig                              m_trail_config{};
+    std::string                              m_label;
 
     void step(f32 dt, f32 speed_scale);
+
+    [[nodiscard]] static ParticleId next_id() noexcept {
+        static std::atomic<ParticleId> id{0};
+        return ++id;
+    }
 };
 
 } // namespace ndde

@@ -52,7 +52,9 @@
 // constant sigma, which is the default here).
 
 #include "sim/IEquation.hpp"
+#include "numeric/ops.hpp"
 #include "sim/HistoryBuffer.hpp"
+#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 
@@ -109,7 +111,7 @@ public:
             }
         }
 
-        const float dist = glm::length(delta);
+        const float dist = ops::length(delta);
         if (dist < 1e-7f) return {0.f, 0.f};
 
         // Pure pursuit: unit vector toward target, scaled by pursuit speed

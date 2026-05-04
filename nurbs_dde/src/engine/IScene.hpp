@@ -20,15 +20,38 @@
 // the actual replacement until the current frame has fully ended. All Vulkan
 // work is flushed before destruction.
 //
-// EngineAPI is passed at construction time (not through the interface) so
-// scenes are free to choose their own constructor signature.  The factory
-// pattern (make_surface_sim_scene, make_analysis_scene, ...) gives Engine
-// type-erased construction without coupling it to scene headers.
+// Legacy note: this interface is retained while older scene components are
+// migrated.  New simulation runtime code uses ISimulation.
 
 #include "math/Scalars.hpp"  // f32
+#include "memory/Containers.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <string>
 #include <string_view>
 
 namespace ndde {
+
+struct ParticleSnapshot {
+    std::uint64_t id = 0;
+    std::string role;
+    std::string label;
+    float u = 0.f;
+    float v = 0.f;
+    float x = 0.f;
+    float y = 0.f;
+    float z = 0.f;
+};
+
+struct SceneSnapshot {
+    std::string name;
+    bool paused = false;
+    float sim_time = 0.f;
+    float sim_speed = 0.f;
+    std::size_t particle_count = 0;
+    std::string status;
+    memory::FrameVector<ParticleSnapshot> particles;
+};
 
 class IScene {
 public:
@@ -47,6 +70,24 @@ public:
 
     // Short human-readable identifier used in the scene selector UI.
     [[nodiscard]] virtual std::string_view name() const = 0;
+
+    [[nodiscard]] virtual SceneSnapshot snapshot() const {
+        return SceneSnapshot{
+            .name = std::string(name()),
+            .paused = paused(),
+            .status = "Scene"
+        };
+    }
+
+    // Simulation controls. Scenes that own simulation state override these;
+    // static/read-only scenes can keep the defaults.
+    virtual void set_paused(bool /*paused*/) {}
+    [[nodiscard]] virtual bool paused() const noexcept { return false; }
+
+    // Raw key events forwarded by Engine from GLFW after ImGui receives them.
+    // Parameters are GLFW-style integer key/action/modifier values without
+    // requiring this interface to include GLFW headers.
+    virtual void on_key_event(int /*key*/, int /*action*/, int /*mods*/) {}
 };
 
 } // namespace ndde

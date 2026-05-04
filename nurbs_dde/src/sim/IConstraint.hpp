@@ -17,7 +17,7 @@
 // IPairConstraint (pairwise):
 //   Called once per ordered pair (i, j), i < j, after all per-particle
 //   IConstraint::apply() calls.
-//   Stored in SurfaceSimScene::m_pair_constraints.
+//   Stored by ParticleSystem as pair constraints.
 //
 // Contract for IConstraint::apply():
 //   - MAY  modify state.uv freely.
@@ -50,7 +50,7 @@ public:
 // ── IPairConstraint ───────────────────────────────────────────────────────────
 // Post-integration correction applied to a pair of particles.
 //
-// Called by SurfaceSimScene::apply_pairwise_constraints() AFTER all per-particle
+// Called by ParticleSystem AFTER all per-particle
 // IConstraint::apply() calls, once per distinct ordered pair (i, j) with i < j.
 // Both states may be modified.
 class IPairConstraint {

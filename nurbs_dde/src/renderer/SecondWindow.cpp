@@ -19,7 +19,8 @@ SecondWindow::~SecondWindow() { destroy(); }
 void SecondWindow::init(const platform::VulkanContext& ctx,
                          int x, int y, u32 width, u32 height,
                          const std::string& title,
-                         const std::string& shader_dir)
+                         const std::string& shader_dir,
+                         bool vsync)
 {
     m_instance        = ctx.instance();
     m_physical_device = ctx.physical_device();
@@ -27,6 +28,7 @@ void SecondWindow::init(const platform::VulkanContext& ctx,
     m_gfx_queue       = ctx.graphics_queue();
     m_present_queue   = ctx.present_queue();
     m_gfx_family      = ctx.queue_families().graphics;
+    m_vsync           = vsync;
 
     // GLFW window — glfwInit already called by primary GlfwContext.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -241,7 +243,7 @@ void SecondWindow::build_swapchain(u32 w, u32 h) {
     vkb::SwapchainBuilder builder{ m_physical_device, m_device, m_surface };
     auto sc_ret = builder
         .set_desired_format({ VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR })
-        .set_desired_present_mode(VK_PRESENT_MODE_FIFO_KHR)
+        .set_desired_present_mode(m_vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_MAILBOX_KHR)
         .set_desired_extent(w, h)
         .add_image_usage_flags(VK_IMAGE_USAGE_TRANSFER_DST_BIT)
         .build();
@@ -252,10 +254,13 @@ void SecondWindow::build_swapchain(u32 w, u32 h) {
     m_sc_raw    = vkb_sc.swapchain;
     m_sc_format = vkb_sc.image_format;
     m_sc_extent = vkb_sc.extent;
-    m_sc_images = vkb_sc.get_images().value();
-    m_sc_views  = vkb_sc.get_image_views().value();
-    std::cout << std::format("[SecondWindow] Swapchain {}x{} images:{}\n",
-        m_sc_extent.width, m_sc_extent.height, m_sc_images.size());
+    const auto images = vkb_sc.get_images().value();
+    const auto views = vkb_sc.get_image_views().value();
+    m_sc_images.assign(images.begin(), images.end());
+    m_sc_views.assign(views.begin(), views.end());
+    std::cout << std::format("[SecondWindow] Swapchain {}x{} images:{} present:{}\n",
+        m_sc_extent.width, m_sc_extent.height, m_sc_images.size(),
+        m_vsync ? "fifo" : "mailbox");
 }
 
 void SecondWindow::destroy_swapchain() {

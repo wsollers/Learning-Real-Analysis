@@ -28,8 +28,7 @@
 // owns the mutation contract -- it passes mutable state to the equation.
 
 #include "sim/IEquation.hpp"
-#include <cmath>
-#include <numbers>
+#include "numeric/ops.hpp"
 #include <algorithm>
 
 namespace ndde::sim {
@@ -69,24 +68,24 @@ public:
         const glm::vec3 dv_vec = surface.dv(state.uv.x, state.uv.y);
         const float fx = du_vec.z;
         const float fy = dv_vec.z;
-        const float gn = std::sqrt(fx*fx + fy*fy) + 1e-5f;
+        const float gn = ops::sqrt(fx*fx + fy*fy) + 1e-5f;
 
         // Perpendicular-to-gradient in the (u,v) plane
         const float perp_x = -fy / gn;
         const float perp_y =  fx / gn;
 
         // Desired heading: gradient-perpendicular + sinusoidal perturbation
-        const float steer   = m_steer_amp * std::sin(state.phase * m_steer_freq);
-        const float desired = std::atan2(perp_y, perp_x) + steer;
+        const float steer   = m_steer_amp * ops::sin(state.phase * m_steer_freq);
+        const float desired = ops::atan2(perp_y, perp_x) + steer;
 
         // Rate-limited heading update -- mutable, no const_cast (Step 5 fix)
         float da = desired - state.angle;
-        while (da >  std::numbers::pi_v<float>) da -= 2.f * std::numbers::pi_v<float>;
-        while (da < -std::numbers::pi_v<float>) da += 2.f * std::numbers::pi_v<float>;
-        state.angle += std::clamp(da, -m_turn_rate, m_turn_rate);
+        while (da >  ops::pi_v<float>) da -= ops::two_pi_v<float>;
+        while (da < -ops::pi_v<float>) da += ops::two_pi_v<float>;
+        state.angle += ops::clamp(da, -m_turn_rate, m_turn_rate);
 
-        return { m_walk_speed * std::cos(state.angle),
-                 m_walk_speed * std::sin(state.angle) };
+        return { m_walk_speed * ops::cos(state.angle),
+                 m_walk_speed * ops::sin(state.angle) };
     }
 
     // Phase accumulates at phase_rate() * |vel| * dt per integrator step.
