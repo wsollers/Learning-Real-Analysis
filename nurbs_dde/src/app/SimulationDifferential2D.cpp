@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <glm/gtc/matrix_inverse.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
@@ -275,12 +276,14 @@ void SimulationDifferential2D::submit_geometry() {
     render.set_view_domain(m_main_view, domain);
     render.set_view_domain(m_phase_view, domain);
 
-    const Mat4 mvp = phase_mvp();
+    update_hover();
+    const Mat4 main_mvp = phase_mvp(m_main_view);
+    const Mat4 phase_view_mvp = phase_mvp(m_phase_view);
     memory::FrameVector<Vertex> axes = memory.frame().make_vector<Vertex>();
     add_line(axes, {domain.u_min, 0.f}, {domain.u_max, 0.f}, {0.86f, 0.20f, 0.18f, 1.f});
     add_line(axes, {0.f, domain.v_min}, {0.f, domain.v_max}, {0.20f, 0.82f, 0.34f, 1.f});
-    render.submit(m_main_view, axes, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
-    render.submit(m_phase_view, axes, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+    render.submit(m_main_view, axes, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, main_mvp);
+    render.submit(m_phase_view, axes, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, phase_view_mvp);
 
     memory::FrameVector<Vertex> field = memory.frame().make_vector<Vertex>();
     constexpr int samples = 17;
@@ -296,7 +299,7 @@ void SimulationDifferential2D::submit_geometry() {
             add_line(field, p - d * 0.5f, p + d * 0.5f, {0.32f, 0.58f, 0.95f, 0.58f});
         }
     }
-    render.submit(m_phase_view, field, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+    render.submit(m_phase_view, field, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, phase_view_mvp);
 
     memory::FrameVector<Vertex> trajectory = memory.frame().make_vector<Vertex>();
     trajectory.reserve(m_problem->history_size());
@@ -308,8 +311,8 @@ void SimulationDifferential2D::submit_geometry() {
             .color = {1.f, 0.72f, 0.18f, 1.f}
         });
     }
-    render.submit(m_main_view, trajectory, Topology::LineStrip, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
-    render.submit(m_phase_view, trajectory, Topology::LineStrip, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+    render.submit(m_main_view, trajectory, Topology::LineStrip, DrawMode::VertexColor, {1, 1, 1, 1}, main_mvp);
+    render.submit(m_phase_view, trajectory, Topology::LineStrip, DrawMode::VertexColor, {1, 1, 1, 1}, phase_view_mvp);
 
     const auto state = m_problem->state();
     if (state.size() >= 2u) {
@@ -318,9 +321,67 @@ void SimulationDifferential2D::submit_geometry() {
         memory::FrameVector<Vertex> marker = memory.frame().make_vector<Vertex>();
         add_line(marker, p + Vec2{-r, 0.f}, p + Vec2{r, 0.f}, {1.f, 0.95f, 0.20f, 1.f});
         add_line(marker, p + Vec2{0.f, -r}, p + Vec2{0.f, r}, {1.f, 0.95f, 0.20f, 1.f});
-        render.submit(m_main_view, marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
-        render.submit(m_phase_view, marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
+        render.submit(m_main_view, marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, main_mvp);
+        render.submit(m_phase_view, marker, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, phase_view_mvp);
     }
+}
+
+void SimulationDifferential2D::update_hover() {
+    if (!m_host || !m_problem) return;
+    auto& interaction = m_host->interaction();
+    auto& render = m_host->render();
+    RenderViewId view = m_phase_view;
+    ViewMouseState mouse = interaction.mouse_state(view);
+    if (!mouse.enabled) {
+        view = m_main_view;
+        mouse = interaction.mouse_state(view);
+    }
+    if (!mouse.enabled) {
+        interaction.set_hover_hits(SurfaceHit{.view = view}, ParticleTrailHit{.view = view});
+        return;
+    }
+
+    const Mat4 mvp = phase_mvp(view);
+    const Mat4 inv = glm::inverse(mvp);
+    const glm::vec4 world4 = inv * glm::vec4(mouse.ndc.x, mouse.ndc.y, 0.f, 1.f);
+    SurfaceHit surface{.view = view};
+    if (std::abs(world4.w) > 1.0e-6f) {
+        const Vec3 world = Vec3{world4.x, world4.y, world4.z} / world4.w;
+        const RenderViewDomain d = phase_domain();
+        surface.uv = {std::clamp(world.x, d.u_min, d.u_max), std::clamp(world.y, d.v_min, d.v_max)};
+        surface.world = {surface.uv.x, surface.uv.y, 0.f};
+        surface.hit = true;
+    }
+
+    ParticleTrailHit trail{.view = view};
+    const RenderViewDescriptor* desc = render.descriptor(view);
+    const Vec2 viewport = desc ? desc->viewport_size : Vec2{1.f, 1.f};
+    float best = std::max(mouse.snap_radius_px, 1.f);
+    for (std::size_t i = 0; i < m_problem->history_size(); ++i) {
+        const auto sample = m_problem->history_state(i);
+        if (sample.size() < 2u) continue;
+        const Vec3 world{static_cast<float>(sample[0]), static_cast<float>(sample[1]), 0.f};
+        const glm::vec4 clip = mvp * glm::vec4(world, 1.f);
+        if (std::abs(clip.w) < 1.0e-6f) continue;
+        const Vec2 pixel{
+            (clip.x / clip.w + 1.f) * 0.5f * viewport.x,
+            (1.f - clip.y / clip.w) * 0.5f * viewport.y
+        };
+        const float dx = pixel.x - mouse.pixel.x;
+        const float dy = pixel.y - mouse.pixel.y;
+        const float distance = std::sqrt(dx * dx + dy * dy);
+        if (distance < best) {
+            best = distance;
+            trail.particle_id = 1;
+            trail.particle_index = 0;
+            trail.trail_index = static_cast<u32>(i);
+            trail.world = world;
+            trail.pixel_distance = distance;
+            trail.hit = true;
+        }
+    }
+
+    interaction.set_hover_hits(surface, trail);
 }
 
 const sim::IOdeSolver& SimulationDifferential2D::solver() const noexcept {
@@ -336,13 +397,8 @@ RenderViewDomain SimulationDifferential2D::phase_domain() const noexcept {
     return {.u_min = -4.f, .u_max = 4.f, .v_min = -4.f, .v_max = 4.f, .z_min = -1.f, .z_max = 1.f};
 }
 
-Mat4 SimulationDifferential2D::phase_mvp() const noexcept {
-    const RenderViewDomain d = phase_domain();
-    const float du = std::max(d.u_max - d.u_min, 0.01f);
-    const float dv = std::max(d.v_max - d.v_min, 0.01f);
-    return glm::ortho(d.u_min - 0.05f * du, d.u_max + 0.05f * du,
-                      d.v_min - 0.05f * dv, d.v_max + 0.05f * dv,
-                      -1.f, 1.f);
+Mat4 SimulationDifferential2D::phase_mvp(RenderViewId view) const noexcept {
+    return m_host ? m_host->camera().orthographic_mvp(view, 0.05f) : Mat4{1.f};
 }
 
 Vec2 SimulationDifferential2D::derivative_at(Vec2 state) const {

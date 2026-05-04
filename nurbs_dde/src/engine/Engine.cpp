@@ -305,13 +305,13 @@ void Engine::draw_global_status_panel() {
     if (ImGui::Checkbox("Axes", &axes))
         m_services.render().set_axes_visible(axes);
     ImGui::SeparatorText("Camera");
-    if (ImGui::Button("Home")) m_services.render().reset_main_cameras(CameraPreset::Home);
+    if (ImGui::Button("Home")) m_services.camera().reset_main(CameraPreset::Home);
     ImGui::SameLine();
-    if (ImGui::Button("Top")) m_services.render().reset_main_cameras(CameraPreset::Top);
+    if (ImGui::Button("Top")) m_services.camera().reset_main(CameraPreset::Top);
     ImGui::SameLine();
-    if (ImGui::Button("Front")) m_services.render().reset_main_cameras(CameraPreset::Front);
+    if (ImGui::Button("Front")) m_services.camera().reset_main(CameraPreset::Front);
     ImGui::SameLine();
-    if (ImGui::Button("Side")) m_services.render().reset_main_cameras(CameraPreset::Side);
+    if (ImGui::Button("Side")) m_services.camera().reset_main(CameraPreset::Side);
     ImGui::TextDisabled("RMB drag orbit   MMB/Shift+RMB pan   Wheel zoom");
     ImGui::TextDisabled("Double-click surface perturb");
     ImGui::End();
@@ -506,37 +506,65 @@ void Engine::update_render_view_input() {
             Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
             mouse_valid && !io.WantCaptureMouse);
     }
-    if (io.WantCaptureMouse) return;
+    const RenderViewId alternate_view = m_services.render().first_active_alternate_view();
+    bool second_hovered = false;
+    Vec2 second_delta{};
+    if (m_second_win.valid() && alternate_view != 0 && m_second_win.width() > 0 && m_second_win.height() > 0) {
+        const Vec2 pixel = m_second_win.cursor_position();
+        second_hovered = m_second_win.hovered()
+            && pixel.x >= 0.f && pixel.y >= 0.f
+            && pixel.x <= static_cast<f32>(m_second_win.width())
+            && pixel.y <= static_cast<f32>(m_second_win.height());
+        const float nx = std::clamp(pixel.x / static_cast<f32>(m_second_win.width()), 0.f, 1.f);
+        const float ny = std::clamp(pixel.y / static_cast<f32>(m_second_win.height()), 0.f, 1.f);
+        m_services.interaction().set_mouse(alternate_view,
+            pixel,
+            Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
+            second_hovered);
+        if (second_hovered && m_second_mouse_prev_valid)
+            second_delta = pixel - m_second_mouse_prev;
+        m_second_mouse_prev = pixel;
+        m_second_mouse_prev_valid = second_hovered;
+    } else {
+        m_second_mouse_prev_valid = false;
+    }
 
-    if (io.MouseWheel != 0.f)
-        m_services.render().zoom_main_cameras(io.MouseWheel);
+    if (io.WantCaptureMouse && !second_hovered) return;
+
+    if (io.MouseWheel != 0.f) {
+        if (second_hovered && alternate_view != 0)
+            m_services.camera().zoom(alternate_view, io.MouseWheel);
+        else
+            m_services.camera().zoom_main(io.MouseWheel);
+    }
+
+    if (second_hovered && alternate_view != 0) {
+        const bool second_pan = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT)
+            || m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE);
+        if (second_pan)
+            m_services.camera().pan(alternate_view, second_delta.x, second_delta.y);
+        return;
+    }
 
     const bool right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right);
     const bool middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle);
     const bool shift = io.KeyShift;
     if (right_drag && !shift)
-        m_services.render().orbit_main_cameras(io.MouseDelta.x, io.MouseDelta.y);
+        m_services.camera().orbit_main(io.MouseDelta.x, io.MouseDelta.y);
     if (middle_drag || (right_drag && shift))
-        m_services.render().pan_main_cameras(io.MouseDelta.x, io.MouseDelta.y);
+        m_services.camera().pan_main(io.MouseDelta.x, io.MouseDelta.y);
 
     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
         const RenderViewId view = m_services.render().first_active_main_view();
         if (view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
-            const RenderViewDomain domain = m_services.render().view_domain(view);
             const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
             const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
-            m_services.interaction().queue_surface_pick(SurfacePickRequest{
-                .view = view,
-                .fallback_uv = {
-                    domain.u_min + nx * (domain.u_max - domain.u_min),
-                    domain.v_max - ny * (domain.v_max - domain.v_min)
-                },
-                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                .amplitude = 0.25f,
-                .radius = 1.0f,
-                .falloff = 1.f,
-                .seed = m_surface_perturb_seed++
-            });
+            (void)m_services.camera().queue_surface_perturbation(
+                m_services.interaction(),
+                view,
+                {nx, ny},
+                {nx * 2.f - 1.f, 1.f - ny * 2.f},
+                m_surface_perturb_seed++);
         }
     }
 }

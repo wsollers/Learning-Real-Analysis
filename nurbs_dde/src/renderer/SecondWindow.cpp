@@ -237,6 +237,22 @@ bool SecondWindow::should_close() const noexcept {
     return m_window && glfwWindowShouldClose(m_window);
 }
 
+bool SecondWindow::hovered() const noexcept {
+    return m_window && glfwGetWindowAttrib(m_window, GLFW_HOVERED) == GLFW_TRUE;
+}
+
+bool SecondWindow::mouse_button_down(int button) const noexcept {
+    return m_window && glfwGetMouseButton(m_window, button) == GLFW_PRESS;
+}
+
+ndde::Vec2 SecondWindow::cursor_position() const noexcept {
+    if (!m_window) return {};
+    double x = 0.0;
+    double y = 0.0;
+    glfwGetCursorPos(m_window, &x, &y);
+    return {static_cast<f32>(x), static_cast<f32>(y)};
+}
+
 // ── Private: build_swapchain ──────────────────────────────────────────────────
 
 void SecondWindow::build_swapchain(u32 w, u32 h) {

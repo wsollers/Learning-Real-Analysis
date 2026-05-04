@@ -39,6 +39,7 @@ public:
     [[nodiscard]] HotkeyService& getHotkeyService() noexcept { return m_services.hotkeys(); }
     [[nodiscard]] InteractionService& getInteractionService() noexcept { return m_services.interaction(); }
     [[nodiscard]] RenderService& getRenderService() noexcept { return m_services.render(); }
+    [[nodiscard]] CameraService& getCameraService() noexcept { return m_services.camera(); }
     [[nodiscard]] SimulationClock& getSimulationClock() noexcept { return m_services.clock(); }
 
 private:
@@ -59,6 +60,8 @@ private:
     double     m_last_frame_time = 0.0;
     DebugStats m_debug_stats;
     u32        m_surface_perturb_seed = 1;
+    Vec2       m_second_mouse_prev{};
+    bool       m_second_mouse_prev_valid = false;
     memory::PersistentVector<PanelHandle> m_global_panels;
     memory::PersistentVector<std::string> m_event_log;
 

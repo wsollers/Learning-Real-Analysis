@@ -215,7 +215,7 @@ void SimulationWavePredatorPrey::submit_geometry() {
             .wire_color = {0.92f, 0.96f, 1.f, 0.30f},
             .fill_color_mode = SurfaceFillColorMode::HeightCell,
             .build_contour = true
-        }, &m_host->interaction(), &m_host->memory());
+        }, &m_host->interaction(), &m_host->memory(), &m_host->camera());
 }
 
 } // namespace ndde

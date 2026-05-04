@@ -258,6 +258,11 @@ public:
 
     [[nodiscard]] const HoverMetadata& hover_metadata() const noexcept { return m_hover; }
 
+    void set_hover_hits(SurfaceHit surface, ParticleTrailHit particle = {}) noexcept {
+        set_surface_hover(surface);
+        set_particle_hover(particle);
+    }
+
 private:
     memory::ViewVector<ViewMouseState> m_mouse;
     memory::ViewVector<SurfacePickRequest> m_surface_requests;

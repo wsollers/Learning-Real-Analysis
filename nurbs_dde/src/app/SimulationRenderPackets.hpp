@@ -4,6 +4,7 @@
 
 #include "app/ParticleSystem.hpp"
 #include "app/SurfaceMeshCache.hpp"
+#include "engine/CameraService.hpp"
 #include "engine/InteractionService.hpp"
 #include "engine/RenderService.hpp"
 #include "math/Surfaces.hpp"
@@ -546,7 +547,8 @@ inline void submit_surface_sim_packets(RenderService& render,
                                        const ParticleSystem& particles,
                                        SurfaceMeshOptions options,
                                        InteractionService* interaction = nullptr,
-                                       memory::MemoryService* memory_service = nullptr)
+                                       memory::MemoryService* memory_service = nullptr,
+                                       CameraService* camera_service = nullptr)
 {
     mesh.bind_memory(memory_service);
     mesh.rebuild_if_needed(surface, options);
@@ -554,8 +556,10 @@ inline void submit_surface_sim_packets(RenderService& render,
     render.set_view_domain(main_view, domain);
     render.set_view_domain(alternate_view, domain);
 
-    const Mat4 main_mvp = surface_main_mvp(surface, render.descriptor(main_view), options.time);
-    const Mat4 alternate_mvp = surface_alternate_mvp(surface, options.time);
+    const Mat4 main_mvp = camera_service ? camera_service->perspective_mvp(main_view)
+                                         : surface_main_mvp(surface, render.descriptor(main_view), options.time);
+    const Mat4 alternate_mvp = camera_service ? camera_service->orthographic_mvp(alternate_view)
+                                              : surface_alternate_mvp(surface, options.time);
     const RenderViewDescriptor* main_descriptor = render.descriptor(main_view);
     const memory::FrameVector<TrailPickSample> pick_samples =
         (interaction && main_descriptor) ? build_trail_pick_samples(particles, memory_service)

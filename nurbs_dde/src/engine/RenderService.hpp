@@ -2,6 +2,7 @@
 // engine/RenderService.hpp
 // Renderer-neutral render view and packet queue service.
 
+#include "engine/CameraTypes.hpp"
 #include "engine/ServiceHandle.hpp"
 #include "math/GeometryTypes.hpp"
 #include "math/Scalars.hpp"
@@ -36,25 +37,6 @@ enum class VectorFieldMode : u8 {
     NegativeGradient,
     LevelTangent,
     ParticleVelocity
-};
-
-enum class CameraProjection : u8 {
-    Perspective,
-    Orthographic
-};
-
-struct CameraState {
-    Vec3 target{0.f, 0.f, 0.f};
-    f32 yaw = 0.72f;
-    f32 pitch = 0.55f;
-    f32 zoom = 1.f;
-};
-
-enum class CameraPreset : u8 {
-    Home,
-    Top,
-    Front,
-    Side
 };
 
 struct ViewOverlayState {
@@ -224,33 +206,12 @@ public:
         return 0;
     }
 
-    void orbit_main_cameras(f32 dx, f32 dy) noexcept {
-        for (auto& entry : m_views) {
-            if (!entry.active || entry.descriptor.kind != RenderViewKind::Main) continue;
-            auto& camera = entry.descriptor.camera;
-            camera.yaw += dx * 0.0065f;
-            camera.pitch = std::clamp(camera.pitch + dy * 0.0065f, -1.35f, 1.35f);
+    [[nodiscard]] RenderViewId first_active_alternate_view() const noexcept {
+        for (const auto& entry : m_views) {
+            if (entry.active && entry.descriptor.kind == RenderViewKind::Alternate)
+                return entry.id;
         }
-    }
-
-    void zoom_main_cameras(f32 wheel_delta) noexcept {
-        if (wheel_delta == 0.f) return;
-        for (auto& entry : m_views) {
-            if (!entry.active || entry.descriptor.kind != RenderViewKind::Main) continue;
-            auto& camera = entry.descriptor.camera;
-            camera.zoom = std::clamp(camera.zoom * (1.f + wheel_delta * 0.12f), 0.08f, 30.f);
-        }
-    }
-
-    void pan_main_cameras(f32 dx, f32 dy) noexcept {
-        for (auto& entry : m_views) {
-            if (!entry.active || entry.descriptor.kind != RenderViewKind::Main) continue;
-            const auto domain = entry.domain;
-            const f32 scale = std::max(domain.u_max - domain.u_min, domain.v_max - domain.v_min)
-                / std::max(entry.descriptor.camera.zoom, 0.05f);
-            entry.descriptor.camera.target.x -= dx * scale * 0.0012f;
-            entry.descriptor.camera.target.y += dy * scale * 0.0012f;
-        }
+        return 0;
     }
 
     void set_axes_visible(bool visible) noexcept {
@@ -283,13 +244,6 @@ public:
                 entry.descriptor.viewport_size = size;
                 entry.descriptor.viewport_aspect = size.x / size.y;
             }
-        }
-    }
-
-    void reset_main_cameras(CameraPreset preset = CameraPreset::Home) noexcept {
-        for (auto& entry : m_views) {
-            if (!entry.active || entry.descriptor.kind != RenderViewKind::Main) continue;
-            entry.descriptor.camera = preset_camera(preset, entry.domain);
         }
     }
 
@@ -398,25 +352,6 @@ private:
     memory::ViewVector<SurfacePerturbCommand> m_surface_commands;
     u64 m_generation = 0;
     memory::MemoryService* m_memory = nullptr;
-
-    [[nodiscard]] static CameraState preset_camera(CameraPreset preset, RenderViewDomain domain) noexcept {
-        const Vec3 target{
-            (domain.u_min + domain.u_max) * 0.5f,
-            (domain.v_min + domain.v_max) * 0.5f,
-            (domain.z_min + domain.z_max) * 0.5f
-        };
-        switch (preset) {
-            case CameraPreset::Top:
-                return CameraState{.target = target, .yaw = 0.f, .pitch = 1.35f, .zoom = 1.f};
-            case CameraPreset::Front:
-                return CameraState{.target = target, .yaw = 1.5707963f, .pitch = 0.10f, .zoom = 1.f};
-            case CameraPreset::Side:
-                return CameraState{.target = target, .yaw = 0.f, .pitch = 0.10f, .zoom = 1.f};
-            case CameraPreset::Home:
-            default:
-                return CameraState{.target = target, .yaw = 0.72f, .pitch = 0.55f, .zoom = 1.f};
-        }
-    }
 
     [[nodiscard]] bool is_active(RenderViewId id) const noexcept {
         return std::any_of(m_views.begin(), m_views.end(),

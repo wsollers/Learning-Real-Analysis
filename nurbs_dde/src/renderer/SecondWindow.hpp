@@ -45,6 +45,9 @@ public:
     [[nodiscard]] u32  width()        const noexcept { return m_sc_extent.width;  }
     [[nodiscard]] u32  height()       const noexcept { return m_sc_extent.height; }
     [[nodiscard]] GLFWwindow* window()const noexcept { return m_window; }
+    [[nodiscard]] bool hovered() const noexcept;
+    [[nodiscard]] bool mouse_button_down(int button) const noexcept;
+    [[nodiscard]] ndde::Vec2 cursor_position() const noexcept;
 
 private:
     GLFWwindow*      m_window          = nullptr;

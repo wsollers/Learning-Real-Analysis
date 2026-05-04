@@ -297,7 +297,7 @@ void SimulationSurfaceGaussian::submit_geometry() {
         .wire_color = {0.92f, 0.96f, 1.f, 0.34f},
         .fill_color_mode = SurfaceFillColorMode::HeightCell,
         .build_contour = true
-    }, &m_host->interaction(), &m_host->memory());
+    }, &m_host->interaction(), &m_host->memory(), &m_host->camera());
 }
 
 void SimulationSurfaceGaussian::reset_differential_problem() {
@@ -328,7 +328,7 @@ void SimulationSurfaceGaussian::apply_surface_commands() {
 
     for (const SurfacePickRequest& command : m_host->interaction().consume_surface_picks(m_main_view)) {
         Vec2 uv = command.fallback_uv;
-        const Mat4 mvp = surface_main_mvp(*m_surface, m_host->render().descriptor(m_main_view), m_surface->time());
+        const Mat4 mvp = m_host->camera().perspective_mvp(m_main_view);
         const SurfaceHit hit = m_host->interaction().resolve_surface_hit(
             m_main_view, *m_surface, mvp, command.screen_ndc, m_surface->time());
         if (hit.hit)

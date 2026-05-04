@@ -78,10 +78,11 @@ private:
     void draw_controls_panel();
     void draw_phase_panel();
     void submit_geometry();
+    void update_hover();
 
     [[nodiscard]] const sim::IOdeSolver& solver() const noexcept;
     [[nodiscard]] RenderViewDomain phase_domain() const noexcept;
-    [[nodiscard]] Mat4 phase_mvp() const noexcept;
+    [[nodiscard]] Mat4 phase_mvp(RenderViewId view) const noexcept;
     [[nodiscard]] Vec2 derivative_at(Vec2 state) const;
 };
 
