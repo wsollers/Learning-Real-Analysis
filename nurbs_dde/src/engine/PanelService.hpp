@@ -36,6 +36,7 @@ public:
                                                      : std::pmr::get_default_resource();
         if (resource == m_panels.get_allocator().resource())
             return;
+        ++m_generation;
         std::destroy_at(&m_panels);
         std::construct_at(&m_panels, resource);
     }
@@ -47,7 +48,7 @@ public:
             .descriptor = std::move(descriptor),
             .active = true
         });
-        return PanelHandle([this, id] { unregister(id); });
+        return PanelHandle([this, id] { unregister(id); }, &m_generation);
     }
 
     void draw_registered_panels(PanelScope scope) {
@@ -90,6 +91,7 @@ private:
     };
 
     PanelId m_next_id = 1;
+    u64 m_generation = 0;
     memory::PersistentVector<PanelEntry> m_panels;
 
     void unregister(PanelId id) noexcept {

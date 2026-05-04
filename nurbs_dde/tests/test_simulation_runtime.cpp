@@ -63,7 +63,7 @@ TEST(SimulationRuntime, RuntimeOwnsISimulationLifecycle) {
     SimulationRuntime runtime("Simulation Runtime",
         [&raw](memory::MemoryService& memory) {
             auto sim = memory.simulation().make_unique_as<ISimulation, RuntimeDummySimulation>();
-            raw = sim.get();
+            raw = static_cast<RuntimeDummySimulation*>(sim.get());
             return sim;
         });
 

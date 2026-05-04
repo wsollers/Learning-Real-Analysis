@@ -40,6 +40,7 @@ public:
                                                      : std::pmr::get_default_resource();
         if (resource == m_hotkeys.get_allocator().resource())
             return;
+        ++m_generation;
         std::destroy_at(&m_hotkeys);
         std::construct_at(&m_hotkeys, resource);
     }
@@ -51,7 +52,7 @@ public:
             .descriptor = std::move(descriptor),
             .active = true
         });
-        return HotkeyHandle([this, id] { unregister(id); });
+        return HotkeyHandle([this, id] { unregister(id); }, &m_generation);
     }
 
     [[nodiscard]] bool dispatch(KeyChord chord) {
@@ -84,6 +85,7 @@ private:
     };
 
     HotkeyId m_next_id = 1;
+    u64 m_generation = 0;
     memory::PersistentVector<HotkeyEntry> m_hotkeys;
 
     void unregister(HotkeyId id) noexcept {

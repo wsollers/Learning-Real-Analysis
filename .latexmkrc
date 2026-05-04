@@ -37,6 +37,16 @@ sub run_makeindex_dep {
     system("makeindex -s '$_[0].ist' -t '$_[0].dep.ilg' -o '$_[0].dep.ind' '$_[0].dep.idx'");
 }
 
+# ── Pass count ───────────────────────────────────────────────
+# Default is 5; your document needs at least 4 passes on a clean
+# build (toc write → bib → cleveref/hyperref resolve → final).
+# Setting 8 gives headroom for the two named indexes as well.
+$max_repeat = 8;
+
+# Teach latexmk to recognise rerun signals from natbib and
+# cleveref that it does not detect by default.
+$lualatex .= ' | grep -qE "(Rerun|rerun|undefined references|Citation.s. may have changed)"';
+
 # ── Output and aux directories ────────────────────────────────
 # Keep the root clean. All intermediate files go to build/.
 # The final PDF is written back to the repo root for convenience.

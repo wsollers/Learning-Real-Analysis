@@ -154,6 +154,7 @@ public:
         std::pmr::memory_resource* view_resource = memory ? memory->view().resource()
                                                           : std::pmr::get_default_resource();
         if (view_resource != m_views.get_allocator().resource()) {
+            ++m_generation;
             std::destroy_at(&m_views);
             std::construct_at(&m_views, view_resource);
             std::destroy_at(&m_surface_commands);
@@ -169,7 +170,7 @@ public:
             .active = true
         });
         if (out_id) *out_id = id;
-        return RenderViewHandle([this, id] { unregister(id); });
+        return RenderViewHandle([this, id] { unregister(id); }, &m_generation);
     }
 
     void submit(RenderViewId view, std::span<const Vertex> vertices,
@@ -395,6 +396,7 @@ private:
     memory::ViewVector<RenderViewEntry> m_views;
     memory::FrameVector<RenderPacket> m_packets;
     memory::ViewVector<SurfacePerturbCommand> m_surface_commands;
+    u64 m_generation = 0;
     memory::MemoryService* m_memory = nullptr;
 
     [[nodiscard]] static CameraState preset_camera(CameraPreset preset, RenderViewDomain domain) noexcept {

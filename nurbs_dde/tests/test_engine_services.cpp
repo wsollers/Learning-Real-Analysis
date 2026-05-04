@@ -40,6 +40,15 @@ private:
     int* m_destroyed = nullptr;
 };
 
+class ArenaValue final {
+public:
+    explicit ArenaValue(int value) : m_value(value) {}
+    [[nodiscard]] int plus_one() const noexcept { return m_value + 1; }
+
+private:
+    int m_value = 0;
+};
+
 TEST(PanelService, RegisterUnregisterPanel) {
     PanelService panels;
     int draws = 0;
@@ -313,6 +322,72 @@ TEST(MemoryService, ScopeUniqueOwnsArenaConstructedPolymorphicObjects) {
     EXPECT_EQ(destroyed, 1);
 }
 
+TEST(MemoryService, ScopeUniqueSupportsAccessBeforeScopeReset) {
+    ndde::memory::MemoryService memory;
+
+    auto owned = memory.simulation().make_unique<ArenaValue>(41);
+
+    ASSERT_TRUE(owned);
+    EXPECT_NE(owned.get(), nullptr);
+    EXPECT_EQ(owned->plus_one(), 42);
+}
+
+TEST(MemoryService, ScopeUniqueCanBeDestroyedBeforeScopeReset) {
+    ndde::memory::MemoryService memory;
+    int destroyed = 0;
+
+    {
+        auto owned = memory.simulation().make_unique<ArenaOwnedDerived>(&destroyed);
+        owned.reset();
+        memory.reset_simulation();
+    }
+
+    EXPECT_EQ(destroyed, 1);
+}
+
+TEST(MemoryService, LifetimeVectorsCanBeUsedBeforeScopeReset) {
+    ndde::memory::MemoryService memory;
+
+    auto sim_values = memory.simulation().make_vector<int>();
+    auto history_values = memory.history().make_vector<int>();
+    sim_values.push_back(7);
+    history_values.push_back(11);
+
+    EXPECT_EQ(sim_values.front(), 7);
+    EXPECT_EQ(history_values.front(), 11);
+}
+
+#ifndef NDEBUG
+TEST(MemoryServiceDeathTest, ScopeUniqueAssertsWhenDestroyedAfterScopeReset) {
+    EXPECT_DEATH_IF_SUPPORTED({
+        ndde::memory::MemoryService memory;
+        auto owned = memory.simulation().make_unique<ArenaOwnedDerived>(nullptr);
+        memory.reset_simulation();
+        owned.reset();
+    }, "memory::Unique");
+}
+
+TEST(MemoryServiceDeathTest, SimVectorAssertsWhenUsedAfterSimulationScopeReset) {
+    EXPECT_DEATH_IF_SUPPORTED({
+        ndde::memory::MemoryService memory;
+        auto values = memory.simulation().make_vector<int>();
+        values.push_back(1);
+        memory.reset_simulation();
+        (void)values.size();
+    }, "memory lifetime vector");
+}
+
+TEST(MemoryServiceDeathTest, HistoryVectorAssertsWhenUsedAfterHistoryScopeReset) {
+    EXPECT_DEATH_IF_SUPPORTED({
+        ndde::memory::MemoryService memory;
+        auto values = memory.history().make_vector<int>();
+        values.push_back(1);
+        memory.reset_history();
+        values.push_back(2);
+    }, "memory lifetime vector");
+}
+#endif
+
 TEST(SimulationHost, ExposesOnlyServiceFacade) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
@@ -340,6 +415,79 @@ TEST(SimulationHost, ExposesOnlyServiceFacade) {
     EXPECT_EQ(host.clock().next(0.1f).tick_index, 1u);
     EXPECT_EQ(&host.memory(), &services.memory());
 }
+
+TEST(ServiceHandle, HandlesUnregisterNormallyBeforeServiceRebind) {
+    ndde::memory::MemoryService memory;
+    PanelService panels;
+    HotkeyService hotkeys;
+    RenderService render;
+    panels.set_memory_service(&memory);
+    hotkeys.set_memory_service(&memory);
+    render.set_memory_service(&memory);
+
+    auto panel = panels.register_panel(PanelDescriptor{.title = "Panel", .draw = [] {}});
+    auto hotkey = hotkeys.register_action(HotkeyDescriptor{
+        .chord = {.key = 7, .mods = 0},
+        .label = "Hotkey",
+        .callback = [] {}
+    });
+    RenderViewId view_id = 0;
+    auto view = render.register_view(RenderViewDescriptor{.title = "View"}, &view_id);
+
+    EXPECT_EQ(panels.active_count(), 1u);
+    EXPECT_EQ(hotkeys.active_count(), 1u);
+    EXPECT_EQ(render.active_view_count(), 1u);
+
+    panel.reset();
+    hotkey.reset();
+    view.reset();
+
+    EXPECT_EQ(panels.active_count(), 0u);
+    EXPECT_EQ(hotkeys.active_count(), 0u);
+    EXPECT_EQ(render.active_view_count(), 0u);
+}
+
+#ifndef NDEBUG
+TEST(ServiceHandleDeathTest, PanelHandleAssertsAfterPanelServiceRebind) {
+    EXPECT_DEATH_IF_SUPPORTED({
+        ndde::memory::MemoryService first;
+        ndde::memory::MemoryService second;
+        PanelService panels;
+        panels.set_memory_service(&first);
+        auto handle = panels.register_panel(PanelDescriptor{.title = "Panel", .draw = [] {}});
+        panels.set_memory_service(&second);
+        handle.reset();
+    }, "service handle");
+}
+
+TEST(ServiceHandleDeathTest, HotkeyHandleAssertsAfterHotkeyServiceRebind) {
+    EXPECT_DEATH_IF_SUPPORTED({
+        ndde::memory::MemoryService first;
+        ndde::memory::MemoryService second;
+        HotkeyService hotkeys;
+        hotkeys.set_memory_service(&first);
+        auto handle = hotkeys.register_action(HotkeyDescriptor{
+            .chord = {.key = 7, .mods = 0},
+            .label = "Hotkey",
+            .callback = [] {}
+        });
+        hotkeys.set_memory_service(&second);
+        handle.reset();
+    }, "service handle");
+}
+
+TEST(ServiceHandleDeathTest, RenderViewHandleAssertsAfterRenderServiceRebind) {
+    EXPECT_DEATH_IF_SUPPORTED({
+        ndde::memory::MemoryService first;
+        ndde::memory::MemoryService second;
+        RenderService render;
+        render.set_memory_service(&first);
+        auto handle = render.register_view(RenderViewDescriptor{.title = "View"});
+        render.set_memory_service(&second);
+        handle.reset();
+    }, "service handle");
+}
+#endif
 
 class DummySimulation final : public ISimulation {
 public:
