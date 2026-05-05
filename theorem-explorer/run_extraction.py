@@ -39,6 +39,9 @@ CHAPTERS = [
     REPO_ROOT / "volume-ii" / "natural-numbers",
     REPO_ROOT / "volume-ii" / "rationals",
     REPO_ROOT / "volume-iii" / "analysis" / "bounding",
+    REPO_ROOT / "volume-iii" / "analysis" / "functions",
+    REPO_ROOT / "volume-iii" / "analysis" / "continuity",
+    REPO_ROOT / "volume-iii" / "analysis" / "differentiation",        
 ]
 
 COMBINED_KNOWLEDGE = EXPLORER_DIR / "knowledge.json"

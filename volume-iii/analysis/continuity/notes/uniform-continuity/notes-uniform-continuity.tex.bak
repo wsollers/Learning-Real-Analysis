@@ -1,0 +1,716 @@
+% =========================================================
+% Uniform Continuity --- Notes
+% Chapter: continuity
+% Volume III - Analysis
+% =========================================================
+
+\subsection{Uniform Continuity}
+\label{sec:uniform-continuity}
+
+\begin{tcolorbox}[title={Toolkit --- Uniform Continuity}]
+\begin{itemize}
+  \item Key distinction: $\delta=\delta(\varepsilon)$ only, not
+    $\delta(\varepsilon,c)$. One $\delta$ serves all pairs in $A$.
+  \item Input condition: $\operatorname{Within}(x,u,\delta)$ --- both
+    $x$ and $u$ range freely, no puncturing.
+  \item Implication chain: $\operatorname{Lipschitz}(f,A)
+    \Rightarrow\operatorname{UniformlyContinuous}(f,A)
+    \Rightarrow\operatorname{ContinuousOn}(f,A)$.
+    Both implications are strict.
+  \item Heine--Cantor: $\operatorname{ContinuousOn}(f,[a,b])
+    \Rightarrow\operatorname{UniformlyContinuous}(f,[a,b])$.
+  \item Failure criterion: sequences $(x_n),(u_n)$ with
+    $x_n-u_n\to 0$ but $|f(x_n)-f(u_n)|\geq\varepsilon_0$.
+  \item $\operatorname{UniformlyContinuous}(f,A)$ preserves Cauchy
+    sequences --- the key lemma for continuous extensions.
+\end{itemize}
+\end{tcolorbox}
+
+% ---------------------------------------------------------
+% Definition --- Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Uniform Continuity)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Uniform Continuity]
+\label{def:uniform-continuity}
+Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. The function $f$ is uniformly continuous on $A$ if and only if for every $\varepsilon > 0$ there exists $\delta > 0$ such that for all $x,u \in A$ the implication $|x-u| < \delta \Rightarrow |f(x)-f(u)| < \varepsilon$ holds.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(A\subseteq\mathbb{R})\land(f:A\to\mathbb{R})\\
+&\qquad\Longrightarrow
+\forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,u \in A \; (|x-u| < \delta \Rightarrow |f(x)-f(u)| < \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{UniformlyContinuous}(f,A) \coloneqq \forall \varepsilon > 0 \; \exists \delta > 0 \; \forall x,u \in A \; (|x-u| < \delta \Rightarrow |f(x)-f(u)| < \varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\\
+&\qquad\lor\exists \varepsilon > 0 \; \forall \delta > 0 \; \exists x,u \in A \; (|x-u| < \delta \land |f(x)-f(u)| \ge \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{UniformlyContinuous}(f,A) \Longleftrightarrow \exists \varepsilon > 0 \; \forall \delta > 0 \; \exists x,u \in A \; (|x-u| < \delta \land |f(x)-f(u)| \ge \varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The definition fails exactly when a single positive tolerance $\varepsilon_{0}$ exposes pairs of inputs arbitrarily close together whose function values remain at least $\varepsilon_{0}$ apart, so no universal $\delta$ works for that $\varepsilon_{0}$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\neg \operatorname{UniformlyContinuous}(f,A)
+=
+\underbrace{\exists \varepsilon_{0} > 0}_{\text{frozen tolerance}}
+\land
+\underbrace{\forall \delta > 0}_{\text{no global control}}
+\land
+\underbrace{\exists x,u \in A \; (|x-u| < \delta \land |f(x)-f(u)| \ge \varepsilon_{0})}_{\text{bad witness pair}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Uniform continuity demands that a single proximity scale $\delta$ answers any prescribed accuracy $\varepsilon$ simultaneously across the whole domain. The negation shows what goes wrong: a fixed output tolerance resists all choices of $\delta$ because pairs of nearby inputs can always be found that stretch the function values too far apart. Geometrically, the graph of a uniformly continuous function can be traversed with a ruler of length $\delta$ horizontally and $\varepsilon$ vertically without ever overstepping the vertical tolerance, whereas a nonuniformly continuous function exhibits spikes that defeat every fixed ruler length.
+\end{remark*}
+
+\NoLocalDependencies
+% ---------------------------------------------------------
+% Theorem --- Algebra of Uniform Continuity (General Domain)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Algebra of Uniform Continuity on a General Domain)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Algebra of Uniform Continuity on a General Domain]
+\label{thm:algebra-of-uniform-continuity-general}
+\begin{enumerate}[label=(\alph*)]
+  \item For every set $A \subseteq \mathbb{R}$, every pair of functions $f,g : A \to \mathbb{R}$ that are uniformly continuous on $A$, and every scalar $c \in \mathbb{R}$, the functions $f+g$, $f-g$, and $cf$ are uniformly continuous on $A$.
+  \item There exist a set $A \subseteq \mathbb{R}$ and uniformly continuous functions $f,g : A \to \mathbb{R}$ such that the product $fg$ is not uniformly continuous on $A$.
+\end{enumerate}
+\hyperref[prf:algebra-of-uniform-continuity-general]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall A \subseteq \mathbb{R}\; \forall f,g : A \to \mathbb{R}\; \forall c \in \mathbb{R}:\\
+&\qquad
+\Bigl[
+\bigl(\forall \varepsilon>0\;\exists \delta_f>0\;\forall x,y\in A\;(|x-y|<\delta_f\Rightarrow |f(x)-f(y)|<\varepsilon)\bigr)\\
+&\qquad\land
+\bigl(\forall \varepsilon>0\;\exists \delta_g>0\;\forall x,y\in A\;(|x-y|<\delta_g\Rightarrow |g(x)-g(y)|<\varepsilon)\bigr)
+\Bigr]
+\Rightarrow
+\Bigl[
+\forall \varepsilon>0\;\exists \delta_1>0\;\forall x,y\in A\;(|x-y|<\delta_1\Rightarrow |(f+g)(x)-(f+g)(y)|<\varepsilon)\\
+&\qquad\land
+\forall \varepsilon>0\;\exists \delta_2>0\;\forall x,y\in A\;(|x-y|<\delta_2\Rightarrow |(f-g)(x)-(f-g)(y)|<\varepsilon)\\
+&\qquad\land
+\forall \varepsilon>0\;\exists \delta_3>0\;\forall x,y\in A\;(|x-y|<\delta_3\Rightarrow |cf(x)-cf(y)|<\varepsilon)
+\Bigr],\\
+&\exists A \subseteq \mathbb{R}\; \exists f,g : A \to \mathbb{R}:\;
+\Bigl[
+\forall \varepsilon>0\;\exists \delta_f>0\;\forall x,y\in A\;(|x-y|<\delta_f\Rightarrow |f(x)-f(y)|<\varepsilon)
+\Bigr]\\
+&\qquad\land
+\Bigl[
+\forall \varepsilon>0\;\exists \delta_g>0\;\forall x,y\in A\;(|x-y|<\delta_g\Rightarrow |g(x)-g(y)|<\varepsilon)
+\Bigr]\\
+&\qquad\land
+\exists \varepsilon_0>0\;\forall \delta>0\;\exists x,y\in A\;
+\bigl(|x-y|<\delta\land |f(x)g(x)-f(y)g(y)|\ge\varepsilon_0\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\begin{aligned}
+&\forall A \subseteq \mathbb{R}\; \forall f,g : A \to \mathbb{R}\; \forall c \in \mathbb{R}:\\
+&\qquad\bigl(\operatorname{UniformlyContinuous}(f,A) \land \operatorname{UniformlyContinuous}(g,A)\bigr) \Longrightarrow \bigl(\operatorname{UniformlyContinuous}(f+g,A) \land \operatorname{UniformlyContinuous}(f-g,A) \land \operatorname{UniformlyContinuous}(cf,A)\bigr),\\
+&\exists A \subseteq \mathbb{R}\; \exists f,g : A \to \mathbb{R}:\quad \operatorname{UniformlyContinuous}(f,A) \land \operatorname{UniformlyContinuous}(g,A) \land \neg \operatorname{UniformlyContinuous}(fg,A).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Uniform continuity is stable under linear combinations on any common domain, so sums, differences, and scalar multiples inherit the same global control on oscillation from the original functions. The proof decomposes the linear expressions into epsilon-delta bounds that add and subtract without upsetting the uniform response. In contrast, products can amplify local variation when one factor lacks a bounded range, so even uniformly continuous multiplicands can produce a product that fails the global tolerance requirement. The theorem explains both the algebraic closure that analysts routinely exploit and the standard obstruction, guiding expectations when building uniformly continuous functions from simpler pieces.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:uniform-continuity]{Definition~\ref*{def:uniform-continuity}}.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Theorem --- Algebra of Uniform Continuity (Bounded Domain)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Algebra of Uniform Continuity on a Bounded Domain)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Algebra of Uniform Continuity on a Bounded Domain]
+\label{thm:algebra-of-uniform-continuity-bounded}
+Let $A \subseteq \mathbb{R}$ be bounded, and let $f,g:A \to \mathbb{R}$ be uniformly continuous on $A$.
+\begin{enumerate}[label=(\alph*)]
+\item The product $x \mapsto f(x)g(x)$ is uniformly continuous on $A$.
+\item If there exists $k>0$ such that $|g(x)| \ge k$ for all $x \in A$, then the quotient $x \mapsto f(x)/g(x)$ is uniformly continuous on $A$.
+\end{enumerate}
+\hyperref[prf:algebra-of-uniform-continuity-bounded]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R} \text{ be bounded and } f,g:A \to \mathbb{R}.\\
+&\bigl[\forall \varepsilon > 0\; \exists \delta > 0\; \forall x,y \in A\;(|x-y|<\delta \Rightarrow |f(x)-f(y)|<\varepsilon)\bigr]\\
+&\land \bigl[\forall \varepsilon > 0\; \exists \delta > 0\; \forall x,y \in A\;(|x-y|<\delta \Rightarrow |g(x)-g(y)|<\varepsilon)\bigr]\\
+&\Rightarrow \forall \varepsilon > 0\; \exists \delta > 0\; \forall x,y \in A\;(|x-y|<\delta \Rightarrow |f(x)g(x)-f(y)g(y)|<\varepsilon),\\
+&\bigl[\forall \varepsilon > 0\; \exists \delta > 0\; \forall x,y \in A\;(|x-y|<\delta \Rightarrow |f(x)-f(y)|<\varepsilon)\bigr]\\
+&\land \bigl[\forall \varepsilon > 0\; \exists \delta > 0\; \forall x,y \in A\;(|x-y|<\delta \Rightarrow |g(x)-g(y)|<\varepsilon)\bigr]\\
+&\land \bigl[\exists k>0\; \forall x \in A\;(|g(x)| \ge k)\bigr]\\
+&\Rightarrow \forall \varepsilon > 0\; \exists \delta > 0\; \forall x,y \in A\;(|x-y|<\delta \Rightarrow |f(x)/g(x)-f(y)/g(y)|<\varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\begin{aligned}
+&\text{Assume } A \subseteq \mathbb{R} \text{ is bounded and } f,g:A \to \mathbb{R}.\\
+&\operatorname{UniformlyContinuous}(f,A) \land \operatorname{UniformlyContinuous}(g,A)\\
+&\qquad\Longrightarrow \operatorname{UniformlyContinuous}(fg,A),\\
+&\operatorname{UniformlyContinuous}(f,A) \land \operatorname{UniformlyContinuous}(g,A) \land \exists k>0\;\forall x \in A\;(|g(x)| \ge k)\\
+&\qquad\Longrightarrow \operatorname{UniformlyContinuous}(f/g,A).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The product conclusion can fail only when one of the hypotheses used to
+control the product is missing: the domain is not bounded, $f$ is not
+uniformly continuous on $A$, or $g$ is not uniformly continuous on $A$.
+The quotient conclusion can also fail if the denominator is not bounded
+away from zero on $A$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\underbrace{\neg\operatorname{BoundedSet}(A)}_{\text{unbounded domain}}
+\lor
+\underbrace{\neg\operatorname{UniformlyContinuous}(f,A)}_{\text{first factor not uniformly continuous}}
+\lor
+\underbrace{\neg\operatorname{UniformlyContinuous}(g,A)}_{\text{second factor not uniformly continuous}}\\
+&\qquad\lor
+\underbrace{\neg\exists k>0\;\forall x\in A:\; |g(x)|\ge k}_{\text{denominator not bounded away from zero}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bounded subsets of $\mathbb{R}$ prevent the product of two uniformly continuous functions from developing large oscillations, so the shared modulus of continuity for $f$ and $g$ can be combined to control $fg$. The quotient is uniformly continuous whenever $g$ never approaches zero, because the bounded-away-from-zero hypothesis allows inversion to act as another uniformly continuous operation that preserves the common modulus after scaling. Failure of boundedness or a loss of a positive lower bound for $|g|$ are the only ways these closure properties can break, and in either case the oscillation of the algebraic combination can no longer be controlled uniformly across the entire set.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:uniform-continuity]{Definition~\ref*{def:uniform-continuity}}.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Proposition --- Sequential Characterization of Uniform Continuity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
+\begin{proposition}[Sequential Characterization of Uniform Continuity]
+\label{prop:sequential-uniform-continuity}
+Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. Then $f$ is uniformly continuous on $A$ if and only if for every pair of sequences $(x_n)$ and $(y_n)$ in $A$ with $\lim_{n \to \infty} (x_n - y_n) = 0$ we have $\lim_{n \to \infty} (f(x_n) - f(y_n)) = 0$.
+\hyperref[prf:sequential-uniform-continuity]{Go to proof.}
+\end{proposition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall A \subseteq \mathbb{R}\;\forall f:A \to \mathbb{R}:\\
+\Bigl[\forall \varepsilon>0\;\exists \delta>0\;\forall x,y\in A\;
+\bigl(|x-y|<\delta\Rightarrow |f(x)-f(y)|<\varepsilon\bigr)\Bigr]
+\Longleftrightarrow
+\forall x_n,y_n:\mathbb{N} \to A\;
+\bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{UniformlyContinuous}(f,A)
+\Longleftrightarrow
+\forall x_n,y_n:\mathbb{N} \to A\;
+\bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\exists A \subseteq \mathbb{R}\;\exists f:A \to \mathbb{R}:\\
+\quad &\Bigl(
+\bigl[\forall \varepsilon>0\;\exists \delta>0\;\forall x,y\in A\;
+(|x-y|<\delta\Rightarrow |f(x)-f(y)|<\varepsilon)\bigr]\\
+&\qquad\land \exists x_n,y_n:\mathbb{N}\to A\;
+\bigl(|x_n - y_n| \to 0 \land \neg(|f(x_n) - f(y_n)| \to 0)\bigr)\Bigr)\\
+\quad &\lor \Bigl(
+\bigl[\exists \varepsilon_0>0\;\forall \delta>0\;\exists x,y\in A\;
+(|x-y|<\delta\land |f(x)-f(y)|\ge\varepsilon_0)\bigr]\land
+\forall x_n,y_n:\mathbb{N}\to A\;
+\bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\begin{aligned}
+&\exists A \subseteq \mathbb{R}\;\exists f:A \to \mathbb{R}:\\
+&\quad \Bigl(\operatorname{UniformlyContinuous}(f,A) \land \exists x_n,y_n:\mathbb{N}\to A\;
+\bigl(|x_n - y_n| \to 0 \land \neg(|f(x_n) - f(y_n)| \to 0)\bigr)\Bigr)\\
+&\quad \lor \Bigl(\neg \operatorname{UniformlyContinuous}(f,A) \land
+\forall x_n,y_n:\mathbb{N}\to A\;
+\bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The equivalence can fail in exactly two ways: either $f$ is uniformly continuous while some pair of asymptotically coincident sequences in $A$ yields outputs that do not converge together, or every such pair of sequences does converge together while $f$ nonetheless fails to be uniformly continuous on $A$.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\underbrace{\operatorname{UniformlyContinuous}(f,A)}_{\text{uniform continuity holds}}
+\land
+\underbrace{\exists x_n,y_n:\mathbb{N}\to A\;
+\bigl(|x_n - y_n| \to 0 \land \neg(|f(x_n) - f(y_n)| \to 0)\bigr)}_{\text{sequential test fails}}\\
+&\lor\;
+\underbrace{\neg \operatorname{UniformlyContinuous}(f,A)}_{\text{uniform continuity fails}}
+\land
+\underbrace{\forall x_n,y_n:\mathbb{N}\to A\;
+\bigl(|x_n - y_n| \to 0 \Rightarrow |f(x_n) - f(y_n)| \to 0\bigr)}_{\text{sequential test holds}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Uniform continuity prevents the function from pulling together inputs that are asymptotically identical while letting their images drift apart. The sequential formulation packages this requirement into a tail test that ignores explicit epsilon-delta bookkeeping: whenever two points of $A$ are eventually arbitrarily close, their function values must also be eventually arbitrarily close. Proving uniform continuity via sequences is often simpler, and conversely, producing two sequences that collide in $A$ but whose images do not collide gives a concrete witness that uniform continuity fails. The two failure modes correspond to breaking one direction or the other of the claimed equivalence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:uniform-continuity]{Definition~\ref*{def:uniform-continuity}}
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Theorem --- Heine--Cantor
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Heine--Cantor Theorem)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Heine--Cantor Theorem]
+\label{thm:heine-cantor}
+Let $a,b \in \mathbb{R}$ with $a<b$ and let $f:[a,b]\to\mathbb{R}$ be continuous on $[a,b]$. Then $f$ is uniformly continuous on $[a,b]$.
+\hyperref[prf:heine-cantor]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a,b \in \mathbb{R} \text{ with } a<b \text{ and let } f:[a,b]\to\mathbb{R}.\\
+&\Bigl[\forall c \in [a,b]\; \forall \varepsilon>0\; \exists \delta>0\; \forall x \in [a,b]\;(|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon)\Bigr]\\
+&\Longrightarrow \forall \varepsilon>0\; \exists \delta>0\; \forall x,y \in [a,b]\;(|x-y|<\delta \Rightarrow |f(x)-f(y)|<\varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \Rightarrow \operatorname{UniformlyContinuous}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } a,b \in \mathbb{R} \text{ with } a<b \text{ and let } f:[a,b]\to\mathbb{R}.\\
+&\Bigl[\forall c \in [a,b]\; \forall \varepsilon>0\; \exists \delta>0\; \forall x \in [a,b]\;(|x-c|<\delta \Rightarrow |f(x)-f(c)|<\varepsilon)\Bigr]\\
+&\land \Bigl[\exists \varepsilon_0>0\; \forall \delta>0\; \exists x,y \in [a,b]\;(|x-y|<\delta \land |f(x)-f(y)| \ge \varepsilon_0)\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{ContinuousOn}(f,[a,b]) \land \neg \operatorname{UniformlyContinuous}(f,[a,b]).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Continuity on the compact interval $[a,b]$ forces a single modulus of continuity that works simultaneously at every point, so oscillations of $f$ cannot sharpen when inspecting smaller neighborhoods. Proofs usually argue by contradiction: assuming the negated form produces sequences of points whose distances shrink while their images stay apart, contradicting compactness-driven convergence. The theorem shows that closed bounded domains prevent the pathological behavior that obstructs uniform control on open or unbounded sets.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:continuous-at-point]{Definition~\ref*{def:continuous-at-point}};\;
+\hyperref[def:uniform-continuity]{Definition~\ref*{def:uniform-continuity}}.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Proposition --- Uniform Continuity Preserves Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
+\begin{proposition}[Uniform Continuity Preserves Cauchy Sequences]
+\label{prop:uniform-continuity-cauchy}
+Let S \subseteq \mathbb{R}, let f:S \to \mathbb{R}, and let (x_n) be a sequence in S. If f is uniformly continuous on S and (x_n) is a Cauchy sequence in S, then (f(x_n)) is a Cauchy sequence in \mathbb{R}.
+\hyperref[prf:uniform-continuity-cauchy]{Go to proof.}
+\end{proposition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } S \subseteq \mathbb{R},\; f:S \to \mathbb{R},\; (x_n)_{n\in\mathbb{N}}\subseteq S.\\
+&\Bigl[\forall \varepsilon>0\;\exists \delta>0\;\forall x,y \in S\;( |x-y|<\delta \Rightarrow |f(x)-f(y)|<\varepsilon )\Bigr]\\
+&\land \Bigl[\forall \varepsilon>0\;\exists N \in \mathbb{N}\;\forall m,n \ge N\;( |x_n - x_m|<\varepsilon )\Bigr]\\
+&\Rightarrow \forall \varepsilon>0\;\exists N \in \mathbb{N}\;\forall m,n \ge N\;( |f(x_n) - f(x_m)|<\varepsilon ).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{UniformlyContinuous}(f,S) \land \operatorname{CauchySequence}(x_n) \;\Rightarrow\; \operatorname{CauchySequence}(f(x_n)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Uniform continuity controls the change in f(x) solely through the distance between inputs, so any Cauchy sequence in the domain is sent to a sequence whose tails remain uniformly close. Ordinary pointwise continuity cannot guarantee this because the necessary input tolerance could shrink along the sequence, so uniformity is exactly the additional strength needed to transport the Cauchy property. The standard failure mode occurs when f is merely continuous and the sequence approaches a boundary point where continuity loses uniform control, producing large oscillations in the image sequence. Geometrically, uniform continuity supplies a single modulus of continuity that works for the entire path traced by (x_n), ensuring that eventually all image terms lie in an arbitrarily small common interval.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:uniform-continuity]{Definition~\ref{def:uniform-continuity}};
+\hyperref[def:cauchy-sequence]{Definition~\ref{def:cauchy-sequence}}.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Definition --- Lipschitz Condition
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Lipschitz Condition)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Lipschitz Condition]
+\label{def:lipschitz-condition}
+Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and let $K>0$. The function $f$ satisfies the Lipschitz condition on $A$ with constant $K$ if and only if $|f(x)-f(u)| \le K|x-u|$ for every $x,u \in A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(A\subseteq\mathbb{R})\land(f:A\to\mathbb{R})\land(K>0)\\
+&\qquad\Longrightarrow
+\forall x,u \in A\;\bigl(|f(x)-f(u)| \le K|x-u|\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Lipschitz}(f,A,K) \coloneqq (K>0) \land \forall x,u \in A\;\bigl(|f(x)-f(u)| \le K|x-u|\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\lor(K\le 0)\\
+&\qquad\lor\exists x,u \in A\;\bigl(|f(x)-f(u)| > K|x-u|\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg \operatorname{Lipschitz}(f,A,K) \Longleftrightarrow
+\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\lor(K\le 0)\lor
+\exists x,u \in A\;\bigl(|f(x)-f(u)| > K|x-u|\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The Lipschitz condition fails when the ambient data are malformed, when
+the proposed constant is not positive, or when there exists a pair of
+points in $A$ whose images separate faster than $K$ times the separation
+of the points themselves.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\neg(A\subseteq\mathbb{R})}_{\text{bad domain}}
+\lor
+\underbrace{\neg(f:A\to\mathbb{R})}_{\text{bad function type}}
+\lor
+\underbrace{K\le 0}_{\text{bad constant}}
+\lor
+\underbrace{\exists x,u \in A:\; |f(x)-f(u)| > K|x-u|}_{\text{excessive separation of outputs}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Lipschitz condition requires a single constant $K$ that simultaneously bounds the rate at which $f$ can stretch distances across the entire set $A$. It encapsulates a global slope cap: every secant line through the graph has absolute slope at most $K$. Failure occurs once a single pair of points forces a steeper secant, signaling that no uniform control constant works on the whole domain. Geometrically, the graph of a Lipschitz function lies inside a cone of opening determined by $K$, so nearby points cannot be blown apart faster than $K$ times their original spacing.
+\end{remark*}
+
+\NoLocalDependencies
+% ---------------------------------------------------------
+% Proposition --- Lipschitz Implies UC
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
+\begin{proposition}[Lipschitz Implies Uniform Continuity]
+\label{prop:lipschitz-implies-uc}
+Let $A \subseteq \mathbb{R}$ and $f:A \to \mathbb{R}$. If there exists $K \ge 0$ such that $|f(x)-f(y)| \le K |x-y|$ for all $x,y \in A$, then $f$ is uniformly continuous on $A$.
+\hyperref[prf:lipschitz-implies-uc]{Go to proof.}
+\end{proposition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f:A \to \mathbb{R},\text{ and suppose }\exists K \ge 0\;\forall x,y \in A\;( |f(x)-f(y)| \le K |x-y|).\\
+&\forall \varepsilon > 0\;\exists \delta > 0\;\forall x,y \in A\;(|x-y| < \delta \Rightarrow |f(x)-f(y)| < \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\bigl[\exists K \ge 0\; \operatorname{Lipschitz}(f,A,K)\bigr] \Rightarrow \operatorname{UniformlyContinuous}(f,A).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A Lipschitz bound controls the variation of $f$ by the distance between inputs with a single constant $K$, so the same $K$ yields a usable $\delta = \varepsilon/K$ for every pair of points at once, proving uniform continuity. When $K=0$ the function is constant and trivially uniform. Failure of uniform continuity would force two points arbitrarily close together whose images stay a fixed distance apart, contradicting the Lipschitz inequality.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lipschitz-condition]{Definition \ref*{def:lipschitz-condition}}, \hyperref[def:uniform-continuity]{Definition \ref*{def:uniform-continuity}}.
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Theorem --- Algebra of Lipschitz Functions
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Algebra of Lipschitz Functions)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Algebra of Lipschitz Functions]
+\label{thm:algebra-of-lipschitz-functions}
+Let $A\subseteq \mathbb{R}$ and let $f,g:A\to\mathbb{R}$ be Lipschitz with constants $K_f,K_g\ge 0$ respectively.
+\begin{enumerate}[label=(\alph*)]
+\item For every $c\in\mathbb{R}$, the function $cf$ is Lipschitz on $A$ with constant $|c|K_f$.
+\item The functions $f+g$ and $f-g$ are Lipschitz on $A$ with constant $K_f+K_g$.
+\item If $B\subseteq\mathbb{R}$, $h:B\to\mathbb{R}$ is Lipschitz with constant $K_h\ge 0$, and $f(A)\subseteq B$, then $h\circ f$ is Lipschitz on $A$ with constant $K_hK_f$.
+\item If $|f(x)|\le M_f$ and $|g(x)|\le M_g$ for all $x\in A$, then $fg$ is Lipschitz on $A$ with constant $M_gK_f+M_fK_g$.
+\item If $|f(x)|\le M_f$ for all $x\in A$, if $|g(x)|\ge k>0$ for all $x\in A$, and if $g$ is Lipschitz on $A$ with constant $K_g$, then $f/g$ is Lipschitz on $A$ with constant $K_f/k + M_fK_g/k^2$.
+\end{enumerate}
+\hyperref[prf:algebra-of-lipschitz-functions]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A\subseteq\mathbb{R},\; f,g:A\to\mathbb{R},\; K_f,K_g\ge 0,\\
+&\forall x,y\in A:\ |f(x)-f(y)|\le K_f|x-y|\ \text{and}\ |g(x)-g(y)|\le K_g|x-y|.\\
+&\text{(a) }\forall c\in\mathbb{R},\ \forall x,y\in A:\ |cf(x)-cf(y)|\le |c|K_f|x-y|.\\
+&\text{(b) }\forall x,y\in A:\ |(f\pm g)(x)-(f\pm g)(y)|\le (K_f+K_g)|x-y|.\\
+&\text{(c) }\text{If }B\subseteq\mathbb{R},\ f(A)\subseteq B,\ h:B\to\mathbb{R},\ \forall u,v\in B:\ |h(u)-h(v)|\le K_h|u-v|,\\
+&\qquad\text{then }\forall x,y\in A:\ |h(f(x))-h(f(y))|\le K_hK_f|x-y|.\\
+&\text{(d) }\text{If }|f(x)|\le M_f,\ |g(x)|\le M_g\ \forall x\in A,\ \text{then } \forall x,y\in A:\\
+&\qquad |f(x)g(x)-f(y)g(y)|\le (M_gK_f+M_fK_g)|x-y|.\\
+&\text{(e) }\text{If }|f(x)|\le M_f,\ |g(x)|\ge k>0\ \forall x\in A,\ \text{then }\forall x,y\in A:\\
+&\qquad \left|\frac{f(x)}{g(x)}-\frac{f(y)}{g(y)}\right|\le \left(\frac{K_f}{k}+\frac{M_fK_g}{k^2}\right)|x-y|.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\begin{aligned}
+&\operatorname{Lipschitz}(f,A,K_f)\land \operatorname{Lipschitz}(g,A,K_g) \\
+&\Longrightarrow \Bigl[\forall c\in\mathbb{R}:\operatorname{Lipschitz}(cf,A,|c|K_f)\Bigr]\\
+&\qquad\land \operatorname{Lipschitz}(f+g,A,K_f+K_g)\land \operatorname{Lipschitz}(f-g,A,K_f+K_g)\\
+&\qquad\land \Bigl(\operatorname{Lipschitz}(h,B,K_h)\land f(A)\subseteq B\Rightarrow \operatorname{Lipschitz}(h\circ f,A,K_hK_f)\Bigr)\\
+&\qquad\land \Bigl[(|f|\le M_f)\land(|g|\le M_g)\Rightarrow \operatorname{Lipschitz}(fg,A,M_gK_f+M_fK_g)\Bigr]\\
+&\qquad\land \Bigl[(|f|\le M_f)\land(|g|\ge k>0)\Rightarrow \operatorname{Lipschitz}\!\left(\frac{f}{g},A,\frac{K_f}{k}+\frac{M_fK_g}{k^2}\right)\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Lipschitz functions are stable under the standard algebraic operations: scaling magnifies the constant proportionally, addition and subtraction add the errors, and composition multiplies constants because distortions accumulate multiplicatively. Products and quotients require uniform control of magnitudes; bounds on the factors prevent growth in the coefficients that accompany the derivatives of the product rule heuristic, while a positive lower bound on the denominator guarantees the quotient does not amplify oscillations uncontrollably. Together, these clauses justify building rich classes of Lipschitz maps from simpler ones without losing quantitative control.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lipschitz-condition]{Definition~\ref{def:lipschitz-condition}}, \hyperref[def:bounded-on-a-set]{Definition~\ref{def:bounded-on-a-set}}
+\end{remark*}
+
+
+% ---------------------------------------------------------
+% Definition --- Bi-Lipschitz Map
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bi-Lipschitz Map)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Bi-Lipschitz Map]
+\label{def:bi-lipschitz}
+Let $A\subseteq \mathbb{R}$ and let $f:A\to\mathbb{R}$. The map $f$ is bi-Lipschitz on $A$ if and only if there exist constants $0<\alpha\le K$ such that for every $x,u\in A$,
+\[
+\alpha|x-u|\le |f(x)-f(u)|\le K|x-u|.
+\]
+Any such pair $(\alpha,K)$ is called a bi-Lipschitz constant pair for $f$ on $A$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(A\subseteq\mathbb{R})\land(f:A\to\mathbb{R})\\
+&\qquad\Longrightarrow
+\exists \alpha,K\in\mathbb{R}\;\Bigl(0<\alpha\le K
+\land \forall x,u\in A:\; \alpha|x-u|\le |f(x)-f(u)|\le K|x-u|\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{BiLipschitz}(f,A,\alpha,K) \coloneqq \left(0<\alpha\le K\right) \land \forall x,u\in A\; \left(\alpha|x-u|\le |f(x)-f(u)|\le K|x-u|\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+\neg(A\subseteq\mathbb{R})\lor\neg(f:A\to\mathbb{R})\\
+&\qquad\lor
+\forall \alpha,K\in\mathbb{R}\;\Bigl(0<\alpha\le K \Rightarrow
+\exists x,u\in A:\; |f(x)-f(u)|<\alpha|x-u| \lor |f(x)-f(u)|>K|x-u|\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{BiLipschitz}(f,A,\alpha,K) \Longleftrightarrow \neg(0<\alpha\le K) \lor \exists x,u\in A\; \left(|f(x)-f(u)|<\alpha|x-u| \lor |f(x)-f(u)|>K|x-u|\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The property fails either because $f$ collapses some pair of points faster than the allowed lower constant $\alpha$, or because it stretches some pair more than the upper constant $K$ permits. Both distortions prevent a uniform two-sided control of distances.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\exists x,u\in A:\quad
+\underbrace{|f(x)-f(u)|<\alpha|x-u|}_{\text{lower-distortion failure}}
+\quad\text{or}\quad
+\underbrace{|f(x)-f(u)|>K|x-u|}_{\text{upper-distortion failure}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A bi-Lipschitz map distorts every distance in $A$ by factors lying between $\alpha$ and $K$, so it is simultaneously Lipschitz and has a Lipschitz inverse defined on its image. This two-sided control guarantees injectivity and preserves geometric features such as relative spacing up to uniform scaling, while failures arise precisely from excessive collapsing or stretching of some pair of points.
+\end{remark*}
+
+\NoLocalDependencies
+% ---------------------------------------------------------
+% Theorem --- Inverse of Bi-Lipschitz Map Is Lipschitz
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Inverse of a Bi-Lipschitz Map Is Lipschitz)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Inverse of a Bi-Lipschitz Map Is Lipschitz]
+\label{thm:bilipschitz-inverse-is-lipschitz}
+Let $A \subseteq \mathbb{R}$, let $f:A \to \mathbb{R}$, and suppose there exist constants $\alpha,K>0$ such that
+$\alpha |x-y| \le |f(x)-f(y)| \le K |x-y|$ for all $x,y \in A$. Then $f$ is injective, the inverse mapping $f^{-1}:f(A) \to A$ is well defined, and
+\[
+\frac{1}{K}|u-v| \le |f^{-1}(u)-f^{-1}(v)| \le \frac{1}{\alpha}|u-v|
+\quad\text{for all } u,v \in f(A).
+\]
+\hyperref[prf:bilipschitz-inverse-is-lipschitz]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\ f:A \to \mathbb{R},\ \alpha,K>0.\\
+&\Bigl[\forall x,y \in A\;\bigl(\alpha |x-y| \le |f(x)-f(y)| \le K|x-y|\bigr)\Bigr]\\
+&\Longrightarrow
+\Bigl[\forall x,y \in A\;(f(x)=f(y) \Rightarrow x=y) \\
+&\qquad\land \exists g:f(A)\to A\;\bigl(\forall u \in f(A)\;(f(g(u))=u)\bigr) \\
+&\qquad\land \forall u,v \in f(A)\;\Bigl(\frac{1}{K}|u-v| \le |g(u)-g(v)| \le \frac{1}{\alpha}|u-v|\Bigr)\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{BiLipschitz}(f,A,\alpha,K)
+\Rightarrow
+\bigl(\operatorname{Injective}(f) \land \operatorname{BiLipschitz}(f^{-1},f(A),1/K,1/\alpha)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A bi-Lipschitz bound simultaneously controls the expansion and contraction of $f$, so no two points of $A$ can share the same image and the inverse is automatically a well-defined function on $f(A)$. The inequalities for $f^{-1}$ follow by applying the original bi-Lipschitz bounds to pairs of preimages, showing that reversing the mapping preserves the same type of two-sided Lipschitz control with the reciprocals of the original constants. Failure would require collapsing two distinct points or losing the two-sided bounds, either of which contradicts the defining hypothesis.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lipschitz-condition]{Definition~\ref*{def:lipschitz-condition}}; \hyperref[def:bi-lipschitz]{Definition~\ref*{def:bi-lipschitz}}.
+\end{remark*}

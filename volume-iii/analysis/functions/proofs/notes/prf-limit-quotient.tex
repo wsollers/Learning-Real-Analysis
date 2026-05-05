@@ -1,0 +1,67 @@
+\newpage
+\phantomsection
+\label{prf:limit-quotient}
+
+\begin{remark*}[Return]
+\hyperref[thm:limit-quotient]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Quotient Rule for Function Limits]
+Let $f, g : A \to \mathbb{R}$, let $c$ be a cluster point of $A$. If
+$\lim_{x\to c}f(x)=L$, $\lim_{x\to c}g(x)=M$, and $M \neq 0$, then there
+exists $\delta_0 > 0$ such that $g(x) \neq 0$ whenever $x \in A$ and
+$0 < |x-c| < \delta_0$, and $\lim_{x\to c}(f/g)(x) = L/M$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Let $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$.
+By the Sequential Criterion, $f(x_n) \to L$ and $g(x_n) \to M$.
+Since $M \neq 0$, the quotient rule for sequence limits applies: $g(x_n)$
+is eventually nonzero and $f(x_n)/g(x_n) \to L/M$.
+Since $(x_n)$ was arbitrary, the Sequential Criterion gives
+$\lim_{x\to c}(f/g)(x) = L/M$.
+
+The existence of $\delta_0$ follows from the Limits Bounded Away From Zero
+theorem applied to $g$: since $\lim_{x\to c}g(x)=M \neq 0$, there exists
+$\delta_0 > 0$ such that $|g(x)| \geq |M|/2 > 0$ for all $x \in A$ with
+$0 < |x-c| < \delta_0$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+\textbf{Step 1. Establish that $g$ stays away from zero near $c$.}
+Since $\lim_{x\to c}g(x) = M \neq 0$, the Limits Bounded Away From Zero
+theorem gives $\delta_0 > 0$ such that $|g(x)| \geq |M|/2$ for all
+$x \in A$ with $0 < |x-c| < \delta_0$. In particular $g(x) \neq 0$
+on this punctured neighbourhood.
+
+\textbf{Step 2. Set up a test sequence.}
+Let $(x_n) \subseteq A \setminus \{c\}$ be any sequence with $x_n \to c$.
+
+\textbf{Step 3. Apply the Sequential Criterion to each component.}
+The Sequential Criterion gives $f(x_n) \to L$ and $g(x_n) \to M$.
+Since $M \neq 0$, the quotient rule for sequence limits applies:
+\[
+  \frac{f(x_n)}{g(x_n)} \to \frac{L}{M}.
+\]
+
+\textbf{Step 4. Lift back by the Sequential Criterion.}
+Since every such $(x_n)$ satisfies $(f/g)(x_n) \to L/M$, the Sequential
+Criterion yields $\lim_{x\to c}(f/g)(x) = L/M$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+Bridge argument plus one preliminary step. The preliminary step establishes
+that the denominator is bounded away from zero near $c$, which is what
+licenses $f/g$ as a well-defined function on a punctured neighbourhood.
+The rest is the same bridge as the other algebra-of-limits proofs.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[prop:sequential-criterion-limits]{Sequential Criterion for Function Limits}
+  \item \hyperref[thm:limit-implies-local-bounding]{Limit Implies Local Boundedness}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+\end{itemize}
+\end{remark*}

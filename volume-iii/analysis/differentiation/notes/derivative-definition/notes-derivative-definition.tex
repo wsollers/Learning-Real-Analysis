@@ -21,7 +21,7 @@
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
+\begin{tcolorbox}[colback=defbox, colframe=defborder]
 \begin{definition}[Derivative at a Point]
 \label{def:derivative-at-a-point}
 Let $f: D \to \mathbb{R}$ be a real-valued function and $c \in \operatorname{int}(D)$. We say $f$ is \emph{differentiable at $c$} with \emph{derivative} $L = f'(c)$ if and only if:
@@ -58,36 +58,29 @@ limit of the difference quotient of $f$ at $c$.
 
 \begin{remark*}[Negation predicate reading]
 \[
-\lnot\operatorname{DerivativeAt}(f,c,L)
+\neg\operatorname{DerivativeAt}(f,c,L)
 \;\Longleftrightarrow\;
-\lnot\operatorname{FunctionLimit}\!\left(\lambda x.\,\frac{f(x)-f(c)}{x-c},\,D,\,c,\,L\right).
+\neg\operatorname{FunctionLimit}\!\left(\lambda x.\,\frac{f(x)-f(c)}{x-c},\,D,\,c,\,L\right).
 \]
-No finite $L$ is the limit of the difference quotient.
 \end{remark*}
 
 \begin{remark*}[Failure modes]
-$f$ fails to be differentiable at $c$ in three structurally distinct ways:
 \begin{itemize}
-  \item \textbf{One-sided disagreement.} The left and right limits of the difference quotient both exist but are unequal. Canonical example: $f(x)=|x|$ at $c=0$, where the left limit is $-1$ and the right limit is $+1$.
-  \item \textbf{Vertical tangent.} The difference quotient diverges to $\pm\infty$. The function has a well-defined tangent direction but the slope is infinite; $f(x)=x^{1/3}$ at $c=0$.
-  \item \textbf{Oscillatory non-convergence.} The difference quotient oscillates without settling. $f(x)=x^2\sin(1/x)$ extended by $f(0)=0$ is differentiable at $0$, but $f(x)=x\sin(1/x)$ at $c=0$ is not.
+  \item The difference quotient has no finite limit at $c$ (e.g.\ $|f(x)-f(c)|/|x-c| \to \infty$).
+  \item The difference quotient oscillates without settling near any single value.
+  \item The proposed value $L$ is the wrong candidate.
 \end{itemize}
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-The difference quotient $\tfrac{f(x)-f(c)}{x-c}$ is the slope of the secant line through $(c,f(c))$ and $(x,f(x))$. The derivative $f'(c)$ is the limit of these secant slopes as $x \to c$ --- the slope of the \emph{tangent line} at $c$. The $\varepsilon$-$\delta$ definition says precisely: for any demanded precision $\varepsilon$ on the slope approximation, a punctured radius $\delta$ of inputs can be found that forces the secant slope within $\varepsilon$ of $L$. Three things are required for $f'(c)$ to exist: $f$ is defined on an open interval about $c$ so both sides can be approached; the left and right limits of the difference quotient agree; and that common limit is finite. If it is $\pm\infty$, the function has a vertical tangent and is not differentiable in this sense.
+The derivative is a limit of slopes of secant lines. The $\varepsilon$-$\delta$ form demands that the difference quotient can be made arbitrarily close to $L$ by taking $x$ sufficiently close to $c$. The input condition $0 < |x-c|$ is punctured: $x = c$ is excluded because $(f(c)-f(c))/(c-c)$ is $0/0$.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
-\begin{itemize}
-  \item \hyperref[def:limit-function]{Definition: Limit of a Function}
-  \item \hyperref[def:continuous-at-point]{Definition: Continuity at a Point}
-\end{itemize}
-\end{remark*}
+\NoLocalDependencies
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
+\begin{tcolorbox}[colback=defbox, colframe=defborder]
 \begin{definition}[Topological Definition of Derivative at a Point]
 \label{def:topological-definition-of-derivative-at-a-point}
 Let $f: D \to \mathbb{R}$ and $c \in \operatorname{int}(D)$. $f$ is differentiable at $c$ with derivative $L$ if for every neighbourhood $V$ of $L$, there exists a neighbourhood $U$ of $c$ such that for all $x \in (U \setminus \{c\}) \cap D$:
@@ -99,234 +92,349 @@ Let $f: D \to \mathbb{R}$ and $c \in \operatorname{int}(D)$. $f$ is differentiab
 
 \begin{remark*}[Standard quantified statement]
 \[
-\forall V \in \mathcal{N}(L)\;\exists U \in \mathcal{N}(c)\;\forall x \in (U\setminus\{c\})\cap D
-\left(\frac{f(x)-f(c)}{x-c} \in V\right).
+\forall V \text{ neighbourhood of } L\;\exists U \text{ neighbourhood of } c\;
+\forall x \in (U \setminus \{c\}) \cap D:\;
+\frac{f(x)-f(c)}{x-c} \in V.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DerivativeAt}_{\mathrm{top}}(f,c,L)
+\;\Longleftrightarrow\;
+\forall V \ni L\;\exists U \ni c\;\forall x \in (U\setminus\{c\})\cap D:\;
+\frac{f(x)-f(c)}{x-c}\in V.
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-\exists V \in \mathcal{N}(L)\;\forall U \in \mathcal{N}(c)\;\exists x \in (U\setminus\{c\})\cap D
-\left(\frac{f(x)-f(c)}{x-c} \notin V\right).
+\exists V \text{ neighbourhood of } L\;\forall U \text{ neighbourhood of } c\;
+\exists x \in (U \setminus \{c\}) \cap D:\;
+\frac{f(x)-f(c)}{x-c} \notin V.
 \]
 \end{remark*}
 
-\begin{remark*}[Dependencies]
-\begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-\end{itemize}
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{DerivativeAt}_{\mathrm{top}}(f,c,L)
+\;\Longleftrightarrow\;
+\exists V \ni L\;\forall U \ni c\;\exists x \in (U\setminus\{c\})\cap D:\;
+\frac{f(x)-f(c)}{x-c}\notin V.
+\]
 \end{remark*}
+
+\begin{remark*}[Failure modes]
+The topological derivative fails when a fixed output neighbourhood of $L$ cannot be entered by the difference quotient no matter how tightly the input is restricted around $c$. Geometric reading: no punctured neighbourhood around $c$ maps all secant slopes into any prescribed window around $L$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The topological form replaces $\varepsilon$-balls with abstract neighbourhoods, making the definition coordinate-free and suited for generalisation to metric spaces and manifolds.
+\end{remark*}
+
+\NoLocalDependencies
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=blue!4, colframe=blue!30]
+\begin{tcolorbox}[colback=defbox, colframe=defborder]
 \begin{definition}[Sequential Definition of Derivative at a Point]
 \label{def:sequential-definition-of-derivative-at-a-point}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. We say that $f$ is differentiable at $c$ with derivative $L$ if
 \[
 \forall (x_n) \subseteq A \setminus \{c\}\;
-\Bigl(x_n \to c \;\Rightarrow\; \frac{f(x_n) - f(c)}{x_n - c} \to L\Bigr).
+\bigl(x_n \to c \Rightarrow \tfrac{f(x_n)-f(c)}{x_n-c} \to L\bigr).
 \]
 \end{definition}
 \end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\forall (x_n) \subseteq A\setminus\{c\}\;
-\Bigl(x_n \to c \;\Rightarrow\; \frac{f(x_n)-f(c)}{x_n-c} \to L\Bigr).
+\forall (x_n) \subseteq A \setminus \{c\}:\;
+x_n \to c \;\Rightarrow\; \frac{f(x_n)-f(c)}{x_n-c} \to L.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DerivativeAt}_{\mathrm{seq}}(f,c,L)
+\;\Longleftrightarrow\;
+\forall (x_n)\subseteq A\setminus\{c\}:\;
+x_n\to c \;\Rightarrow\; \frac{f(x_n)-f(c)}{x_n-c}\to L.
 \]
 \end{remark*}
 
 \begin{remark*}[Negated quantified statement]
 \[
-\exists (x_n) \subseteq A\setminus\{c\}\;
-\Bigl(x_n \to c \;\land\; \frac{f(x_n)-f(c)}{x_n-c} \not\to L\Bigr).
+\exists (x_n) \subseteq A \setminus \{c\}:\;
+x_n \to c \;\land\; \frac{f(x_n)-f(c)}{x_n-c} \not\to L.
 \]
 \end{remark*}
 
-\begin{remark*}[Dependencies]
-\begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-\end{itemize}
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{DerivativeAt}_{\mathrm{seq}}(f,c,L)
+\;\Longleftrightarrow\;
+\exists (x_n)\subseteq A\setminus\{c\}:\;
+x_n\to c \;\land\; \frac{f(x_n)-f(c)}{x_n-c}\not\to L.
+\]
 \end{remark*}
+
+\begin{remark*}[Failure modes]
+Failure occurs when a single approach sequence $(x_n) \to c$ exists along which the difference quotients either: (i) diverge to infinity (vertical tangent); (ii) oscillate without settling; (iii) converge but to a value other than $L$ (wrong slope candidate). A single such sequence certifies non-differentiability.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{x_n \to c}_{\text{approach condition}} \;\land\; \underbrace{\frac{f(x_n)-f(c)}{x_n-c} \not\to L}_{\text{quotient failure}}.
+\]
+The two canonical witness types are: two subsequences with different limiting difference quotients (e.g., $f(x) = |x|$ at $c = 0$), or quotients growing without bound.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The sequential form is the primary tool for disproving differentiability: exhibit a single sequence $x_n \to c$ along which the difference quotient fails to converge to any single value.
+\end{remark*}
+
+\NoLocalDependencies
 
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{theorem}[Equivalence of Definitions of the Derivative at a Point]
 \label{thm:derivative-equivalence}
-Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$ be a limit point of $A$. Let $L \in \mathbb{R}$. The following are equivalent:
-
-\begin{enumerate}[label=(\roman*)]
-\item \textbf{(Epsilon--Delta Definition)}
-\[
-\forall \varepsilon > 0\;\exists \delta > 0\;\forall x \in A\;
-\Bigl(0 < |x - c| < \delta \;\Rightarrow\; \left|\frac{f(x) - f(c)}{x - c} - L\right| < \varepsilon\Bigr).
-\]
-\item \textbf{(Neighbourhood Definition)}
-For every $\varepsilon > 0$, there exists a neighbourhood $V$ of $c$ such that
-\[
-x \in (A \cap V) \setminus \{c\} \;\Rightarrow\; \left|\frac{f(x) - f(c)}{x - c} - L\right| < \varepsilon.
-\]
-\item \textbf{(Sequential Definition)}
-\[
-\forall (x_n) \subseteq A \setminus \{c\}\;
-\Bigl(x_n \to c \;\Rightarrow\; \frac{f(x_n) - f(c)}{x_n - c} \to L\Bigr).
-\]
-\end{enumerate}
-\hyperref[prf:derivative-equivalence]{Go to proof.}
-\end{theorem}
-
-\begin{remark*}[Standard quantified statement]
-\begin{align*}
-&\text{(i)}\;\forall \varepsilon>0\;\exists\delta>0\;\forall x\in A\;
-  \Bigl(0<|x-c|<\delta\Rightarrow\left|\tfrac{f(x)-f(c)}{x-c}-L\right|<\varepsilon\Bigr)\\
-\iff\;&\text{(ii)}\;\forall\varepsilon>0\;\exists V\in\mathcal{N}(c)\;\forall x\in(A\cap V)\setminus\{c\}\;
-  \Bigl(\left|\tfrac{f(x)-f(c)}{x-c}-L\right|<\varepsilon\Bigr)\\
-\iff\;&\text{(iii)}\;\forall(x_n)\subseteq A\setminus\{c\}\;
-  \Bigl(x_n\to c\Rightarrow\tfrac{f(x_n)-f(c)}{x_n-c}\to L\Bigr).
-\end{align*}
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-Across all three formulations the underlying logical structure is identical: control the difference quotient. The metric form regulates precision by the radius $\delta$ of the punctured domain. The topological form asserts containment of the difference quotient within a target neighbourhood. The sequential form says every probe sequence approaching $c$ forces the induced quotient sequence to converge. They are three vocabularies for the same convergence fact. In applied settings this is a stability principle: if input resolution is sufficiently controlled, the approximation error in the difference quotient remains uniformly bounded.
-\end{remark*}
-
-\begin{remark*}[Dependencies]
-\begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point (epsilon--delta)}
-  \item \hyperref[def:topological-definition-of-derivative-at-a-point]{Definition: Topological Definition of Derivative at a Point}
-  \item \hyperref[def:sequential-definition-of-derivative-at-a-point]{Definition: Sequential Definition of Derivative at a Point}
-\end{itemize}
-\end{remark*}
-
-% ---------------------------------------------------------
-
-\begin{proposition}[Derivative: $h$-Form Equivalence]
-\label{prop:derivative-h-form-equivalence}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. The following are equivalent:
+Let $f : A \to \mathbb{R}$ and $c \in A$ be a limit point of $A$. The following are equivalent:
 \begin{enumerate}
-\item $f$ is differentiable at $c$.
-\item The limit $\displaystyle\lim_{h \to 0} \frac{f(c + h) - f(c)}{h}$ exists.
+  \item $f$ is differentiable at $c$ in the $\varepsilon$-$\delta$ sense with derivative $L$.
+  \item $f$ is differentiable at $c$ in the topological sense with derivative $L$.
+  \item $f$ is differentiable at $c$ in the sequential sense with derivative $L$.
 \end{enumerate}
-In this case, $\displaystyle f'(c) = \lim_{h \to 0} \frac{f(c + h) - f(c)}{h}$.
-\hyperref[prf:derivative-h-form-equivalence]{Go to proof.}
-\end{proposition}
 
-\begin{remark*}[Standard quantified statement]
-\[
-\operatorname{DifferentiableAt}(f,c)
-\;\iff\;
-\exists L\in\mathbb{R}\;\forall\varepsilon>0\;\exists\delta>0\;\forall h\;
-\Bigl(0<|h|<\delta \implies \left|\frac{f(c+h)-f(c)}{h}-L\right|<\varepsilon\Bigr).
-\]
-\end{remark*}
-
-\begin{remark*}[Interpretation]
-Setting $h = x - c$ converts the $x$-form of the difference quotient to the $h$-form bijectively: $0 < |x-c| < \delta$ becomes $0 < |h| < \delta$, and the exclusion $x \neq c$ is automatic from $h \neq 0$. The two formulations are literally the same limit under a change of variable. The $h$-form is preferred for chain rule and Taylor series arguments because the displacement $h$ appears explicitly.
-\end{remark*}
-
-\begin{remark*}[Dependencies]
-\begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-\end{itemize}
-\end{remark*}
-
-% ---------------------------------------------------------
-
-\begin{theorem}[Differentiable Implies Continuous]
-\label{thm:differentiable-implies-continuous}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ is differentiable at $c$, then $f$ is continuous at $c$.
-\hyperref[prf:differentiable-implies-continuous]{Go to proof.}
+\smallskip\noindent
+\hyperref[prf:derivative-equivalence]{\textit{Go to proof.}}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\operatorname{DifferentiableAt}(f,c) \;\Rightarrow\; \operatorname{ContinuousAt}(f,c).
+\text{(i) } \Longleftrightarrow \text{ (ii) } \Longleftrightarrow \text{ (iii).}
 \]
 \end{remark*}
 
 \begin{remark*}[Predicate reading]
 \[
-\operatorname{DerivativeAt}(f,c,L) \;\Rightarrow\; \operatorname{ContinuousAt}(f,c).
+\operatorname{DerivativeAt}(f,c,L)
+\;\Longleftrightarrow\;
+\operatorname{DerivativeAt}_{\mathrm{top}}(f,c,L)
+\;\Longleftrightarrow\;
+\operatorname{DerivativeAt}_{\mathrm{seq}}(f,c,L).
+\]
+All three predicates name the same underlying condition on the difference quotient of $f$ at $c$.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+\neg\text{(i)} &\;\Longleftrightarrow\; \neg\text{(ii)} \;\Longleftrightarrow\; \neg\text{(iii)}\\
+&\;\Longleftrightarrow\; \exists (x_n) \subseteq A \setminus \{c\}:\;
+x_n \to c \;\land\; \frac{f(x_n)-f(c)}{x_n-c} \not\to L.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The equivalence cannot produce contradictory verdicts: if $c$ is a limit point of $A$, all three forms agree. Degenerate case: if $c$ is not a limit point of $A$, the punctured-ball and sequence conditions are vacuously satisfied by every candidate $L$ simultaneously, making the equivalence trivially true for all $L$ rather than characterizing a unique derivative.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The three forms are notational restatements of the same underlying limit condition on the difference quotient. Analysts choose whichever form is most convenient for the proof at hand.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Derivative at a Point}
+  \item \hyperref[def:topological-definition-of-derivative-at-a-point]{Topological Definition}
+  \item \hyperref[def:sequential-definition-of-derivative-at-a-point]{Sequential Definition}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
+\begin{proposition}[Derivative: $h$-Form Equivalence]
+\label{prop:derivative-h-form-equivalence}
+Let $f : A \to \mathbb{R}$ and $c \in \operatorname{int}(A)$. Then $f$ is differentiable at $c$ with derivative $L$ if and only if
+\[
+\lim_{h \to 0} \frac{f(c+h) - f(c)}{h} = L.
+\]
+
+\smallskip\noindent
+\hyperref[prf:derivative-h-form-equivalence]{\textit{Go to proof.}}
+\end{proposition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DerivativeAt}(f,c,L)
+\;\Longleftrightarrow\;
+\lim_{h\to 0}\frac{f(c+h)-f(c)}{h} = L.
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{DerivativeAt}(f,c,L)
+\;\Longleftrightarrow\;
+\lim_{h\to 0}\frac{f(c+h)-f(c)}{h} \neq L.
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The $h$-form fails in two branches: (i) The incremental ratio $(f(c+h)-f(c))/h$ has no finite limit as $h \to 0$ (corner, cusp, or vertical tangent at $c$). (ii) The ratio converges to a finite value different from $L$ (proposed $L$ is the wrong slope).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The $h$-form substitutes $x = c + h$ in the difference quotient. It is the standard notation in calculus and makes the incremental structure of the derivative explicit.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Derivative at a Point}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
+\begin{theorem}[Differentiable Implies Continuous]
+\label{thm:differentiable-implies-continuous}
+Let $f : A \to \mathbb{R}$ and $c \in A$. If $f$ is differentiable at $c$, then $f$ is continuous at $c$.
+
+\smallskip\noindent
+\hyperref[prf:differentiable-implies-continuous]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{DerivableAt}(f,c) \;\Rightarrow\; \operatorname{ContinuousAt}(f,c).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{DifferentiableAt}(f,c)
+\;\Longrightarrow\;
+\operatorname{ContinuousAt}(f,c).
 \]
 \end{remark*}
 
 \begin{remark*}[Contrapositive quantified statement]
 \[
-\lnot\operatorname{ContinuousAt}(f,c) \;\Rightarrow\; \lnot\operatorname{DifferentiableAt}(f,c).
+\neg \text{ContinuousAt}(f,c) \;\Rightarrow\; \neg \text{DifferentiableAt}(f,c).
 \]
-Equivalently: if $\lim_{x\to c}f(x)\neq f(c)$, then $f$ is not differentiable at $c$.
 \end{remark*}
 
 \begin{remark*}[Contrapositive predicate reading]
 \[
-\lnot\operatorname{ContinuousAt}(f,c) \;\Rightarrow\; \lnot\operatorname{DifferentiableAt}(f,c).
+\neg\operatorname{ContinuousAt}(f,c)
+\;\Longrightarrow\;
+\neg\operatorname{DifferentiableAt}(f,c).
 \]
 \end{remark*}
 
+\begin{remark*}[Failure mode decomposition]
+The converse fails: $f(x) = |x|$ is continuous at $0$ but not differentiable there.
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-Differentiability is a \emph{stronger} regularity condition than continuity. The proof is a one-line factorization: $f(x)-f(c) = \tfrac{f(x)-f(c)}{x-c}\cdot(x-c)$, and as $x\to c$ the first factor converges to $f'(c)$ while the second vanishes. The product tends to zero, so $f(x)\to f(c)$. The converse fails: $|x|$ is continuous everywhere but non-differentiable at $0$; the Weierstrass function is continuous everywhere and differentiable nowhere. Differentiability sits strictly above continuity in the regularity hierarchy:
-\[
-\text{differentiable at }c \;\Rightarrow\; \text{continuous at }c \;\not\Rightarrow\; \text{differentiable at }c.
-\]
+Differentiability is strictly stronger than continuity: the existence of a well-defined tangent slope forces the function values to coalesce at $f(c)$ as $x \to c$.
 \end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-  \item \hyperref[def:continuous-at]{Definition: Continuous at a Point}
+  \item \hyperref[def:derivative-at-a-point]{Derivative at a Point}
+  \item \hyperref[def:continuous-at-point]{Continuity at a Point}
 \end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{theorem}[Uniqueness of the Derivative]
 \label{thm:uniqueness-of-the-derivative}
-Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ is differentiable at $c$, then $f'(c)$ is unique.
+Let $f : A \to \mathbb{R}$ and $c \in A$. If $f$ is differentiable at $c$, its derivative is unique.
 
-Equivalently, if $L, M \in \mathbb{R}$ both satisfy
-\[
-\forall \varepsilon > 0\;\exists \delta > 0\;\forall x \in I\;
-\Bigl(0 < |x-c| < \delta \;\Rightarrow\; \left|\frac{f(x)-f(c)}{x-c} - L\right| < \varepsilon\Bigr),
-\]
-and likewise with $M$ in place of $L$, then $L = M$.
-\hyperref[prf:uniqueness-of-derivative]{Go to proof.}
+\smallskip\noindent
+\hyperref[prf:uniqueness-of-derivative]{\textit{Go to proof.}}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\operatorname{DerivativeAt}(f,c,L) \;\land\; \operatorname{DerivativeAt}(f,c,M)
-\;\Rightarrow\; L = M.
+\operatorname{DerivativeAt}(f,c,L) \;\land\; \operatorname{DerivativeAt}(f,c,L')
+\;\Rightarrow\; L = L'.
 \]
 \end{remark*}
 
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{DerivativeAt}(f,c,L)
+\;\land\;
+\operatorname{DerivativeAt}(f,c,L')
+\;\Longrightarrow\; L = L'.
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+L \neq L' \;\Rightarrow\; \neg\bigl(\operatorname{DerivativeAt}(f,c,L) \;\land\; \operatorname{DerivativeAt}(f,c,L')\bigr).
+\]
+Two distinct candidates cannot both be the derivative of $f$ at $c$.
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\[
+L \neq L'
+\;\Longrightarrow\;
+\neg\operatorname{DerivativeAt}(f,c,L)
+\;\lor\;
+\neg\operatorname{DerivativeAt}(f,c,L').
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The uniqueness proof assumes $L \neq L'$ and takes $\varepsilon = |L - L'|/2 > 0$. The definition supplies $\delta$ making the difference quotient within $\varepsilon$ of both $L$ and $L'$ simultaneously, forcing $|L - L'| < 2\varepsilon = |L - L'|$, a contradiction. The cluster-point hypothesis on $c$ is essential: without it, the punctured-ball condition is vacuous and the limit is trivially satisfied by every value.
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-The derivative, when it exists, is a function $f' : I \to \mathbb{R}$ assigning a unique real number to each point. Uniqueness follows immediately from the uniqueness of limits: the difference quotient is a single function of $x$, and a function can have at most one limit at a cluster point. Without uniqueness the notation $f'(c)$ would be ambiguous. This theorem validates the entire notation of differential calculus.
+Uniqueness licenses writing $f'(c)$ as a definite value rather than a set of candidates.
 \end{remark*}
 
 \begin{remark*}[Dependencies]
 \begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-  \item \hyperref[thm:uniqueness-of-limits]{Uniqueness of Limits of Functions}
+  \item \hyperref[def:derivative-at-a-point]{Derivative at a Point}
 \end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{proposition}[Derivative of the Identity]
 \label{prop:derivative-of-the-identity}
-Let $I \subseteq \mathbb{R}$ be an open interval, and let $\operatorname{id}_I : I \to \mathbb{R}$ be the identity function defined by $\operatorname{id}_I(x) := x$. Then $\operatorname{id}_I$ is differentiable at every $c \in I$, and $\operatorname{id}_I'(c) = 1$.
-\hyperref[prf:derivative-of-the-identity]{Go to proof.}
+Let $f(x) = x$ for all $x \in \mathbb{R}$. Then $f'(c) = 1$ for every $c \in \mathbb{R}$.
+
+\smallskip\noindent
+\hyperref[prf:derivative-of-the-identity]{\textit{Go to proof.}}
 \end{proposition}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
-\forall c \in I\;\operatorname{DerivativeAt}(\operatorname{id}_I, c, 1).
+\forall c \in \mathbb{R}:\; \frac{d}{dx}[x]\big|_{x=c} = 1.
 \]
 \end{remark*}
 
-\begin{remark*}[Dependencies]
-\begin{itemize}
-  \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-\end{itemize}
+\begin{remark*}[Interpretation]
+The identity function has slope $1$ everywhere. It is the base case for computing derivatives of polynomials via the algebra of derivatives.
 \end{remark*}
+
+\NoLocalDependencies

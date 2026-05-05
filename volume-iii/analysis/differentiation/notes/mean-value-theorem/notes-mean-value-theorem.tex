@@ -15,6 +15,7 @@
 
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{theorem}[Rolle's Theorem]
 \label{thm:rolles-theorem}
 Let $a, b \in \mathbb{R}$ with $a < b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$, differentiable on $(a,b)$, and satisfies $f(a) = f(b)$. Then there exists $c \in (a,b)$ such that
@@ -23,6 +24,7 @@ f'(c) = 0.
 \]
 \hyperref[prf:rolles-theorem]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \begin{align*}
@@ -34,6 +36,51 @@ f(a)=f(b)\\
 &\quad\Rightarrow\;
 \exists c \in (a,b)\;\operatorname{DerivativeAt}(f,c,0).
 \end{align*}
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\begin{align*}
+&\operatorname{ContinuousOn}(f,[a,b])
+\;\land\;
+\operatorname{DifferentiableOn}(f,(a,b))
+\;\land\;
+f(a)=f(b)\\
+&\quad\Longrightarrow\;
+\exists c\in(a,b)\;:\;\operatorname{DerivativeAt}(f,c,0).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\bigl(\forall c \in (a,b)\;:\; f'(c) \ne 0\bigr)
+\;\Rightarrow\;
+f \text{ not continuous on } [a,b]
+\;\lor\;
+f \text{ not differentiable on } (a,b)
+\;\lor\;
+f(a) \ne f(b).
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\begin{align*}
+&\bigl(\forall c\in(a,b)\;:\;\neg\operatorname{DerivativeAt}(f,c,0)\bigr)\\
+&\quad\Longrightarrow\;
+\neg\operatorname{ContinuousOn}(f,[a,b])
+\;\lor\;
+\neg\operatorname{DifferentiableOn}(f,(a,b))
+\;\lor\;
+f(a)\ne f(b).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Each hypothesis is essential:
+\begin{itemize}
+  \item \textbf{Continuity fails:} Let $f(x) = \operatorname{sgn}(x - 1/2)$ on $[0,1]$. Then $f(0) = f(1) = -1$, but $f$ has a jump discontinuity at $x = 1/2$. The derivative does not exist anywhere, so there is no horizontal tangent.
+  \item \textbf{Differentiability fails:} Let $f(x) = |x - 1/2|$ on $[0,1]$. Then $f(0) = f(1) = 1/2$, and $f$ is continuous, but $f$ has a corner at $x = 1/2$ where the derivative is undefined. For all $c \ne 1/2$, we have $f'(c) = \pm 1 \ne 0$.
+  \item \textbf{Equal endpoints fail:} Let $f(x) = x$ on $[0,1]$. Then $f$ is continuous and differentiable with $f'(x) = 1 > 0$ everywhere, but $f(0) = 0 \ne 1 = f(1)$.
+\end{itemize}
 \end{remark*}
 
 \begin{remark*}[Interpretation]
@@ -50,6 +97,7 @@ If a differentiable function returns to the same value at both endpoints of an i
 
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{theorem}[Mean Value Theorem]
 \label{thm:mean-value-theorem}
 Let $a, b \in \mathbb{R}$ with $a < b$. Suppose that $f : [a,b] \to \mathbb{R}$ is continuous on $[a,b]$ and differentiable on $(a,b)$. Then there exists $c \in (a,b)$ such that
@@ -58,6 +106,7 @@ f'(c) = \frac{f(b) - f(a)}{b - a}.
 \]
 \hyperref[prf:mean-value-theorem]{Go to proof.}
 \end{theorem}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \begin{align*}
@@ -68,6 +117,46 @@ f'(c) = \frac{f(b) - f(a)}{b - a}.
 \exists c \in (a,b)\;
 \operatorname{DerivativeAt}\!\left(f,\,c,\,\tfrac{f(b)-f(a)}{b-a}\right).
 \end{align*}
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\begin{align*}
+&\operatorname{ContinuousOn}(f,[a,b])
+\;\land\;
+\operatorname{DifferentiableOn}(f,(a,b))\\
+&\quad\Longrightarrow\;
+\exists c\in(a,b)\;:\;
+\operatorname{DerivativeAt}\!\left(f,\,c,\,\tfrac{f(b)-f(a)}{b-a}\right).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\left(\forall c \in (a,b)\;:\; f'(c) \ne \frac{f(b)-f(a)}{b-a}\right)
+\;\Rightarrow\;
+f \text{ not continuous on } [a,b]
+\;\lor\;
+f \text{ not differentiable on } (a,b).
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\begin{align*}
+&\left(\forall c\in(a,b)\;:\;\neg\operatorname{DerivativeAt}\!\left(f,\,c,\,\tfrac{f(b)-f(a)}{b-a}\right)\right)\\
+&\quad\Longrightarrow\;
+\neg\operatorname{ContinuousOn}(f,[a,b])
+\;\lor\;
+\neg\operatorname{DifferentiableOn}(f,(a,b)).
+\end{align*}
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Each hypothesis is essential:
+\begin{itemize}
+  \item \textbf{Continuity fails:} Let $f(x) = \begin{cases} 0 & \text{if } x \in [0,1/2) \\ 1 & \text{if } x \in [1/2,1] \end{cases}$. Then $f$ has a jump discontinuity at $x = 1/2$, and the secant slope is $\tfrac{f(1)-f(0)}{1-0} = 1$. But $f'(x) = 0$ wherever the derivative exists, so no interior point achieves the average rate of change.
+  \item \textbf{Differentiability fails:} Let $f(x) = |x|$ on $[-1,1]$. Then $f$ is continuous and the secant slope is $\tfrac{f(1)-f(-1)}{1-(-1)} = \tfrac{1-1}{2} = 0$. But $f'(x) = \pm 1$ everywhere $f$ is differentiable (i.e., for $x \ne 0$), so no interior point has derivative equal to the secant slope.
+\end{itemize}
+The MVT is an existence result. It guarantees some $c$ exists but gives no formula for it.
 \end{remark*}
 
 \begin{remark*}[Interpretation]

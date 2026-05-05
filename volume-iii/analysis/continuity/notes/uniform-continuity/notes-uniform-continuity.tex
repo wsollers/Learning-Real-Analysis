@@ -244,11 +244,13 @@ Bounded subsets of $\mathbb{R}$ prevent the product of two uniformly continuous 
 % Proposition --- Sequential Characterization of Uniform Continuity
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{proposition}[Sequential Characterization of Uniform Continuity]
 \label{prop:sequential-uniform-continuity}
 Let $A \subseteq \mathbb{R}$ and let $f:A \to \mathbb{R}$. Then $f$ is uniformly continuous on $A$ if and only if for every pair of sequences $(x_n)$ and $(y_n)$ in $A$ with $\lim_{n \to \infty} (x_n - y_n) = 0$ we have $\lim_{n \to \infty} (f(x_n) - f(y_n)) = 0$.
 \hyperref[prf:sequential-uniform-continuity]{Go to proof.}
 \end{proposition}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -393,11 +395,13 @@ Continuity on the compact interval $[a,b]$ forces a single modulus of continuity
 % Proposition --- Uniform Continuity Preserves Cauchy Sequences
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{proposition}[Uniform Continuity Preserves Cauchy Sequences]
 \label{prop:uniform-continuity-cauchy}
 Let S \subseteq \mathbb{R}, let f:S \to \mathbb{R}, and let (x_n) be a sequence in S. If f is uniformly continuous on S and (x_n) is a Cauchy sequence in S, then (f(x_n)) is a Cauchy sequence in \mathbb{R}.
 \hyperref[prf:uniform-continuity-cauchy]{Go to proof.}
 \end{proposition}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -501,11 +505,13 @@ The Lipschitz condition requires a single constant $K$ that simultaneously bound
 % Proposition --- Lipschitz Implies UC
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder]
 \begin{proposition}[Lipschitz Implies Uniform Continuity]
 \label{prop:lipschitz-implies-uc}
 Let $A \subseteq \mathbb{R}$ and $f:A \to \mathbb{R}$. If there exists $K \ge 0$ such that $|f(x)-f(y)| \le K |x-y|$ for all $x,y \in A$, then $f$ is uniformly continuous on $A$.
 \hyperref[prf:lipschitz-implies-uc]{Go to proof.}
 \end{proposition}
+\end{tcolorbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -522,6 +528,29 @@ Let $A \subseteq \mathbb{R}$ and $f:A \to \mathbb{R}$. If there exists $K \ge 0$
 
 \begin{remark*}[Interpretation]
 A Lipschitz bound controls the variation of $f$ by the distance between inputs with a single constant $K$, so the same $K$ yields a usable $\delta = \varepsilon/K$ for every pair of points at once, proving uniform continuity. When $K=0$ the function is constant and trivially uniform. Failure of uniform continuity would force two points arbitrarily close together whose images stay a fixed distance apart, contradicting the Lipschitz inequality.
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+If $f$ fails to be uniformly continuous on $A$, then $f$ is not Lipschitz on $A$ with any constant.
+\[
+\begin{aligned}
+&\text{Let } A \subseteq \mathbb{R},\; f:A \to \mathbb{R}.\\
+&\Bigl[\exists \varepsilon_0>0\;\forall \delta>0\;\exists x,y \in A\;(|x-y|<\delta \land |f(x)-f(y)|\ge\varepsilon_0)\Bigr]\\
+&\Longrightarrow \forall K\ge 0\;\exists x,y \in A\;(|f(x)-f(y)|>K|x-y|).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive predicate reading]
+\[
+\neg\operatorname{UniformlyContinuous}(f,A)
+\;\Longrightarrow\;
+\neg\exists K\ge 0:\;\operatorname{Lipschitz}(f,A,K).
+\]
+\end{remark*}
+
+\begin{remark*}[Strict implication note]
+The implication Lipschitz $\Rightarrow$ uniform continuity is strict. The canonical counterexample is $f(x)=\sqrt{x}$ on $[0,1]$, which is uniformly continuous by the Heine--Cantor theorem but satisfies $|f(x)-f(0)|/|x-0| = 1/\sqrt{x} \to \infty$ as $x \to 0^+$, so no Lipschitz constant exists at the origin. This distinction is relevant to GPU Lipschitz-constant estimation: uniform continuity of a simulation function does not supply a computable $K$ for the Lipschitz condition; only an explicit Lipschitz bound does.
 \end{remark*}
 
 \begin{remark*}[Dependencies]
