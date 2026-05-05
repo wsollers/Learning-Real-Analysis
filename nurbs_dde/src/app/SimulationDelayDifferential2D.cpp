@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numbers>
 #include <glm/gtc/matrix_inverse.hpp>
 #include <imgui.h>
 
@@ -11,7 +12,7 @@ namespace ndde {
 
 namespace {
 
-constexpr double kTwoPi = 6.28318530717958647692;
+constexpr double kTwoPi = 2.0 * std::numbers::pi;
 
 void add_line(memory::FrameVector<Vertex>& out, Vec2 a, Vec2 b, Vec4 color) {
     out.push_back(Vertex{.pos = {a.x, a.y, 0.f}, .color = color});

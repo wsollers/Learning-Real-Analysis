@@ -87,7 +87,9 @@ public:
 
         // ── Milstein correction: (1/2)*sigma*(d sigma/dX)*(dW^2 - dt) ────────
         // For constant sigma this is zero; it matters for state-dependent sigma.
-        const glm::vec2 dsigma = sigma_gradient(state, equation, surface, t);
+        const glm::vec2 dsigma = equation.has_constant_noise()
+            ? glm::vec2{0.f, 0.f}
+            : sigma_gradient(state, equation, surface, t);
         const glm::vec2 milstein = 0.5f * sigma * dsigma * (dW*dW - glm::vec2(dt));
 
         // ── Euler-Maruyama + Milstein correction ──────────────────────────────
@@ -105,10 +107,17 @@ private:
     // Box-Muller transform: generate two independent N(0,1) samples.
     // thread_local RNG: uses s_global_seed when fixed, else hardware entropy.
     [[nodiscard]] static glm::vec2 normal2() {
-        thread_local std::mt19937 rng{ []() -> uint32_t {
-            if (s_seed_set)
-                return static_cast<uint32_t>(s_global_seed);
-            return std::random_device{}();
+        thread_local std::mt19937 rng{ []() {
+            if (s_seed_set) {
+                std::seed_seq seq{
+                    static_cast<uint32_t>(s_global_seed >> 32u),
+                    static_cast<uint32_t>(s_global_seed & 0xFFFF'FFFFull)
+                };
+                return std::mt19937{seq};
+            }
+            std::random_device rd;
+            std::seed_seq seq{rd(), rd(), rd(), rd()};
+            return std::mt19937{seq};
         }() };
         thread_local std::uniform_real_distribution<float> uniform(1e-7f, 1.f);
 

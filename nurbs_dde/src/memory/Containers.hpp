@@ -29,6 +29,14 @@ public:
 #endif
     }
 
+    [[nodiscard]] LifetimeVector make_same_lifetime_vector() const {
+        LifetimeVector out{Base::get_allocator().resource()};
+#ifndef NDEBUG
+        out.bind_generation(m_generation);
+#endif
+        return out;
+    }
+
     void assert_alive() const noexcept {
 #ifndef NDEBUG
         if (m_generation)

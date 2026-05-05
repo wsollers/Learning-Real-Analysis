@@ -135,9 +135,11 @@ public:
             return;
         }
 
-        std::size_t hi = 1u;
-        while (hi < m_history.size() && m_history[hi].t < t)
-            ++hi;
+        const auto hi_it = std::lower_bound(m_history.begin(), m_history.end(), t,
+            [](const DdeHistorySample& sample, f64 value) {
+                return sample.t < value;
+            });
+        const std::size_t hi = static_cast<std::size_t>(std::distance(m_history.begin(), hi_it));
         const std::size_t lo = hi - 1u;
         const f64 t0 = m_history[lo].t;
         const f64 t1 = m_history[hi].t;
@@ -228,6 +230,49 @@ private:
         m_history.push_back(DdeHistorySample{.t = t, .offset = offset});
         for (const f64 value : state)
             m_history_values.push_back(value);
+        compact_history_if_needed(t);
+    }
+
+    [[nodiscard]] std::size_t max_retained_history_samples() const noexcept {
+        constexpr f64 kDisplayMarginSeconds = 10.0;
+        constexpr std::size_t kMinimumSamples = 4096u;
+        const f64 dt = m_history_sample_dt > 0.0 ? m_history_sample_dt : (1.0 / 120.0);
+        const f64 window = std::max(0.0, m_system.max_delay()) + kDisplayMarginSeconds;
+        return std::max(kMinimumSamples,
+                        static_cast<std::size_t>(std::ceil(window / dt)) + 2u);
+    }
+
+    void compact_history_if_needed(f64 now) {
+        const std::size_t max_samples = max_retained_history_samples();
+        if (m_history.size() <= max_samples)
+            return;
+
+        constexpr f64 kDisplayMarginSeconds = 10.0;
+        const f64 cutoff = now - std::max(0.0, m_system.max_delay()) - kDisplayMarginSeconds;
+        std::size_t first_keep = 0;
+        while (first_keep + 2u < m_history.size() && m_history[first_keep].t < cutoff)
+            ++first_keep;
+        if (first_keep == 0)
+            first_keep = m_history.size() > max_samples ? m_history.size() - max_samples : 0;
+        if (first_keep == 0)
+            return;
+
+        auto compact_samples = m_memory.history().make_vector<DdeHistorySample>();
+        auto compact_values = m_memory.history().make_vector<f64>();
+        const std::size_t dimension = m_state.size();
+        compact_samples.reserve(m_history.size() - first_keep);
+        compact_values.reserve((m_history.size() - first_keep) * dimension);
+
+        for (std::size_t sample = first_keep; sample < m_history.size(); ++sample) {
+            const auto state = history_state(sample);
+            const std::size_t offset = compact_values.size();
+            compact_samples.push_back(DdeHistorySample{.t = m_history[sample].t, .offset = offset});
+            for (const f64 value : state)
+                compact_values.push_back(value);
+        }
+
+        m_history = std::move(compact_samples);
+        m_history_values = std::move(compact_values);
     }
 
     void copy_history_sample(std::size_t sample, std::span<f64> out) const {

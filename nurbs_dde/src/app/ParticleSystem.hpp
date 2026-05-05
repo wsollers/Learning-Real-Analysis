@@ -27,9 +27,15 @@ public:
 
     void bind_memory(memory::MemoryService* memory) {
         m_memory = memory;
-        rebind_vector(m_particles, memory ? memory->simulation().resource() : std::pmr::get_default_resource());
-        rebind_vector(m_pair_constraints, memory ? memory->simulation().resource() : std::pmr::get_default_resource());
-        rebind_vector(m_goals, memory ? memory->simulation().resource() : std::pmr::get_default_resource());
+        if (memory) {
+            memory->simulation().rebind_vector(m_particles);
+            memory->simulation().rebind_vector(m_pair_constraints);
+            memory->simulation().rebind_vector(m_goals);
+        } else {
+            rebind_vector_to_resource(m_particles, std::pmr::get_default_resource());
+            rebind_vector_to_resource(m_pair_constraints, std::pmr::get_default_resource());
+            rebind_vector_to_resource(m_goals, std::pmr::get_default_resource());
+        }
         for (Particle& particle : m_particles)
             particle.bind_memory(memory);
     }
@@ -138,7 +144,7 @@ private:
     std::mt19937 m_rng;
 
     template <class T>
-    static void rebind_vector(memory::SimVector<T>& vector, std::pmr::memory_resource* resource) {
+    static void rebind_vector_to_resource(memory::SimVector<T>& vector, std::pmr::memory_resource* resource) {
         if (vector.get_allocator().resource() == resource)
             return;
         memory::SimVector<T> rebound{resource};

@@ -217,17 +217,43 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
 // AnimatedCurve
 // =============================================================================
 
+namespace {
+
+memory::HistoryVector<Vec3> make_particle_trail_vector(memory::MemoryService* memory) {
+    return memory ? memory->history().make_vector<Vec3>()
+                  : memory::HistoryVector<Vec3>{std::pmr::get_default_resource()};
+}
+
+memory::SimVector<memory::Unique<ndde::sim::IConstraint>>
+make_particle_constraint_vector(memory::MemoryService* memory) {
+    return memory ? memory->simulation().make_vector<memory::Unique<ndde::sim::IConstraint>>()
+                  : memory::SimVector<memory::Unique<ndde::sim::IConstraint>>{
+                        std::pmr::get_default_resource()
+                    };
+}
+
+memory::Unique<ndde::sim::IConstraint>
+make_domain_confinement_constraint(memory::MemoryService* memory) {
+    if (memory)
+        return memory->simulation().make_unique_as<ndde::sim::IConstraint, ndde::sim::DomainConfinement>();
+    return memory::unique_cast<ndde::sim::IConstraint>(
+        memory::make_unique<ndde::sim::DomainConfinement>(std::pmr::get_default_resource()));
+}
+
+} // namespace
+
 AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
                              Role role, u32 colour_slot,
                              const ndde::math::ISurface*  surface,
                              ndde::sim::IEquation*         equation,
                              const ndde::sim::IIntegrator* integrator,
                              memory::MemoryService*        mem)
-    : m_surface(surface)
+    : m_trail(make_particle_trail_vector(mem))
+    , m_surface(surface)
     , m_equation(equation)
     , m_owned_equation(nullptr)   // shared equation -- ownership is external
     , m_integrator(integrator)
-    , m_constraints(mem ? mem->simulation().resource() : std::pmr::get_default_resource())
+    , m_constraints(make_particle_constraint_vector(mem))
     , m_memory(mem)
     , m_role(role)
     , m_colour_slot(colour_slot % MAX_SLOTS)
@@ -236,35 +262,43 @@ AnimatedCurve::AnimatedCurve(f32 start_x, f32 start_y,
 {
     m_walk = ndde::sim::ParticleState{ glm::vec2{start_x, start_y}, 0.f, 0.f };
     m_particle_role = role == Role::Leader ? ParticleRole::Leader : ParticleRole::Chaser;
-    m_constraints.push_back(memory::unique_cast<ndde::sim::IConstraint>(
-        memory::make_unique<ndde::sim::DomainConfinement>(
-            m_constraints.get_allocator().resource())));
+    m_constraints.push_back(make_domain_confinement_constraint(mem));
 }
 
 void AnimatedCurve::bind_memory(memory::MemoryService* memory) {
     m_memory = memory;
-    const std::pmr::memory_resource* trail_resource = m_trail.get_allocator().resource();
-    std::pmr::memory_resource* desired_trail = memory ? memory->history().resource()
-                                                      : std::pmr::get_default_resource();
-    if (trail_resource != desired_trail) {
-        memory::HistoryVector<Vec3> rebound{desired_trail};
-        rebound.reserve(m_trail.size());
-        for (Vec3& point : m_trail)
-            rebound.push_back(point);
-        std::destroy_at(&m_trail);
-        std::construct_at(&m_trail, std::move(rebound));
+    if (memory) {
+        memory->history().rebind_vector(m_trail);
+    } else {
+        std::pmr::memory_resource* desired_trail = std::pmr::get_default_resource();
+        if (m_trail.get_allocator().resource() != desired_trail) {
+            memory::HistoryVector<Vec3> rebound{desired_trail};
+            rebound.reserve(m_trail.size());
+            for (Vec3& point : m_trail)
+                rebound.push_back(point);
+            std::destroy_at(&m_trail);
+            std::construct_at(&m_trail, std::move(rebound));
+        }
     }
 
-    const std::pmr::memory_resource* constraint_resource = m_constraints.get_allocator().resource();
-    std::pmr::memory_resource* desired_constraints = memory ? memory->simulation().resource()
-                                                            : std::pmr::get_default_resource();
-    if (constraint_resource != desired_constraints) {
+    if (memory) {
+        memory->simulation().rebind_vector(m_constraints);
+    } else {
+        std::pmr::memory_resource* desired_constraints = std::pmr::get_default_resource();
+        if (m_constraints.get_allocator().resource() == desired_constraints)
+            return;
         memory::SimVector<memory::Unique<ndde::sim::IConstraint>> rebound{desired_constraints};
         rebound.reserve(m_constraints.size());
         for (auto& constraint : m_constraints)
             rebound.push_back(std::move(constraint));
         std::destroy_at(&m_constraints);
         std::construct_at(&m_constraints, std::move(rebound));
+    }
+
+    if (m_history && memory) {
+        // Existing history buffers are scope-owned; callers should bind memory
+        // before enabling history so stale buffers do not cross a scope reset.
+        m_history.get_deleter().assert_alive();
     }
 }
 
@@ -361,11 +395,14 @@ std::string AnimatedCurve::metadata_label() const {
 // == AnimatedCurve::history methods ==========================================
 
 void AnimatedCurve::enable_history(std::size_t capacity, float dt_min) {
-    std::pmr::memory_resource* owner_resource = m_memory ? m_memory->history().resource()
-                                                         : m_trail.get_allocator().resource();
-    m_history = memory::make_unique<ndde::sim::HistoryBuffer>(
-        owner_resource,
-        capacity, dt_min, owner_resource);
+    if (m_memory) {
+        m_history = m_memory->history().make_unique<ndde::sim::HistoryBuffer>(
+            capacity, dt_min, m_memory->history().make_vector<ndde::sim::HistoryBuffer::Record>());
+        return;
+    }
+
+    std::pmr::memory_resource* owner_resource = m_trail.get_allocator().resource();
+    m_history = memory::make_unique<ndde::sim::HistoryBuffer>(owner_resource, capacity, dt_min, owner_resource);
 }
 
 void AnimatedCurve::push_history(float t) {

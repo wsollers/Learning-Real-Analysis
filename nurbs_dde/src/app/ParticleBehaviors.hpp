@@ -332,12 +332,21 @@ public:
     BehaviorStack& operator=(BehaviorStack&&) noexcept = default;
 
     void bind_memory(memory::MemoryService* memory) {
-        std::pmr::memory_resource* resource = memory ? memory->simulation().resource()
-                                                     : std::pmr::get_default_resource();
+        if (memory) {
+            memory->simulation().rebind_vector(m_behaviors);
+            return;
+        }
+
+        std::pmr::memory_resource* resource = std::pmr::get_default_resource();
         if (resource == m_behaviors.get_allocator().resource())
             return;
+
+        memory::SimVector<Entry> rebound{resource};
+        rebound.reserve(m_behaviors.size());
+        for (auto& entry : m_behaviors)
+            rebound.push_back(std::move(entry));
         std::destroy_at(&m_behaviors);
-        std::construct_at(&m_behaviors, resource);
+        std::construct_at(&m_behaviors, std::move(rebound));
     }
 
     void set_context(const SimulationContext* context) noexcept { m_context = context; }

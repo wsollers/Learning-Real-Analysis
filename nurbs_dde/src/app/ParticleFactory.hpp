@@ -22,7 +22,7 @@ public:
                              memory::MemoryService* memory = nullptr)
         : m_surface(surface)
         , m_memory(memory)
-        , m_constraints(memory ? memory->simulation().resource() : std::pmr::get_default_resource())
+        , m_constraints(make_constraint_vector(memory))
     {
         m_stack.bind_memory(memory);
     }
@@ -198,6 +198,14 @@ private:
     bool m_stochastic = false;
     BehaviorStack m_stack;
     memory::SimVector<memory::Unique<ndde::sim::IConstraint>> m_constraints;
+
+    [[nodiscard]] static memory::SimVector<memory::Unique<ndde::sim::IConstraint>>
+    make_constraint_vector(memory::MemoryService* memory) {
+        return memory ? memory->simulation().make_vector<memory::Unique<ndde::sim::IConstraint>>()
+                      : memory::SimVector<memory::Unique<ndde::sim::IConstraint>>{
+                            std::pmr::get_default_resource()
+                        };
+    }
 
     template <class T, class... Args>
     [[nodiscard]] memory::Unique<T> make_sim_unique(Args&&... args) const {

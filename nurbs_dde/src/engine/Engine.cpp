@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
+#include <cstring>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
@@ -490,24 +491,10 @@ void Engine::on_key_event(int key, int action, int mods) {
     const bool ctrl = (mods & GLFW_MOD_CONTROL) != 0;
     const bool shift = (mods & GLFW_MOD_SHIFT) != 0;
 
-    if (ctrl && !shift && key == GLFW_KEY_1) {
-        m_pending_sim = 0;
-        return;
-    }
-    if (ctrl && !shift && key == GLFW_KEY_2) {
-        m_pending_sim = 1;
-        return;
-    }
-    if (ctrl && !shift && key == GLFW_KEY_3) {
-        m_pending_sim = 2;
-        return;
-    }
-    if (ctrl && !shift && key == GLFW_KEY_4) {
-        m_pending_sim = 3;
-        return;
-    }
-    if (ctrl && !shift && key == GLFW_KEY_5) {
-        m_pending_sim = 4;
+    if (ctrl && !shift && key >= GLFW_KEY_1 && key <= GLFW_KEY_9) {
+        const std::size_t index = static_cast<std::size_t>(key - GLFW_KEY_1);
+        if (index < m_simulations.size())
+            m_pending_sim = index;
         return;
     }
     if (!ctrl && !shift && key == GLFW_KEY_F12) {
@@ -646,7 +633,11 @@ std::filesystem::path Engine::make_capture_path() const {
 
     const std::time_t now = std::time(nullptr);
     std::tm tm{};
+#if defined(_WIN32)
     localtime_s(&tm, &now);
+#else
+    localtime_r(&now, &tm);
+#endif
     std::ostringstream stamp;
     stamp << std::put_time(&tm, "%Y%m%d_%H%M%S");
     return std::filesystem::path{NDDE_PROJECT_DIR} / "captures" / (name + "_" + stamp.str() + ".png");
@@ -669,8 +660,7 @@ void Engine::flush_render_service() {
         if (packet.vertices.empty()) continue;
         auto slice = m_services.memory().allocate_frame_vertices(static_cast<u32>(packet.vertices.size()));
         auto verts = slice.vertices();
-        for (u32 i = 0; i < static_cast<u32>(packet.vertices.size()); ++i)
-            verts[i] = packet.vertices[i];
+        std::memcpy(verts, packet.vertices.data(), packet.vertices.size() * sizeof(Vertex));
 
         renderer::DrawCall dc{
             .slice = slice,

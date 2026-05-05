@@ -86,6 +86,8 @@ public:
         return { m_p.sigma, m_p.sigma };
     }
 
+    [[nodiscard]] bool has_constant_noise() const override { return true; }
+
     // No phase accumulation for Brownian motion.
     [[nodiscard]] float phase_rate() const override { return 0.f; }
 

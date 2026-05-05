@@ -29,7 +29,6 @@
 #include "sim/IEquation.hpp"
 #include "numeric/ops.hpp"
 #include "math/ExtremumTable.hpp"
-#include "numeric/ops.hpp"
 #include "sim/LeaderSeekerEquation.hpp"   // Goal enum
 #include <glm/glm.hpp>
 #include <cmath>

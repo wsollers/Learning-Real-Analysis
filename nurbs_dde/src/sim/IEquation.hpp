@@ -79,6 +79,10 @@ public:
         return {0.f, 0.f};
     }
 
+    // True when noise_coefficient is independent of state and time. Integrators
+    // can use this to skip finite-difference diffusion-gradient work.
+    [[nodiscard]] virtual bool has_constant_noise() const { return false; }
+
     // Rate at which the particle's phase accumulates per unit parameter-space
     // distance travelled.  Used by equations with a steering oscillation.
     // Default: 0.f -- no phase.

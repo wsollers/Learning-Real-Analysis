@@ -318,4 +318,41 @@ private:
     f64 m_gamma = 0.9;
 };
 
+class LorenzSystem final : public IDifferentialSystem {
+public:
+    LorenzSystem(f64 sigma = 10.0, f64 rho = 28.0, f64 beta = 8.0 / 3.0)
+        : m_sigma(sigma)
+        , m_rho(rho)
+        , m_beta(beta)
+    {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Lorenz attractor",
+            .formula = "x' = sigma(y-x), y' = x(rho-z)-y, z' = xy-beta z",
+            .variables = "x, y, z"
+        };
+    }
+
+    [[nodiscard]] std::size_t dimension() const override { return 3u; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        const f64 x = state[0];
+        const f64 y = state[1];
+        const f64 z = state[2];
+        derivative[0] = m_sigma * (y - x);
+        derivative[1] = x * (m_rho - z) - y;
+        derivative[2] = x * y - m_beta * z;
+    }
+
+    [[nodiscard]] f64 sigma() const noexcept { return m_sigma; }
+    [[nodiscard]] f64 rho() const noexcept { return m_rho; }
+    [[nodiscard]] f64 beta() const noexcept { return m_beta; }
+
+private:
+    f64 m_sigma = 10.0;
+    f64 m_rho = 28.0;
+    f64 m_beta = 8.0 / 3.0;
+};
+
 } // namespace ndde::sim

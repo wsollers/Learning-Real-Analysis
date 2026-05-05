@@ -14,6 +14,7 @@
 #include "memory/Unique.hpp"
 
 #include <memory_resource>
+#include <memory>
 #include <string_view>
 #include <utility>
 
@@ -93,6 +94,21 @@ public:
         typename Policy::template Vector<T> vector(count, m_resource);
         vector.bind_generation(&m_generation);
         return vector;
+    }
+
+    template <class T>
+    void rebind_vector(typename Policy::template Vector<T>& vector) const {
+        if (vector.get_allocator().resource() == m_resource) {
+            vector.bind_generation(&m_generation);
+            return;
+        }
+
+        auto rebound = make_vector<T>();
+        rebound.reserve(vector.size());
+        for (auto& item : vector)
+            rebound.push_back(std::move(item));
+        std::destroy_at(&vector);
+        std::construct_at(&vector, std::move(rebound));
     }
 
     template <class T, class... Args>

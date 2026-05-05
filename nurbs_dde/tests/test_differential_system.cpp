@@ -113,6 +113,47 @@ TEST(DifferentialSystem, Rk4SolvesTwoDimensionalLinearSystem) {
     EXPECT_NEAR(problem.state()[1], std::exp(-2.0), 2.5e-7);
 }
 
+TEST(DifferentialSystem, LorenzSystemReportsThreeDimensionalDerivative) {
+    sim::LorenzSystem system{10.0, 28.0, 8.0 / 3.0};
+    const f64 state[] = {1.0, 1.0, 1.0};
+    f64 derivative[] = {0.0, 0.0, 0.0};
+
+    system.evaluate(0.0, state, derivative);
+
+    const sim::EquationSystemMetadata metadata = system.metadata();
+    EXPECT_EQ(metadata.name, "Lorenz attractor");
+    EXPECT_EQ(metadata.variables, "x, y, z");
+    EXPECT_EQ(system.dimension(), 3u);
+    EXPECT_NEAR(derivative[0], 0.0, 1e-12);
+    EXPECT_NEAR(derivative[1], 26.0, 1e-12);
+    EXPECT_NEAR(derivative[2], -5.0 / 3.0, 1e-12);
+}
+
+TEST(DifferentialSystem, LorenzPerturbedPairDivergesFromNearbyInitialCondition) {
+    memory::MemoryService memory;
+    sim::LorenzSystem system{10.0, 28.0, 8.0 / 3.0};
+    sim::Rk4OdeSolver solver;
+    const f64 initial[] = {1.0, 1.0, 1.0};
+    const f64 perturbed[] = {1.001, 1.0, 1.0};
+    sim::InitialValueProblem base{memory, system, initial, 0.0};
+    sim::InitialValueProblem twin{memory, system, perturbed, 0.0};
+
+    for (int i = 0; i < 500; ++i) {
+        base.step(solver, 0.01);
+        twin.step(solver, 0.01);
+    }
+
+    const auto a = base.state();
+    const auto b = twin.state();
+    const f64 dx = b[0] - a[0];
+    const f64 dy = b[1] - a[1];
+    const f64 dz = b[2] - a[2];
+    const f64 final_distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+    EXPECT_GT(final_distance, 1.0e-3);
+    EXPECT_EQ(base.history_size(), twin.history_size());
+}
+
 TEST(DifferentialSystem, ProblemBuffersBindToMemoryServiceScopes) {
     memory::MemoryService memory;
     sim::ExponentialGrowthSystem system{1.0};
@@ -246,6 +287,31 @@ TEST(DelayDifferentialSystem, BoundedDelayedFeedbackStaysWithinExpectedEnvelope)
 
     EXPECT_LT(max_abs, system.expected_bound() + 0.2);
     EXPECT_GT(problem.history_size(), 3000u);
+}
+
+TEST(DelayDifferentialSystem, RuntimeHistoryIsCompactedToBoundedWindow) {
+    memory::MemoryService memory;
+    sim::BoundedDelayedFeedbackSystem system{0.8, 1.4, 1.2};
+    sim::EulerDdeSolver solver;
+    const f64 initial[] = {0.75};
+    sim::DelayInitialValueProblem problem{
+        memory,
+        system,
+        initial,
+        0.0,
+        0.02,
+        constant_history_one,
+        nullptr
+    };
+
+    for (int i = 0; i < 6000; ++i)
+        problem.step(solver, 0.01);
+
+    EXPECT_LE(problem.history_size(), 4096u);
+
+    f64 delayed = 0.0;
+    problem.query_history(problem.time() - system.max_delay(), std::span<f64>{&delayed, 1u});
+    EXPECT_TRUE(std::isfinite(delayed));
 }
 
 } // namespace

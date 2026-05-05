@@ -54,7 +54,6 @@
 #include "sim/IEquation.hpp"
 #include "numeric/ops.hpp"
 #include "sim/HistoryBuffer.hpp"
-#include "numeric/ops.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 
