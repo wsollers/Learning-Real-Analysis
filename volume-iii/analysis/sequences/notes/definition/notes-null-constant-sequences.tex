@@ -1231,3 +1231,237 @@ K > 0
 Two one-sided barriers can always be replaced by one symmetric barrier around zero.
 A standard choice is any positive $K$ satisfying both $K\geq |m|$ and $K\geq |M|$.
 \end{remark*}
+
+% =========================================================
+% Theorems --- Relationships Between Bounded Sequence Definitions
+% =========================================================
+
+% ---------------------------------------------------------
+% Theorem --- Bounded Sequence iff Bounded Above and Below
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[
+  colback=thmbox,
+  colframe=thmborder,
+  title={\small\textbf{Theorem (Bounded Sequence iff Bounded Above and Below)}}
+]
+\label{thm:bounded-sequence-iff-bounded-above-and-below}
+
+\textbf{English.}
+A real sequence is bounded if and only if it is both bounded above and bounded below.
+
+\textbf{Quantified.}
+A real sequence $(x_n)$ is bounded if and only if there exist real numbers $m,M \in \mathbb{R}$ such that
+\[
+m \leq x_n \leq M
+\qquad
+\text{for every } n \in \mathbb{N}.
+\]
+
+\textbf{Fully Quantified Form (FQF).}
+\[
+\begin{aligned}
+&\left[
+\exists K \in \mathbb{R}\;
+\bigl(
+K > 0
+\land
+\forall n \in \mathbb{N}\;
+(|x_n| \leq K)
+\bigr)
+\right]
+\\
+&\qquad\Longleftrightarrow
+\\
+&\left[
+\exists m \in \mathbb{R}\;
+\exists M \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;
+(m \leq x_n \land x_n \leq M)
+\right].
+\end{aligned}
+\]
+
+\textbf{Predicate reading.}
+\[
+\mathrm{BoundedSequence}(x_n)
+\;\Longleftrightarrow\;
+\bigl(
+\mathrm{BoundedBelowSequence}(x_n)
+\land
+\mathrm{BoundedAboveSequence}(x_n)
+\bigr).
+\]
+
+\textbf{Contrapositive predicate reading.}
+\[
+\neg\bigl(
+\mathrm{BoundedBelowSequence}(x_n)
+\land
+\mathrm{BoundedAboveSequence}(x_n)
+\bigr)
+\;\Longleftrightarrow\;
+\neg\mathrm{BoundedSequence}(x_n).
+\]
+
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Boundedness means the sequence is trapped between two finite horizontal barriers.
+The symmetric absolute-value bound $|x_n|\leq K$ is equivalent to having both a floor and a ceiling.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Absolute Bound Gives Upper and Lower Bounds
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[
+  colback=thmbox,
+  colframe=thmborder,
+  title={\small\textbf{Theorem (Absolute Bound Gives Upper and Lower Bounds)}}
+]
+\label{thm:absolute-bound-gives-upper-and-lower-bounds}
+
+\textbf{English.}
+If every term of a real sequence lies within distance $K$ of zero, then $K$ is an upper bound and $-K$ is a lower bound.
+
+\textbf{Quantified.}
+If $K>0$ and
+\[
+|x_n|\leq K
+\qquad
+\text{for every } n\in\mathbb{N},
+\]
+then
+\[
+-K\leq x_n\leq K
+\qquad
+\text{for every } n\in\mathbb{N}.
+\]
+
+\textbf{Fully Quantified Form (FQF).}
+\[
+\begin{aligned}
+&\forall K \in \mathbb{R}\;
+\Bigl(
+K > 0
+\land
+\forall n \in \mathbb{N}\;
+(|x_n| \leq K)
+\Bigr)
+\\
+&\qquad\rightarrow
+\\
+&\forall n \in \mathbb{N}\;
+(-K \leq x_n \land x_n \leq K).
+\end{aligned}
+\]
+
+\textbf{Predicate reading.}
+\[
+\mathrm{BoundedSequence}(x_n)
+\;\rightarrow\;
+\bigl(
+\mathrm{BoundedBelowSequence}(x_n)
+\land
+\mathrm{BoundedAboveSequence}(x_n)
+\bigr).
+\]
+
+\textbf{Contrapositive predicate reading.}
+\[
+\neg\bigl(
+\mathrm{BoundedBelowSequence}(x_n)
+\land
+\mathrm{BoundedAboveSequence}(x_n)
+\bigr)
+\;\rightarrow\;
+\neg\mathrm{BoundedSequence}(x_n).
+\]
+
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+An absolute-value bound gives a symmetric trap around zero. The same number that controls the magnitude also supplies explicit upper and lower barriers.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Upper and Lower Bounds Give an Absolute Bound
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[
+  colback=thmbox,
+  colframe=thmborder,
+  title={\small\textbf{Theorem (Upper and Lower Bounds Give an Absolute Bound)}}
+]
+\label{thm:upper-and-lower-bounds-give-absolute-bound}
+
+\textbf{English.}
+If a real sequence has both a lower bound and an upper bound, then it has an absolute-value bound.
+
+\textbf{Quantified.}
+If there exist $m,M\in\mathbb{R}$ such that
+\[
+m\leq x_n\leq M
+\qquad
+\text{for every } n\in\mathbb{N},
+\]
+then there exists $K>0$ such that
+\[
+|x_n|\leq K
+\qquad
+\text{for every } n\in\mathbb{N}.
+\]
+
+\textbf{Fully Quantified Form (FQF).}
+\[
+\begin{aligned}
+&\left[
+\exists m \in \mathbb{R}\;
+\exists M \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;
+(m \leq x_n \land x_n \leq M)
+\right]
+\\
+&\qquad\rightarrow
+\\
+&\left[
+\exists K \in \mathbb{R}\;
+\bigl(
+K > 0
+\land
+\forall n \in \mathbb{N}\;
+(|x_n| \leq K)
+\bigr)
+\right].
+\end{aligned}
+\]
+
+\textbf{Predicate reading.}
+\[
+\bigl(
+\mathrm{BoundedBelowSequence}(x_n)
+\land
+\mathrm{BoundedAboveSequence}(x_n)
+\bigr)
+\;\rightarrow\;
+\mathrm{BoundedSequence}(x_n).
+\]
+
+\textbf{Contrapositive predicate reading.}
+\[
+\neg\mathrm{BoundedSequence}(x_n)
+\;\rightarrow\;
+\neg\bigl(
+\mathrm{BoundedBelowSequence}(x_n)
+\land
+\mathrm{BoundedAboveSequence}(x_n)
+\bigr).
+\]
+
+\end{tcolorbox}
+
+\begin{remark*}[Interpretation]
+Two one-sided barriers can always be replaced by one symmetric barrier around zero.
+A standard choice is any positive $K$ satisfying both $K\geq |m|$ and $K\geq |M|$.
+\end{remark*}
