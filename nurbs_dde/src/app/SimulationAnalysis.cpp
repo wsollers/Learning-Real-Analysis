@@ -168,7 +168,10 @@ void SimulationAnalysis::draw_control_panel() {
     ImGui::SliderFloat("epsilon", &m_epsilon, 0.01f, 0.5f);
     ImGui::SliderFloat("walk speed", &m_walk_speed, 0.05f, 2.f);
     ImGui::SliderFloat("noise", &m_noise_sigma, 0.f, 0.3f);
-    if (m_host) AlternateViewPanel::draw(m_host->render(), m_alternate_view);
+    if (m_host) {
+        AlternateViewPanel::draw_main_overlays(m_host->render(), m_main_view);
+        AlternateViewPanel::draw(m_host->render(), m_alternate_view);
+    }
     ImGui::End();
 }
 

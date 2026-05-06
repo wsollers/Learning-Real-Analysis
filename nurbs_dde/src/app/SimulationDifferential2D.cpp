@@ -524,13 +524,19 @@ void SimulationDifferential2D::submit_geometry() {
 
         const RenderViewDescriptor* desc = render.descriptor(view);
         if (desc) {
-            auto frame = build_curve2d_frenet_hover_overlay(
+            const Curve2DHoverOverlayOptions options{
+                .show_frenet = desc->overlays.show_hover_frenet,
+                .show_osculating_circle = desc->overlays.show_osculating_circle,
+                .show_velocity_arrow = desc->overlays.show_darboux_frame,
+                .has_velocity = true,
+                .velocity = derivative_at(p)
+            };
+            auto frame = build_curve2d_hover_overlay(
                 std::span<const Vec2>{trajectory_points.data(), trajectory_points.size()},
                 p,
                 domain,
-                desc->overlays.show_hover_frenet,
-                desc->overlays.show_osculating_circle,
-                &memory);
+                options,
+                &memory).vertices;
             render.submit(view, frame, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
         }
     };

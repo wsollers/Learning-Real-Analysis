@@ -46,6 +46,10 @@ struct ViewOverlayState {
     bool show_labels = false;
     bool show_hover_frenet = true;
     bool show_osculating_circle = true;
+    bool show_darboux_frame = true;
+    bool show_diffusion_ellipse = true;
+    bool show_ghost_marker = true;
+    bool show_metric_ellipse = true;
 };
 
 struct AlternateViewSettings {

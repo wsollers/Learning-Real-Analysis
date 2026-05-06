@@ -93,6 +93,7 @@ public:
 
     void reset();
     void advance(f32 dt, f32 speed_scale = 1.f);
+    void record_trail_sample(float t);
 
     [[nodiscard]] FrenetFrame frenet_at(u32 idx) const noexcept;
 
@@ -116,10 +117,15 @@ public:
     void set_behavior_context(const SimulationContext* context) noexcept;
     [[nodiscard]] ParticleMetadata metadata() const;
     [[nodiscard]] std::string metadata_label() const;
+    [[nodiscard]] float max_delay_seconds() const noexcept;
+    [[nodiscard]] float max_nominal_speed() const noexcept;
 
     [[nodiscard]] u32  trail_size()    const noexcept { return static_cast<u32>(m_trail.size()); }
     [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 4; }
-    [[nodiscard]] Vec3 trail_pt(u32 i) const noexcept { return m_trail[i]; }
+    [[nodiscard]] const TrailSample& trail_sample(u32 i) const noexcept { return m_trail[i]; }
+    [[nodiscard]] Vec3 trail_pt(u32 i) const noexcept { return m_trail[i].world; }
+    [[nodiscard]] glm::vec2 trail_uv(u32 i) const noexcept { return m_trail[i].uv; }
+    [[nodiscard]] float trail_time(u32 i) const noexcept { return m_trail[i].time; }
     [[nodiscard]] Role role()          const noexcept { return m_role; }
     [[nodiscard]] u32  colour_slot()   const noexcept { return m_colour_slot; }
 
@@ -171,6 +177,7 @@ public:
     // Prefer ParticleSystem for new simulation code.
     // Do not use from equation or integrator code.
     [[nodiscard]] ndde::sim::ParticleState& walk_state() noexcept { return m_walk; }
+    [[nodiscard]] const ndde::sim::ParticleState& walk_state() const noexcept { return m_walk; }
 
     [[nodiscard]] static Vec4 trail_colour(Role role, u32 slot, f32 age_t) noexcept;
 
@@ -180,7 +187,7 @@ public:
 
 private:
     ndde::sim::ParticleState                m_walk;
-    memory::HistoryVector<Vec3>              m_trail;
+    memory::HistoryVector<TrailSample>       m_trail;
     const ndde::math::ISurface*              m_surface;        // non-owning, never null
     ndde::sim::IEquation*                    m_equation;       // non-owning OR alias to m_owned_equation
     memory::Unique<ndde::sim::IEquation>     m_owned_equation; // null when using shared equation

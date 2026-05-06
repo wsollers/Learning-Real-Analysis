@@ -12,6 +12,21 @@ namespace ndde {
 
 class AlternateViewPanel {
 public:
+    static void draw_main_overlays(RenderService& render, RenderViewId view) {
+        RenderViewDescriptor* descriptor = render.descriptor(view);
+        if (!descriptor || descriptor->kind != RenderViewKind::Main)
+            return;
+
+        ViewOverlayState& overlays = descriptor->overlays;
+        ImGui::SeparatorText("Analysis overlays");
+        ImGui::Checkbox("Frenet frame", &overlays.show_hover_frenet);
+        ImGui::Checkbox("Darboux frame", &overlays.show_darboux_frame);
+        ImGui::Checkbox("Osculating circle", &overlays.show_osculating_circle);
+        ImGui::Checkbox("Diffusion ellipse", &overlays.show_diffusion_ellipse);
+        ImGui::Checkbox("DDE ghost marker", &overlays.show_ghost_marker);
+        ImGui::Checkbox("Metric ellipse", &overlays.show_metric_ellipse);
+    }
+
     static void draw(RenderService& render, RenderViewId view) {
         RenderViewDescriptor* descriptor = render.descriptor(view);
         if (!descriptor || descriptor->kind != RenderViewKind::Alternate)

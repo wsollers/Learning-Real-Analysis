@@ -60,9 +60,12 @@ struct TrailPickSample {
     u64 particle_id = 0;
     u32 particle_index = 0;
     u32 trail_index = 0;
+    Vec2 uv{};
     Vec3 world{};
     f32 curvature = 0.f;
     f32 torsion = 0.f;
+    f32 normal_curvature = 0.f;
+    f32 geodesic_curvature = 0.f;
 };
 
 struct ParticleTrailHit {
@@ -70,9 +73,12 @@ struct ParticleTrailHit {
     u64 particle_id = 0;
     u32 particle_index = 0;
     u32 trail_index = 0;
+    Vec2 uv{};
     Vec3 world{};
     f32 curvature = 0.f;
     f32 torsion = 0.f;
+    f32 normal_curvature = 0.f;
+    f32 geodesic_curvature = 0.f;
     f32 pixel_distance = 0.f;
     bool hit = false;
 };
@@ -103,6 +109,8 @@ struct InteractionTarget {
     u32 trail_index = 0;
     f32 curvature = 0.f;
     f32 torsion = 0.f;
+    f32 normal_curvature = 0.f;
+    f32 geodesic_curvature = 0.f;
     bool valid = false;
 };
 
@@ -309,9 +317,12 @@ public:
                 hit.particle_id = sample.particle_id;
                 hit.particle_index = sample.particle_index;
                 hit.trail_index = sample.trail_index;
+                hit.uv = sample.uv;
                 hit.world = sample.world;
                 hit.curvature = sample.curvature;
                 hit.torsion = sample.torsion;
+                hit.normal_curvature = sample.normal_curvature;
+                hit.geodesic_curvature = sample.geodesic_curvature;
                 hit.pixel_distance = distance;
                 hit.hit = true;
             }
@@ -460,12 +471,15 @@ private:
             set_hover_target(InteractionTarget{
                 .kind = InteractionTargetKind::TrailSample,
                 .view = hit.view,
+                .uv = hit.uv,
                 .world = hit.world,
                 .particle_id = hit.particle_id,
                 .particle_index = hit.particle_index,
                 .trail_index = hit.trail_index,
                 .curvature = hit.curvature,
                 .torsion = hit.torsion,
+                .normal_curvature = hit.normal_curvature,
+                .geodesic_curvature = hit.geodesic_curvature,
                 .valid = true
             });
         }

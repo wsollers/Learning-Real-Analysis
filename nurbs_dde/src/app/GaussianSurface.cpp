@@ -219,9 +219,9 @@ u32 GaussianSurface::tessellate_contours(std::span<Vertex> out,
 
 namespace {
 
-memory::HistoryVector<Vec3> make_particle_trail_vector(memory::MemoryService* memory) {
-    return memory ? memory->history().make_vector<Vec3>()
-                  : memory::HistoryVector<Vec3>{std::pmr::get_default_resource()};
+memory::HistoryVector<TrailSample> make_particle_trail_vector(memory::MemoryService* memory) {
+    return memory ? memory->history().make_vector<TrailSample>()
+                  : memory::HistoryVector<TrailSample>{std::pmr::get_default_resource()};
 }
 
 memory::SimVector<memory::Unique<ndde::sim::IConstraint>>
@@ -272,10 +272,10 @@ void AnimatedCurve::bind_memory(memory::MemoryService* memory) {
     } else {
         std::pmr::memory_resource* desired_trail = std::pmr::get_default_resource();
         if (m_trail.get_allocator().resource() != desired_trail) {
-            memory::HistoryVector<Vec3> rebound{desired_trail};
+            memory::HistoryVector<TrailSample> rebound{desired_trail};
             rebound.reserve(m_trail.size());
-            for (Vec3& point : m_trail)
-                rebound.push_back(point);
+            for (TrailSample& sample : m_trail)
+                rebound.push_back(sample);
             std::destroy_at(&m_trail);
             std::construct_at(&m_trail, std::move(rebound));
         }
@@ -343,10 +343,13 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
     for (const auto& c : m_constraints)
         c->apply(m_walk, *m_surface);
 
-    const Vec3 pt = m_surface->evaluate(m_walk.uv.x, m_walk.uv.y);
+}
+
+void AnimatedCurve::record_trail_sample(float t) {
+    const Vec3 pt = m_surface->evaluate(m_walk.uv.x, m_walk.uv.y, t);
     if (m_trail_config.mode != TrailMode::None &&
-        (m_trail.empty() || glm::length(pt - m_trail.back()) > m_trail_config.min_spacing)) {
-        m_trail.push_back(pt);
+        (m_trail.empty() || glm::length(pt - m_trail.back().world) > m_trail_config.min_spacing)) {
+        m_trail.push_back(TrailSample{.uv = m_walk.uv, .world = pt, .time = t});
         const std::size_t max_points = m_trail_config.max_points > 0
             ? static_cast<std::size_t>(m_trail_config.max_points)
             : static_cast<std::size_t>(MAX_TRAIL);
@@ -390,6 +393,18 @@ std::string AnimatedCurve::metadata_label() const {
         out += " - " + m_equation->name();
     }
     return out;
+}
+
+float AnimatedCurve::max_delay_seconds() const noexcept {
+    if (const auto* stack = dynamic_cast<const BehaviorStack*>(m_equation))
+        return stack->max_delay_seconds();
+    return 0.f;
+}
+
+float AnimatedCurve::max_nominal_speed() const noexcept {
+    if (const auto* stack = dynamic_cast<const BehaviorStack*>(m_equation))
+        return stack->max_nominal_speed();
+    return 0.f;
 }
 
 // == AnimatedCurve::history methods ==========================================
@@ -483,9 +498,9 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
     const u32 n = static_cast<u32>(m_trail.size());
     if (n < 4 || idx < 1 || idx >= n-1) return fr;
 
-    const Vec3& pm = m_trail[idx-1];
-    const Vec3& p0 = m_trail[idx];
-    const Vec3& pp = m_trail[idx+1];
+    const Vec3& pm = m_trail[idx-1].world;
+    const Vec3& p0 = m_trail[idx].world;
+    const Vec3& pp = m_trail[idx+1].world;
 
     const Vec3 v1 = p0 - pm;
     const Vec3 v2 = pp - p0;
@@ -517,7 +532,7 @@ FrenetFrame AnimatedCurve::frenet_at(u32 idx) const noexcept {
 
     // Torsion -- signed rotation of the binormal per unit arc-length.
     if (idx >= 2) {
-        const Vec3& pmm = m_trail[idx - 2];
+        const Vec3& pmm = m_trail[idx - 2].world;
         const Vec3  va  = pm - pmm;
         const f32   la  = glm::length(va);
         if (la > 1e-9f) {
@@ -552,13 +567,13 @@ void AnimatedCurve::tessellate_trail(std::span<Vertex> out) const {
     if (out.size() < n) return;
     for (u32 i = 0; i < n; ++i) {
         const f32 t = static_cast<f32>(i) / static_cast<f32>(n > 1 ? n-1 : 1);
-        out[i] = { m_trail[i], trail_colour(m_role, m_colour_slot, t) };
+        out[i] = { m_trail[i].world, trail_colour(m_role, m_colour_slot, t) };
     }
 }
 
 Vec3 AnimatedCurve::head_world() const noexcept {
     if (m_trail.empty()) return m_surface->evaluate(m_walk.uv.x, m_walk.uv.y);
-    return m_trail.back();
+    return m_trail.back().world;
 }
 
 } // namespace ndde

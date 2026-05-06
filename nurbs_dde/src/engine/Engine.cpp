@@ -372,6 +372,9 @@ void Engine::draw_debug_coordinates_panel() {
             hover.particle.trail_index,
             hover.particle.pixel_distance);
         ImGui::TextDisabled("k %.5f   tau %.5f", hover.particle.curvature, hover.particle.torsion);
+        ImGui::TextDisabled("k_n %.5f   k_g %.5f",
+            hover.particle.normal_curvature,
+            hover.particle.geodesic_curvature);
     } else {
         ImGui::TextDisabled("particle: no trail snap");
     }
@@ -411,6 +414,9 @@ void Engine::draw_debug_coordinates_panel() {
                 static_cast<unsigned long long>(selected.particle_id),
                 selected.trail_index);
             ImGui::TextDisabled("k %.5f   tau %.5f", selected.curvature, selected.torsion);
+            ImGui::TextDisabled("k_n %.5f   k_g %.5f",
+                selected.normal_curvature,
+                selected.geodesic_curvature);
         }
     }
     ImGui::End();
@@ -448,10 +454,15 @@ void Engine::draw_simulation_metadata_panel() {
                 ImGui::TextDisabled("mode %s", alternate_mode_name(view.alternate_mode).data());
             ImGui::TextDisabled("domain u[%.2f, %.2f] v[%.2f, %.2f]",
                 view.domain.u_min, view.domain.u_max, view.domain.v_min, view.domain.v_max);
-            ImGui::TextDisabled("axes %s   hover %s   osc %s",
+            ImGui::TextDisabled("axes %s   frenet %s   osc %s",
                 view.overlays.show_axes ? "on" : "off",
                 view.overlays.show_hover_frenet ? "on" : "off",
                 view.overlays.show_osculating_circle ? "on" : "off");
+            ImGui::TextDisabled("darboux %s   diffusion %s   ghost %s   metric %s",
+                view.overlays.show_darboux_frame ? "on" : "off",
+                view.overlays.show_diffusion_ellipse ? "on" : "off",
+                view.overlays.show_ghost_marker ? "on" : "off",
+                view.overlays.show_metric_ellipse ? "on" : "off");
             ImGui::TreePop();
         }
     }

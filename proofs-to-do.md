@@ -4,7 +4,57 @@ Generated: 2026-05-01 15:51:22
 
 Includes theorem-like results (`thm`, `lem`, `prop`, `cor`) with no proof file, a missing proof file, or an existing proof file that still contains a TODO marker. Capstones and exercises are excluded.
 
-Total: 153
+Total: 196
+
+## volume-ii / natural-numbers
+
+Chapter: `volume-ii/natural-numbers`
+
+| Type | Label | Title | Reason | Source | Proof file |
+| --- | --- | --- | --- | --- | --- |
+| thm | `thm:every-element-is-one-or-a-successor` | Every Element Is Either 1 or a Successor | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | `proofs\notes\prf-every-element-is-one-or-a-successor.tex` |
+| thm | `thm:predecessor-exists-unique-away-from-one` | Predecessor Existence and Uniqueness Away from 1 | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | `proofs\notes\prf-predecessor-exists-unique-away-from-one.tex` |
+| cor | `cor:one-is-unique-non-successor` | The Distinguished Element Is the Unique Non-Successor | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | `proofs\notes\prf-one-is-unique-non-successor.tex` |
+| thm | `thm:no-object-is-its-own-successor` | No Object Is Its Own Successor | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | `proofs\notes\prf-no-object-is-its-own-successor.tex` |
+| thm | `thm:peano-iterator-theorem` | Peano Iterator Theorem | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | `proofs\notes\prf-peano-iterator-theorem.tex` |
+| cor | `cor:uniqueness-of-recursively-defined-functions` | Uniqueness of Recursively Defined Functions | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | `proofs\notes\prf-uniqueness-of-recursively-defined-functions.tex` |
+| thm | `thm:iterator-base-value` | Iterator Base Value | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | `proofs\notes\prf-iterator-base-value.tex` |
+| thm | `thm:iterator-successor-step` | Iterator Successor Step | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | `proofs\notes\prf-iterator-successor-step.tex` |
+| thm | `thm:recursive-specification-well-defined` | Recursive Specification Is Well-Defined | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | `proofs\notes\prf-recursive-specification-well-defined.tex` |
+| thm | `thm:general-recursion-theorem-for-peano-system` | General Recursion Theorem for a Peano System | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | `proofs\notes\prf-general-recursion-theorem-for-peano-system.tex` |
+| thm | `thm:addition-well-defined-on-peano-system` | Addition Is Well-Defined on a Peano System | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-well-defined-on-peano-system.tex` |
+| thm | `thm:addition-with-one` | Addition With 1 | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-with-one.tex` |
+| thm | `thm:addition-successor-on-right` | Addition Successor on the Right | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-successor-on-right.tex` |
+| thm | `thm:one-plus-n` | One Plus n | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-one-plus-n.tex` |
+| thm | `thm:addition-associative` | Addition Is Associative | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-associative.tex` |
+| thm | `thm:addition-commutative` | Addition Is Commutative | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-commutative.tex` |
+| thm | `thm:addition-left-cancellation` | Left Cancellation for Addition | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-left-cancellation.tex` |
+| thm | `thm:addition-right-cancellation` | Right Cancellation for Addition | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | `proofs\notes\prf-addition-right-cancellation.tex` |
+| thm | `thm:multiplication-well-defined-on-peano-system` | Multiplication Is Well-Defined on a Peano System | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-multiplication-well-defined-on-peano-system.tex` |
+| thm | `thm:multiplication-with-one` | Multiplication With 1 | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-multiplication-with-one.tex` |
+| thm | `thm:multiplication-successor-on-right` | Multiplication Successor on the Right | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-multiplication-successor-on-right.tex` |
+| thm | `thm:one-times-n` | One Times n | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-one-times-n.tex` |
+| thm | `thm:multiplication-distributes-over-addition` | Multiplication Distributes Over Addition | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-multiplication-distributes-over-addition.tex` |
+| thm | `thm:multiplication-associative` | Multiplication Is Associative | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-multiplication-associative.tex` |
+| thm | `thm:multiplication-commutative` | Multiplication Is Commutative | Proof file exists but still contains a TODO marker. | `notes\multiplication-on-n\notes-multiplication-on-n.tex` | `proofs\notes\prf-multiplication-commutative.tex` |
+| thm | `thm:order-reflexive-on-peano-system` | Order Is Reflexive on a Peano System | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-order-reflexive-on-peano-system.tex` |
+| thm | `thm:order-transitive-on-peano-system` | Order Is Transitive on a Peano System | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-order-transitive-on-peano-system.tex` |
+| thm | `thm:order-antisymmetric-on-peano-system` | Order Is Antisymmetric on a Peano System | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-order-antisymmetric-on-peano-system.tex` |
+| thm | `thm:addition-preserves-order-on-right` | Addition Preserves Order on the Right | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-addition-preserves-order-on-right.tex` |
+| thm | `thm:addition-preserves-order-on-left` | Addition Preserves Order on the Left | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-addition-preserves-order-on-left.tex` |
+| thm | `thm:strict-order-successor-characterization` | Strict Order Successor Characterization | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-strict-order-successor-characterization.tex` |
+| thm | `thm:trichotomy-on-peano-system` | Trichotomy on a Peano System | Proof file exists but still contains a TODO marker. | `notes\order-on-n\notes-order-on-n.tex` | `proofs\notes\prf-trichotomy-on-peano-system.tex` |
+| thm | `thm:strong-induction-on-peano-system` | Strong Induction on a Peano System | Proof file exists but still contains a TODO marker. | `notes\induction\notes-induction.tex` | `proofs\notes\prf-strong-induction-on-peano-system.tex` |
+| thm | `thm:induction-from-arbitrary-base` | Induction from an Arbitrary Base | Proof file exists but still contains a TODO marker. | `notes\induction\notes-induction.tex` | `proofs\notes\prf-induction-from-arbitrary-base.tex` |
+| thm | `thm:well-ordering-principle` | Well-Ordering Principle | Proof file exists but still contains a TODO marker. | `notes\well-ordering-principle\notes-well-ordering-principle.tex` | `proofs\notes\prf-well-ordering-principle.tex` |
+| thm | `thm:induction-well-ordering-equivalence` | Induction and Well-Ordering Are Equivalent | Proof file exists but still contains a TODO marker. | `notes\well-ordering-principle\notes-well-ordering-principle.tex` | `proofs\notes\prf-induction-well-ordering-equivalence.tex` |
+| thm | `thm:n-additive-structure` | $\mathbb{N}$ Is Closed, Associative, and Commutative Under Addition | Proof file exists but still contains a TODO marker. | `notes\algebraic-structure-of-n\notes-algebraic-structure-of-n.tex` | `proofs\notes\prf-n-additive-structure.tex` |
+| thm | `thm:n-multiplicative-monoid` | $\mathbb{N}$ Is a Commutative Monoid Under Multiplication | Proof file exists but still contains a TODO marker. | `notes\algebraic-structure-of-n\notes-algebraic-structure-of-n.tex` | `proofs\notes\prf-n-multiplicative-monoid.tex` |
+| thm | `thm:n-is-semiring` | $\mathbb{N}$ Is a Semiring | Proof file exists but still contains a TODO marker. | `notes\algebraic-structure-of-n\notes-algebraic-structure-of-n.tex` | `proofs\notes\prf-n-is-semiring.tex` |
+| thm | `thm:exponent-sum-law` | Exponent Sum Law | Proof file exists but still contains a TODO marker. | `notes\powers-and-growth\notes-powers-and-growth.tex` | `proofs\notes\prf-exponent-sum-law.tex` |
+| thm | `thm:exponent-product-law` | Exponent Product Law | Proof file exists but still contains a TODO marker. | `notes\powers-and-growth\notes-powers-and-growth.tex` | `proofs\notes\prf-exponent-product-law.tex` |
+| thm | `thm:exponent-power-law` | Exponent Power Law | Proof file exists but still contains a TODO marker. | `notes\powers-and-growth\notes-powers-and-growth.tex` | `proofs\notes\prf-exponent-power-law.tex` |
+| thm | `thm:n-less-than-2-to-n` | $n < 2^n$ for All $n \in \mathbb{N}$ | Proof file exists but still contains a TODO marker. | `notes\powers-and-growth\notes-powers-and-growth.tex` | `proofs\notes\prf-n-less-than-2-to-n.tex` |
 
 ## volume-ii / rationals
 

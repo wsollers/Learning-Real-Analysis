@@ -58,6 +58,8 @@ public:
 
     [[nodiscard]] virtual float phase_rate() const { return 0.f; }
     [[nodiscard]] virtual std::string metadata_label() const = 0;
+    [[nodiscard]] virtual float delay_seconds() const noexcept { return 0.f; }
+    [[nodiscard]] virtual float nominal_speed() const noexcept { return 0.f; }
 };
 
 class EquationBehavior final : public IParticleBehavior {
@@ -175,6 +177,8 @@ public:
     [[nodiscard]] std::string metadata_label() const override {
         return m_p.delay_seconds > 0.f ? "Delayed Seek" : "Seek";
     }
+    [[nodiscard]] float delay_seconds() const noexcept override { return m_p.delay_seconds; }
+    [[nodiscard]] float nominal_speed() const noexcept override { return m_p.speed; }
 
 private:
     Params m_p;
@@ -205,6 +209,8 @@ public:
     [[nodiscard]] std::string metadata_label() const override {
         return m_p.delay_seconds > 0.f ? "Delayed Avoid" : "Avoid";
     }
+    [[nodiscard]] float delay_seconds() const noexcept override { return m_p.delay_seconds; }
+    [[nodiscard]] float nominal_speed() const noexcept override { return m_p.speed; }
 
 private:
     SeekParticleBehavior::Params seek_params() const {
@@ -385,6 +391,20 @@ public:
         for (const auto& entry : m_behaviors)
             rate += entry.weight * entry.behavior->phase_rate();
         return rate;
+    }
+
+    [[nodiscard]] float max_delay_seconds() const noexcept {
+        float delay = 0.f;
+        for (const auto& entry : m_behaviors)
+            delay = std::max(delay, entry.behavior->delay_seconds());
+        return delay;
+    }
+
+    [[nodiscard]] float max_nominal_speed() const noexcept {
+        float speed = 0.f;
+        for (const auto& entry : m_behaviors)
+            speed = std::max(speed, entry.behavior->nominal_speed());
+        return speed;
     }
 
     [[nodiscard]] std::string name() const override;

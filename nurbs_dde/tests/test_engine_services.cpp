@@ -175,14 +175,16 @@ TEST(InteractionService, ResolvesSurfaceAndTrailHits) {
 
     interaction.set_mouse(5u, {100.f, 100.f}, {0.f, 0.f}, true, 16.f);
     const TrailPickSample samples[] = {
-        {.particle_id = 11u, .particle_index = 0u, .trail_index = 3u, .world = {-1.f, 0.f, 0.f}, .curvature = 0.1f},
-        {.particle_id = 12u, .particle_index = 1u, .trail_index = 4u, .world = {0.f, 0.f, 0.f}, .curvature = 0.2f, .torsion = 0.3f}
+        {.particle_id = 11u, .particle_index = 0u, .trail_index = 3u, .uv = {-1.f, 0.f}, .world = {-1.f, 0.f, 0.f}, .curvature = 0.1f},
+        {.particle_id = 12u, .particle_index = 1u, .trail_index = 4u, .uv = {2.f, 3.f}, .world = {0.f, 0.f, 0.f}, .curvature = 0.2f, .torsion = 0.3f}
     };
     const ParticleTrailHit trail_hit = interaction.resolve_particle_trail_hit(
         5u, samples, mvp, {200.f, 200.f});
     EXPECT_TRUE(trail_hit.hit);
     EXPECT_EQ(trail_hit.particle_id, 12u);
     EXPECT_EQ(trail_hit.trail_index, 4u);
+    EXPECT_FLOAT_EQ(trail_hit.uv.x, 2.f);
+    EXPECT_FLOAT_EQ(trail_hit.uv.y, 3.f);
     EXPECT_FLOAT_EQ(trail_hit.curvature, 0.2f);
 
     const HoverMetadata& hover = interaction.hover_metadata();

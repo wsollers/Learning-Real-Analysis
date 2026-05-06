@@ -92,6 +92,7 @@ public:
         for (auto& particle : m_particles) {
             particle.set_behavior_context(&context);
             particle.advance(dt, speed_scale);
+            particle.record_trail_sample(sim_time);
             particle.push_history(sim_time);
         }
         apply_pair_constraints();

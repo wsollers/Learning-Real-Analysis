@@ -54,6 +54,7 @@ struct SurfaceFrame {
     Vec3 Dx;              ///< dp/du -- unnormalized
     Vec3 Dy;              ///< dp/dv -- unnormalized
     Vec3 normal;          ///< unit surface normal
+    Vec3 geodesic_normal; ///< T x normal, tangent-plane normal to heading
     f32  E = 0.f;         ///< |Dx|^2
     f32  F = 0.f;         ///< Dx.Dy
     f32  G = 0.f;         ///< |Dy|^2
@@ -82,6 +83,8 @@ make_surface_frame(const ndde::math::ISurface& surface,
         const f32 NdotN = glm::dot(fr->N, sf.normal);
         sf.kappa_n = fr->kappa * NdotN;
         sf.kappa_g = fr->kappa * glm::length(fr->N - NdotN * sf.normal);
+        const Vec3 g = glm::cross(fr->T, sf.normal);
+        sf.geodesic_normal = glm::length(g) > 1e-6f ? glm::normalize(g) : Vec3{0.f, 0.f, 0.f};
     }
     return sf;
 }

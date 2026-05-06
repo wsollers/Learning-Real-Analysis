@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
 #include <optional>
 
 namespace {
@@ -165,6 +166,53 @@ TEST(SimulationSurfaceGaussian, FrenetOverlayEmitsAdditionalMainPackets) {
     const std::size_t with_overlay = services.render().packet_count(sim.main_view_id());
 
     EXPECT_GT(with_overlay, without_overlay);
+}
+
+TEST(SimulationSurfaceGaussian, AnalysisOverlaysEmitDarbouxMetricDiffusionAndGhostGeometry) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationSurfaceGaussian sim;
+
+    sim.on_register(host);
+    sim.on_start();
+    auto* view = services.render().descriptor(sim.main_view_id());
+    ASSERT_NE(view, nullptr);
+
+    ASSERT_FALSE(sim.context().particles().empty());
+    const AnimatedCurve& particle = sim.context().particles().front();
+    ASSERT_GE(particle.trail_size(), 4u);
+    const u32 hover_idx = particle.trail_size() / 2u;
+
+    services.render().set_viewport_size(sim.main_view_id(), Vec2{1920.f, 1080.f});
+    const Mat4 mvp = surface_main_mvp(sim.context().surface(), view, sim.context().time());
+    const auto pixel = test_project_world_to_pixel(particle.trail_pt(hover_idx), mvp, view->viewport_size);
+    ASSERT_TRUE(pixel.has_value());
+    services.interaction().set_mouse(sim.main_view_id(), *pixel, {}, true, 24.f);
+
+    view->overlays.show_hover_frenet = false;
+    view->overlays.show_osculating_circle = false;
+    view->overlays.show_darboux_frame = true;
+    view->overlays.show_diffusion_ellipse = true;
+    view->overlays.show_ghost_marker = true;
+    view->overlays.show_metric_ellipse = true;
+
+    services.render().clear_packets();
+    sim.on_tick(host.clock().next(1.f / 60.f));
+
+    const auto& hover = services.interaction().hover_metadata();
+    EXPECT_TRUE(hover.particle.hit);
+    EXPECT_TRUE(std::isfinite(hover.particle.normal_curvature));
+    EXPECT_TRUE(std::isfinite(hover.particle.geodesic_curvature));
+
+    bool found_overlay_packet = false;
+    for (const RenderPacket& packet : services.render().packets()) {
+        if (packet.view == sim.main_view_id()
+            && packet.topology == Topology::LineList
+            && packet.vertices.size() >= 6u) {
+            found_overlay_packet = true;
+        }
+    }
+    EXPECT_TRUE(found_overlay_packet);
 }
 
 } // namespace

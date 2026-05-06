@@ -174,6 +174,37 @@ TEST(AllSimulations, Curve2DHoverOverlayBuildsFrenetAndOsculatingGeometryNearCur
     EXPECT_GT(overlay.size(), 4u);
 }
 
+TEST(AllSimulations, Curve2DHoverOverlayBuildsVelocityAndDelayDiagnostics) {
+    EngineServices services;
+    const Vec2 curve[] = {
+        {0.f, 0.f},
+        {0.5f, 0.25f},
+        {1.f, 0.5f},
+        {1.5f, 0.25f},
+        {2.f, 0.f}
+    };
+    const Curve2DHoverOverlayOptions options{
+        .show_frenet = true,
+        .show_velocity_arrow = true,
+        .show_delay_ghost = true,
+        .has_velocity = true,
+        .has_delay_ghost = true,
+        .velocity = {1.f, 0.4f},
+        .delay_ghost = {0.5f, 0.25f}
+    };
+
+    auto overlay = build_curve2d_hover_overlay(
+        std::span<const Vec2>{curve, 5u},
+        {1.f, 0.5f},
+        RenderViewDomain{.u_min = 0.f, .u_max = 2.f, .v_min = -1.f, .v_max = 1.f},
+        options,
+        &services.memory());
+
+    EXPECT_TRUE(overlay.snapped);
+    EXPECT_EQ(overlay.sample_index, 2u);
+    EXPECT_GT(overlay.vertices.size(), 20u);
+}
+
 TEST(AllSimulations, DefaultRegistryContainsExpectedISimulationRuntimes) {
     EngineServices services;
     SimulationRegistry registry(services.memory());

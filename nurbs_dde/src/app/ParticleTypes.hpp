@@ -4,6 +4,8 @@
 
 #include "memory/Containers.hpp"
 #include "math/Scalars.hpp"
+#include "math/GeometryTypes.hpp"
+#include <glm/glm.hpp>
 #include <cstdint>
 #include <string>
 #include <string_view>
@@ -39,6 +41,12 @@ struct TrailConfig {
     TrailMode mode = TrailMode::Finite;
     u32       max_points = 1200;
     float     min_spacing = 0.015f;
+};
+
+struct TrailSample {
+    glm::vec2 uv{0.f, 0.f};
+    Vec3 world{0.f, 0.f, 0.f};
+    float time = 0.f;
 };
 
 struct ParticleMetadata {

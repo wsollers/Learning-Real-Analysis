@@ -174,7 +174,10 @@ void SimulationMultiWell::draw_control_panel() {
         .sim_speed = &m_sim_speed,
         .reset = [this] { reset_showcase(); }
     });
-    if (m_host) AlternateViewPanel::draw(m_host->render(), m_alternate_view);
+    if (m_host) {
+        AlternateViewPanel::draw_main_overlays(m_host->render(), m_main_view);
+        AlternateViewPanel::draw(m_host->render(), m_alternate_view);
+    }
     ImGui::End();
 }
 

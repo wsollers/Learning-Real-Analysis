@@ -158,6 +158,26 @@ TEST(ParticleSystem, FiniteTrailTruncatesAndPersistentTrailDoesNot) {
     EXPECT_GT(persistent.trail_vertex_count(), 3u);
 }
 
+TEST(ParticleSystem, TrailSamplesRetainParameterCoordinatesAndTimes) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 14u);
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({1.f, 0.f})
+        .trail({TrailMode::Persistent, 16u, 0.f})
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{0.2f, 0.f}));
+
+    system.update(0.1f, 1.f, 0.1f);
+    system.update(0.1f, 1.f, 0.2f);
+
+    ASSERT_GE(particle.trail_size(), 2u);
+    const auto last = particle.trail_size() - 1u;
+    EXPECT_NEAR(particle.trail_uv(last).x, particle.head_uv().x, 1e-5f);
+    EXPECT_NEAR(particle.trail_uv(last).y, particle.head_uv().y, 1e-5f);
+    EXPECT_FLOAT_EQ(particle.trail_time(last), 0.2f);
+    EXPECT_EQ(particle.trail_pt(last), particle.trail_sample(last).world);
+}
+
 TEST(ParticleSwarmFactory, BrownianCloudSpawnsRequestedCount) {
     auto surface = flat_surface();
     ndde::ParticleSystem system(&surface, 7u);

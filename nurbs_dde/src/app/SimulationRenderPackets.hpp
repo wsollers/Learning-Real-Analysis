@@ -411,31 +411,128 @@ inline memory::FrameVector<Vertex> build_flow_vertices(const math::ISurface& sur
 }
 
 inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const AnimatedCurve& particle,
+                                                                  const math::ISurface& surface,
                                                                   const RenderViewDomain& domain,
                                                                   u32 trail_idx,
+                                                                  float time,
                                                                   bool show_frenet,
                                                                   bool show_osculating_circle,
+                                                                  bool show_darboux_frame,
+                                                                  bool show_diffusion_ellipse,
+                                                                  bool show_ghost_marker,
+                                                                  bool show_metric_ellipse,
+                                                                  const ParticleSystem* particles = nullptr,
                                                                   memory::MemoryService* memory_service = nullptr) {
     memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     const u32 n = particle.trail_size();
-    if (n < 4u || (!show_frenet && !show_osculating_circle)) return out;
+    if (n < 4u && !show_diffusion_ellipse && !show_metric_ellipse && !show_ghost_marker) return out;
+    if (!show_frenet && !show_osculating_circle && !show_darboux_frame
+        && !show_diffusion_ellipse && !show_ghost_marker && !show_metric_ellipse) return out;
 
-    const u32 idx = std::clamp(trail_idx, 1u, n - 2u);
-    const Vec3 p = particle.trail_pt(idx);
-    const FrenetFrame fr = particle.frenet_at(idx);
+    const u32 idx = n >= 4u ? std::clamp(trail_idx, 1u, n - 2u) : 0u;
+    const Vec3 p = n >= 4u ? particle.trail_pt(idx) : particle.head_world();
+    const FrenetFrame fr = n >= 4u ? particle.frenet_at(idx) : FrenetFrame{};
     const float span = std::max(domain.u_max - domain.u_min, domain.v_max - domain.v_min);
     const float axis_len = std::max(span * 0.035f, 0.05f);
+    const Vec2 uv = n >= 4u ? particle.trail_uv(idx) : particle.head_uv();
+
+    const auto add_axis = [&](Vec3 origin, Vec3 dir, Vec4 color, float scale = 1.f) {
+            if (glm::length(dir) < 1e-6f) return;
+            dir = glm::normalize(dir) * axis_len * scale;
+            out.push_back({origin, color});
+            out.push_back({origin + dir, color});
+    };
 
     if (show_frenet) {
-        const auto add_axis = [&](Vec3 dir, Vec4 color) {
-            if (glm::length(dir) < 1e-6f) return;
-            dir = glm::normalize(dir) * axis_len;
-            out.push_back({p, color});
-            out.push_back({p + dir, color});
-        };
-        add_axis(fr.T, {1.f, 0.48f, 0.12f, 0.95f});
-        add_axis(fr.N, {0.1f, 1.f, 0.45f, 0.95f});
-        add_axis(fr.B, {0.35f, 0.62f, 1.f, 0.95f});
+        add_axis(p, fr.T, {1.f, 0.48f, 0.12f, 0.95f});
+        add_axis(p, fr.N, {0.1f, 1.f, 0.45f, 0.95f});
+        add_axis(p, fr.B, {0.35f, 0.62f, 1.f, 0.95f});
+    }
+
+    const SurfaceFrame sf = make_surface_frame(surface, uv.x, uv.y, time, &fr);
+    if (show_darboux_frame) {
+        add_axis(p, fr.T, {1.f, 0.48f, 0.12f, 0.95f});
+        add_axis(p, sf.normal, {0.18f, 0.7f, 1.f, 0.95f});
+        add_axis(p, sf.geodesic_normal, {0.75f, 1.f, 0.18f, 0.95f});
+    }
+
+    const auto add_ellipse = [&](Vec3 center, Vec3 axis_u, Vec3 axis_v, Vec4 color, u32 segments = 48u) {
+        if (glm::length(axis_u) < 1e-7f || glm::length(axis_v) < 1e-7f) return;
+        for (u32 i = 0; i < segments; ++i) {
+            const float a0 = ops::two_pi_v<float> * static_cast<float>(i) / static_cast<float>(segments);
+            const float a1 = ops::two_pi_v<float> * static_cast<float>(i + 1u) / static_cast<float>(segments);
+            const Vec3 p0 = center + axis_u * ops::cos(a0) + axis_v * ops::sin(a0);
+            const Vec3 p1 = center + axis_u * ops::cos(a1) + axis_v * ops::sin(a1);
+            out.push_back({p0, color});
+            out.push_back({p1, color});
+        }
+    };
+
+    if (show_metric_ellipse) {
+        const float metric_scale = axis_len * 0.9f;
+        const Vec3 u_axis = glm::length(sf.Dx) > 1e-6f && sf.E > 1e-6f
+            ? glm::normalize(sf.Dx) * (metric_scale / ops::sqrt(sf.E))
+            : Vec3{0.f, 0.f, 0.f};
+        const Vec3 v_axis = glm::length(sf.Dy) > 1e-6f && sf.G > 1e-6f
+            ? glm::normalize(sf.Dy) * (metric_scale / ops::sqrt(sf.G))
+            : Vec3{0.f, 0.f, 0.f};
+        add_ellipse(p, u_axis, v_axis, {0.72f, 0.76f, 0.78f, 0.55f}, 40u);
+    }
+
+    if (show_diffusion_ellipse && particle.equation()) {
+        const glm::vec2 sigma = particle.equation()->noise_coefficient(particle.walk_state(), surface, time);
+        if (ops::abs(sigma.x) > 1e-6f || ops::abs(sigma.y) > 1e-6f) {
+            constexpr float display_dt = 1.f / 60.f;
+            const float root_dt = ops::sqrt(display_dt);
+            const Vec3 center = particle.head_world();
+            const Vec3 du = surface.du(particle.head_uv().x, particle.head_uv().y, time);
+            const Vec3 dv = surface.dv(particle.head_uv().x, particle.head_uv().y, time);
+            const Vec3 u_axis = glm::length(du) > 1e-6f ? glm::normalize(du) * ops::abs(sigma.x) * root_dt * glm::length(du) : Vec3{};
+            const Vec3 v_axis = glm::length(dv) > 1e-6f ? glm::normalize(dv) * ops::abs(sigma.y) * root_dt * glm::length(dv) : Vec3{};
+            Vec4 color = particle.head_colour();
+            color.a = 0.4f;
+            add_ellipse(center, u_axis, v_axis, color, 32u);
+        }
+    }
+
+    if (show_ghost_marker && particles && particle.particle_role() == ParticleRole::Chaser) {
+        const float delay = particle.max_delay_seconds();
+        const float speed = particle.max_nominal_speed();
+        if (delay > 1e-5f) {
+            const AnimatedCurve* leader = nullptr;
+            for (const auto& candidate : particles->particles()) {
+                if (candidate.particle_role() == ParticleRole::Leader) {
+                    leader = &candidate;
+                    break;
+                }
+            }
+            if (leader && leader->history()) {
+                const glm::vec2 ghost_uv = leader->query_history(time - delay);
+                const Vec3 ghost = surface.evaluate(ghost_uv.x, ghost_uv.y, time);
+                const Vec3 chaser = particle.head_world();
+                const Vec3 current = leader->head_world();
+                const float ghost_radius = std::max(axis_len * 0.22f, 0.04f);
+                const Vec3 du = surface.du(ghost_uv.x, ghost_uv.y, time);
+                const Vec3 dv = surface.dv(ghost_uv.x, ghost_uv.y, time);
+                add_ellipse(ghost,
+                    glm::length(du) > 1e-6f ? glm::normalize(du) * ghost_radius : Vec3{},
+                    glm::length(dv) > 1e-6f ? glm::normalize(dv) * ghost_radius : Vec3{},
+                    {1.f, 0.82f, 0.18f, 0.78f}, 18u);
+                out.push_back({chaser, {1.f, 0.82f, 0.18f, 0.9f}});
+                out.push_back({ghost, {1.f, 0.82f, 0.18f, 0.9f}});
+                out.push_back({chaser, {1.f, 0.35f, 0.25f, 0.65f}});
+                out.push_back({current, {1.f, 0.35f, 0.25f, 0.65f}});
+                if (speed > 1e-5f) {
+                    const float cone_radius = std::min(speed * delay, span * 0.22f);
+                    const Vec3 cu = surface.du(particle.head_uv().x, particle.head_uv().y, time);
+                    const Vec3 cv = surface.dv(particle.head_uv().x, particle.head_uv().y, time);
+                    add_ellipse(chaser,
+                        glm::length(cu) > 1e-6f ? glm::normalize(cu) * cone_radius : Vec3{},
+                        glm::length(cv) > 1e-6f ? glm::normalize(cv) * cone_radius : Vec3{},
+                        {1.f, 0.62f, 0.1f, 0.35f}, 40u);
+                }
+            }
+        }
     }
 
     if (show_osculating_circle && fr.kappa > 1e-5f && glm::length(fr.T) > 1e-6f && glm::length(fr.N) > 1e-6f) {
@@ -458,6 +555,8 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
 }
 
 inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const ParticleSystem& particles,
+                                                                     const math::ISurface& surface,
+                                                                     float time,
                                                                      memory::MemoryService* memory_service = nullptr) {
     memory::FrameVector<TrailPickSample> samples = make_frame_vector<TrailPickSample>(memory_service);
     const auto& list = particles.particles();
@@ -467,13 +566,20 @@ inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const Parti
         if (n < 4u) continue;
         for (u32 ti = 1u; ti + 1u < n; ++ti) {
             const FrenetFrame fr = particle.frenet_at(ti);
+            const Vec3 world = particle.trail_pt(ti);
+            const Vec2 uv = particle.trail_uv(ti);
+            const float sample_time = particle.trail_time(ti);
+            const SurfaceFrame sf = make_surface_frame(surface, uv.x, uv.y, sample_time, &fr);
             samples.push_back(TrailPickSample{
                 .particle_id = particle.id(),
                 .particle_index = static_cast<u32>(pi),
                 .trail_index = ti,
-                .world = particle.trail_pt(ti),
+                .uv = uv,
+                .world = world,
                 .curvature = fr.kappa,
-                .torsion = fr.tau
+                .torsion = fr.tau,
+                .normal_curvature = sf.kappa_n,
+                .geodesic_curvature = sf.kappa_g
             });
         }
     }
@@ -567,7 +673,7 @@ inline void submit_surface_sim_packets(RenderService& render,
             (void)interaction->resolve_surface_hit(main_view, surface, main_mvp, mouse.ndc, options.time);
     }
     const memory::FrameVector<TrailPickSample> pick_samples =
-        (interaction && main_descriptor) ? build_trail_pick_samples(particles, memory_service)
+        (interaction && main_descriptor) ? build_trail_pick_samples(particles, surface, options.time, memory_service)
                                          : make_frame_vector<TrailPickSample>(memory_service);
     const ParticleTrailHit hover = (interaction && main_descriptor)
         ? interaction->resolve_particle_trail_hit(main_view, pick_samples, main_mvp, main_descriptor->viewport_size)
@@ -614,11 +720,20 @@ inline void submit_surface_sim_packets(RenderService& render,
 
         if (main_descriptor && hover.hit && hover.particle_index == particle_index
             && (main_descriptor->overlays.show_hover_frenet
-                || main_descriptor->overlays.show_osculating_circle)) {
-            auto overlay = build_particle_frenet_overlay_vertices(particle, domain,
-                hover.trail_index,
+                || main_descriptor->overlays.show_osculating_circle
+                || main_descriptor->overlays.show_darboux_frame
+                || main_descriptor->overlays.show_diffusion_ellipse
+                || main_descriptor->overlays.show_ghost_marker
+                || main_descriptor->overlays.show_metric_ellipse)) {
+            auto overlay = build_particle_frenet_overlay_vertices(particle, surface, domain,
+                hover.trail_index, options.time,
                 main_descriptor->overlays.show_hover_frenet,
                 main_descriptor->overlays.show_osculating_circle,
+                main_descriptor->overlays.show_darboux_frame,
+                main_descriptor->overlays.show_diffusion_ellipse,
+                main_descriptor->overlays.show_ghost_marker,
+                main_descriptor->overlays.show_metric_ellipse,
+                &particles,
                 memory_service);
             render.submit(main_view, overlay, Topology::LineList, DrawMode::VertexColor,
                 {1.f, 1.f, 1.f, 1.f}, main_mvp);

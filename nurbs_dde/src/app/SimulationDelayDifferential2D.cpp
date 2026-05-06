@@ -249,13 +249,29 @@ void SimulationDelayDifferential2D::submit_geometry() {
         const RenderViewDescriptor* desc = render.descriptor(view);
         const auto& curve = view == m_time_view ? time_points : delay_phase_points;
         if (desc) {
-            auto frame = build_curve2d_frenet_hover_overlay(
+            Curve2DHoverOverlayOptions options{
+                .show_frenet = desc->overlays.show_hover_frenet,
+                .show_osculating_circle = desc->overlays.show_osculating_circle,
+                .show_velocity_arrow = desc->overlays.show_darboux_frame,
+                .show_delay_ghost = desc->overlays.show_ghost_marker && view == m_time_view,
+            };
+            if (view == m_time_view) {
+                f64 delayed = 0.0;
+                m_problem->query_history(static_cast<f64>(p.x) - m_delay, std::span<f64>{&delayed, 1u});
+                const float dxdt = static_cast<float>(-m_damping * static_cast<f64>(p.y)
+                    + m_feedback * std::tanh(delayed));
+                options.has_velocity = true;
+                options.velocity = {1.f, dxdt};
+                options.has_delay_ghost = true;
+                options.delay_ghost = {p.x - static_cast<float>(m_delay), static_cast<float>(delayed)};
+            }
+
+            auto frame = build_curve2d_hover_overlay(
                 std::span<const Vec2>{curve.data(), curve.size()},
                 p,
                 domain,
-                desc->overlays.show_hover_frenet,
-                desc->overlays.show_osculating_circle,
-                &memory);
+                options,
+                &memory).vertices;
             render.submit(view, frame, Topology::LineList, DrawMode::VertexColor, {1, 1, 1, 1}, mvp);
         }
     };
