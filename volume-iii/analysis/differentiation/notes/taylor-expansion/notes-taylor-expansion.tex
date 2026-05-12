@@ -1,0 +1,273 @@
+\subsection{Taylor Expansion}
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Taylor Expansion Toolkit}]
+\textbf{Concept family:} Taylor polynomials, Taylor remainders, and Taylor's theorem.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Taylor Polynomial at a Point
+  \item Definition: Taylor Remainder
+  \item Definition: Maclaurin Polynomial
+  \item Theorem: Taylor's Theorem with Lagrange Remainder
+  \item Corollary: Taylor Expansion with Peano Remainder
+\end{itemize}
+\end{tcolorbox}
+
+\begin{exposition}
+Taylor expansion approximates a differentiable function near a point by a
+polynomial whose coefficients are forced by the derivatives at that point.
+The polynomial records the local data, while the remainder records the error
+left after truncating the expansion.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Definition --- Taylor Polynomial at a Point
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Taylor Polynomial at a Point)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Taylor Polynomial at a Point]
+\label{def:taylor-polynomial-at-a-point}
+Let $I\subseteq\mathbb{R}$ be an interval, let $a\in I$, let
+$n\in\mathbb{N}$, and let $f:I\to\mathbb{R}$ have derivatives
+$f^{(k)}(a)$ for $0\le k\le n$. The \textbf{Taylor polynomial of order}
+$n$ for $f$ at $a$ is
+\[
+  T_{n,a}f(x)
+  :=
+  \sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } I\subseteq\mathbb{R},\; a\in I,\; n\in\mathbb{N},\;
+f:I\to\mathbb{R}.\\
+&\text{If } f^{(k)}(a)\text{ exists for every }0\le k\le n,\text{ then}\\
+&\qquad
+\forall x\in I\;
+\left(
+  T_{n,a}f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k
+\right).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Taylor polynomial is the unique polynomial of degree at most $n$ whose
+first $n$ derivatives at $a$ agree with those of $f$. Its coefficients are
+not chosen by fitting sample points; they are dictated by derivative data at
+one point.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:derivative-at-a-point]{Derivative at a Point}
+  \item \hyperref[cor:power-rule-special-case]{Power Rule for Integer Powers of a Function}
+  \item \hyperref[cor:finite-sum-rule]{Finite Sum Rule}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Taylor Remainder
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Taylor Remainder)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Taylor Remainder]
+\label{def:taylor-remainder}
+Let $I\subseteq\mathbb{R}$ be an interval, let $a\in I$, let
+$n\in\mathbb{N}$, and let $f:I\to\mathbb{R}$ have a Taylor polynomial
+$T_{n,a}f$. The \textbf{Taylor remainder of order} $n$ at $a$ is the
+function $R_{n,a}f:I\to\mathbb{R}$ defined by
+\[
+  R_{n,a}f(x):=f(x)-T_{n,a}f(x).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\in I\;\bigl(R_{n,a}f(x)=f(x)-T_{n,a}f(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The remainder is the exact error made by replacing $f$ with its Taylor
+polynomial. Taylor's theorem is valuable because it gives usable formulas
+or estimates for this error.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:taylor-polynomial-at-a-point]{Taylor Polynomial at a Point}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Maclaurin Polynomial
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Maclaurin Polynomial)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Maclaurin Polynomial]
+\label{def:maclaurin-polynomial}
+Let $n\in\mathbb{N}$, and let $f$ be defined on an interval containing
+$0$ with derivatives $f^{(k)}(0)$ for $0\le k\le n$. The
+\textbf{Maclaurin polynomial of order} $n$ for $f$ is
+\[
+  T_{n,0}f(x)
+  :=
+  \sum_{k=0}^{n}\frac{f^{(k)}(0)}{k!}x^k.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\in I\;
+\left(
+  T_{n,0}f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(0)}{k!}x^k
+\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Maclaurin polynomials are Taylor polynomials centered at the origin. They are
+not a separate approximation theory; they are the centered-at-zero case of
+the same construction.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:taylor-polynomial-at-a-point]{Taylor Polynomial at a Point}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Taylor's Theorem with Lagrange Remainder
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Taylor's Theorem with Lagrange Remainder)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Taylor's Theorem with Lagrange Remainder]
+\label{thm:taylor-theorem-lagrange-remainder}
+Let $a,b\in\mathbb{R}$ with $a<b$, let $n\in\mathbb{N}$, and let
+$f:[a,b]\to\mathbb{R}$. Suppose that $f,f',\ldots,f^{(n)}$ are continuous
+on $[a,b]$ and that $f^{(n+1)}$ exists on $(a,b)$. Then, for every
+$x\in(a,b)$, there exists $c$ strictly between $a$ and $x$ such that
+\[
+  f(x)
+  =
+  \sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k
+  +
+  \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:taylor-theorem-lagrange-remainder]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall x\in(a,b)\;\exists c\in(a,x)\\
+&\quad
+\left(
+  f(x)
+  =
+  \sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k
+  +
+  \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}
+\right).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Taylor's theorem says that the error after truncating at degree $n$ has the
+same shape as the next Taylor term, but with the next derivative evaluated at
+some intermediate point rather than at the center. The point $c$ is generally
+not known explicitly; the theorem is most often used to estimate the size of
+the remainder.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:taylor-polynomial-at-a-point]{Taylor Polynomial at a Point}
+  \item \hyperref[def:taylor-remainder]{Taylor Remainder}
+  \item \hyperref[thm:mean-value-theorem]{Mean Value Theorem}
+  \item \hyperref[cor:finite-sum-rule]{Finite Sum Rule}
+  \item \hyperref[cor:power-rule-special-case]{Power Rule for Integer Powers of a Function}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Corollary --- Taylor Expansion with Peano Remainder
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Taylor Expansion with Peano Remainder)}},
+  fonttitle=\small\bfseries]
+\begin{corollary}[Taylor Expansion with Peano Remainder]
+\label{cor:taylor-expansion-peano-remainder}
+Let $I\subseteq\mathbb{R}$ be an interval, let $a\in I$, let
+$n\in\mathbb{N}$, and let $f:I\to\mathbb{R}$ have derivatives up to order
+$n$ in a neighbourhood of $a$. If $f^{(n)}$ is continuous at $a$, then
+\[
+  f(x)
+  =
+  \sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k
+  +
+  o\bigl((x-a)^n\bigr)
+  \qquad\text{as }x\to a.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:taylor-expansion-peano-remainder]{\textit{Go to proof.}}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\lim_{x\to a}
+\frac{
+  f(x)-\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k
+}{
+  (x-a)^n
+}
+=0.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Peano form is a local asymptotic statement. It says that the Taylor
+polynomial captures all terms through order $n$, and the remaining error is
+smaller than $(x-a)^n$ near the center.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:taylor-polynomial-at-a-point]{Taylor Polynomial at a Point}
+  \item \hyperref[def:taylor-remainder]{Taylor Remainder}
+  \item \hyperref[def:limit-function]{Limit of a Function}
+  \item \hyperref[def:derivative-at-a-point]{Derivative at a Point}
+\end{itemize}
+\end{remark*}

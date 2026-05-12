@@ -43,9 +43,9 @@ _EXPECTED_BOX_COLORS = {
     "def": ("defbox", "defborder"),
     "ax": ("axiombox", "axiomborder"),
     "thm": ("thmbox", "thmborder"),
-    "lem": ("propbox", "propborder"),
+    "lem": ("lembox", "lemborder"),
     "prop": ("propbox", "propborder"),
-    "cor": ("propbox", "propborder"),
+    "cor": ("corbox", "corborder"),
 }
 
 _BOX_REQUIRED_TYPES = {"def", "ax"}

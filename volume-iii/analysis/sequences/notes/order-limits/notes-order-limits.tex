@@ -1,0 +1,272 @@
+\subsection{Order-Theoretic Limit Constructions}
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Order-Theoretic Limits Toolkit}]
+\textbf{Concept family:} Limits constructed from suprema and infima.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Theorem: Increasing Sequence Limit as Supremum
+  \item Theorem: Decreasing Sequence Limit as Infimum
+  \item Theorem: Tail Suprema and Infima Converge
+  \item Theorem: Bounded Sequence Has Limsup and Liminf
+\end{itemize}
+\end{tcolorbox}
+
+\begin{exposition}
+Completeness lets order data produce limits. An increasing sequence bounded
+above converges to the least ceiling of its range; a decreasing sequence
+bounded below converges to the greatest floor of its range. Applying these
+same ideas to tail suprema and tail infima produces limsup and liminf for
+every bounded sequence.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Theorem --- Increasing Sequence Limit as Supremum
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Increasing Sequence Limit as Supremum)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Increasing Sequence Limit as Supremum]
+\label{thm:increasing-sequence-limit-as-supremum}
+Let $(x_n)$ be an increasing real sequence that is bounded above. Then
+\[
+  \lim_{n\to\infty}x_n=\sup\{x_n:n\in\mathbb{N}\}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:increasing-sequence-limit-as-supremum]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  \bigl[\forall n\in\mathbb{N}\;(x_n\le x_{n+1})\bigr]
+  \land
+  \bigl[\exists M\in\mathbb{R}\;\forall n\in\mathbb{N}\;(x_n\le M)\bigr]\\
+&\qquad\Longrightarrow\quad
+  \lim_{n\to\infty}x_n=\sup\{x_n:n\in\mathbb{N}\}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{MonotoneIncreasingSequence}(x_n)
+\land
+\operatorname{BoundedAboveSequence}(x_n)
+\Longrightarrow
+\operatorname{ConvergentSequence}\bigl(x_n,\sup\{x_n:n\in\mathbb{N}\}\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The supremum is the only possible destination: all terms lie below it, and
+the defining approximation property of the supremum forces the sequence
+eventually above every lower tolerance.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:increasing-sequence]{Increasing Sequence}
+  \item \hyperref[def:sequence-bounded-above]{Sequence Bounded Above}
+  \item \hyperref[def:supremum]{Supremum}
+  \item \hyperref[thm:monotone-convergence-theorem]{Monotone Convergence Theorem}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Decreasing Sequence Limit as Infimum
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Decreasing Sequence Limit as Infimum)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Decreasing Sequence Limit as Infimum]
+\label{thm:decreasing-sequence-limit-as-infimum}
+Let $(x_n)$ be a decreasing real sequence that is bounded below. Then
+\[
+  \lim_{n\to\infty}x_n=\inf\{x_n:n\in\mathbb{N}\}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:decreasing-sequence-limit-as-infimum]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  \bigl[\forall n\in\mathbb{N}\;(x_{n+1}\le x_n)\bigr]
+  \land
+  \bigl[\exists m\in\mathbb{R}\;\forall n\in\mathbb{N}\;(m\le x_n)\bigr]\\
+&\qquad\Longrightarrow\quad
+  \lim_{n\to\infty}x_n=\inf\{x_n:n\in\mathbb{N}\}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{MonotoneDecreasingSequence}(x_n)
+\land
+\operatorname{BoundedBelowSequence}(x_n)
+\Longrightarrow
+\operatorname{ConvergentSequence}\bigl(x_n,\inf\{x_n:n\in\mathbb{N}\}\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The infimum is the decreasing analogue of the supremum target: the sequence
+falls toward its greatest lower barrier.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:decreasing-sequence]{Decreasing Sequence}
+  \item \hyperref[def:sequence-bounded-below]{Sequence Bounded Below}
+  \item \hyperref[def:infimum]{Infimum}
+  \item \hyperref[thm:monotone-convergence-theorem]{Monotone Convergence Theorem}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Tail Suprema and Infima Converge
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Tail Suprema and Infima Converge)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Tail Suprema and Infima Converge]
+\label{thm:tail-suprema-and-infima-converge}
+Let $(x_n)$ be a bounded real sequence. Define
+\[
+  s_n=\sup\{x_k:k\ge n\},
+  \qquad
+  i_n=\inf\{x_k:k\ge n\}.
+\]
+Then $(s_n)$ and $(i_n)$ converge.
+
+\smallskip
+\noindent
+\hyperref[prf:tail-suprema-and-infima-converge]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  (x_n)\text{ is bounded}
+  \Longrightarrow\\
+&\quad
+  \exists S,I\in\mathbb{R}\;
+  \Bigl[
+    \lim_{n\to\infty}\sup\{x_k:k\ge n\}=S
+    \land
+    \lim_{n\to\infty}\inf\{x_k:k\ge n\}=I
+  \Bigr]
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\Longrightarrow
+\exists S,I\in\mathbb{R}\;
+\bigl(
+  \operatorname{ConvergentSequence}(\sup\{x_k:k\ge n\},S)
+  \land
+  \operatorname{ConvergentSequence}(\inf\{x_k:k\ge n\},I)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Tail suprema decrease because later tails contain fewer terms; tail infima
+increase for the same reason. Boundedness supplies the opposite bound needed
+for monotone convergence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:tail-supremum-sequence]{Tail Supremum Sequence}
+  \item \hyperref[def:tail-infimum-sequence]{Tail Infimum Sequence}
+  \item \hyperref[thm:tail-suprema-are-decreasing]{Tail Suprema Are Decreasing}
+  \item \hyperref[thm:tail-infima-are-increasing]{Tail Infima Are Increasing}
+  \item \hyperref[thm:monotone-convergence-theorem]{Monotone Convergence Theorem}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Bounded Sequence Has Limsup and Liminf
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bounded Sequence Has Limsup and Liminf)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Bounded Sequence Has Limsup and Liminf]
+\label{thm:bounded-sequence-has-limsup-and-liminf}
+Every bounded real sequence has a limit superior and a limit inferior.
+
+\smallskip
+\noindent
+\hyperref[prf:bounded-sequence-has-limsup-and-liminf]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  (x_n)\text{ is bounded}
+  \Longrightarrow
+  \exists S,I\in\mathbb{R}\;
+  \bigl(S=\limsup_{n\to\infty}x_n
+  \land I=\liminf_{n\to\infty}x_n\bigr)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\Longrightarrow
+\exists S,I\in\mathbb{R}\;
+\bigl(
+  \operatorname{LimsupSequence}(x_n,S)
+  \land
+  \operatorname{LiminfSequence}(x_n,I)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+For bounded sequences, limsup and liminf are not extra assumptions. They are
+guaranteed order-theoretic limits of the tail envelopes.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limsup-sequence]{Limit Superior of a Sequence}
+  \item \hyperref[def:liminf-sequence]{Limit Inferior of a Sequence}
+  \item \hyperref[thm:tail-suprema-and-infima-converge]{Tail Suprema and Infima Converge}
+\end{itemize}
+\end{remark*}

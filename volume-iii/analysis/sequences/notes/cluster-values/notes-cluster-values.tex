@@ -1,0 +1,272 @@
+\subsection{Cluster Values of Sequences}
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Cluster Values Toolkit}]
+\textbf{Concept family:} Values approached infinitely often along a sequence.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Cluster Value of a Sequence
+  \item Theorem: Cluster Values Are Subsequential Limits
+  \item Theorem: Bounded Sequences Have Cluster Values
+  \item Theorem: Limsup and Liminf Are Extremal Cluster Values
+\end{itemize}
+\end{tcolorbox}
+
+\begin{exposition}
+A convergent sequence has only one limiting value. A bounded divergent
+sequence may still have values that it approaches along selected subsequences.
+Cluster values name this repeated limiting behavior without requiring the
+entire sequence to converge.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Definition --- Cluster Value of a Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Cluster Value of a Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Cluster Value of a Sequence]
+\label{def:cluster-value-sequence}
+Let $(x_n)$ be a real sequence, and let $L\in\mathbb{R}$. The number $L$ is
+a \textbf{cluster value} of $(x_n)$ if for every $\varepsilon>0$ and every
+$N\in\mathbb{N}$ there exists $n\ge N$ such that
+\[
+  |x_n-L|<\varepsilon.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+L\text{ is a cluster value of }(x_n)
+\Longleftrightarrow
+\forall \varepsilon>0\;\forall N\in\mathbb{N}\;\exists n\ge N
+\;\bigl(|x_n-L|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{SequenceClusterValue}(x_n,L)
+\coloneqq
+\forall \varepsilon>0\;\forall N\in\mathbb{N}\;\exists n\ge N
+\;\bigl(|x_n-L|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+L\text{ is not a cluster value of }(x_n)
+\Longleftrightarrow
+\exists \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(|x_n-L|\ge\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+No matter how far out in the sequence one looks, some later term returns
+inside every neighborhood of $L$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cluster Values Are Subsequential Limits
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cluster Values Are Subsequential Limits)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cluster Values Are Subsequential Limits]
+\label{thm:cluster-values-are-subsequential-limits}
+Let $(x_n)$ be a real sequence, and let $L\in\mathbb{R}$. Then $L$ is a
+cluster value of $(x_n)$ if and only if $L$ is a subsequential limit of
+$(x_n)$.
+
+\smallskip
+\noindent
+\hyperref[prf:cluster-values-are-subsequential-limits]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;\forall L\in\mathbb{R}\;
+\Bigl(
+L\text{ is a cluster value of }(x_n)
+\Longleftrightarrow
+L\text{ is a subsequential limit of }(x_n)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{SequenceClusterValue}(x_n,L)
+\Longleftrightarrow
+\operatorname{SubsequentialLimit}(x_n,L).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The neighborhood formulation and the subsequence formulation describe the
+same phenomenon: infinitely many opportunities to get arbitrarily close to
+$L$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cluster-value-sequence]{Cluster Value of a Sequence}
+  \item \hyperref[def:subsequential-limit]{Subsequential Limit}
+  \item \hyperref[thm:frequent-properties-yield-subsequences]{Frequent Properties Yield Subsequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Bounded Sequences Have Cluster Values
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bounded Sequences Have Cluster Values)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Bounded Sequences Have Cluster Values]
+\label{thm:bounded-sequences-have-cluster-values}
+Every bounded real sequence has at least one cluster value.
+
+\smallskip
+\noindent
+\hyperref[prf:bounded-sequences-have-cluster-values]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  \bigl[\exists M>0\;\forall n\in\mathbb{N}\;(|x_n|\le M)\bigr]
+  \Longrightarrow
+  \exists L\in\mathbb{R}\;
+  \bigl(L\text{ is a cluster value of }(x_n)\bigr)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\Longrightarrow
+\exists L\in\mathbb{R}\;\operatorname{SequenceClusterValue}(x_n,L).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Boundedness traps the sequence in a finite interval, and
+Bolzano-Weierstrass extracts a convergent subsequence from that trap.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+  \item \hyperref[thm:bolzano-weierstrass-sequences]{Bolzano-Weierstrass Theorem for Sequences}
+  \item \hyperref[thm:cluster-values-are-subsequential-limits]{Cluster Values Are Subsequential Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Limsup and Liminf Are Extremal Cluster Values
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Limsup and Liminf Are Extremal Cluster Values)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Limsup and Liminf Are Extremal Cluster Values]
+\label{thm:limsup-liminf-extremal-cluster-values}
+Let $(x_n)$ be a bounded real sequence. Then
+$\limsup_{n\to\infty}x_n$ is the largest cluster value of $(x_n)$, and
+$\liminf_{n\to\infty}x_n$ is the smallest cluster value of $(x_n)$.
+
+\smallskip
+\noindent
+\hyperref[prf:limsup-liminf-extremal-cluster-values]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  (x_n)\text{ is bounded}
+  \Longrightarrow\\
+&\quad
+  \Bigl[
+    \limsup_{n\to\infty}x_n
+    \text{ is a cluster value of }(x_n)
+    \land
+    \forall L\in\mathbb{R}\;
+    \bigl(L\text{ is a cluster value of }(x_n)
+    \Longrightarrow L\le \limsup_{n\to\infty}x_n\bigr)
+  \Bigr]\\
+&\quad\land
+  \Bigl[
+    \liminf_{n\to\infty}x_n
+    \text{ is a cluster value of }(x_n)
+    \land
+    \forall L\in\mathbb{R}\;
+    \bigl(L\text{ is a cluster value of }(x_n)
+    \Longrightarrow \liminf_{n\to\infty}x_n\le L\bigr)
+  \Bigr]
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\begin{aligned}
+&\operatorname{BoundedSequence}(x_n)
+\Longrightarrow\\
+&\quad
+\operatorname{SequenceClusterValue}
+\bigl(x_n,\limsup_{n\to\infty}x_n\bigr)
+\land
+\forall L\in\mathbb{R}\;
+\bigl(\operatorname{SequenceClusterValue}(x_n,L)
+\Longrightarrow L\le \limsup_{n\to\infty}x_n\bigr),\\
+&\operatorname{BoundedSequence}(x_n)
+\Longrightarrow\\
+&\quad
+\operatorname{SequenceClusterValue}
+\bigl(x_n,\liminf_{n\to\infty}x_n\bigr)
+\land
+\forall L\in\mathbb{R}\;
+\bigl(\operatorname{SequenceClusterValue}(x_n,L)
+\Longrightarrow \liminf_{n\to\infty}x_n\le L\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Limsup and liminf describe the top and bottom edges of the sequence's
+subsequential behavior.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:limsup-sequence]{Limit Superior of a Sequence}
+  \item \hyperref[def:liminf-sequence]{Limit Inferior of a Sequence}
+  \item \hyperref[thm:limsup-largest-subsequential-limit]{Limsup Is the Largest Subsequential Limit}
+  \item \hyperref[thm:liminf-smallest-subsequential-limit]{Liminf Is the Smallest Subsequential Limit}
+  \item \hyperref[thm:cluster-values-are-subsequential-limits]{Cluster Values Are Subsequential Limits}
+\end{itemize}
+\end{remark*}

@@ -1,0 +1,603 @@
+\subsection{Divergence}
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Divergence Toolkit}]
+\textbf{Concept family:} Failure modes for convergence of real sequences.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Divergent Sequence
+  \item Definition: Divergence to Positive Infinity
+  \item Definition: Divergence to Negative Infinity
+  \item Definition: Oscillatory Sequence
+  \item Theorem: Divergence to Infinity Implies Real Divergence
+  \item Theorem: Two Subsequential Limits Force Divergence
+  \item Theorem: Unbounded Above Sequence Has a Positive-Infinity Subsequence
+  \item Theorem: Unbounded Below Sequence Has a Negative-Infinity Subsequence
+  \item Theorem: Bounded Divergence Produces Two Subsequential Limits
+\end{itemize}
+\end{tcolorbox}
+
+\begin{exposition}
+Divergence is not a single behavior. A sequence can fail to converge because
+it escapes upward, escapes downward, oscillates between incompatible limiting
+patterns, or remains bounded while refusing to settle. The purpose of this
+section is to separate these failure modes and connect them to subsequences.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Definition --- Divergent Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Divergent Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Divergent Sequence]
+\label{def:divergent-sequence}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{divergent} if there is no $L\in\mathbb{R}$ such that
+$x_n\to L$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ is divergent}\\
+&\quad\Longleftrightarrow\quad
+\forall L\in\mathbb{R}\;\exists \varepsilon>0\;\forall N\in\mathbb{N}
+\;\exists n\ge N\;\bigl(|x_n-L|\ge\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DivergentSequence}(x_n)
+\coloneqq
+\forall L\in\mathbb{R}\;\exists \varepsilon>0\;\forall N\in\mathbb{N}
+\;\exists n\ge N\;\bigl(|x_n-L|\ge\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+(x_n)\text{ is not divergent}
+\Longleftrightarrow
+\exists L\in\mathbb{R}\;\forall \varepsilon>0\;\exists N\in\mathbb{N}
+\;\forall n\ge N\;\bigl(|x_n-L|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{DivergentSequence}(x_n)
+\Longleftrightarrow
+\exists L\in\mathbb{R}\;\operatorname{ConvergentSequence}(x_n,L).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Divergence is the formal negation of real convergence. It says that every
+candidate limit fails at some fixed tolerance on every tail.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Divergence to Positive Infinity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Divergence to Positive Infinity)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Divergence to Positive Infinity]
+\label{def:diverges-to-positive-infinity}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ \textbf{diverges to}
+$+\infty$ if
+\[
+  \forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+  \;\bigl(M<x_n\bigr).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+x_n\to+\infty
+\Longleftrightarrow
+\forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(M<x_n\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DivergesToPositiveInfinity}(x_n)
+\coloneqq
+\forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(M<x_n\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+x_n\not\to+\infty
+\Longleftrightarrow
+\exists M\in\mathbb{R}\;\forall N\in\mathbb{N}\;\exists n\ge N
+\;\bigl(x_n\le M\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Divergence to $+\infty$ means every horizontal threshold is eventually left
+below the sequence. It is not convergence to a real number; it is escape from
+the real line in the positive direction.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Divergence to Negative Infinity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Divergence to Negative Infinity)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Divergence to Negative Infinity]
+\label{def:diverges-to-negative-infinity}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ \textbf{diverges to}
+$-\infty$ if
+\[
+  \forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+  \;\bigl(x_n<M\bigr).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+x_n\to-\infty
+\Longleftrightarrow
+\forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(x_n<M\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DivergesToNegativeInfinity}(x_n)
+\coloneqq
+\forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(x_n<M\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+x_n\not\to-\infty
+\Longleftrightarrow
+\exists M\in\mathbb{R}\;\forall N\in\mathbb{N}\;\exists n\ge N
+\;\bigl(M\le x_n\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Divergence to $-\infty$ is escape past every lower threshold. It is the
+order-dual of divergence to $+\infty$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Oscillatory Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Oscillatory Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Oscillatory Sequence]
+\label{def:oscillatory-sequence}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{oscillatory} if it is divergent, does not diverge to $+\infty$,
+and does not diverge to $-\infty$.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ is oscillatory}\\
+&\quad\Longleftrightarrow\quad
+\Bigl[
+  \forall L\in\mathbb{R}\;\exists \varepsilon>0\;\forall N\in\mathbb{N}
+  \;\exists n\ge N\;\bigl(|x_n-L|\ge\varepsilon\bigr)
+\Bigr]\\
+&\qquad\land
+\Bigl[
+  \exists M\in\mathbb{R}\;\forall N\in\mathbb{N}\;\exists n\ge N
+  \;\bigl(x_n\le M\bigr)
+\Bigr]\\
+&\qquad\land
+\Bigl[
+  \exists M\in\mathbb{R}\;\forall N\in\mathbb{N}\;\exists n\ge N
+  \;\bigl(M\le x_n\bigr)
+\Bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\begin{aligned}
+\operatorname{OscillatorySequence}(x_n)
+\coloneqq\;&
+\operatorname{DivergentSequence}(x_n)\\
+&\land\;\neg\operatorname{DivergesToPositiveInfinity}(x_n)\\
+&\land\;\neg\operatorname{DivergesToNegativeInfinity}(x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Oscillation means failure to settle without one-directional escape. The
+sequence may remain bounded, as $(-1)^n$ does, or it may be unbounded while
+still repeatedly returning in incompatible directions.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:divergent-sequence]{Divergent Sequence}
+  \item \hyperref[def:diverges-to-positive-infinity]{Divergence to Positive Infinity}
+  \item \hyperref[def:diverges-to-negative-infinity]{Divergence to Negative Infinity}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Divergence to Infinity Implies Real Divergence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Divergence to Infinity Implies Real Divergence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Divergence to Infinity Implies Real Divergence]
+\label{thm:divergence-to-infinity-implies-real-divergence}
+Let $(x_n)$ be a real sequence. If $x_n\to+\infty$ or $x_n\to-\infty$,
+then $(x_n)$ is divergent.
+
+\smallskip
+\noindent
+\hyperref[prf:divergence-to-infinity-implies-real-divergence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[
+  \forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+  \;\bigl(M<x_n\bigr)
+\Bigr]\\
+&\quad\lor
+\Bigl[
+  \forall M\in\mathbb{R}\;\exists N\in\mathbb{N}\;\forall n\ge N
+  \;\bigl(x_n<M\bigr)
+\Bigr]\\
+&\qquad\Longrightarrow
+\forall L\in\mathbb{R}\;\exists \varepsilon>0\;\forall N\in\mathbb{N}
+\;\exists n\ge N\;\bigl(|x_n-L|\ge\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{DivergesToPositiveInfinity}(x_n)
+\lor
+\operatorname{DivergesToNegativeInfinity}(x_n)
+\Longrightarrow
+\operatorname{DivergentSequence}(x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Infinity divergence is a stronger, directional failure of real convergence.
+A sequence escaping past every real threshold cannot approach a finite real
+limit.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:divergent-sequence]{Divergent Sequence}
+  \item \hyperref[def:diverges-to-positive-infinity]{Divergence to Positive Infinity}
+  \item \hyperref[def:diverges-to-negative-infinity]{Divergence to Negative Infinity}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Two Subsequential Limits Force Divergence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Two Subsequential Limits Force Divergence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Two Subsequential Limits Force Divergence]
+\label{thm:two-subsequential-limits-force-divergence}
+Let $(x_n)$ be a real sequence. If $(x_n)$ has two subsequential limits
+$L,K\in\mathbb{R}$ with $L\ne K$, then $(x_n)$ is divergent.
+
+\smallskip
+\noindent
+\hyperref[prf:two-subsequential-limits-force-divergence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\exists L,K\in\mathbb{R}\;
+\Bigl(
+  L\ne K
+  \land
+  L\text{ is a subsequential limit of }(x_n)
+  \land
+  K\text{ is a subsequential limit of }(x_n)
+\Bigr)\\
+&\quad\Longrightarrow
+\forall A\in\mathbb{R}\;\exists \varepsilon>0\;\forall N\in\mathbb{N}
+\;\exists n\ge N\;\bigl(|x_n-A|\ge\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\begin{aligned}
+&\exists L,K\in\mathbb{R}\;
+\bigl(
+  L\ne K
+  \land \operatorname{SubsequentialLimit}(x_n,L)
+  \land \operatorname{SubsequentialLimit}(x_n,K)
+\bigr)\\
+&\quad\Longrightarrow
+\operatorname{DivergentSequence}(x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Convergence forces all subsequences to inherit the same limit. Two different
+subsequential limits therefore witness an irreparable conflict in the tail
+behavior of the original sequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:subsequential-limit]{Subsequential Limit}
+  \item \hyperref[thm:subsequences-preserve-limits]{Subsequences Preserve Limits}
+  \item \hyperref[thm:uniqueness-of-limits]{Uniqueness of Limits}
+  \item \hyperref[thm:divergence-by-two-subsequential-limits]{Divergence by Two Subsequential Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Unbounded Above Sequence Has a Positive-Infinity Subsequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Unbounded Above Sequence Has a Positive-Infinity Subsequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Unbounded Above Sequence Has a Positive-Infinity Subsequence]
+\label{thm:unbounded-above-has-positive-infinity-subsequence}
+Let $(x_n)$ be a real sequence. If $(x_n)$ is not bounded above, then
+there exists a subsequence $(x_{\sigma(k)})$ such that
+$x_{\sigma(k)}\to+\infty$.
+
+\smallskip
+\noindent
+\hyperref[prf:unbounded-above-has-positive-infinity-subsequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[
+  \forall M\in\mathbb{R}\;\exists n\in\mathbb{N}\;\bigl(M<x_n\bigr)
+\Bigr]\\
+&\quad\Longrightarrow
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))
+  \land
+  \forall M\in\mathbb{R}\;\exists K\in\mathbb{N}\;\forall k\ge K
+  \;\bigl(M<x_{\sigma(k)}\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\neg\operatorname{BoundedAboveSequence}(x_n)
+\Longrightarrow
+\exists \sigma\;
+\bigl(
+  \operatorname{StrictlyIncreasing}(\sigma)
+  \land
+  \operatorname{DivergesToPositiveInfinity}(x_{\sigma(k)})
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Unboundedness above may be sparse. This theorem says the high values can
+still be selected in increasing index order to form a subsequence that
+escapes to $+\infty$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence-bounded-above]{Sequence Bounded Above}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item \hyperref[def:diverges-to-positive-infinity]{Divergence to Positive Infinity}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Unbounded Below Sequence Has a Negative-Infinity Subsequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Unbounded Below Sequence Has a Negative-Infinity Subsequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Unbounded Below Sequence Has a Negative-Infinity Subsequence]
+\label{thm:unbounded-below-has-negative-infinity-subsequence}
+Let $(x_n)$ be a real sequence. If $(x_n)$ is not bounded below, then
+there exists a subsequence $(x_{\sigma(k)})$ such that
+$x_{\sigma(k)}\to-\infty$.
+
+\smallskip
+\noindent
+\hyperref[prf:unbounded-below-has-negative-infinity-subsequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[
+  \forall M\in\mathbb{R}\;\exists n\in\mathbb{N}\;\bigl(x_n<M\bigr)
+\Bigr]\\
+&\quad\Longrightarrow
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))
+  \land
+  \forall M\in\mathbb{R}\;\exists K\in\mathbb{N}\;\forall k\ge K
+  \;\bigl(x_{\sigma(k)}<M\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\neg\operatorname{BoundedBelowSequence}(x_n)
+\Longrightarrow
+\exists \sigma\;
+\bigl(
+  \operatorname{StrictlyIncreasing}(\sigma)
+  \land
+  \operatorname{DivergesToNegativeInfinity}(x_{\sigma(k)})
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Unboundedness below can be converted into a selected tail that escapes past
+every lower threshold. The proof is the order-reversed version of the
+positive-infinity subsequence construction.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence-bounded-below]{Sequence Bounded Below}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item \hyperref[def:diverges-to-negative-infinity]{Divergence to Negative Infinity}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Bounded Divergence Produces Two Subsequential Limits
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bounded Divergence Produces Two Subsequential Limits)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Bounded Divergence Produces Two Subsequential Limits]
+\label{thm:bounded-divergence-produces-two-subsequential-limits}
+Let $(x_n)$ be a bounded real sequence. If $(x_n)$ is divergent, then
+there exist $L,K\in\mathbb{R}$ with $L\ne K$ such that $L$ and $K$ are
+subsequential limits of $(x_n)$.
+
+\smallskip
+\noindent
+\hyperref[prf:bounded-divergence-produces-two-subsequential-limits]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl[
+  \exists M>0\;\forall n\in\mathbb{N}\;\bigl(|x_n|\le M\bigr)
+\Bigr]
+\land
+\Bigl[
+  \forall A\in\mathbb{R}\;\exists \varepsilon>0\;\forall N\in\mathbb{N}
+  \;\exists n\ge N\;\bigl(|x_n-A|\ge\varepsilon\bigr)
+\Bigr]\\
+&\quad\Longrightarrow
+\exists L,K\in\mathbb{R}\;
+\Bigl(
+  L\ne K
+  \land L\text{ is a subsequential limit of }(x_n)
+  \land K\text{ is a subsequential limit of }(x_n)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\land
+\operatorname{DivergentSequence}(x_n)
+\Longrightarrow
+\exists L,K\in\mathbb{R}\;
+\bigl(
+  L\ne K
+  \land \operatorname{SubsequentialLimit}(x_n,L)
+  \land \operatorname{SubsequentialLimit}(x_n,K)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bounded divergence cannot be explained by escape to infinity. In the real
+line, compactness forces convergent subsequences, and divergence forces at
+least two incompatible subsequential limits.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+  \item \hyperref[def:divergent-sequence]{Divergent Sequence}
+  \item \hyperref[def:subsequential-limit]{Subsequential Limit}
+  \item \hyperref[thm:bolzano-weierstrass-sequences]{Bolzano-Weierstrass Theorem for Sequences}
+  \item \hyperref[thm:subsequences-preserve-limits]{Subsequences Preserve Limits}
+\end{itemize}
+\end{remark*}

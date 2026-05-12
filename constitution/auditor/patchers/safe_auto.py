@@ -49,9 +49,9 @@ PROOF_LABEL_BLOCKS = {
 BOX_COLORS = {
     "def": ("defbox", "defborder", "Definition"),
     "thm": ("thmbox", "thmborder", "Theorem"),
-    "lem": ("propbox", "propborder", "Lemma"),
+    "lem": ("lembox", "lemborder", "Lemma"),
     "prop": ("propbox", "propborder", "Proposition"),
-    "cor": ("propbox", "propborder", "Corollary"),
+    "cor": ("corbox", "corborder", "Corollary"),
     "ax": ("axiombox", "axiomborder", "Axiom"),
 }
 

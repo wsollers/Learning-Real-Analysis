@@ -1,4 +1,4 @@
-\begin{bpnew}{propborder}{Definition: $M$-Tail of a Sequence}
+\begin{bpnew}{defborder}{Definition: $M$-Tail of a Sequence}
 % ---------------------------------------------------------
 % Definition: $M$-Tail of a Sequence
 % Label: def:m-tail
@@ -242,5 +242,120 @@ convergence to $L$.
 \begin{itemize}
   \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
   \item \hyperref[def:m-tail]{$M$-Tail of a Sequence}
+\end{itemize}
+\end{remark*}
+
+
+
+\begin{bpnew}{thmborder}{Theorem: Ratio Limit Less Than One Implies Null}
+% ---------------------------------------------------------
+% Theorem: Ratio Limit Less Than One Implies Null
+% Label: thm:ratio-limit-less-than-one-implies-null
+% ---------------------------------------------------------
+\begin{theorem}[Ratio Limit Less Than One Implies Null]
+\label{thm:ratio-limit-less-than-one-implies-null}
+
+Let $(x_n)$ be a sequence of positive real numbers. Suppose that the
+limit
+\[
+    L := \lim_{n\to\infty}\frac{x_{n+1}}{x_n}
+\]
+exists. If $L<1$, then $(x_n)$ converges and
+\[
+    \lim_{n\to\infty} x_n = 0.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:ratio-limit-less-than-one-implies-null]{\textit{Go to proof.}}
+\end{theorem}
+\end{bpnew}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq (0,\infty)\;\forall L\in\mathbb{R}\\
+&\quad\Bigl(
+    \lim_{n\to\infty}\frac{x_{n+1}}{x_n}=L
+    \;\land\;
+    L<1
+\Bigr)
+\Longrightarrow
+\lim_{n\to\infty}x_n=0.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\bigl(
+\operatorname{ConvergentSequence}\bigl(x_{n+1}/x_n,L\bigr)
+\land
+L<1
+\bigr)
+\Longrightarrow
+\operatorname{NullSequence}(x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\exists (x_n)\subseteq (0,\infty)\;\exists L\in\mathbb{R}\\
+&\quad\Bigl(
+    \lim_{n\to\infty}\frac{x_{n+1}}{x_n}=L
+    \;\land\;
+    L<1
+    \;\land\;
+    \lim_{n\to\infty}x_n\neq 0
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\operatorname{ConvergentSequence}\bigl(x_{n+1}/x_n,L\bigr)
+\land
+L<1
+\land
+\operatorname{NotConvergentTo}(x_n,0).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A failure would be a positive sequence whose consecutive ratios settle below
+one in the limit but whose terms do not tend to zero. The theorem says this
+cannot happen: once the ratio limit is less than one, some tail has ratios
+bounded by a fixed number $r<1$, forcing geometric decay.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{(x_n)\subseteq(0,\infty)}_{\text{positive terms}}
+\quad
+\underbrace{\lim_{n\to\infty}\frac{x_{n+1}}{x_n}=L<1}_{\text{eventual ratio gap}}
+\quad
+\underbrace{\lim_{n\to\infty}x_n\neq 0}_{\text{fails to be null}}.
+\]
+The positive-term hypothesis makes each ratio meaningful. The strict gap
+$L<1$ gives a tail on which $x_{n+1}\le r x_n$ for some $r<1$, and repeated
+iteration then gives domination by a null geometric sequence.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the sequence form of the ratio test. The theorem does not merely say
+that the terms decrease eventually; it says they decrease at an eventually
+geometric rate. The strict inequality $L<1$ is essential. When the ratio
+limit equals $1$, the conclusion may hold, as with $1/n$, or fail, as with
+the constant sequence $1$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+  \item \hyperref[def:m-tail]{$M$-Tail of a Sequence}
+  \item \hyperref[thm:convergence-by-domination]{Convergence by Domination}
 \end{itemize}
 \end{remark*}

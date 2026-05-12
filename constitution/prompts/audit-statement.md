@@ -72,7 +72,11 @@ exposition may satisfy the interpretation requirement.
 - For def: present on first appearance, absent on subsequent appearances?
 - For thm: present only if theorem has proper name, is primary result, cited later?
 - For ax: always present?
-- For lem / prop / cor: absent?
+- For prop: if boxed, uses `colback=propbox, colframe=propborder` and is structurally promoted?
+- For lem: if boxed, uses `colback=lembox, colframe=lemborder` and is structurally promoted?
+- For cor: if boxed, uses `colback=corbox, colframe=corborder` and is structurally promoted?
+- For routine lem / prop / cor: absent?
+- No local statement-box color definitions or decorative gradients?
 
 ### proof_link
 - For thm / lem / prop / cor: \hyperref[prf:...] present at end of environment body?

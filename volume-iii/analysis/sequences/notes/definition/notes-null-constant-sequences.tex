@@ -1,1467 +1,1348 @@
 \subsection{Null and Constant Sequences}
+
 % ---------------------------------------------------------
 % Definition --- Constant Sequence
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Constant Sequence)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Constant Sequence]
 \label{def:constant-sequence}
-
-\textbf{English.}
-A sequence $(x_n)$ in $\mathbb{R}$ is constant if all of its terms are equal to a fixed real number.
-
-\textbf{Quantified.}
-There exists $c \in \mathbb{R}$ such that for every $n \in \mathbb{N}$,
-\[
-x_n = c.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(x_n = c).
-\]
-
-\textbf{Predicate.}
-\[
-\exists c \in \mathbb{R}\;
-\mathrm{ConstantSequence}(x_n, c).
-\]
-
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{constant} exactly when there exists $c \in \mathbb{R}$ such that
+$x_n = c$ for every $n \in \mathbb{N}$.
 \end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is constant}
+\Longleftrightarrow
+\exists c \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(x_n = c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConstantSequence}(x_n,c)
+\coloneqq
+\forall n \in \mathbb{N}\;(x_n = c).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is not constant}
+\Longleftrightarrow
+\forall c \in \mathbb{R}\;
+\exists n \in \mathbb{N}\;(x_n \neq c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\exists c \in \mathbb{R}\;
+\operatorname{ConstantSequence}(x_n,c).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Every proposed constant value fails at some index.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\forall c \in \mathbb{R}\;
+\underbrace{\exists n \in \mathbb{N}\;(x_n \neq c)}
+_{\text{a term differs from the proposed constant value}}.
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-A constant sequence does not evolve: the “time index” $n$ has no effect on the value.
-It represents a completely static process.
+A constant sequence has no genuine dependence on the index. The indexing is
+still part of the object, but every index is assigned the same real value.
 \end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
 % ---------------------------------------------------------
 % Definition --- Null Sequence
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Null Sequence)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Null Sequence]
 \label{def:null-sequence}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is a
+\textbf{null sequence} exactly when for every $\varepsilon > 0$ there exists
+$N \in \mathbb{N}$ such that $|x_n| < \varepsilon$ for every $n \ge N$.
+\end{definition}
+\end{tcolorbox}
 
-\textbf{English.}
-A sequence $(x_n)$ in $\mathbb{R}$ is a null sequence if its terms become arbitrarily close to $0$.
-
-\textbf{Quantified.}
-For every $\varepsilon > 0$, there exists $N \in \mathbb{N}$ such that for every $n \geq N$,
+\begin{remark*}[Standard quantified statement]
 \[
-|x_n| < \varepsilon.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is a null sequence}
+\Longleftrightarrow
 \forall \varepsilon > 0\;
 \exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |x_n| < \varepsilon).
+\forall n \ge N\;(|x_n| < \varepsilon).
+\end{aligned}
 \]
+\end{remark*}
 
-\textbf{Predicate.}
+\begin{remark*}[Definition predicate reading]
 \[
-\mathrm{NullSequence}(x_n).
+\operatorname{NullSequence}(x_n)
+\coloneqq
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n| < \varepsilon).
 \]
+\end{remark*}
 
-\end{definition}
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is not a null sequence}
+\Longleftrightarrow
+\exists \varepsilon > 0\;
+\forall N \in \mathbb{N}\;
+\exists n \ge N\;(|x_n| \ge \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{NullSequence}(x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Some positive tolerance is missed infinitely far out in the sequence.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\exists \varepsilon > 0\;
+\forall N \in \mathbb{N}\;
+\underbrace{\exists n \ge N\;(|x_n| \ge \varepsilon)}
+_{\text{the tail is not trapped inside the } \varepsilon\text{-band}}.
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-A null sequence captures the idea of vanishing: no matter how small a tolerance is chosen,
-the sequence eventually remains within that tolerance of zero.
+A null sequence is a sequence whose tail is eventually contained in every
+symmetric neighborhood of zero. The first finitely many terms are irrelevant;
+only the eventual behavior matters.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Constant Sequence Convergence
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Constant Sequence Convergence)}}
-]
-
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Constant Sequence Convergence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Constant Sequence Convergence]
 \label{thm:constant-sequence-convergence}
+Let $(x_n)$ be a real sequence, and let $c \in \mathbb{R}$. If $x_n = c$
+for every $n \in \mathbb{N}$, then $(x_n)$ converges to $c$.
 
-\textbf{English.}
-Every constant sequence converges to its constant value.
-
-\textbf{Quantified.}
-If there exists $c \in \mathbb{R}$ such that for every $n \in \mathbb{N}$,
-\[
-x_n = c,
-\]
-then
-\[
-\lim_{n \to \infty} x_n = c.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(x_n = c)
-\\
-&\qquad\rightarrow
-\\
-&\forall \varepsilon > 0\;
-\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |x_n - c| < \varepsilon).
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{ConstantSequence}(x_n, c)
-\;\rightarrow\;
-\mathrm{ConvergentSequence}(x_n, c).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:constant-sequence-convergence]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence and } c \in \mathbb{R}.\\
+&\bigl(\forall n \in \mathbb{N}\;(x_n = c)\bigr)
+\Longrightarrow
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n - c| < \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ConstantSequence}(x_n,c)
+\Longrightarrow
+\operatorname{ConvergentSequence}(x_n,c).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-There is no approximation occurring here: the sequence is already equal to its limit at every index.
+A constant sequence is already equal to its proposed limit at every index.
+Every positive tolerance is therefore satisfied by any tail of the sequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:constant-sequence]{Constant Sequence}
+  \item \hyperref[def:convergent-sequence]{Convergent Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Zero Sequence is Null
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Zero Sequence is Null)}}
-]
-
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Zero Sequence is Null)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Zero Sequence is Null]
 \label{thm:zero-sequence-is-null}
-
-\textbf{English.}
-The constant zero sequence is a null sequence.
-
-\textbf{Quantified.}
-If for every $n \in \mathbb{N}$,
-\[
-x_n = 0,
-\]
+Let $(x_n)$ be a real sequence. If $x_n = 0$ for every $n \in \mathbb{N}$,
 then $(x_n)$ is a null sequence.
 
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\forall n \in \mathbb{N}\;
-(x_n = 0)
-\\
-&\qquad\rightarrow
-\\
-&\forall \varepsilon > 0\;
-\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |x_n| < \varepsilon).
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{ConstantSequence}(x_n, 0)
-\;\rightarrow\;
-\mathrm{NullSequence}(x_n).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:zero-sequence-is-null]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl(\forall n \in \mathbb{N}\;(x_n = 0)\bigr)
+\Longrightarrow
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n| < \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ConstantSequence}(x_n,0)
+\Longrightarrow
+\operatorname{NullSequence}(x_n).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-The sequence is already exactly at zero, so it trivially satisfies every $\varepsilon$-constraint.
+The zero sequence satisfies every null-sequence tolerance immediately because
+the distance from each term to zero is exactly zero.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+  \item \hyperref[def:constant-sequence]{Constant Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Constant Null Sequence
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Constant Null Sequence)}}
-]
-
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Constant Null Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Constant Null Sequence]
 \label{thm:constant-null-sequence}
+Let $(x_n)$ be a real sequence, and let $c \in \mathbb{R}$. If $x_n = c$
+for every $n \in \mathbb{N}$, then $(x_n)$ is a null sequence if and only if
+$c = 0$.
 
-\textbf{English.}
-A constant sequence is null if and only if its constant value is zero.
-
-\textbf{Quantified.}
-If there exists $c \in \mathbb{R}$ such that
-\[
-x_n = c \quad \text{for every } n \in \mathbb{N},
-\]
-and $(x_n)$ is a null sequence, then $c = 0$.
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(x_n = c)
-\\
-&\land
-\\
-&\forall \varepsilon > 0\;
-\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |x_n| < \varepsilon)
-\\
-&\qquad\rightarrow
-\\
-&c = 0.
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{ConstantSequence}(x_n, c)
-\land
-\mathrm{NullSequence}(x_n)
-\;\rightarrow\;
-c = 0.
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:constant-null-sequence]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence and } c \in \mathbb{R}.\\
+&\bigl(\forall n \in \mathbb{N}\;(x_n = c)\bigr)
+\Longrightarrow
+\Bigl(
+\bigl[
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n| < \varepsilon)
+\bigr]
+\Longleftrightarrow c = 0
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ConstantSequence}(x_n,c)
+\Longrightarrow
+\bigl(\operatorname{NullSequence}(x_n) \Longleftrightarrow c = 0\bigr).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-A sequence that never changes can only “approach zero” if it is already zero.
+A sequence that never changes can approach zero only when its fixed value is
+already zero. Conversely, the fixed value zero gives the zero sequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:constant-sequence]{Constant Sequence}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition --- Ultimately Constant Sequence
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Ultimately Constant Sequence)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Ultimately Constant Sequence]
 \label{def:ultimately-constant-sequence}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{ultimately constant} exactly when there exist $N \in \mathbb{N}$ and
+$c \in \mathbb{R}$ such that $x_n = c$ for every $n \ge N$.
+\end{definition}
+\end{tcolorbox}
 
-\textbf{English.}
-A sequence $(x_n)$ in $\mathbb{R}$ is ultimately constant if, after some finite index, all of its terms are equal to one fixed real number.
-
-\textbf{Quantified.}
-There exist $N \in \mathbb{N}$ and $c \in \mathbb{R}$ such that for every $n \in \mathbb{N}$,
+\begin{remark*}[Standard quantified statement]
 \[
-n \geq N
-\quad\Longrightarrow\quad
-x_n = c.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is ultimately constant}
+\Longleftrightarrow
 \exists N \in \mathbb{N}\;
 \exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n = c).
+\forall n \ge N\;(x_n = c).
+\end{aligned}
 \]
+\end{remark*}
 
-\textbf{Definition predicate reading.}
+\begin{remark*}[Definition predicate reading]
 \[
-\mathrm{UltimatelyConstantSequence}(x_n,c).
+\operatorname{UltimatelyConstantSequence}(x_n,c)
+\coloneqq
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(x_n = c).
 \]
+\end{remark*}
 
-\end{definition}
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is not ultimately constant}
+\Longleftrightarrow
+\forall N \in \mathbb{N}\;
+\forall c \in \mathbb{R}\;
+\exists n \ge N\;(x_n \neq c).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\exists c \in \mathbb{R}\;
+\operatorname{UltimatelyConstantSequence}(x_n,c).
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+No tail of the sequence becomes permanently equal to a single real value.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\forall N \in \mathbb{N}\;
+\forall c \in \mathbb{R}\;
+\underbrace{\exists n \ge N\;(x_n \neq c)}
+_{\text{the proposed tail value fails later in the sequence}}.
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-An ultimately constant sequence may change during its initial finite segment, but its tail becomes fixed forever. Thus only the eventual behavior matters.
+An ultimately constant sequence may vary on an initial finite segment, but its
+tail becomes fixed. The concept isolates eventual behavior from finite
+initial behavior.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Difference from the Limit is Null
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Difference from the Limit is Null)}}
-]
-
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Difference from the Limit is Null)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Difference from the Limit is Null]
 \label{thm:difference-from-limit-is-null}
+Let $(x_n)$ be a real sequence, and let $L \in \mathbb{R}$. The sequence
+$(x_n)$ converges to $L$ if and only if the sequence $(x_n - L)$ is a null
+sequence.
 
-\textbf{English.}
-A sequence converges to $L$ if and only if subtracting $L$ from each term produces a null sequence.
-
-\textbf{Quantified.}
-\[
-\lim_{n \to \infty} x_n = L
-\quad\Longleftrightarrow\quad
-(x_n - L) \text{ is a null sequence}.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\forall \varepsilon > 0\;
-\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |x_n - L| < \varepsilon)
-\right]
-\\
-&\qquad\Longleftrightarrow
-\\
-&\left[
-\forall \varepsilon > 0\;
-\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |(x_n - L)| < \varepsilon)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{ConvergentSequence}(x_n, L)
-\;\Longleftrightarrow\;
-\mathrm{NullSequence}(x_n - L).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:difference-from-limit-is-null]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Interpretation]
-This theorem reduces all convergence problems to the special case of convergence to zero,
-making null sequences the fundamental building block of limit theory.
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence and } L \in \mathbb{R}.\\
+&\bigl[
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n - L| < \varepsilon)
+\bigr]\\
+&\qquad\Longleftrightarrow\qquad
+\bigl[
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n - L| < \varepsilon)
+\bigr].
+\end{aligned}
+\]
 \end{remark*}
 
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ConvergentSequence}(x_n,L)
+\Longleftrightarrow
+\operatorname{NullSequence}(x_n - L).
+\]
+\end{remark*}
 
-% =========================================================
-% Theorems --- Ultimately Constant Sequences
-% =========================================================
+\begin{remark*}[Interpretation]
+Subtracting the proposed limit translates the convergence problem to the
+special case of convergence to zero. Null sequences are therefore the local
+normal form for sequence convergence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:convergent-sequence]{Convergent Sequence}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+\end{itemize}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Ultimately Constant Sequence Convergence
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Ultimately Constant Sequence Convergence)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Ultimately Constant Sequence Convergence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Ultimately Constant Sequence Convergence]
 \label{thm:ultimately-constant-sequence-convergence}
+Let $(x_n)$ be a real sequence. If there exist $N_0 \in \mathbb{N}$ and
+$c \in \mathbb{R}$ such that $x_n = c$ for every $n \ge N_0$, then
+$(x_n)$ converges to $c$.
 
-\textbf{English.}
-Every ultimately constant real sequence converges to its eventual constant value.
-
-\textbf{Quantified.}
-If there exist $N \in \mathbb{N}$ and $c \in \mathbb{R}$ such that
-\[
-n \geq N \;\Longrightarrow\; x_n = c,
-\]
-then
-\[
-\lim_{n \to \infty} x_n = c.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists N \in \mathbb{N}\;
-\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n = c)
-\\
-&\qquad\rightarrow
-\\
-&\forall \varepsilon > 0\;
-\exists N' \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N' \rightarrow |x_n - c| < \varepsilon).
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{UltimatelyConstantSequence}(x_n,c)
-\;\rightarrow\;
-\mathrm{ConvergentSequence}(x_n,c).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:ultimately-constant-sequence-convergence]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\forall c \in \mathbb{R}\;
+\Bigl(
+\bigl[
+\exists N_0 \in \mathbb{N}\;
+\forall n \ge N_0\;(x_n = c)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\bigl[
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n - c| < \varepsilon)
+\bigr]
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\begin{aligned}
+\operatorname{UltimatelyConstantSequence}(x_n,c)
+\Longrightarrow
+\operatorname{ConvergentSequence}(x_n,c).
+\end{aligned}
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-Once the sequence stabilizes, no further approximation is needed—the tail is already equal to the limit.
+Once the tail is equal to a fixed value, all sufficiently late terms are
+already exactly at the proposed limit.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:ultimately-constant-sequence]{Ultimately Constant Sequence}
+  \item \hyperref[def:convergent-sequence]{Convergent Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Constant Implies Ultimately Constant
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Constant Implies Ultimately Constant)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Constant Implies Ultimately Constant)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Constant Implies Ultimately Constant]
 \label{thm:constant-implies-ultimately-constant}
+Every constant real sequence is ultimately constant.
 
-\textbf{English.}
-Every constant sequence is ultimately constant.
-
-\textbf{Quantified.}
-If there exists $c \in \mathbb{R}$ such that
-\[
-x_n = c
-\qquad
-\text{for every } n \in \mathbb{N},
-\]
-then there exists $N \in \mathbb{N}$ such that
-\[
-n \geq N \;\Longrightarrow\; x_n = c.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(x_n = c)
-\\
-&\qquad\rightarrow
-\\
-&\exists N \in \mathbb{N}\;
-\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n = c).
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{ConstantSequence}(x_n,c)
-\;\rightarrow\;
-\mathrm{UltimatelyConstantSequence}(x_n,c).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:constant-implies-ultimately-constant]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
+\exists c \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(x_n = c)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\bigl[
+\exists N \in \mathbb{N}\;
+\exists c \in \mathbb{R}\;
+\forall n \ge N\;(x_n = c)
+\bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{ConstantSequence}(x_n,c)
+\Longrightarrow
+\operatorname{UltimatelyConstantSequence}(x_n,c).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-A constant sequence is already stabilized from the beginning, so its “eventual” behavior is immediate.
+A constant sequence has already stabilized from the first index, so it is
+automatically stabilized on some tail.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:constant-sequence]{Constant Sequence}
+  \item \hyperref[def:ultimately-constant-sequence]{Ultimately Constant Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Ultimately Zero Sequence is Null
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Ultimately Zero Sequence is Null)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Ultimately Zero Sequence is Null)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Ultimately Zero Sequence is Null]
 \label{thm:ultimately-zero-sequence-is-null}
+Let $(x_n)$ be a real sequence. If there exists $N_0 \in \mathbb{N}$ such
+that $x_n = 0$ for every $n \ge N_0$, then $(x_n)$ is a null sequence.
 
-\textbf{English.}
-If a sequence is eventually equal to zero, then it is a null sequence.
-
-\textbf{Quantified.}
-If there exists $N \in \mathbb{N}$ such that
-\[
-n \geq N \;\Longrightarrow\; x_n = 0,
-\]
-then $(x_n)$ is a null sequence.
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n = 0)
-\\
-&\qquad\rightarrow
-\\
-&\forall \varepsilon > 0\;
-\exists N' \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N' \rightarrow |x_n| < \varepsilon).
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{UltimatelyConstantSequence}(x_n,0)
-\;\rightarrow\;
-\mathrm{NullSequence}(x_n).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:ultimately-zero-sequence-is-null]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
+\exists N_0 \in \mathbb{N}\;
+\forall n \ge N_0\;(x_n = 0)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n| < \varepsilon).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{UltimatelyConstantSequence}(x_n,0)
+\Longrightarrow
+\operatorname{NullSequence}(x_n).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-The sequence eventually becomes identically zero, so it trivially satisfies every $\varepsilon$-requirement.
+If the tail is identically zero, then every sufficiently late term lies inside
+every positive tolerance around zero.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:ultimately-constant-sequence]{Ultimately Constant Sequence}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Ultimately Constant Null Sequence
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Ultimately Constant Null Sequence)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Ultimately Constant Null Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Ultimately Constant Null Sequence]
 \label{thm:ultimately-constant-null-sequence}
+Let $(x_n)$ be a real sequence. Suppose there exist $N_0 \in \mathbb{N}$
+and $c \in \mathbb{R}$ such that $x_n = c$ for every $n \ge N_0$. Then
+$(x_n)$ is a null sequence if and only if $c = 0$.
 
-\textbf{English.}
-An ultimately constant sequence is null if and only if its eventual constant value is zero.
-
-\textbf{Quantified.}
-If there exist $N \in \mathbb{N}$ and $c \in \mathbb{R}$ such that
-\[
-n \geq N \;\Longrightarrow\; x_n = c,
-\]
-and $(x_n)$ is a null sequence, then
-\[
-c = 0.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists N \in \mathbb{N}\;
-\exists c \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n = c)
-\\
-&\land
-\\
-&\forall \varepsilon > 0\;
-\exists N' \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N' \rightarrow |x_n| < \varepsilon)
-\\
-&\qquad\rightarrow
-\\
-&c = 0.
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{UltimatelyConstantSequence}(x_n,c)
-\land
-\mathrm{NullSequence}(x_n)
-\;\rightarrow\;
-c = 0.
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:ultimately-constant-null-sequence]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\forall c \in \mathbb{R}\;
+\Bigl(
+\bigl[
+\exists N_0 \in \mathbb{N}\;
+\forall n \ge N_0\;(x_n = c)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\Bigl(
+\bigl[
+\forall \varepsilon > 0\;
+\exists N \in \mathbb{N}\;
+\forall n \ge N\;(|x_n| < \varepsilon)
+\bigr]
+\Longleftrightarrow c = 0
+\Bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{UltimatelyConstantSequence}(x_n,c)
+\Longrightarrow
+\bigl(\operatorname{NullSequence}(x_n) \Longleftrightarrow c = 0\bigr).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-A sequence that eventually freezes can only converge to zero if that frozen value is already zero.
+Only the eventual value controls whether an ultimately constant sequence is
+null. A finite initial segment cannot prevent or create null behavior.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:ultimately-constant-sequence]{Ultimately Constant Sequence}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Tail Equality Preserves Convergence
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Tail Equality Preserves Convergence)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Tail Equality Preserves Convergence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Tail Equality Preserves Convergence]
 \label{thm:tail-equality-preserves-convergence}
+Let $(x_n)$ and $(y_n)$ be real sequences. If there exists
+$N_0 \in \mathbb{N}$ such that $x_n = y_n$ for every $n \ge N_0$, then
+for every $L \in \mathbb{R}$, $(x_n)$ converges to $L$ if and only if
+$(y_n)$ converges to $L$.
 
-\textbf{English.}
-If two sequences agree from some index onward, then they either both converge or both diverge, and when they converge they have the same limit.
-
-\textbf{Quantified.}
-If there exists $N \in \mathbb{N}$ such that
-\[
-n \geq N \;\Longrightarrow\; x_n = y_n,
-\]
-then $(x_n)$ converges if and only if $(y_n)$ converges, and if they converge then
-\[
-\lim_{n \to \infty} x_n = \lim_{n \to \infty} y_n.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\exists N \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n = y_n)
-\\
-&\qquad\rightarrow
-\\
-&\Big(
-\big[
-\forall \varepsilon > 0\;
-\exists N_1 \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N_1 \rightarrow |x_n - L| < \varepsilon)
-\big]
-\\
-&\qquad\qquad\Longleftrightarrow
-\big[
-\forall \varepsilon > 0\;
-\exists N_2 \in \mathbb{N}\;
-\forall n \in \mathbb{N}\;
-(n \geq N_2 \rightarrow |y_n - L| < \varepsilon)
-\big]
-\Big).
-\end{aligned}
-\]
-
-\textbf{Predicate.}
-\[
-\mathrm{EventuallyEqual}(x_n,y_n)
-\;\rightarrow\;
-\big(
-\mathrm{ConvergentSequence}(x_n,L)
-\;\Longleftrightarrow\;
-\mathrm{ConvergentSequence}(y_n,L)
-\big).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:tail-equality-preserves-convergence]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Interpretation]
-Limits depend only on the tail of a sequence. Finite initial deviations have no influence on convergence behavior.
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ and } (y_n) \text{ be real sequences.}\\
+&\bigl[
+\exists N_0 \in \mathbb{N}\;
+\forall n \ge N_0\;(x_n = y_n)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\forall L \in \mathbb{R}\;
+\Bigl(
+\bigl[
+\forall \varepsilon > 0\;
+\exists N_x \in \mathbb{N}\;
+\forall n \ge N_x\;(|x_n - L| < \varepsilon)
+\bigr]\\
+&\qquad\qquad\Longleftrightarrow\qquad
+\bigl[
+\forall \varepsilon > 0\;
+\exists N_y \in \mathbb{N}\;
+\forall n \ge N_y\;(|y_n - L| < \varepsilon)
+\bigr]
+\Bigr).
+\end{aligned}
+\]
 \end{remark*}
 
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{EventuallyEqual}(x_n,y_n)
+\Longrightarrow
+\forall L \in \mathbb{R}\;
+\bigl(
+\operatorname{ConvergentSequence}(x_n,L)
+\Longleftrightarrow
+\operatorname{ConvergentSequence}(y_n,L)
+\bigr).
+\]
+\end{remark*}
 
+\begin{remark*}[Interpretation]
+Convergence is a tail property. Changing finitely many initial terms cannot
+change whether a sequence converges to a specified real number.
+\end{remark*}
 
-
-
-
-
-
-
-
-
-% =========================================================
-% Definitions --- Bounded Real Sequences (Full House Style)
-% =========================================================
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:convergent-sequence]{Convergent Sequence}
+\end{itemize}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Definition --- Sequence Bounded Above
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Sequence Bounded Above)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Sequence Bounded Above]
 \label{def:sequence-bounded-above}
-
-\textbf{English.}
-A real sequence $(x_n)$ is bounded above if all of its terms are less than or equal to one fixed real number.
-
-\textbf{Quantified.}
-There exists $M \in \mathbb{R}$ such that for every $n \in \mathbb{N}$,
-\[
-x_n \leq M.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(x_n \leq M).
-\]
-
-\textbf{Definition predicate reading.}
-\[
-\mathrm{BoundedAboveSequence}(x_n).
-\]
-
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{bounded above} exactly when there exists $M \in \mathbb{R}$ such
+that $x_n \le M$ for every $n \in \mathbb{N}$.
 \end{definition}
+\end{tcolorbox}
 
-\begin{remark*}[Negation]
+\begin{remark*}[Standard quantified statement]
 \[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is bounded above}
+\Longleftrightarrow
+\exists M \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(x_n \le M).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{BoundedAboveSequence}(x_n)
+\coloneqq
+\exists M \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(x_n \le M).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is not bounded above}
+\Longleftrightarrow
 \forall M \in \mathbb{R}\;
-\exists n \in \mathbb{N}\;
-(M < x_n).
+\exists n \in \mathbb{N}\;(M < x_n).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg \mathrm{BoundedAboveSequence}(x_n).
+\neg\operatorname{BoundedAboveSequence}(x_n).
 \]
 \end{remark*}
 
 \begin{remark*}[Failure modes]
-The sequence eventually exceeds every proposed upper bound.
+Every proposed upper bound is exceeded by some term of the sequence.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
 \forall M \in \mathbb{R}\;
-\exists n \in \mathbb{N}\;
-(x_n > M).
+\underbrace{\exists n \in \mathbb{N}\;(M < x_n)}
+_{\text{a term rises above the proposed ceiling}}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A bounded-above sequence has a ceiling. Failure means it can climb arbitrarily high.
+A bounded-above sequence has a finite ceiling. Failure means no real number
+serves as a ceiling for all terms.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition --- Sequence Bounded Below
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Sequence Bounded Below)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Sequence Bounded Below]
 \label{def:sequence-bounded-below}
-
-\textbf{English.}
-A real sequence $(x_n)$ is bounded below if all of its terms are greater than or equal to one fixed real number.
-
-\textbf{Quantified.}
-There exists $m \in \mathbb{R}$ such that for every $n \in \mathbb{N}$,
-\[
-m \leq x_n.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\exists m \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(m \leq x_n).
-\]
-
-\textbf{Definition predicate reading.}
-\[
-\mathrm{BoundedBelowSequence}(x_n).
-\]
-
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{bounded below} exactly when there exists $m \in \mathbb{R}$ such
+that $m \le x_n$ for every $n \in \mathbb{N}$.
 \end{definition}
+\end{tcolorbox}
 
-\begin{remark*}[Negation]
+\begin{remark*}[Standard quantified statement]
 \[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is bounded below}
+\Longleftrightarrow
+\exists m \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(m \le x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{BoundedBelowSequence}(x_n)
+\coloneqq
+\exists m \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(m \le x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is not bounded below}
+\Longleftrightarrow
 \forall m \in \mathbb{R}\;
-\exists n \in \mathbb{N}\;
-(x_n < m).
+\exists n \in \mathbb{N}\;(x_n < m).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg \mathrm{BoundedBelowSequence}(x_n).
+\neg\operatorname{BoundedBelowSequence}(x_n).
 \]
 \end{remark*}
 
 \begin{remark*}[Failure modes]
-The sequence eventually falls below every proposed lower bound.
+Every proposed lower bound is undercut by some term of the sequence.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
 \forall m \in \mathbb{R}\;
-\exists n \in \mathbb{N}\;
-(x_n < m).
+\underbrace{\exists n \in \mathbb{N}\;(x_n < m)}
+_{\text{a term falls below the proposed floor}}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A bounded-below sequence has a floor. Failure means it can drop arbitrarily low.
+A bounded-below sequence has a finite floor. Failure means no real number
+serves as a floor for all terms.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Definition --- Bounded Sequence
 % ---------------------------------------------------------
 
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Bounded Sequence)}},
+  fonttitle=\small\bfseries]
 \begin{definition}[Bounded Sequence]
 \label{def:bounded-sequence}
-
-\textbf{English.}
-A real sequence $(x_n)$ is bounded if all of its terms remain within one fixed finite distance from zero.
-
-\textbf{Quantified.}
-There exists $M \in \mathbb{R}$ with $M > 0$ such that for every $n \in \mathbb{N}$,
-\[
-|x_n| \leq M.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\exists M \in \mathbb{R}\;
-\bigl(
-M > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq M)
-\bigr).
-\]
-
-\textbf{Definition predicate reading.}
-\[
-\mathrm{BoundedSequence}(x_n).
-\]
-
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is
+\textbf{bounded} exactly when there exists $M > 0$ such that
+$|x_n| \le M$ for every $n \in \mathbb{N}$.
 \end{definition}
+\end{tcolorbox}
 
-\begin{remark*}[Negation]
+\begin{remark*}[Standard quantified statement]
 \[
-\forall M \in \mathbb{R}\;
-\bigl(
-M > 0
-\rightarrow
-\exists n \in \mathbb{N}\;
-(|x_n| > M)
-\bigr).
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is bounded}
+\Longleftrightarrow
+\exists M > 0\;
+\forall n \in \mathbb{N}\;(|x_n| \le M).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\coloneqq
+\exists M > 0\;
+\forall n \in \mathbb{N}\;(|x_n| \le M).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&(x_n) \text{ is not bounded}
+\Longleftrightarrow
+\forall M > 0\;
+\exists n \in \mathbb{N}\;(|x_n| > M).
+\end{aligned}
 \]
 \end{remark*}
 
 \begin{remark*}[Negation predicate reading]
 \[
-\neg \mathrm{BoundedSequence}(x_n).
+\neg\operatorname{BoundedSequence}(x_n).
 \]
 \end{remark*}
 
 \begin{remark*}[Failure modes]
-The sequence escapes every symmetric bound; its magnitude becomes arbitrarily large.
+Every symmetric bound around zero is escaped by some term of the sequence.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
 \[
 \forall M > 0\;
-\exists n \in \mathbb{N}\;
-(|x_n| > M).
+\underbrace{\exists n \in \mathbb{N}\;(|x_n| > M)}
+_{\text{a term escapes the symmetric band of radius } M}.
 \]
 \end{remark*}
 
 \begin{remark*}[Interpretation]
-A bounded sequence is trapped in a finite band. Failure means the sequence can grow without bound in magnitude.
+A bounded sequence is trapped in a finite symmetric band around zero. This is
+equivalent to having both a finite ceiling and a finite floor.
 \end{remark*}
 
-
-% =========================================================
-% Theorems --- Eventually-Based Tail Formulations for Bounded Sequences
-% =========================================================
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Eventually Bounded Above Tail Formulation
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Eventually Bounded Above Tail Formulation)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Eventually Bounded Above Tail Formulation)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Eventually Bounded Above Tail Formulation]
 \label{thm:eventually-bounded-above-tail-formulation}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is bounded above if and
+only if there exist $N_0 \in \mathbb{N}$ and $M \in \mathbb{R}$ such that
+$x_n \le M$ for every $n \ge N_0$.
 
-\textbf{English.}
-A real sequence is bounded above if and only if its tail is bounded above.
-
-\textbf{Quantified.}
-A sequence $(x_n)$ is bounded above if and only if there exist $N \in \mathbb{N}$ and $M \in \mathbb{R}$ such that
-\[
-n \geq N
-\quad\Longrightarrow\quad
-x_n \leq M.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(x_n \leq M)
-\right]
-\\
-&\qquad\Longleftrightarrow
-\\
-&\left[
-\exists N \in \mathbb{N}\;
-\exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow x_n \leq M)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedAboveSequence}(x_n)
-\;\Longleftrightarrow\;
-\mathrm{Eventually}(\mathrm{BoundedAboveSequence}(x_n)).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:eventually-bounded-above-tail-formulation]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
+\exists M \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(x_n \le M)
+\bigr]\\
+&\qquad\Longleftrightarrow\qquad
+\bigl[
+\exists N_0 \in \mathbb{N}\;
+\exists M \in \mathbb{R}\;
+\forall n \ge N_0\;(x_n \le M)
+\bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{BoundedAboveSequence}(x_n)
+\Longleftrightarrow
+\exists M \in \mathbb{R}\;
+\operatorname{Eventually}\bigl(x_n,\; x_n \le M\bigr).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-Finite initial terms do not matter for bounded-above behavior. If the tail has a ceiling, the whole sequence has a ceiling after also accounting for the finitely many earlier terms.
+One-sided boundedness is unchanged by ignoring finitely many initial terms,
+because finitely many exceptional values can be absorbed into a larger upper
+bound.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence-bounded-above]{Sequence Bounded Above}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Eventually Bounded Below Tail Formulation
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Eventually Bounded Below Tail Formulation)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Eventually Bounded Below Tail Formulation)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Eventually Bounded Below Tail Formulation]
 \label{thm:eventually-bounded-below-tail-formulation}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is bounded below if and
+only if there exist $N_0 \in \mathbb{N}$ and $m \in \mathbb{R}$ such that
+$m \le x_n$ for every $n \ge N_0$.
 
-\textbf{English.}
-A real sequence is bounded below if and only if its tail is bounded below.
-
-\textbf{Quantified.}
-A sequence $(x_n)$ is bounded below if and only if there exist $N \in \mathbb{N}$ and $m \in \mathbb{R}$ such that
-\[
-n \geq N
-\quad\Longrightarrow\quad
-m \leq x_n.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\exists m \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(m \leq x_n)
-\right]
-\\
-&\qquad\Longleftrightarrow
-\\
-&\left[
-\exists N \in \mathbb{N}\;
-\exists m \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow m \leq x_n)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedBelowSequence}(x_n)
-\;\Longleftrightarrow\;
-\mathrm{Eventually}(\mathrm{BoundedBelowSequence}(x_n)).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:eventually-bounded-below-tail-formulation]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
+\exists m \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(m \le x_n)
+\bigr]\\
+&\qquad\Longleftrightarrow\qquad
+\bigl[
+\exists N_0 \in \mathbb{N}\;
+\exists m \in \mathbb{R}\;
+\forall n \ge N_0\;(m \le x_n)
+\bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{BoundedBelowSequence}(x_n)
+\Longleftrightarrow
+\exists m \in \mathbb{R}\;
+\operatorname{Eventually}\bigl(x_n,\; m \le x_n\bigr).
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-Finite initial terms do not matter for bounded-below behavior. If the tail has a floor, the whole sequence has a floor after also accounting for the finitely many earlier terms.
+One-sided lower boundedness is unchanged by ignoring finitely many initial
+terms, because finitely many exceptional values can be absorbed into a lower
+bound.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence-bounded-below]{Sequence Bounded Below}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Eventually Bounded Tail Formulation
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Eventually Bounded Tail Formulation)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Eventually Bounded Tail Formulation)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Eventually Bounded Tail Formulation]
 \label{thm:eventually-bounded-tail-formulation}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is bounded if and only
+if there exist $N_0 \in \mathbb{N}$ and $M > 0$ such that $|x_n| \le M$ for
+every $n \ge N_0$.
 
-\textbf{English.}
-A real sequence is bounded if and only if its tail is bounded.
-
-\textbf{Quantified.}
-A sequence $(x_n)$ is bounded if and only if there exist $N \in \mathbb{N}$ and $M > 0$ such that
-\[
-n \geq N
-\quad\Longrightarrow\quad
-|x_n| \leq M.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\exists M \in \mathbb{R}\;
-\bigl(
-M > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq M)
-\bigr)
-\right]
-\\
-&\qquad\Longleftrightarrow
-\\
-&\left[
-\exists N \in \mathbb{N}\;
-\exists M \in \mathbb{R}\;
-\bigl(
-M > 0
-\land
-\forall n \in \mathbb{N}\;
-(n \geq N \rightarrow |x_n| \leq M)
-\bigr)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedSequence}(x_n)
-\;\Longleftrightarrow\;
-\mathrm{Eventually}(\mathrm{BoundedSequence}(x_n)).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:eventually-bounded-tail-formulation]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
-\begin{remark*}[Interpretation]
-Boundedness is a tail property up to finitely many exceptions. A finite number of large early terms can be absorbed into a larger bound.
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
+\exists M > 0\;
+\forall n \in \mathbb{N}\;(|x_n| \le M)
+\bigr]\\
+&\qquad\Longleftrightarrow\qquad
+\bigl[
+\exists N_0 \in \mathbb{N}\;
+\exists M > 0\;
+\forall n \ge N_0\;(|x_n| \le M)
+\bigr].
+\end{aligned}
+\]
 \end{remark*}
 
-% =========================================================
-% Theorems --- Relationships Between Bounded Sequence Definitions
-% =========================================================
-
-% ---------------------------------------------------------
-% Theorem --- Bounded Sequence iff Bounded Above and Below
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Bounded Sequence iff Bounded Above and Below)}}
-]
-\label{thm:bounded-sequence-iff-bounded-above-and-below}
-
-\textbf{English.}
-A real sequence is bounded if and only if it is both bounded above and bounded below.
-
-\textbf{Quantified.}
-A real sequence $(x_n)$ is bounded if and only if there exist real numbers $m,M \in \mathbb{R}$ such that
+\begin{remark*}[Predicate reading]
 \[
-m \leq x_n \leq M
-\qquad
-\text{for every } n \in \mathbb{N}.
+\operatorname{BoundedSequence}(x_n)
+\Longleftrightarrow
+\exists M > 0\;
+\operatorname{Eventually}\bigl(x_n,\; |x_n| \le M\bigr).
 \]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\exists K \in \mathbb{R}\;
-\bigl(
-K > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq K)
-\bigr)
-\right]
-\\
-&\qquad\Longleftrightarrow
-\\
-&\left[
-\exists m \in \mathbb{R}\;
-\exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(m \leq x_n \land x_n \leq M)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedSequence}(x_n)
-\;\Longleftrightarrow\;
-\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr).
-\]
-
-\textbf{Contrapositive predicate reading.}
-\[
-\neg\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr)
-\;\Longleftrightarrow\;
-\neg\mathrm{BoundedSequence}(x_n).
-\]
-
-\end{tcolorbox}
+\end{remark*}
 
 \begin{remark*}[Interpretation]
-Boundedness means the sequence is trapped between two finite horizontal barriers.
-The symmetric absolute-value bound $|x_n|\leq K$ is equivalent to having both a floor and a ceiling.
+Boundedness is a tail property up to finitely many exceptions. A finite
+initial segment can be enclosed by increasing the bound.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Bounded Sequence If and Only If Bounded Above and Below
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bounded Sequence If and Only If Bounded Above and Below)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Bounded Sequence If and Only If Bounded Above and Below]
+\label{thm:bounded-sequence-iff-bounded-above-and-below}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is bounded if and only
+if it is both bounded above and bounded below.
+
+\smallskip
+\noindent
+\hyperref[prf:bounded-sequence-iff-bounded-above-and-below]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
+\exists K > 0\;
+\forall n \in \mathbb{N}\;(|x_n| \le K)
+\bigr]\\
+&\qquad\Longleftrightarrow\qquad
+\bigl[
+\exists m \in \mathbb{R}\;
+\exists M \in \mathbb{R}\;
+\forall n \in \mathbb{N}\;(m \le x_n \land x_n \le M)
+\bigr].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\Longleftrightarrow
+\bigl(
+\operatorname{BoundedBelowSequence}(x_n)
+\land
+\operatorname{BoundedAboveSequence}(x_n)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An absolute-value bound gives a symmetric interval around zero. Having both a
+floor and a ceiling gives an interval that may not be symmetric, but it can be
+enlarged to a symmetric one.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+  \item \hyperref[def:sequence-bounded-above]{Sequence Bounded Above}
+  \item \hyperref[def:sequence-bounded-below]{Sequence Bounded Below}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Absolute Bound Gives Upper and Lower Bounds
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Absolute Bound Gives Upper and Lower Bounds)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Absolute Bound Gives Upper and Lower Bounds)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Absolute Bound Gives Upper and Lower Bounds]
 \label{thm:absolute-bound-gives-upper-and-lower-bounds}
+Let $(x_n)$ be a real sequence, and let $K > 0$. If $|x_n| \le K$ for every
+$n \in \mathbb{N}$, then $-K \le x_n \le K$ for every
+$n \in \mathbb{N}$.
 
-\textbf{English.}
-If every term of a real sequence lies within distance $K$ of zero, then $K$ is an upper bound and $-K$ is a lower bound.
-
-\textbf{Quantified.}
-If $K>0$ and
-\[
-|x_n|\leq K
-\qquad
-\text{for every } n\in\mathbb{N},
-\]
-then
-\[
--K\leq x_n\leq K
-\qquad
-\text{for every } n\in\mathbb{N}.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\forall K \in \mathbb{R}\;
-\Bigl(
-K > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq K)
-\Bigr)
-\\
-&\qquad\rightarrow
-\\
-&\forall n \in \mathbb{N}\;
-(-K \leq x_n \land x_n \leq K).
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedSequence}(x_n)
-\;\rightarrow\;
-\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr).
-\]
-
-\textbf{Contrapositive predicate reading.}
-\[
-\neg\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr)
-\;\rightarrow\;
-\neg\mathrm{BoundedSequence}(x_n).
-\]
-
+\smallskip
+\noindent
+\hyperref[prf:absolute-bound-gives-upper-and-lower-bounds]{\textit{Go to proof.}}
+\end{theorem}
 \end{tcolorbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\forall K > 0\;
+\bigl[
+\forall n \in \mathbb{N}\;(|x_n| \le K)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\forall n \in \mathbb{N}\;(-K \le x_n \land x_n \le K).
+\end{aligned}
+\]
+\end{remark*}
+
 \begin{remark*}[Interpretation]
-An absolute-value bound gives a symmetric trap around zero. The same number that controls the magnitude also supplies explicit upper and lower barriers.
+An absolute-value inequality simultaneously controls the positive and negative
+directions. The upper barrier is $K$, and the lower barrier is $-K$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+  \item \hyperref[def:sequence-bounded-above]{Sequence Bounded Above}
+  \item \hyperref[def:sequence-bounded-below]{Sequence Bounded Below}
+\end{itemize}
 \end{remark*}
 
 % ---------------------------------------------------------
 % Theorem --- Upper and Lower Bounds Give an Absolute Bound
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Upper and Lower Bounds Give an Absolute Bound)}}
-]
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Upper and Lower Bounds Give an Absolute Bound)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Upper and Lower Bounds Give an Absolute Bound]
 \label{thm:upper-and-lower-bounds-give-absolute-bound}
+Let $(x_n)$ be a real sequence. If there exist $m,M \in \mathbb{R}$ such
+that $m \le x_n \le M$ for every $n \in \mathbb{N}$, then there exists
+$K > 0$ such that $|x_n| \le K$ for every $n \in \mathbb{N}$.
 
-\textbf{English.}
-If a real sequence has both a lower bound and an upper bound, then it has an absolute-value bound.
+\smallskip
+\noindent
+\hyperref[prf:upper-and-lower-bounds-give-absolute-bound]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
 
-\textbf{Quantified.}
-If there exist $m,M\in\mathbb{R}$ such that
-\[
-m\leq x_n\leq M
-\qquad
-\text{for every } n\in\mathbb{N},
-\]
-then there exists $K>0$ such that
-\[
-|x_n|\leq K
-\qquad
-\text{for every } n\in\mathbb{N}.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
+\begin{remark*}[Standard quantified statement]
 \[
 \begin{aligned}
-&\left[
+&\text{Let } (x_n) \text{ be a real sequence.}\\
+&\bigl[
 \exists m \in \mathbb{R}\;
 \exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(m \leq x_n \land x_n \leq M)
-\right]
-\\
-&\qquad\rightarrow
-\\
-&\left[
-\exists K \in \mathbb{R}\;
-\bigl(
-K > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq K)
-\bigr)
-\right].
+\forall n \in \mathbb{N}\;(m \le x_n \land x_n \le M)
+\bigr]\\
+&\qquad\Longrightarrow\qquad
+\bigl[
+\exists K > 0\;
+\forall n \in \mathbb{N}\;(|x_n| \le K)
+\bigr].
 \end{aligned}
 \]
-
-\textbf{Predicate reading.}
-\[
-\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr)
-\;\rightarrow\;
-\mathrm{BoundedSequence}(x_n).
-\]
-
-\textbf{Contrapositive predicate reading.}
-\[
-\neg\mathrm{BoundedSequence}(x_n)
-\;\rightarrow\;
-\neg\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr).
-\]
-
-\end{tcolorbox}
-
-\begin{remark*}[Interpretation]
-Two one-sided barriers can always be replaced by one symmetric barrier around zero.
-A standard choice is any positive $K$ satisfying both $K\geq |m|$ and $K\geq |M|$.
 \end{remark*}
 
-% =========================================================
-% Theorems --- Relationships Between Bounded Sequence Definitions
-% =========================================================
-
-% ---------------------------------------------------------
-% Theorem --- Bounded Sequence iff Bounded Above and Below
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Bounded Sequence iff Bounded Above and Below)}}
-]
-\label{thm:bounded-sequence-iff-bounded-above-and-below}
-
-\textbf{English.}
-A real sequence is bounded if and only if it is both bounded above and bounded below.
-
-\textbf{Quantified.}
-A real sequence $(x_n)$ is bounded if and only if there exist real numbers $m,M \in \mathbb{R}$ such that
-\[
-m \leq x_n \leq M
-\qquad
-\text{for every } n \in \mathbb{N}.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\exists K \in \mathbb{R}\;
-\bigl(
-K > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq K)
-\bigr)
-\right]
-\\
-&\qquad\Longleftrightarrow
-\\
-&\left[
-\exists m \in \mathbb{R}\;
-\exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(m \leq x_n \land x_n \leq M)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedSequence}(x_n)
-\;\Longleftrightarrow\;
-\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr).
-\]
-
-\textbf{Contrapositive predicate reading.}
-\[
-\neg\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr)
-\;\Longleftrightarrow\;
-\neg\mathrm{BoundedSequence}(x_n).
-\]
-
-\end{tcolorbox}
-
 \begin{remark*}[Interpretation]
-Boundedness means the sequence is trapped between two finite horizontal barriers.
-The symmetric absolute-value bound $|x_n|\leq K$ is equivalent to having both a floor and a ceiling.
+Two one-sided barriers can always be replaced by one symmetric barrier around
+zero. Any positive $K$ at least as large as both $|m|$ and $|M|$ works.
 \end{remark*}
 
-% ---------------------------------------------------------
-% Theorem --- Absolute Bound Gives Upper and Lower Bounds
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Absolute Bound Gives Upper and Lower Bounds)}}
-]
-\label{thm:absolute-bound-gives-upper-and-lower-bounds}
-
-\textbf{English.}
-If every term of a real sequence lies within distance $K$ of zero, then $K$ is an upper bound and $-K$ is a lower bound.
-
-\textbf{Quantified.}
-If $K>0$ and
-\[
-|x_n|\leq K
-\qquad
-\text{for every } n\in\mathbb{N},
-\]
-then
-\[
--K\leq x_n\leq K
-\qquad
-\text{for every } n\in\mathbb{N}.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\forall K \in \mathbb{R}\;
-\Bigl(
-K > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq K)
-\Bigr)
-\\
-&\qquad\rightarrow
-\\
-&\forall n \in \mathbb{N}\;
-(-K \leq x_n \land x_n \leq K).
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\mathrm{BoundedSequence}(x_n)
-\;\rightarrow\;
-\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr).
-\]
-
-\textbf{Contrapositive predicate reading.}
-\[
-\neg\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr)
-\;\rightarrow\;
-\neg\mathrm{BoundedSequence}(x_n).
-\]
-
-\end{tcolorbox}
-
-\begin{remark*}[Interpretation]
-An absolute-value bound gives a symmetric trap around zero. The same number that controls the magnitude also supplies explicit upper and lower barriers.
-\end{remark*}
-
-% ---------------------------------------------------------
-% Theorem --- Upper and Lower Bounds Give an Absolute Bound
-% ---------------------------------------------------------
-
-\begin{tcolorbox}[
-  colback=thmbox,
-  colframe=thmborder,
-  title={\small\textbf{Theorem (Upper and Lower Bounds Give an Absolute Bound)}}
-]
-\label{thm:upper-and-lower-bounds-give-absolute-bound}
-
-\textbf{English.}
-If a real sequence has both a lower bound and an upper bound, then it has an absolute-value bound.
-
-\textbf{Quantified.}
-If there exist $m,M\in\mathbb{R}$ such that
-\[
-m\leq x_n\leq M
-\qquad
-\text{for every } n\in\mathbb{N},
-\]
-then there exists $K>0$ such that
-\[
-|x_n|\leq K
-\qquad
-\text{for every } n\in\mathbb{N}.
-\]
-
-\textbf{Fully Quantified Form (FQF).}
-\[
-\begin{aligned}
-&\left[
-\exists m \in \mathbb{R}\;
-\exists M \in \mathbb{R}\;
-\forall n \in \mathbb{N}\;
-(m \leq x_n \land x_n \leq M)
-\right]
-\\
-&\qquad\rightarrow
-\\
-&\left[
-\exists K \in \mathbb{R}\;
-\bigl(
-K > 0
-\land
-\forall n \in \mathbb{N}\;
-(|x_n| \leq K)
-\bigr)
-\right].
-\end{aligned}
-\]
-
-\textbf{Predicate reading.}
-\[
-\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr)
-\;\rightarrow\;
-\mathrm{BoundedSequence}(x_n).
-\]
-
-\textbf{Contrapositive predicate reading.}
-\[
-\neg\mathrm{BoundedSequence}(x_n)
-\;\rightarrow\;
-\neg\bigl(
-\mathrm{BoundedBelowSequence}(x_n)
-\land
-\mathrm{BoundedAboveSequence}(x_n)
-\bigr).
-\]
-
-\end{tcolorbox}
-
-\begin{remark*}[Interpretation]
-Two one-sided barriers can always be replaced by one symmetric barrier around zero.
-A standard choice is any positive $K$ satisfying both $K\geq |m|$ and $K\geq |M|$.
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence-bounded-above]{Sequence Bounded Above}
+  \item \hyperref[def:sequence-bounded-below]{Sequence Bounded Below}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+\end{itemize}
 \end{remark*}

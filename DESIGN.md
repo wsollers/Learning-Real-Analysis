@@ -72,6 +72,9 @@ The notes are therefore governed by repository rules, notation rules, box rules,
 
 ## 2. Canonical Repository Structure
 
+For LaTeX compilation commands, Docker setup, output locations, and troubleshooting,
+see `docker/README.md`.
+
 ### 2.1 Top-Level Layout
 
 ```text
@@ -346,14 +349,23 @@ Boxes mark what must be retained. Bare environments carry logical development.
 
 ### 4.2 Box Types
 
-There are four box types:
+There are seven formal statement box types:
 
 - Definition box
 - Axiom box
 - Theorem box
+- Proposition box
+- Lemma box
+- Corollary box
 - Toolkit box
 
 The color palette is fixed in `common/colors.tex`.
+
+Theorem-like result boxes use a single blue family with decreasing visual
+weight: theorem, proposition, lemma, corollary. The variation is by fill
+lightness and border saturation, not by decorative gradients. Definitions use
+the definition palette. Axioms use the axiom palette. Local files must not
+define or override statement-box colors.
 
 ### 4.3 Box Templates
 
@@ -710,11 +722,19 @@ Axioms are always boxed.
 
 Theorems are boxed only when they have a proper name, are the primary result of the section, and will be cited later by name.
 
+Named propositions, lemmas, and corollaries may be boxed only when they are
+structurally promoted in the same sense: proper name, local importance, and
+later citation. When boxed, they use their own result-family palette from
+`common/colors.tex`.
+
 Each section has exactly one toolkit box at the top.
 
 ### Rule R2 — What Never Gets a Box
 
-Lemmas, propositions, corollaries, remarks, examples, proofs, and second appearances never receive boxes.
+Remarks, examples, proofs, and second appearances never receive boxes.
+
+Routine lemmas, propositions, and corollaries remain unboxed. Boxing a
+theorem-like result is a retention signal, not a default formatting choice.
 
 ### Rule R3 — Import Test
 

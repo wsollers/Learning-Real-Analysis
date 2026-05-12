@@ -1,0 +1,1077 @@
+\subsection{Subsequences}
+
+\begin{exposition}
+Subsequences record what remains after passing to an infinite ordered selection
+of indices. They are the basic tool for extracting structure from a sequence:
+limits, oscillation, boundedness, compactness, and failure of convergence are
+all detected by suitable subsequences.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Definition --- Strictly Increasing Index Map
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Strictly Increasing Index Map)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Strictly Increasing Index Map]
+\label{def:strictly-increasing-index-map}
+Let $\sigma:\mathbb{N}\to\mathbb{N}$ be a function. The function $\sigma$
+is a \textbf{strictly increasing index map} if
+\[
+  k<\ell \Longrightarrow \sigma(k)<\sigma(\ell)
+  \qquad
+  \text{for all } k,\ell\in\mathbb{N}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\sigma:\mathbb{N}\to\mathbb{N}\text{ is strictly increasing}
+\Longleftrightarrow
+\forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell)).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{StrictlyIncreasing}(\sigma)
+\coloneqq
+\forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell)).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\sigma\text{ is not strictly increasing}
+\Longleftrightarrow
+\exists k,\ell\in\mathbb{N}\;(k<\ell\land \sigma(\ell)\le \sigma(k)).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{StrictlyIncreasing}(\sigma)
+\Longleftrightarrow
+\exists k,\ell\in\mathbb{N}\;(k<\ell\land \sigma(\ell)\le \sigma(k)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The index map selects terms without repetition and without changing their
+order. This is the structural difference between a subsequence and an
+arbitrary rearrangement.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item Functions
+  \item Natural numbers
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Subsequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Subsequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Subsequence]
+\label{def:subsequence}
+Let $(x_n)$ be a real sequence. A \textbf{subsequence} of $(x_n)$ is a
+sequence $(x_{\sigma(k)})_{k\in\mathbb{N}}$, where
+$\sigma:\mathbb{N}\to\mathbb{N}$ is a strictly increasing index map.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(y_k)\text{ is a subsequence of }(x_n)\\
+&\quad\Longleftrightarrow\quad
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))
+  \land
+  \forall k\in\mathbb{N}\;(y_k=x_{\sigma(k)})
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{Subsequence}(y_k,x_n)
+\coloneqq
+\exists \sigma\;
+\bigl(
+  \operatorname{StrictlyIncreasing}(\sigma)
+  \land
+  \forall k\in\mathbb{N}\;(y_k=x_{\sigma(k)})
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&(y_k)\text{ is not a subsequence of }(x_n)\\
+&\quad\Longleftrightarrow\quad
+\forall \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \exists k,\ell\in\mathbb{N}\;(k<\ell\land \sigma(\ell)\le\sigma(k))
+  \lor
+  \exists k\in\mathbb{N}\;(y_k\neq x_{\sigma(k)})
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{Subsequence}(y_k,x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A subsequence keeps the original chronological order but may skip terms. The
+new index $k$ counts the selected terms, while $\sigma(k)$ records where each
+selected term came from in the original sequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+  \item \hyperref[def:strictly-increasing-index-map]{Strictly Increasing Index Map}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Subsequential Limit
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Subsequential Limit)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Subsequential Limit]
+\label{def:subsequential-limit}
+Let $(x_n)$ be a real sequence and let $L\in\mathbb{R}$. The real number
+$L$ is a \textbf{subsequential limit} of $(x_n)$ if there exists a
+subsequence $(x_{\sigma(k)})$ such that
+\[
+  \lim_{k\to\infty} x_{\sigma(k)}=L.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&L\text{ is a subsequential limit of }(x_n)\\
+&\quad\Longleftrightarrow\quad
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))
+  \land
+  \lim_{k\to\infty}x_{\sigma(k)}=L
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{SubsequentialLimit}(x_n,L)
+\coloneqq
+\exists \sigma\;
+\bigl(
+  \operatorname{StrictlyIncreasing}(\sigma)
+  \land
+  \operatorname{ConvergentSequence}(x_{\sigma(k)},L)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Subsequential limits detect limiting behavior along an infinite selection of
+terms. A sequence may have no ordinary limit but still have one or more
+subsequential limits.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Has Convergent Subsequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Has Convergent Subsequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Has Convergent Subsequence]
+\label{def:has-convergent-subsequence}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ \textbf{has a
+convergent subsequence} if there exist a strictly increasing index map
+$\sigma:\mathbb{N}\to\mathbb{N}$ and a real number $L$ such that
+\[
+  \lim_{k\to\infty}x_{\sigma(k)}=L.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ has a convergent subsequence}\\
+&\quad\Longleftrightarrow\quad
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;\exists L\in\mathbb{R}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))
+  \land
+  \lim_{k\to\infty}x_{\sigma(k)}=L
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{HasConvergentSubsequence}(x_n)
+\coloneqq
+\exists L\in\mathbb{R}\;\operatorname{SubsequentialLimit}(x_n,L).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This property asks for at least one convergent infinite selection. It does not
+assert convergence of the whole sequence and does not require uniqueness of
+the subsequential limit.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:subsequential-limit]{Subsequential Limit}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Subsequence Indices Dominate the Identity
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Subsequence Indices Dominate the Identity)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Subsequence Indices Dominate the Identity]
+\label{thm:subsequence-indices-dominate-identity}
+Let $\sigma:\mathbb{N}\to\mathbb{N}$ be a strictly increasing index map.
+Then
+\[
+  k\le \sigma(k)
+  \qquad
+  \text{for every } k\in\mathbb{N}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:subsequence-indices-dominate-identity]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \bigl[\forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))\bigr]
+  \Longrightarrow
+  \bigl[\forall k\in\mathbb{N}\;(k\le\sigma(k))\bigr]
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{StrictlyIncreasing}(\sigma)
+\Longrightarrow
+\forall k\in\mathbb{N}\;(k\le\sigma(k)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A subsequence cannot outrun the original indexing backwards. By the time the
+subsequence has selected its $k$th term, it must have reached at least the
+$k$th original position.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:strictly-increasing-index-map]{Strictly Increasing Index Map}
+  \item Well-ordering of $\mathbb{N}$
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Subsequences Preserve Limits
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Subsequences Preserve Limits)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Subsequences Preserve Limits]
+\label{thm:subsequences-preserve-limits}
+Let $(x_n)$ be a real sequence and let $L\in\mathbb{R}$. If $x_n\to L$,
+then every subsequence of $(x_n)$ converges to $L$.
+
+\smallskip
+\noindent
+\hyperref[prf:subsequences-preserve-limits]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall L\in\mathbb{R}\;
+\forall \sigma:\mathbb{N}\to\mathbb{N}\\
+&\quad\Bigl(
+  x_n\to L
+  \land
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+\Bigr)
+\Longrightarrow
+\lim_{k\to\infty}x_{\sigma(k)}=L.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{ConvergentSequence}(x_n,L)
+\land
+\operatorname{StrictlyIncreasing}(\sigma)
+\Longrightarrow
+\operatorname{ConvergentSequence}(x_{\sigma(k)},L).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Subsequences cannot escape a limit already possessed by the whole sequence.
+The domination of subsequence indices by the identity transfers every tail
+estimate for $(x_n)$ to a tail estimate for $(x_{\sigma(k)})$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+  \item \hyperref[thm:subsequence-indices-dominate-identity]{Subsequence Indices Dominate the Identity}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Subsequential Limit of a Convergent Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Subsequential Limit of a Convergent Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Subsequential Limit of a Convergent Sequence]
+\label{thm:subsequential-limit-of-convergent-sequence}
+Let $(x_n)$ be a real sequence and let $L\in\mathbb{R}$. If $x_n\to L$,
+then $L$ is the only possible subsequential limit of $(x_n)$.
+
+\smallskip
+\noindent
+\hyperref[prf:subsequential-limit-of-convergent-sequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall L,K\in\mathbb{R}\\
+&\quad\Bigl(
+  x_n\to L
+  \land
+  K\text{ is a subsequential limit of }(x_n)
+\Bigr)
+\Longrightarrow
+K=L.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{ConvergentSequence}(x_n,L)
+\land
+\operatorname{SubsequentialLimit}(x_n,K)
+\Longrightarrow
+K=L.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A convergent sequence has no hidden alternative limiting behavior. Every
+convergent subsequence inherits the same limit, and uniqueness of limits then
+forces equality.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:subsequences-preserve-limits]{Subsequences Preserve Limits}
+  \item \hyperref[thm:uniqueness-of-limits]{Uniqueness of Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Divergence by Two Subsequential Limits
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Divergence by Two Subsequential Limits)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Divergence by Two Subsequential Limits]
+\label{thm:divergence-by-two-subsequential-limits}
+Let $(x_n)$ be a real sequence. If $(x_n)$ has two distinct subsequential
+limits, then $(x_n)$ does not converge.
+
+\smallskip
+\noindent
+\hyperref[prf:divergence-by-two-subsequential-limits]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall L,K\in\mathbb{R}\\
+&\quad\Bigl(
+  L\text{ is a subsequential limit of }(x_n)
+  \land
+  K\text{ is a subsequential limit of }(x_n)
+  \land
+  L\neq K
+\Bigr)\\
+&\quad\Longrightarrow\quad
+\text{$(x_n)$ does not converge}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{SubsequentialLimit}(x_n,L)
+\land
+\operatorname{SubsequentialLimit}(x_n,K)
+\land
+L\neq K
+\Longrightarrow
+\neg\exists A\in\mathbb{R}\;\operatorname{ConvergentSequence}(x_n,A).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Two different subsequential limits reveal persistent oscillation or splitting.
+If the whole sequence had a limit, every subsequence would have to inherit
+that same limit.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:subsequential-limit]{Subsequential Limit}
+  \item \hyperref[thm:subsequential-limit-of-convergent-sequence]{Subsequential Limit of a Convergent Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Boundedness Passes to Subsequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Boundedness Passes to Subsequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Boundedness Passes to Subsequences]
+\label{thm:boundedness-passes-to-subsequences}
+Every subsequence of a bounded real sequence is bounded.
+
+\smallskip
+\noindent
+\hyperref[prf:boundedness-passes-to-subsequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall \sigma:\mathbb{N}\to\mathbb{N}\\
+&\quad\Bigl(
+  \exists M>0\;\forall n\in\mathbb{N}\;(|x_n|\le M)
+  \land
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+\Bigr)\\
+&\quad\Longrightarrow\quad
+\exists M>0\;\forall k\in\mathbb{N}\;(|x_{\sigma(k)}|\le M).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\land
+\operatorname{StrictlyIncreasing}(\sigma)
+\Longrightarrow
+\operatorname{BoundedSequence}(x_{\sigma(k)}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A subsequence cannot create new values; it only selects from the original
+sequence. Any global bound for the original sequence is automatically a bound
+for the selection.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+  \item \hyperref[def:subsequence]{Subsequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Monotonicity Passes to Subsequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Monotonicity Passes to Subsequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Monotonicity Passes to Subsequences]
+\label{thm:monotonicity-passes-to-subsequences}
+Every subsequence of an increasing real sequence is increasing, and every
+subsequence of a decreasing real sequence is decreasing.
+
+\smallskip
+\noindent
+\hyperref[prf:monotonicity-passes-to-subsequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall \sigma:\mathbb{N}\to\mathbb{N}\\
+&\quad\Bigl(
+  \bigl[\forall n\in\mathbb{N}\;(x_n\le x_{n+1})\bigr]
+  \land
+  \bigl[\forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))\bigr]
+\Bigr)\\
+&\quad\Longrightarrow\quad
+\forall k\in\mathbb{N}\;(x_{\sigma(k)}\le x_{\sigma(k+1)}).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{MonotoneIncreasingSequence}(x_n)
+\land
+\operatorname{StrictlyIncreasing}(\sigma)
+\Longrightarrow
+\operatorname{MonotoneIncreasingSequence}(x_{\sigma(k)}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Selecting terms in the original order preserves the order pattern already
+present in the sequence. This is why the index map must be strictly increasing.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:increasing-sequence]{Increasing Sequence}
+  \item \hyperref[def:decreasing-sequence]{Decreasing Sequence}
+  \item \hyperref[def:subsequence]{Subsequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Subsequence of a Subsequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Subsequence of a Subsequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Subsequence of a Subsequence]
+\label{thm:subsequence-of-subsequence}
+Every subsequence of a subsequence of $(x_n)$ is a subsequence of $(x_n)$.
+
+\smallskip
+\noindent
+\hyperref[prf:subsequence-of-subsequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall \sigma,\tau:\mathbb{N}\to\mathbb{N}\\
+&\quad\Bigl(
+  \bigl[\forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))\bigr]
+  \land
+  \bigl[\forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\tau(k)<\tau(\ell))\bigr]
+\Bigr)\\
+&\quad\Longrightarrow\quad
+(x_{\sigma(\tau(k))})_{k\in\mathbb{N}}\text{ is a subsequence of }(x_n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{StrictlyIncreasing}(\sigma)
+\land
+\operatorname{StrictlyIncreasing}(\tau)
+\Longrightarrow
+\operatorname{Subsequence}(x_{\sigma(\tau(k))},x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Passing to subsequences is closed under iteration. The composed index map
+$\sigma\circ\tau$ is still strictly increasing.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item Composition of functions
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Eventual Properties Pass to Subsequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Eventual Properties Pass to Subsequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Eventual Properties Pass to Subsequences]
+\label{thm:eventual-properties-pass-to-subsequences}
+Let $P(n)$ be a property of indices. If there exists $N\in\mathbb{N}$ such
+that $P(n)$ holds for every $n\ge N$, then for every strictly increasing
+index map $\sigma$ there exists $K\in\mathbb{N}$ such that $P(\sigma(k))$
+holds for every $k\ge K$.
+
+\smallskip
+\noindent
+\hyperref[prf:eventual-properties-pass-to-subsequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl(
+  \exists N\in\mathbb{N}\;\forall n\ge N\;P(n)
+  \land
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+\Bigr)\\
+&\quad\Longrightarrow\quad
+\exists K\in\mathbb{N}\;\forall k\ge K\;P(\sigma(k)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{Eventually}(x_n,P)
+\land
+\operatorname{StrictlyIncreasing}(\sigma)
+\Longrightarrow
+\operatorname{Eventually}(x_{\sigma(k)},P).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Subsequences eventually enter every tail of the original sequence. Any
+property that holds on a tail of the original therefore holds on a tail of
+the subsequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:subsequence-indices-dominate-identity]{Subsequence Indices Dominate the Identity}
+  \item \hyperref[def:subsequence]{Subsequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Frequent Properties Yield Subsequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Frequent Properties Yield Subsequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Frequent Properties Yield Subsequences]
+\label{thm:frequent-properties-yield-subsequences}
+Let $P(n)$ be a property of indices. If for every $N\in\mathbb{N}$ there
+exists $n\ge N$ such that $P(n)$ holds, then there exists a strictly
+increasing index map $\sigma:\mathbb{N}\to\mathbb{N}$ such that
+$P(\sigma(k))$ holds for every $k\in\mathbb{N}$.
+
+\smallskip
+\noindent
+\hyperref[prf:frequent-properties-yield-subsequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\Bigl[
+\forall N\in\mathbb{N}\;\exists n\ge N\;P(n)
+\Bigr]
+\Longrightarrow
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+  \land
+  \forall k\in\mathbb{N}\;P(\sigma(k))
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{Frequently}(x_n,P)
+\Longrightarrow
+\exists \sigma\;\bigl(\operatorname{StrictlyIncreasing}(\sigma)
+\land
+\forall k\in\mathbb{N}\;P(\sigma(k))\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An infinitely recurring property can be threaded into a subsequence. The
+construction chooses one later witness at each step.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item Well-ordering of $\mathbb{N}$
+  \item \hyperref[def:subsequence]{Subsequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Subsequential Limits Respect Bounds
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Subsequential Limits Respect Bounds)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Subsequential Limits Respect Bounds]
+\label{thm:subsequential-limits-respect-bounds}
+Let $(x_n)$ be a real sequence and let $L$ be a subsequential limit of
+$(x_n)$. If $m\le x_n\le M$ for every $n\in\mathbb{N}$, then
+$m\le L\le M$.
+
+\smallskip
+\noindent
+\hyperref[prf:subsequential-limits-respect-bounds]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall L,m,M\in\mathbb{R}\\
+&\quad\Bigl(
+  L\text{ is a subsequential limit of }(x_n)
+  \land
+  \forall n\in\mathbb{N}\;(m\le x_n\le M)
+\Bigr)
+\Longrightarrow
+m\le L\le M.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{SubsequentialLimit}(x_n,L)
+\land
+\forall n\in\mathbb{N}\;(m\le x_n\le M)
+\Longrightarrow
+m\le L\le M.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bounds pass to subsequences, and limits preserve eventual inequalities. Hence
+subsequential limits remain inside any closed interval that contains all terms.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:boundedness-passes-to-subsequences]{Boundedness Passes to Subsequences}
+  \item \hyperref[thm:constant-comparison-for-sequence-limits]{Constant Comparison for Sequence Limits}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Squeeze Passes to Subsequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Squeeze Passes to Subsequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Squeeze Passes to Subsequences]
+\label{thm:squeeze-passes-to-subsequences}
+Let $(a_n)$, $(x_n)$, and $(b_n)$ be real sequences. If
+$a_n\le x_n\le b_n$ eventually, then for every subsequence
+$(x_{\sigma(k)})$ there exists $K\in\mathbb{N}$ such that
+\[
+  a_{\sigma(k)}\le x_{\sigma(k)}\le b_{\sigma(k)}
+  \qquad
+  \text{for every } k\ge K.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:squeeze-passes-to-subsequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\Bigl(
+  \exists N\in\mathbb{N}\;\forall n\ge N\;(a_n\le x_n\le b_n)
+  \land
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+\Bigr)\\
+&\quad\Longrightarrow\quad
+\exists K\in\mathbb{N}\;\forall k\ge K\;
+(a_{\sigma(k)}\le x_{\sigma(k)}\le b_{\sigma(k)}).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{Eventually}(x_n,\;a_n\le x_n\le b_n)
+\land
+\operatorname{StrictlyIncreasing}(\sigma)
+\Longrightarrow
+\operatorname{Eventually}(x_{\sigma(k)},\;a_{\sigma(k)}\le x_{\sigma(k)}\le b_{\sigma(k)}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Squeeze hypotheses are tail hypotheses, so they survive passage to
+subsequences.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:eventual-properties-pass-to-subsequences]{Eventual Properties Pass to Subsequences}
+  \item \hyperref[thm:sequence-squeeze-theorem]{Sequence Squeeze Theorem}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Monotone Subsequence Theorem
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Monotone Subsequence Theorem)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Monotone Subsequence Theorem]
+\label{thm:monotone-subsequence-theorem}
+Every real sequence has a monotone subsequence.
+
+\smallskip
+\noindent
+\hyperref[prf:monotone-subsequence-theorem]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;\exists \sigma:\mathbb{N}\to\mathbb{N}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+  \land
+  \bigl[
+    \forall k\in\mathbb{N}\;(x_{\sigma(k)}\le x_{\sigma(k+1)})
+    \lor
+    \forall k\in\mathbb{N}\;(x_{\sigma(k+1)}\le x_{\sigma(k)})
+  \bigr]
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\exists \sigma\;\bigl(
+\operatorname{StrictlyIncreasing}(\sigma)
+\land
+\operatorname{MonotoneSequence}(x_{\sigma(k)})
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every sequence contains an infinite ordered pattern. The proof uses the peak
+dichotomy: either there are infinitely many terms larger than all later terms,
+or there is an infinite rising chain.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:monotone-sequence]{Monotone Sequence}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item Well-ordering of $\mathbb{N}$
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Bolzano-Weierstrass Theorem for Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Bolzano-Weierstrass Theorem for Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Bolzano-Weierstrass Theorem for Sequences]
+\label{thm:bolzano-weierstrass-sequences}
+Every bounded real sequence has a convergent subsequence.
+
+\smallskip
+\noindent
+\hyperref[prf:bolzano-weierstrass-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  \exists M>0\;\forall n\in\mathbb{N}\;(|x_n|\le M)
+  \Longrightarrow
+  \exists \sigma:\mathbb{N}\to\mathbb{N}\;\exists L\in\mathbb{R}\;
+  \bigl[
+    \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+    \land
+    \lim_{k\to\infty}x_{\sigma(k)}=L
+  \bigr]
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\operatorname{BoundedSequence}(x_n)
+\Longrightarrow
+\operatorname{HasConvergentSubsequence}(x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bolzano-Weierstrass is the compactness principle for bounded real sequences.
+Boundedness prevents escape, and the monotone subsequence theorem supplies an
+ordered subsequence to which the Monotone Convergence Theorem applies.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+  \item \hyperref[thm:monotone-subsequence-theorem]{Monotone Subsequence Theorem}
+  \item \hyperref[thm:boundedness-passes-to-subsequences]{Boundedness Passes to Subsequences}
+  \item \hyperref[thm:bounded-monotone-sequence-equivalences]{Bounded Monotone Sequence Equivalences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Sequential Compactness of Closed Bounded Intervals
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Sequential Compactness of Closed Bounded Intervals)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Sequential Compactness of Closed Bounded Intervals]
+\label{thm:sequential-compactness-closed-bounded-interval}
+Let $a,b\in\mathbb{R}$ with $a\le b$. Every sequence in $[a,b]$ has a
+convergent subsequence whose limit belongs to $[a,b]$.
+
+\smallskip
+\noindent
+\hyperref[prf:sequential-compactness-closed-bounded-interval]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall a,b\in\mathbb{R}\;\forall (x_n)\subseteq\mathbb{R}\\
+&\quad\Bigl(
+  a\le b
+  \land
+  \forall n\in\mathbb{N}\;(a\le x_n\le b)
+\Bigr)\\
+&\quad\Longrightarrow\quad
+\exists \sigma:\mathbb{N}\to\mathbb{N}\;\exists L\in\mathbb{R}\;
+\Bigl(
+  \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow\sigma(k)<\sigma(\ell))
+  \land
+  \lim_{k\to\infty}x_{\sigma(k)}=L
+  \land
+  a\le L\le b
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Theorem predicate reading]
+\[
+\bigl[\forall n\in\mathbb{N}\;(a\le x_n\le b)\bigr]
+\Longrightarrow
+\exists L\in[a,b]\;\operatorname{SubsequentialLimit}(x_n,L).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Closed bounded intervals are sequentially compact: a sequence trapped in the
+interval has a convergent subsequence, and closedness keeps the subsequential
+limit inside the interval.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:bolzano-weierstrass-sequences]{Bolzano-Weierstrass Theorem for Sequences}
+  \item \hyperref[thm:subsequential-limits-respect-bounds]{Subsequential Limits Respect Bounds}
+\end{itemize}
+\end{remark*}

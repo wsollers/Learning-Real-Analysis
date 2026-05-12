@@ -1,0 +1,953 @@
+\subsection{Cauchy Sequences}
+
+\begin{exposition}
+Cauchy sequences measure internal stabilization. Instead of comparing the
+terms to an already named limit, the Cauchy condition compares sufficiently
+late terms to each other. Over the real numbers this internal criterion is
+equivalent to convergence, and that equivalence is one of the central
+sequence forms of completeness.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Definition --- Cauchy Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Cauchy Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Cauchy Sequence]
+\label{def:cauchy-sequence}
+Let $(x_n)$ be a real sequence. The sequence $(x_n)$ is a
+\textbf{Cauchy sequence} if
+\[
+  \forall \varepsilon>0 \;\exists N\in\mathbb{N}\;\forall m,n\ge N
+  \;\bigl(|x_m-x_n|<\varepsilon\bigr).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ is Cauchy}\\
+&\quad\Longleftrightarrow\quad
+\forall \varepsilon>0 \;\exists N\in\mathbb{N}\;\forall m,n\ge N
+\;\bigl(|x_m-x_n|<\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\coloneqq
+\forall \varepsilon>0 \;\exists N\in\mathbb{N}\;\forall m,n\ge N
+\;\bigl(|x_m-x_n|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ is not Cauchy}\\
+&\quad\Longleftrightarrow\quad
+\exists \varepsilon>0 \;\forall N\in\mathbb{N}\;\exists m,n\ge N
+\;\bigl(|x_m-x_n|\ge\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\[
+\neg\operatorname{CauchySequence}(x_n)
+\Longleftrightarrow
+\exists \varepsilon>0 \;\forall N\in\mathbb{N}\;\exists m,n\ge N
+\;\bigl(|x_m-x_n|\ge\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Cauchy condition says that the tails of the sequence eventually have
+arbitrarily small internal spread. It does not name a candidate limit; it
+only asserts that late terms become mutually close.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Convergent Sequences Are Cauchy
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Convergent Sequences Are Cauchy)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Convergent Sequences Are Cauchy]
+\label{thm:convergent-sequences-are-cauchy}
+Let $(x_n)$ be a real sequence. If $(x_n)$ converges, then $(x_n)$ is
+Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:convergent-sequences-are-cauchy]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  \bigl(\exists L\in\mathbb{R}\;\forall \varepsilon>0\;\exists N\in\mathbb{N}
+  \;\forall n\ge N\;( |x_n-L|<\varepsilon )\bigr)\\
+&\qquad\Longrightarrow
+  \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall m,n\ge N
+  \;( |x_m-x_n|<\varepsilon )
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  \exists L\in\mathbb{R}\;\operatorname{ConvergentSequence}(x_n,L)
+  \Longrightarrow
+  \operatorname{CauchySequence}(x_n)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Once every sufficiently late term is close to the same limit, any two
+sufficiently late terms are close to each other. This theorem is the easy
+half of the Cauchy criterion.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cauchy Sequences Are Bounded
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cauchy Sequences Are Bounded)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cauchy Sequences Are Bounded]
+\label{thm:cauchy-sequences-are-bounded}
+Every Cauchy real sequence is bounded.
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-sequences-are-bounded]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall m,n\ge N
+  \;( |x_m-x_n|<\varepsilon )\\
+&\qquad\Longrightarrow
+  \exists M>0\;\forall n\in\mathbb{N}\;( |x_n|\le M )
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\bigl(
+  \operatorname{CauchySequence}(x_n)
+  \Longrightarrow
+  \operatorname{BoundedSequence}(x_n)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A Cauchy sequence has one tightly controlled tail. The finitely many terms
+before that tail can be absorbed into a single larger bound.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:bounded-sequence]{Bounded Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cauchy Sequence with a Convergent Subsequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cauchy Sequence with a Convergent Subsequence)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cauchy Sequence with a Convergent Subsequence]
+\label{thm:cauchy-sequence-with-convergent-subsequence}
+Let $(x_n)$ be a Cauchy real sequence. If a subsequence of $(x_n)$
+converges to $L\in\mathbb{R}$, then $(x_n)$ converges to $L$.
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-sequence-with-convergent-subsequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall L\in\mathbb{R}\\
+&\quad
+\Bigl(
+  \bigl[
+    \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall m,n\ge N
+    \;( |x_m-x_n|<\varepsilon )
+  \bigr]\\
+&\qquad\land
+  \bigl[
+    \exists \sigma:\mathbb{N}\to\mathbb{N}\;
+    \bigl(
+      \forall k,\ell\in\mathbb{N}\;(k<\ell\Longrightarrow \sigma(k)<\sigma(\ell))
+      \land
+      \forall \varepsilon>0\;\exists K\in\mathbb{N}\;\forall k\ge K
+      \;( |x_{\sigma(k)}-L|<\varepsilon )
+    \bigr)
+  \bigr]\\
+&\qquad\Longrightarrow
+  \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+  \;( |x_n-L|<\varepsilon )
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall L\in\mathbb{R}\\
+&\quad
+\Bigl(
+  \operatorname{CauchySequence}(x_n)
+  \land
+  \operatorname{SubsequentialLimit}(x_n,L)
+  \Longrightarrow
+  \operatorname{ConvergentSequence}(x_n,L)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Cauchy condition prevents the rest of the tail from wandering away from
+any convergent subsequence. A single subsequential limit therefore determines
+the limit of the whole sequence.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:subsequence]{Subsequence}
+  \item \hyperref[def:subsequential-limit]{Subsequential Limit}
+  \item \hyperref[def:convergent-sequence]{Convergence of a Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cauchy Criterion for Real Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cauchy Criterion for Real Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cauchy Criterion for Real Sequences]
+\label{thm:cauchy-criterion-real-sequences}
+Let $(x_n)$ be a real sequence. Then $(x_n)$ converges if and only if
+$(x_n)$ is Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-criterion-real-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  \exists L\in\mathbb{R}\;\forall \varepsilon>0\;\exists N\in\mathbb{N}
+  \;\forall n\ge N\;( |x_n-L|<\varepsilon )\\
+&\qquad\Longleftrightarrow
+  \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall m,n\ge N
+  \;( |x_m-x_n|<\varepsilon )
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  \exists L\in\mathbb{R}\;\operatorname{ConvergentSequence}(x_n,L)
+  \Longleftrightarrow
+  \operatorname{CauchySequence}(x_n)
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem is the sequence form of completeness of $\mathbb{R}$. In an
+incomplete ambient space, a sequence may be internally stable without
+converging inside that space.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:convergent-sequences-are-cauchy]{Convergent Sequences Are Cauchy}
+  \item \hyperref[thm:cauchy-sequences-are-bounded]{Cauchy Sequences Are Bounded}
+  \item \hyperref[thm:bolzano-weierstrass-sequences]{Bolzano-Weierstrass Theorem for Sequences}
+  \item \hyperref[thm:cauchy-sequence-with-convergent-subsequence]{Cauchy Sequence with a Convergent Subsequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cauchy Criterion via Tails
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cauchy Criterion via Tails)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cauchy Criterion via Tails]
+\label{thm:cauchy-criterion-via-tails}
+Let $(x_n)$ be a real sequence. Then $(x_n)$ is Cauchy if and only if
+for every $\varepsilon>0$ there exists $N\in\mathbb{N}$ such that the
+$N$-tail has pairwise term distances less than $\varepsilon$.
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-criterion-via-tails]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ is Cauchy}\\
+&\quad\Longleftrightarrow\quad
+\forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall p,q\in\mathbb{N}
+\;\bigl(|x_{N+p}-x_{N+q}|<\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\Longleftrightarrow
+\forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall p,q\in\mathbb{N}
+\;\bigl(|x_{N+p}-x_{N+q}|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Cauchy condition is a tail property. Reindexing a sufficiently late tail
+does not change the substance of the condition; it only changes the names of
+the indices.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:m-tail]{$M$-Tail of a Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cauchy Tail Diameter Criterion
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cauchy Tail Diameter Criterion)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cauchy Tail Diameter Criterion]
+\label{thm:cauchy-tail-diameter-criterion}
+Let $(x_n)$ be a real sequence. Then $(x_n)$ is Cauchy if and only if
+every sufficiently late tail has arbitrarily small pairwise diameter.
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-tail-diameter-criterion]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(x_n)\text{ is Cauchy}\\
+&\quad\Longleftrightarrow\quad
+\forall \varepsilon>0\;\exists N_0\in\mathbb{N}\;\forall N\ge N_0\\
+&\qquad\qquad
+\forall m,n\ge N\;\bigl(|x_m-x_n|<\varepsilon\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\Longleftrightarrow
+\forall \varepsilon>0\;\exists N_0\in\mathbb{N}\;\forall N\ge N_0\;\forall m,n\ge N
+\;\bigl(|x_m-x_n|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The tail-diameter form says that once one tail is small, every later tail is
+small as well. It records the monotone nature of tail control without
+introducing additional notation for diameters.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:m-tail]{$M$-Tail of a Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Cauchy Sequences Have Vanishing Successive Differences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Cauchy Sequences Have Vanishing Successive Differences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Cauchy Sequences Have Vanishing Successive Differences]
+\label{thm:cauchy-successive-differences-vanish}
+If $(x_n)$ is a Cauchy real sequence, then
+\[
+  |x_{n+1}-x_n|\to 0.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:cauchy-successive-differences-vanish]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall m,n\ge N
+  \;( |x_m-x_n|<\varepsilon )\\
+&\qquad\Longrightarrow
+  \forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+  \;( |x_{n+1}-x_n|<\varepsilon )
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\Longrightarrow
+\operatorname{NullSequence}\bigl(|x_{n+1}-x_n|\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Cauchy control applies to every pair of late indices, so it applies in
+particular to consecutive late indices. The converse is false in general:
+small successive steps do not prevent accumulated drift.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:null-sequence]{Null Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Scalar Multiples of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Scalar Multiples of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Scalar Multiples of Cauchy Sequences]
+\label{thm:scalar-multiple-cauchy-sequence}
+Let $(x_n)$ be a Cauchy real sequence, and let $\alpha\in\mathbb{R}$.
+Then $(\alpha x_n)$ is Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:scalar-multiple-cauchy-sequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall \alpha\in\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \Longrightarrow
+  (\alpha x_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\Longrightarrow
+\operatorname{CauchySequence}(\alpha x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Multiplying all terms by one fixed real number rescales all pairwise tail
+distances by the same fixed factor.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:scalar-multiple-sequence]{Scalar Multiple of a Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Sums of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Sums of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Sums of Cauchy Sequences]
+\label{thm:sum-cauchy-sequences}
+Let $(x_n)$ and $(y_n)$ be Cauchy real sequences. Then $(x_n+y_n)$ is
+Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:sum-cauchy-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall (y_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \land
+  (y_n)\text{ is Cauchy}
+  \Longrightarrow
+  (x_n+y_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\land
+\operatorname{CauchySequence}(y_n)
+\Longrightarrow
+\operatorname{CauchySequence}(x_n+y_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The triangle inequality splits the tail distance of the sum into the two tail
+distances already controlled by the original sequences.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:pointwise-sum-sequence]{Pointwise Sum of Sequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Differences of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Differences of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Differences of Cauchy Sequences]
+\label{thm:difference-cauchy-sequences}
+Let $(x_n)$ and $(y_n)$ be Cauchy real sequences. Then $(x_n-y_n)$ is
+Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:difference-cauchy-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall (y_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \land
+  (y_n)\text{ is Cauchy}
+  \Longrightarrow
+  (x_n-y_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\land
+\operatorname{CauchySequence}(y_n)
+\Longrightarrow
+\operatorname{CauchySequence}(x_n-y_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The difference theorem is the sum theorem applied after negating one
+sequence. It is often the form used to compare two approximating sequences.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:sum-cauchy-sequences]{Sums of Cauchy Sequences}
+  \item \hyperref[thm:scalar-multiple-cauchy-sequence]{Scalar Multiples of Cauchy Sequences}
+  \item \hyperref[def:pointwise-difference-sequence]{Pointwise Difference of Sequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Linear Combinations of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Linear Combinations of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Linear Combinations of Cauchy Sequences]
+\label{thm:linear-combination-cauchy-sequences}
+Let $(x_n)$ and $(y_n)$ be Cauchy real sequences, and let
+$\alpha,\beta\in\mathbb{R}$. Then $(\alpha x_n+\beta y_n)$ is Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:linear-combination-cauchy-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall (y_n)\subseteq\mathbb{R}\;
+ \forall \alpha\in\mathbb{R}\;\forall \beta\in\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \land
+  (y_n)\text{ is Cauchy}
+  \Longrightarrow
+  (\alpha x_n+\beta y_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\land
+\operatorname{CauchySequence}(y_n)
+\Longrightarrow
+\operatorname{CauchySequence}(\alpha x_n+\beta y_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Cauchy real sequences are closed under finite real linear combinations.
+This is the additive vector-space part of Cauchy algebra.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:scalar-multiple-cauchy-sequence]{Scalar Multiples of Cauchy Sequences}
+  \item \hyperref[thm:sum-cauchy-sequences]{Sums of Cauchy Sequences}
+  \item \hyperref[def:pointwise-sum-sequence]{Pointwise Sum of Sequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Products of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Products of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Products of Cauchy Sequences]
+\label{thm:product-cauchy-sequences}
+Let $(x_n)$ and $(y_n)$ be Cauchy real sequences. Then $(x_ny_n)$ is
+Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:product-cauchy-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall (y_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \land
+  (y_n)\text{ is Cauchy}
+  \Longrightarrow
+  (x_ny_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\land
+\operatorname{CauchySequence}(y_n)
+\Longrightarrow
+\operatorname{CauchySequence}(x_ny_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Products require boundedness in addition to tail closeness. The boundedness
+is supplied automatically because every Cauchy real sequence is bounded.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:cauchy-sequences-are-bounded]{Cauchy Sequences Are Bounded}
+  \item \hyperref[def:pointwise-product-sequence]{Pointwise Product of Sequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Reciprocals of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Reciprocals of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Reciprocals of Cauchy Sequences]
+\label{thm:reciprocal-cauchy-sequence}
+Let $(x_n)$ be a Cauchy real sequence. If there exist $c>0$ and
+$N_0\in\mathbb{N}$ such that $|x_n|\ge c$ for every $n\ge N_0$, then
+$(1/x_n)$ is Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:reciprocal-cauchy-sequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \land
+  \exists c>0\;\exists N_0\in\mathbb{N}\;\forall n\ge N_0\;( |x_n|\ge c )\\
+&\qquad\Longrightarrow
+  (1/x_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\land
+\exists c>0\;\exists N_0\in\mathbb{N}\;\forall n\ge N_0\;( |x_n|\ge c )
+\Longrightarrow
+\operatorname{CauchySequence}(1/x_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The lower bound away from zero prevents division from amplifying small tail
+differences without control. Without it, reciprocals need not preserve Cauchy
+behavior.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:reciprocal-sequence]{Reciprocal Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Quotients of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Quotients of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Quotients of Cauchy Sequences]
+\label{thm:quotient-cauchy-sequences}
+Let $(x_n)$ and $(y_n)$ be Cauchy real sequences. If there exist $c>0$
+and $N_0\in\mathbb{N}$ such that $|y_n|\ge c$ for every $n\ge N_0$,
+then $(x_n/y_n)$ is Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:quotient-cauchy-sequences]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\forall (x_n)\subseteq\mathbb{R}\;\forall (y_n)\subseteq\mathbb{R}\\
+&\quad
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \land
+  (y_n)\text{ is Cauchy}
+  \land
+  \exists c>0\;\exists N_0\in\mathbb{N}\;\forall n\ge N_0\;( |y_n|\ge c )\\
+&\qquad\Longrightarrow
+  (x_n/y_n)\text{ is Cauchy}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\land
+\operatorname{CauchySequence}(y_n)
+\land
+\exists c>0\;\exists N_0\in\mathbb{N}\;\forall n\ge N_0\;( |y_n|\ge c )
+\Longrightarrow
+\operatorname{CauchySequence}(x_n/y_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The quotient theorem is the product theorem combined with the reciprocal
+theorem for a denominator eventually bounded away from zero.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[thm:product-cauchy-sequences]{Products of Cauchy Sequences}
+  \item \hyperref[thm:reciprocal-cauchy-sequence]{Reciprocals of Cauchy Sequences}
+  \item \hyperref[def:pointwise-quotient-sequence]{Pointwise Quotient of Sequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Absolute Values of Cauchy Sequences
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Absolute Values of Cauchy Sequences)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Absolute Values of Cauchy Sequences]
+\label{thm:absolute-value-cauchy-sequence}
+Let $(x_n)$ be a Cauchy real sequence. Then $(|x_n|)$ is Cauchy.
+
+\smallskip
+\noindent
+\hyperref[prf:absolute-value-cauchy-sequence]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall (x_n)\subseteq\mathbb{R}\;
+\Bigl(
+  (x_n)\text{ is Cauchy}
+  \Longrightarrow
+  (|x_n|)\text{ is Cauchy}
+\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{CauchySequence}(x_n)
+\Longrightarrow
+\operatorname{CauchySequence}(|x_n|).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The reverse triangle inequality bounds the distance between absolute values
+by the original distance between terms.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:cauchy-sequence]{Cauchy Sequence}
+  \item \hyperref[def:absolute-value-sequence]{Absolute Value of a Sequence}
+\end{itemize}
+\end{remark*}

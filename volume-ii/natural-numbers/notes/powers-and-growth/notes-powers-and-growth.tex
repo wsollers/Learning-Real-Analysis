@@ -74,6 +74,61 @@ propagates rightward: $a^1 = a$, $a^2 = a^1 \cdot a = a \cdot a$, and so on.
   \item \hyperref[def:multiplication-on-peano-system]{Multiplication on a Peano System}
 \end{itemize}
 \end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Exponentiation Is Well-Defined on a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Exponentiation Is Well-Defined on a Peano System]
+\label{thm:exponentiation-well-defined-on-peano-system}
+Let $(P,S,1)$ be a Peano system. For every $a \in P$, there exists a unique
+function
+\[
+h_a:P\to P
+\]
+such that
+\[
+h_a(1)=a
+\qquad\text{and}\qquad
+\forall n \in P\;(h_a(S(n))=h_a(n)\cdot a).
+\]
+Consequently the rule
+\[
+(a,n)\longmapsto a^n\coloneqq h_a(n)
+\]
+defines a unique binary operation on $P$.
+\hyperref[prf:exponentiation-well-defined-on-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a \in P\;\exists! h_a:P\to P\;
+\Bigl(h_a(1)=a \land
+\forall n \in P\;(h_a(S(n))=h_a(n)\cdot a)\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The recursive clauses for exponentiation determine exactly one exponent map
+for each fixed base. Exponentiation is therefore constructed from recursion
+and multiplication rather than assumed as a primitive operation.
+\end{remark*}
+
+\begin{remark*}[Source alignment]
+This is the house-style existence-and-uniqueness form of the recursive
+definition of exponentiation in \citep{FefermanNumberSystems1964}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[thm:general-recursion-theorem-for-peano-system]{General Recursion Theorem for a Peano System}
+  \item \hyperref[def:multiplication-on-peano-system]{Multiplication on a Peano System}
+\end{itemize}
+\end{remark*}
 \end{topicbox}
 
 \begin{topicbox}{Exponent Laws}
@@ -188,6 +243,105 @@ multiplication.
   \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
   \item \hyperref[thm:exponent-sum-law]{Exponent Sum Law}
   \item \hyperref[thm:multiplication-successor-on-right]{Multiplication Successor on the Right}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Order Compatibility of Powers}
+\begin{exposition}
+Exponentiation is order-sensitive in both its base and its exponent. For a
+fixed positive exponent, taking powers preserves and reflects strict order of
+bases. For a fixed base beyond $1$, increasing the exponent strictly increases
+the value.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Powers with Common Exponent Preserve Strict Order)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Powers with Common Exponent Preserve Strict Order]
+\label{thm:powers-with-common-exponent-preserve-strict-order}
+Let $(P,S,1)$ be a Peano system. For every $a,b,n \in P$,
+\[
+a<b
+\Longleftrightarrow
+a^n<b^n.
+\]
+\hyperref[prf:powers-with-common-exponent-preserve-strict-order]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b,n \in P\;\bigl(a<b \Longleftrightarrow a^n<b^n\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A positive exponent does not collapse the strict order between bases. Since
+the exponent is a natural number, exponentiation repeatedly multiplies by
+positive factors and preserves the order information.
+\end{remark*}
+
+\begin{remark*}[Source alignment]
+This is the house-style common-exponent comparison theorem corresponding to
+Feferman's natural-number exponent laws \citep{FefermanNumberSystems1964}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[thm:multiplication-preserves-and-reflects-strict-order]{Multiplication Preserves and Reflects Strict Order}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Powers with Common Base Preserve Strict Order)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Powers with Common Base Preserve Strict Order]
+\label{thm:powers-with-common-base-preserve-strict-order}
+Let $(P,S,1)$ be a Peano system. For every $a,m,n \in P$,
+\[
+a^m<a^n
+\Longleftrightarrow
+1<a \land m<n.
+\]
+\hyperref[prf:powers-with-common-base-preserve-strict-order]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,m,n \in P\;\bigl(a^m<a^n \Longleftrightarrow (1<a \land m<n)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Strict growth in the exponent occurs exactly when the base is beyond the
+multiplicative identity. If the base is $1$, all powers are $1$; if the base
+is larger than $1$, each successor step in the exponent multiplies by a factor
+that strictly increases the value.
+\end{remark*}
+
+\begin{remark*}[Source alignment]
+This is the house-style common-base comparison theorem corresponding to
+Feferman's exponent-order theorem \citep{FefermanNumberSystems1964}.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:exponentiation-on-peano-system]{Exponentiation on a Peano System}
+  \item \hyperref[thm:multiplication-preserves-and-reflects-strict-order]{Multiplication Preserves and Reflects Strict Order}
+  \item \hyperref[thm:exponent-sum-law]{Exponent Sum Law}
   \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
 \end{itemize}
 \end{remark*}

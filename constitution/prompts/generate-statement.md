@@ -134,10 +134,18 @@ Use house `tcolorbox` colors. Never emit a bare `\begin{tcolorbox}`.
   `colback=defbox, colframe=defborder`, title `Definition (<Title>)`.
 - Theorems:
   `colback=thmbox, colframe=thmborder`, title `Theorem (<Title>)`.
+- Propositions:
+  `colback=propbox, colframe=propborder`, title `Proposition (<Title>)`.
+- Lemmas:
+  `colback=lembox, colframe=lemborder`, title `Lemma (<Title>)`.
+- Corollaries:
+  `colback=corbox, colframe=corborder`, title `Corollary (<Title>)`.
 - Axioms:
   `colback=axiombox, colframe=axiomborder`, title `Axiom (<Title>)`.
-- Lemmas, propositions, and corollaries:
-  `colback=propbox, colframe=propborder`, title matching the artifact noun.
+
+Use only colors defined in `common/colors.tex`. The result palettes are one
+blue family ordered by visual weight: theorem, proposition, lemma, corollary.
+Do not create local color definitions and do not use decorative gradients.
 
 Use this option shape:
 

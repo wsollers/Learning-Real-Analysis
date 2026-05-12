@@ -359,6 +359,14 @@ predicates:
   optional_arguments: []
   formal: \exists \sigma \; (StrictlyIncreasing(\sigma) \land \forall k \in \mathbb{N} \; (x_{n_k} = x_{\sigma(k)}))
 
+- id: pred:subsequential-limit
+  name: SubsequentialLimit
+  category: subsequence
+  arity: 2
+  arguments: [x_n, L]
+  optional_arguments: []
+  formal: \exists \sigma\;(\operatorname{StrictlyIncreasing}(\sigma) \land \operatorname{ConvergentSequence}(x_{\sigma(k)},L))
+
 - id: pred:convergent-sequence
   name: ConvergentSequence
   category: sequence
@@ -368,6 +376,38 @@ predicates:
   signature: ConvergentSequence(x_n, L [, d])
   formal: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; (|x_n - L| < \varepsilon)
 
+- id: pred:null-sequence
+  name: NullSequence
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \forall \varepsilon > 0 \; \exists N \in \mathbb{N} \; \forall n \ge N \; (|x_n| < \varepsilon)
+
+- id: pred:constant-sequence
+  name: ConstantSequence
+  category: sequence
+  arity: 2
+  arguments: [x_n, c]
+  optional_arguments: []
+  formal: \forall n \in \mathbb{N} \; (x_n = c)
+
+- id: pred:ultimately-constant-sequence
+  name: UltimatelyConstantSequence
+  category: sequence
+  arity: 2
+  arguments: [x_n, c]
+  optional_arguments: []
+  formal: \exists N \in \mathbb{N} \; \forall n \ge N \; (x_n = c)
+
+- id: pred:eventually-equal
+  name: EventuallyEqual
+  category: sequence
+  arity: 2
+  arguments: [x_n, y_n]
+  optional_arguments: []
+  formal: \exists N \in \mathbb{N} \; \forall n \ge N \; (x_n = y_n)
+
 - id: pred:divergent-sequence
   name: DivergentSequence
   category: sequence
@@ -375,6 +415,23 @@ predicates:
   arguments: [x_n]
   optional_arguments: [d]
   signature: DivergentSequence(x_n [, d])
+  formal: \forall L \in \mathbb{R} \; \exists \varepsilon > 0 \; \forall N \in \mathbb{N} \; \exists n \ge N \; (|x_n - L| \ge \varepsilon)
+
+- id: pred:bounded-above-sequence
+  name: BoundedAboveSequence
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \exists M \in \mathbb{R} \; \forall n \in \mathbb{N} \; (x_n \le M)
+
+- id: pred:bounded-below-sequence
+  name: BoundedBelowSequence
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \exists m \in \mathbb{R} \; \forall n \in \mathbb{N} \; (m \le x_n)
 
 - id: pred:bounded-sequence
   name: BoundedSequence
@@ -411,6 +468,78 @@ predicates:
   aliases: [NonincreasingSequence]
   formal: \forall n \in \mathbb{N} \; (x_{n+1} \le x_n)
 
+- id: pred:strictly-increasing-sequence
+  name: StrictlyIncreasingSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \forall n \in \mathbb{N} \; (x_n < x_{n+1})
+
+- id: pred:strictly-decreasing-sequence
+  name: StrictlyDecreasingSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \forall n \in \mathbb{N} \; (x_{n+1} < x_n)
+
+- id: pred:monotone-sequence
+  name: MonotoneSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \bigl[\forall n \in \mathbb{N} \; (x_n \le x_{n+1})\bigr] \lor \bigl[\forall n \in \mathbb{N} \; (x_{n+1} \le x_n)\bigr]
+
+- id: pred:eventually-increasing-sequence
+  name: EventuallyIncreasingSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \exists N \in \mathbb{N} \; \forall n \ge N \; (x_n \le x_{n+1})
+
+- id: pred:eventually-decreasing-sequence
+  name: EventuallyDecreasingSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \exists N \in \mathbb{N} \; \forall n \ge N \; (x_{n+1} \le x_n)
+
+- id: pred:eventually-monotone-sequence
+  name: EventuallyMonotoneSequence
+  category: monotone
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \bigl[\exists N \in \mathbb{N} \; \forall n \ge N \; (x_n \le x_{n+1})\bigr] \lor \bigl[\exists N \in \mathbb{N} \; \forall n \ge N \; (x_{n+1} \le x_n)\bigr]
+
+- id: pred:diverges-to-positive-infinity
+  name: DivergesToPositiveInfinity
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \forall M \in \mathbb{R} \; \exists N \in \mathbb{N} \; \forall n \ge N \; (M < x_n)
+
+- id: pred:diverges-to-negative-infinity
+  name: DivergesToNegativeInfinity
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \forall M \in \mathbb{R} \; \exists N \in \mathbb{N} \; \forall n \ge N \; (x_n < M)
+
+- id: pred:oscillatory-sequence
+  name: OscillatorySequence
+  category: sequence
+  arity: 1
+  arguments: [x_n]
+  optional_arguments: []
+  formal: \operatorname{DivergentSequence}(x_n) \land \neg\operatorname{DivergesToPositiveInfinity}(x_n) \land \neg\operatorname{DivergesToNegativeInfinity}(x_n)
+
 - id: pred:eventually
   name: Eventually
   category: sequence
@@ -433,6 +562,7 @@ predicates:
   arity: 1
   arguments: [x_n]
   optional_arguments: [d]
+  formal: \exists \sigma\;\exists L\in\mathbb{R}\;(\operatorname{StrictlyIncreasing}(\sigma) \land \operatorname{ConvergentSequence}(x_{\sigma(k)},L))
 
 - id: pred:limsup-sequence
   name: LimsupSequence
@@ -440,6 +570,7 @@ predicates:
   arity: 2
   arguments: [x_n, L]
   optional_arguments: []
+  formal: \operatorname{ConvergentSequence}(\sup\{x_k:k\ge n\},L)
 
 - id: pred:liminf-sequence
   name: LiminfSequence
@@ -447,6 +578,15 @@ predicates:
   arity: 2
   arguments: [x_n, L]
   optional_arguments: []
+  formal: \operatorname{ConvergentSequence}(\inf\{x_k:k\ge n\},L)
+
+- id: pred:sequence-cluster-value
+  name: SequenceClusterValue
+  category: sequence
+  arity: 2
+  arguments: [x_n, L]
+  optional_arguments: []
+  formal: \forall \varepsilon > 0 \; \forall N \in \mathbb{N} \; \exists n \ge N \; (|x_n - L| < \varepsilon)
 
 # =========================================================
 # Series

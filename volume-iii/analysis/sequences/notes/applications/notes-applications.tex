@@ -1,0 +1,384 @@
+\subsection{Applications of Sequences}
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Sequence Applications Toolkit}]
+\textbf{Concept family:} Numerical approximation by explicitly defined
+sequences.
+
+\medskip
+\textbf{Atomic items in this section:}
+\begin{itemize}
+  \item Definition: Newton Sequence for $\sqrt{2}$
+  \item Theorem: Newton Approximation of $\sqrt{2}$
+  \item Definition: Factorial Partial Sums
+  \item Theorem: Factorial Partial Sums Approximate $e$
+  \item Definition: Compound-Interest Sequence
+  \item Theorem: Compound-Interest Approximation of $e$
+  \item Definition: Decimal Truncation Sequence
+  \item Theorem: Decimal Truncations Converge
+\end{itemize}
+\end{tcolorbox}
+
+\begin{exposition}
+The convergence theorems for sequences become numerical tools once the
+sequence is computable. Newton iteration turns an equation into a convergent
+recursive approximation; factorial partial sums and compound-interest terms
+approximate the Euler number; decimal truncations approximate arbitrary real
+numbers by finite decimals.
+\end{exposition}
+
+% ---------------------------------------------------------
+% Definition --- Newton Sequence for sqrt(2)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Newton Sequence for $\sqrt{2}$)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Newton Sequence for $\sqrt{2}$]
+\label{def:newton-sequence-sqrt-two}
+The \textbf{Newton sequence for} $\sqrt{2}$ is the real sequence $(x_n)$
+defined by
+\[
+  x_1:=\frac{3}{2},
+  \qquad
+  x_{n+1}:=\frac{1}{2}\left(x_n+\frac{2}{x_n}\right)
+  \quad\text{for every } n\in\mathbb{N}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&x_1=\frac{3}{2}\\
+&\quad\land\quad
+\forall n\in\mathbb{N}\;
+\left(
+  x_{n+1}=\frac{1}{2}\left(x_n+\frac{2}{x_n}\right)
+\right).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The recursion is Newton's method applied to the equation $x^2-2=0$.
+Each new term averages the current estimate with the correction $2/x_n$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Newton Approximation of sqrt(2)
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Newton Approximation of $\sqrt{2}$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Newton Approximation of $\sqrt{2}$]
+\label{thm:newton-approximation-sqrt-two}
+Let $(x_n)$ be the Newton sequence for $\sqrt{2}$. Then $(x_n)$ converges
+and
+\[
+  \lim_{n\to\infty}x_n=\sqrt{2}.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:newton-approximation-sqrt-two]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(|x_n-\sqrt{2}|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConvergentSequence}(x_n,\sqrt{2}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The Newton sequence is decreasing after the first term and bounded below by
+$\sqrt{2}$, so monotone convergence supplies a limit. Passing the recursion
+to the limit identifies the limit as the positive solution of $L^2=2$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:newton-sequence-sqrt-two]{Newton Sequence for $\sqrt{2}$}
+  \item \hyperref[thm:monotone-convergence-theorem]{Monotone Convergence Theorem}
+  \item \hyperref[thm:rational-sequence-limit]{Rational Sequence Limit}
+  \item \hyperref[def:square-root-sequence]{Square Root Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Factorial Partial Sums
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Factorial Partial Sums)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Factorial Partial Sums]
+\label{def:factorial-partial-sums}
+The \textbf{factorial partial-sum sequence} is the real sequence $(s_n)$
+defined by
+\[
+  s_n:=\sum_{k=0}^{n}\frac{1}{k!}
+  \qquad\text{for every } n\in\mathbb{N}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall n\in\mathbb{N}\;
+\left(
+  s_n=\sum_{k=0}^{n}\frac{1}{k!}
+\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The sequence adds the reciprocal factorial terms one at a time. The terms
+decrease very rapidly, so the partial sums stabilize quickly.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Factorial Partial Sums Approximate e
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Factorial Partial Sums Approximate $e$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Factorial Partial Sums Approximate $e$]
+\label{thm:factorial-partial-sums-approximate-e}
+Let $(s_n)$ be the factorial partial-sum sequence. Then $(s_n)$ converges
+to the Euler number $e$:
+\[
+  \lim_{n\to\infty}s_n=e.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:factorial-partial-sums-approximate-e]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(|s_n-e|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConvergentSequence}(s_n,e).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the sequence form of the factorial-series definition of $e$. In
+practice the approximation is efficient because the error after $n$ terms is
+controlled by a rapidly shrinking factorial tail.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:factorial-partial-sums]{Factorial Partial Sums}
+  \item \hyperref[def:number-e]{The Number $e$}
+  \item \hyperref[thm:cauchy-criterion-real-sequences]{Cauchy Criterion for Real Sequences}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Compound-Interest Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Compound-Interest Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Compound-Interest Sequence]
+\label{def:compound-interest-sequence}
+The \textbf{compound-interest sequence} is the real sequence $(c_n)$
+defined by
+\[
+  c_n:=\left(1+\frac{1}{n}\right)^n
+  \qquad\text{for every } n\in\mathbb{N}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall n\in\mathbb{N}\;
+\left(
+  c_n=\left(1+\frac{1}{n}\right)^n
+\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The term $c_n$ is the value of one unit of principal after one unit of time
+when interest is compounded $n$ times at nominal rate $1$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Compound-Interest Approximation of e
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Compound-Interest Approximation of $e$)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Compound-Interest Approximation of $e$]
+\label{thm:compound-interest-approximation-e}
+Let $(c_n)$ be the compound-interest sequence. Then
+\[
+  \lim_{n\to\infty}c_n=e.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:compound-interest-approximation-e]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(|c_n-e|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConvergentSequence}(c_n,e).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The compound-interest approximation gives a second natural sequence
+converging to the same constant as the factorial partial sums. It is slower
+numerically, but it explains why $e$ appears in continuous growth.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:compound-interest-sequence]{Compound-Interest Sequence}
+  \item \hyperref[def:number-e]{The Number $e$}
+  \item \hyperref[thm:sequence-squeeze-theorem]{Sequence Squeeze Theorem}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Definition --- Decimal Truncation Sequence
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Decimal Truncation Sequence)}},
+  fonttitle=\small\bfseries]
+\begin{definition}[Decimal Truncation Sequence]
+\label{def:decimal-truncation-sequence}
+Let $\alpha\in\mathbb{R}$. The \textbf{decimal truncation sequence} of
+$\alpha$ is the real sequence $(d_n)$ defined by
+\[
+  d_n:=\frac{\lfloor 10^n\alpha\rfloor}{10^n}
+  \qquad\text{for every } n\in\mathbb{N}.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall n\in\mathbb{N}\;
+\left(
+  d_n=\frac{\lfloor 10^n\alpha\rfloor}{10^n}
+\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The number $d_n$ is obtained by cutting $\alpha$ off after $n$ decimal
+places. Truncation is one-sided: it does not round to the nearest decimal.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:sequence]{Sequence}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% Theorem --- Decimal Truncations Converge
+% ---------------------------------------------------------
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Decimal Truncations Converge)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Decimal Truncations Converge]
+\label{thm:decimal-truncations-converge}
+Let $\alpha\in\mathbb{R}$, and let $(d_n)$ be the decimal truncation
+sequence of $\alpha$. Then
+\[
+  \lim_{n\to\infty}d_n=\alpha.
+\]
+
+\smallskip
+\noindent
+\hyperref[prf:decimal-truncations-converge]{\textit{Go to proof.}}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varepsilon>0\;\exists N\in\mathbb{N}\;\forall n\ge N
+\;\bigl(|d_n-\alpha|<\varepsilon\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{ConvergentSequence}(d_n,\alpha).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Decimal truncations converge because the truncation error is always less
+than $10^{-n}$. This is one of the most concrete examples of convergence:
+finite decimal data can approximate a real number to arbitrary accuracy.
+\end{remark*}
+
+\begin{remark*}[Dependencies]\hfill
+\begin{itemize}
+  \item \hyperref[def:decimal-truncation-sequence]{Decimal Truncation Sequence}
+  \item \hyperref[thm:sequence-squeeze-theorem]{Sequence Squeeze Theorem}
+\end{itemize}
+\end{remark*}
