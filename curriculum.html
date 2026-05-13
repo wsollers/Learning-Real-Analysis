@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Real Analysis — Curriculum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   RESET & ROOT
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:        #1a1a18;
+  --ink-2:      #3a3a36;
+  --ink-3:      #6b6b64;
+  --ink-4:      #9b9b92;
+  --paper:      #f5f2ec;
+  --paper-2:    #ede9e0;
+  --paper-3:    #e4dfd4;
+  --rule:       #d4cfc4;
+  --rule-2:     #c4bfb2;
+
+  --c-ana1:     #1a6b4a;
+  --c-ana1-bg:  #e4f2eb;
+  --c-ana2:     #185fa5;
+  --c-ana2-bg:  #e4eef8;
+  --c-la:       #8a5a10;
+  --c-la-bg:    #f5ead6;
+  --c-mv:       #c04820;
+  --c-mv-bg:    #f8e8e0;
+  --c-geo:      #7a2848;
+  --c-geo-bg:   #f5e0ea;
+  --c-ode:      #3a6a1a;
+  --c-ode-bg:   #e4f0d8;
+  --c-num:      #5a5a52;
+  --c-num-bg:   #eeede8;
+  --c-ten:      #1a7a5a;
+  --c-ten-bg:   #e0f2eb;
+  --c-four:     #1a6b4a;
+  --c-four-bg:  #dff0e8;
+  --c-pde:      #a03060;
+  --c-pde-bg:   #f5dde8;
+  --c-fa:       #3a3aaa;
+  --c-fa-bg:    #e8e8f8;
+  --c-mt:       #a03030;
+  --c-mt-bg:    #f8e0e0;
+  --c-sp:       #2a2a28;
+  --c-sp-bg:    #e8e8e4;
+  --c-ctrl:     #3a6a1a;
+  --c-ctrl-bg:  #e4f0d8;
+  --c-opt:      #c04820;
+  --c-opt-bg:   #f8e8e0;
+  --c-gc:       #7a2848;
+  --c-gc-bg:    #f5e0ea;
+  --c-res:      #3a3aaa;
+  --c-res-bg:   #e8e8f8;
+  --c-cap:      #5a3a8a;
+  --c-cap-bg:   #ede8f5;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ─────────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────────── */
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+}
+
+/* ─────────────────────────────────────────────
+   HEADER
+───────────────────────────────────────────── */
+header {
+  padding: 4rem 0 2.5rem;
+  border-bottom: 1px solid var(--rule-2);
+  margin-bottom: 2.5rem;
+}
+
+.header-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: .75rem;
+}
+
+header h1 {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: .75rem;
+}
+
+.header-sub {
+  font-size: 15px;
+  color: var(--ink-3);
+  font-style: italic;
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+.capstone-banner {
+  margin-top: 1.5rem;
+  padding: .7rem 1rem;
+  background: var(--c-cap-bg);
+  border-left: 3px solid var(--c-cap);
+  border-radius: 0 4px 4px 0;
+  font-size: 13px;
+  color: var(--c-cap);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.5;
+}
+
+.capstone-banner strong { font-weight: 600; }
+
+/* ─────────────────────────────────────────────
+   LEGEND
+───────────────────────────────────────────── */
+.legend-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: .5px solid var(--rule);
+}
+
+.badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  padding: 2px 9px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.leg-item { display: flex; align-items: center; gap: 6px; }
+.leg-desc { font-size: 12px; color: var(--ink-3); font-family: 'JetBrains Mono', monospace; }
+
+.b-now    { background: #dff0e8; color: #0d5c34; }
+.b-par    { background: #f5dde8; color: #6a1830; }
+.b-soon   { background: #e4eef8; color: #0d3d6e; }
+.b-later  { background: #f5ead6; color: #5a3208; }
+.b-target { background: #ede8f5; color: #2e1c5e; }
+.b-p6     { background: #e8e8e4; color: #1a1a18; }
+
+/* ─────────────────────────────────────────────
+   PHASE SECTION
+───────────────────────────────────────────── */
+.phase { margin-bottom: 3rem; }
+
+.phase-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 1.25rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.phase-title {
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -.015em;
+  color: var(--ink);
+}
+
+.phase-est {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-4);
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin: 1.25rem 0 .5rem;
+  padding-left: 2px;
+}
+
+.parallel-note {
+  font-size: 13px;
+  color: var(--ink-3);
+  padding: .55rem .85rem;
+  border-left: 2px solid var(--rule-2);
+  margin-bottom: .6rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   CARDS
+───────────────────────────────────────────── */
+.card {
+  border: .5px solid var(--rule);
+  border-radius: 5px;
+  margin-bottom: 5px;
+  overflow: hidden;
+  background: white;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.card:hover { border-color: var(--rule-2); box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+.card.open  { border-color: var(--rule-2); }
+
+.card-head {
+  display: grid;
+  grid-template-columns: 5px 1fr auto 22px;
+  align-items: stretch;
+  cursor: pointer;
+  min-height: 56px;
+  user-select: none;
+}
+
+.card-stripe { align-self: stretch; }
+
+.card-body { padding: .65rem .8rem .65rem .75rem; }
+
+.card-subject {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  color: var(--ink);
+}
+
+.card-note {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+
+.card-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.book-tag {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--paper-2);
+  color: var(--ink-3);
+  border: .5px solid var(--rule);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.card-dur {
+  font-size: 10px;
+  color: var(--ink-4);
+  font-family: 'JetBrains Mono', monospace;
+  padding: .65rem .5rem 0 0;
+  white-space: nowrap;
+  align-self: start;
+  margin-top: 5px;
+}
+
+.card-arrow {
+  padding: .65rem .6rem 0 0;
+  align-self: start;
+  margin-top: 5px;
+  color: var(--ink-4);
+  font-size: 11px;
+  transition: transform .2s;
+}
+
+.card.open .card-arrow { transform: rotate(180deg); }
+
+/* ─────────────────────────────────────────────
+   EXPAND AREA
+───────────────────────────────────────────── */
+.card-expand {
+  display: none;
+  border-top: .5px solid var(--rule);
+  background: var(--paper);
+}
+
+.card.open .card-expand { display: block; }
+
+.expand-tabs {
+  display: flex;
+  border-bottom: .5px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .06em;
+  padding: .45rem .9rem;
+  cursor: pointer;
+  color: var(--ink-4);
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  user-select: none;
+  text-transform: uppercase;
+}
+
+.tab:hover { color: var(--ink-2); }
+.tab.active { color: var(--ink); border-bottom-color: var(--ink-2); }
+
+.tab-content { display: none; padding: .9rem 1.1rem 1rem 1.3rem; }
+.tab-content.active { display: block; }
+
+.expand-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  margin-bottom: .6rem;
+}
+
+/* ─────────────────────────────────────────────
+   TOPIC LIST
+───────────────────────────────────────────── */
+.topic-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+
+.topic-list li {
+  font-size: 13px;
+  color: var(--ink-3);
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  line-height: 1.5;
+}
+
+.topic-list li::before {
+  content: '—';
+  color: var(--ink-4);
+  font-size: 10px;
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.topic-list li strong { color: var(--ink); font-weight: 500; }
+.topic-list li em { font-style: italic; color: var(--ink-3); }
+
+/* ─────────────────────────────────────────────
+   BOOK LIST
+───────────────────────────────────────────── */
+.book-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+.book-item { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; }
+
+.book-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-4);
+  padding-top: 2px;
+  font-weight: 500;
+}
+
+.book-title { font-size: 13.5px; font-weight: 500; font-style: italic; color: var(--ink); line-height: 1.3; }
+.book-author { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+.book-why { font-size: 12px; color: var(--ink-3); margin-top: 3px; font-style: italic; line-height: 1.45; }
+
+.bbadge {
+  display: inline-block;
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+  vertical-align: middle;
+  font-style: normal;
+}
+
+.bb-e { background: #dff0e8; color: #0d5c34; }
+.bb-c { background: #e4eef8; color: #0d3d6e; }
+.bb-d { background: #ede8f5; color: #2e1c5e; }
+.bb-r { background: #f5ead6; color: #5a3208; }
+.bb-cap { background: #f5dde8; color: #6a1830; }
+
+/* ─────────────────────────────────────────────
+   CALLOUTS
+───────────────────────────────────────────── */
+.milestone {
+  margin: .75rem 0 .25rem;
+  padding: .55rem .85rem;
+  border-left: 2.5px solid #1a6b4a;
+  background: #dff0e8;
+  border-radius: 0 4px 4px 0;
+  font-size: 13px;
+  color: #0d5c34;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.gap-note {
+  margin: .75rem 0 .25rem;
+  padding: .55rem .85rem;
+  border-left: 2.5px solid #c03030;
+  background: #f8e0e0;
+  border-radius: 0 4px 4px 0;
+  font-size: 13px;
+  color: #801818;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.conn-note {
+  margin: .75rem 0 1rem;
+  padding: .65rem .9rem;
+  border-left: 2.5px solid var(--c-geo);
+  background: var(--c-geo-bg);
+  border-radius: 0 4px 4px 0;
+  font-size: 13px;
+  color: #4a1030;
+  line-height: 1.6;
+}
+
+.conn-note strong { font-weight: 500; color: var(--c-geo); }
+
+.divider {
+  height: .5px;
+  background: var(--rule);
+  margin: 2.5rem 0;
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-4);
+  letter-spacing: .06em;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .page { padding: 0 1rem 4rem; }
+  .card-head { grid-template-columns: 4px 1fr 16px; }
+  .card-dur { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<header>
+  <div class="header-eyebrow">Learning Real Analysis — Repository Curriculum</div>
+  <h1>A Ten-Year Mathematical Journey</h1>
+  <p class="header-sub">From the Peano axioms to Brownian motion on an undulating torus. Each phase builds on the last. Click any card to expand topics and reading lists.</p>
+  <div class="capstone-banner">
+    <strong>Capstone target —</strong> Arnaudon, Coulibaly, Thalmaier. <em>Brownian motion with respect to a metric depending on time.</em> C. R. Acad. Sci. Paris 346 (2008). · Full paper: arXiv:0901.1999 · Target year: 6 · Fluency year: 10
+  </div>
+</header>
+
+<!-- LEGEND -->
+<div class="legend-wrap">
+  <div class="leg-item"><span class="badge b-now">now</span><span class="leg-desc">in progress</span></div>
+  <div class="leg-item"><span class="badge b-par">parallel</span><span class="leg-desc">running alongside</span></div>
+  <div class="leg-item"><span class="badge b-soon">soon</span><span class="leg-desc">next 6 months</span></div>
+  <div class="leg-item"><span class="badge b-later">later</span><span class="leg-desc">6–18 months</span></div>
+  <div class="leg-item"><span class="badge b-target">target</span><span class="leg-desc">terminal goals</span></div>
+  <div class="leg-item"><span class="badge b-p6">phase 6</span><span class="leg-desc">years 8–10+</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PHASE 1
+════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-head">
+    <span class="badge b-now">now</span>
+    <span class="phase-title">Phase 1 — Analysis & Linear Algebra foundations</span>
+    <span class="phase-est">now → ~6 months</span>
+  </div>
+
+  <div class="section-label">Single-variable analysis (completing)</div>
+
+  <!-- SEQUENCES -->
+  <div class="card" id="c01">
+    <div class="card-head" onclick="toggle('c01')">
+      <div class="card-stripe" style="background:var(--c-ana1)"></div>
+      <div class="card-body">
+        <div class="card-subject">Sequences, limits, continuity</div>
+        <div class="card-note">In progress. Standard Analysis 1 content. Convergence, Cauchy, metric spaces.</div>
+        <div class="card-tags">
+          <span class="book-tag">Bartle &amp; Sherbert</span>
+          <span class="book-tag" style="background:var(--c-ana1-bg);color:var(--c-ana1)">Analysis 1</span>
+        </div>
+      </div>
+      <div class="card-dur">in progress</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c01','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c01','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Definition of convergence</strong> — ε-N and neighborhood formulations, uniqueness of limits</li>
+          <li><strong>Algebra of limits</strong> — sum, product, quotient rules with full ε-N proofs</li>
+          <li><strong>Cauchy sequences</strong> — definition, equivalence with convergence in ℝ, failure modes</li>
+          <li><strong>Monotone convergence theorem</strong> — first existence theorem in analysis; no explicit limit needed</li>
+          <li><strong>Bolzano–Weierstrass</strong> — every bounded sequence has a convergent subsequence</li>
+          <li><strong>lim sup and lim inf</strong> — definitions, relationship to subsequential limits</li>
+          <li><strong>Metric spaces</strong> — open/closed sets, compactness, completeness, connectedness</li>
+          <li><strong>Continuity</strong> — ε-δ, sequential criterion, uniform continuity, IVT, EVT</li>
+          <li><em>Project Landau —</em> currently at Thm 15–17: transitivity and mixed ordering on ℕ</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Understanding Analysis <span class="bbadge bb-e">entry</span></div><div class="book-author">Abbott</div><div class="book-why">The most readable first encounter with real analysis. Every definition is motivated before stated. Read before or alongside Bartle.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Introduction to Real Analysis, 4th ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Bartle &amp; Sherbert</div><div class="book-why">Primary working text. Rigorous, complete, well-organized. The house notes live here.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Mathematical Analysis I <span class="bbadge bb-c">core</span></div><div class="book-author">Zorich</div><div class="book-why">Russian tradition: deeper, more geometric, more physically motivated. Extraordinary for building intuition behind the formalism. Do not skip.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Principles of Mathematical Analysis <span class="bbadge bb-d">deep</span></div><div class="book-author">Rudin</div><div class="book-why">Baby Rudin. Terse, beautiful, demanding. Read once fluent in Bartle. Every theorem is a lesson in compression.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Counterexamples in Analysis <span class="bbadge bb-r">reference</span></div><div class="book-author">Gelbaum &amp; Olmsted</div><div class="book-why">Indispensable companion. For every theorem, see exactly where the hypotheses cannot be weakened.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIFFERENTIATION -->
+  <div class="card" id="c02">
+    <div class="card-head" onclick="toggle('c02')">
+      <div class="card-stripe" style="background:var(--c-ana2)"></div>
+      <div class="card-body">
+        <div class="card-subject">Differentiation, Taylor expansion, inverse function theorem</div>
+        <div class="card-note">Currently in progress. Upper-level Analysis 2 material. MVT, Taylor remainder, IFT.</div>
+        <div class="card-tags">
+          <span class="book-tag">Bartle &amp; Sherbert</span>
+          <span class="book-tag" style="background:var(--c-ana2-bg);color:var(--c-ana2)">Analysis 2</span>
+        </div>
+      </div>
+      <div class="card-dur">in progress</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c02','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c02','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Mean value theorem</strong> — Cauchy MVT, consequences for monotonicity</li>
+          <li><strong>Taylor's theorem</strong> — remainder estimates; feeds numerical analysis error bounds directly</li>
+          <li><strong>Inverse function theorem</strong> — local diffeomorphism condition; geometric engine of manifold theory</li>
+          <li><strong>Lipschitz constants</strong> — bounds on derivative; GPU stability criterion in volume-iv</li>
+          <li><strong>Convexity</strong> — second derivative test, Jensen's inequality</li>
+          <li><strong>L'Hôpital's rule</strong> — rigorous form via Cauchy MVT</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Understanding Analysis <span class="bbadge bb-e">entry</span></div><div class="book-author">Abbott</div><div class="book-why">Chapter 5 is the clearest motivation for why MVT is the central theorem. Read first.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Introduction to Real Analysis, 4th ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Bartle &amp; Sherbert</div><div class="book-why">Primary text. Chapters 6–7 cover differentiation and Taylor with full proof machinery.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Mathematical Analysis I <span class="bbadge bb-c">core</span></div><div class="book-author">Zorich</div><div class="book-why">Taylor theorem chapter is exceptional — remainder estimates connected to approximation theory and numerical analysis explicitly.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Principles of Mathematical Analysis <span class="bbadge bb-d">deep</span></div><div class="book-author">Rudin</div><div class="book-why">Chapter 5. The IFT proof via contraction mapping is the canonical compressed form you will cite later.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Real Mathematical Analysis, 2nd ed. <span class="bbadge bb-d">deep</span></div><div class="book-author">Pugh</div><div class="book-why">Best geometric pictures of any rigorous analysis text. The IFT chapter is particularly vivid.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIEMANN + SERIES -->
+  <div class="card" id="c03">
+    <div class="card-head" onclick="toggle('c03')">
+      <div class="card-stripe" style="background:var(--c-ana2)"></div>
+      <div class="card-body">
+        <div class="card-subject">Riemann integration &amp; series</div>
+        <div class="card-note">Darboux sums, integrability criteria, series convergence tests. Completes single-variable analysis.</div>
+        <div class="card-tags">
+          <span class="book-tag">Bartle &amp; Sherbert</span>
+          <span class="book-tag" style="background:var(--c-ana2-bg);color:var(--c-ana2)">Analysis 2</span>
+        </div>
+      </div>
+      <div class="card-dur">3–4 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c03','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c03','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Darboux sums</strong> — upper/lower sums, integrability criterion via mesh control</li>
+          <li><strong>Fundamental theorem of calculus</strong> — both parts with full proof</li>
+          <li><strong>Series convergence tests</strong> — comparison, ratio, root, alternating, integral test</li>
+          <li><strong>Absolute vs conditional convergence</strong> — rearrangement theorem</li>
+          <li><strong>Power series</strong> — radius of convergence, uniform convergence, term-by-term differentiation</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Understanding Analysis <span class="bbadge bb-e">entry</span></div><div class="book-author">Abbott</div><div class="book-why">Chapter 7 on integration is gentle and motivates Darboux sums before defining them.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Introduction to Real Analysis, 4th ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Bartle &amp; Sherbert</div><div class="book-why">Primary text. Chapters 7–9 cover integration and series completely.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Sequences and Series: Theory and Practice <span class="bbadge bb-c">core</span></div><div class="book-author">Alves de Sá &amp; Louro</div><div class="book-why">The only book dedicated entirely to sequences and series. Thorough on convergence tests with worked examples.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">The Elements of Integration and Lebesgue Measure <span class="bbadge bb-d">deep</span></div><div class="book-author">Bartle</div><div class="book-why">Bartle's own bridge from Riemann to Lebesgue. Short, clean. Read this before Capiński.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Principles of Mathematical Analysis <span class="bbadge bb-d">deep</span></div><div class="book-author">Rudin</div><div class="book-why">Chapters 6 and 8. Riemann-Stieltjes integral is broader than Bartle and introduces machinery needed for measure theory.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:1.25rem">Parallel track — Project Landau</div>
+  <div class="parallel-note">Working through Landau's <em>Foundations of Analysis</em> theorem by theorem from the Peano axioms. Currently at Thm 15–17: transitivity and mixed ordering on ℕ. This is the atomic foundation everything else rests on.</div>
+
+  <div class="section-label">Linear algebra (parallel track — starting now)</div>
+
+  <!-- LINEAR ALGEBRA ABSTRACT -->
+  <div class="card" id="c04">
+    <div class="card-head" onclick="toggle('c04')">
+      <div class="card-stripe" style="background:var(--c-la)"></div>
+      <div class="card-body">
+        <div class="card-subject">Abstract linear algebra</div>
+        <div class="card-note">Vector spaces, linear maps, eigenvalues, spectral theorem, inner product spaces. Dual spaces prerequisite for Grinfeld.</div>
+        <div class="card-tags">
+          <span class="book-tag">Axler — LADR</span>
+          <span class="book-tag" style="background:var(--c-la-bg);color:var(--c-la)">Linear Algebra</span>
+        </div>
+      </div>
+      <div class="card-dur">parallel</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c04','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c04','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Vector spaces &amp; subspaces</strong> — basis, dimension, direct sum</li>
+          <li><strong>Linear maps</strong> — null space, range, rank-nullity theorem</li>
+          <li><strong>Eigenvalues &amp; eigenvectors</strong> — characteristic polynomial, diagonalization</li>
+          <li><strong>Inner product spaces</strong> — Gram-Schmidt, orthonormal bases, adjoints</li>
+          <li><strong>Spectral theorem</strong> — self-adjoint operators diagonalize orthonormally; seed of spectral theory and harmonic analysis</li>
+          <li><strong>Dual spaces</strong> — covectors; direct prerequisite for tensor calculus (Grinfeld)</li>
+          <li><strong>Positive operators</strong> — square roots, polar decomposition</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Introduction to Linear Algebra, 5th ed. <span class="bbadge bb-e">entry</span></div><div class="book-author">Strang</div><div class="book-why">Computational intuition first. Makes matrices feel physical. Read alongside Axler so every abstract object has a concrete picture.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Linear Algebra Done Right, 4th ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Axler</div><div class="book-why">Primary abstract text. Determinant-free approach forces structural understanding. Spectral theorem chapters essential for everything downstream.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Finite-Dimensional Vector Spaces <span class="bbadge bb-d">deep</span></div><div class="book-author">Halmos</div><div class="book-why">Halmos invented the pedagogical style Axler follows. The dual space and tensor product chapters are still the best treatment at this level.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Numerical Linear Algebra <span class="bbadge bb-d">deep</span></div><div class="book-author">Trefethen &amp; Bau</div><div class="book-why">The bridge from pure to computational. Every decomposition — QR, SVD, conditioning — explained with geometric and numerical insight. Essential for Vulkan.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Measure, Integration &amp; Real Analysis <span class="bbadge bb-r">reference</span></div><div class="book-author">Axler</div><div class="book-why">Reading both Axler LA and measure books creates a coherent operator-theoretic thread from finite to infinite dimensions that pays dividends in functional analysis.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="milestone">Milestone — Analysis 1 &amp; 2 complete, Linear Algebra foundations solid. Ready for multivariable.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     PHASE 2
+════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-head">
+    <span class="badge b-soon">soon</span>
+    <span class="phase-title">Phase 2 — Multivariable analysis, geometry, ODEs, numerics</span>
+    <span class="phase-est">months 4–10</span>
+  </div>
+
+  <!-- MULTIVARIABLE -->
+  <div class="card" id="c05">
+    <div class="card-head" onclick="toggle('c05')">
+      <div class="card-stripe" style="background:var(--c-mv)"></div>
+      <div class="card-body">
+        <div class="card-subject">Multivariable analysis</div>
+        <div class="card-note">Derivative as linear map, IFT, implicit function theorem, differential forms, generalized Stokes theorem.</div>
+        <div class="card-tags">
+          <span class="book-tag">Spivak — Calculus on Manifolds</span>
+          <span class="book-tag" style="background:var(--c-mv-bg);color:var(--c-mv)">Multivariable / Calc 3 rigorous</span>
+        </div>
+      </div>
+      <div class="card-dur">6–8 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c05','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c05','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Derivative as linear map</strong> — Jacobian; the definition that unlocks manifold theory</li>
+          <li><strong>Chain rule in full generality</strong> — composition of differentiable maps between ℝⁿ</li>
+          <li><strong>Inverse function theorem</strong> — multivariable; local diffeomorphism condition</li>
+          <li><strong>Implicit function theorem</strong> — level sets as manifolds; how the torus is defined</li>
+          <li><strong>Differential forms</strong> — k-forms, exterior derivative, pullback</li>
+          <li><strong>Generalized Stokes theorem</strong> — ∫_∂Ω ω = ∫_Ω dω; unifies Green, Gauss, classical Stokes</li>
+          <li><strong>Change of variables</strong> — full multivariable version with Jacobian determinant</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Mathematical Analysis II <span class="bbadge bb-e">entry</span></div><div class="book-author">Zorich</div><div class="book-why">Most humane rigorous multivariable text in existence. Connects integration, differential forms, and physics explicitly. Read before Spivak.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">A Visual Introduction to Differential Forms and Calculus on Manifolds <span class="bbadge bb-e">entry</span></div><div class="book-author">Fortney</div><div class="book-why">The geometric pictures of differential forms here are irreplaceable. Read alongside Spivak to keep intuition attached to formalism.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Calculus on Manifolds <span class="bbadge bb-c">core</span></div><div class="book-author">Spivak</div><div class="book-why">140 pages of concentrated rigor. Dense but necessary. Every line is load-bearing. Treat with full house-constitution discipline.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Differential Forms with Applications to the Physical Sciences <span class="bbadge bb-d">deep</span></div><div class="book-author">Flanders</div><div class="book-why">Classical applied treatment. Where Spivak is abstract, Flanders is concrete and physical. Essential for how forms appear in mechanics and field theory.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Real and Complex Analysis, 3rd ed. <span class="bbadge bb-r">reference</span></div><div class="book-author">Rudin</div><div class="book-why">Big Rudin. Integration chapters generalize Spivak to abstract measure spaces. Connects multivariable calculus to measure theory permanently.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIFFERENTIAL GEOMETRY -->
+  <div class="card" id="c06">
+    <div class="card-head" onclick="toggle('c06')">
+      <div class="card-stripe" style="background:var(--c-geo)"></div>
+      <div class="card-body">
+        <div class="card-subject">Classical differential geometry — Shifrin + do Carmo</div>
+        <div class="card-note">Curves, surfaces in ℝ³, curvature, geodesics, Gauss-Bonnet. The torus appears here as a concrete geometric object.</div>
+        <div class="card-tags">
+          <span class="book-tag">Shifrin</span>
+          <span class="book-tag">do Carmo</span>
+          <span class="book-tag" style="background:var(--c-geo-bg);color:var(--c-geo)">Differential Geometry</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c06','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c06','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Parametrized curves</strong> — arclength, regularity, reparametrization</li>
+          <li><strong>Frenet frame</strong> — tangent T, normal N, binormal B, curvature κ, torsion τ</li>
+          <li><strong>First fundamental form</strong> — the metric tensor; distances and angles on the surface</li>
+          <li><strong>Gauss map &amp; second fundamental form</strong> — principal curvatures, Gaussian curvature K</li>
+          <li><strong>Theorema Egregium</strong> — K is intrinsic; the geometry a creature on the surface would measure</li>
+          <li><strong>Geodesics</strong> — ∇_γ̇ γ̇ = 0; shortest paths on the torus</li>
+          <li><strong>Gauss-Bonnet theorem</strong> — ∫∫_M K dA = 2πχ(M); torus has K=0, χ=0</li>
+          <li><strong>Holonomy</strong> — parallel transport around a loop; angle deficit equals enclosed curvature</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Differential Geometry: A First Course in Curves and Surfaces <span class="bbadge bb-e">entry</span></div><div class="book-author">Shifrin</div><div class="book-why">Entry point. Accessible, worked examples, covers the torus explicitly. Video lectures available online. Read first and read carefully.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Differential Geometry of Curves and Surfaces (Dover revised ed.) <span class="bbadge bb-c">core</span></div><div class="book-author">do Carmo</div><div class="book-why">Canonical reference for classical differential geometry. Run alongside Shifrin. Where Shifrin explains, do Carmo states precisely.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Introduction to Tensor Analysis and the Calculus of Moving Surfaces <span class="bbadge bb-c">core</span></div><div class="book-author">Grinfeld</div><div class="book-why">After Shifrin. Tensor language that makes the metric tensor coordinate-independent. Part III on moving surfaces is unique in the literature.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Elementary Differential Geometry, Revised 2nd ed. <span class="bbadge bb-d">deep</span></div><div class="book-author">O'Neill</div><div class="book-why">Uses differential forms from the start, making the bridge to modern differential geometry natural. Gauss-Bonnet proof is particularly clean.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Riemannian Geometry: A Beginner's Guide <span class="bbadge bb-r">reference</span></div><div class="book-author">Morgan</div><div class="book-why">Short, accessible bridge from classical surfaces to Riemannian manifolds. Chapter on the torus and flat metrics directly relevant to the simulation.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ODEs -->
+  <div class="card" id="c07">
+    <div class="card-head" onclick="toggle('c07')">
+      <div class="card-stripe" style="background:var(--c-ode)"></div>
+      <div class="card-body">
+        <div class="card-subject">Ordinary differential equations</div>
+        <div class="card-note">Existence/uniqueness, linear systems, phase portraits, stability. Foundation for DDEs and SDEs.</div>
+        <div class="card-tags">
+          <span class="book-tag">Hirsch, Smale &amp; Devaney</span>
+          <span class="book-tag">Tenenbaum &amp; Pollard</span>
+          <span class="book-tag" style="background:var(--c-ode-bg);color:var(--c-ode)">ODEs</span>
+        </div>
+      </div>
+      <div class="card-dur">6–8 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c07','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c07','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Picard–Lindelöf theorem</strong> — existence and uniqueness via contraction mapping</li>
+          <li><strong>Linear systems</strong> — matrix exponential, Jordan form, phase portraits</li>
+          <li><strong>Lyapunov stability</strong> — Lyapunov functions, asymptotic stability, LaSalle's principle; seed of Phase 6</li>
+          <li><strong>Gronwall's inequality</strong> — essential for error estimates in numerical ODEs</li>
+          <li><strong>Floquet theory</strong> — periodic linear systems; relevant to motion on torus</li>
+          <li><strong>Lyapunov exponents</strong> — rate of separation of nearby trajectories</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Ordinary Differential Equations <span class="bbadge bb-e">entry</span></div><div class="book-author">Tenenbaum &amp; Pollard</div><div class="book-why">Most comprehensive elementary ODE text. 800+ pages of methods and worked examples. Learn to calculate here before you prove.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Differential Equations, Dynamical Systems and an Introduction to Chaos <span class="bbadge bb-c">core</span></div><div class="book-author">Hirsch, Smale &amp; Devaney</div><div class="book-why">Theoretical counterpart to Tenenbaum. Linear systems, phase portraits, stability. This is where Picard and Gronwall live in context.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Introduction to Partial Differential Equations <span class="bbadge bb-c">core</span></div><div class="book-author">Pinchover &amp; Rubinstein</div><div class="book-why">Natural ODE-to-PDE bridge. Introduces heat and wave equations in a way that motivates everything in Phase 3.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Introduction to the Calculus of Variations <span class="bbadge bb-d">deep</span></div><div class="book-author">Dacorogna</div><div class="book-why">Geodesics are the calculus of variations problem on a surface. The Euler-Lagrange equation is the ODE of geodesics. Connects to Phase 6 optimal control.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Essentials of Stochastic Processes, 3rd ed. <span class="bbadge bb-r">reference</span></div><div class="book-author">Durrett</div><div class="book-why">Forward pointer: bridge from deterministic ODEs to stochastic processes. Makes the SDE transition feel like natural generalization.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUMERICAL ANALYSIS -->
+  <div class="card" id="c08">
+    <div class="card-head" onclick="toggle('c08')">
+      <div class="card-stripe" style="background:var(--c-num)"></div>
+      <div class="card-body">
+        <div class="card-subject">Numerical analysis</div>
+        <div class="card-note">Root finding, interpolation, numerical ODEs, error analysis. Lipschitz constants bound step size — feeds Vulkan workgroup sizing.</div>
+        <div class="card-tags">
+          <span class="book-tag">Burden &amp; Faires</span>
+          <span class="book-tag">Trefethen &amp; Bau</span>
+          <span class="book-tag" style="background:var(--c-num-bg);color:var(--c-num)">Numerical Analysis</span>
+        </div>
+      </div>
+      <div class="card-dur">6–8 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c08','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c08','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Root finding</strong> — bisection, Newton-Raphson, convergence rates</li>
+          <li><strong>Interpolation</strong> — Lagrange, splines, Runge's phenomenon</li>
+          <li><strong>Euler method &amp; RK4</strong> — discretization of ODEs; what the GPU integrator runs</li>
+          <li><strong>Stability &amp; stiffness</strong> — Lipschitz constants bound step size; feeds Vulkan workgroup sizing directly</li>
+          <li><strong>Error analysis</strong> — local vs global truncation error, Taylor remainder connection</li>
+          <li><strong>Numerical linear algebra</strong> — condition number, iterative solvers for PDE discretizations</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">Key texts</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Numerical Analysis, 10th ed. <span class="bbadge bb-e">entry</span></div><div class="book-author">Burden &amp; Faires</div><div class="book-why">The standard undergraduate numerical analysis text. Comprehensive, well-organized, full of algorithms and error analysis.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Numerical Linear Algebra <span class="bbadge bb-c">core</span></div><div class="book-author">Trefethen &amp; Bau</div><div class="book-why">The numerical linear algebra bible. Every decomposition explained with geometric and numerical insight simultaneously. GPU linear algebra maps directly here.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap-note">Gap — most universities require proof-based Calc 3 before Analysis 3. Spivak covers this but is dense. Budget extra time here relative to a university schedule.</div>
+  <div class="milestone">Milestone — equivalent to a strong mathematics BSc core. ODEs, geometry, and numerics all in hand.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     PHASE 3
+════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-head">
+    <span class="badge b-later">later</span>
+    <span class="phase-title">Phase 3 — Tensor calculus, Fourier, PDEs, spectral theory, DDEs, functional analysis</span>
+    <span class="phase-est">months 10–18</span>
+  </div>
+
+  <!-- TENSOR / GRINFELD -->
+  <div class="card" id="c09">
+    <div class="card-head" onclick="toggle('c09')">
+      <div class="card-stripe" style="background:var(--c-ten)"></div>
+      <div class="card-body">
+        <div class="card-subject">Tensor calculus — Grinfeld</div>
+        <div class="card-note">The bridge between classical and abstract differential geometry. Part III: calculus of moving surfaces — the direct mathematical language of the undulating torus.</div>
+        <div class="card-tags">
+          <span class="book-tag">Grinfeld</span>
+          <span class="book-tag" style="background:var(--c-ten-bg);color:var(--c-ten)">Tensor Calculus</span>
+        </div>
+      </div>
+      <div class="card-dur">12–15 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c09','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c09','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Part I — Tensors in Euclidean spaces</strong> — covariant basis Z_i, metric tensor Z_ij, Christoffel symbols Γⁱⱼₖ, covariant derivative</li>
+          <li><strong>Einstein summation convention</strong> — index gymnastics; maps naturally to GPU reduction operations</li>
+          <li><strong>Tensor transformation law</strong> — what makes a quantity genuinely coordinate-independent</li>
+          <li><strong>Part II — Tensors on surfaces</strong> — surface metric, shape operator, curvature tensor in index notation</li>
+          <li><strong>Part III — Calculus of moving surfaces</strong> — δ/δt operator, transport theorems, evolving domains</li>
+          <li><em>Capstone connection:</em> the δ/δt operator is the deterministic precursor to the Arnaudon-Coulibaly-Thalmaier time-varying metric construction</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Introduction to Tensor Analysis and the Calculus of Moving Surfaces <span class="bbadge bb-c">core</span></div><div class="book-author">Grinfeld</div><div class="book-why">The book that started the obsession. Primary text. Read all three parts in order. Part III has no equivalent elsewhere in the literature.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Differential Forms: Theory and Practice, 2nd ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Weintraub</div><div class="book-why">Tensor calculus and differential forms are two languages for the same geometry. Reading Weintraub alongside Grinfeld makes both clearer by contrast.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Tensor Calculus and Differential Geometry for Engineers <span class="bbadge bb-d">deep</span></div><div class="book-author">Sahraee &amp; Wriggers</div><div class="book-why">Computational and applied. Shows how tensor expressions translate to explicit calculations — the bridge to the Vulkan implementation.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Differential Geometry of Curves and Surfaces <span class="bbadge bb-r">reference</span></div><div class="book-author">do Carmo</div><div class="book-why">Every Grinfeld object has a classical counterpart here. Reading them together fixes the connection between coordinate and coordinate-free language.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Smooth Functions and Maps <span class="bbadge bb-d">deep</span></div><div class="book-author">Makarov &amp; Podkorytov</div><div class="book-why">Moscow Lectures. Covers smooth maps from the abstract side. With Grinfeld, triangulates the same territory from two directions.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOURIER -->
+  <div class="card" id="c10">
+    <div class="card-head" onclick="toggle('c10')">
+      <div class="card-stripe" style="background:var(--c-four)"></div>
+      <div class="card-body">
+        <div class="card-subject">Fourier &amp; harmonic analysis</div>
+        <div class="card-note">Fourier series on 𝕋² is the canonical example. Spectrum of Δ on 𝕋² = {4π²(m²+n²)}. Connects to spectral theory, PDEs, and the simulation's spectral expansion.</div>
+        <div class="card-tags">
+          <span class="book-tag">Stein &amp; Shakarchi vol 1</span>
+          <span class="book-tag" style="background:var(--c-four-bg);color:var(--c-four)">Harmonic Analysis</span>
+        </div>
+      </div>
+      <div class="card-dur">6–8 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c10','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c10','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Fourier series on 𝕋²</strong> — characters e^{2πi(mx+ny)}, orthonormality, completeness</li>
+          <li><strong>Parseval's theorem</strong> — energy conservation in frequency domain</li>
+          <li><strong>Convergence theorems</strong> — L² convergence, pointwise convergence, Dirichlet kernel</li>
+          <li><strong>Heat equation via Fourier</strong> — heat kernel on 𝕋² is diagonal in the Fourier basis</li>
+          <li><strong>Spectrum of Δ on 𝕋²</strong> — eigenvalues {4π²(m²+n²)}; explicit and computable for GPU implementation</li>
+          <li><em>Simulation connection:</em> the spectral representation is natural for parallel GPU computation</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Fourier Series <span class="bbadge bb-e">entry</span></div><div class="book-author">Tolstov</div><div class="book-why">Dover classic. Most elementary rigorous treatment available. Builds computational intuition before the abstract machinery.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Fourier Analysis: An Introduction (Princeton Lectures vol 1) <span class="bbadge bb-c">core</span></div><div class="book-author">Stein &amp; Shakarchi</div><div class="book-why">Primary text. Treats the torus as a central example throughout. One of the great achievements of mathematical pedagogy.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Real Analysis: Measure Theory, Integration, and Hilbert Spaces (Princeton Lectures vol 3) <span class="bbadge bb-c">core</span></div><div class="book-author">Stein &amp; Shakarchi</div><div class="book-why">L² theory of Fourier series. Connects Fourier analysis to measure theory and Hilbert spaces — the functional analytic home of the heat semigroup.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Partial Differential Equations: An Introduction, 2nd ed. <span class="bbadge bb-d">deep</span></div><div class="book-author">Strauss</div><div class="book-why">Fourier series appear here as the primary tool for solving heat and wave equations. Shows immediately why Fourier analysis was invented.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Real and Complex Analysis, 3rd ed. <span class="bbadge bb-r">reference</span></div><div class="book-author">Rudin</div><div class="book-why">Chapter 11: L² theory of Fourier transforms in full abstract generality. The reference once Stein and Strauss have built the intuition.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDEs -->
+  <div class="card" id="c11">
+    <div class="card-head" onclick="toggle('c11')">
+      <div class="card-stripe" style="background:var(--c-pde)"></div>
+      <div class="card-body">
+        <div class="card-subject">Partial differential equations</div>
+        <div class="card-note">Heat, wave, Laplace. Heat equation on 𝕋² IS Brownian motion analytically — the Fokker-Planck equation governs the probability density of X_t.</div>
+        <div class="card-tags">
+          <span class="book-tag">Strauss</span>
+          <span class="book-tag">Evans (intro chs)</span>
+          <span class="book-tag" style="background:var(--c-pde-bg);color:var(--c-pde)">PDEs</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c11','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c11','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Heat equation</strong> — maximum principle, fundamental solution, heat kernel on 𝕋²</li>
+          <li><strong>Wave equation</strong> — d'Alembert formula, energy methods</li>
+          <li><strong>Laplace equation</strong> — harmonic functions, mean value property, Dirichlet problem</li>
+          <li><strong>Separation of variables on 𝕋²</strong> — eigenfunction expansion; spectrum of Δ</li>
+          <li><strong>Fokker-Planck equation</strong> — PDE governing probability density of Brownian motion</li>
+          <li><em>Capstone connection:</em> (∂_t − Δ_{g(t)})u = 0 is the central PDE of the target paper</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Partial Differential Equations: An Introduction, 2nd ed. <span class="bbadge bb-e">entry</span></div><div class="book-author">Strauss</div><div class="book-why">Standard undergraduate PDE text. Clear, well-motivated, full of physical examples. Heat equation chapters are the best entry into this subject.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Introduction to Partial Differential Equations <span class="bbadge bb-c">core</span></div><div class="book-author">Pinchover &amp; Rubinstein</div><div class="book-why">Bridges ODE and PDE theory more explicitly than Strauss. Eigenfunction expansion chapters connect directly to spectral theory of Δ on 𝕋².</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Linear Partial Differential Equations for Scientists and Engineers, 4th ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Myint-U &amp; Debnath</div><div class="book-why">Comprehensive and computational. Covers separation of variables, Fourier methods, Green's functions with full worked examples.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Introduction to PDE with Applications <span class="bbadge bb-d">deep</span></div><div class="book-author">Zachmanoglou &amp; Thoe</div><div class="book-why">Dover classic with more theoretical flavor. Characteristics method and Cauchy-Kovalevskaya covered more thoroughly — relevant for PDEs on manifolds.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Real Analysis: Measure Theory, Integration, and Hilbert Spaces (Princeton Lectures vol 3) <span class="bbadge bb-r">reference</span></div><div class="book-author">Stein &amp; Shakarchi</div><div class="book-why">Sobolev space and distribution theory chapters are the rigorous foundation for Evans-level PDE theory. Read once Strauss has built the intuition.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DDEs -->
+  <div class="card" id="c12">
+    <div class="card-head" onclick="toggle('c12')">
+      <div class="card-stripe" style="background:#8a6a10"></div>
+      <div class="card-body">
+        <div class="card-subject">Delay differential equations</div>
+        <div class="card-note">The pursuit-chase in the simulation is literally a DDE on the torus. No standard course — specialist self-study.</div>
+        <div class="card-tags">
+          <span class="book-tag">Bellman &amp; Cooke</span>
+          <span class="book-tag">Erneux</span>
+          <span class="book-tag" style="background:#f5ead6;color:#5a3208">Self-study only</span>
+        </div>
+      </div>
+      <div class="card-dur">4–6 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c12','topics')">Topics</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Method of steps</strong> — solve DDE on [0,τ], [τ,2τ], etc. by reducing to ODE on each interval</li>
+          <li><strong>Existence &amp; uniqueness</strong> — Picard iteration for DDEs; requires initial function on [−τ,0]</li>
+          <li><strong>Characteristic equation</strong> — transcendental equation; infinitely many roots</li>
+          <li><strong>Stability analysis</strong> — delay can destabilize a stable ODE; D-subdivision method</li>
+          <li><strong>DDE on manifolds</strong> — pursuer velocity at t depends on evader position at t−τ on geometry g_{t−τ}</li>
+          <li><em>Stretch goal connection:</em> the delay couples two distinct geometric states of the evolving torus — not fully formalized in the literature</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUNCTIONAL ANALYSIS -->
+  <div class="card" id="c13">
+    <div class="card-head" onclick="toggle('c13')">
+      <div class="card-stripe" style="background:var(--c-fa)"></div>
+      <div class="card-body">
+        <div class="card-subject">Functional analysis</div>
+        <div class="card-note">Banach and Hilbert spaces, bounded operators. The analytic infrastructure for spectral theory and PDEs.</div>
+        <div class="card-tags">
+          <span class="book-tag">Bachman &amp; Narici</span>
+          <span class="book-tag" style="background:var(--c-fa-bg);color:var(--c-fa)">Functional Analysis (grad)</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c13','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c13','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Banach spaces</strong> — completeness, examples, equivalence of norms</li>
+          <li><strong>Hilbert spaces</strong> — orthonormal bases, Riesz representation theorem</li>
+          <li><strong>Bounded linear operators</strong> — operator norm, dual space, adjoint</li>
+          <li><strong>Hahn-Banach theorem</strong> — extension of linear functionals; fundamental separation result</li>
+          <li><strong>Compact operators</strong> — spectral theory, Fredholm alternative</li>
+          <li><strong>Spectral theorem (compact self-adjoint)</strong> — Laplacian on L²(𝕋²)</li>
+          <li><strong>Sobolev spaces</strong> — natural domain for PDEs; weak derivatives</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Real Analysis for the Undergraduate: With an Invitation to Functional Analysis <span class="bbadge bb-e">entry</span></div><div class="book-author">Pons</div><div class="book-why">Exactly what the title says — a bridge from real analysis to functional analysis. Gentlest possible on-ramp.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Introductory Functional Analysis with Applications <span class="bbadge bb-e">entry</span></div><div class="book-author">Kreyszig</div><div class="book-why">Most approachable full treatment. Every abstract theorem immediately connected to a concrete application.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Functional Analysis (Dover) <span class="bbadge bb-c">core</span></div><div class="book-author">Bachman &amp; Narici</div><div class="book-why">Primary text. Rigorous, detailed proofs. Hahn-Banach and spectral theorem chapters are load-bearing for the capstone paper.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Measure, Integration &amp; Real Analysis <span class="bbadge bb-d">deep</span></div><div class="book-author">Axler</div><div class="book-why">Approaches functional analysis through measure theory and Hilbert spaces. The correct order for your goals. Clean and modern.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">A Primer on Hilbert Space Theory, 2nd ed. <span class="bbadge bb-r">reference</span></div><div class="book-author">Alabiso &amp; Weiss</div><div class="book-why">Most thorough Hilbert space treatment in your bibliography. Every object in the capstone paper lives in a Hilbert space. This is the reference.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="milestone">Milestone — equivalent to a strong mathematics MSc core. Heat equation on 𝕋² understood analytically and spectrally.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     PHASE 4
+════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-head">
+    <span class="badge b-later">later</span>
+    <span class="phase-title">Phase 4 — Measure theory &amp; stochastic analysis</span>
+    <span class="phase-est">months 16–24</span>
+  </div>
+
+  <!-- MEASURE THEORY -->
+  <div class="card" id="c14">
+    <div class="card-head" onclick="toggle('c14')">
+      <div class="card-stripe" style="background:var(--c-mt)"></div>
+      <div class="card-body">
+        <div class="card-subject">Measure theory &amp; probability</div>
+        <div class="card-note">σ-algebras, Lebesgue integration, probability spaces. Most approachable entry after PDEs and functional analysis.</div>
+        <div class="card-tags">
+          <span class="book-tag">Capiński &amp; Kopp</span>
+          <span class="book-tag" style="background:var(--c-mt-bg);color:var(--c-mt)">Measure Theory / Grad Probability</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c14','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c14','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>σ-algebras &amp; measurable spaces</strong> — Borel sets, generating σ-algebras</li>
+          <li><strong>Lebesgue measure &amp; integration</strong> — MCT, DCT, Fatou's lemma</li>
+          <li><strong>L^p spaces</strong> — Hölder, Minkowski inequalities; completeness</li>
+          <li><strong>Probability spaces</strong> — random variables, expectation, independence</li>
+          <li><strong>Conditional expectation</strong> — the fundamental tool of stochastic processes</li>
+          <li><strong>Modes of convergence</strong> — a.s., in probability, in L^p, in distribution</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">The Elements of Integration and Lebesgue Measure <span class="bbadge bb-e">entry</span></div><div class="book-author">Bartle</div><div class="book-why">Entry point. Bartle writes with the same clarity as his analysis text. 180 pages building Lebesgue integration from scratch. Read before Capiński.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Measure, Integral and Probability, 2nd ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Capiński &amp; Kopp</div><div class="book-why">Primary text. Most approachable book covering measure theory, Lebesgue integration, and probability spaces with complete rigor.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Measure Theory, GTM 18 <span class="bbadge bb-d">deep</span></div><div class="book-author">Halmos</div><div class="book-why">The classic. Every serious analyst has read this. Product measure and Fubini chapters are definitive. Read after Capiński.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Real Analysis: Measure Theory, Integration, and Hilbert Spaces (Princeton Lectures vol 3) <span class="bbadge bb-d">deep</span></div><div class="book-author">Stein &amp; Shakarchi</div><div class="book-why">Measure theory in the context of Fourier analysis. L² Hilbert space framework is the functional analytic home of the heat semigroup.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Probability and Measure, 3rd ed. <span class="bbadge bb-r">reference</span></div><div class="book-author">Billingsley</div><div class="book-why">Graduate reference connecting measure theory to probability permanently. Weak convergence and CLT with full rigor. Essential before stochastic processes.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCHASTIC PROCESSES -->
+  <div class="card" id="c15">
+    <div class="card-head" onclick="toggle('c15')">
+      <div class="card-stripe" style="background:var(--c-sp)"></div>
+      <div class="card-body">
+        <div class="card-subject">Basic stochastic processes</div>
+        <div class="card-note">Martingales, Brownian motion, Itô calculus. The bridge between measure theory and the simulation.</div>
+        <div class="card-tags">
+          <span class="book-tag">Brzeźniak &amp; Zastawniak</span>
+          <span class="book-tag" style="background:var(--c-sp-bg);color:var(--c-sp)">Stochastic Processes (grad)</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c15','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c15','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Martingales</strong> — optional stopping, Doob's inequalities, convergence theorems</li>
+          <li><strong>Brownian motion</strong> — construction, path properties, quadratic variation</li>
+          <li><strong>Itô integral &amp; formula</strong> — stochastic chain rule; fundamental tool of SDE analysis</li>
+          <li><strong>SDEs</strong> — existence/uniqueness via Picard iteration; Lipschitz coefficients</li>
+          <li><strong>Itô vs Stratonovich</strong> — conversion formula; Stratonovich natural on manifolds</li>
+          <li><strong>Girsanov's theorem</strong> — change of measure</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books — approachable to rigorous</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Basic Stochastic Processes: A Course Through Exercises <span class="bbadge bb-e">entry</span></div><div class="book-author">Brzeźniak &amp; Zastawniak</div><div class="book-why">Entry text. SUMS series — deliberately approachable. Every section has exercises. Brownian motion and Itô calculus chapters are the core.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Introduction to Stochastic Processes, 2nd ed. <span class="bbadge bb-c">core</span></div><div class="book-author">Lawler</div><div class="book-why">Clean, concise, mathematically honest. Stochastic calculus notes (freely available) are the best compact treatment of Itô calculus.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Brownian Motion, Martingales, and Stochastic Calculus, GTM 274 <span class="bbadge bb-d">deep</span></div><div class="book-author">Le Gall</div><div class="book-why">Modern rigorous treatment at the graduate level by one of the world's leading probabilists. Essential before Karatzas.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Measure Theory, Probability, and Stochastic Processes, GTM 296 <span class="bbadge bb-d">deep</span></div><div class="book-author">Le Gall</div><div class="book-why">Companion to the above. Together these two volumes are the complete probabilist's foundation from σ-algebras to Itô calculus.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Brownian Motion and Stochastic Calculus, 2nd ed., GTM 113 <span class="bbadge bb-cap">capstone</span></div><div class="book-author">Karatzas &amp; Shreve</div><div class="book-why">The terminal reference. Read after Le Gall. SDEs on manifolds and Stratonovich integral are directly required for the capstone paper. This is the book that unlocks Arnaudon-Coulibaly-Thalmaier.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="milestone">Milestone — Brownian motion on ℝⁿ understood rigorously. Ready to lift to the torus.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     PHASE 5
+════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-head">
+    <span class="badge b-target">target</span>
+    <span class="phase-title">Phase 5 — Terminal goals</span>
+    <span class="phase-est">years 3–10</span>
+  </div>
+
+  <!-- BROWNIAN ON MANIFOLDS -->
+  <div class="card" id="c16">
+    <div class="card-head" onclick="toggle('c16')">
+      <div class="card-stripe" style="background:var(--c-sp)"></div>
+      <div class="card-body">
+        <div class="card-subject">Brownian motion &amp; stochastic calculus on manifolds</div>
+        <div class="card-note">SDEs on manifolds, rigorous Itô theory, g(t)-Brownian motion. The capstone paper lives here.</div>
+        <div class="card-tags">
+          <span class="book-tag">Karatzas &amp; Shreve</span>
+          <span class="book-tag">Hsu — Stochastic Analysis on Manifolds</span>
+          <span class="book-tag" style="background:var(--c-sp-bg);color:var(--c-sp)">Stochastic Processes (grad)</span>
+        </div>
+      </div>
+      <div class="card-dur">ongoing</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c16','topics')">Topics</div>
+        <div class="tab" onclick="switchTab(event,'c16','books')">Reading list</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Brownian motion on Riemannian manifolds</strong> — frame bundle construction, generator = ½Δ_g</li>
+          <li><strong>Itô formula on manifolds</strong> — involves Levi-Civita connection and Ricci curvature</li>
+          <li><strong>g(t)-Brownian motion</strong> — Arnaudon-Coulibaly-Thalmaier (2008); time-varying metric</li>
+          <li><strong>Heat kernel estimates</strong> — Li-Yau inequality, Bismut formula, gradient estimates</li>
+          <li><strong>Fokker-Planck on evolving manifold</strong> — coefficients involve g(t) and ∂g/∂t simultaneously</li>
+          <li><strong>Frame bundle SDE</strong> — dU_t = Σ_i H_i(t,U_t) ∘ dBⁱ_t; Stratonovich on O_{g(t)}(M)</li>
+        </ul>
+      </div>
+      <div class="tab-content" data-tab="books">
+        <div class="expand-label">5 books that unlock the capstone</div>
+        <ul class="book-list">
+          <li class="book-item"><div class="book-num">1</div><div><div class="book-title">Brownian Motion and Stochastic Calculus, 2nd ed. <span class="bbadge bb-cap">capstone</span></div><div class="book-author">Karatzas &amp; Shreve</div><div class="book-why">Primary prerequisite. The frame bundle SDE in the capstone paper is a direct application of the theory in chapters 1–5.</div></div></li>
+          <li class="book-item"><div class="book-num">2</div><div><div class="book-title">Probability on Compact Lie Groups <span class="bbadge bb-d">deep</span></div><div class="book-author">Applebaum</div><div class="book-why">The only book in your bibliography treating probability on manifolds with structure groups — exactly the frame bundle setting of the capstone paper.</div></div></li>
+          <li class="book-item"><div class="book-num">3</div><div><div class="book-title">Brownian Motion, Martingales, and Stochastic Calculus <span class="bbadge bb-d">deep</span></div><div class="book-author">Le Gall</div><div class="book-why">Itô formula on manifolds and Stratonovich SDE at the level of rigor the capstone paper assumes.</div></div></li>
+          <li class="book-item"><div class="book-num">4</div><div><div class="book-title">Introduction to Tensor Analysis and the Calculus of Moving Surfaces <span class="bbadge bb-cap">capstone</span></div><div class="book-author">Grinfeld</div><div class="book-why">The δ/δt operator in Part III is the deterministic precursor to the time-varying metric construction. Fluency here makes the stochastic generalization legible.</div></div></li>
+          <li class="book-item"><div class="book-num">5</div><div><div class="book-title">Riemannian Geometry: A Beginner's Guide <span class="bbadge bb-r">reference</span></div><div class="book-author">Morgan</div><div class="book-why">Riemannian geometry prerequisites at exactly the right level. Morgan is the minimum; Lee is the comfortable reading level. Both needed.</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- VULKAN -->
+  <div class="card" id="c17">
+    <div class="card-head" onclick="toggle('c17')">
+      <div class="card-stripe" style="background:#8a5a10"></div>
+      <div class="card-body">
+        <div class="card-subject">Vulkan simulation — volume-iv</div>
+        <div class="card-note">Brownian motion on 𝕋², DDE pursuit-chase, Lipschitz GPU optimization, spectral rendering. Stretch goal: undulating torus with evolving metric g(t).</div>
+        <div class="card-tags">
+          <span class="book-tag">volume-iv</span>
+          <span class="book-tag" style="background:#f5ead6;color:#5a3208">Self-study only</span>
+        </div>
+      </div>
+      <div class="card-dur">ongoing</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c17','topics')">Implementation components</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Implementation components</div>
+        <ul class="topic-list">
+          <li><strong>Geodesic solver on 𝕋²</strong> — numerical integration of geodesic equations in current metric g_t</li>
+          <li><strong>Stochastic integrator</strong> — geodesic random walk or Itô SDE discretization; Lipschitz step size bounds</li>
+          <li><strong>DDE delay buffer</strong> — store evader position history for past τ seconds on GPU; pursuer reads from buffer</li>
+          <li><strong>Metric tensor update</strong> — compute shader recomputes g_t each frame from current embedding</li>
+          <li><strong>Spectral rendering</strong> — heat kernel expansion in Fourier basis {4π²(m²+n²)}; natural for parallel GPU</li>
+          <li><strong>Stretch goal — undulating torus</strong> — evolving metric g(t), g(t)-Brownian motion per Arnaudon et al., DDE coupling across metric states</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPSTONE PAPER -->
+  <div class="card" id="c18">
+    <div class="card-head" onclick="toggle('c18')">
+      <div class="card-stripe" style="background:var(--c-cap)"></div>
+      <div class="card-body">
+        <div class="card-subject">Capstone — Arnaudon, Coulibaly, Thalmaier (2008)</div>
+        <div class="card-note">C. R. Acad. Sci. Paris 346 (2008). Every line legible without gaps. Full paper: Coulibaly-Pasquier arXiv:0901.1999.</div>
+        <div class="card-tags">
+          <span class="book-tag">volume-v — Practicing Mathematics</span>
+          <span class="book-tag" style="background:var(--c-cap-bg);color:var(--c-cap)">capstone · year 6</span>
+        </div>
+      </div>
+      <div class="card-dur">~year 6</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c18','topics')">Completion criteria</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Capstone completion criteria</div>
+        <ul class="topic-list">
+          <li><strong>Every object in capstone.md</strong> has a formal definition in volume-v with a valid pointer</li>
+          <li><strong>Every theorem</strong> has a corresponding proof file with a valid pointer</li>
+          <li><strong>Reading log entry</strong> parses every line of the Comptes Rendus paper without gaps</li>
+          <li><strong>Full Coulibaly-Pasquier paper</strong> (arXiv:0901.1999) — all arguments followed, all lemmas verified, notation in house notation</li>
+          <li><strong>Final entry states for each result</strong> <em>why</em> it is true — not just what it says</li>
+          <li><em>Timeline:</em> 6 years to capstone fluency. 10 years to full mathematical landscape. Both are honest numbers.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     PHASE 6
+════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-head">
+    <span class="badge b-p6">phase 6</span>
+    <span class="phase-title">Phase 6 — Control theory &amp; optimal control</span>
+    <span class="phase-est">years 8–10+</span>
+  </div>
+
+  <div class="conn-note">
+    <strong>Why it follows naturally.</strong> Control theory requires ODEs (Phase 2), functional analysis (Phase 3), measure theory and stochastic processes (Phase 4), and PDEs (Phase 3) — all simultaneously. Phase 6 is not a detour. It is what happens when everything in Phases 1–5 is applied to the question: how do you make a system do what you want? The pursuit-chase DDE on the torus is already a control problem. The pursuer is a controller. The Brownian particle is a disturbance. The delay is an information constraint. The evolving metric is a time-varying plant.
+  </div>
+
+  <!-- LYAPUNOV -->
+  <div class="card" id="c19">
+    <div class="card-head" onclick="toggle('c19')">
+      <div class="card-stripe" style="background:var(--c-ctrl)"></div>
+      <div class="card-body">
+        <div class="card-subject">Lyapunov stability theory</div>
+        <div class="card-note">Lyapunov functions, asymptotic stability, LaSalle's invariance principle. Already seeded in Phase 2 ODEs.</div>
+        <div class="card-tags">
+          <span class="book-tag">Hirsch &amp; Smale</span>
+          <span class="book-tag" style="background:var(--c-ctrl-bg);color:var(--c-ctrl)">ODEs — Phase 2 seed</span>
+        </div>
+      </div>
+      <div class="card-dur">Phase 2 seed</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c19','topics')">Topics</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Lyapunov's direct method</strong> — stability without solving the ODE; find V positive definite, compute V̇ ≤ 0, conclude</li>
+          <li><strong>Asymptotic stability</strong> — trajectories return to equilibrium after perturbation</li>
+          <li><strong>LaSalle's invariance principle</strong> — weakens the condition V̇ ≤ 0; powerful for limit cycles</li>
+          <li><strong>Lyapunov exponents</strong> — rate of separation of nearby trajectories; connects to chaos</li>
+          <li><strong>Converse Lyapunov theorems</strong> — if stable, a Lyapunov function exists; existence ↔ stability</li>
+          <li><em>Simulation connection:</em> geodesic distance between pursuer and evader on 𝕋² is a natural Lyapunov function candidate for the pursuit problem</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSICAL CONTROL -->
+  <div class="card" id="c20">
+    <div class="card-head" onclick="toggle('c20')">
+      <div class="card-stripe" style="background:var(--c-ctrl)"></div>
+      <div class="card-body">
+        <div class="card-subject">Classical linear control theory</div>
+        <div class="card-note">State-space representation, controllability, observability, feedback stabilization. Linear algebra of dynamics.</div>
+        <div class="card-tags">
+          <span class="book-tag" style="background:var(--c-ctrl-bg);color:var(--c-ctrl)">Control Theory</span>
+        </div>
+      </div>
+      <div class="card-dur">6–8 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c20','topics')">Topics</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>State-space representation</strong> — ẋ = Ax + Bu, y = Cx; the linear algebra of dynamics</li>
+          <li><strong>Controllability &amp; observability</strong> — Kalman rank conditions; can you steer, can you observe?</li>
+          <li><strong>Pole placement</strong> — choose feedback u = Kx to place eigenvalues of A+BK</li>
+          <li><strong>Stability via eigenvalues</strong> — linear systems stable iff all eigenvalues have negative real part</li>
+          <li><strong>Transfer functions</strong> — Laplace transform of state-space; frequency domain view</li>
+          <li><em>Linear algebra connection:</em> this is Axler's spectral theorem applied to dynamics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIMAL CONTROL -->
+  <div class="card" id="c21">
+    <div class="card-head" onclick="toggle('c21')">
+      <div class="card-stripe" style="background:var(--c-opt)"></div>
+      <div class="card-body">
+        <div class="card-subject">Calculus of variations &amp; Pontryagin maximum principle</div>
+        <div class="card-note">Minimize a cost functional over trajectories. Deterministic optimal control. Geodesics are the zero-input case.</div>
+        <div class="card-tags">
+          <span class="book-tag" style="background:var(--c-opt-bg);color:var(--c-opt)">Optimal Control</span>
+        </div>
+      </div>
+      <div class="card-dur">6–8 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c21','topics')">Topics</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Euler-Lagrange equation</strong> — the ODE a minimizing trajectory must satisfy; geodesics are the zero-control case</li>
+          <li><strong>Pontryagin maximum principle</strong> — necessary condition for optimal control; generalizes Euler-Lagrange to constrained problems</li>
+          <li><strong>Hamiltonian formulation</strong> — optimal control has Hamiltonian structure; symplectic geometry enters</li>
+          <li><strong>Hamilton-Jacobi-Bellman equation</strong> — PDE whose solution is the value function</li>
+          <li><strong>Viscosity solutions</strong> — correct notion of weak solution for HJB; requires Phase 3 PDE theory</li>
+          <li><em>Torus connection:</em> PMP on the torus gives the optimal pursuer velocity in the chase problem</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCHASTIC CONTROL -->
+  <div class="card" id="c22">
+    <div class="card-head" onclick="toggle('c22')">
+      <div class="card-stripe" style="background:var(--c-pde)"></div>
+      <div class="card-body">
+        <div class="card-subject">Stochastic optimal control</div>
+        <div class="card-note">HJB with Brownian noise. The mathematical theory behind the evader being Brownian. Stochastic differential games.</div>
+        <div class="card-tags">
+          <span class="book-tag" style="background:var(--c-pde-bg);color:var(--c-pde)">Stochastic Control</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c22','topics')">Topics</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Stochastic HJB equation</strong> — add ½σ²V_xx to the deterministic HJB; Brownian noise adds a second-order term</li>
+          <li><strong>Dynamic programming principle</strong> — Bellman's principle; value function satisfies HJB</li>
+          <li><strong>Stochastic maximum principle</strong> — Pontryagin for SDEs; requires backward SDEs (BSDEs)</li>
+          <li><strong>Linear-quadratic regulator</strong> — the solvable case; Riccati equation gives optimal control explicitly</li>
+          <li><strong>Stochastic differential games</strong> — pursuer and evader both optimize; Nash equilibria for the chase</li>
+          <li><em>Capstone connection:</em> pursuer chasing Brownian motion on (𝕋², g(t)) is a stochastic differential game on an evolving Riemannian manifold — active research territory</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GEOMETRIC CONTROL -->
+  <div class="card" id="c23">
+    <div class="card-head" onclick="toggle('c23')">
+      <div class="card-stripe" style="background:var(--c-gc)"></div>
+      <div class="card-body">
+        <div class="card-subject">Geometric control theory</div>
+        <div class="card-note">Control theory on manifolds. The natural setting for the pursuit problem on the torus. Lie bracket controllability conditions.</div>
+        <div class="card-tags">
+          <span class="book-tag" style="background:var(--c-gc-bg);color:var(--c-gc)">Geometric Control</span>
+        </div>
+      </div>
+      <div class="card-dur">8–10 wks</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c23','topics')">Topics</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Key topics &amp; theorems</div>
+        <ul class="topic-list">
+          <li><strong>Control systems on manifolds</strong> — ẋ = f(x,u) where x ∈ M; state space has curvature</li>
+          <li><strong>Chow's theorem</strong> — Lie bracket controllability; can you reach any point from any other?</li>
+          <li><strong>Sub-Riemannian geometry</strong> — when you can only move in certain directions; geometry of constrained control</li>
+          <li><strong>Geometric phases &amp; holonomy</strong> — parallel transport around a loop generates net rotation; control phenomenon</li>
+          <li><strong>Optimal control on Riemannian manifolds</strong> — geodesics are zero-input optimal trajectories; curvature affects optimal control</li>
+          <li><em>Torus connection:</em> flat torus has trivial holonomy — simplifies geometric control relative to sphere</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCHASTIC GAMES -->
+  <div class="card" id="c24">
+    <div class="card-head" onclick="toggle('c24')">
+      <div class="card-stripe" style="background:var(--c-res)"></div>
+      <div class="card-body">
+        <div class="card-subject">Stochastic differential games on evolving manifolds</div>
+        <div class="card-note">The mathematical formalization of the DDE pursuit-chase on the undulating torus. Active research territory — not fully formalized in the literature.</div>
+        <div class="card-tags">
+          <span class="book-tag" style="background:var(--c-res-bg);color:var(--c-res)">Research frontier</span>
+          <span class="book-tag" style="background:var(--c-cap-bg);color:var(--c-cap)">Phase 6 capstone</span>
+        </div>
+      </div>
+      <div class="card-dur">research</div>
+      <div class="card-arrow">▾</div>
+    </div>
+    <div class="card-expand">
+      <div class="expand-tabs">
+        <div class="tab active" onclick="switchTab(event,'c24','topics')">What this actually is</div>
+      </div>
+      <div class="tab-content active" data-tab="topics">
+        <div class="expand-label">Problem structure</div>
+        <ul class="topic-list">
+          <li><strong>Two-player stochastic differential game</strong> — pursuer minimizes distance to evader; evader is Brownian (no control) on (𝕋², g(t))</li>
+          <li><strong>Value function</strong> — V(t,x,y) = expected cost under optimal pursuit; satisfies stochastic HJB on 𝕋² × 𝕋²</li>
+          <li><strong>DDE coupling</strong> — pursuer observes evader at t−τ; game is non-Markovian; value function depends on path history</li>
+          <li><strong>Evolving metric</strong> — g(t) changes geodesic distances at each moment; cost function is time-varying</li>
+          <li><strong>Open problem</strong> — the combination of DDE pursuit, Brownian evader, and evolving Riemannian metric on 𝕋² is not fully treated in the literature</li>
+          <li><em>This is where the ten-year curriculum lands.</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="milestone">Phase 6 is not a new subject. It is the same problem — Brownian pursuit on the torus — seen from the control-theoretic angle. Every piece of Phase 6 was already implicit in the stretch goal named at the start of Phase 1.</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>Learning-Real-Analysis / curriculum.html</span>
+  <span>Capstone: arXiv:0901.1999 · Year 6 · Volume V</span>
+</footer>
+
+</div><!-- .page -->
+
+<script>
+function toggle(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function switchTab(e, cardId, tab) {
+  e.stopPropagation();
+  const card = document.getElementById(cardId);
+  card.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  const content = card.querySelector('.tab-content[data-tab="' + tab + '"]');
+  if (content) content.classList.add('active');
+}
+</script>
+</body>
+</html>

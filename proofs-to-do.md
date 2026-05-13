@@ -1,8 +1,8 @@
 # Proofs To Do
 
-Generated: 2026-05-01 15:51:22
+Generated: 2026-05-13 15:52:49
 
-Total: 301
+Total: 304
 
 ## volume-ii / natural-numbers
 
@@ -10,6 +10,8 @@ Chapter: `volume-ii/natural-numbers`
 
 | Type | Label | Title | Reason | Source | Proof file |
 | --- | --- | --- | --- | --- | --- |
+| thm | `thm:induction-principle-for-peano-system` | Induction Principle for a Peano System | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | [proofs/notes/prf-induction-principle-for-peano-system.tex](volume-ii/natural-numbers/proofs/notes/prf-induction-principle-for-peano-system.tex) |
+| thm | `thm:every-element-is-one-or-a-successor` | Every Element Is Either 1 or a Successor | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | [proofs/notes/prf-every-element-is-one-or-a-successor.tex](volume-ii/natural-numbers/proofs/notes/prf-every-element-is-one-or-a-successor.tex) |
 | cor | `cor:predecessor-exists-unique-away-from-one` | Predecessor Existence and Uniqueness Away from 1 | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | [proofs/notes/prf-predecessor-exists-unique-away-from-one.tex](volume-ii/natural-numbers/proofs/notes/prf-predecessor-exists-unique-away-from-one.tex) |
 | cor | `cor:one-is-unique-non-successor` | The Distinguished Element Is the Unique Non-Successor | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | [proofs/notes/prf-one-is-unique-non-successor.tex](volume-ii/natural-numbers/proofs/notes/prf-one-is-unique-non-successor.tex) |
 | thm | `thm:no-object-is-its-own-successor` | No Object Is Its Own Successor | Proof file exists but still contains a TODO marker. | `notes\constructing-the-natural-numbers\notes-peano-system-theorems.tex` | [proofs/notes/prf-no-object-is-its-own-successor.tex](volume-ii/natural-numbers/proofs/notes/prf-no-object-is-its-own-successor.tex) |
@@ -20,6 +22,7 @@ Chapter: `volume-ii/natural-numbers`
 | thm | `thm:recursive-specification-well-defined` | Recursive Specification Is Well-Defined | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | [proofs/notes/prf-recursive-specification-well-defined.tex](volume-ii/natural-numbers/proofs/notes/prf-recursive-specification-well-defined.tex) |
 | thm | `thm:general-recursion-theorem-for-peano-system` | General Recursion Theorem for a Peano System | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | [proofs/notes/prf-general-recursion-theorem-for-peano-system.tex](volume-ii/natural-numbers/proofs/notes/prf-general-recursion-theorem-for-peano-system.tex) |
 | thm | `thm:uniqueness-of-peano-systems-up-to-isomorphism` | Uniqueness of Peano Systems up to Isomorphism | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | [proofs/notes/prf-uniqueness-of-peano-systems-up-to-isomorphism.tex](volume-ii/natural-numbers/proofs/notes/prf-uniqueness-of-peano-systems-up-to-isomorphism.tex) |
+| thm | `thm:natural-numbers-form-a-peano-system` | The Natural Numbers Form a Peano System | Proof file exists but still contains a TODO marker. | `notes\recursion-on-n\notes-recursion-on-n.tex` | [proofs/notes/prf-natural-numbers-form-a-peano-system.tex](volume-ii/natural-numbers/proofs/notes/prf-natural-numbers-form-a-peano-system.tex) |
 | thm | `thm:addition-well-defined-on-peano-system` | Addition Is Well-Defined on a Peano System | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | [proofs/notes/prf-addition-well-defined-on-peano-system.tex](volume-ii/natural-numbers/proofs/notes/prf-addition-well-defined-on-peano-system.tex) |
 | thm | `thm:addition-with-one` | Addition With 1 | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | [proofs/notes/prf-addition-with-one.tex](volume-ii/natural-numbers/proofs/notes/prf-addition-with-one.tex) |
 | thm | `thm:addition-successor-on-right` | Addition Successor on the Right | Proof file exists but still contains a TODO marker. | `notes\addition-on-n\notes-addition-on-n.tex` | [proofs/notes/prf-addition-successor-on-right.tex](volume-ii/natural-numbers/proofs/notes/prf-addition-successor-on-right.tex) |
