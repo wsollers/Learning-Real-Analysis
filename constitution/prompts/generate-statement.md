@@ -104,7 +104,8 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 13. remark*[Contrapositive quantified statement] (thm/lem/prop/cor only, if proof_usage = true)
 14. remark*[Contrapositive predicate reading] (if step 13 generated)
 15. remark*[Interpretation]
-16. remark*[Dependencies] or \NoLocalDependencies
+16. remark*[Historical note] or remark*[Comparison with Feferman] (if a source crosswalk is supplied)
+17. remark*[Dependencies] or \NoLocalDependencies
 ```
 
 ## Environment Body
@@ -230,6 +231,25 @@ Use this option shape:
 - Cover the precise mathematical fact, why it is true, why it matters, the
   standard failure mode, and the structural or geometric picture.
 - Voice: authoritative record. No first-person or second-person prose.
+
+## Source Crosswalk Remarks
+
+- Generate a source crosswalk remark only when the user supplies or requests
+  a known source correspondence.
+- Use `\begin{remark*}[Historical note]` when the generated item corresponds
+  directly to a named theorem, definition, axiom, or construction in a source.
+- Use `\begin{remark*}[Comparison with Feferman]` when the generated item
+  splits, refines, renames, packages, or reorganizes material from Feferman's
+  presentation.
+- Place the source crosswalk remark after `Interpretation` and before
+  `Dependencies`.
+- Keep it short: one paragraph, normally two to six sentences.
+- Do not put source-comparison prose inside formal environments, quantified
+  statements, predicate readings, negation blocks, or failure-mode
+  decompositions.
+- Use natbib-compatible citations such as
+  `\citet{FefermanNumberSystems1964}` or
+  `\citep{FefermanNumberSystems1964}`. Do not use biblatex-only commands.
 
 ## Dependencies
 

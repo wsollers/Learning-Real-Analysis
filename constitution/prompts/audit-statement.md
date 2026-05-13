@@ -137,6 +137,18 @@ exposition may satisfy the interpretation requirement.
 - If absent: identify the nearby section exposition or required topic
   exposition that performs the interpretive work. If none found, flag as FAIL.
 
+### source_crosswalk
+- Optional only.
+- If present, title is exactly "Historical note" or "Comparison with Feferman"?
+- Appears after Interpretation and before Dependencies?
+- Is short expository metadata, not formal mathematics?
+- Does not contain predicate-language notation, failure-mode logic, or theorem
+  statement content?
+- Uses a valid bibliography key and a citation command supported by the repo
+  bibliography stack, such as \citet{...} or \citep{...}?
+- "Historical note" is used for direct provenance; "Comparison with Feferman"
+  is used for structural differences, splitting, refinement, or repackaging?
+
 ### dependencies
 - remark* titled "Dependencies" or silent `\NoLocalDependencies` marker?
 - All \hyperref links point to formal items (def / thm / lem / prop / cor / ax)?
