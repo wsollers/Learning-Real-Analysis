@@ -750,6 +750,52 @@ Breadcrumb prose states dependency, chapter construction, and forward consequenc
 
 ---
 
+## 6.1 Provenance and Crosswalk Remarks
+
+Historical and source-comparison annotations are allowed as ordinary
+`remark*` blocks. They are expository metadata, not formal mathematics.
+
+Use:
+
+```latex
+\begin{remark*}[Historical note]
+...
+\end{remark*}
+```
+
+when the purpose is provenance: a theorem, definition, axiom, or construction
+corresponds directly to a named item in a source.
+
+Use:
+
+```latex
+\begin{remark*}[Comparison with Feferman]
+...
+\end{remark*}
+```
+
+when the purpose is structural comparison: the notes split, rename, refine, or
+make explicit something that a source treats in a different organization.
+
+These remarks:
+
+- are short, normally one paragraph of two to six sentences;
+- appear after the `Interpretation` remark and before `Dependencies`;
+- never appear inside formal environments, quantified statements, predicate
+  readings, negation blocks, or failure-mode decompositions;
+- cite by chapter, section, theorem, definition, or axiom when possible;
+- use repository bibliography commands compatible with `natbib`, such as
+  `\citet{FefermanNumberSystems1964}` or `\citep{FefermanNumberSystems1964}`;
+- do not praise, apologize, or rewrite the note into another author's style.
+
+The standard Feferman crosswalk source is:
+
+```bibtex
+FefermanNumberSystems1964
+```
+
+---
+
 ## 7. Exposition Voice and Register
 
 ### 7.1 Reader Model
