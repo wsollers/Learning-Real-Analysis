@@ -1,0 +1,365 @@
+
+% ============================================================
+
+% --- Title Block ---
+\begin{center}
+  {\LARGE\bfseries\color{deepblue}
+    Stochastic Pursuit on a Dynamic Torus}\\[0.6em]
+  {\large\color{midblue}
+    A Multi-Agent Delay-Pursuit System with Metric Perturbations,\\
+    Rendered via Vulkan}\\[1.2em]
+  {\normalsize\color{softgold}\itshape
+    Research \& Study Notes\quad$\cdot$\quad Solo Independent Study}\\[0.4em]
+  {\small\color{gray} \today}
+\end{center}
+
+\vspace{1.2em}
+\noindent\rule{\linewidth}{0.8pt}
+\vspace{0.6em}
+
+% --- Torus Visualization ---
+\tdplotsetmaincoords{65}{125}
+\begin{center}
+\begin{tikzpicture}[tdplot_main_coords, scale=1.15]
+
+  \def\R{2.2}
+  \def\r{0.85}
+  \colorlet{meshcol}{blue!30!gray}
+  \colorlet{surfcol}{blue!7!white}
+
+  % Back parallels
+  \foreach \vv in {0,40,80,120,160,200,240,280,320} {
+    \draw[meshcol!45, very thin]
+      plot[domain=100:260, samples=28, variable=\u]
+      ({(\R + \r*cos(\vv))*cos(\u)},
+       {(\R + \r*cos(\vv))*sin(\u)},
+       {\r*sin(\vv)});
+  }
+  % Back meridians
+  \foreach \uu in {120,160,200,240} {
+    \draw[meshcol!45, very thin]
+      plot[domain=0:360, samples=36, variable=\v]
+      ({(\R + \r*cos(\v))*cos(\uu)},
+       {(\R + \r*cos(\v))*sin(\uu)},
+       {\r*sin(\v)});
+  }
+
+  % Surface fill patches (front half)
+  \foreach \vv in {0,20,...,340} {
+    \pgfmathsetmacro{\vnext}{\vv+20}
+    \fill[surfcol, opacity=0.6]
+      plot[domain=-82:100, samples=18, variable=\u]
+      ({(\R + \r*cos(\vv))*cos(\u)},
+       {(\R + \r*cos(\vv))*sin(\u)},
+       {\r*sin(\vv)})
+      --
+      plot[domain=100:-82, samples=18, variable=\u]
+      ({(\R + \r*cos(\vnext))*cos(\u)},
+       {(\R + \r*cos(\vnext))*sin(\u)},
+       {\r*sin(\vnext)})
+      -- cycle;
+  }
+
+  % Front parallels
+  \foreach \vv in {0,40,80,120,160,200,240,280,320} {
+    \draw[meshcol, thin]
+      plot[domain=-82:100, samples=28, variable=\u]
+      ({(\R + \r*cos(\vv))*cos(\u)},
+       {(\R + \r*cos(\vv))*sin(\u)},
+       {\r*sin(\vv)});
+  }
+  % Front meridians
+  \foreach \uu in {-80,-40,0,40,80} {
+    \draw[meshcol, thin]
+      plot[domain=0:360, samples=36, variable=\v]
+      ({(\R + \r*cos(\v))*cos(\uu)},
+       {(\R + \r*cos(\v))*sin(\uu)},
+       {\r*sin(\v)});
+  }
+
+  % Outer equator ring
+  \draw[gray!35, thin]
+    plot[domain=0:360, samples=72, variable=\u]
+    ({(\R+\r)*cos(\u)},{(\R+\r)*sin(\u)},{0});
+
+  % LEADER: orange-red, u=28, v=18
+  \pgfmathsetmacro{\Lx}{(\R + \r*cos(18))*cos(28)}
+  \pgfmathsetmacro{\Ly}{(\R + \r*cos(18))*sin(28)}
+  \pgfmathsetmacro{\Lz}{\r*sin(18)}
+  \node[circle, fill=orange!95!red, draw=red!70!black,
+        inner sep=3.5pt, line width=0.7pt]
+    at (\Lx,\Ly,\Lz) {};
+  \node[font=\footnotesize\bfseries, text=orange!80!red,
+        above right=-1pt and 3pt]
+    at (\Lx,\Ly,\Lz) {Leader};
+
+  % CHASER 1: cyan, u=55, v=348
+  \pgfmathsetmacro{\CAx}{(\R + \r*cos(348))*cos(55)}
+  \pgfmathsetmacro{\CAy}{(\R + \r*cos(348))*sin(55)}
+  \pgfmathsetmacro{\CAz}{\r*sin(348)}
+  \node[circle, fill=cyan!85!blue, draw=blue!70!black,
+        inner sep=3.0pt, line width=0.7pt]
+    at (\CAx,\CAy,\CAz) {};
+  \node[font=\footnotesize\bfseries, text=cyan!55!blue,
+        below right=0pt and 3pt]
+    at (\CAx,\CAy,\CAz) {Chaser 1};
+
+  % CHASER 2: magenta, u=8, v=42
+  \pgfmathsetmacro{\CBx}{(\R + \r*cos(42))*cos(8)}
+  \pgfmathsetmacro{\CBy}{(\R + \r*cos(42))*sin(8)}
+  \pgfmathsetmacro{\CBz}{\r*sin(42)}
+  \node[circle, fill=magenta!80!red, draw=magenta!60!black,
+        inner sep=3.0pt, line width=0.7pt]
+    at (\CBx,\CBy,\CBz) {};
+  \node[font=\footnotesize\bfseries, text=magenta!65!black,
+        above left=0pt and 3pt]
+    at (\CBx,\CBy,\CBz) {Chaser 2};
+
+  % Dashed pursuit lines
+  \draw[cyan!65, dashed, thick, opacity=0.85]
+    (\CAx,\CAy,\CAz) -- (\Lx,\Ly,\Lz);
+  \draw[magenta!65, dashed, thick, opacity=0.85]
+    (\CBx,\CBy,\CBz) -- (\Lx,\Ly,\Lz);
+
+\end{tikzpicture}
+
+\vspace{-0.3em}
+{\small\itshape\color{gray}
+  $\mathbb{T}^2 = \mathbb{R}^2/\mathbb{Z}^2$ with mesh,
+  leader~({\color{orange!80!red}$\bullet$}) and
+  chasers~({\color{cyan!60!blue}$\bullet$}\ {\color{magenta!65!black}$\bullet$}).
+  Dashed lines indicate pursuit geodesics.}
+\end{center}
+
+\vspace{0.3em}
+\noindent\rule{\linewidth}{0.4pt}
+\vspace{0.3em}
+
+% ============================================================
+\section*{Mission Statement}
+% ============================================================
+
+This project is a long-horizon study in the unity of pure mathematics and
+high-performance computation. The goal is to build, from first principles, a
+real-time simulation of \textbf{multiple-agent Brownian motion on a
+two-dimensional torus} $\mathbb{T}^2 = \mathbb{R}^2/\mathbb{Z}^2$, in which
+some agents pursue others with a \emph{time-delayed} information signal, and in
+which the geometry of the arena is itself a dynamic, user-perturbed object.
+
+The simulation is not an end. It is a \emph{forcing function}---a concrete
+artifact that demands genuine understanding of every layer of mathematics
+beneath it. A renderer that produces a wrong geodesic is a proof of
+misunderstanding. A pursuer that behaves incorrectly under a metric ripple is a
+failed theorem. The Vulkan pipeline is, in this sense, an automated grader with
+no partial credit.
+
+The work proceeds without shortcuts and without a deadline. Each stage of the
+dependency graph below must be structurally understood before the next is
+approached. This document is the living front matter of that journey.
+
+% ============================================================
+\section*{Problem Statement}
+% ============================================================
+
+\subsection*{The Arena}
+
+Let $\mathbb{T}^2$ denote the flat two-dimensional torus, realized as the
+quotient:
+\[
+  \mathbb{T}^2 \;\cong\; \mathbb{R}^2 / \mathbb{Z}^2,
+\]
+equipped with the background Riemannian metric $g_0 = dx^2 + dy^2$. This
+metric is flat (zero Gaussian curvature) and induces a geodesic distance
+\[
+  d_0(x, y) \;=\; \min_{(m,n)\in\mathbb{Z}^2}
+    \left\| (x - y) + (m,n) \right\|_{\mathbb{R}^2}.
+\]
+The arena is compact, boundary-free, and doubly periodic---a natural domain
+for stochastic processes that must neither escape to infinity nor reflect from walls.
+
+\subsection*{The Dynamic Metric}
+
+At any time $t \geq 0$ and in response to user input (a ``poke'' at point
+$p \in \mathbb{T}^2$ initiated at time $t_0$), the metric is deformed
+conformally:
+\[
+  g(x, t) \;=\; \bigl(1 + \varepsilon\, h(x, t;\, p, t_0)\bigr)\, g_0,
+  \qquad \varepsilon A < 1,
+\]
+where $h$ is a smooth, spatially propagating, temporally decaying perturbation
+field. The positive-definiteness condition $\varepsilon A < 1$ guarantees that
+$g(x,t)$ remains a valid Riemannian metric for all time. The perturbed geodesic
+distance satisfies, to first order in $\varepsilon$:
+\[
+  d_g(x, y, t) \;=\; d_0(x,y)
+    \;+\; \frac{\varepsilon}{2}\int_\gamma h(\gamma(s), t)\,ds
+    \;+\; O(\varepsilon^2),
+\]
+where $\gamma$ is the geodesic in the flat metric. As the perturbation decays,
+$g(x,t) \to g_0$ smoothly and the arena returns to flatness.
+
+\subsection*{The Agents}
+
+Let $\{X_i(t)\}_{i=1}^{n}$ be a collection of stochastic processes on
+$\mathbb{T}^2$. Each agent satisfies a stochastic differential equation of the
+form:
+\[
+  dX_i^k(t) \;=\; V_i^k\!\bigl(X_i(t),\, X_j(t - \tau)\bigr)\,dt
+  \;+\; \sigma^k_{\ \ell}(X_i(t), t)\,dW_i^\ell(t),
+\]
+where:
+\begin{itemize}
+  \item $V_i$ is the \textbf{pursuit drift vector field}, steering agent $i$
+    toward another agent's position at the delayed time $t - \tau$;
+  \item $\tau > 0$ is the \textbf{information delay}---the pursuer reacts to
+    where the prey \emph{was}, not where it \emph{is};
+  \item $\sigma \sigma^T = g^{-1}(t)$ encodes the geometry of the arena into
+    the noise covariance, so that Brownian fluctuations are isotropic \emph{in
+    the metric sense} at each moment;
+  \item $W_i$ are independent standard Wiener processes.
+\end{itemize}
+
+The generator of this process is the time-dependent operator:
+\[
+  \mathcal{L}_t \;=\; \frac{1}{2}\Delta_{g(t)} \;+\; V_i \cdot \nabla,
+\]
+where $\Delta_{g(t)}$ is the \textbf{Laplace-Beltrami operator} of the
+instantaneous metric---the object that connects stochastic analysis,
+differential geometry, and the heat equation in a single symbol.
+
+\subsection*{The Central Questions}
+
+This project asks, and will eventually answer, the following:
+
+\begin{enumerate}
+  \item \textbf{Well-posedness.} Under what conditions on $\tau$, $\varepsilon$,
+    and $\sigma$ does the system of SDEs admit a unique strong solution on
+    $\mathbb{T}^2$?
+
+  \item \textbf{Geodesic bifurcation.} When a metric ripple transiently inflates
+    one geodesic between pursuer and prey, does the optimal pursuit path switch
+    to the complementary geodesic? What is the measure of such events?
+
+  \item \textbf{Stability under perturbation.} In the Lyapunov sense, does the
+    pursuit system remain stable---in expectation and in probability---under the
+    simultaneous action of noise, delay, and metric deformation?
+
+  \item \textbf{Computational faithfulness.} Can the Vulkan pipeline evaluate
+    the perturbed geodesic distance and the corrected SDE drift at interactive
+    frame rates, with a timestep $\Delta t$ guaranteed by the Lipschitz
+    constant of the metric field?
+\end{enumerate}
+
+% ============================================================
+\section*{Dependency Graph}
+% ============================================================
+
+The following diagram encodes the strict logical dependencies of this project.
+No node may be treated as understood until all nodes feeding into it are
+mastered. Arrows denote ``is required by.''
+
+\vspace{1em}
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance = 1.0cm and 1.6cm,
+  every node/.style = {
+    rectangle, rounded corners=4pt,
+    minimum width=3.0cm, minimum height=0.7cm,
+    font=\small\bfseries, align=center
+  },
+  arr/.style = {-{Stealth[length=5pt]}, thick, color=deepblue!70},
+  stA/.style = {fill=stageA!18, draw=stageA, text=stageA},
+  stB/.style = {fill=stageB!18, draw=stageB, text=stageB},
+  stC/.style = {fill=stageC!18, draw=stageC, text=stageC},
+  stD/.style = {fill=stageD!18, draw=stageD, text=stageD},
+]
+
+%% Column 1 -- Analysis foundation
+\node[stA] (ra)   {Real Analysis};
+\node[stA, below=of ra] (ms)   {Metric Spaces\\[-2pt]\&\ Topology};
+\node[stA, below=of ms] (prob) {Measure-Theoretic\\[-2pt]Probability};
+
+%% Column 2 -- Geometry
+\node[stB, right=2.4cm of ra]  (ism)  {Smooth Manifolds\\[-2pt](Lee ISM)};
+\node[stB, below=of ism] (irm)  {Riemannian\\[-2pt]Geometry (IRM)};
+\node[stB, below=of irm] (pt)   {Perturbation\\[-2pt]Theory};
+
+%% Column 3 -- Dynamics
+\node[stC, right=2.4cm of ism] (ode)  {ODEs on\\[-2pt]Manifolds};
+\node[stC, below=of ode]  (dde)  {Delay Differential\\[-2pt]Equations};
+\node[stC, below=of dde]  (ito)  {It\^{o} Calculus\\[-2pt]\&\ SDEs};
+
+%% Column 4 -- Synthesis
+\node[stD, right=2.4cm of ode] (sde2) {SDEs on\\[-2pt]Manifolds};
+\node[stD, below=of sde2] (sdde) {Stochastic DDEs\\[-2pt]on $\mathbb{T}^2$};
+\node[stD, below=of sdde] (lyap) {Lyapunov\\[-2pt]Stability};
+\node[stD, below=of lyap] (vk)   {Vulkan\\[-2pt]Simulation};
+
+%% --- Arrows: Column 1 internal ---
+\draw[arr] (ra)   -- (ms);
+\draw[arr] (ms)   -- (prob);
+
+%% --- Arrows: Column 1 -> 2 ---
+\draw[arr] (ra)   -- (ism);
+\draw[arr] (ms)   -- (ism);
+
+%% --- Arrows: Column 2 internal ---
+\draw[arr] (ism)  -- (irm);
+\draw[arr] (irm)  -- (pt);
+
+%% --- Arrows: Column 2 -> 3 ---
+\draw[arr] (ism)  -- (ode);
+\draw[arr] (irm)  -- (ode);
+\draw[arr] (pt)   -- (dde);
+
+%% --- Arrows: Column 1 -> 3 (prob -> ito) ---
+\draw[arr] (prob) -- (ito);
+
+%% --- Arrows: Column 3 internal ---
+\draw[arr] (ode)  -- (dde);
+\draw[arr] (dde)  -- (ito);
+
+%% --- Arrows: Columns 2+3 -> 4 ---
+\draw[arr] (irm)  -- (sde2);
+\draw[arr] (ito)  -- (sde2);
+\draw[arr] (sde2) -- (sdde);
+\draw[arr] (dde)  -- (sdde);
+\draw[arr] (pt)   -- (sdde);
+\draw[arr] (sdde) -- (lyap);
+\draw[arr] (lyap) -- (vk);
+\draw[arr] (pt)   -- (lyap);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{1em}
+
+\begin{center}
+\small
+\begin{tabular}{ll@{\hspace{2em}}ll@{\hspace{2em}}ll@{\hspace{2em}}ll}
+  \textcolor{stageA}{$\blacksquare$} & \textit{Foundations}
+  & \textcolor{stageB}{$\blacksquare$} & \textit{Geometry}
+  & \textcolor{stageC}{$\blacksquare$} & \textit{Dynamics}
+  & \textcolor{stageD}{$\blacksquare$} & \textit{Synthesis}
+\end{tabular}
+\end{center}
+
+\vspace{1.2em}
+
+\begin{remark}
+  Perturbation theory (Stage 2) is not a terminal node. It is a \emph{vertical
+  thread} that re-enters at every subsequent stage: as linearized curvature in
+  Riemannian geometry, as regular and singular perturbation of ODEs and DDEs,
+  as the $\varepsilon$-expansion of the stochastic heat kernel, and as the
+  robustness theory for Lyapunov functions. Its placement in the graph reflects
+  where it is first formally introduced, not where it last appears.
+\end{remark}
+
+\vspace{0.5em}
+\noindent\rule{\linewidth}{0.4pt}
+\vspace{0.3em}
+{\small\color{gray}\itshape
+This document is the front matter of an ongoing solo research repository.
+It will be revised as understanding deepens. The mathematics does not wait
+for permission to be beautiful.}

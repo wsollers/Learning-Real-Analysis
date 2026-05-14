@@ -46,6 +46,7 @@ each format using a common TikZ layout macro.
     \pgfmathsetmacro{\SignEnd}{#2}
     \pgfmathsetmacro{\ExpEnd}{#2 + #3}
     \pgfmathsetmacro{\FracEnd}{#2 + #3 + #4}
+    \pgfmathtruncatemacro{\SignBitLabel}{#5 - 1}
 
     \draw (0,0) rectangle (\SignEnd,1);
     \draw (\SignEnd,0) rectangle (\ExpEnd,1);
@@ -56,7 +57,7 @@ each format using a common TikZ layout macro.
     \node at ({(\ExpEnd+\FracEnd)/2},0.5) {\small fraction};
 
     \node[above] at (0.5,1) {\scriptsize #5};
-    \node[above] at ({\SignEnd+0.5},1) {\scriptsize \numexpr #5-1\relax};
+    \node[above] at ({\SignEnd+0.5},1) {\scriptsize \SignBitLabel};
     \node[above] at ({\ExpEnd-0.5},1) {\scriptsize #6};
     \node[above] at ({\ExpEnd+0.5},1) {\scriptsize #7};
     \node[above] at ({\FracEnd-0.5},1) {\scriptsize 0};

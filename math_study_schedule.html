@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathematics Study Schedule — May–August 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.5.0/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+:root {
+  --ra:#1a3a2a;--ra-l:#e4f2eb;--ra-m:#3d8f61;
+  --la:#162a3e;--la-l:#e4eef8;--la-m:#3a68a8;
+  --aa:#36142a;--aa-l:#f2e4ef;--aa-m:#a03878;
+  --comp:#3a2800;--comp-l:#fdf0d8;--comp-m:#b07820;
+  --rev:#2a2a2a;--rev-l:#f0f0f0;--rev-m:#888;
+  --bg:#fff;--bg2:#f7f6f3;--border:#e0ddd6;--text:#1a1a1a;--muted:#777;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;}
+.page{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;}
+h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;margin-bottom:4px;}
+.subtitle{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:1.5rem;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.stat{background:var(--bg);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px;}
+.stat-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
+.stat-lab{font-size:11px;color:var(--muted);margin-top:2px;}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem;background:var(--bg);border:0.5px solid var(--border);border-radius:10px;padding:12px 16px;}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.phase-block{margin-bottom:2.5rem;}
+.phase-hdr{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.phase-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;background:var(--bg2);border:0.5px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:4px;}
+.phase-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:500;}
+.phase-dates{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;}
+.cal-grid{display:grid;grid-template-columns:44px repeat(7,1fr);gap:2px;margin-bottom:2px;}
+.day-hdr{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center;padding:4px 2px;background:var(--bg2);}
+.wk-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);display:flex;align-items:flex-start;justify-content:center;padding-top:6px;}
+.cell{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:5px 6px;cursor:pointer;min-height:64px;display:flex;flex-direction:column;gap:2px;transition:border-color .15s,box-shadow .15s;}
+.cell:hover{border-color:#aaa;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.cell.empty{background:transparent;border-color:transparent;cursor:default;}
+.cell.empty:hover{box-shadow:none;border-color:transparent;}
+.cell.review-day{background:#fafaf8;}
+.date-n{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:1px;}
+.pill{font-size:8.5px;font-weight:500;padding:1.5px 4px;border-radius:3px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pill.ra{background:var(--ra-l);color:var(--ra);}
+.pill.la{background:var(--la-l);color:var(--la);}
+.pill.aa{background:var(--aa-l);color:var(--aa);}
+.pill.comp{background:var(--comp-l);color:var(--comp);}
+.pill.rev{background:var(--rev-l);color:var(--rev);}
+/* Modal */
+.backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;}
+.backdrop.open{display:flex;}
+.modal{background:var(--bg);border-radius:14px;border:0.5px solid var(--border);padding:0;max-width:500px;width:92%;max-height:86vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-top{padding:1.25rem 1.5rem 1rem;border-bottom:0.5px solid var(--border);}
+.modal-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.modal-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:500;margin-top:3px;}
+.close-btn{position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:var(--muted);font-size:22px;line-height:1;padding:4px;}
+.modal-body{padding:1.25rem 1.5rem;overflow-y:auto;flex:1;}
+.m-sec-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:8px;font-family:'DM Mono',monospace;}
+.block{display:flex;gap:10px;padding:9px 11px;border-radius:8px;margin-bottom:6px;}
+.block.ra{background:var(--ra-l);}
+.block.la{background:var(--la-l);}
+.block.aa{background:var(--aa-l);}
+.block.comp{background:var(--comp-l);}
+.block.rev{background:var(--rev-l);}
+.b-dur{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;flex-shrink:0;padding-top:1px;min-width:32px;}
+.block.ra .b-dur{color:var(--ra-m);}
+.block.la .b-dur{color:var(--la-m);}
+.block.aa .b-dur{color:var(--aa-m);}
+.block.comp .b-dur{color:var(--comp-m);}
+.block.rev .b-dur{color:var(--rev-m);}
+.b-info .b-course{font-size:13px;font-weight:500;}
+.b-info .b-topic{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.b-info .b-ref{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);opacity:.75;margin-top:3px;}
+.ask-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:0.5px solid var(--border);border-radius:7px;padding:7px 13px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;margin-right:6px;}
+.ask-btn:hover{color:var(--text);border-color:#999;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Mathematics Study Schedule</h1>
+<div class="subtitle">May 15 → Aug 31, 2026 &nbsp;·&nbsp; 7 nights/week &nbsp;·&nbsp; 3 hours/night &nbsp;·&nbsp; 315 total hours</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-val" style="color:var(--ra-m)">~135h</div><div class="stat-lab">Real Analysis</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--la-m)">~67h</div><div class="stat-lab">Linear Algebra</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--aa-m)">~67h</div><div class="stat-lab">Abstract Algebra</div></div>
+  <div class="stat"><div class="stat-val" style="color:var(--comp-m)">~45h</div><div class="stat-lab">Comp Refreshers</div></div>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:var(--ra-m)"></div>Real Analysis (1.5h/night · all 7 nights)</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--la-m)"></div>Linear Algebra (1h · odd nights)</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--aa-m)"></div>Abstract Algebra (1h · even nights)</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--comp-m)"></div>Computational refresher (30m · cycling)</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--rev-m)"></div>Weekly review session</div>
+</div>
+
+<div id="cal-root"></div>
+
+</div>
+
+<!-- Modal -->
+<div class="backdrop" id="backdrop" onclick="maybeClose(event)">
+  <div class="modal" style="position:relative;">
+    <button class="close-btn" onclick="closeModal()">×</button>
+    <div class="modal-top">
+      <div class="modal-date" id="m-date"></div>
+      <div class="modal-title" id="m-title"></div>
+    </div>
+    <div class="modal-body" id="m-body"></div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────────────────────
+// DATA: precise chapter/section refs from actual PDFs
+// ──────────────────────────────────────────────────────────────
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAYSFULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// Real Analysis sessions — tied to actual chapters
+const RA = [
+  // Phase 1: Number Systems
+  {t:'Peano axioms: natural numbers from scratch', r:'Landau Ch.1 · Tao §2.1 p.15 · Feferman §3.1'},
+  {t:'Addition & multiplication of ℕ: inductive definitions & proofs', r:'Landau Ch.1 · Tao §2.2–2.3 p.24–29 · Feferman §3.2'},
+  {t:'Set theory foundations: sets, functions, relations', r:'Tao §3.1–3.3 p.33–56 · Feferman §2.1–2.3 · Zorich §1.1–1.3'},
+  {t:'Cardinality, images/inverses, Cartesian products', r:'Tao §3.4–3.6 p.56–75 · Feferman §2.4'},
+  {t:'Integers ℤ: construction from ℕ, ring properties', r:'Tao §4.1 · Feferman §4.1–4.3 · Landau Ch.2'},
+  {t:'Rationals ℚ: construction, field axioms, density', r:'Tao §4.2–4.3 · Feferman §5.1–5.3 · Landau Ch.3'},
+  {t:'Gaps in ℚ: why ℝ is necessary (√2, irrationals)', r:'Tao §5.1–5.2 · Bartle §2.1 p.19–23'},
+  // ℝ construction
+  {t:'Cauchy sequences of rationals: formal definition', r:'Tao §5.1–5.3 p.95–109 · Bartle §3.5'},
+  {t:'ℝ via Cauchy completion: equivalence classes of Cauchy sequences', r:'Tao §5.3–5.4 p.109–116'},
+  {t:"Completeness axiom (LUB): Dedekind's approach", r:'Bartle §2.3 p.31–35 · Lebl §1.2 p.29–35 · Zorich §2.1.3 p.44'},
+  {t:'Supremum & infimum: Theorem 2.3.4 and consequences', r:'Bartle §2.3–2.4 p.35–42 · Lebl §1.1 p.23–28'},
+  {t:'Archimedean property, density of ℚ in ℝ', r:'Bartle §2.4 p.42–48 · Zorich §2.2.3 p.52 · Lebl §1.2'},
+  {t:'Absolute value, triangle inequality, metric on ℝ', r:'Bartle §2.2 p.27–31 · Lebl §1.3 p.36–40 · Zorich §2.1.2'},
+  {t:'Intervals: types, uncountability of ℝ (Cantor diagonal)', r:'Lebl §1.4 p.41–43 · Bartle §2.5'},
+  // Sequences
+  {t:'Sequences: formal definition, convergence (ε-N)', r:'Bartle §3.1 p.51–57 · Tao §6.1 p.126 · Zorich §3.1.1 p.79'},
+  {t:'Uniqueness of limits, bounded sequences, limit laws', r:'Bartle §3.2 p.58–65 · Zorich §3.1.2 p.81 · Lebl §2.1–2.2'},
+  {t:'Squeeze theorem, monotone convergence theorem', r:'Bartle §3.3 p.65–73 · Lebl §2.1 p.61 · Zorich §3.1.3 p.85'},
+  {t:'Subsequences, Bolzano-Weierstrass theorem (full proof)', r:'Bartle §3.4 p.74–81 · Lebl §2.3 p.73 · Zorich §2.3.3'},
+  {t:'Cauchy sequences: criterion, completeness of ℝ', r:'Bartle §3.5 p.82–88 · Lebl §2.4 p.84 · Zorich §3.1.3 p.95'},
+  {t:'limsup, liminf: definitions, properties, relationship to limits', r:'Lebl §2.3 p.73–82 · Tao §6.4 p.139 · Bruckner §2.13'},
+  // Series
+  {t:'Infinite series: partial sums, convergence (ε-N)', r:'Bartle §3.7 p.95–105 · Lebl §2.5 p.87 · Tao §7.2'},
+  {t:'Tests: comparison, p-series, ratio test (with proofs)', r:'Bartle §3.7 p.105–113 · Lebl §2.5–2.6 p.100 · Tao §7.3–7.5'},
+  {t:'Absolute vs conditional convergence; Dirichlet, alternating series', r:'Bartle §3.7 · Lebl §2.6 p.100 · Bruckner §3.3–3.5'},
+  {t:'Rearrangements: Riemann rearrangement theorem', r:'Tao §7.4 p.174 · Bruckner §3.6'},
+  // Limits of Functions
+  {t:'Limits of functions: sequential & ε-δ definitions, equivalence', r:'Bartle §4.1 p.115–123 · Lebl §3.1 p.113 · Tao §9.3 p.220'},
+  {t:'Limit laws, one-sided limits, limits at infinity', r:'Bartle §4.2–4.3 p.123–135 · Zorich §3.2.2 p.110 · Lebl §3.5'},
+  {t:'Limits superior/inferior for functions', r:'Bruckner §5.3 · Lebl §3.1'},
+  // Continuity
+  {t:'Continuity: ε-δ and sequential definitions, equivalence proof', r:'Bartle §5.1 p.141–148 · Lebl §3.2 p.122 · Tao §9.4 p.227'},
+  {t:'Properties: arithmetic of continuous functions, composition', r:'Bartle §5.2 p.149–155 · Zorich §4.2.1 p.157'},
+  {t:'IVT: statement, full proof, corollaries', r:'Bartle §5.3 p.155–161 · Lebl §3.3 p.130 · Tao §9.7 p.238'},
+  {t:'EVT: compact intervals, maximum principle, proof', r:'Bartle §5.3 p.161–168 · Tao §9.6 p.234 · Zorich §4.2.2 p.158'},
+  {t:'Uniform continuity: definition, Cantor theorem, examples', r:'Bartle §5.4 p.168–176 · Lebl §3.4 p.138 · Zorich §4.2.2'},
+  {t:'Discontinuities: classification (jump, removable, essential)', r:'Bruckner §5.9 p.330 · Bartle §5.5 · Tao §9.5'},
+  {t:'Monotone functions and continuity', r:'Bartle §5.6 · Lebl §3.6 p.149 · Tao §9.8 p.241'},
+  // Differentiation
+  {t:'Derivative: limit definition, geometric meaning, Carathéodory characterization', r:'Bartle §6.1 p.181–188 · Lebl §4.1 p.155 · Zorich §5.1.2 p.175'},
+  {t:'Differentiation rules: sum, product, quotient, chain (full proofs)', r:'Bartle §6.1 p.188–195 · Zorich §5.2.1–5.2.2 p.190'},
+  {t:"Rolle's theorem & MVT: statements and full proofs", r:'Bartle §6.2 p.196–202 · Lebl §4.2 p.162 · Zorich §5.3.1–5.3.2 p.211'},
+  {t:"Cauchy MVT, L'Hôpital's rule (proof via Cauchy MVT)", r:'Bartle §6.3 p.202–210 · Tao §10.5 p.264 · Zorich §5.3.2'},
+  {t:"Taylor's theorem: Lagrange remainder, Peano remainder", r:'Bartle §6.4 p.211–218 · Lebl §4.3 p.171 · Zorich §5.3.3 p.217'},
+  {t:'Darboux property of derivatives: intermediate value for derivatives', r:'Bartle §6.2 · Bruckner §7.2'},
+  // Riemann Integral
+  {t:'Riemann integral via Riemann sums: formal definition', r:'Bartle §7.1 p.223–231 · Tao §11.1–11.4 p.267'},
+  {t:'Darboux sums: upper/lower integrals, Darboux criterion', r:'Bartle §7.4 p.261–270 · Tao §11.3 p.276 · Bruckner §8.2'},
+  {t:'Riemann-Stieltjes integral: definition and basic properties', r:'Bartle §7.5 · Tao §11.8 p.292'},
+  {t:'Integrability criteria: continuous functions, monotone functions', r:'Bartle §7.2 p.232–240 · Tao §11.5–11.6 · Lebl §5.2'},
+  {t:'Properties of the integral: linearity, additivity, comparison', r:'Bartle §7.2–7.3 p.240–250 · Lebl §5.2 p.191'},
+  {t:'FTC Part I: integral as antiderivative (full proof)', r:'Bartle §7.3 p.250–257 · Lebl §5.3 p.200 · Tao §11.9'},
+  {t:'FTC Part II: derivative of the integral (full proof)', r:'Bartle §7.3 · Tao §11.9 p.295 · Zorich (integration chapter)'},
+  // Sequences of Functions
+  {t:'Pointwise vs uniform convergence: definitions, examples', r:'Bartle §8.1 p.299–308 · Lebl §6.1 p.227'},
+  {t:'Uniform convergence: continuity, integrability preserved', r:'Bartle §8.2 p.309–318 · Lebl §6.2 p.234'},
+  {t:'Power series: radius of convergence, term-by-term differentiation', r:'Bartle §9.4 · Lebl §2.6 p.100'},
+  // Review sessions
+  {t:'REVIEW WEEK: ℕ→ℚ→ℝ — reconstruct all constructions from memory', r:'Landau · Feferman · Tao Ch.2–5'},
+  {t:'REVIEW WEEK: sequences, series, limits — re-prove 5 key theorems', r:'Bartle Ch.3–4 · Lebl Ch.2–3'},
+  {t:'REVIEW WEEK: continuity & differentiation — re-prove MVT, IVT, EVT chains', r:'Bartle Ch.5–6 · Bruckner Ch.5,7'},
+  {t:'REVIEW WEEK: Riemann integral (3 approaches) — compare Darboux vs Riemann vs Stieltjes', r:'Bartle Ch.7 · Tao Ch.11'},
+  {t:'CAPSTONE: re-derive full analysis chain ℕ→Riemann FTC from scratch', r:'All texts'},
+];
+
+// Linear Algebra sessions — Axler 4e + Johnston
+const LA = [
+  {t:'ℝⁿ and ℂⁿ: complex numbers review; lists and 𝔽ⁿ', r:'Axler §1A p.2–10'},
+  {t:'Vector spaces: axioms, definition, first examples', r:'Axler §1B p.12–16'},
+  {t:'Subspaces: definition, examples, sums of subspaces', r:'Axler §1C p.18–22 · Johnston §2.3'},
+  {t:'Direct sums: characterization theorem and proof', r:'Axler §1C p.21–24'},
+  {t:'Linear combinations, span, spanning sets', r:'Axler §2A p.28–31 · Johnston §2.4'},
+  {t:'Linear independence: definition, lemma, examples', r:'Axler §2A p.31–37'},
+  {t:'Bases: definition, criterion, spanning list contains a basis', r:'Axler §2B p.39–42'},
+  {t:'Dimension: every basis has same length; subspace dimension', r:'Axler §2C p.44–48'},
+  {t:'Linear maps: definition, examples, ℒ(V,W) as a vector space', r:'Axler §3A p.52–57'},
+  {t:'Null space and range; fundamental theorem of linear maps', r:'Axler §3A–3B p.57–70 · Johnston §2.3'},
+  {t:'Matrices: representation of linear maps, matrix multiplication', r:'Axler §3C p.75–85 · Johnston §1.3'},
+  {t:'Invertibility and isomorphisms; row reduction perspective', r:'Axler §3D p.86–96 · Johnston §2.2'},
+  {t:'Products and quotient spaces; duality; dual map', r:'Axler §3E–3F p.97–115'},
+  {t:'Polynomials applied to operators; invariant subspaces', r:'Axler §4+§5A p.119–139'},
+  {t:'Eigenvalues: definition, existence on ℂ, upper-triangular matrices', r:'Axler §5A–5C p.133–160'},
+  {t:'Minimal polynomial: eigenvalues and diagonalizability criterion', r:'Axler §5B–5D p.143–172'},
+  {t:'Inner product spaces: definition, examples, properties', r:'Axler §6A p.182–191'},
+  {t:'Orthonormal bases; Gram-Schmidt procedure (full proof)', r:'Axler §6B p.197–207 · Johnston §1.2'},
+  {t:'Orthogonal complements, minimization, pseudoinverse', r:'Axler §6C p.211–224'},
+  {t:'Self-adjoint operators, adjoints, normal operators', r:'Axler §7A p.228–239'},
+  {t:'Spectral theorem (real & complex): statement and proof', r:'Axler §7B p.243–247'},
+  {t:'Positive operators, isometries, unitary operators', r:'Axler §7C–7D p.251–268'},
+  {t:'Singular value decomposition: singular values, SVD theorem', r:'Axler §7E p.270–278 · Johnston §3'},
+  {t:'Consequences of SVD: norms, polar decomposition, best approximation', r:'Axler §7F p.280–294'},
+  {t:'Generalized eigenvectors, nilpotent operators, null spaces of powers', r:'Axler §8A p.298–306'},
+  {t:'Generalized eigenspace decomposition; multiplicity of eigenvalue', r:'Axler §8B p.308–316'},
+  {t:'Jordan form: existence and uniqueness (full proof path)', r:'Axler §8C p.319–324'},
+  {t:'Trace via operators and matrices; connections to eigenvalues', r:'Axler §8D p.326–330'},
+  {t:'Determinants: alternating multilinear forms, definition', r:'Axler §9B–9C p.346–367'},
+  {t:'REVIEW LA: maps, matrices, and dimension theorem', r:'Axler Ch.1–3'},
+  {t:'REVIEW LA: spectral theory and SVD', r:'Axler Ch.6–7'},
+  {t:'REVIEW LA: Jordan form and determinants', r:'Axler Ch.8–9'},
+];
+
+// Abstract Algebra sessions — Gallian e7 + Aluffi hints
+const AA = [
+  {t:'Integers: division algorithm, gcd, Euclidean algorithm', r:'Gallian §0 p.3–6'},
+  {t:'Modular arithmetic: ℤ_n, congruences, properties', r:'Gallian §0 p.7–11'},
+  {t:'Mathematical induction and well-ordering', r:'Gallian §0 p.12–14'},
+  {t:'Equivalence relations and partitions', r:'Gallian §0 p.15–20'},
+  {t:'Functions (mappings): injective, surjective, bijective, composition', r:'Gallian §0 p.18–25'},
+  {t:'Introduction to groups: symmetries of a square, dihedral groups', r:'Gallian §1 p.29–35'},
+  {t:'Groups: axioms, definition, elementary properties', r:'Gallian §2 p.40–51'},
+  {t:'Examples: ℤ, ℤ_n, U(n), GL(n,ℝ), Klein 4-group', r:'Gallian §2 p.40–55'},
+  {t:'Subgroups: definition, subgroup tests (one-step, two-step)', r:'Gallian §3 p.57–70'},
+  {t:'Cyclic groups: generator, order, classification theorem', r:'Gallian §4 p.72–82'},
+  {t:'Classification of subgroups of cyclic groups (full proof)', r:'Gallian §4 p.77–86'},
+  {t:'Permutation groups: cycle notation, even/odd, A_n', r:'Gallian §5 p.95–115'},
+  {t:"Isomorphisms: definition, Cayley's theorem, automorphisms", r:'Gallian §6 p.122–135'},
+  {t:'Properties of isomorphisms: invariants, isomorphism classes', r:'Gallian §6 p.128–134'},
+  {t:'Cosets: definition, properties, disjointness theorem', r:'Gallian §7 p.138–145'},
+  {t:"Lagrange's theorem: proof and consequences", r:'Gallian §7 p.141–148'},
+  {t:'External direct products: definition, examples, properties', r:'Gallian §8 p.155–168'},
+  {t:'Normal subgroups: definition, characterizations, examples', r:'Gallian §9 p.178–185'},
+  {t:'Factor groups: definition, well-definedness proof', r:'Gallian §9 p.180–190'},
+  {t:'Group homomorphisms: definition, kernel, image, properties', r:'Gallian §10 p.200–210'},
+  {t:'First isomorphism theorem: proof and applications', r:'Gallian §10 p.206–215'},
+  {t:'Fundamental theorem of finite abelian groups', r:'Gallian §11 p.218–228'},
+  {t:'Introduction to rings: definition, examples, properties', r:'Gallian §12 p.237–245'},
+  {t:'Integral domains: definition, fields, characteristic', r:'Gallian §13 p.249–255'},
+  {t:'Ideals: definition, factor rings, principal ideals', r:'Gallian §14 p.262–272'},
+  {t:'Prime and maximal ideals: characterizations and proofs', r:'Gallian §14 p.267–273'},
+  {t:'Ring homomorphisms: definition, properties, quotient rings', r:'Gallian §15 p.280–288'},
+  {t:'Polynomial rings: division algorithm, roots', r:'Gallian §16 p.293–300'},
+  {t:'Irreducibility: Eisenstein criterion, reducibility tests', r:'Gallian §17 p.305–316'},
+  {t:'Field extensions: definition, degree, algebraic elements', r:'Gallian §20 p.354–368'},
+  {t:'Algebraic extensions: finite extensions, tower law', r:'Gallian §21 p.370–379'},
+  {t:'REVIEW AA: groups, subgroups, cosets', r:'Gallian Part 1–2'},
+  {t:'REVIEW AA: homomorphisms and isomorphism theorems', r:'Gallian §10–11'},
+  {t:'REVIEW AA: rings, ideals, polynomial rings', r:'Gallian Part 3–4'},
+];
+
+// Computational refreshers — cycling, problem sets only
+const COMP = [
+  {course:'Calc 1', t:'Limits: ε-δ, L\'Hôpital, limit laws — problem set', r:'Stewart §2.2–2.6'},
+  {course:'Calc 1', t:'Derivatives: rules, chain rule, implicit differentiation — problem set', r:'Stewart §3.1–3.6'},
+  {course:'Calc 1', t:'Applications: MVT, optimization, related rates — problem set', r:'Stewart §4.1–4.5'},
+  {course:'Calc 1', t:'Integration: Riemann sums, FTC, u-substitution — problem set', r:'Stewart §5.2–5.5'},
+  {course:'Calc 2', t:'Integration techniques: IBP, partial fractions, trig — problem set', r:'Stewart §7.1–7.4'},
+  {course:'Calc 2', t:'Sequences: convergence, limits, ratio/root tests — problem set', r:'Stewart §11.1–11.6'},
+  {course:'Calc 2', t:'Series: convergence tests, power series — problem set', r:'Stewart §11.7–11.10'},
+  {course:'Calc 2', t:'Taylor and Maclaurin series — problem set', r:'Stewart §11.10–11.11'},
+  {course:'Calc 3', t:'Partial derivatives, gradient, directional derivatives — problem set', r:'Stewart §14.1–14.6'},
+  {course:'Calc 3', t:'Optimization: critical points, Lagrange multipliers — problem set', r:'Stewart §14.7–14.8'},
+  {course:'Calc 3', t:'Double and triple integrals: Cartesian, polar — problem set', r:'Stewart §15.1–15.4'},
+  {course:'Calc 3', t:'Vector fields, line integrals, Green\'s theorem — problem set', r:'Stewart §16.1–16.4'},
+  {course:'ODE', t:'First-order ODEs: separable, linear, exact — problem set', r:'Boyce §2.1–2.3'},
+  {course:'ODE', t:'Second-order linear ODEs: homogeneous, characteristic eq — problem set', r:'Boyce §3.1–3.4'},
+  {course:'ODE', t:'Systems of ODEs: matrix methods, phase portraits — problem set', r:'Boyce §7.1–7.6'},
+  {course:'ODE', t:'Series solutions and Laplace transform — problem set', r:'Boyce §5.1, §6.1–6.3'},
+  {course:'Comp LA', t:'Row reduction: Gaussian elimination, RREF — problem set', r:'Johnston §2.1'},
+  {course:'Comp LA', t:'Matrix inverses: LU decomposition, algorithm — problem set', r:'Johnston §2.2 · §2.D'},
+  {course:'Comp LA', t:'Eigenvalues: characteristic polynomial, computation — problem set', r:'Johnston §3.3'},
+  {course:'Comp LA', t:'SVD computation; QR decomposition — problem set', r:'Johnston §3 · Axler §7E'},
+];
+
+// Build schedule: start May 15, end Aug 31, 2026
+function buildSchedule() {
+  const start = new Date(2026, 4, 15);
+  const end = new Date(2026, 7, 31);
+  const data = {};
+  let d = new Date(start);
+  let dayIdx = 0;
+  let raIdx = 0, laIdx = 0, aaIdx = 0, compIdx = 0;
+  // Review every 14th night, else alternate A/B
+  // A night (dayIdx even): RA + LA + comp
+  // B night (dayIdx odd): RA + AA + comp
+  // Every 14th = review
+
+  while (d <= end) {
+    const key = d.toDateString();
+    const isReview = (dayIdx > 0 && dayIdx % 13 === 12);
+    let blocks;
+    if (isReview) {
+      const raR = RA[50 + Math.floor(dayIdx/13) % 5]; // review topics
+      blocks = [{type:'rev', course:'Review session', dur:'3h',
+        topic: 'Weekly review: re-derive all proofs from memory. No books until you\'re stuck.',
+        ref:'Proof log + all texts'}];
+    } else if (dayIdx % 2 === 0) {
+      const ra = RA[raIdx % 50];
+      const la = LA[laIdx % LA.length];
+      const comp = COMP[compIdx % COMP.length];
+      blocks = [
+        {type:'ra', course:'Real Analysis', dur:'1.5h', topic:ra.t, ref:ra.r},
+        {type:'la', course:'Linear Algebra', dur:'1h', topic:la.t, ref:la.r},
+        {type:'comp', course:comp.course+' (comp)', dur:'30m', topic:comp.t, ref:comp.r},
+      ];
+      raIdx++; laIdx++; compIdx++;
+    } else {
+      const ra = RA[raIdx % 50];
+      const aa = AA[aaIdx % AA.length];
+      const comp = COMP[compIdx % COMP.length];
+      blocks = [
+        {type:'ra', course:'Real Analysis', dur:'1.5h', topic:ra.t, ref:ra.r},
+        {type:'aa', course:'Abstract Algebra', dur:'1h', topic:aa.t, ref:aa.r},
+        {type:'comp', course:comp.course+' (comp)', dur:'30m', topic:comp.t, ref:comp.r},
+      ];
+      raIdx++; aaIdx++; compIdx++;
+    }
+    data[key] = {blocks, date:new Date(d)};
+    d.setDate(d.getDate()+1);
+    dayIdx++;
+  }
+  return data;
+}
+
+const phases = [
+  {label:'Phase 1', title:'Number systems & foundations', start:new Date(2026,4,15), end:new Date(2026,5,21),
+   desc:'ℕ → ℤ → ℚ → ℝ: every construction from Peano axioms through completeness. Groups from scratch. Vector spaces and linear maps.'},
+  {label:'Phase 2', title:'Core analysis & abstract theory', start:new Date(2026,5,22), end:new Date(2026,6,26),
+   desc:'Sequences, series, limits of functions, continuity, derivatives. Ring theory, polynomial rings. Spectral theorem and SVD.'},
+  {label:'Phase 3', title:'Integration, structure & capstone', start:new Date(2026,6,27), end:new Date(2026,7,31),
+   desc:'Riemann integral (3 formulations), uniform convergence. Field extensions. Jordan form and determinants. Final capstone review. Ready for Analysis 2 / Differential Geometry.'},
+];
+
+function buildCalendar(data) {
+  const root = document.getElementById('cal-root');
+  root.innerHTML = '';
+  const fmtD = d => `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+
+  phases.forEach(phase => {
+    const pDiv = document.createElement('div');
+    pDiv.className = 'phase-block';
+    const pHdr = document.createElement('div');
+    pHdr.className = 'phase-hdr';
+    pHdr.innerHTML = `<span class="phase-badge">${phase.label}</span><span class="phase-title">${phase.title}</span><span class="phase-dates">${fmtD(phase.start)} – ${fmtD(phase.end)}</span>`;
+    pDiv.appendChild(pHdr);
+
+    // Phase description
+    const descEl = document.createElement('p');
+    descEl.style.cssText = 'font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;';
+    descEl.textContent = phase.desc;
+    pDiv.appendChild(descEl);
+
+    // Day headers
+    const hGrid = document.createElement('div');
+    hGrid.className = 'cal-grid';
+    hGrid.innerHTML = '<div></div>' + DAYS.map(d=>`<div class="day-hdr">${d}</div>`).join('');
+    pDiv.appendChild(hGrid);
+
+    // Collect days for this phase
+    let pDays = [];
+    let d = new Date(phase.start);
+    while (d <= phase.end) { pDays.push(new Date(d)); d.setDate(d.getDate()+1); }
+
+    // Build weeks
+    let weeks = [], wk = [];
+    pDays.forEach(day => {
+      if (!wk.length && day.getDay() !== 0) for (let i=0;i<day.getDay();i++) wk.push(null);
+      wk.push(day);
+      if (day.getDay() === 6) { weeks.push(wk); wk = []; }
+    });
+    if (wk.length) weeks.push(wk);
+
+    let globalWkNum = Math.round((phase.start - new Date(2026,4,15)) / 604800000) + 1;
+
+    weeks.forEach((week, wi) => {
+      const grid = document.createElement('div');
+      grid.className = 'cal-grid';
+      const lbl = document.createElement('div');
+      lbl.className = 'wk-lbl';
+      const firstReal = week.find(x=>x!==null);
+      lbl.textContent = firstReal ? 'W'+(globalWkNum+wi) : '';
+      grid.appendChild(lbl);
+      while (week.length < 7) week.push(null);
+      week.forEach(day => {
+        const cell = document.createElement('div');
+        if (!day) { cell.className = 'cell empty'; grid.appendChild(cell); return; }
+        const key = day.toDateString();
+        const dayData = data[key];
+        const isRev = dayData && dayData.blocks[0].type === 'rev';
+        cell.className = 'cell' + (isRev?' review-day':'');
+        cell.innerHTML = `<div class="date-n">${MONTHS[day.getMonth()]} ${day.getDate()}</div>`;
+        if (dayData) {
+          dayData.blocks.forEach(b => {
+            const p = document.createElement('div');
+            p.className = 'pill ' + b.type;
+            const shortLabel = {ra:'Analysis',la:'Lin Alg',aa:'Algebra',comp:b.course.split(' ')[0],rev:'Review'}[b.type];
+            p.textContent = shortLabel;
+            cell.appendChild(p);
+          });
+          cell.addEventListener('click', () => openModal(day, dayData));
+        }
+        grid.appendChild(cell);
+      });
+      pDiv.appendChild(grid);
+    });
+    root.appendChild(pDiv);
+  });
+}
+
+function openModal(date, dayData) {
+  const fmt = d => `${DAYSFULL[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}, 2026`;
+  document.getElementById('m-date').textContent = fmt(date);
+  const isRev = dayData.blocks[0].type === 'rev';
+  document.getElementById('m-title').textContent = isRev ? 'Weekly Review Session' : "Tonight's study session";
+  const body = document.getElementById('m-body');
+  body.innerHTML = '';
+
+  const secTitle = document.createElement('div');
+  secTitle.className = 'm-sec-title';
+  secTitle.textContent = '3-hour plan';
+  body.appendChild(secTitle);
+
+  dayData.blocks.forEach(b => {
+    const blk = document.createElement('div');
+    blk.className = 'block ' + b.type;
+    blk.innerHTML = `<div class="b-dur">${b.dur}</div><div class="b-info"><div class="b-course">${b.course}</div><div class="b-topic">${b.topic}</div><div class="b-ref">${b.ref}</div></div>`;
+    body.appendChild(blk);
+  });
+
+  const primaryTopic = dayData.blocks[0].topic;
+  const primaryRef = dayData.blocks[0].ref;
+
+  const btnArea = document.createElement('div');
+  btnArea.style.marginTop = '1rem';
+  btnArea.innerHTML = `
+    <button class="ask-btn" onclick="window.open('https://claude.ai','_blank'); return false;">
+      <i class="ti ti-message-2" aria-hidden="true"></i> Teach me: "${primaryTopic.substring(0,45)}…" — geometry first, then full predicate logic
+    </button><br>
+    <button class="ask-btn" onclick="window.open('https://claude.ai','_blank'); return false;">
+      <i class="ti ti-list-check" aria-hidden="true"></i> Give me 5 proof problems on this topic
+    </button>
+  `;
+  body.appendChild(btnArea);
+
+  document.getElementById('backdrop').classList.add('open');
+}
+
+function closeModal() { document.getElementById('backdrop').classList.remove('open'); }
+function maybeClose(e) { if (e.target === document.getElementById('backdrop')) closeModal(); }
+
+const schedule = buildSchedule();
+buildCalendar(schedule);
+</script>
+</body>
+</html>
