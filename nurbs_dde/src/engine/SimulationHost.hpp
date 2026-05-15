@@ -9,6 +9,7 @@
 #include "engine/PanelService.hpp"
 #include "engine/RenderService.hpp"
 #include "engine/SimulationClock.hpp"
+#include "engine/ViewInputService.hpp"
 #include "memory/MemoryService.hpp"
 
 namespace ndde {
@@ -65,6 +66,7 @@ public:
     [[nodiscard]] RenderService& render() noexcept { return m_render; }
     [[nodiscard]] CameraService& camera() noexcept { return m_camera; }
     [[nodiscard]] CameraInputController& camera_input() noexcept { return m_camera_input; }
+    [[nodiscard]] ViewInputService& view_input() noexcept { return m_view_input; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
@@ -80,6 +82,7 @@ private:
     RenderService m_render;
     CameraService m_camera;
     CameraInputController m_camera_input;
+    ViewInputService m_view_input;
     SimulationClock m_clock;
 };
 

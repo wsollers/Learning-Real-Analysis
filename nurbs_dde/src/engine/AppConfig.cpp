@@ -65,6 +65,14 @@ AppConfig AppConfig::load_or_default(const std::string& path) {
         cfg.simulation.tessellation  = jget<u32>(s, "tessellation",  cfg.simulation.tessellation);
         cfg.simulation.arena_size_mb = jget<u32>(s, "arena_size_mb", cfg.simulation.arena_size_mb);
     }
+    if (j.contains("telemetry")) {
+        auto& t = j["telemetry"];
+        cfg.telemetry.enabled        = jget<bool>(t,        "enabled",        cfg.telemetry.enabled);
+        cfg.telemetry.buffer_records = jget<u64>(t,         "buffer_records",  cfg.telemetry.buffer_records);
+        cfg.telemetry.output_dir     = jget<std::string>(t, "output_dir",      cfg.telemetry.output_dir);
+        cfg.telemetry.flush_periodic = jget<bool>(t,        "flush_periodic",  cfg.telemetry.flush_periodic);
+        cfg.telemetry.flush_interval = jget<u64>(t,         "flush_interval",  cfg.telemetry.flush_interval);
+    }
     cfg.assets_dir = jget<std::string>(j, "assets_dir", cfg.assets_dir);
     return cfg;
 }
@@ -78,6 +86,11 @@ void AppConfig::save(const std::string& path) const {
                           {"fov",  camera.fov}, {"near", camera.near_plane}, {"far", camera.far_plane} }},
         { "simulation", { {"tau", simulation.tau}, {"speed", simulation.speed},
                           {"tessellation", simulation.tessellation}, {"arena_size_mb", simulation.arena_size_mb} }},
+        { "telemetry",  { {"enabled",        telemetry.enabled},
+                          {"buffer_records", telemetry.buffer_records},
+                          {"output_dir",     telemetry.output_dir},
+                          {"flush_periodic", telemetry.flush_periodic},
+                          {"flush_interval", telemetry.flush_interval} }},
         { "assets_dir", assets_dir }
     };
     std::ofstream file(path);

@@ -515,6 +515,53 @@ TEST(CameraInputController, SurfacePickOnlyEmitsForPerspectiveSurfaceProfile) {
     EXPECT_EQ(picks.front().seed, 12u);
 }
 
+TEST(ViewInputService, CapturesDragWithinViewAndIgnoresBlockedClicks) {
+    ViewInputService input;
+    const RenderViewId view = 42;
+    const ViewInputRect rect{.origin = {}, .size = {800.f, 600.f}};
+
+    const auto blocked = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {200.f, 150.f},
+        .buttons = ViewPointerButtons{.left_click = true, .left_double_click = true},
+        .ui_blocked = true
+    });
+    EXPECT_FALSE(blocked.enabled);
+    EXPECT_FALSE(blocked.left_double_click);
+
+    const auto start = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {200.f, 150.f},
+        .buttons = ViewPointerButtons{.right_down = true}
+    });
+    EXPECT_TRUE(start.enabled);
+    EXPECT_TRUE(start.captured);
+    EXPECT_TRUE(start.right_drag);
+
+    const auto drag = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {900.f, 700.f},
+        .buttons = ViewPointerButtons{.right_down = true},
+        .ui_blocked = true
+    });
+    EXPECT_TRUE(drag.enabled);
+    EXPECT_TRUE(drag.captured);
+    EXPECT_TRUE(drag.right_drag);
+    EXPECT_FLOAT_EQ(drag.normalized_pixel.x, 1.f);
+    EXPECT_FLOAT_EQ(drag.normalized_pixel.y, 1.f);
+
+    const auto released = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {900.f, 700.f}
+    });
+    EXPECT_FALSE(released.enabled);
+    EXPECT_FALSE(released.captured);
+}
+
 TEST(SimulationClock, AdvancesTickAndTimeAndPauses) {
     SimulationClock clock;
 

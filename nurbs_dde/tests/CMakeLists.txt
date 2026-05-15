@@ -5,7 +5,6 @@ add_executable(ndde_tests
     test_all_simulations.cpp
     test_alternate_view_builders.cpp
     test_conics.cpp
-    test_differential_system.cpp
     test_axes.cpp
     test_numeric.cpp
     test_particle_system.cpp
@@ -13,22 +12,18 @@ add_executable(ndde_tests
     test_engine_services.cpp
     test_simulation_context.cpp
     test_simulation_runtime.cpp
-    test_simulation_surface_gaussian.cpp
     test_surface_metadata.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/GaussianSurface.cpp
+    # Differential / DDE tests reference old simulations — archived, excluded.
+    # Re-enable when those sims are ported to the new simulation/ layer.
+    # test_differential_system.cpp
+    # test_simulation_surface_gaussian.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/AnimatedCurve.cpp
     ${CMAKE_SOURCE_DIR}/src/app/ParticleSystem.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/AnalysisSpawner.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SceneFactories.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/SimulationDelayDifferential2D.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/SimulationDifferential2D.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/MultiWellSpawner.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/SimulationAnalysis.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/SimulationMultiWell.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/SimulationSurfaceGaussian.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SimulationWavePredatorPrey.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SurfaceMeshCache.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/SurfaceSimSpawner.cpp
-    ${CMAKE_SOURCE_DIR}/src/app/WavePredatorPreySpawner.cpp
+    ${CMAKE_SOURCE_DIR}/src/simulation/fields/IField.cpp
+    ${CMAKE_SOURCE_DIR}/src/simulation/scenario/ScenarioBuilder.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
 )
 
@@ -40,6 +35,7 @@ target_link_libraries(ndde_tests PRIVATE
     ndde_memory
     ndde_math
     ndde_numeric
+    ndde_simulation
     volk
     imgui
     GTest::gtest_main
@@ -48,7 +44,7 @@ target_link_libraries(ndde_tests PRIVATE
 
 if(MSVC)
     target_compile_options(ndde_tests PRIVATE
-        /W4 /WX- /wd4100 /permissive-
+        /W4 /WX- /wd4100 /permissive- /utf-8
         $<$<CONFIG:Debug>:/Od /Zi /RTC1>
         $<$<CONFIG:Release>:/O2>
     )

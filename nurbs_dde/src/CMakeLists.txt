@@ -62,6 +62,27 @@ target_link_libraries(ndde_renderer PUBLIC
     Vulkan::Vulkan
 )
 
+# ── ndde_telemetry ────────────────────────────────────────────────────────────
+# No Vulkan dependency -- only uses ndde_math (for scalar types) and std I/O.
+add_library(ndde_telemetry STATIC
+    telemetry/TelemetryService.cpp
+    telemetry/TelemetryWriter.cpp
+)
+target_include_directories(ndde_telemetry PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_telemetry PUBLIC ndde_math)
+
+# ── ndde_simulation ───────────────────────────────────────────────────────────
+# Pure simulation logic. No ImGui. Links volk for header-only Vulkan type
+# access (ArenaSlice.hpp pulled transitively via AnimatedCurve). No Vulkan
+# runtime calls are made from this library.
+add_library(ndde_simulation STATIC
+    simulation/events/EventBus.cpp
+    simulation/events/EventLog.cpp
+    simulation/events/AlertRule.cpp
+)
+target_include_directories(ndde_simulation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_simulation PUBLIC ndde_math volk)
+
 # ── ndde_engine ───────────────────────────────────────────────────────────────
 add_library(ndde_engine STATIC
     engine/AppConfig.cpp
@@ -74,32 +95,29 @@ target_link_libraries(ndde_engine PUBLIC
     ndde_memory
     ndde_platform
     ndde_math
+    ndde_telemetry
+    ndde_simulation
     nlohmann_json::nlohmann_json
 )
 
 # ── nurbs_dde executable ──────────────────────────────────────────────────────
+# Old simulations have been moved to src/old/ and are not compiled.
+# Only SimulationWavePredatorPrey is active.
 add_executable(nurbs_dde
     app/main.cpp
-    app/AnalysisSpawner.cpp
-    app/GaussianSurface.cpp
-    app/MultiWellSpawner.cpp
+    app/AnimatedCurve.cpp
     app/ParticleSystem.cpp
     app/SceneFactories.cpp
-    app/SimulationDelayDifferential2D.cpp
-    app/SimulationAnalysis.cpp
-    app/SimulationDifferential2D.cpp
-    app/SimulationMultiWell.cpp
-    app/SimulationSurfaceGaussian.cpp
     app/SimulationWavePredatorPrey.cpp
     app/SurfaceMeshCache.cpp
-    app/SurfaceSimSpawner.cpp
-    app/WavePredatorPreySpawner.cpp
+    simulation/fields/IField.cpp
+    simulation/scenario/ScenarioBuilder.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(nurbs_dde PRIVATE ndde_engine imgui)
 
 # ── Compiler flags ────────────────────────────────────────────────────────────
-set(NDDE_TARGETS ndde_math ndde_memory ndde_platform ndde_renderer ndde_engine nurbs_dde)
+set(NDDE_TARGETS ndde_math ndde_memory ndde_platform ndde_renderer ndde_telemetry ndde_simulation ndde_engine nurbs_dde)
 
 foreach(tgt IN LISTS NDDE_TARGETS)
     if(MSVC)

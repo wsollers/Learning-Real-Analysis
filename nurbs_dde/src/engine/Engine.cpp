@@ -46,6 +46,18 @@ std::string_view alternate_mode_name(AlternateViewMode mode) noexcept {
     return "Unknown";
 }
 
+bool primary_view_ui_blocked(const ImGuiIO& io) noexcept {
+    const bool mouse_valid = io.MousePos.x > -3.0e37f && io.MousePos.y > -3.0e37f;
+    if (!mouse_valid) return true;
+
+    // The rendered surface is the background, not an ImGui window.  A broad
+    // WantCaptureMouse gate can remain true because of panel state, so only
+    // block the canvas while the pointer is actually over ImGui UI or an item
+    // is actively being edited/dragged.
+    return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)
+        || ImGui::IsAnyItemActive();
+}
+
 } // namespace
 
 void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -60,6 +72,15 @@ Engine::Engine()
 
 Engine::~Engine() {
     uninstall_global_hotkeys();
+
+    // ── Telemetry: close any active run before GPU teardown ─────────────────
+    if (m_telemetry.enabled()) {
+        fire_sim_stopped(m_active_sim,
+                         active_runtime().snapshot().sim_time,
+                         m_telemetry_tick_count);
+        fire_app_stopping();
+    }
+
     m_second_win.destroy();
     m_renderer.destroy();
     m_services.memory().destroy();
@@ -127,6 +148,33 @@ void Engine::start(const std::string& config_path) {
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
 
+    // ── Telemetry init ──────────────────────────────────────────────────────
+    m_telemetry.set_enabled(m_config.telemetry.enabled);
+    if (m_config.telemetry.enabled) {
+        m_telemetry.init(
+            m_config.telemetry.buffer_records,
+            std::filesystem::path{NDDE_PROJECT_DIR} / m_config.telemetry.output_dir);
+        fire_app_started(config_path);
+        fire_sim_started(m_active_sim);
+    }
+
+    // ── Engine event bus + log init ─────────────────────────────────────
+    m_engine_log.init(u64(1024), u64(512));
+    m_engine_bus.attach_ring(&m_engine_log.ring());
+    // Engine bus: subscribe to events that should echo into the legacy
+    // m_event_log vector (still rendered by the existing "Engine - Log" panel).
+    // Tokens are discarded intentionally — these subscriptions last for the
+    // entire app lifetime and are never explicitly unsubscribed.
+    [[maybe_unused]] auto tok1 =
+    m_engine_bus.subscribe<events::AppStarted>([this](const events::AppStarted&) {
+        m_event_log.push_back("[Engine] AppStarted");
+    });
+    [[maybe_unused]] auto tok2 =
+    m_engine_bus.subscribe<events::SimSwitched>([this](const events::SimSwitched& e) {
+        m_event_log.push_back(std::format("[Engine] SimSwitched → {}", e.to_name));
+    });
+    m_engine_bus.dispatch(events::AppStarted{.config_path = config_path});
+
     m_last_frame_time = glfwGetTime();
     m_running = true;
     m_event_log.push_back("Engine ready");
@@ -158,6 +206,12 @@ void Engine::switch_simulation(std::size_t index) {
     if (index >= m_simulations.size() || index == m_active_sim) return;
     vkDeviceWaitIdle(m_vk.device());
     m_renderer.reset_frame_state();
+
+    // ── Telemetry: close current run ─────────────────────────────────────
+    fire_sim_stopped(m_active_sim,
+                     active_runtime().snapshot().sim_time,
+                     m_telemetry_tick_count);
+
     active_runtime().stop();
     m_services.render().clear_packets();
     m_services.memory().reset_simulation();
@@ -166,6 +220,10 @@ void Engine::switch_simulation(std::size_t index) {
     m_active_sim = index;
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
+
+    // ── Telemetry: open new run ──────────────────────────────────────
+    fire_sim_started(m_active_sim);
+
     m_event_log.push_back(std::format("Switched simulation: {}", active_runtime().name()));
     std::cout << std::format("[Engine] Active simulation: {}\n", active_runtime().name());
 }
@@ -199,7 +257,6 @@ void Engine::run_frame() {
     if (!m_renderer.begin_frame(m_swapchain)) { handle_resize(); return; }
     m_renderer.imgui_new_frame();
     dispatch_global_hotkeys();
-    update_render_view_input();
 
     // ── Populate DebugStats ───────────────────────────────────────────────────
     const auto& sc_ext = m_swapchain.extent();
@@ -218,9 +275,64 @@ void Engine::run_frame() {
     // ── Second window begin ──────────────────────────────────────────────────────
     const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
-    active_runtime().tick(m_services.clock().next(frame_ms / 1000.f, active_runtime().paused()));
+    // Input is sampled after panels are drawn, so this reflects the previous
+    // frame's view-owned click state and avoids stale ImGui hover decisions.
+    const RenderViewId tick_main_view = m_services.render().first_active_main_view();
+    const bool double_click_this_frame =
+        tick_main_view != 0 && m_services.view_input().sample(tick_main_view).left_double_click;
+    m_debug_stats.frame_ms = frame_ms;   // already set above, no-op
+
+    // Build the tick with is_double_click populated
+    TickInfo tick_info = m_services.clock().next(frame_ms / f32(1000), active_runtime().paused());
+    tick_info.is_double_click = double_click_this_frame;
+    active_runtime().tick(tick_info);
+
+    // ── Drain sim EventLog into engine log panel (once per frame) ─────────
+    // The sim's EventLog is drained by SimContext::end_tick() internally.
+    // Formatted entries from the engine bus ring are drained here.
+    m_engine_log.drain(tick_info.time, tick_info.tick_index);
+    // Propagate new sim log entries to the legacy m_event_log for the
+    // existing "Engine - Log" panel, which still renders that vector.
+    if (active_runtime().instantiated()) {
+        if (auto* bus = active_runtime().simulation().sim_bus_ptr()) {
+            // Typed subscriber callbacks for important sim events
+            // are registered in fire_sim_started().
+            // The EventLog::entries() vector is rendered directly
+            // by the new Sim - Events panel in SimulationUI.
+            (void)bus;
+        }
+    }
+
+    // ── Telemetry: record this tick ───────────────────────────────────────────
+    if (m_telemetry.enabled() && !active_runtime().paused()) {
+        const auto snap     = active_runtime().snapshot();
+        const f32  wall_ms  = static_cast<f32>(glfwGetTime() * 1000.0)
+                            - m_telemetry_sim_start_wall_ms;
+
+        // Base snapshot recording — populates position fields.
+        // Simulations that override on_telemetry_tick() push richer rows instead.
+        m_telemetry.record_particles(snap.particles,
+                                     m_telemetry_tick_count,
+                                     snap.sim_time,
+                                     wall_ms);
+
+        // Give the active simulation a chance to override / supplement.
+        EngineAPI api = make_api();
+        if (active_runtime().instantiated())
+            active_runtime().simulation().on_telemetry_tick(
+                m_telemetry_tick_count, {}, api);
+
+        ++m_telemetry_tick_count;
+
+        // Periodic mid-run flush — keeps the ring from filling on long runs.
+        if (m_config.telemetry.flush_periodic &&
+            m_telemetry_tick_count % m_config.telemetry.flush_interval == u64(0)) {
+            m_telemetry.flush();
+        }
+    }
     flush_render_service();
     m_services.panels().draw_registered_panels();
+    update_render_view_input();
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_services.memory().frame_gpu_bytes_used();
@@ -478,11 +590,44 @@ void Engine::draw_simulation_metadata_panel() {
 
 void Engine::draw_event_log_panel() {
     ImGui::SetNextWindowPos(ImVec2(1048.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(320.f, 180.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(320.f, 400.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowBgAlpha(0.86f);
     if (!ImGui::Begin("Engine - Log")) { ImGui::End(); return; }
-    for (const auto& line : m_event_log)
-        ImGui::TextDisabled("%s", line.c_str());
+
+    // Engine-scoped strings (plain grey) from m_event_log
+    if (ImGui::TreeNodeEx("Engine Events", ImGuiTreeNodeFlags_DefaultOpen)) {
+        for (const auto& line : m_event_log)
+            ImGui::TextDisabled("%s", line.c_str());
+        ImGui::TreePop();
+    }
+
+    // Sim-scoped events from EventLog — severity-tinted
+    const auto& sim_entries = m_engine_log.entries();
+    if (!sim_entries.empty()) {
+        ImGui::Separator();
+        if (ImGui::TreeNodeEx("Sim Events", ImGuiTreeNodeFlags_DefaultOpen)) {
+            for (const auto& entry : sim_entries) {
+                ImVec4 color;
+                using S = ndde::events::EventSeverity;
+                switch (entry.severity) {
+                    case S::Info:     color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+                    case S::Notice:   color = {0.4f, 0.8f, 1.0f, 1.f}; break;
+                    case S::Warning:  color = {1.0f, 0.9f, 0.2f, 1.f}; break;
+                    case S::Alert:    color = {1.0f, 0.5f, 0.1f, 1.f}; break;
+                    case S::Critical: color = {1.0f, 0.2f, 0.2f, 1.f}; break;
+                    default:          color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+                }
+                ImGui::TextColored(color, "%s", entry.text.c_str());
+            }
+            ImGui::TreePop();
+        }
+    }
+
+    // Stats
+    ImGui::Separator();
+    ImGui::TextDisabled("Ring: %llu queued  %llu dropped",
+        static_cast<unsigned long long>(m_engine_log.approx_queued()),
+        static_cast<unsigned long long>(m_engine_log.total_dropped()));
     ImGui::End();
 }
 
@@ -494,7 +639,7 @@ void Engine::apply_pending_simulation_switch() {
 }
 
 void Engine::on_key_event(int key, int action, int mods) {
-    if (action != GLFW_PRESS) return;
+    if (action != GLFW_PRESS && action != GLFW_REPEAT) return;
 
     const ImGuiIO& io = ImGui::GetIO();
     if (io.WantTextInput) return;
@@ -516,6 +661,14 @@ void Engine::on_key_event(int key, int action, int mods) {
         request_capture(true);
         return;
     }
+    if (!ctrl && !shift && key == GLFW_KEY_LEFT) {
+        m_services.camera().orbit_main(-28.f, 0.f);
+        return;
+    }
+    if (!ctrl && !shift && key == GLFW_KEY_RIGHT) {
+        m_services.camera().orbit_main(28.f, 0.f);
+        return;
+    }
 
     (void)m_services.hotkeys().dispatch(KeyChord{.key = key, .mods = mods});
 }
@@ -528,51 +681,81 @@ void Engine::dispatch_global_hotkeys() {
 
 void Engine::update_render_view_input() {
     ImGuiIO& io = ImGui::GetIO();
+    GLFWwindow* primary_window = m_glfw.window();
     m_services.render().set_viewport_size(RenderViewKind::Main,
         Vec2{static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())});
     if (m_second_win.valid()) {
         m_services.render().set_viewport_size(RenderViewKind::Alternate,
             Vec2{static_cast<f32>(m_second_win.width()), static_cast<f32>(m_second_win.height())});
     }
-    const bool mouse_valid = io.MousePos.x > -3.0e37f && io.MousePos.y > -3.0e37f;
+    Vec2 primary_pixel{io.MousePos.x, io.MousePos.y};
+    bool primary_right_down = ImGui::IsMouseDown(ImGuiMouseButton_Right);
+    bool primary_middle_down = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
+    if (primary_window) {
+        double cx = 0.0;
+        double cy = 0.0;
+        glfwGetCursorPos(primary_window, &cx, &cy);
+        primary_pixel = {
+            static_cast<f32>(cx),
+            static_cast<f32>(cy)
+        };
+        primary_right_down = glfwGetMouseButton(primary_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+        primary_middle_down = glfwGetMouseButton(primary_window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
+    }
+
     const RenderViewId main_view = m_services.render().first_active_main_view();
+    ViewInputSample primary_sample{.view = main_view};
     if (main_view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
-        const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
-        const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
+        primary_sample = m_services.view_input().update(ViewInputUpdate{
+            .view = main_view,
+            .rect = ViewInputRect{
+                .origin = {},
+                .size = {static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())}
+            },
+            .cursor = primary_pixel,
+            .buttons = ViewPointerButtons{
+                .left_click = ImGui::IsMouseClicked(ImGuiMouseButton_Left),
+                .left_double_click = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left),
+                .right_down = primary_right_down,
+                .middle_down = primary_middle_down,
+                .shift_down = io.KeyShift
+            },
+            .wheel_delta = io.MouseWheel,
+            .ui_blocked = primary_view_ui_blocked(io)
+        });
         m_services.interaction().set_mouse(main_view,
-            Vec2{io.MousePos.x, io.MousePos.y},
-            Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
-            mouse_valid && !io.WantCaptureMouse);
+            primary_sample.pixel,
+            primary_sample.screen_ndc,
+            primary_sample.enabled);
     }
     const RenderViewId alternate_view = m_services.render().first_active_alternate_view();
-    bool second_hovered = false;
-    Vec2 second_delta{};
+    ViewInputSample second_sample{.view = alternate_view};
     if (m_second_win.valid() && alternate_view != 0 && m_second_win.width() > 0 && m_second_win.height() > 0) {
         const Vec2 pixel = m_second_win.cursor_position();
-        second_hovered = m_second_win.hovered()
-            && pixel.x >= 0.f && pixel.y >= 0.f
-            && pixel.x <= static_cast<f32>(m_second_win.width())
-            && pixel.y <= static_cast<f32>(m_second_win.height());
-        const float nx = std::clamp(pixel.x / static_cast<f32>(m_second_win.width()), 0.f, 1.f);
-        const float ny = std::clamp(pixel.y / static_cast<f32>(m_second_win.height()), 0.f, 1.f);
+        second_sample = m_services.view_input().update(ViewInputUpdate{
+            .view = alternate_view,
+            .rect = ViewInputRect{
+                .origin = {},
+                .size = {static_cast<f32>(m_second_win.width()), static_cast<f32>(m_second_win.height())}
+            },
+            .cursor = pixel,
+            .buttons = ViewPointerButtons{
+                .right_down = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT),
+                .middle_down = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE),
+                .shift_down = io.KeyShift
+            },
+            .wheel_delta = io.MouseWheel,
+            .ui_blocked = !m_second_win.hovered()
+        });
         m_services.interaction().set_mouse(alternate_view,
-            pixel,
-            Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
-            second_hovered);
-        if (second_hovered && m_second_mouse_prev_valid)
-            second_delta = pixel - m_second_mouse_prev;
-        m_second_mouse_prev = pixel;
-        m_second_mouse_prev_valid = second_hovered;
-    } else {
-        m_second_mouse_prev_valid = false;
+            second_sample.pixel,
+            second_sample.screen_ndc,
+            second_sample.enabled);
     }
 
-    if (io.WantCaptureMouse && !second_hovered) return;
+    if (!primary_sample.enabled && !second_sample.enabled) return;
 
-    if (second_hovered && alternate_view != 0) {
-        const Vec2 pixel = m_second_win.cursor_position();
-        const float nx = std::clamp(pixel.x / static_cast<f32>(m_second_win.width()), 0.f, 1.f);
-        const float ny = std::clamp(pixel.y / static_cast<f32>(m_second_win.height()), 0.f, 1.f);
+    if (second_sample.enabled && alternate_view != 0) {
         (void)m_services.camera_input().dispatch(
             m_services.camera(),
             m_services.interaction(),
@@ -580,26 +763,22 @@ void Engine::update_render_view_input() {
             CameraInputSample{
                 .view = alternate_view,
                 .profile = CameraViewProfile::Auto,
-                .pixel = pixel,
-                .normalized_pixel = {nx, ny},
-                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                .delta = second_delta,
-                .wheel_delta = io.MouseWheel,
-                .right_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT),
-                .middle_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE),
-                .shift = io.KeyShift,
-                .left_click = false,
-                .left_double_click = false,
-                .enabled = true
+                .pixel = second_sample.pixel,
+                .normalized_pixel = second_sample.normalized_pixel,
+                .screen_ndc = second_sample.screen_ndc,
+                .delta = second_sample.delta,
+                .wheel_delta = second_sample.wheel_delta,
+                .right_drag = second_sample.right_drag,
+                .middle_drag = second_sample.middle_drag,
+                .shift = second_sample.shift,
+                .left_click = second_sample.left_click,
+                .left_double_click = second_sample.left_double_click,
+                .enabled = second_sample.enabled
             });
         return;
     }
 
-    if (main_view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
-        const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
-        const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
-        const bool double_click = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
-        const bool left_click = ImGui::IsMouseClicked(ImGuiMouseButton_Left);
+    if (main_view != 0 && primary_sample.enabled) {
         (void)m_services.camera_input().dispatch(
             m_services.camera(),
             m_services.interaction(),
@@ -607,18 +786,18 @@ void Engine::update_render_view_input() {
             CameraInputSample{
                 .view = main_view,
                 .profile = CameraViewProfile::Auto,
-                .pixel = {io.MousePos.x, io.MousePos.y},
-                .normalized_pixel = {nx, ny},
-                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                .delta = {io.MouseDelta.x, io.MouseDelta.y},
-                .wheel_delta = io.MouseWheel,
-                .right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right),
-                .middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle),
-                .shift = io.KeyShift,
-                .left_click = left_click,
-                .left_double_click = double_click,
-                .enabled = true,
-                .perturb_seed = double_click ? m_surface_perturb_seed++ : 0u
+                .pixel = primary_sample.pixel,
+                .normalized_pixel = primary_sample.normalized_pixel,
+                .screen_ndc = primary_sample.screen_ndc,
+                .delta = primary_sample.delta,
+                .wheel_delta = primary_sample.wheel_delta,
+                .right_drag = primary_sample.right_drag,
+                .middle_drag = primary_sample.middle_drag,
+                .shift = primary_sample.shift,
+                .left_click = primary_sample.left_click,
+                .left_double_click = primary_sample.left_double_click,
+                .enabled = primary_sample.enabled,
+                .perturb_seed = primary_sample.left_double_click ? m_surface_perturb_seed++ : 0u
             });
     }
 }
@@ -751,7 +930,59 @@ EngineAPI Engine::make_api() {
         m_pending_sim = index;
     };
 
+    api.record_telemetry = [this](const telemetry::TelemetryRecord& r) -> bool {
+        return m_telemetry.record(r);
+    };
+
+    api.record_telemetry_ext = [this](const telemetry::TelemetryExtRecord& r) -> bool {
+        return m_telemetry.record_ext(r);
+    };
+
     return api;
+}
+
+// ── Telemetry lifecycle helpers ───────────────────────────────────────────────────
+
+void Engine::fire_app_started(const std::string& config_path) {
+    m_telemetry.on_app_started(events::AppStarted{
+        .config_path = config_path,
+        .wall_time   = std::chrono::system_clock::now()
+    });
+}
+
+void Engine::fire_app_stopping() {
+    m_telemetry.on_app_stopping(events::AppStopping{});
+}
+
+void Engine::fire_sim_started(std::size_t index) {
+    m_telemetry_tick_count        = u64(0);
+    m_telemetry_sim_start_wall_ms = static_cast<f32>(glfwGetTime() * 1000.0);
+    m_telemetry.on_sim_started(events::SimStarted{
+        .sim_name  = active_runtime().name(),
+        .sim_index = static_cast<u64>(index),
+        .wall_time = std::chrono::system_clock::now()
+    });
+    // Dispatch on the engine bus so subscribers (log panel) are notified.
+    m_engine_bus.dispatch(ndde::events::SimSwitched{
+        .to_name   = active_runtime().name(),
+        .sim_index = static_cast<u64>(index)
+    });
+    // Sim EventLog drains into m_event_log each frame in run_frame().
+    // No per-event-type subscription needed here — drain() formats everything.
+}
+
+void Engine::fire_sim_stopped(std::size_t index,
+                               f32 total_sim_time,
+                               u64 total_ticks) {
+    m_telemetry.on_sim_stopped(events::SimStopped{
+        .sim_name        = active_runtime().name(),
+        .sim_index       = static_cast<u64>(index),
+        .total_sim_time  = total_sim_time,
+        .total_ticks     = total_ticks,
+        .total_records   = m_telemetry.total_records(),
+        .dropped_records = m_telemetry.dropped(),
+        .wall_time       = std::chrono::system_clock::now()
+    });
 }
 
 } // namespace ndde

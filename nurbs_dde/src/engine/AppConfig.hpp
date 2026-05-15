@@ -34,11 +34,20 @@ struct SimulationConfig {
     u32  arena_size_mb = 128;
 };
 
+struct TelemetryConfig {
+    bool        enabled          = true;
+    u64         buffer_records   = u64(512) * u64(1024); ///< ring capacity (~30 MB)
+    std::string output_dir       = "telemetry";
+    bool        flush_periodic   = true;
+    u64         flush_interval   = u64(1000); ///< ticks between mid-run flushes
+};
+
 struct AppConfig {
     WindowConfig     window;
     RenderConfig     render;
     CameraConfig     camera;
     SimulationConfig simulation;
+    TelemetryConfig  telemetry;
     std::string      assets_dir = "assets";
 
     /// Load from JSON. Missing file -> silent defaults. Malformed JSON -> throws.

@@ -6,6 +6,7 @@
 #include "memory/ArenaSlice.hpp"
 #include "engine/AppConfig.hpp"
 #include "math/Scalars.hpp"
+#include "telemetry/TelemetryRecord.hpp"
 #include <cstddef>
 #include <functional>
 
@@ -73,6 +74,17 @@ struct EngineAPI {
     // Request a first-class simulation switch by registry index.
     // Index 0 is Ctrl+1, index 1 is Ctrl+2, etc.
     std::function<void(std::size_t)> switch_simulation;
+
+    // Push a single telemetry primary record from within simulation code.
+    // Use this from ISimulation::on_telemetry_tick() to supply richer data
+    // (noise_sigma, speed, angle, geodesic_k) than the snapshot provides.
+    // Returns false if the ring was full (record dropped) or telemetry is off.
+    // Wait-free — safe to call every tick without performance concern.
+    std::function<bool(const telemetry::TelemetryRecord&)> record_telemetry;
+
+    // Push a single telemetry extension record (pursuer → target delayed UV).
+    // Emit once per chaser per tick when a target is active.
+    std::function<bool(const telemetry::TelemetryExtRecord&)> record_telemetry_ext;
 };
 
 } // namespace ndde

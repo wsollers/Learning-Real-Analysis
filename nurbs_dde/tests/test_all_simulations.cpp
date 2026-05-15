@@ -1,9 +1,9 @@
-#include "app/SimulationAnalysis.hpp"
+// tests/test_all_simulations.cpp
+// Tests for the active simulation set.
+// Old simulations (Analysis, MultiWell, Gaussian, Differential*) have been
+// archived to src/old/ -- only SimulationWavePredatorPrey is active.
+
 #include "app/Curve2DOverlay.hpp"
-#include "app/SimulationDelayDifferential2D.hpp"
-#include "app/SimulationDifferential2D.hpp"
-#include "app/SimulationMultiWell.hpp"
-#include "app/SimulationSurfaceGaussian.hpp"
 #include "app/SimulationWavePredatorPrey.hpp"
 #include "app/SceneFactories.hpp"
 #include "engine/SimulationHost.hpp"
@@ -17,12 +17,10 @@ using namespace ndde;
 
 bool matrix_near_identity(const Mat4& matrix) {
     const Mat4 identity{1.f};
-    for (int c = 0; c < 4; ++c) {
-        for (int r = 0; r < 4; ++r) {
+    for (int c = 0; c < 4; ++c)
+        for (int r = 0; r < 4; ++r)
             if (!glm::epsilonEqual(matrix[c][r], identity[c][r], 1e-5f))
                 return false;
-        }
-    }
     return true;
 }
 
@@ -59,97 +57,44 @@ void expect_simulation_registers_starts_and_emits_packets() {
     EXPECT_EQ(services.render().active_view_count(), 0u);
 }
 
-TEST(AllSimulations, GaussianRegistersStartsAndEmitsPackets) {
-    expect_simulation_registers_starts_and_emits_packets<SimulationSurfaceGaussian>();
-}
-
-TEST(AllSimulations, AnalysisRegistersStartsAndEmitsPackets) {
-    expect_simulation_registers_starts_and_emits_packets<SimulationAnalysis>();
-}
-
-TEST(AllSimulations, MultiWellRegistersStartsAndEmitsPackets) {
-    expect_simulation_registers_starts_and_emits_packets<SimulationMultiWell>();
-}
-
 TEST(AllSimulations, WavePredatorPreyRegistersStartsAndEmitsPackets) {
     expect_simulation_registers_starts_and_emits_packets<SimulationWavePredatorPrey>();
 }
 
-TEST(AllSimulations, Differential2DRegistersStartsAndEmitsPackets) {
-    expect_simulation_registers_starts_and_emits_packets<SimulationDifferential2D>();
+TEST(AllSimulations, DefaultRegistryContainsOnlyWavePredatorPrey) {
+    EngineServices services;
+    SimulationRegistry registry(services.memory());
+    register_default_simulations(registry);
+
+    ASSERT_EQ(registry.size(), 1u);
+    EXPECT_EQ(registry.get(0)->name(), "Wave Predator-Prey");
 }
 
-TEST(AllSimulations, DelayDifferential2DRegistersStartsAndEmitsPackets) {
-    expect_simulation_registers_starts_and_emits_packets<SimulationDelayDifferential2D>();
-}
-
-TEST(AllSimulations, Differential2DDoubleClickPhasePointResetsInitialCondition) {
+TEST(AllSimulations, WavePredatorPreyDoubleClickSurfacePickAddsRipple) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
-    SimulationDifferential2D sim;
+    SimulationWavePredatorPrey sim;
 
     sim.on_register(host);
     sim.on_start();
+    const std::size_t before = sim.active_field_count();
 
-    services.interaction().queue_view_point_pick(ViewPointPickRequest{
-        .view = sim.alternate_view_id(),
-        .normalized_pixel = {0.75f, 0.25f},
-        .screen_ndc = {0.5f, 0.5f},
-        .seed = 7u
+    ASSERT_TRUE(host.camera().queue_surface_perturbation(
+        host.interaction(),
+        sim.main_view_id(),
+        Vec2{0.5f, 0.5f},
+        Vec2{0.f, 0.f},
+        99u));
+
+    sim.on_tick(TickInfo{
+        .tick_index = 1u,
+        .dt = 0.f,
+        .time = 0.f,
+        .paused = true
     });
-    sim.on_tick(TickInfo{.paused = true});
 
-    const SceneSnapshot snapshot = sim.snapshot();
-    ASSERT_EQ(snapshot.particles.size(), 1u);
-    EXPECT_NEAR(snapshot.particles.front().u, 2.2f, 0.05f);
-    EXPECT_NEAR(snapshot.particles.front().v, 2.2f, 0.05f);
-    EXPECT_EQ(sim.particle_count(), 1u);
-    const InteractionTarget selected = services.interaction().selected_target(sim.alternate_view_id());
-    EXPECT_EQ(selected.kind, InteractionTargetKind::ViewPoint2D);
-    EXPECT_NEAR(selected.point2d.x, 2.2f, 0.05f);
-    EXPECT_NEAR(selected.point2d.y, 2.2f, 0.05f);
-
-    sim.on_stop();
-}
-
-TEST(AllSimulations, Differential2DMainHoverPublishesViewPointTarget) {
-    EngineServices services;
-    SimulationHost host = services.simulation_host();
-    SimulationDifferential2D sim;
-
-    sim.on_register(host);
-    sim.on_start();
-    services.render().set_viewport_size(sim.main_view_id(), {800.f, 600.f});
-    services.interaction().set_mouse(sim.main_view_id(), {400.f, 300.f}, {0.f, 0.f}, true);
-    sim.on_tick(TickInfo{.paused = true});
-
-    EXPECT_GE(services.render().packet_count(sim.main_view_id()), 4u);
-    const InteractionTarget hover = services.interaction().hover_target(sim.main_view_id());
-    EXPECT_TRUE(hover.valid);
-    EXPECT_EQ(hover.kind, InteractionTargetKind::ViewPoint2D);
-    EXPECT_EQ(hover.view, sim.main_view_id());
-    EXPECT_TRUE(services.interaction().hover_metadata().view_point.hit);
-
-    sim.on_stop();
-}
-
-TEST(AllSimulations, DelayDifferential2DMainHoverPublishesViewPointTarget) {
-    EngineServices services;
-    SimulationHost host = services.simulation_host();
-    SimulationDelayDifferential2D sim;
-
-    sim.on_register(host);
-    sim.on_start();
-    services.render().set_viewport_size(sim.main_view_id(), {800.f, 600.f});
-    services.interaction().set_mouse(sim.main_view_id(), {400.f, 300.f}, {0.f, 0.f}, true);
-    sim.on_tick(TickInfo{.paused = true});
-
-    EXPECT_GE(services.render().packet_count(sim.main_view_id()), 4u);
-    const InteractionTarget hover = services.interaction().hover_target(sim.main_view_id());
-    EXPECT_TRUE(hover.valid);
-    EXPECT_EQ(hover.kind, InteractionTargetKind::ViewPoint2D);
-    EXPECT_EQ(hover.view, sim.main_view_id());
-    EXPECT_TRUE(services.interaction().hover_metadata().view_point.hit);
+    EXPECT_EQ(sim.active_field_count(), before + 1u);
+    EXPECT_TRUE(host.interaction().consume_surface_picks(sim.main_view_id()).empty());
 
     sim.on_stop();
 }
@@ -157,31 +102,21 @@ TEST(AllSimulations, DelayDifferential2DMainHoverPublishesViewPointTarget) {
 TEST(AllSimulations, Curve2DHoverOverlayBuildsFrenetAndOsculatingGeometryNearCurve) {
     EngineServices services;
     const Vec2 curve[] = {
-        {-1.f, 1.f},
-        {-0.5f, 0.25f},
-        {0.f, 0.f},
-        {0.5f, 0.25f},
-        {1.f, 1.f}
+        {-1.f, 1.f}, {-0.5f, 0.25f}, {0.f, 0.f}, {0.5f, 0.25f}, {1.f, 1.f}
     };
     auto overlay = build_curve2d_frenet_hover_overlay(
         std::span<const Vec2>{curve, 5u},
         {0.f, 0.f},
         RenderViewDomain{.u_min = -2.f, .u_max = 2.f, .v_min = -1.f, .v_max = 2.f},
-        true,
-        true,
+        true, true,
         &services.memory());
-
     EXPECT_GT(overlay.size(), 4u);
 }
 
 TEST(AllSimulations, Curve2DHoverOverlayBuildsVelocityAndDelayDiagnostics) {
     EngineServices services;
     const Vec2 curve[] = {
-        {0.f, 0.f},
-        {0.5f, 0.25f},
-        {1.f, 0.5f},
-        {1.5f, 0.25f},
-        {2.f, 0.f}
+        {0.f, 0.f}, {0.5f, 0.25f}, {1.f, 0.5f}, {1.5f, 0.25f}, {2.f, 0.f}
     };
     const Curve2DHoverOverlayOptions options{
         .show_frenet = true,
@@ -192,31 +127,15 @@ TEST(AllSimulations, Curve2DHoverOverlayBuildsVelocityAndDelayDiagnostics) {
         .velocity = {1.f, 0.4f},
         .delay_ghost = {0.5f, 0.25f}
     };
-
     auto overlay = build_curve2d_hover_overlay(
         std::span<const Vec2>{curve, 5u},
         {1.f, 0.5f},
         RenderViewDomain{.u_min = 0.f, .u_max = 2.f, .v_min = -1.f, .v_max = 1.f},
         options,
         &services.memory());
-
     EXPECT_TRUE(overlay.snapped);
     EXPECT_EQ(overlay.sample_index, 2u);
     EXPECT_GT(overlay.vertices.size(), 20u);
-}
-
-TEST(AllSimulations, DefaultRegistryContainsExpectedISimulationRuntimes) {
-    EngineServices services;
-    SimulationRegistry registry(services.memory());
-    register_default_simulations(registry);
-
-    ASSERT_EQ(registry.size(), 6u);
-    EXPECT_EQ(registry.get(0)->name(), "Surface Simulation");
-    EXPECT_EQ(registry.get(1)->name(), "Sine-Rational Analysis");
-    EXPECT_EQ(registry.get(2)->name(), "Multi-Well Centroid");
-    EXPECT_EQ(registry.get(3)->name(), "Wave Predator-Prey");
-    EXPECT_EQ(registry.get(4)->name(), "Differential Systems");
-    EXPECT_EQ(registry.get(5)->name(), "Delay Differential Systems");
 }
 
 } // namespace

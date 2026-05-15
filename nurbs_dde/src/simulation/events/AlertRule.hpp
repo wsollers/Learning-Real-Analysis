@@ -1,0 +1,170 @@
+#pragma once
+// simulation/events/AlertRule.hpp
+// Declarative alert conditions evaluated per-tick in SimContext::end_tick().
+// Each rule fires ONCE on the rising edge of a condition (edge detection).
+// Hysteresis prevents boundary chatter.
+// All evaluate() implementations are wait-free and allocation-free.
+//
+// NOTE: AlertContext references AnimatedCurve via a raw span of pointers.
+// The full AnimatedCurve type is included only in AlertRule.cpp to keep
+// ndde_simulation free of the Vulkan-contaminated include chain.
+
+#include "simulation/events/EventRecord.hpp"
+#include "simulation/events/EventRing.hpp"
+#include "math/Scalars.hpp"
+#include "app/ParticleTypes.hpp"
+#include <array>
+#include <functional>
+#include <string_view>
+
+// Forward-declare ISurface to avoid pulling math/Surfaces.hpp + volk chain
+namespace ndde::math { class ISurface; }
+
+// Forward-declare AnimatedCurve — full type included in AlertRule.cpp only
+namespace ndde { class AnimatedCurve; }
+
+namespace ndde::events {
+
+// ── AlertContext ──────────────────────────────────────────────────────────────
+// Read-only view passed to every AlertRule::evaluate(). No allocation.
+// Particle access via raw pointer + count avoids including LifetimeVector.
+struct AlertContext {
+    f32                    sim_time;
+    u64                    tick;
+    const math::ISurface*  surface;        // never null
+    const AnimatedCurve*   particles;      // pointer to first element
+    u64                    particle_count;
+};
+
+// ── AlertRule — base ──────────────────────────────────────────────────────────
+class AlertRule {
+public:
+    virtual ~AlertRule() = default;
+
+    // Evaluate condition. Push EventRecord to ring on rising edge.
+    // Must be wait-free and non-allocating.
+    virtual void evaluate(const AlertContext& ctx, EventRing& ring) = 0;
+
+    [[nodiscard]] virtual std::string_view name()     const noexcept = 0;
+    [[nodiscard]] virtual EventSeverity    severity() const noexcept = 0;
+
+    // Reset edge state. Called on ScenarioReset so alerts re-arm cleanly.
+    virtual void reset() noexcept {}
+};
+
+// ── ProximityAlert ────────────────────────────────────────────────────────────
+class ProximityAlert final : public AlertRule {
+public:
+    struct Params {
+        ParticleRole pursuer_role = ParticleRole::Chaser;
+        ParticleRole prey_role    = ParticleRole::Leader;
+        f32          threshold    = f32(0.5);
+        f32          hysteresis   = f32(0.15);
+    };
+    explicit ProximityAlert(Params p) : m_p(p) {}
+
+    void evaluate(const AlertContext& ctx, EventRing& ring) override;
+    [[nodiscard]] std::string_view name()     const noexcept override { return "ProximityAlert"; }
+    [[nodiscard]] EventSeverity    severity() const noexcept override { return EventSeverity::Warning; }
+    void reset() noexcept override { m_was_inside = false; }
+
+private:
+    Params m_p;
+    bool   m_was_inside = false;
+};
+
+// ── EscapeAlert ───────────────────────────────────────────────────────────────
+class EscapeAlert final : public AlertRule {
+public:
+    struct Params {
+        ParticleRole pursuer_role    = ParticleRole::Chaser;
+        ParticleRole prey_role       = ParticleRole::Leader;
+        f32          escape_distance = f32(3.0);
+        f32          hysteresis      = f32(0.3);
+    };
+    explicit EscapeAlert(Params p) : m_p(p) {}
+
+    void evaluate(const AlertContext& ctx, EventRing& ring) override;
+    [[nodiscard]] std::string_view name()     const noexcept override { return "EscapeAlert"; }
+    [[nodiscard]] EventSeverity    severity() const noexcept override { return EventSeverity::Warning; }
+    void reset() noexcept override { m_was_outside = false; }
+
+private:
+    Params m_p;
+    bool   m_was_outside = false;
+};
+
+// ── StealthAlert ──────────────────────────────────────────────────────────────
+class StealthAlert final : public AlertRule {
+public:
+    struct Params {
+        ParticleRole role       = ParticleRole::Chaser;
+        f32          kappa_max  = f32(2.0);
+        f32          hysteresis = f32(0.1);
+    };
+    explicit StealthAlert(Params p) : m_p(p) {}
+
+    void evaluate(const AlertContext& ctx, EventRing& ring) override;
+    [[nodiscard]] std::string_view name()     const noexcept override { return "StealthAlert"; }
+    [[nodiscard]] EventSeverity    severity() const noexcept override { return EventSeverity::Alert; }
+    void reset() noexcept override {
+        m_agent_count = u32(0);
+        m_state_map.fill({});
+    }
+
+private:
+    Params m_p;
+    static constexpr u32 MAX_AGENTS = 64u;
+    struct AgentEdge { u64 id = u64(0); bool stealth_ok = true; };
+    std::array<AgentEdge, MAX_AGENTS> m_state_map{};
+    u32 m_agent_count = u32(0);
+
+    [[nodiscard]] AgentEdge* find_or_add(u64 id) noexcept;
+};
+
+// ── CapturePendingAlert ───────────────────────────────────────────────────────
+class CapturePendingAlert final : public AlertRule {
+public:
+    struct Params {
+        ParticleRole pursuer_role  = ParticleRole::Chaser;
+        ParticleRole prey_role     = ParticleRole::Leader;
+        f32          seconds_ahead = f32(2.0);
+        f32          hysteresis    = f32(0.5);
+    };
+    explicit CapturePendingAlert(Params p) : m_p(p) {}
+
+    void evaluate(const AlertContext& ctx, EventRing& ring) override;
+    [[nodiscard]] std::string_view name()     const noexcept override { return "CapturePendingAlert"; }
+    [[nodiscard]] EventSeverity    severity() const noexcept override { return EventSeverity::Alert; }
+    void reset() noexcept override { m_was_pending = false; m_prev_dist = f32(-1); }
+
+private:
+    Params m_p;
+    bool   m_was_pending = false;
+    f32    m_prev_dist   = f32(-1);
+};
+
+// ── CustomAlert ───────────────────────────────────────────────────────────────
+class CustomAlert final : public AlertRule {
+public:
+    using EvalFn = std::function<bool(const AlertContext&, f32& val_a, f32& val_b)>;
+
+    struct Params {
+        char          rule_name[32] = "CustomAlert";
+        EventSeverity severity      = EventSeverity::Warning;
+        f32           hysteresis    = f32(0);
+        EvalFn        fn;
+    };
+    explicit CustomAlert(Params p) : m_p(std::move(p)) {}
+
+    void evaluate(const AlertContext& ctx, EventRing& ring) override;
+    [[nodiscard]] std::string_view name()     const noexcept override { return m_p.rule_name; }
+    [[nodiscard]] EventSeverity    severity() const noexcept override { return m_p.severity; }
+    void reset() noexcept override { m_was_active = false; }
+
+private:
+    Params m_p;
+    bool   m_was_active = false;
+};
+
+} // namespace ndde::events

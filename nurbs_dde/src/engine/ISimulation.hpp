@@ -6,6 +6,8 @@
 #include "engine/SimulationMetadata.hpp"
 #include "engine/SimulationClock.hpp"
 #include "engine/SimulationHost.hpp"
+#include "engine/EngineAPI.hpp"
+#include "simulation/events/EventBus.hpp"
 
 #include <string_view>
 
@@ -21,6 +23,22 @@ public:
     virtual void on_start() = 0;
     virtual void on_tick(const TickInfo& tick) = 0;
     virtual void on_stop() = 0;
+
+    // Optional telemetry hook — called by Engine::run_frame() each tick when
+    // telemetry is enabled, AFTER on_tick().
+    // Override to push TelemetryRecord rows with richer per-particle data
+    // (noise_sigma, speed, angle, geodesic_k) than the base snapshot provides.
+    // The default no-op means the engine falls back to snapshot-based recording.
+    // api.record_telemetry() and api.record_telemetry_ext() are wait-free.
+    virtual void on_telemetry_tick(
+        [[maybe_unused]] u64              tick_index,
+        [[maybe_unused]] const TickInfo&  tick,
+        [[maybe_unused]] EngineAPI&       api) {}
+
+    // Expose the simulation-scoped EventBus so the Engine can wire its
+    // log sink into it on sim-start and unwire on sim-stop.
+    // Return nullptr if this simulation does not use the event system.
+    [[nodiscard]] virtual events::EventBus* sim_bus_ptr() noexcept { return nullptr; }
 
     [[nodiscard]] virtual SceneSnapshot snapshot() const {
         return SceneSnapshot{ .name = std::string(name()) };

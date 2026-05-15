@@ -12,7 +12,7 @@
 
 namespace ndde {
 
-using ParticleId = std::uint64_t;
+using ParticleId = u64;
 
 enum class ParticleRole : u8 {
     Neutral,

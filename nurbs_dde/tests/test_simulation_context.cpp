@@ -1,5 +1,9 @@
+// tests/test_simulation_context.cpp
+// GaussianSurface archived — using WavePredatorPreySurface instead.
+
 #include "app/SimulationContext.hpp"
-#include "app/GaussianSurface.hpp"
+#include "app/AnimatedCurve.hpp"        // needed: SimVector<AnimatedCurve> requires complete type
+#include "app/SurfaceRegistry.hpp"
 #include "memory/Containers.hpp"
 
 #include <gtest/gtest.h>
@@ -34,11 +38,8 @@ TEST(SimulationContextState, SurfacePerturbationMarksSurfaceAndViewsDirty) {
     const u64 revision = context.math_cache().surface_revision;
 
     context.queue_perturbation(SurfacePerturbation{
-        .uv = {1.f, -0.5f},
-        .amplitude = 0.2f,
-        .radius = 0.4f,
-        .falloff = 1.5f,
-        .seed = 42u
+        .uv = {1.f, -0.5f}, .amplitude = 0.2f,
+        .radius = 0.4f, .falloff = 1.5f, .seed = 42u
     });
 
     ASSERT_TRUE(context.has_pending_perturbations());
@@ -50,8 +51,9 @@ TEST(SimulationContextState, SurfacePerturbationMarksSurfaceAndViewsDirty) {
 }
 
 TEST(SimulationContextState, MaintainsLegacySurfaceParticleRngView) {
-    GaussianSurface surface;
-    memory::SimVector<AnimatedCurve> particles;
+    WavePredatorPreySurface surface;
+    // AnimatedCurve.hpp included above — type is complete, vector is valid
+    memory::SimVector<AnimatedCurve> particles{std::pmr::get_default_resource()};
     std::mt19937 rng(123u);
     SimulationContext context(&surface, &particles, &rng);
 
