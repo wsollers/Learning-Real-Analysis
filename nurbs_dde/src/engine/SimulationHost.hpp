@@ -6,8 +6,10 @@
 #include "engine/CameraService.hpp"
 #include "engine/capture/CaptureService.hpp"
 #include "engine/diagnostics/DiagnosticsService.hpp"
+#include "engine/events/EventBusService.hpp"
 #include "engine/HotkeyService.hpp"
 #include "engine/InteractionService.hpp"
+#include "engine/logging/LoggerService.hpp"
 #include "engine/metadata/SimMetadataService.hpp"
 #include "engine/PanelService.hpp"
 #include "engine/RenderService.hpp"
@@ -25,6 +27,8 @@ public:
                    RenderService& render,
                    CameraService& camera,
                    DiagnosticsService& diagnostics,
+                   EventBusService& events,
+                   LoggerService& logger,
                    SimMetadataService& metadata,
                    SimulationClock& clock,
                    memory::MemoryService& memory) noexcept
@@ -34,6 +38,8 @@ public:
         , m_render(render)
         , m_camera(camera)
         , m_diagnostics(diagnostics)
+        , m_events(events)
+        , m_logger(logger)
         , m_metadata(metadata)
         , m_clock(clock)
         , m_memory(memory)
@@ -45,6 +51,8 @@ public:
     [[nodiscard]] RenderService& render() const noexcept { return m_render; }
     [[nodiscard]] CameraService& camera() const noexcept { return m_camera; }
     [[nodiscard]] DiagnosticsService& diagnostics() const noexcept { return m_diagnostics; }
+    [[nodiscard]] EventBusService& events() const noexcept { return m_events; }
+    [[nodiscard]] LoggerService& logger() const noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() const noexcept { return m_metadata; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() const noexcept { return m_memory; }
@@ -56,6 +64,8 @@ private:
     RenderService& m_render;
     CameraService& m_camera;
     DiagnosticsService& m_diagnostics;
+    EventBusService& m_events;
+    LoggerService& m_logger;
     SimMetadataService& m_metadata;
     SimulationClock& m_clock;
     memory::MemoryService& m_memory;
@@ -69,6 +79,8 @@ public:
         m_interaction.set_memory_service(&m_memory);
         m_render.set_memory_service(&m_memory);
         m_camera.set_render_service(&m_render);
+        m_events.init();
+        m_logger.init();
     }
 
     [[nodiscard]] PanelService& panels() noexcept { return m_panels; }
@@ -80,13 +92,15 @@ public:
     [[nodiscard]] ViewInputService& view_input() noexcept { return m_view_input; }
     [[nodiscard]] CaptureService& capture() noexcept { return m_capture; }
     [[nodiscard]] DiagnosticsService& diagnostics() noexcept { return m_diagnostics; }
+    [[nodiscard]] EventBusService& events() noexcept { return m_events; }
+    [[nodiscard]] LoggerService& logger() noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() noexcept { return m_metadata; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
         return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera,
-                              m_diagnostics, m_metadata, m_clock, m_memory);
+                              m_diagnostics, m_events, m_logger, m_metadata, m_clock, m_memory);
     }
 
 private:
@@ -98,6 +112,8 @@ private:
     CameraService m_camera;
     CaptureService m_capture;
     DiagnosticsService m_diagnostics;
+    EventBusService m_events;
+    LoggerService m_logger;
     SimMetadataService m_metadata;
     CameraInputController m_camera_input;
     ViewInputService m_view_input;

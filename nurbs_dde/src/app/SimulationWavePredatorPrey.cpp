@@ -1,5 +1,5 @@
 // app/SimulationWavePredatorPrey.cpp
-// Refactored thin simulation host using ScenarioBuilder + EventBus.
+// Refactored thin simulation host using ScenarioBuilder + EventBusService.
 
 #include "app/SimulationWavePredatorPrey.hpp"
 #include "app/AlternateViewPanel.hpp"
@@ -59,8 +59,6 @@ SimulationWavePredatorPrey::SimulationWavePredatorPrey(memory::MemoryService* me
     : m_surface(SurfaceRegistry::make_wave_predator_prey(memory, f32(4)))
     , m_particles(m_surface.get(), u32(4242))
 {
-    m_event_log.init(u64(2048), u64(256));
-    m_bus.attach_ring(&m_event_log.ring());
     sync_context();
 }
 
@@ -148,38 +146,41 @@ void SimulationWavePredatorPrey::on_tick(const TickInfo& tick) {
             m_goal_status = gs;
             m_paused = true;
             if (gs == GoalStatus::Succeeded) {
-                m_bus.dispatch(simulation::events::AgentCaptured{
-                    .pursuer_id = u64(0), .prey_id = u64(0),
-                    .distance   = f32(0),
-                    .sim_time   = m_sim_time,
-                    .tick       = tick.tick_index
-                });
+                if (m_host) {
+                    m_host->events().publish(EventChannelId::Simulation, simulation::events::AgentCaptured{
+                        .pursuer_id = u64(0), .prey_id = u64(0),
+                        .distance   = f32(0),
+                        .sim_time   = m_sim_time,
+                        .tick       = tick.tick_index
+                    });
+                }
             }
         }
 
         evaluate_alerts(tick);
         sweep_decayed_fields(tick);
-        m_event_log.drain(m_sim_time, tick.tick_index);
+        if (m_host)
+            m_host->events().drain(EventChannelId::Simulation, m_sim_time, tick.tick_index);
     }
 
     submit_geometry();
 }
 
 void SimulationWavePredatorPrey::on_stop() {
-    m_bus.dispatch(simulation::events::ScenarioStopped{
-        .name        = name(),
-        .sim_time    = m_sim_time,
-        .total_ticks = u64(0)
-    });
-    m_event_log.drain(m_sim_time, u64(0));
+    if (m_host) {
+        m_host->events().publish(EventChannelId::Simulation, simulation::events::ScenarioStopped{
+            .name        = name(),
+            .sim_time    = m_sim_time,
+            .total_ticks = u64(0)
+        });
+        m_host->events().drain(EventChannelId::Simulation, m_sim_time, u64(0));
+    }
     m_panel_handles.clear();
     m_reset_hotkey.reset();
     m_cloud_hotkey.reset();
     m_contour_hotkey.reset();
     m_main_handle.reset();
     m_alt_handle.reset();
-    m_bus.clear_all_subscribers();
-    m_bus.detach_ring();
     m_host = nullptr;
 }
 
@@ -229,6 +230,7 @@ void SimulationWavePredatorPrey::reset_particles() {
 void SimulationWavePredatorPrey::reset_showcase() {
     reset_particles();
     sync_context();
+    if (!m_host) return;
 
     // Prey agent prototype — Leaders that avoid the nearest Chaser with delay
     simulation::AgentSpec prey_spec;
@@ -281,7 +283,8 @@ void SimulationWavePredatorPrey::reset_showcase() {
            .alert_capture_pending(f32(2.0));
 
     builder.build(m_particles, m_fields, m_alerts,
-                  m_bus, m_host ? &m_host->memory() : nullptr,
+                  m_host->events().bus(EventChannelId::Simulation),
+                  m_host ? &m_host->memory() : nullptr,
                   m_sim_time, u64(0));
 
     m_particles.add_goal<CaptureGoal>(CaptureGoal::Params{
@@ -338,9 +341,9 @@ void SimulationWavePredatorPrey::handle_poke(const TickInfo& tick) {
     auto picks = m_host->interaction().consume_surface_picks(m_main_view);
     if (picks.empty()) return;
 
-    m_event_log.push_engine_string(std::format(
-        "[{:>7.2f}] DEBUG  surface-pick queue count={} paused={} sim_paused={}",
-        m_sim_time, picks.size(), tick.paused ? "yes" : "no", m_paused ? "yes" : "no"),
+    m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
+            "[{:>7.2f}] DEBUG  surface-pick queue count={} paused={} sim_paused={}",
+            m_sim_time, picks.size(), tick.paused ? "yes" : "no", m_paused ? "yes" : "no"),
         events::EventSeverity::Info);
 
     for (const SurfacePickRequest& pick : picks) {
@@ -371,7 +374,7 @@ void SimulationWavePredatorPrey::handle_poke(const TickInfo& tick) {
 
         const f32 metric_now = m_fields.metric_factor(uv.x, uv.y, m_sim_time);
         const f32 metric_later = m_fields.metric_factor(uv.x, uv.y, m_sim_time + f32(0.25));
-        m_event_log.push_engine_string(std::format(
+        m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
             "[{:>7.2f}] DEBUG  pick {} uv=({:.3f},{:.3f}) fallback=({:.3f},{:.3f}) ndc=({:.2f},{:.2f})",
             m_sim_time,
             hit.hit ? "ray-hit" : "fallback",
@@ -379,17 +382,17 @@ void SimulationWavePredatorPrey::handle_poke(const TickInfo& tick) {
             pick.fallback_uv.x, pick.fallback_uv.y,
             pick.screen_ndc.x, pick.screen_ndc.y),
             hit.hit ? events::EventSeverity::Notice : events::EventSeverity::Warning);
-        m_event_log.push_engine_string(std::format(
+        m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
             "[{:>7.2f}] DEBUG  fields={} metric@poke now={:.5f} metric@poke +0.25s={:.5f}",
             m_sim_time, m_fields.size(), metric_now, metric_later),
             events::EventSeverity::Info);
-        m_event_log.push_engine_string(std::format(
+        m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
             "[{:>7.2f}] DEBUG  render note: field-driven radial wave A={:.3f} k={:.3f} alpha={:.3f} beta={:.3f}",
             m_sim_time, evt.amplitude, evt.k_wave, evt.alpha, evt.beta),
             events::EventSeverity::Notice);
 
-        m_bus.dispatch(evt);
-        m_bus.dispatch(simulation::events::FieldAdded{
+        m_host->events().publish(EventChannelId::Simulation, evt);
+        m_host->events().publish(EventChannelId::Simulation, simulation::events::FieldAdded{
             .field_name = std::string(ripple->name()),
             .sim_time   = m_sim_time,
             .tick       = tick.tick_index
@@ -419,14 +422,15 @@ void SimulationWavePredatorPrey::log_ripple_diagnostics(const TickInfo& tick) {
         max_factor = std::max(max_factor, factor);
     }
 
-    m_event_log.push_engine_string(std::format(
-        "[{:>7.2f}] DEBUG  ripple-sample tick={} fields={} metric range [{:.5f}, {:.5f}] near ({:.3f},{:.3f})",
-        t, tick.tick_index, m_fields.size(), min_factor, max_factor, m_last_poke_uv.x, m_last_poke_uv.y),
+    if (!m_host) return;
+    m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
+            "[{:>7.2f}] DEBUG  ripple-sample tick={} fields={} metric range [{:.5f}, {:.5f}] near ({:.3f},{:.3f})",
+            t, tick.tick_index, m_fields.size(), min_factor, max_factor, m_last_poke_uv.x, m_last_poke_uv.y),
         events::EventSeverity::Info);
 }
 
 void SimulationWavePredatorPrey::evaluate_alerts(const TickInfo& tick) {
-    if (m_alerts.empty()) return;
+    if (m_alerts.empty() || !m_host) return;
     const events::AlertContext ctx{
         .sim_time       = m_sim_time,
         .tick           = tick.tick_index,
@@ -435,7 +439,7 @@ void SimulationWavePredatorPrey::evaluate_alerts(const TickInfo& tick) {
         .particle_count = static_cast<u64>(m_particles.size())
     };
     for (auto& rule : m_alerts)
-        rule->evaluate(ctx, m_event_log.ring());
+        rule->evaluate(ctx, m_host->events().log(EventChannelId::Simulation).ring());
 }
 
 void SimulationWavePredatorPrey::sweep_decayed_fields(const TickInfo& tick) {
@@ -443,10 +447,11 @@ void SimulationWavePredatorPrey::sweep_decayed_fields(const TickInfo& tick) {
     if (!removed.empty())
         m_mesh.mark_dirty();
     for (const auto& fname : removed) {
-        m_bus.dispatch(simulation::events::FieldRemoved{
+        if (!m_host) continue;
+        m_host->events().publish(EventChannelId::Simulation, simulation::events::FieldRemoved{
             .field_name = fname, .sim_time = m_sim_time, .tick = tick.tick_index
         });
-        m_bus.dispatch(simulation::events::PerturbationDecayed{
+        m_host->events().publish(EventChannelId::Simulation, simulation::events::PerturbationDecayed{
             .u = f32(0), .v = f32(0), .sim_time = m_sim_time, .tick = tick.tick_index
         });
     }
@@ -538,10 +543,13 @@ void SimulationWavePredatorPrey::draw_events_panel() {
     ImGui::SetNextWindowPos(ImVec2(24.f, 700.f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(500.f, 300.f), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin("Sim - Events")) { ImGui::End(); return; }
+    if (!m_host) { ImGui::End(); return; }
+
+    const events::EventLog& event_log = m_host->events().log(EventChannelId::Simulation);
 
     ImGui::TextDisabled("Ring: %llu queued  %llu dropped",
-        static_cast<unsigned long long>(m_event_log.approx_queued()),
-        static_cast<unsigned long long>(m_event_log.total_dropped()));
+        static_cast<unsigned long long>(event_log.approx_queued()),
+        static_cast<unsigned long long>(event_log.total_dropped()));
     ImGui::Separator();
 
     static bool show_info    = true;
@@ -554,7 +562,7 @@ void SimulationWavePredatorPrey::draw_events_panel() {
 
     ImGui::BeginChild("event_scroll", ImVec2(0.f, 0.f), false,
                       ImGuiWindowFlags_HorizontalScrollbar);
-    for (const auto& entry : m_event_log.entries()) {
+    for (const auto& entry : event_log.entries()) {
         using S = events::EventSeverity;
         if (entry.severity == S::Info    && !show_info)    continue;
         if (entry.severity == S::Notice  && !show_notices) continue;

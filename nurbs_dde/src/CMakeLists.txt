@@ -94,6 +94,8 @@ target_link_libraries(ndde_simulation PUBLIC ndde_math volk)
 add_library(ndde_engine STATIC
     engine/capture/CaptureService.cpp
     engine/diagnostics/DiagnosticsService.cpp
+    engine/events/EventBusService.cpp
+    engine/logging/LoggerService.cpp
     engine/metadata/SimMetadataService.cpp
     engine/AppConfig.cpp
     engine/Engine.cpp

@@ -32,6 +32,18 @@ struct EventTypeId {
     friend constexpr bool operator==(EventTypeId, EventTypeId) noexcept = default;
 };
 
+struct ResourceId {
+    u64 value = u64(0);
+
+    friend constexpr bool operator==(ResourceId, ResourceId) noexcept = default;
+};
+
+struct CaptureArtifactId {
+    u64 value = u64(0);
+
+    friend constexpr bool operator==(CaptureArtifactId, CaptureArtifactId) noexcept = default;
+};
+
 namespace ids {
 
 inline constexpr ComponentId unknown_component{"unknown"};

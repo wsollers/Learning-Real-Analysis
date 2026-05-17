@@ -50,6 +50,7 @@ void expect_simulation_registers_starts_and_emits_packets() {
     EXPECT_EQ(metadata.name, sim.name());
     EXPECT_FALSE(metadata.surface_name.empty());
     EXPECT_EQ(metadata.particle_count, sim.particle_count());
+    EXPECT_FALSE(services.events().log(EventChannelId::Simulation).entries().empty());
 
     sim.on_stop();
     EXPECT_EQ(services.panels().active_count(), 0u);

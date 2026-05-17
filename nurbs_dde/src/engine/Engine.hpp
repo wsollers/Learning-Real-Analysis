@@ -17,8 +17,6 @@
 #include "renderer/SecondWindow.hpp"
 #include "memory/Containers.hpp"
 #include "telemetry/TelemetryService.hpp"
-#include "simulation/events/EventBus.hpp"
-#include "simulation/events/EventLog.hpp"
 #include "simulation/events/EngineEventTypes.hpp"
 #include <filesystem>
 #include <string>
@@ -55,8 +53,8 @@ public:
     [[nodiscard]] telemetry::TelemetryService& telemetry() noexcept       { return m_telemetry; }
     [[nodiscard]] const telemetry::TelemetryService& telemetry() const noexcept { return m_telemetry; }
 
-    [[nodiscard]] events::EventBus& engine_bus() noexcept { return m_engine_bus; }
-    [[nodiscard]] events::EventLog& engine_log() noexcept { return m_engine_log; }
+    [[nodiscard]] EventBusService& engine_bus() noexcept { return m_services.events(); }
+    [[nodiscard]] events::EventLog& engine_log() noexcept { return m_services.events().log(EventChannelId::App); }
 
 private:
     AppConfig               m_config;
@@ -77,7 +75,6 @@ private:
     DebugStats m_debug_stats;
     u32        m_surface_perturb_seed = 1;
     memory::PersistentVector<PanelHandle> m_global_panels;
-    memory::PersistentVector<std::string> m_event_log;
 
     // ── Telemetry ──────────────────────────────────────────────────────────────
     telemetry::TelemetryService m_telemetry;
@@ -85,8 +82,8 @@ private:
     f32 m_telemetry_sim_start_wall_ms = f32(0);
 
     // ── Event system ───────────────────────────────────────────────────
-    events::EventBus m_engine_bus;   ///< app-lifetime bus (AppStarted, SimSwitched)
-    events::EventLog m_engine_log;   ///< owns ring slab + display buffer
+    Subscription m_app_started_subscription;
+    Subscription m_sim_switched_subscription;
 
     void fire_app_started(const std::string& config_path);
     void fire_app_stopping();

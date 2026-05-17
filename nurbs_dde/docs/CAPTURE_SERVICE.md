@@ -34,11 +34,18 @@ Implementation should follow modern C++ best practices as expressed in the C++
 Core Guidelines and related industry guidance. The project targets modern C++
 in the C++20/C++23 style: prefer clear ownership, RAII, value semantics where
 appropriate, strong project scalar aliases, and narrow dependencies.
-Use project standard types such as `f32`, `f64`, `i32`, `u32`, and `u64`
+Use project standard types such as `byte`, `f32`, `f64`, `i32`, `u32`, and `u64`
 where they express project-owned domain data. It is acceptable to use native
 boundary types such as `int`, `std::size_t`, or external enum/integer types
 where the STL, ImGui, GLFW, Vulkan, FFmpeg, or another library API expects
 them.
+
+Prefer the standard vocabulary types available in modern C++20/C++23 when they
+make intent explicit: `std::optional` for meaningful absence, `std::expected`
+for recoverable fallible operations, and `std::variant` for closed sets of
+known runtime categories. These should be favored over sentinel values, loosely
+structured status codes, output-parameter error channels, or `dynamic_cast`
+where a type-safe result or sum type expresses the contract clearly.
 
 Use the Rule of Zero for ordinary value/config/model types. Use the Rule of
 Three or Rule of Five where a type manages ownership, lifetime, polymorphism, or

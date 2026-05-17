@@ -7,7 +7,6 @@
 #include "engine/SimulationClock.hpp"
 #include "engine/SimulationHost.hpp"
 #include "engine/EngineAPI.hpp"
-#include "simulation/events/EventBus.hpp"
 
 #include <string_view>
 
@@ -34,11 +33,6 @@ public:
         [[maybe_unused]] u64              tick_index,
         [[maybe_unused]] const TickInfo&  tick,
         [[maybe_unused]] EngineAPI&       api) {}
-
-    // Expose the simulation-scoped EventBus so the Engine can wire its
-    // log sink into it on sim-start and unwire on sim-stop.
-    // Return nullptr if this simulation does not use the event system.
-    [[nodiscard]] virtual events::EventBus* sim_bus_ptr() noexcept { return nullptr; }
 
     [[nodiscard]] virtual SceneSnapshot snapshot() const {
         return SceneSnapshot{ .name = std::string(name()) };

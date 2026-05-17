@@ -11,8 +11,10 @@ add_executable(ndde_tests
     test_particle_system.cpp
     test_surface_mesh_cache.cpp
     test_diagnostics_service.cpp
+    test_event_bus_service.cpp
     test_engine_services.cpp
     test_gravitational_systems.cpp
+    test_logger_service.cpp
     test_mp_units_integration.cpp
     test_sim_metadata_service.cpp
     test_simulation_context.cpp
@@ -32,6 +34,8 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/capture/CaptureService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/diagnostics/DiagnosticsService.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/events/EventBusService.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/logging/LoggerService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/metadata/SimMetadataService.cpp
 )
 

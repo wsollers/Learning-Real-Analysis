@@ -90,6 +90,7 @@ TelemetryService
 DiagnosticsService
 QuantityDisplayService
 EventBusService
+LoggerService
 MetricService
 ```
 
@@ -109,7 +110,7 @@ Violations are bugs.
 | 4 | Metadata Describes, Runtime Owns | `SimMetadataService` describes what can exist. Active simulations own what currently exists. |
 | 5 | Fields Compose Through One Pipeline | Drift, diffusion, metric factor, and visible displacement flow through `IField` and `FieldCompositor`. |
 | 6 | Panels Subscribe, Never Own Math | Panels display and command state; they must not be the only place where mathematical action is encoded. |
-| 7 | Events Are Not Telemetry | Events are discrete happenings. Telemetry is sampled measured state. |
+| 7 | Events Are Not Telemetry Or Logs | Events are compact discrete happenings. Telemetry is sampled measured state. Logging is formatted narrative text. |
 | 8 | Diagnostics Are Centralized | All validation issues, math errors, solver failures, and trust warnings flow through `DiagnosticsService`. |
 | 9 | DDE State Is a Function | Delay state is a history segment in `C([-τ,0],M)`, not just the point `x(t-τ)`. |
 | 10 | Markov State Is First-Class | Behavioral state is a registered control component, not an enum hidden in the sim loop. |

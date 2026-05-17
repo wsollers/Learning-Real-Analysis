@@ -158,26 +158,24 @@ void Engine::start(const std::string& config_path) {
         fire_sim_started(m_active_sim);
     }
 
-    // ── Engine event bus + log init ─────────────────────────────────────
-    m_engine_log.init(u64(1024), u64(512));
-    m_engine_bus.attach_ring(&m_engine_log.ring());
-    // Engine bus: subscribe to events that should echo into the legacy
-    // m_event_log vector (still rendered by the existing "Engine - Log" panel).
-    // Tokens are discarded intentionally — these subscriptions last for the
-    // entire app lifetime and are never explicitly unsubscribed.
-    [[maybe_unused]] auto tok1 =
-    m_engine_bus.subscribe<events::AppStarted>([this](const events::AppStarted&) {
-        m_event_log.push_back("[Engine] AppStarted");
+    // ── Engine event bus + logger init ─────────────────────────────────────
+    m_services.events().init();
+    m_app_started_subscription =
+    m_services.events().subscribe<events::AppStarted>(EventChannelId::App, [this](const events::AppStarted&) {
+        (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "[Engine] AppStarted");
     });
-    [[maybe_unused]] auto tok2 =
-    m_engine_bus.subscribe<events::SimSwitched>([this](const events::SimSwitched& e) {
-        m_event_log.push_back(std::format("[Engine] SimSwitched → {}", e.to_name));
+    m_sim_switched_subscription =
+    m_services.events().subscribe<events::SimSwitched>(EventChannelId::App, [this](const events::SimSwitched& e) {
+        (void)m_services.logger().write(LogSeverity::Info,
+                                        LogCategory::Engine,
+                                        {},
+                                        std::format("[Engine] SimSwitched -> {}", e.to_name));
     });
-    m_engine_bus.dispatch(events::AppStarted{.config_path = config_path});
+    m_services.events().publish(EventChannelId::App, events::AppStarted{.config_path = config_path});
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
-    m_event_log.push_back("Engine ready");
+    (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "Engine ready");
     std::cout << "[Engine] Ready.\n";
 }
 
@@ -224,7 +222,10 @@ void Engine::switch_simulation(std::size_t index) {
     // ── Telemetry: open new run ──────────────────────────────────────
     fire_sim_started(m_active_sim);
 
-    m_event_log.push_back(std::format("Switched simulation: {}", active_runtime().name()));
+    (void)m_services.logger().write(LogSeverity::Info,
+                                    LogCategory::Engine,
+                                    {},
+                                    std::format("Switched simulation: {}", active_runtime().name()));
     std::cout << std::format("[Engine] Active simulation: {}\n", active_runtime().name());
 }
 
@@ -287,21 +288,8 @@ void Engine::run_frame() {
     tick_info.is_double_click = double_click_this_frame;
     active_runtime().tick(tick_info);
 
-    // ── Drain sim EventLog into engine log panel (once per frame) ─────────
-    // The sim's EventLog is drained by SimContext::end_tick() internally.
-    // Formatted entries from the engine bus ring are drained here.
-    m_engine_log.drain(tick_info.time, tick_info.tick_index);
-    // Propagate new sim log entries to the legacy m_event_log for the
-    // existing "Engine - Log" panel, which still renders that vector.
-    if (active_runtime().instantiated()) {
-        if (auto* bus = active_runtime().simulation().sim_bus_ptr()) {
-            // Typed subscriber callbacks for important sim events
-            // are registered in fire_sim_started().
-            // The EventLog::entries() vector is rendered directly
-            // by the new Sim - Events panel in SimulationUI.
-            (void)bus;
-        }
-    }
+    // ── Drain service-owned event logs once per frame ─────────────────────
+    m_services.events().drain_all(tick_info.time, tick_info.tick_index);
 
     // ── Telemetry: record this tick ───────────────────────────────────────────
     if (m_telemetry.enabled() && !active_runtime().paused()) {
@@ -594,15 +582,20 @@ void Engine::draw_event_log_panel() {
     ImGui::SetNextWindowBgAlpha(0.86f);
     if (!ImGui::Begin("Engine - Log")) { ImGui::End(); return; }
 
-    // Engine-scoped strings (plain grey) from m_event_log
+    // Engine-scoped narrative log records from LoggerService.
     if (ImGui::TreeNodeEx("Engine Events", ImGuiTreeNodeFlags_DefaultOpen)) {
-        for (const auto& line : m_event_log)
-            ImGui::TextDisabled("%s", line.c_str());
+        for (const LogRecord& record : m_services.logger().records()) {
+            if (record.category != LogCategory::Engine) {
+                continue;
+            }
+            const std::string_view message = m_services.logger().message(record.id);
+            ImGui::TextDisabled("%.*s", static_cast<int>(message.size()), message.data());
+        }
         ImGui::TreePop();
     }
 
     // Sim-scoped events from EventLog — severity-tinted
-    const auto& sim_entries = m_engine_log.entries();
+    const auto& sim_entries = m_services.events().log(EventChannelId::Simulation).entries();
     if (!sim_entries.empty()) {
         ImGui::Separator();
         if (ImGui::TreeNodeEx("Sim Events", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -626,8 +619,10 @@ void Engine::draw_event_log_panel() {
     // Stats
     ImGui::Separator();
     ImGui::TextDisabled("Ring: %llu queued  %llu dropped",
-        static_cast<unsigned long long>(m_engine_log.approx_queued()),
-        static_cast<unsigned long long>(m_engine_log.total_dropped()));
+        static_cast<unsigned long long>(m_services.events().log(EventChannelId::Simulation).approx_queued()),
+        static_cast<unsigned long long>(m_services.events().log(EventChannelId::Simulation).total_dropped()));
+    ImGui::TextDisabled("Logger: %llu records dropped",
+        static_cast<unsigned long long>(m_services.logger().dropped_records()));
     ImGui::End();
 }
 
@@ -828,7 +823,7 @@ void Engine::request_capture(bool pause_first) {
         else if (artifact.target == CaptureTarget::AlternateWindow && m_second_win.valid())
             m_second_win.request_png_capture(artifact.path);
     }
-    m_event_log.push_back("PNG capture requested");
+    (void)m_services.logger().write(LogSeverity::Info, LogCategory::Capture, {}, "PNG capture requested");
 }
 
 SimulationRuntime& Engine::active_runtime() {
@@ -961,12 +956,11 @@ void Engine::fire_sim_started(std::size_t index) {
         .wall_time = std::chrono::system_clock::now()
     });
     // Dispatch on the engine bus so subscribers (log panel) are notified.
-    m_engine_bus.dispatch(ndde::events::SimSwitched{
+    m_services.events().publish(EventChannelId::App, ndde::events::SimSwitched{
         .to_name   = active_runtime().name(),
         .sim_index = static_cast<u64>(index)
     });
-    // Sim EventLog drains into m_event_log each frame in run_frame().
-    // No per-event-type subscription needed here — drain() formats everything.
+    // EventBusService drains app/simulation logs once per frame in run_frame().
 }
 
 void Engine::fire_sim_stopped(std::size_t index,

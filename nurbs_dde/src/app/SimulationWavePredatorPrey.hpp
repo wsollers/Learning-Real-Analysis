@@ -4,14 +4,12 @@
 // Delegates particle construction to ScenarioBuilder,
 // environmental effects to FieldCompositor,
 // and alert evaluation to the registered AlertRules.
-// All events flow through the SimEventBus to the engine log panel.
+// All events flow through EventBusService's Simulation channel.
 
 #include "simulation/scenario/ScenarioBuilder.hpp"
 #include "simulation/fields/IField.hpp"
 #include "simulation/fields/DampingField.hpp"
 #include "simulation/fields/MetricRipple.hpp"
-#include "simulation/events/EventBus.hpp"
-#include "simulation/events/EventLog.hpp"
 #include "simulation/events/AlertRule.hpp"
 #include "simulation/events/SimEventTypes.hpp"
 #include "app/GoalStatusPanel.hpp"
@@ -39,9 +37,6 @@ public:
 
     [[nodiscard]] std::string_view name() const override { return "Wave Predator-Prey"; }
 
-    // Expose sim-scoped EventBus so Engine can wire its log sink.
-    [[nodiscard]] events::EventBus* sim_bus_ptr() noexcept override { return &m_bus; }
-
     void on_register(SimulationHost& host) override;
     void on_start() override;
     void on_tick(const TickInfo& tick) override;
@@ -68,10 +63,6 @@ private:
     ParticleSystem      m_particles;
     SimulationContext   m_context;
     SurfaceMeshCache    m_mesh;
-
-    // ── Event system ──────────────────────────────────────────────────────────
-    events::EventBus    m_bus;       // sim-scoped bus — engine wires log sink
-    events::EventLog    m_event_log; // ring + display buffer for Sim-Events panel
 
     // ── Fields ────────────────────────────────────────────────────────────────
     simulation::FieldCompositor  m_fields;
