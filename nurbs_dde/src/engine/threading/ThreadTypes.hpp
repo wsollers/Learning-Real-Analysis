@@ -134,6 +134,26 @@ struct SimulationRenderSnapshot {
     std::vector<ParticleSnapshot> particles;
 };
 
+struct RenderFrameSnapshot {
+    u64 frame_index = u64(0);
+    f32 frame_ms = f32(0);
+    SimulationRenderSnapshot simulation;
+    bool ui_draw_data_ready = false;
+};
+
+enum class RenderThreadCommandKind : u8 {
+    Frame,
+    Resize,
+    Shutdown
+};
+
+struct RenderThreadCommand {
+    RenderThreadCommandKind kind = RenderThreadCommandKind::Frame;
+    RenderFrameSnapshot frame;
+    u32 width = u32(0);
+    u32 height = u32(0);
+};
+
 [[nodiscard]] inline SimulationRenderSnapshot make_simulation_render_snapshot(const SceneSnapshot& source) {
     SimulationRenderSnapshot snapshot{
         .name = source.name,

@@ -7,7 +7,7 @@
 #include "simulation/events/EventRecord.hpp"
 #include "simulation/events/EventRing.hpp"
 #include "math/Scalars.hpp"
-#include <memory>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -63,7 +63,7 @@ public:
     [[nodiscard]] static std::string format_record(const EventRecord& r);
 
 private:
-    std::unique_ptr<std::byte[]> m_slab;
+    std::vector<std::byte>       m_slab;
     EventRing                    m_ring;
     std::vector<LogEntry>        m_display;
     std::vector<EventRecord>     m_drain_scratch;  // pre-allocated, reused

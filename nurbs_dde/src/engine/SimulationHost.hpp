@@ -104,11 +104,10 @@ public:
             return m_threads.require_thread_role(ThreadRole::Main, api_name);
         });
         m_logger.set_owner_guard([this](std::string_view api_name) {
-            if (m_threads.is_thread_role(ThreadRole::Main) ||
-                m_threads.is_thread_role(ThreadRole::Logger)) {
+            if (m_threads.is_thread_role(ThreadRole::Logger)) {
                 return true;
             }
-            return m_threads.require_thread_role(ThreadRole::Main, api_name);
+            return m_threads.require_thread_role(ThreadRole::Logger, api_name);
         });
         m_panels.set_thread_service(&m_threads, ThreadRole::Main);
         m_hotkeys.set_thread_service(&m_threads, ThreadRole::Main);

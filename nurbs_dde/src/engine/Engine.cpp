@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <iostream>
 #include <cstring>
+#include <span>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
@@ -70,6 +71,13 @@ Engine::Engine()
     : m_simulation_host(m_services.simulation_host())
     , m_simulations(m_services.memory()) {
     m_telemetry.set_owner_guard([this](std::string_view api_name) {
+        const bool logger_allowed =
+            api_name == "TelemetryService::flush" ||
+            api_name == "TelemetryService::on_sim_stopped" ||
+            api_name == "TelemetryService::on_app_stopping";
+        if (logger_allowed && m_services.threads().is_thread_role(ThreadRole::Logger)) {
+            return true;
+        }
         return m_services.threads().require_thread_role(ThreadRole::Main, api_name);
     });
 }
@@ -168,20 +176,26 @@ void Engine::start(const std::string& config_path) {
     m_services.events().init();
     m_app_started_subscription =
     m_services.events().subscribe<events::AppStarted>(EventChannelId::App, [this](const events::AppStarted&) {
-        (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "[Engine] AppStarted");
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "[Engine] AppStarted");
+        });
     });
     m_sim_switched_subscription =
     m_services.events().subscribe<events::SimSwitched>(EventChannelId::App, [this](const events::SimSwitched& e) {
-        (void)m_services.logger().write(LogSeverity::Info,
-                                        LogCategory::Engine,
-                                        {},
-                                        std::format("[Engine] SimSwitched index={}", e.sim_index));
+        (void)m_services.threads().enqueue_logger_task([this, index = e.sim_index] {
+            (void)m_services.logger().write(LogSeverity::Info,
+                                            LogCategory::Engine,
+                                            {},
+                                            std::format("[Engine] SimSwitched index={}", index));
+        });
     });
     m_services.events().publish(EventChannelId::App, events::AppStarted{});
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
-    (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "Engine ready");
+    (void)m_services.threads().enqueue_logger_task([this] {
+        (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "Engine ready");
+    });
     std::cout << "[Engine] Ready.\n";
 }
 
@@ -230,10 +244,13 @@ void Engine::switch_simulation(std::size_t index) {
     // ── Telemetry: open new run ──────────────────────────────────────
     fire_sim_started(m_active_sim);
 
-    (void)m_services.logger().write(LogSeverity::Info,
-                                    LogCategory::Engine,
-                                    {},
-                                    std::format("Switched simulation: {}", active_runtime().name()));
+    const std::string sim_name{active_runtime().name()};
+    (void)m_services.threads().enqueue_logger_task([this, sim_name] {
+        (void)m_services.logger().write(LogSeverity::Info,
+                                        LogCategory::Engine,
+                                        {},
+                                        std::format("Switched simulation: {}", sim_name));
+    });
     std::cout << std::format("[Engine] Active simulation: {}\n", active_runtime().name());
 }
 
@@ -330,7 +347,9 @@ void Engine::run_frame() {
         // Periodic mid-run flush — keeps the ring from filling on long runs.
         if (m_config.telemetry.flush_periodic &&
             m_telemetry_tick_count % m_config.telemetry.flush_interval == u64(0)) {
-            m_telemetry.flush();
+            (void)m_services.threads().enqueue_logger_task([this] {
+                (void)m_telemetry.flush();
+            });
         }
     }
     if (m_config.simulation.threaded_runtime) {
@@ -387,6 +406,12 @@ void Engine::register_global_panels() {
         .category = "Engine",
         .scope = PanelScope::Global,
         .draw = [this] { draw_event_log_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Engine - Threads",
+        .category = "Engine",
+        .scope = PanelScope::Global,
+        .draw = [this] { draw_thread_health_panel(); }
     }));
 }
 
@@ -643,6 +668,66 @@ void Engine::draw_event_log_panel() {
     ImGui::End();
 }
 
+void Engine::draw_thread_health_panel() {
+    ImGui::SetNextWindowPos(ImVec2(704.f, 34.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(420.f, 360.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.86f);
+    if (!ImGui::Begin("Engine - Threads")) { ImGui::End(); return; }
+
+    ThreadManagementService& threads = m_services.threads();
+    const ThreadStats stats = threads.stats();
+    ImGui::SeparatorText("Queues");
+    ImGui::TextDisabled("Workers: %u", static_cast<unsigned>(stats.worker_count));
+    ImGui::TextDisabled("Queued jobs: %llu", static_cast<unsigned long long>(stats.queued_jobs));
+    ImGui::TextDisabled("Completed results: %llu", static_cast<unsigned long long>(stats.completed_results));
+    ImGui::TextDisabled("Simulation thread: %s", threads.simulation_thread_running() ? "running" : "stopped");
+    ImGui::TextDisabled("Render thread: %s", threads.render_thread_running() ? "running" : "stopped");
+    ImGui::TextDisabled("Drops: results=%llu logs=%llu diagnostics=%llu events=%llu",
+        static_cast<unsigned long long>(stats.dropped_results),
+        static_cast<unsigned long long>(stats.dropped_logs),
+        static_cast<unsigned long long>(stats.dropped_diagnostics),
+        static_cast<unsigned long long>(stats.dropped_events));
+
+    const auto thread_faults = m_services.diagnostics().active_with(ErrorCode::ThreadFault);
+    const auto role_violations = m_services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ImGui::SeparatorText("Thread Faults");
+    ImGui::TextDisabled("Faults: %zu  Role violations: %zu",
+        thread_faults.size(), role_violations.size());
+    for (const Diagnostic& issue : thread_faults) {
+        ImGui::TextWrapped("%s", issue.message.c_str());
+    }
+    for (const Diagnostic& issue : role_violations) {
+        ImGui::TextWrapped("%s", issue.message.c_str());
+    }
+
+    ImGui::SeparatorText("Jobs");
+    const std::span<const ThreadJobStatus> jobs = threads.jobs();
+    if (ImGui::BeginTable("thread_jobs", 5, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY,
+                          ImVec2(0.f, 132.f))) {
+        ImGui::TableSetupColumn("Id");
+        ImGui::TableSetupColumn("Owner");
+        ImGui::TableSetupColumn("State");
+        ImGui::TableSetupColumn("Priority");
+        ImGui::TableSetupColumn("Worker");
+        ImGui::TableHeadersRow();
+        for (const ThreadJobStatus& job : jobs) {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextDisabled("%llu", static_cast<unsigned long long>(job.id.value));
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextDisabled("%.*s", static_cast<int>(job.owner.value.size()), job.owner.value.data());
+            ImGui::TableSetColumnIndex(2);
+            ImGui::TextDisabled("%u", static_cast<unsigned>(job.state));
+            ImGui::TableSetColumnIndex(3);
+            ImGui::TextDisabled("%u", static_cast<unsigned>(job.priority));
+            ImGui::TableSetColumnIndex(4);
+            ImGui::TextDisabled("%llu", static_cast<unsigned long long>(job.worker_index));
+        }
+        ImGui::EndTable();
+    }
+    ImGui::End();
+}
+
 void Engine::apply_pending_simulation_switch() {
     if (m_pending_sim == static_cast<std::size_t>(-1)) return;
     const std::size_t next = m_pending_sim;
@@ -840,7 +925,9 @@ void Engine::request_capture(bool pause_first) {
         else if (artifact.target == CaptureTarget::AlternateWindow && m_second_win.valid())
             m_second_win.request_png_capture(artifact.path);
     }
-    (void)m_services.logger().write(LogSeverity::Info, LogCategory::Capture, {}, "PNG capture requested");
+    (void)m_services.threads().enqueue_logger_task([this] {
+        (void)m_services.logger().write(LogSeverity::Info, LogCategory::Capture, {}, "PNG capture requested");
+    });
 }
 
 void Engine::start_active_simulation_thread() {
@@ -857,15 +944,19 @@ void Engine::start_active_simulation_thread() {
             runtime->process_thread_commands(commands, &threads);
         });
     if (started) {
-        (void)m_services.logger().write(LogSeverity::Info,
-                                        LogCategory::Engine,
-                                        {},
-                                        "Simulation thread started");
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Info,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Simulation thread started");
+        });
     } else {
-        (void)m_services.logger().write(LogSeverity::Warning,
-                                        LogCategory::Engine,
-                                        {},
-                                        "Simulation thread could not start");
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Warning,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Simulation thread could not start");
+        });
     }
 }
 
@@ -1029,7 +1120,9 @@ void Engine::fire_app_started(const std::string& config_path) {
 }
 
 void Engine::fire_app_stopping() {
-    m_telemetry.on_app_stopping(events::AppStopping{});
+    (void)m_services.threads().run_logger_task_sync([this] {
+        m_telemetry.on_app_stopping(events::AppStopping{});
+    });
 }
 
 void Engine::fire_sim_started(std::size_t index) {
@@ -1050,7 +1143,7 @@ void Engine::fire_sim_started(std::size_t index) {
 void Engine::fire_sim_stopped(std::size_t index,
                                f32 total_sim_time,
                                u64 total_ticks) {
-    m_telemetry.on_sim_stopped(events::SimStopped{
+    events::SimStopped stopped{
         .sim_name        = active_runtime().name(),
         .sim_index       = static_cast<u64>(index),
         .total_sim_time  = total_sim_time,
@@ -1058,6 +1151,9 @@ void Engine::fire_sim_stopped(std::size_t index,
         .total_records   = m_telemetry.total_records(),
         .dropped_records = m_telemetry.dropped(),
         .wall_time       = std::chrono::system_clock::now()
+    };
+    (void)m_services.threads().run_logger_task_sync([this, stopped] {
+        m_telemetry.on_sim_stopped(stopped);
     });
 }
 

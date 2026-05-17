@@ -13,6 +13,7 @@
 #include "simulation/events/EventRing.hpp"
 #include "math/Scalars.hpp"
 #include "app/ParticleTypes.hpp"
+#include "memory/Unique.hpp"
 #include <array>
 #include <functional>
 #include <string_view>
@@ -24,6 +25,9 @@ namespace ndde::math { class ISurface; }
 namespace ndde { class AnimatedCurve; }
 
 namespace ndde::events {
+
+class AlertRule;
+using AlertRulePtr = ndde::memory::Unique<AlertRule>;
 
 // ── AlertContext ──────────────────────────────────────────────────────────────
 // Read-only view passed to every AlertRule::evaluate(). No allocation.

@@ -24,9 +24,10 @@
 #include "engine/events/AppEvent.hpp"
 #include "engine/events/SimEvent.hpp"
 #include "math/Scalars.hpp"
+#include <cstddef>
 #include <filesystem>
 #include <functional>
-#include <memory>
+#include <mutex>
 #include <string_view>
 #include <vector>
 
@@ -77,6 +78,7 @@ public:
     [[nodiscard]] bool record_ext(const TelemetryExtRecord& r) {
         if (!require_owner_thread("TelemetryService::record_ext")) return false;
         if (!m_enabled || !m_writer.is_open()) return false;
+        std::scoped_lock lock(m_ext_mutex);
         m_ext_scratch.push_back(r);   // buffered for flush — not via ring
         return true;
     }
@@ -113,7 +115,7 @@ public:
 
 private:
     bool                         m_enabled = true;
-    std::unique_ptr<std::byte[]> m_slab;            ///< raw backing store for the ring
+    std::vector<std::byte>       m_slab;            ///< raw backing store for the ring
     TelemetryBuffer              m_ring;
     TelemetryWriter              m_writer;
 
@@ -123,6 +125,7 @@ private:
     // Scratch buffers for flush() — allocated once, reused across all calls.
     std::vector<TelemetryRecord>    m_flush_scratch;
     std::vector<TelemetryExtRecord> m_ext_scratch;
+    mutable std::mutex m_ext_mutex;
     std::function<bool(std::string_view)> m_owner_guard;
 
     [[nodiscard]] bool require_owner_thread(std::string_view api_name) const;

@@ -9,6 +9,7 @@
 
 #include <condition_variable>
 #include <deque>
+#include <future>
 #include <functional>
 #include <mutex>
 #include <optional>
@@ -54,6 +55,7 @@ private:
 
 using ThreadJobFn = std::function<void(ThreadJobContext&)>;
 using SimulationThreadFn = std::function<void(std::stop_token, std::span<const SimulationThreadCommand>)>;
+using RenderThreadFn = std::function<void(std::stop_token, std::span<const RenderThreadCommand>)>;
 
 struct ThreadServiceBindings {
     DiagnosticsService* diagnostics = nullptr;
@@ -86,8 +88,14 @@ public:
     [[nodiscard]] bool enqueue_simulation_command(SimulationThreadCommand command);
     [[nodiscard]] std::vector<SimulationThreadCommand> consume_simulation_commands();
     void publish_event_record(EventChannelId channel, events::EventRecord record);
+    [[nodiscard]] bool enqueue_logger_task(std::function<void()> task);
+    [[nodiscard]] bool run_logger_task_sync(std::function<void()> task);
     [[nodiscard]] bool start_simulation_thread(SimulationThreadFn step);
     void stop_simulation_thread() noexcept;
+    [[nodiscard]] bool enqueue_render_command(RenderThreadCommand command);
+    [[nodiscard]] std::vector<RenderThreadCommand> consume_render_commands();
+    [[nodiscard]] bool start_render_thread(RenderThreadFn step);
+    void stop_render_thread() noexcept;
     void publish_simulation_snapshot(SimulationRenderSnapshot snapshot);
     [[nodiscard]] std::optional<SimulationRenderSnapshot> latest_simulation_snapshot() const;
 
@@ -100,6 +108,7 @@ public:
     [[nodiscard]] bool is_thread_role(ThreadRole expected) const noexcept;
     [[nodiscard]] bool require_thread_role(ThreadRole expected, std::string_view api_name);
     [[nodiscard]] bool simulation_thread_running() const noexcept;
+    [[nodiscard]] bool render_thread_running() const noexcept;
     [[nodiscard]] u64 dropped_results() const noexcept { return m_dropped_results; }
     [[nodiscard]] u64 dropped_logs() const noexcept { return m_dropped_logs; }
     [[nodiscard]] u64 dropped_diagnostics() const noexcept { return m_dropped_diagnostics; }
@@ -128,21 +137,31 @@ private:
         events::EventRecord record;
     };
 
+    struct LoggerWork {
+        std::vector<QueuedLog> logs;
+        std::vector<std::function<void()>> tasks;
+    };
+
     mutable std::mutex m_mutex;
     mutable std::vector<ThreadJobStatus> m_job_status_view;
     std::condition_variable m_work_available;
     std::condition_variable m_log_available;
     std::condition_variable m_simulation_available;
+    std::condition_variable m_render_available;
     std::deque<PendingJob> m_pending;
     std::vector<JobRecord> m_jobs;
     std::vector<std::jthread> m_workers;
     std::optional<std::jthread> m_logger_thread;
     std::optional<std::jthread> m_simulation_thread;
+    std::optional<std::jthread> m_render_thread;
     SimulationThreadFn m_simulation_step;
+    RenderThreadFn m_render_step;
     std::vector<ThreadJobResult> m_completed_results;
     std::vector<SimulationThreadCommand> m_simulation_commands;
+    std::vector<RenderThreadCommand> m_render_commands;
     std::optional<SimulationRenderSnapshot> m_latest_simulation_snapshot;
     std::vector<QueuedLog> m_log_mailbox;
+    std::vector<std::function<void()>> m_logger_tasks;
     std::vector<DiagnosticReport> m_diagnostic_mailbox;
     std::vector<QueuedEvent> m_event_mailbox;
     ThreadPoolConfig m_config;
@@ -161,10 +180,12 @@ private:
     void worker_loop(std::stop_token service_stop, u64 worker_index) noexcept;
     void logger_loop(std::stop_token service_stop) noexcept;
     void simulation_loop(std::stop_token service_stop) noexcept;
+    void render_loop(std::stop_token service_stop) noexcept;
 
     [[nodiscard]] PendingJob wait_for_job(std::stop_token service_stop);
-    [[nodiscard]] std::vector<QueuedLog> wait_for_logs(std::stop_token service_stop);
+    [[nodiscard]] LoggerWork wait_for_logger_work(std::stop_token service_stop);
     [[nodiscard]] std::vector<SimulationThreadCommand> wait_for_simulation_commands(std::stop_token service_stop);
+    [[nodiscard]] std::vector<RenderThreadCommand> wait_for_render_commands(std::stop_token service_stop);
     [[nodiscard]] JobRecord* find_job_locked(ThreadJobId id) noexcept;
     [[nodiscard]] const JobRecord* find_job_locked(ThreadJobId id) const noexcept;
     [[nodiscard]] static u32 default_worker_count() noexcept;

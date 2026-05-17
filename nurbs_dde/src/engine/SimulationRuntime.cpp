@@ -91,6 +91,12 @@ void SimulationRuntime::submit_render() {
 
 void SimulationRuntime::process_thread_commands(std::span<const SimulationThreadCommand> commands,
                                                 ThreadManagementService* threads) {
+    if (threads &&
+        !threads->require_thread_role(ThreadRole::Simulation,
+                                      "SimulationRuntime::process_thread_commands")) {
+        return;
+    }
+
     for (const SimulationThreadCommand& command : commands) {
         switch (command.kind) {
             case SimulationThreadCommandKind::Pause:

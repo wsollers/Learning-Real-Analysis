@@ -18,8 +18,8 @@ void TelemetryService::init(u64 buffer_records,
 
     // Allocate slab — aligned to cache line for the ring's atomic indices.
     const u64 slab_bytes = buffer_records * static_cast<u64>(sizeof(TelemetryRecord));
-    m_slab = std::make_unique<std::byte[]>(static_cast<std::size_t>(slab_bytes));
-    m_ring.attach(m_slab.get(), slab_bytes);
+    m_slab.resize(static_cast<std::size_t>(slab_bytes));
+    m_ring.attach(m_slab.data(), slab_bytes);
 
     // Pre-size the flush scratch buffer to ring capacity to avoid re-allocation
     // during a flush call.
@@ -35,8 +35,10 @@ void TelemetryService::init(u64 buffer_records,
 }
 
 void TelemetryService::destroy() noexcept {
+    std::scoped_lock lock(m_ext_mutex);
     m_ring.detach();
-    m_slab.reset();
+    m_slab.clear();
+    m_slab.shrink_to_fit();
     m_flush_scratch.clear();
     m_flush_scratch.shrink_to_fit();
     m_ext_scratch.clear();
@@ -72,6 +74,7 @@ void TelemetryService::on_sim_started(const events::SimStarted& e) {
     m_ring.reset();
     m_total_records.store(u64(0), std::memory_order_relaxed);
     m_total_ticks.store(u64(0), std::memory_order_relaxed);
+    std::scoped_lock lock(m_ext_mutex);
     m_ext_scratch.clear();
 
     const auto csv_path = m_writer.open(e);
@@ -84,9 +87,13 @@ void TelemetryService::on_sim_stopped(const events::SimStopped& e) {
     flush();
 
     // Flush ext records that accumulated since last flush.
-    if (!m_ext_scratch.empty()) {
-        m_writer.write_ext_batch(m_ext_scratch);
-        m_ext_scratch.clear();
+    std::vector<TelemetryExtRecord> ext_records;
+    {
+        std::scoped_lock lock(m_ext_mutex);
+        ext_records.swap(m_ext_scratch);
+    }
+    if (!ext_records.empty()) {
+        m_writer.write_ext_batch(ext_records);
     }
 
     m_writer.close(e, dropped());
@@ -107,9 +114,13 @@ u64 TelemetryService::flush() {
     }
 
     // Flush accumulated ext records while we're here.
-    if (!m_ext_scratch.empty()) {
-        m_writer.write_ext_batch(m_ext_scratch);
-        m_ext_scratch.clear();
+    std::vector<TelemetryExtRecord> ext_records;
+    {
+        std::scoped_lock lock(m_ext_mutex);
+        ext_records.swap(m_ext_scratch);
+    }
+    if (!ext_records.empty()) {
+        m_writer.write_ext_batch(ext_records);
     }
 
     return n;

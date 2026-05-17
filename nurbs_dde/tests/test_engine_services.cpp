@@ -720,10 +720,13 @@ TEST(SimulationHost, ExposesOnlyServiceFacade) {
     EXPECT_EQ(services.render().active_view_count(), 1u);
     EXPECT_TRUE(services.interaction().mouse_state(view_id).enabled);
     EXPECT_EQ(host.clock().next(0.1f).tick_index, 1u);
-    const LogRecordId log_id = host.logger().write(LogSeverity::Info,
-                                                   LogCategory::Simulation,
-                                                   {},
-                                                   "host log");
+    LogRecordId log_id;
+    ASSERT_TRUE(host.threads().run_logger_task_sync([&host, &log_id] {
+        log_id = host.logger().write(LogSeverity::Info,
+                                     LogCategory::Simulation,
+                                     {},
+                                     "host log");
+    }));
     EXPECT_EQ(services.logger().message(log_id), "host log");
     EXPECT_EQ(&host.memory(), &services.memory());
 }

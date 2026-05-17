@@ -8,8 +8,8 @@ namespace ndde::events {
 void EventLog::init(u64 capacity_records, u64 max_display) {
     m_max_display = max_display;
     const u64 slab_bytes = capacity_records * static_cast<u64>(sizeof(EventRecord));
-    m_slab = std::make_unique<std::byte[]>(static_cast<std::size_t>(slab_bytes));
-    m_ring.attach(m_slab.get(), slab_bytes);
+    m_slab.resize(static_cast<std::size_t>(slab_bytes));
+    m_ring.attach(m_slab.data(), slab_bytes);
     m_drain_scratch.resize(static_cast<std::size_t>(capacity_records));
     m_display.reserve(static_cast<std::size_t>(max_display));
     std::cout << std::format("[EventLog] Init — {} records ({} KB slab)\n",
@@ -18,7 +18,8 @@ void EventLog::init(u64 capacity_records, u64 max_display) {
 
 void EventLog::destroy() noexcept {
     m_ring.detach();
-    m_slab.reset();
+    m_slab.clear();
+    m_slab.shrink_to_fit();
     m_drain_scratch.clear();
     m_drain_scratch.shrink_to_fit();
     m_display.clear();

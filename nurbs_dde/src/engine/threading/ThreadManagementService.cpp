@@ -4,6 +4,7 @@
 #include <array>
 #include <exception>
 #include <format>
+#include <memory>
 
 namespace ndde {
 
@@ -99,7 +100,7 @@ void ThreadManagementService::init(ThreadPoolConfig config, ThreadServiceBinding
         });
     }
 
-    if (m_config.enable_logger_thread && m_bindings.logger) {
+    if (m_config.enable_logger_thread) {
         m_logger_thread.emplace([this](std::stop_token stop) noexcept {
             logger_loop(stop);
         });
@@ -126,10 +127,16 @@ void ThreadManagementService::shutdown() noexcept {
     m_work_available.notify_all();
     m_log_available.notify_all();
     m_simulation_available.notify_all();
+    m_render_available.notify_all();
     if (m_simulation_thread) {
         m_simulation_thread->request_stop();
         m_simulation_available.notify_all();
         m_simulation_thread.reset();
+    }
+    if (m_render_thread) {
+        m_render_thread->request_stop();
+        m_render_available.notify_all();
+        m_render_thread.reset();
     }
     if (m_logger_thread) {
         m_logger_thread->request_stop();
@@ -148,7 +155,10 @@ void ThreadManagementService::shutdown() noexcept {
         }
         m_pending.clear();
         m_simulation_commands.clear();
+        m_render_commands.clear();
+        m_logger_tasks.clear();
         m_simulation_step = {};
+        m_render_step = {};
         m_shutting_down = false;
         m_initialised = false;
     }
@@ -258,6 +268,41 @@ void ThreadManagementService::publish_event_record(EventChannelId channel, event
     enqueue_event(channel, record);
 }
 
+bool ThreadManagementService::enqueue_logger_task(std::function<void()> task) {
+    if (!task) return false;
+    std::scoped_lock lock(m_mutex);
+    if (!m_initialised ||
+        !has_capacity(static_cast<u64>(m_logger_tasks.size()), m_config.max_mailbox_records)) {
+        ++m_dropped_logs;
+        return false;
+    }
+    m_logger_tasks.push_back(std::move(task));
+    m_log_available.notify_one();
+    return true;
+}
+
+bool ThreadManagementService::run_logger_task_sync(std::function<void()> task) {
+    if (!task) return false;
+    if (is_thread_role(ThreadRole::Logger) || !m_logger_thread) {
+        task();
+        return true;
+    }
+
+    auto done = std::make_shared<std::promise<void>>();
+    std::future<void> future = done->get_future();
+    const bool queued = enqueue_logger_task([task = std::move(task), done] {
+        try {
+            task();
+            done->set_value();
+        } catch (...) {
+            done->set_exception(std::current_exception());
+        }
+    });
+    if (!queued) return false;
+    future.get();
+    return true;
+}
+
 bool ThreadManagementService::start_simulation_thread(SimulationThreadFn step) {
     if (!step) return false;
 
@@ -283,6 +328,53 @@ void ThreadManagementService::stop_simulation_thread() noexcept {
     if (thread) {
         thread->request_stop();
         m_simulation_available.notify_all();
+        thread.reset();
+    }
+}
+
+bool ThreadManagementService::enqueue_render_command(RenderThreadCommand command) {
+    std::scoped_lock lock(m_mutex);
+    if (!has_capacity(static_cast<u64>(m_render_commands.size()), m_config.max_queued_jobs)) {
+        ++m_dropped_events;
+        return false;
+    }
+    m_render_commands.push_back(std::move(command));
+    m_render_available.notify_one();
+    return true;
+}
+
+std::vector<RenderThreadCommand> ThreadManagementService::consume_render_commands() {
+    std::scoped_lock lock(m_mutex);
+    std::vector<RenderThreadCommand> out;
+    out.swap(m_render_commands);
+    return out;
+}
+
+bool ThreadManagementService::start_render_thread(RenderThreadFn step) {
+    if (!step) return false;
+
+    std::scoped_lock lock(m_mutex);
+    if (!m_initialised || m_render_thread.has_value()) {
+        return false;
+    }
+
+    m_render_step = std::move(step);
+    m_render_thread.emplace([this](std::stop_token stop) noexcept {
+        render_loop(stop);
+    });
+    return true;
+}
+
+void ThreadManagementService::stop_render_thread() noexcept {
+    std::optional<std::jthread> thread;
+    {
+        std::scoped_lock lock(m_mutex);
+        thread.swap(m_render_thread);
+        m_render_step = {};
+    }
+    if (thread) {
+        thread->request_stop();
+        m_render_available.notify_all();
         thread.reset();
     }
 }
@@ -388,6 +480,11 @@ bool ThreadManagementService::simulation_thread_running() const noexcept {
     return m_simulation_thread.has_value();
 }
 
+bool ThreadManagementService::render_thread_running() const noexcept {
+    std::scoped_lock lock(m_mutex);
+    return m_render_thread.has_value();
+}
+
 void ThreadManagementService::worker_loop(std::stop_token service_stop, u64 worker_index) noexcept {
     t_thread_role = ThreadRole::Worker;
     while (!service_stop.stop_requested()) {
@@ -433,35 +530,52 @@ void ThreadManagementService::worker_loop(std::stop_token service_stop, u64 work
 void ThreadManagementService::logger_loop(std::stop_token service_stop) noexcept {
     t_thread_role = ThreadRole::Logger;
     while (!service_stop.stop_requested()) {
-        std::vector<QueuedLog> logs = wait_for_logs(service_stop);
-        if (logs.empty()) {
+        LoggerWork work = wait_for_logger_work(service_stop);
+        if (work.logs.empty() && work.tasks.empty()) {
             continue;
         }
-        if (!m_bindings.logger) {
-            continue;
+        if (m_bindings.logger) {
+            for (const QueuedLog& log : work.logs) {
+                (void)m_bindings.logger->write(log.severity, log.category, log.source, log.message);
+            }
+            m_bindings.logger->drain_sinks();
         }
-        for (const QueuedLog& log : logs) {
-            (void)m_bindings.logger->write(log.severity, log.category, log.source, log.message);
+        for (auto& task : work.tasks) {
+            try {
+                task();
+            } catch (const std::exception& ex) {
+                report_thread_fault(ThreadJobId{}, ex.what());
+            } catch (...) {
+                report_thread_fault(ThreadJobId{}, "logger task threw an unknown exception");
+            }
         }
-        m_bindings.logger->drain_sinks();
     }
 
     for (;;) {
-        std::vector<QueuedLog> logs;
+        LoggerWork work;
         {
             std::scoped_lock lock(m_mutex);
-            if (m_log_mailbox.empty()) {
+            if (m_log_mailbox.empty() && m_logger_tasks.empty()) {
                 break;
             }
-            logs.swap(m_log_mailbox);
+            work.logs.swap(m_log_mailbox);
+            work.tasks.swap(m_logger_tasks);
         }
-        if (!m_bindings.logger) {
-            continue;
+        if (m_bindings.logger) {
+            for (const QueuedLog& log : work.logs) {
+                (void)m_bindings.logger->write(log.severity, log.category, log.source, log.message);
+            }
+            m_bindings.logger->drain_sinks();
         }
-        for (const QueuedLog& log : logs) {
-            (void)m_bindings.logger->write(log.severity, log.category, log.source, log.message);
+        for (auto& task : work.tasks) {
+            try {
+                task();
+            } catch (const std::exception& ex) {
+                report_thread_fault(ThreadJobId{}, ex.what());
+            } catch (...) {
+                report_thread_fault(ThreadJobId{}, "logger task threw an unknown exception");
+            }
         }
-        m_bindings.logger->drain_sinks();
     }
 }
 
@@ -492,6 +606,33 @@ void ThreadManagementService::simulation_loop(std::stop_token service_stop) noex
     }
 }
 
+void ThreadManagementService::render_loop(std::stop_token service_stop) noexcept {
+    t_thread_role = ThreadRole::Renderer;
+    while (!service_stop.stop_requested()) {
+        std::vector<RenderThreadCommand> commands = wait_for_render_commands(service_stop);
+        if (commands.empty()) {
+            continue;
+        }
+
+        RenderThreadFn step;
+        {
+            std::scoped_lock lock(m_mutex);
+            step = m_render_step;
+        }
+        if (!step) {
+            continue;
+        }
+
+        try {
+            step(service_stop, commands);
+        } catch (const std::exception& ex) {
+            report_thread_fault(ThreadJobId{}, ex.what());
+        } catch (...) {
+            report_thread_fault(ThreadJobId{}, "render thread callback threw an unknown exception");
+        }
+    }
+}
+
 ThreadManagementService::PendingJob
 ThreadManagementService::wait_for_job(std::stop_token service_stop) {
     std::unique_lock lock(m_mutex);
@@ -517,16 +658,17 @@ ThreadManagementService::wait_for_job(std::stop_token service_stop) {
     return job;
 }
 
-std::vector<ThreadManagementService::QueuedLog>
-ThreadManagementService::wait_for_logs(std::stop_token service_stop) {
+ThreadManagementService::LoggerWork
+ThreadManagementService::wait_for_logger_work(std::stop_token service_stop) {
     std::unique_lock lock(m_mutex);
     m_log_available.wait(lock, [this, service_stop] {
-        return service_stop.stop_requested() || !m_log_mailbox.empty();
+        return service_stop.stop_requested() || !m_log_mailbox.empty() || !m_logger_tasks.empty();
     });
 
-    std::vector<QueuedLog> logs;
-    logs.swap(m_log_mailbox);
-    return logs;
+    LoggerWork work;
+    work.logs.swap(m_log_mailbox);
+    work.tasks.swap(m_logger_tasks);
+    return work;
 }
 
 std::vector<SimulationThreadCommand>
@@ -538,6 +680,18 @@ ThreadManagementService::wait_for_simulation_commands(std::stop_token service_st
 
     std::vector<SimulationThreadCommand> commands;
     commands.swap(m_simulation_commands);
+    return commands;
+}
+
+std::vector<RenderThreadCommand>
+ThreadManagementService::wait_for_render_commands(std::stop_token service_stop) {
+    std::unique_lock lock(m_mutex);
+    m_render_available.wait(lock, [this, service_stop] {
+        return service_stop.stop_requested() || m_shutting_down || !m_render_commands.empty();
+    });
+
+    std::vector<RenderThreadCommand> commands;
+    commands.swap(m_render_commands);
     return commands;
 }
 

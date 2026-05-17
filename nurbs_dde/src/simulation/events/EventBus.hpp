@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <memory_resource>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -67,7 +68,15 @@ public:
             list->entries.end());
     }
 
-    void clear_all_subscribers() noexcept { m_subscribers.clear(); }
+    void clear_all_subscribers() noexcept {
+        for (auto& entry : m_subscribers) {
+            if (entry.second) {
+                entry.second->destroy();
+            }
+        }
+        m_subscribers.clear();
+        m_subscriber_storage.release();
+    }
 
     // ── Dispatch — HOT PATH ───────────────────────────────────────────────────
     // Explicit record overload: caller supplies the EventRecord.
@@ -104,6 +113,7 @@ public:
 private:
     struct ListBase {
         virtual ~ListBase() = default;
+        virtual void destroy() noexcept = 0;
 
         ListBase() = default;
         ListBase(const ListBase&) = delete;
@@ -121,11 +131,28 @@ private:
     template <class E>
     struct TypedList final : ListBase {
         std::vector<TypedEntry<E>> entries;
+
+        void destroy() noexcept override {
+            std::destroy_at(this);
+        }
     };
 
     u64 m_next_token = u64(1);
-    std::unordered_map<std::type_index, std::unique_ptr<ListBase>> m_subscribers;
+    std::pmr::monotonic_buffer_resource m_subscriber_storage{1024u * 8u};
+    std::pmr::polymorphic_allocator<std::byte> m_subscriber_allocator{&m_subscriber_storage};
+    std::unordered_map<std::type_index, ListBase*> m_subscribers;
     EventRing* m_ring = nullptr;
+
+    template <class E>
+    [[nodiscard]] TypedList<E>* allocate_list() {
+        void* storage = m_subscriber_allocator.allocate_bytes(sizeof(TypedList<E>), alignof(TypedList<E>));
+        try {
+            return std::construct_at(static_cast<TypedList<E>*>(storage));
+        } catch (...) {
+            m_subscriber_allocator.deallocate_bytes(storage, sizeof(TypedList<E>), alignof(TypedList<E>));
+            throw;
+        }
+    }
 
     template <class E>
     [[nodiscard]] TypedList<E>* find_list() noexcept {
@@ -133,7 +160,7 @@ private:
         if (it == m_subscribers.end()) {
             return nullptr;
         }
-        return static_cast<TypedList<E>*>(it->second.get());
+        return static_cast<TypedList<E>*>(it->second);
     }
 
     template <class E>
@@ -141,9 +168,9 @@ private:
         const std::type_index key{typeid(E)};
         auto it = m_subscribers.find(key);
         if (it == m_subscribers.end()) {
-            it = m_subscribers.emplace(key, std::make_unique<TypedList<E>>()).first;
+            it = m_subscribers.emplace(key, allocate_list<E>()).first;
         }
-        return *static_cast<TypedList<E>*>(it->second.get());
+        return *static_cast<TypedList<E>*>(it->second);
     }
 
     // make_record<E>: convert typed event struct to EventRecord.

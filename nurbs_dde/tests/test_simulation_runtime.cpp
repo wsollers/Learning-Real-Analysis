@@ -355,7 +355,7 @@ TEST(SimulationRuntime, ThreadStopCommandDoesNotRunOwnerThreadTeardown) {
     const std::array commands{
         SimulationThreadCommand{.kind = SimulationThreadCommandKind::Stop}
     };
-    runtime.process_thread_commands(commands, &threads);
+    runtime.process_thread_commands(commands, nullptr);
 
     EXPECT_TRUE(runtime.paused());
     EXPECT_EQ(raw->stops, 0);
@@ -367,6 +367,38 @@ TEST(SimulationRuntime, ThreadStopCommandDoesNotRunOwnerThreadTeardown) {
     EXPECT_EQ(services.panels().active_count(), 0u);
     EXPECT_EQ(services.hotkeys().active_count(), 0u);
     EXPECT_EQ(services.render().active_view_count(), 0u);
+}
+
+TEST(SimulationRuntime, ProcessThreadCommandsRequiresSimulationRoleWhenThreadServiceIsProvided) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    RuntimeDummySimulation* raw = nullptr;
+    SimulationRuntime runtime("Simulation Runtime",
+        [&raw](memory::MemoryService& memory) {
+            auto sim = memory.simulation().make_unique_as<ISimulation, RuntimeDummySimulation>();
+            raw = static_cast<RuntimeDummySimulation*>(sim.get());
+            return sim;
+        });
+
+    runtime.instantiate(host);
+    runtime.start();
+    ASSERT_NE(raw, nullptr);
+
+    const std::array commands{
+        SimulationThreadCommand{
+            .kind = SimulationThreadCommandKind::Tick,
+            .tick = TickInfo{.tick_index = u64(9), .dt = f32(0.1f), .time = f32(0.1f)}
+        }
+    };
+    runtime.process_thread_commands(commands, &services.threads());
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_EQ(raw->simulation_ticks, 0);
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("SimulationRuntime::process_thread_commands"),
+              std::string::npos);
 }
 
 } // namespace

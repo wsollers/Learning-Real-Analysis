@@ -47,6 +47,7 @@ threads will depend on. The current implementation includes:
 - channel-aware compact event mailbox for worker and simulation-thread event
   records
 - logger-thread drain for worker log messages
+- logger-thread task queue for bounded I/O work such as telemetry flush/close
 - logger snapshots for UI reads while the logger thread is active
 - simulation-thread command queue for future UI/main-to-simulation handoff
 - dedicated simulation loop thread with start/stop lifecycle and command-batch callback
@@ -58,15 +59,16 @@ threads will depend on. The current implementation includes:
 - surface-poke simulation command payload for main/UI-owned input handoff
 - optional engine live wiring via `simulation.threaded_runtime`
 - latest simulation render snapshot mailbox with deep-copied immutable data
+- render-thread command queue and immutable `RenderFrameSnapshot` handoff type
 - main-thread role tracking and deterministic shutdown
 - thread-role guard API for main/render/simulation/logger/worker ownership checks
 - Main-owned `EventBusService` typed publish/subscribe/reset/drain APIs
   guarded by the thread-role service; cross-thread events use compact
   mailboxes
-- `LoggerService` direct string-store writes guarded to Main or Logger thread;
-  workers use the logger mailbox
-- Main-owned `TelemetryService` lifecycle, extension scratch, and flush APIs
-  guarded by the thread-role service while primary telemetry remains a
+- `LoggerService` direct string-store writes guarded to the Logger thread;
+  Main/worker/simulation code use mailboxes or logger tasks
+- `TelemetryService` extension scratch is Main-owned, while flush/stop-close
+  can be handed to the Logger/I/O thread; primary telemetry remains a
   single-producer ring contract
 - `RenderService` mutation APIs guarded by the thread-role service during the
   current Main-owned transition
@@ -277,12 +279,12 @@ systems assume a single-threaded engine.
 |---|---|---|
 | GLFW window/events | GUI/Main | enqueue commands only |
 | ImGui frame/build | GUI/Main | enqueue UI model updates only |
-| Vulkan renderer/swapchain | Render | submit immutable render snapshots only |
+| Vulkan renderer/swapchain | Render | submit immutable render frame commands only |
 | Active simulation state | Simulation | enqueue commands/jobs only |
 | `EventBusService` typed channels | Main during transition | use compact event mailboxes only |
-| `LoggerService` string store | Logger/Main during transition | enqueue log records/mailbox messages |
+| `LoggerService` string store | Logger | enqueue log records/mailbox messages |
 | `DiagnosticsService` active issues | Main/Diagnostics drain | enqueue diagnostic reports |
-| `TelemetryService` lifecycle/ext/flush | Main during transition | primary SPSC record producer only |
+| `TelemetryService` lifecycle/ext/flush | Main for lifecycle/ext, Logger for flush/close | primary SPSC record producer only |
 | Worker pool | Worker threads | use constrained `ThreadJobContext` |
 
 No row should silently become "everyone can mutate it." If a second thread needs
@@ -322,13 +324,24 @@ requests are tied to window/render state and artifact queues.
 `EventBusService` typed publish/subscribe/reset/drain APIs are Main-owned
 during this phase. Worker and simulation threads publish compact `EventRecord`
 values through mailboxes, then the owner drains them into fixed-size event logs.
-`LoggerService` accepts direct writes only from Main or the Logger thread.
-Other threads must use `ThreadJobContext::log()` or the thread-service logger
-mailbox so string ownership stays centralized.
-`TelemetryService` lifecycle, extension-record scratch storage, and flush are
-Main-owned for now. Primary telemetry records still use the existing
-single-producer ring contract; file flushing should move to Logger/I/O once the
-writer handoff is explicit.
+`LoggerService` accepts direct writes only from the Logger thread once
+`EngineServices` wires the owner guard. Other threads must use
+`ThreadJobContext::log()` or the thread-service logger mailbox so string
+ownership stays centralized.
+`TelemetryService` lifecycle and extension-record scratch storage are
+Main-owned. Primary telemetry records still use the existing single-producer
+ring contract.
+The writer handoff is now explicit for periodic flush and sim/app stop-close:
+the engine queues telemetry flush/close work onto the logger task queue, and
+`TelemetryService` permits those operations from `ThreadRole::Logger`.
+Extension-record scratch storage remains guarded separately so the logger
+thread never races an extension producer.
+
+The render split now has a service-level boundary: GUI/Main can enqueue
+`RenderThreadCommand` values containing immutable `RenderFrameSnapshot` data,
+and a render thread callback consumes them under `ThreadRole::Renderer`.
+Vulkan/ImGui are still live-migrated in later renderer work, but the ownership
+path no longer needs to be invented at the same time as the Vulkan move.
 
 ## Locking Policy
 
@@ -366,8 +379,9 @@ Current owner-guarded services:
   `ResourceManagerService`, `CaptureService`, and `TelemetryService`
   lifecycle/flush/extension-record paths.
 - Simulation-owned: active simulation state through `SimulationRuntime`.
-- Logger/Main-owned or mailbox-driven: `LoggerService` writes during the
-  transition.
+- Logger-owned or mailbox-driven: `LoggerService` writes.
+- Renderer-owned command lane: `RenderThreadCommand` / `RenderFrameSnapshot`
+  handoff through `ThreadManagementService`.
 
 ## Frame Pipeline
 
@@ -564,8 +578,9 @@ drain APIs. The compact mailboxes remain the approved cross-thread path.
 Workers and simulation/render threads should not mutate logger string storage
 directly in the final design. They should write to a `LoggerMailbox` or submit
 a result that the logger thread formats and stores. Direct writes are currently
-accepted only from Main and Logger roles; worker writes through
-`ThreadJobContext::log()` are drained by the logger thread.
+accepted only from the Logger role once `EngineServices` wires the guard;
+worker writes through `ThreadJobContext::log()` are drained by the logger
+thread. Standalone `LoggerService` tests may leave the guard unset.
 
 ### DiagnosticsService
 
@@ -577,10 +592,10 @@ consistent source of truth.
 
 Telemetry already has SPSC-oriented buffer contracts. Thread management should
 not turn telemetry into a general job queue. Primary `record()` and
-`record_particles()` calls are the producer side. Lifecycle, extension-record
-scratch storage, and `flush()` are owner-thread APIs. If a telemetry flush
-worker is added, it owns file flushing only and must receive an explicit writer
-handoff that preserves the producer/consumer boundary.
+`record_particles()` calls are the producer side. Extension-record scratch
+storage is Main-owned. `flush()` and stop-close can run on the logger/I/O thread
+through `ThreadManagementService::enqueue_logger_task()` or
+`run_logger_task_sync()`, preserving the producer/consumer boundary.
 
 Simulation-specific telemetry hooks must be invoked through
 `SimulationRuntime::record_telemetry_tick()`. Engine/UI code should not obtain a
@@ -606,9 +621,10 @@ through an explicit result queue.
 
 The render thread owns Vulkan command recording/submission and swapchain
 presentation once the split is enabled. GUI/Main owns GLFW polling and ImGui
-frame construction. The handoff between GUI and render should be explicit:
-either render consumes immutable ImGui draw data produced by GUI, or GUI/render
-remain the same thread until this boundary is safe.
+frame construction. The handoff between GUI and render is represented by
+`RenderThreadCommand` and `RenderFrameSnapshot`. The next renderer migration
+should move Vulkan command recording/presentation behind that command lane while
+keeping GLFW polling and ImGui frame construction on GUI/Main.
 
 ## Result Model
 
@@ -726,12 +742,14 @@ internals or block waiting for jobs.
 5. Add diagnostics/log mailboxes and main-thread ingestion. **Done.**
 6. Add thread-role assertions for main/GUI/render/simulation-only APIs. **Thread-role guard API and diagnostics are done; `RenderService`, `PanelService`, `HotkeyService`, `InteractionService`, `CameraService`, `DiagnosticsService`, `EventBusService`, `LoggerService`, `TelemetryService`, `SimMetadataService`, `ViewInputService`, `ResourceManagerService`, and `CaptureService` mutation APIs are covered. Applying checks to additional services remains ongoing.**
 7. Add logger mailbox and logger/I/O thread first; it has the least coupling. **Logger-thread in-memory drain and direct-write ownership guard done.**
-8. Move telemetry/log/capture manifest flushing to logger/I/O. **Telemetry owner-thread guard is done; file flush handoff to Logger/I/O remains.**
+8. Move telemetry/log/capture manifest flushing to logger/I/O. **Telemetry periodic flush and sim/app stop-close handoff to Logger/I/O are done; capture manifests remain future work.**
 9. Add simulation-thread command queue for UI/main-to-simulation commands. **Done.**
-10. Add immutable render snapshot type and simulation-to-render mailbox. **Snapshot mailbox foundation done.**
+10. Add immutable render snapshot type and simulation-to-render mailbox. **Simulation snapshot mailbox and render command/snapshot lane are done.**
 11. Split simulation tick into a simulation thread. **Thread lifecycle, command callback, `SimulationRuntime` command adapter, simulation update/render method split, runtime serialization for render and telemetry hooks, command-based surface poke handoff, compact simulation event mailbox handoff, and optional engine live wiring done. Default config keeps the compatibility path off while remaining direct host-service access is reduced.**
 12. Split render submission/presentation into a render thread, or explicitly
     keep GUI/render co-owned until GLFW/ImGui/Vulkan boundaries are safe.
+    **Render command queue and Renderer-role callback foundation are done; Vulkan
+    command recording/presentation migration remains.**
 13. Move expensive geometry/cache generation onto worker jobs.
 14. Add worker/jobs/thread-health UI panel.
 
@@ -754,13 +772,15 @@ internals or block waiting for jobs.
 - camera mutation APIs reject and report diagnostics when called off their owner thread **Covered for `CameraService` Worker-to-Main violation.**
 - direct diagnostics ingestion rejects and reports diagnostics when called off its owner thread **Covered for `DiagnosticsService` Worker-to-Main violation.**
 - typed event publish/subscribe/reset/drain APIs reject and report diagnostics when called off their owner thread **Covered for `EventBusService` Worker-to-Main publish violation.**
-- direct logger writes reject and report diagnostics when called from worker threads **Covered for `LoggerService` Worker-to-Main/Logger violation.**
+- direct logger writes reject and report diagnostics when called from non-logger threads **Covered for `LoggerService` Worker-to-Logger and Main-to-Logger violations.**
 - logger mailbox writes remain accepted through the logger thread **Covered for `ThreadJobContext::log()` to logger-thread drain.**
+- logger tasks can run synchronously on the logger thread **Covered.**
 - telemetry owner-thread extension-record paths reject and report diagnostics when called from worker threads **Covered for `TelemetryService::record_ext` Worker-to-Main violation.**
+- telemetry flush can be handed to the logger thread without diagnostics **Covered.**
 - metadata registry and view-input mutation reject and report diagnostics when called off their owner thread **Covered for `SimMetadataService` and `ViewInputService` Worker-to-Main violations.**
 - resource registry and capture queue/movie-state mutation reject and report diagnostics when called off their owner thread **Covered for `ResourceManagerService` and `CaptureService` Worker-to-Main violations.**
 - render-facing mutation APIs reject and report diagnostics when called off their current owner thread **Covered for `RenderService` Worker-to-Main violation.**
-- simulation-only APIs assert/reject when called off simulation thread **Guard API ready; service-level adoption pending.**
+- simulation-only APIs assert/reject when called off simulation thread **Covered for `SimulationRuntime::process_thread_commands`; broader service-level adoption remains ongoing.**
 - simulation thread consumes command batches and reports callback failures **Covered.**
 - `SimulationRuntime` can be driven through the simulation thread and publish snapshot mailboxes **Covered.**
 - simulation-thread Stop/Shutdown command does not run owner-thread teardown **Covered.**
@@ -772,6 +792,7 @@ internals or block waiting for jobs.
 - `simulation.threaded_runtime` config flag loads/saves and gates live engine threading **Covered.**
 - logger thread drains mailbox without mutating event/diagnostic sources **Covered for worker log mailbox.**
 - latest render snapshot mailbox drops stale snapshots safely **Covered for simulation render snapshot mailbox.**
+- render command queue preserves immutable frame snapshots and invokes callbacks with Renderer role **Covered.**
 
 ## Open Decisions
 

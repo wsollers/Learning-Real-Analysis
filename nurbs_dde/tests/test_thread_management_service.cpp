@@ -272,6 +272,25 @@ TEST(ThreadManagementService, SimulationCommandQueuePreservesOrderAndDrains) {
     EXPECT_TRUE(threads.consume_simulation_commands().empty());
 }
 
+TEST(ThreadManagementService, RenderCommandQueueReportsOverflow) {
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+        .worker_count = u32(0),
+        .max_queued_jobs = u64(1),
+        .enable_background_workers = false
+    });
+
+    EXPECT_TRUE(threads.enqueue_render_command(RenderThreadCommand{
+        .kind = RenderThreadCommandKind::Frame
+    }));
+    EXPECT_FALSE(threads.enqueue_render_command(RenderThreadCommand{
+        .kind = RenderThreadCommandKind::Resize,
+        .width = u32(800),
+        .height = u32(600)
+    }));
+    EXPECT_EQ(threads.dropped_events(), u64(1));
+}
+
 TEST(ThreadManagementService, SimulationSnapshotMailboxKeepsLatestImmutableCopy) {
     ndde::memory::MemoryService memory;
     memory.begin_frame();
@@ -350,6 +369,72 @@ TEST(ThreadManagementService, SimulationThreadConsumesCommandBatches) {
 
     threads.stop_simulation_thread();
     EXPECT_FALSE(threads.simulation_thread_running());
+}
+
+TEST(ThreadManagementService, RenderCommandQueuePreservesImmutableFrameSnapshot) {
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+        .worker_count = u32(0),
+        .max_queued_jobs = u64(2),
+        .enable_background_workers = false
+    });
+
+    RenderThreadCommand command;
+    command.kind = RenderThreadCommandKind::Frame;
+    command.frame.frame_index = u64(42);
+    command.frame.frame_ms = f32(16.6f);
+    command.frame.simulation.name = "Render Snapshot";
+    command.frame.simulation.particles.push_back(ParticleSnapshot{.id = 17u, .label = "p"});
+
+    EXPECT_TRUE(threads.enqueue_render_command(command));
+    command.frame.simulation.name = "mutated";
+    command.frame.simulation.particles.front().label = "mutated";
+
+    const auto commands = threads.consume_render_commands();
+    ASSERT_EQ(commands.size(), 1u);
+    EXPECT_EQ(commands.front().kind, RenderThreadCommandKind::Frame);
+    EXPECT_EQ(commands.front().frame.frame_index, u64(42));
+    EXPECT_EQ(commands.front().frame.simulation.name, "Render Snapshot");
+    ASSERT_EQ(commands.front().frame.simulation.particles.size(), 1u);
+    EXPECT_EQ(commands.front().frame.simulation.particles.front().label, "p");
+}
+
+TEST(ThreadManagementService, RenderThreadConsumesCommandBatchesWithRendererRole) {
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+        .worker_count = u32(0),
+        .enable_background_workers = false
+    });
+
+    std::mutex mutex;
+    std::condition_variable cv;
+    std::vector<RenderThreadCommandKind> seen;
+    ThreadRole callback_role = ThreadRole::Unknown;
+
+    ASSERT_TRUE(threads.start_render_thread(
+        [&threads, &mutex, &cv, &seen, &callback_role](
+            std::stop_token,
+            std::span<const RenderThreadCommand> commands) {
+            std::scoped_lock lock(mutex);
+            callback_role = threads.current_thread_role();
+            for (const RenderThreadCommand& command : commands) {
+                seen.push_back(command.kind);
+            }
+            cv.notify_one();
+        }));
+
+    ASSERT_TRUE(threads.enqueue_render_command(RenderThreadCommand{
+        .kind = RenderThreadCommandKind::Frame
+    }));
+
+    std::unique_lock lock(mutex);
+    ASSERT_TRUE(cv.wait_for(lock, 2s, [&seen] { return !seen.empty(); }));
+    EXPECT_EQ(callback_role, ThreadRole::Renderer);
+    ASSERT_EQ(seen.size(), 1u);
+    EXPECT_EQ(seen.front(), RenderThreadCommandKind::Frame);
+
+    lock.unlock();
+    threads.stop_render_thread();
 }
 
 TEST(ThreadManagementService, RequireThreadRolePassesOnSimulationThread) {
@@ -470,6 +555,25 @@ TEST(LoggerService, WorkerThreadDirectWriteReportsThreadRoleViolation) {
     EXPECT_NE(role_violations.front().message.find("LoggerService::write"), std::string::npos);
 }
 
+TEST(LoggerService, MainThreadDirectWriteReportsThreadRoleViolationWhenLoggerThreadOwnsWrites) {
+    EngineServices services;
+
+    const LogRecordId id = services.logger().write(LogSeverity::Info,
+                                                   LogCategory::Engine,
+                                                   LogSourceRef{},
+                                                   "main direct write");
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_EQ(id.value, u64(0));
+    EXPECT_TRUE(services.logger().snapshot().empty());
+
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("LoggerService::write"), std::string::npos);
+    EXPECT_NE(role_violations.front().message.find("expected Logger thread"), std::string::npos);
+}
+
 TEST(LoggerService, WorkerMailboxWriteIsAcceptedByLoggerThread) {
     EngineServices services;
 
@@ -490,6 +594,46 @@ TEST(LoggerService, WorkerMailboxWriteIsAcceptedByLoggerThread) {
     ASSERT_EQ(snapshot.size(), 1u);
     EXPECT_EQ(snapshot.front().message, "mailbox worker write");
     EXPECT_TRUE(services.diagnostics().active_with(ErrorCode::ThreadRoleViolation).empty());
+}
+
+TEST(ThreadManagementService, LoggerTaskRunsOnLoggerThreadSynchronously) {
+    LoggerService logger;
+    logger.init();
+
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+                     .worker_count = u32(0),
+                     .enable_logger_thread = true,
+                     .enable_background_workers = false
+                 },
+                 ThreadServiceBindings{.logger = &logger});
+
+    std::atomic<bool> ran = false;
+    std::atomic<bool> logger_role = false;
+    ASSERT_TRUE(threads.run_logger_task_sync([&threads, &ran, &logger_role] {
+        ran.store(true);
+        logger_role.store(threads.is_thread_role(ThreadRole::Logger));
+    }));
+
+    EXPECT_TRUE(ran.load());
+    EXPECT_TRUE(logger_role.load());
+}
+
+TEST(ThreadManagementService, LoggerThreadDrainsQueuedTaskDuringShutdown) {
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+                     .worker_count = u32(0),
+                     .enable_logger_thread = true,
+                     .enable_background_workers = false
+                 });
+
+    std::atomic<bool> ran = false;
+    ASSERT_TRUE(threads.enqueue_logger_task([&ran] {
+        ran.store(true);
+    }));
+
+    threads.shutdown();
+    EXPECT_TRUE(ran.load());
 }
 
 TEST(TelemetryService, WorkerThreadExtensionRecordReportsThreadRoleViolation) {
@@ -518,6 +662,40 @@ TEST(TelemetryService, WorkerThreadExtensionRecordReportsThreadRoleViolation) {
         diagnostics.active_with(ErrorCode::ThreadRoleViolation);
     ASSERT_EQ(role_violations.size(), 1u);
     EXPECT_NE(role_violations.front().message.find("TelemetryService::record_ext"), std::string::npos);
+}
+
+TEST(TelemetryService, FlushCanBeHandedToLoggerThread) {
+    DiagnosticsService diagnostics;
+    LoggerService logger;
+    logger.init();
+
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+                     .worker_count = u32(0),
+                     .enable_logger_thread = true,
+                     .enable_background_workers = false
+                 },
+                 ThreadServiceBindings{
+                     .diagnostics = &diagnostics,
+                     .logger = &logger
+                 });
+
+    telemetry::TelemetryService telemetry;
+    telemetry.set_owner_guard([&threads](std::string_view api_name) {
+        if (api_name == "TelemetryService::flush" &&
+            threads.is_thread_role(ThreadRole::Logger)) {
+            return true;
+        }
+        return threads.require_thread_role(ThreadRole::Main, api_name);
+    });
+
+    std::atomic<u64> flushed = u64(999);
+    ASSERT_TRUE(threads.run_logger_task_sync([&telemetry, &flushed] {
+        flushed.store(telemetry.flush());
+    }));
+    threads.drain_service_mailboxes();
+    EXPECT_EQ(flushed.load(), u64(0));
+    EXPECT_TRUE(diagnostics.active_with(ErrorCode::ThreadRoleViolation).empty());
 }
 
 TEST(RenderService, WorkerThreadMutationReportsThreadRoleViolation) {
