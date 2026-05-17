@@ -79,6 +79,11 @@ public:
         return m_particles.back();
     }
 
+    void set_behavior_context(const SimulationContext* context) noexcept {
+        for (Particle& particle : m_particles)
+            particle.set_behavior_context(context);
+    }
+
     void clear() { m_particles.clear(); }
     void clear_goals() { m_goals.clear(); }
     void clear_pair_constraints() { m_pair_constraints.clear(); }
@@ -98,6 +103,7 @@ public:
             particle.record_trail_sample(sim_time);
             particle.push_history(sim_time);
         }
+        set_behavior_context(nullptr);
         apply_pair_constraints();
     }
 

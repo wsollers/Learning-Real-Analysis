@@ -178,7 +178,7 @@ bool SecondWindow::end_frame() {
 
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     VkSemaphore wait_sem   = m_image_available[m_frame_sync];
-    VkSemaphore signal_sem = m_render_finished[m_frame_sync];
+    VkSemaphore signal_sem = m_render_finished[m_image_index];
     VkSubmitInfo submit{
         .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
         .waitSemaphoreCount   = 1,

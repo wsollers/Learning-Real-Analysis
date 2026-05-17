@@ -71,8 +71,9 @@ private:
     VkCommandPool   m_cmd_pool        = VK_NULL_HANDLE;
     VkCommandBuffer m_cmd             = VK_NULL_HANDLE;
     VkFence         m_render_fence    = VK_NULL_HANDLE;
-    // One semaphore per swapchain image — prevents reuse-before-consumed races
-    // for both acquire and render-finished signals.
+    // Acquire semaphores are frame-slot indexed after the frame fence waits.
+    // Render-finished semaphores are swapchain-image indexed because present
+    // may keep using a semaphore until that same image is acquired again.
     memory::PersistentVector<VkSemaphore> m_image_available;
     memory::PersistentVector<VkSemaphore> m_render_finished;
     u32             m_image_index     = 0;

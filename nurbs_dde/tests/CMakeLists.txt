@@ -13,6 +13,7 @@ add_executable(ndde_tests
     test_engine_services.cpp
     test_gravitational_systems.cpp
     test_mp_units_integration.cpp
+    test_sim_metadata_service.cpp
     test_simulation_context.cpp
     test_simulation_runtime.cpp
     test_surface_metadata.cpp
@@ -29,6 +30,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/simulation/scenario/ScenarioBuilder.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/diagnostics/DiagnosticsService.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/metadata/SimMetadataService.cpp
 )
 
 target_include_directories(ndde_tests PRIVATE

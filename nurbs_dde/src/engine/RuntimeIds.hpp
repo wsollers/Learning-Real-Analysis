@@ -36,8 +36,14 @@ namespace ids {
 
 inline constexpr ComponentId unknown_component{"unknown"};
 inline constexpr ComponentId simulation_wave_predator_prey{"simulation.wave_predator_prey"};
+inline constexpr ComponentId surface_torus{"surface.torus"};
+inline constexpr ComponentId surface_sine_rational{"surface.sine_rational"};
+inline constexpr ComponentId surface_wave_predator_prey{"surface.wave_predator_prey"};
 inline constexpr ComponentId field_metric_ripple{"field.metric_ripple"};
 inline constexpr ComponentId field_damping{"field.damping"};
+inline constexpr ComponentId behavior_brownian{"behavior.brownian"};
+inline constexpr ComponentId behavior_seek{"behavior.seek"};
+inline constexpr ComponentId behavior_avoid{"behavior.avoid"};
 inline constexpr ComponentId solver_ode_euler{"solver.ode.euler"};
 inline constexpr ComponentId solver_ode_rk4{"solver.ode.rk4"};
 inline constexpr ComponentId system_gravity_pendulum{"system.gravity.pendulum"};

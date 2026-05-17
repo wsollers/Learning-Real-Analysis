@@ -460,6 +460,7 @@ void SimulationWavePredatorPrey::sync_context() {
     m_context.set_rng(&m_particles.rng());
     m_context.set_fields(&m_fields);
     m_context.set_time(m_sim_time);
+    m_particles.set_behavior_context(&m_context);
 }
 
 void SimulationWavePredatorPrey::submit_geometry() {

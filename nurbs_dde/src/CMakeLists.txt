@@ -93,6 +93,7 @@ target_link_libraries(ndde_simulation PUBLIC ndde_math volk)
 # ── ndde_engine ───────────────────────────────────────────────────────────────
 add_library(ndde_engine STATIC
     engine/diagnostics/DiagnosticsService.cpp
+    engine/metadata/SimMetadataService.cpp
     engine/AppConfig.cpp
     engine/Engine.cpp
     engine/SimulationRuntime.cpp
