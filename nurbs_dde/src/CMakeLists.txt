@@ -30,6 +30,13 @@ add_library(ndde_math STATIC
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm)
 
+# ── ndde_units ────────────────────────────────────────────────────────────────
+# Thin project vocabulary over mp-units. Keep this as the only common place
+# that application code needs to depend on the external units library.
+add_library(ndde_units INTERFACE)
+target_include_directories(ndde_units INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(ndde_units INTERFACE mp-units::mp-units ndde_math)
+
 # ── ndde_memory ───────────────────────────────────────────────────────────────
 add_library(ndde_memory STATIC
     memory/BufferManager.cpp

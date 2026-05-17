@@ -60,6 +60,18 @@ FetchContent_Declare(nlohmann_json
 set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(nlohmann_json)
 
+# mp-units (header-only). Use the library's src CMake project; the top-level
+# project is intended for mp-units development and pulls extra examples/tests.
+set(MP_UNITS_BUILD_INSTALL OFF CACHE BOOL "" FORCE)
+set(MP_UNITS_BUILD_CXX_MODULES OFF CACHE BOOL "" FORCE)
+set(MP_UNITS_API_CONTRACTS NONE CACHE STRING "" FORCE)
+FetchContent_Declare(mp_units
+    GIT_REPOSITORY https://github.com/mpusz/mp-units.git
+    # mp-units 2.5.0, pinned by commit for reproducible Windows builds.
+    GIT_TAG        6e06eddf205deaf6c2f2f63500c8c70ec220a99f
+    SOURCE_SUBDIR  src)
+FetchContent_MakeAvailable(mp_units)
+
 # Google Test
 FetchContent_Declare(googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
