@@ -4,11 +4,14 @@
 
 #include "engine/RuntimeIds.hpp"
 #include "engine/diagnostics/DiagnosticsTypes.hpp"
+#include "engine/IScene.hpp"
+#include "engine/SimulationClock.hpp"
 #include "simulation/events/EventRecord.hpp"
 
 #include <chrono>
 #include <string>
 #include <variant>
+#include <vector>
 
 namespace ndde {
 
@@ -90,6 +93,59 @@ using ThreadJobResult = std::variant<
     ResourceId,
     ThreadTextResult
 >;
+
+enum class SimulationThreadCommandKind : u8 {
+    Pause,
+    Resume,
+    Stop,
+    Tick,
+    SurfacePoke,
+    SwitchSimulation,
+    ResetClock,
+    Shutdown
+};
+
+struct SimulationSurfacePoke {
+    u64 view = u64(0);
+    Vec2 uv{};
+    Vec2 fallback_uv{};
+    Vec2 screen_ndc{};
+    f32 amplitude = f32(0.35);
+    f32 radius = f32(0.9);
+    f32 falloff = f32(1);
+    bool ray_hit = false;
+    u32 seed = u32(0);
+};
+
+struct SimulationThreadCommand {
+    SimulationThreadCommandKind kind = SimulationThreadCommandKind::Tick;
+    TickInfo tick = {};
+    SimulationSurfacePoke surface_poke = {};
+    u64 simulation_index = u64(0);
+};
+
+struct SimulationRenderSnapshot {
+    std::string name;
+    bool paused = false;
+    f32 sim_time = f32(0);
+    f32 sim_speed = f32(0);
+    u64 particle_count = u64(0);
+    std::string status;
+    std::vector<ParticleSnapshot> particles;
+};
+
+[[nodiscard]] inline SimulationRenderSnapshot make_simulation_render_snapshot(const SceneSnapshot& source) {
+    SimulationRenderSnapshot snapshot{
+        .name = source.name,
+        .paused = source.paused,
+        .sim_time = static_cast<f32>(source.sim_time),
+        .sim_speed = static_cast<f32>(source.sim_speed),
+        .particle_count = static_cast<u64>(source.particle_count),
+        .status = source.status
+    };
+    snapshot.particles.assign(source.particles.begin(), source.particles.end());
+    return snapshot;
+}
 
 struct ThreadPoolConfig {
     u32 worker_count = u32(0);

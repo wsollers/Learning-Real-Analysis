@@ -94,8 +94,49 @@ TEST(AllSimulations, WavePredatorPreyDoubleClickSurfacePickAddsRipple) {
         .paused = true
     });
 
+    host.threads().drain_service_mailboxes();
+    host.events().drain(EventChannelId::Simulation, f32(0.1f), u64(2));
+
     EXPECT_EQ(sim.active_field_count(), before + 1u);
     EXPECT_TRUE(host.interaction().consume_surface_picks(sim.main_view_id()).empty());
+    EXPECT_FALSE(host.events().log(EventChannelId::Simulation).entries().empty());
+
+    sim.on_stop();
+}
+
+TEST(AllSimulations, WavePredatorPreySurfacePokeCommandAddsRippleWithoutInteractionService) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationWavePredatorPrey sim;
+
+    sim.on_register(host);
+    sim.on_start();
+    const std::size_t before = sim.active_field_count();
+
+    sim.on_simulation_command(SimulationThreadCommand{
+        .kind = SimulationThreadCommandKind::SurfacePoke,
+        .tick = TickInfo{.tick_index = 2u, .time = f32(0.1f), .paused = false},
+        .surface_poke = SimulationSurfacePoke{
+            .view = sim.main_view_id(),
+            .uv = Vec2{f32(0.25), f32(-0.5)},
+            .fallback_uv = Vec2{f32(0.25), f32(-0.5)},
+            .amplitude = f32(0.25),
+            .radius = f32(1),
+            .falloff = f32(1),
+            .seed = u32(101)
+        }
+    });
+
+    EXPECT_EQ(sim.active_field_count(), before + 1u);
+    EXPECT_TRUE(host.interaction().consume_surface_picks(sim.main_view_id()).empty());
+
+    host.threads().drain_service_mailboxes();
+    host.events().drain(EventChannelId::Simulation, f32(0.1f), u64(2));
+
+    const auto& entries = host.events().log(EventChannelId::Simulation).entries();
+    ASSERT_GE(entries.size(), 2u);
+    EXPECT_EQ(entries[entries.size() - 2u].kind, events::EventKind::PerturbationFired);
+    EXPECT_EQ(entries[entries.size() - 1u].kind, events::EventKind::FieldAdded);
 
     sim.on_stop();
 }

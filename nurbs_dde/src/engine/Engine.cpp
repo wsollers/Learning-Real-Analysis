@@ -71,6 +71,7 @@ Engine::Engine()
     , m_simulations(m_services.memory()) {}
 
 Engine::~Engine() {
+    stop_active_simulation_thread();
     uninstall_global_hotkeys();
 
     // ── Telemetry: close any active run before GPU teardown ─────────────────
@@ -147,6 +148,7 @@ void Engine::start(const std::string& config_path) {
     m_active_sim = 0;
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
+    start_active_simulation_thread();
 
     // ── Telemetry init ──────────────────────────────────────────────────────
     m_telemetry.set_enabled(m_config.telemetry.enabled);
@@ -202,6 +204,7 @@ void Engine::uninstall_global_hotkeys() noexcept {
 
 void Engine::switch_simulation(std::size_t index) {
     if (index >= m_simulations.size() || index == m_active_sim) return;
+    stop_active_simulation_thread();
     vkDeviceWaitIdle(m_vk.device());
     m_renderer.reset_frame_state();
 
@@ -218,6 +221,7 @@ void Engine::switch_simulation(std::size_t index) {
     m_active_sim = index;
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
+    start_active_simulation_thread();
 
     // ── Telemetry: open new run ──────────────────────────────────────
     fire_sim_started(m_active_sim);
@@ -286,7 +290,15 @@ void Engine::run_frame() {
     // Build the tick with is_double_click populated
     TickInfo tick_info = m_services.clock().next(frame_ms / f32(1000), active_runtime().paused());
     tick_info.is_double_click = double_click_this_frame;
-    active_runtime().tick(tick_info);
+    if (m_config.simulation.threaded_runtime) {
+        enqueue_pending_surface_pokes(tick_info);
+        (void)m_services.threads().enqueue_simulation_command(SimulationThreadCommand{
+            .kind = SimulationThreadCommandKind::Tick,
+            .tick = tick_info
+        });
+    } else {
+        active_runtime().tick(tick_info);
+    }
 
     // ── Drain service-owned event logs once per frame ─────────────────────
     m_services.threads().drain_service_mailboxes();
@@ -307,9 +319,7 @@ void Engine::run_frame() {
 
         // Give the active simulation a chance to override / supplement.
         EngineAPI api = make_api();
-        if (active_runtime().instantiated())
-            active_runtime().simulation().on_telemetry_tick(
-                m_telemetry_tick_count, {}, api);
+        active_runtime().record_telemetry_tick(m_telemetry_tick_count, tick_info, api);
 
         ++m_telemetry_tick_count;
 
@@ -318,6 +328,9 @@ void Engine::run_frame() {
             m_telemetry_tick_count % m_config.telemetry.flush_interval == u64(0)) {
             m_telemetry.flush();
         }
+    }
+    if (m_config.simulation.threaded_runtime) {
+        active_runtime().submit_render();
     }
     flush_render_service();
     m_services.panels().draw_registered_panels();
@@ -824,6 +837,74 @@ void Engine::request_capture(bool pause_first) {
             m_second_win.request_png_capture(artifact.path);
     }
     (void)m_services.logger().write(LogSeverity::Info, LogCategory::Capture, {}, "PNG capture requested");
+}
+
+void Engine::start_active_simulation_thread() {
+    if (!m_config.simulation.threaded_runtime) {
+        return;
+    }
+    SimulationRuntime* runtime = &active_runtime();
+    ThreadManagementService& threads = m_services.threads();
+    if (threads.simulation_thread_running()) {
+        return;
+    }
+    const bool started = threads.start_simulation_thread(
+        [runtime, &threads](std::stop_token, std::span<const SimulationThreadCommand> commands) {
+            runtime->process_thread_commands(commands, &threads);
+        });
+    if (started) {
+        (void)m_services.logger().write(LogSeverity::Info,
+                                        LogCategory::Engine,
+                                        {},
+                                        "Simulation thread started");
+    } else {
+        (void)m_services.logger().write(LogSeverity::Warning,
+                                        LogCategory::Engine,
+                                        {},
+                                        "Simulation thread could not start");
+    }
+}
+
+void Engine::stop_active_simulation_thread() noexcept {
+    m_services.threads().stop_simulation_thread();
+}
+
+void Engine::enqueue_pending_surface_pokes(const TickInfo& tick) {
+    const RenderViewId main_view = m_services.render().first_active_main_view();
+    if (main_view == 0) {
+        return;
+    }
+
+    const auto picks = m_services.interaction().consume_surface_picks(main_view);
+    if (picks.empty()) {
+        return;
+    }
+
+    const SimulationSnapshot snapshot = active_runtime().snapshot();
+    (void)m_services.events().log(EventChannelId::Simulation).push_engine_string(std::format(
+            "[{:>7.2f}] DEBUG  surface-pick queue count={} threaded=yes paused={}",
+            snapshot.sim_time,
+            picks.size(),
+            tick.paused ? "yes" : "no"),
+        events::EventSeverity::Info);
+
+    for (const SurfacePickRequest& pick : picks) {
+        (void)m_services.threads().enqueue_simulation_command(SimulationThreadCommand{
+            .kind = SimulationThreadCommandKind::SurfacePoke,
+            .tick = tick,
+            .surface_poke = SimulationSurfacePoke{
+                .view = static_cast<u64>(main_view),
+                .uv = pick.fallback_uv,
+                .fallback_uv = pick.fallback_uv,
+                .screen_ndc = pick.screen_ndc,
+                .amplitude = pick.amplitude,
+                .radius = pick.radius,
+                .falloff = pick.falloff,
+                .ray_hit = false,
+                .seed = pick.seed
+            }
+        });
+    }
 }
 
 SimulationRuntime& Engine::active_runtime() {

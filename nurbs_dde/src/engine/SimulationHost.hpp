@@ -97,6 +97,12 @@ public:
             .events = &m_events,
             .logger = &m_logger
         });
+        m_diagnostics.set_thread_service(&m_threads, ThreadRole::Main);
+        m_panels.set_thread_service(&m_threads, ThreadRole::Main);
+        m_hotkeys.set_thread_service(&m_threads, ThreadRole::Main);
+        m_interaction.set_thread_service(&m_threads, ThreadRole::Main);
+        m_render.set_thread_service(&m_threads, ThreadRole::Main);
+        m_camera.set_thread_service(&m_threads, ThreadRole::Main);
     }
 
     [[nodiscard]] PanelService& panels() noexcept { return m_panels; }

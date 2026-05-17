@@ -4,12 +4,14 @@
 
 #include "engine/ISimulation.hpp"
 #include "engine/SimulationHost.hpp"
+#include "engine/threading/ThreadTypes.hpp"
 #include "memory/Containers.hpp"
 #include "memory/MemoryService.hpp"
 #include "memory/Unique.hpp"
 
 #include <functional>
 #include <mutex>
+#include <span>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -18,6 +20,7 @@
 namespace ndde {
 
 using SimulationSnapshot = SceneSnapshot;
+class ThreadManagementService;
 
 class SimulationSnapshotStore {
 public:
@@ -54,6 +57,11 @@ public:
     void pause();
     void resume();
     void tick(TickInfo tick);
+    void tick_simulation(TickInfo tick);
+    void submit_render();
+    void process_thread_commands(std::span<const SimulationThreadCommand> commands,
+                                 ThreadManagementService* threads = nullptr);
+    void record_telemetry_tick(u64 tick_index, const TickInfo& tick, EngineAPI& api);
     void publish();
 
     [[nodiscard]] std::string_view name() const noexcept { return m_name; }
@@ -65,6 +73,7 @@ public:
     [[nodiscard]] SimulationMetadata metadata() const;
 
 private:
+    mutable std::recursive_mutex m_mutex;
     std::string m_name;
     SimulationFactory m_factory;
     memory::Unique<ISimulation> m_simulation;

@@ -133,7 +133,26 @@ void SimulationWavePredatorPrey::on_tick(const TickInfo& tick) {
     m_context.set_tick(tick);
     handle_poke(tick);
     log_ripple_diagnostics(tick);
+    advance_state(tick, true);
+    submit_geometry();
+}
 
+void SimulationWavePredatorPrey::on_simulation_tick(const TickInfo& tick) {
+    m_context.set_tick(tick);
+    advance_state(tick, false);
+}
+
+void SimulationWavePredatorPrey::on_simulation_command(const SimulationThreadCommand& command) {
+    if (command.kind == SimulationThreadCommandKind::SurfacePoke) {
+        apply_surface_poke(command.surface_poke, command.tick, false);
+    }
+}
+
+void SimulationWavePredatorPrey::on_submit_render() {
+    submit_geometry();
+}
+
+void SimulationWavePredatorPrey::advance_state(const TickInfo& tick, bool allow_host_events) {
     if (!tick.paused && !m_paused) {
         m_sim_time = tick.time;
         if (!m_fields.empty())
@@ -146,24 +165,43 @@ void SimulationWavePredatorPrey::on_tick(const TickInfo& tick) {
             m_goal_status = gs;
             m_paused = true;
             if (gs == GoalStatus::Succeeded) {
-                if (m_host) {
+                if (allow_host_events && m_host) {
                     m_host->events().publish(EventChannelId::Simulation, simulation::events::AgentCaptured{
                         .pursuer_id = u64(0), .prey_id = u64(0),
                         .distance   = f32(0),
                         .sim_time   = m_sim_time,
                         .tick       = tick.tick_index
                     });
+                } else if (m_host) {
+                    m_host->threads().publish_event_record(
+                        EventChannelId::Simulation,
+                        events::make_agent_captured(u64(0), u64(0), f32(0), m_sim_time, tick.tick_index));
                 }
             }
         }
 
-        evaluate_alerts(tick);
-        sweep_decayed_fields(tick);
-        if (m_host)
+        if (allow_host_events) {
+            evaluate_alerts(tick);
+            sweep_decayed_fields(tick);
+        } else {
+            const auto removed = m_fields.sweep_decayed(m_sim_time);
+            if (!removed.empty()) {
+                m_mesh.mark_dirty();
+            }
+            if (m_host) {
+                for (const auto& fname : removed) {
+                    m_host->threads().publish_event_record(
+                        EventChannelId::Simulation,
+                        events::make_field_removed(runtime_node_id_from_text(fname).value, m_sim_time, tick.tick_index));
+                    m_host->threads().publish_event_record(
+                        EventChannelId::Simulation,
+                        events::make_perturbation_decayed(f32(0), f32(0), m_sim_time, tick.tick_index));
+                }
+            }
+        }
+        if (allow_host_events && m_host)
             m_host->events().drain(EventChannelId::Simulation, m_sim_time, tick.tick_index);
     }
-
-    submit_geometry();
 }
 
 void SimulationWavePredatorPrey::on_stop() {
@@ -351,54 +389,83 @@ void SimulationWavePredatorPrey::handle_poke(const TickInfo& tick) {
         const SurfaceHit hit = m_host->interaction().resolve_surface_hit(
             m_main_view, *m_surface, mvp, pick.screen_ndc, m_sim_time);
         const Vec2 uv = hit.hit ? hit.uv : pick.fallback_uv;
-        m_last_poke_uv = uv;
-
-        simulation::events::PerturbationFired evt;
-        evt.u         = uv.x;
-        evt.v         = uv.y;
-        evt.amplitude = ((pick.seed % 2u) == 0u ? f32(1) : f32(-1))
-            * std::max(f32(0.18), pick.amplitude * f32(2));
-        evt.omega     = f32(6.28);
-        evt.k_wave    = ops::two_pi_v<f32> / std::max(f32(0.6), pick.radius * f32(2.1));
-        evt.alpha     = f32(1) / std::max(f32(0.35), pick.radius);
-        evt.beta      = std::max(f32(0.05), pick.falloff * f32(0.35));
-        evt.sim_time  = m_sim_time;
-        evt.tick      = tick.tick_index;
-        evt.seed      = pick.seed != 0u ? pick.seed : m_poke_seed;
-        ++m_poke_seed;
-
-        auto ripple = std::make_shared<simulation::MetricRipple>(
-            simulation::MetricRipple::from_event(evt));
-        m_fields.add(ripple);
-        m_mesh.mark_dirty();
-        m_ripple_debug_frames = u32(8);
-
-        const f32 metric_now = m_fields.metric_factor(uv.x, uv.y, m_sim_time);
-        const f32 metric_later = m_fields.metric_factor(uv.x, uv.y, m_sim_time + f32(0.25));
-        m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
-            "[{:>7.2f}] DEBUG  pick {} uv=({:.3f},{:.3f}) fallback=({:.3f},{:.3f}) ndc=({:.2f},{:.2f})",
-            m_sim_time,
-            hit.hit ? "ray-hit" : "fallback",
-            uv.x, uv.y,
-            pick.fallback_uv.x, pick.fallback_uv.y,
-            pick.screen_ndc.x, pick.screen_ndc.y),
-            hit.hit ? events::EventSeverity::Notice : events::EventSeverity::Warning);
-        m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
-            "[{:>7.2f}] DEBUG  fields={} metric@poke now={:.5f} metric@poke +0.25s={:.5f}",
-            m_sim_time, m_fields.size(), metric_now, metric_later),
-            events::EventSeverity::Info);
-        m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
-            "[{:>7.2f}] DEBUG  render note: field-driven radial wave A={:.3f} k={:.3f} alpha={:.3f} beta={:.3f}",
-            m_sim_time, evt.amplitude, evt.k_wave, evt.alpha, evt.beta),
-            events::EventSeverity::Notice);
-
-        m_host->events().publish(EventChannelId::Simulation, evt);
-        m_host->events().publish(EventChannelId::Simulation, simulation::events::FieldAdded{
-            .field      = runtime_node_id_from_text(ripple->name()),
-            .sim_time   = m_sim_time,
-            .tick       = tick.tick_index
-        });
+        apply_surface_poke(SimulationSurfacePoke{
+            .view = m_main_view,
+            .uv = uv,
+            .fallback_uv = pick.fallback_uv,
+            .screen_ndc = pick.screen_ndc,
+            .amplitude = pick.amplitude,
+            .radius = pick.radius,
+            .falloff = pick.falloff,
+            .ray_hit = hit.hit,
+            .seed = pick.seed
+        }, tick, true);
     }
+}
+
+void SimulationWavePredatorPrey::apply_surface_poke(const SimulationSurfacePoke& poke,
+                                                    const TickInfo& tick,
+                                                    bool allow_host_events) {
+    const Vec2 uv = poke.uv;
+    m_last_poke_uv = uv;
+
+    simulation::events::PerturbationFired evt;
+    evt.u         = uv.x;
+    evt.v         = uv.y;
+    evt.amplitude = ((poke.seed % 2u) == 0u ? f32(1) : f32(-1))
+        * std::max(f32(0.18), poke.amplitude * f32(2));
+    evt.omega     = f32(6.28);
+    evt.k_wave    = ops::two_pi_v<f32> / std::max(f32(0.6), poke.radius * f32(2.1));
+    evt.alpha     = f32(1) / std::max(f32(0.35), poke.radius);
+    evt.beta      = std::max(f32(0.05), poke.falloff * f32(0.35));
+    evt.sim_time  = m_sim_time;
+    evt.tick      = tick.tick_index;
+    evt.seed      = poke.seed != 0u ? poke.seed : m_poke_seed;
+    ++m_poke_seed;
+
+    auto ripple = std::make_shared<simulation::MetricRipple>(
+        simulation::MetricRipple::from_event(evt));
+    m_fields.add(ripple);
+    m_mesh.mark_dirty();
+    m_ripple_debug_frames = u32(8);
+
+    if (!m_host) return;
+
+    if (!allow_host_events) {
+        m_host->threads().publish_event_record(
+            EventChannelId::Simulation,
+            events::make_perturbation_fired(uv.x, uv.y, evt.amplitude, m_sim_time, tick.tick_index));
+        m_host->threads().publish_event_record(
+            EventChannelId::Simulation,
+            events::make_field_added(runtime_node_id_from_text(ripple->name()).value, m_sim_time, tick.tick_index));
+        return;
+    }
+
+    const f32 metric_now = m_fields.metric_factor(uv.x, uv.y, m_sim_time);
+    const f32 metric_later = m_fields.metric_factor(uv.x, uv.y, m_sim_time + f32(0.25));
+    m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
+        "[{:>7.2f}] DEBUG  pick {} uv=({:.3f},{:.3f}) fallback=({:.3f},{:.3f}) ndc=({:.2f},{:.2f})",
+        m_sim_time,
+        poke.ray_hit ? "ray-hit" : "fallback",
+        uv.x, uv.y,
+        poke.fallback_uv.x, poke.fallback_uv.y,
+        poke.screen_ndc.x, poke.screen_ndc.y),
+        poke.ray_hit ? events::EventSeverity::Notice : events::EventSeverity::Warning);
+    m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
+        "[{:>7.2f}] DEBUG  fields={} metric@poke now={:.5f} metric@poke +0.25s={:.5f}",
+        m_sim_time, m_fields.size(), metric_now, metric_later),
+        events::EventSeverity::Info);
+    m_host->events().log(EventChannelId::Simulation).push_engine_string(std::format(
+        "[{:>7.2f}] DEBUG  render note: field-driven radial wave A={:.3f} k={:.3f} alpha={:.3f} beta={:.3f}",
+        m_sim_time, evt.amplitude, evt.k_wave, evt.alpha, evt.beta),
+        events::EventSeverity::Notice);
+
+    m_host->events().publish(EventChannelId::Simulation, evt);
+    m_host->events().publish(EventChannelId::Simulation, simulation::events::FieldAdded{
+        .field      = runtime_node_id_from_text(ripple->name()),
+        .sim_time   = m_sim_time,
+        .tick       = tick.tick_index
+    });
 }
 
 void SimulationWavePredatorPrey::log_ripple_diagnostics(const TickInfo& tick) {

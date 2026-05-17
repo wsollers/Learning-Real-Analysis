@@ -1,6 +1,7 @@
 #include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
+#include <array>
 #include <exception>
 #include <format>
 
@@ -11,6 +12,21 @@ thread_local ThreadRole t_thread_role = ThreadRole::Unknown;
 
 bool has_capacity(u64 size, u64 capacity) noexcept {
     return capacity == u64(0) || size < capacity;
+}
+
+std::string_view role_name(ThreadRole role) noexcept {
+    switch (role) {
+        case ThreadRole::Main: return "Main";
+        case ThreadRole::Gui: return "Gui";
+        case ThreadRole::Simulation: return "Simulation";
+        case ThreadRole::Renderer: return "Renderer";
+        case ThreadRole::Logger: return "Logger";
+        case ThreadRole::Worker: return "Worker";
+        case ThreadRole::Io: return "Io";
+        case ThreadRole::Telemetry: return "Telemetry";
+        case ThreadRole::Unknown: return "Unknown";
+        default: return "Unknown";
+    }
 }
 } // namespace
 
@@ -25,7 +41,7 @@ ThreadJobContext::ThreadJobContext(ThreadManagementService& service,
 void ThreadJobContext::publish_worker_record(events::EventRecord record) const {
     if (!m_service) return;
     record.id_a = record.id_a == u64(0) ? m_job_id.value : record.id_a;
-    m_service->enqueue_event(record);
+    m_service->enqueue_event(EventChannelId::Worker, record);
 }
 
 void ThreadJobContext::report_diagnostic(DiagnosticReport report) const {
@@ -109,6 +125,12 @@ void ThreadManagementService::shutdown() noexcept {
 
     m_work_available.notify_all();
     m_log_available.notify_all();
+    m_simulation_available.notify_all();
+    if (m_simulation_thread) {
+        m_simulation_thread->request_stop();
+        m_simulation_available.notify_all();
+        m_simulation_thread.reset();
+    }
     if (m_logger_thread) {
         m_logger_thread->request_stop();
         m_log_available.notify_all();
@@ -125,6 +147,8 @@ void ThreadManagementService::shutdown() noexcept {
             }
         }
         m_pending.clear();
+        m_simulation_commands.clear();
+        m_simulation_step = {};
         m_shutting_down = false;
         m_initialised = false;
     }
@@ -212,10 +236,71 @@ std::vector<ThreadJobResult> ThreadManagementService::consume_completed_results(
     return out;
 }
 
+bool ThreadManagementService::enqueue_simulation_command(SimulationThreadCommand command) {
+    std::scoped_lock lock(m_mutex);
+    if (!has_capacity(static_cast<u64>(m_simulation_commands.size()), m_config.max_queued_jobs)) {
+        ++m_dropped_events;
+        return false;
+    }
+    m_simulation_commands.push_back(command);
+    m_simulation_available.notify_one();
+    return true;
+}
+
+std::vector<SimulationThreadCommand> ThreadManagementService::consume_simulation_commands() {
+    std::scoped_lock lock(m_mutex);
+    std::vector<SimulationThreadCommand> out;
+    out.swap(m_simulation_commands);
+    return out;
+}
+
+void ThreadManagementService::publish_event_record(EventChannelId channel, events::EventRecord record) {
+    enqueue_event(channel, record);
+}
+
+bool ThreadManagementService::start_simulation_thread(SimulationThreadFn step) {
+    if (!step) return false;
+
+    std::scoped_lock lock(m_mutex);
+    if (!m_initialised || m_simulation_thread.has_value()) {
+        return false;
+    }
+
+    m_simulation_step = std::move(step);
+    m_simulation_thread.emplace([this](std::stop_token stop) noexcept {
+        simulation_loop(stop);
+    });
+    return true;
+}
+
+void ThreadManagementService::stop_simulation_thread() noexcept {
+    std::optional<std::jthread> thread;
+    {
+        std::scoped_lock lock(m_mutex);
+        thread.swap(m_simulation_thread);
+        m_simulation_step = {};
+    }
+    if (thread) {
+        thread->request_stop();
+        m_simulation_available.notify_all();
+        thread.reset();
+    }
+}
+
+void ThreadManagementService::publish_simulation_snapshot(SimulationRenderSnapshot snapshot) {
+    std::scoped_lock lock(m_mutex);
+    m_latest_simulation_snapshot = std::move(snapshot);
+}
+
+std::optional<SimulationRenderSnapshot> ThreadManagementService::latest_simulation_snapshot() const {
+    std::scoped_lock lock(m_mutex);
+    return m_latest_simulation_snapshot;
+}
+
 void ThreadManagementService::drain_service_mailboxes() {
     std::vector<QueuedLog> logs;
     std::vector<DiagnosticReport> diagnostics;
-    std::vector<events::EventRecord> events;
+    std::vector<QueuedEvent> events;
     {
         std::scoped_lock lock(m_mutex);
         logs.swap(m_log_mailbox);
@@ -236,10 +321,16 @@ void ThreadManagementService::drain_service_mailboxes() {
     }
 
     if (m_bindings.events) {
-        for (events::EventRecord& record : events) {
-            (void)m_bindings.events->enqueue_worker_record(record);
+        std::array<bool, static_cast<std::size_t>(EventChannelId::Count)> touched_channels{};
+        for (QueuedEvent& event : events) {
+            (void)m_bindings.events->enqueue_record(event.channel, event.record);
+            touched_channels[static_cast<std::size_t>(event.channel)] = true;
         }
-        (void)m_bindings.events->drain_worker_mailbox();
+        for (std::size_t i = 0; i < touched_channels.size(); ++i) {
+            if (touched_channels[i]) {
+                (void)m_bindings.events->drain_mailbox(static_cast<EventChannelId>(i));
+            }
+        }
     }
 }
 
@@ -262,6 +353,39 @@ bool ThreadManagementService::is_main_thread() const noexcept {
 
 ThreadRole ThreadManagementService::current_thread_role() const noexcept {
     return t_thread_role;
+}
+
+bool ThreadManagementService::is_thread_role(ThreadRole expected) const noexcept {
+    return current_thread_role() == expected;
+}
+
+bool ThreadManagementService::require_thread_role(ThreadRole expected, std::string_view api_name) {
+    const ThreadRole actual = current_thread_role();
+    if (actual == expected) {
+        return true;
+    }
+
+    DiagnosticReport report;
+    report.severity = DiagnosticSeverity::Error;
+    report.lifetime = DiagnosticLifetime::Frame;
+    report.code = ErrorCode::ThreadRoleViolation;
+    report.source.subsystem = DiagnosticSubsystem::Threading;
+    report.title = "Thread role violation";
+    report.message = std::format(
+        "{} expected {} thread but was called on {} thread",
+        api_name.empty() ? std::string_view{"Unnamed API"} : api_name,
+        role_name(expected),
+        role_name(actual));
+    report.suggested_fix = "Route the call through the owning thread's command queue, mailbox, or immutable snapshot.";
+    report.facts.push_back(DiagnosticFact{.key = "expected_role", .value = std::string{role_name(expected)}});
+    report.facts.push_back(DiagnosticFact{.key = "actual_role", .value = std::string{role_name(actual)}});
+    enqueue_diagnostic(std::move(report));
+    return false;
+}
+
+bool ThreadManagementService::simulation_thread_running() const noexcept {
+    std::scoped_lock lock(m_mutex);
+    return m_simulation_thread.has_value();
 }
 
 void ThreadManagementService::worker_loop(std::stop_token service_stop, u64 worker_index) noexcept {
@@ -341,6 +465,33 @@ void ThreadManagementService::logger_loop(std::stop_token service_stop) noexcept
     }
 }
 
+void ThreadManagementService::simulation_loop(std::stop_token service_stop) noexcept {
+    t_thread_role = ThreadRole::Simulation;
+    while (!service_stop.stop_requested()) {
+        std::vector<SimulationThreadCommand> commands = wait_for_simulation_commands(service_stop);
+        if (commands.empty()) {
+            continue;
+        }
+
+        SimulationThreadFn step;
+        {
+            std::scoped_lock lock(m_mutex);
+            step = m_simulation_step;
+        }
+        if (!step) {
+            continue;
+        }
+
+        try {
+            step(service_stop, commands);
+        } catch (const std::exception& ex) {
+            report_thread_fault(ThreadJobId{}, ex.what());
+        } catch (...) {
+            report_thread_fault(ThreadJobId{}, "simulation thread callback threw an unknown exception");
+        }
+    }
+}
+
 ThreadManagementService::PendingJob
 ThreadManagementService::wait_for_job(std::stop_token service_stop) {
     std::unique_lock lock(m_mutex);
@@ -376,6 +527,18 @@ ThreadManagementService::wait_for_logs(std::stop_token service_stop) {
     std::vector<QueuedLog> logs;
     logs.swap(m_log_mailbox);
     return logs;
+}
+
+std::vector<SimulationThreadCommand>
+ThreadManagementService::wait_for_simulation_commands(std::stop_token service_stop) {
+    std::unique_lock lock(m_mutex);
+    m_simulation_available.wait(lock, [this, service_stop] {
+        return service_stop.stop_requested() || m_shutting_down || !m_simulation_commands.empty();
+    });
+
+    std::vector<SimulationThreadCommand> commands;
+    commands.swap(m_simulation_commands);
+    return commands;
 }
 
 ThreadManagementService::JobRecord*
@@ -440,13 +603,13 @@ void ThreadManagementService::enqueue_diagnostic(DiagnosticReport report) {
     m_diagnostic_mailbox.push_back(std::move(report));
 }
 
-void ThreadManagementService::enqueue_event(events::EventRecord record) {
+void ThreadManagementService::enqueue_event(EventChannelId channel, events::EventRecord record) {
     std::scoped_lock lock(m_mutex);
     if (!has_capacity(static_cast<u64>(m_event_mailbox.size()), m_config.max_mailbox_records)) {
         ++m_dropped_events;
         return;
     }
-    m_event_mailbox.push_back(record);
+    m_event_mailbox.push_back(QueuedEvent{.channel = channel, .record = record});
 }
 
 void ThreadManagementService::report_thread_fault(ThreadJobId id, std::string message) noexcept {

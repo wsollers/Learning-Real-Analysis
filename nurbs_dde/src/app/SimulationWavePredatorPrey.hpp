@@ -40,6 +40,9 @@ public:
     void on_register(SimulationHost& host) override;
     void on_start() override;
     void on_tick(const TickInfo& tick) override;
+    void on_simulation_tick(const TickInfo& tick) override;
+    void on_simulation_command(const SimulationThreadCommand& command) override;
+    void on_submit_render() override;
     void on_stop() override;
 
     [[nodiscard]] SceneSnapshot    snapshot()  const override;
@@ -93,9 +96,11 @@ private:
 
     // ── Internal helpers ──────────────────────────────────────────────────────
     void handle_poke(const TickInfo& tick);
+    void apply_surface_poke(const SimulationSurfacePoke& poke, const TickInfo& tick, bool allow_host_events);
     void log_ripple_diagnostics(const TickInfo& tick);
     void evaluate_alerts(const TickInfo& tick);
     void sweep_decayed_fields(const TickInfo& tick);
+    void advance_state(const TickInfo& tick, bool allow_host_events);
     void sync_context();
     void submit_geometry();
     void reset_particles();

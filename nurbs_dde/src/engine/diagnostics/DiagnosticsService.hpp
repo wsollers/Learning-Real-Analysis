@@ -3,14 +3,21 @@
 // Engine-owned structured diagnostics service.
 
 #include "engine/diagnostics/DiagnosticsTypes.hpp"
+#include "engine/threading/ThreadTypes.hpp"
 
 #include <span>
+#include <string_view>
 #include <vector>
 
 namespace ndde {
 
+class ThreadManagementService;
+
 class DiagnosticsService {
 public:
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept;
+
     [[nodiscard]] DiagnosticId report(DiagnosticReport report, f64 now_seconds = f64(0));
     void report(const ValidationReport& report, f64 now_seconds = f64(0));
 
@@ -36,7 +43,11 @@ public:
 private:
     std::vector<Diagnostic> m_active;
     std::vector<Diagnostic> m_history;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
     u64 m_next_id = u64(1);
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name);
 
     [[nodiscard]] DiagnosticId next_id() noexcept { return DiagnosticId{m_next_id++}; }
     [[nodiscard]] Diagnostic* find_active(DiagnosticId id) noexcept;

@@ -4,6 +4,7 @@ enable_testing()
 add_executable(ndde_tests
     test_all_simulations.cpp
     test_alternate_view_builders.cpp
+    test_app_config.cpp
     test_conics.cpp
     test_capture_service.cpp
     test_axes.cpp
@@ -33,6 +34,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/app/SurfaceMeshCache.cpp
     ${CMAKE_SOURCE_DIR}/src/simulation/fields/IField.cpp
     ${CMAKE_SOURCE_DIR}/src/simulation/scenario/ScenarioBuilder.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/AppConfig.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/capture/CaptureService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/diagnostics/DiagnosticsService.cpp
@@ -55,6 +57,7 @@ target_link_libraries(ndde_tests PRIVATE
     ndde_simulation
     volk
     imgui
+    nlohmann_json::nlohmann_json
     GTest::gtest_main
     glm::glm
 )

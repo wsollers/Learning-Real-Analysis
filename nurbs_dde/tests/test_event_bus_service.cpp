@@ -156,6 +156,36 @@ TEST(EventBusService, WorkerMailboxDrainsCompactRecordsToWorkerChannel) {
     EXPECT_EQ(events.next_sequence_value(ndde::EventChannelId::Worker), 2u);
 }
 
+TEST(EventBusService, ChannelMailboxDrainsCompactRecordsToRequestedChannel) {
+    ndde::EventBusService events;
+    events.init(ndde::EventBusConfig{{
+        ndde::EventChannelConfig{
+            .channel = ndde::EventChannelId::Simulation,
+            .ring_capacity_records = ndde::u64(8),
+            .max_display_records = ndde::u64(8),
+            .record_to_log = true
+        },
+        ndde::EventChannelConfig{
+            .channel = ndde::EventChannelId::Worker,
+            .ring_capacity_records = ndde::u64(8),
+            .max_display_records = ndde::u64(8),
+            .record_to_log = true
+        }
+    }});
+
+    EXPECT_TRUE(events.enqueue_record(ndde::EventChannelId::Simulation, test_record(17)));
+    EXPECT_EQ(events.mailbox_size(ndde::EventChannelId::Simulation), 1u);
+    EXPECT_EQ(events.mailbox_size(ndde::EventChannelId::Worker), 0u);
+
+    EXPECT_EQ(events.drain_mailbox(ndde::EventChannelId::Simulation), 1u);
+    events.drain(ndde::EventChannelId::Simulation, 0.f, ndde::u64(17));
+
+    const auto& sim_entries = events.log(ndde::EventChannelId::Simulation).entries();
+    ASSERT_EQ(sim_entries.size(), 1u);
+    EXPECT_NE(sim_entries.front().text.find("TestEvent"), std::string::npos);
+    EXPECT_TRUE(events.log(ndde::EventChannelId::Worker).entries().empty());
+}
+
 TEST(EventBusService, WorkerMailboxReportsOverflow) {
     ndde::EventBusService events;
     events.init(ndde::EventBusConfig{{
@@ -171,6 +201,23 @@ TEST(EventBusService, WorkerMailboxReportsOverflow) {
     EXPECT_FALSE(events.enqueue_worker_record(test_record(2)));
     EXPECT_EQ(events.worker_mailbox_size(), 1u);
     EXPECT_EQ(events.worker_mailbox_dropped(), 1u);
+}
+
+TEST(EventBusService, ChannelMailboxReportsOverflow) {
+    ndde::EventBusService events;
+    events.init(ndde::EventBusConfig{{
+        ndde::EventChannelConfig{
+            .channel = ndde::EventChannelId::Simulation,
+            .ring_capacity_records = ndde::u64(1),
+            .max_display_records = ndde::u64(1),
+            .record_to_log = true
+        }
+    }});
+
+    EXPECT_TRUE(events.enqueue_record(ndde::EventChannelId::Simulation, test_record(1)));
+    EXPECT_FALSE(events.enqueue_record(ndde::EventChannelId::Simulation, test_record(2)));
+    EXPECT_EQ(events.mailbox_size(ndde::EventChannelId::Simulation), 1u);
+    EXPECT_EQ(events.mailbox_dropped(ndde::EventChannelId::Simulation), 1u);
 }
 
 TEST(EventBusService, ChannelsAreIsolated) {

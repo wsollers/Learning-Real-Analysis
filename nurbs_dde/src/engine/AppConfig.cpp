@@ -64,6 +64,7 @@ AppConfig AppConfig::load_or_default(const std::string& path) {
         cfg.simulation.speed         = jget<f32>(s, "speed",         cfg.simulation.speed);
         cfg.simulation.tessellation  = jget<u32>(s, "tessellation",  cfg.simulation.tessellation);
         cfg.simulation.arena_size_mb = jget<u32>(s, "arena_size_mb", cfg.simulation.arena_size_mb);
+        cfg.simulation.threaded_runtime = jget<bool>(s, "threaded_runtime", cfg.simulation.threaded_runtime);
     }
     if (j.contains("telemetry")) {
         auto& t = j["telemetry"];
@@ -85,7 +86,8 @@ void AppConfig::save(const std::string& path) const {
                           {"target",   {camera.target.x,   camera.target.y,   camera.target.z}},
                           {"fov",  camera.fov}, {"near", camera.near_plane}, {"far", camera.far_plane} }},
         { "simulation", { {"tau", simulation.tau}, {"speed", simulation.speed},
-                          {"tessellation", simulation.tessellation}, {"arena_size_mb", simulation.arena_size_mb} }},
+                          {"tessellation", simulation.tessellation}, {"arena_size_mb", simulation.arena_size_mb},
+                          {"threaded_runtime", simulation.threaded_runtime} }},
         { "telemetry",  { {"enabled",        telemetry.enabled},
                           {"buffer_records", telemetry.buffer_records},
                           {"output_dir",     telemetry.output_dir},

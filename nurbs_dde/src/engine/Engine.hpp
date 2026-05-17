@@ -105,6 +105,9 @@ private:
     void dispatch_global_hotkeys();
     void update_render_view_input();
     void request_capture(bool pause_first);
+    void start_active_simulation_thread();
+    void stop_active_simulation_thread() noexcept;
+    void enqueue_pending_surface_pokes(const TickInfo& tick);
     [[nodiscard]] SimulationRuntime& active_runtime();
     [[nodiscard]] const SimulationRuntime& active_runtime() const;
     [[nodiscard]] EngineAPI make_api();

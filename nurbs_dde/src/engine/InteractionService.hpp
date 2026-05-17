@@ -142,7 +142,14 @@ public:
         }
     }
 
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
     void set_mouse(RenderViewId view, Vec2 pixel, Vec2 ndc, bool enabled, f32 snap_radius_px = 22.f) {
+        if (!require_owner_thread("InteractionService::set_mouse")) return;
         ViewMouseState* state = mouse_state_mut(view);
         if (!state) {
             m_mouse.push_back(ViewMouseState{.view = view});
@@ -163,11 +170,16 @@ public:
     }
 
     void queue_surface_pick(SurfacePickRequest request) {
+        if (!require_owner_thread("InteractionService::queue_surface_pick")) return;
         if (request.view != 0)
             m_surface_requests.push_back(request);
     }
 
     [[nodiscard]] memory::FrameVector<SurfacePickRequest> consume_surface_picks(RenderViewId view) {
+        if (!require_owner_thread("InteractionService::consume_surface_picks")) {
+            return m_memory ? m_memory->frame().make_vector<SurfacePickRequest>()
+                            : memory::FrameVector<SurfacePickRequest>{};
+        }
         memory::FrameVector<SurfacePickRequest> out =
             m_memory ? m_memory->frame().make_vector<SurfacePickRequest>() : memory::FrameVector<SurfacePickRequest>{};
         auto it = m_surface_requests.begin();
@@ -183,11 +195,16 @@ public:
     }
 
     void queue_view_point_pick(ViewPointPickRequest request) {
+        if (!require_owner_thread("InteractionService::queue_view_point_pick")) return;
         if (request.view != 0)
             m_view_point_requests.push_back(request);
     }
 
     [[nodiscard]] memory::FrameVector<ViewPointPickRequest> consume_view_point_picks(RenderViewId view) {
+        if (!require_owner_thread("InteractionService::consume_view_point_picks")) {
+            return m_memory ? m_memory->frame().make_vector<ViewPointPickRequest>()
+                            : memory::FrameVector<ViewPointPickRequest>{};
+        }
         memory::FrameVector<ViewPointPickRequest> out =
             m_memory ? m_memory->frame().make_vector<ViewPointPickRequest>()
                      : memory::FrameVector<ViewPointPickRequest>{};
@@ -351,11 +368,13 @@ public:
     }
 
     void set_hover_hits(SurfaceHit surface, ParticleTrailHit particle = {}) {
+        if (!require_owner_thread("InteractionService::set_hover_hits")) return;
         set_surface_hover(surface);
         set_particle_hover(particle);
     }
 
     void set_hover_view_point(RenderViewId view, Vec2 point, Vec3 world = {}) {
+        if (!require_owner_thread("InteractionService::set_hover_view_point")) return;
         if (view == 0) return;
         m_hover.view = view;
         m_hover.view_point = ViewPointHit{
@@ -375,12 +394,14 @@ public:
     }
 
     void select_current_hover(RenderViewId view = 0) {
+        if (!require_owner_thread("InteractionService::select_current_hover")) return;
         InteractionTarget target = hover_target(view);
         if (target.valid)
             set_selected_target(target);
     }
 
     void select_surface(SurfaceHit hit) {
+        if (!require_owner_thread("InteractionService::select_surface")) return;
         if (!hit.hit) return;
         set_selected_target(InteractionTarget{
             .kind = InteractionTargetKind::SurfacePoint,
@@ -392,6 +413,7 @@ public:
     }
 
     void select_view_point(RenderViewId view, Vec2 point, Vec3 world = {}) {
+        if (!require_owner_thread("InteractionService::select_view_point")) return;
         if (view == 0) return;
         set_selected_target(InteractionTarget{
             .kind = InteractionTargetKind::ViewPoint2D,
@@ -413,6 +435,12 @@ private:
     InteractionTarget m_hover_target{};
     InteractionTarget m_selected_target{};
     memory::MemoryService* m_memory = nullptr;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     [[nodiscard]] static std::optional<Vec2> project_world_to_pixel(Vec3 world,
                                                                     const Mat4& mvp,

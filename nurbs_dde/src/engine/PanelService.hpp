@@ -3,6 +3,7 @@
 // Engine-owned registration surface for UI panels.
 
 #include "engine/ServiceHandle.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 #include "memory/Containers.hpp"
 #include "memory/MemoryService.hpp"
 
@@ -41,7 +42,14 @@ public:
         std::construct_at(&m_panels, resource);
     }
 
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
     [[nodiscard]] PanelHandle register_panel(PanelDescriptor descriptor) {
+        if (!require_owner_thread("PanelService::register_panel")) return {};
         const PanelId id = m_next_id++;
         m_panels.push_back(PanelEntry{
             .id = id,
@@ -52,6 +60,7 @@ public:
     }
 
     void draw_registered_panels(PanelScope scope) {
+        if (!require_owner_thread("PanelService::draw_registered_panels")) return;
         for (auto& entry : m_panels) {
             if (!entry.active || !entry.descriptor.draw) continue;
             if (entry.descriptor.scope != scope) continue;
@@ -93,6 +102,12 @@ private:
     PanelId m_next_id = 1;
     u64 m_generation = 0;
     memory::PersistentVector<PanelEntry> m_panels;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     void unregister(PanelId id) noexcept {
         for (auto& entry : m_panels) {

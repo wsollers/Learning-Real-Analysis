@@ -64,6 +64,7 @@ enum class ErrorCode {
     ReplaySeedMissing,
     MissingCapabilityForTelemetry,
     ThreadFault,
+    ThreadRoleViolation,
     ExternalDependencyUnavailable
 };
 

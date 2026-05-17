@@ -44,9 +44,29 @@ threads will depend on. The current implementation includes:
 - cancellable jobs using `std::stop_source` / `std::stop_token`
 - job status tracking and completed result drain
 - worker-to-owner mailboxes for logs, diagnostics, and compact event records
+- channel-aware compact event mailbox for worker and simulation-thread event
+  records
 - logger-thread drain for worker log messages
 - logger snapshots for UI reads while the logger thread is active
+- simulation-thread command queue for future UI/main-to-simulation handoff
+- dedicated simulation loop thread with start/stop lifecycle and command-batch callback
+- `SimulationRuntime::process_thread_commands()` adapter for thread-driven runtime ticks
+- `ISimulation` update/render split through `on_simulation_tick()` and `on_submit_render()`
+- `SimulationRuntime::tick_simulation()` state-only path for simulation-thread execution
+- runtime serialization between simulation ticks and render submission
+- runtime serialization between simulation ticks and telemetry hooks
+- surface-poke simulation command payload for main/UI-owned input handoff
+- optional engine live wiring via `simulation.threaded_runtime`
+- latest simulation render snapshot mailbox with deep-copied immutable data
 - main-thread role tracking and deterministic shutdown
+- thread-role guard API for main/render/simulation/logger/worker ownership checks
+- `RenderService` mutation APIs guarded by the thread-role service during the
+  current Main-owned transition
+- GUI/Main-owned `PanelService`, `HotkeyService`, and `InteractionService`
+  mutation APIs guarded by the thread-role service
+- Main-owned `CameraService` mutation APIs guarded by the thread-role service
+- Main-owned `DiagnosticsService` ingestion APIs guarded by the thread-role
+  service; workers must report diagnostics through thread mailboxes
 - focused unit tests and tidy build coverage
 
 The target is not merely "some background workers." The target is a fully
@@ -219,8 +239,9 @@ Current runtime is mostly single-threaded:
 - Simulation ticks run on the main thread.
 - Event log drain runs on the main thread.
 - Telemetry push paths are designed for one producer and one consumer.
-- A compact event worker mailbox exists, but the main runtime loop has not yet
-  been split.
+- Compact worker and simulation-thread event mailboxes exist. The live runtime
+  can queue simulation ticks and surface-poke commands, then drain compact event
+  records back into `EventBusService` on the owner thread.
 
 Target split:
 
@@ -253,6 +274,63 @@ systems assume a single-threaded engine.
 No row should silently become "everyone can mutate it." If a second thread needs
 access, add an explicit command queue, mailbox, immutable snapshot, or owned
 resource transfer.
+
+APIs with a strict owner should call
+`ThreadManagementService::require_thread_role(expected, api_name)` at their
+boundary. A violation returns `false` and emits a `ThreadRoleViolation`
+diagnostic so the "Stuff Is Broken" panel can surface the misuse. This is a
+runtime guardrail during migration; once ownership is fully separated, hot-path
+checks can be compiled out or replaced with narrower debug assertions.
+
+During the transition, `RenderService` is wired as Main-owned because Vulkan,
+GLFW, ImGui, and render-packet submission are still co-threaded in the engine
+frame. When render submission/presentation moves to a dedicated render thread,
+the service owner role should change to `ThreadRole::Renderer` and callers
+should submit immutable render snapshots or render commands instead of mutating
+the packet queues directly.
+
+`PanelService`, `HotkeyService`, and `InteractionService` are also wired as
+Main-owned. Worker and simulation threads should communicate with them through
+commands, snapshots, or input handoff records rather than direct mutation.
+`CameraService` is Main-owned during this phase because camera motion mutates
+render-view camera descriptors directly.
+`DiagnosticsService` active issue state is Main-owned during this phase.
+Workers and simulation callbacks should report through `ThreadJobContext` or
+`ThreadManagementService` mailboxes so diagnostics are ingested on the owning
+thread.
+
+## Locking Policy
+
+The threading model uses three synchronization styles:
+
+- owner-thread guards for services that should not be touched from arbitrary
+  threads
+- short `std::mutex` / `std::scoped_lock` regions for shared service state and
+  mailbox swaps
+- fixed-size SPSC-style ring buffers for telemetry and compact event records
+
+Do not add broad locks to hide unclear ownership. If a service has one logical
+owner, guard its mutating APIs with `require_thread_role()` and route
+cross-thread work through commands, mailboxes, immutable snapshots, or resource
+handles. Use locks only where shared ownership is intentional and documented.
+
+Current locks:
+
+- `ThreadManagementService`: `std::mutex` plus condition variables for worker,
+  logger, simulation-command, event, diagnostic, and result mailboxes.
+- `SimulationRuntime`: `std::recursive_mutex` around simulation lifecycle,
+  tick, render-submit, telemetry-hook, metadata, and snapshot publication.
+- `LoggerService`: `std::mutex` around string/record storage.
+- `EventBusService`: `std::mutex` around channel mailboxes; the compact event
+  rings remain fixed-size ring buffers.
+- `SimulationSnapshotStore`: `std::mutex` around latest snapshot publication.
+
+Current owner-guarded services:
+
+- Main-owned: `PanelService`, `HotkeyService`, `InteractionService`,
+  `RenderService`, `CameraService`, and `DiagnosticsService`.
+- Simulation-owned: active simulation state through `SimulationRuntime`.
+- Logger-owned or mailbox-driven: `LoggerService` writes during the transition.
 
 ## Frame Pipeline
 
@@ -403,6 +481,7 @@ public:
     void request_cancel_all() noexcept;
 
     void drain_service_mailboxes();
+    void publish_event_record(EventChannelId channel, events::EventRecord record);
 
     [[nodiscard]] std::span<const ThreadJobStatus> jobs() const noexcept;
     [[nodiscard]] std::optional<ThreadJobStatus> status(ThreadJobId id) const;
@@ -427,16 +506,19 @@ explicit channels.
 
 ### EventBusService
 
-Workers may publish compact records only:
+Workers and simulation-thread callbacks may publish compact records only:
 
 ```text
 worker -> EventBusService::enqueue_worker_record(EventRecord)
-main   -> EventBusService::drain_worker_mailbox()
+worker/simulation -> ThreadManagementService::publish_event_record(channel, EventRecord)
+main              -> EventBusService::drain_mailbox(channel)
 main   -> EventLog::drain()
 ```
 
-Typed event dispatch remains main/simulation-thread only unless a specific
-channel is made MPSC-safe.
+Typed event dispatch remains owner-thread only unless a specific channel is made
+MPSC-safe. Cross-thread events should use fixed-size `EventRecord` payloads with
+IDs only; paths, strings, and large resources stay in their owning service or
+resource registry.
 
 ### LoggerService
 
@@ -457,6 +539,11 @@ Telemetry already has SPSC-oriented buffer contracts. Thread management should
 not turn telemetry into a general job queue. If a telemetry flush worker is
 added, it owns file flushing only and must respect the existing producer/consumer
 boundaries.
+
+Simulation-specific telemetry hooks must be invoked through
+`SimulationRuntime::record_telemetry_tick()`. Engine/UI code should not obtain a
+raw `ISimulation&` just to call telemetry methods, because that bypasses the
+runtime lock and can race with the simulation thread.
 
 ### Renderer And Platform
 
@@ -590,15 +677,16 @@ internals or block waiting for jobs.
 3. Add bounded worker job queue and `std::jthread` worker pool. **Done.**
 4. Route compact worker records through `EventBusService`. **Done.**
 5. Add diagnostics/log mailboxes and main-thread ingestion. **Done.**
-6. Add thread-role assertions for main/GUI/render/simulation-only APIs.
+6. Add thread-role assertions for main/GUI/render/simulation-only APIs. **Thread-role guard API and diagnostics are done; `RenderService`, `PanelService`, `HotkeyService`, `InteractionService`, `CameraService`, and `DiagnosticsService` mutation APIs are covered. Applying checks to additional services remains ongoing.**
 7. Add logger mailbox and logger/I/O thread first; it has the least coupling. **Logger-thread in-memory drain done.**
 8. Move telemetry/log/capture manifest flushing to logger/I/O.
-9. Add immutable render snapshot type and simulation-to-render mailbox.
-10. Split simulation tick into a simulation thread.
-11. Split render submission/presentation into a render thread, or explicitly
+9. Add simulation-thread command queue for UI/main-to-simulation commands. **Done.**
+10. Add immutable render snapshot type and simulation-to-render mailbox. **Snapshot mailbox foundation done.**
+11. Split simulation tick into a simulation thread. **Thread lifecycle, command callback, `SimulationRuntime` command adapter, simulation update/render method split, runtime serialization for render and telemetry hooks, command-based surface poke handoff, compact simulation event mailbox handoff, and optional engine live wiring done. Default config keeps the compatibility path off while remaining direct host-service access is reduced.**
+12. Split render submission/presentation into a render thread, or explicitly
     keep GUI/render co-owned until GLFW/ImGui/Vulkan boundaries are safe.
-12. Move expensive geometry/cache generation onto worker jobs.
-13. Add worker/jobs/thread-health UI panel.
+13. Move expensive geometry/cache generation onto worker jobs.
+14. Add worker/jobs/thread-health UI panel.
 
 ## Unit Test Targets
 
@@ -609,14 +697,27 @@ internals or block waiting for jobs.
 - queued job overflow is reported **Covered.**
 - worker exception becomes a diagnostic **Covered.**
 - compact worker event records drain through `EventBusService` **Covered.**
+- compact simulation-thread event records drain through `EventBusService` **Covered.**
 - results are delivered only through owner-thread drains **Covered.**
 - shutdown joins workers and rejects new jobs **Partially covered.**
 - jobs do not run after `shutdown()` **Partially covered.**
-- GUI-only APIs assert/reject when called off GUI thread
-- render-only APIs assert/reject when called off render thread
-- simulation-only APIs assert/reject when called off simulation thread
+- thread-role guard passes on the expected owner thread **Covered for Main and Simulation.**
+- thread-role guard rejects and reports diagnostics from the wrong thread **Covered for Worker calling Main-only.**
+- GUI/Main-owned service mutation APIs reject and report diagnostics when called off their owner thread **Covered for `PanelService`, `HotkeyService`, and `InteractionService` Worker-to-Main violations.**
+- camera mutation APIs reject and report diagnostics when called off their owner thread **Covered for `CameraService` Worker-to-Main violation.**
+- direct diagnostics ingestion rejects and reports diagnostics when called off its owner thread **Covered for `DiagnosticsService` Worker-to-Main violation.**
+- render-facing mutation APIs reject and report diagnostics when called off their current owner thread **Covered for `RenderService` Worker-to-Main violation.**
+- simulation-only APIs assert/reject when called off simulation thread **Guard API ready; service-level adoption pending.**
+- simulation thread consumes command batches and reports callback failures **Covered.**
+- `SimulationRuntime` can be driven through the simulation thread and publish snapshot mailboxes **Covered.**
+- simulation update and render submission can be invoked independently **Covered.**
+- simulation update and render submission are serialized by `SimulationRuntime` **Covered.**
+- simulation telemetry hooks are serialized by `SimulationRuntime` **Covered.**
+- surface perturbations can be sent as simulation commands without reading `InteractionService` **Covered.**
+- surface perturbation commands publish compact perturbation/field events through the simulation event mailbox **Covered.**
+- `simulation.threaded_runtime` config flag loads/saves and gates live engine threading **Covered.**
 - logger thread drains mailbox without mutating event/diagnostic sources **Covered for worker log mailbox.**
-- latest render snapshot mailbox drops stale snapshots safely
+- latest render snapshot mailbox drops stale snapshots safely **Covered for simulation render snapshot mailbox.**
 
 ## Open Decisions
 

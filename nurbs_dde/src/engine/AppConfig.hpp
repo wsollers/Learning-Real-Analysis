@@ -32,6 +32,7 @@ struct SimulationConfig {
     f32  speed         = 1.0f;
     u32  tessellation  = 256;
     u32  arena_size_mb = 128;
+    bool threaded_runtime = false;
 };
 
 struct TelemetryConfig {

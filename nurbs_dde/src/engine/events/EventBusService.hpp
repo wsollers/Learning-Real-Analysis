@@ -138,7 +138,9 @@ public:
     }
 
     [[nodiscard]] bool enqueue_worker_record(events::EventRecord record);
+    [[nodiscard]] bool enqueue_record(EventChannelId channel, events::EventRecord record);
     [[nodiscard]] u64 drain_worker_mailbox();
+    [[nodiscard]] u64 drain_mailbox(EventChannelId channel);
 
     void drain(EventChannelId channel, f32 sim_time, u64 tick);
     void drain_all(f32 sim_time, u64 tick);
@@ -152,7 +154,9 @@ public:
     [[nodiscard]] bool initialised() const noexcept { return m_initialised; }
     [[nodiscard]] u64 next_sequence_value(EventChannelId channel) const;
     [[nodiscard]] u64 worker_mailbox_size() const;
-    [[nodiscard]] u64 worker_mailbox_dropped() const noexcept { return m_worker_mailbox_dropped; }
+    [[nodiscard]] u64 worker_mailbox_dropped() const noexcept { return mailbox_dropped(EventChannelId::Worker); }
+    [[nodiscard]] u64 mailbox_size(EventChannelId channel) const;
+    [[nodiscard]] u64 mailbox_dropped(EventChannelId channel) const noexcept;
 
 private:
     struct Channel {
@@ -164,10 +168,10 @@ private:
     };
 
     std::array<Channel, static_cast<std::size_t>(EventChannelId::Count)> m_channels;
-    mutable std::mutex m_worker_mailbox_mutex;
-    std::vector<events::EventRecord> m_worker_mailbox;
-    u64 m_worker_mailbox_capacity = u64(512);
-    u64 m_worker_mailbox_dropped = u64(0);
+    mutable std::mutex m_mailbox_mutex;
+    std::array<std::vector<events::EventRecord>, static_cast<std::size_t>(EventChannelId::Count)> m_mailboxes;
+    std::array<u64, static_cast<std::size_t>(EventChannelId::Count)> m_mailbox_capacities{};
+    std::array<u64, static_cast<std::size_t>(EventChannelId::Count)> m_mailbox_dropped{};
     bool m_initialised = false;
 
     [[nodiscard]] static std::size_t index_of(EventChannelId channel) noexcept {
@@ -176,6 +180,7 @@ private:
 
     [[nodiscard]] Channel& channel_for(EventChannelId channel);
     [[nodiscard]] const Channel& channel_for(EventChannelId channel) const;
+    [[nodiscard]] u64 mailbox_capacity(EventChannelId channel) const noexcept;
     [[nodiscard]] static u64 next_sequence(Channel& channel) noexcept {
         return channel.next_sequence++;
     }

@@ -1,4 +1,5 @@
 #include "engine/diagnostics/DiagnosticsService.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
 
@@ -21,7 +22,16 @@ bool ValidationReport::has_warnings() const noexcept {
     });
 }
 
+void DiagnosticsService::set_thread_service(ThreadManagementService* threads,
+                                            ThreadRole owner_role) noexcept {
+    m_threads = threads;
+    m_owner_role = owner_role;
+}
+
 DiagnosticId DiagnosticsService::report(DiagnosticReport report, f64 now_seconds) {
+    if (!require_owner_thread("DiagnosticsService::report")) {
+        return {};
+    }
     if (Diagnostic* existing = find_duplicate(report)) {
         existing->last_seen_seconds = now_seconds;
         ++existing->occurrence_count;
@@ -56,6 +66,9 @@ DiagnosticId DiagnosticsService::report(DiagnosticReport report, f64 now_seconds
 }
 
 void DiagnosticsService::report(const ValidationReport& report_batch, f64 now_seconds) {
+    if (!require_owner_thread("DiagnosticsService::report")) {
+        return;
+    }
     for (const ValidationIssue& issue : report_batch.issues) {
         (void)report(DiagnosticReport{
             .severity = issue.severity,
@@ -71,6 +84,9 @@ void DiagnosticsService::report(const ValidationReport& report_batch, f64 now_se
 }
 
 void DiagnosticsService::resolve(DiagnosticId id) {
+    if (!require_owner_thread("DiagnosticsService::resolve")) {
+        return;
+    }
     auto it = std::find_if(m_active.begin(), m_active.end(), [id](const Diagnostic& diagnostic) {
         return diagnostic.id == id;
     });
@@ -79,6 +95,9 @@ void DiagnosticsService::resolve(DiagnosticId id) {
 }
 
 void DiagnosticsService::resolve_for(ComponentId component) {
+    if (!require_owner_thread("DiagnosticsService::resolve_for")) {
+        return;
+    }
     auto it = m_active.begin();
     while (it != m_active.end()) {
         if (it->source.component && *it->source.component == component) {
@@ -92,11 +111,17 @@ void DiagnosticsService::resolve_for(ComponentId component) {
 }
 
 void DiagnosticsService::acknowledge(DiagnosticId id) {
+    if (!require_owner_thread("DiagnosticsService::acknowledge")) {
+        return;
+    }
     if (Diagnostic* diagnostic = find_active(id))
         diagnostic->acknowledged = true;
 }
 
 void DiagnosticsService::clear_frame_diagnostics() {
+    if (!require_owner_thread("DiagnosticsService::clear_frame_diagnostics")) {
+        return;
+    }
     auto it = m_active.begin();
     while (it != m_active.end()) {
         if (it->lifetime == DiagnosticLifetime::Frame) {
@@ -110,6 +135,9 @@ void DiagnosticsService::clear_frame_diagnostics() {
 }
 
 void DiagnosticsService::clear_scenario_diagnostics() {
+    if (!require_owner_thread("DiagnosticsService::clear_scenario_diagnostics")) {
+        return;
+    }
     auto it = m_active.begin();
     while (it != m_active.end()) {
         if (it->lifetime == DiagnosticLifetime::Frame
@@ -124,11 +152,18 @@ void DiagnosticsService::clear_scenario_diagnostics() {
 }
 
 void DiagnosticsService::clear_all() {
+    if (!require_owner_thread("DiagnosticsService::clear_all")) {
+        return;
+    }
     for (Diagnostic& diagnostic : m_active) {
         diagnostic.active = false;
         m_history.push_back(std::move(diagnostic));
     }
     m_active.clear();
+}
+
+bool DiagnosticsService::require_owner_thread(std::string_view api_name) {
+    return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
 }
 
 std::vector<Diagnostic> DiagnosticsService::active_for(ComponentId component) const {

@@ -1,4 +1,5 @@
 #include "engine/SimulationRuntime.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 
 #include <stdexcept>
 #include <utility>
@@ -17,6 +18,7 @@ SimulationRuntime::~SimulationRuntime() {
 }
 
 void SimulationRuntime::instantiate(SimulationHost& host) {
+    std::scoped_lock lock(m_mutex);
     stop();
     m_simulation = m_factory(host.memory());
     m_simulation->on_register(host);
@@ -26,6 +28,7 @@ void SimulationRuntime::instantiate(SimulationHost& host) {
 }
 
 void SimulationRuntime::start() {
+    std::scoped_lock lock(m_mutex);
     if (!m_simulation)
         throw std::runtime_error("[SimulationRuntime] start called before instantiate");
     if (!m_started) {
@@ -36,6 +39,7 @@ void SimulationRuntime::start() {
 }
 
 void SimulationRuntime::stop() {
+    std::scoped_lock lock(m_mutex);
     if (m_simulation) {
         m_simulation->on_stop();
         m_simulation.reset();
@@ -46,11 +50,13 @@ void SimulationRuntime::stop() {
 }
 
 void SimulationRuntime::pause() {
+    std::scoped_lock lock(m_mutex);
     m_paused = true;
     publish();
 }
 
 void SimulationRuntime::resume() {
+    std::scoped_lock lock(m_mutex);
     if (!m_simulation)
         throw std::runtime_error("[SimulationRuntime] resume called before instantiate");
     m_paused = false;
@@ -58,6 +64,7 @@ void SimulationRuntime::resume() {
 }
 
 void SimulationRuntime::tick(TickInfo tick) {
+    std::scoped_lock lock(m_mutex);
     if (!m_simulation) return;
     TickInfo effective = tick;
     effective.paused = m_paused || tick.paused;
@@ -66,7 +73,67 @@ void SimulationRuntime::tick(TickInfo tick) {
     publish();
 }
 
+void SimulationRuntime::tick_simulation(TickInfo tick) {
+    std::scoped_lock lock(m_mutex);
+    if (!m_simulation) return;
+    TickInfo effective = tick;
+    effective.paused = m_paused || tick.paused;
+    if (effective.paused) effective.dt = 0.f;
+    m_simulation->on_simulation_tick(effective);
+    publish();
+}
+
+void SimulationRuntime::submit_render() {
+    std::scoped_lock lock(m_mutex);
+    if (!m_simulation) return;
+    m_simulation->on_submit_render();
+}
+
+void SimulationRuntime::process_thread_commands(std::span<const SimulationThreadCommand> commands,
+                                                ThreadManagementService* threads) {
+    for (const SimulationThreadCommand& command : commands) {
+        switch (command.kind) {
+            case SimulationThreadCommandKind::Pause:
+                pause();
+                break;
+            case SimulationThreadCommandKind::Resume:
+                resume();
+                break;
+            case SimulationThreadCommandKind::Stop:
+            case SimulationThreadCommandKind::Shutdown:
+                stop();
+                break;
+            case SimulationThreadCommandKind::Tick:
+                tick_simulation(command.tick);
+                break;
+            case SimulationThreadCommandKind::SurfacePoke: {
+                    std::scoped_lock lock(m_mutex);
+                    if (m_simulation) {
+                        m_simulation->on_simulation_command(command);
+                    }
+                }
+                publish();
+                break;
+            case SimulationThreadCommandKind::SwitchSimulation:
+            case SimulationThreadCommandKind::ResetClock:
+                publish();
+                break;
+        }
+    }
+
+    if (threads) {
+        threads->publish_simulation_snapshot(make_simulation_render_snapshot(snapshot()));
+    }
+}
+
+void SimulationRuntime::record_telemetry_tick(u64 tick_index, const TickInfo& tick, EngineAPI& api) {
+    std::scoped_lock lock(m_mutex);
+    if (!m_simulation) return;
+    m_simulation->on_telemetry_tick(tick_index, tick, api);
+}
+
 void SimulationRuntime::publish() {
+    std::scoped_lock lock(m_mutex);
     if (m_simulation) {
         SimulationSnapshot snapshot = m_simulation->snapshot();
         snapshot.paused = m_paused;
@@ -81,12 +148,14 @@ void SimulationRuntime::publish() {
 }
 
 ISimulation& SimulationRuntime::simulation() {
+    std::scoped_lock lock(m_mutex);
     if (!m_simulation)
         throw std::runtime_error("[SimulationRuntime] simulation requested before instantiate");
     return *m_simulation;
 }
 
 const ISimulation& SimulationRuntime::simulation() const {
+    std::scoped_lock lock(m_mutex);
     if (!m_simulation)
         throw std::runtime_error("[SimulationRuntime] simulation requested before instantiate");
     return *m_simulation;
@@ -97,6 +166,7 @@ SimulationSnapshot SimulationRuntime::snapshot() const {
 }
 
 SimulationMetadata SimulationRuntime::metadata() const {
+    std::scoped_lock lock(m_mutex);
     if (!m_simulation) {
         return SimulationMetadata{
             .name = m_name,

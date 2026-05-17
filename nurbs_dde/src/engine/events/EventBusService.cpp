@@ -49,9 +49,7 @@ void EventBusService::init(EventBusConfig config) {
         ch.record_to_log = channel_config.record_to_log;
         ch.configured = true;
         ch.next_sequence = u64(1);
-        if (channel_config.channel == EventChannelId::Worker) {
-            m_worker_mailbox_capacity = channel_config.ring_capacity_records;
-        }
+        m_mailbox_capacities[index_of(channel_config.channel)] = channel_config.ring_capacity_records;
         if (ch.record_to_log) {
             ch.log.init(channel_config.ring_capacity_records,
                         channel_config.max_display_records);
@@ -72,53 +70,65 @@ void EventBusService::shutdown() noexcept {
         channel.configured = false;
     }
     {
-        std::scoped_lock lock{m_worker_mailbox_mutex};
-        m_worker_mailbox.clear();
-        m_worker_mailbox_capacity = u64(512);
-        m_worker_mailbox_dropped = u64(0);
+        std::scoped_lock lock{m_mailbox_mutex};
+        for (auto& mailbox : m_mailboxes) {
+            mailbox.clear();
+        }
+        m_mailbox_capacities.fill(u64(512));
+        m_mailbox_dropped.fill(u64(0));
     }
     m_initialised = false;
 }
 
 bool EventBusService::enqueue_worker_record(events::EventRecord record) {
-    std::scoped_lock lock{m_worker_mailbox_mutex};
-    if (m_worker_mailbox.size() >= static_cast<std::size_t>(m_worker_mailbox_capacity)) {
-        ++m_worker_mailbox_dropped;
+    return enqueue_record(EventChannelId::Worker, record);
+}
+
+bool EventBusService::enqueue_record(EventChannelId channel, events::EventRecord record) {
+    std::scoped_lock lock{m_mailbox_mutex};
+    const std::size_t index = index_of(channel);
+    std::vector<events::EventRecord>& mailbox = m_mailboxes[index];
+    if (mailbox.size() >= static_cast<std::size_t>(mailbox_capacity(channel))) {
+        ++m_mailbox_dropped[index];
         return false;
     }
-    m_worker_mailbox.push_back(record);
+    mailbox.push_back(record);
     return true;
 }
 
 u64 EventBusService::drain_worker_mailbox() {
+    return drain_mailbox(EventChannelId::Worker);
+}
+
+u64 EventBusService::drain_mailbox(EventChannelId channel) {
     std::vector<events::EventRecord> pending;
     {
-        std::scoped_lock lock{m_worker_mailbox_mutex};
-        pending.swap(m_worker_mailbox);
+        std::scoped_lock lock{m_mailbox_mutex};
+        pending.swap(m_mailboxes[index_of(channel)]);
     }
 
-    Channel& worker = channel_for(EventChannelId::Worker);
+    Channel& target = channel_for(channel);
     for (events::EventRecord& record : pending) {
-        record.sequence = next_sequence(worker);
-        if (worker.record_to_log && worker.configured) {
-            (void)worker.log.ring().push(record);
+        record.sequence = next_sequence(target);
+        if (target.record_to_log && target.configured) {
+            (void)target.log.ring().push(record);
         }
     }
     return static_cast<u64>(pending.size());
 }
 
 void EventBusService::drain(EventChannelId channel, f32 sim_time, u64 tick) {
-    if (channel == EventChannelId::Worker) {
-        (void)drain_worker_mailbox();
-    }
+    (void)drain_mailbox(channel);
     Channel& ch = channel_for(channel);
     if (ch.record_to_log)
         ch.log.drain(sim_time, tick);
 }
 
 void EventBusService::drain_all(f32 sim_time, u64 tick) {
-    (void)drain_worker_mailbox();
-    for (Channel& ch : m_channels) {
+    for (std::size_t i = 0; i < m_channels.size(); ++i) {
+        Channel& ch = m_channels[i];
+        const auto channel = static_cast<EventChannelId>(i);
+        (void)drain_mailbox(channel);
         if (ch.configured && ch.record_to_log)
             ch.log.drain(sim_time, tick);
     }
@@ -129,11 +139,9 @@ void EventBusService::reset_channel(EventChannelId channel) noexcept {
     ch.bus.clear_all_subscribers();
     ch.log.reset();
     ch.next_sequence = u64(1);
-    if (channel == EventChannelId::Worker) {
-        std::scoped_lock lock{m_worker_mailbox_mutex};
-        m_worker_mailbox.clear();
-        m_worker_mailbox_dropped = u64(0);
-    }
+    std::scoped_lock lock{m_mailbox_mutex};
+    m_mailboxes[index_of(channel)].clear();
+    m_mailbox_dropped[index_of(channel)] = u64(0);
 }
 
 void EventBusService::clear_scenario_channels() noexcept {
@@ -162,8 +170,16 @@ u64 EventBusService::next_sequence_value(EventChannelId channel) const {
 }
 
 u64 EventBusService::worker_mailbox_size() const {
-    std::scoped_lock lock{m_worker_mailbox_mutex};
-    return static_cast<u64>(m_worker_mailbox.size());
+    return mailbox_size(EventChannelId::Worker);
+}
+
+u64 EventBusService::mailbox_size(EventChannelId channel) const {
+    std::scoped_lock lock{m_mailbox_mutex};
+    return static_cast<u64>(m_mailboxes[index_of(channel)].size());
+}
+
+u64 EventBusService::mailbox_dropped(EventChannelId channel) const noexcept {
+    return m_mailbox_dropped[index_of(channel)];
 }
 
 EventBusService::Channel& EventBusService::channel_for(EventChannelId channel) {
@@ -178,6 +194,11 @@ const EventBusService::Channel& EventBusService::channel_for(EventChannelId chan
     if (index >= m_channels.size())
         throw std::out_of_range("[EventBusService] Invalid event channel");
     return m_channels[index];
+}
+
+u64 EventBusService::mailbox_capacity(EventChannelId channel) const noexcept {
+    const u64 capacity = m_mailbox_capacities[index_of(channel)];
+    return capacity == u64(0) ? u64(512) : capacity;
 }
 
 } // namespace ndde

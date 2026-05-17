@@ -7,6 +7,7 @@
 #include "engine/SimulationClock.hpp"
 #include "engine/SimulationHost.hpp"
 #include "engine/EngineAPI.hpp"
+#include "engine/threading/ThreadTypes.hpp"
 
 #include <string_view>
 
@@ -21,6 +22,9 @@ public:
     virtual void on_register(SimulationHost& host) = 0;
     virtual void on_start() = 0;
     virtual void on_tick(const TickInfo& tick) = 0;
+    virtual void on_simulation_tick(const TickInfo& tick) { on_tick(tick); }
+    virtual void on_simulation_command(const SimulationThreadCommand&) {}
+    virtual void on_submit_render() {}
     virtual void on_stop() = 0;
 
     // Optional telemetry hook — called by Engine::run_frame() each tick when
