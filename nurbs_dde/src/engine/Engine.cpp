@@ -59,6 +59,14 @@ bool primary_view_ui_blocked(const ImGuiIO& io) noexcept {
         || ImGui::IsAnyItemActive();
 }
 
+void draw_wrapped_log_text(std::string_view text, ImVec4 color) {
+    ImGui::PushStyleColor(ImGuiCol_Text, color);
+    ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x);
+    ImGui::TextUnformatted(text.data(), text.data() + text.size());
+    ImGui::PopTextWrapPos();
+    ImGui::PopStyleColor();
+}
+
 } // namespace
 
 void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -276,6 +284,9 @@ void Engine::run_frame() {
     m_last_frame_time     = now;
     const f32 frame_ms    = static_cast<f32>(delta_s * 1000.0);
     const f32 fps         = (frame_ms > 0.f) ? 1000.f / frame_ms : 0.f;
+    m_services.metrics().begin_frame(m_services.clock().current().tick_index,
+                                     static_cast<f64>(now));
+    m_services.metrics().record_frame_time(frame_ms);
 
     // Destroy previous-frame packet payloads before releasing frame PMR memory.
     m_services.render().clear_packets();
@@ -389,6 +400,7 @@ void Engine::run_frame() {
     if (!primary_ok) handle_resize();
 
     apply_pending_simulation_switch();
+    m_services.metrics().end_frame();
 }
 
 void Engine::register_global_panels() {
@@ -422,6 +434,12 @@ void Engine::register_global_panels() {
         .category = "Engine",
         .scope = PanelScope::Global,
         .draw = [this] { draw_thread_health_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Engine - Metrics",
+        .category = "Engine",
+        .scope = PanelScope::Global,
+        .draw = [this] { draw_metrics_panel(); }
     }));
 }
 
@@ -635,38 +653,55 @@ void Engine::draw_event_log_panel() {
     ImGui::SetNextWindowBgAlpha(0.86f);
     if (!ImGui::Begin("Engine - Log")) { ImGui::End(); return; }
 
-    // Engine-scoped narrative log records from LoggerService.
-    if (ImGui::TreeNodeEx("Engine Events", ImGuiTreeNodeFlags_DefaultOpen)) {
-        for (const LogSnapshotEntry& entry : m_services.logger().snapshot()) {
-            if (entry.record.category != LogCategory::Engine) {
-                continue;
-            }
-            ImGui::TextDisabled("%.*s", static_cast<int>(entry.message.size()), entry.message.data());
-        }
-        ImGui::TreePop();
-    }
+    const ImGuiStyle& style = ImGui::GetStyle();
+    const f32 footer_height =
+        (ImGui::GetTextLineHeightWithSpacing() * 2.0f) +
+        style.ItemSpacing.y +
+        style.WindowPadding.y;
 
-    // Sim-scoped events from EventLog — severity-tinted
-    const auto& sim_entries = m_services.events().log(EventChannelId::Simulation).entries();
-    if (!sim_entries.empty()) {
-        ImGui::Separator();
-        if (ImGui::TreeNodeEx("Sim Events", ImGuiTreeNodeFlags_DefaultOpen)) {
-            for (const auto& entry : sim_entries) {
-                ImVec4 color;
-                using S = ndde::events::EventSeverity;
-                switch (entry.severity) {
-                    case S::Info:     color = {0.7f, 0.7f, 0.7f, 1.f}; break;
-                    case S::Notice:   color = {0.4f, 0.8f, 1.0f, 1.f}; break;
-                    case S::Warning:  color = {1.0f, 0.9f, 0.2f, 1.f}; break;
-                    case S::Alert:    color = {1.0f, 0.5f, 0.1f, 1.f}; break;
-                    case S::Critical: color = {1.0f, 0.2f, 0.2f, 1.f}; break;
-                    default:          color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+    if (ImGui::BeginChild("engine_log_scroll", ImVec2(0.f, -footer_height), false,
+            ImGuiWindowFlags_AlwaysVerticalScrollbar)) {
+        const bool was_at_bottom = ImGui::GetScrollY() >= ImGui::GetScrollMaxY();
+
+        // Engine-scoped narrative log records from LoggerService.
+        if (ImGui::TreeNodeEx("Engine Events", ImGuiTreeNodeFlags_DefaultOpen)) {
+            const ImVec4 disabled = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+            for (const LogSnapshotEntry& entry : m_services.logger().snapshot()) {
+                if (entry.record.category != LogCategory::Engine) {
+                    continue;
                 }
-                ImGui::TextColored(color, "%s", entry.text.c_str());
+                draw_wrapped_log_text(entry.message, disabled);
             }
             ImGui::TreePop();
         }
+
+        // Sim-scoped events from EventLog, severity-tinted.
+        const auto& sim_entries = m_services.events().log(EventChannelId::Simulation).entries();
+        if (!sim_entries.empty()) {
+            ImGui::Separator();
+            if (ImGui::TreeNodeEx("Sim Events", ImGuiTreeNodeFlags_DefaultOpen)) {
+                for (const auto& entry : sim_entries) {
+                    ImVec4 color;
+                    using S = ndde::events::EventSeverity;
+                    switch (entry.severity) {
+                        case S::Info:     color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+                        case S::Notice:   color = {0.4f, 0.8f, 1.0f, 1.f}; break;
+                        case S::Warning:  color = {1.0f, 0.9f, 0.2f, 1.f}; break;
+                        case S::Alert:    color = {1.0f, 0.5f, 0.1f, 1.f}; break;
+                        case S::Critical: color = {1.0f, 0.2f, 0.2f, 1.f}; break;
+                        default:          color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+                    }
+                    draw_wrapped_log_text(entry.text, color);
+                }
+                ImGui::TreePop();
+            }
+        }
+
+        if (was_at_bottom) {
+            ImGui::SetScrollHereY(1.0f);
+        }
     }
+    ImGui::EndChild();
 
     // Stats
     ImGui::Separator();
@@ -735,6 +770,64 @@ void Engine::draw_thread_health_panel() {
         }
         ImGui::EndTable();
     }
+    ImGui::End();
+}
+
+void Engine::draw_metrics_panel() {
+    ImGui::SetNextWindowPos(ImVec2(720.f, 420.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(420.f, 300.f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowBgAlpha(0.86f);
+    if (!ImGui::Begin("Engine - Metrics")) { ImGui::End(); return; }
+
+    const MetricSummary frame = m_services.metrics().short_summary(MetricId::FrameMs);
+    ImGui::TextDisabled("Median %.1f FPS   P95 %.2f ms   Latest %.2f ms",
+        m_services.metrics().median_fps(),
+        frame.p95,
+        frame.latest);
+
+    ImGui::SeparatorText("Frame");
+    if (ImGui::BeginTable("metric_frame_table", 5,
+            ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp)) {
+        ImGui::TableSetupColumn("Metric");
+        ImGui::TableSetupColumn("Latest");
+        ImGui::TableSetupColumn("Median");
+        ImGui::TableSetupColumn("P95");
+        ImGui::TableSetupColumn("Max");
+        ImGui::TableHeadersRow();
+
+        const auto draw_row = [this](MetricId id) {
+            const u32 slot = static_cast<u32>(id);
+            const MetricSummary summary = m_services.metrics().short_summary(id);
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(metric_descriptors[slot].name.data(),
+                                   metric_descriptors[slot].name.data() + metric_descriptors[slot].name.size());
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("%.2f", summary.latest);
+            ImGui::TableSetColumnIndex(2);
+            ImGui::Text("%.2f", summary.median);
+            ImGui::TableSetColumnIndex(3);
+            ImGui::Text("%.2f", summary.p95);
+            ImGui::TableSetColumnIndex(4);
+            ImGui::Text("%.2f", summary.max);
+        };
+
+        draw_row(MetricId::FrameMs);
+        draw_row(MetricId::FrameFps);
+        draw_row(MetricId::SimulationTickMs);
+        draw_row(MetricId::TelemetryTickMs);
+        ImGui::EndTable();
+    }
+
+    ImGui::SeparatorText("Counters");
+    ImGui::TextDisabled("Frames submitted %llu   presented %llu   skipped %llu",
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::FramesSubmitted)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::FramesPresented)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::FramesSkipped)));
+    ImGui::TextDisabled("Jobs submitted %llu   completed %llu   failed %llu",
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsSubmitted)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsCompleted)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsFailed)));
     ImGui::End();
 }
 

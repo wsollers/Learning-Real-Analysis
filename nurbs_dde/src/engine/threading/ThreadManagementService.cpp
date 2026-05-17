@@ -1,4 +1,5 @@
 #include "engine/threading/ThreadManagementService.hpp"
+#include "engine/metricservice/MetricsService.hpp"
 
 #include <algorithm>
 #include <array>
@@ -192,6 +193,9 @@ ThreadJobId ThreadManagementService::submit(ThreadJobDescriptor descriptor, Thre
 
     m_jobs.push_back(std::move(record));
     m_pending.push_back(PendingJob{.id = id, .fn = std::move(job)});
+    if (m_bindings.metrics) {
+        m_bindings.metrics->increment(MetricId::JobsSubmitted);
+    }
     m_work_available.notify_one();
     return id;
 }
@@ -523,6 +527,10 @@ bool ThreadManagementService::render_thread_running() const noexcept {
 
 void ThreadManagementService::worker_loop(std::stop_token service_stop, u64 worker_index) noexcept {
     t_thread_role = ThreadRole::Worker;
+    std::optional<MetricsThreadScope> metrics_scope;
+    if (m_bindings.metrics) {
+        metrics_scope.emplace(*m_bindings.metrics, ThreadRole::Worker);
+    }
     while (!service_stop.stop_requested()) {
         PendingJob pending = wait_for_job(service_stop);
         if (!pending.fn) return;
@@ -552,12 +560,23 @@ void ThreadManagementService::worker_loop(std::stop_token service_stop, u64 work
                 finished->status.state = finished->stop_source.stop_requested()
                     ? ThreadJobState::Cancelled
                     : ThreadJobState::Completed;
+                if (m_bindings.metrics) {
+                    m_bindings.metrics->increment(finished->status.state == ThreadJobState::Cancelled
+                        ? MetricId::JobsCancelled
+                        : MetricId::JobsCompleted);
+                }
             }
         } catch (const std::exception& ex) {
             set_state(pending.id, ThreadJobState::Failed, worker_index);
+            if (m_bindings.metrics) {
+                m_bindings.metrics->increment(MetricId::JobsFailed);
+            }
             report_thread_fault(pending.id, ex.what());
         } catch (...) {
             set_state(pending.id, ThreadJobState::Failed, worker_index);
+            if (m_bindings.metrics) {
+                m_bindings.metrics->increment(MetricId::JobsFailed);
+            }
             report_thread_fault(pending.id, "worker job threw an unknown exception");
         }
     }
@@ -565,6 +584,10 @@ void ThreadManagementService::worker_loop(std::stop_token service_stop, u64 work
 
 void ThreadManagementService::logger_loop(std::stop_token service_stop) noexcept {
     t_thread_role = ThreadRole::Logger;
+    std::optional<MetricsThreadScope> metrics_scope;
+    if (m_bindings.metrics) {
+        metrics_scope.emplace(*m_bindings.metrics, ThreadRole::Logger);
+    }
     while (!service_stop.stop_requested()) {
         LoggerWork work = wait_for_logger_work(service_stop);
         if (work.logs.empty() && work.tasks.empty()) {
@@ -617,6 +640,10 @@ void ThreadManagementService::logger_loop(std::stop_token service_stop) noexcept
 
 void ThreadManagementService::simulation_loop(std::stop_token service_stop) noexcept {
     t_thread_role = ThreadRole::Simulation;
+    std::optional<MetricsThreadScope> metrics_scope;
+    if (m_bindings.metrics) {
+        metrics_scope.emplace(*m_bindings.metrics, ThreadRole::Simulation);
+    }
     while (!service_stop.stop_requested()) {
         std::vector<SimulationThreadCommand> commands = wait_for_simulation_commands(service_stop);
         if (commands.empty()) {
@@ -644,6 +671,10 @@ void ThreadManagementService::simulation_loop(std::stop_token service_stop) noex
 
 void ThreadManagementService::render_loop(std::stop_token service_stop) noexcept {
     t_thread_role = ThreadRole::Renderer;
+    std::optional<MetricsThreadScope> metrics_scope;
+    if (m_bindings.metrics) {
+        metrics_scope.emplace(*m_bindings.metrics, ThreadRole::Renderer);
+    }
     while (!service_stop.stop_requested()) {
         RenderWork work = wait_for_render_work(service_stop);
         if (work.commands.empty() && work.tasks.empty()) {

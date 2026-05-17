@@ -11,6 +11,7 @@
 #include "engine/InteractionService.hpp"
 #include "engine/logging/LoggerService.hpp"
 #include "engine/metadata/SimMetadataService.hpp"
+#include "engine/metricservice/MetricsService.hpp"
 #include "engine/PanelService.hpp"
 #include "engine/RenderService.hpp"
 #include "engine/resources/ResourceManagerService.hpp"
@@ -34,6 +35,7 @@ public:
                    EventBusService& events,
                    LoggerService& logger,
                    SimMetadataService& metadata,
+                   MetricsService& metrics,
                    ResourceManagerService& resources,
                    ThreadManagementService& threads,
                    SimulationClock& clock,
@@ -47,6 +49,7 @@ public:
         , m_events(events)
         , m_logger(logger)
         , m_metadata(metadata)
+        , m_metrics(metrics)
         , m_resources(resources)
         , m_threads(threads)
         , m_clock(clock)
@@ -62,6 +65,7 @@ public:
     [[nodiscard]] EventBusService& events() const noexcept { return m_events; }
     [[nodiscard]] LoggerService& logger() const noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() const noexcept { return m_metadata; }
+    [[nodiscard]] MetricsService& metrics() const noexcept { return m_metrics; }
     [[nodiscard]] ResourceManagerService& resources() const noexcept { return m_resources; }
     [[nodiscard]] ThreadManagementService& threads() const noexcept { return m_threads; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
@@ -77,6 +81,7 @@ private:
     EventBusService& m_events;
     LoggerService& m_logger;
     SimMetadataService& m_metadata;
+    MetricsService& m_metrics;
     ResourceManagerService& m_resources;
     ThreadManagementService& m_threads;
     SimulationClock& m_clock;
@@ -93,11 +98,13 @@ public:
         m_camera.set_render_service(&m_render);
         m_events.init();
         m_logger.init();
+        m_metrics.init();
         m_resources.init();
         m_threads.init(ThreadPoolConfig{.enable_logger_thread = true}, ThreadServiceBindings{
             .diagnostics = &m_diagnostics,
             .events = &m_events,
-            .logger = &m_logger
+            .logger = &m_logger,
+            .metrics = &m_metrics
         });
         m_diagnostics.set_thread_service(&m_threads, ThreadRole::Main);
         m_events.set_owner_guard([this](std::string_view api_name) {
@@ -132,6 +139,7 @@ public:
     [[nodiscard]] EventBusService& events() noexcept { return m_events; }
     [[nodiscard]] LoggerService& logger() noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() noexcept { return m_metadata; }
+    [[nodiscard]] MetricsService& metrics() noexcept { return m_metrics; }
     [[nodiscard]] ResourceManagerService& resources() noexcept { return m_resources; }
     [[nodiscard]] ThreadManagementService& threads() noexcept { return m_threads; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
@@ -139,7 +147,7 @@ public:
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
         return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera,
-                              m_diagnostics, m_events, m_logger, m_metadata, m_resources,
+                              m_diagnostics, m_events, m_logger, m_metadata, m_metrics, m_resources,
                               m_threads, m_clock, m_memory);
     }
 
@@ -155,6 +163,7 @@ private:
     EventBusService m_events;
     LoggerService m_logger;
     SimMetadataService m_metadata;
+    MetricsService m_metrics;
     ResourceManagerService m_resources;
     ThreadManagementService m_threads;
     CameraInputController m_camera_input;

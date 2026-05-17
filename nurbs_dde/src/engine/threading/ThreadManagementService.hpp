@@ -22,6 +22,7 @@
 namespace ndde {
 
 class ThreadManagementService;
+class MetricsService;
 
 class ThreadJobContext {
 public:
@@ -61,6 +62,7 @@ struct ThreadServiceBindings {
     DiagnosticsService* diagnostics = nullptr;
     EventBusService* events = nullptr;
     LoggerService* logger = nullptr;
+    MetricsService* metrics = nullptr;
 };
 
 class ThreadManagementService {

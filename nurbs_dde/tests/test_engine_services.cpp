@@ -729,6 +729,7 @@ TEST(SimulationHost, ExposesOnlyServiceFacade) {
     }));
     EXPECT_EQ(services.logger().message(log_id), "host log");
     EXPECT_EQ(&host.memory(), &services.memory());
+    EXPECT_EQ(&host.metrics(), &services.metrics());
 }
 
 TEST(ServiceHandle, HandlesUnregisterNormallyBeforeServiceRebind) {
