@@ -98,6 +98,7 @@ private:
     void draw_debug_coordinates_panel();
     void draw_simulation_metadata_panel();
     void draw_event_log_panel();
+    void draw_thread_health_panel();
     void flush_render_service();
     void install_global_hotkeys();
     void uninstall_global_hotkeys() noexcept;

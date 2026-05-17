@@ -7,6 +7,8 @@
 #include <cstring>
 #include <format>
 #include <iostream>
+#include <memory_resource>
+#include <type_traits>
 
 namespace ndde::simulation {
 
@@ -104,15 +106,13 @@ std::vector<glm::vec2> ScenarioBuilder::compute_spawn_positions(
 void ScenarioBuilder::build(
         ParticleSystem&                                        particles,
         FieldCompositor&                                       compositor,
-        std::vector<std::unique_ptr<ndde::events::AlertRule>>& alerts_out,
+        std::vector<ndde::events::AlertRulePtr>&               alerts_out,
         EventBusService&                                       events,
         EventChannelId                                         channel,
         memory::MemoryService*                                 memory,
         f32                                                    sim_time,
         u64                                                    tick)
 {
-    (void)memory;  // reserved for future PMR-backed allocation
-
     events.publish(channel, ndde::simulation::events::ScenarioStarted{
         .scenario = runtime_node_id_from_text(m_name),
         .sim_time = sim_time,
@@ -183,8 +183,30 @@ void ScenarioBuilder::build(
         });
     }
 
-    for (auto& alert : m_alerts)
-        alerts_out.push_back(std::move(alert));
+    memory::SimulationMemoryScope fallback_scope{"ScenarioBuilderFallback"};
+    auto& alert_scope = memory ? memory->simulation() : fallback_scope;
+    for (auto& alert : m_alerts) {
+        std::visit([&alerts_out, &alert_scope](auto& params) {
+            using Params = std::decay_t<decltype(params)>;
+            if constexpr (std::is_same_v<Params, ndde::events::ProximityAlert::Params>) {
+                alerts_out.push_back(alert_scope.template make_unique_as<
+                    ndde::events::AlertRule, ndde::events::ProximityAlert>(params));
+            } else if constexpr (std::is_same_v<Params, ndde::events::EscapeAlert::Params>) {
+                alerts_out.push_back(alert_scope.template make_unique_as<
+                    ndde::events::AlertRule, ndde::events::EscapeAlert>(params));
+            } else if constexpr (std::is_same_v<Params, ndde::events::StealthAlert::Params>) {
+                alerts_out.push_back(alert_scope.template make_unique_as<
+                    ndde::events::AlertRule, ndde::events::StealthAlert>(params));
+            } else if constexpr (std::is_same_v<Params, ndde::events::CapturePendingAlert::Params>) {
+                alerts_out.push_back(alert_scope.template make_unique_as<
+                    ndde::events::AlertRule, ndde::events::CapturePendingAlert>(params));
+            } else if constexpr (std::is_same_v<Params, ndde::events::CustomAlert::Params>) {
+                alerts_out.push_back(alert_scope.template make_unique_as<
+                    ndde::events::AlertRule, ndde::events::CustomAlert>(std::move(params)));
+            }
+        }, alert);
+    }
+    m_alerts.clear();
 
     std::cout << std::format("[ScenarioBuilder] Built '{}': {} agents, "
         "{} fields, {} alerts\n",

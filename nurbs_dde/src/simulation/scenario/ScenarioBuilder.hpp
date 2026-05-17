@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <variant>
 
 namespace ndde::simulation {
 
@@ -57,8 +58,7 @@ public:
             f32 threshold, f32 hysteresis = f32(0.15),
             ParticleRole pursuer = ParticleRole::Chaser,
             ParticleRole prey    = ParticleRole::Leader) {
-        m_alerts.push_back(std::make_unique<ndde::events::ProximityAlert>(
-            ndde::events::ProximityAlert::Params{pursuer, prey, threshold, hysteresis}));
+        m_alerts.push_back(ndde::events::ProximityAlert::Params{pursuer, prey, threshold, hysteresis});
         return *this;
     }
 
@@ -66,25 +66,22 @@ public:
             f32 distance, f32 hysteresis = f32(0.3),
             ParticleRole pursuer = ParticleRole::Chaser,
             ParticleRole prey    = ParticleRole::Leader) {
-        m_alerts.push_back(std::make_unique<ndde::events::EscapeAlert>(
-            ndde::events::EscapeAlert::Params{pursuer, prey, distance, hysteresis}));
+        m_alerts.push_back(ndde::events::EscapeAlert::Params{pursuer, prey, distance, hysteresis});
         return *this;
     }
 
     ScenarioBuilder& alert_stealth(
             f32 kappa_max, f32 hysteresis = f32(0.1),
             ParticleRole role = ParticleRole::Chaser) {
-        m_alerts.push_back(std::make_unique<ndde::events::StealthAlert>(
-            ndde::events::StealthAlert::Params{role, kappa_max, hysteresis}));
+        m_alerts.push_back(ndde::events::StealthAlert::Params{role, kappa_max, hysteresis});
         return *this;
     }
 
     ScenarioBuilder& alert_capture_pending(
             f32 seconds_ahead = f32(2.0), f32 hysteresis = f32(0.5)) {
-        m_alerts.push_back(std::make_unique<ndde::events::CapturePendingAlert>(
-            ndde::events::CapturePendingAlert::Params{
-                ParticleRole::Chaser, ParticleRole::Leader,
-                seconds_ahead, hysteresis}));
+        m_alerts.push_back(ndde::events::CapturePendingAlert::Params{
+            ParticleRole::Chaser, ParticleRole::Leader,
+            seconds_ahead, hysteresis});
         return *this;
     }
 
@@ -101,7 +98,7 @@ public:
         cp.severity   = sev;
         cp.hysteresis = hysteresis;
         cp.fn         = std::move(fn);
-        m_alerts.push_back(std::make_unique<ndde::events::CustomAlert>(std::move(cp)));
+        m_alerts.push_back(std::move(cp));
         return *this;
     }
 
@@ -109,7 +106,7 @@ public:
     // ndde::events:: fully qualified in signature for the same namespace reason.
     void build(ParticleSystem&                                        particles,
                FieldCompositor&                                       compositor,
-               std::vector<std::unique_ptr<ndde::events::AlertRule>>& alerts_out,
+               std::vector<ndde::events::AlertRulePtr>&               alerts_out,
                EventBusService&                                       events,
                EventChannelId                                         channel,
                memory::MemoryService*                                 memory,
@@ -123,7 +120,13 @@ private:
     const math::ISurface*                                 m_surface = nullptr;
     std::vector<AgentSpec>                                m_agents;
     std::vector<std::shared_ptr<IField>>                  m_fields;
-    std::vector<std::unique_ptr<ndde::events::AlertRule>> m_alerts;
+    using AlertSpec = std::variant<
+        ndde::events::ProximityAlert::Params,
+        ndde::events::EscapeAlert::Params,
+        ndde::events::StealthAlert::Params,
+        ndde::events::CapturePendingAlert::Params,
+        ndde::events::CustomAlert::Params>;
+    std::vector<AlertSpec>                                m_alerts;
 
     std::vector<glm::vec2> compute_spawn_positions(
             const AgentSpec& spec, u32 count, std::mt19937& rng) const;

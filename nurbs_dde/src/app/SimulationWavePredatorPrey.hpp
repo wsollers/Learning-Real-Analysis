@@ -25,7 +25,6 @@
 #include "engine/ScopedServiceHandles.hpp"
 #include "memory/Unique.hpp"
 
-#include <memory>
 #include <string_view>
 #include <vector>
 
@@ -71,7 +70,7 @@ private:
     simulation::FieldCompositor  m_fields;
 
     // ── Alert rules ───────────────────────────────────────────────────────────
-    std::vector<std::unique_ptr<events::AlertRule>> m_alerts;
+    std::vector<events::AlertRulePtr> m_alerts;
 
     // ── Simulation state ──────────────────────────────────────────────────────
     f32        m_sim_time  = f32(0);
