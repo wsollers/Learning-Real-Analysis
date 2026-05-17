@@ -1,8 +1,14 @@
 #include "engine/logging/LoggerService.hpp"
 
 #include <algorithm>
+#include <utility>
 
 namespace ndde {
+
+void LoggerService::set_owner_guard(std::function<bool(std::string_view)> guard) {
+    std::scoped_lock lock(m_mutex);
+    m_owner_guard = std::move(guard);
+}
 
 void LoggerService::init(LoggerConfig config) {
     std::scoped_lock lock(m_mutex);
@@ -39,6 +45,7 @@ LogRecordId LoggerService::write(LogSeverity severity,
                                  LogCategory category,
                                  LogSourceRef source,
                                  std::string_view message) {
+    if (!require_owner_thread("LoggerService::write")) return {};
     std::scoped_lock lock(m_mutex);
     LogRecord record;
     record.severity = severity;
@@ -51,6 +58,7 @@ LogRecordId LoggerService::write_event(EventRef event,
                                        LogSeverity severity,
                                        LogCategory category,
                                        std::string_view message) {
+    if (!require_owner_thread("LoggerService::write_event")) return {};
     std::scoped_lock lock(m_mutex);
     LogRecord record;
     record.severity = severity;
@@ -64,6 +72,7 @@ LogRecordId LoggerService::write_event(EventRef event,
 LogRecordId LoggerService::write_diagnostic(DiagnosticId diagnostic,
                                             LogSeverity severity,
                                             std::string_view message) {
+    if (!require_owner_thread("LoggerService::write_diagnostic")) return {};
     std::scoped_lock lock(m_mutex);
     LogRecord record;
     record.severity = severity;
@@ -122,7 +131,8 @@ std::vector<LogRecord> LoggerService::records_in_category(LogCategory category) 
     return result;
 }
 
-void LoggerService::clear() noexcept {
+void LoggerService::clear() {
+    if (!require_owner_thread("LoggerService::clear")) return;
     std::scoped_lock lock(m_mutex);
     m_store.clear();
     m_record_view.clear();
@@ -130,6 +140,7 @@ void LoggerService::clear() noexcept {
 }
 
 void LoggerService::drain_sinks() {
+    if (!require_owner_thread("LoggerService::drain_sinks")) return;
     std::scoped_lock lock(m_mutex);
     // File/async sinks are intentionally deferred. The in-memory service is the
     // first reliable contract; sinks can consume records here later.
@@ -192,6 +203,10 @@ void LoggerService::rebuild_record_view() {
 
 bool LoggerService::severity_at_or_above(LogSeverity value, LogSeverity threshold) noexcept {
     return static_cast<u8>(value) >= static_cast<u8>(threshold);
+}
+
+bool LoggerService::require_owner_thread(std::string_view api_name) const {
+    return !m_owner_guard || m_owner_guard(api_name);
 }
 
 } // namespace ndde

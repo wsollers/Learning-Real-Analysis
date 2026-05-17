@@ -101,7 +101,11 @@ void SimulationRuntime::process_thread_commands(std::span<const SimulationThread
                 break;
             case SimulationThreadCommandKind::Stop:
             case SimulationThreadCommandKind::Shutdown:
-                stop();
+                // Full teardown calls simulation on_stop(), which unregisters
+                // owner-thread services such as panels, hotkeys, and views.
+                // The simulation thread may only quiesce runtime state; the
+                // engine owner thread performs lifecycle teardown.
+                pause();
                 break;
             case SimulationThreadCommandKind::Tick:
                 tick_simulation(command.tick);

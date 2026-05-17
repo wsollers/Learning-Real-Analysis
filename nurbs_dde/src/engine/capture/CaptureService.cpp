@@ -1,6 +1,7 @@
 // engine/capture/CaptureService.cpp
 
 #include "engine/capture/CaptureService.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -30,7 +31,23 @@ namespace {
 
 } // namespace
 
+void CaptureService::set_thread_service(ThreadManagementService* threads,
+                                        ThreadRole owner_role) noexcept {
+    m_threads = threads;
+    m_owner_role = owner_role;
+}
+
+void CaptureService::set_output_dir(std::filesystem::path directory) {
+    if (!require_owner_thread("CaptureService::set_output_dir")) {
+        return;
+    }
+    m_output_dir = std::move(directory);
+}
+
 void CaptureService::request_still(CaptureRequest request, CaptureRunMetadata metadata) {
+    if (!require_owner_thread("CaptureService::request_still")) {
+        return;
+    }
     request.mode = CaptureMode::StillPng;
 
     const std::string run_id = make_run_id(metadata);
@@ -66,6 +83,9 @@ void CaptureService::request_still(CaptureRequest request, CaptureRunMetadata me
 }
 
 std::vector<CaptureArtifact> CaptureService::consume_pending_stills() {
+    if (!require_owner_thread("CaptureService::consume_pending_stills")) {
+        return {};
+    }
     std::vector<CaptureArtifact> out;
     out.swap(m_pending_stills);
     return out;
@@ -73,6 +93,9 @@ std::vector<CaptureArtifact> CaptureService::consume_pending_stills() {
 
 bool CaptureService::start_movie_frames(MovieFrameSequenceOptions options,
                                         CaptureRunMetadata metadata) {
+    if (!require_owner_thread("CaptureService::start_movie_frames")) {
+        return false;
+    }
     if (m_movie_status.active)
         return false;
 
@@ -105,8 +128,18 @@ bool CaptureService::start_movie_frames(MovieFrameSequenceOptions options,
     return true;
 }
 
-void CaptureService::stop_movie_frames() noexcept {
+void CaptureService::stop_movie_frames() {
+    if (!require_owner_thread("CaptureService::stop_movie_frames")) {
+        return;
+    }
     m_movie_status.active = false;
+}
+
+void CaptureService::clear_completed_artifacts() {
+    if (!require_owner_thread("CaptureService::clear_completed_artifacts")) {
+        return;
+    }
+    m_completed.clear();
 }
 
 std::string CaptureService::normalize_stem(std::string_view text) {
@@ -139,6 +172,10 @@ std::string CaptureService::target_token(CaptureTarget target) {
         case CaptureTarget::BothWindows: return "both";
     }
     return "unknown";
+}
+
+bool CaptureService::require_owner_thread(std::string_view api_name) const {
+    return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
 }
 
 std::string CaptureService::make_run_id(const CaptureRunMetadata& metadata) const {

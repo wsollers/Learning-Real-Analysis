@@ -32,7 +32,9 @@ public:
     // Override to push TelemetryRecord rows with richer per-particle data
     // (noise_sigma, speed, angle, geodesic_k) than the base snapshot provides.
     // The default no-op means the engine falls back to snapshot-based recording.
-    // api.record_telemetry() and api.record_telemetry_ext() are wait-free.
+    // api.record_telemetry() is a producer push. api.record_telemetry_ext()
+    // appends to the owner-thread extension scratch buffer and should only be
+    // used from the engine telemetry hook path.
     virtual void on_telemetry_tick(
         [[maybe_unused]] u64              tick_index,
         [[maybe_unused]] const TickInfo&  tick,

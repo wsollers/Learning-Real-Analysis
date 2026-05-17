@@ -19,6 +19,8 @@
 #include "engine/ViewInputService.hpp"
 #include "memory/MemoryService.hpp"
 
+#include <string_view>
+
 namespace ndde {
 
 class SimulationHost {
@@ -98,11 +100,25 @@ public:
             .logger = &m_logger
         });
         m_diagnostics.set_thread_service(&m_threads, ThreadRole::Main);
+        m_events.set_owner_guard([this](std::string_view api_name) {
+            return m_threads.require_thread_role(ThreadRole::Main, api_name);
+        });
+        m_logger.set_owner_guard([this](std::string_view api_name) {
+            if (m_threads.is_thread_role(ThreadRole::Main) ||
+                m_threads.is_thread_role(ThreadRole::Logger)) {
+                return true;
+            }
+            return m_threads.require_thread_role(ThreadRole::Main, api_name);
+        });
         m_panels.set_thread_service(&m_threads, ThreadRole::Main);
         m_hotkeys.set_thread_service(&m_threads, ThreadRole::Main);
         m_interaction.set_thread_service(&m_threads, ThreadRole::Main);
         m_render.set_thread_service(&m_threads, ThreadRole::Main);
         m_camera.set_thread_service(&m_threads, ThreadRole::Main);
+        m_metadata.set_thread_service(&m_threads, ThreadRole::Main);
+        m_view_input.set_thread_service(&m_threads, ThreadRole::Main);
+        m_resources.set_thread_service(&m_threads, ThreadRole::Main);
+        m_capture.set_thread_service(&m_threads, ThreadRole::Main);
     }
 
     [[nodiscard]] PanelService& panels() noexcept { return m_panels; }

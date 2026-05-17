@@ -60,6 +60,14 @@ threads will depend on. The current implementation includes:
 - latest simulation render snapshot mailbox with deep-copied immutable data
 - main-thread role tracking and deterministic shutdown
 - thread-role guard API for main/render/simulation/logger/worker ownership checks
+- Main-owned `EventBusService` typed publish/subscribe/reset/drain APIs
+  guarded by the thread-role service; cross-thread events use compact
+  mailboxes
+- `LoggerService` direct string-store writes guarded to Main or Logger thread;
+  workers use the logger mailbox
+- Main-owned `TelemetryService` lifecycle, extension scratch, and flush APIs
+  guarded by the thread-role service while primary telemetry remains a
+  single-producer ring contract
 - `RenderService` mutation APIs guarded by the thread-role service during the
   current Main-owned transition
 - GUI/Main-owned `PanelService`, `HotkeyService`, and `InteractionService`
@@ -67,6 +75,12 @@ threads will depend on. The current implementation includes:
 - Main-owned `CameraService` mutation APIs guarded by the thread-role service
 - Main-owned `DiagnosticsService` ingestion APIs guarded by the thread-role
   service; workers must report diagnostics through thread mailboxes
+- Main-owned `SimMetadataService` registry mutation APIs and
+  `ViewInputService` pointer-state mutation APIs guarded by the thread-role
+  service
+- Main-owned `ResourceManagerService` registry mutation APIs and
+  `CaptureService` capture-queue/movie-state APIs guarded by the thread-role
+  service
 - focused unit tests and tidy build coverage
 
 The target is not merely "some background workers." The target is a fully
@@ -265,10 +279,10 @@ systems assume a single-threaded engine.
 | ImGui frame/build | GUI/Main | enqueue UI model updates only |
 | Vulkan renderer/swapchain | Render | submit immutable render snapshots only |
 | Active simulation state | Simulation | enqueue commands/jobs only |
-| `EventBusService` typed channels | owning channel thread | use worker compact mailbox only |
+| `EventBusService` typed channels | Main during transition | use compact event mailboxes only |
 | `LoggerService` string store | Logger/Main during transition | enqueue log records/mailbox messages |
 | `DiagnosticsService` active issues | Main/Diagnostics drain | enqueue diagnostic reports |
-| `TelemetryService` producer buffer | Simulation producer, Logger/I/O consumer | respect SPSC contracts |
+| `TelemetryService` lifecycle/ext/flush | Main during transition | primary SPSC record producer only |
 | Worker pool | Worker threads | use constrained `ThreadJobContext` |
 
 No row should silently become "everyone can mutate it." If a second thread needs
@@ -298,6 +312,23 @@ render-view camera descriptors directly.
 Workers and simulation callbacks should report through `ThreadJobContext` or
 `ThreadManagementService` mailboxes so diagnostics are ingested on the owning
 thread.
+`SimMetadataService` registry mutation is Main-owned; workers may read stable
+metadata only through future immutable snapshots or owner-approved APIs.
+`ViewInputService` is Main-owned because it reflects GLFW/ImGui frame input.
+`ResourceManagerService` registry mutation is Main-owned during this phase;
+workers should return resource IDs/results through job completion and let the
+owner publish or register them. `CaptureService` is Main-owned because capture
+requests are tied to window/render state and artifact queues.
+`EventBusService` typed publish/subscribe/reset/drain APIs are Main-owned
+during this phase. Worker and simulation threads publish compact `EventRecord`
+values through mailboxes, then the owner drains them into fixed-size event logs.
+`LoggerService` accepts direct writes only from Main or the Logger thread.
+Other threads must use `ThreadJobContext::log()` or the thread-service logger
+mailbox so string ownership stays centralized.
+`TelemetryService` lifecycle, extension-record scratch storage, and flush are
+Main-owned for now. Primary telemetry records still use the existing
+single-producer ring contract; file flushing should move to Logger/I/O once the
+writer handoff is explicit.
 
 ## Locking Policy
 
@@ -323,14 +354,20 @@ Current locks:
 - `LoggerService`: `std::mutex` around string/record storage.
 - `EventBusService`: `std::mutex` around channel mailboxes; the compact event
   rings remain fixed-size ring buffers.
+- `TelemetryService`: primary records use the telemetry ring; extension
+  records and flush scratch are owner-thread state.
 - `SimulationSnapshotStore`: `std::mutex` around latest snapshot publication.
 
 Current owner-guarded services:
 
 - Main-owned: `PanelService`, `HotkeyService`, `InteractionService`,
-  `RenderService`, `CameraService`, and `DiagnosticsService`.
+  `RenderService`, `CameraService`, `DiagnosticsService`,
+  `EventBusService`, `SimMetadataService`, `ViewInputService`,
+  `ResourceManagerService`, `CaptureService`, and `TelemetryService`
+  lifecycle/flush/extension-record paths.
 - Simulation-owned: active simulation state through `SimulationRuntime`.
-- Logger-owned or mailbox-driven: `LoggerService` writes during the transition.
+- Logger/Main-owned or mailbox-driven: `LoggerService` writes during the
+  transition.
 
 ## Frame Pipeline
 
@@ -519,13 +556,16 @@ Typed event dispatch remains owner-thread only unless a specific channel is made
 MPSC-safe. Cross-thread events should use fixed-size `EventRecord` payloads with
 IDs only; paths, strings, and large resources stay in their owning service or
 resource registry.
+The implemented guard enforces this today for typed publish/subscribe/reset and
+drain APIs. The compact mailboxes remain the approved cross-thread path.
 
 ### LoggerService
 
 Workers and simulation/render threads should not mutate logger string storage
 directly in the final design. They should write to a `LoggerMailbox` or submit
-a result that the logger thread formats and stores. The current logger design
-reserves this as future work.
+a result that the logger thread formats and stores. Direct writes are currently
+accepted only from Main and Logger roles; worker writes through
+`ThreadJobContext::log()` are drained by the logger thread.
 
 ### DiagnosticsService
 
@@ -536,14 +576,21 @@ consistent source of truth.
 ### TelemetryService
 
 Telemetry already has SPSC-oriented buffer contracts. Thread management should
-not turn telemetry into a general job queue. If a telemetry flush worker is
-added, it owns file flushing only and must respect the existing producer/consumer
-boundaries.
+not turn telemetry into a general job queue. Primary `record()` and
+`record_particles()` calls are the producer side. Lifecycle, extension-record
+scratch storage, and `flush()` are owner-thread APIs. If a telemetry flush
+worker is added, it owns file flushing only and must receive an explicit writer
+handoff that preserves the producer/consumer boundary.
 
 Simulation-specific telemetry hooks must be invoked through
 `SimulationRuntime::record_telemetry_tick()`. Engine/UI code should not obtain a
 raw `ISimulation&` just to call telemetry methods, because that bypasses the
 runtime lock and can race with the simulation thread.
+
+Simulation-thread Stop/Shutdown commands quiesce runtime state only. They do
+not call `ISimulation::on_stop()`, because owner-thread teardown unregisters
+panels, hotkeys, views, and other host services. The engine owner thread remains
+responsible for lifecycle teardown.
 
 ### Renderer And Platform
 
@@ -677,9 +724,9 @@ internals or block waiting for jobs.
 3. Add bounded worker job queue and `std::jthread` worker pool. **Done.**
 4. Route compact worker records through `EventBusService`. **Done.**
 5. Add diagnostics/log mailboxes and main-thread ingestion. **Done.**
-6. Add thread-role assertions for main/GUI/render/simulation-only APIs. **Thread-role guard API and diagnostics are done; `RenderService`, `PanelService`, `HotkeyService`, `InteractionService`, `CameraService`, and `DiagnosticsService` mutation APIs are covered. Applying checks to additional services remains ongoing.**
-7. Add logger mailbox and logger/I/O thread first; it has the least coupling. **Logger-thread in-memory drain done.**
-8. Move telemetry/log/capture manifest flushing to logger/I/O.
+6. Add thread-role assertions for main/GUI/render/simulation-only APIs. **Thread-role guard API and diagnostics are done; `RenderService`, `PanelService`, `HotkeyService`, `InteractionService`, `CameraService`, `DiagnosticsService`, `EventBusService`, `LoggerService`, `TelemetryService`, `SimMetadataService`, `ViewInputService`, `ResourceManagerService`, and `CaptureService` mutation APIs are covered. Applying checks to additional services remains ongoing.**
+7. Add logger mailbox and logger/I/O thread first; it has the least coupling. **Logger-thread in-memory drain and direct-write ownership guard done.**
+8. Move telemetry/log/capture manifest flushing to logger/I/O. **Telemetry owner-thread guard is done; file flush handoff to Logger/I/O remains.**
 9. Add simulation-thread command queue for UI/main-to-simulation commands. **Done.**
 10. Add immutable render snapshot type and simulation-to-render mailbox. **Snapshot mailbox foundation done.**
 11. Split simulation tick into a simulation thread. **Thread lifecycle, command callback, `SimulationRuntime` command adapter, simulation update/render method split, runtime serialization for render and telemetry hooks, command-based surface poke handoff, compact simulation event mailbox handoff, and optional engine live wiring done. Default config keeps the compatibility path off while remaining direct host-service access is reduced.**
@@ -706,10 +753,17 @@ internals or block waiting for jobs.
 - GUI/Main-owned service mutation APIs reject and report diagnostics when called off their owner thread **Covered for `PanelService`, `HotkeyService`, and `InteractionService` Worker-to-Main violations.**
 - camera mutation APIs reject and report diagnostics when called off their owner thread **Covered for `CameraService` Worker-to-Main violation.**
 - direct diagnostics ingestion rejects and reports diagnostics when called off its owner thread **Covered for `DiagnosticsService` Worker-to-Main violation.**
+- typed event publish/subscribe/reset/drain APIs reject and report diagnostics when called off their owner thread **Covered for `EventBusService` Worker-to-Main publish violation.**
+- direct logger writes reject and report diagnostics when called from worker threads **Covered for `LoggerService` Worker-to-Main/Logger violation.**
+- logger mailbox writes remain accepted through the logger thread **Covered for `ThreadJobContext::log()` to logger-thread drain.**
+- telemetry owner-thread extension-record paths reject and report diagnostics when called from worker threads **Covered for `TelemetryService::record_ext` Worker-to-Main violation.**
+- metadata registry and view-input mutation reject and report diagnostics when called off their owner thread **Covered for `SimMetadataService` and `ViewInputService` Worker-to-Main violations.**
+- resource registry and capture queue/movie-state mutation reject and report diagnostics when called off their owner thread **Covered for `ResourceManagerService` and `CaptureService` Worker-to-Main violations.**
 - render-facing mutation APIs reject and report diagnostics when called off their current owner thread **Covered for `RenderService` Worker-to-Main violation.**
 - simulation-only APIs assert/reject when called off simulation thread **Guard API ready; service-level adoption pending.**
 - simulation thread consumes command batches and reports callback failures **Covered.**
 - `SimulationRuntime` can be driven through the simulation thread and publish snapshot mailboxes **Covered.**
+- simulation-thread Stop/Shutdown command does not run owner-thread teardown **Covered.**
 - simulation update and render submission can be invoked independently **Covered.**
 - simulation update and render submission are serialized by `SimulationRuntime` **Covered.**
 - simulation telemetry hooks are serialized by `SimulationRuntime` **Covered.**

@@ -1,5 +1,6 @@
 #include "engine/SimulationHost.hpp"
 #include "engine/threading/ThreadManagementService.hpp"
+#include "telemetry/TelemetryService.hpp"
 
 #include <gtest/gtest.h>
 
@@ -415,6 +416,110 @@ TEST(ThreadManagementService, SimulationThreadExceptionBecomesDiagnostic) {
     EXPECT_EQ(diagnostics.active().front().code, ErrorCode::ThreadFault);
 }
 
+TEST(EventBusService, WorkerThreadTypedPublishReportsThreadRoleViolation) {
+    struct WorkerTypedEvent {
+        u64 value = u64(1);
+    };
+
+    EngineServices services;
+    std::atomic<u64> sequence = u64(999);
+
+    const ThreadJobId id = services.threads().submit(
+        ThreadJobDescriptor{},
+        [&services, &sequence](ThreadJobContext&) {
+            events::EventRecord record;
+            record.kind = events::EventKind::AppStarted;
+            sequence.store(services.events().publish(EventChannelId::Simulation,
+                                                     WorkerTypedEvent{},
+                                                     record));
+        });
+
+    ASSERT_TRUE(wait_for_state(services.threads(), id, ThreadJobState::Completed));
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_EQ(sequence.load(), u64(0));
+
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("EventBusService::publish"), std::string::npos);
+}
+
+TEST(LoggerService, WorkerThreadDirectWriteReportsThreadRoleViolation) {
+    EngineServices services;
+    std::atomic<u64> log_id = u64(999);
+
+    const ThreadJobId id = services.threads().submit(
+        ThreadJobDescriptor{},
+        [&services, &log_id](ThreadJobContext&) {
+            log_id.store(services.logger().write(LogSeverity::Info,
+                                                 LogCategory::Worker,
+                                                 LogSourceRef{},
+                                                 "direct worker write").value);
+        });
+
+    ASSERT_TRUE(wait_for_state(services.threads(), id, ThreadJobState::Completed));
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_EQ(log_id.load(), u64(0));
+    EXPECT_TRUE(services.logger().snapshot().empty());
+
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("LoggerService::write"), std::string::npos);
+}
+
+TEST(LoggerService, WorkerMailboxWriteIsAcceptedByLoggerThread) {
+    EngineServices services;
+
+    const ThreadJobId id = services.threads().submit(
+        ThreadJobDescriptor{},
+        [](ThreadJobContext& context) {
+            context.log(LogSeverity::Info, LogCategory::Worker, "mailbox worker write");
+        });
+
+    ASSERT_TRUE(wait_for_state(services.threads(), id, ThreadJobState::Completed));
+
+    const auto deadline = std::chrono::steady_clock::now() + 2s;
+    while (services.logger().snapshot().empty() && std::chrono::steady_clock::now() < deadline) {
+        std::this_thread::sleep_for(5ms);
+    }
+
+    const auto snapshot = services.logger().snapshot();
+    ASSERT_EQ(snapshot.size(), 1u);
+    EXPECT_EQ(snapshot.front().message, "mailbox worker write");
+    EXPECT_TRUE(services.diagnostics().active_with(ErrorCode::ThreadRoleViolation).empty());
+}
+
+TEST(TelemetryService, WorkerThreadExtensionRecordReportsThreadRoleViolation) {
+    DiagnosticsService diagnostics;
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{.worker_count = u32(1)},
+                 ThreadServiceBindings{.diagnostics = &diagnostics});
+
+    telemetry::TelemetryService telemetry;
+    telemetry.set_owner_guard([&threads](std::string_view api_name) {
+        return threads.require_thread_role(ThreadRole::Main, api_name);
+    });
+
+    std::atomic<bool> recorded = true;
+    const ThreadJobId id = threads.submit(
+        ThreadJobDescriptor{},
+        [&telemetry, &recorded](ThreadJobContext&) {
+            recorded.store(telemetry.record_ext(telemetry::TelemetryExtRecord{}));
+        });
+
+    ASSERT_TRUE(wait_for_state(threads, id, ThreadJobState::Completed));
+    threads.drain_service_mailboxes();
+
+    EXPECT_FALSE(recorded.load());
+    const auto role_violations =
+        diagnostics.active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("TelemetryService::record_ext"), std::string::npos);
+}
+
 TEST(RenderService, WorkerThreadMutationReportsThreadRoleViolation) {
     EngineServices services;
     std::atomic<bool> registered = true;
@@ -531,6 +636,95 @@ TEST(DiagnosticsService, WorkerThreadDirectReportUsesThreadRoleViolation) {
         services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
     ASSERT_EQ(role_violations.size(), 1u);
     EXPECT_NE(role_violations.front().message.find("DiagnosticsService::report"), std::string::npos);
+}
+
+TEST(EngineRegistryAndInputServices, WorkerThreadMutationReportsThreadRoleViolations) {
+    EngineServices services;
+    std::atomic<bool> metadata_registered = true;
+    std::atomic<bool> view_input_enabled = true;
+
+    const ThreadJobId id = services.threads().submit(
+        ThreadJobDescriptor{},
+        [&services, &metadata_registered, &view_input_enabled](ThreadJobContext&) {
+            metadata_registered.store(services.metadata().register_component(ComponentDescriptor{
+                .id = ComponentId{"worker.component"},
+                .display_name = "Worker Component",
+                .category = ObjectCategory::FieldObject
+            }));
+
+            const ViewInputSample sample = services.view_input().update(ViewInputUpdate{
+                .view = u64(88),
+                .rect = {.origin = Vec2{}, .size = Vec2{100.f, 100.f}},
+                .cursor = Vec2{25.f, 25.f}
+            });
+            view_input_enabled.store(sample.enabled);
+        });
+
+    ASSERT_TRUE(wait_for_state(services.threads(), id, ThreadJobState::Completed));
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_FALSE(metadata_registered.load());
+    EXPECT_EQ(services.metadata().get_descriptor(ComponentId{"worker.component"}), nullptr);
+    EXPECT_FALSE(view_input_enabled.load());
+    EXPECT_FALSE(services.view_input().sample(u64(88)).enabled);
+
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_GE(role_violations.front().occurrence_count, u64(2));
+}
+
+TEST(ResourceManagerService, WorkerThreadMutationReportsThreadRoleViolation) {
+    EngineServices services;
+    std::atomic<u64> reserved_id = u64(999);
+
+    const ThreadJobId id = services.threads().submit(
+        ThreadJobDescriptor{},
+        [&services, &reserved_id](ThreadJobContext&) {
+            const ResourceId resource = services.resources().reserve(
+                ResourceKind::CpuMesh,
+                ResourceOwner::Worker,
+                ResourceLifetime::Cache);
+            reserved_id.store(resource.value);
+        });
+
+    ASSERT_TRUE(wait_for_state(services.threads(), id, ThreadJobState::Completed));
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_EQ(reserved_id.load(), u64(0));
+    EXPECT_TRUE(services.resources().resources_by_kind(ResourceKind::CpuMesh).empty());
+
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("ResourceManagerService::reserve"), std::string::npos);
+}
+
+TEST(CaptureService, WorkerThreadMutationReportsThreadRoleViolation) {
+    EngineServices services;
+
+    const ThreadJobId id = services.threads().submit(
+        ThreadJobDescriptor{},
+        [&services](ThreadJobContext&) {
+            services.capture().request_still(CaptureRequest{
+                .target = CaptureTarget::MainWindow,
+                .include_manifest = false
+            }, CaptureRunMetadata{
+                .simulation_name = "Worker Capture",
+                .run_id = "worker_capture"
+            });
+        });
+
+    ASSERT_TRUE(wait_for_state(services.threads(), id, ThreadJobState::Completed));
+    services.threads().drain_service_mailboxes();
+
+    EXPECT_TRUE(services.capture().completed_artifacts().empty());
+    EXPECT_TRUE(services.capture().consume_pending_stills().empty());
+
+    const auto role_violations =
+        services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ASSERT_EQ(role_violations.size(), 1u);
+    EXPECT_NE(role_violations.front().message.find("CaptureService::request_still"), std::string::npos);
 }
 
 TEST(EngineServices, OwnsThreadManagementServiceAndPassesItToSimulationHost) {

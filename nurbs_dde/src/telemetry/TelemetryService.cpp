@@ -4,11 +4,18 @@
 #include <cassert>
 #include <format>
 #include <iostream>
+#include <utility>
 
 namespace ndde::telemetry {
 
+void TelemetryService::set_owner_guard(std::function<bool(std::string_view)> guard) {
+    m_owner_guard = std::move(guard);
+}
+
 void TelemetryService::init(u64 buffer_records,
                              std::filesystem::path output_dir) {
+    if (!require_owner_thread("TelemetryService::init")) return;
+
     // Allocate slab — aligned to cache line for the ring's atomic indices.
     const u64 slab_bytes = buffer_records * static_cast<u64>(sizeof(TelemetryRecord));
     m_slab = std::make_unique<std::byte[]>(static_cast<std::size_t>(slab_bytes));
@@ -37,10 +44,12 @@ void TelemetryService::destroy() noexcept {
 }
 
 void TelemetryService::on_app_started(const events::AppStarted& /*e*/) {
+    if (!require_owner_thread("TelemetryService::on_app_started")) return;
     std::cout << "[Telemetry] App started.\n";
 }
 
 void TelemetryService::on_app_stopping(const events::AppStopping& /*e*/) {
+    if (!require_owner_thread("TelemetryService::on_app_stopping")) return;
     // If a sim is still active (abnormal exit path) ensure we flush and close.
     if (m_writer.is_open()) {
         flush();
@@ -59,6 +68,7 @@ void TelemetryService::on_app_stopping(const events::AppStopping& /*e*/) {
 }
 
 void TelemetryService::on_sim_started(const events::SimStarted& e) {
+    if (!require_owner_thread("TelemetryService::on_sim_started")) return;
     m_ring.reset();
     m_total_records.store(u64(0), std::memory_order_relaxed);
     m_total_ticks.store(u64(0), std::memory_order_relaxed);
@@ -70,6 +80,7 @@ void TelemetryService::on_sim_started(const events::SimStarted& e) {
 }
 
 void TelemetryService::on_sim_stopped(const events::SimStopped& e) {
+    if (!require_owner_thread("TelemetryService::on_sim_stopped")) return;
     flush();
 
     // Flush ext records that accumulated since last flush.
@@ -85,6 +96,7 @@ void TelemetryService::on_sim_stopped(const events::SimStopped& e) {
 }
 
 u64 TelemetryService::flush() {
+    if (!require_owner_thread("TelemetryService::flush")) return u64(0);
     if (!m_writer.is_open() || m_ring.empty()) return u64(0);
 
     const u64 n = m_ring.consume_all(m_flush_scratch);
@@ -101,6 +113,10 @@ u64 TelemetryService::flush() {
     }
 
     return n;
+}
+
+bool TelemetryService::require_owner_thread(std::string_view api_name) const {
+    return !m_owner_guard || m_owner_guard(api_name);
 }
 
 } // namespace ndde::telemetry

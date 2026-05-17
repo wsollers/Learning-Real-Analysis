@@ -68,7 +68,11 @@ void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 Engine::Engine()
     : m_simulation_host(m_services.simulation_host())
-    , m_simulations(m_services.memory()) {}
+    , m_simulations(m_services.memory()) {
+    m_telemetry.set_owner_guard([this](std::string_view api_name) {
+        return m_services.threads().require_thread_role(ThreadRole::Main, api_name);
+    });
+}
 
 Engine::~Engine() {
     stop_active_simulation_thread();

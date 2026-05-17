@@ -25,7 +25,9 @@
 #include "engine/events/SimEvent.hpp"
 #include "math/Scalars.hpp"
 #include <filesystem>
+#include <functional>
 #include <memory>
+#include <string_view>
 #include <vector>
 
 namespace ndde::telemetry {
@@ -39,6 +41,8 @@ public:
     TelemetryService& operator=(const TelemetryService&) = delete;
     TelemetryService(TelemetryService&&)                 = delete;
     TelemetryService& operator=(TelemetryService&&)      = delete;
+
+    void set_owner_guard(std::function<bool(std::string_view)> guard);
 
     // ── Lifecycle (called by Engine — main thread) ────────────────────────────
 
@@ -70,7 +74,8 @@ public:
     }
 
     /// Record a single pursuer/target extension row.
-    [[nodiscard]] bool record_ext(const TelemetryExtRecord& r) noexcept {
+    [[nodiscard]] bool record_ext(const TelemetryExtRecord& r) {
+        if (!require_owner_thread("TelemetryService::record_ext")) return false;
         if (!m_enabled || !m_writer.is_open()) return false;
         m_ext_scratch.push_back(r);   // buffered for flush — not via ring
         return true;
@@ -118,6 +123,9 @@ private:
     // Scratch buffers for flush() — allocated once, reused across all calls.
     std::vector<TelemetryRecord>    m_flush_scratch;
     std::vector<TelemetryExtRecord> m_ext_scratch;
+    std::function<bool(std::string_view)> m_owner_guard;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) const;
 };
 
 // ── Template implementation ───────────────────────────────────────────────────

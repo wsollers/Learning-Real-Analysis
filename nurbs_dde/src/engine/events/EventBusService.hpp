@@ -10,6 +10,7 @@
 #include <functional>
 #include <mutex>
 #include <span>
+#include <string_view>
 #include <vector>
 
 namespace ndde {
@@ -102,16 +103,19 @@ public:
 
     void init(EventBusConfig config = EventBusConfig::defaults());
     void shutdown() noexcept;
+    void set_owner_guard(std::function<bool(std::string_view)> guard);
 
     template <class Event>
     [[nodiscard]] Subscription subscribe(EventChannelId channel,
                                          std::function<void(const Event&)> handler) {
+        if (!require_owner_thread("EventBusService::subscribe")) return {};
         Channel& ch = channel_for(channel);
         const u64 token = ch.bus.subscribe<Event>(std::move(handler));
         return Subscription{
             SubscriptionId{token},
             [this, channel](SubscriptionId id) {
                 if (!m_initialised) return;
+                if (!require_owner_thread("EventBusService::unsubscribe")) return;
                 channel_for(channel).bus.unsubscribe<Event>(id.value);
             }
         };
@@ -119,6 +123,7 @@ public:
 
     template <class Event>
     u64 publish(EventChannelId channel, const Event& event) {
+        if (!require_owner_thread("EventBusService::publish")) return u64(0);
         Channel& ch = channel_for(channel);
         const u64 sequence = next_sequence(ch);
         ch.bus.dispatch(event, sequence);
@@ -129,6 +134,7 @@ public:
     u64 publish(EventChannelId channel,
                 const Event& event,
                 const events::EventRecord& record) {
+        if (!require_owner_thread("EventBusService::publish")) return u64(0);
         Channel& ch = channel_for(channel);
         const u64 sequence = next_sequence(ch);
         events::EventRecord sequenced = record;
@@ -144,8 +150,8 @@ public:
 
     void drain(EventChannelId channel, f32 sim_time, u64 tick);
     void drain_all(f32 sim_time, u64 tick);
-    void reset_channel(EventChannelId channel) noexcept;
-    void clear_scenario_channels() noexcept;
+    void reset_channel(EventChannelId channel);
+    void clear_scenario_channels();
 
     [[nodiscard]] events::EventLog& log(EventChannelId channel);
     [[nodiscard]] const events::EventLog& log(EventChannelId channel) const;
@@ -172,6 +178,7 @@ private:
     std::array<std::vector<events::EventRecord>, static_cast<std::size_t>(EventChannelId::Count)> m_mailboxes;
     std::array<u64, static_cast<std::size_t>(EventChannelId::Count)> m_mailbox_capacities{};
     std::array<u64, static_cast<std::size_t>(EventChannelId::Count)> m_mailbox_dropped{};
+    std::function<bool(std::string_view)> m_owner_guard;
     bool m_initialised = false;
 
     [[nodiscard]] static std::size_t index_of(EventChannelId channel) noexcept {
@@ -180,6 +187,7 @@ private:
 
     [[nodiscard]] Channel& channel_for(EventChannelId channel);
     [[nodiscard]] const Channel& channel_for(EventChannelId channel) const;
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) const;
     [[nodiscard]] u64 mailbox_capacity(EventChannelId channel) const noexcept;
     [[nodiscard]] static u64 next_sequence(Channel& channel) noexcept {
         return channel.next_sequence++;

@@ -54,6 +54,7 @@ target_link_libraries(ndde_tests PRIVATE
     ndde_math
     ndde_numeric
     ndde_units
+    ndde_telemetry
     ndde_simulation
     volk
     imgui

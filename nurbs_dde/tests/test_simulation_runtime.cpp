@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <thread>
@@ -328,6 +329,44 @@ TEST(SimulationRuntime, ProcessesThreadCommandsAndPublishesSnapshotMailbox) {
     EXPECT_EQ(raw->ticks, 0);
 
     runtime.stop();
+}
+
+TEST(SimulationRuntime, ThreadStopCommandDoesNotRunOwnerThreadTeardown) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    RuntimeDummySimulation* raw = nullptr;
+    SimulationRuntime runtime("Simulation Runtime",
+        [&raw](memory::MemoryService& memory) {
+            auto sim = memory.simulation().make_unique_as<ISimulation, RuntimeDummySimulation>();
+            raw = static_cast<RuntimeDummySimulation*>(sim.get());
+            return sim;
+        });
+
+    runtime.instantiate(host);
+    runtime.start();
+    ASSERT_NE(raw, nullptr);
+
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+        .worker_count = u32(0),
+        .enable_background_workers = false
+    });
+
+    const std::array commands{
+        SimulationThreadCommand{.kind = SimulationThreadCommandKind::Stop}
+    };
+    runtime.process_thread_commands(commands, &threads);
+
+    EXPECT_TRUE(runtime.paused());
+    EXPECT_EQ(raw->stops, 0);
+    EXPECT_EQ(services.panels().active_count(), 1u);
+    EXPECT_EQ(services.hotkeys().active_count(), 1u);
+    EXPECT_EQ(services.render().active_view_count(), 1u);
+
+    runtime.stop();
+    EXPECT_EQ(services.panels().active_count(), 0u);
+    EXPECT_EQ(services.hotkeys().active_count(), 0u);
+    EXPECT_EQ(services.render().active_view_count(), 0u);
 }
 
 } // namespace

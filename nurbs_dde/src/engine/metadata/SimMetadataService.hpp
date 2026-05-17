@@ -3,17 +3,24 @@
 // Engine-owned registry for semantic component descriptors and factories.
 
 #include "engine/metadata/MetadataTypes.hpp"
+#include "engine/threading/ThreadTypes.hpp"
 
 #include <functional>
 #include <span>
+#include <string_view>
 #include <unordered_map>
 
 namespace ndde {
+
+class ThreadManagementService;
 
 using RuntimeFactory = std::function<MetadataResult<RuntimeComponent>(const ComponentConfig&)>;
 
 class SimMetadataService {
 public:
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept;
+
     [[nodiscard]] bool register_component(ComponentDescriptor descriptor);
     [[nodiscard]] bool register_event(EventDescriptor descriptor);
     [[nodiscard]] bool register_factory(ComponentId id, RuntimeFactory factory);
@@ -42,6 +49,10 @@ private:
     std::unordered_map<std::string, u64> m_index_by_id;
     std::unordered_map<std::string, u64> m_event_index_by_id;
     std::unordered_map<std::string, RuntimeFactory> m_factories;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) const;
 
     [[nodiscard]] static std::string key(ComponentId id);
     [[nodiscard]] static std::string key(EventTypeId id);

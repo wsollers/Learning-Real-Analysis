@@ -6,6 +6,7 @@
 
 #include <span>
 #include <string_view>
+#include <functional>
 #include <mutex>
 #include <vector>
 
@@ -20,6 +21,8 @@ public:
     LoggerService& operator=(const LoggerService&) = delete;
     LoggerService(LoggerService&&) = delete;
     LoggerService& operator=(LoggerService&&) = delete;
+
+    void set_owner_guard(std::function<bool(std::string_view)> guard);
 
     void init(LoggerConfig config = {});
     void shutdown() noexcept;
@@ -49,7 +52,7 @@ public:
     [[nodiscard]] std::vector<LogRecord> records_at_or_above(LogSeverity severity) const;
     [[nodiscard]] std::vector<LogRecord> records_in_category(LogCategory category) const;
 
-    void clear() noexcept;
+    void clear();
     void drain_sinks();
 
 private:
@@ -61,6 +64,7 @@ private:
     LoggerConfig m_config;
     std::vector<StoredRecord> m_store;
     std::vector<LogRecord> m_record_view;
+    std::function<bool(std::string_view)> m_owner_guard;
     mutable std::mutex m_mutex;
     u64 m_next_id = u64(1);
     u64 m_string_bytes = u64(0);
@@ -69,6 +73,7 @@ private:
     bool m_initialised = false;
 
     [[nodiscard]] LogRecordId append(LogRecord record, std::string_view message);
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) const;
     void enforce_capacity();
     void evict_oldest() noexcept;
     void rebuild_record_view();

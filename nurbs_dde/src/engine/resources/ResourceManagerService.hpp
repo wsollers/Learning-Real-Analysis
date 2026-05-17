@@ -3,13 +3,17 @@
 // Engine-owned resource identity and lookup registry.
 
 #include "engine/resources/ResourceTypes.hpp"
+#include "engine/threading/ThreadTypes.hpp"
 
 #include <expected>
 #include <span>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
 namespace ndde {
+
+class ThreadManagementService;
 
 class ResourceManagerService {
 public:
@@ -20,6 +24,9 @@ public:
     ResourceManagerService& operator=(const ResourceManagerService&) = delete;
     ResourceManagerService(ResourceManagerService&&) = delete;
     ResourceManagerService& operator=(ResourceManagerService&&) = delete;
+
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept;
 
     void init(ResourceManagerConfig config = {});
     void shutdown() noexcept;
@@ -75,11 +82,14 @@ private:
     std::unordered_map<u64, u64> m_index_by_handle;
     std::unordered_map<std::string, ResourceHandle> m_handle_by_key;
     std::unordered_map<std::string, ResourceHandle> m_handle_by_path;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
     u64 m_next_id = u64(1);
     u64 m_next_runtime_handle = u64(0x0002'0000'0000'0000);
     bool m_initialised = false;
 
     [[nodiscard]] ResourceHandle allocate_runtime_handle();
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) const;
     [[nodiscard]] ResourceHandle register_impl(ResourceRegistration registration,
                                                std::optional<std::filesystem::path> path);
     [[nodiscard]] ResourceDescriptor* mutable_descriptor(ResourceId id) noexcept;

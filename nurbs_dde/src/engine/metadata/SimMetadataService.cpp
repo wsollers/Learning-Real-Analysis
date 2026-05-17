@@ -1,11 +1,21 @@
 #include "engine/metadata/SimMetadataService.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
 #include <iterator>
 
 namespace ndde {
 
+void SimMetadataService::set_thread_service(ThreadManagementService* threads,
+                                            ThreadRole owner_role) noexcept {
+    m_threads = threads;
+    m_owner_role = owner_role;
+}
+
 bool SimMetadataService::register_component(ComponentDescriptor descriptor) {
+    if (!require_owner_thread("SimMetadataService::register_component")) {
+        return false;
+    }
     const std::string id_key = key(descriptor.id);
     if (id_key.empty() || m_index_by_id.contains(id_key))
         return false;
@@ -17,6 +27,9 @@ bool SimMetadataService::register_component(ComponentDescriptor descriptor) {
 }
 
 bool SimMetadataService::register_event(EventDescriptor descriptor) {
+    if (!require_owner_thread("SimMetadataService::register_event")) {
+        return false;
+    }
     const std::string id_key = key(descriptor.id);
     if (id_key.empty() || m_event_index_by_id.contains(id_key))
         return false;
@@ -28,6 +41,9 @@ bool SimMetadataService::register_event(EventDescriptor descriptor) {
 }
 
 bool SimMetadataService::register_factory(ComponentId id, RuntimeFactory factory) {
+    if (!require_owner_thread("SimMetadataService::register_factory")) {
+        return false;
+    }
     const std::string id_key = key(id);
     const auto descriptor_it = m_index_by_id.find(id_key);
     if (descriptor_it == m_index_by_id.end() || !factory)
@@ -193,11 +209,18 @@ MetadataResult<RuntimeComponent> SimMetadataService::create(ComponentId id,
 }
 
 void SimMetadataService::clear() {
+    if (!require_owner_thread("SimMetadataService::clear")) {
+        return;
+    }
     m_descriptors.clear();
     m_event_descriptors.clear();
     m_index_by_id.clear();
     m_event_index_by_id.clear();
     m_factories.clear();
+}
+
+bool SimMetadataService::require_owner_thread(std::string_view api_name) const {
+    return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
 }
 
 std::string SimMetadataService::key(ComponentId id) {

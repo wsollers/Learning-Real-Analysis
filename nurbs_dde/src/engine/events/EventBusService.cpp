@@ -3,6 +3,7 @@
 #include "engine/events/EventBusService.hpp"
 
 #include <stdexcept>
+#include <utility>
 
 namespace ndde {
 
@@ -58,6 +59,10 @@ void EventBusService::init(EventBusConfig config) {
     }
 
     m_initialised = true;
+}
+
+void EventBusService::set_owner_guard(std::function<bool(std::string_view)> guard) {
+    m_owner_guard = std::move(guard);
 }
 
 void EventBusService::shutdown() noexcept {
@@ -118,6 +123,7 @@ u64 EventBusService::drain_mailbox(EventChannelId channel) {
 }
 
 void EventBusService::drain(EventChannelId channel, f32 sim_time, u64 tick) {
+    if (!require_owner_thread("EventBusService::drain")) return;
     (void)drain_mailbox(channel);
     Channel& ch = channel_for(channel);
     if (ch.record_to_log)
@@ -125,6 +131,7 @@ void EventBusService::drain(EventChannelId channel, f32 sim_time, u64 tick) {
 }
 
 void EventBusService::drain_all(f32 sim_time, u64 tick) {
+    if (!require_owner_thread("EventBusService::drain_all")) return;
     for (std::size_t i = 0; i < m_channels.size(); ++i) {
         Channel& ch = m_channels[i];
         const auto channel = static_cast<EventChannelId>(i);
@@ -134,7 +141,8 @@ void EventBusService::drain_all(f32 sim_time, u64 tick) {
     }
 }
 
-void EventBusService::reset_channel(EventChannelId channel) noexcept {
+void EventBusService::reset_channel(EventChannelId channel) {
+    if (!require_owner_thread("EventBusService::reset_channel")) return;
     Channel& ch = m_channels[index_of(channel)];
     ch.bus.clear_all_subscribers();
     ch.log.reset();
@@ -144,7 +152,8 @@ void EventBusService::reset_channel(EventChannelId channel) noexcept {
     m_mailbox_dropped[index_of(channel)] = u64(0);
 }
 
-void EventBusService::clear_scenario_channels() noexcept {
+void EventBusService::clear_scenario_channels() {
+    if (!require_owner_thread("EventBusService::clear_scenario_channels")) return;
     reset_channel(EventChannelId::Scenario);
     reset_channel(EventChannelId::Simulation);
 }
@@ -199,6 +208,10 @@ const EventBusService::Channel& EventBusService::channel_for(EventChannelId chan
 u64 EventBusService::mailbox_capacity(EventChannelId channel) const noexcept {
     const u64 capacity = m_mailbox_capacities[index_of(channel)];
     return capacity == u64(0) ? u64(512) : capacity;
+}
+
+bool EventBusService::require_owner_thread(std::string_view api_name) const {
+    return !m_owner_guard || m_owner_guard(api_name);
 }
 
 } // namespace ndde

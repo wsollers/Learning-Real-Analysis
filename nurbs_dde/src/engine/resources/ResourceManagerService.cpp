@@ -1,8 +1,15 @@
 #include "engine/resources/ResourceManagerService.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
 
 namespace ndde {
+
+void ResourceManagerService::set_thread_service(ThreadManagementService* threads,
+                                                ThreadRole owner_role) noexcept {
+    m_threads = threads;
+    m_owner_role = owner_role;
+}
 
 void ResourceManagerService::init(ResourceManagerConfig config) {
     shutdown();
@@ -30,6 +37,9 @@ void ResourceManagerService::shutdown() noexcept {
 ResourceId ResourceManagerService::reserve(ResourceKind kind,
                                            ResourceOwner owner,
                                            ResourceLifetime lifetime) {
+    if (!require_owner_thread("ResourceManagerService::reserve")) {
+        return {};
+    }
     if (!m_initialised) {
         init();
     }
@@ -51,6 +61,9 @@ ResourceId ResourceManagerService::reserve(ResourceKind kind,
 }
 
 ResourceId ResourceManagerService::reserve(ResourceHandle handle) {
+    if (!require_owner_thread("ResourceManagerService::reserve")) {
+        return {};
+    }
     HandleEntry* entry = mutable_handle(handle);
     if (!entry || entry->released) {
         return {};
@@ -70,10 +83,16 @@ ResourceId ResourceManagerService::reserve(ResourceHandle handle) {
 }
 
 ResourceHandle ResourceManagerService::register_handle(ResourceRegistration registration) {
+    if (!require_owner_thread("ResourceManagerService::register_handle")) {
+        return {};
+    }
     return register_impl(std::move(registration), std::nullopt);
 }
 
 ResourceHandle ResourceManagerService::register_builtin(ResourceRegistration registration) {
+    if (!require_owner_thread("ResourceManagerService::register_builtin")) {
+        return {};
+    }
     if (registration.handle.value == u64(0)) {
         return {};
     }
@@ -85,11 +104,17 @@ ResourceHandle ResourceManagerService::register_builtin(ResourceRegistration reg
 
 ResourceHandle ResourceManagerService::register_path(ResourceRegistration registration,
                                                      std::filesystem::path path) {
+    if (!require_owner_thread("ResourceManagerService::register_path")) {
+        return {};
+    }
     registration.origin = ResourceOrigin::FilePath;
     return register_impl(std::move(registration), std::move(path));
 }
 
 bool ResourceManagerService::publish(ResourceId id, ResourcePayload payload) {
+    if (!require_owner_thread("ResourceManagerService::publish")) {
+        return false;
+    }
     ResourceDescriptor* desc = mutable_descriptor(id);
     if (!desc || desc->state != ResourceState::Reserved) {
         return false;
@@ -113,6 +138,9 @@ bool ResourceManagerService::publish(ResourceId id, ResourcePayload payload) {
 }
 
 std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load(ResourceHandle handle) {
+    if (!require_owner_thread("ResourceManagerService::load")) {
+        return std::unexpected(ResourceLoadError{.code = ResourceLoadErrorCode::Unknown, .handle = handle});
+    }
     const HandleEntry* entry = handle_entry(handle);
     if (!entry || entry->released) {
         return std::unexpected(ResourceLoadError{.code = ResourceLoadErrorCode::InvalidHandle, .handle = handle});
@@ -125,6 +153,13 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load(Resour
 
 std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_path(ResourceHandle handle,
                                                                                    std::filesystem::path path) {
+    if (!require_owner_thread("ResourceManagerService::load_from_path")) {
+        return std::unexpected(ResourceLoadError{
+            .code = ResourceLoadErrorCode::Unknown,
+            .handle = handle,
+            .path = std::move(path)
+        });
+    }
     HandleEntry* entry = mutable_handle(handle);
     if (!entry || entry->released) {
         return std::unexpected(ResourceLoadError{
@@ -177,6 +212,9 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
 }
 
 bool ResourceManagerService::mark_ready(ResourceId id) {
+    if (!require_owner_thread("ResourceManagerService::mark_ready")) {
+        return false;
+    }
     ResourceDescriptor* desc = mutable_descriptor(id);
     if (!desc || desc->state == ResourceState::Released) {
         return false;
@@ -186,6 +224,9 @@ bool ResourceManagerService::mark_ready(ResourceId id) {
 }
 
 bool ResourceManagerService::mark_failed(ResourceId id, DiagnosticId diagnostic) {
+    if (!require_owner_thread("ResourceManagerService::mark_failed")) {
+        return false;
+    }
     ResourceDescriptor* desc = mutable_descriptor(id);
     if (!desc || desc->state == ResourceState::Released) {
         return false;
@@ -198,6 +239,9 @@ bool ResourceManagerService::mark_failed(ResourceId id, DiagnosticId diagnostic)
 }
 
 bool ResourceManagerService::release(ResourceId id) {
+    if (!require_owner_thread("ResourceManagerService::release")) {
+        return false;
+    }
     ResourceDescriptor* desc = mutable_descriptor(id);
     if (!desc || desc->state == ResourceState::Released) {
         return false;
@@ -291,11 +335,17 @@ std::vector<ResourceId> ResourceManagerService::resources_by_lifetime(ResourceLi
 }
 
 void ResourceManagerService::sweep_released() {
+    if (!require_owner_thread("ResourceManagerService::sweep_released")) {
+        return;
+    }
     // Keep stable vector indices for now. A compacting implementation would need
     // to rewrite all indexes and is unnecessary until resource churn appears.
 }
 
 void ResourceManagerService::clear_lifetime(ResourceLifetime lifetime) {
+    if (!require_owner_thread("ResourceManagerService::clear_lifetime")) {
+        return;
+    }
     for (ResourceDescriptor& desc : m_descriptors) {
         if (desc.lifetime == lifetime && desc.state != ResourceState::Released) {
             (void)release(desc.id);
@@ -305,6 +355,10 @@ void ResourceManagerService::clear_lifetime(ResourceLifetime lifetime) {
 
 ResourceHandle ResourceManagerService::allocate_runtime_handle() {
     return ResourceHandle{m_next_runtime_handle++};
+}
+
+bool ResourceManagerService::require_owner_thread(std::string_view api_name) const {
+    return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
 }
 
 ResourceHandle ResourceManagerService::register_impl(ResourceRegistration registration,

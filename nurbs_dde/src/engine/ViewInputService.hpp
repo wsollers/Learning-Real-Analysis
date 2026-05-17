@@ -3,8 +3,10 @@
 // Per-render-view pointer ownership and camera-input sampling.
 
 #include "engine/RenderService.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
+#include <string_view>
 #include <vector>
 
 namespace ndde {
@@ -50,7 +52,16 @@ struct ViewInputUpdate {
 
 class ViewInputService {
 public:
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
     [[nodiscard]] ViewInputSample update(const ViewInputUpdate& input) {
+        if (!require_owner_thread("ViewInputService::update")) {
+            return ViewInputSample{.view = input.view};
+        }
         ViewState& state = state_for(input.view);
         const bool inside = contains(input.rect, input.cursor);
         const bool drag_down = input.buttons.right_down || input.buttons.middle_down;
@@ -94,6 +105,7 @@ public:
     }
 
     void clear_view(RenderViewId view) {
+        if (!require_owner_thread("ViewInputService::clear_view")) return;
         m_views.erase(std::remove_if(m_views.begin(), m_views.end(),
             [view](const ViewState& state) { return state.view == view; }),
             m_views.end());
@@ -109,6 +121,12 @@ private:
     };
 
     std::vector<ViewState> m_views;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     [[nodiscard]] ViewState& state_for(RenderViewId view) {
         if (ViewState* state = state_mut(view))
