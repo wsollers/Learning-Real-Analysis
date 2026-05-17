@@ -2,6 +2,7 @@
 #include "renderer/SecondWindow.hpp"
 #include "renderer/Renderer.hpp"   // for DrawCall
 #include "platform/VulkanContext.hpp"
+#include "renderer/PngWriter.hpp"
 
 #include <volk.h>
 #define GLFW_INCLUDE_NONE
@@ -9,6 +10,9 @@
 #include <stdexcept>
 #include <iostream>
 #include <format>
+#include <cstdint>
+#include <utility>
+#include <vector>
 
 namespace ndde::renderer {
 
@@ -165,14 +169,84 @@ void SecondWindow::draw(const DrawCall& dc) {
     vkCmdDraw(m_cmd, dc.slice.vertex_count, 1, 0, 0);
 }
 
+void SecondWindow::request_png_capture(std::filesystem::path path) {
+    m_pending_capture = std::move(path);
+}
+
 // ── end_frame ─────────────────────────────────────────────────────────────────
 
 bool SecondWindow::end_frame() {
     if (!m_frame_open) return false;
     vkCmdEndRendering(m_cmd);
-    transition_image(m_sc_images[m_image_index],
-                     VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                     VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+    struct CaptureReadback {
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+        std::filesystem::path path;
+    } capture;
+
+    const bool do_capture = m_pending_capture.has_value();
+    if (do_capture) {
+        const VkDeviceSize bytes =
+            static_cast<VkDeviceSize>(m_sc_extent.width) * m_sc_extent.height * 4u;
+        capture.path = std::move(*m_pending_capture);
+        m_pending_capture.reset();
+
+        VkBufferCreateInfo bi{
+            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+            .size = bytes,
+            .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+            .sharingMode = VK_SHARING_MODE_EXCLUSIVE
+        };
+        if (vkCreateBuffer(m_device, &bi, nullptr, &capture.buffer) != VK_SUCCESS)
+            throw std::runtime_error("[SecondWindow] capture vkCreateBuffer failed");
+
+        VkMemoryRequirements req{};
+        vkGetBufferMemoryRequirements(m_device, capture.buffer, &req);
+        VkMemoryAllocateInfo ai{
+            .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+            .allocationSize = req.size,
+            .memoryTypeIndex = find_memory_type(req.memoryTypeBits,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+        };
+        if (vkAllocateMemory(m_device, &ai, nullptr, &capture.memory) != VK_SUCCESS) {
+            vkDestroyBuffer(m_device, capture.buffer, nullptr);
+            throw std::runtime_error("[SecondWindow] capture vkAllocateMemory failed");
+        }
+        if (vkBindBufferMemory(m_device, capture.buffer, capture.memory, 0) != VK_SUCCESS) {
+            vkFreeMemory(m_device, capture.memory, nullptr);
+            vkDestroyBuffer(m_device, capture.buffer, nullptr);
+            throw std::runtime_error("[SecondWindow] capture vkBindBufferMemory failed");
+        }
+
+        transition_image(m_sc_images[m_image_index],
+                         VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                         VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+        VkBufferImageCopy region{
+            .bufferOffset = 0,
+            .bufferRowLength = 0,
+            .bufferImageHeight = 0,
+            .imageSubresource = {
+                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                .mipLevel = 0,
+                .baseArrayLayer = 0,
+                .layerCount = 1
+            },
+            .imageOffset = {0, 0, 0},
+            .imageExtent = {m_sc_extent.width, m_sc_extent.height, 1}
+        };
+        vkCmdCopyImageToBuffer(m_cmd, m_sc_images[m_image_index],
+                               VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                               capture.buffer, 1, &region);
+        transition_image(m_sc_images[m_image_index],
+                         VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+    } else {
+        transition_image(m_sc_images[m_image_index],
+                         VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+    }
+
     if (vkEndCommandBuffer(m_cmd) != VK_SUCCESS)
         throw std::runtime_error("[SecondWindow] vkEndCommandBuffer failed");
 
@@ -191,6 +265,31 @@ bool SecondWindow::end_frame() {
     };
     if (vkQueueSubmit(m_gfx_queue, 1, &submit, m_render_fence) != VK_SUCCESS)
         throw std::runtime_error("[SecondWindow] vkQueueSubmit failed");
+
+    if (do_capture) {
+        vkWaitForFences(m_device, 1, &m_render_fence, VK_TRUE, UINT64_MAX);
+        const std::size_t pixel_count =
+            static_cast<std::size_t>(m_sc_extent.width) * m_sc_extent.height;
+        const std::size_t byte_count = pixel_count * 4u;
+        void* mapped = nullptr;
+        if (vkMapMemory(m_device, capture.memory, 0,
+                        static_cast<VkDeviceSize>(byte_count), 0, &mapped) != VK_SUCCESS)
+            throw std::runtime_error("[SecondWindow] capture vkMapMemory failed");
+
+        std::vector<byte> rgba(byte_count);
+        const auto* bgra = static_cast<const byte*>(mapped);
+        for (std::size_t i = 0; i < pixel_count; ++i) {
+            rgba[i * 4u + 0u] = bgra[i * 4u + 2u];
+            rgba[i * 4u + 1u] = bgra[i * 4u + 1u];
+            rgba[i * 4u + 2u] = bgra[i * 4u + 0u];
+            rgba[i * 4u + 3u] = bgra[i * 4u + 3u];
+        }
+        vkUnmapMemory(m_device, capture.memory);
+        write_png_rgba8(capture.path, m_sc_extent.width, m_sc_extent.height, rgba);
+        vkFreeMemory(m_device, capture.memory, nullptr);
+        vkDestroyBuffer(m_device, capture.buffer, nullptr);
+        std::cout << "[SecondWindow] Wrote capture: " << capture.path.string() << "\n";
+    }
 
     VkPresentInfoKHR present{
         .sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
@@ -350,6 +449,16 @@ void SecondWindow::transition_image(VkImage image, VkImageLayout from, VkImageLa
         dst_stage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
         src_access = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         dst_access = 0;
+    } else if (from == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && to == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+        src_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dst_stage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        src_access = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dst_access = VK_ACCESS_TRANSFER_READ_BIT;
+    } else if (from == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL && to == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR) {
+        src_stage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        dst_stage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+        src_access = VK_ACCESS_TRANSFER_READ_BIT;
+        dst_access = 0;
     }
 
     VkImageMemoryBarrier b{
@@ -364,6 +473,17 @@ void SecondWindow::transition_image(VkImage image, VkImageLayout from, VkImageLa
     };
     vkCmdPipelineBarrier(m_cmd, src_stage, dst_stage,
         0, 0, nullptr, 0, nullptr, 1, &b);
+}
+
+u32 SecondWindow::find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const {
+    VkPhysicalDeviceMemoryProperties mem_props{};
+    vkGetPhysicalDeviceMemoryProperties(m_physical_device, &mem_props);
+    for (u32 i = 0; i < mem_props.memoryTypeCount; ++i) {
+        if ((type_filter & (1u << i)) &&
+            (mem_props.memoryTypes[i].propertyFlags & props) == props)
+            return i;
+    }
+    throw std::runtime_error("[SecondWindow] No suitable capture memory type found");
 }
 
 Pipeline& SecondWindow::pipeline_for(Topology topo) {

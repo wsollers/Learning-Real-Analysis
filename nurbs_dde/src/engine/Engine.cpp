@@ -805,32 +805,30 @@ void Engine::update_render_view_input() {
 void Engine::request_capture(bool pause_first) {
     if (pause_first)
         active_runtime().pause();
-    m_event_log.push_back("PNG capture requested");
-    m_renderer.request_png_capture(make_capture_path());
-}
 
-std::filesystem::path Engine::make_capture_path() const {
-    std::string name = std::string(active_runtime().name());
-    for (char& c : name) {
-        const unsigned char uc = static_cast<unsigned char>(c);
-        if (!std::isalnum(uc)) c = '_';
+    const TickInfo tick = m_services.clock().current();
+    m_services.capture().set_output_dir(std::filesystem::path{NDDE_PROJECT_DIR} / "captures");
+    m_services.capture().request_still(CaptureRequest{
+        .mode = CaptureMode::StillPng,
+        .target = CaptureTarget::BothWindows,
+        .pause_before_capture = pause_first,
+        .include_manifest = true
+    }, CaptureRunMetadata{
+        .simulation_name = std::string(active_runtime().name()),
+        .scenario_name = std::string(active_runtime().name()),
+        .simulation_index = static_cast<u64>(m_active_sim),
+        .tick = tick.tick_index,
+        .sim_time = tick.time,
+        .wall_seconds = static_cast<f32>(glfwGetTime())
+    });
+
+    for (const CaptureArtifact& artifact : m_services.capture().consume_pending_stills()) {
+        if (artifact.target == CaptureTarget::MainWindow)
+            m_renderer.request_png_capture(artifact.path);
+        else if (artifact.target == CaptureTarget::AlternateWindow && m_second_win.valid())
+            m_second_win.request_png_capture(artifact.path);
     }
-    name.erase(std::unique(name.begin(), name.end(),
-                           [](char a, char b){ return a == '_' && b == '_'; }),
-               name.end());
-    if (!name.empty() && name.back() == '_') name.pop_back();
-    if (name.empty()) name = "simulation";
-
-    const std::time_t now = std::time(nullptr);
-    std::tm tm{};
-#if defined(_WIN32)
-    localtime_s(&tm, &now);
-#else
-    localtime_r(&now, &tm);
-#endif
-    std::ostringstream stamp;
-    stamp << std::put_time(&tm, "%Y%m%d_%H%M%S");
-    return std::filesystem::path{NDDE_PROJECT_DIR} / "captures" / (name + "_" + stamp.str() + ".png");
+    m_event_log.push_back("PNG capture requested");
 }
 
 SimulationRuntime& Engine::active_runtime() {

@@ -5,6 +5,7 @@ add_executable(ndde_tests
     test_all_simulations.cpp
     test_alternate_view_builders.cpp
     test_conics.cpp
+    test_capture_service.cpp
     test_axes.cpp
     test_numeric.cpp
     test_particle_system.cpp
@@ -29,6 +30,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/simulation/fields/IField.cpp
     ${CMAKE_SOURCE_DIR}/src/simulation/scenario/ScenarioBuilder.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/capture/CaptureService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/diagnostics/DiagnosticsService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/metadata/SimMetadataService.cpp
 )

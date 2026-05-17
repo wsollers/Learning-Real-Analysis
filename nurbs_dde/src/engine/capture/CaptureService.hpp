@@ -1,0 +1,69 @@
+#pragma once
+// engine/capture/CaptureService.hpp
+// Engine-owned visual artifact capture service.
+
+#include "engine/capture/CaptureTypes.hpp"
+
+#include <span>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
+
+namespace ndde {
+
+class CaptureService {
+public:
+    CaptureService() = default;
+    ~CaptureService() = default;
+
+    CaptureService(const CaptureService&) = delete;
+    CaptureService& operator=(const CaptureService&) = delete;
+    CaptureService(CaptureService&&) = delete;
+    CaptureService& operator=(CaptureService&&) = delete;
+
+    void set_output_dir(std::filesystem::path directory) { m_output_dir = std::move(directory); }
+    [[nodiscard]] const std::filesystem::path& output_dir() const noexcept { return m_output_dir; }
+
+    void request_still(CaptureRequest request, CaptureRunMetadata metadata);
+
+    [[nodiscard]] bool start_movie_frames(MovieFrameSequenceOptions options,
+                                          CaptureRunMetadata metadata);
+    void stop_movie_frames() noexcept;
+    [[nodiscard]] bool movie_frames_active() const noexcept { return m_movie_status.active; }
+    [[nodiscard]] MovieFrameSequenceStatus movie_frame_status() const { return m_movie_status; }
+
+    [[nodiscard]] std::vector<CaptureArtifact> consume_pending_stills();
+    [[nodiscard]] std::span<const CaptureArtifact> completed_artifacts() const noexcept { return m_completed; }
+    void clear_completed_artifacts() noexcept { m_completed.clear(); }
+
+    [[nodiscard]] static std::string normalize_stem(std::string_view text);
+    [[nodiscard]] static std::string target_token(CaptureTarget target);
+
+private:
+    std::filesystem::path m_output_dir{"captures"};
+    std::vector<CaptureArtifact> m_pending_stills;
+    std::vector<CaptureArtifact> m_completed;
+    MovieFrameSequenceOptions m_movie_options;
+    MovieFrameSequenceStatus m_movie_status;
+
+    [[nodiscard]] std::string make_run_id(const CaptureRunMetadata& metadata) const;
+    [[nodiscard]] std::filesystem::path make_manifest_path(const std::filesystem::path& run_dir,
+                                                           const std::string& run_id) const;
+    [[nodiscard]] std::filesystem::path make_still_path(const std::filesystem::path& run_dir,
+                                                        const std::string& run_id,
+                                                        CaptureTarget target,
+                                                        const CaptureRunMetadata& metadata) const;
+    [[nodiscard]] static std::filesystem::path unique_path(std::filesystem::path path);
+    [[nodiscard]] static std::string local_timestamp();
+
+    void write_manifest(const std::filesystem::path& manifest_path,
+                        const CaptureRequest& request,
+                        const CaptureRunMetadata& metadata,
+                        std::span<const CaptureArtifact> artifacts) const;
+    void write_movie_frame_manifest(const CaptureRunMetadata& metadata,
+                                    const MovieFrameSequenceOptions& options,
+                                    const MovieFrameSequenceStatus& status) const;
+};
+
+} // namespace ndde

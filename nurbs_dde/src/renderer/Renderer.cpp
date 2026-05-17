@@ -256,8 +256,8 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
         if (vkMapMemory(m_device, capture.memory, 0, static_cast<VkDeviceSize>(byte_count), 0, &mapped) != VK_SUCCESS)
             throw std::runtime_error("[Renderer] capture vkMapMemory failed");
 
-        std::vector<std::uint8_t> rgba(byte_count);
-        const auto* bgra = static_cast<const std::uint8_t*>(mapped);
+        std::vector<byte> rgba(byte_count);
+        const auto* bgra = static_cast<const byte*>(mapped);
         for (std::size_t i = 0; i < pixel_count; ++i) {
             rgba[i * 4u + 0u] = bgra[i * 4u + 2u];
             rgba[i * 4u + 1u] = bgra[i * 4u + 1u];

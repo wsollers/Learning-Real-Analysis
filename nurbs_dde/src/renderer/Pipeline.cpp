@@ -134,17 +134,17 @@ void Pipeline::destroy() {
     m_device = VK_NULL_HANDLE;
 }
 
-std::vector<char> Pipeline::read_spv(const std::string& path) {
+std::vector<byte> Pipeline::read_spv(const std::string& path) {
     std::ifstream file(path, std::ios::ate | std::ios::binary);
     if (!file.is_open()) throw std::runtime_error("[Pipeline] Cannot open shader: " + path);
     const auto size = static_cast<std::size_t>(file.tellg());
-    std::vector<char> buf(size);
+    std::vector<byte> buf(size);
     file.seekg(0);
-    file.read(buf.data(), static_cast<std::streamsize>(size));
+    file.read(reinterpret_cast<char*>(buf.data()), static_cast<std::streamsize>(size));
     return buf;
 }
 
-VkShaderModule Pipeline::create_shader_module(VkDevice device, const std::vector<char>& code) {
+VkShaderModule Pipeline::create_shader_module(VkDevice device, const std::vector<byte>& code) {
     VkShaderModuleCreateInfo info{
         .sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         .codeSize = code.size(),

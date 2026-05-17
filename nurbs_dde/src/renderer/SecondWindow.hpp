@@ -8,6 +8,8 @@
 #include "renderer/Pipeline.hpp"
 #include <volk.h>
 #include <VkBootstrap.h>
+#include <filesystem>
+#include <optional>
 #include <string>
 
 struct GLFWwindow;
@@ -39,6 +41,7 @@ public:
     [[nodiscard]] bool begin_frame();
     void draw(const DrawCall& dc);
     [[nodiscard]] bool end_frame();
+    void request_png_capture(std::filesystem::path path);
 
     void on_resize();
 
@@ -86,6 +89,7 @@ private:
     Pipeline m_pipeline_line_list;
     Pipeline m_pipeline_line_strip;
     Pipeline m_pipeline_triangle_list;
+    std::optional<std::filesystem::path> m_pending_capture;
 
     void build_swapchain(u32 w, u32 h);
     void destroy_swapchain();
@@ -93,6 +97,7 @@ private:
     void create_sync_objects();
     void init_pipelines(const std::string& shader_dir);
     void transition_image(VkImage image, VkImageLayout from, VkImageLayout to);
+    [[nodiscard]] u32 find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const;
     [[nodiscard]] Pipeline& pipeline_for(Topology topo);
 
     static void resize_callback(GLFWwindow* win, int w, int h);

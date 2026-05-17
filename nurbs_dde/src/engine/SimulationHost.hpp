@@ -4,6 +4,7 @@
 
 #include "engine/CameraInputController.hpp"
 #include "engine/CameraService.hpp"
+#include "engine/capture/CaptureService.hpp"
 #include "engine/diagnostics/DiagnosticsService.hpp"
 #include "engine/HotkeyService.hpp"
 #include "engine/InteractionService.hpp"
@@ -77,6 +78,7 @@ public:
     [[nodiscard]] CameraService& camera() noexcept { return m_camera; }
     [[nodiscard]] CameraInputController& camera_input() noexcept { return m_camera_input; }
     [[nodiscard]] ViewInputService& view_input() noexcept { return m_view_input; }
+    [[nodiscard]] CaptureService& capture() noexcept { return m_capture; }
     [[nodiscard]] DiagnosticsService& diagnostics() noexcept { return m_diagnostics; }
     [[nodiscard]] SimMetadataService& metadata() noexcept { return m_metadata; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
@@ -94,6 +96,7 @@ private:
     InteractionService m_interaction;
     RenderService m_render;
     CameraService m_camera;
+    CaptureService m_capture;
     DiagnosticsService m_diagnostics;
     SimMetadataService m_metadata;
     CameraInputController m_camera_input;

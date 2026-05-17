@@ -30,8 +30,10 @@ std::filesystem::path TelemetryWriter::make_stem(std::string_view sim_name,
     // Sanitise sim_name → lowercase_with_underscores
     std::string name{sim_name};
     for (char& c : name) {
-        const auto uc = static_cast<unsigned char>(c);
-        c = std::isalnum(uc) ? static_cast<char>(std::tolower(uc)) : '_';
+        const auto uc = static_cast<byte>(c);
+        c = std::isalnum(static_cast<int>(uc))
+            ? static_cast<char>(std::tolower(static_cast<int>(uc)))
+            : '_';
     }
     // Collapse runs of underscores
     name.erase(std::unique(name.begin(), name.end(),

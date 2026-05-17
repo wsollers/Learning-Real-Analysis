@@ -108,7 +108,6 @@ private:
     void dispatch_global_hotkeys();
     void update_render_view_input();
     void request_capture(bool pause_first);
-    [[nodiscard]] std::filesystem::path make_capture_path() const;
     [[nodiscard]] SimulationRuntime& active_runtime();
     [[nodiscard]] const SimulationRuntime& active_runtime() const;
     [[nodiscard]] EngineAPI make_api();
