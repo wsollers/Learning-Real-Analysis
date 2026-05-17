@@ -53,9 +53,10 @@ public:
     [[nodiscard]] bool empty() const noexcept { return m_particles.empty(); }
     [[nodiscard]] std::size_t size() const noexcept { return m_particles.size(); }
 
-    [[nodiscard]] memory::FrameVector<ParticleSnapshot> snapshot_particles() const {
-        memory::FrameVector<ParticleSnapshot> out =
-            m_memory ? m_memory->frame().make_vector<ParticleSnapshot>() : memory::FrameVector<ParticleSnapshot>{};
+    [[nodiscard]] memory::PersistentVector<ParticleSnapshot> snapshot_particles() const {
+        memory::PersistentVector<ParticleSnapshot> out =
+            m_memory ? m_memory->persistent().make_vector<ParticleSnapshot>()
+                     : memory::PersistentVector<ParticleSnapshot>{};
         out.reserve(m_particles.size());
         for (const auto& particle : m_particles) {
             const glm::vec2 uv = particle.head_uv();

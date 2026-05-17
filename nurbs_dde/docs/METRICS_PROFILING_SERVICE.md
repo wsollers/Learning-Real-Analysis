@@ -281,6 +281,7 @@ Record these from `Engine::run_frame()` and the renderer frame boundaries:
 | median FPS | derived | from median frame ms |
 | ImGui build ms | main thread | widget construction and `ImGui::Render()` |
 | render task wait ms | main thread | time waiting for renderer-role task, if threaded |
+| simulation render submit ms | main thread / simulation runtime | CPU packet preparation, render-service submission, geometry cache rebuilds, and render snapshot handoff |
 | swapchain acquire ms | renderer | `vkAcquireNextImageKHR` region |
 | command record ms | renderer | Vulkan command recording |
 | queue submit ms | renderer | submission call region |
@@ -292,6 +293,20 @@ Record these from `Engine::run_frame()` and the renderer frame boundaries:
 
 These should be available in an `Engine - Metrics` panel before any durable
 export is added.
+
+Interpretation rule:
+
+```text
+High frame ms + low Vulkan acquire/submit/present ms = CPU-side frame work.
+High Simulation Render Submit ms = render packet preparation/cache rebuilds,
+not GPU queue submission.
+```
+
+`SimulationRenderSubmitMs` is intentionally broader than Vulkan submission. In
+the current engine it includes calls such as `ISimulation::on_submit_render()`
+and simulation packet emission into `RenderService`. A high value here usually
+means CPU geometry work, packet copies, cache invalidation, hover/picking
+geometry, or alternate-view packet construction.
 
 ## Simulation And Math Metrics
 
@@ -334,6 +349,24 @@ calling a shared metric API for every particle or every derivative in the hot
 loop. Prefer local accumulation into a thread-owned `SimulationWorkMetrics`
 struct, then copy the accumulated values into the service during the periodic
 metrics drain.
+
+Render packet preparation should be treated separately from simulation-state
+advance. With `simulation.threaded_runtime = true`, the simulation tick can run
+on the simulation thread, while packet preparation may still occur on the
+main/render-submit path if it mutates main-owned services such as
+`RenderService`, `InteractionService`, or camera/view state.
+
+Optimization targets when `SimulationRenderSubmitMs` is high:
+
+- avoid marking surface mesh caches dirty every tick unless topology, grid,
+  surface definition, or field structure actually changed
+- separate persistent geometry caches from per-frame transform/submission
+  packets
+- move expensive geometry/cache generation to a worker or simulation-owned
+  staging object, then publish immutable snapshots/resources
+- keep hover/picking helper geometry conditional and bounded
+- avoid rebuilding alternate-view contour/vector/flow packets unless their
+  inputs changed
 
 ## Background Job Metrics
 

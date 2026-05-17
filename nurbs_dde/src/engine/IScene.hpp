@@ -50,7 +50,7 @@ struct SceneSnapshot {
     float sim_speed = 0.f;
     std::size_t particle_count = 0;
     std::string status;
-    memory::FrameVector<ParticleSnapshot> particles;
+    memory::PersistentVector<ParticleSnapshot> particles;
 };
 
 class IScene {

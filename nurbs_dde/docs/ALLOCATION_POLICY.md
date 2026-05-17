@@ -46,6 +46,13 @@ reference expose explicit bind methods, for example `SurfaceMeshCache::bind_memo
 `ParticleSystem::bind_memory`, and service `set_memory_service` methods. A scope
 must not be reset while objects allocated from that scope are still alive.
 
+Cross-frame and cross-thread snapshots are not frame scratch. If a snapshot is
+cached by a runtime, published through a mailbox, or may be read after
+`memory.frame().begin_frame()` resets the frame scope, it must use
+`memory::PersistentVector<T>`, another appropriate non-frame policy alias, or a
+compact resource ID. `memory::FrameVector<T>` is only for data consumed before
+the next frame reset.
+
 Object ownership for simulation-runtime polymorphic objects should use
 `memory::Unique<T>`, normally created by the appropriate scope:
 

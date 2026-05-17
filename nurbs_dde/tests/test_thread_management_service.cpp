@@ -301,7 +301,6 @@ TEST(ThreadManagementService, SimulationSnapshotMailboxKeepsLatestImmutableCopy)
     scene.sim_time = 3.25f;
     scene.sim_speed = 2.0f;
     scene.status = "Running";
-    scene.particles = memory.frame().make_vector<ParticleSnapshot>();
     scene.particles.push_back(ParticleSnapshot{.id = 11u, .label = "first", .x = 1.f});
     scene.particle_count = scene.particles.size();
 

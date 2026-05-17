@@ -668,6 +668,16 @@ for storage. When data must cross thread, frame, or service ownership
 boundaries, register it with `ResourceManagerService` and pass `ResourceId`
 rather than raw pointers or large payloads.
 
+Snapshot lifetime rule:
+
+- Data that is consumed only during the current frame may use frame lifetime.
+- Data published through a mailbox, cached by a runtime, or read by another
+  thread on a later frame must not use `memory::FrameVector`.
+- Latest-value simulation/render snapshots should own their copied payloads
+  with persistent/session lifetime or refer to resources by ID.
+- `SimulationRuntime` snapshots are cached and can cross frame boundaries, so
+  particle snapshot payloads use persistent lifetime rather than frame lifetime.
+
 ## Shutdown Contract
 
 Shutdown must be boring and deterministic:

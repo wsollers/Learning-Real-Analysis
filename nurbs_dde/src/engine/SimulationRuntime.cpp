@@ -1,6 +1,8 @@
 #include "engine/SimulationRuntime.hpp"
+#include "engine/metricservice/MetricsService.hpp"
 #include "engine/threading/ThreadManagementService.hpp"
 
+#include <chrono>
 #include <stdexcept>
 #include <utility>
 
@@ -64,6 +66,7 @@ void SimulationRuntime::resume() {
 }
 
 void SimulationRuntime::tick(TickInfo tick) {
+    const auto started = std::chrono::steady_clock::now();
     std::scoped_lock lock(m_mutex);
     if (!m_simulation) return;
     TickInfo effective = tick;
@@ -71,9 +74,14 @@ void SimulationRuntime::tick(TickInfo tick) {
     if (effective.paused) effective.dt = 0.f;
     m_simulation->on_tick(effective);
     publish();
+    if (MetricsThreadContext* metrics = MetricsThreadHandle::current()) {
+        metrics->record_duration(MetricId::SimulationTickMs,
+                                 std::chrono::steady_clock::now() - started);
+    }
 }
 
 void SimulationRuntime::tick_simulation(TickInfo tick) {
+    const auto started = std::chrono::steady_clock::now();
     std::scoped_lock lock(m_mutex);
     if (!m_simulation) return;
     TickInfo effective = tick;
@@ -81,12 +89,21 @@ void SimulationRuntime::tick_simulation(TickInfo tick) {
     if (effective.paused) effective.dt = 0.f;
     m_simulation->on_simulation_tick(effective);
     publish();
+    if (MetricsThreadContext* metrics = MetricsThreadHandle::current()) {
+        metrics->record_duration(MetricId::SimulationTickMs,
+                                 std::chrono::steady_clock::now() - started);
+    }
 }
 
 void SimulationRuntime::submit_render() {
+    const auto started = std::chrono::steady_clock::now();
     std::scoped_lock lock(m_mutex);
     if (!m_simulation) return;
     m_simulation->on_submit_render();
+    if (MetricsThreadContext* metrics = MetricsThreadHandle::current()) {
+        metrics->record_duration(MetricId::SimulationRenderSubmitMs,
+                                 std::chrono::steady_clock::now() - started);
+    }
 }
 
 void SimulationRuntime::process_thread_commands(std::span<const SimulationThreadCommand> commands,
@@ -137,9 +154,14 @@ void SimulationRuntime::process_thread_commands(std::span<const SimulationThread
 }
 
 void SimulationRuntime::record_telemetry_tick(u64 tick_index, const TickInfo& tick, EngineAPI& api) {
+    const auto started = std::chrono::steady_clock::now();
     std::scoped_lock lock(m_mutex);
     if (!m_simulation) return;
     m_simulation->on_telemetry_tick(tick_index, tick, api);
+    if (MetricsThreadContext* metrics = MetricsThreadHandle::current()) {
+        metrics->record_duration(MetricId::TelemetryTickMs,
+                                 std::chrono::steady_clock::now() - started);
+    }
 }
 
 void SimulationRuntime::publish() {

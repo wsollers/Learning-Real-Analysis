@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <format>
 #include <algorithm>
+#include <chrono>
 #include <cctype>
 #include <ctime>
 #include <filesystem>
@@ -327,15 +328,20 @@ void Engine::run_frame() {
             .tick = tick_info
         });
     } else {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::SimulationTickMs);
         active_runtime().tick(tick_info);
     }
 
     // ── Drain service-owned event logs once per frame ─────────────────────
-    m_services.threads().drain_service_mailboxes();
-    m_services.events().drain_all(tick_info.time, tick_info.tick_index);
+    {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::EventDrainMs);
+        m_services.threads().drain_service_mailboxes();
+        m_services.events().drain_all(tick_info.time, tick_info.tick_index);
+    }
 
     // ── Telemetry: record this tick ───────────────────────────────────────────
     if (m_telemetry.enabled() && !active_runtime().paused()) {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::TelemetryTickMs);
         const auto snap     = active_runtime().snapshot();
         const f32  wall_ms  = static_cast<f32>(glfwGetTime() * 1000.0)
                             - m_telemetry_sim_start_wall_ms;
@@ -362,16 +368,23 @@ void Engine::run_frame() {
         }
     }
     if (m_config.simulation.threaded_runtime) {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::SimulationRenderSubmitMs);
         active_runtime().submit_render();
     }
-    m_services.panels().draw_registered_panels();
-    update_render_view_input();
-    m_renderer.imgui_build_draw_data();
+    {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::ImGuiBuildMs);
+        m_services.panels().draw_registered_panels();
+        update_render_view_input();
+        m_renderer.imgui_build_draw_data();
+    }
 
     bool primary_ok = true;
     bool second_present_ok = true;
     (void)run_render_frame_task([this, &primary_ok, &second_present_ok] {
-        primary_ok = m_renderer.begin_frame(m_swapchain);
+        {
+            ScopedMetricTimer timer(m_services.metrics(), MetricId::FrameAcquireMs);
+            primary_ok = m_renderer.begin_frame(m_swapchain);
+        }
         if (!primary_ok) {
             return;
         }
@@ -379,15 +392,25 @@ void Engine::run_frame() {
         const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
         flush_render_service();
         m_renderer.imgui_record_draw_data();
-        primary_ok = m_renderer.end_frame(m_swapchain);
+        {
+            ScopedMetricTimer timer(m_services.metrics(), MetricId::FrameSubmitMs);
+            primary_ok = m_renderer.end_frame(m_swapchain);
+        }
 
         // Present the auxiliary contour window after the primary window. FIFO
         // present can block, and letting the secondary surface block first makes
         // main-window frame pacing visibly worse on some drivers.
         if (second_ok) {
+            ScopedMetricTimer timer(m_services.metrics(), MetricId::FramePresentMs);
             second_present_ok = m_second_win.end_frame();
         }
     });
+    if (primary_ok) {
+        m_services.metrics().increment(MetricId::FramesSubmitted);
+        m_services.metrics().increment(MetricId::FramesPresented);
+    } else {
+        m_services.metrics().increment(MetricId::FramesSkipped);
+    }
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_services.memory().frame_gpu_bytes_used();
@@ -814,8 +837,15 @@ void Engine::draw_metrics_panel() {
 
         draw_row(MetricId::FrameMs);
         draw_row(MetricId::FrameFps);
+        draw_row(MetricId::ImGuiBuildMs);
+        draw_row(MetricId::EventDrainMs);
         draw_row(MetricId::SimulationTickMs);
+        draw_row(MetricId::SimulationRenderSubmitMs);
         draw_row(MetricId::TelemetryTickMs);
+        draw_row(MetricId::RenderTaskWaitMs);
+        draw_row(MetricId::FrameAcquireMs);
+        draw_row(MetricId::FrameSubmitMs);
+        draw_row(MetricId::FramePresentMs);
         ImGui::EndTable();
     }
 
@@ -1099,7 +1129,11 @@ void Engine::stop_render_presentation_thread() noexcept {
 }
 
 bool Engine::run_render_frame_task(std::function<void()> task) {
-    return m_services.threads().run_render_task_sync(std::move(task));
+    const auto started = std::chrono::steady_clock::now();
+    const bool result = m_services.threads().run_render_task_sync(std::move(task));
+    m_services.metrics().record_duration(MetricId::RenderTaskWaitMs,
+                                          std::chrono::steady_clock::now() - started);
+    return result;
 }
 
 void Engine::enqueue_pending_surface_pokes(const TickInfo& tick) {

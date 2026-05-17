@@ -192,6 +192,9 @@ add_custom_target(nurbs_dde_config ALL
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_SOURCE_DIR}/engine_config.json"
         "${CMAKE_BINARY_DIR}/engine_config.json"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/engine_config.json"
+        "$<TARGET_FILE_DIR:nurbs_dde>/engine_config.json"
     COMMENT "Copying engine_config.json to build directory"
 )
 add_dependencies(nurbs_dde nurbs_dde_config)
