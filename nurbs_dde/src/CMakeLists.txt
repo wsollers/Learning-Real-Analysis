@@ -98,6 +98,7 @@ add_library(ndde_engine STATIC
     engine/logging/LoggerService.cpp
     engine/metadata/SimMetadataService.cpp
     engine/resources/ResourceManagerService.cpp
+    engine/threading/ThreadManagementService.cpp
     engine/AppConfig.cpp
     engine/Engine.cpp
     engine/SimulationRuntime.cpp

@@ -6,6 +6,7 @@
 
 #include <span>
 #include <string_view>
+#include <mutex>
 #include <vector>
 
 namespace ndde {
@@ -38,6 +39,7 @@ public:
                                                std::string_view message);
 
     [[nodiscard]] std::span<const LogRecord> records() const noexcept;
+    [[nodiscard]] std::vector<LogSnapshotEntry> snapshot() const;
     [[nodiscard]] std::string_view message(LogRecordId id) const noexcept;
     [[nodiscard]] u64 dropped_records() const noexcept { return m_dropped_records; }
     [[nodiscard]] u64 dropped_string_bytes() const noexcept { return m_dropped_string_bytes; }
@@ -59,6 +61,7 @@ private:
     LoggerConfig m_config;
     std::vector<StoredRecord> m_store;
     std::vector<LogRecord> m_record_view;
+    mutable std::mutex m_mutex;
     u64 m_next_id = u64(1);
     u64 m_string_bytes = u64(0);
     u64 m_dropped_records = u64(0);

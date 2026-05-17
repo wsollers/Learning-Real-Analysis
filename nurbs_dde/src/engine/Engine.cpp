@@ -289,6 +289,7 @@ void Engine::run_frame() {
     active_runtime().tick(tick_info);
 
     // ── Drain service-owned event logs once per frame ─────────────────────
+    m_services.threads().drain_service_mailboxes();
     m_services.events().drain_all(tick_info.time, tick_info.tick_index);
 
     // ── Telemetry: record this tick ───────────────────────────────────────────
@@ -584,12 +585,11 @@ void Engine::draw_event_log_panel() {
 
     // Engine-scoped narrative log records from LoggerService.
     if (ImGui::TreeNodeEx("Engine Events", ImGuiTreeNodeFlags_DefaultOpen)) {
-        for (const LogRecord& record : m_services.logger().records()) {
-            if (record.category != LogCategory::Engine) {
+        for (const LogSnapshotEntry& entry : m_services.logger().snapshot()) {
+            if (entry.record.category != LogCategory::Engine) {
                 continue;
             }
-            const std::string_view message = m_services.logger().message(record.id);
-            ImGui::TextDisabled("%.*s", static_cast<int>(message.size()), message.data());
+            ImGui::TextDisabled("%.*s", static_cast<int>(entry.message.size()), entry.message.data());
         }
         ImGui::TreePop();
     }

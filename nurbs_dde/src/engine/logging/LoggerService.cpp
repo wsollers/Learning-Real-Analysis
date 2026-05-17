@@ -5,7 +5,15 @@
 namespace ndde {
 
 void LoggerService::init(LoggerConfig config) {
-    shutdown();
+    std::scoped_lock lock(m_mutex);
+    m_store.clear();
+    m_record_view.clear();
+    m_string_bytes = u64(0);
+    m_config = {};
+    m_next_id = u64(1);
+    m_dropped_records = u64(0);
+    m_dropped_string_bytes = u64(0);
+    m_initialised = false;
     m_config = config;
     if (m_config.max_records == u64(0)) {
         m_config.max_records = u64(1);
@@ -16,7 +24,10 @@ void LoggerService::init(LoggerConfig config) {
 }
 
 void LoggerService::shutdown() noexcept {
-    clear();
+    std::scoped_lock lock(m_mutex);
+    m_store.clear();
+    m_record_view.clear();
+    m_string_bytes = u64(0);
     m_config = {};
     m_next_id = u64(1);
     m_dropped_records = u64(0);
@@ -28,6 +39,7 @@ LogRecordId LoggerService::write(LogSeverity severity,
                                  LogCategory category,
                                  LogSourceRef source,
                                  std::string_view message) {
+    std::scoped_lock lock(m_mutex);
     LogRecord record;
     record.severity = severity;
     record.category = category;
@@ -39,6 +51,7 @@ LogRecordId LoggerService::write_event(EventRef event,
                                        LogSeverity severity,
                                        LogCategory category,
                                        std::string_view message) {
+    std::scoped_lock lock(m_mutex);
     LogRecord record;
     record.severity = severity;
     record.category = category;
@@ -51,6 +64,7 @@ LogRecordId LoggerService::write_event(EventRef event,
 LogRecordId LoggerService::write_diagnostic(DiagnosticId diagnostic,
                                             LogSeverity severity,
                                             std::string_view message) {
+    std::scoped_lock lock(m_mutex);
     LogRecord record;
     record.severity = severity;
     record.category = LogCategory::Diagnostics;
@@ -60,6 +74,19 @@ LogRecordId LoggerService::write_diagnostic(DiagnosticId diagnostic,
 
 std::span<const LogRecord> LoggerService::records() const noexcept {
     return m_record_view;
+}
+
+std::vector<LogSnapshotEntry> LoggerService::snapshot() const {
+    std::scoped_lock lock(m_mutex);
+    std::vector<LogSnapshotEntry> result;
+    result.reserve(m_store.size());
+    for (const StoredRecord& stored : m_store) {
+        result.push_back(LogSnapshotEntry{
+            .record = stored.record,
+            .message = stored.message
+        });
+    }
+    return result;
 }
 
 std::string_view LoggerService::message(LogRecordId id) const noexcept {
@@ -74,6 +101,7 @@ std::string_view LoggerService::message(LogRecordId id) const noexcept {
 }
 
 std::vector<LogRecord> LoggerService::records_at_or_above(LogSeverity severity) const {
+    std::scoped_lock lock(m_mutex);
     std::vector<LogRecord> result;
     for (const StoredRecord& stored : m_store) {
         if (severity_at_or_above(stored.record.severity, severity)) {
@@ -84,6 +112,7 @@ std::vector<LogRecord> LoggerService::records_at_or_above(LogSeverity severity) 
 }
 
 std::vector<LogRecord> LoggerService::records_in_category(LogCategory category) const {
+    std::scoped_lock lock(m_mutex);
     std::vector<LogRecord> result;
     for (const StoredRecord& stored : m_store) {
         if (stored.record.category == category) {
@@ -94,19 +123,25 @@ std::vector<LogRecord> LoggerService::records_in_category(LogCategory category) 
 }
 
 void LoggerService::clear() noexcept {
+    std::scoped_lock lock(m_mutex);
     m_store.clear();
     m_record_view.clear();
     m_string_bytes = u64(0);
 }
 
 void LoggerService::drain_sinks() {
+    std::scoped_lock lock(m_mutex);
     // File/async sinks are intentionally deferred. The in-memory service is the
     // first reliable contract; sinks can consume records here later.
 }
 
 LogRecordId LoggerService::append(LogRecord record, std::string_view message) {
     if (!m_initialised) {
-        init();
+        m_config = {};
+        if (m_config.max_records == u64(0)) {
+            m_config.max_records = u64(1);
+        }
+        m_initialised = true;
     }
 
     record.id = LogRecordId{m_next_id++};

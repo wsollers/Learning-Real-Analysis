@@ -15,6 +15,7 @@
 #include "engine/RenderService.hpp"
 #include "engine/resources/ResourceManagerService.hpp"
 #include "engine/SimulationClock.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 #include "engine/ViewInputService.hpp"
 #include "memory/MemoryService.hpp"
 
@@ -32,6 +33,7 @@ public:
                    LoggerService& logger,
                    SimMetadataService& metadata,
                    ResourceManagerService& resources,
+                   ThreadManagementService& threads,
                    SimulationClock& clock,
                    memory::MemoryService& memory) noexcept
         : m_panels(panels)
@@ -44,6 +46,7 @@ public:
         , m_logger(logger)
         , m_metadata(metadata)
         , m_resources(resources)
+        , m_threads(threads)
         , m_clock(clock)
         , m_memory(memory)
     {}
@@ -58,6 +61,7 @@ public:
     [[nodiscard]] LoggerService& logger() const noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() const noexcept { return m_metadata; }
     [[nodiscard]] ResourceManagerService& resources() const noexcept { return m_resources; }
+    [[nodiscard]] ThreadManagementService& threads() const noexcept { return m_threads; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() const noexcept { return m_memory; }
 
@@ -72,6 +76,7 @@ private:
     LoggerService& m_logger;
     SimMetadataService& m_metadata;
     ResourceManagerService& m_resources;
+    ThreadManagementService& m_threads;
     SimulationClock& m_clock;
     memory::MemoryService& m_memory;
 };
@@ -87,6 +92,11 @@ public:
         m_events.init();
         m_logger.init();
         m_resources.init();
+        m_threads.init(ThreadPoolConfig{.enable_logger_thread = true}, ThreadServiceBindings{
+            .diagnostics = &m_diagnostics,
+            .events = &m_events,
+            .logger = &m_logger
+        });
     }
 
     [[nodiscard]] PanelService& panels() noexcept { return m_panels; }
@@ -102,13 +112,14 @@ public:
     [[nodiscard]] LoggerService& logger() noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() noexcept { return m_metadata; }
     [[nodiscard]] ResourceManagerService& resources() noexcept { return m_resources; }
+    [[nodiscard]] ThreadManagementService& threads() noexcept { return m_threads; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
         return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera,
                               m_diagnostics, m_events, m_logger, m_metadata, m_resources,
-                              m_clock, m_memory);
+                              m_threads, m_clock, m_memory);
     }
 
 private:
@@ -124,6 +135,7 @@ private:
     LoggerService m_logger;
     SimMetadataService m_metadata;
     ResourceManagerService m_resources;
+    ThreadManagementService m_threads;
     CameraInputController m_camera_input;
     ViewInputService m_view_input;
     SimulationClock m_clock;

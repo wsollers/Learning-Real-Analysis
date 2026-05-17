@@ -21,6 +21,7 @@ add_executable(ndde_tests
     test_simulation_context.cpp
     test_simulation_runtime.cpp
     test_surface_metadata.cpp
+    test_thread_management_service.cpp
     # Differential / DDE tests reference old simulations — archived, excluded.
     # Re-enable when those sims are ported to the new simulation/ layer.
     # test_differential_system.cpp
@@ -39,6 +40,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/engine/logging/LoggerService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/metadata/SimMetadataService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/resources/ResourceManagerService.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/threading/ThreadManagementService.cpp
 )
 
 target_include_directories(ndde_tests PRIVATE

@@ -69,4 +69,9 @@ struct LogRecord {
     u32 message_size = u32(0);
 };
 
+struct LogSnapshotEntry {
+    LogRecord record;
+    std::string message;
+};
+
 } // namespace ndde

@@ -1,6 +1,6 @@
 # ThreadManagementService Design
 
-**Status:** design contract  
+**Status:** implementation in progress; worker-pool foundation implemented  
 **Scope:** full application threading, worker lifecycle, render/UI separation, job submission, shutdown, mailboxes, and cross-thread service boundaries  
 **Owner:** `EngineServices`  
 **Intent:** move the app toward a fully threaded runtime while keeping ownership explicit, cancellable, observable, and unable to corrupt simulation/UI/renderer state
@@ -32,6 +32,22 @@ DiagnosticsService      = correctness/trust issues and active broken-state recor
 TelemetryService        = sampled numeric/state measurements.
 Renderer/Platform       = main/render-thread Vulkan, GLFW, and ImGui ownership.
 ```
+
+The first implemented milestone is not merely "some background workers": it is
+the engine-owned execution substrate that future simulation/render/logger
+threads will depend on. The current implementation includes:
+
+- `ThreadManagementService` under `src/engine/threading`
+- engine ownership through `EngineServices`
+- access through `SimulationHost`
+- bounded worker queue using `std::jthread`
+- cancellable jobs using `std::stop_source` / `std::stop_token`
+- job status tracking and completed result drain
+- worker-to-owner mailboxes for logs, diagnostics, and compact event records
+- logger-thread drain for worker log messages
+- logger snapshots for UI reads while the logger thread is active
+- main-thread role tracking and deterministic shutdown
+- focused unit tests and tidy build coverage
 
 The target is not merely "some background workers." The target is a fully
 threaded application:
@@ -355,7 +371,7 @@ expose mutable engine services wholesale.
 ## Public API
 
 ```cpp
-using ThreadJobFn = std::move_only_function<void(ThreadJobContext&)>;
+using ThreadJobFn = std::function<void(ThreadJobContext&)>;
 
 struct ThreadPoolConfig {
     u32 worker_count = u32(0);       // 0 means choose a conservative default.
@@ -377,7 +393,7 @@ public:
     ThreadManagementService(ThreadManagementService&&) = delete;
     ThreadManagementService& operator=(ThreadManagementService&&) = delete;
 
-    void init(ThreadPoolConfig config);
+    void init(ThreadPoolConfig config, ThreadServiceBindings bindings);
     void shutdown() noexcept;
 
     [[nodiscard]] ThreadJobId submit(ThreadJobDescriptor descriptor,
@@ -386,20 +402,19 @@ public:
     void request_cancel(ThreadJobId id) noexcept;
     void request_cancel_all() noexcept;
 
-    void start_runtime_threads();
-    void stop_runtime_threads() noexcept;
-
-    void drain_gui_thread_results();
     void drain_service_mailboxes();
 
     [[nodiscard]] std::span<const ThreadJobStatus> jobs() const noexcept;
     [[nodiscard]] std::optional<ThreadJobStatus> status(ThreadJobId id) const;
+    [[nodiscard]] std::vector<ThreadJobResult> consume_completed_results();
     [[nodiscard]] bool is_main_thread() const noexcept;
 };
 ```
 
-The first implementation can omit a full priority scheduler. It should still
-keep priority in descriptors so the contract does not need to change later.
+The first implementation omits a full priority scheduler but does prefer higher
+priority queued jobs when a worker picks the next item. It keeps priority in
+descriptors so the public contract remains stable when a more sophisticated
+scheduler is added.
 
 Runtime threads should be independently toggleable during migration. That lets
 us split logger/I/O first, then simulation, then rendering, without landing one
@@ -570,14 +585,14 @@ internals or block waiting for jobs.
 
 ## Migration Plan
 
-1. Add `ThreadManagementService` under `src/engine/threading`.
-2. Add `threads()` to `EngineServices`.
-3. Add thread-role assertions for main/GUI/render/simulation-only APIs.
-4. Add logger mailbox and logger/I/O thread first; it has the least coupling.
-5. Move telemetry/log/capture manifest flushing to logger/I/O.
-6. Add bounded worker job queue and `std::jthread` worker pool.
-7. Route compact worker records through `EventBusService`.
-8. Add diagnostics mailbox and main-thread ingestion.
+1. Add `ThreadManagementService` under `src/engine/threading`. **Done.**
+2. Add `threads()` to `EngineServices` and `SimulationHost`. **Done.**
+3. Add bounded worker job queue and `std::jthread` worker pool. **Done.**
+4. Route compact worker records through `EventBusService`. **Done.**
+5. Add diagnostics/log mailboxes and main-thread ingestion. **Done.**
+6. Add thread-role assertions for main/GUI/render/simulation-only APIs.
+7. Add logger mailbox and logger/I/O thread first; it has the least coupling. **Logger-thread in-memory drain done.**
+8. Move telemetry/log/capture manifest flushing to logger/I/O.
 9. Add immutable render snapshot type and simulation-to-render mailbox.
 10. Split simulation tick into a simulation thread.
 11. Split render submission/presentation into a render thread, or explicitly
@@ -588,19 +603,19 @@ internals or block waiting for jobs.
 ## Unit Test Targets
 
 - service follows Rule of Five policy
-- init/shutdown with zero workers is safe
-- submitted job reaches completed state
-- cancellation request is observable through `std::stop_token`
-- queued job overflow is reported
-- worker exception becomes a diagnostic
-- compact worker event records drain through `EventBusService`
-- results are delivered only through owner-thread drains
-- shutdown joins workers and rejects new jobs
-- jobs do not run after `shutdown()`
+- init/shutdown with zero workers is safe **Covered.**
+- submitted job reaches completed state **Covered.**
+- cancellation request is observable through `std::stop_token` **Covered.**
+- queued job overflow is reported **Covered.**
+- worker exception becomes a diagnostic **Covered.**
+- compact worker event records drain through `EventBusService` **Covered.**
+- results are delivered only through owner-thread drains **Covered.**
+- shutdown joins workers and rejects new jobs **Partially covered.**
+- jobs do not run after `shutdown()` **Partially covered.**
 - GUI-only APIs assert/reject when called off GUI thread
 - render-only APIs assert/reject when called off render thread
 - simulation-only APIs assert/reject when called off simulation thread
-- logger thread drains mailbox without mutating event/diagnostic sources
+- logger thread drains mailbox without mutating event/diagnostic sources **Covered for worker log mailbox.**
 - latest render snapshot mailbox drops stale snapshots safely
 
 ## Open Decisions

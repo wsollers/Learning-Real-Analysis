@@ -1,0 +1,157 @@
+#pragma once
+// engine/threading/ThreadManagementService.hpp
+// Engine-owned worker lifecycle and cross-thread service mailbox coordinator.
+
+#include "engine/diagnostics/DiagnosticsService.hpp"
+#include "engine/events/EventBusService.hpp"
+#include "engine/logging/LoggerService.hpp"
+#include "engine/threading/ThreadTypes.hpp"
+
+#include <condition_variable>
+#include <deque>
+#include <functional>
+#include <mutex>
+#include <optional>
+#include <span>
+#include <stop_token>
+#include <thread>
+#include <vector>
+
+namespace ndde {
+
+class ThreadManagementService;
+
+class ThreadJobContext {
+public:
+    ThreadJobContext() = default;
+
+    [[nodiscard]] ThreadJobId job_id() const noexcept { return m_job_id; }
+    [[nodiscard]] std::stop_token stop_token() const noexcept { return m_stop_token; }
+    [[nodiscard]] bool stop_requested() const noexcept { return m_stop_token.stop_requested(); }
+
+    void publish_worker_record(events::EventRecord record) const;
+    void report_diagnostic(DiagnosticReport report) const;
+    void log(LogSeverity severity, LogCategory category, std::string_view message) const;
+    void complete(ThreadJobResult result) const;
+
+    template <class Result>
+    void complete(Result result) const {
+        complete(ThreadJobResult{std::move(result)});
+    }
+
+private:
+    friend class ThreadManagementService;
+
+    ThreadJobContext(ThreadManagementService& service,
+                     ThreadJobId job_id,
+                     std::stop_token stop_token) noexcept;
+
+    ThreadManagementService* m_service = nullptr;
+    ThreadJobId m_job_id = {};
+    std::stop_token m_stop_token;
+};
+
+using ThreadJobFn = std::function<void(ThreadJobContext&)>;
+
+struct ThreadServiceBindings {
+    DiagnosticsService* diagnostics = nullptr;
+    EventBusService* events = nullptr;
+    LoggerService* logger = nullptr;
+};
+
+class ThreadManagementService {
+public:
+    ThreadManagementService() = default;
+    ~ThreadManagementService();
+
+    ThreadManagementService(const ThreadManagementService&) = delete;
+    ThreadManagementService& operator=(const ThreadManagementService&) = delete;
+    ThreadManagementService(ThreadManagementService&&) = delete;
+    ThreadManagementService& operator=(ThreadManagementService&&) = delete;
+
+    void init(ThreadPoolConfig config = {}, ThreadServiceBindings bindings = {});
+    void shutdown() noexcept;
+
+    [[nodiscard]] ThreadJobId submit(ThreadJobDescriptor descriptor, ThreadJobFn job);
+
+    void request_cancel(ThreadJobId id) noexcept;
+    void request_cancel_all() noexcept;
+
+    [[nodiscard]] std::optional<ThreadJobStatus> status(ThreadJobId id) const;
+    [[nodiscard]] std::span<const ThreadJobStatus> jobs() const;
+    [[nodiscard]] std::vector<ThreadJobResult> consume_completed_results();
+
+    void drain_service_mailboxes();
+
+    [[nodiscard]] ThreadStats stats() const;
+    [[nodiscard]] bool initialised() const noexcept { return m_initialised; }
+    [[nodiscard]] bool is_main_thread() const noexcept;
+    [[nodiscard]] ThreadRole current_thread_role() const noexcept;
+    [[nodiscard]] u64 dropped_results() const noexcept { return m_dropped_results; }
+    [[nodiscard]] u64 dropped_logs() const noexcept { return m_dropped_logs; }
+    [[nodiscard]] u64 dropped_diagnostics() const noexcept { return m_dropped_diagnostics; }
+    [[nodiscard]] u64 dropped_events() const noexcept { return m_dropped_events; }
+
+private:
+    struct PendingJob {
+        ThreadJobId id = {};
+        ThreadJobFn fn;
+    };
+
+    struct JobRecord {
+        ThreadJobStatus status;
+        std::stop_source stop_source;
+    };
+
+    struct QueuedLog {
+        LogSeverity severity = LogSeverity::Info;
+        LogCategory category = LogCategory::Worker;
+        LogSourceRef source = {};
+        std::string message;
+    };
+
+    mutable std::mutex m_mutex;
+    mutable std::vector<ThreadJobStatus> m_job_status_view;
+    std::condition_variable m_work_available;
+    std::condition_variable m_log_available;
+    std::deque<PendingJob> m_pending;
+    std::vector<JobRecord> m_jobs;
+    std::vector<std::jthread> m_workers;
+    std::optional<std::jthread> m_logger_thread;
+    std::vector<ThreadJobResult> m_completed_results;
+    std::vector<QueuedLog> m_log_mailbox;
+    std::vector<DiagnosticReport> m_diagnostic_mailbox;
+    std::vector<events::EventRecord> m_event_mailbox;
+    ThreadPoolConfig m_config;
+    ThreadServiceBindings m_bindings;
+    std::thread::id m_main_thread_id;
+    u64 m_next_job_id = u64(1);
+    u64 m_next_queue_order = u64(1);
+    u64 m_dropped_results = u64(0);
+    u64 m_dropped_logs = u64(0);
+    u64 m_dropped_diagnostics = u64(0);
+    u64 m_dropped_events = u64(0);
+    bool m_accepting_jobs = false;
+    bool m_shutting_down = false;
+    bool m_initialised = false;
+
+    void worker_loop(std::stop_token service_stop, u64 worker_index) noexcept;
+    void logger_loop(std::stop_token service_stop) noexcept;
+
+    [[nodiscard]] PendingJob wait_for_job(std::stop_token service_stop);
+    [[nodiscard]] std::vector<QueuedLog> wait_for_logs(std::stop_token service_stop);
+    [[nodiscard]] JobRecord* find_job_locked(ThreadJobId id) noexcept;
+    [[nodiscard]] const JobRecord* find_job_locked(ThreadJobId id) const noexcept;
+    [[nodiscard]] static u32 default_worker_count() noexcept;
+
+    void set_state(ThreadJobId id, ThreadJobState state, u64 worker_index = u64(0)) noexcept;
+    void push_result(ThreadJobResult result);
+    void enqueue_log(QueuedLog log);
+    void enqueue_diagnostic(DiagnosticReport report);
+    void enqueue_event(events::EventRecord record);
+    void report_thread_fault(ThreadJobId id, std::string message) noexcept;
+
+    friend class ThreadJobContext;
+};
+
+} // namespace ndde
