@@ -32,10 +32,31 @@ struct EventTypeId {
     friend constexpr bool operator==(EventTypeId, EventTypeId) noexcept = default;
 };
 
+enum class EventScope : u8 {
+    App,
+    Scenario,
+    Simulation,
+    View,
+    Capture,
+    Worker
+};
+
 struct ResourceId {
     u64 value = u64(0);
 
     friend constexpr bool operator==(ResourceId, ResourceId) noexcept = default;
+};
+
+struct ResourceHandle {
+    u64 value = u64(0);
+
+    friend constexpr bool operator==(ResourceHandle, ResourceHandle) noexcept = default;
+};
+
+struct ResourceGeneration {
+    u64 value = u64(0);
+
+    friend constexpr bool operator==(ResourceGeneration, ResourceGeneration) noexcept = default;
 };
 
 struct CaptureArtifactId {
@@ -43,6 +64,15 @@ struct CaptureArtifactId {
 
     friend constexpr bool operator==(CaptureArtifactId, CaptureArtifactId) noexcept = default;
 };
+
+[[nodiscard]] inline constexpr RuntimeNodeId runtime_node_id_from_text(std::string_view text) noexcept {
+    u64 hash = u64(14695981039346656037ull);
+    for (const char ch : text) {
+        hash ^= static_cast<u64>(static_cast<unsigned char>(ch));
+        hash *= u64(1099511628211ull);
+    }
+    return RuntimeNodeId{hash};
+}
 
 namespace ids {
 
@@ -62,5 +92,14 @@ inline constexpr ComponentId system_gravity_pendulum{"system.gravity.pendulum"};
 inline constexpr ComponentId system_gravity_planar_n_body{"system.gravity.planar_n_body"};
 
 } // namespace ids
+
+namespace resource_handles {
+
+inline constexpr ResourceHandle invalid{u64(0)};
+inline constexpr ResourceHandle renderer_line_shader{u64(0x0001'0000'0000'0010)};
+inline constexpr ResourceHandle renderer_triangle_shader{u64(0x0001'0000'0000'0011)};
+inline constexpr ResourceHandle colormap_viridis{u64(0x0001'0000'0000'0020)};
+
+} // namespace resource_handles
 
 } // namespace ndde

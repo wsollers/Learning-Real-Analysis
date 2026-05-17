@@ -3,6 +3,9 @@
 #include "engine/SimulationHost.hpp"
 #include "engine/events/EventBusService.hpp"
 #include "simulation/events/EngineEventTypes.hpp"
+#include "simulation/events/SimEventTypes.hpp"
+
+#include <type_traits>
 
 namespace {
 
@@ -93,6 +96,83 @@ TEST(EventBusService, PublishWithRecordDrainsToChannelLog) {
     EXPECT_NE(entries.front().text.find("TestEvent"), std::string::npos);
 }
 
+TEST(EventBusService, PublishAssignsPerChannelSequences) {
+    ndde::EventBusService events;
+    events.init();
+
+    const ndde::u64 app_sequence = events.publish(ndde::EventChannelId::App,
+                                                  TestEvent{.value = ndde::u64(1)},
+                                                  test_record(1));
+    const ndde::u64 sim_sequence_a = events.publish(ndde::EventChannelId::Simulation,
+                                                    TestEvent{.value = ndde::u64(2)},
+                                                    test_record(2));
+    const ndde::u64 sim_sequence_b = events.publish(ndde::EventChannelId::Simulation,
+                                                    TestEvent{.value = ndde::u64(3)},
+                                                    test_record(3));
+
+    EXPECT_EQ(app_sequence, 1u);
+    EXPECT_EQ(sim_sequence_a, 1u);
+    EXPECT_EQ(sim_sequence_b, 2u);
+    EXPECT_EQ(events.next_sequence_value(ndde::EventChannelId::App), 2u);
+    EXPECT_EQ(events.next_sequence_value(ndde::EventChannelId::Simulation), 3u);
+}
+
+TEST(EventBusService, ResetChannelResetsSequence) {
+    ndde::EventBusService events;
+    events.init();
+
+    (void)events.publish(ndde::EventChannelId::Simulation,
+                         TestEvent{.value = ndde::u64(2)},
+                         test_record(2));
+    events.reset_channel(ndde::EventChannelId::Simulation);
+    const ndde::u64 sequence = events.publish(ndde::EventChannelId::Simulation,
+                                              TestEvent{.value = ndde::u64(3)},
+                                              test_record(3));
+
+    EXPECT_EQ(sequence, 1u);
+}
+
+TEST(EventBusService, WorkerMailboxDrainsCompactRecordsToWorkerChannel) {
+    ndde::EventBusService events;
+    events.init(ndde::EventBusConfig{{
+        ndde::EventChannelConfig{
+            .channel = ndde::EventChannelId::Worker,
+            .ring_capacity_records = ndde::u64(8),
+            .max_display_records = ndde::u64(8),
+            .record_to_log = true
+        }
+    }});
+
+    EXPECT_TRUE(events.enqueue_worker_record(test_record(11)));
+    EXPECT_EQ(events.worker_mailbox_size(), 1u);
+
+    EXPECT_EQ(events.drain_worker_mailbox(), 1u);
+    EXPECT_EQ(events.worker_mailbox_size(), 0u);
+    events.drain(ndde::EventChannelId::Worker, 0.f, ndde::u64(11));
+
+    const auto& entries = events.log(ndde::EventChannelId::Worker).entries();
+    ASSERT_EQ(entries.size(), 1u);
+    EXPECT_NE(entries.front().text.find("TestEvent"), std::string::npos);
+    EXPECT_EQ(events.next_sequence_value(ndde::EventChannelId::Worker), 2u);
+}
+
+TEST(EventBusService, WorkerMailboxReportsOverflow) {
+    ndde::EventBusService events;
+    events.init(ndde::EventBusConfig{{
+        ndde::EventChannelConfig{
+            .channel = ndde::EventChannelId::Worker,
+            .ring_capacity_records = ndde::u64(1),
+            .max_display_records = ndde::u64(1),
+            .record_to_log = true
+        }
+    }});
+
+    EXPECT_TRUE(events.enqueue_worker_record(test_record(1)));
+    EXPECT_FALSE(events.enqueue_worker_record(test_record(2)));
+    EXPECT_EQ(events.worker_mailbox_size(), 1u);
+    EXPECT_EQ(events.worker_mailbox_dropped(), 1u);
+}
+
 TEST(EventBusService, ChannelsAreIsolated) {
     ndde::EventBusService events;
     events.init();
@@ -137,12 +217,32 @@ TEST(EventBusService, KnownEngineEventUsesConvenienceRecordConversion) {
     ndde::EventBusService events;
     events.init();
 
-    events.publish(ndde::EventChannelId::App, ndde::events::AppStarted{.config_path = "test.json"});
+    events.publish(ndde::EventChannelId::App, ndde::events::AppStarted{});
     events.drain(ndde::EventChannelId::App, 0.f, ndde::u64(0));
 
     const auto& entries = events.log(ndde::EventChannelId::App).entries();
     ASSERT_EQ(entries.size(), 1u);
     EXPECT_NE(entries.front().text.find("AppStarted"), std::string::npos);
+}
+
+TEST(EventBus, DispatchWithoutSubscribersDoesNotCreateSubscriberList) {
+    ndde::events::EventBus bus;
+
+    bus.dispatch(TestEvent{.value = ndde::u64(1)}, test_record(1));
+
+    EXPECT_EQ(bus.subscriber_type_count(), 0u);
+}
+
+TEST(EventTypes, HotSimulationEventsAreTriviallyCopyable) {
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::ScenarioStarted>);
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::ScenarioStopped>);
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::AgentSpawned>);
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::AgentCaptured>);
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::PerturbationFired>);
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::FieldAdded>);
+    static_assert(std::is_trivially_copyable_v<ndde::simulation::events::FieldRemoved>);
+
+    SUCCEED();
 }
 
 TEST(EngineServices, OwnsEventBusServiceAndPassesItToSimulationHost) {

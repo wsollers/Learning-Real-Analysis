@@ -2,34 +2,35 @@
 // simulation/events/SimEventTypes.hpp
 // Sim-scoped typed event PODs dispatched by SimContext / ScenarioBuilder.
 // These are the structs that subscribe<E>() handlers receive.
+// Payloads intentionally carry compact IDs and scalar data only. Human names,
+// labels, and paths belong to metadata/resource/logger services.
 //
 // NOTE: The names SimStarted/SimStopped are already defined in
 // engine/events/SimEvent.hpp (used by TelemetryService, with wall_time).
 // The structs here are sim-domain events with different fields.
 // They live in the ndde::simulation::events sub-namespace to avoid collision.
 
+#include "engine/RuntimeIds.hpp"
 #include "math/Scalars.hpp"
-#include <string_view>
-#include <string>
 
 namespace ndde::simulation::events {
 
 // ── Sim lifecycle ─────────────────────────────────────────────────────────────
 
 struct ScenarioStarted {
-    std::string_view name;
+    RuntimeNodeId scenario = {};
     f32              sim_time = f32(0);
     u64              tick     = u64(0);
 };
 
 struct ScenarioReset {
-    std::string_view name;
+    RuntimeNodeId scenario = {};
     f32              sim_time = f32(0);
     u64              tick     = u64(0);
 };
 
 struct ScenarioStopped {
-    std::string_view name;
+    RuntimeNodeId scenario = {};
     f32              sim_time    = f32(0);
     u64              total_ticks = u64(0);
 };
@@ -37,12 +38,12 @@ struct ScenarioStopped {
 // ── Agent events ──────────────────────────────────────────────────────────────
 
 struct AgentSpawned {
-    u64         packed_id = u64(0);
-    f32         u         = f32(0);
-    f32         v         = f32(0);
-    f32         sim_time  = f32(0);
-    u64         tick      = u64(0);
-    std::string label;
+    u64           packed_id = u64(0);
+    RuntimeNodeId recipe = {};
+    f32           u         = f32(0);
+    f32           v         = f32(0);
+    f32           sim_time  = f32(0);
+    u64           tick      = u64(0);
 };
 
 struct AgentDespawned {
@@ -85,15 +86,15 @@ struct PerturbationDecayed {
 // ── Field events ──────────────────────────────────────────────────────────────
 
 struct FieldAdded {
-    std::string field_name;
-    f32         sim_time = f32(0);
-    u64         tick     = u64(0);
+    RuntimeNodeId field = {};
+    f32           sim_time = f32(0);
+    u64           tick     = u64(0);
 };
 
 struct FieldRemoved {
-    std::string field_name;
-    f32         sim_time = f32(0);
-    u64         tick     = u64(0);
+    RuntimeNodeId field = {};
+    f32           sim_time = f32(0);
+    u64           tick     = u64(0);
 };
 
 // ── Geometry ──────────────────────────────────────────────────────────────────

@@ -32,7 +32,7 @@ EventRecord EventBus::make_record(const SimSwitched& e) {
     EventRecord r;
     r.kind = EventKind::SimSwitched; r.severity = EventSeverity::Info;
     r.id_a = e.sim_index;
-    r.set_label(e.to_name);
+    r.set_label("SimSwitched");
     return r;
 }
 
@@ -48,12 +48,12 @@ using namespace ndde::simulation::events;
 
 template <>
 EventRecord EventBus::make_record(const ScenarioStarted& e) {
-    return make_sim_started(e.name, e.sim_time, e.tick);
+    return make_sim_started(e.scenario.value, e.sim_time, e.tick);
 }
 
 template <>
 EventRecord EventBus::make_record(const ScenarioReset& e) {
-    return make_sim_reset(e.name, e.sim_time, e.tick);
+    return make_sim_reset(e.scenario.value, e.sim_time, e.tick);
 }
 
 template <>
@@ -61,13 +61,14 @@ EventRecord EventBus::make_record(const ScenarioStopped& e) {
     EventRecord r;
     r.kind = EventKind::SimStopped; r.severity = EventSeverity::Info;
     r.sim_time = e.sim_time; r.tick = e.total_ticks;
-    r.set_label(e.name);
+    r.id_a = e.scenario.value;
+    r.set_label("ScenarioStopped");
     return r;
 }
 
 template <>
 EventRecord EventBus::make_record(const AgentSpawned& e) {
-    return make_agent_spawned(e.packed_id, e.u, e.v, e.sim_time, e.tick, e.label);
+    return make_agent_spawned(e.packed_id, e.recipe.value, e.u, e.v, e.sim_time, e.tick);
 }
 
 template <>
@@ -97,12 +98,12 @@ EventRecord EventBus::make_record(const PerturbationDecayed& e) {
 
 template <>
 EventRecord EventBus::make_record(const FieldAdded& e) {
-    return make_field_added(e.field_name, e.sim_time, e.tick);
+    return make_field_added(e.field.value, e.sim_time, e.tick);
 }
 
 template <>
 EventRecord EventBus::make_record(const FieldRemoved& e) {
-    return make_field_removed(e.field_name, e.sim_time, e.tick);
+    return make_field_removed(e.field.value, e.sim_time, e.tick);
 }
 
 } // namespace ndde::events

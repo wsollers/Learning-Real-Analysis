@@ -15,10 +15,13 @@ using RuntimeFactory = std::function<MetadataResult<RuntimeComponent>(const Comp
 class SimMetadataService {
 public:
     [[nodiscard]] bool register_component(ComponentDescriptor descriptor);
+    [[nodiscard]] bool register_event(EventDescriptor descriptor);
     [[nodiscard]] bool register_factory(ComponentId id, RuntimeFactory factory);
 
     [[nodiscard]] const ComponentDescriptor* get_descriptor(ComponentId id) const noexcept;
+    [[nodiscard]] const EventDescriptor* get_event_descriptor(EventTypeId id) const noexcept;
     [[nodiscard]] std::span<const ComponentDescriptor> descriptors() const noexcept { return m_descriptors; }
+    [[nodiscard]] std::span<const EventDescriptor> event_descriptors() const noexcept { return m_event_descriptors; }
 
     [[nodiscard]] std::vector<const ComponentDescriptor*> query_category(ObjectCategory category) const;
     [[nodiscard]] std::vector<const ComponentDescriptor*> query_capability(Capability capability) const;
@@ -35,10 +38,13 @@ public:
 
 private:
     std::vector<ComponentDescriptor> m_descriptors;
+    std::vector<EventDescriptor> m_event_descriptors;
     std::unordered_map<std::string, u64> m_index_by_id;
+    std::unordered_map<std::string, u64> m_event_index_by_id;
     std::unordered_map<std::string, RuntimeFactory> m_factories;
 
     [[nodiscard]] static std::string key(ComponentId id);
+    [[nodiscard]] static std::string key(EventTypeId id);
     [[nodiscard]] static bool has_capability(const ComponentDescriptor& descriptor,
                                              Capability capability) noexcept;
     [[nodiscard]] static bool value_matches(const ParameterSchema& schema,

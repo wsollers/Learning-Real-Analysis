@@ -16,6 +16,7 @@ add_executable(ndde_tests
     test_gravitational_systems.cpp
     test_logger_service.cpp
     test_mp_units_integration.cpp
+    test_resource_manager_service.cpp
     test_sim_metadata_service.cpp
     test_simulation_context.cpp
     test_simulation_runtime.cpp
@@ -37,6 +38,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/engine/events/EventBusService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/logging/LoggerService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/metadata/SimMetadataService.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/resources/ResourceManagerService.cpp
 )
 
 target_include_directories(ndde_tests PRIVATE

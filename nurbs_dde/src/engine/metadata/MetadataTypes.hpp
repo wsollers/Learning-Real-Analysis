@@ -188,6 +188,15 @@ struct ComponentDescriptor {
     bool factory_available = false;
 };
 
+struct EventDescriptor {
+    EventTypeId id;
+    std::string display_name;
+    EventScope scope = EventScope::Simulation;
+    DiagnosticSeverity default_severity = DiagnosticSeverity::Info;
+    ComponentId producer = ids::unknown_component;
+    DocumentationRef docs;
+};
+
 using ParameterValue = std::variant<bool, i64, f64, std::string, units::QuantityValue, ComponentId>;
 
 struct ParameterAssignment {

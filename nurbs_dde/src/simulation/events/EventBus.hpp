@@ -13,11 +13,13 @@
 // Thread safety: single-producer model — dispatch() must be called from the
 // simulation tick thread only. subscribe/unsubscribe are main-thread only.
 
+#include "math/Scalars.hpp"
 #include "simulation/events/EventRecord.hpp"
 #include "simulation/events/EventRing.hpp"
-#include "math/Scalars.hpp"
-#include <any>
+
+#include <algorithm>
 #include <functional>
+#include <memory>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -46,22 +48,23 @@ public:
     template <class E>
     [[nodiscard]] u64 subscribe(std::function<void(const E&)> handler) {
         const u64 token = m_next_token++;
-        get_list<E>().push_back(Entry{
-            token,
-            [h = std::move(handler)](const std::any& e) {
-                h(std::any_cast<const E&>(e));
-            }
+        get_or_create_list<E>().entries.push_back(TypedEntry<E>{
+            .token = token,
+            .handler = std::move(handler)
         });
         return token;
     }
 
     template <class E>
     void unsubscribe(u64 token) {
-        auto& list = get_list<E>();
-        list.erase(
-            std::remove_if(list.begin(), list.end(),
-                [token](const Entry& e){ return e.token == token; }),
-            list.end());
+        auto* list = find_list<E>();
+        if (!list) {
+            return;
+        }
+        list->entries.erase(
+            std::remove_if(list->entries.begin(), list->entries.end(),
+                [token](const TypedEntry<E>& e){ return e.token == token; }),
+            list->entries.end());
     }
 
     void clear_all_subscribers() noexcept { m_subscribers.clear(); }
@@ -71,8 +74,10 @@ public:
     // This is the preferred overload — zero overhead on the push side.
     template <class E>
     void dispatch(const E& event, const EventRecord& record) {
-        for (auto& entry : get_list<E>())
-            entry.handler(event);
+        if (auto* list = find_list<E>()) {
+            for (auto& entry : list->entries)
+                entry.handler(event);
+        }
         if (m_ring)
             (void)m_ring->push(record);
     }
@@ -84,21 +89,61 @@ public:
         dispatch(event, make_record(event));
     }
 
+    template <class E>
+    void dispatch(const E& event, u64 sequence) {
+        EventRecord record = make_record(event);
+        record.sequence = sequence;
+        dispatch(event, record);
+    }
+
     [[nodiscard]] bool has_ring() const noexcept { return m_ring != nullptr; }
+    [[nodiscard]] std::size_t subscriber_type_count() const noexcept {
+        return m_subscribers.size();
+    }
 
 private:
-    struct Entry {
+    struct ListBase {
+        virtual ~ListBase() = default;
+
+        ListBase() = default;
+        ListBase(const ListBase&) = delete;
+        ListBase& operator=(const ListBase&) = delete;
+        ListBase(ListBase&&) = delete;
+        ListBase& operator=(ListBase&&) = delete;
+    };
+
+    template <class E>
+    struct TypedEntry {
         u64 token;
-        std::function<void(const std::any&)> handler;
+        std::function<void(const E&)> handler;
+    };
+
+    template <class E>
+    struct TypedList final : ListBase {
+        std::vector<TypedEntry<E>> entries;
     };
 
     u64 m_next_token = u64(1);
-    std::unordered_map<std::type_index, std::vector<Entry>> m_subscribers;
+    std::unordered_map<std::type_index, std::unique_ptr<ListBase>> m_subscribers;
     EventRing* m_ring = nullptr;
 
     template <class E>
-    std::vector<Entry>& get_list() {
-        return m_subscribers[std::type_index(typeid(E))];
+    [[nodiscard]] TypedList<E>* find_list() noexcept {
+        const auto it = m_subscribers.find(std::type_index(typeid(E)));
+        if (it == m_subscribers.end()) {
+            return nullptr;
+        }
+        return static_cast<TypedList<E>*>(it->second.get());
+    }
+
+    template <class E>
+    [[nodiscard]] TypedList<E>& get_or_create_list() {
+        const std::type_index key{typeid(E)};
+        auto it = m_subscribers.find(key);
+        if (it == m_subscribers.end()) {
+            it = m_subscribers.emplace(key, std::make_unique<TypedList<E>>()).first;
+        }
+        return *static_cast<TypedList<E>*>(it->second.get());
     }
 
     // make_record<E>: convert typed event struct to EventRecord.

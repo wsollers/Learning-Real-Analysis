@@ -13,6 +13,7 @@
 #include "engine/metadata/SimMetadataService.hpp"
 #include "engine/PanelService.hpp"
 #include "engine/RenderService.hpp"
+#include "engine/resources/ResourceManagerService.hpp"
 #include "engine/SimulationClock.hpp"
 #include "engine/ViewInputService.hpp"
 #include "memory/MemoryService.hpp"
@@ -30,6 +31,7 @@ public:
                    EventBusService& events,
                    LoggerService& logger,
                    SimMetadataService& metadata,
+                   ResourceManagerService& resources,
                    SimulationClock& clock,
                    memory::MemoryService& memory) noexcept
         : m_panels(panels)
@@ -41,6 +43,7 @@ public:
         , m_events(events)
         , m_logger(logger)
         , m_metadata(metadata)
+        , m_resources(resources)
         , m_clock(clock)
         , m_memory(memory)
     {}
@@ -54,6 +57,7 @@ public:
     [[nodiscard]] EventBusService& events() const noexcept { return m_events; }
     [[nodiscard]] LoggerService& logger() const noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() const noexcept { return m_metadata; }
+    [[nodiscard]] ResourceManagerService& resources() const noexcept { return m_resources; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() const noexcept { return m_memory; }
 
@@ -67,6 +71,7 @@ private:
     EventBusService& m_events;
     LoggerService& m_logger;
     SimMetadataService& m_metadata;
+    ResourceManagerService& m_resources;
     SimulationClock& m_clock;
     memory::MemoryService& m_memory;
 };
@@ -81,6 +86,7 @@ public:
         m_camera.set_render_service(&m_render);
         m_events.init();
         m_logger.init();
+        m_resources.init();
     }
 
     [[nodiscard]] PanelService& panels() noexcept { return m_panels; }
@@ -95,12 +101,14 @@ public:
     [[nodiscard]] EventBusService& events() noexcept { return m_events; }
     [[nodiscard]] LoggerService& logger() noexcept { return m_logger; }
     [[nodiscard]] SimMetadataService& metadata() noexcept { return m_metadata; }
+    [[nodiscard]] ResourceManagerService& resources() noexcept { return m_resources; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
         return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera,
-                              m_diagnostics, m_events, m_logger, m_metadata, m_clock, m_memory);
+                              m_diagnostics, m_events, m_logger, m_metadata, m_resources,
+                              m_clock, m_memory);
     }
 
 private:
@@ -115,6 +123,7 @@ private:
     EventBusService m_events;
     LoggerService m_logger;
     SimMetadataService m_metadata;
+    ResourceManagerService m_resources;
     CameraInputController m_camera_input;
     ViewInputService m_view_input;
     SimulationClock m_clock;

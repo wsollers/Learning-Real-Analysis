@@ -8,6 +8,7 @@
 
 #include <array>
 #include <functional>
+#include <mutex>
 #include <span>
 #include <vector>
 
@@ -20,15 +21,6 @@ enum class EventChannelId : u8 {
     Ui,
     Worker,
     Count
-};
-
-enum class EventScope : u8 {
-    App,
-    Scenario,
-    Simulation,
-    View,
-    Capture,
-    Worker
 };
 
 struct EventChannelConfig {
@@ -126,16 +118,27 @@ public:
     }
 
     template <class Event>
-    void publish(EventChannelId channel, const Event& event) {
-        channel_for(channel).bus.dispatch(event);
+    u64 publish(EventChannelId channel, const Event& event) {
+        Channel& ch = channel_for(channel);
+        const u64 sequence = next_sequence(ch);
+        ch.bus.dispatch(event, sequence);
+        return sequence;
     }
 
     template <class Event>
-    void publish(EventChannelId channel,
-                 const Event& event,
-                 const events::EventRecord& record) {
-        channel_for(channel).bus.dispatch(event, record);
+    u64 publish(EventChannelId channel,
+                const Event& event,
+                const events::EventRecord& record) {
+        Channel& ch = channel_for(channel);
+        const u64 sequence = next_sequence(ch);
+        events::EventRecord sequenced = record;
+        sequenced.sequence = sequence;
+        ch.bus.dispatch(event, sequenced);
+        return sequence;
     }
+
+    [[nodiscard]] bool enqueue_worker_record(events::EventRecord record);
+    [[nodiscard]] u64 drain_worker_mailbox();
 
     void drain(EventChannelId channel, f32 sim_time, u64 tick);
     void drain_all(f32 sim_time, u64 tick);
@@ -147,16 +150,24 @@ public:
     [[nodiscard]] events::EventBus& bus(EventChannelId channel);
     [[nodiscard]] const events::EventBus& bus(EventChannelId channel) const;
     [[nodiscard]] bool initialised() const noexcept { return m_initialised; }
+    [[nodiscard]] u64 next_sequence_value(EventChannelId channel) const;
+    [[nodiscard]] u64 worker_mailbox_size() const;
+    [[nodiscard]] u64 worker_mailbox_dropped() const noexcept { return m_worker_mailbox_dropped; }
 
 private:
     struct Channel {
         events::EventBus bus;
         events::EventLog log;
+        u64 next_sequence = u64(1);
         bool record_to_log = true;
         bool configured = false;
     };
 
     std::array<Channel, static_cast<std::size_t>(EventChannelId::Count)> m_channels;
+    mutable std::mutex m_worker_mailbox_mutex;
+    std::vector<events::EventRecord> m_worker_mailbox;
+    u64 m_worker_mailbox_capacity = u64(512);
+    u64 m_worker_mailbox_dropped = u64(0);
     bool m_initialised = false;
 
     [[nodiscard]] static std::size_t index_of(EventChannelId channel) noexcept {
@@ -165,6 +176,9 @@ private:
 
     [[nodiscard]] Channel& channel_for(EventChannelId channel);
     [[nodiscard]] const Channel& channel_for(EventChannelId channel) const;
+    [[nodiscard]] static u64 next_sequence(Channel& channel) noexcept {
+        return channel.next_sequence++;
+    }
 };
 
 } // namespace ndde

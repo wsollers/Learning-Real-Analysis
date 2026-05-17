@@ -169,7 +169,7 @@ void SimulationWavePredatorPrey::on_tick(const TickInfo& tick) {
 void SimulationWavePredatorPrey::on_stop() {
     if (m_host) {
         m_host->events().publish(EventChannelId::Simulation, simulation::events::ScenarioStopped{
-            .name        = name(),
+            .scenario    = runtime_node_id_from_text(name()),
             .sim_time    = m_sim_time,
             .total_ticks = u64(0)
         });
@@ -283,7 +283,8 @@ void SimulationWavePredatorPrey::reset_showcase() {
            .alert_capture_pending(f32(2.0));
 
     builder.build(m_particles, m_fields, m_alerts,
-                  m_host->events().bus(EventChannelId::Simulation),
+                  m_host->events(),
+                  EventChannelId::Simulation,
                   m_host ? &m_host->memory() : nullptr,
                   m_sim_time, u64(0));
 
@@ -393,7 +394,7 @@ void SimulationWavePredatorPrey::handle_poke(const TickInfo& tick) {
 
         m_host->events().publish(EventChannelId::Simulation, evt);
         m_host->events().publish(EventChannelId::Simulation, simulation::events::FieldAdded{
-            .field_name = std::string(ripple->name()),
+            .field      = runtime_node_id_from_text(ripple->name()),
             .sim_time   = m_sim_time,
             .tick       = tick.tick_index
         });
@@ -449,7 +450,7 @@ void SimulationWavePredatorPrey::sweep_decayed_fields(const TickInfo& tick) {
     for (const auto& fname : removed) {
         if (!m_host) continue;
         m_host->events().publish(EventChannelId::Simulation, simulation::events::FieldRemoved{
-            .field_name = fname, .sim_time = m_sim_time, .tick = tick.tick_index
+            .field = runtime_node_id_from_text(fname), .sim_time = m_sim_time, .tick = tick.tick_index
         });
         m_host->events().publish(EventChannelId::Simulation, simulation::events::PerturbationDecayed{
             .u = f32(0), .v = f32(0), .sim_time = m_sim_time, .tick = tick.tick_index

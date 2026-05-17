@@ -169,9 +169,9 @@ void Engine::start(const std::string& config_path) {
         (void)m_services.logger().write(LogSeverity::Info,
                                         LogCategory::Engine,
                                         {},
-                                        std::format("[Engine] SimSwitched -> {}", e.to_name));
+                                        std::format("[Engine] SimSwitched index={}", e.sim_index));
     });
-    m_services.events().publish(EventChannelId::App, events::AppStarted{.config_path = config_path});
+    m_services.events().publish(EventChannelId::App, events::AppStarted{});
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
@@ -937,8 +937,8 @@ EngineAPI Engine::make_api() {
 // ── Telemetry lifecycle helpers ───────────────────────────────────────────────────
 
 void Engine::fire_app_started(const std::string& config_path) {
+    (void)config_path;
     m_telemetry.on_app_started(events::AppStarted{
-        .config_path = config_path,
         .wall_time   = std::chrono::system_clock::now()
     });
 }
@@ -957,7 +957,6 @@ void Engine::fire_sim_started(std::size_t index) {
     });
     // Dispatch on the engine bus so subscribers (log panel) are notified.
     m_services.events().publish(EventChannelId::App, ndde::events::SimSwitched{
-        .to_name   = active_runtime().name(),
         .sim_index = static_cast<u64>(index)
     });
     // EventBusService drains app/simulation logs once per frame in run_frame().

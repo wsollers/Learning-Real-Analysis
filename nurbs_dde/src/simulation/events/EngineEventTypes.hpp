@@ -6,12 +6,10 @@
 
 #include "math/Scalars.hpp"
 #include <chrono>
-#include <string_view>
 
 namespace ndde::events {
 
 struct AppStarted {
-    std::string_view                      config_path;
     std::chrono::system_clock::time_point wall_time
         = std::chrono::system_clock::now();
 };
@@ -19,8 +17,6 @@ struct AppStarted {
 struct AppStopping {};
 
 struct SimSwitched {
-    std::string_view from_name;
-    std::string_view to_name;
     u64              sim_index = u64(0);
 };
 

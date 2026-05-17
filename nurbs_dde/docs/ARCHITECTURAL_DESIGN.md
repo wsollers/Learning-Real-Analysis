@@ -85,7 +85,7 @@ flowchart TD
     Sim --> Particles["ParticleSystem"]
     Sim --> Fields["FieldCompositor"]
     Sim --> Scenario["ScenarioBuilder"]
-    Sim --> Events["EventBus / EventLog"]
+    Sim --> Events["EventBusService / EventLog"]
     Sim --> Packets["SimulationRenderPackets"]
 
     Particles --> Behavior["BehaviorStack / IParticleBehavior"]
@@ -361,10 +361,26 @@ are not yet exposed as an active runtime scene. The intended next step is a
 - presets for simple pendulum, two-body orbit, and small solar system
 - telemetry and energy diagnostics
 
-## Events, Alerts, And Telemetry
+## Events, Alerts, Logging, And Telemetry
 
-Each active simulation can expose a sim-scoped `EventBus`. Events are drained
-into an `EventLog` for panel display.
+`EventBusService` is the engine-owned route for discrete runtime happenings.
+Active simulations publish through `SimulationHost::events()` into service-owned
+channels rather than owning private event buses. `EventLog` remains the compact
+record sink for panel display; `LoggerService` owns human-readable narrative
+text, larger strings, filtering, and future file sinks.
+
+Current event contract:
+
+- typed events carry IDs, project scalar values, enums, ticks, and compact
+  coordinates
+- typed events do not carry owned strings, paths, blobs, JSON, or formatted
+  messages
+- service-published records receive per-channel sequence numbers
+- worker threads submit compact `EventRecord` values through the worker mailbox
+- `SimMetadataService` can register `EventDescriptor` records so tools can
+  discover event types without relying on string payloads
+- raw internal `events::EventBus` access is a legacy/internal escape hatch and
+  should not be the normal publication path
 
 Current alert concepts:
 
@@ -373,6 +389,10 @@ Current alert concepts:
 - stealth lost/restored
 - capture pending
 - custom alerts
+
+Alerts currently write compact `EventRecord` values directly to the service-owned
+simulation event ring. If alert behavior later needs typed subscribers, route
+that through `EventBusService` rather than adding simulation-owned buses.
 
 Telemetry records particle snapshots and supports richer simulation-provided
 records through `on_telemetry_tick`.

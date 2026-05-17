@@ -105,21 +105,24 @@ void ScenarioBuilder::build(
         ParticleSystem&                                        particles,
         FieldCompositor&                                       compositor,
         std::vector<std::unique_ptr<ndde::events::AlertRule>>& alerts_out,
-        ndde::events::EventBus&                                bus,
+        EventBusService&                                       events,
+        EventChannelId                                         channel,
         memory::MemoryService*                                 memory,
         f32                                                    sim_time,
         u64                                                    tick)
 {
     (void)memory;  // reserved for future PMR-backed allocation
 
-    bus.dispatch(ndde::simulation::events::ScenarioStarted{
-        .name = m_name, .sim_time = sim_time, .tick = tick
+    events.publish(channel, ndde::simulation::events::ScenarioStarted{
+        .scenario = runtime_node_id_from_text(m_name),
+        .sim_time = sim_time,
+        .tick = tick
     });
 
     for (auto& field : m_fields) {
         compositor.add(field);
-        bus.dispatch(ndde::simulation::events::FieldAdded{
-            .field_name = std::string(field->name()),
+        events.publish(channel, ndde::simulation::events::FieldAdded{
+            .field = runtime_node_id_from_text(field->name()),
             .sim_time   = sim_time,
             .tick       = tick
         });
@@ -170,9 +173,13 @@ void ScenarioBuilder::build(
         const u64 packed   = telemetry::pack_particle_id(
             particle.id(), static_cast<ParticleRole>(particle.particle_role()));
 
-        bus.dispatch(ndde::simulation::events::AgentSpawned{
-            .packed_id = packed, .u = uv.x, .v = uv.y,
-            .sim_time  = sim_time, .tick = tick, .label = spec.label
+        events.publish(channel, ndde::simulation::events::AgentSpawned{
+            .packed_id = packed,
+            .recipe = runtime_node_id_from_text(spec.label),
+            .u = uv.x,
+            .v = uv.y,
+            .sim_time  = sim_time,
+            .tick = tick
         });
     }
 

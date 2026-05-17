@@ -10,9 +10,9 @@
 // which live in ndde::events, MUST use the full qualification ndde::events::.
 
 #include "simulation/scenario/AgentSpec.hpp"
+#include "engine/events/EventBusService.hpp"
 #include "simulation/fields/IField.hpp"
 #include "simulation/events/AlertRule.hpp"
-#include "simulation/events/EventBus.hpp"
 #include "simulation/events/SimEventTypes.hpp"
 #include "simulation/events/EventRecord.hpp"
 #include "app/ParticleSystem.hpp"
@@ -110,7 +110,8 @@ public:
     void build(ParticleSystem&                                        particles,
                FieldCompositor&                                       compositor,
                std::vector<std::unique_ptr<ndde::events::AlertRule>>& alerts_out,
-               ndde::events::EventBus&                                bus,
+               EventBusService&                                       events,
+               EventChannelId                                         channel,
                memory::MemoryService*                                 memory,
                f32                                                    sim_time,
                u64                                                    tick);

@@ -16,7 +16,8 @@
 //  40-43   val_c       f32 payload (uv.x of event point)
 //  44-47   val_d       f32 payload (uv.y of event point)
 //  48-111  label       char[64]  null-terminated short description
-// 112-127  _reserved   u8[16]    Phase 2 (metric factor, etc.)
+// 112-119  sequence    per-channel sequence assigned by EventBusService
+// 120-127  _reserved   u8[8]     Phase 2 (metric factor, etc.)
 // Total: 128 bytes = 2 cache lines
 
 #include "math/Scalars.hpp"
@@ -89,7 +90,8 @@ struct EventRecord {
     f32           val_c     = f32(0);   // uv.x
     f32           val_d     = f32(0);   // uv.y
     char          label[64] = {};
-    u8            _reserved[16] = {};
+    u64           sequence  = u64(0);
+    u8            _reserved[8] = {};
 
     // Write into label without heap allocation. Truncates silently.
     void set_label(std::string_view s) noexcept {
@@ -120,36 +122,39 @@ static_assert(offsetof(EventRecord, val_b)     ==  36);
 static_assert(offsetof(EventRecord, val_c)     ==  40);
 static_assert(offsetof(EventRecord, val_d)     ==  44);
 static_assert(offsetof(EventRecord, label)     ==  48);
-static_assert(offsetof(EventRecord, _reserved) == 112);
+static_assert(offsetof(EventRecord, sequence)  == 112);
+static_assert(offsetof(EventRecord, _reserved) == 120);
 
 // ── Named builders ────────────────────────────────────────────────────────────
 
 [[nodiscard]] inline EventRecord make_sim_started(
-        std::string_view name, f32 sim_time, u64 tick) noexcept {
+        u64 scenario_id, f32 sim_time, u64 tick) noexcept {
     EventRecord r;
     r.kind = EventKind::SimStarted; r.severity = EventSeverity::Info;
     r.sim_time = sim_time; r.tick = tick;
-    r.set_label(name);
+    r.id_a = scenario_id;
+    r.set_label("ScenarioStarted");
     return r;
 }
 
 [[nodiscard]] inline EventRecord make_sim_reset(
-        std::string_view name, f32 sim_time, u64 tick) noexcept {
+        u64 scenario_id, f32 sim_time, u64 tick) noexcept {
     EventRecord r;
     r.kind = EventKind::SimReset; r.severity = EventSeverity::Info;
     r.sim_time = sim_time; r.tick = tick;
-    r.set_label(name);
+    r.id_a = scenario_id;
+    r.set_label("ScenarioReset");
     return r;
 }
 
 [[nodiscard]] inline EventRecord make_agent_spawned(
-        u64 packed_id, f32 u, f32 v,
-        f32 sim_time, u64 tick, std::string_view label) noexcept {
+        u64 packed_id, u64 recipe_id, f32 u, f32 v,
+        f32 sim_time, u64 tick) noexcept {
     EventRecord r;
     r.kind = EventKind::AgentSpawned; r.severity = EventSeverity::Notice;
     r.sim_time = sim_time; r.tick = tick;
-    r.id_a = packed_id; r.val_c = u; r.val_d = v;
-    r.set_label(label);
+    r.id_a = packed_id; r.id_b = recipe_id; r.val_c = u; r.val_d = v;
+    r.set_label("AgentSpawned");
     return r;
 }
 
@@ -185,20 +190,20 @@ static_assert(offsetof(EventRecord, _reserved) == 112);
 }
 
 [[nodiscard]] inline EventRecord make_field_added(
-        std::string_view name, f32 sim_time, u64 tick) noexcept {
+        u64 field_id, f32 sim_time, u64 tick) noexcept {
     EventRecord r;
     r.kind = EventKind::FieldAdded; r.severity = EventSeverity::Notice;
-    r.sim_time = sim_time; r.tick = tick;
-    r.set_label(name);
+    r.sim_time = sim_time; r.tick = tick; r.id_a = field_id;
+    r.set_label("FieldAdded");
     return r;
 }
 
 [[nodiscard]] inline EventRecord make_field_removed(
-        std::string_view name, f32 sim_time, u64 tick) noexcept {
+        u64 field_id, f32 sim_time, u64 tick) noexcept {
     EventRecord r;
     r.kind = EventKind::FieldRemoved; r.severity = EventSeverity::Info;
-    r.sim_time = sim_time; r.tick = tick;
-    r.set_label(name);
+    r.sim_time = sim_time; r.tick = tick; r.id_a = field_id;
+    r.set_label("FieldRemoved");
     return r;
 }
 

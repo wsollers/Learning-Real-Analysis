@@ -533,21 +533,24 @@ Recommended event messages:
 
 ```cpp
 struct ComponentRegisteredEvent {
-    ComponentId id;
-    ObjectCategory category;
+    ComponentId id = ids::unknown_component;
+    ObjectCategory category = ObjectCategory::GeometricObject;
 };
 
 struct ComponentFactoryRegisteredEvent {
-    ComponentId id;
+    ComponentId id = ids::unknown_component;
 };
 
 struct ScenarioValidationEvent {
-    std::string scenario_name;
-    ValidationReport report;
+    RuntimeNodeId scenario = {};
+    u64 warning_count = u64(0);
+    u64 error_count = u64(0);
 };
 ```
 
-These are discrete events. They should not be used for sampled telemetry.
+These are discrete events. They carry IDs and compact counts, not scenario names
+or full reports. The full validation report remains owned by diagnostics or
+metadata APIs, and sampled values belong to telemetry.
 
 ## Scenario Graph
 
@@ -656,6 +659,28 @@ parameter values.
 Telemetry can use descriptors to discover streams, but metadata is not the
 sample store. Stream registration should live in the evolved telemetry service.
 
+### Events
+
+`SimMetadataService` also owns `EventDescriptor` registration. Event descriptors
+make event types discoverable to panels, scenario tooling, diagnostics, logger
+formatters, and documentation links without requiring event payloads to carry
+human strings.
+
+```cpp
+struct EventDescriptor {
+    EventTypeId id;
+    std::string display_name;
+    EventScope scope = EventScope::Simulation;
+    DiagnosticSeverity default_severity = DiagnosticSeverity::Info;
+    ComponentId producer = ids::unknown_component;
+    DocumentationRef docs;
+};
+```
+
+Publishing is not currently gated on descriptor registration. The registry is
+the lookup/discovery layer; gating can be added later once all canonical events
+are registered.
+
 ## Example Descriptors
 
 ### Metric Ripple
@@ -738,6 +763,14 @@ void register_builtin_metadata(SimMetadataService& metadata)
 
     metadata.register_factory({"field.metric_ripple"}, make_metric_ripple_factory());
     metadata.register_factory({"system.gravity.planar_n_body"}, make_planar_n_body_factory());
+
+    metadata.register_event({
+        .id = {"event.sim.agent_captured"},
+        .display_name = "Agent Captured",
+        .scope = EventScope::Simulation,
+        .producer = ids::simulation_wave_predator_prey,
+        .docs = {"EventBusService", "docs/EVENT_BUS_SERVICE.md", "Simulation Events"}
+    });
 }
 ```
 

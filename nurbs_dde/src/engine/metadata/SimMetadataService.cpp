@@ -16,6 +16,17 @@ bool SimMetadataService::register_component(ComponentDescriptor descriptor) {
     return true;
 }
 
+bool SimMetadataService::register_event(EventDescriptor descriptor) {
+    const std::string id_key = key(descriptor.id);
+    if (id_key.empty() || m_event_index_by_id.contains(id_key))
+        return false;
+
+    const u64 index = static_cast<u64>(m_event_descriptors.size());
+    m_event_descriptors.push_back(std::move(descriptor));
+    m_event_index_by_id.emplace(id_key, index);
+    return true;
+}
+
 bool SimMetadataService::register_factory(ComponentId id, RuntimeFactory factory) {
     const std::string id_key = key(id);
     const auto descriptor_it = m_index_by_id.find(id_key);
@@ -32,6 +43,13 @@ const ComponentDescriptor* SimMetadataService::get_descriptor(ComponentId id) co
     if (it == m_index_by_id.end())
         return nullptr;
     return &m_descriptors[it->second];
+}
+
+const EventDescriptor* SimMetadataService::get_event_descriptor(EventTypeId id) const noexcept {
+    const auto it = m_event_index_by_id.find(key(id));
+    if (it == m_event_index_by_id.end())
+        return nullptr;
+    return &m_event_descriptors[it->second];
 }
 
 std::vector<const ComponentDescriptor*> SimMetadataService::query_category(ObjectCategory category) const {
@@ -176,11 +194,17 @@ MetadataResult<RuntimeComponent> SimMetadataService::create(ComponentId id,
 
 void SimMetadataService::clear() {
     m_descriptors.clear();
+    m_event_descriptors.clear();
     m_index_by_id.clear();
+    m_event_index_by_id.clear();
     m_factories.clear();
 }
 
 std::string SimMetadataService::key(ComponentId id) {
+    return std::string{id.value};
+}
+
+std::string SimMetadataService::key(EventTypeId id) {
     return std::string{id.value};
 }
 

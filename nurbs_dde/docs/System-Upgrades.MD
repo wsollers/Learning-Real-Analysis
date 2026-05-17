@@ -91,6 +91,8 @@ DiagnosticsService
 QuantityDisplayService
 EventBusService
 LoggerService
+ThreadManagementService
+ResourceManagerService
 MetricService
 ```
 
@@ -118,6 +120,8 @@ Violations are bugs.
 | 12 | Abstract Categories Must Converge | Components should progressively unify beneath `GeometricObject`, `FieldObject`, `OperatorObject`, `DynamicalObject`, `ControlObject`, `ObservableObject`. |
 | 13 | Modern C++ by Default | Prefer C++20/23: concepts, `std::expected`, `std::optional`, `std::variant`, `std::span`, RAII, `std::jthread`. |
 | 14 | Zero-Copy Where Feasible | Use zero-copy / lock-free / mailbox patterns when correctness and complexity permit. Do not over-engineer prematurely. |
+| 15 | Workers Communicate Through Mailboxes | Worker threads do not mutate UI, Vulkan, or active simulation state directly. They report through bounded mailboxes and main-thread drains. |
+| 16 | Resources Are IDs Across Boundaries | Large artifacts crossing thread/service/frame boundaries are referenced by `ResourceId`; storage remains in `MemoryService`, renderer, capture, or file owners. |
 
 ---
 
@@ -664,44 +668,55 @@ public:
 
 ## 11.1 Purpose
 
-Typed discrete event routing.
+Typed discrete event routing for compact runtime happenings.
+
+`EventBusService` is owned by `EngineServices`. It owns app, scenario,
+simulation, UI, and worker channels. Events are not telemetry and not logs:
+events answer "what happened", telemetry answers "what was sampled", and
+`LoggerService` owns formatted narrative text.
 
 ## 11.2 Event Examples
 
 ```cpp
 struct ScenarioLoadedEvent {
-    std::string scenario_name;
+    RuntimeNodeId scenario = {};
+    RuntimeNodeId root_node = {};
 };
 
 struct CaptureEvent {
-    AgentId pursuer;
-    AgentId prey;
-    double sim_time_seconds;
+    u64 pursuer_id = u64(0);
+    u64 prey_id = u64(0);
+    f32 sim_time = f32(0);
+    u64 tick = u64(0);
 };
 
 struct MarkovTransitionEvent {
-    AgentId agent;
-    StateId from_state;
-    StateId to_state;
-    std::string trigger;
-    double sim_time_seconds;
+    u64 agent_id = u64(0);
+    RuntimeNodeId from_state = {};
+    RuntimeNodeId to_state = {};
+    RuntimeNodeId trigger = {};
+    f32 sim_time = f32(0);
+    u64 tick = u64(0);
 };
 
 struct MarkovDwellEvent {
-    AgentId agent;
-    StateId state;
-    double dwell_seconds;
+    u64 agent_id = u64(0);
+    RuntimeNodeId state = {};
+    f32 dwell_seconds = f32(0);
+    f32 sim_time = f32(0);
+    u64 tick = u64(0);
 };
 
 struct SplineKnotChangedEvent {
-    SplineId spline;
-    std::size_t knot_index;
-    double new_value;
+    RuntimeNodeId spline = {};
+    u32 knot_index = u32(0);
+    f64 new_value = f64(0);
 };
 
 struct ThreadFaultEvent {
-    std::string thread_name;
-    std::string message;
+    RuntimeNodeId worker = {};
+    DiagnosticId diagnostic = {};
+    DiagnosticSeverity severity = DiagnosticSeverity::Error;
 };
 ```
 
@@ -711,10 +726,14 @@ struct ThreadFaultEvent {
 class EventBusService {
 public:
     template<class Event>
-    Subscription subscribe(std::function<void(const Event&)> handler);
+    Subscription subscribe(EventChannelId channel,
+                           std::function<void(const Event&)> handler);
 
     template<class Event>
-    void publish(const Event& event);
+    u64 publish(EventChannelId channel, const Event& event);
+
+    bool enqueue_worker_record(events::EventRecord record);
+    u64 drain_worker_mailbox();
 };
 ```
 
@@ -723,7 +742,13 @@ public:
 - Events are discrete happenings.
 - Do not use event bus for high-frequency telemetry samples.
 - Events must be typed structs.
-- Avoid string-only event dispatch.
+- Events carry compact IDs/scalars/enums, not strings, paths, blobs, or
+  formatted text.
+- `EventBusService` assigns monotonic per-channel sequence numbers.
+- Worker threads submit compact records through the worker mailbox.
+- `SimMetadataService` registers `EventDescriptor` values for discoverability.
+- Text formatting belongs to `LoggerService` or compact `EventLog` display
+  adapters, not to typed event payloads.
 
 ---
 
@@ -1525,17 +1550,42 @@ suggested fixes
 
 ---
 
-# 24. Threading Contract
+# 24. New Service: ThreadManagementService
 
-## 24.1 Target Layout
+Detailed design: `docs/THREAD_MANAGEMENT_SERVICE.md`.
+
+## 24.1 Purpose
+
+Engine-owned application threading: GUI/main, simulation, render, logger/I/O,
+worker lifecycle, job submission, cancellation, shutdown, and cross-thread
+communication.
+
+`ThreadManagementService` should be added to `EngineServices` soon. The goal is
+not only background jobs; the goal is to split the app into clear owner threads
+before the runtime grows around single-thread assumptions.
+
+```cpp
+class EngineServices {
+public:
+    ThreadManagementService& threads() noexcept;
+};
+```
+
+## 24.2 Target Layout
 
 ```text
 UI thread
 Simulation thread
 Renderer thread
+Worker pool
+Telemetry/file I/O worker
+Logger/I/O thread
 ```
 
-## 24.2 Queues
+The current runtime is mostly main-threaded. This target layout is a phased
+future state, not permission for workers to access arbitrary services.
+
+## 24.3 Queues And Mailboxes
 
 ```cpp
 template<class T>
@@ -1545,19 +1595,67 @@ template<class T>
 class LatestValueMailbox;
 ```
 
-## 24.3 Contracts
+Current concrete mailbox:
+
+```text
+worker thread -> EventBusService::enqueue_worker_record(EventRecord)
+main thread   -> EventBusService::drain_worker_mailbox()
+```
+
+## 24.4 Contracts
 
 - UI sends commands to simulation via queue.
 - Simulation publishes latest render snapshot via mailbox.
 - Renderer consumes latest snapshot and may discard stale frames.
 - Event delivery crossing threads must be safe.
 - Shutdown uses `std::jthread` and `std::stop_token`.
+- Logger/I/O drains log, telemetry, capture, and file sinks outside the frame
+  hot path.
+- Workers do not call ImGui, GLFW, Vulkan swapchain/presentation, or mutable
+  simulation APIs directly.
+- Worker failures are reported through `DiagnosticsService`.
+- Worker narrative text is routed through `LoggerService`, not event payloads.
+- Compact worker happenings are routed through `EventBusService` worker mailbox.
 
 ---
 
-# 25. Replay Contract
+# 25. New Service: ResourceManagerService
 
-## 25.1 Required Replay Data
+Detailed design: `docs/RESOURCE_MANAGER_SERVICE.md`.
+
+## 25.1 Purpose
+
+Addressable resource identity, lookup, ownership transfer, and lifecycle
+tracking for large artifacts that cross thread, frame, or service boundaries.
+
+`ResourceManagerService` does not replace `MemoryService`, arenas, or
+`BufferManager`. It records what an artifact is, who owns it, which lifetime it
+belongs to, and how another service can refer to it by `ResourceId`.
+
+```cpp
+class EngineServices {
+public:
+    ResourceManagerService& resources() noexcept;
+};
+```
+
+## 25.2 Contract
+
+- Use `MemoryService` scopes and existing buffer managers for storage.
+- Register artifacts that need cross-thread or cross-service identity.
+- Support constexpr built-in handles for known engine resources.
+- Support path-backed registration and lazy loading.
+- Allocate runtime handles from a handle pool with generation/stale checks.
+- Pass `ResourceId` through events, logs, diagnostics, and thread results.
+- Do not pass large buffers, file paths, or raw pointers through event payloads.
+- Renderer-owned Vulkan resources remain render-thread owned.
+- Capture artifacts may map `CaptureArtifactId` to `ResourceId`.
+
+---
+
+# 26. Replay Contract
+
+## 26.1 Required Replay Data
 
 ```cpp
 struct ReplaySession {

@@ -98,6 +98,11 @@ The project already has event infrastructure:
 `EventBusService` should evolve these existing pieces. It should not replace
 them with a string-only or reflection-heavy event system.
 
+The current typed dispatch implementation uses per-event typed subscriber
+lists. It does not use `std::any` or allocate on dispatch. Subscriber storage is
+allocated when subscribing, which is acceptable because subscription changes are
+not the simulation hot path.
+
 ## Ownership
 
 `EventBusService` is owned by the engine through `EngineServices`.
@@ -196,6 +201,7 @@ other values needed for routing or immediate reactions.
 The event bus does not carry:
 
 - owned `std::string` values
+- borrowed `std::string_view` names or paths as semantic payloads
 - `std::filesystem::path` values
 - large arrays, image buffers, packet blobs, or JSON documents
 - fully formatted user-facing text
@@ -217,6 +223,11 @@ Those details live behind service APIs:
 
 This keeps hot events stable and cheap while still allowing rich UI and file
 output through the services that own that richer data.
+
+During migration, `runtime_node_id_from_text()` may be used to derive stable
+runtime IDs from existing scenario, recipe, or field names. That is a bridge,
+not the final source of truth. The long-term source should be registered
+metadata/resource IDs.
 
 ### Telemetry
 
@@ -329,8 +340,8 @@ IDs plus logger/resource lookup.
 
 ### Event Descriptor
 
-Metadata should eventually describe event types so panels and scenario tooling
-can discover them.
+`SimMetadataService` describes event types so panels and scenario tooling can
+discover them without relying on string payloads in events.
 
 ```cpp
 struct EventDescriptor {
@@ -338,7 +349,8 @@ struct EventDescriptor {
     std::string display_name;
     EventScope scope = EventScope::Simulation;
     DiagnosticSeverity default_severity = DiagnosticSeverity::Info;
-    std::string docs_path;
+    ComponentId producer = ids::unknown_component;
+    DocumentationRef docs;
 };
 ```
 
@@ -482,6 +494,8 @@ Typed dispatch should preserve the current hot-path behavior:
 4. Do not allocate during common simulation event dispatch.
 5. Do not hold locks while invoking subscribers.
 6. Do not copy strings, paths, or variable-sized payloads through dispatch.
+7. Do not create subscriber lists during dispatch for event types with no
+   subscribers.
 
 Subscribers must be fast. Long work belongs in explicit worker systems.
 
@@ -492,17 +506,20 @@ Within one channel, events are observed in publish order.
 Across different channels, no global ordering guarantee is required. Panels that
 need a merged view can merge by `(tick, sim_time, sequence_number)` after drain.
 
-The service should eventually assign a monotonic per-channel sequence:
+`EventBusService` assigns a monotonic per-channel sequence to records published
+through the service. The sequence is stored in `EventRecord::sequence` and is
+available for future logger/resource references.
 
 ```cpp
-struct EventEnvelopeHeader {
-    EventChannelId channel = EventChannelId::Simulation;
-    EventScope scope = EventScope::Simulation;
+struct EventRecord {
+    // ...
     u64 sequence = u64(0);
-    u64 tick = u64(0);
-    f32 sim_time = f32(0);
 };
 ```
+
+Publishing through a raw `events::EventBus` bypasses service sequencing and
+should be treated as a legacy/internal escape hatch. Scenario construction has
+been migrated to publish through `EventBusService`.
 
 ## Threading
 
@@ -511,16 +528,21 @@ Initial contract:
 - simulation events publish on the simulation/main tick thread
 - UI subscriptions are registered/unregistered on the main thread
 - event log drain runs once per frame on the main thread
-- worker threads publish only through a worker-safe mailbox or worker channel
+- worker threads publish compact records through the worker mailbox
 
 Do not let arbitrary background threads call the simulation hot-path channel
 directly unless the channel has been made MPSC-safe.
 
-Future worker channel:
+Current worker channel:
 
 ```text
-worker thread -> WorkerEventMailbox -> EventBusService drain -> typed publish/log
+worker thread -> EventBusService::enqueue_worker_record()
+main thread   -> EventBusService::drain_worker_mailbox()
+main thread   -> EventLog::drain()
 ```
+
+The worker mailbox accepts compact `EventRecord` values only. It is not a typed
+cross-thread dispatch mechanism and it does not carry strings or paths.
 
 ## Event Log Integration
 
@@ -626,7 +648,13 @@ a future `ResourceManager`.
 9. Add event descriptors to `SimMetadataService`.
 10. Add capture and diagnostics event adapters.
 11. Replace string/path event payloads with IDs and service lookup.
+    Initial cleanup has removed owned/buffered strings and semantic string
+    views from app/simulation typed events; remaining string use belongs to
+    `EventRecord` display hints, `EventLog` formatted UI text, or
+    `LoggerService`.
 12. Move rich text output into `LoggerService`.
+13. Assign per-channel sequences in `EventBusService`.
+14. Add a worker mailbox for compact worker records.
 
 ## Unit Test Targets
 
@@ -641,12 +669,17 @@ a future `ResourceManager`.
 - worker-channel mailbox rejects overflow or reports drops
 - service follows Rule of Five policy for ownership types
 - hot-path event types stay bounded and do not own strings or paths
+- dispatch of unsubscribed event types does not allocate or mutate subscriber
+  maps
+- typed dispatch does not use `std::any`
 - logger/resource lookup can resolve IDs emitted by event payloads
+- service-published records receive monotonic per-channel sequence numbers
+- worker mailbox accepts, drains, and reports overflow for compact records
 
 ## Open Decisions
 
 - Should every event type have a mandatory `EventDescriptor` before it can be
-  published?
+  published? The registry exists now, but publishing is not yet gated on it.
 - Should the final implementation use one shared channel map or strongly typed
   channel objects?
 - Should simulation events remain synchronous, or should some subscribers opt

@@ -204,6 +204,48 @@ TEST(SimMetadataService, ScenarioValidationWarnsWhenFactoryIsMissing) {
     EXPECT_EQ(report.issues.front().source.node->value, 3u);
 }
 
+TEST(SimMetadataService, RegistersAndFindsEventDescriptorById) {
+    SimMetadataService metadata;
+
+    ASSERT_TRUE(metadata.register_event(EventDescriptor{
+        .id = EventTypeId{"event.sim.agent_captured"},
+        .display_name = "Agent Captured",
+        .scope = EventScope::Simulation,
+        .default_severity = DiagnosticSeverity::Info,
+        .producer = ids::simulation_wave_predator_prey,
+        .docs = DocumentationRef{
+            .title = "EventBusService",
+            .path = "docs/EVENT_BUS_SERVICE.md",
+            .section = "Simulation Events"
+        }
+    }));
+    EXPECT_FALSE(metadata.register_event(EventDescriptor{
+        .id = EventTypeId{"event.sim.agent_captured"},
+        .display_name = "Duplicate"
+    }));
+
+    const EventDescriptor* descriptor =
+        metadata.get_event_descriptor(EventTypeId{"event.sim.agent_captured"});
+    ASSERT_NE(descriptor, nullptr);
+    EXPECT_EQ(descriptor->display_name, "Agent Captured");
+    EXPECT_EQ(descriptor->scope, EventScope::Simulation);
+    EXPECT_EQ(descriptor->producer, ids::simulation_wave_predator_prey);
+    EXPECT_EQ(metadata.event_descriptors().size(), 1u);
+}
+
+TEST(SimMetadataService, ClearRemovesEventDescriptors) {
+    SimMetadataService metadata;
+    ASSERT_TRUE(metadata.register_event(EventDescriptor{
+        .id = EventTypeId{"event.sim.field_added"},
+        .display_name = "Field Added"
+    }));
+
+    metadata.clear();
+
+    EXPECT_TRUE(metadata.event_descriptors().empty());
+    EXPECT_EQ(metadata.get_event_descriptor(EventTypeId{"event.sim.field_added"}), nullptr);
+}
+
 TEST(EngineServices, OwnsMetadataServiceAndPassesItToSimulationHost) {
     EngineServices services;
     ASSERT_TRUE(services.metadata().register_component(metric_ripple_descriptor()));
