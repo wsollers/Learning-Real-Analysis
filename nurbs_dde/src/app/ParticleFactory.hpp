@@ -26,6 +26,7 @@ public:
     {
         m_stack.bind_memory(memory);
     }
+    ~ParticleBuilder() = default;
     ParticleBuilder(const ParticleBuilder&) = delete;
     ParticleBuilder& operator=(const ParticleBuilder&) = delete;
     ParticleBuilder(ParticleBuilder&&) noexcept = default;
@@ -67,13 +68,13 @@ public:
         return std::move(*this);
     }
 
-    ParticleBuilder& history(std::size_t capacity = 4096, float dt_min = 1.f / 120.f) & noexcept {
+    ParticleBuilder& history(std::size_t capacity = 4096, f32 dt_min = 1.f / 120.f) & noexcept {
         m_history_capacity = capacity;
         m_history_dt_min = dt_min;
         m_enable_history = true;
         return *this;
     }
-    ParticleBuilder&& history(std::size_t capacity = 4096, float dt_min = 1.f / 120.f) && noexcept {
+    ParticleBuilder&& history(std::size_t capacity = 4096, f32 dt_min = 1.f / 120.f) && noexcept {
         this->history(capacity, dt_min);
         return std::move(*this);
     }
@@ -97,10 +98,10 @@ public:
         return std::move(*this);
     }
 
-    ParticleBuilder& slope_velocity_transform(float intercept,
-                                              float slope_gain,
-                                              float min_scale = 0.f,
-                                              float max_scale = std::numeric_limits<float>::infinity()) & noexcept {
+    ParticleBuilder& slope_velocity_transform(f32 intercept,
+                                              f32 slope_gain,
+                                              f32 min_scale = 0.f,
+                                              f32 max_scale = std::numeric_limits<f32>::infinity()) & noexcept {
         return slope_velocity_transform(SlopeVelocityTransform{
             .enabled = true,
             .intercept = intercept,
@@ -109,21 +110,21 @@ public:
             .max_scale = max_scale
         });
     }
-    ParticleBuilder&& slope_velocity_transform(float intercept,
-                                               float slope_gain,
-                                               float min_scale = 0.f,
-                                               float max_scale = std::numeric_limits<float>::infinity()) && noexcept {
+    ParticleBuilder&& slope_velocity_transform(f32 intercept,
+                                               f32 slope_gain,
+                                               f32 min_scale = 0.f,
+                                               f32 max_scale = std::numeric_limits<f32>::infinity()) && noexcept {
         this->slope_velocity_transform(intercept, slope_gain, min_scale, max_scale);
         return std::move(*this);
     }
 
     template <class Behavior, class... Args>
-    ParticleBuilder& with_behavior(float weight, Args&&... args) & {
+    ParticleBuilder& with_behavior(f32 weight, Args&&... args) & {
         m_stack.add(make_sim_unique_as<IParticleBehavior, Behavior>(std::forward<Args>(args)...), weight);
         return *this;
     }
     template <class Behavior, class... Args>
-    ParticleBuilder&& with_behavior(float weight, Args&&... args) && {
+    ParticleBuilder&& with_behavior(f32 weight, Args&&... args) && {
         this->with_behavior<Behavior>(weight, std::forward<Args>(args)...);
         return std::move(*this);
     }
@@ -138,23 +139,23 @@ public:
         return std::move(*this);
     }
 
-    ParticleBuilder& with_equation(memory::Unique<ndde::sim::IEquation> equation, float weight = 1.f) & {
+    ParticleBuilder& with_equation(memory::Unique<ndde::sim::IEquation> equation, f32 weight = 1.f) & {
         m_stack.add(make_sim_unique_as<IParticleBehavior, EquationBehavior>(std::move(equation)), weight);
         return *this;
     }
-    ParticleBuilder&& with_equation(memory::Unique<ndde::sim::IEquation> equation, float weight = 1.f) && {
+    ParticleBuilder&& with_equation(memory::Unique<ndde::sim::IEquation> equation, f32 weight = 1.f) && {
         this->with_equation(std::move(equation), weight);
         return std::move(*this);
     }
 
     template <class Equation, class... Args>
-    ParticleBuilder& with_equation(float weight, Args&&... args) & {
+    ParticleBuilder& with_equation(f32 weight, Args&&... args) & {
         return with_equation(make_sim_unique_as<ndde::sim::IEquation, Equation>(
             std::forward<Args>(args)...), weight);
     }
 
     template <class Equation, class... Args>
-    ParticleBuilder&& with_equation(float weight, Args&&... args) && {
+    ParticleBuilder&& with_equation(f32 weight, Args&&... args) && {
         this->with_equation<Equation>(weight, std::forward<Args>(args)...);
         return std::move(*this);
     }
@@ -194,7 +195,7 @@ private:
     TrailConfig m_trail{};
     bool m_enable_history = false;
     std::size_t m_history_capacity = 4096;
-    float m_history_dt_min = 1.f / 120.f;
+    f32 m_history_dt_min = 1.f / 120.f;
     bool m_stochastic = false;
     BehaviorStack m_stack;
     memory::SimVector<memory::Unique<ndde::sim::IConstraint>> m_constraints;

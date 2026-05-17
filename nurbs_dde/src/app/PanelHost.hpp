@@ -16,7 +16,7 @@ struct PanelSpec {
     std::string title;
     ImVec2 default_pos{20.f, 20.f};
     ImVec2 default_size{300.f, 220.f};
-    float bg_alpha = 0.88f;
+    f32 bg_alpha = 0.88f;
     bool* visible = nullptr;
     std::function<void()> draw_body;
 };

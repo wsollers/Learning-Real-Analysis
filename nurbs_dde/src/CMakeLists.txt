@@ -92,6 +92,7 @@ target_link_libraries(ndde_simulation PUBLIC ndde_math volk)
 
 # ── ndde_engine ───────────────────────────────────────────────────────────────
 add_library(ndde_engine STATIC
+    engine/diagnostics/DiagnosticsService.cpp
     engine/AppConfig.cpp
     engine/Engine.cpp
     engine/SimulationRuntime.cpp
@@ -131,16 +132,22 @@ foreach(tgt IN LISTS NDDE_TARGETS)
         target_compile_options(${tgt} PRIVATE
             /W4 /WX- /wd4100 /permissive- /utf-8
             $<$<CONFIG:Debug>:/Od /Zi /RTC1>
+            $<$<CONFIG:Tidy>:/Od /Zi /RTC1>
             $<$<CONFIG:Release>:/O2 /DNDEBUG>
         )
     else()
         target_compile_options(${tgt} PRIVATE
             -Wall -Wextra -Wpedantic -Wno-unused-parameter
             $<$<CONFIG:Debug>:-g -O0>
+            $<$<CONFIG:Tidy>:-g -O0>
             $<$<CONFIG:Release>:-O3 -march=native>
         )
     endif()
 endforeach()
+
+if(NDDE_CLANG_TIDY_ENABLED)
+    set_property(TARGET ${NDDE_TARGETS} PROPERTY CXX_CLANG_TIDY "${NDDE_CLANG_TIDY_COMMAND}")
+endif()
 
 # ── Shaders ───────────────────────────────────────────────────────────────────
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/shaders")

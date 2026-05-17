@@ -25,23 +25,23 @@ public:
         , m_fields(fields)
     {}
 
-    [[nodiscard]] Vec3 evaluate(float u, float v, float t = 0.f) const override {
+    [[nodiscard]] Vec3 evaluate(f32 u, f32 v, f32 t = 0.f) const override {
         Vec3 p = m_base.evaluate(u, v, t);
         p.z += m_fields.surface_displacement(u, v, t);
         return p;
     }
 
-    [[nodiscard]] float u_min(float t = 0.f) const override { return m_base.u_min(t); }
-    [[nodiscard]] float u_max(float t = 0.f) const override { return m_base.u_max(t); }
-    [[nodiscard]] float v_min(float t = 0.f) const override { return m_base.v_min(t); }
-    [[nodiscard]] float v_max(float t = 0.f) const override { return m_base.v_max(t); }
+    [[nodiscard]] f32 u_min(f32 t = 0.f) const override { return m_base.u_min(t); }
+    [[nodiscard]] f32 u_max(f32 t = 0.f) const override { return m_base.u_max(t); }
+    [[nodiscard]] f32 v_min(f32 t = 0.f) const override { return m_base.v_min(t); }
+    [[nodiscard]] f32 v_max(f32 t = 0.f) const override { return m_base.v_max(t); }
     [[nodiscard]] bool is_periodic_u() const override { return m_base.is_periodic_u(); }
     [[nodiscard]] bool is_periodic_v() const override { return m_base.is_periodic_v(); }
     [[nodiscard]] bool is_time_varying() const override {
         return !m_fields.empty() || m_base.is_time_varying();
     }
 
-    [[nodiscard]] math::SurfaceMetadata metadata(float t = 0.f) const override {
+    [[nodiscard]] math::SurfaceMetadata metadata(f32 t = 0.f) const override {
         math::SurfaceMetadata data = m_base.metadata(t);
         data.deformable = true;
         data.time_varying = is_time_varying();
@@ -290,7 +290,7 @@ void SimulationWavePredatorPrey::reset_showcase() {
         .radius      = f32(0.18)
     });
 
-    for (int i = 0; i < 100; ++i) {
+    for (i32 i = 0; i < 100; ++i) {
         m_sim_time += f32(1.0 / 60.0);
         m_particles.update(f32(1.0 / 60.0), f32(1), m_sim_time, &m_fields);
     }
@@ -355,7 +355,7 @@ void SimulationWavePredatorPrey::handle_poke(const TickInfo& tick) {
         evt.amplitude = ((pick.seed % 2u) == 0u ? f32(1) : f32(-1))
             * std::max(f32(0.18), pick.amplitude * f32(2));
         evt.omega     = f32(6.28);
-        evt.k_wave    = ops::two_pi_v<float> / std::max(f32(0.6), pick.radius * f32(2.1));
+        evt.k_wave    = ops::two_pi_v<f32> / std::max(f32(0.6), pick.radius * f32(2.1));
         evt.alpha     = f32(1) / std::max(f32(0.35), pick.radius);
         evt.beta      = std::max(f32(0.05), pick.falloff * f32(0.35));
         evt.sim_time  = m_sim_time;

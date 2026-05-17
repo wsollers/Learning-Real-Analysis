@@ -27,8 +27,11 @@ public:
     };
 
     // leader_uv_fn: invoked each step to get the leader's current uv.
-    explicit DirectPursuitEquation(std::function<glm::vec2()> leader_uv_fn,
-                                    Params p = {})
+    explicit DirectPursuitEquation(std::function<glm::vec2()> leader_uv_fn)
+        : DirectPursuitEquation(std::move(leader_uv_fn), Params{})
+    {}
+    DirectPursuitEquation(std::function<glm::vec2()> leader_uv_fn,
+                          Params p)
         : m_leader_uv_fn(std::move(leader_uv_fn)), m_p(p)
     {}
 

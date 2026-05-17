@@ -56,6 +56,13 @@ public:
             .goal_succeeded = s.status == "Succeeded"
         };
     }
+
+protected:
+    ISimulation() = default;
+    ISimulation(const ISimulation&) = default;
+    ISimulation& operator=(const ISimulation&) = default;
+    ISimulation(ISimulation&&) = default;
+    ISimulation& operator=(ISimulation&&) = default;
 };
 
 } // namespace ndde

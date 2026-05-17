@@ -23,7 +23,7 @@ namespace simulation { class FieldCompositor; }
 class ParticleSystem {
 public:
     explicit ParticleSystem(const ndde::math::ISurface* surface,
-                            std::uint32_t seed = std::random_device{}())
+                            u32 seed = std::random_device{}())
         : m_surface(surface), m_rng(seed)
     {}
 
@@ -88,7 +88,7 @@ public:
         m_goals.clear();
     }
 
-    void update(float dt, float speed_scale, float sim_time,
+    void update(f32 dt, f32 speed_scale, f32 sim_time,
                 const simulation::FieldCompositor* fields = nullptr) {
         SimulationContext context(m_surface, &m_particles, &m_rng, fields);
         context.set_time(sim_time);
@@ -101,7 +101,7 @@ public:
         apply_pair_constraints();
     }
 
-    [[nodiscard]] SimulationContext context(float sim_time,
+    [[nodiscard]] SimulationContext context(f32 sim_time,
                                             const simulation::FieldCompositor* fields = nullptr) {
         SimulationContext c(m_surface, &m_particles, &m_rng, fields);
         c.set_time(sim_time);
@@ -126,7 +126,7 @@ public:
         return ref;
     }
 
-    [[nodiscard]] GoalStatus evaluate_goals(float sim_time) {
+    [[nodiscard]] GoalStatus evaluate_goals(f32 sim_time) {
         SimulationContext c = context(sim_time);
         GoalStatus aggregate = GoalStatus::Running;
         for (const auto& goal : m_goals) {

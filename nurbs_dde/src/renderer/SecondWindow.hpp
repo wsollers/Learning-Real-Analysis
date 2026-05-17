@@ -24,6 +24,8 @@ public:
 
     SecondWindow(const SecondWindow&)            = delete;
     SecondWindow& operator=(const SecondWindow&) = delete;
+    SecondWindow(SecondWindow&&)                 = delete;
+    SecondWindow& operator=(SecondWindow&&)      = delete;
 
     // x,y: OS screen position for top-left corner.
     void init(const platform::VulkanContext& ctx,

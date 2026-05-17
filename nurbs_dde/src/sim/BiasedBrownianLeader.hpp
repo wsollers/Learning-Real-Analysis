@@ -47,8 +47,11 @@ public:
         float arrival_radius        = 0.4f;  ///< neighbourhood radius for goal flip
     };
 
-    explicit BiasedBrownianLeader(const ndde::math::ExtremumTable* table,
-                                   Params p = {})
+    explicit BiasedBrownianLeader(const ndde::math::ExtremumTable* table)
+        : BiasedBrownianLeader(table, Params{})
+    {}
+    BiasedBrownianLeader(const ndde::math::ExtremumTable* table,
+                         Params p)
         : m_table(table), m_p(p)
     {}
 

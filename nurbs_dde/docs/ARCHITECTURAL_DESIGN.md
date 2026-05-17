@@ -25,6 +25,28 @@ Renderer receives packets only.
 Fields alter dynamics, metric, and visible geometry through one pipeline.
 ```
 
+## C++ Engineering Standard
+
+Implementation should follow modern C++ best practices as expressed in the C++
+Core Guidelines and related industry guidance. The project targets modern C++
+in the C++20/C++23 style: prefer clear ownership, RAII, value semantics where
+appropriate, strong project scalar aliases, and narrow dependencies.
+
+Use the Rule of Zero for ordinary value/config/model types. Use the Rule of
+Three or Rule of Five where a type manages ownership, lifetime, polymorphism, or
+non-trivial copy/move behavior. Abstract interfaces should make slicing
+impossible while still allowing derived types to use appropriate copy/move
+semantics.
+
+After major changes and before check-ins, run the normal build/tests and the
+clang-tidy build. The tidy build is the guardrail for guideline issues such as
+special member function policy:
+
+```powershell
+cmake -S . -B cmake-build-tidy -G Ninja -DCMAKE_BUILD_TYPE=Tidy
+cmake --build cmake-build-tidy --target nurbs_dde
+```
+
 ## Layer Map
 
 ```mermaid
@@ -462,4 +484,3 @@ When adding a new mathematical system:
 7. Store dynamic data through `MemoryService`.
 8. Add focused tests that do not require a window.
 9. Only then register the simulation in `SceneFactories.cpp`.
-

@@ -42,7 +42,7 @@
 //
 // Unregistration
 // ──────────────
-// register_*() returns a HotkeyID (uint32_t). Pass it to unregister() to
+// register_*() returns a HotkeyID (u32). Pass it to unregister() to
 // remove the binding. Useful when a panel or subsystem is destroyed.
 // IDs are never reused within a session.
 //
@@ -73,17 +73,17 @@
 #include <imgui.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "math/Scalars.hpp"
 #include "memory/Containers.hpp"
 #include <functional>
 #include <string>
-#include <cstdint>
 #include <algorithm>
 
 namespace ndde {
 
 // ── HotkeyID ──────────────────────────────────────────────────────────────────
 
-using HotkeyID = uint32_t;
+using HotkeyID = u32;
 inline constexpr HotkeyID k_invalid_hotkey = 0u;
 
 // ── Chord ─────────────────────────────────────────────────────────────────────
@@ -91,12 +91,12 @@ inline constexpr HotkeyID k_invalid_hotkey = 0u;
 // Alt support is a one-liner (add Alt = 4).
 
 struct Chord {
-    static constexpr uint8_t None  = 0;
-    static constexpr uint8_t Ctrl  = 1;
-    static constexpr uint8_t Shift = 2;
+    static constexpr u8 None  = u8(0);
+    static constexpr u8 Ctrl  = u8(1);
+    static constexpr u8 Shift = u8(2);
 
     ImGuiKey key  = ImGuiKey_None;
-    uint8_t  mods = None;
+    u8       mods = None;
 
     // ── Named constructors ────────────────────────────────────────────────────
     [[nodiscard]] static constexpr Chord ctrl(ImGuiKey k) noexcept {
@@ -106,7 +106,7 @@ struct Chord {
         return {k, Shift};
     }
     [[nodiscard]] static constexpr Chord ctrl_shift(ImGuiKey k) noexcept {
-        return {k, static_cast<uint8_t>(Ctrl | Shift)};
+        return {k, static_cast<u8>(Ctrl | Shift)};
     }
     [[nodiscard]] static constexpr Chord bare(ImGuiKey k) noexcept {
         return {k, None};
@@ -153,6 +153,7 @@ struct Chord {
 class HotkeyManager {
 public:
     HotkeyManager() = default;
+    ~HotkeyManager() = default;
 
     // Non-copyable (owns callbacks by value; copy is rarely correct).
     // Moveable so it can live as a class member and be default-constructed.
@@ -234,7 +235,7 @@ public:
         const ImGuiKey imgui_key = glfw_key_to_imgui(key);
         if (imgui_key == ImGuiKey_None) return false;
 
-        const uint8_t chord_mods = mods_from_glfw(mods);
+        const u8 chord_mods = mods_from_glfw(mods);
         for (auto& e : m_entries) {
             if (e.chord.key == imgui_key && e.chord.mods == chord_mods) {
                 e.callback();
@@ -313,8 +314,8 @@ private:
     memory::SimVector<Entry> m_entries;
     HotkeyID           m_next_id = 0u;
 
-    [[nodiscard]] static uint8_t mods_from_glfw(int mods) noexcept {
-        uint8_t out = Chord::None;
+    [[nodiscard]] static u8 mods_from_glfw(int mods) noexcept {
+        u8 out = Chord::None;
         if ((mods & GLFW_MOD_CONTROL) != 0) out |= Chord::Ctrl;
         if ((mods & GLFW_MOD_SHIFT) != 0) out |= Chord::Shift;
         return out;

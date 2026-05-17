@@ -50,6 +50,13 @@ public:
 
     // Reset edge state. Called on ScenarioReset so alerts re-arm cleanly.
     virtual void reset() noexcept {}
+
+protected:
+    AlertRule() = default;
+    AlertRule(const AlertRule&) = default;
+    AlertRule& operator=(const AlertRule&) = default;
+    AlertRule(AlertRule&&) = default;
+    AlertRule& operator=(AlertRule&&) = default;
 };
 
 // ── ProximityAlert ────────────────────────────────────────────────────────────

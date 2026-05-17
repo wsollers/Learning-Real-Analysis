@@ -17,8 +17,8 @@ enum class SurfaceFillColorMode : u8 {
 
 struct SurfaceMeshOptions {
     u32 grid_lines = 64;
-    float time = 0.f;
-    float color_scale = 1.f;
+    f32 time = 0.f;
+    f32 color_scale = 1.f;
     Vec4 wire_color{0.9f, 0.95f, 1.f, 0.45f};
     SurfaceFillColorMode fill_color_mode = SurfaceFillColorMode::HeightCell;
     bool build_contour = true;
@@ -41,8 +41,8 @@ public:
     [[nodiscard]] u32 wire_count() const noexcept { return m_wire_count; }
     [[nodiscard]] u32 contour_count() const noexcept { return m_contour_count; }
 
-    [[nodiscard]] static Vec4 height_color(float z, float scale) noexcept;
-    [[nodiscard]] static Vec4 curvature_color(float k, float scale) noexcept;
+    [[nodiscard]] static Vec4 height_color(f32 z, f32 scale) noexcept;
+    [[nodiscard]] static Vec4 curvature_color(f32 k, f32 scale) noexcept;
 
 private:
     bool m_dirty = true;

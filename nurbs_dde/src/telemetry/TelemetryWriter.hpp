@@ -40,6 +40,8 @@ public:
 
     TelemetryWriter(const TelemetryWriter&)            = delete;
     TelemetryWriter& operator=(const TelemetryWriter&) = delete;
+    TelemetryWriter(TelemetryWriter&&)                 = delete;
+    TelemetryWriter& operator=(TelemetryWriter&&)      = delete;
 
     // ── Configuration ─────────────────────────────────────────────────────────
 

@@ -4,6 +4,7 @@
 
 #include "engine/CameraInputController.hpp"
 #include "engine/CameraService.hpp"
+#include "engine/diagnostics/DiagnosticsService.hpp"
 #include "engine/HotkeyService.hpp"
 #include "engine/InteractionService.hpp"
 #include "engine/PanelService.hpp"
@@ -21,6 +22,7 @@ public:
                    InteractionService& interaction,
                    RenderService& render,
                    CameraService& camera,
+                   DiagnosticsService& diagnostics,
                    SimulationClock& clock,
                    memory::MemoryService& memory) noexcept
         : m_panels(panels)
@@ -28,6 +30,7 @@ public:
         , m_interaction(interaction)
         , m_render(render)
         , m_camera(camera)
+        , m_diagnostics(diagnostics)
         , m_clock(clock)
         , m_memory(memory)
     {}
@@ -37,6 +40,7 @@ public:
     [[nodiscard]] InteractionService& interaction() const noexcept { return m_interaction; }
     [[nodiscard]] RenderService& render() const noexcept { return m_render; }
     [[nodiscard]] CameraService& camera() const noexcept { return m_camera; }
+    [[nodiscard]] DiagnosticsService& diagnostics() const noexcept { return m_diagnostics; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() const noexcept { return m_memory; }
 
@@ -46,6 +50,7 @@ private:
     InteractionService& m_interaction;
     RenderService& m_render;
     CameraService& m_camera;
+    DiagnosticsService& m_diagnostics;
     SimulationClock& m_clock;
     memory::MemoryService& m_memory;
 };
@@ -67,11 +72,13 @@ public:
     [[nodiscard]] CameraService& camera() noexcept { return m_camera; }
     [[nodiscard]] CameraInputController& camera_input() noexcept { return m_camera_input; }
     [[nodiscard]] ViewInputService& view_input() noexcept { return m_view_input; }
+    [[nodiscard]] DiagnosticsService& diagnostics() noexcept { return m_diagnostics; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
-        return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera, m_clock, m_memory);
+        return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera,
+                              m_diagnostics, m_clock, m_memory);
     }
 
 private:
@@ -81,6 +88,7 @@ private:
     InteractionService m_interaction;
     RenderService m_render;
     CameraService m_camera;
+    DiagnosticsService m_diagnostics;
     CameraInputController m_camera_input;
     ViewInputService m_view_input;
     SimulationClock m_clock;

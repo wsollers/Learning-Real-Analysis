@@ -28,6 +28,10 @@ class SimulationSurfaceGaussian final : public ISimulation {
 public:
     explicit SimulationSurfaceGaussian(memory::MemoryService* memory = nullptr);
     ~SimulationSurfaceGaussian() override = default;
+    SimulationSurfaceGaussian(const SimulationSurfaceGaussian&) = delete;
+    SimulationSurfaceGaussian& operator=(const SimulationSurfaceGaussian&) = delete;
+    SimulationSurfaceGaussian(SimulationSurfaceGaussian&&) = delete;
+    SimulationSurfaceGaussian& operator=(SimulationSurfaceGaussian&&) = delete;
 
     [[nodiscard]] std::string_view name() const override { return "Surface Simulation"; }
 

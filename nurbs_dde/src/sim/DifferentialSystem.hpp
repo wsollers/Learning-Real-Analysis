@@ -29,6 +29,13 @@ public:
     virtual void evaluate(f64 t,
                           std::span<const f64> state,
                           std::span<f64> derivative) const = 0;
+
+protected:
+    IDifferentialSystem() = default;
+    IDifferentialSystem(const IDifferentialSystem&) = default;
+    IDifferentialSystem& operator=(const IDifferentialSystem&) = default;
+    IDifferentialSystem(IDifferentialSystem&&) = default;
+    IDifferentialSystem& operator=(IDifferentialSystem&&) = default;
 };
 
 class IOdeSolver {
@@ -43,6 +50,13 @@ public:
                       f64 dt,
                       std::span<f64> state,
                       std::span<f64> scratch) const = 0;
+
+protected:
+    IOdeSolver() = default;
+    IOdeSolver(const IOdeSolver&) = default;
+    IOdeSolver& operator=(const IOdeSolver&) = default;
+    IOdeSolver(IOdeSolver&&) = default;
+    IOdeSolver& operator=(IOdeSolver&&) = default;
 };
 
 struct OdeHistorySample {

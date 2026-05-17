@@ -45,6 +45,8 @@ public:
 
     SimulationRuntime(const SimulationRuntime&) = delete;
     SimulationRuntime& operator=(const SimulationRuntime&) = delete;
+    SimulationRuntime(SimulationRuntime&&) = delete;
+    SimulationRuntime& operator=(SimulationRuntime&&) = delete;
 
     void instantiate(SimulationHost& host);
     void start();

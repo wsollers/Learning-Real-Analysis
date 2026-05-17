@@ -48,7 +48,7 @@ public:
     struct BrownianCloudParams {
         u32 count = 16;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.f;
+        f32 radius = 1.f;
         ParticleRole role = ParticleRole::Neutral;
         BrownianBehavior::Params brownian{.sigma = 0.16f, .drift_strength = 0.f};
         TrailConfig trail{TrailMode::Finite, 600u, 0.015f};
@@ -59,12 +59,12 @@ public:
         u32 leader_count = 1;
         u32 chaser_count = 6;
         glm::vec2 center{0.f, 0.f};
-        float leader_radius = 0.7f;
-        float chaser_radius = 2.2f;
-        float leader_speed = 0.42f;
-        float chaser_speed = 0.86f;
-        float delay_seconds = 0.35f;
-        float capture_radius = 0.20f;
+        f32 leader_radius = 0.7f;
+        f32 chaser_radius = 2.2f;
+        f32 leader_speed = 0.42f;
+        f32 chaser_speed = 0.86f;
+        f32 delay_seconds = 0.35f;
+        f32 capture_radius = 0.20f;
         BrownianBehavior::Params leader_noise{.sigma = 0.08f, .drift_strength = 0.03f};
         BrownianBehavior::Params chaser_noise{.sigma = 0.055f, .drift_strength = 0.f};
         TrailConfig leader_trail{TrailMode::Persistent, 1600u, 0.012f};
@@ -77,7 +77,7 @@ public:
     struct ContourBandParams {
         u32 count = 10;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.2f;
+        f32 radius = 1.2f;
         bool shared_level = true;
         ParticleRole role = ParticleRole::Leader;
         ndde::sim::LevelCurveWalker::Params walker{};
@@ -89,7 +89,7 @@ public:
     struct GradientDriftParams {
         u32 count = 14;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.4f;
+        f32 radius = 1.4f;
         ParticleRole role = ParticleRole::Neutral;
         GradientDriftBehavior::Params gradient{.mode = GradientDriftBehavior::Mode::Uphill, .speed = 0.55f};
         BrownianBehavior::Params noise{.sigma = 0.035f, .drift_strength = 0.f};
@@ -100,11 +100,11 @@ public:
     struct AvoidanceParams {
         u32 count = 12;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.3f;
+        f32 radius = 1.3f;
         ParticleRole role = ParticleRole::Avoider;
         ParticleRole avoid_role = ParticleRole::Chaser;
-        float speed = 0.65f;
-        float delay_seconds = 0.f;
+        f32 speed = 0.65f;
+        f32 delay_seconds = 0.f;
         BrownianBehavior::Params noise{.sigma = 0.045f, .drift_strength = 0.f};
         TrailConfig trail{TrailMode::Finite, 900u, 0.014f};
         std::string label = "Avoidance Swarm";
@@ -113,10 +113,10 @@ public:
     struct CentroidSwarmParams {
         u32 count = 10;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.8f;
+        f32 radius = 1.8f;
         ParticleRole role = ParticleRole::Chaser;
         ParticleRole target_role = ParticleRole::Chaser;
-        float speed = 0.55f;
+        f32 speed = 0.55f;
         BrownianBehavior::Params noise{.sigma = 0.035f, .drift_strength = 0.f};
         TrailConfig trail{TrailMode::Finite, 1000u, 0.014f};
         std::string label = "Centroid Swarm";
@@ -125,7 +125,7 @@ public:
     struct RingOrbitParams {
         u32 count = 16;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.8f;
+        f32 radius = 1.8f;
         ParticleRole role = ParticleRole::Neutral;
         OrbitBehavior::Params orbit{};
         BrownianBehavior::Params noise{.sigma = 0.02f, .drift_strength = 0.f};
@@ -136,7 +136,7 @@ public:
     struct FlockingParams {
         u32 count = 18;
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.6f;
+        f32 radius = 1.6f;
         ParticleRole role = ParticleRole::Neutral;
         FlockingBehavior::Params flock{};
         BrownianBehavior::Params noise{.sigma = 0.025f, .drift_strength = 0.f};
@@ -169,7 +169,7 @@ public:
         result.particle_ids.reserve(static_cast<std::size_t>(p.leader_count) + p.chaser_count);
 
         for (u32 i = 0; i < p.leader_count; ++i) {
-            const float a = angle(i, std::max(p.leader_count, 1u));
+            const f32 a = angle(i, std::max(p.leader_count, 1u));
             AvoidParticleBehavior::Params avoid;
             avoid.target = TargetSelector::nearest(ParticleRole::Chaser);
             avoid.speed = p.leader_speed;
@@ -188,7 +188,7 @@ public:
         }
 
         for (u32 i = 0; i < p.chaser_count; ++i) {
-            const float a = angle(i, std::max(p.chaser_count, 1u)) + 0.35f;
+            const f32 a = angle(i, std::max(p.chaser_count, 1u)) + 0.35f;
             SeekParticleBehavior::Params seek;
             seek.target = TargetSelector::nearest(ParticleRole::Leader);
             seek.speed = p.chaser_speed;
@@ -219,7 +219,7 @@ public:
         SwarmBuildResult result;
         result.metadata = recipe_metadata(p.label, p.count, {p.role}, false);
         result.particle_ids.reserve(p.count);
-        const float z0 = surface().evaluate(p.center.x, p.center.y).z;
+        const f32 z0 = surface().evaluate(p.center.x, p.center.y).z;
 
         for (u32 i = 0; i < p.count; ++i) {
             const glm::vec2 uv = spawn_disc(p.center, p.radius, i, p.count);
@@ -306,7 +306,7 @@ public:
         result.metadata = recipe_metadata(p.label, p.count, {p.role}, false);
         result.particle_ids.reserve(p.count);
         for (u32 i = 0; i < p.count; ++i) {
-            const float a = angle(i, std::max(p.count, 1u));
+            const f32 a = angle(i, std::max(p.count, 1u));
             auto orbit = p.orbit;
             orbit.center = p.center;
             if (orbit.radius <= 0.f) orbit.radius = p.radius;
@@ -334,7 +334,7 @@ public:
         auto flock = p.flock;
         flock.role = p.role;
         for (u32 i = 0; i < p.count; ++i) {
-            const float a = angle(i, std::max(p.count, 1u));
+            const f32 a = angle(i, std::max(p.count, 1u));
             const glm::vec2 tangent{-ops::sin(a), ops::cos(a)};
             Particle& particle = m_system.spawn(m_system.factory().particle()
                 .named(p.label)
@@ -358,14 +358,14 @@ private:
         return *m_system.surface();
     }
 
-    [[nodiscard]] static float angle(u32 i, u32 count) noexcept {
-        return ops::two_pi_v<float> * static_cast<float>(i) / static_cast<float>(std::max(count, 1u));
+    [[nodiscard]] static f32 angle(u32 i, u32 count) noexcept {
+        return ops::two_pi_v<f32> * static_cast<f32>(i) / static_cast<f32>(std::max(count, 1u));
     }
 
-    [[nodiscard]] glm::vec2 spawn_disc(glm::vec2 center, float radius, u32 i, u32 count) {
-        std::uniform_real_distribution<float> jitter(0.82f, 1.16f);
-        const float a = angle(i, std::max(count, 1u)) + 0.37f * static_cast<float>(i % 5u);
-        const float r = radius * jitter(m_system.rng());
+    [[nodiscard]] glm::vec2 spawn_disc(glm::vec2 center, f32 radius, u32 i, u32 count) {
+        std::uniform_real_distribution<f32> jitter(0.82f, 1.16f);
+        const f32 a = angle(i, std::max(count, 1u)) + 0.37f * static_cast<f32>(i % 5u);
+        const f32 r = radius * jitter(m_system.rng());
         const glm::vec2 raw = center + glm::vec2{r * ops::cos(a), r * ops::sin(a)};
         return {
             ops::clamp(raw.x, surface().u_min(), surface().u_max()),

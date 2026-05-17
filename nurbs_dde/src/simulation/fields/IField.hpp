@@ -55,6 +55,13 @@ public:
     [[nodiscard]] virtual bool active(f32 t) const { (void)t; return true; }
 
     [[nodiscard]] virtual std::string_view name() const noexcept = 0;
+
+protected:
+    IField() = default;
+    IField(const IField&) = default;
+    IField& operator=(const IField&) = default;
+    IField(IField&&) = default;
+    IField& operator=(IField&&) = default;
 };
 
 // ── FieldCompositor ───────────────────────────────────────────────────────────

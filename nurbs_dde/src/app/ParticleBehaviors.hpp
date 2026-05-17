@@ -43,24 +43,31 @@ public:
     [[nodiscard]] virtual glm::vec2 velocity(
         ndde::sim::ParticleState&    state,
         const ndde::math::ISurface&  surface,
-        float                        t,
+        f32                        t,
         const SimulationContext&     context,
         ParticleId                   owner) const = 0;
 
     [[nodiscard]] virtual glm::vec2 noise_coefficient(
         const ndde::sim::ParticleState& /*state*/,
         const ndde::math::ISurface&     /*surface*/,
-        float                           /*t*/,
+        f32                           /*t*/,
         const SimulationContext&        /*context*/,
         ParticleId                      /*owner*/) const
     {
         return {0.f, 0.f};
     }
 
-    [[nodiscard]] virtual float phase_rate() const { return 0.f; }
+    [[nodiscard]] virtual f32 phase_rate() const { return 0.f; }
     [[nodiscard]] virtual std::string metadata_label() const = 0;
-    [[nodiscard]] virtual float delay_seconds() const noexcept { return 0.f; }
-    [[nodiscard]] virtual float nominal_speed() const noexcept { return 0.f; }
+    [[nodiscard]] virtual f32 delay_seconds() const noexcept { return 0.f; }
+    [[nodiscard]] virtual f32 nominal_speed() const noexcept { return 0.f; }
+
+protected:
+    IParticleBehavior() = default;
+    IParticleBehavior(const IParticleBehavior&) = default;
+    IParticleBehavior& operator=(const IParticleBehavior&) = default;
+    IParticleBehavior(IParticleBehavior&&) = default;
+    IParticleBehavior& operator=(IParticleBehavior&&) = default;
 };
 
 class EquationBehavior final : public IParticleBehavior {
@@ -71,7 +78,7 @@ public:
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float t,
+                                     f32 t,
                                      const SimulationContext&,
                                      ParticleId) const override {
         return m_equation ? m_equation->update(state, surface, t) : glm::vec2{0.f, 0.f};
@@ -79,13 +86,13 @@ public:
 
     [[nodiscard]] glm::vec2 noise_coefficient(const ndde::sim::ParticleState& state,
                                               const ndde::math::ISurface& surface,
-                                              float t,
+                                              f32 t,
                                               const SimulationContext&,
                                               ParticleId) const override {
         return m_equation ? m_equation->noise_coefficient(state, surface, t) : glm::vec2{0.f, 0.f};
     }
 
-    [[nodiscard]] float phase_rate() const override {
+    [[nodiscard]] f32 phase_rate() const override {
         return m_equation ? m_equation->phase_rate() : 0.f;
     }
 
@@ -103,27 +110,28 @@ private:
 class BrownianBehavior final : public IParticleBehavior {
 public:
     struct Params {
-        float sigma = 0.4f;
-        float drift_strength = 0.f;
+        f32 sigma = 0.4f;
+        f32 drift_strength = 0.f;
     };
 
-    explicit BrownianBehavior(Params p = {}) : m_p(p) {}
+    BrownianBehavior() = default;
+    explicit BrownianBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float,
+                                     f32,
                                      const SimulationContext&,
                                      ParticleId) const override {
         if (ops::abs(m_p.drift_strength) < 1e-7f) return {0.f, 0.f};
         const glm::vec3 du = surface.du(state.uv.x, state.uv.y);
         const glm::vec3 dv = surface.dv(state.uv.x, state.uv.y);
-        const float gn = ops::sqrt(du.z * du.z + dv.z * dv.z) + 1e-7f;
+        const f32 gn = ops::sqrt(du.z * du.z + dv.z * dv.z) + 1e-7f;
         return {m_p.drift_strength * du.z / gn, m_p.drift_strength * dv.z / gn};
     }
 
     [[nodiscard]] glm::vec2 noise_coefficient(const ndde::sim::ParticleState&,
                                               const ndde::math::ISurface&,
-                                              float,
+                                              f32,
                                               const SimulationContext&,
                                               ParticleId) const override {
         return {m_p.sigma, m_p.sigma};
@@ -143,7 +151,7 @@ public:
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState&,
                                      const ndde::math::ISurface&,
-                                     float,
+                                     f32,
                                      const SimulationContext&,
                                      ParticleId) const override {
         return m_velocity;
@@ -161,15 +169,16 @@ class SeekParticleBehavior final : public IParticleBehavior {
 public:
     struct Params {
         TargetSelector target = TargetSelector::first(ParticleRole::Leader);
-        float speed = 0.8f;
-        float delay_seconds = 0.f;
+        f32 speed = 0.8f;
+        f32 delay_seconds = 0.f;
     };
 
-    explicit SeekParticleBehavior(Params p = {}) : m_p(p) {}
+    SeekParticleBehavior() = default;
+    explicit SeekParticleBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float t,
+                                     f32 t,
                                      const SimulationContext& context,
                                      ParticleId owner) const override {
         return direction_to_target(state.uv, surface, t, context, owner) * m_p.speed;
@@ -178,15 +187,15 @@ public:
     [[nodiscard]] std::string metadata_label() const override {
         return m_p.delay_seconds > 0.f ? "Delayed Seek" : "Seek";
     }
-    [[nodiscard]] float delay_seconds() const noexcept override { return m_p.delay_seconds; }
-    [[nodiscard]] float nominal_speed() const noexcept override { return m_p.speed; }
+    [[nodiscard]] f32 delay_seconds() const noexcept override { return m_p.delay_seconds; }
+    [[nodiscard]] f32 nominal_speed() const noexcept override { return m_p.speed; }
 
 private:
     Params m_p;
 
     [[nodiscard]] glm::vec2 direction_to_target(glm::vec2 from,
                                                 const ndde::math::ISurface& surface,
-                                                float t,
+                                                f32 t,
                                                 const SimulationContext& context,
                                                 ParticleId owner) const;
 };
@@ -195,23 +204,24 @@ class AvoidParticleBehavior final : public IParticleBehavior {
 public:
     struct Params {
         TargetSelector target = TargetSelector::nearest(ParticleRole::Chaser);
-        float speed = 0.8f;
-        float delay_seconds = 0.f;
+        f32 speed = 0.8f;
+        f32 delay_seconds = 0.f;
     };
 
-    explicit AvoidParticleBehavior(Params p = {}) : m_p(p) {}
+    AvoidParticleBehavior() = default;
+    explicit AvoidParticleBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float t,
+                                     f32 t,
                                      const SimulationContext& context,
                                      ParticleId owner) const override;
 
     [[nodiscard]] std::string metadata_label() const override {
         return m_p.delay_seconds > 0.f ? "Delayed Avoid" : "Avoid";
     }
-    [[nodiscard]] float delay_seconds() const noexcept override { return m_p.delay_seconds; }
-    [[nodiscard]] float nominal_speed() const noexcept override { return m_p.speed; }
+    [[nodiscard]] f32 delay_seconds() const noexcept override { return m_p.delay_seconds; }
+    [[nodiscard]] f32 nominal_speed() const noexcept override { return m_p.speed; }
 
 private:
     SeekParticleBehavior::Params seek_params() const {
@@ -224,14 +234,15 @@ class CentroidSeekBehavior final : public IParticleBehavior {
 public:
     struct Params {
         ParticleRole role = ParticleRole::Chaser;
-        float speed = 0.8f;
+        f32 speed = 0.8f;
     };
 
-    explicit CentroidSeekBehavior(Params p = {}) : m_p(p) {}
+    CentroidSeekBehavior() = default;
+    explicit CentroidSeekBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float,
+                                     f32,
                                      const SimulationContext& context,
                                      ParticleId owner) const override;
 
@@ -253,14 +264,15 @@ public:
 
     struct Params {
         Mode mode = Mode::Uphill;
-        float speed = 0.6f;
+        f32 speed = 0.6f;
     };
 
-    explicit GradientDriftBehavior(Params p = {}) : m_p(p) {}
+    GradientDriftBehavior() = default;
+    explicit GradientDriftBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float,
+                                     f32,
                                      const SimulationContext&,
                                      ParticleId) const override;
 
@@ -274,17 +286,18 @@ class OrbitBehavior final : public IParticleBehavior {
 public:
     struct Params {
         glm::vec2 center{0.f, 0.f};
-        float radius = 1.f;
-        float angular_speed = 0.7f;
-        float radial_strength = 0.45f;
+        f32 radius = 1.f;
+        f32 angular_speed = 0.7f;
+        f32 radial_strength = 0.45f;
         bool clockwise = false;
     };
 
-    explicit OrbitBehavior(Params p = {}) : m_p(p) {}
+    OrbitBehavior() = default;
+    explicit OrbitBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float,
+                                     f32,
                                      const SimulationContext&,
                                      ParticleId) const override;
 
@@ -298,19 +311,20 @@ class FlockingBehavior final : public IParticleBehavior {
 public:
     struct Params {
         ParticleRole role = ParticleRole::Neutral;
-        float neighbor_radius = 1.2f;
-        float separation_radius = 0.35f;
-        float separation_weight = 1.0f;
-        float cohesion_weight = 0.45f;
-        float alignment_weight = 0.35f;
-        float speed = 0.65f;
+        f32 neighbor_radius = 1.2f;
+        f32 separation_radius = 0.35f;
+        f32 separation_weight = 1.0f;
+        f32 cohesion_weight = 0.45f;
+        f32 alignment_weight = 0.35f;
+        f32 speed = 0.65f;
     };
 
-    explicit FlockingBehavior(Params p = {}) : m_p(p) {}
+    FlockingBehavior() = default;
+    explicit FlockingBehavior(Params p) : m_p(p) {}
 
     [[nodiscard]] glm::vec2 velocity(ndde::sim::ParticleState& state,
                                      const ndde::math::ISurface& surface,
-                                     float,
+                                     f32,
                                      const SimulationContext& context,
                                      ParticleId owner) const override;
 
@@ -322,10 +336,10 @@ private:
 
 struct SlopeVelocityTransform {
     bool enabled = false;
-    float intercept = 1.f;
-    float slope_gain = 0.f;
-    float min_scale = 0.f;
-    float max_scale = std::numeric_limits<float>::infinity();
+    f32 intercept = 1.f;
+    f32 slope_gain = 0.f;
+    f32 min_scale = 0.f;
+    f32 max_scale = std::numeric_limits<f32>::infinity();
 
     [[nodiscard]] static SlopeVelocityTransform identity() noexcept { return {}; }
 };
@@ -333,6 +347,7 @@ struct SlopeVelocityTransform {
 class BehaviorStack final : public ndde::sim::IEquation {
 public:
     BehaviorStack() = default;
+    ~BehaviorStack() override = default;
     BehaviorStack(const BehaviorStack&) = delete;
     BehaviorStack& operator=(const BehaviorStack&) = delete;
     BehaviorStack(BehaviorStack&&) noexcept = default;
@@ -359,7 +374,7 @@ public:
     void set_context(const SimulationContext* context) noexcept { m_context = context; }
     void set_owner(ParticleId owner) noexcept { m_owner = owner; }
 
-    void add(memory::Unique<IParticleBehavior> behavior, float weight = 1.f) {
+    void add(memory::Unique<IParticleBehavior> behavior, f32 weight = 1.f) {
         m_behaviors.push_back({std::move(behavior), weight});
     }
 
@@ -369,7 +384,7 @@ public:
 
     [[nodiscard]] glm::vec2 update(ndde::sim::ParticleState& state,
                                    const ndde::math::ISurface& surface,
-                                   float t) const override {
+                                   f32 t) const override {
         if (!m_context) return {0.f, 0.f};
         glm::vec2 sum{0.f, 0.f};
         for (const auto& entry : m_behaviors)
@@ -381,7 +396,7 @@ public:
 
     [[nodiscard]] glm::vec2 noise_coefficient(const ndde::sim::ParticleState& state,
                                               const ndde::math::ISurface& surface,
-                                              float t) const override {
+                                              f32 t) const override {
         if (!m_context) return {0.f, 0.f};
         glm::vec2 sum{0.f, 0.f};
         for (const auto& entry : m_behaviors)
@@ -391,22 +406,22 @@ public:
         return sum;
     }
 
-    [[nodiscard]] float phase_rate() const override {
-        float rate = 0.f;
+    [[nodiscard]] f32 phase_rate() const override {
+        f32 rate = 0.f;
         for (const auto& entry : m_behaviors)
             rate += entry.weight * entry.behavior->phase_rate();
         return rate;
     }
 
-    [[nodiscard]] float max_delay_seconds() const noexcept {
-        float delay = 0.f;
+    [[nodiscard]] f32 max_delay_seconds() const noexcept {
+        f32 delay = 0.f;
         for (const auto& entry : m_behaviors)
             delay = std::max(delay, entry.behavior->delay_seconds());
         return delay;
     }
 
-    [[nodiscard]] float max_nominal_speed() const noexcept {
-        float speed = 0.f;
+    [[nodiscard]] f32 max_nominal_speed() const noexcept {
+        f32 speed = 0.f;
         for (const auto& entry : m_behaviors)
             speed = std::max(speed, entry.behavior->nominal_speed());
         return speed;
@@ -440,7 +455,7 @@ public:
 private:
     struct Entry {
         memory::Unique<IParticleBehavior> behavior;
-        float weight = 1.f;
+        f32 weight = 1.f;
     };
 
     memory::SimVector<Entry> m_behaviors;
@@ -452,14 +467,14 @@ private:
                                                      const ndde::sim::ParticleState& state,
                                                      const ndde::math::ISurface& surface) const noexcept {
         if (!m_velocity_transform.enabled) return velocity;
-        const float speed = ops::length(velocity);
+        const f32 speed = ops::length(velocity);
         if (speed < 1e-7f) return velocity;
 
         const glm::vec2 dir = velocity / speed;
         const glm::vec3 du = surface.du(state.uv.x, state.uv.y);
         const glm::vec3 dv = surface.dv(state.uv.x, state.uv.y);
-        const float directional_derivative = du.z * dir.x + dv.z * dir.y;
-        const float scale = ops::clamp(
+        const f32 directional_derivative = du.z * dir.x + dv.z * dir.y;
+        const f32 scale = ops::clamp(
             m_velocity_transform.intercept + m_velocity_transform.slope_gain * directional_derivative,
             m_velocity_transform.min_scale,
             m_velocity_transform.max_scale);

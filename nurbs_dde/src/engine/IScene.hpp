@@ -88,6 +88,13 @@ public:
     // Parameters are GLFW-style integer key/action/modifier values without
     // requiring this interface to include GLFW headers.
     virtual void on_key_event(int /*key*/, int /*action*/, int /*mods*/) {}
+
+protected:
+    IScene() = default;
+    IScene(const IScene&) = default;
+    IScene& operator=(const IScene&) = default;
+    IScene(IScene&&) = default;
+    IScene& operator=(IScene&&) = default;
 };
 
 } // namespace ndde

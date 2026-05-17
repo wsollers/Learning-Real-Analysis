@@ -119,9 +119,9 @@ void AnimatedCurve::reset() {
 }
 
 void AnimatedCurve::advance(f32 dt, f32 speed_scale) {
-    const int sub_steps = 4;
+    const i32 sub_steps = 4;
     const f32 sub_dt    = dt / static_cast<f32>(sub_steps);
-    for (int s = 0; s < sub_steps; ++s)
+    for (i32 s = 0; s < sub_steps; ++s)
         step(sub_dt, speed_scale);
 }
 
@@ -131,7 +131,7 @@ void AnimatedCurve::step(f32 dt, f32 speed_scale) {
         c->apply(m_walk, *m_surface);
 }
 
-void AnimatedCurve::record_trail_sample(float t) {
+void AnimatedCurve::record_trail_sample(f32 t) {
     const Vec3 pt = m_surface->evaluate(m_walk.uv.x, m_walk.uv.y, t);
     if (m_trail_config.mode != TrailMode::None &&
         (m_trail.empty() || glm::length(pt - m_trail.back().world) > m_trail_config.min_spacing)) {
@@ -180,19 +180,19 @@ std::string AnimatedCurve::metadata_label() const {
     return out;
 }
 
-float AnimatedCurve::max_delay_seconds() const noexcept {
+f32 AnimatedCurve::max_delay_seconds() const noexcept {
     if (const auto* stack = dynamic_cast<const BehaviorStack*>(m_equation))
         return stack->max_delay_seconds();
     return 0.f;
 }
 
-float AnimatedCurve::max_nominal_speed() const noexcept {
+f32 AnimatedCurve::max_nominal_speed() const noexcept {
     if (const auto* stack = dynamic_cast<const BehaviorStack*>(m_equation))
         return stack->max_nominal_speed();
     return 0.f;
 }
 
-void AnimatedCurve::enable_history(std::size_t capacity, float dt_min) {
+void AnimatedCurve::enable_history(std::size_t capacity, f32 dt_min) {
     if (m_memory) {
         m_history = m_memory->history().make_unique<ndde::sim::HistoryBuffer>(
             capacity, dt_min,
@@ -204,12 +204,12 @@ void AnimatedCurve::enable_history(std::size_t capacity, float dt_min) {
         owner_resource, capacity, dt_min, owner_resource);
 }
 
-void AnimatedCurve::push_history(float t) {
+void AnimatedCurve::push_history(f32 t) {
     if (!m_history) return;
     m_history->push(t, m_walk.uv);
 }
 
-glm::vec2 AnimatedCurve::query_history(float t_past) const {
+glm::vec2 AnimatedCurve::query_history(f32 t_past) const {
     if (!m_history) return m_walk.uv;
     return m_history->query(t_past);
 }

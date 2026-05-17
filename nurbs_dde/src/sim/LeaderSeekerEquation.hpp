@@ -48,8 +48,11 @@ public:
         float arrival_radius        = 0.4f; ///< neighbourhood radius for goal flip
     };
 
-    explicit LeaderSeekerEquation(const ndde::math::ExtremumTable* table,
-                                   Params p = {})
+    explicit LeaderSeekerEquation(const ndde::math::ExtremumTable* table)
+        : LeaderSeekerEquation(table, Params{})
+    {}
+    LeaderSeekerEquation(const ndde::math::ExtremumTable* table,
+                         Params p)
         : m_table(table), m_p(p)
     {}
 

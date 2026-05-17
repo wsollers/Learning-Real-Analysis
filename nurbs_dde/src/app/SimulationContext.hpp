@@ -98,8 +98,8 @@ public:
         : m_surface(surface), m_particles(particles), m_rng(rng), m_fields(fields)
     {}
 
-    void set_time(float t) noexcept { m_time = t; }
-    [[nodiscard]] float time() const noexcept { return m_time; }
+    void set_time(f32 t) noexcept { m_time = t; }
+    [[nodiscard]] f32 time() const noexcept { return m_time; }
     void set_tick(TickInfo tick) noexcept {
         m_tick = tick;
         m_time = tick.time;
@@ -164,7 +164,7 @@ private:
     const memory::SimVector<AnimatedCurve>* m_particles = nullptr;
     std::mt19937* m_rng = nullptr;
     const simulation::FieldCompositor* m_fields = nullptr;
-    float m_time = 0.f;
+    f32 m_time = 0.f;
     TickInfo m_tick{};
     SimulationDirtyState m_dirty{};
     SimulationMathCache m_math_cache{};

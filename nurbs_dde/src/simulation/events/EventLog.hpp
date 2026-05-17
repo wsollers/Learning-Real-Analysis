@@ -27,6 +27,8 @@ public:
 
     EventLog(const EventLog&)            = delete;
     EventLog& operator=(const EventLog&) = delete;
+    EventLog(EventLog&&)                 = delete;
+    EventLog& operator=(EventLog&&)      = delete;
 
     // Allocate ring slab and pre-size scratch buffer.
     // capacity_records: ring depth (default 4096 = 512 KB slab)

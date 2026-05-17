@@ -33,6 +33,8 @@ public:
 
     Renderer(const Renderer&)            = delete;
     Renderer& operator=(const Renderer&) = delete;
+    Renderer(Renderer&&)                 = delete;
+    Renderer& operator=(Renderer&&)      = delete;
 
     void init(const platform::VulkanContext& ctx,
               const Swapchain&               swapchain,

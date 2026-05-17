@@ -32,7 +32,8 @@ public:
         float     extent      = 5.f;    // domain = [-extent, extent]^2
     };
 
-    explicit ExtremumSurface(Params p = {}) : m_p(p) {}
+    ExtremumSurface() = default;
+    explicit ExtremumSurface(Params p) : m_p(p) {}
 
     [[nodiscard]] Vec3 evaluate(float u, float v, float /*t*/ = 0.f) const override {
         return Vec3{ u, v, height(u, v) };

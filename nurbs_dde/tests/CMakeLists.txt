@@ -9,6 +9,7 @@ add_executable(ndde_tests
     test_numeric.cpp
     test_particle_system.cpp
     test_surface_mesh_cache.cpp
+    test_diagnostics_service.cpp
     test_engine_services.cpp
     test_gravitational_systems.cpp
     test_mp_units_integration.cpp
@@ -27,6 +28,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/simulation/fields/IField.cpp
     ${CMAKE_SOURCE_DIR}/src/simulation/scenario/ScenarioBuilder.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/SimulationRuntime.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/diagnostics/DiagnosticsService.cpp
 )
 
 target_include_directories(ndde_tests PRIVATE
@@ -49,12 +51,14 @@ if(MSVC)
     target_compile_options(ndde_tests PRIVATE
         /W4 /WX- /wd4100 /permissive- /utf-8
         $<$<CONFIG:Debug>:/Od /Zi /RTC1>
+        $<$<CONFIG:Tidy>:/Od /Zi /RTC1>
         $<$<CONFIG:Release>:/O2>
     )
 else()
     target_compile_options(ndde_tests PRIVATE
         -Wall -Wextra -Wpedantic -Wno-unused-parameter
         $<$<CONFIG:Debug>:-g -O0>
+        $<$<CONFIG:Tidy>:-g -O0>
         $<$<CONFIG:Release>:-O3>
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${ENABLE_SANITIZERS}>>:-fsanitize=address,undefined>
     )

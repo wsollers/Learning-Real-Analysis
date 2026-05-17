@@ -55,7 +55,8 @@ public:
         float drift_strength = 0.f;    ///< signed gradient drift (+ = uphill, - = downhill)
     };
 
-    explicit BrownianMotion(Params p = {}) : m_p(p) {}
+    BrownianMotion() = default;
+    explicit BrownianMotion(Params p) : m_p(p) {}
 
     // Drift: zero for pure Brownian motion, or gradient-aligned bias.
     [[nodiscard]] glm::vec2 update(

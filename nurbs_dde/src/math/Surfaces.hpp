@@ -108,6 +108,13 @@ public:
                               u32 u_lines, u32 v_lines,
                               float t     = 0.f,
                               Vec4  color = { 1.f, 1.f, 1.f, 1.f }) const;
+
+protected:
+    ISurface() = default;
+    ISurface(const ISurface&) = default;
+    ISurface& operator=(const ISurface&) = default;
+    ISurface(ISurface&&) = default;
+    ISurface& operator=(ISurface&&) = default;
 };
 
 // ── Paraboloid ────────────────────────────────────────────────────────────────

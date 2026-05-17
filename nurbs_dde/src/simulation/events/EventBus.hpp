@@ -31,6 +31,8 @@ public:
 
     EventBus(const EventBus&)            = delete;
     EventBus& operator=(const EventBus&) = delete;
+    EventBus(EventBus&&)                 = delete;
+    EventBus& operator=(EventBus&&)      = delete;
 
     // Attach the ring that dispatch() will push records into.
     // Called by EventLog during init. Ring lifetime must exceed bus.

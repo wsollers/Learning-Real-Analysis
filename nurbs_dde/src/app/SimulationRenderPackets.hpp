@@ -32,11 +32,11 @@ inline memory::FrameVector<T> make_frame_vector(memory::MemoryService* memory_se
     return memory_service ? memory_service->frame().make_vector<T>(count) : memory::FrameVector<T>(count);
 }
 
-inline RenderViewDomain surface_domain(const math::ISurface& surface, float time = 0.f) {
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
+inline RenderViewDomain surface_domain(const math::ISurface& surface, f32 time = 0.f) {
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
 
     const Vec3 center = surface.evaluate((u0 + u1) * 0.5f, (v0 + v1) * 0.5f, time);
     return RenderViewDomain{
@@ -51,7 +51,7 @@ inline RenderViewDomain surface_domain(const math::ISurface& surface, float time
 
 inline Mat4 surface_main_mvp(const math::ISurface& surface,
                              const RenderViewDescriptor* descriptor,
-                             float time = 0.f) {
+                             f32 time = 0.f) {
     const RenderViewDomain domain = surface_domain(surface, time);
     const Vec3 center{
         descriptor ? descriptor->camera.target.x : (domain.u_min + domain.u_max) * 0.5f,
@@ -61,14 +61,14 @@ inline Mat4 surface_main_mvp(const math::ISurface& surface,
                                                                     time).z
     };
 
-    const float span_u = std::max(domain.u_max - domain.u_min, 0.01f);
-    const float span_v = std::max(domain.v_max - domain.v_min, 0.01f);
-    const float radius = std::max(span_u, span_v) * 0.62f;
+    const f32 span_u = std::max(domain.u_max - domain.u_min, 0.01f);
+    const f32 span_v = std::max(domain.v_max - domain.v_min, 0.01f);
+    const f32 radius = std::max(span_u, span_v) * 0.62f;
     const CameraState camera = descriptor ? descriptor->camera : CameraState{};
-    const float zoom = std::max(camera.zoom, 0.05f);
-    const float dist = std::max(radius * 2.35f / zoom, 4.f);
-    const float yaw = camera.yaw;
-    const float pitch = camera.pitch;
+    const f32 zoom = std::max(camera.zoom, 0.05f);
+    const f32 dist = std::max(radius * 2.35f / zoom, 4.f);
+    const f32 yaw = camera.yaw;
+    const f32 pitch = camera.pitch;
 
     const Vec3 eye{
         center.x + dist * ops::cos(pitch) * ops::cos(yaw),
@@ -76,28 +76,28 @@ inline Mat4 surface_main_mvp(const math::ISurface& surface,
         center.z + dist * ops::sin(pitch)
     };
 
-    const float aspect = descriptor ? std::max(descriptor->viewport_aspect, 0.1f) : 16.f / 9.f;
+    const f32 aspect = descriptor ? std::max(descriptor->viewport_aspect, 0.1f) : 16.f / 9.f;
     const Mat4 proj = glm::perspective(glm::radians(43.f), aspect, 0.05f, 400.f);
     const Mat4 view = glm::lookAt(eye, center, Vec3{0.f, 0.f, 1.f});
     return proj * view;
 }
 
-inline Mat4 surface_alternate_mvp(const math::ISurface& surface, float time = 0.f) {
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
-    const float du = std::max(u1 - u0, 0.01f);
-    const float dv = std::max(v1 - v0, 0.01f);
-    const float pad_u = du * 0.04f;
-    const float pad_v = dv * 0.04f;
+inline Mat4 surface_alternate_mvp(const math::ISurface& surface, f32 time = 0.f) {
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
+    const f32 du = std::max(u1 - u0, 0.01f);
+    const f32 dv = std::max(v1 - v0, 0.01f);
+    const f32 pad_u = du * 0.04f;
+    const f32 pad_v = dv * 0.04f;
     return glm::ortho(u0 - pad_u, u1 + pad_u, v0 - pad_v, v1 + pad_v, -10.f, 10.f);
 }
 
 inline std::optional<Vec2> pick_surface_uv_by_ray(const math::ISurface& surface,
                                                   const RenderViewDescriptor* descriptor,
                                                   Vec2 screen_ndc,
-                                                  float time = 0.f) {
+                                                  f32 time = 0.f) {
     const Mat4 inv = glm::inverse(surface_main_mvp(surface, descriptor, time));
     const glm::vec4 near4 = inv * glm::vec4(screen_ndc.x, screen_ndc.y, 0.f, 1.f);
     const glm::vec4 far4 = inv * glm::vec4(screen_ndc.x, screen_ndc.y, 1.f, 1.f);
@@ -108,44 +108,44 @@ inline std::optional<Vec2> pick_surface_uv_by_ray(const math::ISurface& surface,
     const Vec3 far_point = Vec3{far4.x, far4.y, far4.z} / far4.w;
     const Vec3 dir = glm::normalize(far_point - origin);
 
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
-    auto in_domain = [&](float t) {
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
+    auto in_domain = [&](f32 t) {
         const Vec3 p = origin + dir * t;
         return p.x >= u0 && p.x <= u1 && p.y >= v0 && p.y <= v1;
     };
-    auto f = [&](float t) {
+    auto f = [&](f32 t) {
         const Vec3 p = origin + dir * t;
         return p.z - surface.evaluate(p.x, p.y, time).z;
     };
 
     constexpr int samples = 256;
-    constexpr float t_min = 0.05f;
-    constexpr float t_max = 400.f;
-    float best_t = t_min;
-    float best_abs = std::numeric_limits<float>::max();
-    float prev_t = t_min;
-    float prev_f = f(prev_t);
+    constexpr f32 t_min = 0.05f;
+    constexpr f32 t_max = 400.f;
+    f32 best_t = t_min;
+    f32 best_abs = std::numeric_limits<f32>::max();
+    f32 prev_t = t_min;
+    f32 prev_f = f(prev_t);
     bool prev_valid = in_domain(prev_t);
 
     for (int i = 1; i <= samples; ++i) {
-        const float t = t_min + (t_max - t_min) * static_cast<float>(i) / static_cast<float>(samples);
+        const f32 t = t_min + (t_max - t_min) * static_cast<f32>(i) / static_cast<f32>(samples);
         if (!in_domain(t)) continue;
-        const float ft = f(t);
-        const float aft = std::abs(ft);
+        const f32 ft = f(t);
+        const f32 aft = std::abs(ft);
         if (aft < best_abs) {
             best_abs = aft;
             best_t = t;
         }
         if (prev_valid && ((prev_f <= 0.f && ft >= 0.f) || (prev_f >= 0.f && ft <= 0.f))) {
-            float lo = prev_t;
-            float hi = t;
-            float flo = prev_f;
+            f32 lo = prev_t;
+            f32 hi = t;
+            f32 flo = prev_f;
             for (int it = 0; it < 32; ++it) {
-                const float mid = 0.5f * (lo + hi);
-                const float fm = f(mid);
+                const f32 mid = 0.5f * (lo + hi);
+                const f32 fm = f(mid);
                 if ((flo <= 0.f && fm >= 0.f) || (flo >= 0.f && fm <= 0.f)) {
                     hi = mid;
                 } else {
@@ -169,54 +169,54 @@ inline std::optional<Vec2> pick_surface_uv_by_ray(const math::ISurface& surface,
 }
 
 inline void add_iso_segment(memory::FrameVector<Vertex>& out,
-                            const Vec2& a, float za,
-                            const Vec2& b, float zb,
-                            float level,
+                            const Vec2& a, f32 za,
+                            const Vec2& b, f32 zb,
+                            f32 level,
                             Vec4 color) {
-    const float denom = zb - za;
-    const float t = std::abs(denom) > 1e-6f ? std::clamp((level - za) / denom, 0.f, 1.f) : 0.5f;
+    const f32 denom = zb - za;
+    const f32 t = std::abs(denom) > 1e-6f ? std::clamp((level - za) / denom, 0.f, 1.f) : 0.5f;
     out.push_back({{a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, 0.f}, color});
 }
 
 template <class ScalarSampler>
 inline memory::FrameVector<Vertex> build_scalar_isoline_vertices(const math::ISurface& surface,
                                                          u32 grid,
-                                                         float time,
-                                                         std::span<const float> levels,
+                                                         f32 time,
+                                                         std::span<const f32> levels,
                                                          ScalarSampler&& sample,
                                                          Vec4 color,
                                                          memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(grid, 8u);
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
-    const float du = (u1 - u0) / static_cast<float>(n);
-    const float dv = (v1 - v0) / static_cast<float>(n);
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
+    const f32 du = (u1 - u0) / static_cast<f32>(n);
+    const f32 dv = (v1 - v0) / static_cast<f32>(n);
 
-    memory::FrameVector<float> values = make_frame_vector<float>(memory_service, (n + 1u) * (n + 1u));
+    memory::FrameVector<f32> values = make_frame_vector<f32>(memory_service, (n + 1u) * (n + 1u));
     const auto idx = [n](u32 i, u32 j) { return i * (n + 1u) + j; };
     for (u32 i = 0; i <= n; ++i) {
         for (u32 j = 0; j <= n; ++j) {
-            values[idx(i, j)] = sample(u0 + du * static_cast<float>(i),
-                                       v0 + dv * static_cast<float>(j));
+            values[idx(i, j)] = sample(u0 + du * static_cast<f32>(i),
+                                       v0 + dv * static_cast<f32>(j));
         }
     }
 
     memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
-    for (const float level : levels) {
+    for (const f32 level : levels) {
         for (u32 i = 0; i < n; ++i) {
             for (u32 j = 0; j < n; ++j) {
-                const Vec2 p00{u0 + du * static_cast<float>(i), v0 + dv * static_cast<float>(j)};
+                const Vec2 p00{u0 + du * static_cast<f32>(i), v0 + dv * static_cast<f32>(j)};
                 const Vec2 p10{p00.x + du, p00.y};
                 const Vec2 p01{p00.x, p00.y + dv};
                 const Vec2 p11{p00.x + du, p00.y + dv};
-                const float z00 = values[idx(i, j)];
-                const float z10 = values[idx(i + 1u, j)];
-                const float z01 = values[idx(i, j + 1u)];
-                const float z11 = values[idx(i + 1u, j + 1u)];
+                const f32 z00 = values[idx(i, j)];
+                const f32 z10 = values[idx(i + 1u, j)];
+                const f32 z01 = values[idx(i, j + 1u)];
+                const f32 z11 = values[idx(i + 1u, j + 1u)];
                 u32 c = 0;
-                auto edge = [&](const Vec2& a, float za, const Vec2& b, float zb) {
+                auto edge = [&](const Vec2& a, f32 za, const Vec2& b, f32 zb) {
                     if ((za < level && zb >= level) || (za >= level && zb < level))
                         add_iso_segment(out, a, za, b, zb, level, color), ++c;
                 };
@@ -235,46 +235,46 @@ inline memory::FrameVector<Vertex> build_scalar_isoline_vertices(const math::ISu
 
 inline memory::FrameVector<Vertex> build_level_curve_vertices(const math::ISurface& surface,
                                                       u32 grid,
-                                                      float time,
+                                                      f32 time,
                                                       u32 levels,
                                                       Vec4 color,
                                                       memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(grid, 8u);
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
-    const float du = (u1 - u0) / static_cast<float>(n);
-    const float dv = (v1 - v0) / static_cast<float>(n);
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
+    const f32 du = (u1 - u0) / static_cast<f32>(n);
+    const f32 dv = (v1 - v0) / static_cast<f32>(n);
 
-    float zmin = std::numeric_limits<float>::max();
-    float zmax = -std::numeric_limits<float>::max();
+    f32 zmin = std::numeric_limits<f32>::max();
+    f32 zmax = -std::numeric_limits<f32>::max();
     for (u32 i = 0; i <= n; ++i) {
         for (u32 j = 0; j <= n; ++j) {
-            const float z = surface.evaluate(u0 + du * static_cast<float>(i),
-                                             v0 + dv * static_cast<float>(j), time).z;
+            const f32 z = surface.evaluate(u0 + du * static_cast<f32>(i),
+                                             v0 + dv * static_cast<f32>(j), time).z;
             zmin = std::min(zmin, z);
             zmax = std::max(zmax, z);
         }
     }
     if (zmax <= zmin + 1e-6f) return make_frame_vector<Vertex>(memory_service);
 
-    memory::FrameVector<float> scalar_levels = make_frame_vector<float>(memory_service);
+    memory::FrameVector<f32> scalar_levels = make_frame_vector<f32>(memory_service);
     scalar_levels.reserve(levels);
     for (u32 l = 1; l <= levels; ++l)
-        scalar_levels.push_back(zmin + (zmax - zmin) * static_cast<float>(l) / static_cast<float>(levels + 1u));
+        scalar_levels.push_back(zmin + (zmax - zmin) * static_cast<f32>(l) / static_cast<f32>(levels + 1u));
 
     return build_scalar_isoline_vertices(surface, grid, time, scalar_levels,
-        [&](float u, float v) { return surface.evaluate(u, v, time).z; }, color, memory_service);
+        [&](f32 u, f32 v) { return surface.evaluate(u, v, time).z; }, color, memory_service);
 }
 
-inline Vec2 surface_height_gradient(const math::ISurface& surface, float u, float v, float time) {
+inline Vec2 surface_height_gradient(const math::ISurface& surface, f32 u, f32 v, f32 time) {
     return Vec2{surface.du(u, v, time).z, surface.dv(u, v, time).z};
 }
 
 inline memory::FrameVector<Vertex> build_isocline_vertices(const math::ISurface& surface,
                                                    u32 grid,
-                                                   float time,
+                                                   f32 time,
                                                    f32 direction_angle,
                                                    f32 target_slope,
                                                    f32 tolerance,
@@ -283,28 +283,28 @@ inline memory::FrameVector<Vertex> build_isocline_vertices(const math::ISurface&
                                                    memory::MemoryService* memory_service = nullptr) {
     const Vec2 dir{ops::cos(direction_angle), ops::sin(direction_angle)};
     const u32 count = std::max(bands, 1u);
-    const float tol = std::max(tolerance, 0.001f);
-    memory::FrameVector<float> levels = make_frame_vector<float>(memory_service);
+    const f32 tol = std::max(tolerance, 0.001f);
+    memory::FrameVector<f32> levels = make_frame_vector<f32>(memory_service);
     levels.reserve(count);
     if (count == 1u) {
         levels.push_back(target_slope);
     } else {
         for (u32 i = 0; i < count; ++i) {
-            const float t = static_cast<float>(i) / static_cast<float>(count - 1u);
+            const f32 t = static_cast<f32>(i) / static_cast<f32>(count - 1u);
             levels.push_back(target_slope - tol + 2.f * tol * t);
         }
     }
     return build_scalar_isoline_vertices(surface, grid, time, levels,
-        [&](float u, float v) {
+        [&](f32 u, f32 v) {
             const Vec2 grad = surface_height_gradient(surface, u, v, time);
             return glm::dot(grad, dir);
         }, color, memory_service);
 }
 
 inline Vec2 surface_vector_at(const math::ISurface& surface,
-                              float u,
-                              float v,
-                              float time,
+                              f32 u,
+                              f32 v,
+                              f32 time,
                               VectorFieldMode mode) {
     const Vec2 grad = surface_height_gradient(surface, u, v, time);
     switch (mode) {
@@ -322,25 +322,25 @@ inline Vec2 surface_vector_at(const math::ISurface& surface,
 
 inline memory::FrameVector<Vertex> build_vector_field_vertices(const math::ISurface& surface,
                                                        u32 samples,
-                                                       float time,
+                                                       f32 time,
                                                        VectorFieldMode mode,
-                                                       float scale,
+                                                       f32 scale,
                                                        Vec4 color,
                                                        memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(samples, 4u);
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
-    const float du = (u1 - u0) / static_cast<float>(n);
-    const float dv = (v1 - v0) / static_cast<float>(n);
-    const float len = std::min(du, dv) * 0.38f;
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
+    const f32 du = (u1 - u0) / static_cast<f32>(n);
+    const f32 dv = (v1 - v0) / static_cast<f32>(n);
+    const f32 len = std::min(du, dv) * 0.38f;
     memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     out.reserve(n * n * 2u);
     for (u32 i = 0; i < n; ++i) {
         for (u32 j = 0; j < n; ++j) {
-            const float u = u0 + du * (static_cast<float>(i) + 0.5f);
-            const float v = v0 + dv * (static_cast<float>(j) + 0.5f);
+            const f32 u = u0 + du * (static_cast<f32>(i) + 0.5f);
+            const f32 v = v0 + dv * (static_cast<f32>(j) + 0.5f);
             Vec2 g = surface_vector_at(surface, u, v, time, mode);
             if (glm::length(g) < 1e-5f) continue;
             g = glm::normalize(g) * len * std::max(scale, 0.01f);
@@ -352,7 +352,7 @@ inline memory::FrameVector<Vertex> build_vector_field_vertices(const math::ISurf
 }
 
 inline memory::FrameVector<Vertex> build_particle_velocity_vertices(const ParticleSystem& particles,
-                                                            float scale,
+                                                            f32 scale,
                                                             Vec4 color,
                                                             memory::MemoryService* memory_service = nullptr) {
     memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
@@ -373,27 +373,27 @@ inline memory::FrameVector<Vertex> build_particle_velocity_vertices(const Partic
 inline memory::FrameVector<Vertex> build_flow_vertices(const math::ISurface& surface,
                                                u32 seed_count,
                                                u32 steps,
-                                               float step_size,
-                                               float time,
+                                               f32 step_size,
+                                               f32 time,
                                                VectorFieldMode mode,
                                                Vec4 color,
                                                memory::MemoryService* memory_service = nullptr) {
     const u32 n = std::max(seed_count, 3u);
     const u32 step_count = std::max(steps, 1u);
-    const float u0 = surface.u_min(time);
-    const float u1 = surface.u_max(time);
-    const float v0 = surface.v_min(time);
-    const float v1 = surface.v_max(time);
-    const float du = (u1 - u0) / static_cast<float>(n);
-    const float dv = (v1 - v0) / static_cast<float>(n);
-    const float step = std::min(u1 - u0, v1 - v0) * std::max(step_size, 0.001f);
+    const f32 u0 = surface.u_min(time);
+    const f32 u1 = surface.u_max(time);
+    const f32 v0 = surface.v_min(time);
+    const f32 v1 = surface.v_max(time);
+    const f32 du = (u1 - u0) / static_cast<f32>(n);
+    const f32 dv = (v1 - v0) / static_cast<f32>(n);
+    const f32 step = std::min(u1 - u0, v1 - v0) * std::max(step_size, 0.001f);
 
     memory::FrameVector<Vertex> out = make_frame_vector<Vertex>(memory_service);
     out.reserve(n * n * step_count * 2u);
     for (u32 i = 0; i < n; ++i) {
         for (u32 j = 0; j < n; ++j) {
-            Vec2 p{u0 + du * (static_cast<float>(i) + 0.5f),
-                   v0 + dv * (static_cast<float>(j) + 0.5f)};
+            Vec2 p{u0 + du * (static_cast<f32>(i) + 0.5f),
+                   v0 + dv * (static_cast<f32>(j) + 0.5f)};
             for (u32 k = 0; k < step_count; ++k) {
                 Vec2 direction = surface_vector_at(surface, p.x, p.y, time, mode);
                 if (glm::length(direction) < 1e-5f) break;
@@ -414,7 +414,7 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
                                                                   const math::ISurface& surface,
                                                                   const RenderViewDomain& domain,
                                                                   u32 trail_idx,
-                                                                  float time,
+                                                                  f32 time,
                                                                   bool show_frenet,
                                                                   bool show_osculating_circle,
                                                                   bool show_darboux_frame,
@@ -432,11 +432,11 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
     const u32 idx = n >= 4u ? std::clamp(trail_idx, 1u, n - 2u) : 0u;
     const Vec3 p = n >= 4u ? particle.trail_pt(idx) : particle.head_world();
     const FrenetFrame fr = n >= 4u ? particle.frenet_at(idx) : FrenetFrame{};
-    const float span = std::max(domain.u_max - domain.u_min, domain.v_max - domain.v_min);
-    const float axis_len = std::max(span * 0.035f, 0.05f);
+    const f32 span = std::max(domain.u_max - domain.u_min, domain.v_max - domain.v_min);
+    const f32 axis_len = std::max(span * 0.035f, 0.05f);
     const Vec2 uv = n >= 4u ? particle.trail_uv(idx) : particle.head_uv();
 
-    const auto add_axis = [&](Vec3 origin, Vec3 dir, Vec4 color, float scale = 1.f) {
+    const auto add_axis = [&](Vec3 origin, Vec3 dir, Vec4 color, f32 scale = 1.f) {
             if (glm::length(dir) < 1e-6f) return;
             dir = glm::normalize(dir) * axis_len * scale;
             out.push_back({origin, color});
@@ -459,8 +459,8 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
     const auto add_ellipse = [&](Vec3 center, Vec3 axis_u, Vec3 axis_v, Vec4 color, u32 segments = 48u) {
         if (glm::length(axis_u) < 1e-7f || glm::length(axis_v) < 1e-7f) return;
         for (u32 i = 0; i < segments; ++i) {
-            const float a0 = ops::two_pi_v<float> * static_cast<float>(i) / static_cast<float>(segments);
-            const float a1 = ops::two_pi_v<float> * static_cast<float>(i + 1u) / static_cast<float>(segments);
+            const f32 a0 = ops::two_pi_v<f32> * static_cast<f32>(i) / static_cast<f32>(segments);
+            const f32 a1 = ops::two_pi_v<f32> * static_cast<f32>(i + 1u) / static_cast<f32>(segments);
             const Vec3 p0 = center + axis_u * ops::cos(a0) + axis_v * ops::sin(a0);
             const Vec3 p1 = center + axis_u * ops::cos(a1) + axis_v * ops::sin(a1);
             out.push_back({p0, color});
@@ -469,7 +469,7 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
     };
 
     if (show_metric_ellipse) {
-        const float metric_scale = axis_len * 0.9f;
+        const f32 metric_scale = axis_len * 0.9f;
         const Vec3 u_axis = glm::length(sf.Dx) > 1e-6f && sf.E > 1e-6f
             ? glm::normalize(sf.Dx) * (metric_scale / ops::sqrt(sf.E))
             : Vec3{0.f, 0.f, 0.f};
@@ -482,8 +482,8 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
     if (show_diffusion_ellipse && particle.equation()) {
         const glm::vec2 sigma = particle.equation()->noise_coefficient(particle.walk_state(), surface, time);
         if (ops::abs(sigma.x) > 1e-6f || ops::abs(sigma.y) > 1e-6f) {
-            constexpr float display_dt = 1.f / 60.f;
-            const float root_dt = ops::sqrt(display_dt);
+            constexpr f32 display_dt = 1.f / 60.f;
+            const f32 root_dt = ops::sqrt(display_dt);
             const Vec3 center = particle.head_world();
             const Vec3 du = surface.du(particle.head_uv().x, particle.head_uv().y, time);
             const Vec3 dv = surface.dv(particle.head_uv().x, particle.head_uv().y, time);
@@ -496,8 +496,8 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
     }
 
     if (show_ghost_marker && particles && particle.particle_role() == ParticleRole::Chaser) {
-        const float delay = particle.max_delay_seconds();
-        const float speed = particle.max_nominal_speed();
+        const f32 delay = particle.max_delay_seconds();
+        const f32 speed = particle.max_nominal_speed();
         if (delay > 1e-5f) {
             const AnimatedCurve* leader = nullptr;
             for (const auto& candidate : particles->particles()) {
@@ -511,7 +511,7 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
                 const Vec3 ghost = surface.evaluate(ghost_uv.x, ghost_uv.y, time);
                 const Vec3 chaser = particle.head_world();
                 const Vec3 current = leader->head_world();
-                const float ghost_radius = std::max(axis_len * 0.22f, 0.04f);
+                const f32 ghost_radius = std::max(axis_len * 0.22f, 0.04f);
                 const Vec3 du = surface.du(ghost_uv.x, ghost_uv.y, time);
                 const Vec3 dv = surface.dv(ghost_uv.x, ghost_uv.y, time);
                 add_ellipse(ghost,
@@ -523,7 +523,7 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
                 out.push_back({chaser, {1.f, 0.35f, 0.25f, 0.65f}});
                 out.push_back({current, {1.f, 0.35f, 0.25f, 0.65f}});
                 if (speed > 1e-5f) {
-                    const float cone_radius = std::min(speed * delay, span * 0.22f);
+                    const f32 cone_radius = std::min(speed * delay, span * 0.22f);
                     const Vec3 cu = surface.du(particle.head_uv().x, particle.head_uv().y, time);
                     const Vec3 cv = surface.dv(particle.head_uv().x, particle.head_uv().y, time);
                     add_ellipse(chaser,
@@ -537,14 +537,14 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
 
     if (show_osculating_circle && fr.kappa > 1e-5f && glm::length(fr.T) > 1e-6f && glm::length(fr.N) > 1e-6f) {
         constexpr u32 segments = 48u;
-        const float radius = std::min(1.f / fr.kappa, span * 0.18f);
+        const f32 radius = std::min(1.f / fr.kappa, span * 0.18f);
         const Vec3 tangent = glm::normalize(fr.T);
         const Vec3 normal = glm::normalize(fr.N);
         const Vec3 center = p + normal * radius;
         const Vec4 color{1.f, 0.92f, 0.18f, 0.72f};
         for (u32 i = 0; i < segments; ++i) {
-            const float a0 = ops::two_pi_v<float> * static_cast<float>(i) / static_cast<float>(segments);
-            const float a1 = ops::two_pi_v<float> * static_cast<float>(i + 1u) / static_cast<float>(segments);
+            const f32 a0 = ops::two_pi_v<f32> * static_cast<f32>(i) / static_cast<f32>(segments);
+            const f32 a1 = ops::two_pi_v<f32> * static_cast<f32>(i + 1u) / static_cast<f32>(segments);
             const Vec3 p0 = center + (-normal * ops::cos(a0) + tangent * ops::sin(a0)) * radius;
             const Vec3 p1 = center + (-normal * ops::cos(a1) + tangent * ops::sin(a1)) * radius;
             out.push_back({p0, color});
@@ -556,7 +556,7 @@ inline memory::FrameVector<Vertex> build_particle_frenet_overlay_vertices(const 
 
 inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const ParticleSystem& particles,
                                                                      const math::ISurface& surface,
-                                                                     float time,
+                                                                     f32 time,
                                                                      memory::MemoryService* memory_service = nullptr) {
     memory::FrameVector<TrailPickSample> samples = make_frame_vector<TrailPickSample>(memory_service);
     const auto& list = particles.particles();
@@ -568,7 +568,7 @@ inline memory::FrameVector<TrailPickSample> build_trail_pick_samples(const Parti
             const FrenetFrame fr = particle.frenet_at(ti);
             const Vec3 world = particle.trail_pt(ti);
             const Vec2 uv = particle.trail_uv(ti);
-            const float sample_time = particle.trail_time(ti);
+            const f32 sample_time = particle.trail_time(ti);
             const SurfaceFrame sf = make_surface_frame(surface, uv.x, uv.y, sample_time, &fr);
             samples.push_back(TrailPickSample{
                 .particle_id = particle.id(),
@@ -686,7 +686,7 @@ inline void submit_surface_sim_packets(RenderService& render,
     }
 
     if (main_descriptor && main_descriptor->overlays.show_axes) {
-        const float z = (domain.z_min + domain.z_max) * 0.5f;
+        const f32 z = (domain.z_min + domain.z_max) * 0.5f;
         const Vec3 origin{0.f, 0.f, z};
         const std::array<Vertex, 6> axes{{
             {{domain.u_min, 0.f, z}, {1.f, 0.25f, 0.25f, 0.95f}},

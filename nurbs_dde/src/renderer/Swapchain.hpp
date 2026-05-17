@@ -18,6 +18,8 @@ public:
 
     Swapchain(const Swapchain&)            = delete;
     Swapchain& operator=(const Swapchain&) = delete;
+    Swapchain(Swapchain&&)                 = delete;
+    Swapchain& operator=(Swapchain&&)      = delete;
 
     void init(const platform::VulkanContext& ctx, u32 width, u32 height, bool vsync);
     void recreate(const platform::VulkanContext& ctx, u32 width, u32 height, bool vsync);
