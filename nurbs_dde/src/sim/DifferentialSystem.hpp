@@ -8,6 +8,8 @@
 #include <span>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 namespace ndde::sim {
 
@@ -353,6 +355,124 @@ private:
     f64 m_sigma = 10.0;
     f64 m_rho = 28.0;
     f64 m_beta = 8.0 / 3.0;
+};
+
+class SimplePendulumSystem final : public IDifferentialSystem {
+public:
+    SimplePendulumSystem(f64 gravity = 9.80665, f64 length = 1.0, f64 damping = 0.0)
+        : m_gravity(gravity)
+        , m_length(length > 0.0 ? length : 1.0)
+        , m_damping(damping)
+    {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Simple pendulum",
+            .formula = "theta' = omega, omega' = -(g/L) sin(theta) - c omega",
+            .variables = "theta, omega"
+        };
+    }
+
+    [[nodiscard]] std::size_t dimension() const override { return 2u; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        derivative[0] = state[1];
+        derivative[1] = -(m_gravity / m_length) * std::sin(state[0]) - m_damping * state[1];
+    }
+
+    [[nodiscard]] f64 gravity() const noexcept { return m_gravity; }
+    [[nodiscard]] f64 length() const noexcept { return m_length; }
+    [[nodiscard]] f64 damping() const noexcept { return m_damping; }
+
+    [[nodiscard]] f64 energy(std::span<const f64> state) const noexcept {
+        const f64 theta = state.size() > 0 ? state[0] : 0.0;
+        const f64 omega = state.size() > 1 ? state[1] : 0.0;
+        return 0.5 * m_length * m_length * omega * omega
+             + m_gravity * m_length * (1.0 - std::cos(theta));
+    }
+
+private:
+    f64 m_gravity = 9.80665;
+    f64 m_length = 1.0;
+    f64 m_damping = 0.0;
+};
+
+class PlanarNBodyGravitySystem final : public IDifferentialSystem {
+public:
+    PlanarNBodyGravitySystem(std::vector<f64> masses,
+                             f64 gravitational_constant = 1.0,
+                             f64 softening = 1.0e-6)
+        : m_masses(std::move(masses))
+        , m_gravitational_constant(gravitational_constant)
+        , m_softening(std::max(0.0, softening))
+    {}
+
+    [[nodiscard]] EquationSystemMetadata metadata() const override {
+        return {
+            .name = "Planar N-body gravity",
+            .formula = "x_i' = v_i, v_i' = sum_{j!=i} G m_j (x_j-x_i) / (|x_j-x_i|^2 + eps^2)^(3/2)",
+            .variables = "x_i, y_i, vx_i, vy_i for each body"
+        };
+    }
+
+    [[nodiscard]] std::size_t body_count() const noexcept { return m_masses.size(); }
+    [[nodiscard]] std::size_t dimension() const override { return m_masses.size() * 4u; }
+    [[nodiscard]] std::span<const f64> masses() const noexcept { return m_masses; }
+    [[nodiscard]] f64 gravitational_constant() const noexcept { return m_gravitational_constant; }
+    [[nodiscard]] f64 softening() const noexcept { return m_softening; }
+
+    void evaluate(f64, std::span<const f64> state, std::span<f64> derivative) const override {
+        const std::size_t n = m_masses.size();
+        for (std::size_t i = 0; i < n; ++i) {
+            const std::size_t oi = i * 4u;
+            derivative[oi + 0u] = state[oi + 2u];
+            derivative[oi + 1u] = state[oi + 3u];
+            derivative[oi + 2u] = 0.0;
+            derivative[oi + 3u] = 0.0;
+        }
+
+        const f64 eps2 = m_softening * m_softening;
+        for (std::size_t i = 0; i < n; ++i) {
+            const std::size_t oi = i * 4u;
+            for (std::size_t j = 0; j < n; ++j) {
+                if (i == j) continue;
+                const std::size_t oj = j * 4u;
+                const f64 dx = state[oj + 0u] - state[oi + 0u];
+                const f64 dy = state[oj + 1u] - state[oi + 1u];
+                const f64 r2 = dx * dx + dy * dy + eps2;
+                const f64 inv_r = 1.0 / std::sqrt(r2);
+                const f64 inv_r3 = inv_r * inv_r * inv_r;
+                const f64 scale = m_gravitational_constant * m_masses[j] * inv_r3;
+                derivative[oi + 2u] += scale * dx;
+                derivative[oi + 3u] += scale * dy;
+            }
+        }
+    }
+
+    [[nodiscard]] f64 total_energy(std::span<const f64> state) const noexcept {
+        const std::size_t n = m_masses.size();
+        f64 kinetic = 0.0;
+        f64 potential = 0.0;
+        for (std::size_t i = 0; i < n; ++i) {
+            const std::size_t oi = i * 4u;
+            const f64 vx = state[oi + 2u];
+            const f64 vy = state[oi + 3u];
+            kinetic += 0.5 * m_masses[i] * (vx * vx + vy * vy);
+            for (std::size_t j = i + 1u; j < n; ++j) {
+                const std::size_t oj = j * 4u;
+                const f64 dx = state[oj + 0u] - state[oi + 0u];
+                const f64 dy = state[oj + 1u] - state[oi + 1u];
+                const f64 r = std::sqrt(dx * dx + dy * dy + m_softening * m_softening);
+                potential -= m_gravitational_constant * m_masses[i] * m_masses[j] / r;
+            }
+        }
+        return kinetic + potential;
+    }
+
+private:
+    std::vector<f64> m_masses;
+    f64 m_gravitational_constant = 1.0;
+    f64 m_softening = 1.0e-6;
 };
 
 } // namespace ndde::sim

@@ -140,7 +140,7 @@ void SimulationWavePredatorPrey::on_tick(const TickInfo& tick) {
         m_sim_time = tick.time;
         if (!m_fields.empty())
             m_mesh.mark_dirty();
-        m_particles.update(tick.dt, m_sim_speed, m_sim_time);
+        m_particles.update(tick.dt, m_sim_speed, m_sim_time, &m_fields);
         m_context.dirty().mark_particles_changed();
 
         const GoalStatus gs = m_particles.evaluate_goals(m_sim_time);
@@ -292,7 +292,7 @@ void SimulationWavePredatorPrey::reset_showcase() {
 
     for (int i = 0; i < 100; ++i) {
         m_sim_time += f32(1.0 / 60.0);
-        m_particles.update(f32(1.0 / 60.0), f32(1), m_sim_time);
+        m_particles.update(f32(1.0 / 60.0), f32(1), m_sim_time, &m_fields);
     }
 
     sync_context();
@@ -458,6 +458,7 @@ void SimulationWavePredatorPrey::sync_context() {
     m_context.set_surface(m_surface.get());
     m_context.set_particles(&m_particles.particles());
     m_context.set_rng(&m_particles.rng());
+    m_context.set_fields(&m_fields);
     m_context.set_time(m_sim_time);
 }
 

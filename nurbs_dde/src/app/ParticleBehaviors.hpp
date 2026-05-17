@@ -6,6 +6,7 @@
 #include "memory/Containers.hpp"
 #include "memory/MemoryService.hpp"
 #include "memory/Unique.hpp"
+#include "simulation/fields/IField.hpp"
 #include "sim/IEquation.hpp"
 #include "numeric/ops.hpp"
 #include <algorithm>
@@ -373,6 +374,8 @@ public:
         glm::vec2 sum{0.f, 0.f};
         for (const auto& entry : m_behaviors)
             sum += entry.weight * entry.behavior->velocity(state, surface, t, *m_context, m_owner);
+        if (const auto* fields = m_context->fields())
+            sum += fields->total_drift(state, surface, t);
         return apply_velocity_transform(sum, state, surface);
     }
 
@@ -383,6 +386,8 @@ public:
         glm::vec2 sum{0.f, 0.f};
         for (const auto& entry : m_behaviors)
             sum += entry.weight * entry.behavior->noise_coefficient(state, surface, t, *m_context, m_owner);
+        if (const auto* fields = m_context->fields())
+            sum *= fields->diffusion_factor(state, surface, t);
         return sum;
     }
 

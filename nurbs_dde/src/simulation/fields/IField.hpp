@@ -74,6 +74,12 @@ public:
     // Net conformal factor: product of all active metric_factor() values.
     [[nodiscard]] f32 metric_factor(f32 u, f32 v, f32 t) const;
 
+    // Net diffusion scale: componentwise product of all active diffusion factors.
+    [[nodiscard]] glm::vec2 diffusion_factor(
+        const sim::ParticleState& state,
+        const math::ISurface&     surface,
+        f32                       t) const;
+
     // Sum of active fields' rendered surface displacement.
     [[nodiscard]] f32 surface_displacement(f32 u, f32 v, f32 t) const;
 

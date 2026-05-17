@@ -37,6 +37,16 @@ f32 FieldCompositor::metric_factor(f32 u, f32 v, f32 t) const {
     return factor;
 }
 
+glm::vec2 FieldCompositor::diffusion_factor(const sim::ParticleState& state,
+                                            const math::ISurface& surface,
+                                            f32 t) const {
+    glm::vec2 factor{f32(1), f32(1)};
+    for (const auto& f : m_fields)
+        if (f && f->active(t))
+            factor *= f->diffusion_contribution(state, surface, t);
+    return factor;
+}
+
 f32 FieldCompositor::surface_displacement(f32 u, f32 v, f32 t) const {
     f32 displacement = f32(0);
     for (const auto& f : m_fields)

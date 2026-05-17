@@ -19,6 +19,7 @@
 namespace ndde {
 
 class AnimatedCurve;
+namespace simulation { class FieldCompositor; }
 
 struct SurfacePerturbation {
     Vec2 uv{0.f, 0.f};
@@ -92,8 +93,9 @@ public:
 
     SimulationContext(const ndde::math::ISurface* surface,
                       const memory::SimVector<AnimatedCurve>* particles,
-                      std::mt19937* rng) noexcept
-        : m_surface(surface), m_particles(particles), m_rng(rng)
+                      std::mt19937* rng,
+                      const simulation::FieldCompositor* fields = nullptr) noexcept
+        : m_surface(surface), m_particles(particles), m_rng(rng), m_fields(fields)
     {}
 
     void set_time(float t) noexcept { m_time = t; }
@@ -113,6 +115,9 @@ public:
 
     [[nodiscard]] std::mt19937& rng() const noexcept { return *m_rng; }
     void set_rng(std::mt19937* rng) noexcept { m_rng = rng; }
+    void set_fields(const simulation::FieldCompositor* fields) noexcept { m_fields = fields; }
+    [[nodiscard]] const simulation::FieldCompositor* fields() const noexcept { return m_fields; }
+    [[nodiscard]] bool has_fields() const noexcept { return m_fields != nullptr; }
     void set_particles(const memory::SimVector<AnimatedCurve>* particles) noexcept {
         m_particles = particles;
         m_dirty.mark_particles_changed();
@@ -158,6 +163,7 @@ private:
     const ndde::math::ISurface* m_surface = nullptr;
     const memory::SimVector<AnimatedCurve>* m_particles = nullptr;
     std::mt19937* m_rng = nullptr;
+    const simulation::FieldCompositor* m_fields = nullptr;
     float m_time = 0.f;
     TickInfo m_tick{};
     SimulationDirtyState m_dirty{};

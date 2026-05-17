@@ -10,6 +10,7 @@ add_executable(ndde_tests
     test_particle_system.cpp
     test_surface_mesh_cache.cpp
     test_engine_services.cpp
+    test_gravitational_systems.cpp
     test_simulation_context.cpp
     test_simulation_runtime.cpp
     test_surface_metadata.cpp

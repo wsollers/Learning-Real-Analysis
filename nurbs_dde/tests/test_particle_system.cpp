@@ -5,6 +5,7 @@
 #include "app/ParticleSystem.hpp"
 #include "math/Surfaces.hpp"
 #include "memory/MemoryService.hpp"
+#include "simulation/fields/IField.hpp"
 
 using ndde::ParticleRole;
 using ndde::TrailMode;
@@ -14,6 +15,17 @@ namespace {
 ndde::math::Paraboloid flat_surface() {
     return ndde::math::Paraboloid(0.001f, 10.f, -10.f, 10.f);
 }
+
+class ConstantWindField final : public ndde::simulation::IField {
+public:
+    [[nodiscard]] glm::vec2 drift_contribution(const ndde::sim::ParticleState&,
+                                               const ndde::math::ISurface&,
+                                               ndde::f32) const override {
+        return {1.f, 0.f};
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override { return "ConstantWindField"; }
+};
 
 } // namespace
 
@@ -82,6 +94,23 @@ TEST(ParticleSystem, SeekBehaviorMovesTowardNearestRoleTarget) {
     const float before = chaser.head_uv().x;
     system.update(0.1f, 1.f, 0.1f);
     EXPECT_GT(chaser.head_uv().x, before);
+}
+
+TEST(ParticleSystem, FieldCompositorContributesDriftToParticles) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 15u);
+    ndde::simulation::FieldCompositor fields;
+    fields.add(std::make_shared<ConstantWindField>());
+
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({0.f, 0.f})
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{0.f, 0.f}));
+
+    system.update(0.1f, 1.f, 0.1f, &fields);
+
+    EXPECT_GT(particle.head_uv().x, 0.f);
+    EXPECT_NEAR(particle.head_uv().y, 0.f, 1e-6f);
 }
 
 TEST(ParticleSystem, AvoidBehaviorMovesAwayFromNearestRoleTarget) {

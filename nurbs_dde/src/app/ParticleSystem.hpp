@@ -18,6 +18,8 @@
 
 namespace ndde {
 
+namespace simulation { class FieldCompositor; }
+
 class ParticleSystem {
 public:
     explicit ParticleSystem(const ndde::math::ISurface* surface,
@@ -86,8 +88,9 @@ public:
         m_goals.clear();
     }
 
-    void update(float dt, float speed_scale, float sim_time) {
-        SimulationContext context(m_surface, &m_particles, &m_rng);
+    void update(float dt, float speed_scale, float sim_time,
+                const simulation::FieldCompositor* fields = nullptr) {
+        SimulationContext context(m_surface, &m_particles, &m_rng, fields);
         context.set_time(sim_time);
         for (auto& particle : m_particles) {
             particle.set_behavior_context(&context);
@@ -98,8 +101,9 @@ public:
         apply_pair_constraints();
     }
 
-    [[nodiscard]] SimulationContext context(float sim_time) {
-        SimulationContext c(m_surface, &m_particles, &m_rng);
+    [[nodiscard]] SimulationContext context(float sim_time,
+                                            const simulation::FieldCompositor* fields = nullptr) {
+        SimulationContext c(m_surface, &m_particles, &m_rng, fields);
         c.set_time(sim_time);
         return c;
     }
