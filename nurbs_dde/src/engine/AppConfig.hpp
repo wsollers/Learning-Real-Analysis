@@ -17,6 +17,7 @@ struct WindowConfig {
 struct RenderConfig {
     bool vsync                = true;
     u32  max_frames_in_flight = 2;
+    bool threaded_presentation = true;
 };
 
 struct CameraConfig {

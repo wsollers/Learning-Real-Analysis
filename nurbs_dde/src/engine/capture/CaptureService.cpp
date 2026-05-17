@@ -73,8 +73,9 @@ void CaptureService::request_still(CaptureRequest request, CaptureRunMetadata me
         });
     }
 
-    if (request.include_manifest)
-        write_manifest(manifest_path, request, metadata, artifacts);
+    if (request.include_manifest) {
+        enqueue_manifest_write(manifest_path, request, metadata, artifacts);
+    }
 
     for (const CaptureArtifact& artifact : artifacts) {
         m_pending_stills.push_back(artifact);
@@ -124,7 +125,7 @@ bool CaptureService::start_movie_frames(MovieFrameSequenceOptions options,
         std::filesystem::create_directories(m_movie_status.alternate_frame_dir);
     }
 
-    write_movie_frame_manifest(metadata, options, m_movie_status);
+    enqueue_movie_frame_manifest_write(metadata, options, m_movie_status);
     return true;
 }
 
@@ -239,10 +240,48 @@ std::string CaptureService::local_timestamp() {
     return ss.str();
 }
 
+void CaptureService::enqueue_manifest_write(std::filesystem::path manifest_path,
+                                            CaptureRequest request,
+                                            CaptureRunMetadata metadata,
+                                            std::vector<CaptureArtifact> artifacts) const {
+    if (m_threads) {
+        const bool queued = m_threads->enqueue_logger_task(
+            [manifest_path = std::move(manifest_path),
+             request = std::move(request),
+             metadata = std::move(metadata),
+             artifacts = std::move(artifacts)] {
+                write_manifest(manifest_path, request, metadata, artifacts);
+            });
+        if (queued) {
+            return;
+        }
+    }
+
+    write_manifest(manifest_path, request, metadata, artifacts);
+}
+
+void CaptureService::enqueue_movie_frame_manifest_write(CaptureRunMetadata metadata,
+                                                       MovieFrameSequenceOptions options,
+                                                       MovieFrameSequenceStatus status) const {
+    if (m_threads) {
+        const bool queued = m_threads->enqueue_logger_task(
+            [metadata = std::move(metadata),
+             options,
+             status = std::move(status)] {
+                write_movie_frame_manifest(metadata, options, status);
+            });
+        if (queued) {
+            return;
+        }
+    }
+
+    write_movie_frame_manifest(metadata, options, status);
+}
+
 void CaptureService::write_manifest(const std::filesystem::path& manifest_path,
                                     const CaptureRequest& request,
                                     const CaptureRunMetadata& metadata,
-                                    std::span<const CaptureArtifact> artifacts) const {
+                                    std::span<const CaptureArtifact> artifacts) {
     std::ofstream out(manifest_path, std::ios::out | std::ios::trunc);
     if (!out.is_open())
         return;
@@ -272,7 +311,7 @@ void CaptureService::write_manifest(const std::filesystem::path& manifest_path,
 
 void CaptureService::write_movie_frame_manifest(const CaptureRunMetadata& metadata,
                                                 const MovieFrameSequenceOptions& options,
-                                                const MovieFrameSequenceStatus& status) const {
+                                                const MovieFrameSequenceStatus& status) {
     std::ofstream out(status.manifest_path, std::ios::out | std::ios::trunc);
     if (!out.is_open())
         return;

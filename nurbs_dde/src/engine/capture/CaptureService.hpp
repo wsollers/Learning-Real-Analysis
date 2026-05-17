@@ -66,13 +66,20 @@ private:
     [[nodiscard]] static std::filesystem::path unique_path(std::filesystem::path path);
     [[nodiscard]] static std::string local_timestamp();
 
-    void write_manifest(const std::filesystem::path& manifest_path,
-                        const CaptureRequest& request,
-                        const CaptureRunMetadata& metadata,
-                        std::span<const CaptureArtifact> artifacts) const;
-    void write_movie_frame_manifest(const CaptureRunMetadata& metadata,
-                                    const MovieFrameSequenceOptions& options,
-                                    const MovieFrameSequenceStatus& status) const;
+    void enqueue_manifest_write(std::filesystem::path manifest_path,
+                                CaptureRequest request,
+                                CaptureRunMetadata metadata,
+                                std::vector<CaptureArtifact> artifacts) const;
+    void enqueue_movie_frame_manifest_write(CaptureRunMetadata metadata,
+                                            MovieFrameSequenceOptions options,
+                                            MovieFrameSequenceStatus status) const;
+    static void write_manifest(const std::filesystem::path& manifest_path,
+                               const CaptureRequest& request,
+                               const CaptureRunMetadata& metadata,
+                               std::span<const CaptureArtifact> artifacts);
+    static void write_movie_frame_manifest(const CaptureRunMetadata& metadata,
+                                           const MovieFrameSequenceOptions& options,
+                                           const MovieFrameSequenceStatus& status);
 };
 
 } // namespace ndde

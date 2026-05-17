@@ -47,6 +47,8 @@ public:
     [[nodiscard]] bool begin_frame(const Swapchain& swapchain);
     void draw(const DrawCall& dc);
     void imgui_new_frame() { m_imgui.new_frame(); }
+    void imgui_build_draw_data() { m_imgui.build_draw_data(); }
+    void imgui_record_draw_data() { m_imgui.record_draw_data(m_cmd); }
     void imgui_render()    { m_imgui.render(m_cmd); }
     [[nodiscard]] bool end_frame(const Swapchain& swapchain);
     void on_swapchain_recreated(const Swapchain& swapchain);

@@ -117,9 +117,17 @@ void ImGuiLayer::new_frame() {
     ImGui::NewFrame();
 }
 
-void ImGuiLayer::render(VkCommandBuffer cmd) {
+void ImGuiLayer::build_draw_data() {
     ImGui::Render();
+}
+
+void ImGuiLayer::record_draw_data(VkCommandBuffer cmd) {
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
+}
+
+void ImGuiLayer::render(VkCommandBuffer cmd) {
+    build_draw_data();
+    record_draw_data(cmd);
 }
 
 void ImGuiLayer::on_swapchain_recreated(const Swapchain&) {}

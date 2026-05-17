@@ -49,6 +49,7 @@ AppConfig AppConfig::load_or_default(const std::string& path) {
         auto& r = j["render"];
         cfg.render.vsync                = jget<bool>(r, "vsync",      cfg.render.vsync);
         cfg.render.max_frames_in_flight = jget<u32>(r,  "max_frames_in_flight", cfg.render.max_frames_in_flight);
+        cfg.render.threaded_presentation = jget<bool>(r, "threaded_presentation", cfg.render.threaded_presentation);
     }
     if (j.contains("camera")) {
         auto& c = j["camera"];
@@ -81,7 +82,9 @@ AppConfig AppConfig::load_or_default(const std::string& path) {
 void AppConfig::save(const std::string& path) const {
     json j = {
         { "window",     { {"width",  window.width},  {"height", window.height}, {"title", window.title} }},
-        { "render",     { {"vsync",  render.vsync},  {"max_frames_in_flight", render.max_frames_in_flight} }},
+        { "render",     { {"vsync",  render.vsync},
+                          {"max_frames_in_flight", render.max_frames_in_flight},
+                          {"threaded_presentation", render.threaded_presentation} }},
         { "camera",     { {"position", {camera.position.x, camera.position.y, camera.position.z}},
                           {"target",   {camera.target.x,   camera.target.y,   camera.target.z}},
                           {"fov",  camera.fov}, {"near", camera.near_plane}, {"far", camera.far_plane} }},

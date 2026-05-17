@@ -94,6 +94,8 @@ public:
     void stop_simulation_thread() noexcept;
     [[nodiscard]] bool enqueue_render_command(RenderThreadCommand command);
     [[nodiscard]] std::vector<RenderThreadCommand> consume_render_commands();
+    [[nodiscard]] bool enqueue_render_task(std::function<void()> task);
+    [[nodiscard]] bool run_render_task_sync(std::function<void()> task);
     [[nodiscard]] bool start_render_thread(RenderThreadFn step);
     void stop_render_thread() noexcept;
     void publish_simulation_snapshot(SimulationRenderSnapshot snapshot);
@@ -142,6 +144,11 @@ private:
         std::vector<std::function<void()>> tasks;
     };
 
+    struct RenderWork {
+        std::vector<RenderThreadCommand> commands;
+        std::vector<std::function<void()>> tasks;
+    };
+
     mutable std::mutex m_mutex;
     mutable std::vector<ThreadJobStatus> m_job_status_view;
     std::condition_variable m_work_available;
@@ -159,6 +166,7 @@ private:
     std::vector<ThreadJobResult> m_completed_results;
     std::vector<SimulationThreadCommand> m_simulation_commands;
     std::vector<RenderThreadCommand> m_render_commands;
+    std::vector<std::function<void()>> m_render_tasks;
     std::optional<SimulationRenderSnapshot> m_latest_simulation_snapshot;
     std::vector<QueuedLog> m_log_mailbox;
     std::vector<std::function<void()>> m_logger_tasks;
@@ -185,7 +193,7 @@ private:
     [[nodiscard]] PendingJob wait_for_job(std::stop_token service_stop);
     [[nodiscard]] LoggerWork wait_for_logger_work(std::stop_token service_stop);
     [[nodiscard]] std::vector<SimulationThreadCommand> wait_for_simulation_commands(std::stop_token service_stop);
-    [[nodiscard]] std::vector<RenderThreadCommand> wait_for_render_commands(std::stop_token service_stop);
+    [[nodiscard]] RenderWork wait_for_render_work(std::stop_token service_stop);
     [[nodiscard]] JobRecord* find_job_locked(ThreadJobId id) noexcept;
     [[nodiscard]] const JobRecord* find_job_locked(ThreadJobId id) const noexcept;
     [[nodiscard]] static u32 default_worker_count() noexcept;

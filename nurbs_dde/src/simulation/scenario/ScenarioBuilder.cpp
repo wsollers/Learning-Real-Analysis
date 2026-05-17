@@ -183,26 +183,44 @@ void ScenarioBuilder::build(
         });
     }
 
-    memory::SimulationMemoryScope fallback_scope{"ScenarioBuilderFallback"};
-    auto& alert_scope = memory ? memory->simulation() : fallback_scope;
     for (auto& alert : m_alerts) {
-        std::visit([&alerts_out, &alert_scope](auto& params) {
+        std::visit([&alerts_out, memory](auto& params) {
             using Params = std::decay_t<decltype(params)>;
             if constexpr (std::is_same_v<Params, ndde::events::ProximityAlert::Params>) {
-                alerts_out.push_back(alert_scope.template make_unique_as<
-                    ndde::events::AlertRule, ndde::events::ProximityAlert>(params));
+                alerts_out.push_back(memory
+                    ? memory->simulation().template make_unique_as<
+                        ndde::events::AlertRule, ndde::events::ProximityAlert>(params)
+                    : memory::unique_cast<ndde::events::AlertRule>(
+                        memory::make_unique<ndde::events::ProximityAlert>(
+                            std::pmr::get_default_resource(), params)));
             } else if constexpr (std::is_same_v<Params, ndde::events::EscapeAlert::Params>) {
-                alerts_out.push_back(alert_scope.template make_unique_as<
-                    ndde::events::AlertRule, ndde::events::EscapeAlert>(params));
+                alerts_out.push_back(memory
+                    ? memory->simulation().template make_unique_as<
+                        ndde::events::AlertRule, ndde::events::EscapeAlert>(params)
+                    : memory::unique_cast<ndde::events::AlertRule>(
+                        memory::make_unique<ndde::events::EscapeAlert>(
+                            std::pmr::get_default_resource(), params)));
             } else if constexpr (std::is_same_v<Params, ndde::events::StealthAlert::Params>) {
-                alerts_out.push_back(alert_scope.template make_unique_as<
-                    ndde::events::AlertRule, ndde::events::StealthAlert>(params));
+                alerts_out.push_back(memory
+                    ? memory->simulation().template make_unique_as<
+                        ndde::events::AlertRule, ndde::events::StealthAlert>(params)
+                    : memory::unique_cast<ndde::events::AlertRule>(
+                        memory::make_unique<ndde::events::StealthAlert>(
+                            std::pmr::get_default_resource(), params)));
             } else if constexpr (std::is_same_v<Params, ndde::events::CapturePendingAlert::Params>) {
-                alerts_out.push_back(alert_scope.template make_unique_as<
-                    ndde::events::AlertRule, ndde::events::CapturePendingAlert>(params));
+                alerts_out.push_back(memory
+                    ? memory->simulation().template make_unique_as<
+                        ndde::events::AlertRule, ndde::events::CapturePendingAlert>(params)
+                    : memory::unique_cast<ndde::events::AlertRule>(
+                        memory::make_unique<ndde::events::CapturePendingAlert>(
+                            std::pmr::get_default_resource(), params)));
             } else if constexpr (std::is_same_v<Params, ndde::events::CustomAlert::Params>) {
-                alerts_out.push_back(alert_scope.template make_unique_as<
-                    ndde::events::AlertRule, ndde::events::CustomAlert>(std::move(params)));
+                alerts_out.push_back(memory
+                    ? memory->simulation().template make_unique_as<
+                        ndde::events::AlertRule, ndde::events::CustomAlert>(std::move(params))
+                    : memory::unique_cast<ndde::events::AlertRule>(
+                        memory::make_unique<ndde::events::CustomAlert>(
+                            std::pmr::get_default_resource(), std::move(params))));
             }
         }, alert);
     }

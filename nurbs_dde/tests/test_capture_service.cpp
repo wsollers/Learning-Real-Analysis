@@ -140,3 +140,28 @@ TEST(EngineServices, OwnsCaptureService) {
     EXPECT_EQ(services.capture().consume_pending_stills().size(), 1u);
     std::filesystem::remove_all(dir);
 }
+
+TEST(CaptureService, ManifestWriteCanDrainThroughLoggerThread) {
+    const std::filesystem::path dir = test_output_dir("async_manifest");
+    ndde::EngineServices services;
+    services.capture().set_output_dir(dir);
+
+    services.capture().request_still(ndde::CaptureRequest{
+        .target = ndde::CaptureTarget::MainWindow,
+        .include_manifest = true
+    }, ndde::CaptureRunMetadata{
+        .simulation_name = "Async Manifest",
+        .run_id = "async_manifest",
+        .tick = ndde::u64(4),
+        .sim_time = ndde::f32(0.125)
+    });
+
+    const std::vector<ndde::CaptureArtifact> pending = services.capture().consume_pending_stills();
+    ASSERT_EQ(pending.size(), 1u);
+    ASSERT_FALSE(pending.front().manifest_path.empty());
+
+    ASSERT_TRUE(services.threads().run_logger_task_sync([] {}));
+    EXPECT_TRUE(std::filesystem::exists(pending.front().manifest_path));
+
+    std::filesystem::remove_all(dir);
+}

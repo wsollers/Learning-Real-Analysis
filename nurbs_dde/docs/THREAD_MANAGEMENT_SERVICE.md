@@ -1,6 +1,6 @@
 # ThreadManagementService Design
 
-**Status:** implementation in progress; worker-pool foundation implemented  
+**Status:** implementation in progress; worker/logger/simulation/render-presentation foundation implemented
 **Scope:** full application threading, worker lifecycle, render/UI separation, job submission, shutdown, mailboxes, and cross-thread service boundaries  
 **Owner:** `EngineServices`  
 **Intent:** move the app toward a fully threaded runtime while keeping ownership explicit, cancellable, observable, and unable to corrupt simulation/UI/renderer state
@@ -60,6 +60,9 @@ threads will depend on. The current implementation includes:
 - optional engine live wiring via `simulation.threaded_runtime`
 - latest simulation render snapshot mailbox with deep-copied immutable data
 - render-thread command queue and immutable `RenderFrameSnapshot` handoff type
+- renderer-thread task queue for synchronous renderer-role work such as
+  swapchain frame recording, submission, and presentation
+- optional engine live wiring via `render.threaded_presentation`
 - main-thread role tracking and deterministic shutdown
 - thread-role guard API for main/render/simulation/logger/worker ownership checks
 - Main-owned `EventBusService` typed publish/subscribe/reset/drain APIs
@@ -70,6 +73,8 @@ threads will depend on. The current implementation includes:
 - `TelemetryService` extension scratch is Main-owned, while flush/stop-close
   can be handed to the Logger/I/O thread; primary telemetry remains a
   single-producer ring contract
+- `CaptureService` manifest writes are handed to the Logger/I/O task lane when
+  thread services are available, with direct fallback for tests/tools
 - `RenderService` mutation APIs guarded by the thread-role service during the
   current Main-owned transition
 - GUI/Main-owned `PanelService`, `HotkeyService`, and `InteractionService`
@@ -619,12 +624,15 @@ Workers do not call:
 Workers may prepare CPU-side data that the main/render thread later consumes
 through an explicit result queue.
 
-The render thread owns Vulkan command recording/submission and swapchain
-presentation once the split is enabled. GUI/Main owns GLFW polling and ImGui
-frame construction. The handoff between GUI and render is represented by
-`RenderThreadCommand` and `RenderFrameSnapshot`. The next renderer migration
-should move Vulkan command recording/presentation behind that command lane while
-keeping GLFW polling and ImGui frame construction on GUI/Main.
+The render thread now has a production task lane and owns the primary Vulkan
+frame recording path when `render.threaded_presentation` is enabled:
+swapchain acquire, command recording, render packet drawing, ImGui draw-data
+recording, submission, and presentation all run under `ThreadRole::Renderer`.
+GUI/Main still owns GLFW polling, ImGui widget construction, render service
+mutation, and frame-arena lifetime boundaries. Main calls `ImGui::Render()` to
+freeze draw data, then synchronously hands the frame to the renderer role. The
+handoff between GUI and future fully-independent rendering is represented by
+`RenderThreadCommand`, `RenderFrameSnapshot`, and renderer-role tasks.
 
 ## Result Model
 
@@ -726,8 +734,8 @@ the source of truth for job state.
 
 Future UI panels:
 
-- Worker/Jobs panel: queued/running/completed/failed job table
-- Thread health panel: worker count, queue depth, drops, last fault
+- Worker/Jobs panel: queued/running/completed/failed job table **Covered by `Engine - Threads`.**
+- Thread health panel: worker count, queue depth, drops, last fault **Covered by `Engine - Threads`.**
 - Diagnostics "Stuff Is Broken" panel: active thread failures
 
 The UI reads service state on the main thread. It does not inspect worker
@@ -742,14 +750,16 @@ internals or block waiting for jobs.
 5. Add diagnostics/log mailboxes and main-thread ingestion. **Done.**
 6. Add thread-role assertions for main/GUI/render/simulation-only APIs. **Thread-role guard API and diagnostics are done; `RenderService`, `PanelService`, `HotkeyService`, `InteractionService`, `CameraService`, `DiagnosticsService`, `EventBusService`, `LoggerService`, `TelemetryService`, `SimMetadataService`, `ViewInputService`, `ResourceManagerService`, and `CaptureService` mutation APIs are covered. Applying checks to additional services remains ongoing.**
 7. Add logger mailbox and logger/I/O thread first; it has the least coupling. **Logger-thread in-memory drain and direct-write ownership guard done.**
-8. Move telemetry/log/capture manifest flushing to logger/I/O. **Telemetry periodic flush and sim/app stop-close handoff to Logger/I/O are done; capture manifests remain future work.**
+8. Move telemetry/log/capture manifest flushing to logger/I/O. **Telemetry periodic flush, sim/app stop-close handoff, logger writes, and capture manifest writes are handed to Logger/I/O.**
 9. Add simulation-thread command queue for UI/main-to-simulation commands. **Done.**
 10. Add immutable render snapshot type and simulation-to-render mailbox. **Simulation snapshot mailbox and render command/snapshot lane are done.**
 11. Split simulation tick into a simulation thread. **Thread lifecycle, command callback, `SimulationRuntime` command adapter, simulation update/render method split, runtime serialization for render and telemetry hooks, command-based surface poke handoff, compact simulation event mailbox handoff, and optional engine live wiring done. Default config keeps the compatibility path off while remaining direct host-service access is reduced.**
 12. Split render submission/presentation into a render thread, or explicitly
     keep GUI/render co-owned until GLFW/ImGui/Vulkan boundaries are safe.
-    **Render command queue and Renderer-role callback foundation are done; Vulkan
-    command recording/presentation migration remains.**
+    **Renderer-role command queue, task lane, threaded frame recording, ImGui
+    draw-data recording, submission, and presentation are done. GLFW polling,
+    ImGui widget construction, and render service mutation remain Main-owned by
+    design.**
 13. Move expensive geometry/cache generation onto worker jobs.
 14. Add worker/jobs/thread-health UI panel.
 

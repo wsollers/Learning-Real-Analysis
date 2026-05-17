@@ -78,6 +78,9 @@ Movie capture is possible, but MP4 conversion should not run inside the app:
 - The app writes a manifest that records frame rate, dimensions, run metadata,
   and output paths.
 - Offline conversion to MP4 is handled by `tools/Convert-ToMp4.ps1`.
+- Manifest file writes are handed to the logger/I/O task lane when
+  `ThreadManagementService` is available, so capture metadata does not need to
+  block the UI/render path.
 
 This keeps FFmpeg and video encoding out of the runtime. Missing FFmpeg should
 never affect normal app startup, still PNG capture, or simulation shutdown.
@@ -488,6 +491,11 @@ MP4 conversion remains an offline tooling action.
 Still PNG capture may block for a single frame in the first implementation.
 That is acceptable.
 
+Capture manifest writes are small but still file I/O. Current implementation
+routes still and movie-frame manifests through `ThreadManagementService` logger
+tasks, with immediate direct writes only when the service is used without a
+thread manager in tests or standalone tools.
+
 Movie frame capture should not block the render loop on disk stalls. The
 recommended future pipeline is:
 
@@ -511,7 +519,7 @@ On engine shutdown:
 
 1. Stop active movie sessions.
 2. Flush frame-writing workers.
-3. Write manifests.
+3. Drain logger/I/O manifest tasks.
 4. Release readback buffers.
 5. Then allow renderer and Vulkan teardown.
 
@@ -529,7 +537,8 @@ window dimensions, pixel formats, and GPU resources.
 6. Add manifests for still capture.
 7. Add start/stop frame-sequence capture for both windows.
 8. Document `tools/Convert-ToMp4.ps1` in capture manifests.
-9. Add tests for naming, request state, target expansion, and diagnostics.
+9. Add tests for naming, request state, target expansion, async manifest drain,
+   and diagnostics.
 
 ## Unit Test Targets
 
@@ -538,6 +547,7 @@ window dimensions, pixel formats, and GPU resources.
 - `BothWindows` expands to main and alternate artifacts
 - closed alternate window reports a diagnostic but still captures main
 - still capture writes manifest paths correctly
+- manifest writes can drain through the logger/I/O thread
 - movie frame session creates expected frame directories
 - movie frame stop writes final artifact metadata
 - service follows Rule of Five policy for ownership types

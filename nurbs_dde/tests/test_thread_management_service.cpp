@@ -437,6 +437,47 @@ TEST(ThreadManagementService, RenderThreadConsumesCommandBatchesWithRendererRole
     threads.stop_render_thread();
 }
 
+TEST(ThreadManagementService, RenderTaskRunsOnRendererThreadSynchronously) {
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+        .worker_count = u32(0),
+        .enable_background_workers = false
+    });
+
+    ASSERT_TRUE(threads.start_render_thread(
+        [](std::stop_token, std::span<const RenderThreadCommand>) {}));
+
+    std::atomic<bool> ran = false;
+    std::atomic<bool> renderer_role = false;
+    ASSERT_TRUE(threads.run_render_task_sync([&threads, &ran, &renderer_role] {
+        ran.store(true);
+        renderer_role.store(threads.is_thread_role(ThreadRole::Renderer));
+    }));
+
+    EXPECT_TRUE(ran.load());
+    EXPECT_TRUE(renderer_role.load());
+    threads.stop_render_thread();
+}
+
+TEST(ThreadManagementService, RenderThreadDrainsQueuedTaskDuringShutdown) {
+    ThreadManagementService threads;
+    threads.init(ThreadPoolConfig{
+        .worker_count = u32(0),
+        .enable_background_workers = false
+    });
+
+    ASSERT_TRUE(threads.start_render_thread(
+        [](std::stop_token, std::span<const RenderThreadCommand>) {}));
+
+    std::atomic<bool> ran = false;
+    ASSERT_TRUE(threads.enqueue_render_task([&ran] {
+        ran.store(true);
+    }));
+
+    threads.shutdown();
+    EXPECT_TRUE(ran.load());
+}
+
 TEST(ThreadManagementService, RequireThreadRolePassesOnSimulationThread) {
     ThreadManagementService threads;
     threads.init(ThreadPoolConfig{

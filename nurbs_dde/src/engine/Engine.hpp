@@ -19,6 +19,7 @@
 #include "telemetry/TelemetryService.hpp"
 #include "simulation/events/EngineEventTypes.hpp"
 #include <filesystem>
+#include <functional>
 #include <string>
 
 namespace ndde {
@@ -108,6 +109,9 @@ private:
     void request_capture(bool pause_first);
     void start_active_simulation_thread();
     void stop_active_simulation_thread() noexcept;
+    void start_render_presentation_thread();
+    void stop_render_presentation_thread() noexcept;
+    [[nodiscard]] bool run_render_frame_task(std::function<void()> task);
     void enqueue_pending_surface_pokes(const TickInfo& tick);
     [[nodiscard]] SimulationRuntime& active_runtime();
     [[nodiscard]] const SimulationRuntime& active_runtime() const;

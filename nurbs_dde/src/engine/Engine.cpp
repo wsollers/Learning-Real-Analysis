@@ -84,6 +84,7 @@ Engine::Engine()
 
 Engine::~Engine() {
     stop_active_simulation_thread();
+    stop_render_presentation_thread();
     uninstall_global_hotkeys();
 
     // ── Telemetry: close any active run before GPU teardown ─────────────────
@@ -117,6 +118,7 @@ void Engine::start(const std::string& config_path) {
     m_vk.init(m_glfw.window(), m_config.window.title);
     m_swapchain.init(m_vk, m_glfw.width(), m_glfw.height(), m_config.render.vsync);
     m_renderer.init(m_vk, m_swapchain, SHADER_DIR, ASSETS_DIR, m_glfw.window());
+    start_render_presentation_thread();
     install_global_hotkeys();
 
     m_services.memory().init_frame_gpu_arena(m_vk.device(), m_vk.physical_device(),
@@ -279,8 +281,7 @@ void Engine::run_frame() {
     m_services.render().clear_packets();
     m_services.memory().begin_frame();
 
-    // ── Primary window (3D surface + ImGui) ─────────────────────────────────
-    if (!m_renderer.begin_frame(m_swapchain)) { handle_resize(); return; }
+    // ── GUI frame construction ──────────────────────────────────────────────
     m_renderer.imgui_new_frame();
     dispatch_global_hotkeys();
 
@@ -297,9 +298,6 @@ void Engine::run_frame() {
         .frame_ms           = frame_ms,
         .fps                = fps,
     };
-
-    // ── Second window begin ──────────────────────────────────────────────────────
-    const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
 
     // Input is sampled after panels are drawn, so this reflects the previous
     // frame's view-owned click state and avoids stale ImGui hover decisions.
@@ -355,9 +353,30 @@ void Engine::run_frame() {
     if (m_config.simulation.threaded_runtime) {
         active_runtime().submit_render();
     }
-    flush_render_service();
     m_services.panels().draw_registered_panels();
     update_render_view_input();
+    m_renderer.imgui_build_draw_data();
+
+    bool primary_ok = true;
+    bool second_present_ok = true;
+    (void)run_render_frame_task([this, &primary_ok, &second_present_ok] {
+        primary_ok = m_renderer.begin_frame(m_swapchain);
+        if (!primary_ok) {
+            return;
+        }
+
+        const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
+        flush_render_service();
+        m_renderer.imgui_record_draw_data();
+        primary_ok = m_renderer.end_frame(m_swapchain);
+
+        // Present the auxiliary contour window after the primary window. FIFO
+        // present can block, and letting the secondary surface block first makes
+        // main-window frame pacing visibly worse on some drivers.
+        if (second_ok) {
+            second_present_ok = m_second_win.end_frame();
+        }
+    });
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_services.memory().frame_gpu_bytes_used();
@@ -365,16 +384,7 @@ void Engine::run_frame() {
     m_debug_stats.arena_vertex_count =
         m_services.memory().frame_gpu_bytes_used() / static_cast<u64>(sizeof(Vertex));
 
-    m_renderer.imgui_render();
-    const bool primary_ok = m_renderer.end_frame(m_swapchain);
-
-    // Present the auxiliary contour window after the primary window. FIFO
-    // present can block, and letting the secondary surface block first makes
-    // main-window frame pacing visibly worse on some drivers.
-    if (second_ok) {
-        const bool present_ok = m_second_win.end_frame();
-        if (!present_ok) { /* resize handled internally */ }
-    }
+    if (!second_present_ok) { /* resize handled internally */ }
 
     if (!primary_ok) handle_resize();
 
@@ -962,6 +972,41 @@ void Engine::start_active_simulation_thread() {
 
 void Engine::stop_active_simulation_thread() noexcept {
     m_services.threads().stop_simulation_thread();
+}
+
+void Engine::start_render_presentation_thread() {
+    if (!m_config.render.threaded_presentation) {
+        return;
+    }
+    ThreadManagementService& threads = m_services.threads();
+    if (threads.render_thread_running()) {
+        return;
+    }
+    const bool started = threads.start_render_thread(
+        [](std::stop_token, std::span<const RenderThreadCommand>) {});
+    if (started) {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Info,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Render presentation thread started");
+        });
+    } else {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Warning,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Render presentation thread could not start");
+        });
+    }
+}
+
+void Engine::stop_render_presentation_thread() noexcept {
+    m_services.threads().stop_render_thread();
+}
+
+bool Engine::run_render_frame_task(std::function<void()> task) {
+    return m_services.threads().run_render_task_sync(std::move(task));
 }
 
 void Engine::enqueue_pending_surface_pokes(const TickInfo& tick) {

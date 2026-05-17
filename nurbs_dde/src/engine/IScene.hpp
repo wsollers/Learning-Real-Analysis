@@ -57,8 +57,9 @@ class IScene {
 public:
     virtual ~IScene() = default;
 
-    // Called once per frame after ImGui::NewFrame() and before
-    // imgui_render(). dt is wall-clock seconds since the previous frame.
+    // Called once per frame after ImGui::NewFrame() and before the engine
+    // freezes ImGui draw data for renderer-thread command recording.
+    // dt is wall-clock seconds since the previous frame.
     // The scene is responsible for all ImGui window calls this frame.
     virtual void on_frame(f32 dt) = 0;
 

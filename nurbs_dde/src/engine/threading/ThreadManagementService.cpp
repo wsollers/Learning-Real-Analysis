@@ -156,6 +156,7 @@ void ThreadManagementService::shutdown() noexcept {
         m_pending.clear();
         m_simulation_commands.clear();
         m_render_commands.clear();
+        m_render_tasks.clear();
         m_logger_tasks.clear();
         m_simulation_step = {};
         m_render_step = {};
@@ -348,6 +349,41 @@ std::vector<RenderThreadCommand> ThreadManagementService::consume_render_command
     std::vector<RenderThreadCommand> out;
     out.swap(m_render_commands);
     return out;
+}
+
+bool ThreadManagementService::enqueue_render_task(std::function<void()> task) {
+    if (!task) return false;
+    std::scoped_lock lock(m_mutex);
+    if (!m_initialised ||
+        !has_capacity(static_cast<u64>(m_render_tasks.size()), m_config.max_mailbox_records)) {
+        ++m_dropped_events;
+        return false;
+    }
+    m_render_tasks.push_back(std::move(task));
+    m_render_available.notify_one();
+    return true;
+}
+
+bool ThreadManagementService::run_render_task_sync(std::function<void()> task) {
+    if (!task) return false;
+    if (is_thread_role(ThreadRole::Renderer) || !m_render_thread) {
+        task();
+        return true;
+    }
+
+    auto done = std::make_shared<std::promise<void>>();
+    std::future<void> future = done->get_future();
+    const bool queued = enqueue_render_task([task = std::move(task), done] {
+        try {
+            task();
+            done->set_value();
+        } catch (...) {
+            done->set_exception(std::current_exception());
+        }
+    });
+    if (!queued) return false;
+    future.get();
+    return true;
 }
 
 bool ThreadManagementService::start_render_thread(RenderThreadFn step) {
@@ -609,9 +645,19 @@ void ThreadManagementService::simulation_loop(std::stop_token service_stop) noex
 void ThreadManagementService::render_loop(std::stop_token service_stop) noexcept {
     t_thread_role = ThreadRole::Renderer;
     while (!service_stop.stop_requested()) {
-        std::vector<RenderThreadCommand> commands = wait_for_render_commands(service_stop);
-        if (commands.empty()) {
+        RenderWork work = wait_for_render_work(service_stop);
+        if (work.commands.empty() && work.tasks.empty()) {
             continue;
+        }
+
+        for (auto& task : work.tasks) {
+            try {
+                task();
+            } catch (const std::exception& ex) {
+                report_thread_fault(ThreadJobId{}, ex.what());
+            } catch (...) {
+                report_thread_fault(ThreadJobId{}, "render thread task threw an unknown exception");
+            }
         }
 
         RenderThreadFn step;
@@ -619,16 +665,37 @@ void ThreadManagementService::render_loop(std::stop_token service_stop) noexcept
             std::scoped_lock lock(m_mutex);
             step = m_render_step;
         }
-        if (!step) {
+        if (!step || work.commands.empty()) {
             continue;
         }
 
         try {
-            step(service_stop, commands);
+            step(service_stop, work.commands);
         } catch (const std::exception& ex) {
             report_thread_fault(ThreadJobId{}, ex.what());
         } catch (...) {
             report_thread_fault(ThreadJobId{}, "render thread callback threw an unknown exception");
+        }
+    }
+
+    for (;;) {
+        RenderWork work;
+        {
+            std::scoped_lock lock(m_mutex);
+            if (m_render_commands.empty() && m_render_tasks.empty()) {
+                break;
+            }
+            work.commands.swap(m_render_commands);
+            work.tasks.swap(m_render_tasks);
+        }
+        for (auto& task : work.tasks) {
+            try {
+                task();
+            } catch (const std::exception& ex) {
+                report_thread_fault(ThreadJobId{}, ex.what());
+            } catch (...) {
+                report_thread_fault(ThreadJobId{}, "render thread task threw an unknown exception during shutdown");
+            }
         }
     }
 }
@@ -683,16 +750,18 @@ ThreadManagementService::wait_for_simulation_commands(std::stop_token service_st
     return commands;
 }
 
-std::vector<RenderThreadCommand>
-ThreadManagementService::wait_for_render_commands(std::stop_token service_stop) {
+ThreadManagementService::RenderWork
+ThreadManagementService::wait_for_render_work(std::stop_token service_stop) {
     std::unique_lock lock(m_mutex);
     m_render_available.wait(lock, [this, service_stop] {
-        return service_stop.stop_requested() || m_shutting_down || !m_render_commands.empty();
+        return service_stop.stop_requested() || m_shutting_down ||
+               !m_render_commands.empty() || !m_render_tasks.empty();
     });
 
-    std::vector<RenderThreadCommand> commands;
-    commands.swap(m_render_commands);
-    return commands;
+    RenderWork work;
+    work.commands.swap(m_render_commands);
+    work.tasks.swap(m_render_tasks);
+    return work;
 }
 
 ThreadManagementService::JobRecord*
