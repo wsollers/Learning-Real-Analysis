@@ -4,6 +4,9 @@
 // archived to src/old/ -- only SimulationWavePredatorPrey is active.
 
 #include "app/Curve2DOverlay.hpp"
+#include "app/SimulationIntegrationDerivativeLab.hpp"
+#include "app/SimulationLabPicker.hpp"
+#include "app/SimulationTaylorExpansionLab.hpp"
 #include "app/SimulationWavePredatorPrey.hpp"
 #include "app/SceneFactories.hpp"
 #include "engine/SimulationHost.hpp"
@@ -62,13 +65,80 @@ TEST(AllSimulations, WavePredatorPreyRegistersStartsAndEmitsPackets) {
     expect_simulation_registers_starts_and_emits_packets<SimulationWavePredatorPrey>();
 }
 
-TEST(AllSimulations, DefaultRegistryContainsOnlyWavePredatorPrey) {
+TEST(AllSimulations, IntegrationDerivativeLabRegistersStartsAndEmitsPackets) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationIntegrationDerivativeLab sim;
+
+    sim.on_register(host);
+    EXPECT_GE(services.panels().active_count(), 1u);
+    EXPECT_EQ(services.render().active_view_count(), 1u);
+
+    sim.on_start();
+    services.render().clear_packets();
+    sim.on_tick(host.clock().next(1.f / 60.f));
+    sim.on_submit_render();
+
+    EXPECT_GT(services.render().packet_count(sim.main_view_id()), 0u);
+    EXPECT_NEAR(sim.result().estimate, 2.0, 0.01);
+    EXPECT_EQ(sim.snapshot().name, "Integration & Derivative Lab");
+
+    sim.on_stop();
+    EXPECT_EQ(services.panels().active_count(), 0u);
+    EXPECT_EQ(services.render().active_view_count(), 0u);
+}
+
+TEST(AllSimulations, LabPickerRegistersOnlyPickerPanel) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    bool switched = false;
+    std::size_t target = 0u;
+    SimulationLabPicker sim(nullptr, [&](std::size_t index) {
+        switched = true;
+        target = index;
+    });
+
+    sim.on_register(host);
+    EXPECT_EQ(services.panels().active_count(), 1u);
+    EXPECT_EQ(services.render().active_view_count(), 0u);
+
+    sim.on_start();
+    sim.on_tick(host.clock().next(1.f / 60.f));
+    EXPECT_EQ(sim.snapshot().name, "Lab Picker");
+    EXPECT_FALSE(switched);
+    EXPECT_EQ(target, 0u);
+
+    sim.on_stop();
+    EXPECT_EQ(services.panels().active_count(), 0u);
+}
+
+TEST(AllSimulations, TaylorExpansionLabRegistersPanel) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationTaylorExpansionLab sim;
+
+    sim.on_register(host);
+    EXPECT_EQ(services.panels().active_count(), 1u);
+    EXPECT_EQ(services.render().active_view_count(), 0u);
+
+    sim.on_start();
+    sim.on_tick(host.clock().next(1.f / 60.f));
+    EXPECT_EQ(sim.snapshot().name, "Taylor Expansion Lab");
+
+    sim.on_stop();
+    EXPECT_EQ(services.panels().active_count(), 0u);
+}
+
+TEST(AllSimulations, DefaultRegistryContainsActiveLearningLabs) {
     EngineServices services;
     SimulationRegistry registry(services.memory());
     register_default_simulations(registry);
 
-    ASSERT_EQ(registry.size(), 1u);
-    EXPECT_EQ(registry.get(0)->name(), "Wave Predator-Prey");
+    ASSERT_EQ(registry.size(), 4u);
+    EXPECT_EQ(registry.get(0)->name(), "Lab Picker");
+    EXPECT_EQ(registry.get(1)->name(), "Smoke Test - Wave Predator-Prey");
+    EXPECT_EQ(registry.get(2)->name(), "Integration & Derivative Lab");
+    EXPECT_EQ(registry.get(3)->name(), "Taylor Expansion Lab");
 }
 
 TEST(AllSimulations, WavePredatorPreyDoubleClickSurfacePickAddsRipple) {

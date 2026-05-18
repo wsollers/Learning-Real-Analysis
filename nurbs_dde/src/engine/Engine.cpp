@@ -209,7 +209,9 @@ void Engine::start(const std::filesystem::path& executable_path,
     glfwMaximizeWindow(m_glfw.window());
 
     register_global_panels();
-    register_default_simulations(m_simulations);
+    register_default_simulations(m_simulations, [this](std::size_t index) {
+        m_pending_sim = index;
+    });
 
     m_active_sim = 0;
     active_runtime().instantiate(m_simulation_host);

@@ -26,6 +26,8 @@ add_library(ndde_math STATIC
     math/Surfaces.cpp
     math/Axes.cpp
     math/ExtremumTable.cpp
+    math/integration/Integration1D.cpp
+    math/integration/Integration2D.cpp
 )
 target_include_directories(ndde_math PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_math PUBLIC ndde_numeric glm::glm)
@@ -120,8 +122,11 @@ target_link_libraries(ndde_engine PUBLIC
 add_executable(nurbs_dde
     app/main.cpp
     app/AnimatedCurve.cpp
+    app/SimulationIntegrationDerivativeLab.cpp
+    app/SimulationLabPicker.cpp
     app/ParticleSystem.cpp
     app/SceneFactories.cpp
+    app/SimulationTaylorExpansionLab.cpp
     app/SimulationWavePredatorPrey.cpp
     app/SurfaceMeshCache.cpp
     simulation/fields/IField.cpp

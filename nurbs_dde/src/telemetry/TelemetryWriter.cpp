@@ -5,24 +5,15 @@
 #include <chrono>
 #include <format>
 #include <iostream>
-#include <sstream>
 
 namespace ndde::telemetry {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 std::string TelemetryWriter::iso8601_now() {
-    const auto now  = std::chrono::system_clock::now();
-    const auto time = std::chrono::system_clock::to_time_t(now);
-    std::tm tm{};
-#if defined(_WIN32)
-    gmtime_s(&tm, &time);
-#else
-    gmtime_r(&time, &tm);
-#endif
-    std::ostringstream ss;
-    ss << std::put_time(&tm, "%Y-%m-%dT%H:%M:%SZ");
-    return ss.str();
+    const auto now = std::chrono::floor<std::chrono::seconds>(
+        std::chrono::system_clock::now());
+    return std::format("{:%FT%TZ}", now);
 }
 
 std::filesystem::path TelemetryWriter::make_stem(std::string_view sim_name,
@@ -42,19 +33,10 @@ std::filesystem::path TelemetryWriter::make_stem(std::string_view sim_name,
     if (!name.empty() && name.back() == '_') name.pop_back();
     if (name.empty()) name = "simulation";
 
-    // Timestamp suffix
-    const auto now  = std::chrono::system_clock::now();
-    const auto time = std::chrono::system_clock::to_time_t(now);
-    std::tm tm{};
-#if defined(_WIN32)
-    localtime_s(&tm, &time);
-#else
-    localtime_r(&time, &tm);
-#endif
-    std::ostringstream ss;
-    ss << std::put_time(&tm, "%Y%m%d_%H%M%S");
+    const auto now = std::chrono::floor<std::chrono::seconds>(
+        std::chrono::system_clock::now());
 
-    return m_output_dir / std::format("{}_{}_{}", name, index, ss.str());
+    return m_output_dir / std::format("{}_{}_{:%Y%m%d_%H%M%S}", name, index, now);
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────

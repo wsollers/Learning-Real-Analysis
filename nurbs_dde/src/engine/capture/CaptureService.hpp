@@ -64,7 +64,7 @@ private:
                                                         CaptureTarget target,
                                                         const CaptureRunMetadata& metadata) const;
     [[nodiscard]] static std::filesystem::path unique_path(std::filesystem::path path);
-    [[nodiscard]] static std::string local_timestamp();
+    [[nodiscard]] static std::string file_timestamp();
 
     void enqueue_manifest_write(std::filesystem::path manifest_path,
                                 CaptureRequest request,

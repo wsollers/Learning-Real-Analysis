@@ -8,8 +8,6 @@
 #include <cctype>
 #include <format>
 #include <fstream>
-#include <iomanip>
-#include <sstream>
 
 namespace ndde {
 
@@ -186,7 +184,7 @@ std::string CaptureService::make_run_id(const CaptureRunMetadata& metadata) cons
     const std::string base = !metadata.simulation_name.empty()
         ? normalize_stem(metadata.simulation_name)
         : normalize_stem(metadata.scenario_name);
-    return std::format("{}_{}_{}", base, metadata.simulation_index, local_timestamp());
+    return std::format("{}_{}_{}", base, metadata.simulation_index, file_timestamp());
 }
 
 std::filesystem::path CaptureService::make_manifest_path(const std::filesystem::path& run_dir,
@@ -226,18 +224,10 @@ std::filesystem::path CaptureService::unique_path(std::filesystem::path path) {
     return path;
 }
 
-std::string CaptureService::local_timestamp() {
-    const auto now = std::chrono::system_clock::now();
-    const auto time = std::chrono::system_clock::to_time_t(now);
-    std::tm tm{};
-#if defined(_WIN32)
-    localtime_s(&tm, &time);
-#else
-    localtime_r(&time, &tm);
-#endif
-    std::ostringstream ss;
-    ss << std::put_time(&tm, "%Y%m%d_%H%M%S");
-    return ss.str();
+std::string CaptureService::file_timestamp() {
+    const auto now = std::chrono::floor<std::chrono::seconds>(
+        std::chrono::system_clock::now());
+    return std::format("{:%Y%m%d_%H%M%S}", now);
 }
 
 void CaptureService::enqueue_manifest_write(std::filesystem::path manifest_path,

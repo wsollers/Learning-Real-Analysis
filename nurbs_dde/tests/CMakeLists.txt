@@ -16,6 +16,8 @@ add_executable(ndde_tests
     test_engine_services.cpp
     test_gravitational_systems.cpp
     test_history_buffer.cpp
+    test_integration2d_core.cpp
+    test_integration_lab_core.cpp
     test_logger_service.cpp
     test_metrics_service.cpp
     test_milstein_integrator.cpp
@@ -31,8 +33,11 @@ add_executable(ndde_tests
     # test_differential_system.cpp
     # test_simulation_surface_gaussian.cpp
     ${CMAKE_SOURCE_DIR}/src/app/AnimatedCurve.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationIntegrationDerivativeLab.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationLabPicker.cpp
     ${CMAKE_SOURCE_DIR}/src/app/ParticleSystem.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SceneFactories.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/SimulationTaylorExpansionLab.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SimulationWavePredatorPrey.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SurfaceMeshCache.cpp
     ${CMAKE_SOURCE_DIR}/src/simulation/fields/IField.cpp

@@ -4,9 +4,13 @@
 
 #include "engine/SimulationRuntime.hpp"
 
+#include <functional>
+
 namespace ndde {
 
-void register_default_simulations(SimulationRegistry& registry);
+using SimulationSwitchRequest = std::function<void(std::size_t)>;
+
+void register_default_simulations(SimulationRegistry& registry,
+                                  SimulationSwitchRequest switch_request = {});
 
 } // namespace ndde
-

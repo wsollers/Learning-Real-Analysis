@@ -299,26 +299,26 @@ be verified against the current tree before implementation.
 ### Ctrl+Number Simulation Switching
 
 **Decision:** yes. Maintain a HOTKEY_MAP.MD that we can use / reference or better add a post build cmake step to extract data from the c++ to autocreate the doc.  
-**Status:** pending  
+**Status:** complete  
 **Area:** input cleanup  
 **Files:** `src/engine/Engine.cpp`  
 **Reason to consider:** Repeated `Ctrl+1` through `Ctrl+5` conditionals can become range arithmetic.
 
 **Current opinion:** Tiny cleanup. Do when touching hotkeys.
 
-**Notes:**
+**Notes:** Complete. `Engine::on_key_event` already uses range arithmetic for `Ctrl+1` through `Ctrl+9`. Added `docs/HOTKEY_MAP.md` as the maintained hotkey reference and noted a few visible UI labels that should either become registered hotkeys or lose the chord label.
 
 ### Capture Timestamp Portability
 
 **Decision:** yes, prefer std:: to any thing compiler / platform specifc. Add that to all engineering blurbs in design documents and use it for all new design documents as well.  
-**Status:** pending  
+**Status:** complete  
 **Area:** portability  
 **Files:** `src/engine/Engine.cpp`  
 **Reason to consider:** `localtime_s` is MSVC-specific. `std::chrono`/`std::format` could be more portable if compiler support is sufficient.
 
 **Current opinion:** Low priority while Windows/MSVC is the active development environment.
 
-**Notes:**
+**Notes:** Complete. Capture and telemetry timestamp formatting now use `std::chrono` plus `std::format`, removing `localtime_s`, `localtime_r`, `gmtime_s`, `gmtime_r`, `std::tm`, and `std::put_time` from the active source tree.
 
 ## Already Checked Or Likely Stale
 
