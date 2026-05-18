@@ -549,6 +549,7 @@ void SimulationWavePredatorPrey::submit_geometry() {
             .grid_lines = 80u, .time = m_sim_time, .color_scale = f32(1.05),
             .wire_color = {f32(0.92), f32(0.96), f32(1), f32(0.30)},
             .fill_color_mode = SurfaceFillColorMode::HeightCell,
+            .build_fill = false,
             .build_contour = true
         },
         &m_host->interaction(), &m_host->memory(), &m_host->camera());

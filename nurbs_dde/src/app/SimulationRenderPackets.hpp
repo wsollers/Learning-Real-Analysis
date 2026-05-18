@@ -667,15 +667,18 @@ inline void submit_surface_sim_packets(RenderService& render,
     const Mat4 alternate_mvp = camera_service ? camera_service->orthographic_mvp(alternate_view)
                                               : surface_alternate_mvp(surface, options.time);
     const RenderViewDescriptor* main_descriptor = render.descriptor(main_view);
+    bool mouse_enabled = false;
     if (interaction && main_descriptor) {
         const ViewMouseState mouse = interaction->mouse_state(main_view);
-        if (mouse.enabled)
+        mouse_enabled = mouse.enabled;
+        if (mouse_enabled)
             (void)interaction->resolve_surface_hit(main_view, surface, main_mvp, mouse.ndc, options.time);
     }
     const memory::FrameVector<TrailPickSample> pick_samples =
-        (interaction && main_descriptor) ? build_trail_pick_samples(particles, surface, options.time, memory_service)
-                                         : make_frame_vector<TrailPickSample>(memory_service);
-    const ParticleTrailHit hover = (interaction && main_descriptor)
+        (interaction && main_descriptor && mouse_enabled)
+            ? build_trail_pick_samples(particles, surface, options.time, memory_service)
+            : make_frame_vector<TrailPickSample>(memory_service);
+    const ParticleTrailHit hover = (interaction && main_descriptor && mouse_enabled)
         ? interaction->resolve_particle_trail_hit(main_view, pick_samples, main_mvp, main_descriptor->viewport_size)
         : ParticleTrailHit{};
 

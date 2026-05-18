@@ -21,6 +21,7 @@ struct SurfaceMeshOptions {
     f32 color_scale = 1.f;
     Vec4 wire_color{0.9f, 0.95f, 1.f, 0.45f};
     SurfaceFillColorMode fill_color_mode = SurfaceFillColorMode::HeightCell;
+    bool build_fill = true;
     bool build_contour = true;
 };
 
@@ -47,6 +48,8 @@ public:
 private:
     bool m_dirty = true;
     u32 m_cached_grid = 0;
+    bool m_cached_build_fill = true;
+    bool m_cached_build_contour = true;
     std::pmr::memory_resource* m_cache_resource = std::pmr::get_default_resource();
 
     memory::CacheVector<Vertex> m_fill;
