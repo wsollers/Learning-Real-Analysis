@@ -18,6 +18,7 @@ add_executable(ndde_tests
     test_history_buffer.cpp
     test_logger_service.cpp
     test_metrics_service.cpp
+    test_milstein_integrator.cpp
     test_mp_units_integration.cpp
     test_resource_manager_service.cpp
     test_sim_metadata_service.cpp

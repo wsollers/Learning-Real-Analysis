@@ -65,6 +65,7 @@ public:
     static void set_global_seed(uint64_t seed) noexcept {
         s_global_seed = seed;
         s_seed_set    = (seed != 0);
+        ++s_seed_generation;
     }
     [[nodiscard]] static uint64_t global_seed()    noexcept { return s_global_seed; }
     [[nodiscard]] static bool     seed_is_fixed()  noexcept { return s_seed_set; }
@@ -107,7 +108,7 @@ private:
     // Box-Muller transform: generate two independent N(0,1) samples.
     // thread_local RNG: uses s_global_seed when fixed, else hardware entropy.
     [[nodiscard]] static glm::vec2 normal2() {
-        thread_local std::mt19937 rng{ []() {
+        const auto make_rng = []() {
             if (s_seed_set) {
                 std::seed_seq seq{
                     static_cast<uint32_t>(s_global_seed >> 32u),
@@ -118,7 +119,13 @@ private:
             std::random_device rd;
             std::seed_seq seq{rd(), rd(), rd(), rd()};
             return std::mt19937{seq};
-        }() };
+        };
+        thread_local uint64_t observed_generation = 0;
+        thread_local std::mt19937 rng{make_rng()};
+        if (observed_generation != s_seed_generation) {
+            rng = make_rng();
+            observed_generation = s_seed_generation;
+        }
         thread_local std::uniform_real_distribution<float> uniform(1e-7f, 1.f);
 
         const float u1 = uniform(rng);
@@ -130,6 +137,7 @@ private:
 
     inline static uint64_t s_global_seed = 0;
     inline static bool     s_seed_set    = false;
+    inline static uint64_t s_seed_generation = 1;
 
     // Central finite-difference estimate of d sigma/d(u,v) at current position.
     // Uses the diagonal components: d(sigma_u)/du and d(sigma_v)/dv.

@@ -89,14 +89,14 @@ be verified against the current tree before implementation.
 ### Milstein Statistical Variance Test
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** numerical tests  
 **Files:** `src/sim/MilsteinIntegrator.hpp`, `tests/`  
 **Reason to consider:** For pure diffusion, the expected variance is known. A statistical test can catch bad `sqrt(dt)` scaling, RNG wiring, or Milstein correction mistakes.
 
 **Current opinion:** Useful, but keep tolerances broad enough to avoid flaky CI. Prefer deterministic seed and enough particles/samples for stability.
 
-**Notes:**
+**Notes:** Complete. Added deterministic pure-Brownian variance coverage for `MilsteinIntegrator`. The test checks both parameter axes against the analytic variance `sigma^2 * T`. `MilsteinIntegrator::set_global_seed()` now bumps a seed generation so thread-local RNGs can be reseeded deterministically even if the current thread initialized the generator earlier.
 
 ### DelayPursuitEquation Surface Ownership
 
