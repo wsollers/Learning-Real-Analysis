@@ -118,13 +118,13 @@ FetchContent_MakeAvailable(googletest)
 FetchContent_Declare(imgui
     GIT_REPOSITORY https://github.com/ocornut/imgui.git
     GIT_TAG        docking
-    GIT_SHALLOW    OFF)
+    GIT_SHALLOW    ON)
 FetchContent_MakeAvailable(imgui)
 
 find_package(Vulkan REQUIRED)
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-add_library(imgui STATIC
+add_library(ndde_imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp
     ${imgui_SOURCE_DIR}/imgui_draw.cpp
     ${imgui_SOURCE_DIR}/imgui_tables.cpp
@@ -133,12 +133,13 @@ add_library(imgui STATIC
     ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp
 )
-target_include_directories(imgui PUBLIC
+add_library(ndde::imgui ALIAS ndde_imgui)
+target_include_directories(ndde_imgui PUBLIC
     ${imgui_SOURCE_DIR}
     ${imgui_SOURCE_DIR}/backends
 )
-target_compile_definitions(imgui PUBLIC IMGUI_IMPL_VULKAN_USE_VOLK)
-target_link_libraries(imgui PUBLIC Vulkan::Vulkan volk glfw)
+target_compile_definitions(ndde_imgui PUBLIC IMGUI_IMPL_VULKAN_USE_VOLK)
+target_link_libraries(ndde_imgui PUBLIC Vulkan::Vulkan volk glfw)
 
 # ── Global Vulkan define ──────────────────────────────────────────────────────
 # volk loads all Vulkan function pointers at runtime.

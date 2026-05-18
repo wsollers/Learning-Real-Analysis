@@ -12,6 +12,8 @@
 #include <string>
 #include <string_view>
 
+#include <imgui.h>
+
 namespace ndde {
 
 using PanelId = u64;
@@ -27,7 +29,11 @@ struct PanelDescriptor {
     std::string category = "Simulation";
     PanelScope scope = PanelScope::Simulation;
     bool initially_open = true;
+    ImVec2 first_use_pos{0.f, 0.f};
+    ImVec2 first_use_size{0.f, 0.f};
+    f32 background_alpha = 0.86f;
     std::function<void()> draw;
+    std::function<void()> draw_body;
 };
 
 class PanelService {
@@ -62,9 +68,14 @@ public:
     void draw_registered_panels(PanelScope scope) {
         if (!require_owner_thread("PanelService::draw_registered_panels")) return;
         for (auto& entry : m_panels) {
-            if (!entry.active || !entry.descriptor.draw) continue;
+            if (!entry.active) continue;
             if (entry.descriptor.scope != scope) continue;
-            entry.descriptor.draw();
+            if (entry.descriptor.draw) {
+                entry.descriptor.draw();
+                continue;
+            }
+            if (!entry.descriptor.draw_body) continue;
+            draw_window_panel(entry.descriptor);
         }
     }
 
@@ -114,9 +125,24 @@ private:
             if (entry.id == id) {
                 entry.active = false;
                 entry.descriptor.draw = {};
+                entry.descriptor.draw_body = {};
                 return;
             }
         }
+    }
+
+    static void draw_window_panel(const PanelDescriptor& descriptor) {
+        if (descriptor.first_use_pos.x != 0.f || descriptor.first_use_pos.y != 0.f)
+            ImGui::SetNextWindowPos(descriptor.first_use_pos, ImGuiCond_FirstUseEver);
+        if (descriptor.first_use_size.x > 0.f && descriptor.first_use_size.y > 0.f)
+            ImGui::SetNextWindowSize(descriptor.first_use_size, ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowBgAlpha(descriptor.background_alpha);
+        if (!ImGui::Begin(descriptor.title.c_str())) {
+            ImGui::End();
+            return;
+        }
+        descriptor.draw_body();
+        ImGui::End();
     }
 };
 

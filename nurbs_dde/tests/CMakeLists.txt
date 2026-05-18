@@ -61,7 +61,7 @@ target_link_libraries(ndde_tests PRIVATE
     ndde_telemetry
     ndde_simulation
     volk
-    imgui
+    ndde::imgui
     nlohmann_json::nlohmann_json
     GTest::gtest_main
     glm::glm

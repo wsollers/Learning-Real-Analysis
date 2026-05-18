@@ -65,7 +65,7 @@ target_include_directories(ndde_renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_renderer PUBLIC
     ndde_platform
     ndde_memory
-    imgui
+    ndde::imgui
     Vulkan::Vulkan
 )
 
@@ -128,7 +128,7 @@ add_executable(nurbs_dde
     simulation/scenario/ScenarioBuilder.cpp
 )
 target_include_directories(nurbs_dde PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(nurbs_dde PRIVATE ndde_engine imgui)
+target_link_libraries(nurbs_dde PRIVATE ndde_engine ndde::imgui)
 
 # ── Compiler flags ────────────────────────────────────────────────────────────
 set(NDDE_TARGETS ndde_math ndde_memory ndde_platform ndde_renderer ndde_telemetry ndde_simulation ndde_engine nurbs_dde)
@@ -167,17 +167,6 @@ compile_shaders(
 
 set(ASSETS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/assets")
 
-target_compile_definitions(nurbs_dde  PRIVATE
-    SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
-    ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
-    NDDE_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
-)
-target_compile_definitions(ndde_engine PRIVATE
-    SHADER_DIR="${CMAKE_BINARY_DIR}/shaders"
-    ASSETS_DIR="${ASSETS_OUTPUT_DIR}"
-    NDDE_PROJECT_DIR="${CMAKE_SOURCE_DIR}"
-)
-
 # ── Assets copy ───────────────────────────────────────────────────────────────
 add_custom_target(nurbs_dde_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -185,6 +174,14 @@ add_custom_target(nurbs_dde_assets ALL
     COMMENT "Copying assets to build directory"
 )
 add_dependencies(nurbs_dde nurbs_dde_assets)
+
+add_custom_command(TARGET nurbs_dde POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ASSETS_OUTPUT_DIR}" "$<TARGET_FILE_DIR:nurbs_dde>/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_BINARY_DIR}/shaders" "$<TARGET_FILE_DIR:nurbs_dde>/shaders"
+    COMMENT "Copying runtime assets and shaders beside executable"
+)
 
 # ── engine_config.json copy ───────────────────────────────────────────────────
 add_custom_target(nurbs_dde_config ALL

@@ -34,9 +34,12 @@ public:
     [[nodiscard]] u32        width()  const noexcept { return m_width.load(std::memory_order_relaxed);  }
     [[nodiscard]] u32        height() const noexcept { return m_height.load(std::memory_order_relaxed); }
     [[nodiscard]] GLFWwindow* window() const noexcept { return m_window; }
+    void set_key_callback_user(void* user) noexcept { m_key_callback_user = user; }
+    [[nodiscard]] void* key_callback_user() const noexcept { return m_key_callback_user; }
 
 private:
     GLFWwindow*       m_window      = nullptr;
+    void*             m_key_callback_user = nullptr;
     std::atomic<u32>  m_width{0};
     std::atomic<u32>  m_height{0};
     std::atomic<bool> m_resized{false};

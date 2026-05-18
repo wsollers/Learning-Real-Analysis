@@ -36,7 +36,8 @@ public:
     Engine(Engine&&)                 = delete;
     Engine& operator=(Engine&&)      = delete;
 
-    void start(const std::string& config_path = "engine_config.json");
+    void start(const std::filesystem::path& executable_path = {},
+               const std::filesystem::path& config_path = "engine_config.json");
     void run();
 
     void switch_simulation(std::size_t index);
@@ -76,6 +77,11 @@ private:
     DebugStats m_debug_stats;
     u32        m_surface_perturb_seed = 1;
     memory::PersistentVector<PanelHandle> m_global_panels;
+    std::filesystem::path m_executable_dir{"."};
+    std::filesystem::path m_shader_dir{"shaders"};
+    std::filesystem::path m_assets_dir{"assets"};
+    std::filesystem::path m_telemetry_dir{"telemetry"};
+    std::filesystem::path m_capture_dir{"captures"};
 
     // ── Telemetry ──────────────────────────────────────────────────────────────
     telemetry::TelemetryService m_telemetry;

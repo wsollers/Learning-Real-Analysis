@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <chrono>
 #include <cctype>
-#include <ctime>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
@@ -19,20 +18,13 @@
 #include <span>
 #include <sstream>
 #include <stdexcept>
-#include <unordered_map>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#ifndef NDDE_PROJECT_DIR
-#define NDDE_PROJECT_DIR "."
-#endif
-
 namespace ndde {
 
 namespace {
-std::unordered_map<GLFWwindow*, Engine*> g_hotkey_engines;
-
 std::string_view render_kind_name(RenderViewKind kind) noexcept {
     return kind == RenderViewKind::Main ? "Main" : "Alternate";
 }
@@ -68,12 +60,54 @@ void draw_wrapped_log_text(std::string_view text, ImVec4 color) {
     ImGui::PopStyleColor();
 }
 
+[[nodiscard]] std::filesystem::path absolute_path_or_empty(const std::filesystem::path& path) {
+    if (path.empty()) return {};
+    return std::filesystem::absolute(path).lexically_normal();
+}
+
+[[nodiscard]] std::filesystem::path executable_directory(const std::filesystem::path& executable_path) {
+    const std::filesystem::path absolute = absolute_path_or_empty(executable_path);
+    if (!absolute.empty() && absolute.has_parent_path()) {
+        return absolute.parent_path();
+    }
+    return std::filesystem::current_path();
+}
+
+[[nodiscard]] std::filesystem::path resolve_relative_to(const std::filesystem::path& base,
+                                                        const std::filesystem::path& path) {
+    if (path.empty()) return base;
+    if (path.is_absolute()) return path.lexically_normal();
+    return (base / path).lexically_normal();
+}
+
+[[nodiscard]] std::filesystem::path resolve_config_path(const std::filesystem::path& executable_dir,
+                                                        const std::filesystem::path& requested) {
+    if (requested.is_absolute()) return requested.lexically_normal();
+
+    const std::filesystem::path beside_exe = (executable_dir / requested).lexically_normal();
+    if (std::filesystem::exists(beside_exe)) {
+        return beside_exe;
+    }
+    return requested;
+}
+
+[[nodiscard]] std::filesystem::path prefer_existing_path(const std::filesystem::path& preferred,
+                                                        const std::filesystem::path& fallback) {
+    if (std::filesystem::exists(preferred)) {
+        return preferred;
+    }
+    return fallback.lexically_normal();
+}
+
 } // namespace
 
 void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
-    if (auto it = g_hotkey_engines.find(window); it != g_hotkey_engines.end())
-        it->second->on_key_event(key, action, mods);
+    auto* glfw_context = static_cast<platform::GlfwContext*>(glfwGetWindowUserPointer(window));
+    if (!glfw_context) return;
+    auto* engine = static_cast<Engine*>(glfw_context->key_callback_user());
+    if (!engine) return;
+    engine->on_key_event(key, action, mods);
 }
 
 Engine::Engine()
@@ -112,10 +146,19 @@ Engine::~Engine() {
     m_glfw.destroy();
 }
 
-void Engine::start(const std::string& config_path) {
+void Engine::start(const std::filesystem::path& executable_path,
+                   const std::filesystem::path& config_path) {
     std::cout << "[Engine] Starting...\n";
 
-    m_config = AppConfig::load_or_default(config_path);
+    m_executable_dir = executable_directory(executable_path);
+    const std::filesystem::path resolved_config = resolve_config_path(m_executable_dir, config_path);
+    m_config = AppConfig::load_or_default(resolved_config.string());
+    m_shader_dir = prefer_existing_path(m_executable_dir / "shaders",
+                                        std::filesystem::current_path() / "shaders");
+    m_assets_dir = prefer_existing_path(resolve_relative_to(m_executable_dir, m_config.assets_dir),
+                                        resolve_relative_to(std::filesystem::current_path(), m_config.assets_dir));
+    m_telemetry_dir = resolve_relative_to(m_executable_dir, m_config.telemetry.output_dir);
+    m_capture_dir = resolve_relative_to(m_executable_dir, "captures");
 
     m_glfw.init(m_config.window.width,
                 m_config.window.height,
@@ -126,7 +169,7 @@ void Engine::start(const std::string& config_path) {
 
     m_vk.init(m_glfw.window(), m_config.window.title);
     m_swapchain.init(m_vk, m_glfw.width(), m_glfw.height(), m_config.render.vsync);
-    m_renderer.init(m_vk, m_swapchain, SHADER_DIR, ASSETS_DIR, m_glfw.window());
+    m_renderer.init(m_vk, m_swapchain, m_shader_dir.string(), m_assets_dir.string(), m_glfw.window());
     start_render_presentation_thread();
     install_global_hotkeys();
 
@@ -149,7 +192,7 @@ void Engine::start(const std::string& config_path) {
             m_second_win.init(m_vk, x, y,
                 static_cast<u32>(vm->width),
                 static_cast<u32>(vm->height),
-                "Contour 2D", SHADER_DIR, m_config.render.vsync);
+                "Contour 2D", m_shader_dir.string(), m_config.render.vsync);
         } else {
             // Single monitor: place second window at right half
             int mx=0, my=0;
@@ -158,7 +201,7 @@ void Engine::start(const std::string& config_path) {
             const u32 hw = static_cast<u32>(vm->width / 2);
             m_second_win.init(m_vk, mx + static_cast<int>(hw), my,
                 hw, static_cast<u32>(vm->height),
-                "Contour 2D", SHADER_DIR, m_config.render.vsync);
+                "Contour 2D", m_shader_dir.string(), m_config.render.vsync);
         }
     }
 
@@ -178,8 +221,8 @@ void Engine::start(const std::string& config_path) {
     if (m_config.telemetry.enabled) {
         m_telemetry.init(
             m_config.telemetry.buffer_records,
-            std::filesystem::path{NDDE_PROJECT_DIR} / m_config.telemetry.output_dir);
-        fire_app_started(config_path);
+            m_telemetry_dir);
+        fire_app_started(resolved_config.string());
         fire_sim_started(m_active_sim);
     }
 
@@ -213,7 +256,7 @@ void Engine::start(const std::string& config_path) {
 void Engine::install_global_hotkeys() {
     GLFWwindow* window = m_glfw.window();
     if (!window) return;
-    g_hotkey_engines[window] = this;
+    m_glfw.set_key_callback_user(this);
     glfwSetKeyCallback(window, engine_key_callback);
 #if defined(_WIN32)
     std::cout << "[Engine] Global hotkeys: GLFW event callback (Win32 backend)\n";
@@ -227,8 +270,10 @@ void Engine::install_global_hotkeys() {
 void Engine::uninstall_global_hotkeys() noexcept {
     GLFWwindow* window = m_glfw.window();
     if (!window) return;
-    g_hotkey_engines.erase(window);
     glfwSetKeyCallback(window, nullptr);
+    if (m_glfw.key_callback_user() == this) {
+        m_glfw.set_key_callback_user(nullptr);
+    }
 }
 
 void Engine::switch_simulation(std::size_t index) {
@@ -432,46 +477,53 @@ void Engine::register_global_panels() {
         .title = "Engine - Global",
         .category = "Engine",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_global_status_panel(); }
+        .first_use_pos = ImVec2(12.f, 34.f),
+        .first_use_size = ImVec2(260.f, 150.f),
+        .draw_body = [this] { draw_global_status_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Debug - Coordinates",
         .category = "Debug",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_debug_coordinates_panel(); }
+        .first_use_pos = ImVec2(290.f, 34.f),
+        .first_use_size = ImVec2(340.f, 220.f),
+        .draw_body = [this] { draw_debug_coordinates_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Simulation - Metadata",
         .category = "Debug",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_simulation_metadata_panel(); }
+        .first_use_pos = ImVec2(650.f, 34.f),
+        .first_use_size = ImVec2(380.f, 420.f),
+        .draw_body = [this] { draw_simulation_metadata_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Engine - Log",
         .category = "Engine",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_event_log_panel(); }
+        .first_use_pos = ImVec2(1048.f, 34.f),
+        .first_use_size = ImVec2(320.f, 400.f),
+        .draw_body = [this] { draw_event_log_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Engine - Threads",
         .category = "Engine",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_thread_health_panel(); }
+        .first_use_pos = ImVec2(704.f, 34.f),
+        .first_use_size = ImVec2(420.f, 360.f),
+        .draw_body = [this] { draw_thread_health_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Engine - Metrics",
         .category = "Engine",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_metrics_panel(); }
+        .first_use_pos = ImVec2(720.f, 420.f),
+        .first_use_size = ImVec2(420.f, 300.f),
+        .draw_body = [this] { draw_metrics_panel(); }
     }));
 }
 
 void Engine::draw_global_status_panel() {
-    ImGui::SetNextWindowPos(ImVec2(12.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(260.f, 150.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Engine - Global")) { ImGui::End(); return; }
-
     ImGui::SeparatorText("Simulations");
     for (std::size_t i = 0; i < m_simulations.size(); ++i) {
         auto* sim = m_simulations.get(i);
@@ -511,15 +563,9 @@ void Engine::draw_global_status_panel() {
         (void)m_services.camera().frame_selection(m_services.interaction());
     ImGui::TextDisabled("RMB drag orbit   MMB/Shift+RMB pan   Wheel zoom");
     ImGui::TextDisabled("Double-click surface perturb");
-    ImGui::End();
 }
 
 void Engine::draw_debug_coordinates_panel() {
-    ImGui::SetNextWindowPos(ImVec2(290.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(340.f, 220.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Debug - Coordinates")) { ImGui::End(); return; }
-
     const ImGuiIO& io = ImGui::GetIO();
     const Vec2 fb{static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())};
     ImGui::SeparatorText("Mouse");
@@ -609,19 +655,13 @@ void Engine::draw_debug_coordinates_panel() {
                 selected.trail_index);
             ImGui::TextDisabled("k %.5f   tau %.5f", selected.curvature, selected.torsion);
             ImGui::TextDisabled("k_n %.5f   k_g %.5f",
-                selected.normal_curvature,
-                selected.geodesic_curvature);
+            selected.normal_curvature,
+            selected.geodesic_curvature);
         }
     }
-    ImGui::End();
 }
 
 void Engine::draw_simulation_metadata_panel() {
-    ImGui::SetNextWindowPos(ImVec2(650.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(380.f, 420.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Simulation - Metadata")) { ImGui::End(); return; }
-
     const SimulationMetadata metadata = active_runtime().metadata();
     const SceneSnapshot snapshot = active_runtime().snapshot();
     ImGui::SeparatorText("Simulation");
@@ -667,15 +707,9 @@ void Engine::draw_simulation_metadata_panel() {
         ImGui::SameLine();
         ImGui::TextDisabled("(%.2f, %.2f, %.2f)", particle.x, particle.y, particle.z);
     }
-    ImGui::End();
 }
 
 void Engine::draw_event_log_panel() {
-    ImGui::SetNextWindowPos(ImVec2(1048.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(320.f, 400.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Engine - Log")) { ImGui::End(); return; }
-
     const ImGuiStyle& style = ImGui::GetStyle();
     const f32 footer_height =
         (ImGui::GetTextLineHeightWithSpacing() * 2.0f) +
@@ -733,15 +767,9 @@ void Engine::draw_event_log_panel() {
         static_cast<unsigned long long>(m_services.events().log(EventChannelId::Simulation).total_dropped()));
     ImGui::TextDisabled("Logger: %llu records dropped",
         static_cast<unsigned long long>(m_services.logger().dropped_records()));
-    ImGui::End();
 }
 
 void Engine::draw_thread_health_panel() {
-    ImGui::SetNextWindowPos(ImVec2(704.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(420.f, 360.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Engine - Threads")) { ImGui::End(); return; }
-
     ThreadManagementService& threads = m_services.threads();
     const ThreadStats stats = threads.stats();
     ImGui::SeparatorText("Queues");
@@ -793,15 +821,9 @@ void Engine::draw_thread_health_panel() {
         }
         ImGui::EndTable();
     }
-    ImGui::End();
 }
 
 void Engine::draw_metrics_panel() {
-    ImGui::SetNextWindowPos(ImVec2(720.f, 420.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(420.f, 300.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Engine - Metrics")) { ImGui::End(); return; }
-
     const MetricSummary frame = m_services.metrics().short_summary(MetricId::FrameMs);
     ImGui::TextDisabled("Median %.1f FPS   P95 %.2f ms   Latest %.2f ms",
         m_services.metrics().median_fps(),
@@ -858,7 +880,6 @@ void Engine::draw_metrics_panel() {
         static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsSubmitted)),
         static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsCompleted)),
         static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsFailed)));
-    ImGui::End();
 }
 
 void Engine::apply_pending_simulation_switch() {
@@ -1037,7 +1058,7 @@ void Engine::request_capture(bool pause_first) {
         active_runtime().pause();
 
     const TickInfo tick = m_services.clock().current();
-    m_services.capture().set_output_dir(std::filesystem::path{NDDE_PROJECT_DIR} / "captures");
+    m_services.capture().set_output_dir(m_capture_dir);
     m_services.capture().request_still(CaptureRequest{
         .mode = CaptureMode::StillPng,
         .target = CaptureTarget::BothWindows,

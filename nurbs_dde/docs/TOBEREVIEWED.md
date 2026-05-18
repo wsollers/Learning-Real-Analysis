@@ -213,26 +213,26 @@ be verified against the current tree before implementation.
 ### Engine Responsibility Split
 
 **Decision:** Yes, implement a global PanelService that handles the panels.   
-**Status:** pending  
+**Status:** complete  
 **Area:** engine architecture  
 **Files:** `src/engine/Engine.hpp`, `src/engine/Engine.cpp`  
 **Reason to consider:** `Engine` owns frame loop, simulation switching, input, global panels, capture, telemetry, and renderer coordination.
 
 **Current opinion:** Extracting all of this at once would be churn. A `GlobalPanelSet` or panel service consolidation is the most natural first extraction if the class keeps growing.
 
-**Notes:**
+**Notes:** Complete for the first extraction. `PanelService` now supports service-owned ImGui window framing via `draw_body`, including first-use position, size, and background alpha. Engine global panels register body callbacks, so the service owns global panel Begin/End/window placement while older full-window callbacks remain supported. A later split can still move panel body implementations out of `Engine.cpp` if the class keeps growing.
 
 ### GLFW Hotkey Dispatch
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** platform/input cleanup  
 **Files:** `src/engine/Engine.cpp`  
 **Reason to consider:** A global `GLFWwindow* -> Engine*` map can be replaced with `glfwSetWindowUserPointer()` / `glfwGetWindowUserPointer()`.
 
 **Current opinion:** Small, good cleanup.
 
-**Notes:**
+**Notes:** Complete. The primary GLFW user pointer remains owned by `GlfwContext` for platform callbacks, and `GlfwContext` now carries an opaque key-callback user slot for the engine. `Engine` no longer needs the global `GLFWwindow* -> Engine*` map for hotkey dispatch.
 
 ### EngineAPI Hot-Path Function Objects
 
@@ -263,38 +263,38 @@ be verified against the current tree before implementation.
 ### ImGui Target Naming
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** CMake hygiene  
 **Files:** `CMakeLists.txt`  
 **Reason to consider:** A plain `imgui` target name can collide with external target names.
 
 **Current opinion:** Low-risk cleanup. Rename to `ndde_imgui` or add an alias when convenient.
 
-**Notes:**
+**Notes:** Complete. The manually defined Dear ImGui target is now `ndde_imgui`, with an `ndde::imgui` alias used by project targets and tests.
 
 ### ImGui Shallow Clone
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** CMake dependency fetch  
 **Files:** `CMakeLists.txt`  
 **Reason to consider:** `GIT_SHALLOW OFF` fetches full ImGui history.
 
 **Current opinion:** Set shallow clone on unless there is a workflow reason to preserve full history.
 
-**Notes:**
+**Notes:** Complete. Dear ImGui FetchContent now uses `GIT_SHALLOW ON` so clean dependency fetches avoid cloning the full repository history.
 
 ### Runtime Path Relocatability
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** packaging/runtime config  
 **Files:** `src/CMakeLists.txt`, config loading code  
 **Reason to consider:** Absolute `SHADER_DIR` and `NDDE_PROJECT_DIR` compile definitions make developer builds convenient but non-relocatable.
 
 **Current opinion:** Fine for local development. Revisit when packaging/distribution matters.
 
-**Notes:**
+**Notes:** Complete for the developer runtime path. Engine startup now resolves config, shaders, assets, telemetry, and capture output from the executable directory when possible. The build copies `assets`, `shaders`, and `engine_config.json` beside `nurbs_dde.exe`, and the engine no longer depends on `SHADER_DIR`, `ASSETS_DIR`, or `NDDE_PROJECT_DIR` compile definitions.
 
 ### Ctrl+Number Simulation Switching
 
