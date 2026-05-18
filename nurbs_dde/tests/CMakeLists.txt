@@ -15,6 +15,7 @@ add_executable(ndde_tests
     test_event_bus_service.cpp
     test_engine_services.cpp
     test_gravitational_systems.cpp
+    test_history_buffer.cpp
     test_logger_service.cpp
     test_metrics_service.cpp
     test_mp_units_integration.cpp

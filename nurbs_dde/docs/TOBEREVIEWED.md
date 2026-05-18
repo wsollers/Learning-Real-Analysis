@@ -77,14 +77,14 @@ be verified against the current tree before implementation.
 ### HistoryBuffer Wrap-Boundary Test
 
 **Decision:** yes 
-**Status:** pending  
+**Status:** complete  
 **Area:** simulation tests  
 **Files:** `src/sim/HistoryBuffer.hpp`, `tests/`  
 **Reason to consider:** Add coverage for filling the buffer to capacity, pushing across the wrap boundary, and querying/interpolating across the wrapped chronological order.
 
 **Current opinion:** Good targeted test. This protects DDE pursuit behavior from subtle off-by-one mistakes.
 
-**Notes:**
+**Notes:** Complete. Added `test_history_buffer.cpp` coverage for interpolation across the physical ring wrap boundary, chronological `to_vector()` export after wrap, and clamp behavior at the wrapped window extents.
 
 ### Milstein Statistical Variance Test
 
