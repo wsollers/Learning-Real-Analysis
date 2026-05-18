@@ -1,8 +1,5 @@
 // simulation/events/AlertRule.cpp
-// Full AnimatedCurve type available here — volk linked via ndde_simulation target.
 #include "simulation/events/AlertRule.hpp"
-#include "app/AnimatedCurve.hpp"
-#include "app/FrenetFrame.hpp"
 #include "math/Surfaces.hpp"
 #include "numeric/ops.hpp"
 #include <glm/glm.hpp>
@@ -12,13 +9,12 @@ namespace ndde::events {
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-static glm::vec3 world_pos(const AnimatedCurve& p, const math::ISurface& surface) {
-    const auto uv = p.head_uv();
-    const auto w  = surface.evaluate(uv.x, uv.y);
+static glm::vec3 world_pos(const AlertParticleView& p, const math::ISurface& surface) {
+    const auto w  = surface.evaluate(p.uv.x, p.uv.y);
     return {w.x, w.y, w.z};
 }
 
-static f32 world_dist(const AnimatedCurve& a, const AnimatedCurve& b,
+static f32 world_dist(const AlertParticleView& a, const AlertParticleView& b,
                        const math::ISurface& surface) {
     const glm::vec3 pa = world_pos(a, surface);
     const glm::vec3 pb = world_pos(b, surface);
@@ -36,17 +32,17 @@ void ProximityAlert::evaluate(const AlertContext& ctx, EventRing& ring) {
     u64 best_prey    = u64(0);
 
     for (u64 i = u64(0); i < ctx.particle_count; ++i) {
-        const AnimatedCurve& pursuer = ctx.particles[i];
-        if (pursuer.particle_role() != m_p.pursuer_role) continue;
+        const AlertParticleView& pursuer = ctx.particles[i];
+        if (pursuer.role != m_p.pursuer_role) continue;
 
         for (u64 j = u64(0); j < ctx.particle_count; ++j) {
-            const AnimatedCurve& prey = ctx.particles[j];
-            if (prey.particle_role() != m_p.prey_role) continue;
+            const AlertParticleView& prey = ctx.particles[j];
+            if (prey.role != m_p.prey_role) continue;
             const f32 d = world_dist(pursuer, prey, *ctx.surface);
             if (d < min_dist) {
                 min_dist     = d;
-                best_pursuer = pursuer.id();
-                best_prey    = prey.id();
+                best_pursuer = pursuer.id;
+                best_prey    = prey.id;
             }
         }
     }
@@ -73,8 +69,8 @@ void EscapeAlert::evaluate(const AlertContext& ctx, EventRing& ring) {
     glm::vec3 centroid{f32(0)};
     u32 pursuer_count = u32(0);
     for (u64 i = u64(0); i < ctx.particle_count; ++i) {
-        const AnimatedCurve& p = ctx.particles[i];
-        if (p.particle_role() != m_p.pursuer_role) continue;
+        const AlertParticleView& p = ctx.particles[i];
+        if (p.role != m_p.pursuer_role) continue;
         centroid += world_pos(p, *ctx.surface);
         ++pursuer_count;
     }
@@ -83,8 +79,8 @@ void EscapeAlert::evaluate(const AlertContext& ctx, EventRing& ring) {
 
     f32 max_dist = f32(0);
     for (u64 i = u64(0); i < ctx.particle_count; ++i) {
-        const AnimatedCurve& p = ctx.particles[i];
-        if (p.particle_role() != m_p.prey_role) continue;
+        const AlertParticleView& p = ctx.particles[i];
+        if (p.role != m_p.prey_role) continue;
         const glm::vec3 pw = world_pos(p, *ctx.surface);
         const glm::vec3 dv = pw - centroid;
         const f32 d = ops::sqrt(dv.x*dv.x + dv.y*dv.y + dv.z*dv.z);
@@ -117,22 +113,15 @@ void StealthAlert::evaluate(const AlertContext& ctx, EventRing& ring) {
     if (!ctx.surface || !ctx.particles || ctx.particle_count == u64(0)) return;
 
     for (u64 i = u64(0); i < ctx.particle_count; ++i) {
-        const AnimatedCurve& p = ctx.particles[i];
-        if (p.particle_role() != m_p.role) continue;
+        const AlertParticleView& p = ctx.particles[i];
+        if (p.role != m_p.role) continue;
 
-        const u32 trail_n = p.trail_size();
+        const u32 trail_n = p.trail_size;
         if (trail_n < 4u) continue;
 
-        // FrenetFrame is on the curve; kappa_g lives on SurfaceFrame.
-        // Build the SurfaceFrame by pairing FrenetFrame with the surface frame
-        // at the particle's current UV position.
-        const FrenetFrame frenet = p.frenet_at(trail_n - 1u);
-        const glm::vec2 uv = p.head_uv();
-        const SurfaceFrame sf = make_surface_frame(
-            *ctx.surface, uv.x, uv.y, ctx.sim_time, &frenet);
-        const f32 kappa_g = sf.kappa_g;
+        const f32 kappa_g = p.geodesic_curvature;
 
-        AgentEdge* edge = find_or_add(p.id());
+        AgentEdge* edge = find_or_add(p.id);
         if (!edge) continue;
 
         const bool violation = kappa_g > m_p.kappa_max;
@@ -141,12 +130,12 @@ void StealthAlert::evaluate(const AlertContext& ctx, EventRing& ring) {
 
         if (violation && edge->stealth_ok) {
             (void)ring.push(make_alert_stealth(
-                p.id(), kappa_g, m_p.kappa_max, /*lost=*/true,
+                p.id, kappa_g, m_p.kappa_max, /*lost=*/true,
                 ctx.sim_time, ctx.tick));
             edge->stealth_ok = false;
         } else if (settled && !edge->stealth_ok) {
             (void)ring.push(make_alert_stealth(
-                p.id(), kappa_g, m_p.kappa_max, /*lost=*/false,
+                p.id, kappa_g, m_p.kappa_max, /*lost=*/false,
                 ctx.sim_time, ctx.tick));
             edge->stealth_ok = true;
         }
@@ -163,16 +152,16 @@ void CapturePendingAlert::evaluate(const AlertContext& ctx, EventRing& ring) {
     u64 best_prey    = u64(0);
 
     for (u64 i = u64(0); i < ctx.particle_count; ++i) {
-        const AnimatedCurve& pursuer = ctx.particles[i];
-        if (pursuer.particle_role() != m_p.pursuer_role) continue;
+        const AlertParticleView& pursuer = ctx.particles[i];
+        if (pursuer.role != m_p.pursuer_role) continue;
         for (u64 j = u64(0); j < ctx.particle_count; ++j) {
-            const AnimatedCurve& prey = ctx.particles[j];
-            if (prey.particle_role() != m_p.prey_role) continue;
+            const AlertParticleView& prey = ctx.particles[j];
+            if (prey.role != m_p.prey_role) continue;
             const f32 d = world_dist(pursuer, prey, *ctx.surface);
             if (d < min_dist) {
                 min_dist     = d;
-                best_pursuer = pursuer.id();
-                best_prey    = prey.id();
+                best_pursuer = pursuer.id;
+                best_prey    = prey.id;
             }
         }
     }

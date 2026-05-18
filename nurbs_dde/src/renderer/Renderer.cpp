@@ -11,6 +11,37 @@
 
 namespace ndde::renderer {
 
+namespace {
+
+[[nodiscard]] std::vector<byte> convert_swapchain_pixels_to_rgba8(const byte* pixels,
+                                                                  std::size_t pixel_count,
+                                                                  VkFormat format) {
+    std::vector<byte> rgba(pixel_count * 4u);
+    const bool is_bgra = format == VK_FORMAT_B8G8R8A8_UNORM ||
+                         format == VK_FORMAT_B8G8R8A8_SRGB;
+    const bool is_rgba = format == VK_FORMAT_R8G8B8A8_UNORM ||
+                         format == VK_FORMAT_R8G8B8A8_SRGB;
+    if (!is_bgra && !is_rgba)
+        throw std::runtime_error("[Renderer] unsupported capture swapchain format");
+
+    for (std::size_t i = 0; i < pixel_count; ++i) {
+        if (is_bgra) {
+            rgba[i * 4u + 0u] = pixels[i * 4u + 2u];
+            rgba[i * 4u + 1u] = pixels[i * 4u + 1u];
+            rgba[i * 4u + 2u] = pixels[i * 4u + 0u];
+            rgba[i * 4u + 3u] = pixels[i * 4u + 3u];
+        } else {
+            rgba[i * 4u + 0u] = pixels[i * 4u + 0u];
+            rgba[i * 4u + 1u] = pixels[i * 4u + 1u];
+            rgba[i * 4u + 2u] = pixels[i * 4u + 2u];
+            rgba[i * 4u + 3u] = pixels[i * 4u + 3u];
+        }
+    }
+    return rgba;
+}
+
+} // namespace
+
 Renderer::~Renderer() { destroy(); }
 
 void Renderer::init(const platform::VulkanContext& ctx,
@@ -41,6 +72,7 @@ void Renderer::destroy() {
     m_pipeline_line_list.destroy();
     m_pipeline_line_strip.destroy();
     m_pipeline_triangle_list.destroy();
+    destroy_capture_staging_buffer();
 
     if (m_render_fence    != VK_NULL_HANDLE) vkDestroyFence(m_device, m_render_fence, nullptr);
     for (auto& sem : m_image_available)
@@ -160,45 +192,15 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
 
     vkCmdEndRendering(m_cmd);
 
-    struct CaptureReadback {
-        VkBuffer buffer = VK_NULL_HANDLE;
-        VkDeviceMemory memory = VK_NULL_HANDLE;
-        std::filesystem::path path;
-    } capture;
+    std::filesystem::path capture_path;
 
     const bool do_capture = m_pending_capture.has_value();
     if (do_capture) {
         const VkExtent2D ext = swapchain.extent();
         const VkDeviceSize bytes = static_cast<VkDeviceSize>(ext.width) * ext.height * 4u;
-        capture.path = std::move(*m_pending_capture);
+        capture_path = std::move(*m_pending_capture);
         m_pending_capture.reset();
-
-        VkBufferCreateInfo bi{
-            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-            .size = bytes,
-            .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            .sharingMode = VK_SHARING_MODE_EXCLUSIVE
-        };
-        if (vkCreateBuffer(m_device, &bi, nullptr, &capture.buffer) != VK_SUCCESS)
-            throw std::runtime_error("[Renderer] capture vkCreateBuffer failed");
-
-        VkMemoryRequirements req{};
-        vkGetBufferMemoryRequirements(m_device, capture.buffer, &req);
-        VkMemoryAllocateInfo ai{
-            .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-            .allocationSize = req.size,
-            .memoryTypeIndex = find_memory_type(req.memoryTypeBits,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
-        };
-        if (vkAllocateMemory(m_device, &ai, nullptr, &capture.memory) != VK_SUCCESS) {
-            vkDestroyBuffer(m_device, capture.buffer, nullptr);
-            throw std::runtime_error("[Renderer] capture vkAllocateMemory failed");
-        }
-        if (vkBindBufferMemory(m_device, capture.buffer, capture.memory, 0) != VK_SUCCESS) {
-            vkFreeMemory(m_device, capture.memory, nullptr);
-            vkDestroyBuffer(m_device, capture.buffer, nullptr);
-            throw std::runtime_error("[Renderer] capture vkBindBufferMemory failed");
-        }
+        ensure_capture_staging_buffer(bytes);
 
         transition_image(swapchain.images()[m_image_index],
                          VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -218,7 +220,7 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
         };
         vkCmdCopyImageToBuffer(m_cmd, swapchain.images()[m_image_index],
                                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                               capture.buffer, 1, &region);
+                               m_capture_staging.buffer, 1, &region);
         transition_image(swapchain.images()[m_image_index],
                          VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
@@ -253,22 +255,14 @@ bool Renderer::end_frame(const Swapchain& swapchain) {
         const std::size_t pixel_count = static_cast<std::size_t>(ext.width) * ext.height;
         const std::size_t byte_count = pixel_count * 4u;
         void* mapped = nullptr;
-        if (vkMapMemory(m_device, capture.memory, 0, static_cast<VkDeviceSize>(byte_count), 0, &mapped) != VK_SUCCESS)
+        if (vkMapMemory(m_device, m_capture_staging.memory, 0, static_cast<VkDeviceSize>(byte_count), 0, &mapped) != VK_SUCCESS)
             throw std::runtime_error("[Renderer] capture vkMapMemory failed");
 
-        std::vector<byte> rgba(byte_count);
-        const auto* bgra = static_cast<const byte*>(mapped);
-        for (std::size_t i = 0; i < pixel_count; ++i) {
-            rgba[i * 4u + 0u] = bgra[i * 4u + 2u];
-            rgba[i * 4u + 1u] = bgra[i * 4u + 1u];
-            rgba[i * 4u + 2u] = bgra[i * 4u + 0u];
-            rgba[i * 4u + 3u] = bgra[i * 4u + 3u];
-        }
-        vkUnmapMemory(m_device, capture.memory);
-        write_png_rgba8(capture.path, ext.width, ext.height, rgba);
-        vkFreeMemory(m_device, capture.memory, nullptr);
-        vkDestroyBuffer(m_device, capture.buffer, nullptr);
-        std::cout << "[Renderer] Wrote capture: " << capture.path.string() << "\n";
+        const auto* pixels = static_cast<const byte*>(mapped);
+        std::vector<byte> rgba = convert_swapchain_pixels_to_rgba8(pixels, pixel_count, swapchain.format());
+        vkUnmapMemory(m_device, m_capture_staging.memory);
+        write_png_rgba8(capture_path, ext.width, ext.height, rgba);
+        std::cout << "[Renderer] Wrote capture: " << capture_path.string() << "\n";
     }
 
     VkSwapchainKHR sc = swapchain.swapchain();
@@ -429,6 +423,53 @@ void Renderer::transition_image(VkImage image, VkImageLayout from, VkImageLayout
     };
     vkCmdPipelineBarrier(m_cmd, src_stage, dst_stage,
         0, 0, nullptr, 0, nullptr, 1, &barrier);
+}
+
+void Renderer::ensure_capture_staging_buffer(VkDeviceSize required_bytes) {
+    if (m_capture_staging.buffer != VK_NULL_HANDLE &&
+        m_capture_staging.memory != VK_NULL_HANDLE &&
+        m_capture_staging.capacity_bytes >= required_bytes) {
+        return;
+    }
+
+    destroy_capture_staging_buffer();
+
+    VkBufferCreateInfo bi{
+        .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        .size = required_bytes,
+        .usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        .sharingMode = VK_SHARING_MODE_EXCLUSIVE
+    };
+    if (vkCreateBuffer(m_device, &bi, nullptr, &m_capture_staging.buffer) != VK_SUCCESS)
+        throw std::runtime_error("[Renderer] capture vkCreateBuffer failed");
+
+    VkMemoryRequirements req{};
+    vkGetBufferMemoryRequirements(m_device, m_capture_staging.buffer, &req);
+    VkMemoryAllocateInfo ai{
+        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        .allocationSize = req.size,
+        .memoryTypeIndex = find_memory_type(req.memoryTypeBits,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+    };
+    if (vkAllocateMemory(m_device, &ai, nullptr, &m_capture_staging.memory) != VK_SUCCESS) {
+        vkDestroyBuffer(m_device, m_capture_staging.buffer, nullptr);
+        m_capture_staging.buffer = VK_NULL_HANDLE;
+        throw std::runtime_error("[Renderer] capture vkAllocateMemory failed");
+    }
+    if (vkBindBufferMemory(m_device, m_capture_staging.buffer, m_capture_staging.memory, 0) != VK_SUCCESS) {
+        destroy_capture_staging_buffer();
+        throw std::runtime_error("[Renderer] capture vkBindBufferMemory failed");
+    }
+    m_capture_staging.capacity_bytes = required_bytes;
+}
+
+void Renderer::destroy_capture_staging_buffer() noexcept {
+    if (m_device == VK_NULL_HANDLE) return;
+    if (m_capture_staging.memory != VK_NULL_HANDLE)
+        vkFreeMemory(m_device, m_capture_staging.memory, nullptr);
+    if (m_capture_staging.buffer != VK_NULL_HANDLE)
+        vkDestroyBuffer(m_device, m_capture_staging.buffer, nullptr);
+    m_capture_staging = {};
 }
 
 u32 Renderer::find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const {

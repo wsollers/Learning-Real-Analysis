@@ -79,16 +79,15 @@ target_include_directories(ndde_telemetry PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(ndde_telemetry PUBLIC ndde_math)
 
 # ── ndde_simulation ───────────────────────────────────────────────────────────
-# Pure simulation logic. No ImGui. Links volk for header-only Vulkan type
-# access (ArenaSlice.hpp pulled transitively via AnimatedCurve). No Vulkan
-# runtime calls are made from this library.
+# Pure simulation logic. No ImGui or Vulkan. App/runtime code adapts concrete
+# particle objects into compact simulation-facing views before evaluating rules.
 add_library(ndde_simulation STATIC
     simulation/events/EventBus.cpp
     simulation/events/EventLog.cpp
     simulation/events/AlertRule.cpp
 )
 target_include_directories(ndde_simulation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(ndde_simulation PUBLIC ndde_math volk)
+target_link_libraries(ndde_simulation PUBLIC ndde_math)
 
 # ── ndde_engine ───────────────────────────────────────────────────────────────
 add_library(ndde_engine STATIC

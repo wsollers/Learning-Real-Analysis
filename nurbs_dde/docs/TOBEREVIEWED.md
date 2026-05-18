@@ -151,26 +151,26 @@ be verified against the current tree before implementation.
 ### Capture Staging Buffer Reuse
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** renderer capture  
 **Files:** `src/renderer/Renderer.cpp`  
 **Reason to consider:** PNG capture allocates Vulkan buffer/memory for capture work. Reusing a staging buffer would reduce driver allocation churn and make ownership cleaner.
 
 **Current opinion:** Good cleanup for capture reliability. Lower priority than frame-path work unless capture becomes frequent.
 
-**Notes:**
+**Notes:** Complete. `Renderer` and `SecondWindow` now own reusable host-visible capture staging buffers that grow on demand instead of allocating/freeing Vulkan buffer memory for every PNG capture. Build and tests pass; live PNG capture should still be smoke-tested in the Vulkan app.
 
 ### Capture Format Conversion
 
 **Decision:** yes 
-**Status:** pending  
+**Status:** complete  
 **Area:** renderer capture portability  
 **Files:** `src/renderer/Renderer.cpp`  
 **Reason to consider:** Capture conversion should branch on swapchain format instead of assuming BGRA byte order.
 
 **Current opinion:** Worth doing when capture code is touched next.
 
-**Notes:**
+**Notes:** Complete. Primary and second-window PNG capture now convert readback pixels according to the actual swapchain format, handling BGRA and RGBA UNORM/SRGB explicitly and failing loudly on unsupported capture formats. Live Vulkan PNG capture should still be smoke-tested.
 
 ### Renderer Pipeline Fallback
 
@@ -201,14 +201,14 @@ be verified against the current tree before implementation.
 ### Remove Vulkan Dependency From Simulation Library
 
 **Decision:** yes  
-**Status:** pending  
+**Status:** complete  
 **Area:** layering, CMake  
 **Files:** `src/CMakeLists.txt`, `src/app/AnimatedCurve.*`, memory/render headers  
 **Reason to consider:** `ndde_simulation` links `volk` because a transitive include pulls in a Vulkan-facing type. Pure simulation should not depend on Vulkan concepts.
 
 **Current opinion:** Good architectural cleanup. Simulation should expose data/math; engine or renderer should translate to GPU resources.
 
-**Notes:**
+**Notes:** Complete for the Vulkan dependency. `ndde_simulation` no longer links `volk`; alert rules now consume compact `AlertParticleView` records instead of concrete `AnimatedCurve` objects, and the app adapts particles before evaluation. Broader vocabulary cleanup remains possible later because `ParticleRole`/particle metadata still live under `app/ParticleTypes.hpp`.
 
 ### Engine Responsibility Split
 

@@ -3,6 +3,7 @@
 
 #include "app/SimulationWavePredatorPrey.hpp"
 #include "app/AlternateViewPanel.hpp"
+#include "app/FrenetFrame.hpp"
 #include "app/SimulationRenderPackets.hpp"
 #include "simulation/fields/MetricRipple.hpp"
 #include "telemetry/TelemetryRecord.hpp"
@@ -499,12 +500,32 @@ void SimulationWavePredatorPrey::log_ripple_diagnostics(const TickInfo& tick) {
 
 void SimulationWavePredatorPrey::evaluate_alerts(const TickInfo& tick) {
     if (m_alerts.empty() || !m_host) return;
+    memory::FrameVector<events::AlertParticleView> alert_particles =
+        m_host->memory().frame().make_vector<events::AlertParticleView>();
+    alert_particles.reserve(m_particles.size());
+    for (const AnimatedCurve& particle : m_particles.particles()) {
+        f32 kappa_g = f32(0);
+        const u32 trail_size = particle.trail_size();
+        if (trail_size >= u32(4)) {
+            const FrenetFrame frenet = particle.frenet_at(trail_size - u32(1));
+            const Vec2 uv = particle.head_uv();
+            const SurfaceFrame sf = make_surface_frame(*m_surface, uv.x, uv.y, m_sim_time, &frenet);
+            kappa_g = sf.kappa_g;
+        }
+        alert_particles.push_back(events::AlertParticleView{
+            .id = particle.id(),
+            .role = particle.particle_role(),
+            .uv = particle.head_uv(),
+            .trail_size = trail_size,
+            .geodesic_curvature = kappa_g
+        });
+    }
     const events::AlertContext ctx{
         .sim_time       = m_sim_time,
         .tick           = tick.tick_index,
         .surface        = m_surface.get(),
-        .particles      = m_particles.particles().data(),
-        .particle_count = static_cast<u64>(m_particles.size())
+        .particles      = alert_particles.data(),
+        .particle_count = static_cast<u64>(alert_particles.size())
     };
     for (auto& rule : m_alerts)
         rule->evaluate(ctx, m_host->events().log(EventChannelId::Simulation).ring());

@@ -91,12 +91,21 @@ private:
     Pipeline m_pipeline_triangle_list;
     std::optional<std::filesystem::path> m_pending_capture;
 
+    struct CaptureStagingBuffer {
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+        VkDeviceSize capacity_bytes = 0;
+    };
+    CaptureStagingBuffer m_capture_staging;
+
     void build_swapchain(u32 w, u32 h);
     void destroy_swapchain();
     void create_cmd_objects();
     void create_sync_objects();
     void init_pipelines(const std::string& shader_dir);
     void transition_image(VkImage image, VkImageLayout from, VkImageLayout to);
+    void ensure_capture_staging_buffer(VkDeviceSize required_bytes);
+    void destroy_capture_staging_buffer() noexcept;
     [[nodiscard]] u32 find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const;
     [[nodiscard]] Pipeline& pipeline_for(Topology topo);
 

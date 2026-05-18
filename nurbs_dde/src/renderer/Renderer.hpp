@@ -90,16 +90,25 @@ private:
     u32 m_draw_calls_current = 0;
     u32 m_draw_calls_last    = 0;
 
+    struct CaptureStagingBuffer {
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+        VkDeviceSize capacity_bytes = 0;
+    };
+
     Pipeline   m_pipeline_line_list;
     Pipeline   m_pipeline_line_strip;
     Pipeline   m_pipeline_triangle_list;
     ImGuiLayer m_imgui;
     std::optional<std::filesystem::path> m_pending_capture;
+    CaptureStagingBuffer m_capture_staging;
 
     void create_command_objects(u32 graphics_queue_family);
     void create_sync_objects(u32 image_count);
     void init_pipelines(VkFormat color_format, const std::string& shader_dir);
     void transition_image(VkImage image, VkImageLayout from, VkImageLayout to);
+    void ensure_capture_staging_buffer(VkDeviceSize required_bytes);
+    void destroy_capture_staging_buffer() noexcept;
     [[nodiscard]] u32 find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const;
     [[nodiscard]] Pipeline& pipeline_for(Topology topo);
 };

@@ -5,12 +5,9 @@
 // Hysteresis prevents boundary chatter.
 // All evaluate() implementations are wait-free and allocation-free.
 //
-// NOTE: AlertContext references AnimatedCurve via a raw span of pointers.
-// The full AnimatedCurve type is included only in AlertRule.cpp to keep
-// ndde_simulation free of the Vulkan-contaminated include chain.
-
 #include "simulation/events/EventRecord.hpp"
 #include "simulation/events/EventRing.hpp"
+#include "math/GeometryTypes.hpp"
 #include "math/Scalars.hpp"
 #include "app/ParticleTypes.hpp"
 #include "memory/Unique.hpp"
@@ -18,16 +15,21 @@
 #include <functional>
 #include <string_view>
 
-// Forward-declare ISurface to avoid pulling math/Surfaces.hpp + volk chain
+// Forward-declare ISurface so alert declarations do not pull in surface math bodies.
 namespace ndde::math { class ISurface; }
-
-// Forward-declare AnimatedCurve — full type included in AlertRule.cpp only
-namespace ndde { class AnimatedCurve; }
 
 namespace ndde::events {
 
 class AlertRule;
 using AlertRulePtr = ndde::memory::Unique<AlertRule>;
+
+struct AlertParticleView {
+    ParticleId    id = ParticleId(0);
+    ParticleRole  role = ParticleRole::Neutral;
+    Vec2          uv{f32(0), f32(0)};
+    u32           trail_size = u32(0);
+    f32           geodesic_curvature = f32(0);
+};
 
 // ── AlertContext ──────────────────────────────────────────────────────────────
 // Read-only view passed to every AlertRule::evaluate(). No allocation.
@@ -36,7 +38,7 @@ struct AlertContext {
     f32                    sim_time;
     u64                    tick;
     const math::ISurface*  surface;        // never null
-    const AnimatedCurve*   particles;      // pointer to first element
+    const AlertParticleView* particles;     // pointer to first element
     u64                    particle_count;
 };
 
