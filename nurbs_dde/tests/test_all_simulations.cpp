@@ -72,7 +72,7 @@ TEST(AllSimulations, IntegrationDerivativeLabRegistersStartsAndEmitsPackets) {
 
     sim.on_register(host);
     EXPECT_GE(services.panels().active_count(), 1u);
-    EXPECT_EQ(services.render().active_view_count(), 1u);
+    EXPECT_EQ(services.render().active_view_count(), 2u);
 
     sim.on_start();
     services.render().clear_packets();
@@ -80,12 +80,82 @@ TEST(AllSimulations, IntegrationDerivativeLabRegistersStartsAndEmitsPackets) {
     sim.on_submit_render();
 
     EXPECT_GT(services.render().packet_count(sim.main_view_id()), 0u);
+    EXPECT_GT(services.render().packet_count(sim.analytics_view_id()), 0u);
     EXPECT_NEAR(sim.result().estimate, 2.0, 0.01);
+    EXPECT_GT(sim.workbench().snapshot().result.cell_count, 0u);
+    EXPECT_GT(sim.workbench().snapshot().result.estimate, 0.0);
     EXPECT_EQ(sim.snapshot().name, "Integration & Derivative Lab");
 
     sim.on_stop();
     EXPECT_EQ(services.panels().active_count(), 0u);
     EXPECT_EQ(services.render().active_view_count(), 0u);
+}
+
+TEST(AllSimulations, IntegrationDerivativeLabHoverMapsMainViewPointToCell) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationIntegrationDerivativeLab sim;
+
+    sim.on_register(host);
+    sim.on_start();
+
+    services.interaction().set_mouse(sim.main_view_id(), {400.f, 300.f}, {0.f, 0.f}, true);
+    sim.on_tick(host.clock().next(1.f / 60.f));
+
+    const IntegrationWorkbenchSnapshot snapshot = sim.workbench().snapshot();
+    ASSERT_TRUE(snapshot.renderable.hovered_cell_id.has_value());
+    EXPECT_EQ(*snapshot.renderable.hovered_cell_id, 136u);
+
+    const HoverMetadata& hover = services.interaction().hover_metadata();
+    EXPECT_EQ(hover.view, sim.main_view_id());
+    EXPECT_TRUE(hover.view_point.hit);
+    EXPECT_FLOAT_EQ(hover.view_point.point.x, 0.f);
+    EXPECT_FLOAT_EQ(hover.view_point.point.y, 0.f);
+
+    sim.on_stop();
+}
+
+TEST(AllSimulations, IntegrationDerivativeLabSingleClickPinsCurrentHoveredCell) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationIntegrationDerivativeLab sim;
+
+    sim.on_register(host);
+    sim.on_start();
+
+    services.interaction().set_mouse(sim.main_view_id(), {400.f, 300.f}, {0.f, 0.f}, true);
+    sim.on_tick(host.clock().next(1.f / 60.f));
+    services.interaction().select_current_hover(sim.main_view_id());
+    sim.on_tick(host.clock().next(1.f / 60.f));
+
+    const IntegrationWorkbenchSnapshot snapshot = sim.workbench().snapshot();
+    ASSERT_TRUE(snapshot.selected_cell.valid);
+    EXPECT_EQ(snapshot.selected_cell.cell_id, 136u);
+
+    sim.on_stop();
+}
+
+TEST(AllSimulations, IntegrationDerivativeLabDoubleClickPickPinsCell) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationIntegrationDerivativeLab sim;
+
+    sim.on_register(host);
+    sim.on_start();
+
+    services.interaction().queue_view_point_pick(ViewPointPickRequest{
+        .view = sim.main_view_id(),
+        .normalized_pixel = {0.5f, 0.5f},
+        .screen_ndc = {0.f, 0.f},
+        .seed = 17u
+    });
+    sim.on_tick(host.clock().next(1.f / 60.f));
+
+    const IntegrationWorkbenchSnapshot snapshot = sim.workbench().snapshot();
+    ASSERT_TRUE(snapshot.selected_cell.valid);
+    EXPECT_EQ(snapshot.selected_cell.cell_id, 136u);
+
+    sim.on_stop();
 }
 
 TEST(AllSimulations, LabPickerRegistersOnlyPickerPanel) {

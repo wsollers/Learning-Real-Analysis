@@ -18,6 +18,9 @@ add_executable(ndde_tests
     test_history_buffer.cpp
     test_integration2d_core.cpp
     test_integration_lab_core.cpp
+    test_integration_lab_analytics_packets.cpp
+    test_integration_lab_render_packets.cpp
+    test_integration_workbench_state.cpp
     test_logger_service.cpp
     test_metrics_service.cpp
     test_milstein_integrator.cpp
@@ -27,12 +30,16 @@ add_executable(ndde_tests
     test_simulation_context.cpp
     test_simulation_runtime.cpp
     test_surface_metadata.cpp
+    test_text_overlay_service.cpp
     test_thread_management_service.cpp
     # Differential / DDE tests reference old simulations — archived, excluded.
     # Re-enable when those sims are ported to the new simulation/ layer.
     # test_differential_system.cpp
     # test_simulation_surface_gaussian.cpp
     ${CMAKE_SOURCE_DIR}/src/app/AnimatedCurve.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/IntegrationLabAnalyticsPackets.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/IntegrationLabRenderPackets.cpp
+    ${CMAKE_SOURCE_DIR}/src/app/IntegrationWorkbenchState.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SimulationIntegrationDerivativeLab.cpp
     ${CMAKE_SOURCE_DIR}/src/app/SimulationLabPicker.cpp
     ${CMAKE_SOURCE_DIR}/src/app/ParticleSystem.cpp
@@ -51,6 +58,7 @@ add_executable(ndde_tests
     ${CMAKE_SOURCE_DIR}/src/engine/metadata/SimMetadataService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/metricservice/MetricsService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/resources/ResourceManagerService.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/text/TextOverlayService.cpp
     ${CMAKE_SOURCE_DIR}/src/engine/threading/ThreadManagementService.cpp
 )
 

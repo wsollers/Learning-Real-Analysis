@@ -163,6 +163,43 @@ TEST(ResourceManagerService, RegistersPathAndLoadsFileAsCurrentResource) {
     EXPECT_EQ(std::get<PathBackedResource>(*payload).path, path);
 }
 
+TEST(ResourceManagerService, LoadsFontResourceBytesFromPath) {
+    ResourceManagerService resources;
+    resources.init();
+
+    const std::filesystem::path path = resource_test_dir() / "font_asset.ttf";
+    {
+        std::ofstream out(path, std::ios::binary);
+        out << "font bytes";
+    }
+
+    const ResourceHandle handle = resources.register_path(ResourceRegistration{
+        .key = ResourceKey{"font.test"},
+        .kind = ResourceKind::Font,
+        .owner = ResourceOwner::Renderer,
+        .lifetime = ResourceLifetime::Persistent
+    }, path);
+    ASSERT_NE(handle.value, u64(0));
+
+    const auto loaded = resources.load(handle);
+    ASSERT_TRUE(loaded.has_value());
+
+    const ResourceDescriptor* descriptor = resources.descriptor(*loaded);
+    ASSERT_NE(descriptor, nullptr);
+    EXPECT_EQ(descriptor->kind, ResourceKind::Font);
+    EXPECT_EQ(descriptor->state, ResourceState::Ready);
+    EXPECT_EQ(descriptor->byte_count, u64(10));
+
+    const ResourcePayload* payload = resources.payload(*loaded);
+    ASSERT_NE(payload, nullptr);
+    ASSERT_TRUE(std::holds_alternative<FontResource>(*payload));
+    const FontResource& font = std::get<FontResource>(*payload);
+    EXPECT_EQ(font.handle, handle);
+    EXPECT_EQ(font.path, path);
+    ASSERT_EQ(font.bytes.size(), 10u);
+    EXPECT_EQ(static_cast<char>(font.bytes[0]), 'f');
+}
+
 TEST(ResourceManagerService, LoadReportsMissingFile) {
     ResourceManagerService resources;
     resources.init();

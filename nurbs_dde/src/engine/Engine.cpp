@@ -338,6 +338,7 @@ void Engine::run_frame() {
 
     // Destroy previous-frame packet payloads before releasing frame PMR memory.
     m_services.render().clear_packets();
+    m_services.text().clear();
     m_services.memory().begin_frame();
 
     // ── GUI frame construction ──────────────────────────────────────────────

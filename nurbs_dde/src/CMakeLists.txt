@@ -100,6 +100,7 @@ add_library(ndde_engine STATIC
     engine/metadata/SimMetadataService.cpp
     engine/metricservice/MetricsService.cpp
     engine/resources/ResourceManagerService.cpp
+    engine/text/TextOverlayService.cpp
     engine/threading/ThreadManagementService.cpp
     engine/AppConfig.cpp
     engine/Engine.cpp
@@ -122,6 +123,9 @@ target_link_libraries(ndde_engine PUBLIC
 add_executable(nurbs_dde
     app/main.cpp
     app/AnimatedCurve.cpp
+    app/IntegrationLabAnalyticsPackets.cpp
+    app/IntegrationLabRenderPackets.cpp
+    app/IntegrationWorkbenchState.cpp
     app/SimulationIntegrationDerivativeLab.cpp
     app/SimulationLabPicker.cpp
     app/ParticleSystem.cpp

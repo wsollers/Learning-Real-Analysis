@@ -5,6 +5,16 @@
 **Goal:** complete a usable 2D integration workbench quickly without blocking
 future 3D, surface, spline, or NURBS integration.
 
+Current user-facing parity note:
+
+```text
+The engine-safe vertical slices are not the same as prototype parity.
+Each phase marked complete means the underlying runnable capability exists and
+is tested. The full POC-shaped experience still requires workbench layout,
+second-window analytics polish, richer domain/partition creation, Darboux
+views, and result-trace/theorem panes.
+```
+
 ---
 
 ## Strategy
@@ -289,6 +299,12 @@ Purpose:
 Separate UI controls from numerical computation and rendering data.
 ```
 
+Status:
+
+```text
+complete
+```
+
 Files:
 
 ```text
@@ -343,6 +359,12 @@ Purpose:
 
 ```text
 Replace the current 1D-only integration panel with the first usable 2D workbench.
+```
+
+Status:
+
+```text
+complete
 ```
 
 Files:
@@ -411,6 +433,12 @@ Purpose:
 Make the main viewport show the domain, cells, samples, selected cell, and map.
 ```
 
+Status:
+
+```text
+complete
+```
+
 Files:
 
 ```text
@@ -468,6 +496,12 @@ Purpose:
 Let the user inspect cells directly from the viewport.
 ```
 
+Status:
+
+```text
+complete
+```
+
 Files:
 
 ```text
@@ -516,6 +550,12 @@ Purpose:
 
 ```text
 Use the existing alternate/second Vulkan window as the analytics companion.
+```
+
+Status:
+
+```text
+complete initial slice
 ```
 
 Files:

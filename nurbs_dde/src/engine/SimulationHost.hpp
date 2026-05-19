@@ -16,6 +16,7 @@
 #include "engine/RenderService.hpp"
 #include "engine/resources/ResourceManagerService.hpp"
 #include "engine/SimulationClock.hpp"
+#include "engine/text/TextOverlayService.hpp"
 #include "engine/threading/ThreadManagementService.hpp"
 #include "engine/ViewInputService.hpp"
 #include "memory/MemoryService.hpp"
@@ -37,6 +38,7 @@ public:
                    SimMetadataService& metadata,
                    MetricsService& metrics,
                    ResourceManagerService& resources,
+                   TextOverlayService& text,
                    ThreadManagementService& threads,
                    SimulationClock& clock,
                    memory::MemoryService& memory) noexcept
@@ -51,6 +53,7 @@ public:
         , m_metadata(metadata)
         , m_metrics(metrics)
         , m_resources(resources)
+        , m_text(text)
         , m_threads(threads)
         , m_clock(clock)
         , m_memory(memory)
@@ -67,6 +70,7 @@ public:
     [[nodiscard]] SimMetadataService& metadata() const noexcept { return m_metadata; }
     [[nodiscard]] MetricsService& metrics() const noexcept { return m_metrics; }
     [[nodiscard]] ResourceManagerService& resources() const noexcept { return m_resources; }
+    [[nodiscard]] TextOverlayService& text() const noexcept { return m_text; }
     [[nodiscard]] ThreadManagementService& threads() const noexcept { return m_threads; }
     [[nodiscard]] SimulationClock& clock() const noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() const noexcept { return m_memory; }
@@ -83,6 +87,7 @@ private:
     SimMetadataService& m_metadata;
     MetricsService& m_metrics;
     ResourceManagerService& m_resources;
+    TextOverlayService& m_text;
     ThreadManagementService& m_threads;
     SimulationClock& m_clock;
     memory::MemoryService& m_memory;
@@ -95,6 +100,8 @@ public:
         m_hotkeys.set_memory_service(&m_memory);
         m_interaction.set_memory_service(&m_memory);
         m_render.set_memory_service(&m_memory);
+        m_text.set_memory_service(&m_memory);
+        m_text.set_resource_manager(&m_resources);
         m_camera.set_render_service(&m_render);
         m_events.init();
         m_logger.init();
@@ -124,6 +131,7 @@ public:
         m_metadata.set_thread_service(&m_threads, ThreadRole::Main);
         m_view_input.set_thread_service(&m_threads, ThreadRole::Main);
         m_resources.set_thread_service(&m_threads, ThreadRole::Main);
+        m_text.set_thread_service(&m_threads, ThreadRole::Main);
         m_capture.set_thread_service(&m_threads, ThreadRole::Main);
     }
 
@@ -141,13 +149,14 @@ public:
     [[nodiscard]] SimMetadataService& metadata() noexcept { return m_metadata; }
     [[nodiscard]] MetricsService& metrics() noexcept { return m_metrics; }
     [[nodiscard]] ResourceManagerService& resources() noexcept { return m_resources; }
+    [[nodiscard]] TextOverlayService& text() noexcept { return m_text; }
     [[nodiscard]] ThreadManagementService& threads() noexcept { return m_threads; }
     [[nodiscard]] SimulationClock& clock() noexcept { return m_clock; }
     [[nodiscard]] memory::MemoryService& memory() noexcept { return m_memory; }
 
     [[nodiscard]] SimulationHost simulation_host() noexcept {
         return SimulationHost(m_panels, m_hotkeys, m_interaction, m_render, m_camera,
-                              m_diagnostics, m_events, m_logger, m_metadata, m_metrics, m_resources,
+                              m_diagnostics, m_events, m_logger, m_metadata, m_metrics, m_resources, m_text,
                               m_threads, m_clock, m_memory);
     }
 
@@ -165,6 +174,7 @@ private:
     SimMetadataService m_metadata;
     MetricsService m_metrics;
     ResourceManagerService m_resources;
+    TextOverlayService m_text;
     ThreadManagementService m_threads;
     CameraInputController m_camera_input;
     ViewInputService m_view_input;

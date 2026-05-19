@@ -2,6 +2,7 @@
 #include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
+#include <fstream>
 
 namespace ndde {
 
@@ -198,6 +199,26 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
         .expected_kind = entry->registration.kind,
         .byte_count = size
     };
+    if (entry->registration.kind == ResourceKind::Font) {
+        std::vector<byte> bytes(static_cast<std::size_t>(size));
+        std::ifstream in(path, std::ios::binary);
+        if (!in || (size > u64(0) &&
+                    !in.read(reinterpret_cast<char*>(bytes.data()),
+                             static_cast<std::streamsize>(bytes.size())))) {
+            return std::unexpected(ResourceLoadError{
+                .code = ResourceLoadErrorCode::Unknown,
+                .handle = handle,
+                .path = std::move(path)
+            });
+        }
+        loaded = FontResource{
+            .id = id,
+            .handle = handle,
+            .path = path,
+            .byte_count = size,
+            .bytes = std::move(bytes)
+        };
+    }
     if (!publish(id, std::move(loaded))) {
         return std::unexpected(ResourceLoadError{
             .code = ResourceLoadErrorCode::Unknown,
@@ -441,6 +462,8 @@ u64 ResourceManagerService::payload_byte_count(const ResourcePayload& payload) n
             return (item.vertex_count + item.index_count) * u64(sizeof(Vertex));
         } else if constexpr (std::is_same_v<T, RenderSnapshotResource>) {
             return item.vertex_count * u64(sizeof(Vertex));
+        } else if constexpr (std::is_same_v<T, FontResource>) {
+            return static_cast<u64>(item.bytes.size());
         } else {
             return item.byte_count;
         }
@@ -452,6 +475,8 @@ void ResourceManagerService::set_payload_id(ResourcePayload& payload, ResourceId
         item.id = id;
         using T = std::decay_t<decltype(item)>;
         if constexpr (std::is_same_v<T, PathBackedResource>) {
+            item.handle = handle;
+        } else if constexpr (std::is_same_v<T, FontResource>) {
             item.handle = handle;
         }
     }, payload);

@@ -11,6 +11,7 @@
 #include <string>
 #include <string_view>
 #include <variant>
+#include <vector>
 
 namespace ndde {
 
@@ -28,6 +29,7 @@ enum class ResourceKind : u8 {
     ShaderModule,
     Material,
     ColorMap,
+    Font,
     ScenarioAsset,
     GpuUpload,
     CaptureArtifact,
@@ -142,6 +144,14 @@ struct PathBackedResource {
     u64 byte_count = u64(0);
 };
 
+struct FontResource {
+    ResourceId id = {};
+    ResourceHandle handle = {};
+    std::filesystem::path path;
+    u64 byte_count = u64(0);
+    std::vector<byte> bytes;
+};
+
 struct GpuUploadResource {
     ResourceId id = {};
     u64 byte_count = u64(0);
@@ -153,6 +163,7 @@ using ResourcePayload = std::variant<
     RenderSnapshotResource,
     FileArtifactResource,
     PathBackedResource,
+    FontResource,
     GpuUploadResource
 >;
 
