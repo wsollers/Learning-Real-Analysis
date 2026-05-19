@@ -131,7 +131,7 @@ struct RenderPacket {
     DrawMode mode = DrawMode::VertexColor;
     Vec4 color{1.f, 1.f, 1.f, 1.f};
     Mat4 mvp{1.f};
-    memory::FrameVector<Vertex> vertices;
+    std::pmr::vector<Vertex> vertices;
 };
 
 class RenderService {
@@ -174,15 +174,12 @@ public:
     {
         if (!require_owner_thread("RenderService::submit")) return;
         if (!is_active(view) || vertices.empty()) return;
-        memory::FrameVector<Vertex> packet_vertices =
-            m_memory ? m_memory->frame().make_vector<Vertex>() : memory::FrameVector<Vertex>{};
         RenderPacket packet{
             .view = view,
             .topology = topology,
             .mode = mode,
             .color = color,
-            .mvp = mvp,
-            .vertices = std::move(packet_vertices)
+            .mvp = mvp
         };
         packet.vertices.assign(vertices.begin(), vertices.end());
         m_packets.push_back(std::move(packet));
@@ -341,7 +338,7 @@ public:
         return RenderViewKind::Main;
     }
 
-    [[nodiscard]] const memory::FrameVector<RenderPacket>& packets() const noexcept { return m_packets; }
+    [[nodiscard]] const std::pmr::vector<RenderPacket>& packets() const noexcept { return m_packets; }
 
     [[nodiscard]] memory::FrameVector<RenderViewSnapshot> active_view_snapshots() const {
         memory::FrameVector<RenderViewSnapshot> out =
@@ -378,7 +375,7 @@ private:
 
     RenderViewId m_next_id = 1;
     memory::ViewVector<RenderViewEntry> m_views;
-    memory::FrameVector<RenderPacket> m_packets;
+    std::pmr::vector<RenderPacket> m_packets;
     memory::ViewVector<SurfacePerturbCommand> m_surface_commands;
     u64 m_generation = 0;
     memory::MemoryService* m_memory = nullptr;

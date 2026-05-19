@@ -1,7 +1,9 @@
 #include "engine/resources/ResourceManagerService.hpp"
+#include "engine/logging/LoggerService.hpp"
 #include "engine/threading/ThreadManagementService.hpp"
 
 #include <algorithm>
+#include <format>
 #include <fstream>
 
 namespace ndde {
@@ -10,6 +12,10 @@ void ResourceManagerService::set_thread_service(ThreadManagementService* threads
                                                 ThreadRole owner_role) noexcept {
     m_threads = threads;
     m_owner_role = owner_role;
+}
+
+void ResourceManagerService::set_logger_service(LoggerService* logger) noexcept {
+    m_logger = logger;
 }
 
 void ResourceManagerService::init(ResourceManagerConfig config) {
@@ -144,9 +150,15 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load(Resour
     }
     const HandleEntry* entry = handle_entry(handle);
     if (!entry || entry->released) {
+        log_resource(LogSeverity::Error, {}, std::format(
+            "[ResourceManager] load failed: invalid handle {:#x}",
+            handle.value));
         return std::unexpected(ResourceLoadError{.code = ResourceLoadErrorCode::InvalidHandle, .handle = handle});
     }
     if (!entry->path) {
+        log_resource(LogSeverity::Error, {}, std::format(
+            "[ResourceManager] load failed: no path registered for handle {:#x}",
+            handle.value));
         return std::unexpected(ResourceLoadError{.code = ResourceLoadErrorCode::NoPathRegistered, .handle = handle});
     }
     return load_from_path(handle, *entry->path);
@@ -163,6 +175,10 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
     }
     HandleEntry* entry = mutable_handle(handle);
     if (!entry || entry->released) {
+        log_resource(LogSeverity::Error, {}, std::format(
+            "[ResourceManager] load failed: invalid handle {:#x} path '{}'",
+            handle.value,
+            path.string()));
         return std::unexpected(ResourceLoadError{
             .code = ResourceLoadErrorCode::InvalidHandle,
             .handle = handle,
@@ -170,6 +186,10 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
         });
     }
     if (!std::filesystem::exists(path)) {
+        log_resource(LogSeverity::Error, {}, std::format(
+            "[ResourceManager] load failed: file not found handle {:#x} path '{}'",
+            handle.value,
+            path.string()));
         return std::unexpected(ResourceLoadError{
             .code = ResourceLoadErrorCode::FileNotFound,
             .handle = handle,
@@ -179,6 +199,10 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
 
     const ResourceId id = reserve(handle);
     if (id.value == u64(0)) {
+        log_resource(LogSeverity::Error, {}, std::format(
+            "[ResourceManager] load failed: reserve failed handle {:#x} path '{}'",
+            handle.value,
+            path.string()));
         return std::unexpected(ResourceLoadError{
             .code = ResourceLoadErrorCode::Unknown,
             .handle = handle,
@@ -205,6 +229,11 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
         if (!in || (size > u64(0) &&
                     !in.read(reinterpret_cast<char*>(bytes.data()),
                              static_cast<std::streamsize>(bytes.size())))) {
+            log_resource(LogSeverity::Error, id, std::format(
+                "[ResourceManager] load failed: could not read font bytes resource {} handle {:#x} path '{}'",
+                id.value,
+                handle.value,
+                path.string()));
             return std::unexpected(ResourceLoadError{
                 .code = ResourceLoadErrorCode::Unknown,
                 .handle = handle,
@@ -220,6 +249,11 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
         };
     }
     if (!publish(id, std::move(loaded))) {
+        log_resource(LogSeverity::Error, id, std::format(
+            "[ResourceManager] load failed: publish failed resource {} handle {:#x} path '{}'",
+            id.value,
+            handle.value,
+            path.string()));
         return std::unexpected(ResourceLoadError{
             .code = ResourceLoadErrorCode::Unknown,
             .handle = handle,
@@ -229,6 +263,13 @@ std::expected<ResourceId, ResourceLoadError> ResourceManagerService::load_from_p
     (void)mark_ready(id);
     entry->path = path;
     m_handle_by_path[path_key(path)] = handle;
+    log_resource(LogSeverity::Info, id, std::format(
+        "[ResourceManager] loaded resource {} handle {:#x} kind {} bytes {} path '{}'",
+        id.value,
+        handle.value,
+        static_cast<unsigned>(entry->registration.kind),
+        size,
+        path.string()));
     return id;
 }
 
@@ -480,6 +521,17 @@ void ResourceManagerService::set_payload_id(ResourcePayload& payload, ResourceId
             item.handle = handle;
         }
     }, payload);
+}
+
+void ResourceManagerService::log_resource(LogSeverity severity, ResourceId id, std::string message) const {
+    if (!m_logger) return;
+    auto write = [logger = m_logger, severity, id, message = std::move(message)] {
+        (void)logger->write_resource(id, severity, message);
+    };
+    if (m_threads && m_threads->enqueue_logger_task(write)) {
+        return;
+    }
+    write();
 }
 
 } // namespace ndde

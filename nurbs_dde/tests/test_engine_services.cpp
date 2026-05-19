@@ -272,10 +272,12 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     camera.reset_main(CameraPreset::Top);
     EXPECT_NEAR(render.descriptor(main_id)->camera.pitch, 1.35f, 1e-5f);
     render.queue_surface_perturbation(SurfacePerturbCommand{.view = main_id, .uv = {0.25f, -0.5f}, .seed = 42u});
-    const auto commands = render.consume_surface_perturbations(main_id);
-    ASSERT_EQ(commands.size(), 1u);
-    EXPECT_EQ(commands.get_allocator().resource(), memory.frame().resource());
-    EXPECT_FLOAT_EQ(commands.front().uv.x, 0.25f);
+    {
+        const auto commands = render.consume_surface_perturbations(main_id);
+        ASSERT_EQ(commands.size(), 1u);
+        EXPECT_EQ(commands.get_allocator().resource(), memory.frame().resource());
+        EXPECT_FLOAT_EQ(commands.front().uv.x, 0.25f);
+    }
 
     const Vertex verts[] = {
         {{0.f, 0.f, 0.f}, {1.f, 0.f, 0.f, 1.f}},
@@ -287,7 +289,14 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     EXPECT_EQ(render.packet_count(main_id), 1u);
     EXPECT_EQ(render.packet_count(alt_id), 1u);
     EXPECT_EQ(render.packets().size(), 2u);
-    EXPECT_EQ(render.packets().front().vertices.get_allocator().resource(), memory.frame().resource());
+    EXPECT_EQ(render.packets().front().vertices.size(), 2u);
+    memory.begin_frame();
+    ASSERT_EQ(render.packets().size(), 2u);
+    EXPECT_EQ(render.packets().front().vertices.size(), 2u);
+    EXPECT_FLOAT_EQ(render.packets().front().vertices.front().pos.x, 0.f);
+    render.clear_packets();
+    EXPECT_TRUE(render.packets().empty());
+
     const auto snapshots = render.active_view_snapshots();
     ASSERT_EQ(snapshots.size(), 2u);
     EXPECT_EQ(snapshots.get_allocator().resource(), memory.frame().resource());
@@ -295,7 +304,7 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     main.reset();
     EXPECT_EQ(render.active_view_count(), 1u);
     render.submit(main_id, verts, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, Mat4{1.f});
-    EXPECT_EQ(render.packet_count(main_id), 1u);
+    EXPECT_EQ(render.packet_count(main_id), 0u);
 }
 
 TEST(CameraInputController, PerspectiveProfileOrbitsAndZooms) {

@@ -106,6 +106,7 @@ Good resource examples:
 - immutable render snapshot payload
 - GPU upload request
 - texture/image data
+- font files and cached font bytes
 - built-in shader, colormap, mesh, material, or scenario asset
 - capture PNG artifact
 - capture frame-sequence manifest
@@ -121,6 +122,34 @@ Poor resource examples:
 - per-frame temporary vertices that are consumed immediately
 - arbitrary raw allocation with no service boundary
 - text that belongs to `LoggerService`
+- individual glyph cache records derived from a font atlas
+
+## Font Resource Boundary
+
+Font files are first-class resources because they cross service boundaries:
+
+```text
+assets/fonts/*.ttf or *.otf
+  -> ResourceManagerService path registration
+  -> ResourceManagerService load()
+  -> FontResource{ResourceId, ResourceHandle, path, byte_count, bytes}
+  -> TextOverlayService active font handle/id
+  -> renderer TextRenderer FreeType face + glyph atlas cache
+```
+
+The manager owns font identity, file path metadata, load diagnostics, and cached
+font bytes. It does not own renderer-specific glyph caches.
+
+Derived glyph and atlas data belongs to the text renderer:
+
+- FreeType face/size state
+- glyph advances, bearings, bitmap extents, and atlas UVs
+- GPU atlas images, samplers, descriptors, and text draw batches
+
+Those derived records should be keyed by the font `ResourceId`/`ResourceHandle`,
+font role, pixel size, and atlas generation. They should not be exposed as
+hundreds of public `ResourceId` entries unless a future cross-service use case
+requires it.
 
 ## Ownership
 

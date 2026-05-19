@@ -1,4 +1,5 @@
 #include "engine/SimulationHost.hpp"
+#include "engine/logging/LoggerService.hpp"
 #include "engine/resources/ResourceManagerService.hpp"
 
 #include <gtest/gtest.h>
@@ -198,6 +199,67 @@ TEST(ResourceManagerService, LoadsFontResourceBytesFromPath) {
     EXPECT_EQ(font.path, path);
     ASSERT_EQ(font.bytes.size(), 10u);
     EXPECT_EQ(static_cast<char>(font.bytes[0]), 'f');
+}
+
+TEST(ResourceManagerService, LogsSuccessfulPathLoadsWithResourceReference) {
+    LoggerService logger;
+    logger.init();
+    ResourceManagerService resources;
+    resources.init();
+    resources.set_logger_service(&logger);
+
+    const std::filesystem::path path = resource_test_dir() / "logged_asset.bin";
+    {
+        std::ofstream out(path, std::ios::binary);
+        out << "logged bytes";
+    }
+
+    const ResourceHandle handle = resources.register_path(ResourceRegistration{
+        .key = ResourceKey{"asset.logged"},
+        .kind = ResourceKind::FileArtifact,
+        .owner = ResourceOwner::Engine,
+        .lifetime = ResourceLifetime::Persistent
+    }, path);
+    ASSERT_NE(handle.value, u64(0));
+
+    const auto loaded = resources.load(handle);
+    ASSERT_TRUE(loaded.has_value());
+
+    const auto records = logger.snapshot();
+    ASSERT_EQ(records.size(), 1u);
+    EXPECT_EQ(records.front().record.severity, LogSeverity::Info);
+    EXPECT_EQ(records.front().record.category, LogCategory::Resource);
+    ASSERT_TRUE(records.front().record.resource.has_value());
+    EXPECT_EQ(*records.front().record.resource, *loaded);
+    EXPECT_NE(records.front().message.find("loaded resource"), std::string::npos);
+    EXPECT_NE(records.front().message.find(path.string()), std::string::npos);
+}
+
+TEST(ResourceManagerService, LogsMissingPathLoadFailures) {
+    LoggerService logger;
+    logger.init();
+    ResourceManagerService resources;
+    resources.init();
+    resources.set_logger_service(&logger);
+
+    const std::filesystem::path path = resource_test_dir() / "logged_missing_asset.bin";
+    std::filesystem::remove(path);
+    const ResourceHandle handle = resources.register_path(ResourceRegistration{
+        .key = ResourceKey{"asset.logged.missing"},
+        .kind = ResourceKind::FileArtifact
+    }, path);
+    ASSERT_NE(handle.value, u64(0));
+
+    const auto loaded = resources.load(handle);
+    ASSERT_FALSE(loaded.has_value());
+
+    const auto records = logger.snapshot();
+    ASSERT_EQ(records.size(), 1u);
+    EXPECT_EQ(records.front().record.severity, LogSeverity::Error);
+    EXPECT_EQ(records.front().record.category, LogCategory::Resource);
+    EXPECT_FALSE(records.front().record.resource.has_value());
+    EXPECT_NE(records.front().message.find("file not found"), std::string::npos);
+    EXPECT_NE(records.front().message.find(path.string()), std::string::npos);
 }
 
 TEST(ResourceManagerService, LoadReportsMissingFile) {

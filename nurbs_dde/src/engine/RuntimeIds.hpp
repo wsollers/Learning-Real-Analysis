@@ -90,6 +90,17 @@ inline constexpr ComponentId solver_ode_euler{"solver.ode.euler"};
 inline constexpr ComponentId solver_ode_rk4{"solver.ode.rk4"};
 inline constexpr ComponentId system_gravity_pendulum{"system.gravity.pendulum"};
 inline constexpr ComponentId system_gravity_planar_n_body{"system.gravity.planar_n_body"};
+inline constexpr ComponentId integration_zoo_function_one{"integration.zoo.function_one"};
+inline constexpr ComponentId integration_zoo_function_x{"integration.zoo.function_x"};
+inline constexpr ComponentId integration_zoo_function_exp{"integration.zoo.function_exp"};
+inline constexpr ComponentId integration_zoo_function_ln{"integration.zoo.function_ln"};
+inline constexpr ComponentId integration_zoo_function_reciprocal{"integration.zoo.function_reciprocal"};
+inline constexpr ComponentId integration_zoo_gaussian{"integration.zoo.gaussian"};
+inline constexpr ComponentId integration_zoo_wave{"integration.zoo.wave"};
+inline constexpr ComponentId integration_zoo_polynomial{"integration.zoo.polynomial"};
+inline constexpr ComponentId integration_zoo_step_x{"integration.zoo.step_x"};
+inline constexpr ComponentId integration_zoo_plane_patch{"integration.zoo.plane_patch"};
+inline constexpr ComponentId integration_zoo_torus_chart{"integration.zoo.torus_chart"};
 
 } // namespace ids
 

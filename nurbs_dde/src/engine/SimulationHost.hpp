@@ -107,6 +107,7 @@ public:
         m_logger.init();
         m_metrics.init();
         m_resources.init();
+        m_resources.set_logger_service(&m_logger);
         m_threads.init(ThreadPoolConfig{.enable_logger_thread = true}, ThreadServiceBindings{
             .diagnostics = &m_diagnostics,
             .events = &m_events,

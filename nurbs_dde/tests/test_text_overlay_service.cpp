@@ -5,6 +5,9 @@
 
 #include <fstream>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 namespace {
 
 using namespace ndde;
@@ -96,6 +99,13 @@ TEST(TextOverlayService, RegistersLoadsAndBindsFontThroughResourceManager) {
     EXPECT_EQ(font->path, path);
     EXPECT_EQ(font->bytes.size(), 17u);
     EXPECT_EQ(resources.current(*handle), service.active_font_id());
+}
+
+TEST(TextRenderingVendor, FreeTypeCanCreateAndDestroyLibrary) {
+    FT_Library library = nullptr;
+    ASSERT_EQ(FT_Init_FreeType(&library), 0);
+    ASSERT_NE(library, nullptr);
+    EXPECT_EQ(FT_Done_FreeType(library), 0);
 }
 
 TEST(EngineServices, OwnsTextOverlayServiceAndPassesItToSimulationHost) {

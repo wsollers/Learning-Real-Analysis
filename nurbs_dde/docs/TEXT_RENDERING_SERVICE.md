@@ -52,7 +52,8 @@ TextOverlayService
 TextRenderer
   receives FontResource bytes from ResourceManagerService through
   TextOverlayService
-  builds/rebuilds Vulkan font atlases from cached bytes
+  builds/rebuilds FreeType-backed glyph caches and Vulkan font atlases from
+  cached bytes
 ```
 
 Expected flow:
@@ -69,6 +70,19 @@ Engine startup or lab setup
 
 This keeps font identity, lifetime, and cached bytes consistent with the rest of
 the engine resource system.
+
+Glyphs are derived renderer data, not individually registered public resources.
+`ResourceManagerService` owns the font-file resource. `TextRenderer` owns
+`FontResourceId + pixel size + font role + atlas generation` caches containing:
+
+- FreeType face/size-derived glyph metrics
+- glyph bitmap placement in an atlas page
+- advance, bearing, and quad layout data
+- Vulkan image/sampler/descriptor state for atlas pages
+
+This avoids creating hundreds of tiny `ResourceId` records for individual
+glyphs while still keeping font loading and lifetime auditable through the
+resource manager.
 
 ## C++ Engineering Standard
 
@@ -97,6 +111,27 @@ The desired default is a monospaced TTF/OTF font when one is present in assets.
 The service keeps the font path configurable so the renderer can switch to a
 true mono font without changing calling code.
 
+Initial label work should use small point sizes, roughly 12 to 16 screen pixels
+on the target view. A label such as `"TTTT"` at a selected point should be a
+normal text draw request, not custom mesh geometry.
+
+## Font Rasterizer
+
+The renderer-side implementation uses FreeType.
+
+Rationale:
+
+- supports both TTF and OTF assets already expected by the project
+- preserves access to real glyph metrics, bearings, kerning-ready advances, and
+  future shaping hooks
+- avoids hand-authored bitmap alphabets in analysis views
+- keeps simulation and math code independent from font details
+
+FreeType is vendored through CMake `FetchContent` and linked into the engine
+layer for the text service implementation. The first atlas milestone uses
+grayscale bitmap glyphs with alpha blending. Signed-distance-field text and
+complex shaping are later refinements.
+
 ## Service Split
 
 Use two layers:
@@ -109,7 +144,8 @@ TextOverlayService
 
 TextRenderer
   renderer-owned Vulkan implementation
-  font atlas / glyph cache built from ResourceManager cached font bytes
+  FreeType face loading from ResourceManager cached font bytes
+  font atlas / glyph cache built from FreeType glyph bitmaps
   glyph quad generation
   Vulkan pipeline, descriptor, sampler ownership
 ```
@@ -186,11 +222,12 @@ Spline/NURBS lab:
 
 1. Build a CPU-side text command service with tests.
 2. Add font asset discovery/config.
-3. Add renderer-side font atlas using the configured TTF/OTF.
-4. Generate glyph quads into a text vertex format.
-5. Add a Vulkan text pipeline with alpha blending.
-6. Flush text commands after regular geometry packets for each view.
-7. Add integration analytics labels.
+3. Add renderer-side FreeType font face creation from `FontResource::bytes`.
+4. Add bitmap glyph atlas construction for the configured TTF/OTF.
+5. Generate glyph quads into a text vertex format.
+6. Add a Vulkan text pipeline with alpha blending.
+7. Flush text commands after regular geometry packets for each view.
+8. Add integration analytics labels.
 
 ## Non-Goals For The First Slice
 

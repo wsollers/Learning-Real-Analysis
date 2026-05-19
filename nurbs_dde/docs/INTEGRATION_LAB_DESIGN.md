@@ -3,6 +3,13 @@
 **Status:** design draft  
 **Scope:** 2D-first integration, approximation, diagnostics, and UI workbenches  
 **Parent architecture:** `Integration-Nurbs-Splines.md`  
+**Focused UI designs:**
+
+```text
+docs/INTEGRATION_WORKBENCH_UI_DESIGN.md
+docs/INTEGRATION_ANALYTICS_WINDOW_DESIGN.md
+```
+
 **Prototype references:**
 
 ```text
@@ -144,7 +151,9 @@ that cannot be inspected numerically.
 
 ## UI Shape
 
-The lab should be a dense, restrained scientific instrument.
+The lab should be a dense, restrained scientific instrument. The main window is
+the integration workbench itself. Controls are part of the workbench chrome
+around the rendered integral, not a free-floating settings dialog.
 
 ```text
 +-----------------------------------------------------------------------+
@@ -166,6 +175,24 @@ The lab should be a dense, restrained scientific instrument.
 The first screen should be the usable workbench, not a landing page. The UI
 should default to a working 2D integral with a visible domain, visible partition,
 and a live estimate.
+
+The two-window mental model is:
+
+```text
+Main window:
+  Workbench
+  construct/manipulate the active integral
+  integrated toolbar, tool tray, viewport, inspector, and status strip
+
+Second window:
+  Results and displays
+  convergence, comparison, diagnostic plots, selected-cell microscope,
+  result traces, and supporting graphs
+```
+
+The main window may use ImGui while the renderer/text systems mature, but those
+widgets should be anchored as workbench chrome. They should not appear as
+movable floating panels over an unrelated viewport.
 
 ---
 
@@ -221,6 +248,99 @@ Status strip: one line at bottom
 
 The top strip is for fast switching, not deep configuration. When a setting
 needs multiple controls, open a small focused section in the right inspector.
+
+### Main Window Workbench Chrome
+
+The main window should be composed as anchored UI around the Vulkan workbench
+view:
+
+```text
+Top bar:
+  lab title
+  object zoo selection populated from metadata
+  active method
+  partition resolution
+  display field
+  workbench mode selector
+
+Left tool tray:
+  mode-specific tools for domain, partition, samples, contribution, error,
+  bounds, or analysis setup
+
+Center:
+  Vulkan-rendered domain, cells, samples, heatmaps, selected cell, and later
+  Vulkan text labels/legends
+
+Right inspector:
+  problem summary
+  live result
+  selected-cell details
+  compact metadata and flags
+
+Bottom strip:
+  estimate
+  error
+  cell count
+  selected/hovered cell
+  active mode
+  diagnostic flags
+```
+
+This keeps the user’s attention on the integral while still making the controls
+and readouts feel like part of the instrument.
+
+### Object Zoo Selector
+
+The first top-bar control should select the mathematical object being studied.
+This is broader than an integrand picker.
+
+```text
+Object Zoo:
+  functions
+  scalar fields
+  surfaces
+  manifolds / charts
+  later: NURBS curves and surfaces
+```
+
+The selector must be populated from `SimMetadataService` descriptors, not from a
+hardcoded UI-only list. The metadata entry should describe:
+
+```text
+display name
+category
+capabilities
+assumptions
+trust level
+documentation reference
+whether a live backend/factory is available
+```
+
+The first live objects may still map onto current `IntegrandPreset2D` values,
+but the UI vocabulary should remain object-oriented:
+
+```text
+1D equation objects:
+  y = 1
+  y = x
+  y = exp(x)
+  y = ln(x)
+  y = 1 / x
+
+2D scalar-field objects:
+Gaussian scalar field
+Wave scalar field
+Polynomial scalar field
+Step discontinuity field
+
+Planned geometric/manifold objects:
+Plane surface patch       planned
+Torus manifold chart      planned
+```
+
+Planned zoo entries may be visible but disabled or marked planned. They should
+not pretend to run until the math adapter, renderable sample data, diagnostics,
+metadata, and tests exist.
 
 ### Primary Screen Modes
 
@@ -379,6 +499,10 @@ The screen can run without the second analytics window.
 The second window should be the analytical companion to the main workbench. The
 main screen is for constructing and inspecting one active integral; the second
 window is for asking whether the computation is trustworthy.
+
+The second window should not duplicate the main workbench controls. Its job is
+to show results and supporting displays. Think of it as the analysis wall beside
+the workbench.
 
 Current engine terminology maps naturally:
 

@@ -439,6 +439,7 @@ void Engine::run_frame() {
 
         const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
         flush_render_service();
+        m_services.render().clear_packets();
         m_renderer.imgui_record_draw_data();
         {
             ScopedMetricTimer timer(m_services.metrics(), MetricId::FrameSubmitMs);

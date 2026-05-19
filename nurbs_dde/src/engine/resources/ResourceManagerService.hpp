@@ -3,6 +3,7 @@
 // Engine-owned resource identity and lookup registry.
 
 #include "engine/resources/ResourceTypes.hpp"
+#include "engine/logging/LoggerTypes.hpp"
 #include "engine/threading/ThreadTypes.hpp"
 
 #include <expected>
@@ -14,6 +15,7 @@
 namespace ndde {
 
 class ThreadManagementService;
+class LoggerService;
 
 class ResourceManagerService {
 public:
@@ -27,6 +29,7 @@ public:
 
     void set_thread_service(ThreadManagementService* threads,
                             ThreadRole owner_role = ThreadRole::Main) noexcept;
+    void set_logger_service(LoggerService* logger) noexcept;
 
     void init(ResourceManagerConfig config = {});
     void shutdown() noexcept;
@@ -83,6 +86,7 @@ private:
     std::unordered_map<std::string, ResourceHandle> m_handle_by_key;
     std::unordered_map<std::string, ResourceHandle> m_handle_by_path;
     ThreadManagementService* m_threads = nullptr;
+    LoggerService* m_logger = nullptr;
     ThreadRole m_owner_role = ThreadRole::Main;
     u64 m_next_id = u64(1);
     u64 m_next_runtime_handle = u64(0x0002'0000'0000'0000);
@@ -99,6 +103,7 @@ private:
     [[nodiscard]] static std::string path_key(const std::filesystem::path& path);
     [[nodiscard]] static u64 payload_byte_count(const ResourcePayload& payload) noexcept;
     static void set_payload_id(ResourcePayload& payload, ResourceId id, ResourceHandle handle);
+    void log_resource(LogSeverity severity, ResourceId id, std::string message) const;
 };
 
 } // namespace ndde

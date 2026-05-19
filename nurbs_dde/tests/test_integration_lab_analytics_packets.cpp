@@ -17,6 +17,18 @@ TEST(IntegrationLabAnalyticsPackets, ConvergencePlotEmitsAxesAndSeries) {
     EXPECT_GT(vertices.size(), 4u);
 }
 
+TEST(IntegrationLabAnalyticsPackets, AnalyticsShellEmitsPanelsAndLabels) {
+    memory::MemoryService memory;
+    IntegrationWorkbenchState state;
+    auto lines = memory.frame().make_vector<Vertex>();
+    auto labels = memory.frame().make_vector<Vertex>();
+
+    append_integration_analytics_shell(lines, labels, state.analysis_snapshot());
+
+    EXPECT_GT(lines.size(), 40u);
+    EXPECT_GT(labels.size(), 100u);
+}
+
 TEST(IntegrationLabAnalyticsPackets, MethodComparisonEmitsBars) {
     memory::MemoryService memory;
     IntegrationWorkbenchState state;
@@ -47,7 +59,10 @@ TEST(IntegrationLabAnalyticsPackets, SubmitCreatesAlternateViewPackets) {
 
     EXPECT_GT(stats.convergence_vertices, 0u);
     EXPECT_GT(stats.comparison_vertices, 0u);
-    EXPECT_EQ(services.render().packet_count(view), 2u);
+    EXPECT_GT(stats.shell_vertices, 0u);
+    EXPECT_GT(stats.label_vertices, 0u);
+    EXPECT_GT(stats.contribution_vertices, 0u);
+    EXPECT_EQ(services.render().packet_count(view), 5u);
 }
 
 } // namespace

@@ -85,21 +85,21 @@ public:
     template <class T>
     [[nodiscard]] typename Policy::template Vector<T> make_vector() const {
         typename Policy::template Vector<T> vector{m_resource};
-        vector.bind_generation(&m_generation);
+        vector.bind_generation(&m_generation, m_name);
         return vector;
     }
 
     template <class T>
     [[nodiscard]] typename Policy::template Vector<T> make_vector(std::size_t count) const {
         typename Policy::template Vector<T> vector(count, m_resource);
-        vector.bind_generation(&m_generation);
+        vector.bind_generation(&m_generation, m_name);
         return vector;
     }
 
     template <class T>
     void rebind_vector(typename Policy::template Vector<T>& vector) const {
         if (vector.get_allocator().resource() == m_resource) {
-            vector.bind_generation(&m_generation);
+            vector.bind_generation(&m_generation, m_name);
             return;
         }
 

@@ -115,6 +115,7 @@ target_link_libraries(ndde_engine PUBLIC
     ndde_telemetry
     ndde_simulation
     nlohmann_json::nlohmann_json
+    ndde::freetype
 )
 
 # ── nurbs_dde executable ──────────────────────────────────────────────────────

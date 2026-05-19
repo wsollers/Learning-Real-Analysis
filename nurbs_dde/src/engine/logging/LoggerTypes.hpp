@@ -33,6 +33,7 @@ enum class LogCategory : u8 {
     Capture,
     Telemetry,
     Metadata,
+    Resource,
     Renderer,
     Worker
 };

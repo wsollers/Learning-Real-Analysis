@@ -81,6 +81,20 @@ LogRecordId LoggerService::write_diagnostic(DiagnosticId diagnostic,
     return append(record, message);
 }
 
+LogRecordId LoggerService::write_resource(ResourceId resource,
+                                          LogSeverity severity,
+                                          std::string_view message) {
+    if (!require_owner_thread("LoggerService::write_resource")) return {};
+    std::scoped_lock lock(m_mutex);
+    LogRecord record;
+    record.severity = severity;
+    record.category = LogCategory::Resource;
+    if (resource.value != u64(0)) {
+        record.resource = resource;
+    }
+    return append(record, message);
+}
+
 std::span<const LogRecord> LoggerService::records() const noexcept {
     return m_record_view;
 }

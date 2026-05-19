@@ -5,14 +5,23 @@
 **Goal:** complete a usable 2D integration workbench quickly without blocking
 future 3D, surface, spline, or NURBS integration.
 
+Focused UI contracts:
+
+```text
+docs/INTEGRATION_WORKBENCH_UI_DESIGN.md
+docs/INTEGRATION_ANALYTICS_WINDOW_DESIGN.md
+```
+
 Current user-facing parity note:
 
 ```text
 The engine-safe vertical slices are not the same as prototype parity.
 Each phase marked complete means the underlying runnable capability exists and
-is tested. The full POC-shaped experience still requires workbench layout,
-second-window analytics polish, richer domain/partition creation, Darboux
-views, and result-trace/theorem panes.
+is tested. The intended UI is a two-window lab:
+  main window = integrated workbench
+  second window = results and supporting displays
+The full POC-shaped experience still requires second-window analytics polish,
+richer domain/partition creation, Darboux views, and result-trace/theorem panes.
 ```
 
 ---
@@ -358,7 +367,9 @@ No render packet generation occurs inside math kernel.
 Purpose:
 
 ```text
-Replace the current 1D-only integration panel with the first usable 2D workbench.
+Replace floating demo panels with the first usable integrated workbench.
+For the current 1D-first use cases, the main window should be one top command
+bar plus one primary spatial viewport.
 ```
 
 Status:
@@ -379,40 +390,42 @@ src/app/IntegrationLabPrimaryPanel.cpp       optional
 UI:
 
 ```text
-Top controls:
-  domain preset
-  integrand
+Top anchored bar:
+  Equation object zoo selector populated from SimMetadataService
   method
-  nx / ny resolution
-  display mode
+  N partition count
+  interval min / max
 
-Right inspector:
-  problem
-  live result
-  selected cell
-  display layers
-
-Bottom status:
-  estimate
-  error/reference when available
+Center:
+  Vulkan-rendered active integral
+  graph/domain frame
   cells
-  hovered/selected cell
-  diagnostic flags
+  samples
+  active/selected cell guides when enabled
+
+Not shown in the first use cases:
+  left tool tray
+  right inspector
+  bottom status strip
+  mode tabs
+  floating panels
 ```
 
 Implementation notes:
 
 ```text
-Use ImGui for controls and inspector.
-Keep the current 1D/derivative slice either as a collapsible "1D bridge" or
-move it behind a mode selector.
+Use ImGui as anchored workbench chrome until Vulkan text/UI rendering is mature.
+Do not use a movable/floating settings panel as the primary lab shape.
 Do not remove the existing lab entry point.
+The detailed contract lives in `INTEGRATION_WORKBENCH_UI_DESIGN.md`.
 ```
 
 Tests:
 
 ```text
 Existing simulation registration test still passes.
+Integration lab registers zoo metadata for live scalar fields and planned
+surface/manifold objects.
 Snapshot after tick contains 2D result.
 No render packets required for panel-only operation.
 ```
@@ -420,7 +433,8 @@ No render packets required for panel-only operation.
 Completion gate:
 
 ```text
-User can open Ctrl+3 and see/change a 2D integral from the main app window.
+User can open Ctrl+3 and see a workbench-shaped main window:
+top command bar and one primary spatial viewport.
 ```
 
 ---
@@ -549,7 +563,8 @@ Hover/click updates selected-cell data in the workbench.
 Purpose:
 
 ```text
-Use the existing alternate/second Vulkan window as the analytics companion.
+Use the existing alternate/second Vulkan window as the results and displays
+companion.
 ```
 
 Status:
@@ -571,33 +586,31 @@ tests/test_integration_lab_analytics.cpp
 Views:
 
 ```text
+Stable empty analysis shell
+Result summary
 Convergence trace
 Method comparison
-Diagnostic map
+Contribution distribution
+Error/refinement distribution shell
 Selected-cell microscope
-Result trace/audit rows
+Metadata / diagnostics / trace rows
 ```
 
 First implementation:
 
 ```text
 Register one alternate view for the integration lab.
-Render a diagnostic map in the second window.
-Show convergence/method comparison in ImGui panel on the main window or as
-second-window render packets, whichever is fastest with current infrastructure.
+When no active problem exists, render an empty analysis shell with empty graph
+frames and empty tables.
+When a problem snapshot exists, populate result summary, contribution
+distribution, method comparison, and convergence data from the same snapshot
+that drives the main viewport.
 ```
 
-Recommended compromise:
-
-```text
-Second Vulkan window:
-  diagnostic/convergence visual map
-
-Main ImGui analytics panel:
-  dense tables and numeric rows
-```
-
-Then later move more analytics drawing into the second window if needed.
+The second window should not duplicate the main workbench controls. It follows
+the active problem and selected cell from the main window, then presents richer
+analysis, plots, comparisons, and traces.
+The detailed contract lives in `INTEGRATION_ANALYTICS_WINDOW_DESIGN.md`.
 
 Tests:
 
@@ -650,6 +663,89 @@ Completion gate:
 
 ```text
 The 2D lab can teach value, contribution, error, and convergence clearly.
+```
+
+---
+
+## Phase 7A: Expanded POC-Shaped Workbench Shell
+
+Purpose:
+
+```text
+Restore the broader prototype-shaped workbench only after the first use cases
+are stable. The current first-screen contract remains one top command bar plus
+one primary spatial viewport.
+```
+
+Status:
+
+```text
+pending after initial use cases
+```
+
+Later target shell:
+
+```text
+Main window:
+  anchored top bar
+  anchored left tool tray
+  Vulkan-rendered center workbench
+  anchored right inspector
+  anchored bottom status strip
+
+Mode strip:
+  Domain
+  Partition
+  Samples
+  Contribution
+  Error
+  Bounds
+  Analysis
+
+Live controls:
+  rectangle domains
+  metadata-backed object zoo selector
+  1D equation objects: y=1, y=x, y=exp(x), y=ln(x), y=1/x
+  live scalar-field presets
+  uniform grids
+  samples
+  contribution maps
+  local-error maps
+  analysis tables
+
+Inspector:
+  problem summary
+  live result
+  selected-cell microscope
+  status and viewport notes
+```
+
+Rules:
+
+```text
+Controls backed by current engine behavior are marked live.
+Controls that express the design but lack backend support are visible but
+disabled or marked planned.
+The UI must not claim a method/domain/partition works until the math kernel,
+snapshots, render packets, and tests exist for it.
+```
+
+Next fill-in items:
+
+```text
+Darboux sampled bounds backend for the Bounds mode
+draggable/nonuniform tag support for the Samples mode
+adaptive refinement queue for the Error mode
+second-window labels through TextOverlayService
+domain creation for disk/annulus/triangle/polygon
+```
+
+Completion gate:
+
+```text
+The user can navigate the full first-screen workbench shape, use all live
+features, and clearly see which future tools are planned. This is not required
+for Use Case 1 or Use Case 2.
 ```
 
 ---

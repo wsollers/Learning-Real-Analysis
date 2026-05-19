@@ -57,7 +57,7 @@ ResourceManagerService.
 Status:
 
 ```text
-in progress
+complete
 ```
 
 Initial default:
@@ -108,16 +108,58 @@ src/renderer/TextRenderer.cpp
 Implementation notes:
 
 ```text
-Use stb_truetype or another small proven font rasterizer.
+Use vendored FreeType as the font rasterizer.
+Create FreeType library/face objects from ResourceManager-owned FontResource bytes.
 Own Vulkan image/sampler/descriptors with RAII.
 Start with ASCII printable glyphs plus common math punctuation.
 Rebuild atlas on font change or device recreation.
+Keep glyphs as renderer-owned derived cache entries, not ResourceManager records.
 ```
 
 Completion gate:
 
 ```text
 Renderer can create and destroy a font atlas without leaks.
+```
+
+---
+
+## Phase 2A: FreeType Vendor Boundary
+
+Purpose:
+
+```text
+Make FreeType available to the text renderer while keeping font file loading in
+ResourceManagerService.
+```
+
+Status:
+
+```text
+in progress
+```
+
+Build rule:
+
+```text
+FreeType is vendored with FetchContent and linked through ndde::freetype.
+Optional FreeType compression/image dependencies are disabled for the first
+slice: zlib, bzip2, brotli, png, and harfbuzz.
+```
+
+Ownership rule:
+
+```text
+ResourceManagerService owns FontResource bytes.
+TextOverlayService owns text draw commands and active font handles.
+TextRenderer owns FreeType faces, glyph metrics, atlas pages, and Vulkan objects.
+Individual glyphs are cache records, not public ResourceId entries.
+```
+
+Completion gate:
+
+```text
+Debug and tidy builds configure and link with FreeType available to ndde_engine.
 ```
 
 ---
@@ -207,6 +249,7 @@ The second-window analytics view is readable without relying on ImGui panels.
 Do not build a full layout/rich text engine.
 Do not put text on the event bus.
 Do not make simulations own fonts.
+Do not make each glyph a ResourceManager resource.
 Do not add LaTeX rendering before basic labels work.
 Do not optimize with SDF/MSDF until bitmap atlas text is proven insufficient.
 ```

@@ -41,6 +41,10 @@ public:
                                                LogSeverity severity,
                                                std::string_view message);
 
+    [[nodiscard]] LogRecordId write_resource(ResourceId resource,
+                                             LogSeverity severity,
+                                             std::string_view message);
+
     [[nodiscard]] std::span<const LogRecord> records() const noexcept;
     [[nodiscard]] std::vector<LogSnapshotEntry> snapshot() const;
     [[nodiscard]] std::string_view message(LogRecordId id) const noexcept;

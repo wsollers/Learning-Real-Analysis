@@ -121,6 +121,21 @@ FetchContent_Declare(imgui
     GIT_SHALLOW    ON)
 FetchContent_MakeAvailable(imgui)
 
+# FreeType
+# Used by the renderer-side text service to rasterize TTF/OTF font resources
+# that are loaded and cached through ResourceManagerService.
+set(FT_DISABLE_BROTLI  ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_BZIP2   ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_PNG     ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_ZLIB    ON CACHE BOOL "" FORCE)
+FetchContent_Declare(freetype
+    GIT_REPOSITORY https://github.com/freetype/freetype.git
+    GIT_TAG        VER-2-13-3
+    GIT_SHALLOW    ON)
+FetchContent_MakeAvailable(freetype)
+add_library(ndde::freetype ALIAS freetype)
+
 find_package(Vulkan REQUIRED)
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
 

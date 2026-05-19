@@ -14,6 +14,8 @@
 #include <gtest/gtest.h>
 #include <glm/gtc/epsilon.hpp>
 
+#include <cmath>
+
 namespace {
 
 using namespace ndde;
@@ -73,6 +75,13 @@ TEST(AllSimulations, IntegrationDerivativeLabRegistersStartsAndEmitsPackets) {
     sim.on_register(host);
     EXPECT_GE(services.panels().active_count(), 1u);
     EXPECT_EQ(services.render().active_view_count(), 2u);
+    EXPECT_NE(services.metadata().get_descriptor(ids::integration_zoo_function_one), nullptr);
+    EXPECT_NE(services.metadata().get_descriptor(ids::integration_zoo_function_exp), nullptr);
+    EXPECT_NE(services.metadata().get_descriptor(ids::integration_zoo_function_ln), nullptr);
+    EXPECT_NE(services.metadata().get_descriptor(ids::integration_zoo_function_reciprocal), nullptr);
+    EXPECT_NE(services.metadata().get_descriptor(ids::integration_zoo_gaussian), nullptr);
+    EXPECT_NE(services.metadata().get_descriptor(ids::integration_zoo_plane_patch), nullptr);
+    EXPECT_GE(services.metadata().query_capability(Capability::EmbeddedEvaluation).size(), 11u);
 
     sim.on_start();
     services.render().clear_packets();
@@ -81,7 +90,7 @@ TEST(AllSimulations, IntegrationDerivativeLabRegistersStartsAndEmitsPackets) {
 
     EXPECT_GT(services.render().packet_count(sim.main_view_id()), 0u);
     EXPECT_GT(services.render().packet_count(sim.analytics_view_id()), 0u);
-    EXPECT_NEAR(sim.result().estimate, 2.0, 0.01);
+    EXPECT_TRUE(std::isfinite(sim.result().estimate));
     EXPECT_GT(sim.workbench().snapshot().result.cell_count, 0u);
     EXPECT_GT(sim.workbench().snapshot().result.estimate, 0.0);
     EXPECT_EQ(sim.snapshot().name, "Integration & Derivative Lab");
@@ -91,7 +100,7 @@ TEST(AllSimulations, IntegrationDerivativeLabRegistersStartsAndEmitsPackets) {
     EXPECT_EQ(services.render().active_view_count(), 0u);
 }
 
-TEST(AllSimulations, IntegrationDerivativeLabHoverMapsMainViewPointToCell) {
+TEST(AllSimulations, IntegrationDerivativeLabStartsInOneDimensionalEquationMode) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
     SimulationIntegrationDerivativeLab sim;
@@ -103,19 +112,36 @@ TEST(AllSimulations, IntegrationDerivativeLabHoverMapsMainViewPointToCell) {
     sim.on_tick(host.clock().next(1.f / 60.f));
 
     const IntegrationWorkbenchSnapshot snapshot = sim.workbench().snapshot();
-    ASSERT_TRUE(snapshot.renderable.hovered_cell_id.has_value());
-    EXPECT_EQ(*snapshot.renderable.hovered_cell_id, 136u);
+    EXPECT_FALSE(snapshot.renderable.hovered_cell_id.has_value());
+    EXPECT_GT(services.render().packet_count(sim.main_view_id()), 0u);
 
     const HoverMetadata& hover = services.interaction().hover_metadata();
-    EXPECT_EQ(hover.view, sim.main_view_id());
-    EXPECT_TRUE(hover.view_point.hit);
-    EXPECT_FLOAT_EQ(hover.view_point.point.x, 0.f);
-    EXPECT_FLOAT_EQ(hover.view_point.point.y, 0.f);
+    EXPECT_FALSE(hover.view_point.hit);
 
     sim.on_stop();
 }
 
-TEST(AllSimulations, IntegrationDerivativeLabSingleClickPinsCurrentHoveredCell) {
+TEST(AllSimulations, IntegrationDerivativeLabSimulationThreadTickDoesNotSubmitFrameGeometry) {
+    EngineServices services;
+    SimulationHost host = services.simulation_host();
+    SimulationIntegrationDerivativeLab sim;
+
+    sim.on_register(host);
+    sim.on_start();
+    services.render().clear_packets();
+
+    sim.on_simulation_tick(host.clock().next(1.f / 60.f));
+    EXPECT_EQ(services.render().packet_count(sim.main_view_id()), 0u);
+    EXPECT_EQ(services.render().packet_count(sim.analytics_view_id()), 0u);
+
+    sim.on_submit_render();
+    EXPECT_GT(services.render().packet_count(sim.main_view_id()), 0u);
+    EXPECT_GT(services.render().packet_count(sim.analytics_view_id()), 0u);
+
+    sim.on_stop();
+}
+
+TEST(AllSimulations, IntegrationDerivativeLabSingleClickDoesNotPin2DCellInEquationMode) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
     SimulationIntegrationDerivativeLab sim;
@@ -129,13 +155,12 @@ TEST(AllSimulations, IntegrationDerivativeLabSingleClickPinsCurrentHoveredCell) 
     sim.on_tick(host.clock().next(1.f / 60.f));
 
     const IntegrationWorkbenchSnapshot snapshot = sim.workbench().snapshot();
-    ASSERT_TRUE(snapshot.selected_cell.valid);
-    EXPECT_EQ(snapshot.selected_cell.cell_id, 136u);
+    EXPECT_FALSE(snapshot.selected_cell.valid);
 
     sim.on_stop();
 }
 
-TEST(AllSimulations, IntegrationDerivativeLabDoubleClickPickPinsCell) {
+TEST(AllSimulations, IntegrationDerivativeLabDoubleClickPickDoesNotPin2DCellInEquationMode) {
     EngineServices services;
     SimulationHost host = services.simulation_host();
     SimulationIntegrationDerivativeLab sim;
@@ -152,8 +177,7 @@ TEST(AllSimulations, IntegrationDerivativeLabDoubleClickPickPinsCell) {
     sim.on_tick(host.clock().next(1.f / 60.f));
 
     const IntegrationWorkbenchSnapshot snapshot = sim.workbench().snapshot();
-    ASSERT_TRUE(snapshot.selected_cell.valid);
-    EXPECT_EQ(snapshot.selected_cell.cell_id, 136u);
+    EXPECT_FALSE(snapshot.selected_cell.valid);
 
     sim.on_stop();
 }

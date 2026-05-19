@@ -114,6 +114,23 @@ TEST(LoggerService, KeepsEventAndDiagnosticReferencesStructured) {
     EXPECT_EQ(logger.records()[1].category, LogCategory::Diagnostics);
 }
 
+TEST(LoggerService, KeepsResourceReferencesStructured) {
+    LoggerService logger;
+    logger.init();
+
+    const ResourceId resource{u64(42)};
+    const LogRecordId id = logger.write_resource(resource,
+                                                 LogSeverity::Info,
+                                                 "resource loaded");
+
+    ASSERT_EQ(logger.records().size(), 1u);
+    EXPECT_EQ(logger.records().front().id, id);
+    EXPECT_EQ(logger.records().front().category, LogCategory::Resource);
+    ASSERT_TRUE(logger.records().front().resource.has_value());
+    EXPECT_EQ(*logger.records().front().resource, resource);
+    EXPECT_EQ(logger.message(id), "resource loaded");
+}
+
 TEST(LoggerService, ClearRemovesRecordsButPreservesDropCounters) {
     LoggerService logger;
     logger.init(LoggerConfig{.max_records = u64(1), .max_string_bytes = u64(1024)});
