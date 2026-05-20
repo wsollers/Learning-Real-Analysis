@@ -272,10 +272,12 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     camera.reset_main(CameraPreset::Top);
     EXPECT_NEAR(render.descriptor(main_id)->camera.pitch, 1.35f, 1e-5f);
     render.queue_surface_perturbation(SurfacePerturbCommand{.view = main_id, .uv = {0.25f, -0.5f}, .seed = 42u});
-    const auto commands = render.consume_surface_perturbations(main_id);
-    ASSERT_EQ(commands.size(), 1u);
-    EXPECT_EQ(commands.get_allocator().resource(), memory.frame().resource());
-    EXPECT_FLOAT_EQ(commands.front().uv.x, 0.25f);
+    {
+        const auto commands = render.consume_surface_perturbations(main_id);
+        ASSERT_EQ(commands.size(), 1u);
+        EXPECT_EQ(commands.get_allocator().resource(), memory.frame().resource());
+        EXPECT_FLOAT_EQ(commands.front().uv.x, 0.25f);
+    }
 
     const Vertex verts[] = {
         {{0.f, 0.f, 0.f}, {1.f, 0.f, 0.f, 1.f}},
@@ -287,7 +289,14 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     EXPECT_EQ(render.packet_count(main_id), 1u);
     EXPECT_EQ(render.packet_count(alt_id), 1u);
     EXPECT_EQ(render.packets().size(), 2u);
-    EXPECT_EQ(render.packets().front().vertices.get_allocator().resource(), memory.frame().resource());
+    EXPECT_EQ(render.packets().front().vertices.size(), 2u);
+    memory.begin_frame();
+    ASSERT_EQ(render.packets().size(), 2u);
+    EXPECT_EQ(render.packets().front().vertices.size(), 2u);
+    EXPECT_FLOAT_EQ(render.packets().front().vertices.front().pos.x, 0.f);
+    render.clear_packets();
+    EXPECT_TRUE(render.packets().empty());
+
     const auto snapshots = render.active_view_snapshots();
     ASSERT_EQ(snapshots.size(), 2u);
     EXPECT_EQ(snapshots.get_allocator().resource(), memory.frame().resource());
@@ -295,7 +304,7 @@ TEST(RenderService, RegistersMainAndAlternateViewsAndQueuesPackets) {
     main.reset();
     EXPECT_EQ(render.active_view_count(), 1u);
     render.submit(main_id, verts, Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, Mat4{1.f});
-    EXPECT_EQ(render.packet_count(main_id), 1u);
+    EXPECT_EQ(render.packet_count(main_id), 0u);
 }
 
 TEST(CameraInputController, PerspectiveProfileOrbitsAndZooms) {
@@ -515,6 +524,53 @@ TEST(CameraInputController, SurfacePickOnlyEmitsForPerspectiveSurfaceProfile) {
     EXPECT_EQ(picks.front().seed, 12u);
 }
 
+TEST(ViewInputService, CapturesDragWithinViewAndIgnoresBlockedClicks) {
+    ViewInputService input;
+    const RenderViewId view = 42;
+    const ViewInputRect rect{.origin = {}, .size = {800.f, 600.f}};
+
+    const auto blocked = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {200.f, 150.f},
+        .buttons = ViewPointerButtons{.left_click = true, .left_double_click = true},
+        .ui_blocked = true
+    });
+    EXPECT_FALSE(blocked.enabled);
+    EXPECT_FALSE(blocked.left_double_click);
+
+    const auto start = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {200.f, 150.f},
+        .buttons = ViewPointerButtons{.right_down = true}
+    });
+    EXPECT_TRUE(start.enabled);
+    EXPECT_TRUE(start.captured);
+    EXPECT_TRUE(start.right_drag);
+
+    const auto drag = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {900.f, 700.f},
+        .buttons = ViewPointerButtons{.right_down = true},
+        .ui_blocked = true
+    });
+    EXPECT_TRUE(drag.enabled);
+    EXPECT_TRUE(drag.captured);
+    EXPECT_TRUE(drag.right_drag);
+    EXPECT_FLOAT_EQ(drag.normalized_pixel.x, 1.f);
+    EXPECT_FLOAT_EQ(drag.normalized_pixel.y, 1.f);
+
+    const auto released = input.update(ViewInputUpdate{
+        .view = view,
+        .rect = rect,
+        .cursor = {900.f, 700.f}
+    });
+    EXPECT_FALSE(released.enabled);
+    EXPECT_FALSE(released.captured);
+}
+
 TEST(SimulationClock, AdvancesTickAndTimeAndPauses) {
     SimulationClock clock;
 
@@ -673,7 +729,16 @@ TEST(SimulationHost, ExposesOnlyServiceFacade) {
     EXPECT_EQ(services.render().active_view_count(), 1u);
     EXPECT_TRUE(services.interaction().mouse_state(view_id).enabled);
     EXPECT_EQ(host.clock().next(0.1f).tick_index, 1u);
+    LogRecordId log_id;
+    ASSERT_TRUE(host.threads().run_logger_task_sync([&host, &log_id] {
+        log_id = host.logger().write(LogSeverity::Info,
+                                     LogCategory::Simulation,
+                                     {},
+                                     "host log");
+    }));
+    EXPECT_EQ(services.logger().message(log_id), "host log");
     EXPECT_EQ(&host.memory(), &services.memory());
+    EXPECT_EQ(&host.metrics(), &services.metrics());
 }
 
 TEST(ServiceHandle, HandlesUnregisterNormallyBeforeServiceRebind) {

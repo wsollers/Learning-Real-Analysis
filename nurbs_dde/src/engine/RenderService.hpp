@@ -4,6 +4,7 @@
 
 #include "engine/CameraTypes.hpp"
 #include "engine/ServiceHandle.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 #include "math/GeometryTypes.hpp"
 #include "math/Scalars.hpp"
 #include "memory/Containers.hpp"
@@ -130,7 +131,7 @@ struct RenderPacket {
     DrawMode mode = DrawMode::VertexColor;
     Vec4 color{1.f, 1.f, 1.f, 1.f};
     Mat4 mvp{1.f};
-    memory::FrameVector<Vertex> vertices;
+    std::pmr::vector<Vertex> vertices;
 };
 
 class RenderService {
@@ -150,7 +151,14 @@ public:
         }
     }
 
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
     [[nodiscard]] RenderViewHandle register_view(RenderViewDescriptor descriptor, RenderViewId* out_id = nullptr) {
+        if (!require_owner_thread("RenderService::register_view")) return {};
         const RenderViewId id = m_next_id++;
         m_views.push_back(RenderViewEntry{
             .id = id,
@@ -164,24 +172,26 @@ public:
     void submit(RenderViewId view, std::span<const Vertex> vertices,
                 Topology topology, DrawMode mode, Vec4 color, Mat4 mvp)
     {
+        if (!require_owner_thread("RenderService::submit")) return;
         if (!is_active(view) || vertices.empty()) return;
-        memory::FrameVector<Vertex> packet_vertices =
-            m_memory ? m_memory->frame().make_vector<Vertex>() : memory::FrameVector<Vertex>{};
         RenderPacket packet{
             .view = view,
             .topology = topology,
             .mode = mode,
             .color = color,
-            .mvp = mvp,
-            .vertices = std::move(packet_vertices)
+            .mvp = mvp
         };
         packet.vertices.assign(vertices.begin(), vertices.end());
         m_packets.push_back(std::move(packet));
     }
 
-    void clear_packets() noexcept { m_packets.clear(); }
+    void clear_packets() {
+        if (!require_owner_thread("RenderService::clear_packets")) return;
+        m_packets.clear();
+    }
 
-    void set_view_domain(RenderViewId id, RenderViewDomain domain) noexcept {
+    void set_view_domain(RenderViewId id, RenderViewDomain domain) {
+        if (!require_owner_thread("RenderService::set_view_domain")) return;
         if (auto* entry = find_active_entry(id))
             entry->domain = domain;
     }
@@ -220,14 +230,16 @@ public:
         return 0;
     }
 
-    void set_axes_visible(bool visible) noexcept {
+    void set_axes_visible(bool visible) {
+        if (!require_owner_thread("RenderService::set_axes_visible")) return;
         for (auto& entry : m_views) {
             if (entry.active)
                 entry.descriptor.overlays.show_axes = visible;
         }
     }
 
-    void set_main_view_aspect(f32 aspect) noexcept {
+    void set_main_view_aspect(f32 aspect) {
+        if (!require_owner_thread("RenderService::set_main_view_aspect")) return;
         if (aspect <= 0.f) return;
         for (auto& entry : m_views) {
             if (entry.active && entry.descriptor.kind == RenderViewKind::Main)
@@ -235,7 +247,8 @@ public:
         }
     }
 
-    void set_viewport_size(RenderViewId id, Vec2 size) noexcept {
+    void set_viewport_size(RenderViewId id, Vec2 size) {
+        if (!require_owner_thread("RenderService::set_viewport_size")) return;
         if (size.x <= 0.f || size.y <= 0.f) return;
         if (auto* entry = find_active_entry(id)) {
             entry->descriptor.viewport_size = size;
@@ -243,7 +256,8 @@ public:
         }
     }
 
-    void set_viewport_size(RenderViewKind kind, Vec2 size) noexcept {
+    void set_viewport_size(RenderViewKind kind, Vec2 size) {
+        if (!require_owner_thread("RenderService::set_viewport_size")) return;
         if (size.x <= 0.f || size.y <= 0.f) return;
         for (auto& entry : m_views) {
             if (entry.active && entry.descriptor.kind == kind) {
@@ -253,7 +267,8 @@ public:
         }
     }
 
-    void set_hover_cursor(RenderViewKind kind, Vec2 pixel, bool enabled) noexcept {
+    void set_hover_cursor(RenderViewKind kind, Vec2 pixel, bool enabled) {
+        if (!require_owner_thread("RenderService::set_hover_cursor")) return;
         for (auto& entry : m_views) {
             if (entry.active && entry.descriptor.kind == kind) {
                 entry.descriptor.interaction.hover_pixel = pixel;
@@ -271,6 +286,7 @@ public:
     }
 
     void queue_surface_perturbation(SurfacePerturbCommand command) {
+        if (!require_owner_thread("RenderService::queue_surface_perturbation")) return;
         if (command.view == 0)
             command.view = first_active_main_view();
         if (command.view == 0) return;
@@ -278,6 +294,10 @@ public:
     }
 
     [[nodiscard]] memory::FrameVector<SurfacePerturbCommand> consume_surface_perturbations(RenderViewId view) {
+        if (!require_owner_thread("RenderService::consume_surface_perturbations")) {
+            return m_memory ? m_memory->frame().make_vector<SurfacePerturbCommand>()
+                            : memory::FrameVector<SurfacePerturbCommand>{};
+        }
         memory::FrameVector<SurfacePerturbCommand> out =
             m_memory ? m_memory->frame().make_vector<SurfacePerturbCommand>()
                      : memory::FrameVector<SurfacePerturbCommand>{};
@@ -318,7 +338,7 @@ public:
         return RenderViewKind::Main;
     }
 
-    [[nodiscard]] const memory::FrameVector<RenderPacket>& packets() const noexcept { return m_packets; }
+    [[nodiscard]] const std::pmr::vector<RenderPacket>& packets() const noexcept { return m_packets; }
 
     [[nodiscard]] memory::FrameVector<RenderViewSnapshot> active_view_snapshots() const {
         memory::FrameVector<RenderViewSnapshot> out =
@@ -355,10 +375,16 @@ private:
 
     RenderViewId m_next_id = 1;
     memory::ViewVector<RenderViewEntry> m_views;
-    memory::FrameVector<RenderPacket> m_packets;
+    std::pmr::vector<RenderPacket> m_packets;
     memory::ViewVector<SurfacePerturbCommand> m_surface_commands;
     u64 m_generation = 0;
     memory::MemoryService* m_memory = nullptr;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     [[nodiscard]] bool is_active(RenderViewId id) const noexcept {
         return std::any_of(m_views.begin(), m_views.end(),

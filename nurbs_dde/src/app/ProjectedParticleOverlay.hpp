@@ -21,8 +21,8 @@ struct ProjectedParticleOverlayOptions {
     bool show_T = true;
     bool show_N = true;
     bool show_B = true;
-    float snap_radius_px = 22.f;
-    float frame_scale = 0.34f;
+    f32 snap_radius_px = 22.f;
+    f32 frame_scale = 0.34f;
 };
 
 struct ProjectedParticleOverlayResult {
@@ -34,7 +34,7 @@ struct ProjectedParticleOverlayResult {
 namespace detail {
 
 [[nodiscard]] inline ImU32 imgui_color(Vec4 c) noexcept {
-    const auto u8 = [](float v) {
+    const auto u8 = [](f32 v) {
         return static_cast<int>(ops::clamp(v, 0.f, 1.f) * 255.f + 0.5f);
     };
     return IM_COL32(u8(c.r), u8(c.g), u8(c.b), u8(c.a));
@@ -43,7 +43,7 @@ namespace detail {
 inline void draw_projected_arrow(ImDrawList* dl,
                                  Vec3 origin,
                                  Vec3 dir,
-                                 float length,
+                                 f32 length,
                                  ImU32 color,
                                  const auto& project) {
     const ImVec2 a = project(origin);
@@ -66,7 +66,7 @@ template <class ProjectFn>
     ProjectedParticleOverlayResult result;
     dl->PushClipRect(cpos, ImVec2(cpos.x + csz.x, cpos.y + csz.y), true);
 
-    float best = options.snap_radius_px;
+    f32 best = options.snap_radius_px;
     const ImGuiIO& io = ImGui::GetIO();
     const ImVec2 mouse = io.MousePos;
 
@@ -76,7 +76,7 @@ template <class ProjectFn>
 
         if (options.draw_trails && n >= 2) {
             for (u32 i = 1; i < n; ++i) {
-                const float age = static_cast<float>(i) / static_cast<float>(std::max(n - 1u, 1u));
+                const f32 age = static_cast<f32>(i) / static_cast<f32>(std::max(n - 1u, 1u));
                 Vec4 color = AnimatedCurve::trail_colour(particle.role(), particle.colour_slot(), age);
                 color.a = std::max(color.a, 0.58f);
                 dl->AddLine(project(particle.trail_pt(i - 1)),
@@ -88,7 +88,7 @@ template <class ProjectFn>
 
         if (options.draw_heads) {
             const ImVec2 head = project(particle.head_world());
-            const float radius = particle.particle_role() == ParticleRole::Leader ? 5.2f : 4.0f;
+            const f32 radius = particle.particle_role() == ParticleRole::Leader ? 5.2f : 4.0f;
             dl->AddCircleFilled(head, radius, detail::imgui_color(particle.head_colour()), 18);
             dl->AddCircle(head, radius + 1.0f, IM_COL32(245, 245, 245, 160), 18, 1.1f);
         }
@@ -96,9 +96,9 @@ template <class ProjectFn>
         if (options.hover_enabled) {
             for (u32 i = 0; i < n; ++i) {
                 const ImVec2 p = project(particle.trail_pt(i));
-                const float dx = p.x - mouse.x;
-                const float dy = p.y - mouse.y;
-                const float d = ops::sqrt(dx * dx + dy * dy);
+                const f32 dx = p.x - mouse.x;
+                const f32 dy = p.y - mouse.y;
+                const f32 d = ops::sqrt(dx * dx + dy * dy);
                 if (d < best) {
                     best = d;
                     result.snapped = true;
@@ -126,12 +126,12 @@ template <class ProjectFn>
                 detail::draw_projected_arrow(dl, o, fr.B, options.frame_scale, IM_COL32(80, 150, 255, 245), project);
 
             if (options.show_osculating_circle && fr.kappa > 1e-5f) {
-                const float R = 1.f / fr.kappa;
+                const f32 R = 1.f / fr.kappa;
                 const Vec3 centre = o + fr.N * R;
                 constexpr u32 seg = 72;
                 ImVec2 prev = project(centre + R * (-fr.N));
                 for (u32 i = 1; i <= seg; ++i) {
-                    const float th = ops::two_pi_v<float> * static_cast<float>(i) / static_cast<float>(seg);
+                    const f32 th = ops::two_pi_v<f32> * static_cast<f32>(i) / static_cast<f32>(seg);
                     const Vec3 p = centre + R * (-ops::cos(th) * fr.N + ops::sin(th) * fr.T);
                     const ImVec2 cur = project(p);
                     dl->AddLine(prev, cur, IM_COL32(185, 95, 255, 215), 1.7f);

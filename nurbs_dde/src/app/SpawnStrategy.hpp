@@ -36,7 +36,7 @@ struct SpawnContext {
     ndde::sim::IEquation*           shared_equation;    ///< for Leader/Chaser
     const ndde::sim::IIntegrator*   shared_integrator;  ///< Euler (deterministic)
     const ndde::sim::IIntegrator*   milstein;           ///< for SDE equations
-    float sim_speed    = 1.f;
+    f32 sim_speed    = 1.f;
     int   prewarm_frames = 60;
 };
 
@@ -60,11 +60,11 @@ struct SpawnContext {
 
 [[nodiscard]] inline glm::vec2 offset_spawn(
     glm::vec2                   ref_uv,
-    float                       offset_radius,
-    float                       angle,
+    f32                       offset_radius,
+    f32                       angle,
     const ndde::math::ISurface& surface) noexcept
 {
-    constexpr float margin = 0.5f;
+    constexpr f32 margin = 0.5f;
     return {
         std::clamp(ref_uv.x + offset_radius * ops::cos(angle),
                    surface.u_min() + margin, surface.u_max() - margin),

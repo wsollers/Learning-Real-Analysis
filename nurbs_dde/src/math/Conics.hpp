@@ -35,6 +35,13 @@ public:
                     Vec4 color = { 1.f, 1.f, 1.f, 1.f }) const;
 
     [[nodiscard]] u32 vertex_count(u32 n) const noexcept { return n + 1; }
+
+protected:
+    IConic() = default;
+    IConic(const IConic&) = default;
+    IConic& operator=(const IConic&) = default;
+    IConic(IConic&&) = default;
+    IConic& operator=(IConic&&) = default;
 };
 
 // ── Parabola ──────────────────────────────────────────────────────────────────

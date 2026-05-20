@@ -9,7 +9,10 @@
 #include "math/Scalars.hpp"
 
 #include <cassert>
+#include <iostream>
 #include <memory_resource>
+#include <string_view>
+#include <typeinfo>
 #include <vector>
 
 namespace ndde::memory {
@@ -20,27 +23,34 @@ public:
     using Base = std::pmr::vector<T>;
     using Base::Base;
 
-    void bind_generation(const u64* generation) noexcept {
+    void bind_generation(const u64* generation, std::string_view lifetime_name = {}) noexcept {
 #ifndef NDEBUG
         m_generation = generation;
         m_expected_generation = generation ? *generation : 0u;
+        m_lifetime_name = lifetime_name;
 #else
         (void)generation;
+        (void)lifetime_name;
 #endif
     }
 
     [[nodiscard]] LifetimeVector make_same_lifetime_vector() const {
         LifetimeVector out{Base::get_allocator().resource()};
 #ifndef NDEBUG
-        out.bind_generation(m_generation);
+        out.bind_generation(m_generation, m_lifetime_name);
 #endif
         return out;
     }
 
     void assert_alive() const noexcept {
 #ifndef NDEBUG
-        if (m_generation)
+        if (m_generation && *m_generation != m_expected_generation) {
+            std::cerr << "[MemoryService] stale LifetimeVector<" << typeid(T).name()
+                      << "> scope='" << m_lifetime_name
+                      << "' expected_generation=" << m_expected_generation
+                      << " current_generation=" << *m_generation << '\n';
             assert(*m_generation == m_expected_generation && "memory lifetime vector used after its scope was reset");
+        }
 #endif
     }
 
@@ -96,6 +106,7 @@ private:
 #ifndef NDEBUG
     const u64* m_generation = nullptr;
     u64 m_expected_generation = 0;
+    std::string_view m_lifetime_name;
 #endif
 };
 

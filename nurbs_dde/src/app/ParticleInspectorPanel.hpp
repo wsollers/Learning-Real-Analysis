@@ -90,9 +90,9 @@ private:
             particle.set_trail_config(cfg);
     }
 
-    static void draw_level_curve_controls(ndde::sim::LevelCurveWalker& level, float current_z) {
+    static void draw_level_curve_controls(ndde::sim::LevelCurveWalker& level, f32 current_z) {
         auto& p = level.params();
-        const float dz = current_z - p.z0;
+        const f32 dz = current_z - p.z0;
         const ImVec4 col = std::abs(dz) < p.epsilon
             ? ImVec4(0.4f, 1.f, 0.4f, 1.f)
             : ImVec4(1.f, 0.5f, 0.2f, 1.f);

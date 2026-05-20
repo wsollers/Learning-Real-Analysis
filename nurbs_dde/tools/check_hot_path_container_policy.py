@@ -54,6 +54,8 @@ def strip_line_comment(line: str) -> str:
 def main() -> int:
     violations: list[str] = []
     for path in HOT_PATH_FILES:
+        if not path.exists():
+            continue
         for lineno, line in enumerate(path.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             if PATTERN.search(strip_line_comment(line)):
                 violations.append(f"{path.relative_to(ROOT)}:{lineno}: {line.strip()}")

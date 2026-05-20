@@ -89,6 +89,13 @@ public:
     [[nodiscard]] virtual float phase_rate() const { return 0.f; }
 
     [[nodiscard]] virtual std::string name() const = 0;
+
+protected:
+    IEquation() = default;
+    IEquation(const IEquation&) = default;
+    IEquation& operator=(const IEquation&) = default;
+    IEquation(IEquation&&) = default;
+    IEquation& operator=(IEquation&&) = default;
 };
 
 } // namespace ndde::sim

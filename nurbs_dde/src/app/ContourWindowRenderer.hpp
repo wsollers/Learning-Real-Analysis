@@ -14,12 +14,12 @@
 namespace ndde {
 
 struct ContourWindowOptions {
-    float extent = 4.f;
+    f32 extent = 4.f;
     bool draw_wire = false;
     Vec4 wire_color{0.95f, 0.95f, 1.f, 0.32f};
-    float trail_alpha_floor = 0.70f;
+    f32 trail_alpha_floor = 0.70f;
     bool draw_heads = false;
-    float head_radius = 0.055f;
+    f32 head_radius = 0.055f;
 };
 
 inline void submit_contour_window(EngineAPI& api,
@@ -30,7 +30,7 @@ inline void submit_contour_window(EngineAPI& api,
     const Vec2 sz = api.viewport_size2();
     if (sz.x <= 0.f || sz.y <= 0.f || mesh.contour_count() == 0) return;
 
-    const float aspect = sz.x / std::max(sz.y, 1.f);
+    const f32 aspect = sz.x / std::max(sz.y, 1.f);
     const Mat4 mvp = aspect >= 1.f
         ? glm::ortho(-options.extent * aspect, options.extent * aspect, -options.extent, options.extent, -1.f, 1.f)
         : glm::ortho(-options.extent, options.extent, -options.extent / aspect, options.extent / aspect, -1.f, 1.f);
@@ -66,7 +66,7 @@ inline void submit_contour_window(EngineAPI& api,
         if (options.draw_heads) {
             const glm::vec2 uv = particle.head_uv();
             const Vec4 col = particle.head_colour();
-            const float r = options.head_radius;
+            const f32 r = options.head_radius;
             submit_generated_vertices(api, RenderTarget::Contour2D, 4u,
                 Topology::LineList, DrawMode::VertexColor, {1,1,1,1}, mvp,
                 [uv, col, r](Vertex& out, u32 i) {

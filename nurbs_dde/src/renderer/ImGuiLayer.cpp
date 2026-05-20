@@ -24,6 +24,7 @@ void ImGuiLayer::init(GLFWwindow* window,
     m_device = ctx.device();
 
     VkDescriptorPoolSize pool_sizes[] = {
+        { VK_DESCRIPTOR_TYPE_SAMPLER,                32 },
         { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32 },
         { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          32 },
     };
@@ -31,7 +32,7 @@ void ImGuiLayer::init(GLFWwindow* window,
         .sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
         .flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
         .maxSets       = 64,
-        .poolSizeCount = 2,
+        .poolSizeCount = 3,
         .pPoolSizes    = pool_sizes
     };
     if (vkCreateDescriptorPool(m_device, &pool_info, nullptr, &m_pool) != VK_SUCCESS)
@@ -116,9 +117,17 @@ void ImGuiLayer::new_frame() {
     ImGui::NewFrame();
 }
 
-void ImGuiLayer::render(VkCommandBuffer cmd) {
+void ImGuiLayer::build_draw_data() {
     ImGui::Render();
+}
+
+void ImGuiLayer::record_draw_data(VkCommandBuffer cmd) {
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
+}
+
+void ImGuiLayer::render(VkCommandBuffer cmd) {
+    build_draw_data();
+    record_draw_data(cmd);
 }
 
 void ImGuiLayer::on_swapchain_recreated(const Swapchain&) {}

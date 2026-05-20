@@ -3,6 +3,7 @@
 // Engine-owned registration surface for UI panels.
 
 #include "engine/ServiceHandle.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 #include "memory/Containers.hpp"
 #include "memory/MemoryService.hpp"
 
@@ -10,6 +11,8 @@
 #include <functional>
 #include <string>
 #include <string_view>
+
+#include <imgui.h>
 
 namespace ndde {
 
@@ -26,7 +29,11 @@ struct PanelDescriptor {
     std::string category = "Simulation";
     PanelScope scope = PanelScope::Simulation;
     bool initially_open = true;
+    ImVec2 first_use_pos{0.f, 0.f};
+    ImVec2 first_use_size{0.f, 0.f};
+    f32 background_alpha = 0.86f;
     std::function<void()> draw;
+    std::function<void()> draw_body;
 };
 
 class PanelService {
@@ -41,7 +48,14 @@ public:
         std::construct_at(&m_panels, resource);
     }
 
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
     [[nodiscard]] PanelHandle register_panel(PanelDescriptor descriptor) {
+        if (!require_owner_thread("PanelService::register_panel")) return {};
         const PanelId id = m_next_id++;
         m_panels.push_back(PanelEntry{
             .id = id,
@@ -52,10 +66,16 @@ public:
     }
 
     void draw_registered_panels(PanelScope scope) {
+        if (!require_owner_thread("PanelService::draw_registered_panels")) return;
         for (auto& entry : m_panels) {
-            if (!entry.active || !entry.descriptor.draw) continue;
+            if (!entry.active) continue;
             if (entry.descriptor.scope != scope) continue;
-            entry.descriptor.draw();
+            if (entry.descriptor.draw) {
+                entry.descriptor.draw();
+                continue;
+            }
+            if (!entry.descriptor.draw_body) continue;
+            draw_window_panel(entry.descriptor);
         }
     }
 
@@ -93,15 +113,36 @@ private:
     PanelId m_next_id = 1;
     u64 m_generation = 0;
     memory::PersistentVector<PanelEntry> m_panels;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     void unregister(PanelId id) noexcept {
         for (auto& entry : m_panels) {
             if (entry.id == id) {
                 entry.active = false;
                 entry.descriptor.draw = {};
+                entry.descriptor.draw_body = {};
                 return;
             }
         }
+    }
+
+    static void draw_window_panel(const PanelDescriptor& descriptor) {
+        if (descriptor.first_use_pos.x != 0.f || descriptor.first_use_pos.y != 0.f)
+            ImGui::SetNextWindowPos(descriptor.first_use_pos, ImGuiCond_FirstUseEver);
+        if (descriptor.first_use_size.x > 0.f && descriptor.first_use_size.y > 0.f)
+            ImGui::SetNextWindowSize(descriptor.first_use_size, ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowBgAlpha(descriptor.background_alpha);
+        if (!ImGui::Begin(descriptor.title.c_str())) {
+            ImGui::End();
+            return;
+        }
+        descriptor.draw_body();
+        ImGui::End();
     }
 };
 

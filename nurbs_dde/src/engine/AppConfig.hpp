@@ -17,6 +17,7 @@ struct WindowConfig {
 struct RenderConfig {
     bool vsync                = true;
     u32  max_frames_in_flight = 2;
+    bool threaded_presentation = true;
 };
 
 struct CameraConfig {
@@ -32,6 +33,15 @@ struct SimulationConfig {
     f32  speed         = 1.0f;
     u32  tessellation  = 256;
     u32  arena_size_mb = 128;
+    bool threaded_runtime = true;
+};
+
+struct TelemetryConfig {
+    bool        enabled          = true;
+    u64         buffer_records   = u64(512) * u64(1024); ///< ring capacity (~30 MB)
+    std::string output_dir       = "telemetry";
+    bool        flush_periodic   = true;
+    u64         flush_interval   = u64(1000); ///< ticks between mid-run flushes
 };
 
 struct AppConfig {
@@ -39,6 +49,7 @@ struct AppConfig {
     RenderConfig     render;
     CameraConfig     camera;
     SimulationConfig simulation;
+    TelemetryConfig  telemetry;
     std::string      assets_dir = "assets";
 
     /// Load from JSON. Missing file -> silent defaults. Malformed JSON -> throws.

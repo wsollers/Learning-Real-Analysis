@@ -9,28 +9,22 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <format>
 #include <algorithm>
+#include <chrono>
 #include <cctype>
-#include <ctime>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <cstring>
+#include <span>
 #include <sstream>
 #include <stdexcept>
-#include <unordered_map>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#ifndef NDDE_PROJECT_DIR
-#define NDDE_PROJECT_DIR "."
-#endif
-
 namespace ndde {
 
 namespace {
-std::unordered_map<GLFWwindow*, Engine*> g_hotkey_engines;
-
 std::string_view render_kind_name(RenderViewKind kind) noexcept {
     return kind == RenderViewKind::Main ? "Main" : "Alternate";
 }
@@ -46,20 +40,104 @@ std::string_view alternate_mode_name(AlternateViewMode mode) noexcept {
     return "Unknown";
 }
 
+bool primary_view_ui_blocked(const ImGuiIO& io) noexcept {
+    const bool mouse_valid = io.MousePos.x > -3.0e37f && io.MousePos.y > -3.0e37f;
+    if (!mouse_valid) return true;
+
+    // The rendered surface is the background, not an ImGui window.  A broad
+    // WantCaptureMouse gate can remain true because of panel state, so only
+    // block the canvas while the pointer is actually over ImGui UI or an item
+    // is actively being edited/dragged.
+    return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)
+        || ImGui::IsAnyItemActive();
+}
+
+void draw_wrapped_log_text(std::string_view text, ImVec4 color) {
+    ImGui::PushStyleColor(ImGuiCol_Text, color);
+    ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x);
+    ImGui::TextUnformatted(text.data(), text.data() + text.size());
+    ImGui::PopTextWrapPos();
+    ImGui::PopStyleColor();
+}
+
+[[nodiscard]] std::filesystem::path absolute_path_or_empty(const std::filesystem::path& path) {
+    if (path.empty()) return {};
+    return std::filesystem::absolute(path).lexically_normal();
+}
+
+[[nodiscard]] std::filesystem::path executable_directory(const std::filesystem::path& executable_path) {
+    const std::filesystem::path absolute = absolute_path_or_empty(executable_path);
+    if (!absolute.empty() && absolute.has_parent_path()) {
+        return absolute.parent_path();
+    }
+    return std::filesystem::current_path();
+}
+
+[[nodiscard]] std::filesystem::path resolve_relative_to(const std::filesystem::path& base,
+                                                        const std::filesystem::path& path) {
+    if (path.empty()) return base;
+    if (path.is_absolute()) return path.lexically_normal();
+    return (base / path).lexically_normal();
+}
+
+[[nodiscard]] std::filesystem::path resolve_config_path(const std::filesystem::path& executable_dir,
+                                                        const std::filesystem::path& requested) {
+    if (requested.is_absolute()) return requested.lexically_normal();
+
+    const std::filesystem::path beside_exe = (executable_dir / requested).lexically_normal();
+    if (std::filesystem::exists(beside_exe)) {
+        return beside_exe;
+    }
+    return requested;
+}
+
+[[nodiscard]] std::filesystem::path prefer_existing_path(const std::filesystem::path& preferred,
+                                                        const std::filesystem::path& fallback) {
+    if (std::filesystem::exists(preferred)) {
+        return preferred;
+    }
+    return fallback.lexically_normal();
+}
+
 } // namespace
 
 void engine_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
-    if (auto it = g_hotkey_engines.find(window); it != g_hotkey_engines.end())
-        it->second->on_key_event(key, action, mods);
+    auto* glfw_context = static_cast<platform::GlfwContext*>(glfwGetWindowUserPointer(window));
+    if (!glfw_context) return;
+    auto* engine = static_cast<Engine*>(glfw_context->key_callback_user());
+    if (!engine) return;
+    engine->on_key_event(key, action, mods);
 }
 
 Engine::Engine()
     : m_simulation_host(m_services.simulation_host())
-    , m_simulations(m_services.memory()) {}
+    , m_simulations(m_services.memory()) {
+    m_telemetry.set_owner_guard([this](std::string_view api_name) {
+        const bool logger_allowed =
+            api_name == "TelemetryService::flush" ||
+            api_name == "TelemetryService::on_sim_stopped" ||
+            api_name == "TelemetryService::on_app_stopping";
+        if (logger_allowed && m_services.threads().is_thread_role(ThreadRole::Logger)) {
+            return true;
+        }
+        return m_services.threads().require_thread_role(ThreadRole::Main, api_name);
+    });
+}
 
 Engine::~Engine() {
+    stop_active_simulation_thread();
+    stop_render_presentation_thread();
     uninstall_global_hotkeys();
+
+    // ── Telemetry: close any active run before GPU teardown ─────────────────
+    if (m_telemetry.enabled()) {
+        fire_sim_stopped(m_active_sim,
+                         active_runtime().snapshot().sim_time,
+                         m_telemetry_tick_count);
+        fire_app_stopping();
+    }
+
     m_second_win.destroy();
     m_renderer.destroy();
     m_services.memory().destroy();
@@ -68,10 +146,19 @@ Engine::~Engine() {
     m_glfw.destroy();
 }
 
-void Engine::start(const std::string& config_path) {
+void Engine::start(const std::filesystem::path& executable_path,
+                   const std::filesystem::path& config_path) {
     std::cout << "[Engine] Starting...\n";
 
-    m_config = AppConfig::load_or_default(config_path);
+    m_executable_dir = executable_directory(executable_path);
+    const std::filesystem::path resolved_config = resolve_config_path(m_executable_dir, config_path);
+    m_config = AppConfig::load_or_default(resolved_config.string());
+    m_shader_dir = prefer_existing_path(m_executable_dir / "shaders",
+                                        std::filesystem::current_path() / "shaders");
+    m_assets_dir = prefer_existing_path(resolve_relative_to(m_executable_dir, m_config.assets_dir),
+                                        resolve_relative_to(std::filesystem::current_path(), m_config.assets_dir));
+    m_telemetry_dir = resolve_relative_to(m_executable_dir, m_config.telemetry.output_dir);
+    m_capture_dir = resolve_relative_to(m_executable_dir, "captures");
 
     m_glfw.init(m_config.window.width,
                 m_config.window.height,
@@ -82,7 +169,8 @@ void Engine::start(const std::string& config_path) {
 
     m_vk.init(m_glfw.window(), m_config.window.title);
     m_swapchain.init(m_vk, m_glfw.width(), m_glfw.height(), m_config.render.vsync);
-    m_renderer.init(m_vk, m_swapchain, SHADER_DIR, ASSETS_DIR, m_glfw.window());
+    m_renderer.init(m_vk, m_swapchain, m_shader_dir.string(), m_assets_dir.string(), m_glfw.window());
+    start_render_presentation_thread();
     install_global_hotkeys();
 
     m_services.memory().init_frame_gpu_arena(m_vk.device(), m_vk.physical_device(),
@@ -104,7 +192,7 @@ void Engine::start(const std::string& config_path) {
             m_second_win.init(m_vk, x, y,
                 static_cast<u32>(vm->width),
                 static_cast<u32>(vm->height),
-                "Contour 2D", SHADER_DIR, m_config.render.vsync);
+                "Contour 2D", m_shader_dir.string(), m_config.render.vsync);
         } else {
             // Single monitor: place second window at right half
             int mx=0, my=0;
@@ -113,7 +201,7 @@ void Engine::start(const std::string& config_path) {
             const u32 hw = static_cast<u32>(vm->width / 2);
             m_second_win.init(m_vk, mx + static_cast<int>(hw), my,
                 hw, static_cast<u32>(vm->height),
-                "Contour 2D", SHADER_DIR, m_config.render.vsync);
+                "Contour 2D", m_shader_dir.string(), m_config.render.vsync);
         }
     }
 
@@ -121,22 +209,56 @@ void Engine::start(const std::string& config_path) {
     glfwMaximizeWindow(m_glfw.window());
 
     register_global_panels();
-    register_default_simulations(m_simulations);
+    register_default_simulations(m_simulations, [this](std::size_t index) {
+        m_pending_sim = index;
+    });
 
     m_active_sim = 0;
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
+    start_active_simulation_thread();
+
+    // ── Telemetry init ──────────────────────────────────────────────────────
+    m_telemetry.set_enabled(m_config.telemetry.enabled);
+    if (m_config.telemetry.enabled) {
+        m_telemetry.init(
+            m_config.telemetry.buffer_records,
+            m_telemetry_dir);
+        fire_app_started(resolved_config.string());
+        fire_sim_started(m_active_sim);
+    }
+
+    // ── Engine event bus + logger init ─────────────────────────────────────
+    m_services.events().init();
+    m_app_started_subscription =
+    m_services.events().subscribe<events::AppStarted>(EventChannelId::App, [this](const events::AppStarted&) {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "[Engine] AppStarted");
+        });
+    });
+    m_sim_switched_subscription =
+    m_services.events().subscribe<events::SimSwitched>(EventChannelId::App, [this](const events::SimSwitched& e) {
+        (void)m_services.threads().enqueue_logger_task([this, index = e.sim_index] {
+            (void)m_services.logger().write(LogSeverity::Info,
+                                            LogCategory::Engine,
+                                            {},
+                                            std::format("[Engine] SimSwitched index={}", index));
+        });
+    });
+    m_services.events().publish(EventChannelId::App, events::AppStarted{});
 
     m_last_frame_time = glfwGetTime();
     m_running = true;
-    m_event_log.push_back("Engine ready");
+    (void)m_services.threads().enqueue_logger_task([this] {
+        (void)m_services.logger().write(LogSeverity::Info, LogCategory::Engine, {}, "Engine ready");
+    });
     std::cout << "[Engine] Ready.\n";
 }
 
 void Engine::install_global_hotkeys() {
     GLFWwindow* window = m_glfw.window();
     if (!window) return;
-    g_hotkey_engines[window] = this;
+    m_glfw.set_key_callback_user(this);
     glfwSetKeyCallback(window, engine_key_callback);
 #if defined(_WIN32)
     std::cout << "[Engine] Global hotkeys: GLFW event callback (Win32 backend)\n";
@@ -150,14 +272,23 @@ void Engine::install_global_hotkeys() {
 void Engine::uninstall_global_hotkeys() noexcept {
     GLFWwindow* window = m_glfw.window();
     if (!window) return;
-    g_hotkey_engines.erase(window);
     glfwSetKeyCallback(window, nullptr);
+    if (m_glfw.key_callback_user() == this) {
+        m_glfw.set_key_callback_user(nullptr);
+    }
 }
 
 void Engine::switch_simulation(std::size_t index) {
     if (index >= m_simulations.size() || index == m_active_sim) return;
+    stop_active_simulation_thread();
     vkDeviceWaitIdle(m_vk.device());
     m_renderer.reset_frame_state();
+
+    // ── Telemetry: close current run ─────────────────────────────────────
+    fire_sim_stopped(m_active_sim,
+                     active_runtime().snapshot().sim_time,
+                     m_telemetry_tick_count);
+
     active_runtime().stop();
     m_services.render().clear_packets();
     m_services.memory().reset_simulation();
@@ -166,7 +297,18 @@ void Engine::switch_simulation(std::size_t index) {
     m_active_sim = index;
     active_runtime().instantiate(m_simulation_host);
     active_runtime().start();
-    m_event_log.push_back(std::format("Switched simulation: {}", active_runtime().name()));
+    start_active_simulation_thread();
+
+    // ── Telemetry: open new run ──────────────────────────────────────
+    fire_sim_started(m_active_sim);
+
+    const std::string sim_name{active_runtime().name()};
+    (void)m_services.threads().enqueue_logger_task([this, sim_name] {
+        (void)m_services.logger().write(LogSeverity::Info,
+                                        LogCategory::Engine,
+                                        {},
+                                        std::format("Switched simulation: {}", sim_name));
+    });
     std::cout << std::format("[Engine] Active simulation: {}\n", active_runtime().name());
 }
 
@@ -190,16 +332,18 @@ void Engine::run_frame() {
     m_last_frame_time     = now;
     const f32 frame_ms    = static_cast<f32>(delta_s * 1000.0);
     const f32 fps         = (frame_ms > 0.f) ? 1000.f / frame_ms : 0.f;
+    m_services.metrics().begin_frame(m_services.clock().current().tick_index,
+                                     static_cast<f64>(now));
+    m_services.metrics().record_frame_time(frame_ms);
 
     // Destroy previous-frame packet payloads before releasing frame PMR memory.
     m_services.render().clear_packets();
+    m_services.text().clear();
     m_services.memory().begin_frame();
 
-    // ── Primary window (3D surface + ImGui) ─────────────────────────────────
-    if (!m_renderer.begin_frame(m_swapchain)) { handle_resize(); return; }
+    // ── GUI frame construction ──────────────────────────────────────────────
     m_renderer.imgui_new_frame();
     dispatch_global_hotkeys();
-    update_render_view_input();
 
     // ── Populate DebugStats ───────────────────────────────────────────────────
     const auto& sc_ext = m_swapchain.extent();
@@ -215,12 +359,107 @@ void Engine::run_frame() {
         .fps                = fps,
     };
 
-    // ── Second window begin ──────────────────────────────────────────────────────
-    const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
+    // Input is sampled after panels are drawn, so this reflects the previous
+    // frame's view-owned click state and avoids stale ImGui hover decisions.
+    const RenderViewId tick_main_view = m_services.render().first_active_main_view();
+    const bool double_click_this_frame =
+        tick_main_view != 0 && m_services.view_input().sample(tick_main_view).left_double_click;
+    m_debug_stats.frame_ms = frame_ms;   // already set above, no-op
 
-    active_runtime().tick(m_services.clock().next(frame_ms / 1000.f, active_runtime().paused()));
-    flush_render_service();
-    m_services.panels().draw_registered_panels();
+    // Build the tick with is_double_click populated
+    TickInfo tick_info = m_services.clock().next(frame_ms / f32(1000), active_runtime().paused());
+    tick_info.is_double_click = double_click_this_frame;
+    if (m_config.simulation.threaded_runtime) {
+        enqueue_pending_surface_pokes(tick_info);
+        (void)m_services.threads().enqueue_simulation_command(SimulationThreadCommand{
+            .kind = SimulationThreadCommandKind::Tick,
+            .tick = tick_info
+        });
+    } else {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::SimulationTickMs);
+        active_runtime().tick(tick_info);
+    }
+
+    // ── Drain service-owned event logs once per frame ─────────────────────
+    {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::EventDrainMs);
+        m_services.threads().drain_service_mailboxes();
+        m_services.events().drain_all(tick_info.time, tick_info.tick_index);
+    }
+
+    // ── Telemetry: record this tick ───────────────────────────────────────────
+    if (m_telemetry.enabled() && !active_runtime().paused()) {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::TelemetryTickMs);
+        const auto snap     = active_runtime().snapshot();
+        const f32  wall_ms  = static_cast<f32>(glfwGetTime() * 1000.0)
+                            - m_telemetry_sim_start_wall_ms;
+
+        // Base snapshot recording — populates position fields.
+        // Simulations that override on_telemetry_tick() push richer rows instead.
+        m_telemetry.record_particles(snap.particles,
+                                     m_telemetry_tick_count,
+                                     snap.sim_time,
+                                     wall_ms);
+
+        // Give the active simulation a chance to override / supplement.
+        EngineAPI api = make_api();
+        active_runtime().record_telemetry_tick(m_telemetry_tick_count, tick_info, api);
+
+        ++m_telemetry_tick_count;
+
+        // Periodic mid-run flush — keeps the ring from filling on long runs.
+        if (m_config.telemetry.flush_periodic &&
+            m_telemetry_tick_count % m_config.telemetry.flush_interval == u64(0)) {
+            (void)m_services.threads().enqueue_logger_task([this] {
+                (void)m_telemetry.flush();
+            });
+        }
+    }
+    if (m_config.simulation.threaded_runtime) {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::SimulationRenderSubmitMs);
+        active_runtime().submit_render();
+    }
+    {
+        ScopedMetricTimer timer(m_services.metrics(), MetricId::ImGuiBuildMs);
+        m_services.panels().draw_registered_panels();
+        update_render_view_input();
+        m_renderer.imgui_build_draw_data();
+    }
+
+    bool primary_ok = true;
+    bool second_present_ok = true;
+    (void)run_render_frame_task([this, &primary_ok, &second_present_ok] {
+        {
+            ScopedMetricTimer timer(m_services.metrics(), MetricId::FrameAcquireMs);
+            primary_ok = m_renderer.begin_frame(m_swapchain);
+        }
+        if (!primary_ok) {
+            return;
+        }
+
+        const bool second_ok = m_second_win.valid() && m_second_win.begin_frame();
+        flush_render_service();
+        m_services.render().clear_packets();
+        m_renderer.imgui_record_draw_data();
+        {
+            ScopedMetricTimer timer(m_services.metrics(), MetricId::FrameSubmitMs);
+            primary_ok = m_renderer.end_frame(m_swapchain);
+        }
+
+        // Present the auxiliary contour window after the primary window. FIFO
+        // present can block, and letting the secondary surface block first makes
+        // main-window frame pacing visibly worse on some drivers.
+        if (second_ok) {
+            ScopedMetricTimer timer(m_services.metrics(), MetricId::FramePresentMs);
+            second_present_ok = m_second_win.end_frame();
+        }
+    });
+    if (primary_ok) {
+        m_services.metrics().increment(MetricId::FramesSubmitted);
+        m_services.metrics().increment(MetricId::FramesPresented);
+    } else {
+        m_services.metrics().increment(MetricId::FramesSkipped);
+    }
 
     // ── Update arena stats after scene geometry has been written ─────────────
     m_debug_stats.arena_bytes_used   = m_services.memory().frame_gpu_bytes_used();
@@ -228,20 +467,12 @@ void Engine::run_frame() {
     m_debug_stats.arena_vertex_count =
         m_services.memory().frame_gpu_bytes_used() / static_cast<u64>(sizeof(Vertex));
 
-    m_renderer.imgui_render();
-    const bool primary_ok = m_renderer.end_frame(m_swapchain);
-
-    // Present the auxiliary contour window after the primary window. FIFO
-    // present can block, and letting the secondary surface block first makes
-    // main-window frame pacing visibly worse on some drivers.
-    if (second_ok) {
-        const bool present_ok = m_second_win.end_frame();
-        if (!present_ok) { /* resize handled internally */ }
-    }
+    if (!second_present_ok) { /* resize handled internally */ }
 
     if (!primary_ok) handle_resize();
 
     apply_pending_simulation_switch();
+    m_services.metrics().end_frame();
 }
 
 void Engine::register_global_panels() {
@@ -250,34 +481,53 @@ void Engine::register_global_panels() {
         .title = "Engine - Global",
         .category = "Engine",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_global_status_panel(); }
+        .first_use_pos = ImVec2(12.f, 34.f),
+        .first_use_size = ImVec2(260.f, 150.f),
+        .draw_body = [this] { draw_global_status_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Debug - Coordinates",
         .category = "Debug",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_debug_coordinates_panel(); }
+        .first_use_pos = ImVec2(290.f, 34.f),
+        .first_use_size = ImVec2(340.f, 220.f),
+        .draw_body = [this] { draw_debug_coordinates_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Simulation - Metadata",
         .category = "Debug",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_simulation_metadata_panel(); }
+        .first_use_pos = ImVec2(650.f, 34.f),
+        .first_use_size = ImVec2(380.f, 420.f),
+        .draw_body = [this] { draw_simulation_metadata_panel(); }
     }));
     m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
         .title = "Engine - Log",
         .category = "Engine",
         .scope = PanelScope::Global,
-        .draw = [this] { draw_event_log_panel(); }
+        .first_use_pos = ImVec2(1048.f, 34.f),
+        .first_use_size = ImVec2(320.f, 400.f),
+        .draw_body = [this] { draw_event_log_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Engine - Threads",
+        .category = "Engine",
+        .scope = PanelScope::Global,
+        .first_use_pos = ImVec2(704.f, 34.f),
+        .first_use_size = ImVec2(420.f, 360.f),
+        .draw_body = [this] { draw_thread_health_panel(); }
+    }));
+    m_global_panels.push_back(m_services.panels().register_panel(PanelDescriptor{
+        .title = "Engine - Metrics",
+        .category = "Engine",
+        .scope = PanelScope::Global,
+        .first_use_pos = ImVec2(720.f, 420.f),
+        .first_use_size = ImVec2(420.f, 300.f),
+        .draw_body = [this] { draw_metrics_panel(); }
     }));
 }
 
 void Engine::draw_global_status_panel() {
-    ImGui::SetNextWindowPos(ImVec2(12.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(260.f, 150.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Engine - Global")) { ImGui::End(); return; }
-
     ImGui::SeparatorText("Simulations");
     for (std::size_t i = 0; i < m_simulations.size(); ++i) {
         auto* sim = m_simulations.get(i);
@@ -317,15 +567,9 @@ void Engine::draw_global_status_panel() {
         (void)m_services.camera().frame_selection(m_services.interaction());
     ImGui::TextDisabled("RMB drag orbit   MMB/Shift+RMB pan   Wheel zoom");
     ImGui::TextDisabled("Double-click surface perturb");
-    ImGui::End();
 }
 
 void Engine::draw_debug_coordinates_panel() {
-    ImGui::SetNextWindowPos(ImVec2(290.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(340.f, 220.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Debug - Coordinates")) { ImGui::End(); return; }
-
     const ImGuiIO& io = ImGui::GetIO();
     const Vec2 fb{static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())};
     ImGui::SeparatorText("Mouse");
@@ -415,19 +659,13 @@ void Engine::draw_debug_coordinates_panel() {
                 selected.trail_index);
             ImGui::TextDisabled("k %.5f   tau %.5f", selected.curvature, selected.torsion);
             ImGui::TextDisabled("k_n %.5f   k_g %.5f",
-                selected.normal_curvature,
-                selected.geodesic_curvature);
+            selected.normal_curvature,
+            selected.geodesic_curvature);
         }
     }
-    ImGui::End();
 }
 
 void Engine::draw_simulation_metadata_panel() {
-    ImGui::SetNextWindowPos(ImVec2(650.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(380.f, 420.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Simulation - Metadata")) { ImGui::End(); return; }
-
     const SimulationMetadata metadata = active_runtime().metadata();
     const SceneSnapshot snapshot = active_runtime().snapshot();
     ImGui::SeparatorText("Simulation");
@@ -473,17 +711,179 @@ void Engine::draw_simulation_metadata_panel() {
         ImGui::SameLine();
         ImGui::TextDisabled("(%.2f, %.2f, %.2f)", particle.x, particle.y, particle.z);
     }
-    ImGui::End();
 }
 
 void Engine::draw_event_log_panel() {
-    ImGui::SetNextWindowPos(ImVec2(1048.f, 34.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(320.f, 180.f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowBgAlpha(0.86f);
-    if (!ImGui::Begin("Engine - Log")) { ImGui::End(); return; }
-    for (const auto& line : m_event_log)
-        ImGui::TextDisabled("%s", line.c_str());
-    ImGui::End();
+    const ImGuiStyle& style = ImGui::GetStyle();
+    const f32 footer_height =
+        (ImGui::GetTextLineHeightWithSpacing() * 2.0f) +
+        style.ItemSpacing.y +
+        style.WindowPadding.y;
+
+    if (ImGui::BeginChild("engine_log_scroll", ImVec2(0.f, -footer_height), false,
+            ImGuiWindowFlags_AlwaysVerticalScrollbar)) {
+        const bool was_at_bottom = ImGui::GetScrollY() >= ImGui::GetScrollMaxY();
+
+        // Engine-scoped narrative log records from LoggerService.
+        if (ImGui::TreeNodeEx("Engine Events", ImGuiTreeNodeFlags_DefaultOpen)) {
+            const ImVec4 disabled = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+            for (const LogSnapshotEntry& entry : m_services.logger().snapshot()) {
+                if (entry.record.category != LogCategory::Engine) {
+                    continue;
+                }
+                draw_wrapped_log_text(entry.message, disabled);
+            }
+            ImGui::TreePop();
+        }
+
+        // Sim-scoped events from EventLog, severity-tinted.
+        const auto& sim_entries = m_services.events().log(EventChannelId::Simulation).entries();
+        if (!sim_entries.empty()) {
+            ImGui::Separator();
+            if (ImGui::TreeNodeEx("Sim Events", ImGuiTreeNodeFlags_DefaultOpen)) {
+                for (const auto& entry : sim_entries) {
+                    ImVec4 color;
+                    using S = ndde::events::EventSeverity;
+                    switch (entry.severity) {
+                        case S::Info:     color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+                        case S::Notice:   color = {0.4f, 0.8f, 1.0f, 1.f}; break;
+                        case S::Warning:  color = {1.0f, 0.9f, 0.2f, 1.f}; break;
+                        case S::Alert:    color = {1.0f, 0.5f, 0.1f, 1.f}; break;
+                        case S::Critical: color = {1.0f, 0.2f, 0.2f, 1.f}; break;
+                        default:          color = {0.7f, 0.7f, 0.7f, 1.f}; break;
+                    }
+                    draw_wrapped_log_text(entry.text, color);
+                }
+                ImGui::TreePop();
+            }
+        }
+
+        if (was_at_bottom) {
+            ImGui::SetScrollHereY(1.0f);
+        }
+    }
+    ImGui::EndChild();
+
+    // Stats
+    ImGui::Separator();
+    ImGui::TextDisabled("Ring: %llu queued  %llu dropped",
+        static_cast<unsigned long long>(m_services.events().log(EventChannelId::Simulation).approx_queued()),
+        static_cast<unsigned long long>(m_services.events().log(EventChannelId::Simulation).total_dropped()));
+    ImGui::TextDisabled("Logger: %llu records dropped",
+        static_cast<unsigned long long>(m_services.logger().dropped_records()));
+}
+
+void Engine::draw_thread_health_panel() {
+    ThreadManagementService& threads = m_services.threads();
+    const ThreadStats stats = threads.stats();
+    ImGui::SeparatorText("Queues");
+    ImGui::TextDisabled("Workers: %u", static_cast<unsigned>(stats.worker_count));
+    ImGui::TextDisabled("Queued jobs: %llu", static_cast<unsigned long long>(stats.queued_jobs));
+    ImGui::TextDisabled("Completed results: %llu", static_cast<unsigned long long>(stats.completed_results));
+    ImGui::TextDisabled("Simulation thread: %s", threads.simulation_thread_running() ? "running" : "stopped");
+    ImGui::TextDisabled("Render thread: %s", threads.render_thread_running() ? "running" : "stopped");
+    ImGui::TextDisabled("Drops: results=%llu logs=%llu diagnostics=%llu events=%llu",
+        static_cast<unsigned long long>(stats.dropped_results),
+        static_cast<unsigned long long>(stats.dropped_logs),
+        static_cast<unsigned long long>(stats.dropped_diagnostics),
+        static_cast<unsigned long long>(stats.dropped_events));
+
+    const auto thread_faults = m_services.diagnostics().active_with(ErrorCode::ThreadFault);
+    const auto role_violations = m_services.diagnostics().active_with(ErrorCode::ThreadRoleViolation);
+    ImGui::SeparatorText("Thread Faults");
+    ImGui::TextDisabled("Faults: %zu  Role violations: %zu",
+        thread_faults.size(), role_violations.size());
+    for (const Diagnostic& issue : thread_faults) {
+        ImGui::TextWrapped("%s", issue.message.c_str());
+    }
+    for (const Diagnostic& issue : role_violations) {
+        ImGui::TextWrapped("%s", issue.message.c_str());
+    }
+
+    ImGui::SeparatorText("Jobs");
+    const std::span<const ThreadJobStatus> jobs = threads.jobs();
+    if (ImGui::BeginTable("thread_jobs", 5, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY,
+                          ImVec2(0.f, 132.f))) {
+        ImGui::TableSetupColumn("Id");
+        ImGui::TableSetupColumn("Owner");
+        ImGui::TableSetupColumn("State");
+        ImGui::TableSetupColumn("Priority");
+        ImGui::TableSetupColumn("Worker");
+        ImGui::TableHeadersRow();
+        for (const ThreadJobStatus& job : jobs) {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextDisabled("%llu", static_cast<unsigned long long>(job.id.value));
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextDisabled("%.*s", static_cast<int>(job.owner.value.size()), job.owner.value.data());
+            ImGui::TableSetColumnIndex(2);
+            ImGui::TextDisabled("%u", static_cast<unsigned>(job.state));
+            ImGui::TableSetColumnIndex(3);
+            ImGui::TextDisabled("%u", static_cast<unsigned>(job.priority));
+            ImGui::TableSetColumnIndex(4);
+            ImGui::TextDisabled("%llu", static_cast<unsigned long long>(job.worker_index));
+        }
+        ImGui::EndTable();
+    }
+}
+
+void Engine::draw_metrics_panel() {
+    const MetricSummary frame = m_services.metrics().short_summary(MetricId::FrameMs);
+    ImGui::TextDisabled("Median %.1f FPS   P95 %.2f ms   Latest %.2f ms",
+        m_services.metrics().median_fps(),
+        frame.p95,
+        frame.latest);
+
+    ImGui::SeparatorText("Frame");
+    if (ImGui::BeginTable("metric_frame_table", 5,
+            ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp)) {
+        ImGui::TableSetupColumn("Metric");
+        ImGui::TableSetupColumn("Latest");
+        ImGui::TableSetupColumn("Median");
+        ImGui::TableSetupColumn("P95");
+        ImGui::TableSetupColumn("Max");
+        ImGui::TableHeadersRow();
+
+        const auto draw_row = [this](MetricId id) {
+            const u32 slot = static_cast<u32>(id);
+            const MetricSummary summary = m_services.metrics().short_summary(id);
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(metric_descriptors[slot].name.data(),
+                                   metric_descriptors[slot].name.data() + metric_descriptors[slot].name.size());
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("%.2f", summary.latest);
+            ImGui::TableSetColumnIndex(2);
+            ImGui::Text("%.2f", summary.median);
+            ImGui::TableSetColumnIndex(3);
+            ImGui::Text("%.2f", summary.p95);
+            ImGui::TableSetColumnIndex(4);
+            ImGui::Text("%.2f", summary.max);
+        };
+
+        draw_row(MetricId::FrameMs);
+        draw_row(MetricId::FrameFps);
+        draw_row(MetricId::ImGuiBuildMs);
+        draw_row(MetricId::EventDrainMs);
+        draw_row(MetricId::SimulationTickMs);
+        draw_row(MetricId::SimulationRenderSubmitMs);
+        draw_row(MetricId::TelemetryTickMs);
+        draw_row(MetricId::RenderTaskWaitMs);
+        draw_row(MetricId::FrameAcquireMs);
+        draw_row(MetricId::FrameSubmitMs);
+        draw_row(MetricId::FramePresentMs);
+        ImGui::EndTable();
+    }
+
+    ImGui::SeparatorText("Counters");
+    ImGui::TextDisabled("Frames submitted %llu   presented %llu   skipped %llu",
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::FramesSubmitted)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::FramesPresented)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::FramesSkipped)));
+    ImGui::TextDisabled("Jobs submitted %llu   completed %llu   failed %llu",
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsSubmitted)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsCompleted)),
+        static_cast<unsigned long long>(m_services.metrics().counter_value(MetricId::JobsFailed)));
 }
 
 void Engine::apply_pending_simulation_switch() {
@@ -494,7 +894,7 @@ void Engine::apply_pending_simulation_switch() {
 }
 
 void Engine::on_key_event(int key, int action, int mods) {
-    if (action != GLFW_PRESS) return;
+    if (action != GLFW_PRESS && action != GLFW_REPEAT) return;
 
     const ImGuiIO& io = ImGui::GetIO();
     if (io.WantTextInput) return;
@@ -516,6 +916,14 @@ void Engine::on_key_event(int key, int action, int mods) {
         request_capture(true);
         return;
     }
+    if (!ctrl && !shift && key == GLFW_KEY_LEFT) {
+        m_services.camera().orbit_main(-28.f, 0.f);
+        return;
+    }
+    if (!ctrl && !shift && key == GLFW_KEY_RIGHT) {
+        m_services.camera().orbit_main(28.f, 0.f);
+        return;
+    }
 
     (void)m_services.hotkeys().dispatch(KeyChord{.key = key, .mods = mods});
 }
@@ -528,51 +936,81 @@ void Engine::dispatch_global_hotkeys() {
 
 void Engine::update_render_view_input() {
     ImGuiIO& io = ImGui::GetIO();
+    GLFWwindow* primary_window = m_glfw.window();
     m_services.render().set_viewport_size(RenderViewKind::Main,
         Vec2{static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())});
     if (m_second_win.valid()) {
         m_services.render().set_viewport_size(RenderViewKind::Alternate,
             Vec2{static_cast<f32>(m_second_win.width()), static_cast<f32>(m_second_win.height())});
     }
-    const bool mouse_valid = io.MousePos.x > -3.0e37f && io.MousePos.y > -3.0e37f;
+    Vec2 primary_pixel{io.MousePos.x, io.MousePos.y};
+    bool primary_right_down = ImGui::IsMouseDown(ImGuiMouseButton_Right);
+    bool primary_middle_down = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
+    if (primary_window) {
+        double cx = 0.0;
+        double cy = 0.0;
+        glfwGetCursorPos(primary_window, &cx, &cy);
+        primary_pixel = {
+            static_cast<f32>(cx),
+            static_cast<f32>(cy)
+        };
+        primary_right_down = glfwGetMouseButton(primary_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+        primary_middle_down = glfwGetMouseButton(primary_window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
+    }
+
     const RenderViewId main_view = m_services.render().first_active_main_view();
+    ViewInputSample primary_sample{.view = main_view};
     if (main_view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
-        const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
-        const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
+        primary_sample = m_services.view_input().update(ViewInputUpdate{
+            .view = main_view,
+            .rect = ViewInputRect{
+                .origin = {},
+                .size = {static_cast<f32>(m_glfw.width()), static_cast<f32>(m_glfw.height())}
+            },
+            .cursor = primary_pixel,
+            .buttons = ViewPointerButtons{
+                .left_click = ImGui::IsMouseClicked(ImGuiMouseButton_Left),
+                .left_double_click = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left),
+                .right_down = primary_right_down,
+                .middle_down = primary_middle_down,
+                .shift_down = io.KeyShift
+            },
+            .wheel_delta = io.MouseWheel,
+            .ui_blocked = primary_view_ui_blocked(io)
+        });
         m_services.interaction().set_mouse(main_view,
-            Vec2{io.MousePos.x, io.MousePos.y},
-            Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
-            mouse_valid && !io.WantCaptureMouse);
+            primary_sample.pixel,
+            primary_sample.screen_ndc,
+            primary_sample.enabled);
     }
     const RenderViewId alternate_view = m_services.render().first_active_alternate_view();
-    bool second_hovered = false;
-    Vec2 second_delta{};
+    ViewInputSample second_sample{.view = alternate_view};
     if (m_second_win.valid() && alternate_view != 0 && m_second_win.width() > 0 && m_second_win.height() > 0) {
         const Vec2 pixel = m_second_win.cursor_position();
-        second_hovered = m_second_win.hovered()
-            && pixel.x >= 0.f && pixel.y >= 0.f
-            && pixel.x <= static_cast<f32>(m_second_win.width())
-            && pixel.y <= static_cast<f32>(m_second_win.height());
-        const float nx = std::clamp(pixel.x / static_cast<f32>(m_second_win.width()), 0.f, 1.f);
-        const float ny = std::clamp(pixel.y / static_cast<f32>(m_second_win.height()), 0.f, 1.f);
+        second_sample = m_services.view_input().update(ViewInputUpdate{
+            .view = alternate_view,
+            .rect = ViewInputRect{
+                .origin = {},
+                .size = {static_cast<f32>(m_second_win.width()), static_cast<f32>(m_second_win.height())}
+            },
+            .cursor = pixel,
+            .buttons = ViewPointerButtons{
+                .right_down = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT),
+                .middle_down = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE),
+                .shift_down = io.KeyShift
+            },
+            .wheel_delta = io.MouseWheel,
+            .ui_blocked = !m_second_win.hovered()
+        });
         m_services.interaction().set_mouse(alternate_view,
-            pixel,
-            Vec2{nx * 2.f - 1.f, 1.f - ny * 2.f},
-            second_hovered);
-        if (second_hovered && m_second_mouse_prev_valid)
-            second_delta = pixel - m_second_mouse_prev;
-        m_second_mouse_prev = pixel;
-        m_second_mouse_prev_valid = second_hovered;
-    } else {
-        m_second_mouse_prev_valid = false;
+            second_sample.pixel,
+            second_sample.screen_ndc,
+            second_sample.enabled);
     }
 
-    if (io.WantCaptureMouse && !second_hovered) return;
+    if (!primary_sample.enabled && !second_sample.enabled) return;
 
-    if (second_hovered && alternate_view != 0) {
-        const Vec2 pixel = m_second_win.cursor_position();
-        const float nx = std::clamp(pixel.x / static_cast<f32>(m_second_win.width()), 0.f, 1.f);
-        const float ny = std::clamp(pixel.y / static_cast<f32>(m_second_win.height()), 0.f, 1.f);
+    if (second_sample.enabled && alternate_view != 0) {
         (void)m_services.camera_input().dispatch(
             m_services.camera(),
             m_services.interaction(),
@@ -580,26 +1018,22 @@ void Engine::update_render_view_input() {
             CameraInputSample{
                 .view = alternate_view,
                 .profile = CameraViewProfile::Auto,
-                .pixel = pixel,
-                .normalized_pixel = {nx, ny},
-                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                .delta = second_delta,
-                .wheel_delta = io.MouseWheel,
-                .right_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_RIGHT),
-                .middle_drag = m_second_win.mouse_button_down(GLFW_MOUSE_BUTTON_MIDDLE),
-                .shift = io.KeyShift,
-                .left_click = false,
-                .left_double_click = false,
-                .enabled = true
+                .pixel = second_sample.pixel,
+                .normalized_pixel = second_sample.normalized_pixel,
+                .screen_ndc = second_sample.screen_ndc,
+                .delta = second_sample.delta,
+                .wheel_delta = second_sample.wheel_delta,
+                .right_drag = second_sample.right_drag,
+                .middle_drag = second_sample.middle_drag,
+                .shift = second_sample.shift,
+                .left_click = second_sample.left_click,
+                .left_double_click = second_sample.left_double_click,
+                .enabled = second_sample.enabled
             });
         return;
     }
 
-    if (main_view != 0 && io.DisplaySize.x > 0.f && io.DisplaySize.y > 0.f) {
-        const float nx = std::clamp(io.MousePos.x / io.DisplaySize.x, 0.f, 1.f);
-        const float ny = std::clamp(io.MousePos.y / io.DisplaySize.y, 0.f, 1.f);
-        const bool double_click = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
-        const bool left_click = ImGui::IsMouseClicked(ImGuiMouseButton_Left);
+    if (main_view != 0 && primary_sample.enabled) {
         (void)m_services.camera_input().dispatch(
             m_services.camera(),
             m_services.interaction(),
@@ -607,18 +1041,18 @@ void Engine::update_render_view_input() {
             CameraInputSample{
                 .view = main_view,
                 .profile = CameraViewProfile::Auto,
-                .pixel = {io.MousePos.x, io.MousePos.y},
-                .normalized_pixel = {nx, ny},
-                .screen_ndc = {nx * 2.f - 1.f, 1.f - ny * 2.f},
-                .delta = {io.MouseDelta.x, io.MouseDelta.y},
-                .wheel_delta = io.MouseWheel,
-                .right_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Right),
-                .middle_drag = ImGui::IsMouseDragging(ImGuiMouseButton_Middle),
-                .shift = io.KeyShift,
-                .left_click = left_click,
-                .left_double_click = double_click,
-                .enabled = true,
-                .perturb_seed = double_click ? m_surface_perturb_seed++ : 0u
+                .pixel = primary_sample.pixel,
+                .normalized_pixel = primary_sample.normalized_pixel,
+                .screen_ndc = primary_sample.screen_ndc,
+                .delta = primary_sample.delta,
+                .wheel_delta = primary_sample.wheel_delta,
+                .right_drag = primary_sample.right_drag,
+                .middle_drag = primary_sample.middle_drag,
+                .shift = primary_sample.shift,
+                .left_click = primary_sample.left_click,
+                .left_double_click = primary_sample.left_double_click,
+                .enabled = primary_sample.enabled,
+                .perturb_seed = primary_sample.left_double_click ? m_surface_perturb_seed++ : 0u
             });
     }
 }
@@ -626,32 +1060,143 @@ void Engine::update_render_view_input() {
 void Engine::request_capture(bool pause_first) {
     if (pause_first)
         active_runtime().pause();
-    m_event_log.push_back("PNG capture requested");
-    m_renderer.request_png_capture(make_capture_path());
+
+    const TickInfo tick = m_services.clock().current();
+    m_services.capture().set_output_dir(m_capture_dir);
+    m_services.capture().request_still(CaptureRequest{
+        .mode = CaptureMode::StillPng,
+        .target = CaptureTarget::BothWindows,
+        .pause_before_capture = pause_first,
+        .include_manifest = true
+    }, CaptureRunMetadata{
+        .simulation_name = std::string(active_runtime().name()),
+        .scenario_name = std::string(active_runtime().name()),
+        .simulation_index = static_cast<u64>(m_active_sim),
+        .tick = tick.tick_index,
+        .sim_time = tick.time,
+        .wall_seconds = static_cast<f32>(glfwGetTime())
+    });
+
+    for (const CaptureArtifact& artifact : m_services.capture().consume_pending_stills()) {
+        if (artifact.target == CaptureTarget::MainWindow)
+            m_renderer.request_png_capture(artifact.path);
+        else if (artifact.target == CaptureTarget::AlternateWindow && m_second_win.valid())
+            m_second_win.request_png_capture(artifact.path);
+    }
+    (void)m_services.threads().enqueue_logger_task([this] {
+        (void)m_services.logger().write(LogSeverity::Info, LogCategory::Capture, {}, "PNG capture requested");
+    });
 }
 
-std::filesystem::path Engine::make_capture_path() const {
-    std::string name = std::string(active_runtime().name());
-    for (char& c : name) {
-        const unsigned char uc = static_cast<unsigned char>(c);
-        if (!std::isalnum(uc)) c = '_';
+void Engine::start_active_simulation_thread() {
+    if (!m_config.simulation.threaded_runtime) {
+        return;
     }
-    name.erase(std::unique(name.begin(), name.end(),
-                           [](char a, char b){ return a == '_' && b == '_'; }),
-               name.end());
-    if (!name.empty() && name.back() == '_') name.pop_back();
-    if (name.empty()) name = "simulation";
+    SimulationRuntime* runtime = &active_runtime();
+    ThreadManagementService& threads = m_services.threads();
+    if (threads.simulation_thread_running()) {
+        return;
+    }
+    const bool started = threads.start_simulation_thread(
+        [runtime, &threads](std::stop_token, std::span<const SimulationThreadCommand> commands) {
+            runtime->process_thread_commands(commands, &threads);
+        });
+    if (started) {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Info,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Simulation thread started");
+        });
+    } else {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Warning,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Simulation thread could not start");
+        });
+    }
+}
 
-    const std::time_t now = std::time(nullptr);
-    std::tm tm{};
-#if defined(_WIN32)
-    localtime_s(&tm, &now);
-#else
-    localtime_r(&now, &tm);
-#endif
-    std::ostringstream stamp;
-    stamp << std::put_time(&tm, "%Y%m%d_%H%M%S");
-    return std::filesystem::path{NDDE_PROJECT_DIR} / "captures" / (name + "_" + stamp.str() + ".png");
+void Engine::stop_active_simulation_thread() noexcept {
+    m_services.threads().stop_simulation_thread();
+}
+
+void Engine::start_render_presentation_thread() {
+    if (!m_config.render.threaded_presentation) {
+        return;
+    }
+    ThreadManagementService& threads = m_services.threads();
+    if (threads.render_thread_running()) {
+        return;
+    }
+    const bool started = threads.start_render_thread(
+        [](std::stop_token, std::span<const RenderThreadCommand>) {});
+    if (started) {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Info,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Render presentation thread started");
+        });
+    } else {
+        (void)m_services.threads().enqueue_logger_task([this] {
+            (void)m_services.logger().write(LogSeverity::Warning,
+                                            LogCategory::Engine,
+                                            {},
+                                            "Render presentation thread could not start");
+        });
+    }
+}
+
+void Engine::stop_render_presentation_thread() noexcept {
+    m_services.threads().stop_render_thread();
+}
+
+bool Engine::run_render_frame_task(std::function<void()> task) {
+    const auto started = std::chrono::steady_clock::now();
+    const bool result = m_services.threads().run_render_task_sync(std::move(task));
+    m_services.metrics().record_duration(MetricId::RenderTaskWaitMs,
+                                          std::chrono::steady_clock::now() - started);
+    return result;
+}
+
+void Engine::enqueue_pending_surface_pokes(const TickInfo& tick) {
+    const RenderViewId main_view = m_services.render().first_active_main_view();
+    if (main_view == 0) {
+        return;
+    }
+
+    const auto picks = m_services.interaction().consume_surface_picks(main_view);
+    if (picks.empty()) {
+        return;
+    }
+
+    const SimulationSnapshot snapshot = active_runtime().snapshot();
+    (void)m_services.events().log(EventChannelId::Simulation).push_engine_string(std::format(
+            "[{:>7.2f}] DEBUG  surface-pick queue count={} threaded=yes paused={}",
+            snapshot.sim_time,
+            picks.size(),
+            tick.paused ? "yes" : "no"),
+        events::EventSeverity::Info);
+
+    for (const SurfacePickRequest& pick : picks) {
+        (void)m_services.threads().enqueue_simulation_command(SimulationThreadCommand{
+            .kind = SimulationThreadCommandKind::SurfacePoke,
+            .tick = tick,
+            .surface_poke = SimulationSurfacePoke{
+                .view = static_cast<u64>(main_view),
+                .uv = pick.fallback_uv,
+                .fallback_uv = pick.fallback_uv,
+                .screen_ndc = pick.screen_ndc,
+                .amplitude = pick.amplitude,
+                .radius = pick.radius,
+                .falloff = pick.falloff,
+                .ray_hit = false,
+                .seed = pick.seed
+            }
+        });
+    }
 }
 
 SimulationRuntime& Engine::active_runtime() {
@@ -751,7 +1296,62 @@ EngineAPI Engine::make_api() {
         m_pending_sim = index;
     };
 
+    api.record_telemetry = [this](const telemetry::TelemetryRecord& r) -> bool {
+        return m_telemetry.record(r);
+    };
+
+    api.record_telemetry_ext = [this](const telemetry::TelemetryExtRecord& r) -> bool {
+        return m_telemetry.record_ext(r);
+    };
+
     return api;
+}
+
+// ── Telemetry lifecycle helpers ───────────────────────────────────────────────────
+
+void Engine::fire_app_started(const std::string& config_path) {
+    (void)config_path;
+    m_telemetry.on_app_started(events::AppStarted{
+        .wall_time   = std::chrono::system_clock::now()
+    });
+}
+
+void Engine::fire_app_stopping() {
+    (void)m_services.threads().run_logger_task_sync([this] {
+        m_telemetry.on_app_stopping(events::AppStopping{});
+    });
+}
+
+void Engine::fire_sim_started(std::size_t index) {
+    m_telemetry_tick_count        = u64(0);
+    m_telemetry_sim_start_wall_ms = static_cast<f32>(glfwGetTime() * 1000.0);
+    m_telemetry.on_sim_started(events::SimStarted{
+        .sim_name  = active_runtime().name(),
+        .sim_index = static_cast<u64>(index),
+        .wall_time = std::chrono::system_clock::now()
+    });
+    // Dispatch on the engine bus so subscribers (log panel) are notified.
+    m_services.events().publish(EventChannelId::App, ndde::events::SimSwitched{
+        .sim_index = static_cast<u64>(index)
+    });
+    // EventBusService drains app/simulation logs once per frame in run_frame().
+}
+
+void Engine::fire_sim_stopped(std::size_t index,
+                               f32 total_sim_time,
+                               u64 total_ticks) {
+    events::SimStopped stopped{
+        .sim_name        = active_runtime().name(),
+        .sim_index       = static_cast<u64>(index),
+        .total_sim_time  = total_sim_time,
+        .total_ticks     = total_ticks,
+        .total_records   = m_telemetry.total_records(),
+        .dropped_records = m_telemetry.dropped(),
+        .wall_time       = std::chrono::system_clock::now()
+    };
+    (void)m_services.threads().run_logger_task_sync([this, stopped] {
+        m_telemetry.on_sim_stopped(stopped);
+    });
 }
 
 } // namespace ndde

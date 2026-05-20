@@ -49,6 +49,13 @@ public:
                       float                       dt) const = 0;
 
     [[nodiscard]] virtual std::string name() const = 0;
+
+protected:
+    IIntegrator() = default;
+    IIntegrator(const IIntegrator&) = default;
+    IIntegrator& operator=(const IIntegrator&) = default;
+    IIntegrator(IIntegrator&&) = default;
+    IIntegrator& operator=(IIntegrator&&) = default;
 };
 
 } // namespace ndde::sim

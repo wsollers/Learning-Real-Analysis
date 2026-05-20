@@ -61,7 +61,8 @@ public:
         float tangent_floor = 0.35f; ///< minimum level-curve component
     };
 
-    explicit LevelCurveWalker(Params p = {}) : m_p(p) {}
+    LevelCurveWalker() = default;
+    explicit LevelCurveWalker(Params p) : m_p(p) {}
 
     // ── IEquation::update ──────────────────────────────────────────────────────
     // Returns (du/dt, dv/dt) in parameter space.

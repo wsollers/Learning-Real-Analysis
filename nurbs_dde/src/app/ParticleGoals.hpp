@@ -21,6 +21,13 @@ public:
 
     [[nodiscard]] virtual GoalStatus evaluate(const SimulationContext& context) = 0;
     [[nodiscard]] virtual std::string metadata_label() const = 0;
+
+protected:
+    IParticleGoal() = default;
+    IParticleGoal(const IParticleGoal&) = default;
+    IParticleGoal& operator=(const IParticleGoal&) = default;
+    IParticleGoal(IParticleGoal&&) = default;
+    IParticleGoal& operator=(IParticleGoal&&) = default;
 };
 
 class CaptureGoal final : public IParticleGoal {
@@ -28,10 +35,11 @@ public:
     struct Params {
         ParticleRole seeker_role = ParticleRole::Chaser;
         ParticleRole target_role = ParticleRole::Leader;
-        float radius = 0.25f;
+        f32 radius = 0.25f;
     };
 
-    explicit CaptureGoal(Params p = {}) : m_p(p) {}
+    CaptureGoal() = default;
+    explicit CaptureGoal(Params p) : m_p(p) {}
 
     [[nodiscard]] GoalStatus evaluate(const SimulationContext& context) override {
         for (const auto& seeker : context.particles()) {
@@ -54,7 +62,7 @@ private:
 
 class SurvivalGoal final : public IParticleGoal {
 public:
-    explicit SurvivalGoal(float duration_seconds) : m_duration(duration_seconds) {}
+    explicit SurvivalGoal(f32 duration_seconds) : m_duration(duration_seconds) {}
 
     [[nodiscard]] GoalStatus evaluate(const SimulationContext& context) override {
         return context.time() >= m_duration ? GoalStatus::Succeeded : GoalStatus::Running;
@@ -63,7 +71,7 @@ public:
     [[nodiscard]] std::string metadata_label() const override { return "Survival"; }
 
 private:
-    float m_duration = 0.f;
+    f32 m_duration = 0.f;
 };
 
 } // namespace ndde

@@ -69,7 +69,7 @@ struct SurfaceFrame {
 [[nodiscard]] inline SurfaceFrame
 make_surface_frame(const ndde::math::ISurface& surface,
                    f32 u, f32 v,
-                   float t = 0.f,
+                   f32 t = 0.f,
                    const FrenetFrame* fr = nullptr) noexcept
 {
     SurfaceFrame sf;

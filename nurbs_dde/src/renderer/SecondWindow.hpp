@@ -8,6 +8,8 @@
 #include "renderer/Pipeline.hpp"
 #include <volk.h>
 #include <VkBootstrap.h>
+#include <filesystem>
+#include <optional>
 #include <string>
 
 struct GLFWwindow;
@@ -24,6 +26,8 @@ public:
 
     SecondWindow(const SecondWindow&)            = delete;
     SecondWindow& operator=(const SecondWindow&) = delete;
+    SecondWindow(SecondWindow&&)                 = delete;
+    SecondWindow& operator=(SecondWindow&&)      = delete;
 
     // x,y: OS screen position for top-left corner.
     void init(const platform::VulkanContext& ctx,
@@ -37,6 +41,7 @@ public:
     [[nodiscard]] bool begin_frame();
     void draw(const DrawCall& dc);
     [[nodiscard]] bool end_frame();
+    void request_png_capture(std::filesystem::path path);
 
     void on_resize();
 
@@ -69,8 +74,9 @@ private:
     VkCommandPool   m_cmd_pool        = VK_NULL_HANDLE;
     VkCommandBuffer m_cmd             = VK_NULL_HANDLE;
     VkFence         m_render_fence    = VK_NULL_HANDLE;
-    // One semaphore per swapchain image — prevents reuse-before-consumed races
-    // for both acquire and render-finished signals.
+    // Acquire semaphores are frame-slot indexed after the frame fence waits.
+    // Render-finished semaphores are swapchain-image indexed because present
+    // may keep using a semaphore until that same image is acquired again.
     memory::PersistentVector<VkSemaphore> m_image_available;
     memory::PersistentVector<VkSemaphore> m_render_finished;
     u32             m_image_index     = 0;
@@ -83,6 +89,14 @@ private:
     Pipeline m_pipeline_line_list;
     Pipeline m_pipeline_line_strip;
     Pipeline m_pipeline_triangle_list;
+    std::optional<std::filesystem::path> m_pending_capture;
+
+    struct CaptureStagingBuffer {
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+        VkDeviceSize capacity_bytes = 0;
+    };
+    CaptureStagingBuffer m_capture_staging;
 
     void build_swapchain(u32 w, u32 h);
     void destroy_swapchain();
@@ -90,6 +104,9 @@ private:
     void create_sync_objects();
     void init_pipelines(const std::string& shader_dir);
     void transition_image(VkImage image, VkImageLayout from, VkImageLayout to);
+    void ensure_capture_staging_buffer(VkDeviceSize required_bytes);
+    void destroy_capture_staging_buffer() noexcept;
+    [[nodiscard]] u32 find_memory_type(u32 type_filter, VkMemoryPropertyFlags props) const;
     [[nodiscard]] Pipeline& pipeline_for(Topology topo);
 
     static void resize_callback(GLFWwindow* win, int w, int h);

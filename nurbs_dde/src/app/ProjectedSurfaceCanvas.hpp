@@ -16,12 +16,12 @@ namespace ndde {
 
 struct ProjectedSurfaceCanvasOptions {
     u32 grid_lines = 64;
-    float color_scale = 1.f;
+    f32 color_scale = 1.f;
     Vec4 wire_color{0.92f, 0.96f, 1.f, 0.32f};
     SurfaceFillColorMode fill_color_mode = SurfaceFillColorMode::HeightCell;
     bool show_frenet = true;
     bool show_osculating_circle = true;
-    float overlay_frame_scale = 0.34f;
+    f32 overlay_frame_scale = 0.34f;
     const char* canvas_id = "projected_surface_canvas";
     const char* help_text = nullptr;
     const char* subtitle = nullptr;
@@ -76,28 +76,28 @@ public:
     }
 
     [[nodiscard]] static Vec3 project_point(Vec3 p, const Viewport& viewport) noexcept {
-        const float cy = ops::cos(viewport.yaw);
-        const float sy = ops::sin(viewport.yaw);
-        const float cp = ops::cos(viewport.pitch);
-        const float sp = ops::sin(viewport.pitch);
-        const float xr = cy * p.x - sy * p.y;
-        const float yr = sy * p.x + cy * p.y;
-        const float screen_y = cp * yr - sp * p.z;
-        const float inv_zoom = 1.f / ops::clamp(viewport.zoom, 0.05f, 20.f);
+        const f32 cy = ops::cos(viewport.yaw);
+        const f32 sy = ops::sin(viewport.yaw);
+        const f32 cp = ops::cos(viewport.pitch);
+        const f32 sp = ops::sin(viewport.pitch);
+        const f32 xr = cy * p.x - sy * p.y;
+        const f32 yr = sy * p.x + cy * p.y;
+        const f32 screen_y = cp * yr - sp * p.z;
+        const f32 inv_zoom = 1.f / ops::clamp(viewport.zoom, 0.05f, 20.f);
         return {xr * inv_zoom, screen_y * inv_zoom, (sp * yr + cp * p.z) * 0.01f};
     }
 
-    [[nodiscard]] static ImVec2 projected_to_canvas(Vec3 p, const ImVec2& cpos, const ImVec2& csz, float extent) noexcept {
-        const float aspect = csz.x / std::max(csz.y, 1.f);
-        const float half_x = aspect >= 1.f ? extent * aspect : extent;
-        const float half_y = aspect >= 1.f ? extent : extent / aspect;
-        const float nx = (p.x + half_x) / (2.f * half_x);
-        const float ny = 1.f - ((p.y + half_y) / (2.f * half_y));
+    [[nodiscard]] static ImVec2 projected_to_canvas(Vec3 p, const ImVec2& cpos, const ImVec2& csz, f32 extent) noexcept {
+        const f32 aspect = csz.x / std::max(csz.y, 1.f);
+        const f32 half_x = aspect >= 1.f ? extent * aspect : extent;
+        const f32 half_y = aspect >= 1.f ? extent : extent / aspect;
+        const f32 nx = (p.x + half_x) / (2.f * half_x);
+        const f32 ny = 1.f - ((p.y + half_y) / (2.f * half_y));
         return {cpos.x + nx * csz.x, cpos.y + ny * csz.y};
     }
 
     [[nodiscard]] static ImU32 imgui_color(Vec4 c) noexcept {
-        const auto u8 = [](float v) { return static_cast<int>(ops::clamp(v, 0.f, 1.f) * 255.f + 0.5f); };
+        const auto u8 = [](f32 v) { return static_cast<int>(ops::clamp(v, 0.f, 1.f) * 255.f + 0.5f); };
         return IM_COL32(u8(c.r), u8(c.g), u8(c.b), u8(c.a));
     }
 
@@ -114,7 +114,7 @@ private:
         });
     }
 
-    static void draw_surface(const SurfaceMeshCache& mesh, const Viewport& viewport, float extent,
+    static void draw_surface(const SurfaceMeshCache& mesh, const Viewport& viewport, f32 extent,
                              const ImVec2& cpos, const ImVec2& csz)
     {
         ImDrawList* dl = ImGui::GetWindowDrawList();
