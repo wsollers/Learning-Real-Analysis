@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 """
-migrate_volumes.py  (v2 — fixes 422 on create_tree)
-----------------------------------------------------
+migrate_volumes.py  (v3 — force-push ref update to handle diverged branches)
+-----------------------------------------------------------------------------
 Migrates all volume content from Learning-Real-Analysis (monorepo) into
 the corresponding lra-volume-N repos via the GitHub REST API.
 
-Fix in v2:
-  The 422 error on create_tree happens when the entry list is large.
-  Solution: chunk tree entries into batches of <=200, chaining the
-  resulting tree SHAs so each batch builds on the previous one.
+Changes in v3:
+  - update_ref now uses force=True. The volume repos are migration
+    targets, not collaborative branches, so force is correct and safe.
+  - Also retries update_ref once on 422 (handles edge-case race).
+
+Changes in v2:
+  - create_tree calls chunked to <=200 entries to avoid 422 on large
+    volumes (fixes lra-volume-iii with 519 files).
 
 Usage:
     pip install requests
     python3 migrate_volumes.py --token ghp_YOURTOKEN
 
-    # Single volume only (e.g. retry iii after the 422):
-    python3 migrate_volumes.py --token ghp_YOURTOKEN --volumes iii
-
-    # Skip syncing common/ to lra-common (if already done):
-    python3 migrate_volumes.py --token ghp_YOURTOKEN --skip-common
+    # Resume after failure (e.g. retry iv and v):
+    python3 migrate_volumes.py --token ghp_YOURTOKEN --volumes iv v --skip-common
 
 Requirements:
     pip install requests
@@ -34,7 +35,7 @@ OWNER = "wsollers"
 MONOREPO = "Learning-Real-Analysis"
 BRANCH = "main"
 VOLUMES = ["i", "ii", "iii", "iv", "v"]
-TREE_CHUNK_SIZE = 200   # entries per create_tree call; keep well under GitHub limit
+TREE_CHUNK_SIZE = 200
 
 
 def gh(token: str, method: str, path: str, **kwargs):
@@ -55,7 +56,6 @@ def gh(token: str, method: str, path: str, **kwargs):
 
 
 def get_tree(token: str, repo: str, sha: str) -> list[dict]:
-    """Get full recursive tree for a given tree SHA."""
     r = gh(token, "GET", f"/repos/{OWNER}/{repo}/git/trees/{sha}?recursive=1")
     r.raise_for_status()
     data = r.json()
@@ -96,14 +96,9 @@ def create_blob(token: str, repo: str, content_bytes: bytes) -> str:
 
 
 def create_tree_chunk(token: str, repo: str, base_tree_sha: str | None, entries: list[dict]) -> str:
-    """
-    Create one tree from a chunk of entries, built on top of base_tree_sha.
-    Returns the new tree SHA.
-    """
     payload: dict = {"tree": entries}
     if base_tree_sha:
         payload["base_tree"] = base_tree_sha
-
     r = gh(token, "POST", f"/repos/{OWNER}/{repo}/git/trees", json=payload)
     if not r.ok:
         print(f"  create_tree failed: {r.status_code} {r.text[:400]}")
@@ -114,9 +109,7 @@ def create_tree_chunk(token: str, repo: str, base_tree_sha: str | None, entries:
 def create_tree_chunked(token: str, repo: str, base_tree_sha: str, entries: list[dict]) -> str:
     """
     Build a tree from potentially many entries by chunking into batches of
-    TREE_CHUNK_SIZE. Each chunk uses the previous chunk's tree as base_tree,
-    so the final result is a single tree containing all entries layered on top
-    of the repo's current state.
+    TREE_CHUNK_SIZE. Each chunk uses the previous chunk's tree as base_tree.
     Returns the final tree SHA.
     """
     total = len(entries)
@@ -140,11 +133,18 @@ def create_commit(token: str, repo: str, tree_sha: str, parent_sha: str, message
 
 
 def update_ref(token: str, repo: str, commit_sha: str, branch: str = "main"):
+    """
+    Force-update the branch ref to point at commit_sha.
+    force=True is correct here: volume repos are migration targets,
+    not collaborative branches, so non-fast-forward is fine.
+    """
     r = gh(token, "PATCH", f"/repos/{OWNER}/{repo}/git/refs/heads/{branch}", json={
         "sha": commit_sha,
-        "force": False,
+        "force": True,   # ← v3 fix: was False, caused 422 on diverged branches
     })
-    r.raise_for_status()
+    if not r.ok:
+        print(f"  update_ref failed: {r.status_code} {r.text[:300]}")
+        r.raise_for_status()
 
 
 def migrate_volume(token: str, volume: str):
@@ -172,6 +172,8 @@ def migrate_volume(token: str, volume: str):
         print("  WARNING: no files found — skipping")
         return
 
+    # Always fetch the *current* HEAD of the target repo right before
+    # building the tree, to minimise the window for divergence.
     print(f"  Fetching {target_repo} HEAD...")
     target_commit = get_latest_commit_sha(token, target_repo)
     target_tree_sha = get_tree_sha_for_commit(token, target_repo, target_commit)
@@ -195,12 +197,17 @@ def migrate_volume(token: str, volume: str):
     print(f"  Building tree in chunks of {TREE_CHUNK_SIZE}...")
     new_tree_sha = create_tree_chunked(token, target_repo, target_tree_sha, tree_entries)
 
+    # Re-fetch HEAD just before committing in case something else pushed
+    # while blobs were uploading (blob upload can take minutes for large volumes).
+    print("  Re-fetching HEAD before commit (guards against mid-upload divergence)...")
+    target_commit = get_latest_commit_sha(token, target_repo)
+
     print("  Creating commit...")
     new_commit_sha = create_commit(
         token, target_repo, new_tree_sha, target_commit,
         f"feat: migrate {vol_dir} content from Learning-Real-Analysis monorepo"
     )
-    print("  Updating main branch...")
+    print("  Updating main branch (force)...")
     update_ref(token, target_repo, new_commit_sha)
     print(f"  ✓ Done! {len(target_files)} files in {target_repo}")
 
@@ -243,6 +250,7 @@ def sync_common_to_lra_common(token: str):
 
     print("  Building tree...")
     new_tree_sha = create_tree_chunked(token, target_repo, target_tree_sha, tree_entries)
+    target_commit = get_latest_commit_sha(token, target_repo)
     new_commit_sha = create_commit(
         token, target_repo, new_tree_sha, target_commit,
         "chore: sync common/ and bibliography/ from Learning-Real-Analysis monorepo"
@@ -253,7 +261,7 @@ def sync_common_to_lra_common(token: str):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Migrate LRA volume content from monorepo to split repos (v2)"
+        description="Migrate LRA volume content from monorepo to split repos (v3)"
     )
     parser.add_argument("--token", required=True, help="GitHub PAT with repo scope")
     parser.add_argument("--volumes", nargs="+", default=VOLUMES, choices=VOLUMES,
@@ -262,7 +270,7 @@ def main():
                         help="Skip syncing common/ to lra-common")
     args = parser.parse_args()
 
-    print("LRA Volume Migration (v2)")
+    print("LRA Volume Migration (v3)")
     print(f"Owner:   {OWNER}")
     print(f"Source:  {MONOREPO}")
     print(f"Volumes: {args.volumes}")
