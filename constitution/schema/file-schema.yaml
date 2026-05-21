@@ -5,24 +5,65 @@
 # chapter subject.
 
 # ---------------------------------------------------------------------------
-# Repository Root
+# Multi-Repo Layout (as of 2026)
+# ---------------------------------------------------------------------------
+#
+# The project uses separate repositories to stay within Overleaf's 2000-file limit.
+#
+# Repository roles:
+#   Learning-Real-Analysis  — monorepo: full build, constitution, canonical YAMLs
+#   lra-common              — shared LaTeX infrastructure (common/, bibliography/)
+#   lra-volume-i .. v       — per-volume Overleaf targets
+#   lra-lean                — Lean 4 formalization
+#   lra-nurbs               — NURBS/DDE C++ engine
+#   lra-knowledge-explorer  — theorem extraction pipeline + HTML explorer
+#
+# The auditor always runs against the monorepo. Set REPO_ROOT or --repoDir
+# to the Learning-Real-Analysis clone when working from a volume repo.
+
+# ---------------------------------------------------------------------------
+# Monorepo Root (Learning-Real-Analysis)
 # ---------------------------------------------------------------------------
 
-repository_root:
-  - main.tex
+monorepo_root:
+  - main.tex                     # full omnibus build
+  - volume-i-main.tex            # per-volume standalone roots (reference only)
+  - volume-ii-main.tex
+  - volume-iii-main.tex
+  - volume-iv-main.tex
+  - volume-v-main.tex
   - bibliography/
   - common/
-  - predicates.yaml
-  - notation.yaml
-  - relations.yaml
-  - proofs-to-do-analysis.md
+  - predicates.yaml              # canonical source — never duplicated
+  - notation.yaml                # canonical source — never duplicated
+  - relations.yaml               # canonical source — never duplicated
+  - proofs-to-do.md
   - volume-i/
   - volume-ii/
   - volume-iii/
   - volume-iv/
+  - volume-v/
+  - constitution/
+  - docker/
+  - theorem-explorer/
+  - lean/
+  - nurbs_dde/
 
 # ---------------------------------------------------------------------------
-# Volume Structure
+# Volume Repo Root (lra-volume-N)
+# ---------------------------------------------------------------------------
+# Each volume repo is self-contained and Overleaf-ready.
+# common/ is a synced copy from lra-common — do not edit in volume repos.
+
+volume_repo_root:
+  - main.tex                     # volume root — Overleaf main document
+  - .latexmkrc
+  - common/                      # synced copy from lra-common
+  - bibliography/                # synced copy from lra-common
+  - volume-N/                    # replace N with actual volume number
+
+# ---------------------------------------------------------------------------
+# Volume Structure (within any repo — monorepo or volume repo)
 # ---------------------------------------------------------------------------
 
 volume:
@@ -160,7 +201,7 @@ proof_file:
 capstone:
   location: proofs/exercises/capstone-{chapter}.tex
   position: last in proofs/exercises/index.tex
-  tracking: proofs-to-do-analysis.md
+  tracking: proofs-to-do.md      # updated path (was proofs-to-do-analysis.md)
 
   scope_rule: >
     A capstone must synthesize the chapter's material using only concepts that
@@ -210,3 +251,30 @@ breadcrumb:
   stub_rule: >
     Stub chapters still carry a breadcrumb. A stub chapter inserts a
     Status: Planned box immediately after the breadcrumb.
+
+# ---------------------------------------------------------------------------
+# Auditor Path Rules (Multi-Repo)
+# ---------------------------------------------------------------------------
+
+auditor_paths:
+  monorepo_root_discovery:
+    - check REPO_ROOT environment variable
+    - walk up from cwd looking for constitution/master.md
+
+  volume_repo_usage: >
+    When working in a volume repo (e.g., lra-volume-i), set REPO_ROOT or pass
+    --repoDir pointing at the Learning-Real-Analysis monorepo clone. The auditor
+    will scan LaTeX files from the path you specify but load constitution files
+    and canonical YAMLs from REPO_ROOT.
+
+  canonical_yaml_locations:
+    predicates: REPO_ROOT/predicates.yaml
+    notation:   REPO_ROOT/notation.yaml
+    relations:  REPO_ROOT/relations.yaml
+
+  constitution_location: REPO_ROOT/constitution/
+
+  common_location:
+    monorepo: REPO_ROOT/common/
+    volume_repos: lra-volume-N/common/   # synced copy; do not edit here
+    source_of_truth: lra-common/common/
