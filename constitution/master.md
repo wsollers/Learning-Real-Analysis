@@ -3,13 +3,54 @@
 ## Purpose
 
 This constitution governs the generation and auditing of all formal mathematical
-content in the Learning Real Analysis repository. It is organized into four
+content in the Learning Real Analysis project. It is organized into four
 concerns that must never be mixed:
 
 - **Schema** — what a valid artifact looks like
 - **Prompts** — what to send to the model for generation or audit
 - **Schemas** — what the model must return
 - **This file** — orientation and loading order only
+
+---
+
+## Repository Map (as of 2026)
+
+The project is split across multiple repos. The constitution lives in the monorepo
+and governs all repos.
+
+| Repository | Role |
+|---|---|
+| `Learning-Real-Analysis` | Monorepo: full build, constitution, canonical YAMLs, auditor, docker |
+| `lra-common` | Shared LaTeX infrastructure: `common/`, `bibliography/` — synced to volumes |
+| `lra-volume-i` | Volume I content — Overleaf target |
+| `lra-volume-ii` | Volume II content — Overleaf target |
+| `lra-volume-iii` | Volume III content — Overleaf target |
+| `lra-volume-iv` | Volume IV content — Overleaf target |
+| `lra-volume-v` | Volume V content — Overleaf target |
+| `lra-lean` | Lean 4 proof formalization |
+| `lra-nurbs` | NURBS/DDE C++ engine |
+| `lra-knowledge-explorer` | Theorem extraction pipeline + HTML graph |
+
+### Auditor root discovery
+
+The auditor (`constitution/auditor/config.py`) discovers the monorepo root by looking
+for `constitution/master.md` or by reading the `REPO_ROOT` environment variable.
+
+When running against a volume repo, set:
+
+```bash
+export REPO_ROOT=/path/to/Learning-Real-Analysis
+# or pass --repoDir /path/to/Learning-Real-Analysis to the CLI
+```
+
+The canonical source files (`predicates.yaml`, `notation.yaml`, `relations.yaml`) live
+at the monorepo root and are never duplicated in volume repos.
+
+### common/ ownership
+
+`common/` is owned by `lra-common`. Volume repos receive synced copies via
+GitHub Actions (`.github/workflows/sync-to-volumes.yml` in `lra-common`).
+Do not edit `common/` files in volume repos directly.
 
 ---
 
@@ -95,13 +136,15 @@ concerns that must never be mixed:
 
 ## Canonical Source Files (outside this constitution)
 
-These files live at the repository root and are the single source of truth for
-formal mathematical names. The constitution never duplicates their content.
+These files live at the **monorepo root** (`Learning-Real-Analysis/`) and are the
+single source of truth for formal mathematical names. The constitution never
+duplicates their content. They are never copied to volume repos.
 
 ```text
-predicates.yaml
-notation.yaml
-relations.yaml
+Learning-Real-Analysis/
+  predicates.yaml
+  notation.yaml
+  relations.yaml
 ```
 
 They are read-only to all automated processes. They are modified only by
