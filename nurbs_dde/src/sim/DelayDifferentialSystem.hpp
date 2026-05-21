@@ -47,6 +47,13 @@ public:
                           std::span<const f64> state,
                           const DelayHistoryView& history,
                           std::span<f64> derivative) const = 0;
+
+protected:
+    IDelayDifferentialSystem() = default;
+    IDelayDifferentialSystem(const IDelayDifferentialSystem&) = default;
+    IDelayDifferentialSystem& operator=(const IDelayDifferentialSystem&) = default;
+    IDelayDifferentialSystem(IDelayDifferentialSystem&&) = default;
+    IDelayDifferentialSystem& operator=(IDelayDifferentialSystem&&) = default;
 };
 
 class IDdeSolver {
@@ -62,6 +69,13 @@ public:
                       f64 dt,
                       std::span<f64> state,
                       std::span<f64> scratch) const = 0;
+
+protected:
+    IDdeSolver() = default;
+    IDdeSolver(const IDdeSolver&) = default;
+    IDdeSolver& operator=(const IDdeSolver&) = default;
+    IDdeSolver(IDdeSolver&&) = default;
+    IDdeSolver& operator=(IDdeSolver&&) = default;
 };
 
 struct DdeHistorySample {

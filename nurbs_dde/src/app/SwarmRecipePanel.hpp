@@ -22,9 +22,9 @@ struct SwarmRecipeAction {
 
 struct SwarmRecipePanelState {
     bool* paused = nullptr;
-    float* sim_speed = nullptr;
+    f32* sim_speed = nullptr;
     u32* grid_lines = nullptr;
-    float* color_scale = nullptr;
+    f32* color_scale = nullptr;
     bool* show_frenet = nullptr;
     bool* show_osculating_circle = nullptr;
     SurfaceMeshCache* mesh = nullptr;

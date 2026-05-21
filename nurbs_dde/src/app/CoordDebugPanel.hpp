@@ -25,52 +25,52 @@ public:
 
     struct Snapshot {
         // ImGui / display
-        float imgui_display_w  = 0.f;
-        float imgui_display_h  = 0.f;
-        float imgui_fb_scale_x = 0.f;
-        float imgui_fb_scale_y = 0.f;
-        float mouse_px_x       = 0.f;
-        float mouse_px_y       = 0.f;
+        f32 imgui_display_w  = 0.f;
+        f32 imgui_display_h  = 0.f;
+        f32 imgui_fb_scale_x = 0.f;
+        f32 imgui_fb_scale_y = 0.f;
+        f32 mouse_px_x       = 0.f;
+        f32 mouse_px_y       = 0.f;
         bool  mouse_in_window  = false; ///< false when ImGui sentinel (-FLT_MAX)
         bool  want_capture     = false;
 
         // Vulkan / framebuffer
-        float fb_w = 0.f;
-        float fb_h = 0.f;
+        f32 fb_w = 0.f;
+        f32 fb_h = 0.f;
 
         // Viewport camera
-        float vp_dp_w        = 0.f;
-        float vp_dp_h        = 0.f;
-        float vp_fb_w        = 0.f;
-        float vp_fb_h        = 0.f;
-        float vp_pan_x       = 0.f;
-        float vp_pan_y       = 0.f;
-        float vp_zoom        = 0.f;
-        float vp_base_extent = 0.f;
-        float vp_half_h      = 0.f;
-        float vp_half_w      = 0.f;
-        float vp_fb_aspect   = 0.f;
+        f32 vp_dp_w        = 0.f;
+        f32 vp_dp_h        = 0.f;
+        f32 vp_fb_w        = 0.f;
+        f32 vp_fb_h        = 0.f;
+        f32 vp_pan_x       = 0.f;
+        f32 vp_pan_y       = 0.f;
+        f32 vp_zoom        = 0.f;
+        f32 vp_base_extent = 0.f;
+        f32 vp_half_h      = 0.f;
+        f32 vp_half_w      = 0.f;
+        f32 vp_fb_aspect   = 0.f;
 
         // World bounds
-        float world_left   = 0.f;
-        float world_right  = 0.f;
-        float world_bottom = 0.f;
-        float world_top    = 0.f;
+        f32 world_left   = 0.f;
+        f32 world_right  = 0.f;
+        f32 world_bottom = 0.f;
+        f32 world_top    = 0.f;
 
         // Mouse → world → round-trip (only valid when mouse_in_window)
-        float mouse_world_x    = 0.f;
-        float mouse_world_y    = 0.f;
-        float roundtrip_px_x   = 0.f;
-        float roundtrip_px_y   = 0.f;
-        float roundtrip_err_x  = 0.f;
-        float roundtrip_err_y  = 0.f;
+        f32 mouse_world_x    = 0.f;
+        f32 mouse_world_y    = 0.f;
+        f32 roundtrip_px_x   = 0.f;
+        f32 roundtrip_px_y   = 0.f;
+        f32 roundtrip_err_x  = 0.f;
+        f32 roundtrip_err_y  = 0.f;
 
         // Hover / snap
         bool        snap_hit       = false;
-        float       snap_world_x   = 0.f;
-        float       snap_world_y   = 0.f;
-        float       snap_dist_px_x = 0.f;
-        float       snap_dist_px_y = 0.f;
+        f32       snap_world_x   = 0.f;
+        f32       snap_world_y   = 0.f;
+        f32       snap_dist_px_x = 0.f;
+        f32       snap_dist_px_y = 0.f;
         int         snap_curve_idx = -1;
         std::string snap_curve_name;
 
@@ -269,13 +269,13 @@ private:
             ImGui::TextDisabled("  %-20s  %d pts", name.c_str(), sz);
     }
 
-    static void row(const char* label, float a, float b, const char* unit) {
+    static void row(const char* label, f32 a, f32 b, const char* unit) {
         ImGui::TextDisabled("  %-30s", label);
         ImGui::SameLine(240.f);
         ImGui::Text("%-10.4f  %-10.4f  %s", a, b, unit);
     }
 
-    static void scalar(const char* label, float v) {
+    static void scalar(const char* label, f32 v) {
         ImGui::TextDisabled("  %-30s", label);
         ImGui::SameLine(240.f);
         ImGui::Text("%.6f", v);
@@ -295,8 +295,8 @@ private:
                            ok ? "OK" : "MISMATCH  <---");
     }
 
-    static void row_err(const char* label, float a, float b) {
-        const float mag = ops::sqrt(a*a + b*b);
+    static void row_err(const char* label, f32 a, f32 b) {
+        const f32 mag = ops::sqrt(a*a + b*b);
         const ImVec4 col = (mag < 0.5f)
             ? ImVec4(0.5f, 1.f, 0.5f, 1.f)
             : (mag < 2.f)

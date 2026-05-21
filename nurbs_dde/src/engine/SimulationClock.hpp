@@ -7,10 +7,11 @@
 namespace ndde {
 
 struct TickInfo {
-    u64 tick_index = 0;
-    f32 dt = 0.f;
-    f32 time = 0.f;
-    bool paused = false;
+    u64  tick_index      = u64(0);
+    f32  dt              = f32(0);
+    f32  time            = f32(0);
+    bool paused          = false;
+    bool is_double_click = false;  ///< set by Engine::run_frame() each frame
 };
 
 class SimulationClock {

@@ -38,7 +38,10 @@ public:
 
     // history: non-owning pointer to the leader's HistoryBuffer.
     //          Must remain valid for the lifetime of this equation.
-    explicit MomentumBearingEquation(const HistoryBuffer* history, Params p = {})
+    explicit MomentumBearingEquation(const HistoryBuffer* history)
+        : MomentumBearingEquation(history, Params{})
+    {}
+    MomentumBearingEquation(const HistoryBuffer* history, Params p)
         : m_history(history), m_p(p)
     {}
 

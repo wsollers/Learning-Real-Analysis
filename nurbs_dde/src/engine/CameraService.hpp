@@ -8,6 +8,7 @@
 #include "numeric/ops.hpp"
 
 #include <algorithm>
+#include <string_view>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace ndde {
@@ -18,7 +19,14 @@ public:
         m_render = render;
     }
 
-    void orbit_main(f32 dx, f32 dy) noexcept {
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
+    void orbit_main(f32 dx, f32 dy) {
+        if (!require_owner_thread("CameraService::orbit_main")) return;
         if (!m_render) return;
         for (const RenderViewSnapshot& view : m_render->active_view_snapshots()) {
             if (view.kind != RenderViewKind::Main) continue;
@@ -28,7 +36,8 @@ public:
         }
     }
 
-    void orbit(RenderViewId view, f32 dx, f32 dy) noexcept {
+    void orbit(RenderViewId view, f32 dx, f32 dy) {
+        if (!require_owner_thread("CameraService::orbit")) return;
         if (!m_render) return;
         const auto* descriptor = m_render->descriptor(view);
         if (!descriptor || descriptor->projection == CameraProjection::Orthographic)
@@ -40,7 +49,8 @@ public:
         }
     }
 
-    void pan_main(f32 dx, f32 dy) noexcept {
+    void pan_main(f32 dx, f32 dy) {
+        if (!require_owner_thread("CameraService::pan_main")) return;
         if (!m_render) return;
         for (const RenderViewSnapshot& view : m_render->active_view_snapshots()) {
             if (view.kind == RenderViewKind::Main)
@@ -48,7 +58,8 @@ public:
         }
     }
 
-    void zoom_main(f32 wheel_delta) noexcept {
+    void zoom_main(f32 wheel_delta) {
+        if (!require_owner_thread("CameraService::zoom_main")) return;
         if (!m_render) return;
         for (const RenderViewSnapshot& view : m_render->active_view_snapshots()) {
             if (view.kind == RenderViewKind::Main)
@@ -56,7 +67,8 @@ public:
         }
     }
 
-    void pan(RenderViewId view, f32 dx, f32 dy) noexcept {
+    void pan(RenderViewId view, f32 dx, f32 dy) {
+        if (!require_owner_thread("CameraService::pan")) return;
         if (!m_render) return;
         auto* descriptor = m_render->descriptor(view);
         if (!descriptor) return;
@@ -67,7 +79,8 @@ public:
         descriptor->camera.target.y += dy * scale * 0.0012f;
     }
 
-    void zoom(RenderViewId view, f32 wheel_delta) noexcept {
+    void zoom(RenderViewId view, f32 wheel_delta) {
+        if (!require_owner_thread("CameraService::zoom")) return;
         if (!m_render || wheel_delta == 0.f) return;
         if (auto* descriptor = m_render->descriptor(view)) {
             descriptor->camera.zoom = std::clamp(descriptor->camera.zoom * (1.f + wheel_delta * k_zoom_step),
@@ -75,7 +88,8 @@ public:
         }
     }
 
-    void reset_main(CameraPreset preset = CameraPreset::Home) noexcept {
+    void reset_main(CameraPreset preset = CameraPreset::Home) {
+        if (!require_owner_thread("CameraService::reset_main")) return;
         if (!m_render) return;
         for (const RenderViewSnapshot& view : m_render->active_view_snapshots()) {
             if (view.kind == RenderViewKind::Main)
@@ -83,14 +97,16 @@ public:
         }
     }
 
-    void reset(RenderViewId view, CameraPreset preset = CameraPreset::Home) noexcept {
+    void reset(RenderViewId view, CameraPreset preset = CameraPreset::Home) {
+        if (!require_owner_thread("CameraService::reset")) return;
         if (!m_render) return;
         if (auto* descriptor = m_render->descriptor(view))
             descriptor->camera = preset_camera(preset, m_render->view_domain(view));
     }
 
     [[nodiscard]] bool frame_selection(const InteractionService& interaction,
-                                       RenderViewId view = 0) noexcept {
+                                       RenderViewId view = 0) {
+        if (!require_owner_thread("CameraService::frame_selection")) return false;
         if (!m_render) return false;
         const InteractionTarget target = interaction.selected_target(view);
         if (!target.valid || target.view == 0)
@@ -169,6 +185,7 @@ public:
                                                   f32 amplitude = 0.25f,
                                                   f32 radius = 1.0f,
                                                   f32 falloff = 1.f) const {
+        if (!require_owner_thread("CameraService::queue_surface_perturbation")) return false;
         if (!m_render || view == 0) return false;
         const RenderViewDomain domain = m_render->view_domain(view);
         interaction.queue_surface_pick(SurfacePickRequest{
@@ -210,6 +227,12 @@ private:
     static constexpr f32 k_zoom_step = 0.12f;
 
     RenderService* m_render = nullptr;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) const {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     [[nodiscard]] static Vec3 normalized_target(CameraState camera, RenderViewDomain domain) noexcept {
         const Vec3 domain_center{

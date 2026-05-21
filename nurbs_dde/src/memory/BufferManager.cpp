@@ -79,7 +79,7 @@ ArenaSlice BufferManager::acquire(u32 vertex_count) {
 
     return ArenaSlice{
         .buffer       = m_buffer,
-        .data         = static_cast<char*>(m_mapped_base) + start,
+        .data         = static_cast<byte*>(m_mapped_base) + start,
         .byte_offset  = static_cast<u32>(start),
         .vertex_count = vertex_count
     };

@@ -50,15 +50,16 @@ struct SceneSnapshot {
     float sim_speed = 0.f;
     std::size_t particle_count = 0;
     std::string status;
-    memory::FrameVector<ParticleSnapshot> particles;
+    memory::PersistentVector<ParticleSnapshot> particles;
 };
 
 class IScene {
 public:
     virtual ~IScene() = default;
 
-    // Called once per frame after ImGui::NewFrame() and before
-    // imgui_render(). dt is wall-clock seconds since the previous frame.
+    // Called once per frame after ImGui::NewFrame() and before the engine
+    // freezes ImGui draw data for renderer-thread command recording.
+    // dt is wall-clock seconds since the previous frame.
     // The scene is responsible for all ImGui window calls this frame.
     virtual void on_frame(f32 dt) = 0;
 
@@ -88,6 +89,13 @@ public:
     // Parameters are GLFW-style integer key/action/modifier values without
     // requiring this interface to include GLFW headers.
     virtual void on_key_event(int /*key*/, int /*action*/, int /*mods*/) {}
+
+protected:
+    IScene() = default;
+    IScene(const IScene&) = default;
+    IScene& operator=(const IScene&) = default;
+    IScene(IScene&&) = default;
+    IScene& operator=(IScene&&) = default;
 };
 
 } // namespace ndde

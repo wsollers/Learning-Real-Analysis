@@ -42,6 +42,8 @@ using f128 = long double;     ///< Extended         — stochastic integration o
 
 // ── Integer scalars ───────────────────────────────────────────────────────────
 
+using byte = std::uint8_t; ///< Raw byte storage. Use char only for text/API boundaries.
+
 using i8   = std::int8_t;
 using i16  = std::int16_t;
 using i32  = std::int32_t;

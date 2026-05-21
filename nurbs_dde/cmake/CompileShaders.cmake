@@ -55,7 +55,4 @@ function(compile_shaders)
         add_dependencies(${CS_TARGET} ${CS_TARGET}_shaders)
     endif()
 
-    target_compile_definitions(${CS_TARGET} PRIVATE
-        SHADER_DIR="${CS_OUTPUT_DIR}"
-    )
 endfunction()

@@ -45,6 +45,13 @@ public:
                        const ndde::math::ISurface& surface) const = 0;
 
     [[nodiscard]] virtual std::string name() const = 0;
+
+protected:
+    IConstraint() = default;
+    IConstraint(const IConstraint&) = default;
+    IConstraint& operator=(const IConstraint&) = default;
+    IConstraint(IConstraint&&) = default;
+    IConstraint& operator=(IConstraint&&) = default;
 };
 
 // ── IPairConstraint ───────────────────────────────────────────────────────────
@@ -62,6 +69,13 @@ public:
                        const ndde::math::ISurface& surface) const = 0;
 
     [[nodiscard]] virtual std::string name() const = 0;
+
+protected:
+    IPairConstraint() = default;
+    IPairConstraint(const IPairConstraint&) = default;
+    IPairConstraint& operator=(const IPairConstraint&) = default;
+    IPairConstraint(IPairConstraint&&) = default;
+    IPairConstraint& operator=(IPairConstraint&&) = default;
 };
 
 } // namespace ndde::sim

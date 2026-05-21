@@ -13,14 +13,14 @@
 namespace ndde::renderer {
 
 namespace detail {
-inline void write_be32(std::vector<std::uint8_t>& out, std::uint32_t v) {
-    out.push_back(static_cast<std::uint8_t>((v >> 24) & 0xffu));
-    out.push_back(static_cast<std::uint8_t>((v >> 16) & 0xffu));
-    out.push_back(static_cast<std::uint8_t>((v >>  8) & 0xffu));
-    out.push_back(static_cast<std::uint8_t>( v        & 0xffu));
+inline void write_be32(std::vector<byte>& out, std::uint32_t v) {
+    out.push_back(static_cast<byte>((v >> 24) & 0xffu));
+    out.push_back(static_cast<byte>((v >> 16) & 0xffu));
+    out.push_back(static_cast<byte>((v >>  8) & 0xffu));
+    out.push_back(static_cast<byte>( v        & 0xffu));
 }
 
-inline std::uint32_t crc32(const std::uint8_t* data, std::size_t size) {
+inline std::uint32_t crc32(const byte* data, std::size_t size) {
     std::uint32_t crc = 0xffffffffu;
     for (std::size_t i = 0; i < size; ++i) {
         crc ^= data[i];
@@ -30,7 +30,7 @@ inline std::uint32_t crc32(const std::uint8_t* data, std::size_t size) {
     return crc ^ 0xffffffffu;
 }
 
-inline std::uint32_t adler32(const std::uint8_t* data, std::size_t size) {
+inline std::uint32_t adler32(const byte* data, std::size_t size) {
     constexpr std::uint32_t mod = 65521u;
     std::uint32_t a = 1u;
     std::uint32_t b = 0u;
@@ -41,9 +41,9 @@ inline std::uint32_t adler32(const std::uint8_t* data, std::size_t size) {
     return (b << 16u) | a;
 }
 
-inline void append_chunk(std::vector<std::uint8_t>& png,
+inline void append_chunk(std::vector<byte>& png,
                          const char type[4],
-                         const std::vector<std::uint8_t>& payload) {
+                         const std::vector<byte>& payload) {
     write_be32(png, static_cast<std::uint32_t>(payload.size()));
     const std::size_t type_pos = png.size();
     png.insert(png.end(), type, type + 4);
@@ -56,14 +56,14 @@ inline void append_chunk(std::vector<std::uint8_t>& png,
 inline void write_png_rgba8(const std::filesystem::path& path,
                             u32 width,
                             u32 height,
-                            const std::vector<std::uint8_t>& rgba) {
+                            const std::vector<byte>& rgba) {
     if (width == 0 || height == 0)
         throw std::runtime_error("[PngWriter] Empty image");
     const std::size_t expected = static_cast<std::size_t>(width) * height * 4u;
     if (rgba.size() != expected)
         throw std::runtime_error("[PngWriter] RGBA buffer size mismatch");
 
-    std::vector<std::uint8_t> scanlines;
+    std::vector<byte> scanlines;
     scanlines.reserve(static_cast<std::size_t>(height) * (static_cast<std::size_t>(width) * 4u + 1u));
     for (u32 y = 0; y < height; ++y) {
         scanlines.push_back(0); // filter type 0
@@ -71,7 +71,7 @@ inline void write_png_rgba8(const std::filesystem::path& path,
         scanlines.insert(scanlines.end(), row, row + static_cast<std::size_t>(width) * 4u);
     }
 
-    std::vector<std::uint8_t> zlib;
+    std::vector<byte> zlib;
     zlib.reserve(scanlines.size() + scanlines.size() / 65535u * 5u + 16u);
     zlib.push_back(0x78u);
     zlib.push_back(0x01u); // zlib header: no compression/fastest
@@ -83,11 +83,11 @@ inline void write_png_rgba8(const std::filesystem::path& path,
             remaining > 65535u ? 65535u : remaining);
         const bool final = (pos + block_len) == scanlines.size();
         zlib.push_back(final ? 0x01u : 0x00u);
-        zlib.push_back(static_cast<std::uint8_t>(block_len & 0xffu));
-        zlib.push_back(static_cast<std::uint8_t>((block_len >> 8u) & 0xffu));
+        zlib.push_back(static_cast<byte>(block_len & 0xffu));
+        zlib.push_back(static_cast<byte>((block_len >> 8u) & 0xffu));
         const std::uint16_t nlen = static_cast<std::uint16_t>(~block_len);
-        zlib.push_back(static_cast<std::uint8_t>(nlen & 0xffu));
-        zlib.push_back(static_cast<std::uint8_t>((nlen >> 8u) & 0xffu));
+        zlib.push_back(static_cast<byte>(nlen & 0xffu));
+        zlib.push_back(static_cast<byte>((nlen >> 8u) & 0xffu));
         zlib.insert(zlib.end(), scanlines.begin() + static_cast<std::ptrdiff_t>(pos),
                     scanlines.begin() + static_cast<std::ptrdiff_t>(pos + block_len));
         pos += block_len;
@@ -95,11 +95,11 @@ inline void write_png_rgba8(const std::filesystem::path& path,
 
     detail::write_be32(zlib, detail::adler32(scanlines.data(), scanlines.size()));
 
-    std::vector<std::uint8_t> png{
+    std::vector<byte> png{
         0x89u, 'P', 'N', 'G', '\r', '\n', 0x1au, '\n'
     };
 
-    std::vector<std::uint8_t> ihdr;
+    std::vector<byte> ihdr;
     detail::write_be32(ihdr, width);
     detail::write_be32(ihdr, height);
     ihdr.push_back(8); // bit depth

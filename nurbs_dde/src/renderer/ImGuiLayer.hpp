@@ -1,7 +1,9 @@
 #pragma once
 // renderer/ImGuiLayer.hpp
 // Owns ImGui's descriptor pool and GLFW+Vulkan backends.
-// All methods must be called from the render thread.
+// GLFW/ImGui frame construction stays on the GUI/Main thread. Vulkan recording
+// of finished ImGui draw data may run on the renderer thread once the engine
+// has synchronised the frame boundary.
 
 #include <volk.h>
 #include <imgui.h>
@@ -21,6 +23,8 @@ public:
 
     ImGuiLayer(const ImGuiLayer&)            = delete;
     ImGuiLayer& operator=(const ImGuiLayer&) = delete;
+    ImGuiLayer(ImGuiLayer&&)                 = delete;
+    ImGuiLayer& operator=(ImGuiLayer&&)      = delete;
 
     void init(GLFWwindow*                    window,
               const platform::VulkanContext& ctx,
@@ -29,6 +33,8 @@ public:
 
     void destroy();
     void new_frame();
+    void build_draw_data();
+    void record_draw_data(VkCommandBuffer cmd);
     void render(VkCommandBuffer cmd);
     void on_swapchain_recreated(const Swapchain& swapchain);
 

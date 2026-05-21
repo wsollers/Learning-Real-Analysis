@@ -86,6 +86,7 @@ public:
         memory::MemoryService*                memory = nullptr);
 
     // AnimatedCurve is moveable (unique_ptr members) but not copyable.
+    ~AnimatedCurve() = default;
     AnimatedCurve(const AnimatedCurve&)            = delete;
     AnimatedCurve& operator=(const AnimatedCurve&) = delete;
     AnimatedCurve(AnimatedCurve&&)                 = default;
@@ -93,7 +94,7 @@ public:
 
     void reset();
     void advance(f32 dt, f32 speed_scale = 1.f);
-    void record_trail_sample(float t);
+    void record_trail_sample(f32 t);
 
     [[nodiscard]] FrenetFrame frenet_at(u32 idx) const noexcept;
 
@@ -117,22 +118,22 @@ public:
     void set_behavior_context(const SimulationContext* context) noexcept;
     [[nodiscard]] ParticleMetadata metadata() const;
     [[nodiscard]] std::string metadata_label() const;
-    [[nodiscard]] float max_delay_seconds() const noexcept;
-    [[nodiscard]] float max_nominal_speed() const noexcept;
+    [[nodiscard]] f32 max_delay_seconds() const noexcept;
+    [[nodiscard]] f32 max_nominal_speed() const noexcept;
 
     [[nodiscard]] u32  trail_size()    const noexcept { return static_cast<u32>(m_trail.size()); }
     [[nodiscard]] bool has_trail()     const noexcept { return m_trail.size() >= 4; }
     [[nodiscard]] const TrailSample& trail_sample(u32 i) const noexcept { return m_trail[i]; }
     [[nodiscard]] Vec3 trail_pt(u32 i) const noexcept { return m_trail[i].world; }
     [[nodiscard]] glm::vec2 trail_uv(u32 i) const noexcept { return m_trail[i].uv; }
-    [[nodiscard]] float trail_time(u32 i) const noexcept { return m_trail[i].time; }
+    [[nodiscard]] f32 trail_time(u32 i) const noexcept { return m_trail[i].time; }
     [[nodiscard]] Role role()          const noexcept { return m_role; }
     [[nodiscard]] u32  colour_slot()   const noexcept { return m_colour_slot; }
 
     // ── History recording (delay-pursuit DDE) ─────────────────────────────────
-    void enable_history(std::size_t capacity = 4096, float dt_min = 1.f/120.f);
-    void push_history(float t);
-    [[nodiscard]] glm::vec2 query_history(float t_past) const;
+    void enable_history(std::size_t capacity = 4096, f32 dt_min = 1.f/120.f);
+    void push_history(f32 t);
+    [[nodiscard]] glm::vec2 query_history(f32 t_past) const;
 
     // Non-owning access to the history buffer (null if not enabled).
     // The pointer is stable across vector reallocations.

@@ -5,6 +5,7 @@
 #include "app/ParticleSystem.hpp"
 #include "math/Surfaces.hpp"
 #include "memory/MemoryService.hpp"
+#include "simulation/fields/IField.hpp"
 
 using ndde::ParticleRole;
 using ndde::TrailMode;
@@ -14,6 +15,28 @@ namespace {
 ndde::math::Paraboloid flat_surface() {
     return ndde::math::Paraboloid(0.001f, 10.f, -10.f, 10.f);
 }
+
+class ConstantWindField final : public ndde::simulation::IField {
+public:
+    [[nodiscard]] glm::vec2 drift_contribution(const ndde::sim::ParticleState&,
+                                               const ndde::math::ISurface&,
+                                               ndde::f32) const override {
+        return {1.f, 0.f};
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override { return "ConstantWindField"; }
+};
+
+class ConstantDiffusionField final : public ndde::simulation::IField {
+public:
+    [[nodiscard]] glm::vec2 diffusion_contribution(const ndde::sim::ParticleState&,
+                                                   const ndde::math::ISurface&,
+                                                   ndde::f32) const override {
+        return {2.f, 3.f};
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override { return "ConstantDiffusionField"; }
+};
 
 } // namespace
 
@@ -82,6 +105,51 @@ TEST(ParticleSystem, SeekBehaviorMovesTowardNearestRoleTarget) {
     const float before = chaser.head_uv().x;
     system.update(0.1f, 1.f, 0.1f);
     EXPECT_GT(chaser.head_uv().x, before);
+}
+
+TEST(ParticleSystem, FieldCompositorContributesDriftToParticles) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 15u);
+    ndde::simulation::FieldCompositor fields;
+    fields.add(std::make_shared<ConstantWindField>());
+
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({0.f, 0.f})
+        .with_behavior<ndde::ConstantDriftBehavior>(glm::vec2{0.f, 0.f}));
+
+    system.update(0.1f, 1.f, 0.1f, &fields);
+
+    EXPECT_GT(particle.head_uv().x, 0.f);
+    EXPECT_NEAR(particle.head_uv().y, 0.f, 1e-6f);
+}
+
+TEST(ParticleSystem, UpdateContextDoesNotEscapePastUpdate) {
+    auto surface = flat_surface();
+    ndde::ParticleSystem system(&surface, 16u);
+    ndde::simulation::FieldCompositor fields;
+    fields.add(std::make_shared<ConstantDiffusionField>());
+
+    ndde::Particle& particle = system.spawn(system.factory().particle()
+        .role(ParticleRole::Neutral)
+        .at({0.f, 0.f})
+        .stochastic()
+        .with_behavior<ndde::BrownianBehavior>(ndde::BrownianBehavior::Params{
+            .sigma = 0.5f,
+            .drift_strength = 0.f
+        }));
+
+    system.update(0.1f, 1.f, 0.1f, &fields);
+    const glm::vec2 unbound_sigma =
+        particle.equation()->noise_coefficient(particle.walk_state(), surface, 0.1f);
+    EXPECT_EQ(unbound_sigma, glm::vec2(0.f, 0.f));
+
+    ndde::SimulationContext stable_context(&surface, &system.particles(), &system.rng(), &fields);
+    stable_context.set_time(0.1f);
+    system.set_behavior_context(&stable_context);
+    const glm::vec2 rebound_sigma =
+        particle.equation()->noise_coefficient(particle.walk_state(), surface, 0.1f);
+    EXPECT_EQ(rebound_sigma, glm::vec2(1.f, 1.5f));
 }
 
 TEST(ParticleSystem, AvoidBehaviorMovesAwayFromNearestRoleTarget) {

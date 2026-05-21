@@ -3,6 +3,7 @@
 // Engine-owned hotkey registration and dispatch service.
 
 #include "engine/ServiceHandle.hpp"
+#include "engine/threading/ThreadManagementService.hpp"
 #include "math/Scalars.hpp"
 #include "memory/Containers.hpp"
 #include "memory/MemoryService.hpp"
@@ -45,7 +46,14 @@ public:
         std::construct_at(&m_hotkeys, resource);
     }
 
+    void set_thread_service(ThreadManagementService* threads,
+                            ThreadRole owner_role = ThreadRole::Main) noexcept {
+        m_threads = threads;
+        m_owner_role = owner_role;
+    }
+
     [[nodiscard]] HotkeyHandle register_action(HotkeyDescriptor descriptor) {
+        if (!require_owner_thread("HotkeyService::register_action")) return {};
         const HotkeyId id = m_next_id++;
         m_hotkeys.push_back(HotkeyEntry{
             .id = id,
@@ -56,6 +64,7 @@ public:
     }
 
     [[nodiscard]] bool dispatch(KeyChord chord) {
+        if (!require_owner_thread("HotkeyService::dispatch")) return false;
         bool handled = false;
         for (auto& entry : m_hotkeys) {
             if (!entry.active || entry.descriptor.chord != chord || !entry.descriptor.callback) continue;
@@ -87,6 +96,12 @@ private:
     HotkeyId m_next_id = 1;
     u64 m_generation = 0;
     memory::PersistentVector<HotkeyEntry> m_hotkeys;
+    ThreadManagementService* m_threads = nullptr;
+    ThreadRole m_owner_role = ThreadRole::Main;
+
+    [[nodiscard]] bool require_owner_thread(std::string_view api_name) {
+        return !m_threads || m_threads->require_thread_role(m_owner_role, api_name);
+    }
 
     void unregister(HotkeyId id) noexcept {
         for (auto& entry : m_hotkeys) {

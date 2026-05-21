@@ -18,10 +18,12 @@
 
 namespace ndde {
 
+namespace simulation { class FieldCompositor; }
+
 class ParticleSystem {
 public:
     explicit ParticleSystem(const ndde::math::ISurface* surface,
-                            std::uint32_t seed = std::random_device{}())
+                            u32 seed = std::random_device{}())
         : m_surface(surface), m_rng(seed)
     {}
 
@@ -51,9 +53,10 @@ public:
     [[nodiscard]] bool empty() const noexcept { return m_particles.empty(); }
     [[nodiscard]] std::size_t size() const noexcept { return m_particles.size(); }
 
-    [[nodiscard]] memory::FrameVector<ParticleSnapshot> snapshot_particles() const {
-        memory::FrameVector<ParticleSnapshot> out =
-            m_memory ? m_memory->frame().make_vector<ParticleSnapshot>() : memory::FrameVector<ParticleSnapshot>{};
+    [[nodiscard]] memory::PersistentVector<ParticleSnapshot> snapshot_particles() const {
+        memory::PersistentVector<ParticleSnapshot> out =
+            m_memory ? m_memory->persistent().make_vector<ParticleSnapshot>()
+                     : memory::PersistentVector<ParticleSnapshot>{};
         out.reserve(m_particles.size());
         for (const auto& particle : m_particles) {
             const glm::vec2 uv = particle.head_uv();
@@ -77,6 +80,11 @@ public:
         return m_particles.back();
     }
 
+    void set_behavior_context(const SimulationContext* context) noexcept {
+        for (Particle& particle : m_particles)
+            particle.set_behavior_context(context);
+    }
+
     void clear() { m_particles.clear(); }
     void clear_goals() { m_goals.clear(); }
     void clear_pair_constraints() { m_pair_constraints.clear(); }
@@ -86,8 +94,9 @@ public:
         m_goals.clear();
     }
 
-    void update(float dt, float speed_scale, float sim_time) {
-        SimulationContext context(m_surface, &m_particles, &m_rng);
+    void update(f32 dt, f32 speed_scale, f32 sim_time,
+                const simulation::FieldCompositor* fields = nullptr) {
+        SimulationContext context(m_surface, &m_particles, &m_rng, fields);
         context.set_time(sim_time);
         for (auto& particle : m_particles) {
             particle.set_behavior_context(&context);
@@ -95,11 +104,13 @@ public:
             particle.record_trail_sample(sim_time);
             particle.push_history(sim_time);
         }
+        set_behavior_context(nullptr);
         apply_pair_constraints();
     }
 
-    [[nodiscard]] SimulationContext context(float sim_time) {
-        SimulationContext c(m_surface, &m_particles, &m_rng);
+    [[nodiscard]] SimulationContext context(f32 sim_time,
+                                            const simulation::FieldCompositor* fields = nullptr) {
+        SimulationContext c(m_surface, &m_particles, &m_rng, fields);
         c.set_time(sim_time);
         return c;
     }
@@ -122,7 +133,7 @@ public:
         return ref;
     }
 
-    [[nodiscard]] GoalStatus evaluate_goals(float sim_time) {
+    [[nodiscard]] GoalStatus evaluate_goals(f32 sim_time) {
         SimulationContext c = context(sim_time);
         GoalStatus aggregate = GoalStatus::Running;
         for (const auto& goal : m_goals) {
