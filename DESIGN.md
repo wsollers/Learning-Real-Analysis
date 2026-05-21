@@ -75,11 +75,56 @@ The notes are therefore governed by repository rules, notation rules, box rules,
 For LaTeX compilation commands, Docker setup, output locations, and troubleshooting,
 see `docker/README.md`.
 
-### 2.1 Top-Level Layout
+### 2.0 Multi-Repo Layout (as of 2026)
+
+The project is split across multiple repositories to stay within Overleaf's 2000-file limit
+and to give each concern its own clean home. The monorepo `Learning-Real-Analysis` is the
+integration hub and source of truth for build infrastructure, canonical YAML sources, and
+cross-cutting tooling.
+
+| Repository | Contents | Overleaf? |
+|---|---|---|
+| `Learning-Real-Analysis` | Monorepo: full build, docker, auditor, constitution, canonical YAMLs, cross-volume index | No |
+| `lra-common` | Shared LaTeX infrastructure: `common/`, `bibliography/` | Rarely |
+| `lra-volume-i` | Volume I content + local copy of `common/` | Yes — one at a time |
+| `lra-volume-ii` | Volume II content + local copy of `common/` | Yes — one at a time |
+| `lra-volume-iii` | Volume III content + local copy of `common/` | Yes — one at a time |
+| `lra-volume-iv` | Volume IV content + local copy of `common/` | Yes — one at a time |
+| `lra-volume-v` | Volume V content + local copy of `common/` | Yes — one at a time |
+| `lra-lean` | Lean 4 proof formalization | No |
+| `lra-nurbs` | NURBS/DDE C++ engine | No |
+| `lra-knowledge-explorer` | Python extraction pipeline + HTML explorer | No |
+
+**Rule — common/ is managed in lra-common**
+
+The `common/` directory is owned by `lra-common`. Volume repos receive copies via
+a GitHub Actions sync workflow. Do not edit `common/` files in individual volume repos.
+Edit in `lra-common`; the sync propagates automatically.
+
+**Rule — canonical YAML sources stay in the monorepo**
+
+`predicates.yaml`, `notation.yaml`, and `relations.yaml` live at the root of
+`Learning-Real-Analysis`. They are the single source of truth. The auditor reads
+them from there. They are not duplicated in volume repos.
+
+**Rule — constitution stays in the monorepo**
+
+The `constitution/` directory lives in `Learning-Real-Analysis`. The auditor Python
+package (`constitution/auditor/`) discovers the repo root by looking for
+`constitution/master.md` or the environment variable `REPO_ROOT`. When running
+the auditor against a volume repo checked out locally, pass `--repoDir` pointing
+at the `Learning-Real-Analysis` clone.
+
+### 2.1 Monorepo Top-Level Layout
 
 ```text
 Learning-Real-Analysis/
-  main.tex
+  main.tex                    full omnibus build (all volumes)
+  volume-i-main.tex           per-volume standalone roots (kept for reference)
+  volume-ii-main.tex
+  volume-iii-main.tex
+  volume-iv-main.tex
+  volume-v-main.tex
   bibliography/
     analysis.bib
   common/
@@ -88,28 +133,72 @@ Learning-Real-Analysis/
     environments.tex
     macros.tex
     boxes.tex
-  predicates.yaml
-  notation.yaml
-  relations.yaml
-  proofs-to-do-analysis.md
+    exercise-format.tex
+    volume-preamble.tex
+  predicates.yaml             canonical source — do not duplicate
+  notation.yaml               canonical source — do not duplicate
+  relations.yaml              canonical source — do not duplicate
+  proofs-to-do.md
+  proofs-to-do-debug.md
   volume-i/
   volume-ii/
   volume-iii/
   volume-iv/
+  volume-v/
+  constitution/               auditor, prompts, schemas — full toolchain
+  docker/                     Dockerfile + compile.ps1
+  theorem-explorer/           extraction pipeline (canonical copy lives in lra-knowledge-explorer)
+  lean/                       Lean workspace (canonical copy lives in lra-lean)
+  nurbs_dde/                  NURBS/DDE engine (canonical copy lives in lra-nurbs)
+  ontology/
+  rules/
 ```
 
-### 2.2 Volume Scope
+### 2.2 Volume Repo Layout (lra-volume-N)
+
+Each volume repo is self-contained and Overleaf-ready:
+
+```text
+lra-volume-N/
+  main.tex                    volume root — Overleaf main document
+  .latexmkrc                  local build config
+  common/                     copy of lra-common/common/ — synced by GitHub Actions
+    preamble.tex
+    colors.tex
+    environments.tex
+    macros.tex
+    boxes.tex
+    exercise-format.tex
+    volume-preamble.tex
+  bibliography/
+    analysis.bib              copy synced from lra-common/bibliography/
+  volume-N/                   all chapter content for this volume
+    index.tex
+    <chapter>/
+      index.tex
+      chapter.yaml
+      notes/
+      proofs/
+```
+
+**main.tex in each volume repo** uses `\input{common/volume-preamble}` and
+`\input{volume-N/index}`. All paths are relative to the repo root, identical to
+how they worked in the monorepo. The auditor, when targeting a volume repo,
+should be passed `--repoDir` pointing at the monorepo for canonical YAML access.
+
+### 2.3 Volume Scope
 
 - `volume-i/` contains logic, predicate calculus, sets, relations, functions, axiom systems, and proof techniques.
 - `volume-ii/` contains natural numbers through complex numbers.
 - `volume-iii/` contains analysis, metric spaces, topology, measure theory, algebra, and related proof-primary mathematics.
 - `volume-iv/` contains applied and computational mathematics.
+- `volume-v/` is reserved for future content.
 
-### 2.3 Card Extraction Rule
+### 2.4 Card Extraction Rule
 
 `volume-iv/` is excluded from card extraction by default.
 
-### 2.4 Volume Chapter Registry
+### 2.5 Volume Chapter Registry
 
 Each volume must declare its canonical chapter subjects in dependency order.
 
@@ -146,7 +235,7 @@ Example:
 - repository subject: `limits-of-functions`
 - display title: `Limits of Functions`
 
-### 2.5 Canonical Chapter Structure
+### 2.6 Canonical Chapter Structure
 
 Every chapter follows this structure:
 
@@ -170,7 +259,7 @@ Every chapter follows this structure:
       capstone-<chapter>.tex
 ```
 
-### 2.6 Structural Rules
+### 2.7 Structural Rules
 
 The root `main.tex` inputs volumes only.
 
@@ -186,7 +275,43 @@ Each `notes/<section>/` directory contains no local `index.tex`; the section fil
 
 Reading-list files are not compiled into the main document.
 
-### 2.7 Stub Chapter Generation
+### 2.8 Auditor Path Rules (Multi-Repo)
+
+The auditor (`constitution/auditor/config.py`) discovers the monorepo root by:
+
+1. checking the `REPO_ROOT` environment variable, or
+2. walking up from the current directory looking for `constitution/master.md`.
+
+When working in a volume repo (e.g., `lra-volume-i`), set:
+
+```bash
+export REPO_ROOT=/path/to/Learning-Real-Analysis
+```
+
+or pass `--repoDir /path/to/Learning-Real-Analysis` to the CLI.
+
+The auditor scans LaTeX files from the path you specify (which may be inside a volume repo),
+but loads constitution files and canonical YAML from `REPO_ROOT`.
+
+### 2.9 Docker Build (Monorepo)
+
+The Docker build infrastructure lives in `docker/` of the monorepo. It mounts the full
+monorepo and can build any volume or the full omnibus:
+
+```powershell
+# Full omnibus build
+.\docker\compile.ps1
+
+# Single volume
+.\docker\compile.ps1 -Volume i
+
+# Rebuild image
+.\docker\compile.ps1 -Build
+```
+
+For Overleaf builds, no Docker is needed — Overleaf compiles `main.tex` in each volume repo directly.
+
+### 2.10 Stub Chapter Generation
 
 A stub chapter is a formally created chapter whose structural files exist even when its notes and proofs are not yet written.
 
@@ -250,7 +375,7 @@ A stub chapter does not postpone naming discipline. Its folder name, capstone na
 
 If section decomposition or chapter scope is unclear, the stub may contain placeholders, but it must not invent detailed theorem lists without being asked.
 
-### 2.8 Capstone Rule
+### 2.11 Capstone Rule
 
 Every chapter has exactly one capstone exercise:
 
@@ -258,7 +383,7 @@ Every chapter has exactly one capstone exercise:
 proofs/exercises/capstone-<chapter>.tex
 ```
 
-It appears last in `proofs/exercises/index.tex` and is tracked in `proofs-to-do-analysis.md`.
+It appears last in `proofs/exercises/index.tex` and is tracked in `proofs-to-do.md`.
 
 ---
 
@@ -318,13 +443,15 @@ The symbols used in prose, logical blocks, and predicate blocks must agree with 
 
 ## Rule — Canonical Predicate, Relation, and Notation Sources
 
-All predicate names, relation names, and canonical notation names used in theorem statements, predicate readings, negation readings, failure-mode decompositions, and other formal logical displays must come from the project’s canonical source files. This file is stored in the root of the repository or in project memory in ChatGPT.
+All predicate names, relation names, and canonical notation names used in theorem statements, predicate readings, negation readings, failure-mode decompositions, and other formal logical displays must come from the project's canonical source files.
 
 The canonical sources are:
 
-- `predicates.yaml`
-- `relations.yaml`
-- `notation.yaml`
+- `predicates.yaml`   (monorepo root)
+- `relations.yaml`    (monorepo root)
+- `notation.yaml`     (monorepo root)
+
+These files are read-only to all automated processes. They are not duplicated in volume repos.
 
 For AI-assisted generation, these source files are the project memory.
 Standardizer request files must transmit the applicable predicate catalog
@@ -340,6 +467,7 @@ All rendered formal names in logical displays must be written in their canonical
 
 ```latex
 \operatorname{Name}(\cdots)
+```
 
 ## 4. Box Vocabulary
 
@@ -396,7 +524,7 @@ Every chapter `index.tex` opens with these elements in this order:
 
 ### 5.2 Breadcrumb Title Rule
 
-The title of the breadcrumb box is the chapter subject, not the word “Breadcrumb”.
+The title of the breadcrumb box is the chapter subject, not the word "Breadcrumb".
 
 ### 5.3 Breadcrumb Scope Rule
 
@@ -435,7 +563,7 @@ No environment may bundle multiple predicates, operations, relations, conditions
 
 An environment is non-compliant if it contains:
 
-Multiple named concepts (e.g., “bounded above / below / bounded”)
+Multiple named concepts (e.g., "bounded above / below / bounded")
 Multiple operations or constructions (e.g., all pointwise operations in one definition)
 Bullet lists or clauses that define distinct mathematical notions
 Multiple statements that could each be given their own label
@@ -519,91 +647,6 @@ Conceptual grouping belongs to Toolkit and exposition.
 Formal environments must remain strictly atomic.
 
 This rule is mandatory and applies globally across all volumes and chapters.
-Addendum — Bundled Content Detection Criteria
-
-Purpose.
-To ensure that bundled mathematical content is detected reliably and uniformly, independent of formatting style, so that all formal environments remain atomic and extractable.
-
-1. Trigger Condition (Formatting-Independent)
-
-A bundled-content violation is triggered whenever a definition or theorem-like environment introduces more than one independently nameable mathematical item, regardless of how the content is formatted.
-
-This applies independently of presentation, including but not limited to:
-
-itemize or enumerate lists
-align, aligned, or multi-line equation blocks
-comma-separated definitions or assignments
-multiple constructions defined in a single display
-conditional clauses introducing additional notions
-inline chains of definitions (e.g., “define …, …, and …”)
-2. Formal Detection Rule
-
-Let an environment E be a definition or theorem-like environment.
-If the content of E can be decomposed into two or more statements S
-1
-	​
-
-,S
-2
-	​
-
-,…,S
-n
-	​
-
- such that each S
-i
-	​
-
- could be assigned:
-
-its own name, and
-its own label,
-then E is non-compliant and must be decomposed.
-3. Canonical Examples of Violations
-
-The following patterns are always violations:
-
-(a) Multiple predicates in one definition
-$f$ is bounded above, bounded below, and bounded if ...
-(b) Multiple operations defined together
-(f+g)(x), (f-g)(x), (fg)(x), ...
-(c) Bullet-list definitions
-\begin{itemize}
-\item ...
-\item ...
-\end{itemize}
-(d) Multi-clause logical definitions
-We define A if ..., and define B if ...
-4. Non-Exceptions
-
-There are no formatting-based exceptions to this rule.
-
-In particular, the following do not exempt an environment from decomposition:
-
-grouping for convenience
-brevity of presentation
-traditional textbook style
-“closely related” concepts
-use of shared notation
-5. Required Action Upon Detection
-
-When a bundled-content violation is detected:
-
-Identify the concept family governing the items
-Locate or create the corresponding Toolkit box
-Insert or verify presence of expository block
-Decompose the environment into atomic environments:
-one item per environment
-one label per item
-no residual bundling
-6. Design Principle (Reinforced)
-
-Formatting must not obscure structure.
-If multiple concepts exist, they must be made structurally explicit.
-
-This addendum is mandatory and extends the global atomicity requirement to be strictly formatting-independent.
-
 
 Rule — Bundled Content Detection Criteria
 
@@ -621,31 +664,10 @@ align, aligned, or other multi-line equation blocks
 comma-separated definitions or assignments
 multiple constructions defined in a single display
 conditional clauses introducing additional notions
-inline chains of definitions such as “define …, …, and …”
+inline chains of definitions such as "define …, …, and …"
 2. Formal Detection Rule
 
-Let E be a definition or theorem-like environment. If the content of E can be decomposed into two or more statements S
-1
-	​
-
-,S
-2
-	​
-
-,…,S
-n
-	​
-
- such that each S
-i
-	​
-
- could be assigned:
-
-its own name, and
-its own label,
-
-then E is non-compliant and must be decomposed.
+Let E be a definition or theorem-like environment. If the content of E can be decomposed into two or more statements S1, S2, …, Sn such that each Si could be assigned its own name and its own label, then E is non-compliant and must be decomposed.
 
 3. Canonical Examples of Violations
 
@@ -669,6 +691,7 @@ $f$ is bounded above, bounded below, and bounded if ...
 (d) Multi-clause logical definitions
 
 We define A if ..., and define B if ...
+
 4. Non-Exceptions
 
 There are no formatting-based exceptions to this rule.
@@ -680,6 +703,7 @@ brevity of presentation
 traditional textbook style
 closely related concepts
 use of shared notation
+
 5. Required Action Upon Detection
 
 When a bundled-content violation is detected:
@@ -691,6 +715,7 @@ decompose the environment into atomic environments:
 one item per environment,
 one label per item,
 no residual bundling.
+
 6. Design Principle
 
 Formatting must not obscure structure.
@@ -707,6 +732,7 @@ The Toolkit must:
 name the governing concept family,
 list the atomic notions or results that will be formalized below,
 provide structural orientation without itself serving as a formal definition or theorem.
+
 Consequence
 
 The Toolkit functions as the conceptual hub for the atomic sequence that follows. It is not decorative and it must correspond to the formal decomposition beneath it.
@@ -807,14 +833,14 @@ The notes are written for one serious reader who has studied logic, set theory, 
 First person and second person are absent. The notes are written as an authoritative record.
 
 Forbidden examples:
-- “we will show”
-- “you should notice”
-- “let us recall”
+- "we will show"
+- "you should notice"
+- "let us recall"
 
 Preferred forms:
-- “The argument proceeds…”
-- “The critical observation is…”
-- “This follows from…”
+- "The argument proceeds…"
+- "The critical observation is…"
+- "This follows from…"
 
 ### 7.3 Explanation Rule
 
@@ -959,7 +985,8 @@ Proof Structure Remark: A remark* titled Proof structure summarizing the high-le
 Dependencies Remark: A remark* titled Dependencies containing a list of \hyperref links to all definitions, axioms, or lemmas utilized in the proof.
 
 Canonical Template for Proof Files
-Code snippet
+
+```latex
 \newpage
 \phantomsection
 \label{prf:theorem-id}
@@ -997,6 +1024,7 @@ Description of the overall strategy.
   \item \hyperref[thm:source2]{Theorem Y}
 \end{itemize}
 \end{remark*}
+```
 
 ### 9.6 Macro Restriction Rule
 
@@ -1020,51 +1048,36 @@ No step macros and no separate remark environments organize the steps.
 
 ### 9.9 Explanationless Proof Mode
 
-Explanationless proof mode is opt-in only. It occurs only when explicitly requested with phrases such as “proof only”, “no explanation”, “professional proof only”, or “compact proof”.
+Explanationless proof mode is opt-in only. It occurs only when explicitly requested with phrases such as "proof only", "no explanation", "professional proof only", or "compact proof".
 
 ### 9.10 Discipline Preservation Rule
 
 Even when explanation is omitted, the proof still obeys house notation, label conventions, proof architecture, macro restrictions, and voice rules.
 
-
-
 ### 9.11 — Proof Files Must Use Unnumbered Theorem Environments
 
-    In proof files (files whose purpose is to contain proofs, e.g. under `proofs/`), any restatement of a theorem must use the unnumbered environment:
-    
-    \begin{theorem*} ... \end{theorem*}
-    
-    and must NOT use a numbered `theorem` environment.
-    
-    #### Requirements
-    
-    - The proof file version of a theorem is a **restatement**, not a new theorem.
-    - Therefore it must:
-      - use `\begin{theorem*}` (unnumbered)
-      - retain the original theorem name
-      - NOT introduce numbering or new theorem identities
-    
-    #### Label Restriction (Strict)
-    
-    - Proof files must **never contain `\label{...}` inside theorem environments**.
-    - Labels belong only to the canonical theorem in the notes file.
-    
-    #### Rationale
-    
-    - Prevents duplicate numbering across notes and proofs.
-    - Enforces that the canonical statement lives in the notes, not the proof file.
-    - Prevents cross-reference collisions and accidental label shadowing.
-    - Keeps proofs as secondary artifacts attached to primary theorem declarations.
-    
-    #### Example
-    
-    ❌ Incorrect (creates duplicate numbering and label collision)
-    ```latex
-    \begin{theorem}[Least Upper Bound Property Implies Existence of Suprema]
-    \label{prf:lub-property-implies-existence-of-suprema}
-    ...
-    \end{theorem}
-    ---
+In proof files (files whose purpose is to contain proofs, e.g. under `proofs/`), any restatement of a theorem must use the unnumbered environment:
+
+```latex
+\begin{theorem*} ... \end{theorem*}
+```
+
+and must NOT use a numbered `theorem` environment.
+
+#### Requirements
+
+- The proof file version of a theorem is a **restatement**, not a new theorem.
+- Therefore it must:
+  - use `\begin{theorem*}` (unnumbered)
+  - retain the original theorem name
+  - NOT introduce numbering or new theorem identities
+
+#### Label Restriction (Strict)
+
+- Proof files must **never contain `\label{...}` inside theorem environments**.
+- Labels belong only to the canonical theorem in the notes file.
+
+---
 
 ## 10. Logical Form Blocks
 
@@ -1073,12 +1086,13 @@ Even when explanation is omitted, the proof still obeys house notation, label co
 Each mathematically distinct term, condition, or assertion receives its own environment.
 
 Paired notions such as upper bound and lower bound, bounded above and bounded below, or monotone increasing and monotone decreasing are not bundled into one environment merely because they are naturally related.
+
 ### 10.1.1 Mathematical Standards in Definition and Theorem like Environments
 
 Definition, lemma, corollary, theorem, proposition, axiom, should only contain standard 
 mathematical notation. 
 
-House predicates are reserved soley for the remark blocks:
+House predicates are reserved solely for the remark blocks:
 1. Definition predicate reading
 2. Negation predicate reading
 3. Failure mode decomposition
@@ -1186,6 +1200,7 @@ Preferred breakpoints:
 - implications
 - conjunctions
 - disjunctions
+
 ---
 
 ## 11. Variable and Domain Rules
@@ -1346,7 +1361,6 @@ When a proof is requested with no qualification, the default output is:
 
 Only an explicit request suppresses the explanatory layer.
 
-
 ---
 
 ## Rule — Long logical displays must use aligned
@@ -1385,17 +1399,14 @@ This keeps logical blocks readable, prevents overflow into the margins, and make
 
 A long one-line logical display should not be left flat when its structure can be made clear.
 
-
 ---
 
 ## Rule — Theorem/Proof Separation
 
 Every theorem-like environment must have its statement defined in the notes layer and its proof defined in a separate proof file.
 
-- Statements live in:
-  `notes/...`
-- Proofs live in:
-  `proofs/notes/...`
+- Statements live in: `notes/...`
+- Proofs live in: `proofs/notes/...`
 
 No inline proofs inside notes unless explicitly designated as an example.
 
@@ -1439,8 +1450,7 @@ Proof stubs are placeholders for user-authored proofs.
 
 Each theorem must have exactly one proof file.
 
-- File naming:
-  `prf:<theorem-label>.tex`
+- File naming: `prf:<theorem-label>.tex`
 
 ---
 
@@ -1474,7 +1484,6 @@ Maintain a lightweight status marker for each proof:
 - VERIFIED
 
 This may be tracked externally (e.g., in a tracking markdown file).
-
 
 ---
 
@@ -1553,15 +1562,22 @@ This keeps predicate-reading remarks visually stable, avoids symbol collisions, 
 
 Predicate-reading remarks should present formal predicates as textual operators unless a symbolic form is clearly readable and intentionally standardized.
 
+---
 
-###  rule 15. Priority and Stability of Formal Outputs
-### 15.1 Atomic File Rule: 
+## Rule 15. Priority and Stability of Formal Outputs
+
+### 15.1 Atomic File Rule
+
 When generating a proof, the assistant must treat the output as the final contents of a single .tex file. It must not include conversational filler, meta-commentary, or introductory prose outside of the LaTeX source unless explicitly asked.
-### 15.2 Structural Immutability: 
- The vertical sequence defined in Rule 9.5.1 (Header $\to$ Return $\to$ Label $\to$ Claim $\to$ Professional Proof $\to$ Learning Proof $\to$ Remarks) is non-negotiable. The assistant is prohibited from collapsing these into fewer environments or reordering them to "save space".
- 
- ### 15.3 Default High-Fidelity Mode: 
- In the absence of "compact" or "professional-only" keywords, the assistant must automatically generate all 12+ mandatory logical blocks for notes and all 6 layers for proof files.
- 
- ### 15.4 Context Continuity: 
- The assistant must refer to notation.yaml and predicates.yaml before every formal display to ensure role-specific variable and operator consistency.
+
+### 15.2 Structural Immutability
+
+The vertical sequence defined in Rule 9.5.1 (Header → Return → Label → Claim → Professional Proof → Learning Proof → Remarks) is non-negotiable. The assistant is prohibited from collapsing these into fewer environments or reordering them to "save space".
+
+### 15.3 Default High-Fidelity Mode
+
+In the absence of "compact" or "professional-only" keywords, the assistant must automatically generate all 12+ mandatory logical blocks for notes and all 6 layers for proof files.
+
+### 15.4 Context Continuity
+
+The assistant must refer to notation.yaml and predicates.yaml before every formal display to ensure role-specific variable and operator consistency.
