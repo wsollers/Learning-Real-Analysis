@@ -1,28 +1,39 @@
 #!/usr/bin/env python3
 """
-migrate_volumes.py  (v3 — force-push ref update to handle diverged branches)
------------------------------------------------------------------------------
-Migrates all volume content from Learning-Real-Analysis (monorepo) into
-the corresponding lra-volume-N repos via the GitHub REST API.
+migrate_volumes.py  (v4 — adds lean/ and nurbs_dde/ satellite repo migration)
+------------------------------------------------------------------------------
+Migrates content from Learning-Real-Analysis (monorepo) into the
+corresponding split repos via the GitHub REST API.
+
+Repo mapping:
+  volume-N/   →  lra-volume-N  (path preserved: volume-N/ in both repos)
+  lean/       →  lra-lean      (path remapped:  lean/* → repo root)
+  nurbs_dde/  →  lra-nurbs     (path remapped:  nurbs_dde/* → repo root)
+  common/ + bibliography/  →  lra-common  (path preserved)
+
+Changes in v4:
+  - Added --lean and --nurbs flags to migrate satellite repos
+  - migrate_satellite() handles the monorepo-subdir → repo-root path remap
+  - Excluded .github/ from satellite syncs to avoid overwriting actions
 
 Changes in v3:
-  - update_ref now uses force=True. The volume repos are migration
-    targets, not collaborative branches, so force is correct and safe.
-  - Also retries update_ref once on 422 (handles edge-case race).
+  - force=True on update_ref (fixes 422 on diverged branches)
+  - Re-fetch HEAD before commit
 
 Changes in v2:
-  - create_tree calls chunked to <=200 entries to avoid 422 on large
-    volumes (fixes lra-volume-iii with 519 files).
+  - create_tree chunked to <=200 entries (fixes 422 on large volumes)
 
 Usage:
     pip install requests
+
+    # Migrate all volumes + common:
     python3 migrate_volumes.py --token ghp_YOURTOKEN
 
-    # Resume after failure (e.g. retry iv and v):
-    python3 migrate_volumes.py --token ghp_YOURTOKEN --volumes iv v --skip-common
+    # Migrate lean and nurbs satellites:
+    python3 migrate_volumes.py --token ghp_YOURTOKEN --lean --nurbs --skip-common
 
-Requirements:
-    pip install requests
+    # Single volume:
+    python3 migrate_volumes.py --token ghp_YOURTOKEN --volumes iii --skip-common
 """
 
 import argparse
@@ -60,7 +71,7 @@ def get_tree(token: str, repo: str, sha: str) -> list[dict]:
     r.raise_for_status()
     data = r.json()
     if data.get("truncated"):
-        print("  WARNING: tree was truncated (>100k entries). Some files may be missing.")
+        print("  WARNING: tree was truncated. Some files may be missing.")
     return data["tree"]
 
 
@@ -107,11 +118,6 @@ def create_tree_chunk(token: str, repo: str, base_tree_sha: str | None, entries:
 
 
 def create_tree_chunked(token: str, repo: str, base_tree_sha: str, entries: list[dict]) -> str:
-    """
-    Build a tree from potentially many entries by chunking into batches of
-    TREE_CHUNK_SIZE. Each chunk uses the previous chunk's tree as base_tree.
-    Returns the final tree SHA.
-    """
     total = len(entries)
     current_base = base_tree_sha
     for start in range(0, total, TREE_CHUNK_SIZE):
@@ -133,47 +139,23 @@ def create_commit(token: str, repo: str, tree_sha: str, parent_sha: str, message
 
 
 def update_ref(token: str, repo: str, commit_sha: str, branch: str = "main"):
-    """
-    Force-update the branch ref to point at commit_sha.
-    force=True is correct here: volume repos are migration targets,
-    not collaborative branches, so non-fast-forward is fine.
-    """
     r = gh(token, "PATCH", f"/repos/{OWNER}/{repo}/git/refs/heads/{branch}", json={
         "sha": commit_sha,
-        "force": True,   # ← v3 fix: was False, caused 422 on diverged branches
+        "force": True,
     })
     if not r.ok:
         print(f"  update_ref failed: {r.status_code} {r.text[:300]}")
         r.raise_for_status()
 
 
-def migrate_volume(token: str, volume: str):
-    vol_dir = f"volume-{volume}"
-    target_repo = f"lra-volume-{volume}"
-    print(f"\n{'='*60}")
-    print(f"Migrating {vol_dir} → {target_repo}")
-    print(f"{'='*60}")
-
-    print("  Fetching monorepo HEAD...")
-    mono_commit = get_latest_commit_sha(token, MONOREPO)
-    mono_tree_sha = get_tree_sha_for_commit(token, MONOREPO, mono_commit)
-    print(f"  Monorepo commit: {mono_commit[:10]}")
-
-    print("  Fetching full monorepo tree (recursive)...")
-    mono_tree = get_tree(token, MONOREPO, mono_tree_sha)
-
-    target_files = [
-        item for item in mono_tree
-        if item["type"] == "blob" and item["path"].startswith(f"{vol_dir}/")
-    ]
-    print(f"  Found {len(target_files)} files in {vol_dir}/")
-
-    if not target_files:
-        print("  WARNING: no files found — skipping")
-        return
-
-    # Always fetch the *current* HEAD of the target repo right before
-    # building the tree, to minimise the window for divergence.
+def _do_migrate(token: str, target_repo: str, target_files: list[dict],
+                strip_prefix: str, commit_message: str):
+    """
+    Core migration logic. Uploads blobs, builds tree, commits.
+    strip_prefix: path prefix to remove from monorepo paths when writing
+                  to target repo (e.g. 'lean/' so lean/LRA/X → LRA/X).
+                  Pass '' to preserve paths as-is.
+    """
     print(f"  Fetching {target_repo} HEAD...")
     target_commit = get_latest_commit_sha(token, target_repo)
     target_tree_sha = get_tree_sha_for_commit(token, target_repo, target_commit)
@@ -186,8 +168,11 @@ def migrate_volume(token: str, volume: str):
             print(f"    [{i}/{len(target_files)}] {item['path']}")
         content = get_blob_content(token, MONOREPO, item["sha"])
         new_blob_sha = create_blob(token, target_repo, content)
+        dest_path = item["path"]
+        if strip_prefix and dest_path.startswith(strip_prefix):
+            dest_path = dest_path[len(strip_prefix):]
         tree_entries.append({
-            "path": item["path"],
+            "path": dest_path,
             "mode": item.get("mode", "100644"),
             "type": "blob",
             "sha": new_blob_sha,
@@ -197,19 +182,77 @@ def migrate_volume(token: str, volume: str):
     print(f"  Building tree in chunks of {TREE_CHUNK_SIZE}...")
     new_tree_sha = create_tree_chunked(token, target_repo, target_tree_sha, tree_entries)
 
-    # Re-fetch HEAD just before committing in case something else pushed
-    # while blobs were uploading (blob upload can take minutes for large volumes).
-    print("  Re-fetching HEAD before commit (guards against mid-upload divergence)...")
+    print("  Re-fetching HEAD before commit...")
     target_commit = get_latest_commit_sha(token, target_repo)
 
     print("  Creating commit...")
-    new_commit_sha = create_commit(
-        token, target_repo, new_tree_sha, target_commit,
-        f"feat: migrate {vol_dir} content from Learning-Real-Analysis monorepo"
-    )
+    new_commit_sha = create_commit(token, target_repo, new_tree_sha, target_commit, commit_message)
+
     print("  Updating main branch (force)...")
     update_ref(token, target_repo, new_commit_sha)
     print(f"  ✓ Done! {len(target_files)} files in {target_repo}")
+
+
+def migrate_volume(token: str, volume: str):
+    vol_dir = f"volume-{volume}"
+    target_repo = f"lra-volume-{volume}"
+    print(f"\n{'='*60}")
+    print(f"Migrating {vol_dir} → {target_repo}")
+    print(f"{'='*60}")
+
+    print("  Fetching monorepo tree...")
+    mono_commit = get_latest_commit_sha(token, MONOREPO)
+    mono_tree_sha = get_tree_sha_for_commit(token, MONOREPO, mono_commit)
+    mono_tree = get_tree(token, MONOREPO, mono_tree_sha)
+
+    target_files = [
+        item for item in mono_tree
+        if item["type"] == "blob" and item["path"].startswith(f"{vol_dir}/")
+    ]
+    print(f"  Found {len(target_files)} files in {vol_dir}/")
+    if not target_files:
+        print("  WARNING: no files found — skipping")
+        return
+
+    _do_migrate(
+        token, target_repo, target_files,
+        strip_prefix="",   # volume-N/ path preserved in both repos
+        commit_message=f"feat: migrate {vol_dir} content from Learning-Real-Analysis monorepo",
+    )
+
+
+def migrate_satellite(token: str, monorepo_dir: str, target_repo: str):
+    """
+    Migrate a satellite project (lean, nurbs_dde) from monorepo subdir
+    to target repo root. Files under monorepo_dir/ land at repo root.
+    .github/ files in the target repo are never overwritten.
+    """
+    print(f"\n{'='*60}")
+    print(f"Migrating {monorepo_dir}/ → {target_repo} (repo root)")
+    print(f"{'='*60}")
+
+    print("  Fetching monorepo tree...")
+    mono_commit = get_latest_commit_sha(token, MONOREPO)
+    mono_tree_sha = get_tree_sha_for_commit(token, MONOREPO, mono_commit)
+    mono_tree = get_tree(token, MONOREPO, mono_tree_sha)
+
+    prefix = f"{monorepo_dir}/"
+    target_files = [
+        item for item in mono_tree
+        if item["type"] == "blob"
+        and item["path"].startswith(prefix)
+        and not item["path"].startswith(f"{prefix}.github/")
+    ]
+    print(f"  Found {len(target_files)} files in {monorepo_dir}/")
+    if not target_files:
+        print("  WARNING: no files found — skipping")
+        return
+
+    _do_migrate(
+        token, target_repo, target_files,
+        strip_prefix=prefix,  # lean/LRA/X.lean → LRA/X.lean at repo root
+        commit_message=f"feat: migrate {monorepo_dir}/ content from Learning-Real-Analysis monorepo",
+    )
 
 
 def sync_common_to_lra_common(token: str):
@@ -230,66 +273,54 @@ def sync_common_to_lra_common(token: str):
     ]
     print(f"  Found {len(target_files)} files")
 
-    target_repo = "lra-common"
-    target_commit = get_latest_commit_sha(token, target_repo)
-    target_tree_sha = get_tree_sha_for_commit(token, target_repo, target_commit)
-
-    tree_entries = []
-    for i, item in enumerate(target_files, 1):
-        if i % 10 == 0 or i == 1 or i == len(target_files):
-            print(f"    [{i}/{len(target_files)}] {item['path']}")
-        content = get_blob_content(token, MONOREPO, item["sha"])
-        new_blob_sha = create_blob(token, target_repo, content)
-        tree_entries.append({
-            "path": item["path"],
-            "mode": item.get("mode", "100644"),
-            "type": "blob",
-            "sha": new_blob_sha,
-        })
-        time.sleep(0.05)
-
-    print("  Building tree...")
-    new_tree_sha = create_tree_chunked(token, target_repo, target_tree_sha, tree_entries)
-    target_commit = get_latest_commit_sha(token, target_repo)
-    new_commit_sha = create_commit(
-        token, target_repo, new_tree_sha, target_commit,
-        "chore: sync common/ and bibliography/ from Learning-Real-Analysis monorepo"
+    _do_migrate(
+        token, "lra-common", target_files,
+        strip_prefix="",
+        commit_message="chore: sync common/ and bibliography/ from Learning-Real-Analysis monorepo",
     )
-    update_ref(token, target_repo, new_commit_sha)
-    print(f"  ✓ Done! {len(target_files)} files in lra-common")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Migrate LRA volume content from monorepo to split repos (v3)"
+        description="Migrate LRA content from monorepo to split repos (v4)"
     )
     parser.add_argument("--token", required=True, help="GitHub PAT with repo scope")
     parser.add_argument("--volumes", nargs="+", default=VOLUMES, choices=VOLUMES,
                         help="Volumes to migrate (default: all)")
+    parser.add_argument("--lean", action="store_true",
+                        help="Migrate lean/ → lra-lean")
+    parser.add_argument("--nurbs", action="store_true",
+                        help="Migrate nurbs_dde/ → lra-nurbs")
     parser.add_argument("--skip-common", action="store_true",
                         help="Skip syncing common/ to lra-common")
+    parser.add_argument("--skip-volumes", action="store_true",
+                        help="Skip all volume migrations")
     args = parser.parse_args()
 
-    print("LRA Volume Migration (v3)")
+    print("LRA Migration (v4)")
     print(f"Owner:   {OWNER}")
     print(f"Source:  {MONOREPO}")
-    print(f"Volumes: {args.volumes}")
     print()
 
     if not args.skip_common:
         sync_common_to_lra_common(args.token)
 
-    for vol in args.volumes:
-        migrate_volume(args.token, vol)
+    if not args.skip_volumes:
+        for vol in args.volumes:
+            migrate_volume(args.token, vol)
+
+    if args.lean:
+        migrate_satellite(args.token, "lean", "lra-lean")
+
+    if args.nurbs:
+        migrate_satellite(args.token, "nurbs_dde", "lra-nurbs")
 
     print(f"\n{'='*60}")
     print("Migration complete!")
     print(f"{'='*60}")
     print()
-    print("Next steps:")
-    print("  1. Add SYNC_PAT secret to lra-common → Settings → Secrets → Actions")
-    print("  2. Link each lra-volume-N to Overleaf via Menu → GitHub")
-    print("  3. Set Main Document to main.tex in Overleaf")
+    print("Reminder: add SYNC_PAT secret to lra-lean and lra-nurbs")
+    print("  Settings → Secrets and variables → Actions → SYNC_PAT")
     print()
 
 
