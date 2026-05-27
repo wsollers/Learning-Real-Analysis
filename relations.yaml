@@ -272,14 +272,14 @@ relations:
     note: "T is surjective iff range T equals the codomain (Axler 3.19)."
 
   - from: Injective
-    to: Isomorphism
+    to: LinearIsomorphism
     kind: uses
-    note: "An isomorphism is a bijective linear map; injectivity is one half of the bijectivity condition."
+    note: "A linear isomorphism is a bijective linear map; injectivity is one half of the bijectivity condition."
 
   - from: Surjective
-    to: Isomorphism
+    to: LinearIsomorphism
     kind: uses
-    note: "An isomorphism is a bijective linear map; surjectivity is the other half."
+    note: "A linear isomorphism is a bijective linear map; surjectivity is the other half."
 
   - from: NullSpace
     to: Dimension
@@ -292,6 +292,80 @@ relations:
     kind: uses
     context: "rank-nullity theorem"
     note: "Fundamental theorem of linear maps: dim V = dim null T + dim range T (Axler 3.21)."
+
+# =========================================================
+# Relations, Structure, and Peano Recursion
+# =========================================================
+
+  - from: FunctionalRelation
+    to: Relation
+    kind: specializes
+    note: "A functional relation is a relation whose left inputs have at most one right value."
+
+  - from: TotalRelation
+    to: Relation
+    kind: specializes
+    note: "A total relation is a relation whose left inputs all have at least one right value."
+
+  - from: GraphOf
+    to: FunctionalRelation
+    kind: uses
+    note: "A graph of a function is single-valued."
+
+  - from: GraphOf
+    to: TotalRelation
+    kind: uses
+    note: "A graph of a function has a value at every point of the domain."
+
+  - from: MinimalRelation
+    to: Relation
+    kind: uses
+    note: "A minimal relation is formed by intersecting relations satisfying a fixed closure condition."
+
+  - from: Isomorphism
+    to: Relation
+    kind: uses
+    note: "A structural isomorphism is witnessed by a structure-preserving bijective relation or map."
+
+  - from: LinearIsomorphism
+    to: Isomorphism
+    kind: specializes
+    note: "A linear isomorphism is the vector-space instance of structural isomorphism."
+
+  - from: PeanoSystem
+    to: Isomorphism
+    kind: uses
+    note: "Categoricity of Peano systems is expressed as Isomorphism(A,B) between the two structures."
+
+  - from: IteratorRelation
+    to: Relation
+    kind: specializes
+    note: "An iterator relation is a relation in P x W satisfying base and step closure."
+
+  - from: IteratorFunction
+    to: IteratorRelation
+    kind: uses
+    note: "The graph of an iterator function is an iterator relation satisfying the iterator clauses."
+
+  - from: IteratorGeneratedFunction
+    to: IteratorFunction
+    kind: defines
+    note: "The generated function is the unique function satisfying the iterator clauses."
+
+  - from: IteratorGeneratedFunction
+    to: GraphOf
+    kind: uses
+    note: "The minimal iterator relation becomes the graph of the generated function."
+
+  - from: StageDependentStepRule
+    to: GeneralRecursiveFunction
+    kind: uses
+    note: "A general recursive function is determined by a stage-dependent step rule."
+
+  - from: GeneralRecursiveFunction
+    to: IteratorFunction
+    kind: uses
+    note: "General recursion is reduced to iteration by state encoding."
 
   - from: Basis
     to: LinearlyIndependent

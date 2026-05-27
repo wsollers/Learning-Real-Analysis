@@ -44,7 +44,7 @@ predicates:
   arity: 2
   arguments: [a, b]
   optional_arguments: []
-  formal: \{x \in \mathbb{R} : a \le x \le b\}
+  formal: "\\{x \\in \\mathbb{R} : a \\le x \\le b\\}"
   note: The closed interval [a,b] as a set predicate.
 
 - id: pred:open-interval
@@ -53,7 +53,7 @@ predicates:
   arity: 2
   arguments: [a, b]
   optional_arguments: []
-  formal: \{x \in \mathbb{R} : a < x < b\}
+  formal: "\\{x \\in \\mathbb{R} : a < x < b\\}"
 
 # =========================================================
 # Bounding
@@ -1648,8 +1648,8 @@ predicates:
   formal: "R = \\operatorname{range} T = \\{Tv : v \\in V\\}"
   note: "Axler 3.16. The range is a subspace of the codomain. T is surjective iff range T = W."
 
-- id: pred:isomorphism
-  name: Isomorphism
+- id: pred:linear-isomorphism
+  name: LinearIsomorphism
   category: linear-algebra
   arity: 3
   arguments: [T, V, W]
@@ -1663,5 +1663,187 @@ predicates:
   arity: 2
   arguments: [V, W]
   optional_arguments: []
-  formal: "\\exists T{:}\; \\operatorname{Isomorphism}(T, V, W)"
+  formal: '\exists T{:}\; \operatorname{LinearIsomorphism}(T, V, W)'
   note: "Axler 3D. V and W are isomorphic iff there exists an invertible linear map between them. Two finite-dimensional spaces over the same field are isomorphic iff they have the same dimension."
+
+# =========================================================
+# Relations, Structure, and Peano Recursion
+# =========================================================
+
+- id: pred:relation
+  name: Relation
+  category: relation
+  arity: 3
+  arguments: [R, X, Y]
+  optional_arguments: []
+  formal: "R \\subseteq X \\times Y"
+  reading_template: >
+    Relation(R,X,Y) \Longleftrightarrow R is a relation from X to Y,
+    equivalently R \subseteq X \times Y.
+  note: >
+    Generic set-theoretic relation predicate. Use this instead of
+    creating theorem-specific relation names.
+
+- id: pred:functional-relation
+  name: FunctionalRelation
+  category: relation
+  arity: 3
+  arguments: [R, X, Y]
+  optional_arguments: []
+  formal: >
+    Relation(R,X,Y) \land
+    \forall x \in X \; \forall y_0,y_1 \in Y \;
+    (((x,y_0) \in R \land (x,y_1) \in R) \rightarrow y_0=y_1)
+  reading_template: >
+    FunctionalRelation(R,X,Y) \Longleftrightarrow R is a relation from X
+    to Y and each x in X is related to at most one y in Y.
+  note: "Functional means single-valued; it does not by itself assert totality."
+
+- id: pred:total-relation
+  name: TotalRelation
+  category: relation
+  arity: 3
+  arguments: [R, X, Y]
+  optional_arguments: []
+  formal: >
+    Relation(R,X,Y) \land
+    \forall x \in X \; \exists y \in Y \; ((x,y) \in R)
+  reading_template: >
+    TotalRelation(R,X,Y) \Longleftrightarrow R is a relation from X to Y
+    and every x in X is related to at least one y in Y.
+  note: "Total means every input has a value; it does not by itself assert uniqueness."
+
+- id: pred:graph-of
+  name: GraphOf
+  category: relation
+  arity: 4
+  arguments: [R, f, X, Y]
+  optional_arguments: []
+  formal: >
+    f:X\to Y \land R=\{(x,f(x)):x\in X\}
+  reading_template: >
+    GraphOf(R,f,X,Y) \Longleftrightarrow R is the graph of the function
+    f:X\to Y.
+  note: "Used when a functional and total relation is packaged as a function."
+
+- id: pred:minimal-relation
+  name: MinimalRelation
+  category: relation
+  arity: 2
+  arguments: [R, C]
+  optional_arguments: []
+  formal: "R = \\bigcap\\{Q : C(Q)\\}"
+  reading_template: >
+    MinimalRelation(R,C) \Longleftrightarrow R is the intersection of all
+    relations satisfying the closure condition C.
+  note: >
+    Generic minimal-relation construction. The second argument C names the
+    admissibility or closure condition; do not specialize the predicate name
+    to a particular construction such as iterator relations.
+
+- id: pred:isomorphism
+  name: Isomorphism
+  category: structure
+  arity: 2
+  arguments: [A, B]
+  optional_arguments: [theta]
+  formal: >
+    \exists \theta \;(\theta:A\cong B)
+  reading_template: >
+    Isomorphism(A,B) \Longleftrightarrow there exists a structure-preserving
+    bijection from A to B.
+  note: >
+    Generic structural isomorphism predicate. A and B are structured objects.
+    The optional witness theta may be supplied in prose or a predicate-reading
+    remark, but theta is not part of the predicate name.
+
+- id: pred:peano-system
+  name: PeanoSystem
+  category: peano
+  arity: 1
+  arguments: [A]
+  optional_arguments: []
+  formal: "A=(P,S,1) \\text{ satisfies the Peano system axioms}"
+  reading_template: >
+    PeanoSystem(A) \Longleftrightarrow A is a Peano system.
+  note: "Use A for the whole structure when the structure, rather than only P, is the object."
+
+- id: pred:iterator-data
+  name: IteratorData
+  category: recursion
+  arity: 3
+  arguments: [W, c, g]
+  optional_arguments: [A]
+  formal: "W \\text{ is a set} \\land c\\in W \\land g:W\\to W"
+  reading_template: >
+    IteratorData(W,c,g) \Longleftrightarrow W is a value set, c is an
+    initial value in W, and g is a self-map of W.
+  note: "The optional context A is the Peano system along which the data are iterated."
+
+- id: pred:iterator-relation
+  name: IteratorRelation
+  category: recursion
+  arity: 5
+  arguments: [R, A, W, c, g]
+  optional_arguments: []
+  formal: >
+    A=(P,S,1) \land Relation(R,P,W) \land (1,c)\in R
+    \land \forall n\in P \; \forall w\in W \;
+    ((n,w)\in R \rightarrow (S(n),g(w))\in R)
+  reading_template: >
+    IteratorRelation(R,A,W,c,g) \Longleftrightarrow R is a relation in
+    P \times W containing the base pair and closed under the iterator step
+    for A=(P,S,1).
+  note: "Use R for arbitrary admissible iterator relations and R^* for the minimal one."
+
+- id: pred:iterator-function
+  name: IteratorFunction
+  category: recursion
+  arity: 5
+  arguments: [f, A, W, c, g]
+  optional_arguments: []
+  formal: >
+    A=(P,S,1) \land f:P\to W \land f(1)=c
+    \land \forall n\in P \;(f(S(n))=g(f(n)))
+  reading_template: >
+    IteratorFunction(f,A,W,c,g) \Longleftrightarrow f satisfies the base
+    and successor clauses for the iterator data over A=(P,S,1).
+  note: "This is the predicate form of the Peano iterator clauses."
+
+- id: pred:iterator-generated-function
+  name: IteratorGeneratedFunction
+  category: recursion
+  arity: 5
+  arguments: [f, A, W, c, g]
+  optional_arguments: []
+  formal: 'IteratorFunction(f,A,W,c,g) \land \exists! h\;IteratorFunction(h,A,W,c,g)'
+  reading_template: >
+    IteratorGeneratedFunction(f,A,W,c,g) \Longleftrightarrow f is the
+    unique iterator function determined by W,c,g over A.
+  note: "Use after the Peano Iterator Theorem has supplied existence and uniqueness."
+
+- id: pred:stage-dependent-step-rule
+  name: StageDependentStepRule
+  category: recursion
+  arity: 3
+  arguments: [Phi, P, W]
+  optional_arguments: []
+  formal: "\\Phi:P\\times W\\to W"
+  reading_template: >
+    StageDependentStepRule(\Phi,P,W) \Longleftrightarrow \Phi is a function
+    from stage-value pairs into W.
+  note: "Use Phi in YAML for the symbol \\Phi."
+
+- id: pred:general-recursive-function
+  name: GeneralRecursiveFunction
+  category: recursion
+  arity: 5
+  arguments: [f, A, W, c, Phi]
+  optional_arguments: []
+  formal: >
+    A=(P,S,1) \land f:P\to W \land f(1)=c
+    \land \forall n\in P \;(f(S(n))=\Phi(n,f(n)))
+  reading_template: >
+    GeneralRecursiveFunction(f,A,W,c,\Phi) \Longleftrightarrow f satisfies
+    the base clause and the stage-dependent successor clause over A.
+  note: "Stage-dependent analogue of IteratorFunction."
