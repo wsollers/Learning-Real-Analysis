@@ -15,16 +15,66 @@ S(n) \neq n.
 
 \begin{proof}
 \textbf{Professional Standard Proof.}~\\
-TODO.
+Let
+\[
+D:=\{x\in P:S(x)\neq x\}.
+\]
+We prove that $D=P$ by induction.
+
+First, $1\in D$. Indeed, if $S(1)=1$, then $1$ would be the successor of the
+element $1\in P$, contradicting the Peano axiom that $1$ is not a successor.
+Thus $S(1)\neq 1$.
+
+Now assume $n\in D$. Then $S(n)\neq n$. If $S(S(n))=S(n)$, injectivity of
+$S$ would imply $S(n)=n$, contradicting $n\in D$. Therefore
+$S(S(n))\neq S(n)$, so $S(n)\in D$.
+
+Thus $D$ contains $1$ and is closed under successor. By the induction
+principle, $D=P$. Hence for every $n\in P$, $S(n)\neq n$.
 \end{proof}
 
 \begin{proof}
 \textbf{Detailed Learning Proof.}~\\
-TODO.
+Define
+\[
+D:=\{x\in P:S(x)\neq x\}.
+\]
+The goal is to prove that every element of $P$ lies in $D$.
+
+For the base case, we show $1\in D$. This means showing
+\[
+S(1)\neq 1.
+\]
+If $S(1)=1$, then $1$ would be the successor of an element of $P$, namely
+$1$ itself. This contradicts the Peano axiom that the distinguished element
+$1$ is not a successor of any element of $P$. Therefore $S(1)\neq 1$, and so
+$1\in D$.
+
+For the inductive step, assume $n\in D$. Then
+\[
+S(n)\neq n.
+\]
+We must show that $S(n)\in D$, which means
+\[
+S(S(n))\neq S(n).
+\]
+Suppose instead that $S(S(n))=S(n)$. Since the successor map is injective,
+this equality of successors would imply
+\[
+S(n)=n,
+\]
+contradicting the inductive hypothesis. Hence $S(S(n))\neq S(n)$, so
+$S(n)\in D$.
+
+Therefore $D$ is inductive. By the induction principle for Peano systems,
+$D=P$. Thus every $n\in P$ satisfies $S(n)\neq n$.
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The proof uses induction on the subset of elements that are not equal to
+their own successors. The base case uses the axiom that $1$ is not a
+successor. The successor step uses the contrapositive form of injectivity:
+from $S(n)\neq n$, one obtains $S(S(n))\neq S(n)$.
 \end{remark*}
 
 \begin{remark*}[Dependencies]~\\
