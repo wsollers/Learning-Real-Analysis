@@ -75,16 +75,20 @@ The notes are therefore governed by repository rules, notation rules, box rules,
 For LaTeX compilation commands, Docker setup, output locations, and troubleshooting,
 see `docker/README.md`.
 
+The canonical multi-repo ownership map and filesystem layouts live in
+`REPOSITORY_STRUCTURE.md`. This section records the design rules that follow
+from that map.
+
 ### 2.0 Multi-Repo Layout (as of 2026)
 
 The project is split across multiple repositories to stay within Overleaf's 2000-file limit
 and to give each concern its own clean home. The monorepo `Learning-Real-Analysis` is the
-integration hub and source of truth for build infrastructure, canonical YAML sources, and
-cross-cutting tooling.
+assembled project and integration hub. Project governance is owned by `lra-governance`.
 
 | Repository | Contents | Overleaf? |
 |---|---|---|
-| `Learning-Real-Analysis` | Monorepo: full build, docker, auditor, constitution, canonical YAMLs, cross-volume index | No |
+| `lra-governance` | Governance: `DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, `constitution/` | No |
+| `Learning-Real-Analysis` | Monorepo: full build, docker, canonical YAMLs, cross-volume index | No |
 | `lra-common` | Shared LaTeX infrastructure: `common/`, `bibliography/` | Rarely |
 | `lra-volume-i` | Volume I content + local copy of `common/` | Yes — one at a time |
 | `lra-volume-ii` | Volume II content + local copy of `common/` | Yes — one at a time |
@@ -101,24 +105,36 @@ The `common/` directory is owned by `lra-common`. Volume repos receive copies vi
 a GitHub Actions sync workflow. Do not edit `common/` files in individual volume repos.
 Edit in `lra-common`; the sync propagates automatically.
 
+**Rule — governance is managed in lra-governance**
+
+`DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, and `constitution/` are
+owned by `lra-governance`. They are synced into every working repository so
+local agents and editors can read the same rules from the repository root.
+Do not edit downstream copies directly except for emergency repair; port such
+repairs back to `lra-governance` immediately.
+
 **Rule — canonical YAML sources stay in the monorepo**
 
 `predicates.yaml`, `notation.yaml`, and `relations.yaml` live at the root of
 `Learning-Real-Analysis`. They are the single source of truth. The auditor reads
 them from there. They are not duplicated in volume repos.
 
-**Rule — constitution stays in the monorepo**
+**Rule — auditor canonical-data root stays in the monorepo**
 
-The `constitution/` directory lives in `Learning-Real-Analysis`. The auditor Python
-package (`constitution/auditor/`) discovers the repo root by looking for
-`constitution/master.md` or the environment variable `REPO_ROOT`. When running
-the auditor against a volume repo checked out locally, pass `--repoDir` pointing
-at the `Learning-Real-Analysis` clone.
+The `constitution/` directory is available in every repo through governance
+sync. The canonical YAML files still live only in `Learning-Real-Analysis`.
+When running auditor commands that need those YAML files from a split repo,
+pass `--repoDir` pointing at the `Learning-Real-Analysis` clone or set
+`REPO_ROOT` to that clone.
 
 ### 2.1 Monorepo Top-Level Layout
 
 ```text
 Learning-Real-Analysis/
+  .gitignore                  synced from lra-governance
+  DESIGN.md                   synced from lra-governance
+  REPOSITORY_STRUCTURE.md     synced from lra-governance
+  constitution/               synced from lra-governance
   main.tex                    full omnibus build (all volumes)
   volume-i-main.tex           per-volume standalone roots (kept for reference)
   volume-ii-main.tex
@@ -145,7 +161,6 @@ Learning-Real-Analysis/
   volume-iii/
   volume-iv/
   volume-v/
-  constitution/               auditor, prompts, schemas — full toolchain
   docker/                     Dockerfile + compile.ps1
   theorem-explorer/           extraction pipeline (canonical copy lives in lra-knowledge-explorer)
   lean/                       Lean workspace (canonical copy lives in lra-lean)
@@ -160,6 +175,10 @@ Each volume repo is self-contained and Overleaf-ready:
 
 ```text
 lra-volume-N/
+  .gitignore                  synced from lra-governance
+  DESIGN.md                   synced from lra-governance
+  REPOSITORY_STRUCTURE.md     synced from lra-governance
+  constitution/               synced from lra-governance
   main.tex                    volume root — Overleaf main document
   .latexmkrc                  local build config
   common/                     copy of lra-common/common/ — synced by GitHub Actions

@@ -15,12 +15,14 @@ concerns that must never be mixed:
 
 ## Repository Map (as of 2026)
 
-The project is split across multiple repos. The constitution lives in the monorepo
-and governs all repos.
+The project is split across multiple repos. The constitution is owned by
+`lra-governance`, synced into every repo, and governs all repos. The detailed
+ownership and filesystem map lives in `REPOSITORY_STRUCTURE.md`.
 
 | Repository | Role |
 |---|---|
-| `Learning-Real-Analysis` | Monorepo: full build, constitution, canonical YAMLs, auditor, docker |
+| `lra-governance` | Governance: `DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, `constitution/` |
+| `Learning-Real-Analysis` | Monorepo: full build, canonical YAMLs, docker, assembled volumes |
 | `lra-common` | Shared LaTeX infrastructure: `common/`, `bibliography/` — synced to volumes |
 | `lra-volume-i` | Volume I content — Overleaf target |
 | `lra-volume-ii` | Volume II content — Overleaf target |
@@ -33,8 +35,10 @@ and governs all repos.
 
 ### Auditor root discovery
 
-The auditor (`constitution/auditor/config.py`) discovers the monorepo root by looking
-for `constitution/master.md` or by reading the `REPO_ROOT` environment variable.
+The auditor (`constitution/auditor/config.py`) can discover governance files in
+the current repo by looking for `constitution/master.md`. Auditor operations
+that need canonical YAML files should use the monorepo root by reading the
+`REPO_ROOT` environment variable or by receiving `--repoDir`.
 
 When running against a volume repo, set:
 
@@ -51,6 +55,11 @@ at the monorepo root and are never duplicated in volume repos.
 `common/` is owned by `lra-common`. Volume repos receive synced copies via
 GitHub Actions (`.github/workflows/sync-to-volumes.yml` in `lra-common`).
 Do not edit `common/` files in volume repos directly.
+
+### governance ownership
+
+`DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, and `constitution/` are
+owned by `lra-governance`. Downstream copies are local working context only.
 
 ---
 
