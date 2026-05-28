@@ -1,0 +1,84 @@
+\begin{tikzpicture}[
+  code/.style={
+    draw,
+    rounded corners,
+    fill=gray!8,
+    font=\ttfamily\small,
+    align=left,
+    inner sep=8pt
+  },
+  note/.style={
+    draw,
+    rounded corners,
+    fill=blue!6,
+    font=\small,
+    align=left,
+    text width=4.4cm,
+    inner sep=6pt
+  },
+  arrow/.style={->, thick}
+]
+
+\node[code] (theorem) {
+theorem every\_element\_is\_one\_or\_successor\\
+\quad (ps : PeanoSystem) :\\
+\quad $\forall$ element : ps.carrier,\\
+\quad\quad element = ps.one $\lor$\\
+\quad\quad $\exists$ predecessor : ps.carrier,\\
+\quad\quad\quad ps.successor predecessor = element := by\\[2mm]
+\quad apply induction\_principle ps\\[1mm]
+\quad $\cdot$ left\\
+\quad\quad rfl\\[1mm]
+\quad $\cdot$ intro element induction\_hypothesis\\
+\quad\quad right\\
+\quad\quad exact $\langle$element, rfl$\rangle$
+};
+
+\node[note, right=2.4cm of theorem.north east, anchor=north west] (ps) {
+\textbf{\texttt{ps : PeanoSystem}}\\
+The theorem is not about one fixed natural number system. It is about an arbitrary Peano system:
+\[
+(P,S,1).
+\]
+};
+
+\node[note, right=2.4cm of theorem.east, anchor=west] (goal) {
+\textbf{The target predicate}\\
+Lean infers the predicate:
+\[
+P(x) := x=1 \;\lor\; \exists u,\; S(u)=x.
+\]
+This is the Lean-native version of defining the subset \(D\).
+};
+
+\node[note, right=2.4cm of theorem.south east, anchor=south west] (base) {
+\textbf{Base case}\\
+For \(x=1\), prove:
+\[
+1=1 \;\lor\; \exists u,\; S(u)=1.
+\]
+Choose the left side using \texttt{left}; prove \(1=1\) by \texttt{rfl}.
+};
+
+\node[note, below=1.3cm of theorem] (step) {
+\textbf{Successor step}\\
+To prove the statement for \(S(x)\), choose the right side:
+\[
+\exists u,\; S(u)=S(x).
+\]
+Take \(u=x\). Then \(S(x)=S(x)\), proved by \texttt{rfl}.
+};
+
+\node[note, left=2.4cm of theorem.west, anchor=east] (ih) {
+\textbf{Induction hypothesis}\\
+The variable \texttt{induction\_hypothesis} says the theorem already holds for \texttt{element}.\\
+In this proof, it is not actually needed, because \(S(\texttt{element})\) is visibly a successor.
+};
+
+\draw[arrow] (ps.west) -- ++(-0.7,0) |- ([yshift=2.1cm]theorem.east);
+\draw[arrow] (goal.west) -- ++(-0.7,0) |- ([yshift=0.6cm]theorem.east);
+\draw[arrow] (base.west) -- ++(-0.7,0) |- ([yshift=-1.0cm]theorem.east);
+\draw[arrow] (step.north) -- ([yshift=-1.7cm]theorem.south);
+\draw[arrow] (ih.east) -- ++(0.7,0) |- ([yshift=-1.25cm]theorem.west);
+
+\end{tikzpicture}

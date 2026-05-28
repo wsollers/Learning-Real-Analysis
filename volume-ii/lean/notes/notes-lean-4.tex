@@ -1,0 +1,51 @@
+\section{A First Lean 4 Reading}
+\label{sec:lean-4-first-reading}
+
+\begin{topicbox}{Subsets as Predicates}
+\begin{exposition}
+Lean represents many mathematical objects by their defining behavior. For a
+type $P$, a subset of $P$ can be read as a predicate $P\to Prop$: it takes an
+element of $P$ as input and returns the proposition that the element belongs to
+the subset. This is the key syntax bridge for the Peano-system arguments that
+use inductive subsets.
+\end{exposition}
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{volume-ii/lean/notes/figure-function-syntax}
+}
+\caption{Reading a Lean subset predicate as a mathematical subset condition.}
+\label{fig:lean-function-syntax}
+\end{figure}
+
+\begin{remark*}[Interpretation]
+The Lean line `D : ps.carrier \(\to\) Prop` says that membership in $D$ is a
+proposition depending on an input from the carrier of the Peano system. In
+ordinary mathematical notation, this is the same role played by a subset
+$D\subseteq P$ or by a defining condition $D(x)$.
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Reading an Initial Proof}
+\begin{exposition}
+Lean proofs are built from local goals and the terms that solve them. A first
+reading strategy is to identify the current hypotheses, the target proposition,
+and the exact line that transforms the local context into the required result.
+\end{exposition}
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\input{volume-ii/lean/notes/figure-initial-proof}
+}
+\caption{Reading the shape of an initial Lean proof.}
+\label{fig:lean-initial-proof}
+\end{figure}
+
+\begin{remark*}[Interpretation]
+The figure isolates the proof-state reading habit used throughout Lean:
+separate the available assumptions from the current goal, then read each proof
+term as an instruction that closes or transforms that goal.
+\end{remark*}
+\end{topicbox}

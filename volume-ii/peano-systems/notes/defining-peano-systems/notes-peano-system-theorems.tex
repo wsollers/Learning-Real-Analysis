@@ -1,0 +1,674 @@
+\subsection{First Theorems on Peano Systems}
+
+\begin{topicbox}{Induction as a Working Principle}
+\begin{exposition}
+The induction axiom for a Peano system is formulated in terms of inductive
+subsets of the underlying set. Arithmetic arguments are usually written in
+terms of predicates rather than subsets. This theorem identifies the
+predicate-form induction principle derived from the Peano axioms. It is the
+standard form of induction used in the rest of the chapter.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Induction Principle for a Peano System)}},
+  fonttitle=\small\bfseries]
+\begin{theorem}[Induction Principle for a Peano System]
+\label{thm:induction-principle-for-peano-system}
+Let $(P,S,1)$ be a Peano system, and let $\varphi$ be a predicate on $P$.
+If
+\[
+\varphi(1)
+\qquad\text{and}\qquad
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n))),
+\]
+then
+\[
+\forall n \in P\;\varphi(n).
+\]
+\hyperref[prf:induction-principle-for-peano-system]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } \varphi
+\text{ be a predicate on } P.\\
+&\Bigl(\varphi(1) \land
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n)))\Bigr)
+\Longrightarrow
+\forall n \in P\;\varphi(n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } \varphi
+\text{ be a predicate on } P.\\
+&\neg\forall n \in P\;\varphi(n)
+\Longrightarrow
+\neg\Bigl(\varphi(1) \land
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n)))\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem converts the subset form of induction into the predicate form
+used in ordinary arithmetic arguments. A property propagates through the
+entire Peano system once it holds at the distinguished first element and is
+preserved by successor. The theorem therefore turns the structural induction
+axiom into a proof principle for arbitrary predicates on $P$.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+Feferman derives the working form of mathematical induction from the subset
+formulation of the Peano axioms immediately after Theorem 3.3 in Chapter 3 of
+\citet{FefermanNumberSystems1964}. The present notes formalize that induction
+principle as an explicit reusable theorem.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-induction]{Induction Axiom}
+\end{itemize}
+\end{dependencies}
+\end{topicbox}
+
+\begin{topicbox}{Inductive Subsets and Predecessors}
+\begin{exposition}
+Induction is expressed in terms of subsets of a Peano system. Two structural
+notions appear repeatedly in that setting: closure under successor and
+membership generated from the distinguished first element. Predecessor language
+is also convenient once it is known that every non-initial element arises as a
+successor.
+\end{exposition}
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Successor-Closed Subset)}} ,
+  fonttitle=\small\bfseries]
+\begin{definition}[Successor-Closed Subset]
+\label{def:successor-closed-subset}
+Let $(P,S,1)$ be a Peano system, and let $A \subseteq P$. The subset $A$ is
+called \emph{successor-closed} exactly when
+\[
+\forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } A \subseteq P.\\
+&A \text{ is successor-closed}
+\Longleftrightarrow
+\forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } A \subseteq P.\\
+&A \text{ is not successor-closed}
+\Longleftrightarrow
+\exists n \in P\;(n \in A \land S(n) \notin A).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A subset fails to be successor-closed exactly when it contains some element of
+$P$ but fails to contain that element's successor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+A \text{ is not successor-closed}
+\Longleftrightarrow
+\exists n \in P\;\underbrace{(n \in A \land S(n) \notin A)}_{\text{closure fails at } n}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A successor-closed subset is stable under one step of counting. Once an
+element of $A$ is present, its successor remains in $A$ as well.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+The notion of a successor-closed subset is implicit in condition (iii) of
+Feferman's Definition 3.1 \citep{FefermanNumberSystems1964}. The present notes
+isolate it as a separate definition so that induction arguments can refer to
+the closure condition directly.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Inductive Subset of a Peano System)}} ,
+  fonttitle=\small\bfseries]
+\begin{definition}[Inductive Subset of a Peano System]
+\label{def:inductive-subset-of-peano-system}
+Let $(P,S,1)$ be a Peano system, and let $A \subseteq P$. The subset $A$ is
+called \emph{inductive} exactly when $1 \in A$ and $A$ is successor-closed.
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } A \subseteq P.\\
+&A \text{ is inductive}
+\Longleftrightarrow
+\bigl(1 \in A \land
+\forall n \in P\;(n \in A \Longrightarrow S(n) \in A)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } A \subseteq P.\\
+&A \text{ is not inductive}
+\Longleftrightarrow
+\bigl(1 \notin A \lor \exists n \in P\;(n \in A \land S(n) \notin A)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A subset fails to be inductive in exactly two ways: it may fail to contain the
+distinguished first element, or it may contain some element while failing to
+contain that element's successor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+A \text{ is not inductive}
+\Longleftrightarrow\;&
+\underbrace{1 \notin A}_{\text{base point missing}}\\
+&\lor
+\underbrace{\exists n \in P\;(n \in A \land S(n) \notin A)}_{\text{successor closure fails}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An inductive subset contains the distinguished first element and is closed
+under successor. Such a subset contains every stage obtained by starting at
+$1$ and applying successor repeatedly.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+The notion of an inductive subset packages the two hypotheses appearing in the
+induction clause of Feferman's Definition 3.1
+\citep{FefermanNumberSystems1964}. The present notes name this package so
+that the internal structure of induction proofs remains explicit.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[def:successor-closed-subset]{Successor-Closed Subset}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Definition (Predecessor in a Peano System)}} ,
+  fonttitle=\small\bfseries]
+\begin{definition}[Predecessor in a Peano System]
+\label{def:predecessor-in-peano-system}
+Let $(P,S,1)$ be a Peano system, and let $x,u \in P$. The element $u$ is
+called a \emph{predecessor} of $x$ exactly when
+\[
+S(u)=x.
+\]
+\end{definition}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } x,u \in P.\\
+&u \text{ is a predecessor of } x
+\Longleftrightarrow
+S(u)=x.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system and let } x,u \in P.\\
+&u \text{ is not a predecessor of } x
+\Longleftrightarrow
+S(u) \neq x.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A predecessor of $x$ is an element whose successor is $x$. This language
+isolates the inverse-looking question attached to the successor map without
+assuming that successor is globally invertible.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+\end{itemize}
+\end{dependencies}
+\end{topicbox}
+
+\begin{topicbox}{Generation by Successor}
+\begin{exposition}
+The Peano axioms describe a counting system generated from a distinguished
+first element by the successor operation. The next theorems make that
+generation principle explicit: every element is either the first element or a
+successor, every non-initial element has a unique predecessor, and no element
+can be its own successor.
+\end{exposition}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Every Element Is Either \texorpdfstring{$1$}{1} or a Successor)}} ,
+  fonttitle=\small\bfseries]
+\begin{theorem}[Every Element Is Either $1$ or a Successor]
+\label{thm:every-element-is-one-or-a-successor}
+Let $(P,S,1)$ be a Peano system. For every $x \in P$, either $x=1$ or there
+exists $u \in P$ such that $S(u)=x$.
+\hyperref[prf:every-element-is-one-or-a-successor]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\bigl(x=1 \lor \exists u \in P\;(S(u)=x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every element of a Peano system is reached by starting at the distinguished
+first element and moving forward by successor. The only possible exception to
+having a predecessor is the element $1$ itself.
+\end{remark*}
+
+\begin{remark*}[Historical note]
+This theorem corresponds directly to Theorem 3.3 in
+\citet{FefermanNumberSystems1964}. Feferman uses this result to show that the
+distinguished initial element is the only possible non-successor in a Peano
+system.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-one-in-n]{Distinguished Element Lies in the Underlying Set}
+  \item \hyperref[ax:peano-successor-closure]{Closure Under Successor}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Successor Inequality Reflection)}} ,
+  fonttitle=\small\bfseries]
+\begin{theorem}[Successor Inequality Reflection]
+\label{thm:successor-inequality-reflection}
+Let $(P,S,1)$ be a Peano system. For all $a,b \in P$, if $a \neq b$, then
+$S(a)\neq S(b)$.
+\hyperref[prf:successor-inequality-reflection]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;(a\neq b \Longrightarrow S(a)\neq S(b)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists a,b \in P\;(a\neq b \land S(a)=S(b)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Successor inequality reflection fails exactly when two distinct elements have
+the same successor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\exists a,b \in P\;
+\underbrace{(a\neq b \land S(a)=S(b))}_{\text{distinct elements with a common successor}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;(S(a)=S(b) \Longrightarrow a=b).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The successor operation reflects inequality: distinct inputs remain distinct
+after one successor step. This is the contrapositive form of successor
+injectivity, and it is the form used when an induction step must preserve a
+negative equality statement.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-successor-injective]{Injectivity of Successor}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Non-One Elements Have a Predecessor)}} ,
+  fonttitle=\small\bfseries]
+\begin{corollary}[Non-One Elements Have a Predecessor]
+\label{cor:non-one-elements-have-a-predecessor}
+Let $(P,S,1)$ be a Peano system. For every $x \in P$, if $x \neq 1$, then
+there exists $u \in P$ such that $S(u)=x$.
+\hyperref[prf:non-one-elements-have-a-predecessor]{Go to proof.}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\bigl(x\neq 1 \Longrightarrow
+\exists u \in P\;(S(u)=x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists x \in P\;\bigl(x\neq 1 \land
+\forall u \in P\;(S(u)\neq x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The statement fails exactly when some element distinct from $1$ has no
+predecessor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\exists x \in P\;
+\underbrace{\bigl(x\neq 1 \land
+\forall u \in P\;(S(u)\neq x)\bigr)}_{\text{non-initial element with no predecessor}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every non-initial element of a Peano system is reached by one successor step
+from an earlier element. This separates predecessor existence from predecessor
+uniqueness so that later arguments can cite only the part they need.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+Feferman's Theorem 3.3 in \citet{FefermanNumberSystems1964} contains this
+predecessor-existence fact as part of the structural analysis of Peano systems.
+The present notes record it separately before adding uniqueness.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[thm:every-element-is-one-or-a-successor]{Every Element Is Either $1$ or a Successor}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Predecessor Existence and Uniqueness Away from \texorpdfstring{$1$}{1})}} ,
+  fonttitle=\small\bfseries]
+\begin{corollary}[Predecessor Existence and Uniqueness Away from $1$]
+\label{cor:predecessor-exists-unique-away-from-one}
+Let $(P,S,1)$ be a Peano system, and let $x \in P$ with $x \neq 1$. Then
+there exists a unique $u \in P$ such that $S(u)=x$.
+\hyperref[prf:predecessor-exists-unique-away-from-one]{Go to proof.}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\bigl(x \neq 1 \Longrightarrow \exists! u \in P\;(S(u)=x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every element distinct from $1$ has exactly one predecessor. The successor map
+therefore organizes the non-initial part of a Peano system into one-step
+extensions of earlier elements.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+Feferman proves predecessor existence and uniqueness together inside Theorem
+3.3 of \citet{FefermanNumberSystems1964}. The present notes separate the
+uniqueness statement into an independent corollary so that it can be cited
+directly in later proofs.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[cor:non-one-elements-have-a-predecessor]{Non-One Elements Have a Predecessor}
+  \item \hyperref[ax:peano-successor-injective]{Injectivity of Successor}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Unique Predecessor Characterization Away from \texorpdfstring{$1$}{1})}} ,
+  fonttitle=\small\bfseries]
+\begin{corollary}[Unique Predecessor Characterization Away from $1$]
+\label{cor:unique-predecessor-characterization-away-from-one}
+Let $(P,S,1)$ be a Peano system. For every $x \in P$, $x \neq 1$ if and
+only if there exists a unique $u \in P$ such that $S(u)=x$.
+\hyperref[prf:unique-predecessor-characterization-away-from-one]{Go to proof.}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\bigl(x\neq 1 \Longleftrightarrow
+\exists! u \in P\;(S(u)=x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists x \in P\;\Bigl(
+\bigl(x\neq 1 \land
+(\forall u \in P\;(S(u)\neq x)\\
+&\qquad\qquad\qquad\lor
+\exists u,v \in P\;(S(u)=x \land S(v)=x \land u\neq v))\bigr)\\
+&\qquad\qquad\lor
+\bigl(x=1 \land \exists u \in P\;(S(u)=x \land
+\forall v \in P\;(S(v)=x \Longrightarrow v=u))\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The biconditional can fail in two ways: a non-initial element can fail to have
+a unique predecessor, or the distinguished first element can have a unique
+predecessor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\exists x \in P\;\Bigl(
+\underbrace{\bigl(x\neq 1 \land
+(\forall u \in P\;(S(u)\neq x)
+\lor
+\exists u,v \in P\;(S(u)=x \land S(v)=x \land u\neq v))\bigr)}_
+{\text{non-initial element lacks a unique predecessor}}\\
+&\qquad\qquad\lor
+\underbrace{\bigl(x=1 \land \exists u \in P\;(S(u)=x \land
+\forall v \in P\;(S(v)=x \Longrightarrow v=u))\bigr)}_
+{\text{the first element has a unique predecessor}}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Being different from the distinguished first element is exactly the same as
+having a unique predecessor. This turns the informal phrase "away from $1$"
+into an internal characterization of the successor structure.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+This corollary packages the predecessor analysis surrounding Feferman's
+Theorem 3.3 in \citet{FefermanNumberSystems1964}. The forward direction is
+the predecessor existence-and-uniqueness result, while the reverse direction
+uses the axiom that $1$ is not a successor.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-one-not-successor]{Distinguished Element Is Not a Successor}
+  \item \hyperref[cor:predecessor-exists-unique-away-from-one]{Predecessor Existence and Uniqueness Away from $1$}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (The Distinguished Element Is the Unique Non-Successor)}} ,
+  fonttitle=\small\bfseries]
+\begin{corollary}[The Distinguished Element Is the Unique Non-Successor]
+\label{cor:one-is-unique-non-successor}
+Let $(P,S,1)$ be a Peano system. An element $x \in P$ is not a successor of
+any element of $P$ if and only if $x=1$.
+\hyperref[prf:one-is-unique-non-successor]{Go to proof.}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\Bigl(\neg\exists u \in P\;(S(u)=x) \Longleftrightarrow x=1\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The distinguished first element is characterized internally as the unique
+element with no predecessor. This gives a structural description of $1$ that
+does not depend on external notation.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+This corollary extracts a structural characterization of the distinguished
+initial element that is implicit in the discussion surrounding Theorem 3.3 of
+\citet{FefermanNumberSystems1964}.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[ax:peano-one-not-successor]{Distinguished Element Is Not a Successor}
+  \item \hyperref[cor:predecessor-exists-unique-away-from-one]{Predecessor Existence and Uniqueness Away from $1$}
+\end{itemize}
+\end{dependencies}
+
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (No Object Is Its Own Successor)}} ,
+  fonttitle=\small\bfseries]
+\begin{theorem}[No Object Is Its Own Successor]
+\label{thm:no-object-is-its-own-successor}
+Let $(P,S,1)$ be a Peano system. For every $n \in P$,
+\[
+S(n) \neq n.
+\]
+\hyperref[prf:no-object-is-its-own-successor]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall n \in P\;(S(n) \neq n).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Successor always moves forward in the counting structure. No element can be
+recovered by applying successor to itself.
+\end{remark*}
+
+\begin{remark*}[Historical note]
+This theorem is a standard consequence of the Peano axioms in the classical
+development of the natural numbers. Feferman includes the corresponding result
+as an exercise in Chapter 3 of \citet{FefermanNumberSystems1964}.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[ax:peano-one-not-successor]{Distinguished Element Is Not a Successor}
+  \item \hyperref[ax:peano-successor-injective]{Injectivity of Successor}
+  \item \hyperref[thm:induction-principle-for-peano-system]{Induction Principle for a Peano System}
+\end{itemize}
+\end{dependencies}
+\end{topicbox}
+
