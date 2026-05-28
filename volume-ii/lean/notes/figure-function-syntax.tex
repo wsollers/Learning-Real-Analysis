@@ -1,0 +1,74 @@
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  code/.style={
+    draw,
+    rounded corners,
+    fill=gray!8,
+    font=\ttfamily\small,
+    align=left,
+    inner sep=8pt
+  },
+  note/.style={
+    draw,
+    rounded corners,
+    fill=blue!6,
+    font=\small,
+    align=left,
+    text width=4.2cm,
+    inner sep=6pt
+  },
+  arrow/.style={->, thick}
+]
+
+\node[code] (code) {
+let D : ps.carrier $\to$ Prop :=\\
+\quad fun candidate\_element =>\\
+\quad\quad candidate\_element = ps.one $\lor$\\
+\quad\quad $\exists$ predecessor : ps.carrier,\\
+\quad\quad\quad ps.successor predecessor = candidate\_element
+};
+
+\node[note, right=2.8cm of code.north east, anchor=north west] (subset) {
+\textbf{D is a subset predicate}\\
+In Lean, a subset of the carrier is represented as a function:
+\[
+D : ps.carrier \to Prop.
+\]
+It answers: ``does this element belong to \(D\)?''
+};
+
+\node[note, right=2.8cm of code.east, anchor=west] (candidate) {
+\textbf{candidate\_element}\\
+This is the element currently being tested for membership in \(D\).
+It plays the role of \(x\) in:
+\[
+D=\{x\in P : \cdots\}.
+\]
+};
+
+\node[note, right=2.8cm of code.south east, anchor=south west] (condition) {
+\textbf{Membership condition}\\
+The proposition says:
+\[
+x = 1
+\quad\text{or}\quad
+\exists u,\ S(u)=x.
+\]
+So \(D\) contains exactly elements that are either \(1\) or successors.
+};
+
+\node[note, below=1.5cm of code] (predecessor) {
+\textbf{predecessor}\\
+The existential witness:
+\[
+\exists\, predecessor : ps.carrier
+\]
+means ``there is some element of the carrier whose successor is the candidate element.''
+};
+
+\draw[arrow] (subset.west) -- ++(-0.9,0) |- ([yshift=0.45cm]code.east);
+\draw[arrow] (candidate.west) -- ++(-0.9,0) |- ([yshift=-0.15cm]code.east);
+\draw[arrow] (condition.west) -- ++(-0.9,0) |- ([yshift=-0.95cm]code.east);
+\draw[arrow] (predecessor.north) -- ([yshift=-1.2cm]code.south);
+
+\end{tikzpicture}
