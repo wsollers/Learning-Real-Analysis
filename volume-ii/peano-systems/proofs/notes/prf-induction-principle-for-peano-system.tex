@@ -1,0 +1,122 @@
+\newpage
+\phantomsection
+\label{prf:induction-principle-for-peano-system}
+
+\begin{remark*}[Return]
+\hyperref[thm:induction-principle-for-peano-system]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Induction Principle for a Peano System]
+Let $(P,S,1)$ be a Peano system, and let $\varphi$ be a predicate on $P$.
+If
+\[
+\varphi(1)
+\qquad\text{and}\qquad
+\forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n))),
+\]
+then
+\[
+\forall n \in P\;\varphi(n).
+\]
+\end{theorem*}
+
+\begin{proof}
+\textbf{Professional Standard Proof.}~\\
+Define $A \coloneqq \{\,n \in P \mid \varphi(n)\,\}$.
+The hypothesis $\varphi(1)$ gives $1 \in A$.
+The hypothesis $\forall n \in P\,(\varphi(n) \Rightarrow \varphi(S(n)))$
+gives $\forall n \in P\,(n \in A \Rightarrow S(n) \in A)$.
+Hence $A$ is an inductive subset of $P$.
+By the induction axiom \hyperref[ax:peano-induction]{(P5)}, $A = P$.
+Therefore $\varphi(n)$ holds for every $n \in P$.
+\end{proof}
+
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Translate the predicate into a subset.}
+Every predicate $\varphi$ on a set $P$ determines an extension: the set of
+elements for which the predicate holds. Define
+\[
+  A \;\coloneqq\; \{\,n \in P \mid \varphi(n)\,\}.
+\]
+Since $\varphi$ is a predicate on $P$, the subset $A$ is well-defined as a
+subset of $P$, that is, $A \subseteq P$.  
+
+The goal $\forall n \in P\,\varphi(n)$ is now equivalent to $A = P$: every
+element of $P$ satisfies $\varphi$ if and only if every element of $P$
+belongs to $A$. The proof will establish $A = P$ by applying the induction
+axiom.
+
+\textbf{Step 2. Verify the base condition: $1 \in A$.}
+The first hypothesis is $\varphi(1)$.
+By the definition of $A$, $\varphi(1)$ holds if and only if $1 \in A$.
+Since $\varphi(1)$ is given, we conclude $1 \in A$.
+
+\textbf{Step 3. Verify the successor-closure condition.}
+The second hypothesis is
+\[
+  \forall n \in P\;(\varphi(n) \Longrightarrow \varphi(S(n))).
+\]
+Let $n \in P$ be arbitrary and suppose $n \in A$.
+By the definition of $A$, $n \in A$ means precisely $\varphi(n)$.
+The second hypothesis then gives $\varphi(S(n))$.
+Since $S(n) \in P$ (by the closure axiom for a Peano system) and
+$\varphi(S(n))$ holds, the definition of $A$ gives $S(n) \in A$.
+
+Since $n$ was arbitrary, this establishes
+\[
+  \forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\]
+The subset $A$ is therefore successor-closed.
+
+\textbf{Step 4. Conclude that $A$ is an inductive subset.}
+Combining Steps 2 and 3:
+\[
+  1 \in A
+  \quad\text{and}\quad
+  \forall n \in P\;(n \in A \Longrightarrow S(n) \in A).
+\]
+By the definition of an inductive subset
+\hyperref[def:inductive-subset-of-peano-system]{(Definition: Inductive Subset of a Peano System)},
+$A$ is an inductive subset of the Peano system $(P,S,1)$.
+
+\textbf{Step 5. Apply the induction axiom.}
+The induction axiom \hyperref[ax:peano-induction]{(P5)} states: any subset
+$A \subseteq P$ that contains $1$ and is closed under successor satisfies
+$A = P$. Steps 2 and 3 establish exactly these two conditions. Therefore
+$A = P$.
+
+\textbf{Step 6. Conclude the predicate holds universally.}
+Since $A = P$, every element $n \in P$ belongs to $A$. By the definition of
+$A$, this means $\varphi(n)$ holds for every $n \in P$. That is,
+\[
+  \forall n \in P\;\varphi(n). \qedhere
+\]
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof is a direct application of the induction axiom (P5). The induction
+axiom is formulated in terms of subsets: any inductive subset of $P$ must
+equal $P$ itself. The predicate $\varphi$ does not appear in (P5), so the
+first move is always to translate --- passing from the predicate form to the
+subset form via the extension $A \coloneqq \{\,n \in P \mid \varphi(n)\,\}$.
+Once the translation is made, the two hypotheses map exactly onto the two
+conditions that (P5) requires: the base condition $1 \in A$ comes from
+$\varphi(1)$, and successor-closure of $A$ comes from the step hypothesis on
+$\varphi$. The induction axiom then forces $A = P$, and translating back gives
+the conclusion.
+
+This translation pattern --- predicate to subset, apply (P5), translate back
+--- is the invariant structure of every induction proof in the Peano system
+framework.
+\end{remark*}
+
+\begin{remark*}[Dependencies]~\\
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-induction]{Induction Axiom (P5)}
+  \item \hyperref[def:inductive-subset-of-peano-system]{Inductive Subset of a Peano System}
+\end{itemize}
+\end{remark*}
+
