@@ -330,6 +330,139 @@ system.
 \end{itemize}
 \end{remark*}
 
+\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Theorem (Successor Inequality Reflection)}} ,
+  fonttitle=\small\bfseries]
+\begin{theorem}[Successor Inequality Reflection]
+\label{thm:successor-inequality-reflection}
+Let $(P,S,1)$ be a Peano system. For all $a,b \in P$, if $a \neq b$, then
+$S(a)\neq S(b)$.
+\hyperref[prf:successor-inequality-reflection]{Go to proof.}
+\end{theorem}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;(a\neq b \Longrightarrow S(a)\neq S(b)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists a,b \in P\;(a\neq b \land S(a)=S(b)).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Successor inequality reflection fails exactly when two distinct elements have
+the same successor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\exists a,b \in P\;
+\underbrace{(a\neq b \land S(a)=S(b))}_{\text{distinct elements with a common successor}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Contrapositive quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall a,b \in P\;(S(a)=S(b) \Longrightarrow a=b).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The successor operation reflects inequality: distinct inputs remain distinct
+after one successor step. This is the contrapositive form of successor
+injectivity, and it is the form used when an induction step must preserve a
+negative equality statement.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-successor-injective]{Injectivity of Successor}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Non-One Elements Have a Predecessor)}} ,
+  fonttitle=\small\bfseries]
+\begin{corollary}[Non-One Elements Have a Predecessor]
+\label{cor:non-one-elements-have-a-predecessor}
+Let $(P,S,1)$ be a Peano system. For every $x \in P$, if $x \neq 1$, then
+there exists $u \in P$ such that $S(u)=x$.
+\hyperref[prf:non-one-elements-have-a-predecessor]{Go to proof.}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\bigl(x\neq 1 \Longrightarrow
+\exists u \in P\;(S(u)=x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists x \in P\;\bigl(x\neq 1 \land
+\forall u \in P\;(S(u)\neq x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The statement fails exactly when some element distinct from $1$ has no
+predecessor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\exists x \in P\;
+\underbrace{\bigl(x\neq 1 \land
+\forall u \in P\;(S(u)\neq x)\bigr)}_{\text{non-initial element with no predecessor}}.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every non-initial element of a Peano system is reached by one successor step
+from an earlier element. This separates predecessor existence from predecessor
+uniqueness so that later arguments can cite only the part they need.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+Feferman's Theorem 3.3 in \citet{FefermanNumberSystems1964} contains this
+predecessor-existence fact as part of the structural analysis of Peano systems.
+The present notes record it separately before adding uniqueness.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[thm:every-element-is-one-or-a-successor]{Every Element Is Either $1$ or a Successor}
+\end{itemize}
+\end{remark*}
+
 \begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   title={\small\textbf{Corollary (Predecessor Existence and Uniqueness Away from \texorpdfstring{$1$}{1})}} ,
@@ -367,8 +500,92 @@ directly in later proofs.
 \begin{remark*}[Dependencies]
 \begin{itemize}
   \item \hyperref[def:peano-system]{Peano System}
-  \item \hyperref[thm:every-element-is-one-or-a-successor]{Every Element Is Either $1$ or a Successor}
+  \item \hyperref[cor:non-one-elements-have-a-predecessor]{Non-One Elements Have a Predecessor}
   \item \hyperref[ax:peano-successor-injective]{Injectivity of Successor}
+\end{itemize}
+\end{remark*}
+
+\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{Corollary (Unique Predecessor Characterization Away from \texorpdfstring{$1$}{1})}} ,
+  fonttitle=\small\bfseries]
+\begin{corollary}[Unique Predecessor Characterization Away from $1$]
+\label{cor:unique-predecessor-characterization-away-from-one}
+Let $(P,S,1)$ be a Peano system. For every $x \in P$, $x \neq 1$ if and
+only if there exists a unique $u \in P$ such that $S(u)=x$.
+\hyperref[prf:unique-predecessor-characterization-away-from-one]{Go to proof.}
+\end{corollary}
+\end{tcolorbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\forall x \in P\;\bigl(x\neq 1 \Longleftrightarrow
+\exists! u \in P\;(S(u)=x)\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\begin{aligned}
+&\text{Let } (P,S,1) \text{ be a Peano system.}\\
+&\exists x \in P\;\Bigl(
+\bigl(x\neq 1 \land
+(\forall u \in P\;(S(u)\neq x)\\
+&\qquad\qquad\qquad\lor
+\exists u,v \in P\;(S(u)=x \land S(v)=x \land u\neq v))\bigr)\\
+&\qquad\qquad\lor
+\bigl(x=1 \land \exists u \in P\;(S(u)=x \land
+\forall v \in P\;(S(v)=x \Longrightarrow v=u))\bigr)
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The biconditional can fail in two ways: a non-initial element can fail to have
+a unique predecessor, or the distinguished first element can have a unique
+predecessor.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\begin{aligned}
+&\exists x \in P\;\Bigl(
+\underbrace{\bigl(x\neq 1 \land
+(\forall u \in P\;(S(u)\neq x)
+\lor
+\exists u,v \in P\;(S(u)=x \land S(v)=x \land u\neq v))\bigr)}_
+{\text{non-initial element lacks a unique predecessor}}\\
+&\qquad\qquad\lor
+\underbrace{\bigl(x=1 \land \exists u \in P\;(S(u)=x \land
+\forall v \in P\;(S(v)=x \Longrightarrow v=u))\bigr)}_
+{\text{the first element has a unique predecessor}}
+\Bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Being different from the distinguished first element is exactly the same as
+having a unique predecessor. This turns the informal phrase "away from $1$"
+into an internal characterization of the successor structure.
+\end{remark*}
+
+\begin{remark*}[Comparison with Feferman]
+This corollary packages the predecessor analysis surrounding Feferman's
+Theorem 3.3 in \citet{FefermanNumberSystems1964}. The forward direction is
+the predecessor existence-and-uniqueness result, while the reverse direction
+uses the axiom that $1$ is not a successor.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-one-not-successor]{Distinguished Element Is Not a Successor}
+  \item \hyperref[cor:predecessor-exists-unique-away-from-one]{Predecessor Existence and Uniqueness Away from $1$}
 \end{itemize}
 \end{remark*}
 
