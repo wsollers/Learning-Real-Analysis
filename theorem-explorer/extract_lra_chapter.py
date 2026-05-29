@@ -7,6 +7,9 @@ What it does
 - Recurses through a chapter's notes/ and proofs/ trees.
 - Extracts theorem-like environments from note files, even when nested inside tcolorbox.
 - Captures immediate trailing remark* blocks attached to each theorem-like item.
+- Captures \begin{dependencies}...\end{dependencies} blocks that follow each item
+  (after its enclosing tcolorbox if present) and before the next theorem-like
+  environment begins — emitted as dependency_refs and depends_on graph edges.
 - Maps proof files to theorem-like items via:
     * \\hyperref[prf:...] links inside note blocks
     * \\label{prf:...} inside proof files
@@ -44,6 +47,11 @@ TARGET_ENVS = {
 }
 
 REMARK_ENV = "remark*"
+
+# Environments whose \begin signals we must not scan past when looking for
+# a trailing dependencies block.  Includes all theorem-like envs plus
+# structural wrappers that open a new logical node.
+LOOKAHEAD_FENCE_ENVS = TARGET_ENVS | {"topicbox", "tcolorbox"}
 
 SECTIONING_ENVS = {
     "section",
@@ -99,6 +107,7 @@ class ExtractedItem:
     labels: list[str]
     proof_refs: list[str]
     theorem_refs: list[str]
+    dependency_refs: list[str]
     remark_blocks: list[dict[str, Any]]
     proof_source_path: str | None = None
     proof_labels: list[str] = field(default_factory=list)
@@ -403,6 +412,75 @@ def collect_trailing_remarks(text: str, envs: list[EnvBlock], idx: int) -> list[
     return out
 
 
+def collect_dependencies(text: str, envs: list[EnvBlock], idx: int) -> list[str]:
+    """Return the sorted list of hyperref labels found inside the first
+    \\begin{dependencies}...\\end{dependencies} block that belongs to the
+    theorem-like item at envs[idx].
+
+    Search strategy
+    ---------------
+    Start scanning *after* the item's enclosing tcolorbox (if any), otherwise
+    after the item itself.  Walk forward through the env list, skipping only:
+
+      - envs that are nested inside the already-consumed region (they were
+        already visited as children)
+      - remark* blocks (they trail the tcolorbox and precede dependencies)
+
+    Stop immediately — returning [] — if we encounter any env whose *begin*
+    falls inside a LOOKAHEAD_FENCE_ENV (TARGET_ENVS | topicbox | tcolorbox).
+    That means a new node is starting and this item simply has no dependencies
+    block.
+
+    Also stop if there is any non-whitespace text between the current scan
+    position and the next env that is not accounted for by a remark* or
+    dependencies block we just consumed.
+    """
+    current = envs[idx]
+    wrapper_end = enclosing_tcolorbox_end(envs, current)
+    # scan_from: the position in the text from which we look for the next env
+    scan_from = wrapper_end if wrapper_end is not None else current.end_end
+
+    j = idx + 1
+    while j < len(envs):
+        nxt = envs[j]
+
+        # Skip envs that are nested inside what we've already consumed
+        if nxt.begin_start < scan_from:
+            j += 1
+            continue
+
+        # Hard fence: a new theorem-like env or structural wrapper is beginning.
+        # This item has no dependencies block — bail out immediately.
+        if nxt.name in LOOKAHEAD_FENCE_ENVS:
+            return []
+
+        # Gap check: if there is non-whitespace text between scan_from and the
+        # next env, something unexpected is in the way — stop safely.
+        between = text[scan_from : nxt.begin_start]
+        if between.strip():
+            return []
+
+        # remark* blocks are allowed between tcolorbox and dependencies — skip.
+        if nxt.name == REMARK_ENV:
+            scan_from = nxt.end_end
+            j += 1
+            continue
+
+        # Found the dependencies block.
+        if nxt.name == "dependencies":
+            raw = nxt.raw(text)
+            refs = [
+                h for h in HYPERREF_RE.findall(raw)
+                if ":" in h
+            ]
+            return sorted(set(refs))
+
+        # Anything else (itemize, enumerate, etc.) — not expected here, stop.
+        return []
+
+    return []
+
+
 def make_fallback_id(kind: str, path: Path, ordinal: int) -> str:
     stem = re.sub(r"[^A-Za-z0-9]+", "-", path.stem).strip("-").lower()
     return f"{kind.lower()}:{stem}:{ordinal:03d}"
@@ -436,6 +514,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
             proof_refs = sorted({h for h in HYPERREF_RE.findall(raw) if h.startswith("prf:")})
             theorem_refs = sorted({h for h in HYPERREF_RE.findall(raw) if h.startswith(("def:", "thm:", "lem:", "prop:", "cor:", "ax:"))})
             remarks = collect_trailing_remarks(text, envs, idx)
+            dependency_refs = collect_dependencies(text, envs, idx)
 
             item = ExtractedItem(
                 id=item_id,
@@ -453,6 +532,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
                 labels=labels,
                 proof_refs=proof_refs,
                 theorem_refs=theorem_refs,
+                dependency_refs=dependency_refs,
                 remark_blocks=remarks,
                 text_preview=clean_preview(raw),
             )
@@ -500,6 +580,11 @@ def build_edges(items: Iterable[ExtractedItem]) -> list[dict[str, str]]:
             if edge not in seen:
                 seen.add(edge)
                 edges.append({"from": edge[0], "to": edge[1], "kind": edge[2]})
+        for dep in item.dependency_refs:
+            edge = (item.id, dep, "depends_on")
+            if edge not in seen:
+                seen.add(edge)
+                edges.append({"from": edge[0], "to": edge[1], "kind": edge[2]})
     return edges
 
 
@@ -519,6 +604,7 @@ def item_to_json(item: ExtractedItem) -> dict[str, Any]:
         "proof_labels": item.proof_labels,
         "proof_refs": item.proof_refs,
         "theorem_refs": item.theorem_refs,
+        "dependency_refs": item.dependency_refs,
         "proof_return_targets": item.proof_return_targets,
         "raw_latex_b64": item.raw_latex_b64,
         "body_latex_b64": item.body_latex_b64,

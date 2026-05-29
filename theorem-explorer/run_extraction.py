@@ -16,9 +16,13 @@ This script:
   4. Prints a summary of node counts, edge counts, and any errors found.
 
 Chapters extracted:
+  - volume-ii/peano-systems
   - volume-ii/natural-numbers
   - volume-ii/rationals
   - volume-iii/analysis/bounding
+  - volume-iii/analysis/functions
+  - volume-iii/analysis/continuity
+  - volume-iii/analysis/differentiation
 """
 
 from __future__ import annotations
@@ -36,12 +40,13 @@ PASS1_SCRIPT = EXPLORER_DIR / "extract_lra_chapter.py"
 PASS2_SCRIPT = EXPLORER_DIR / "seed_to_knowledge_json_v3_fixed6.py"
 
 CHAPTERS = [
+    REPO_ROOT / "volume-ii" / "peano-systems",
     REPO_ROOT / "volume-ii" / "natural-numbers",
     REPO_ROOT / "volume-ii" / "rationals",
     REPO_ROOT / "volume-iii" / "analysis" / "bounding",
     REPO_ROOT / "volume-iii" / "analysis" / "functions",
     REPO_ROOT / "volume-iii" / "analysis" / "continuity",
-    REPO_ROOT / "volume-iii" / "analysis" / "differentiation",        
+    REPO_ROOT / "volume-iii" / "analysis" / "differentiation",
 ]
 
 COMBINED_KNOWLEDGE = EXPLORER_DIR / "knowledge.json"
@@ -180,7 +185,6 @@ def print_summary() -> None:
     print(f"  Generated : {meta.get('generated_at', '')}")
     print()
 
-    # Node kind breakdown
     kind_counts: dict[str, int] = {}
     for n in nodes:
         kind_counts[n.get("kind", "?")] = kind_counts.get(n.get("kind", "?"), 0) + 1
@@ -189,7 +193,6 @@ def print_summary() -> None:
         print(f"    {kind:<20} {count}")
     print()
 
-    # Edge kind breakdown
     edge_counts: dict[str, int] = {}
     for e in edges:
         edge_counts[e.get("kind", "?")] = edge_counts.get(e.get("kind", "?"), 0) + 1
@@ -198,7 +201,6 @@ def print_summary() -> None:
         print(f"    {kind:<20} {count}")
     print()
 
-    # Error summary
     errors = load_json(COMBINED_ERRORS)
     edge_errors = load_json(COMBINED_EDGE_ERRORS)
     err_count = (errors or {}).get("error_count", 0)
@@ -206,31 +208,7 @@ def print_summary() -> None:
     print(f"  Proof errors      : {err_count}")
     print(f"  Graph edge errors : {edge_err_count}")
 
-    if err_count > 0:
-        print(f"\n  See: {COMBINED_ERRORS}")
-    if edge_err_count > 0:
-        print(f"  See: {COMBINED_EDGE_ERRORS}")
-
-    # Nodes missing proofs
-    no_proof = [n for n in nodes if not n.get("has_proof_file") and n.get("kind", "").lower() not in ("definition", "axiom")]
-    if no_proof:
-        print(f"\n  Theorems/Lemmas without proof files: {len(no_proof)}")
-        for n in no_proof[:10]:
-            print(f"    [{n.get('kind','?')}] {n.get('id','')}  —  {n.get('name','')[:60]}")
-        if len(no_proof) > 10:
-            print(f"    ... and {len(no_proof) - 10} more")
-
-    # Nodes with todo stub proofs
-    todo_stubs = [n for n in nodes if n.get("proof_sketch_source") == "todo_stub_skipped"]
-    if todo_stubs:
-        print(f"\n  TODO-stub proof files (proofs not yet written): {len(todo_stubs)}")
-        for n in todo_stubs[:10]:
-            print(f"    [{n.get('kind','?')}] {n.get('id','')}  —  {n.get('name','')[:60]}")
-        if len(todo_stubs) > 10:
-            print(f"    ... and {len(todo_stubs) - 10} more")
-
     print(f"\n  Explorer output : {COMBINED_KNOWLEDGE}")
-    print(f"  Open in browser : {EXPLORER_DIR / 'real-analysis-explorer.html'}")
     print()
 
 

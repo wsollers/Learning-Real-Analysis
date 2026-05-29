@@ -73,6 +73,7 @@ FIELD_DEFAULTS: dict[str, Any] = {
     "kind": "",
     "name": "",
     "deck": "",
+    "chapter": "",          # top-level chapter slug (e.g. "peano-systems")
     "source": "",
     "proof_source": "",
     "question": "",
@@ -349,14 +350,6 @@ PREDICATE_LEAD_IN_RE = re.compile(
 
 
 def strip_predicate_lead_in(content: str) -> str:
-    """Remove predicate-only prefaces from formal extraction fields.
-
-    Some legacy notes put a predicate statement first inside a
-    "Standard quantified statement" or "Negated quantified statement" remark
-    and then give the actual standard notation after "Equivalently".  For the
-    viewer's formal fields, keep the standard notation and leave predicate
-    notation to the dedicated predicate-reading fields.
-    """
     stripped = PREDICATE_LEAD_IN_RE.sub("", content, count=1).strip()
     return stripped or content
 
@@ -440,7 +433,6 @@ def detect_multiple_primary_statements(
     title: str,
     raw_latex: str,
 ) -> list[str]:
-    """Return conservative structural signals that one box may contain multiple nodes."""
     text = raw_latex or statement_text or ""
     display_text = statement_text or text
     plain = strip_latex_for_structure(display_text)
@@ -664,6 +656,7 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
     node["kind"] = seed_node.get("kind", "")
     node["name"] = seed_node.get("title") or humanize_label(seed_node.get("label") or seed_node["id"])
     node["deck"] = humanize_slug(seed_node.get("section_slug") or seed_node.get("note_dir") or chapter_name)
+    node["chapter"] = chapter_name   # raw slug, e.g. "peano-systems" — used by the explorer chapter filter
     node["section"] = seed_node.get("section_slug") or ""
     node["source"] = seed_node.get("source_path") or ""
     node["proof_source"] = seed_node.get("proof_source_path") or ""
