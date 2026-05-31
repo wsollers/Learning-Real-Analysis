@@ -1,8 +1,8 @@
 # Model Standards
 
 Model standards govern structural presentations: signatures, languages,
-structures, models, classification cards, structure blueprints, and related
-model-theoretic or algebraic objects.
+structures, models, syntactic objects, classification cards, structure
+blueprints, and related model-theoretic or algebraic objects.
 
 These standards do not replace theorem-like standards. The theorem-like
 standards remain authoritative for definitions, axioms, theorems, lemmas,
@@ -14,14 +14,21 @@ decoration.
 ## 1. Scope
 
 Use this standard for mathematical objects whose main role is to describe
-vocabulary, components, inheritance, taxonomy, or semantic organization.
+vocabulary, syntax, components, inheritance, taxonomy, or semantic
+organization.
 
 Examples include:
 
 - signatures;
 - languages;
+- theories;
 - structures;
+- interpretations;
 - models;
+- variables;
+- terms;
+- formulas;
+- sentences;
 - groups;
 - rings;
 - fields;
@@ -32,8 +39,9 @@ Examples include:
 - Peano systems.
 
 The standard applies to first presentations, comparison tables, structure
-blueprints, classification cards, model-theoretic remarks, and metadata-bearing
-presentations intended for extraction or future Knowledge Explorer views.
+blueprints, classification cards, syntactic presentations, formation rules,
+worked examples, model-theoretic remarks, and metadata-bearing presentations
+intended for extraction or future Knowledge Explorer views.
 
 ## 2. Structure Presentation Order
 
@@ -55,7 +63,21 @@ The presentation order is a local organization rule. It does not override the
 block order inside a formal theorem-like environment when such an environment
 is used.
 
-## 3. Signature Presentation Standard
+## 3. Structural Toolkit Standard
+
+Model-theoretic and signature-heavy chapters may begin with a compact toolkit
+that lists the local structural vocabulary, symbols, and links to definitions.
+Use exactly one toolkit box at the front of a section when a toolkit is
+requested or locally required.
+
+Structural toolkits should use the shared `toolkitbox` macro. Local files must
+not hand-roll gray toolkit `tcolorbox` styling when `toolkitbox` is available.
+
+Toolkits are navigational and structural summaries. They do not replace formal
+definitions, signature presentations, interpretation remarks, or dependency
+blocks.
+
+## 4. Signature Presentation Standard
 
 A signature presentation records formal vocabulary. It describes which symbols
 exist and how many inputs the relevant symbols take. It does not assert truth,
@@ -84,7 +106,7 @@ Interpretation notes inside a signature presentation are informal readings of
 symbols. They are not semantic assignments, model definitions, or truth
 conditions.
 
-## 4. Structure Blueprint Standard
+## 5. Structure Blueprint Standard
 
 A structure blueprint is a compact structural summary of what an object adds,
 inherits, contains, uses, or classifies as. It is descriptive metadata, not a
@@ -109,7 +131,7 @@ same structure without changing the mathematical meaning.
 Blueprints must not replace formal definitions. When the object is being
 defined, the formal definition remains the authoritative mathematical statement.
 
-## 5. Classification Standard
+## 6. Classification Standard
 
 Classification cards present the taxonomic position of a structural object.
 They are used for inheritance, cross-referencing, and comparison across
@@ -136,10 +158,10 @@ Classification cards should use shared classification macros when available.
 They are extraction-friendly presentation artifacts, not theorem-like
 environments, and do not require predicate readings or negation blocks.
 
-## 6. Vocabulary Definitions
+## 7. Vocabulary Object Definitions
 
-Vocabulary Definitions are formal definitions whose purpose is to name a
-symbolic or syntactic object rather than to introduce a predicate used in
+Vocabulary Object Definitions are formal definitions whose purpose is to name
+a structural or semantic object rather than to introduce a predicate used in
 ordinary proofs.
 
 Examples include:
@@ -150,38 +172,79 @@ Examples include:
 - Function Symbol;
 - Relation Symbol;
 - Arity;
-- Variable;
-- Term;
-- Formula;
 - Theory;
+- Structure;
+- Interpretation;
 - Model.
 
-Vocabulary Definitions require:
+Vocabulary Object Definitions require:
 
 - a formal Definition environment with a stable `def:` label;
 - an Interpretation block unless nearby structural exposition already performs
   the same work clearly.
 
-Vocabulary Definitions may require:
+Vocabulary Object Definitions may require:
 
 - a formal characterization;
 - a signature presentation;
+- a structure blueprint;
+- a classification card;
 - a table or component display;
 - a dependency block or `\NoLocalDependencies` marker.
 
 When dependency information is present, it is governed by
 `dependency-standards.md`.
 
-Vocabulary Definitions do not require:
+Vocabulary Object Definitions do not require:
 
 - predicate readings;
 - negation predicate readings;
 - contrapositive blocks.
 
-Generate predicate or negation predicate readings for Vocabulary Definitions
-only when they are explicitly useful, canonical, and not merely mechanical.
+Generate predicate or negation predicate readings for Vocabulary Object
+Definitions only when they are explicitly useful, canonical, and not merely
+mechanical.
 
-## 7. Structural Definitions
+## 8. Syntactic Object Definitions
+
+Syntactic Object Definitions are formal definitions whose purpose is to name
+objects built by formation rules inside a formal language.
+
+Examples include:
+
+- Variable;
+- Term;
+- Formula;
+- Sentence.
+
+Syntactic Object Definitions require:
+
+- a formal Definition environment with a stable `def:` label;
+- an Interpretation block unless nearby syntactic exposition already performs
+  the same work clearly.
+
+Syntactic Object Definitions often require:
+
+- a `syntacticbox` presentation for compact object-level summaries;
+- a `formationrules` block when the object is inductively generated;
+- a `workedexamples` block when examples clarify grammatical boundaries;
+- a dependency block or `\NoLocalDependencies` marker.
+
+Formation rules should state the constructors and closure conditions that
+generate the object. Worked examples should separate well-formed examples from
+near misses when that distinction prevents later confusion.
+
+Syntactic Object Definitions do not require:
+
+- predicate readings;
+- negation predicate readings;
+- contrapositive blocks.
+
+Generate predicate or negation predicate readings for Syntactic Object
+Definitions only when the predicate is canonical and useful, not merely because
+the object can be recognized by a grammar.
+
+## 9. Structural Definitions
 
 Structural Definitions introduce mathematical objects by components,
 operations, relations, axioms, compatibility conditions, or ambient data.
@@ -215,7 +278,7 @@ When a Structural Definition includes axioms or laws, keep atomicity visible:
 do not hide independently nameable axioms inside prose when they must later be
 cited as formal axioms.
 
-## 8. Model-Theoretic Remarks
+## 10. Model-Theoretic Remarks
 
 Model-theoretic remarks may explain structural distinctions without requiring
 full logical decomposition.
@@ -233,16 +296,18 @@ These remarks should be precise and local. They may orient readers before full
 model theory is available, but they must not introduce unsupported theorems or
 unscoped semantic claims.
 
-## 9. Knowledge Explorer Integration
+## 11. Knowledge Explorer Integration
 
-Structural presentations are first-class extraction targets. Metadata should be
-represented in stable, machine-readable categories where possible.
+Structural and syntactic presentations are first-class extraction targets.
+Metadata should be represented in stable, machine-readable categories where
+possible.
 
 Intended metadata categories include:
 
 - `structure`;
 - `signature`;
 - `classification`;
+- `syntactic-object`;
 - `proof-vault-url`.
 
 Future generated artifacts may include:
@@ -250,42 +315,46 @@ Future generated artifacts may include:
 - Knowledge Explorer cards;
 - TikZ structure DAGs;
 - blueprint diagrams;
-- classification tables.
+- classification tables;
+- syntactic formation cards.
 
-Extraction tooling should treat structural metadata as distinct from
-theorem-like logical blocks. A structure blueprint, signature presentation, or
-classification card may create graph nodes or display records even when it does
-not correspond to a theorem, lemma, proposition, corollary, axiom, or formal
-definition.
+Extraction tooling should treat structural and syntactic metadata as distinct
+from theorem-like logical blocks. A structure blueprint, signature
+presentation, classification card, syntactic presentation, formation-rules
+block, or worked-examples block may create graph nodes or display records even
+when it does not correspond to a theorem, lemma, proposition, corollary, axiom,
+or formal definition.
 
-## 10. Overrides
+## 12. Overrides
 
-This document overrides theorem-like decoration rules only for structural
-presentation artifacts and for Vocabulary Definitions or Structural Definitions
-where predicate-oriented blocks would be artificial.
+This document overrides theorem-like decoration rules only for structural or
+syntactic presentation artifacts and for Vocabulary Object Definitions,
+Syntactic Object Definitions, or Structural Definitions where predicate-oriented
+blocks would be artificial.
 
 Overrides:
 
-- predicate readings are optional for Vocabulary Definitions and Structural
-  Definitions;
+- predicate readings are optional for Vocabulary Object Definitions,
+  Syntactic Object Definitions, and Structural Definitions;
 - negation predicate readings are normally omitted;
 - negated quantified statements are normally omitted unless the negated form is
   a standard proof tool for the object;
 - contrapositives are normally omitted and are not generated for definitions;
-- classification cards, structure blueprints, and signature presentations do
-  not require theorem-like logical blocks;
+- classification cards, structure blueprints, signature presentations,
+  syntactic presentations, formation-rules blocks, and worked-examples blocks
+  do not require theorem-like logical blocks;
 - interpretation blocks remain encouraged and are the preferred explanatory
-  layer for structural meaning;
+  layer for structural and syntactic meaning;
 - formal definitions still require stable labels and dependency handling under
   existing extraction standards;
-- theorem-like standards remain authoritative whenever a structural
-  presentation contains an actual definition, axiom, theorem, lemma,
+- theorem-like standards remain authoritative whenever a structural or
+  syntactic presentation contains an actual definition, axiom, theorem, lemma,
   proposition, or corollary.
 
 If a conflict arises, apply the more specific rule: theorem-like standards
 govern formal theorem-like environments, while this document governs structural
-presentation artifacts and the omission of non-useful predicate-oriented
-decoration around structural objects.
+and syntactic presentation artifacts and the omission of non-useful
+predicate-oriented decoration around structural and syntactic objects.
 
 Decoration block shape and ordering, when such blocks are used, are governed by
 `decoration-box-standards.md`.
