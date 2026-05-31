@@ -23,10 +23,13 @@ owned work, but they do not fork or weaken the global rules.
 - `task-scope-limits.md`
 - `authoring-standards.md`
 - `proof-standards.md`
+- `handwritten-proof-vault-standards.md`
 - `extraction-standards.md`
 - `notation-standards.md`
 - `file-splitting-standards.md`
 - `refactoring-standards.md`
+- `stub-chapter-standards.md`
+- `stub-section-standards.md`
 - `model-view-standards.md`
 - `build-render-standards.md`
 - `decoration-audit-standards.md`

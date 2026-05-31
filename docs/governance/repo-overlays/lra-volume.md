@@ -21,3 +21,17 @@ explicitly says otherwise. They should not edit synced `common/`,
 `bibliography/`, generated governance wrappers, or canonical YAML.
 
 Volume tasks should preserve Overleaf readiness and monorepo sync shape.
+
+## Stub Chapters
+
+Volume chapter stubs follow the global `stub-chapter-standards.md` standard.
+After stub generation, run the local volume build command when available; for
+standard LRA volume roots, try `latexmk -lualatex main.tex` unless local
+instructions say otherwise.
+
+## Stub Sections
+
+Volume section stubs follow the global `stub-section-standards.md` standard.
+Section-stub tasks must update the owning chapter's notes and proofs routers
+using the local routing convention, then run the local volume build command
+when available.

@@ -30,11 +30,14 @@ appropriate modular document instead.
 | --- | --- |
 | Authoring theorem, definition, axiom, or chapter content | `docs/governance/authoring-standards.md` |
 | Box decisions and load-bearing structural items | `docs/governance/authoring-standards.md` |
+| Handwritten proof vault policy and memorialized proof artifacts | `docs/governance/handwritten-proof-vault-standards.md` |
 | Formal notation, predicate readings, and no predicate leakage | `docs/governance/notation-standards.md` |
 | Proof file architecture, proof labels, and theorem/proof navigation | `docs/governance/proof-standards.md` |
 | Dependency remarks and extraction-visible labels | `docs/governance/extraction-standards.md` |
 | File splitting, one-object-per-environment rules, and structural stability | `docs/governance/file-splitting-standards.md` |
 | Refactoring safety and high-fidelity cleanup | `docs/governance/refactoring-standards.md` |
+| Stub chapter generation during governance rebuilds | `docs/governance/stub-chapter-standards.md` |
+| Stub section generation during governance rebuilds | `docs/governance/stub-section-standards.md` |
 | Decoration audit expectations | `docs/governance/decoration-audit-standards.md` |
 | Agent instruction generation and provider wrappers | `docs/governance/agent-instruction-policy.md` |
 | Task limits, stop conditions, and protected local paths | `docs/governance/task-scope-limits.md` |

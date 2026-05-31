@@ -8,6 +8,11 @@ rules after section 14.
 No proof file may be created for a statement unless the corresponding statement
 label already exists in the notes file.
 
+Handwritten proof artifacts, reviewed handwritten proof attempts, and
+proof-vault backlinks are governed by `handwritten-proof-vault-standards.md`.
+The proof vault is archival support only; canonical proof content remains in
+the volume repositories.
+
 ## Proof File Structure
 
 Proof files live under the owning chapter's `proofs/` tree and use lowercase,
