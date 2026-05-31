@@ -177,8 +177,7 @@ should perform the following steps:
 4. Create a markdown record for the proof artifact.
 5. Commit the proof vault repository.
 6. Push the proof vault repository.
-7. Add a backlink to the canonical theorem proof when the canonical repo
-   supports that backlink.
+7. Add a `\ProofVaultURL{...}` backlink to the canonical theorem proof file.
 8. Commit the canonical repository.
 9. Push the canonical repository.
 
@@ -186,18 +185,55 @@ No raw image may be committed at any stage of this workflow.
 
 ## Backlink Rules
 
-Backlinks from canonical proof files to proof-vault records are optional until
-a local volume convention requires them.
+Backlinks from canonical proof files to proof-vault records are required for
+proofs created from memorialized handwritten proof images.
 
-When a backlink is added:
+The backlink must use the shared macro:
+
+```latex
+\ProofVaultURL{https://github.com/wsollers/lra-proof-vault/tree/master/path/to/sanitized-record}
+```
+
+Place the macro immediately after the `Return` remark and before the
+unnumbered theorem restatement:
+
+```latex
+\begin{remark*}[Return]
+\hyperref[lem:example]{Return to Lemma}
+\end{remark*}
+
+\ProofVaultURL{https://github.com/wsollers/lra-proof-vault/tree/master/...}
+
+\begin{theorem*}[Example]
+...
+\end{theorem*}
+```
+
+The macro is extraction-visible. Knowledge extraction and theorem-explorer
+pipelines should treat the argument of `\ProofVaultURL{...}` as the
+proof-vault record URL for the owning proof label.
+
+Backlinks must satisfy the following rules:
 
 - it must point to a sanitized proof-vault record, not to a raw image;
 - it must not replace the canonical proof text;
 - it must not make the handwritten proof the source of truth;
-- it must use the local theorem/proof navigation style when one exists;
 - it must preserve existing labels, dependency blocks, and extraction-visible
   structure.
 
 If a canonical theorem or proof file does not exist, report the missing target
 instead of inventing one.
 
+## Canonical Proof Format
+
+When a proof is generated from a handwritten image, the canonical proof file
+must still follow `proof-standards.md`.
+
+The extracted proof content must be converted into:
+
+- a professional standard proof;
+- a detailed learning proof;
+- a proof-structure remark;
+- a dependencies block using extraction-visible `\hyperref[...]` targets.
+
+A direct transcription alone is not a complete canonical proof file.

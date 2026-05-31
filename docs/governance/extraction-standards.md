@@ -46,6 +46,18 @@ where `label` is a mathematical statement label with one of these prefixes:
 The extractor should treat the label inside `\hyperref[...]` as the graph-edge
 target.
 
+## Proof Vault Links
+
+Proof-vault backlinks must use:
+
+```latex
+\ProofVaultURL{https://github.com/wsollers/lra-proof-vault/tree/master/path/to/sanitized-record}
+```
+
+The extractor should associate the URL argument with the owning proof label.
+Do not infer proof-vault links from raw `\href` commands or ordinary prose
+URLs.
+
 Do not use `prf:` labels as dependency targets. A `prf:` label identifies a
 proof file or proof location, not a mathematical dependency.
 

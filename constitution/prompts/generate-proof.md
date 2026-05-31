@@ -6,6 +6,10 @@
 \hyperref[thm:ec-multiplication]{Return to Theorem}
 \end{remark*}
 
+% Include this line only when the proof was generated from a memorialized
+% handwritten proof image:
+% \ProofVaultURL{https://github.com/wsollers/lra-proof-vault/tree/master/path/to/sanitized-record}
+
 \begin{theorem*}[Multiplication of Equivalence Classes]
 For every $[(a,b)],[(c,d)]\in\mathbb{Q}$,
 \[
@@ -55,14 +59,16 @@ is the prior justification that this rule is independent of the representatives
 chosen for the two rational numbers.
 \end{remark*}
 
-\begin{remark*}[Dependencies]~\\
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:rational-operations]{Definition~\ref*{def:rational-operations}}
         \textnormal{(definition of multiplication on rational equivalence classes)}
   \item \hyperref[lem:rational-multiplication-well-defined]{Lemma~\ref*{lem:rational-multiplication-well-defined}}
         \textnormal{(well-definedness of multiplication)}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
+
+\clearpage
 
 Do not use `topicbox` containers in proof files.
 Do not use `exposition` environments in proof files.
@@ -71,8 +77,12 @@ professional proof first, detailed learning proof second.
 At the top of every proof file, emit:
 - `\newpage`
 - `\phantomsection`
-- a proof label of the form `\label{prf-...}`
+- a proof label of the form `\label{prf:...}`
 - `\begin{remark*}[Return] ... \end{remark*}` with a hyperref back to the
   source theorem/corollary/lemma/proposition
+- if the proof was generated from a memorialized handwritten proof image,
+  `\ProofVaultURL{...}` immediately after the Return remark and before the
+  starred theorem restatement
 Use starred statement environments in proof files, e.g. `theorem*` or
 `corollary*`, not the numbered statement environments from the note body.
+End each proof file with `\clearpage`.

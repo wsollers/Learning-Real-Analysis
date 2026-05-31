@@ -23,12 +23,21 @@ start on the same page as the previous proof.
 A full proof file contains:
 
 1. proof-level label,
-2. unnumbered theorem-like restatement,
-3. theorem-side navigation link when applicable,
-4. professional standard proof,
-5. detailed learning proof,
-6. proof structure remark,
-7. dependencies remark.
+2. theorem-side navigation link,
+3. proof-vault backlink when the proof came from a memorialized handwritten
+   proof artifact,
+4. unnumbered theorem-like restatement,
+5. professional standard proof,
+6. detailed learning proof,
+7. proof structure remark,
+8. dependencies remark,
+9. `\clearpage`.
+
+Proof-vault backlinks must use the shared `\ProofVaultURL{...}` macro and
+must be placed immediately after the `Return` remark and before the theorem
+restatement. Do not use raw `\href` or ad hoc URL text for proof-vault links.
+The macro argument must point to the sanitized proof-vault record, not to a raw
+or unsanitized image.
 
 ## Proof Stub Structure
 
@@ -44,6 +53,11 @@ The professional proof is compact and rigorous. The detailed learning proof
 teaches the same proof with explicit step structure. Explanationless proof mode
 is opt-in only and does not waive notation, label, dependency, or architecture
 rules.
+
+Proofs generated from handwritten proof images must still be converted into the
+full two-layer proof-file format. The handwritten proof may inform the
+professional and detailed layers, but it must not replace the required
+structure with a single transcription block.
 
 ## Label Rule
 

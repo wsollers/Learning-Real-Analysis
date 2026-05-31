@@ -172,17 +172,25 @@ proof_file:
     2: \phantomsection
     3: \label{prf:{theorem-id}}       # outside all environments
     4: remark* Return                 # \hyperref back to theorem
-    5: theorem*                       # restatement, unnumbered, no label inside
-    6: proof Professional Standard    # compact rigorous argument
-    7: proof Detailed Learning        # bold inline step headings only
-    8: remark* Proof structure        # high-level strategy
-    9: remark* Dependencies           # \hyperref links to all items used
+    5: optional \ProofVaultURL{...}    # required for memorialized handwritten proof records
+    6: theorem*                       # restatement, unnumbered, no label inside
+    7: proof Professional Standard    # compact rigorous argument
+    8: proof Detailed Learning        # bold inline step headings only
+    9: remark* Proof structure        # high-level strategy
+    10: dependencies environment      # \hyperref links to all items used
+    11: \clearpage
 
   label_rules:
     - proof label must be \label{prf:X} where X matches \label{thm:X} / \label{def:X}
     - label appears outside and prior to all environments
     - no \label{} inside theorem* environment
     - no \label{} inside proof environments
+
+  proof_vault_rules:
+    - if a proof is generated from a memorialized handwritten proof image, include \ProofVaultURL{...}
+    - \ProofVaultURL{...} appears immediately after the Return remark and before theorem*
+    - the URL points to the sanitized proof-vault record, not a raw image
+    - extraction treats the macro argument as the proof-vault URL for the owning proof label
 
   macro_rules:
     - no flash macros
