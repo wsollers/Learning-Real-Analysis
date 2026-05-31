@@ -11,7 +11,9 @@ label already exists in the notes file.
 ## Proof File Structure
 
 Proof files live under the owning chapter's `proofs/` tree and use lowercase,
-hyphen-separated ASCII filenames. Each notes proof file begins on a new page.
+hyphen-separated ASCII filenames. Each notes proof file begins on a new page
+and ends with `\clearpage`, so the next proof topic or proof section cannot
+start on the same page as the previous proof.
 
 A full proof file contains:
 
