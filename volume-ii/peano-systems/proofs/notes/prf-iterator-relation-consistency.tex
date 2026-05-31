@@ -6,6 +6,8 @@
 \hyperref[lem:iterator-relation-consistency]{Return to Lemma}
 \end{remark*}
 
+\ProofVaultURL{https://github.com/wsollers/lra-proof-vault/tree/master/volume-ii/peano-systems/lem-iterator-relation-consistency}
+
 \begin{theorem*}[Consistency of the Minimal Iterator Relation]
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
 $R^*$ be the minimal iterator relation for $(W,c,g)$. Then $R^*$ is an
@@ -13,6 +15,118 @@ iterator relation for $(W,c,g)$.
 \end{theorem*}
 
 \begin{proof}
-TODO
+\textbf{Professional Standard Proof.}~\\
+Let
+\[
+\mathcal R=
+\{R\subseteq P\times W : R \text{ is an iterator relation for } (W,c,g)\}.
+\]
+By definition,
+\[
+R^*=\bigcap \mathcal R.
+\]
+We verify the three clauses in the definition of an iterator relation.
+
+First, since every member of $\mathcal R$ is a subset of $P\times W$, its
+intersection is also a subset of $P\times W$. Hence
+\[
+R^*\subseteq P\times W.
+\]
+
+Second, let $R\in\mathcal R$. Because $R$ is an iterator relation,
+$(1,c)\in R$. Since this holds for every $R\in\mathcal R$, the pair $(1,c)$
+belongs to the intersection. Thus
+\[
+(1,c)\in R^*.
+\]
+
+Third, suppose $n\in P$, $w\in W$, and $(n,w)\in R^*$. Let $R\in\mathcal R$.
+Then $(n,w)\in R$, because $R^*$ is the intersection of all relations in
+\(\mathcal R\). Since $R$ is an iterator relation, it is closed under the
+iterator step, so
+\[
+(S(n),g(w))\in R.
+\]
+This holds for every $R\in\mathcal R$, and therefore
+\[
+(S(n),g(w))\in R^*.
+\]
+
+We have shown that $R^*\subseteq P\times W$, that $(1,c)\in R^*$, and that
+$R^*$ is closed under the iterator step. Hence $R^*$ is an iterator relation
+for $(W,c,g)$.
 \end{proof}
 
+\begin{proof}
+\textbf{Detailed Learning Proof.}~\\
+
+\textbf{Step 1. Identify the family being intersected.}
+Let
+\[
+\mathcal R=
+\{R\subseteq P\times W : R \text{ is an iterator relation for } (W,c,g)\}.
+\]
+By definition, the minimal iterator relation is
+\[
+R^*=\bigcap \mathcal R.
+\]
+To prove that $R^*$ is itself an iterator relation, each clause in the
+definition of iterator relation must be checked.
+
+\textbf{Step 2. Check that $R^*$ is a relation from $P$ to $W$.}
+Every member of $\mathcal R$ is a subset of $P\times W$. An intersection of
+subsets of $P\times W$ is again a subset of $P\times W$. Therefore
+\[
+R^*\subseteq P\times W.
+\]
+
+\textbf{Step 3. Check the base pair.}
+Let $R\in\mathcal R$. Since $R$ is an iterator relation for $(W,c,g)$, it
+contains the base pair $(1,c)$. This is true for every $R\in\mathcal R$.
+Hence $(1,c)$ belongs to the intersection of all such relations, so
+\[
+(1,c)\in R^*.
+\]
+
+\textbf{Step 4. Check closure under the iterator step.}
+Suppose $n\in P$, $w\in W$, and $(n,w)\in R^*$. Let $R\in\mathcal R$ be
+arbitrary. Since $R^*$ is the intersection of all relations in $\mathcal R$,
+the membership $(n,w)\in R^*$ implies $(n,w)\in R$.
+
+Because $R$ is an iterator relation, it is closed under the iterator step.
+Therefore
+\[
+(S(n),g(w))\in R.
+\]
+This holds for every $R\in\mathcal R$. Hence $(S(n),g(w))$ belongs to the
+intersection of all relations in $\mathcal R$, and so
+\[
+(S(n),g(w))\in R^*.
+\]
+
+\textbf{Step 5. Conclude.}
+The relation $R^*$ is a subset of $P\times W$, contains the base pair
+$(1,c)$, and is closed under the iterator step. These are exactly the clauses
+in the definition of an iterator relation. Hence $R^*$ is an iterator relation
+for $(W,c,g)$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses the closure properties that define the class of iterator
+relations and verifies that those properties are preserved by intersection.
+The base-pair and step-closure clauses hold in every iterator relation in the
+family, so they hold in the intersection that defines $R^*$. The argument is
+therefore a direct verification from the definition of the minimal iterator
+relation.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[def:iterator-data-on-peano-system]{Iterator Data on a Peano System}
+  \item \hyperref[def:iterator-relation]{Iterator Relation}
+  \item \hyperref[def:minimal-iterator-relation]{Minimal Iterator Relation}
+\end{itemize}
+\end{dependencies}
+
+\clearpage
