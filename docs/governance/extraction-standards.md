@@ -9,6 +9,9 @@ Extraction depends on stable labels, one theorem-like object per environment,
 dependency remarks, and canonical logical blocks. Authoring changes must
 preserve those structures unless the extraction pipeline is explicitly updated.
 
+Author-facing dependency rules live in `dependency-standards.md`. This document
+records the extraction contract and implementation-facing expectations.
+
 ## Dependency Blocks
 
 Dependency blocks must be readable in the PDF and extractable by tooling.
@@ -71,6 +74,9 @@ not invent a label.
 
 Logical blocks must be ordered and named consistently. Predicate-reading blocks
 may use canonical predicates only where their layer permits them.
+
+Decoration block shape and order are governed by
+`decoration-box-standards.md`.
 
 ## Labels
 

@@ -22,6 +22,8 @@ owned work, but they do not fork or weaken the global rules.
 - `agent-instruction-policy.md`
 - `task-scope-limits.md`
 - `authoring-standards.md`
+- `dependency-standards.md`
+- `decoration-box-standards.md`
 - `proof-standards.md`
 - `handwritten-proof-vault-standards.md`
 - `extraction-standards.md`
@@ -30,6 +32,7 @@ owned work, but they do not fork or weaken the global rules.
 - `refactoring-standards.md`
 - `stub-chapter-standards.md`
 - `stub-section-standards.md`
+- `model-standards.md`
 - `model-view-standards.md`
 - `build-render-standards.md`
 - `decoration-audit-standards.md`

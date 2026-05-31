@@ -95,6 +95,25 @@ github_url:
 notes_file:
 ```
 
+The root `theorem-map.yaml` file must also include one entry for each
+memorialized proof record. Each map entry must include at least:
+
+```yaml
+theorem_label:
+theorem_title:
+canonical_repo:
+canonical_path:
+vault_record:
+github_url:
+image_file:
+review_status:
+```
+
+The `github_url` field is required in both `metadata.yaml` and
+`theorem-map.yaml`. This allows consumers such as the Knowledge Explorer to
+read proof-vault links from the root map without opening each per-record
+metadata file.
+
 Allowed metadata includes:
 
 - source filename;

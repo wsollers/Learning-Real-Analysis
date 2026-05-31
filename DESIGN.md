@@ -18,7 +18,7 @@ appropriate modular document instead.
 
 | Directory | Purpose |
 | --- | --- |
-| `docs/governance/` | Authoring, proof, extraction, notation, generated-agent, task-scope, refactoring, and validation standards. |
+| `docs/governance/` | Authoring, dependency, decoration-box, model presentation, proof, extraction, notation, generated-agent, task-scope, refactoring, and validation standards. |
 | `docs/governance/repo-overlays/` | Additive repository and repository-family overlays. |
 | `docs/architecture/` | Ownership, repository layout, generated-file policy, sync architecture, build/render architecture, canonical YAML, and knowledge pipeline architecture. |
 | `docs/workflows/` | Operational workflows for extraction, cleanup, wrapper sync, and audit/report phases. |
@@ -30,10 +30,13 @@ appropriate modular document instead.
 | --- | --- |
 | Authoring theorem, definition, axiom, or chapter content | `docs/governance/authoring-standards.md` |
 | Box decisions and load-bearing structural items | `docs/governance/authoring-standards.md` |
+| Shared dependency information for definitions, theorem-like environments, proofs, stubs, and structural records | `docs/governance/dependency-standards.md` |
+| Standardized surrounding logical and explanatory blocks for formal artifacts | `docs/governance/decoration-box-standards.md` |
+| Structural presentations for signatures, languages, models, classifications, and blueprints | `docs/governance/model-standards.md` |
 | Handwritten proof vault policy and memorialized proof artifacts | `docs/governance/handwritten-proof-vault-standards.md` |
 | Formal notation, predicate readings, and no predicate leakage | `docs/governance/notation-standards.md` |
 | Proof file architecture, proof labels, and theorem/proof navigation | `docs/governance/proof-standards.md` |
-| Dependency remarks and extraction-visible labels | `docs/governance/extraction-standards.md` |
+| Extraction implementation for dependency labels, proof-vault URLs, and theorem explorer records | `docs/governance/extraction-standards.md` |
 | File splitting, one-object-per-environment rules, and structural stability | `docs/governance/file-splitting-standards.md` |
 | Refactoring safety and high-fidelity cleanup | `docs/governance/refactoring-standards.md` |
 | Stub chapter generation during governance rebuilds | `docs/governance/stub-chapter-standards.md` |
