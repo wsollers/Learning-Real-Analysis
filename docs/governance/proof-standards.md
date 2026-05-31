@@ -23,6 +23,14 @@ A full proof file contains:
 6. proof structure remark,
 7. dependencies remark.
 
+## Proof Stub Structure
+
+A proof stub is a compile-safe proof file that preserves the full proof-file
+structure. It may replace the professional standard proof and detailed learning
+proof bodies with TODO placeholders, but it must still include the proof-level
+label, theorem restatement, navigation, proof-structure remark, and dependency
+block.
+
 ## Two-Layer Proof Rule
 
 The professional proof is compact and rigorous. The detailed learning proof
