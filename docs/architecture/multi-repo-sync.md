@@ -43,11 +43,3 @@ Integration into `lra-common`, `Learning-Real-Analysis`, `lra-volume-*`, or
 
 Future governance sync may deliver generated agent wrappers to this repo, using
 the `lra-pdf-extractor` overlay.
-
-## Planned Volume Repositories
-
-The canonical volume set is `wsollers/lra-volume-i` through
-`wsollers/lra-volume-viii`. Existing split-repo sync workflows cover the active
-Volume I-V repositories. Volume VI-VIII split repositories and sync workflows
-are deferred until the later split-repo phase; monorepo-local tooling must not
-assume those external repositories already exist.

@@ -24,18 +24,3 @@ owned by volume repos.
 
 Volume repos own volume content only. They do not own Lean formalization,
 C++/Vulkan simulation, numerical benchmarking, or global governance.
-
-The target architecture contains eight volume repositories:
-
-- `wsollers/lra-volume-i`
-- `wsollers/lra-volume-ii`
-- `wsollers/lra-volume-iii`
-- `wsollers/lra-volume-iv`
-- `wsollers/lra-volume-v`
-- `wsollers/lra-volume-vi`
-- `wsollers/lra-volume-vii`
-- `wsollers/lra-volume-viii`
-
-As of Phase 3B, the monorepo has standalone roots and stub directories for
-Volumes VI-VIII. External split repositories and sync workflows for those
-volumes remain deferred.

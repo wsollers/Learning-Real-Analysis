@@ -16,9 +16,9 @@ contains the repository ownership and layout rules.
 | `lra-volume-iii` | Volume III content under `volume-iii/` | to monorepo `volume-iii/` |
 | `lra-volume-iv` | Volume IV content under `volume-iv/` | to monorepo `volume-iv/` |
 | `lra-volume-v` | Volume V content under `volume-v/` | to monorepo `volume-v/` |
-| `lra-volume-vi` | Volume VI content under `volume-vi/` | planned; split-repo sync deferred |
-| `lra-volume-vii` | Volume VII content under `volume-vii/` | planned; split-repo sync deferred |
-| `lra-volume-viii` | Volume VIII content under `volume-viii/` | planned; split-repo sync deferred |
+| `lra-volume-vi` | Volume VI content under `volume-vi/` | to monorepo `volume-vi/` |
+| `lra-volume-vii` | Volume VII content under `volume-vii/` | to monorepo `volume-vii/` |
+| `lra-volume-viii` | Volume VIII content under `volume-viii/` | to monorepo `volume-viii/` |
 | `lra-lean` | Lean 4 formalization workspace | independent/specialized |
 | `lra-nurbs` | NURBS/DDE C++ engine | independent/specialized |
 | `lra-knowledge-explorer` | extraction pipeline, HTML theorem graph, GitHub Pages site | triggered by monorepo CI dispatch |
@@ -186,9 +186,8 @@ whenever LaTeX source content is pushed to the monorepo. The full chain is:
 
 ```
 lra-common push        ─┐
-lra-volume-ii push      ├─► Learning-Real-Analysis (sync CI)
-lra-volume-iii push     │     └── trigger-knowledge-rebuild.yml
-planned volume repos    │
+lra-volume-i push       ├─► Learning-Real-Analysis (sync CI)
+lra-volume-* push       │     └── trigger-knowledge-rebuild.yml
        ...             ─┘               └── repository_dispatch: lra-rebuild
                                                   └── lra-knowledge-explorer
                                                         ├── checkout LRA
@@ -218,19 +217,13 @@ fires only when these paths change on `main`:
 
 | Path | Reason |
 |---|---|
-| `volume-ii/**` | Core LaTeX chapters extracted by the pipeline |
-| `volume-iii/**` | Core LaTeX chapters extracted by the pipeline |
+| `volume-i/**` through `volume-viii/**` | Volume LaTeX chapters extracted by the pipeline |
 | `common/**` | Shared macro/environment changes can affect extraction output |
 | `bibliography/**` | Same reasoning |
 | `theorem-explorer/**.py` | Script changes in the pipeline itself warrant a rebuild |
 
 Cosmetic or structural files (`DESIGN.md`, `BACKLOG.md`, `curriculum.html`,
 etc.) do not trigger a rebuild.
-
-The current extraction workflow intentionally watches only `volume-ii/**` and
-`volume-iii/**` for volume content. Extending extraction to the other target
-volumes is a deferred pipeline decision, not part of the eight-volume
-frontmatter/tooling migration.
 
 ### Required secret
 

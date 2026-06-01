@@ -29,9 +29,9 @@ ownership and filesystem map lives in `REPOSITORY_STRUCTURE.md`.
 | `lra-volume-iii` | Volume III content — Overleaf target |
 | `lra-volume-iv` | Volume IV content — Overleaf target |
 | `lra-volume-v` | Volume V content — Overleaf target |
-| `lra-volume-vi` | Volume VI content — planned Overleaf target |
-| `lra-volume-vii` | Volume VII content — planned Overleaf target |
-| `lra-volume-viii` | Volume VIII content — planned Overleaf target |
+| `lra-volume-vi` | Volume VI content — Overleaf target |
+| `lra-volume-vii` | Volume VII content — Overleaf target |
+| `lra-volume-viii` | Volume VIII content — Overleaf target |
 | `lra-lean` | Lean 4 proof formalization |
 | `lra-nurbs` | NURBS/DDE C++ engine |
 | `lra-knowledge-explorer` | Theorem extraction pipeline + HTML graph |

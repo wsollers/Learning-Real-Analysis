@@ -9,8 +9,7 @@ Source: `REPOSITORY_STRUCTURE.md`.
 | `lra-governance` | Governance docs, architecture docs, repo overlays, prompts, schemas, generators, sync policy. | source for generated governance artifacts |
 | `Learning-Real-Analysis` | Assembled monorepo, omnibus builds, canonical YAML sources, docker, cross-volume integration. | receives volume/common/governance syncs |
 | `lra-common` | Shared LaTeX infrastructure: `common/`, `bibliography/`. | to volume repos and monorepo |
-| `lra-volume-i` through `lra-volume-v` | Active split volume content under `volume-N/`. | to monorepo `volume-N/` |
-| `lra-volume-vi` through `lra-volume-viii` | Planned split volume repositories for the eight-volume architecture. | deferred until split repos exist |
+| `lra-volume-i` through `lra-volume-viii` | Volume content under `volume-N/`. | to monorepo `volume-N/` |
 | `lra-lean` | Lean 4 formalization workspace. | to monorepo `lean/` |
 | `lra-nurbs` | C++ / Vulkan / geometry / simulation workspace. | to monorepo `nurbs_dde/` |
 | `lra-knowledge-explorer` | Extraction pipeline and HTML theorem explorer. | receives rebuild dispatch from monorepo |

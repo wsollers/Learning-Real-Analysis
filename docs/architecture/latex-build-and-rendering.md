@@ -14,11 +14,6 @@ Docker build details remain in the monorepo's Docker documentation. Governance
 docs record ownership and safety boundaries rather than duplicating every build
 command.
 
-The monorepo exposes standalone roots for Volumes I-VIII. As of Phase 3D, the
-omnibus `main.tex` root includes Volumes I-VIII. The future Volume III
-frontispiece replacement still depends on generating and tracking
-`images/cauchy.png`.
-
 ## Volume Repos
 
 Each `lra-volume-*` repo is Overleaf-ready. Its local `main.tex` uses synced
