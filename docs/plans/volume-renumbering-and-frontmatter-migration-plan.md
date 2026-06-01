@@ -162,11 +162,11 @@ The target architecture expects these monorepo-relative image paths:
 |---|---|---|---|
 | Volume I | Georg Cantor | `images/cantor.png` | present in `lra-volume-i` |
 | Volume II | Giuseppe Peano | `images/peano.png` | present in `lra-volume-ii` |
-| Volume III | Augustin-Louis Cauchy | `images/cauchy.png` | not present in inspected split repos |
-| Volume IV | Emmy Noether | `images/noether.png` | untracked in local monorepo only |
-| Volume V | Henri Poincare | `images/poincare.png` | untracked in local monorepo only |
+| Volume III | Augustin-Louis Cauchy | `images/cauchy.png` | missing; must be generated and tracked before the Volume III frontispiece is finalized |
+| Volume IV | Emmy Noether | `images/noether.png` | tracked in the monorepo as of Phase 3C |
+| Volume V | Henri Poincare | `images/poincare.png` | tracked in the monorepo as of Phase 3C |
 | Volume VI | Leonhard Euler | `images/euler.png` | present in `lra-volume-iv` |
-| Volume VII | Isaac Newton | `images/newton.png` | untracked in local monorepo only |
+| Volume VII | Isaac Newton | `images/newton.png` | tracked in the monorepo as of Phase 3C |
 | Volume VIII | David Hilbert | `images/hilbert.png` | present in `lra-volume-iii` |
 
 ### Current Split-Repo Image Directories
