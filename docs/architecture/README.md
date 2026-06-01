@@ -13,6 +13,8 @@ Modules:
 - `latex-build-and-rendering.md`
 - `canonical-yaml.md`
 - `generated-file-policy.md`
+- `volume-architecture.md`
+- `frontmatter-and-frontispiece-standard.md`
 
 `DESIGN.md` routes to these modular architecture sources. Keep architecture
 policy here rather than expanding the root router.

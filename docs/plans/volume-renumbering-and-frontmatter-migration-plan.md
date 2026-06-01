@@ -8,6 +8,11 @@ content moves, repository renames, image edits, theorem-label changes,
 proof-label changes, citation changes, or cross-reference changes are included
 in this phase.
 
+Phase 1 governance documents:
+
+- `docs/architecture/volume-architecture.md`
+- `docs/architecture/frontmatter-and-frontispiece-standard.md`
+
 ## Current Repository Inventory
 
 ### Existing Volume Repositories
