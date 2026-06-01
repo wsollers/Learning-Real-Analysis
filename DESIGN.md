@@ -50,6 +50,7 @@ appropriate modular document instead.
 | Canonical YAML ownership | `docs/architecture/canonical-yaml.md` |
 | Knowledge graph and theorem explorer pipeline | `docs/architecture/knowledge-pipeline.md` and `docs/architecture/theorem-explorer-pipeline.md` |
 | LaTeX build and rendering expectations | `docs/architecture/latex-build-and-rendering.md` |
+| Numerical-analysis software workbench tasks | `docs/governance/repo-overlays/lra-numerical-analysis.md` |
 | Multi-repo sync boundaries | `docs/architecture/multi-repo-sync.md` |
 | Generated file headers, drift, and full-replace policy | `docs/architecture/generated-file-policy.md` |
 | Knowledge extraction workflow | `docs/workflows/knowledge-extraction.md` |
