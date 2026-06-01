@@ -94,8 +94,7 @@ The monorepo now has planned stub directories and standalone roots for
 Volumes VI-VIII, and local Docker/migration tooling recognizes the eight-volume
 identifier set. Some integration points intentionally remain deferred:
 
-- monorepo `main.tex` still inputs only `volume-i` through `volume-v` until
-  clean-checkout frontispiece assets are safe;
+- monorepo `main.tex` inputs Volumes I-VIII as of Phase 3D;
 - split-repo sync workflows currently exist only for Volume I through Volume V;
 - Volume VI-VIII external split repositories are planned, not yet active;
 - knowledge rebuild workflow path filters currently watch only the extraction

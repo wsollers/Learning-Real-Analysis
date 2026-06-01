@@ -506,8 +506,9 @@ cross-references, and Overleaf file limits while the architecture stabilizes.
   one repo too large before the new repos are ready.
 - Current monorepo and split repos have sync workflows that can overwrite
   volume directories with `rsync --delete`.
-- Historical five-volume script assumptions have been updated in Phase 3B;
-  root inclusion and VI-VIII split-repo sync remain deferred.
+- Historical five-volume script assumptions have been updated in Phase 3B,
+  and root inclusion is enabled as of Phase 3D. VI-VIII split-repo sync remains
+  deferred.
 - Existing quote/frontispiece files mix display-title content with image and
   quote content.
 - Volume III has substantial mixed-domain content; moving it all at once would

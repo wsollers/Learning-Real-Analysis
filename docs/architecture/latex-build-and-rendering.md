@@ -14,10 +14,10 @@ Docker build details remain in the monorepo's Docker documentation. Governance
 docs record ownership and safety boundaries rather than duplicating every build
 command.
 
-The monorepo exposes standalone roots for Volumes I-VIII. The omnibus
-`main.tex` root currently includes only Volumes I-V; root inclusion of
-Volumes VI-VIII remains deferred until frontispiece assets are tracked and the
-clean-checkout build is safe.
+The monorepo exposes standalone roots for Volumes I-VIII. As of Phase 3D, the
+omnibus `main.tex` root includes Volumes I-VIII. The future Volume III
+frontispiece replacement still depends on generating and tracking
+`images/cauchy.png`.
 
 ## Volume Repos
 

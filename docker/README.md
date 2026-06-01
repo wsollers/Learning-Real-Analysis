@@ -44,7 +44,7 @@ Each volume has a thin standalone root at the repo root:
 
 | File | Content |
 |---|---|
-| `main.tex` | Full book root; currently enables Volumes I-V while VI-VIII root inclusion is deferred |
+| `main.tex` | Full book root; enables Volumes I-VIII |
 | `volume-i-main.tex` | Volume I: Logic, Sets, and Proof |
 | `volume-ii-main.tex` | Volume II: Origins of the Numbers |
 | `volume-iii-main.tex` | Volume III: Analysis |
@@ -125,7 +125,7 @@ CTAN packages are already present and no `tlmgr install` calls are needed.
 | Symptom | Fix |
 |---|---|
 | `Image not found` error | Run `.\docker\compile.ps1 -Build` |
-| Volume VII missing `images/newton.png` | Image tracking is deferred until Phase 5; keep root inclusion disabled on clean checkouts |
+| Volume VII missing `images/newton.png` | Ensure canonical frontispiece assets are tracked before compiling clean checkouts |
 | Build fails with LaTeX errors | Check `build\main.log` for the full compiler log |
 | Index not updating | Run `.\docker\compile.ps1 -Clean` to wipe stale `.idx` files |
 | PDF not found after success | Verify `build\` directory exists; check `.latexmkrc` `$out_dir` |
