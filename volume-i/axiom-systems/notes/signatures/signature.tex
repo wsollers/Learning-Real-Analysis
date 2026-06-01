@@ -1,0 +1,175 @@
+\subsection{Signatures}
+\label{sec:axiom-systems-signatures}
+
+\begin{toolkitbox}{Signatures Toolkit --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Role} & \textbf{Detail} \\
+\midrule
+Signature & non-logical vocabulary & \hyperref[def:signature]{Definition} \\
+Language & signature together with logical syntax & \hyperref[def:language]{Definition} \\
+Constant symbol & names a distinguished object syntactically & \hyperref[def:constant-symbol]{Definition} \\
+Function symbol & names an operation syntactically & \hyperref[def:function-symbol]{Definition} \\
+Relation symbol & names a relation syntactically & \hyperref[def:relation-symbol]{Definition} \\
+Arity & records number of input places & \hyperref[def:arity]{Definition} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\SignatureMetadata{arithmetic-signature}
+
+\begin{signaturebox}{Signature Presentation: A Simple Arithmetic Language}
+Let
+\[
+  \Sigma_{\mathrm{arith}}
+  =
+  \bigl(
+    \mathcal{C}_{\mathrm{arith}},
+    \mathcal{F}_{\mathrm{arith}},
+    \mathcal{R}_{\mathrm{arith}},
+    \operatorname{ar}
+  \bigr)
+\]
+where
+\[
+  \mathcal{C}_{\mathrm{arith}}=\{0,1\},\qquad
+  \mathcal{F}_{\mathrm{arith}}=\{+,\cdot,S\},\qquad
+  \mathcal{R}_{\mathrm{arith}}=\{<\}.
+\]
+The arity function is specified by
+\[
+  \operatorname{ar}(0)=\operatorname{ar}(1)=0,\qquad
+  \operatorname{ar}(S)=1,\qquad
+  \operatorname{ar}(+)=\operatorname{ar}(\cdot)=2,\qquad
+  \operatorname{ar}(<)=2.
+\]
+
+\begin{signaturetable}
+$0,1$ & constants & $0$ & distinguished constant names \\
+$S$ & function symbol & $1$ & successor operation symbol \\
+$+,\cdot$ & function symbols & $2$ & binary operation symbols \\
+$<$ & relation symbol & $2$ & binary order relation symbol \\
+\end{signaturetable}
+
+The signature records only the available non-logical symbols and their arities.
+It does not assert any axioms about those symbols.
+\end{signaturebox}
+
+\begin{definition}[Signature]
+\label{def:signature}
+A \emph{signature} is a collection of non-logical symbols divided into
+constant symbols, function symbols, and relation symbols, together with an
+arity assignment for each symbol. Constant symbols are recorded as arity-$0$
+symbols.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A signature is the formal vocabulary available before any axioms are chosen.
+It says which symbols may occur and how many input places each symbol has.
+\end{remark*}
+
+\NoLocalDependencies
+
+\begin{definition}[Arity]
+\label{def:arity}
+The \emph{arity} of a symbol is the number of input places assigned to that
+symbol by a signature. Constants have arity $0$; unary symbols have arity $1$;
+binary symbols have arity $2$.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+Arity is bookkeeping for grammatical well-formedness. It determines whether a
+symbol has been supplied with the correct number of arguments.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Language]
+\label{def:language}
+A \emph{language} determined by a signature $\Sigma$ consists of the
+non-logical symbols of $\Sigma$ together with the logical symbols, variables,
+punctuation, and formation rules used to build terms and formulas.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+The signature supplies the subject-specific vocabulary. The language adds the
+logical grammar needed to form expressions from that vocabulary.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Constant Symbol]
+\label{def:constant-symbol}
+A \emph{constant symbol} is a non-logical symbol of arity $0$ in a signature.
+It may occur as a term without taking any input terms.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A constant symbol is a name-forming symbol. In the arithmetic signature above,
+$0$ and $1$ are constant symbols.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+  \item \hyperref[def:arity]{Arity}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Function Symbol]
+\label{def:function-symbol}
+A \emph{function symbol} is a non-logical symbol in a signature assigned an
+arity $n\geq 1$. If $f$ has arity $n$ and $t_1,\ldots,t_n$ are terms, then
+$f(t_1,\ldots,t_n)$ is a term.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A function symbol is an operation-forming symbol. In the arithmetic signature
+above, $S$ is unary, while $+$ and $\cdot$ are binary.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+  \item \hyperref[def:arity]{Arity}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Relation Symbol]
+\label{def:relation-symbol}
+A \emph{relation symbol} is a non-logical symbol in a signature assigned an
+arity $n\geq 1$. If $R$ has arity $n$ and $t_1,\ldots,t_n$ are terms, then
+$R(t_1,\ldots,t_n)$ is an atomic formula.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A relation symbol is a statement-forming symbol once it is applied to the
+right number of terms. In the arithmetic signature above, $<$ is a binary
+relation symbol.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+  \item \hyperref[def:arity]{Arity}
+\end{itemize}
+\end{dependencies}
+
+\begin{remark*}[Structural remarks]
+The same signature may support different choices of axioms later in the
+chapter. For example, a single arithmetic vocabulary can be used with stronger
+or weaker axiom sets.
+
+The same signature may also be read over different mathematical universes once
+interpretations are introduced. At this stage, the signature itself records
+only the common vocabulary; it does not choose any particular interpretation.
+\end{remark*}

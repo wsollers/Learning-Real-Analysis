@@ -1,0 +1,169 @@
+\subsection{Models}
+\label{sec:axiom-systems-models}
+
+\begin{toolkitbox}{Models Toolkit --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Role} & \textbf{Detail} \\
+\midrule
+Interpretation & assigns meanings to symbols & \hyperref[def:axiom-systems-interpretation]{Definition} \\
+Structure & domain with interpreted symbols & \hyperref[def:axiom-systems-structure]{Definition} \\
+Model & structure satisfying the theory & \hyperref[def:axiom-systems-model]{Definition} \\
+Satisfaction & truth of a statement in a structure & \hyperref[def:axiom-systems-satisfaction]{Definition} \\
+Countermodel & model where a statement fails & \hyperref[def:axiom-systems-countermodel]{Definition} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\begin{tcolorbox}[colback=structurebox, colframe=structureborder, arc=2pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\small\textbf{Model Presentation: Arithmetic as a Model}},
+  fonttitle=\small\bfseries]
+Reuse the arithmetic signature and arithmetic-style axioms from the previous
+sections. A model begins by interpreting the symbols of that signature in an
+actual mathematical structure.
+
+\[
+\begin{array}{rcl}
+\text{Domain} & = & \text{the natural numbers},\\
+0 & \mapsto & \text{the number zero},\\
+S & \mapsto & \text{the successor operation},\\
++ & \mapsto & \text{addition}.
+\end{array}
+\]
+
+In this structure, the statement
+\[
+  \forall x\;(x+0=x)
+\]
+holds because adding zero to any natural number gives back that same natural
+number.
+
+The formal symbol $0$ is only a symbol until it is interpreted as the number
+zero. The formal symbol $+$ is only a symbol until it is interpreted as
+addition. The symbols acquire meaning only after interpretation.
+\end{tcolorbox}
+
+\begin{remark*}[Structural remarks]
+\textbf{Syntax vs meaning.}
+Signatures, axioms, and theories are formal objects. They belong to syntax:
+they specify vocabulary, adopted assertions, and consequences. Models provide
+semantic meaning by assigning mathematical content to the symbols and by
+determining which statements hold.
+
+\textbf{One theory, many models.}
+The same theory may have multiple models. Euclidean geometry may be realized
+in different coordinate systems. The group axioms have many models, including
+different concrete groups. The theory fixes the assertions; a model is one
+mathematical realization in which those assertions hold.
+
+\textbf{Countermodels.}
+A statement fails to follow from a theory if there is a model of the theory in
+which that statement is false. Countermodels are therefore evidence that a
+claim is not forced by the axioms.
+
+\textbf{Forward roadmap.}
+The next sections use models to explain consistency and independence:
+\[
+\begin{array}{c}
+\text{Models}\\
+\Downarrow\\
+\text{Consistency}\\
+\Downarrow\\
+\text{Independence}
+\end{array}
+\]
+\end{remark*}
+
+\begin{definition}[Interpretation]
+\label{def:axiom-systems-interpretation}
+An \emph{interpretation} is an assignment of meanings to the non-logical
+symbols of a signature.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+An interpretation turns formal vocabulary into mathematical content. It tells
+what each constant, function symbol, and relation symbol means in a particular
+setting.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Structure]
+\label{def:axiom-systems-structure}
+A \emph{structure} is a domain together with interpretations of the symbols in
+a signature.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A structure is the environment in which formal symbols receive meaning. The
+domain supplies the objects, and the interpretation explains how the symbols
+refer to objects, operations, and relations on that domain.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:signature]{Signature}
+  \item \hyperref[def:axiom-systems-interpretation]{Interpretation}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Model]
+\label{def:axiom-systems-model}
+A \emph{model} is a structure in which all axioms, equivalently all statements
+of the theory, are satisfied.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A model is a structure that makes the theory true. It is not just an
+interpretation of the vocabulary; it is an interpretation in which the adopted
+assertions and their consequences hold.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:axiom-systems-structure]{Structure}
+  \item \hyperref[def:axiom-systems-theory]{Theory}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Satisfaction]
+\label{def:axiom-systems-satisfaction}
+A statement is \emph{satisfied} in a structure if it evaluates as true under
+the given interpretation.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+Satisfaction is the semantic test for a statement. Once the symbols have been
+interpreted in a structure, the statement can be checked as true or false in
+that setting.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:axiom-systems-structure]{Structure}
+\end{itemize}
+\end{dependencies}
+
+\begin{definition}[Countermodel]
+\label{def:axiom-systems-countermodel}
+A \emph{countermodel} is a model of a theory in which a particular statement
+fails.
+\end{definition}
+
+\begin{remark*}[Interpretation]
+A countermodel shows that the theory does not force the statement. It keeps
+the axioms true while making the proposed statement false.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:axiom-systems-model]{Model}
+  \item \hyperref[def:axiom-systems-satisfaction]{Satisfaction}
+\end{itemize}
+\end{dependencies}
