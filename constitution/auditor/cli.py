@@ -414,6 +414,7 @@ def cmd_generate_stub_volume(args: argparse.Namespace) -> None:
         volume_display_title=args.title,
         volume_scope=args.scope or "",
         chapter_registry=registry,
+        frontispiece_mathematician=getattr(args, "mathematician", None),
     )
     _print_generated_files(files, args)
 
@@ -746,6 +747,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--scope",         help="Volume scope description")
     p.add_argument("--registry-file", dest="registry_file",
                    help="Path to YAML file containing chapter registry")
+    p.add_argument("--mathematician",
+                   help="Optional frontispiece mathematician, e.g. Gauss")
     p.add_argument("--write",         action="store_true", help="Write files to disk")
     p.set_defaults(func=cmd_generate_stub_volume)
 

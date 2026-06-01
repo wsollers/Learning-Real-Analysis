@@ -23,6 +23,38 @@ You will receive:
 3. Volume scope description (what mathematical territory this volume covers).
 4. Chapter registry for the volume: ordered list of chapter subjects and
    display titles in dependency order.
+5. Optional frontispiece mathematician, supplied by requests such as
+   `generate volume stub volume-iii with Gauss`.
+
+## Frontispiece Rule
+
+When a frontispiece mathematician is supplied:
+
+- Resolve the mathematician to the standard full name and birth-death years.
+  For example, `Gauss` resolves to `Carl Friedrich Gauss (1777-1855)`.
+- Compute the image path from the lowercase ASCII last name:
+  `images/<lastname>.png`.
+- If `images/<lastname>.png` already exists under the monorepo image
+  directory, reference that existing image.
+- If `images/<lastname>.png` does not exist, the caller must generate the
+  image before finalizing the stub using this exact image-generation prompt:
+
+```text
+When creating a new volume frontispiece, use the standard mathematician
+portrait format: a black-and-white vintage engraved/etching-style
+illustration with a centered circular medallion, thick black circular border,
+portrait of the selected mathematician, relevant equations/diagrams lightly
+arranged in the medallion background, and a beveled rectangular plaque below.
+The plaque text must be exactly the mathematician's full name and birth-death
+years. Save the image as `images/<lastname>.png` and reference it with
+`images/<lastname>.png`; do not use volume-local image paths.
+```
+
+- The plaque text must be exactly the mathematician's full name and
+  birth-death years, with no title, quote, or extra wording.
+- The LaTeX reference must use `images/<lastname>.png`.
+- Do not use paths such as `{volume}/images/<lastname>.png` or
+  `volume-local/images/<lastname>.png`.
 
 ## Output
 
@@ -34,6 +66,11 @@ Return the contents for each file below, clearly labeled by filename.
 
 ```latex
 \chapter*{{Volume Display Title}}
+
+% Include this block only when a frontispiece mathematician is supplied.
+\begin{center}
+\includegraphics[width=0.6\textwidth]{images/<lastname>.png}
+\end{center}
 
 \section*{Scope}
 
@@ -64,6 +101,10 @@ Chapters will be \input here as they are created.
 volume: {volume identifier}
 display_title: "{volume display title}"
 status: planned
+frontispiece:
+  mathematician: "{Full Name}"
+  years: "{birth-death years}"
+  image: "images/<lastname>.png"
 scope: >
   {volume scope description}
 chapters:
@@ -83,6 +124,8 @@ chapters:
 - Order is dependency order -- not alphabetical, not thematic grouping.
 - Every chapter subject must be unique within the volume.
 - Display titles are sentence-case proper titles.
+- Omit the `frontispiece` block from chapter.yaml when no frontispiece
+  mathematician is supplied.
 
 ## What This Prompt Must Not Do
 
@@ -91,3 +134,4 @@ chapters:
 - Must not generate mathematical content.
 - Must not generate individual chapter stubs -- use generate-stub-chapter.md
   for that operation, invoked per chapter.
+- Must not place frontispiece images under volume-local image directories.
