@@ -88,22 +88,18 @@ When content eventually moves:
 - prefer router files or compatibility stubs when they reduce breakage;
 - test the source and destination volume builds before pushing.
 
-## Fixed Five-Volume Assumptions
+## Remaining Deferred Integration Points
 
-Current scripts and workflows still assume five volumes in several places.
-These must be updated in a later implementation phase, not in this governance
-phase.
+The monorepo now has planned stub directories and standalone roots for
+Volumes VI-VIII, and local Docker/migration tooling recognizes the eight-volume
+identifier set. Some integration points intentionally remain deferred:
 
-Known examples include:
-
-- monorepo `main.tex`, which inputs only `volume-i` through `volume-v`;
-- standalone roots `volume-i-main.tex` through `volume-v-main.tex`;
-- `docker/compile.ps1`, whose valid volume list is `i` through `v`;
-- `docker/migrate_volumes.py`, whose `VOLUMES` list is `i` through `v`;
-- split-repo sync workflows, which currently exist only for Volume I through
-  Volume V;
-- knowledge rebuild workflow path filters, which currently watch only a
-  subset of volumes.
+- monorepo `main.tex` still inputs only `volume-i` through `volume-v` until
+  clean-checkout frontispiece assets are safe;
+- split-repo sync workflows currently exist only for Volume I through Volume V;
+- Volume VI-VIII external split repositories are planned, not yet active;
+- knowledge rebuild workflow path filters currently watch only the extraction
+  pipeline's active volume subset.
 
 ## Deferred Phase 0 Findings
 

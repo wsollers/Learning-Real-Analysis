@@ -66,7 +66,7 @@ interpreting repo-local agent rules.
 | --- | --- |
 | `Learning-Real-Analysis` | `docs/governance/repo-overlays/learning-real-analysis.md` |
 | `lra-common` | `docs/governance/repo-overlays/lra-common.md` |
-| `lra-volume-i` through `lra-volume-v` | `docs/governance/repo-overlays/lra-volume.md` |
+| `lra-volume-i` through `lra-volume-viii` | `docs/governance/repo-overlays/lra-volume.md` |
 | `lra-lean` | `docs/governance/repo-overlays/lra-lean.md` |
 | `lra-nurbs` | `docs/governance/repo-overlays/lra-nurbs.md` |
 | `lra-knowledge-explorer` | `docs/governance/repo-overlays/lra-knowledge-explorer.md` |

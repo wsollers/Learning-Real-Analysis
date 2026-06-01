@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """
-migrate_volumes.py  (v4 — adds lean/ and nurbs_dde/ satellite repo migration)
+migrate_volumes.py  (v4 - adds lean/ and nurbs_dde/ satellite repo migration)
 ------------------------------------------------------------------------------
 Migrates content from Learning-Real-Analysis (monorepo) into the
 corresponding split repos via the GitHub REST API.
 
 Repo mapping:
-  volume-N/   →  lra-volume-N  (path preserved: volume-N/ in both repos)
-  lean/       →  lra-lean      (path remapped:  lean/* → repo root)
-  nurbs_dde/  →  lra-nurbs     (path remapped:  nurbs_dde/* → repo root)
-  common/ + bibliography/  →  lra-common  (path preserved)
+  volume-N/   ->  lra-volume-N  (path preserved: volume-N/ in both repos)
+  lean/       ->  lra-lean      (path remapped:  lean/* -> repo root)
+  nurbs_dde/  ->  lra-nurbs     (path remapped:  nurbs_dde/* -> repo root)
+  common/ + bibliography/  ->  lra-common  (path preserved)
 
 Changes in v4:
   - Added --lean and --nurbs flags to migrate satellite repos
-  - migrate_satellite() handles the monorepo-subdir → repo-root path remap
+  - migrate_satellite() handles the monorepo-subdir -> repo-root path remap
   - Excluded .github/ from satellite syncs to avoid overwriting actions
 
 Changes in v3:
@@ -26,8 +26,11 @@ Changes in v2:
 Usage:
     pip install requests
 
-    # Migrate all volumes + common:
+    # Migrate active split volume repos + common:
     python3 migrate_volumes.py --token ghp_YOURTOKEN
+
+    # Include planned VI-VIII split repos only after they exist:
+    python3 migrate_volumes.py --token ghp_YOURTOKEN --include-planned-split-repos
 
     # Migrate lean and nurbs satellites:
     python3 migrate_volumes.py --token ghp_YOURTOKEN --lean --nurbs --skip-common
@@ -45,7 +48,8 @@ import requests
 OWNER = "wsollers"
 MONOREPO = "Learning-Real-Analysis"
 BRANCH = "main"
-VOLUMES = ["i", "ii", "iii", "iv", "v"]
+VOLUMES = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii"]
+ACTIVE_SPLIT_VOLUME_REPOS = {"i", "ii", "iii", "iv", "v"}
 TREE_CHUNK_SIZE = 200
 
 
@@ -60,7 +64,7 @@ def gh(token: str, method: str, path: str, **kwargs):
     if r.status_code == 429 or (r.status_code == 403 and "rate" in r.text.lower()):
         reset = int(r.headers.get("X-RateLimit-Reset", time.time() + 60))
         wait = max(reset - time.time(), 5)
-        print(f"  Rate limited — sleeping {wait:.0f}s")
+        print(f"  Rate limited - sleeping {wait:.0f}s")
         time.sleep(wait)
         r = requests.request(method, url, headers=headers, **kwargs)
     return r
@@ -123,7 +127,7 @@ def create_tree_chunked(token: str, repo: str, base_tree_sha: str, entries: list
     for start in range(0, total, TREE_CHUNK_SIZE):
         chunk = entries[start : start + TREE_CHUNK_SIZE]
         end = min(start + TREE_CHUNK_SIZE, total)
-        print(f"    tree chunk [{start+1}–{end} / {total}]")
+        print(f"    tree chunk [{start+1}-{end} / {total}]")
         current_base = create_tree_chunk(token, repo, current_base, chunk)
     return current_base
 
@@ -153,7 +157,7 @@ def _do_migrate(token: str, target_repo: str, target_files: list[dict],
     """
     Core migration logic. Uploads blobs, builds tree, commits.
     strip_prefix: path prefix to remove from monorepo paths when writing
-                  to target repo (e.g. 'lean/' so lean/LRA/X → LRA/X).
+                  to target repo (e.g. 'lean/' so lean/LRA/X -> LRA/X).
                   Pass '' to preserve paths as-is.
     """
     print(f"  Fetching {target_repo} HEAD...")
@@ -190,14 +194,19 @@ def _do_migrate(token: str, target_repo: str, target_files: list[dict],
 
     print("  Updating main branch (force)...")
     update_ref(token, target_repo, new_commit_sha)
-    print(f"  ✓ Done! {len(target_files)} files in {target_repo}")
+    print(f"  Done! {len(target_files)} files in {target_repo}")
 
 
-def migrate_volume(token: str, volume: str):
+def migrate_volume(token: str, volume: str, include_planned_split_repos: bool = False):
     vol_dir = f"volume-{volume}"
     target_repo = f"lra-volume-{volume}"
+    if volume not in ACTIVE_SPLIT_VOLUME_REPOS and not include_planned_split_repos:
+        print(f"\nSkipping {vol_dir} -> {target_repo}: split repo creation is deferred.")
+        print("  Re-run with --include-planned-split-repos after the target repo exists.")
+        return
+
     print(f"\n{'='*60}")
-    print(f"Migrating {vol_dir} → {target_repo}")
+    print(f"Migrating {vol_dir} -> {target_repo}")
     print(f"{'='*60}")
 
     print("  Fetching monorepo tree...")
@@ -211,7 +220,7 @@ def migrate_volume(token: str, volume: str):
     ]
     print(f"  Found {len(target_files)} files in {vol_dir}/")
     if not target_files:
-        print("  WARNING: no files found — skipping")
+        print("  WARNING: no files found - skipping")
         return
 
     _do_migrate(
@@ -228,7 +237,7 @@ def migrate_satellite(token: str, monorepo_dir: str, target_repo: str):
     .github/ files in the target repo are never overwritten.
     """
     print(f"\n{'='*60}")
-    print(f"Migrating {monorepo_dir}/ → {target_repo} (repo root)")
+    print(f"Migrating {monorepo_dir}/ -> {target_repo} (repo root)")
     print(f"{'='*60}")
 
     print("  Fetching monorepo tree...")
@@ -245,19 +254,19 @@ def migrate_satellite(token: str, monorepo_dir: str, target_repo: str):
     ]
     print(f"  Found {len(target_files)} files in {monorepo_dir}/")
     if not target_files:
-        print("  WARNING: no files found — skipping")
+        print("  WARNING: no files found - skipping")
         return
 
     _do_migrate(
         token, target_repo, target_files,
-        strip_prefix=prefix,  # lean/LRA/X.lean → LRA/X.lean at repo root
+        strip_prefix=prefix,  # lean/LRA/X.lean -> LRA/X.lean at repo root
         commit_message=f"feat: migrate {monorepo_dir}/ content from Learning-Real-Analysis monorepo",
     )
 
 
 def sync_common_to_lra_common(token: str):
     print(f"\n{'='*60}")
-    print("Syncing common/ + bibliography/ → lra-common")
+    print("Syncing common/ + bibliography/ -> lra-common")
     print(f"{'='*60}")
 
     mono_commit = get_latest_commit_sha(token, MONOREPO)
@@ -288,13 +297,15 @@ def main():
     parser.add_argument("--volumes", nargs="+", default=VOLUMES, choices=VOLUMES,
                         help="Volumes to migrate (default: all)")
     parser.add_argument("--lean", action="store_true",
-                        help="Migrate lean/ → lra-lean")
+                        help="Migrate lean/ -> lra-lean")
     parser.add_argument("--nurbs", action="store_true",
-                        help="Migrate nurbs_dde/ → lra-nurbs")
+                        help="Migrate nurbs_dde/ -> lra-nurbs")
     parser.add_argument("--skip-common", action="store_true",
                         help="Skip syncing common/ to lra-common")
     parser.add_argument("--skip-volumes", action="store_true",
                         help="Skip all volume migrations")
+    parser.add_argument("--include-planned-split-repos", action="store_true",
+                        help="Attempt VI-VIII split-repo migrations after those repos exist")
     args = parser.parse_args()
 
     print("LRA Migration (v4)")
@@ -307,7 +318,7 @@ def main():
 
     if not args.skip_volumes:
         for vol in args.volumes:
-            migrate_volume(args.token, vol)
+            migrate_volume(args.token, vol, args.include_planned_split_repos)
 
     if args.lean:
         migrate_satellite(args.token, "lean", "lra-lean")
@@ -320,7 +331,7 @@ def main():
     print(f"{'='*60}")
     print()
     print("Reminder: add SYNC_PAT secret to lra-lean and lra-nurbs")
-    print("  Settings → Secrets and variables → Actions → SYNC_PAT")
+    print("  Settings -> Secrets and variables -> Actions -> SYNC_PAT")
     print()
 
 

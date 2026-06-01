@@ -44,12 +44,15 @@ Each volume has a thin standalone root at the repo root:
 
 | File | Content |
 |---|---|
-| `main.tex` | Full book — all five volumes |
-| `volume-i-main.tex` | Volume I: Mathematical Logic |
-| `volume-ii-main.tex` | Volume II: Foundations of Formal Number Systems |
-| `volume-iii-main.tex` | Volume III: Abstract Mathematics |
-| `volume-iv-main.tex` | Volume IV: Applied and Computational Mathematics |
-| `volume-v-main.tex` | Volume V: Numerical Analysis and Approximation |
+| `main.tex` | Full book root; currently enables Volumes I-V while VI-VIII root inclusion is deferred |
+| `volume-i-main.tex` | Volume I: Logic, Sets, and Proof |
+| `volume-ii-main.tex` | Volume II: Origins of the Numbers |
+| `volume-iii-main.tex` | Volume III: Analysis |
+| `volume-iv-main.tex` | Volume IV: Algebra and Abstract Structures |
+| `volume-v-main.tex` | Volume V: Topology and Geometry |
+| `volume-vi-main.tex` | Volume VI: Computational Mathematics |
+| `volume-vii-main.tex` | Volume VII: Numerical and Approximation Mathematics |
+| `volume-viii-main.tex` | Volume VIII: Mathematical Logic and Foundations |
 
 All thin roots share `common/volume-preamble.tex` and delegate entirely
 to their `volume-N/index.tex` — no content files are duplicated.
@@ -79,6 +82,9 @@ to their `volume-N/index.tex` — no content files are duplicated.
 .\docker\compile.ps1 -Volume iii               # Volume III only
 .\docker\compile.ps1 -Volume iv                # Volume IV only
 .\docker\compile.ps1 -Volume v                 # Volume V only
+.\docker\compile.ps1 -Volume vi                # Volume VI only
+.\docker\compile.ps1 -Volume vii               # Volume VII only
+.\docker\compile.ps1 -Volume viii              # Volume VIII only
 .\docker\compile.ps1 -Build                    # Rebuild the Docker image first
 .\docker\compile.ps1 -Clean                    # latexmk -C (wipe build/) then compile
 .\docker\compile.ps1 -Open                     # Open PDF in default viewer after build
@@ -119,6 +125,7 @@ CTAN packages are already present and no `tlmgr install` calls are needed.
 | Symptom | Fix |
 |---|---|
 | `Image not found` error | Run `.\docker\compile.ps1 -Build` |
+| Volume VII missing `images/newton.png` | Image tracking is deferred until Phase 5; keep root inclusion disabled on clean checkouts |
 | Build fails with LaTeX errors | Check `build\main.log` for the full compiler log |
 | Index not updating | Run `.\docker\compile.ps1 -Clean` to wipe stale `.idx` files |
 | PDF not found after success | Verify `build\` directory exists; check `.latexmkrc` `$out_dir` |

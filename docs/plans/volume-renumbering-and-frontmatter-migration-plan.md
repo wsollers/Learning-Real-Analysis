@@ -234,19 +234,20 @@ No standalone root files exist yet for:
 
 ### Docker and Migration Scripts
 
-The monorepo Docker compile script `docker/compile.ps1` currently hard-codes:
+Phase 3B updated the monorepo Docker compile script `docker/compile.ps1` from:
 
 ```powershell
-$validVolumes = @('i', 'ii', 'iii', 'iv', 'v')
+$validVolumes = @('i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii')
 ```
 
-The monorepo migration script `docker/migrate_volumes.py` currently hard-codes:
+Phase 3B updated the monorepo migration script `docker/migrate_volumes.py` from:
 
 ```python
-VOLUMES = ["i", "ii", "iii", "iv", "v"]
+VOLUMES = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii"]
 ```
 
-Both must eventually be extended to include `vi`, `vii`, and `viii`.
+The migration script recognizes all eight volume identifiers, but skips
+planned VI-VIII split-repo pushes by default until those repositories exist.
 
 ### Knowledge Explorer Trigger
 
@@ -265,8 +266,9 @@ make that explicit.
 
 ### Documentation With Fixed Five-Volume Assumptions
 
-The following docs mention the current `lra-volume-i` through `lra-volume-v`
-layout and should be updated in a later phase:
+Phase 3B updates the active monorepo documentation to mention the target
+`lra-volume-i` through `lra-volume-viii` layout. Historical inventory notes in
+this plan may still mention the pre-migration five-volume state.
 
 - `DESIGN.md`;
 - `REPOSITORY_STRUCTURE.md`;
@@ -504,7 +506,8 @@ cross-references, and Overleaf file limits while the architecture stabilizes.
   one repo too large before the new repos are ready.
 - Current monorepo and split repos have sync workflows that can overwrite
   volume directories with `rsync --delete`.
-- Several scripts hard-code exactly five volumes.
+- Historical five-volume script assumptions have been updated in Phase 3B;
+  root inclusion and VI-VIII split-repo sync remain deferred.
 - Existing quote/frontispiece files mix display-title content with image and
   quote content.
 - Volume III has substantial mixed-domain content; moving it all at once would

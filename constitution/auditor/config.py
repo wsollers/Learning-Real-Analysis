@@ -12,7 +12,7 @@ The project is split across several repos:
                             docker build, full omnibus LaTeX build
   lra-common              — shared LaTeX infrastructure (common/, bibliography/)
                             synced to all volume repos via GitHub Actions
-  lra-volume-i .. v       — per-volume Overleaf targets; each is self-contained
+  lra-volume-i .. viii    — per-volume Overleaf targets; each is self-contained
   lra-lean                — Lean 4 formalization
   lra-nurbs               — NURBS/DDE C++ engine
   lra-knowledge-explorer  — theorem extraction pipeline + HTML graph

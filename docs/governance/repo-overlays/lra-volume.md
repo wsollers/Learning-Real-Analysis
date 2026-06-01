@@ -1,6 +1,6 @@
 # lra-volume Overlay
 
-Stub overlay for `lra-volume-i` through `lra-volume-v`.
+Stub overlay for `lra-volume-i` through `lra-volume-viii`.
 
 Owned concerns:
 

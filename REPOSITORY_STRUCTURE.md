@@ -16,6 +16,9 @@ contains the repository ownership and layout rules.
 | `lra-volume-iii` | Volume III content under `volume-iii/` | to monorepo `volume-iii/` |
 | `lra-volume-iv` | Volume IV content under `volume-iv/` | to monorepo `volume-iv/` |
 | `lra-volume-v` | Volume V content under `volume-v/` | to monorepo `volume-v/` |
+| `lra-volume-vi` | Volume VI content under `volume-vi/` | planned; split-repo sync deferred |
+| `lra-volume-vii` | Volume VII content under `volume-vii/` | planned; split-repo sync deferred |
+| `lra-volume-viii` | Volume VIII content under `volume-viii/` | planned; split-repo sync deferred |
 | `lra-lean` | Lean 4 formalization workspace | independent/specialized |
 | `lra-nurbs` | NURBS/DDE C++ engine | independent/specialized |
 | `lra-knowledge-explorer` | extraction pipeline, HTML theorem graph, GitHub Pages site | triggered by monorepo CI dispatch |
@@ -60,6 +63,9 @@ Learning-Real-Analysis/
   volume-iii-main.tex
   volume-iv-main.tex
   volume-v-main.tex
+  volume-vi-main.tex
+  volume-vii-main.tex
+  volume-viii-main.tex
   bibliography/               synced from lra-common
   common/                     synced from lra-common
   predicates.yaml             canonical YAML source
@@ -70,6 +76,9 @@ Learning-Real-Analysis/
   volume-iii/
   volume-iv/
   volume-v/
+  volume-vi/
+  volume-vii/
+  volume-viii/
   docker/
   theorem-explorer/
   lean/
@@ -179,6 +188,7 @@ whenever LaTeX source content is pushed to the monorepo. The full chain is:
 lra-common push        ─┐
 lra-volume-ii push      ├─► Learning-Real-Analysis (sync CI)
 lra-volume-iii push     │     └── trigger-knowledge-rebuild.yml
+planned volume repos    │
        ...             ─┘               └── repository_dispatch: lra-rebuild
                                                   └── lra-knowledge-explorer
                                                         ├── checkout LRA
@@ -216,6 +226,11 @@ fires only when these paths change on `main`:
 
 Cosmetic or structural files (`DESIGN.md`, `BACKLOG.md`, `curriculum.html`,
 etc.) do not trigger a rebuild.
+
+The current extraction workflow intentionally watches only `volume-ii/**` and
+`volume-iii/**` for volume content. Extending extraction to the other target
+volumes is a deferred pipeline decision, not part of the eight-volume
+frontmatter/tooling migration.
 
 ### Required secret
 

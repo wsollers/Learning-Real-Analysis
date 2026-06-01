@@ -17,7 +17,7 @@ param (
     [switch]$Build,          # (Re)build the Docker image before compiling
     [switch]$Clean,          # Run latexmk -C (full clean) before compiling
     [switch]$Open,           # Open the PDF in the default viewer on success
-    [string]$Volume = ''     # Target a single volume: i, ii, iii, iv, v
+    [string]$Volume = ''     # Target a single volume: i, ii, iii, iv, v, vi, vii, viii
                              # Omit for the full book (main.tex)
 )
 
@@ -39,7 +39,7 @@ $imageName  = 'learning-real-analysis-latex'
 $dockerfile = Join-Path $scriptDir 'Dockerfile'
 
 # ── Resolve target tex file and output pdf name ───────────────
-$validVolumes = @('i', 'ii', 'iii', 'iv', 'v')
+$validVolumes = @('i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii')
 if ($Volume -ne '') {
     if ($validVolumes -notcontains $Volume.ToLower()) {
         Write-Error "Invalid -Volume '$Volume'. Must be one of: $($validVolumes -join ', ')"
@@ -56,6 +56,19 @@ if ($Volume -ne '') {
 if (-not (Test-Path (Join-Path $repoRoot $texFile))) {
     Write-Error "Target file not found: $texFile"
     exit 1
+}
+
+$volumeImageRequirements = @{
+    'vi'   = 'images\euler.png'
+    'vii'  = 'images\newton.png'
+    'viii' = 'images\hilbert.png'
+}
+if ($Volume -ne '' -and $volumeImageRequirements.ContainsKey($Volume)) {
+    $requiredImage = Join-Path $repoRoot $volumeImageRequirements[$Volume]
+    if (-not (Test-Path $requiredImage)) {
+        Write-Error "Required frontispiece image missing: $($volumeImageRequirements[$Volume]). Volume VII image tracking is deferred until Phase 5."
+        exit 1
+    }
 }
 
 # ── Build the Docker image ────────────────────────────────────

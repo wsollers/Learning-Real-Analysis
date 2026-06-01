@@ -14,6 +14,11 @@ Docker build details remain in the monorepo's Docker documentation. Governance
 docs record ownership and safety boundaries rather than duplicating every build
 command.
 
+The monorepo exposes standalone roots for Volumes I-VIII. The omnibus
+`main.tex` root currently includes only Volumes I-V; root inclusion of
+Volumes VI-VIII remains deferred until frontispiece assets are tracked and the
+clean-checkout build is safe.
+
 ## Volume Repos
 
 Each `lra-volume-*` repo is Overleaf-ready. Its local `main.tex` uses synced
