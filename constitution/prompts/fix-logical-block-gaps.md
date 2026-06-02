@@ -43,7 +43,9 @@ blocks appear in this exact order. Omit only when the trigger is not met.
 7.  remark*[Contrapositive quantified statement]    — thm/lem/prop/cor, when illuminating
 8.  remark*[Contrapositive predicate reading]       — if step 7 generated
 9.  remark*[Interpretation]                         — always
-10. remark*[Dependencies] or \NoLocalDependencies   — always
+10. remark*[Examples]                              — defs only, when concept-boundary value is high
+11. remark*[Non-Examples]                          — defs only, when concept-boundary value is high
+12. remark*[Dependencies] or \NoLocalDependencies  — always
 ```
 
 ### Notation discipline (DESIGN.md Rule A)

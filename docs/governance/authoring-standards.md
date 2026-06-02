@@ -69,3 +69,33 @@ Each layer has one job:
 - prose connects local context.
 
 Do not over-symbolize exposition. Use prose where prose is the correct layer.
+
+## Examples And Non-Examples
+
+Examples and non-examples are concept-boundary tools. Formal definitions state
+what a concept is; examples and non-examples help readers recognize where the
+concept applies and where it fails.
+
+Definitions may be followed by optional explanatory remark blocks:
+
+```latex
+\begin{remark*}[Examples]
+...
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+...
+\end{remark*}
+```
+
+Include these blocks when they materially improve concept-boundary
+recognition. They are especially valuable for major algebraic or structural
+objects, subtle predicates, and frequently confused concepts.
+
+Examples and non-examples are usually unnecessary for simple auxiliary
+definitions, notation declarations, obvious derived concepts, or definitions
+whose examples immediately appear in nearby theorems.
+
+Non-examples should identify the precise failed condition whenever practical.
+Do not merely state that an object is not an example when the failed axiom,
+condition, or hypothesis can be named.

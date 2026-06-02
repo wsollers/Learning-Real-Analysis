@@ -105,6 +105,29 @@ be ASCII, descriptive, and aligned with filenames and proof labels.
 Definition labels shall be atomic: one concept, one definition, one label.
 Shared labels for bundled independent concepts are prohibited.
 
+## Examples And Non-Examples Metadata
+
+`Examples` and `Non-Examples` remark blocks are explanatory metadata attached
+to the preceding definition node. They do not create knowledge-graph nodes and
+must not be treated as formal dependency targets.
+
+When extraction supports them, examples and non-examples may be indexed as
+metadata on the owning definition record, for example:
+
+```yaml
+node: Ring
+examples:
+  - "\\mathbb{Z}"
+  - "\\mathbb{Z}[x]"
+  - "M_n(\\mathbb{R})"
+non_examples:
+  - object: "\\mathbb{N}"
+    failure: "fails additive inverses"
+```
+
+Non-example metadata should preserve the failed condition when the source text
+identifies it.
+
 ## Theorem Explorer
 
 The theorem explorer implementation is owned by `lra-knowledge-explorer`.

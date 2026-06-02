@@ -5,8 +5,9 @@ surround definitions, theorem-like environments, and related formal artifacts.
 
 These blocks are part of the standard information set for an artifact. They are
 not decorative flourish. They provide formal restatements, predicate readings,
-failure-mode analysis, interpretation, source crosswalks, dependencies, and
-proof navigation where the artifact type requires them.
+failure-mode analysis, interpretation, examples, non-examples, source
+crosswalks, dependencies, and proof navigation where the artifact type
+requires them.
 
 ## Scope
 
@@ -41,6 +42,8 @@ The standardized decoration blocks are:
 - Interpretation;
 - Historical note;
 - Comparison with Feferman;
+- Examples;
+- Non-Examples;
 - Dependencies;
 - Proof navigation link.
 
@@ -63,7 +66,9 @@ When a block is present, use this order:
 10. Contrapositive predicate reading
 11. Interpretation
 12. Historical note or Comparison with Feferman
-13. Dependencies or `\NoLocalDependencies`
+13. Examples
+14. Non-Examples
+15. Dependencies or `\NoLocalDependencies`
 
 Do not reorder blocks for aesthetics. Omit only blocks that the governing
 artifact standard does not require.
@@ -154,6 +159,28 @@ structural comparison with Feferman's presentation.
 Source crosswalks appear after Interpretation and before Dependencies. They
 must not appear inside formal environments, quantified statements, predicate
 readings, negation blocks, or failure-mode decompositions.
+
+## Examples And Non-Examples
+
+Definitions may include optional concept-boundary blocks:
+
+```latex
+\begin{remark*}[Examples]
+...
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+...
+\end{remark*}
+```
+
+Include them when they materially improve recognition of what the definition
+does and does not cover. They are especially useful for major algebraic
+structures, subtle predicates, and frequently confused pairs of concepts.
+
+Non-examples should identify the failed axiom, condition, or hypothesis
+whenever practical. These blocks are explanatory metadata attached to the
+owning definition; they do not create separate knowledge-graph nodes.
 
 ## Dependencies
 

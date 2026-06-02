@@ -108,7 +108,9 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 14. remark*[Contrapositive predicate reading] (if step 13 generated)
 15. remark*[Interpretation]
 16. remark*[Historical note] or remark*[Comparison with Feferman] (if a source crosswalk is supplied)
-17. remark*[Dependencies] or \NoLocalDependencies
+17. remark*[Examples] (definitions only, if concept-boundary value is high)
+18. remark*[Non-Examples] (definitions only, if concept-boundary value is high)
+19. remark*[Dependencies] or \NoLocalDependencies
 ```
 
 ## Environment Body
@@ -255,6 +257,26 @@ Use this option shape:
 - Use natbib-compatible citations such as
   `\citet{FefermanNumberSystems1964}` or
   `\citep{FefermanNumberSystems1964}`. Do not use biblatex-only commands.
+
+## Examples And Non-Examples
+
+- Generate `\begin{remark*}[Examples]` for definitions only when examples
+  materially improve concept-boundary recognition.
+- Generate `\begin{remark*}[Non-Examples]` for definitions only when
+  non-examples materially improve concept-boundary recognition or prevent a
+  common confusion.
+- These blocks are especially valuable for major algebraic structures, subtle
+  predicates, and frequently confused concepts.
+- They are usually unnecessary for simple auxiliary definitions, notation
+  declarations, obvious derived concepts, or definitions whose examples
+  immediately appear in nearby theorems.
+- Non-examples should identify the precise failed axiom, condition, or
+  hypothesis whenever practical.
+- Examples and non-examples are explanatory metadata attached to the owning
+  definition. They do not create knowledge-graph nodes and must not be listed
+  as dependencies.
+- Place Examples and Non-Examples after source crosswalk remarks and before
+  Dependencies.
 
 ## Dependencies
 

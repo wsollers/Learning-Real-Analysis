@@ -336,7 +336,7 @@ Preferred local order inside a `topicbox`:
 3. primary theorems
 4. structural remark blocks
 5. interpretation remarks
-6. examples
+6. examples and non-examples
 7. consequences
 
 When a subsection contains multiple related formulations of one concept,

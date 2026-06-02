@@ -149,6 +149,28 @@ exposition may satisfy the interpretation requirement.
 - "Historical note" is used for direct provenance; "Comparison with Feferman"
   is used for structural differences, splitting, refinement, or repackaging?
 
+### examples
+- Optional for definitions only?
+- remark* titled exactly "Examples"?
+- Appears after Interpretation and source_crosswalk, if present, and before
+  Dependencies?
+- Contains explanatory examples rather than new formal definitions or theorem
+  statements?
+- Does not introduce new labels?
+- Does not create or imply dependency targets?
+- Included only when it materially improves concept-boundary recognition?
+
+### non_examples
+- Optional for definitions only?
+- remark* titled exactly "Non-Examples"?
+- Appears after Examples, if present, and before Dependencies?
+- Identifies the precise failed axiom, condition, or hypothesis whenever
+  practical?
+- Contains explanatory non-examples rather than new formal definitions or
+  theorem statements?
+- Does not introduce new labels?
+- Does not create or imply dependency targets?
+
 ### dependencies
 - remark* titled "Dependencies" or silent `\NoLocalDependencies` marker?
 - All \hyperref links point to formal items (def / thm / lem / prop / cor / ax)?
