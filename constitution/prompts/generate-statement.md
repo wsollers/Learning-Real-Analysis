@@ -68,6 +68,9 @@ Before writing any LaTeX, perform these checks silently and apply results:
    `BUNDLED_CONTENT` notice listing each item that needs its own environment.
    This rule applies fully to axiom systems: distinct axioms must be split
    into distinct axiom environments.
+   For definitions, the check is mandatory repository identity enforcement:
+   one concept, one definition, one label, one knowledge-graph node, one
+   extraction record.
 2. Predicate check: if a canonical predicate exists in `predicates.yaml`, use
    it in predicate-reading blocks. If not, emit a `MISSING_PREDICATE` comment
    and do not invent a predicate name.
@@ -113,6 +116,8 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 - Use standard mathematical notation only.
 - Do not use `\operatorname{...}` predicate names in the environment body.
 - Generate exactly one independently nameable mathematical item.
+- For definitions, do not group independent concepts, operations, relations,
+  conditions, variants, or named examples in one environment.
 - If notation is introduced, it appears in the definition body first.
 - Put mathematical variables and expressions in math mode in prose:
   `$A \subseteq S$`, `$u \in S$`, `$x \le u$`.
@@ -289,3 +294,10 @@ Use this option shape:
 
 Raw LaTeX source only. No explanatory prose outside the LaTeX. No markdown
 wrapping. No code fences unless specifically requested by the caller.
+
+## Figure Prohibition
+
+This prompt shall not emit nontrivial embedded `tikzpicture` environments. If a
+requested statement requires a nontrivial figure, emit a
+`FIGURE_FILE_REQUIRED` notice instead of embedding TikZ. Nontrivial figures
+shall be produced by a figure-file workflow as dedicated figure source files.

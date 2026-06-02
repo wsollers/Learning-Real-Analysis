@@ -41,8 +41,10 @@ propagated through the approved sync path.
 ## Figures
 
 Dependency figures live in dedicated `figure-<n>.tex` files and are input by
-notes files. They should contain TikZ code only: no document preamble and no
-inline color-system redefinition.
+notes files. Every nontrivial TikZ figure shall live in a dedicated figure
+source file. Figure source files shall contain TikZ code only: no document
+preamble, no figure environment, no caption, no label, no surrounding prose,
+and no inline color-system redefinition.
 
 Figure colors, boxes, and legend macros come from shared infrastructure rather
 than local ad hoc definitions.

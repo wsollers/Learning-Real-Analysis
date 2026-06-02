@@ -176,3 +176,6 @@ All file and folder names must be canonical immediately:
 - Must not invent section decompositions beyond what was provided.
 - Must not populate mathematical content in any file.
 - Must not deviate from the registry for breadcrumb neighbors.
+- Must not embed nontrivial TikZ figures. Any future nontrivial TikZ figure
+  shall be generated as a dedicated figure source file containing only the
+  `tikzpicture`.

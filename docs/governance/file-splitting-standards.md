@@ -4,9 +4,20 @@ Source sections: `DESIGN.md` sections 2.5, 2.6, 2.7, 8, 9, 10.1, and 15.
 
 ## Atomicity
 
-Each theorem-like environment should contain one named mathematical object.
-Do not bundle multiple predicates, operations, relations, conditions, or named
-statements into one formal environment.
+Each theorem-like environment shall contain exactly one independently
+nameable mathematical object.
+
+Every mathematical concept shall be introduced in its own definition
+environment and shall possess its own unique label. Grouping multiple
+independent mathematical concepts into a single definition environment is
+prohibited.
+
+Every nontrivial TikZ figure shall exist as an independent figure source file.
+Embedded nontrivial `tikzpicture` environments in note, proof, exercise, or
+exposition files are prohibited.
+
+The canonical atomic artifact rules are governed by
+`atomic-artifact-standards.md`.
 
 ## Chapter Layout
 

@@ -25,6 +25,12 @@ dependency weight in the knowledge graph.
 
 Do not box merely because an item is a first appearance.
 
+Every mathematical concept shall be introduced in its own definition
+environment and shall possess its own unique label. Grouping multiple
+independent mathematical concepts into a single definition environment is
+prohibited. This rule is architectural, not stylistic: one concept maps to one
+definition, one label, one knowledge-graph node, and one extraction record.
+
 Box-worthy examples include structural concepts and results such as
 `Supremum`, `Least Upper Bound Property`, `Sequential Limit`, `Cauchy Sequence`,
 `Continuity`, `Derivative`, `Partition`, and `Riemann Integrability`.
@@ -36,6 +42,15 @@ load-bearing.
 
 Each section begins with exactly one gray Toolkit box at the top. Chapter
 entries use the required breadcrumb and roadmap structure.
+
+## Figures
+
+Every nontrivial TikZ figure shall exist as an independent figure source file.
+Embedded nontrivial `tikzpicture` environments in note bodies, proof bodies,
+exercise bodies, exposition blocks, and statement files are prohibited.
+
+Figure source files contain only the `tikzpicture` environment. Captions,
+labels, placement, and explanatory prose belong at the inclusion point.
 
 ## Chapter Entries
 

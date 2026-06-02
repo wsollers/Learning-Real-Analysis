@@ -340,5 +340,50 @@ Preferred local order inside a `topicbox`:
 7. consequences
 
 When a subsection contains multiple related formulations of one concept,
-generation should prefer separate `topicbox` containers over creating extra
+generation shall use separate `topicbox` containers over creating extra
 subsections or flattening all formulations into one uninterrupted block.
+
+### Atomic Definition Invariant
+
+Every mathematical concept introduced into the repository shall be introduced
+in its own definition environment and shall possess its own unique label.
+
+Canonical principle:
+
+```text
+One concept -> one definition -> one label.
+```
+
+Grouping multiple independent mathematical concepts into a single definition
+environment is prohibited. Each concept shall correspond to exactly one
+definition environment, one label, one knowledge-graph node, and one
+extraction record.
+
+When generated or audited content contains multiple independently nameable
+concepts in one proposed definition, generation shall stop or the audit shall
+require a split into atomic definitions before the content is accepted.
+
+### Atomic Figure Invariant
+
+Every nontrivial TikZ figure shall exist as an independent figure source file.
+
+Canonical principle:
+
+```text
+One figure -> one figure file.
+```
+
+Embedded nontrivial `tikzpicture` environments are prohibited in mathematical
+note bodies, proof bodies, exercise bodies, exposition blocks, and statement
+files. A dedicated figure source file shall contain only:
+
+```latex
+\begin{tikzpicture}
+...
+\end{tikzpicture}
+```
+
+The figure environment, caption, label, placement, and surrounding prose belong
+at the inclusion point. Trivial inline visual marks are exempt only when they
+have no independent mathematical identity, no caption, no label, no graph role,
+and no reuse value.

@@ -274,9 +274,12 @@ object. Supplemental structural presentations should make the components and
 inheritance easier to inspect without duplicating or contradicting the
 definition.
 
-When a Structural Definition includes axioms or laws, keep atomicity visible:
-do not hide independently nameable axioms inside prose when they must later be
-cited as formal axioms.
+When a Structural Definition includes axioms or laws, atomicity is mandatory:
+independently nameable axioms, laws, operations, relations, and component
+concepts shall receive their own formal environments and stable labels when
+they are introduced as repository concepts. They shall not be hidden inside
+one bundled definition when they must later be cited, extracted, or used as
+graph nodes.
 
 ## 10. Model-Theoretic Remarks
 
@@ -317,6 +320,11 @@ Future generated artifacts may include:
 - blueprint diagrams;
 - classification tables;
 - syntactic formation cards.
+
+Any generated TikZ structure DAG or blueprint diagram that is nontrivial shall
+be emitted as a dedicated figure source file under the applicable section
+directory. The note body shall input the figure source file from the figure
+environment rather than embedding the `tikzpicture`.
 
 Extraction tooling should treat structural and syntactic metadata as distinct
 from theorem-like logical blocks. A structure blueprint, signature

@@ -28,6 +28,7 @@ owned work, but they do not fork or weaken the global rules.
 - `handwritten-proof-vault-standards.md`
 - `extraction-standards.md`
 - `notation-standards.md`
+- `atomic-artifact-standards.md`
 - `file-splitting-standards.md`
 - `refactoring-standards.md`
 - `stub-chapter-standards.md`

@@ -173,6 +173,24 @@ exposition may satisfy the interpretation requirement.
 - This applies to axiom systems as well: if multiple distinct axioms are
   bundled into one axiom environment, flag the environment and list the
   separate axiom items that must be split out.
+- For definitions, this check is mandatory repository identity enforcement:
+  one concept, one definition, one label, one knowledge-graph node, one
+  extraction record.
+- Bundled independent concepts in a definition are never acceptable as a
+  style choice or convenience.
+
+## Figure Atomicity Check
+
+- If the supplied block or nearby included context contains an embedded
+  `tikzpicture`, determine whether it is nontrivial.
+- A nontrivial TikZ figure explains a mathematical relation, construction,
+  dependency, map, commutative structure, graph, geometry, approximation, or
+  proof idea.
+- If a nontrivial embedded `tikzpicture` is present, flag
+  EMBEDDED_TIKZ_VIOLATION.
+- The required repair is a dedicated figure source file containing only the
+  `tikzpicture`, with the figure environment, caption, and label retained at
+  the inclusion point.
 
 ## Output Format
 

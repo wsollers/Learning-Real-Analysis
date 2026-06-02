@@ -12,6 +12,25 @@ preserve those structures unless the extraction pipeline is explicitly updated.
 Author-facing dependency rules live in `dependency-standards.md`. This document
 records the extraction contract and implementation-facing expectations.
 
+## Atomic Extraction Identity
+
+Extraction shall enforce the atomic artifact invariants from
+`atomic-artifact-standards.md`.
+
+Every mathematical concept shall correspond to exactly one definition
+environment, one label, one knowledge-graph node, and one extraction record.
+Extraction tools shall not merge multiple independent mathematical concepts
+from a bundled definition into a single graph node.
+
+When source content contains a multi-concept definition, the correct migration
+is to split the source into atomic definitions, create stable labels for each
+concept, update references, and regenerate extraction records. Creating one
+combined extraction record for multiple concepts is prohibited.
+
+Every nontrivial TikZ figure shall be represented by a dedicated figure source
+file. Figure source files contain only the `tikzpicture`; captions, labels,
+and figure environments are extracted from the inclusion point.
+
 ## Dependency Blocks
 
 Dependency blocks must be readable in the PDF and extractable by tooling.
@@ -82,6 +101,9 @@ Decoration block shape and order are governed by
 
 Formal environments require stable labels with approved prefixes. Labels should
 be ASCII, descriptive, and aligned with filenames and proof labels.
+
+Definition labels shall be atomic: one concept, one definition, one label.
+Shared labels for bundled independent concepts are prohibited.
 
 ## Theorem Explorer
 

@@ -36,8 +36,9 @@ appropriate modular document instead.
 | Handwritten proof vault policy and memorialized proof artifacts | `docs/governance/handwritten-proof-vault-standards.md` |
 | Formal notation, predicate readings, and no predicate leakage | `docs/governance/notation-standards.md` |
 | Proof file architecture, proof labels, and theorem/proof navigation | `docs/governance/proof-standards.md` |
+| Atomic definition and atomic figure invariants | `docs/governance/atomic-artifact-standards.md` |
 | Extraction implementation for dependency labels, proof-vault URLs, and theorem explorer records | `docs/governance/extraction-standards.md` |
-| File splitting, one-object-per-environment rules, and structural stability | `docs/governance/file-splitting-standards.md` |
+| File splitting, one-artifact-per-file rules, and structural stability | `docs/governance/file-splitting-standards.md` |
 | Refactoring safety and high-fidelity cleanup | `docs/governance/refactoring-standards.md` |
 | Stub chapter generation during governance rebuilds | `docs/governance/stub-chapter-standards.md` |
 | Stub section generation during governance rebuilds | `docs/governance/stub-section-standards.md` |
