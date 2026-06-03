@@ -1,10 +1,13 @@
 \newpage
 \phantomsection
 \label{prf:addition-well-defined-on-peano-system}
+\LRAProofFor{thm:addition-well-defined-on-peano-system}
 
 \begin{remark*}[Return]
 \hyperref[thm:addition-well-defined-on-peano-system]{Return to Theorem}
 \end{remark*}
+
+\ProofVaultURL{https://github.com/wsollers/lra-proof-vault/tree/master/volume-ii/natural-numbers/thm-addition-well-defined-on-peano-system}
 
 \begin{theorem*}[Addition Is Well-Defined on a Peano System]
 Let $(P,S,1)$ be a Peano system. For every $m \in P$, there exists a unique
@@ -27,21 +30,113 @@ defines a unique binary operation on $P$.
 
 \begin{proof}
 \textbf{Professional Standard Proof.}~\\
-TODO.
+Fix $m\in P$. Since $(P,S,1)$ is a Peano system, $S:P\to P$ is a function.
+By closure under successor, $S(m)\in P$. Thus $(P,S(m),S)$ is iterator data
+for $(P,S,1)$. By the Peano Iterator Theorem, there exists a unique function
+\[
+f_m:P\to P
+\]
+such that
+\[
+f_m(1)=S(m)
+\qquad\text{and}\qquad
+\forall n\in P\;(f_m(S(n))=S(f_m(n))).
+\]
+This proves existence and uniqueness of the recursively specified function
+for the fixed element $m$.
+
+Since $m\in P$ was arbitrary, each $m\in P$ determines exactly one such
+function $f_m$. Define
+\[
++:P\times P\to P
+\qquad\text{by}\qquad
+(m,n)\longmapsto m+n\coloneqq f_m(n).
+\]
+For every pair $(m,n)\in P\times P$, the value $f_m(n)$ lies in $P$, because
+$f_m:P\to P$. The uniqueness of each $f_m$ makes the value assigned to each
+pair uniquely determined. Hence the displayed rule defines a unique binary
+operation on $P$.
 \end{proof}
 
 \begin{proof}
 \textbf{Detailed Learning Proof.}~\\
-TODO.
+\textbf{Step 1. Fix the left input.}
+Let $m\in P$ be fixed. Addition is constructed by holding this left input
+constant and recursively defining the right-input function.
+
+\textbf{Step 2. Build the iterator data.}
+Because $(P,S,1)$ is a Peano system, the successor map is a function
+\[
+S:P\to P.
+\]
+Also, since $m\in P$, closure under successor gives
+\[
+S(m)\in P.
+\]
+Therefore the value set $P$, the initial value $S(m)$, and the update map
+$S:P\to P$ form iterator data
+\[
+(P,S(m),S)
+\]
+for the Peano system $(P,S,1)$.
+
+\textbf{Step 3. Apply the Peano Iterator Theorem.}
+The Peano Iterator Theorem applied to the iterator data $(P,S(m),S)$ gives a
+unique function
+\[
+f_m:P\to P
+\]
+such that the base value is
+\[
+f_m(1)=S(m)
+\]
+and the successor step is
+\[
+\forall n\in P\;(f_m(S(n))=S(f_m(n))).
+\]
+Thus, for this fixed $m$, the recursive clauses determine exactly one
+right-input function.
+
+\textbf{Step 4. Vary the left input.}
+The argument did not use anything special about $m$ except that $m\in P$.
+Hence every element $m\in P$ has its own uniquely determined function
+$f_m:P\to P$ satisfying the same form of recursive clauses.
+
+\textbf{Step 5. Define the operation pointwise.}
+For a pair $(m,n)\in P\times P$, define
+\[
+m+n\coloneqq f_m(n).
+\]
+This value belongs to $P$ because $f_m$ maps $P$ into $P$ and $n\in P$.
+Therefore the rule assigns an element of $P$ to every ordered pair from
+$P\times P$.
+
+\textbf{Step 6. Check uniqueness of the operation.}
+For each fixed $m$, the function $f_m$ is unique by the iterator theorem.
+Therefore no other rule satisfying the same recursive specification can give
+a different value at any pair $(m,n)$. The operation
+\[
+(m,n)=m+n=f_m(n)
+\]
+is consequently a uniquely determined binary operation on $P$.
 \end{proof}
 
 \begin{remark*}[Proof structure]
-TODO.
+The proof fixes the left input $m$ and packages the recursive data as the
+iterator data $(P,S(m),S)$. Closure under successor supplies the initial value
+$S(m)\in P$, and the Peano Iterator Theorem supplies the unique function
+$f_m:P\to P$. Varying $m$ then defines the binary operation pointwise by
+$m+n=f_m(n)$; uniqueness is pointwise uniqueness of the iterator functions.
 \end{remark*}
 
 \begin{dependencies}
 \begin{itemize}
+  \item \hyperref[def:peano-system]{Peano System}
+  \item \hyperref[ax:peano-successor-closure]{Closure Under Successor}
+  \item \hyperref[def:iterator-data-on-peano-system]{Iterator Data on a Peano System}
   \item \hyperref[def:addition-on-peano-system]{Addition on a Peano System}
   \item \hyperref[thm:peano-iterator-theorem]{Peano Iterator Theorem}
 \end{itemize}
 \end{dependencies}
+
+\clearpage
