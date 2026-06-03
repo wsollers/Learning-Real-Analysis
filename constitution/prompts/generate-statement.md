@@ -45,7 +45,9 @@ This prompt generates exactly one formal mathematical item.
 - Do not generate Toolkit boxes unless the user explicitly asks for a
   section-level toolkit plan.
 - Do not generate `topicbox` containers.
-- Do not generate `exposition` environments.
+- Do not generate topic-level `exposition` environments. Optional
+  `remark*` blocks titled `Exposition` are allowed only under the Exposition
+  rule below.
 - Do not generate section-top expository prose for ordinary single-item
   generation.
 - The output must begin with the statement environment or its required
@@ -108,9 +110,10 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 14. remark*[Contrapositive predicate reading] (if step 13 generated)
 15. remark*[Interpretation]
 16. remark*[Historical note] or remark*[Comparison with Feferman] (if a source crosswalk is supplied)
-17. remark*[Examples] (definitions only, if concept-boundary value is high)
-18. remark*[Non-Examples] (definitions only, if concept-boundary value is high)
-19. remark*[Dependencies] or \NoLocalDependencies
+17. remark*[Exposition] (if broader conceptual framing materially helps)
+18. remark*[Examples] (definitions only, if concept-boundary value is high)
+19. remark*[Non-Examples] (definitions only, if concept-boundary value is high)
+20. remark*[Dependencies] or \NoLocalDependencies
 ```
 
 ## Environment Body
@@ -239,6 +242,22 @@ Use this option shape:
   standard failure mode, and the structural or geometric picture.
 - Voice: authoritative record. No first-person or second-person prose.
 
+## Exposition
+
+- Use `\begin{remark*}[Exposition]` only when broader mathematical narrative
+  materially helps.
+- Use Exposition for motivation, intuition, conceptual framing, structural
+  commentary, methodological context, historical context, or connections to
+  nearby topics.
+- Do not use Exposition merely to translate one formal item into ordinary
+  language; use `Interpretation` for that.
+- Do not use Exposition to unpack logical form; use predicate-reading blocks
+  for that.
+- Exposition blocks are extractable metadata attached to the nearest relevant
+  formal item or section. They do not create knowledge-graph nodes by default.
+- Place Exposition after Interpretation and source crosswalk remarks, and
+  before Examples, Non-Examples, and Dependencies.
+
 ## Source Crosswalk Remarks
 
 - Generate a source crosswalk remark only when the user supplies or requests
@@ -249,7 +268,7 @@ Use this option shape:
   splits, refines, renames, packages, or reorganizes material from Feferman's
   presentation.
 - Place the source crosswalk remark after `Interpretation` and before
-  `Dependencies`.
+  `Exposition`, Examples, Non-Examples, and `Dependencies`.
 - Keep it short: one paragraph, normally two to six sentences.
 - Do not put source-comparison prose inside formal environments, quantified
   statements, predicate readings, negation blocks, or failure-mode
@@ -275,7 +294,7 @@ Use this option shape:
 - Examples and non-examples are explanatory metadata attached to the owning
   definition. They do not create knowledge-graph nodes and must not be listed
   as dependencies.
-- Place Examples and Non-Examples after source crosswalk remarks and before
+- Place Examples and Non-Examples after Exposition, if present, and before
   Dependencies.
 
 ## Dependencies

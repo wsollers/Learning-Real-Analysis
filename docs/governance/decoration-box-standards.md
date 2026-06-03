@@ -5,7 +5,7 @@ surround definitions, theorem-like environments, and related formal artifacts.
 
 These blocks are part of the standard information set for an artifact. They are
 not decorative flourish. They provide formal restatements, predicate readings,
-failure-mode analysis, interpretation, examples, non-examples, source
+failure-mode analysis, interpretation, exposition, examples, non-examples, source
 crosswalks, dependencies, and proof navigation where the artifact type
 requires them.
 
@@ -42,6 +42,7 @@ The standardized decoration blocks are:
 - Interpretation;
 - Historical note;
 - Comparison with Feferman;
+- Exposition;
 - Examples;
 - Non-Examples;
 - Dependencies;
@@ -66,9 +67,10 @@ When a block is present, use this order:
 10. Contrapositive predicate reading
 11. Interpretation
 12. Historical note or Comparison with Feferman
-13. Examples
-14. Non-Examples
-15. Dependencies or `\NoLocalDependencies`
+13. Exposition
+14. Examples
+15. Non-Examples
+16. Dependencies or `\NoLocalDependencies`
 
 Do not reorder blocks for aesthetics. Omit only blocks that the governing
 artifact standard does not require.
@@ -151,12 +153,40 @@ role, standard failure picture, and local significance.
 Interpretation blocks remain encouraged across artifact types, including
 vocabulary and structural definitions.
 
+## Exposition
+
+Use:
+
+```latex
+\begin{remark*}[Exposition]
+...
+\end{remark*}
+```
+
+Exposition is broader mathematical narrative: motivation, intuition,
+conceptual framing, structural commentary, historical or methodological
+context, and relationships to nearby topics. It is not a formal definition,
+theorem, predicate reading, or dependency list.
+
+Use `Interpretation` when translating one specific formal item into ordinary
+mathematical language. Use predicate-reading blocks when unpacking logical
+form. Use `Exposition` for topic-level explanation or broader conceptual
+framing.
+
+Exposition blocks use the normal unboxed `remark*` style. They are
+extractable explanatory metadata attached to the nearest relevant formal item
+or section; they do not create separate knowledge-graph nodes by default.
+
+Do not confuse `remark*` titled `Exposition` with the topic-level
+`exposition` environment used inside topic boxes.
+
 ## Source Crosswalks
 
 Use `Historical note` for direct provenance and `Comparison with Feferman` for
 structural comparison with Feferman's presentation.
 
-Source crosswalks appear after Interpretation and before Dependencies. They
+Source crosswalks appear after Interpretation and before Exposition,
+Examples, Non-Examples, and Dependencies. They
 must not appear inside formal environments, quantified statements, predicate
 readings, negation blocks, or failure-mode decompositions.
 

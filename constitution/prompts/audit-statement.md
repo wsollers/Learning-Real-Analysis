@@ -137,10 +137,23 @@ exposition may satisfy the interpretation requirement.
 - If absent: identify the nearby section exposition or required topic
   exposition that performs the interpretive work. If none found, flag as FAIL.
 
+### exposition
+- Optional?
+- If present, remark* titled exactly "Exposition"?
+- Is it broader conceptual framing, motivation, intuition, structural
+  commentary, historical context, methodology, or connection to nearby topics?
+- Does it avoid merely repeating the formal statement or duplicating the
+  Interpretation block?
+- Appears after Interpretation/source_crosswalk and before Examples,
+  Non-Examples, and Dependencies?
+- Does not introduce new labels, predicates, formal statements, or dependency
+  targets?
+
 ### source_crosswalk
 - Optional only.
 - If present, title is exactly "Historical note" or "Comparison with Feferman"?
-- Appears after Interpretation and before Dependencies?
+- Appears after Interpretation and before Exposition, Examples, Non-Examples,
+  and Dependencies?
 - Is short expository metadata, not formal mathematics?
 - Does not contain predicate-language notation, failure-mode logic, or theorem
   statement content?
@@ -152,8 +165,7 @@ exposition may satisfy the interpretation requirement.
 ### examples
 - Optional for definitions only?
 - remark* titled exactly "Examples"?
-- Appears after Interpretation and source_crosswalk, if present, and before
-  Dependencies?
+- Appears after Exposition, if present, and before Dependencies?
 - Contains explanatory examples rather than new formal definitions or theorem
   statements?
 - Does not introduce new labels?

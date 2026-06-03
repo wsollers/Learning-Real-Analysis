@@ -128,6 +128,45 @@ non_examples:
 Non-example metadata should preserve the failed condition when the source text
 identifies it.
 
+## Exposition Metadata
+
+`Exposition` remark blocks are extractable explanatory metadata. They preserve
+mathematical narrative without turning ordinary prose into a formal node.
+
+The canonical source form is:
+
+```latex
+\begin{remark*}[Exposition]
+...
+\end{remark*}
+```
+
+Extraction tools should attach exposition artifacts in this order:
+
+1. To the most recent preceding definition, theorem, axiom, proposition,
+   lemma, corollary, or example in the same section.
+2. If no such item exists, to the current section.
+3. If the source explicitly tags an attachment target, to the referenced
+   label.
+
+Exposition artifacts should not become primary knowledge-graph nodes by
+default. They may appear in hover cards, side panels, or detail panes.
+
+Preferred extracted shape:
+
+```yaml
+expositions:
+  - id: exposition:compactness-payoff
+    attached_to: thm:extreme-value-theorem
+    attached_to_kind: theorem
+    heading: Exposition
+    source_file: volume-iii/analysis/continuity/notes/index.tex
+    source_line_start: 42
+    source_line_end: 48
+    body: |
+      Compactness is the hypothesis that prevents values from escaping.
+```
+
 ## Theorem Explorer
 
 The theorem explorer implementation is owned by `lra-knowledge-explorer`.

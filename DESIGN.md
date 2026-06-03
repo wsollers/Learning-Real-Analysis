@@ -55,6 +55,7 @@ appropriate modular document instead.
 | Multi-repo sync boundaries | `docs/architecture/multi-repo-sync.md` |
 | Generated file headers, drift, and full-replace policy | `docs/architecture/generated-file-policy.md` |
 | Knowledge extraction workflow | `docs/workflows/knowledge-extraction.md` |
+| Bibliography entry workflow | `docs/workflows/bibliography-entry.md` |
 | Volume cleanup workflow | `docs/workflows/volume-cleanup.md` |
 | Generated wrapper sync workflow | `docs/workflows/generated-wrapper-sync.md` |
 | Decoration audit workflow | `docs/workflows/decoration-audit.md` |

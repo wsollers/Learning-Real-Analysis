@@ -8,10 +8,35 @@ rules after section 14.
 No proof file may be created for a statement unless the corresponding statement
 label already exists in the notes file.
 
+Leaf volume repositories own theorem and proof source files. The
+`Learning-Real-Analysis` monorepo is an assembled integration target and must
+not be edited as the canonical source for theorem/proof files.
+
 Handwritten proof artifacts, reviewed handwritten proof attempts, and
 proof-vault backlinks are governed by `handwritten-proof-vault-standards.md`.
 The proof vault is archival support only; canonical proof content remains in
 the volume repositories.
+
+## Theorem Proof-Stub Invariant
+
+Every top-level `theorem`, `proposition`, `lemma`, and `corollary` in a leaf
+repo `notes/**/*.tex` file that is expected to have a proof must have a
+compile-safe proof stub in that leaf repo's `proofs/**/*.tex` tree at creation
+time.
+
+Definitions and axioms are stable knowledge nodes, but they are not proof
+obligations unless explicitly marked by a local workflow or governance task.
+Local claims inside proof files do not create proof-stub obligations.
+
+The proof-to-theorem association is the source-visible macro:
+
+```latex
+\LRAProofFor{thm:example-label}
+```
+
+`lra-common` owns this macro. It is render-inert and exists for validators and
+knowledge extraction. Proof files should not rely on title or path inference as
+the primary theorem association.
 
 ## Proof File Structure
 
@@ -23,15 +48,16 @@ start on the same page as the previous proof.
 A full proof file contains:
 
 1. proof-level label,
-2. theorem-side navigation link,
-3. proof-vault backlink when the proof came from a memorialized handwritten
+2. `\LRAProofFor{...}`,
+3. theorem-side navigation link,
+4. proof-vault backlink when the proof came from a memorialized handwritten
    proof artifact,
-4. unnumbered theorem-like restatement,
-5. professional standard proof,
-6. detailed learning proof,
-7. proof structure remark,
-8. dependencies remark,
-9. `\clearpage`.
+5. unnumbered theorem-like restatement,
+6. professional standard proof,
+7. detailed learning proof,
+8. proof structure remark,
+9. dependencies remark,
+10. `\clearpage`.
 
 Proof-vault backlinks must use the shared `\ProofVaultURL{...}` macro and
 must be placed immediately after the `Return` remark and before the theorem
@@ -44,8 +70,14 @@ or unsanitized image.
 A proof stub is a compile-safe proof file that preserves the full proof-file
 structure. It may replace the professional standard proof and detailed learning
 proof bodies with TODO placeholders, but it must still include the proof-level
-label, theorem restatement, navigation, proof-structure remark, and dependency
-block.
+label, `\LRAProofFor{...}`, theorem restatement, navigation,
+proof-structure remark, and dependency block.
+
+Proof stubs are durable canonical containers. Later proof population must
+modify the existing proof file in place. It must preserve labels, theorem
+navigation, `\LRAProofFor{...}`, proof-vault backlinks, theorem restatement,
+dependency remarks, proof-structure remarks, and extraction metadata unless an
+explicit refactor task says otherwise.
 
 ## Two-Layer Proof Rule
 

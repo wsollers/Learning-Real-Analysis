@@ -99,3 +99,33 @@ whose examples immediately appear in nearby theorems.
 Non-examples should identify the precise failed condition whenever practical.
 Do not merely state that an object is not an example when the failed axiom,
 condition, or hypothesis can be named.
+
+## Exposition Remark Blocks
+
+Use `remark*` blocks titled `Exposition` when a topic benefits from
+conceptual explanation, motivation, intuition, historical context, structural
+commentary, or connections to nearby topics:
+
+```latex
+\begin{remark*}[Exposition]
+...
+\end{remark*}
+```
+
+Exposition blocks are for mathematical explanation that is neither a formal
+definition nor a theorem. They may explain why a definition matters, how a
+result fits the local structure, what earlier material it connects to, or what
+future material it prepares.
+
+Do not use exposition blocks merely to restate a displayed formula or repeat
+an interpretation block. Use `Interpretation` when translating one specific
+formal definition or theorem into ordinary mathematical language. Use
+predicate-reading blocks only when unpacking logical form.
+
+Exposition remark blocks use the normal unboxed `remark*` style. Do not
+introduce a new colored box for exposition.
+
+This is distinct from the topic-level `exposition` environment used inside
+topic boxes. The environment `exposition` orients a topic cluster; the
+`remark*` block titled `Exposition` makes item-adjacent conceptual narrative
+extractable.

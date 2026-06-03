@@ -41,7 +41,7 @@ repository.
 It must not directly overwrite:
 
 - volume note files,
-- `lra-common/bibliography/analysis.bib`,
+- the canonical split `.bib` files under `lra-common/bibliography/`,
 - canonical YAML files,
 - theorem explorer generated data,
 - governance files.

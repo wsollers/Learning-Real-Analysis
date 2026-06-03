@@ -43,9 +43,10 @@ blocks appear in this exact order. Omit only when the trigger is not met.
 7.  remark*[Contrapositive quantified statement]    — thm/lem/prop/cor, when illuminating
 8.  remark*[Contrapositive predicate reading]       — if step 7 generated
 9.  remark*[Interpretation]                         — always
-10. remark*[Examples]                              — defs only, when concept-boundary value is high
-11. remark*[Non-Examples]                          — defs only, when concept-boundary value is high
-12. remark*[Dependencies] or \NoLocalDependencies  — always
+10. remark*[Exposition]                            — when broader conceptual framing materially helps
+11. remark*[Examples]                              — defs only, when concept-boundary value is high
+12. remark*[Non-Examples]                          — defs only, when concept-boundary value is high
+13. remark*[Dependencies] or \NoLocalDependencies  — always
 ```
 
 ### Notation discipline (DESIGN.md Rule A)
@@ -54,6 +55,7 @@ Predicate names (`\operatorname{...}`) appear **only** in:
 - Definition predicate reading
 - Negation predicate reading
 - Contrapositive predicate reading
+- Exposition
 - Failure mode decomposition
 
 They must **never** appear in:
