@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-DEFAULT_SCHEMA_VERSION = "0.3"
+DEFAULT_SCHEMA_VERSION = "0.4"
 RECOGNIZED_EDGE_KINDS = {"depends_on", "equivalent_to", "implies", "prereq", "used_by"}
 
 LABEL_RE = re.compile(r"\\label\{[^{}]+\}")
@@ -696,6 +696,7 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
     node["title_latex_b64"] = seed_node.get("title_latex_b64", "")
     node["proof_raw_latex_b64"] = seed_node.get("proof_raw_latex_b64", "")
     node["remark_blocks"] = seed_node.get("remark_blocks", [])
+    node["expositions"] = seed_node.get("expositions", [])
     node["proof_file_blocks"] = seed_node.get("proof_file_blocks", [])
     node["seed_labels"] = seed_node.get("labels", [])
     node["seed_proof_refs"] = seed_node.get("proof_refs", [])

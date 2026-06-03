@@ -171,6 +171,14 @@ const els = {
 };
 
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function decodeB64(s) {
+  if (!s) return '';
+  try { return decodeURIComponent(escape(atob(s))); }
+  catch (e) {
+    try { return atob(s); }
+    catch (_) { return ''; }
+  }
+}
 function htmlWithBreaks(s) { return esc(s).replace(/\n/g, '<br>'); }
 const KATEX_OPTIONS = {
   throwOnError: false,
@@ -718,6 +726,14 @@ function renderDetails(n) {
   add('Failure modes', n.failure_modes, true);
   add('Failure mode decomposition', n.failure_mode_decomposition, true);
   add('Contrapositive', n.contrapositive, true);
+  if (Array.isArray(n.expositions)) {
+    n.expositions.forEach(exp => {
+      const body = decodeB64(exp.body_latex_b64) || exp.body_preview || '';
+      if (!body) return;
+      const source = exp.source_file ? `${exp.source_file}${exp.source_line_start ? ':' + exp.source_line_start : ''}` : '';
+      blocks.push(`<div class="card"><div class="label">${esc(exp.heading || 'Exposition')}</div><div class="value">${htmlWithBreaks(body)}</div>${source ? `<div class="tiny" style="margin-top:8px">${esc(source)}</div>` : ''}</div>`);
+    });
+  }
   add('Proof type', n.proof_type);
   add('Proof idea', n.proof_idea);
   addProofSketch();

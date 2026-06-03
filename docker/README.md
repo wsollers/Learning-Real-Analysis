@@ -67,7 +67,7 @@ to their `volume-N/index.tex` — no content files are duplicated.
 |---|---|---|
 | Engine | **LuaLaTeX** | Required by `expl3`, `tcolorbox` skins, `microtype` |
 | Driver | **latexmk** | Multi-pass orchestration: aux → bib → index → toc → hyperref |
-| Bibliography | **BibTeX / natbib** | `plainnat` style via `bibliography/analysis.bib` |
+| Bibliography | **BibTeX / natbib** | `plainnat` style via split `bibliography/volume-*.bib` files |
 | Indexes | **makeindex** (×2) | `imakeidx` produces `main.tech.idx` and `main.dep.idx` |
 | Output dir | `build/` | Keeps the repo root clean |
 

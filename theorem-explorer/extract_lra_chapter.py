@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 Extract structured theorem-like data from a standardized Learning Real Analysis chapter.
 
 What it does
@@ -10,6 +10,8 @@ What it does
 - Captures \begin{dependencies}...\end{dependencies} blocks that follow each item
   (after its enclosing tcolorbox if present) and before the next theorem-like
   environment begins — emitted as dependency_refs and depends_on graph edges.
+- Promotes item-attached Exposition remark blocks into metadata fields without
+  creating graph nodes.
 - Maps proof files to theorem-like items via:
     * \\hyperref[prf:...] links inside note blocks
     * \\label{prf:...} inside proof files
@@ -109,6 +111,7 @@ class ExtractedItem:
     theorem_refs: list[str]
     dependency_refs: list[str]
     remark_blocks: list[dict[str, Any]]
+    expositions: list[dict[str, Any]] = field(default_factory=list)
     proof_source_path: str | None = None
     proof_labels: list[str] = field(default_factory=list)
     proof_return_targets: list[str] = field(default_factory=list)
@@ -296,6 +299,15 @@ def clean_preview(latex: str, limit: int = 220) -> str:
     return s[:limit]
 
 
+def line_number(text: str, pos: int) -> int:
+    return text.count("\n", 0, pos) + 1
+
+
+def slugify(value: str) -> str:
+    slug = re.sub(r"[^A-Za-z0-9]+", "-", value).strip("-").lower()
+    return slug or "item"
+
+
 def relative_posix(path: Path, root: Path) -> str:
     return path.relative_to(root).as_posix()
 
@@ -405,6 +417,10 @@ def collect_trailing_remarks(text: str, envs: list[EnvBlock], idx: int) -> list[
                 "title": title.strip(),
                 "env_name": nxt.name,
                 "raw_latex_b64": b64(raw),
+                "body_latex_b64": b64(nxt.content(text).strip()),
+                "body_preview": clean_preview(nxt.content(text)),
+                "source_line_start": line_number(text, nxt.begin_start),
+                "source_line_end": line_number(text, nxt.end_end),
             }
         )
         current_end = nxt.end_end
@@ -486,6 +502,36 @@ def make_fallback_id(kind: str, path: Path, ordinal: int) -> str:
     return f"{kind.lower()}:{stem}:{ordinal:03d}"
 
 
+def exposition_metadata(
+    remarks: list[dict[str, Any]],
+    item_id: str,
+    kind: str,
+    label: str,
+    section_slug: str,
+    source_path: str,
+) -> list[dict[str, Any]]:
+    expositions: list[dict[str, Any]] = []
+    for index, remark in enumerate(remarks, start=1):
+        if remark.get("title", "").strip() != "Exposition":
+            continue
+        expositions.append(
+            {
+                "id": f"exposition:{slugify(item_id)}:{index:02d}",
+                "attached_to": item_id,
+                "attached_to_kind": kind,
+                "source_label": label,
+                "section": section_slug,
+                "heading": "Exposition",
+                "source_file": source_path,
+                "source_line_start": remark.get("source_line_start"),
+                "source_line_end": remark.get("source_line_end"),
+                "body_latex_b64": remark.get("body_latex_b64", ""),
+                "body_preview": remark.get("body_preview", ""),
+            }
+        )
+    return expositions
+
+
 def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
     notes_root = chapter_root / "notes"
     chapter_name = chapter_root.name
@@ -515,6 +561,9 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
             theorem_refs = sorted({h for h in HYPERREF_RE.findall(raw) if h.startswith(("def:", "thm:", "lem:", "prop:", "cor:", "ax:"))})
             remarks = collect_trailing_remarks(text, envs, idx)
             dependency_refs = collect_dependencies(text, envs, idx)
+            source_path = relative_posix(path, chapter_root)
+            section_slug = find_section_slug(path, chapter_root)
+            expositions = exposition_metadata(remarks, item_id, kind, label, section_slug, source_path)
 
             item = ExtractedItem(
                 id=item_id,
@@ -522,9 +571,9 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
                 env_name=env.name,
                 title=cleaned_title,
                 label=label,
-                source_path=relative_posix(path, chapter_root),
+                source_path=source_path,
                 chapter=chapter_name,
-                section_slug=find_section_slug(path, chapter_root),
+                section_slug=section_slug,
                 note_dir=path.parent.name,
                 raw_latex_b64=b64(raw),
                 body_latex_b64=b64(body),
@@ -534,6 +583,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
                 theorem_refs=theorem_refs,
                 dependency_refs=dependency_refs,
                 remark_blocks=remarks,
+                expositions=expositions,
                 text_preview=clean_preview(raw),
             )
 
@@ -611,6 +661,7 @@ def item_to_json(item: ExtractedItem) -> dict[str, Any]:
         "title_latex_b64": item.title_latex_b64,
         "proof_raw_latex_b64": item.proof_raw_latex_b64,
         "remark_blocks": item.remark_blocks,
+        "expositions": item.expositions,
         "proof_file_blocks": item.proof_file_blocks,
         "text_preview": item.text_preview,
     }
