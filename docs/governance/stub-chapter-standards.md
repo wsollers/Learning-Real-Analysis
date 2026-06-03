@@ -51,6 +51,9 @@ capstone/
 
 Do not create extra directories unless local conventions require them.
 
+The machine-readable authority for volume, chapter, and topic layout is
+`constitution/schema/file-schema.yaml`.
+
 ## Chapter Index
 
 The chapter `index.tex` is the chapter-level router. It should contain, in the
@@ -208,4 +211,3 @@ Any stub-generation task should report:
 - archived material referenced, if applicable;
 - build result;
 - warnings or errors.
-

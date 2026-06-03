@@ -18,15 +18,11 @@ the monorepo root explicitly.
 
 ## Expected Source Shape
 
-Extraction assumes:
-
-- one mathematical object per theorem-like environment,
-- stable labels with approved prefixes,
-- dependency blocks after interpretation material,
-- dependency items using `\hyperref[label]{Readable Name}`,
-- proof labels using `prf:` only for proof locations and navigation,
-- no invented predicates,
-- no predicate leakage into theorem or definition bodies.
+Extraction assumes source follows `docs/governance/extraction-standards.md`,
+`docs/governance/dependency-standards.md`, and the structured rules in
+`constitution/schema/block-registry.yaml`,
+`constitution/schema/artifact-matrix.yaml`, and
+`constitution/schema/file-schema.yaml`.
 
 ## Review
 

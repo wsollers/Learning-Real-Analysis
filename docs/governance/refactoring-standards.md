@@ -31,3 +31,13 @@ only; they must update local routers without inventing mathematical content.
 
 Do not edit downstream synced copies as sources of truth. Apply source changes
 in the owning repo and use the approved sync path.
+
+## Route Metadata
+
+When a refactor moves theorem source files, proof source files, or the folders
+that contain them, regenerate the leaf theorem-route artifacts before any
+proof-vault sync or mobile memorialization workflow uses those routes.
+
+Route metadata is path-sensitive. `theorem_id` remains stable, but
+`theorem_tex`, `proof_tex`, and derived route artifacts must reflect the new
+leaf repo paths.

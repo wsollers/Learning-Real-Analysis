@@ -45,6 +45,12 @@ hyphen-separated ASCII filenames. Each notes proof file begins on a new page
 and ends with `\clearpage`, so the next proof topic or proof section cannot
 start on the same page as the previous proof.
 
+The machine-readable authority for proof folder architecture, topic matching,
+legacy refactor mode, and proof index reachability is
+`constitution/schema/file-schema.yaml`.
+Use `tools/governance/audit_proof_layout.py` for deterministic proof-layout
+classification when a task needs compliant/non-compliant proof lists.
+
 A full proof file contains:
 
 1. proof-level label,

@@ -73,6 +73,7 @@ volume_repo_root:
 # ---------------------------------------------------------------------------
 
 volume:
+  location: volume-{n}/
   required_files:
     - index.tex
     - chapter.yaml        # chapter registry for this volume in dependency order
@@ -82,6 +83,51 @@ volume:
     Registry order is structural, not alphabetical. Canonical chapter subjects
     are authoritative — a chapter must use a subject from the registry.
     Chapter subject names are repository identifiers, not display titles.
+
+volume_chapter_topic_layout:
+  volume_root: volume-{n}/
+  chapter_location: volume-{n}/{chapter}/
+  topic_location:
+    notes: volume-{n}/{chapter}/notes/{topic}/
+    proofs: volume-{n}/{chapter}/proofs/{topic}/
+  required_volume_files:
+    - index.tex
+    - chapter.yaml
+  required_chapter_files:
+    - index.tex
+    - chapter.yaml
+  required_chapter_directories:
+    - notes/
+    - proofs/
+    - proofs/exercises/
+  required_topic_files:
+    notes/{topic}/:
+      - index.tex
+    proofs/{topic}/:
+      - index.tex
+  router_files:
+    volume_index: volume-{n}/index.tex
+    chapter_index: volume-{n}/{chapter}/index.tex
+    notes_index: volume-{n}/{chapter}/notes/index.tex
+    proofs_index: volume-{n}/{chapter}/proofs/index.tex
+    proofs_topic_index: volume-{n}/{chapter}/proofs/{topic}/index.tex
+  router_rules:
+    - volume index.tex inputs chapter/index.tex files in chapter order when local convention requires explicit routing
+    - chapter index.tex inputs notes/index.tex and proofs/index.tex
+    - notes/index.tex inputs each notes/{topic}/index.tex
+    - proofs/index.tex inputs each proofs/{topic}/index.tex
+    - proofs/{topic}/index.tex inputs proof files for that topic
+  topic_pair_rule: >
+    Every active notes topic directory must have a matching proofs topic
+    directory with the same topic identifier. A proofs topic directory without
+    a matching notes topic directory is orphaned unless explicit
+    migration/refactor mode is active.
+  legacy_topic_rule: >
+    Legacy flat notes files directly under notes/ and legacy flat proof files
+    under proofs/notes/ may be recognized only under explicit
+    migration/refactor mode. New active topics use notes/{topic}/ and
+    proofs/{topic}/.
+  audit_tool: tools/governance/audit_volume_layout.py
 
 # ---------------------------------------------------------------------------
 # Chapter Structure (full)
@@ -95,7 +141,6 @@ chapter:
   required_directories:
     - notes/
     - proofs/
-    - proofs/notes/
     - proofs/exercises/
 
   required_files_in_directories:
@@ -103,24 +148,34 @@ chapter:
       - index.tex
     proofs/:
       - index.tex
-    proofs/notes/:
-      - index.tex
     proofs/exercises/:
       - index.tex
       - capstone-{chapter}.tex   # {chapter} = repository subject name
 
   section_structure:
-    notes/{section}/:
-      - notes-{section}.tex
-      - figure-{n}.tex           # required for every nontrivial TikZ figure
-                                 # TikZ only; no preamble; no inline color defs
-                                 # no figure env, caption, label, or prose
+    topic_pair:
+      notes/{topic}/:
+        - index.tex              # topic router
+        - notes-{topic}.tex      # conventional topic body when locally used
+        - figure-{n}.tex         # required for every nontrivial TikZ figure
+                                  # TikZ only; no preamble; no inline color defs
+                                  # no figure env, caption, label, or prose
+      proofs/{topic}/:
+        - index.tex              # inputs proof files for this topic
+
+  topic_pair_rule: >
+    Every authored notes topic folder has a matching proofs topic folder.
+    The topic identifier is shared: notes/{topic}/ pairs with proofs/{topic}/.
+    New proof-bearing theorem-like environments under notes/{topic}/ must use
+    proof files under proofs/{topic}/ unless explicit migration/refactor mode
+    is active.
 
   input_rules:
     - main.tex inputs volumes only
     - chapter index.tex is the only file that inputs proofs/index.tex
-    - notes/{section}/ contains no local index.tex
-    - proofs/notes/index.tex inputs proof files in dependency order
+    - notes/index.tex inputs each notes/{topic}/index.tex in chapter order
+    - proofs/index.tex inputs each proofs/{topic}/index.tex in matching chapter order
+    - proofs/{topic}/index.tex inputs proof files for that topic in dependency order
     - proofs/exercises/index.tex inputs exercise proofs with capstone last
 
 # ---------------------------------------------------------------------------
@@ -135,7 +190,6 @@ chapter_stub:
   required_directories:
     - notes/
     - proofs/
-    - proofs/notes/
     - proofs/exercises/
 
   required_files_in_directories:
@@ -143,11 +197,21 @@ chapter_stub:
       - index.tex
     proofs/:
       - index.tex
-    proofs/notes/:
-      - index.tex
     proofs/exercises/:
       - index.tex
       - capstone-{chapter}.tex
+
+  topic_pair_stub:
+    notes/{topic}/:
+      - index.tex
+    proofs/{topic}/:
+      - index.tex
+
+  topic_pair_rule: >
+    Section/topic stubs are created as matched notes/proofs topic pairs.
+    Stub generation does not create proof files for nonexistent statements.
+    Proof files are added only when a proof-bearing theorem-like statement
+    exists and the proof stub invariant is satisfied.
 
   index_tex_order:
     - breadcrumb_box
@@ -172,21 +236,53 @@ chapter_stub:
 # ---------------------------------------------------------------------------
 
 proof_file:
-  location: proofs/notes/{proof-id}.tex
+  location: proofs/{topic}/{proof-id}.tex
+  legacy_location: proofs/notes/{proof-id}.tex
+  legacy_location_rule: >
+    The legacy flat proofs/notes/{proof-id}.tex layout may be recognized only
+    under explicit migration/refactor mode. New proof files must use the
+    topic-mirrored proofs/{topic}/{proof-id}.tex layout.
   naming_rule: lowercase, hyphen-separated, ASCII only, free of LaTeX markup
 
+  topic_match_rule: >
+    If the theorem-like environment associated by \LRAProofFor{...} is located
+    under notes/{topic}/, the proof file must be located under proofs/{topic}/.
+    The proof topic folder must match the notes topic folder unless explicit
+    migration/refactor mode is active.
+
+  index_hook_rule: >
+    Every proof file must be reachable from proofs/{topic}/index.tex. Every
+    proofs/{topic}/index.tex must be reachable from proofs/index.tex. The
+    chapter index.tex remains the only chapter-level file that inputs
+    proofs/index.tex.
+
   required_layers_in_order:
-    1: \newpage
-    2: \phantomsection
-    3: \label{prf:{theorem-id}}       # outside all environments
-    4: remark* Return                 # \hyperref back to theorem
-    5: optional \ProofVaultURL{...}    # required for memorialized handwritten proof records
-    6: theorem*                       # restatement, unnumbered, no label inside
-    7: proof Professional Standard    # compact rigorous argument
-    8: proof Detailed Learning        # bold inline step headings only
-    9: remark* Proof structure        # high-level strategy
-    10: dependencies environment      # \hyperref links to all items used
-    11: \clearpage
+    1: newpage
+    2: phantomsection
+    3: proof_label
+    4: proof_for
+    5: return_navigation
+    6: optional_proof_vault_url
+    7: theorem_restatement
+    8: professional_standard_proof
+    9: detailed_learning_proof
+    10: proof_structure
+    11: dependencies
+    12: clearpage
+
+  layer_definitions:
+    newpage: \newpage
+    phantomsection: \phantomsection
+    proof_label: \label{prf:{theorem-root}}
+    proof_for: \LRAProofFor{{theorem-label}}
+    return_navigation: remark* Return with \hyperref[{theorem-label}]{Return ...}
+    optional_proof_vault_url: \ProofVaultURL{...}
+    theorem_restatement: theorem* restatement, unnumbered, no label inside
+    professional_standard_proof: proof environment containing "Professional Standard Proof"
+    detailed_learning_proof: proof environment containing "Detailed Learning Proof"
+    proof_structure: remark* Proof structure
+    dependencies: dependencies environment with hyperref links to mathematical labels
+    clearpage: \clearpage
 
   label_rules:
     - proof label must be \label{prf:X} where X matches \label{thm:X} / \label{def:X}
@@ -209,6 +305,37 @@ proof_file:
     Detailed learning proof uses inline bold step headings only:
     \textbf{Step 1.} ...
     No step macros. No separate remark environments to organize steps.
+
+proof_status:
+  full:
+    required: proof_file.required_layers_in_order
+    todo_rule: >
+      A full proof must not contain TODO placeholders in the theorem
+      restatement, professional standard proof, detailed learning proof, proof
+      structure remark, or dependency block.
+
+  stub:
+    required: proof_file.required_layers_in_order
+    todo_rule: >
+      A proof stub keeps the same layers as a full proof file. It may use
+      TODO-safe placeholders in the theorem restatement, professional standard
+      proof, detailed learning proof, proof structure remark, and dependencies
+      block. The professional standard proof body and detailed learning proof
+      body must both be present, even when they contain TODO placeholders.
+    durable_container_rule: >
+      Later proof population modifies the stub in place and preserves proof
+      label, \LRAProofFor{...}, return navigation, proof-vault URL if present,
+      theorem restatement, extraction-visible metadata, proof structure, and
+      dependency block.
+
+proof_layout_audit:
+  tool: tools/governance/audit_proof_layout.py
+  outputs:
+    - compliant_full
+    - compliant_stub
+    - non_compliant
+  strict_rule: >
+    In strict mode, any non-compliant proof file causes a nonzero exit status.
 
 # ---------------------------------------------------------------------------
 # Capstone Structure

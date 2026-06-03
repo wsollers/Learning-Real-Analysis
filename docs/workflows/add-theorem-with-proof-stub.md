@@ -9,11 +9,10 @@ or proof source files directly in `Learning-Real-Analysis`.
 2. Give every top-level `theorem`, `proposition`, `lemma`, and `corollary` a
    stable source label.
 3. Create the matching proof stub in the leaf repo `proofs/**/*.tex` tree.
-4. Add a proof-level `prf:` label.
-5. Add `\LRAProofFor{...}` with the theorem/proposition/lemma/corollary label.
-6. Add theorem return/navigation, an unnumbered restatement, a professional
-   proof TODO section, a detailed learning proof TODO section, and TODO-safe
-   dependency/proof-structure remarks.
+4. Follow the proof-stub structure in `docs/governance/proof-standards.md` and
+   `constitution/schema/file-schema.yaml`.
+5. Inspect nearby statements, proof stubs, and topic indexes before editing.
+6. Ensure the proof file is routed through the chapter's proof indexes.
 7. Run:
 
 ```bash

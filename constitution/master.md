@@ -9,158 +9,50 @@ concerns that must never be mixed:
 - **Schema** — what a valid artifact looks like
 - **Prompts** — what to send to the model for generation or audit
 - **Schemas** — what the model must return
-- **This file** — orientation and loading order only
+- **This file** — constitutional invariants and pointers to the owning
+  authority docs
 
 ---
 
-## Repository Map (as of 2026)
+## Authority Pointers
 
-The project is split across multiple repos. The constitution is owned by
-`lra-governance`, synced into every repo, and governs all repos. The detailed
-ownership and filesystem map lives in `REPOSITORY_STRUCTURE.md`.
+Repository ownership, volume ownership, sync direction, generated-file policy,
+canonical YAML storage, and agent loading discipline are not constitutional
+rules. They are maintained in the architecture, governance, and routing docs:
 
-| Repository | Role |
-|---|---|
-| `lra-governance` | Governance: `DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, `constitution/` |
-| `Learning-Real-Analysis` | Monorepo: full build, canonical YAMLs, docker, assembled volumes |
-| `lra-common` | Shared LaTeX infrastructure: `common/`, `bibliography/` — synced to volumes |
-| `lra-volume-i` | Volume I content — Overleaf target |
-| `lra-volume-ii` | Volume II content — Overleaf target |
-| `lra-volume-iii` | Volume III content — Overleaf target |
-| `lra-volume-iv` | Volume IV content — Overleaf target |
-| `lra-volume-v` | Volume V content — Overleaf target |
-| `lra-volume-vi` | Volume VI content — Overleaf target |
-| `lra-volume-vii` | Volume VII content — Overleaf target |
-| `lra-volume-viii` | Volume VIII content — Overleaf target |
-| `lra-lean` | Lean 4 proof formalization |
-| `lra-nurbs` | NURBS/DDE C++ engine |
-| `lra-knowledge-explorer` | Theorem extraction pipeline + HTML graph |
+- repository and repo ownership map:
+  `docs/architecture/repository-layout.md`
+- multi-repo sync direction and emergency downstream edits:
+  `docs/architecture/multi-repo-sync.md`
+- canonical predicate, notation, and relation YAML storage:
+  `docs/architecture/canonical-yaml.md`
+- generated downstream file policy:
+  `docs/architecture/generated-file-policy.md`
+- generated agent instruction policy:
+  `docs/governance/agent-instruction-policy.md`
+- agent task loading discipline:
+  `docs/agent-task-index.md`
 
-### Auditor root discovery
-
-The auditor (`constitution/auditor/config.py`) can discover governance files in
-the current repo by looking for `constitution/master.md`. Auditor operations
-that need canonical YAML files should use the monorepo root by reading the
-`REPO_ROOT` environment variable or by receiving `--repoDir`.
-
-When running against a volume repo, set:
-
-```bash
-export REPO_ROOT=/path/to/Learning-Real-Analysis
-# or pass --repoDir /path/to/Learning-Real-Analysis to the CLI
-```
-
-The canonical source files (`predicates.yaml`, `notation.yaml`, `relations.yaml`) live
-at the monorepo root and are never duplicated in volume repos.
-
-### common/ ownership
-
-`common/` is owned by `lra-common`. Volume repos receive synced copies via
-GitHub Actions (`.github/workflows/sync-to-volumes.yml` in `lra-common`).
-Do not edit `common/` files in volume repos directly.
-
-### governance ownership
-
-`DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, and `constitution/` are
-owned by `lra-governance`. Downstream copies are local working context only.
+The constitution keeps only validity rules for mathematical artifacts and the
+structured data used by generation and audit.
 
 ---
 
-## File Map
+## Structured Constitution Files
 
-### Schema (data files — loaded by scripts directly)
+The structured files below are loaded directly by tools and prompts. Detailed
+task routing belongs in `docs/agent-task-index.md`.
 
 | File | Purpose |
 |------|---------|
-| `schema/block-registry.yaml` | Every possible logical block with trigger conditions and parent dependencies |
+| `schema/block-registry.yaml` | Logical block identity, trigger conditions, and parent dependencies |
 | `schema/artifact-matrix.yaml` | R/C/D/N requirement matrix indexed by artifact type |
-| `schema/file-schema.yaml` | Canonical filesystem structure for volumes, chapters, proof directories |
+| `schema/file-schema.yaml` | Volume, chapter, topic, proof, stub, capstone, and breadcrumb layout |
+| `schemas/audit-report.json` | Shared response schema for audit API calls |
 
-### Prompts (injected into API calls by the Python auditor/generator)
-
-| File | Artifact | Operation |
-|------|----------|-----------|
-| `prompts/audit-statement.md` | def / thm / lem / prop / cor / ax | Audit |
-| `prompts/audit-proof.md` | proof file | Audit |
-| `prompts/audit-stub.md` | chapter stub / volume stub | Audit |
-| `prompts/audit-chapter-symbols.md` | full chapter | Symbol / notation / predicate audit |
-| `prompts/generate-statement.md` | def / thm / lem / prop / cor / ax | Generate |
-| `prompts/generate-proof.md` | proof file | Generate |
-| `prompts/generate-stub-chapter.md` | chapter stub | Generate |
-| `prompts/generate-stub-volume.md` | volume stub | Generate |
-| `prompts/generate-breadcrumb.md` | breadcrumb box | Generate |
-| `prompts/generate-capstone.md` | capstone exercise | Generate |
-
-### Schemas (JSON response schemas — enforced by the Python auditor)
-
-| File | Purpose |
-|------|---------|
-| `schemas/audit-report.json` | Shared response schema for all audit API calls |
-
----
-
-## Loading Order for the Python Script
-
-### Audit call (statement)
-1. Load `schema/block-registry.yaml`
-2. Load `schema/artifact-matrix.yaml`
-3. Identify artifact type from LaTeX environment name
-4. Extract requirement row from matrix
-5. Concatenate: `prompts/audit-statement.md` + matrix row + block registry
-6. Send to API
-7. Validate response against `schemas/audit-report.json`
-
-### Audit call (proof)
-1. Load `prompts/audit-proof.md`
-2. Send to API
-3. Validate response against `schemas/audit-report.json`
-
-### Audit call (stub)
-1. Load `schema/file-schema.yaml`
-2. Load `prompts/audit-stub.md`
-3. Send to API
-4. Validate response against `schemas/audit-report.json`
-
-### Audit call (chapter symbols)
-1. Load `prompts/audit-chapter-symbols.md`
-2. Load canonical source files: `predicates.yaml`, `notation.yaml`, `relations.yaml`
-3. Send chapter content + canonical files to API
-4. Receive markdown audit report — **no YAML is written by the model**
-5. On explicit user approval: issue separate add request; model returns YAML block only
-
-### Generate call (statement)
-1. Load `schema/block-registry.yaml`
-2. Load `schema/artifact-matrix.yaml`
-3. Load `prompts/generate-statement.md`
-4. Identify artifact type
-5. Send to API
-
-### Generate call (proof)
-1. Load `prompts/generate-proof.md`
-2. Send to API
-
-### Generate call (stub)
-1. Load `schema/file-schema.yaml`
-2. Load `prompts/generate-stub-chapter.md` or `generate-stub-volume.md`
-3. Send to API
-
----
-
-## Canonical Source Files (outside this constitution)
-
-These files live at the **monorepo root** (`Learning-Real-Analysis/`) and are the
-single source of truth for formal mathematical names. The constitution never
-duplicates their content. They are never copied to volume repos.
-
-```text
-Learning-Real-Analysis/
-  predicates.yaml
-  notation.yaml
-  relations.yaml
-```
-
-They are read-only to all automated processes. They are modified only by
-explicit user instruction, by hand, after reviewing a markdown audit report.
+Prompt files under `constitution/prompts/` are loaded only for the explicit
+generation or audit mode named by the task. They should consume structured
+schema/data files rather than duplicating large rule lists when practical.
 
 ---
 

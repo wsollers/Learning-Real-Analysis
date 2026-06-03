@@ -5,14 +5,17 @@ downstream only through a controlled process.
 
 ## Source Flow
 
+The generated-file and local-edit rules live in
+`docs/architecture/generated-file-policy.md` and
+`docs/governance/agent-instruction-policy.md`.
+
 The generation formula is:
 
 ```text
 global governance docs + repo overlay + provider wrapper format
 ```
 
-Generated downstream files are not canonical. Emergency downstream edits must
-be ported upstream into `lra-governance` before the next sync.
+Generated downstream files are not canonical.
 
 ## Preview And Validation
 
@@ -31,13 +34,8 @@ a task explicitly asks for a report artifact.
 Wrapper sync is dry-run by default. Write mode must be explicit,
 repo-selected, and guarded. It must not silently sync every repo.
 
-The sync tool writes only generated wrapper files:
-
-- `AGENTS.md`
-- `CLAUDE.md`
-- `GEMINI.md`
-- `.github/copilot-instructions.md`
-- `.github/instructions/lra.instructions.md`
+The sync tool writes only generated wrapper files defined by the generated-file
+policy and the selected provider wrapper.
 
 Write mode must refuse dirty target repos and non-main target branches unless a
 task explicitly authorizes an exception. The sync tool does not stage, commit,

@@ -10,8 +10,11 @@ Modules:
 - `add-theorem-with-proof-stub.md`
 - `populate-proof-stub.md`
 - `proof-stub-invariant-migration.md`
+- `proof-layout-audit.md`
+- `volume-layout-audit.md`
 - `volume-cleanup.md`
 - `generated-wrapper-sync.md`
+- `governance-audit.md`
 - `decoration-audit.md`
 
 Use these files when a task asks how to run or review a process. Use

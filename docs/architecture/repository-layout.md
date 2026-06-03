@@ -6,7 +6,7 @@ Source: `REPOSITORY_STRUCTURE.md`.
 
 | Repository | Canonical ownership | Sync direction |
 | --- | --- | --- |
-| `lra-governance` | Governance docs, architecture docs, repo overlays, prompts, schemas, generators, sync policy. | source for generated governance artifacts |
+| `lra-governance` | Governance docs, architecture docs, repo overlays, prompts, schemas, constitution files, generators, sync policy. | source for generated governance artifacts |
 | `Learning-Real-Analysis` | Assembled monorepo, omnibus builds, canonical YAML sources, docker, cross-volume integration. | receives volume/common/governance syncs |
 | `lra-common` | Shared LaTeX infrastructure: `common/`, split `bibliography/`, and bibliography helper scripts. | to volume repos and monorepo |
 | `lra-volume-i` through `lra-volume-viii` | Volume content under `volume-N/`. | to monorepo `volume-N/` |
