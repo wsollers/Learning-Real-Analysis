@@ -28,7 +28,7 @@ Top-level `exercises/` is reserved for the chapter exercise vault. It is
 separate from theorem proof material under `proofs/`; stable exercise IDs are
 canonical, while exercise paths are mutable routing details.
 
-`common/` are synced copies from `lra-common`. They are not
+`common/` and `bibliography/` are synced copies from `lra-common`. They are not
 owned by volume repos.
 
 Volume repos own volume content only. They do not own Lean formalization,

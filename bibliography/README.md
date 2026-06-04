@@ -1,39 +1,17 @@
-# Split Bibliography
+# Assembled Bibliography Shards
 
-This directory is owned by `lra-common`.
+This directory is an integration target in `Learning-Real-Analysis`.
 
-Add new entries to exactly one split file:
+Each `volume-*.bib` file is owned by the corresponding `lra-volume-*` repository
+and is copied here by that volume's sync workflow. Do not edit these files here
+as the source of truth; edit the owning volume repo and sync the shard in.
 
-- `volume-i-foundations.bib`
-- `volume-ii-number-systems.bib`
-- `volume-iii-analysis.bib`
-- `volume-iv-algebra.bib`
-- `volume-v-topology-geometry.bib`
-- `volume-vi-computational.bib`
-- `volume-vii-numerical-approximation.bib`
-- `volume-viii-logic-foundations.bib`
-- `general-reference.bib`
+The full monorepo build assembles the bibliography by listing all volume-owned
+shards in `main.tex`. Per-volume monorepo roots list only their corresponding
+volume shard.
 
-`analysis.bib` is a legacy pointer only. Do not add entries there.
-
-Before committing, run:
+Run duplicate checks with:
 
 ```powershell
-python scripts/check_bibliography.py
+python scripts/check_bibliography.py --bib-dir bibliography
 ```
-
-To search before adding a mobile/OCR/extractor candidate, run:
-
-```powershell
-python scripts/check_bibliography.py --find "author or title words"
-```
-
-Local PDF inventory, ISBN scanning, rename planning, and reading-tab launchers
-are documented in:
-
-```text
-docs/workflows/reading-library-tools.md
-```
-
-Those tools describe local holdings and reading workflows. They do not replace
-BibTeX entries, and they do not rename or delete files automatically.
