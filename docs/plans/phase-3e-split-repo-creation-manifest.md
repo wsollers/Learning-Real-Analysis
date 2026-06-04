@@ -147,7 +147,8 @@ These template files are not active workflows.
 - The target repo exists under the expected `wsollers/lra-volume-*` name.
 - The target repo has default branch `main`.
 - Only one volume directory is present in each split repo.
-- `common/`, `bibliography/`, `constitution/`, and `docs/` are present.
+- `common/`, the volume-owned bibliography shard, `constitution/`, and `docs/`
+  are present.
 - Required image asset is present:
   - `images/euler.png` for Volume VI;
   - `images/newton.png` for Volume VII;

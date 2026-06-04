@@ -52,6 +52,14 @@ exercise bodies, exposition blocks, and statement files are prohibited.
 Figure source files contain only the `tikzpicture` environment. Captions,
 labels, placement, and explanatory prose belong at the inclusion point.
 
+## LaTeX Structural Integrity
+
+Generated LaTeX must be structurally balanced before acceptance. Every `\[`
+must have a matching `\]`, every `\begin{...}` must have a matching
+`\end{...}`, and `\cite` or `\label` must not appear inside display math unless
+intentionally part of the mathematical display. Close display math before
+citations, labels, environment endings, or prose continuation.
+
 ## Chapter Entries
 
 Chapter openings use the canonical entry pattern from `DESIGN.md`: breadcrumb,
@@ -69,6 +77,52 @@ Each layer has one job:
 - prose connects local context.
 
 Do not over-symbolize exposition. Use prose where prose is the correct layer.
+
+## Multi-Definition Source Passages
+
+When converting a source passage that contains several related definitions,
+operations, cases, or constructions, do not bundle the independent concepts
+into one formal definition environment. Classify the passage as a related
+definition cluster when it has signals such as:
+
+- "one of the following";
+- "the four operations";
+- "for each of";
+- "this leads to";
+- "the endpoint formulas are";
+- a set-builder definition followed by multiple displayed equations;
+- repeated formulas with the same left-hand object and different operators or
+  cases;
+- prose saying one displayed equation defines several operators or cases.
+
+For a related definition cluster, begin with a short `remark*` block titled
+`Exposition` that explains the shared conceptual family, then give a general
+definition when the source gives a common set-based or abstract definition,
+then give each independently nameable operation, case, or construction its own
+definition environment and stable label.
+
+Do not replace those atomic definitions with a single parameterized umbrella
+definition such as "let `\circ` range over the operations" when the source gives
+named operations, cases, or endpoint/formula rules separately. The shared
+schema may be explained in the exposition block, but each named operation or
+case still receives its own definition environment.
+
+When an example is supported by the source or follows directly without adding
+new mathematical claims, include a short example after the relevant definition
+if it materially improves understanding. Do not add examples merely to satisfy
+a pattern, and do not invent examples that introduce unsupported hypotheses,
+notation, or claims.
+
+Suppress accidental OCR/prose fragments as definition titles. Titles such as
+"And B", "The following", "This leads to", "With", "For", "Therefore", or any
+phrase that is not a meaningful mathematical noun phrase must be normalized or
+discarded.
+
+Labels for generated definitions must be derived from normalized semantic
+titles, not raw OCR spans. Use stable lowercase kebab-case labels such as
+`def:interval-addition`, not labels that include page numbers, prose fragments,
+or truncated OCR text such as
+`def:2-3-real-interval-arithmetic-let-denote-one-of-the-four-arithmet`.
 
 ## Examples And Non-Examples
 

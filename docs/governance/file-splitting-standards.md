@@ -29,10 +29,12 @@ Chapters follow the canonical layout:
   chapter.yaml
   notes/
   proofs/
+  exercises/
 ```
 
 The chapter `index.tex` controls chapter-level inputs. Proof indexes control
-proof input order.
+proof input order. Exercise-vault material belongs under the top-level
+`exercises/` tree, not under `proofs/`.
 
 ## File Names
 

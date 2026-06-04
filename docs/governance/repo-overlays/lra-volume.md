@@ -6,7 +6,7 @@ Owned concerns:
 
 - volume content only,
 - Overleaf-ready volume roots,
-- local copies of synced `common/` and `bibliography/`,
+- local copies of synced `common/`,
 - volume-to-monorepo content sync.
 
 This overlay may contain negative guard rails that say specialist rules do not

@@ -11,7 +11,7 @@ task.
 ## Volume Repos
 
 Volume repos are Overleaf-ready and build through their local `main.tex` with
-synced `common/` and `bibliography/`.
+synced `common/`.
 
 ## Monorepo
 

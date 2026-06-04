@@ -105,6 +105,33 @@ be ASCII, descriptive, and aligned with filenames and proof labels.
 Definition labels shall be atomic: one concept, one definition, one label.
 Shared labels for bundled independent concepts are prohibited.
 
+## Extraction Notation Normalization
+
+Preserve mathematical meaning; normalize mathematical notation.
+
+When converting copied text, OCR text, or image-derived mathematical content
+into LRA-ready candidate LaTeX, extraction tools shall normalize notation into
+house style while preserving the source meaning. The standard normalization
+table lives in `docs/governance/notation-standards.md` under
+`Standard Notation Normalizations`.
+
+The extractor should not reproduce OCR notation mechanically. It should rewrite
+plain text, Unicode symbols, inconsistent typography, and OCR artifacts into
+standard mathematical LaTeX used by the project, unless the task explicitly
+requests source-faithful transcription.
+
+Before returning candidate LaTeX, check:
+
+- Are number systems written in house notation?
+- Are membership and subset symbols normalized?
+- Is multiplication notation consistent?
+- Are interval families written as `\mathcal{I}(\mathbb{R})` when appropriate?
+- Are endpoint symbols normalized?
+- Are OCR artifacts such as `(1,2]` corrected when the source clearly shows
+  `[1,2]`?
+- Has the extractor preserved meaning rather than merely copying source
+  typography?
+
 ## Examples And Non-Examples Metadata
 
 `Examples` and `Non-Examples` remark blocks are explanatory metadata attached

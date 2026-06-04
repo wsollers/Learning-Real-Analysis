@@ -10,7 +10,7 @@ contains the repository ownership and layout rules.
 |---|---|---|
 | `lra-governance` | `DESIGN.md`, `REPOSITORY_STRUCTURE.md`, `.gitignore`, `constitution/` | to all repos |
 | `Learning-Real-Analysis` | assembled monorepo, omnibus builds, canonical YAML sources, docker, cross-volume tooling | receives volume/common/governance syncs; dispatches knowledge rebuild |
-| `lra-common` | shared LaTeX infrastructure: `common/`, `bibliography/` | to volume repos and monorepo |
+| `lra-common` | shared LaTeX infrastructure: `common/` | to volume repos and monorepo |
 | `lra-volume-i` | Volume I content under `volume-i/` | to monorepo `volume-i/` |
 | `lra-volume-ii` | Volume II content under `volume-ii/` | to monorepo `volume-ii/` |
 | `lra-volume-iii` | Volume III content under `volume-iii/` | to monorepo `volume-iii/` |
@@ -66,7 +66,7 @@ Learning-Real-Analysis/
   volume-vi-main.tex
   volume-vii-main.tex
   volume-viii-main.tex
-  bibliography/               synced from lra-common
+  bibliography/               volume-owned shard copied into monorepo by volume sync
   common/                     synced from lra-common
   predicates.yaml             canonical YAML source
   notation.yaml               canonical YAML source
@@ -109,10 +109,12 @@ lra-common/
     exercise-format.tex
     volume-preamble.tex
   bibliography/
-    analysis.bib
+    README.md                 retired mirror note; not a sync source
 ```
 
-`common/` and `bibliography/` are edited in `lra-common` and propagated outward.
+`common/` is edited in `lra-common` and propagated outward. Bibliography
+entries are edited in the owning `lra-volume-*` shard and copied into
+`Learning-Real-Analysis` by that volume repo.
 
 ## Volume Repo Layout
 
@@ -127,7 +129,7 @@ lra-volume-N/
   main.tex                    Overleaf main document
   .latexmkrc                  local build config
   common/                     synced copy from lra-common
-  bibliography/               synced copy from lra-common
+  bibliography/               volume-owned shard for standalone builds
   volume-N/
     index.tex
     <chapter>/
@@ -168,7 +170,7 @@ capstone material lives under `proofs/exercises/`.
 ## Sync Rules
 
 - Governance files flow from `lra-governance` to every repo.
-- Shared LaTeX and bibliography files flow from `lra-common` outward.
+- Shared LaTeX files flow from `lra-common` outward. Bibliography shards are owned by volume repos and flow from each volume repo into the monorepo.
 - Volume content flows from each `lra-volume-N` repo to the monorepo.
 - Governance files are excluded from volume-to-monorepo sync by path scope:
   volume workflows sync only `volume-N/**`.

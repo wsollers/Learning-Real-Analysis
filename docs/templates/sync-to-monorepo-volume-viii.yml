@@ -1,8 +1,9 @@
-# Inert template only. Do not place this file under `.github/workflows/`
-# until Phase 3F/3G review explicitly approves activation.
+# Inert template only. Do not place this file under .github/workflows/
+# until review explicitly approves activation.
 #
-# This workflow mirrors `volume-viii/` into the monorepo using rsync.
-# `rsync --delete` is destructive; run and review dry-run output first.
+# This workflow mirrors volume-viii/ and its volume-owned bibliography shard into
+# the monorepo. rsync --delete applies only to volume-viii/; bibliography sync
+# copies one shard without deleting other volume bibliography files.
 
 name: Sync Volume VIII to Monorepo
 
@@ -30,15 +31,28 @@ jobs:
           token: ${{ secrets.SYNC_PAT }}
           path: monorepo
 
-      - name: Dry-run sync volume-viii
+      - name: Dry-run sync volume-viii and bibliography
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           rsync -av --delete --dry-run volume-repo/volume-viii/ monorepo/volume-viii/
+          mkdir -p monorepo/bibliography
+          cmp -s volume-repo/bibliography/volume-viii-logic-foundations.bib monorepo/bibliography/volume-viii-logic-foundations.bib || echo "bibliography/volume-viii-logic-foundations.bib would be updated"
 
       - name: Sync volume-viii
         if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
           rsync -av --delete volume-repo/volume-viii/ monorepo/volume-viii/
+
+      - name: Validate volume bibliography
+        run: |
+          cd volume-repo
+          python scripts/check_bibliography.py --bib-dir bibliography
+
+      - name: Sync volume-viii bibliography
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          mkdir -p monorepo/bibliography
+          cp volume-repo/bibliography/volume-viii-logic-foundations.bib monorepo/bibliography/volume-viii-logic-foundations.bib
 
       - name: Commit monorepo sync
         if: ${{ github.event.inputs.dry_run == 'false' }}
@@ -46,7 +60,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add volume-viii
+          git add volume-viii bibliography/volume-viii-logic-foundations.bib
           git diff --cached --quiet || git commit -m "chore: sync volume-viii from lra-volume-viii"
           git push
-

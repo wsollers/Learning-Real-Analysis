@@ -72,6 +72,22 @@ Forbidden pattern:
 
 Reason: multiple independent concepts cannot share one repository identity.
 
+When a source passage presents a coherent family of related definitions,
+operations, cases, or constructions, the shared family may be introduced by a
+short `remark*` block titled `Exposition`, but each independently nameable
+concept in the family shall still receive its own definition environment and
+stable label. Source-supported examples may follow the relevant definitions
+when they improve understanding, but examples must not be invented merely to
+fill a template.
+
+A single parameterized definition that lets a symbol range over several named
+operations, cases, or constructions does not satisfy atomicity when the source
+states those named items separately. The parameterized schema may appear in
+exposition, but it must not replace the atomic definition environments.
+
+Definition labels shall be generated from normalized semantic titles, not from
+raw OCR spans, page headers, prose fragments, or truncated source text.
+
 When auditing existing content, multi-concept definitions shall be split into
 atomic definitions, each new concept shall receive its own stable label, and
 all references and extraction records shall be updated to the new labels.
@@ -141,7 +157,17 @@ Chapter, section, statement, and figure generators shall enforce these
 invariants before emitting source:
 
 - if requested definition content contains more than one independently
-  nameable concept, generation shall stop and return a bundled-content notice;
+  nameable concept, generation shall split it into atomic definitions, using
+  a short `remark*` Exposition block first when the concepts form a coherent
+  family; if a safe split is not possible, generation shall stop and return a
+  bundled-content notice;
+- generators shall not satisfy a multi-definition request by emitting only a
+  single parameterized umbrella definition;
+- generators shall derive labels from normalized semantic titles, not raw OCR
+  spans or prose fragments;
+- generators may include short source-supported examples after definitions
+  when they improve understanding, but must not invent examples merely to
+  satisfy a pattern;
 - if requested figure content contains a nontrivial TikZ diagram, generation
   shall emit a dedicated figure source file and an inclusion block;
 - generators shall not create shared labels for bundled concepts;

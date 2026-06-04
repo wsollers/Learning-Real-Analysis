@@ -41,7 +41,7 @@ repository.
 It must not directly overwrite:
 
 - volume note files,
-- the canonical split `.bib` files under `lra-common/bibliography/`,
+- the volume-owned `.bib` shards under `lra-volume-*/bibliography/`,
 - canonical YAML files,
 - theorem explorer generated data,
 - governance files.
@@ -64,7 +64,7 @@ Local models must not be treated as authorities for:
 - invented labels,
 - direct note insertion,
 - silent bulk edits,
-- canonical bibliography updates.
+- volume-owned bibliography updates.
 
 ## Future Agent Rules
 

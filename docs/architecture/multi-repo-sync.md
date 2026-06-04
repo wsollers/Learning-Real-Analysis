@@ -5,7 +5,7 @@ Source: `REPOSITORY_STRUCTURE.md` and current GitHub Actions workflows.
 ## Sync Direction
 
 - `lra-governance` syncs governance artifacts outward.
-- `lra-common` syncs `common/` and `bibliography/` outward to the monorepo and
+- `lra-common` syncs `common/` outward to the monorepo and
   all split volume repos.
 - `lra-volume-*` sync volume content into `Learning-Real-Analysis`.
 - `lra-lean` syncs into `Learning-Real-Analysis/lean/`.

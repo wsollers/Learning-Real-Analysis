@@ -17,7 +17,7 @@ command.
 ## Volume Repos
 
 Each `lra-volume-*` repo is Overleaf-ready. Its local `main.tex` uses synced
-`common/` and `bibliography/` copies and inputs only that volume's content.
+`common/` copies and inputs only that volume's content.
 
 Volume repos own volume content only. They do not own shared LaTeX
 infrastructure, canonical YAML, Lean formalization, NURBS/Vulkan simulation,

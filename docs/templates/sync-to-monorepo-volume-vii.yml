@@ -1,8 +1,9 @@
-# Inert template only. Do not place this file under `.github/workflows/`
-# until Phase 3F/3G review explicitly approves activation.
+# Inert template only. Do not place this file under .github/workflows/
+# until review explicitly approves activation.
 #
-# This workflow mirrors `volume-vii/` into the monorepo using rsync.
-# `rsync --delete` is destructive; run and review dry-run output first.
+# This workflow mirrors volume-vii/ and its volume-owned bibliography shard into
+# the monorepo. rsync --delete applies only to volume-vii/; bibliography sync
+# copies one shard without deleting other volume bibliography files.
 
 name: Sync Volume VII to Monorepo
 
@@ -30,15 +31,28 @@ jobs:
           token: ${{ secrets.SYNC_PAT }}
           path: monorepo
 
-      - name: Dry-run sync volume-vii
+      - name: Dry-run sync volume-vii and bibliography
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           rsync -av --delete --dry-run volume-repo/volume-vii/ monorepo/volume-vii/
+          mkdir -p monorepo/bibliography
+          cmp -s volume-repo/bibliography/volume-vii-numerical-approximation.bib monorepo/bibliography/volume-vii-numerical-approximation.bib || echo "bibliography/volume-vii-numerical-approximation.bib would be updated"
 
       - name: Sync volume-vii
         if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
           rsync -av --delete volume-repo/volume-vii/ monorepo/volume-vii/
+
+      - name: Validate volume bibliography
+        run: |
+          cd volume-repo
+          python scripts/check_bibliography.py --bib-dir bibliography
+
+      - name: Sync volume-vii bibliography
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          mkdir -p monorepo/bibliography
+          cp volume-repo/bibliography/volume-vii-numerical-approximation.bib monorepo/bibliography/volume-vii-numerical-approximation.bib
 
       - name: Commit monorepo sync
         if: ${{ github.event.inputs.dry_run == 'false' }}
@@ -46,7 +60,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add volume-vii
+          git add volume-vii bibliography/volume-vii-numerical-approximation.bib
           git diff --cached --quiet || git commit -m "chore: sync volume-vii from lra-volume-vii"
           git push
-

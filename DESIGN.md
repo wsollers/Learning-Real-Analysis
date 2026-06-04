@@ -34,6 +34,7 @@ appropriate modular document instead.
 | Standardized surrounding logical and explanatory blocks for formal artifacts | `docs/governance/decoration-box-standards.md` |
 | Structural presentations for signatures, languages, models, classifications, and blueprints | `docs/governance/model-standards.md` |
 | Handwritten proof vault policy and memorialized proof artifacts | `docs/governance/handwritten-proof-vault-standards.md` |
+| Exercise vault policy and memorialized exercise artifacts | `docs/governance/exercise-vault-standards.md` |
 | Formal notation, predicate readings, and no predicate leakage | `docs/governance/notation-standards.md` |
 | Proof file architecture, proof labels, and theorem/proof navigation | `docs/governance/proof-standards.md` |
 | Atomic definition and atomic figure invariants | `docs/governance/atomic-artifact-standards.md` |
@@ -56,6 +57,7 @@ appropriate modular document instead.
 | Generated file headers, drift, and full-replace policy | `docs/architecture/generated-file-policy.md` |
 | Knowledge extraction workflow | `docs/workflows/knowledge-extraction.md` |
 | Bibliography entry workflow | `docs/workflows/bibliography-entry.md` |
+| Exercise memorialization workflow | `docs/workflows/exercise-vault-memorialization.md` |
 | Volume cleanup workflow | `docs/workflows/volume-cleanup.md` |
 | Generated wrapper sync workflow | `docs/workflows/generated-wrapper-sync.md` |
 | Decoration audit workflow | `docs/workflows/decoration-audit.md` |

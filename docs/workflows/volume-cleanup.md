@@ -10,7 +10,7 @@ Edit only the named volume repo and named content scope. Do not turn a local
 cleanup into a multi-repo sync, shared-LaTeX edit, Lean task, NURBS/Vulkan task,
 numerical-analysis task, or PDF-extractor task.
 
-Volume repos own `volume-N/` content only. Synced `common/`, `bibliography/`,
+Volume repos own `volume-N/` content only. Synced `common/`,
 generated wrappers, canonical YAML, and governance files are not volume-owned
 source.
 

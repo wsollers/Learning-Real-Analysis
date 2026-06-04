@@ -60,6 +60,15 @@ This prompt generates exactly one formal mathematical item.
   note body file.
 - Axioms follow the same atomicity rule as definitions and theorems: one
   independently nameable axiom per environment.
+- If the input is a related definition cluster rather than one formal item,
+  do not compress it into one parameterized definition. Follow
+  `docs/workflows/content-generation-from-source.md`: produce the cluster-level
+  `remark*` Exposition and then invoke/generate separate atomic definitions
+  for the set-based/common definition and each named operation, case, or
+  construction.
+- For any source-snippet conversion, follow the source-generation workflow:
+  Comprehend first, rewrite second, emit LaTeX third. Generate LaTeX from a
+  well-formed mathematical restatement, not directly from OCR fragments.
 
 ## Pre-Generation Checks
 
@@ -73,6 +82,12 @@ Before writing any LaTeX, perform these checks silently and apply results:
    For definitions, the check is mandatory repository identity enforcement:
    one concept, one definition, one label, one knowledge-graph node, one
    extraction record.
+   If the bundled content is a related definition family, the notice must
+   identify the required cluster shape from
+   `docs/workflows/content-generation-from-source.md`, including the
+   Exposition block, semantic labels, and each named operation/case. Do not
+   satisfy atomicity with a single umbrella definition such as "let `\circ`
+   range over the operations."
 2. Predicate check: if a canonical predicate exists in `predicates.yaml`, use
    it in predicate-reading blocks. If not, emit a `MISSING_PREDICATE` comment
    and do not invent a predicate name.

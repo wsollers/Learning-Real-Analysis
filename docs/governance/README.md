@@ -26,6 +26,7 @@ owned work, but they do not fork or weaken the global rules.
 - `decoration-box-standards.md`
 - `proof-standards.md`
 - `handwritten-proof-vault-standards.md`
+- `exercise-vault-standards.md`
 - `extraction-standards.md`
 - `notation-standards.md`
 - `atomic-artifact-standards.md`
