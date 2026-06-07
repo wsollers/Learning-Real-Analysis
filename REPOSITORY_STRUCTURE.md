@@ -22,6 +22,9 @@ contains the repository ownership and layout rules.
 | `lra-lean` | Lean 4 formalization workspace | independent/specialized |
 | `lra-nurbs` | NURBS/DDE C++ engine | independent/specialized |
 | `lra-knowledge-explorer` | extraction pipeline, HTML theorem graph, GitHub Pages site | triggered by monorepo CI dispatch |
+| `lra-numerical-analysis` | numerical methods, computational experiments, benchmarks, plots, numerical reports | independent/specialized |
+| `lra-pdf-extractor` | PDF/source ingestion, bibliography extraction, candidate artifact staging | independent tool repo; produces reviewable candidates only |
+| `lra-source-profiles` | dynamic mathematical source profiles, source classification, active source indexes, stable project attachment exports | receives governance sync; otherwise independent profile/staging repo; produces reviewed source-profile artifacts only |
 
 ## Governance Repo Layout
 

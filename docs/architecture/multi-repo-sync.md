@@ -13,6 +13,9 @@ Source: `REPOSITORY_STRUCTURE.md` and current GitHub Actions workflows.
 - `Learning-Real-Analysis` dispatches theorem-explorer rebuilds.
 - `lra-pdf-extractor` is an independent tool repo and is not currently a
   source of direct sync into notes.
+- `lra-source-profiles` is an independent profile/staging repo and is not
+  currently a source of direct sync into notes, bibliography shards, canonical
+  YAML, or theorem-explorer data.
 
 ## Full-Replace Policy
 
@@ -44,3 +47,17 @@ Integration into `lra-common`, `Learning-Real-Analysis`, `lra-volume-*`, or
 
 Future governance sync may deliver generated agent wrappers to this repo, using
 the `lra-pdf-extractor` overlay.
+
+## lra-source-profiles
+
+`lra-source-profiles` is a source profile and review staging repo. It may
+generate source manifests, category placements, active profile selections,
+cached Markdown extracts, and stable project attachment exports, but those
+outputs are not automatically synced into downstream repos.
+
+Integration into `Learning-Real-Analysis`, `lra-volume-*`,
+`lra-knowledge-explorer`, or final bibliography shards must occur through
+reviewable changes in the owning repo.
+
+Future governance sync may deliver generated agent wrappers to this repo, using
+the `lra-source-profiles` overlay.

@@ -12,6 +12,9 @@ provider-specific agent behavior.
   internals, and generated explorer data.
 - `lra-pdf-extractor` may produce candidate source-ingestion artifacts, but it
   does not own final notes, graph data, canonical YAML, or explorer internals.
+- `lra-source-profiles` may produce reviewed source-profile selections,
+  source indexes, and cached source extracts, but it does not own final notes,
+  graph data, canonical YAML, or explorer internals.
 - `lra-governance` owns the standards that make extraction possible.
 
 ## Extraction Inputs
@@ -45,10 +48,10 @@ from the integrated source tree and owned by the theorem explorer pipeline.
 
 ## Candidate Artifacts
 
-Candidate artifacts from `lra-pdf-extractor` or other ingestion tools must be
-staged and reviewed before entering notes, bibliography, canonical YAML, or
-explorer data. Local model or Ollama output is advisory only and must not be
-treated as a mathematical authority.
+Candidate artifacts from `lra-pdf-extractor`, `lra-source-profiles`, or other
+ingestion and source-profile tools must be staged and reviewed before entering
+notes, bibliography, canonical YAML, or explorer data. Local model or Ollama
+output is advisory only and must not be treated as a mathematical authority.
 
 ## Maintenance
 

@@ -15,10 +15,15 @@ Source: `REPOSITORY_STRUCTURE.md`.
 | `lra-knowledge-explorer` | Extraction pipeline and HTML theorem explorer. | receives rebuild dispatch from monorepo |
 | `lra-numerical-analysis` | Numerical methods, computational experiments, benchmarks, plots, numerical reports. | independent/specialized |
 | `lra-pdf-extractor` | PDF/source ingestion, bibliography extraction and normalization, local-model-assisted candidate extraction/decorating, Python GUI review workflow, staged LaTeX/BibTeX/JSON outputs. | independent tool repo; produces reviewable candidates only |
+| `lra-source-profiles` | Dynamic source profiles, candidate mathematical source classification, active volume/chapter source indexes, stable project attachment exports, and source review workflow. | independent profile/staging repo; produces reviewed source-profile artifacts only |
 
 `lra-pdf-extractor` is an acceleration and staging tool. It does not own
 downstream notes, bibliography, canonical YAML, theorem explorer internals, or
 governance rules.
+
+`lra-source-profiles` is a source selection and profile staging tool. It does
+not own final LRA note content, final bibliography shards, canonical YAML,
+theorem explorer internals, or governance rules.
 
 ## Downstream Governance Copies
 

@@ -53,6 +53,7 @@ appropriate modular document instead.
 | Knowledge graph and theorem explorer pipeline | `docs/architecture/knowledge-pipeline.md` and `docs/architecture/theorem-explorer-pipeline.md` |
 | LaTeX build and rendering expectations | `docs/architecture/latex-build-and-rendering.md` |
 | Numerical-analysis software workbench tasks | `docs/governance/repo-overlays/lra-numerical-analysis.md` |
+| Source profile selection, classification, active-profile export, and review workflow | `docs/governance/repo-overlays/lra-source-profiles.md` |
 | Multi-repo sync boundaries | `docs/architecture/multi-repo-sync.md` |
 | Generated file headers, drift, and full-replace policy | `docs/architecture/generated-file-policy.md` |
 | Knowledge extraction workflow | `docs/workflows/knowledge-extraction.md` |
@@ -77,6 +78,7 @@ interpreting repo-local agent rules.
 | `lra-knowledge-explorer` | `docs/governance/repo-overlays/lra-knowledge-explorer.md` |
 | `lra-numerical-analysis` | `docs/governance/repo-overlays/lra-numerical-analysis.md` |
 | `lra-pdf-extractor` | `docs/governance/repo-overlays/lra-pdf-extractor.md` |
+| `lra-source-profiles` | `docs/governance/repo-overlays/lra-source-profiles.md` |
 
 Repo overlays are additive. They refine the global rules for owned work, but
 they do not fork or weaken global governance.
@@ -90,7 +92,7 @@ they do not fork or weaken global governance.
 - Generated wrapper sync is controlled, repo-selected, drift-checked, and
   full-replace only after review.
 - Volume repos must not receive positive Lean, NURBS/Vulkan,
-  numerical-analysis, or PDF-extractor specialist rules.
+  numerical-analysis, PDF-extractor, or source-profile specialist rules.
 - `Learning-Real-Analysis/scripts/` is protected and out of scope for
   governance migration.
 - Canonical YAML remains owned by `Learning-Real-Analysis`.
