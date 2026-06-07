@@ -93,6 +93,8 @@ For each approved topic:
 8. When the chapter is expected to satisfy current house rules, include the
    chapter validator in the prompt's validation commands:
    `python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root>`.
+   Use `--generate-missing-capstone` only when the task explicitly authorizes
+   creating the standard planned capstone stub.
 
 ## Phase 5: Codex Execution
 
