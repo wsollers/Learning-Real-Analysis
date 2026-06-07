@@ -35,3 +35,12 @@ Volume section stubs follow the global `stub-section-standards.md` standard.
 Section-stub tasks must update the owning chapter's notes and proofs routers
 using the local routing convention, then run the local volume build command
 when available.
+
+## Artifact Payload Generation
+
+For large chapter artifact generation, use the deterministic payload workflow
+in `docs/workflows/artifact-payload-generation.md`. Machine-ingested JSON or
+JSONL payloads are the source of truth; Codex should rehydrate payloads through
+the importer and generator, preserve pedagogical order, keep notation before
+first use, and run deterministic local audits by default. AI-backed audits
+using `-ai codex` are opt-in only.

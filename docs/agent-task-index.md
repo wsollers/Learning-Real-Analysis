@@ -1,5 +1,13 @@
 # Agent Task Index
 
+Repository scope: `Learning-Real-Analysis` is read-only by default unless the
+user explicitly asks to modify it; workflows sync changes from the leaf
+`lra-*` repositories into that aggregate monorepo.
+
+Governance scope: `lra-governance` is the master governance and script
+repository; shared scripts, rules, prompts, schemas, and workflows belong here,
+and commit syncs copy those rules into the leaf repositories.
+
 This index tells agents which authority to load for common LRA tasks. It is a
 router, not a replacement for the referenced standards.
 
@@ -51,6 +59,7 @@ or data files. Prose docs should point to them instead of restating them.
 
 | Task | Required docs | Required schema/data | Required tools | Optional docs | Output artifacts | Validation checks |
 | --- | --- | --- | --- | --- | --- | --- |
+| Generate chapter artifacts from payload | `docs/workflows/artifact-payload-generation.md`, `docs/governance/atomic-artifact-standards.md`, `docs/governance/notation-standards.md` | ordered JSON/JSONL payload, appendable artifact registries, canonical predicates/notation/relations YAML | `tools/import_artifact_payload.py`, `tools/chapter_artifact.py`, deterministic local audit commands | `docs/workflows/proof-layout-audit.md` | payload file, appendable YAML registry, generated notation page, generated LaTeX blocks, proof stubs, chapter manifest, audit report | importer dry-run/write, artifact validate, true-up, box-color audit, proof-layout audit, latexmk build, local registry/symbol check when available without AI |
 | Add theorem with proof stub | `docs/workflows/add-theorem-with-proof-stub.md`, `docs/governance/proof-standards.md` | `constitution/schema/file-schema.yaml`, `constitution/schema/artifact-matrix.yaml` | leaf `scripts/validate_leaf_proofs.py`, `tools/governance/audit_proof_layout.py` | `docs/governance/dependency-standards.md`, `docs/governance/atomic-artifact-standards.md`, `docs/architecture/volume-layout.md` | theorem/proposition/lemma/corollary source, canonical proof stub | leaf proof validator, proof layout audit, volume build |
 | Add definition | `docs/governance/authoring-standards.md`, `docs/governance/atomic-artifact-standards.md`, `docs/governance/notation-standards.md` | `constitution/schema/artifact-matrix.yaml`, `constitution/schema/block-registry.yaml` | volume build or local extractor when available | `docs/governance/model-standards.md`, `docs/governance/dependency-standards.md` | definition source and any notation/predicate updates | YAML parse when data changes, volume build, extractor audit when available |
 | Add proof or populate existing proof stub | `docs/workflows/populate-proof-stub.md`, `docs/governance/proof-standards.md`, nearby populated proof files | `constitution/schema/file-schema.yaml` | leaf `scripts/validate_leaf_proofs.py`, `tools/governance/audit_proof_layout.py` | `docs/governance/dependency-standards.md`, `docs/governance/handwritten-proof-vault-standards.md` | existing proof file populated in place | leaf proof validator, proof layout audit, volume build |
