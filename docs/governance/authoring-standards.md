@@ -78,6 +78,12 @@ Each layer has one job:
 
 Do not over-symbolize exposition. Use prose where prose is the correct layer.
 
+Generated note prose must live inside its owning LaTeX layer. Do not leave
+ordinary explanatory prose directly under a section or subsection heading. Use
+formal environments for mathematical objects, `remark*` blocks for exposition
+and interpretation, `example*` or `remark*` example metadata for examples and
+non-examples, and the shared `dependencies` environment for dependency lists.
+
 ## Multi-Definition Source Passages
 
 When converting a source passage that contains several related definitions,

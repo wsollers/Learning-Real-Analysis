@@ -98,7 +98,9 @@ Use the mathematical role of each item:
 - definitions become `definition` environments;
 - theorem-like claims, laws, and reusable facts become `proposition` or another
   theorem-like environment;
-- examples and counterexamples become `example` environments;
+- examples and counterexamples become `example*` blocks or `remark*`
+  examples/non-examples metadata unless the task explicitly asks for a
+  numbered formal example artifact;
 - warnings, exposition, interpretation, and informal comments become `remark*`
   environments.
 
@@ -219,6 +221,20 @@ Before returning output, check:
 - no `\cite` or `\label` appears inside unfinished display math;
 - citations and labels use the project's canonical order;
 - labels are semantic and stable.
+
+For newly generated note files or note directories, run the note-block
+validator:
+
+```powershell
+python tools\governance\validate_note_blocks.py --root <target-repo> <new-notes-directory>
+```
+
+When running inside a leaf volume repo that carries a synced local copy of the
+tool, the equivalent command is:
+
+```powershell
+python scripts\validate_note_blocks.py --root . <new-notes-directory>
+```
 
 ## House Rules
 
