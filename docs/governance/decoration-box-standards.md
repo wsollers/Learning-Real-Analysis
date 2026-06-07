@@ -9,6 +9,21 @@ failure-mode analysis, interpretation, exposition, examples, non-examples, sourc
 crosswalks, dependencies, and proof navigation where the artifact type
 requires them.
 
+## Rendering Rule
+
+Decoration blocks are structural metadata blocks. Unless an artifact-specific
+standard explicitly states otherwise, decoration blocks render as unboxed
+`remark*` environments rather than standalone theorem-style boxes.
+
+This applies to standard quantified statements, predicate readings, negated
+quantified statements, negation predicate readings, failure-mode blocks,
+interpretation blocks, exposition blocks, examples, non-examples, source
+crosswalks, and dependency blocks.
+
+The owning definition, theorem, lemma, proposition, corollary, or axiom remains
+the primary formal artifact. Decoration blocks are attached metadata and do not
+create an independent theorem-like visual hierarchy.
+
 ## Scope
 
 Use this standard for standardized surrounding blocks attached to:
@@ -77,13 +92,7 @@ artifact standard does not require.
 
 ## Standard Quantified Statement
 
-Use:
-
-```latex
-\begin{remark*}[Standard quantified statement]
-...
-\end{remark*}
-```
+Use a `remark*` block titled `Standard quantified statement`.
 
 The block contains standard mathematical notation only. Do not use canonical
 predicate names or extraction predicate forms here.
@@ -139,13 +148,7 @@ not merely because they can be formed mechanically.
 
 ## Interpretation
 
-Use:
-
-```latex
-\begin{remark*}[Interpretation]
-...
-\end{remark*}
-```
+Use a `remark*` block titled `Interpretation`.
 
 Interpretation is prose only. It explains mathematical meaning, structural
 role, standard failure picture, and local significance.
@@ -155,13 +158,7 @@ vocabulary and structural definitions.
 
 ## Exposition
 
-Use:
-
-```latex
-\begin{remark*}[Exposition]
-...
-\end{remark*}
-```
+Use a `remark*` block titled `Exposition`.
 
 Exposition is broader mathematical narrative: motivation, intuition,
 conceptual framing, structural commentary, historical or methodological
@@ -192,17 +189,8 @@ readings, negation blocks, or failure-mode decompositions.
 
 ## Examples And Non-Examples
 
-Definitions may include optional concept-boundary blocks:
-
-```latex
-\begin{remark*}[Examples]
-...
-\end{remark*}
-
-\begin{remark*}[Non-Examples]
-...
-\end{remark*}
-```
+Definitions may include optional concept-boundary blocks titled `Examples` and
+`Non-Examples`.
 
 Include them when they materially improve recognition of what the definition
 does and does not cover. They are especially useful for major algebraic
