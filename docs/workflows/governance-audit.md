@@ -32,6 +32,12 @@ reasonably own the content.
    isolated checkouts, not as additional canonical sources.
 10. Confirm machine-checkable rules are represented in existing schema/data
     files before proposing a new schema system.
+11. When any file under `constitution/schema/` changes, update or explicitly
+    audit the deterministic validators that enforce it in the same change.
+    For chapter-local rules in `file-schema.yaml`, `block-registry.yaml`, or
+    `artifact-matrix.yaml`, update
+    `tools/governance/validate_chapter_house_rules.py` or document why the
+    requirement is delegated to another validator.
 
 ## Mechanical Checks
 
@@ -39,6 +45,14 @@ Run the checks that are available for the audit target. Typical checks include:
 
 ```powershell
 python -m py_compile tools\governance\audit_proof_layout.py tools\governance\audit_volume_layout.py
+```
+
+If schema files changed, also compile the chapter house-rule validator and run
+one chapter smoke audit:
+
+```powershell
+python -m py_compile tools\governance\validate_chapter_house_rules.py
+python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root> --format json
 ```
 
 ```powershell
