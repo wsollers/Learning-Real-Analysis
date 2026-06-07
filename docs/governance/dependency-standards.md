@@ -30,26 +30,71 @@ Dependency information may appear with:
 
 ## Dependency Layer
 
-A dependency block records mathematical reliance, not exposition, history, or
-proof navigation.
+A dependency block records graph-relevant mathematical routing. It is not merely
+an exposition list, bibliography list, proof-location list, or informal reading
+order.
 
 Dependency blocks answer:
 
 ```text
-Which already-defined mathematical objects or results does this item use?
+Which formal mathematical artifacts should this item be connected to in the
+learning graph?
 ```
+
+This includes more than strict proof-theoretic ancestry. Dependency links may
+record any of the following route kinds:
+
+1. Direct prerequisites: formal items needed to state, parse, define, or prove
+   the owning artifact.
+2. Structural-existence routes: axioms or theorem-like artifacts that make the
+   owning concept operative in the intended theory.
+3. Structural-pairing routes: companion artifacts that give the concept its
+   main mathematical role.
+4. Proof-use routes: definitions, axioms, and prior results actually invoked by
+   a completed proof or proof stub.
 
 They do not answer:
 
 ```text
-Where is the proof?
+Where is the proof file?
 What source text inspired this item?
-What should be read next?
+What should be read next as ordinary exposition?
 What is the informal motivation?
 ```
 
 Those belong to proof navigation, source crosswalk remarks, reading order,
-toolkits, or interpretation remarks.
+toolkits, interpretation remarks, or exposition remarks.
+
+## Definition Dependency Rule
+
+A definition may list both direct vocabulary prerequisites and structural
+artifacts that govern use of the concept.
+
+For example, the definition of supremum has a direct prerequisite edge to upper
+bound and a structural-existence edge to the Axiom of Completeness. Upper bound
+is needed to define what a supremum is. Completeness is the axiom that ensures
+important bounded-above subsets of `\mathbb{R}` actually have suprema. Without
+that structural route, the Knowledge Explorer misses the mathematical hinge:
+
+```text
+Upper bound <-- Supremum --> Axiom of Completeness
+```
+
+Preferred dependency block for this case:
+
+```latex
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:upper-bound]{Upper bound}
+  \item \hyperref[ax:real-completeness]{Axiom of Completeness}
+\end{itemize}
+\end{dependencies}
+```
+
+Axioms remain formal roots as statements. Do not assign prerequisites to an
+axiom merely because its wording uses prior vocabulary. Axioms may, however,
+appear as dependency targets for definitions, theorems, and proofs when the
+axiom structurally governs the concept or result.
 
 ## Standard LaTeX Form
 
@@ -125,14 +170,25 @@ carry dependency metadata, but they do not automatically require visible
 dependency blocks unless they introduce a formal statement or a reusable
 extraction record.
 
-When a structural presentation points to formal prerequisites, use the same
-approved label prefixes and readable link text.
+When a structural presentation points to formal prerequisites or structural
+routes, use the same approved label prefixes and readable link text.
 
 ## Extraction Contract
 
 Dependency information is extraction-visible. Tooling should treat each
 approved `\hyperref[label]{Readable Name}` dependency item as a graph edge from
 the owning artifact to the target label.
+
+When tooling supports edge kinds, the standard dependency route kinds are:
+
+- `prerequisite`;
+- `structural-existence`;
+- `structural-pairing`;
+- `proof-use`.
+
+If the LaTeX source does not encode an explicit kind, extraction tooling should
+record the edge as an untyped dependency edge and may infer a route kind only
+when a deterministic rule or canonical route registry supports that inference.
 
 Extraction implementation details belong in `extraction-standards.md`; this
 document is the author-facing dependency rule source.
