@@ -85,4 +85,13 @@ At the top of every proof file, emit:
   starred theorem restatement
 Use starred statement environments in proof files, e.g. `theorem*` or
 `corollary*`, not the numbered statement environments from the note body.
+
+For proof dependency blocks, include definitions, axioms, and prior results
+actually invoked in the proof, plus any structural route artifacts needed for the
+Knowledge Explorer to place the proof correctly in the learning graph. Do not
+link to proof labels, proof files, remarks, examples, exercises, figures, or
+sections. When a formal target exists, use a linked dependency item rather than
+prose such as "uses completeness". If a needed target is absent, write an
+`UNRESOLVED_DEPENDENCY` comment rather than inventing a label.
+
 End each proof file with `\clearpage`.
