@@ -68,6 +68,25 @@ where `label` is a mathematical statement label with one of these prefixes:
 The extractor should treat the label inside `\hyperref[...]` as the graph-edge
 target.
 
+Every visible dependency item creates an edge from the owning artifact to the
+target label. The edge is a dependency-route edge for the learning graph, not
+necessarily a strict proof-theoretic prerequisite.
+
+When no explicit edge kind is encoded in the LaTeX source, extract the edge as
+`kind: dependency`. When later tooling or a canonical route registry supplies
+edge kinds, the allowed dependency route kinds are:
+
+- `prerequisite`
+- `structural-existence`
+- `structural-pairing`
+- `proof-use`
+
+For example, in a dependency block attached to `def:supremum`, the edge to
+`def:upper-bound` is a prerequisite route and the edge to
+`ax:real-completeness` is a structural-existence route. The visible PDF block may
+show both simply as dependencies; the Knowledge Explorer should not assume that
+both edges have the same logical meaning.
+
 ## Proof Vault Links
 
 Proof-vault backlinks must use:
