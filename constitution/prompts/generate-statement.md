@@ -318,6 +318,22 @@ Use this option shape:
   dependencies to display.
 - A dependency is a formal mathematical item only: definition, theorem, lemma,
   proposition, corollary, or axiom.
+- Dependency blocks are graph-aware mathematical route records. They are not
+  limited to strict proof-theoretic ancestry.
+- For definitions, include direct vocabulary prerequisites needed to state or
+  parse the definition, and include structural axioms or theorem-like artifacts
+  that make the concept operative in the intended theory.
+- For theorem-like statements, include definitions, axioms, and prior results
+  needed to state or prove the result, plus structural route artifacts needed
+  for the Knowledge Explorer to place the result correctly.
+- Axioms remain formal roots as statements. Do not give an axiom a dependency
+  list merely because its wording uses prior vocabulary. Axioms may still be
+  dependency targets for definitions and theorem-like artifacts.
+- Example route: the definition of supremum should link to
+  `\hyperref[def:upper-bound]{Upper bound}` as a direct prerequisite and to
+  `\hyperref[ax:real-completeness]{Axiom of Completeness}` as a
+  structural-existence route, yielding the graph pattern
+  `Upper bound <-- Supremum --> Axiom of Completeness`.
 - Do not link to proof labels, remarks, examples, exercises, figures, sections,
   or proof files.
 - If the statement is foundational within the current local note scope and
@@ -336,7 +352,7 @@ Use this option shape:
   but this prompt must not emit the topic wrapper itself.
 - If the caller context describes multiple related formulations inside one
   subsection, the correct structural response is multiple separate statement
-  generations to be placed under separate topic containers, not bundling or
+generations to be placed under separate topic containers, not bundling or
   subsection proliferation.
 
 ## Notation Enforcement
