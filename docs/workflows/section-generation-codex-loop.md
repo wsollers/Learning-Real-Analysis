@@ -90,6 +90,9 @@ For each approved topic:
 6. Do not invent dependency labels.
 7. If a needed dependency target is missing, emit an unresolved dependency
    comment in the requested form rather than inventing a label.
+8. When the chapter is expected to satisfy current house rules, include the
+   chapter validator in the prompt's validation commands:
+   `python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root>`.
 
 ## Phase 5: Codex Execution
 
