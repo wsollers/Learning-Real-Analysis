@@ -1,0 +1,61 @@
+name: Build and Publish PDF
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-pdf-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build LaTeX PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: main.tex
+          latexmk_use_lualatex: true
+          latexmk_shell_escape: true
+          args: -file-line-error -interaction=nonstopmode -outdir=build
+
+      - name: Verify PDF output
+        run: test -f build/main.pdf
+
+      - name: Checkout output repository
+        uses: actions/checkout@v4
+        with:
+          repository: wsollers/lra-volumes-output
+          token: ${{ secrets.SYNC_PAT }}
+          ref: main
+          path: output
+          fetch-depth: 0
+
+      - name: Publish PDF
+        run: |
+          cp build/main.pdf output/learning-real-analysis.pdf
+          cd output
+          git config user.name "lra-pdf-bot"
+          git config user.email "lra-pdf-bot@noreply.github.com"
+          git add learning-real-analysis.pdf
+          if git diff --cached --quiet; then
+            echo "No PDF changes to publish"
+            exit 0
+          fi
+          git commit -m "Update Learning Real Analysis PDF"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin main; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
