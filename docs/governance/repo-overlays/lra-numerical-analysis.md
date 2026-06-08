@@ -50,6 +50,31 @@ Shared reusable numerical code belongs in `include/lra/numeric/` and
 `src/numeric/`. Do not hide project-specific experiments in the shared library
 until at least two projects need the abstraction.
 
+## Unit-Test Project Workflow
+
+When creating a unit-test-only project, follow the existing `hello-unit`
+pattern unless local files clearly establish a newer convention:
+
+1. Create `projects/<name>/`.
+2. Create `projects/<name>/tests/`.
+3. Add `projects/<name>/CMakeLists.txt` with `add_subdirectory(tests)`.
+4. Add `projects/<name>/tests/CMakeLists.txt` defining one GoogleTest
+   executable target for the project.
+5. Name the initial test source `<name>-test.cpp` unless the repository's
+   nearby examples use a more specific `test_<name>.cpp` convention.
+6. Link the test target to `lra::numeric` and `GTest::gtest_main`.
+7. Apply the standard local target helpers, including `lra_configure_target`
+   and `lra_enable_sanitizers`, when they are available.
+8. Register tests with `gtest_discover_tests`.
+9. Add `add_subdirectory(projects/<name>)` to the root `CMakeLists.txt`.
+10. Start with a compile-safe smoke test that asserts `true`.
+11. Build the project and run CTest before reporting completion.
+
+If the project introduces reusable numerical declarations, place public headers
+under `include/lra/numeric/`. Keep project-specific test fixtures and helper
+code under `projects/<name>/tests/` until at least two projects need the shared
+abstraction.
+
 ## Dependency Boundaries
 
 Core numerical code must not depend on Vulkan, ImGui, GLFW, or UI code. Visual
@@ -77,6 +102,28 @@ The standard local gates are:
 - Dockerized Clang/Ninja build;
 - project-local GoogleTest/CTest success;
 - benchmark and fuzz gates when the touched project owns them.
+
+On Windows, run MSVC configure, build, and test commands from a Visual Studio
+Developer Command Prompt, or through the repo's `tools/build-msvc.ps1` helper
+that initializes `vcvars64.bat`. A plain PowerShell session may find stale or
+missing compiler paths and is not a valid substitute for the MSVC gate.
+
+## Pre-Push Gates
+
+Before pushing numerical-analysis changes, both platform gates must be green:
+
+```powershell
+.\tools\build-msvc.ps1
+.\tools\build-docker-clang.ps1
+```
+
+The MSVC gate validates the Windows Visual Studio toolchain. The Docker gate
+validates the Linux Clang/Ninja toolchain and runs CTest inside the container.
+
+If Docker commands fail with a Docker engine pipe error such as
+`open //./pipe/dockerDesktopLinuxEngine`, start Docker Desktop, wait for the
+engine to become available, and rerun the Docker gate. Docker Desktop is not
+assumed to start automatically on Windows workstations.
 
 ## Artifact And Analysis Flow
 
