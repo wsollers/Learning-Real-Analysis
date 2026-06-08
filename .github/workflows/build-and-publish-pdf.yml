@@ -21,7 +21,6 @@ jobs:
 
       - name: Build LaTeX PDF
         uses: xu-cheng/latex-action@v4
-        continue-on-error: true
         with:
           root_file: main.tex
           latexmk_use_lualatex: true
@@ -29,7 +28,19 @@ jobs:
           args: -f -file-line-error -interaction=nonstopmode -outdir=build
 
       - name: Verify PDF output
-        run: test -f build/main.pdf
+        run: |
+          test -s build/main.pdf
+          python3 - <<'PY'
+          from pathlib import Path
+
+          pdf = Path("build/main.pdf")
+          data = pdf.read_bytes()
+          if not data.startswith(b"%PDF-"):
+              raise SystemExit("build/main.pdf does not start with a PDF header")
+          if b"%%EOF" not in data[-2048:]:
+              raise SystemExit("build/main.pdf is missing a PDF EOF trailer")
+          PY
+          pdfinfo build/main.pdf > /dev/null
 
       - name: Checkout output repository
         uses: actions/checkout@v4
@@ -44,6 +55,7 @@ jobs:
         run: |
           cp build/main.pdf output/learning-real-analysis.pdf
           cd output
+          git config core.autocrlf false
           git config user.name "lra-pdf-bot"
           git config user.email "lra-pdf-bot@noreply.github.com"
           git add learning-real-analysis.pdf
