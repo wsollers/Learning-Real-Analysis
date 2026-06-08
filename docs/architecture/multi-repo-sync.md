@@ -17,6 +17,12 @@ Source: `REPOSITORY_STRUCTURE.md` and current GitHub Actions workflows.
   currently a source of direct sync into notes, bibliography shards, canonical
   YAML, or theorem-explorer data.
 
+Governance validator and audit tool implementations are not forked into leaf
+repositories. Leaf-local `tools/governance/*.py` files, when present, are
+wrappers that delegate to the canonical implementation in
+`lra-governance/tools/governance/` and fail if that canonical checkout is not
+available.
+
 ## Full-Replace Policy
 
 Existing workflows use `rsync --delete` for full-replace sync. Future

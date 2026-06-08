@@ -6,18 +6,24 @@ layout.
 Machine-readable layout authority lives in
 `constitution/schema/file-schema.yaml`.
 
-Run from `lra-governance` against a leaf repo, volume root, or chapter root:
+Run from `lra-governance` against a leaf repo, volume, chapter, or section.
+When unsure, discover the available targets first:
 
 ```powershell
-python tools\governance\audit_volume_layout.py --root F:\repos\lra-volume-ii --refactor-mode
+python tools\governance\audit_volume_layout.py --root F:\repos\lra-volume-ii --list-targets
 ```
 
 Use `--strict` when the target is expected to satisfy the current
 volume/chapter/topic architecture:
 
 ```powershell
-python tools\governance\audit_volume_layout.py --root F:\repos\lra-volume-ii --strict
+python tools\governance\audit_volume_layout.py --root F:\repos\lra-volume-ii --chapter whole-numbers --strict
 ```
+
+Use `--volume <volume-name>`, `--chapter <chapter-name>`, or
+`--section <topic-name>` to avoid whole-repo legacy noise. Section scope audits
+the containing chapter because topic pairing and router reachability are
+chapter-level invariants.
 
 Use JSON output for generated reports:
 

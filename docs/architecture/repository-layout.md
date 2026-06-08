@@ -29,3 +29,9 @@ theorem explorer internals, or governance rules.
 
 Downstream governance files should be generated from `lra-governance`, not
 edited as independent sources.
+
+Governance tool implementations remain canonical in
+`lra-governance/tools/governance/`. Downstream leaf repositories may contain
+thin wrappers at matching paths so local commands keep working, but those
+wrappers delegate to `lra-governance` and fail when the canonical checkout is
+unavailable.

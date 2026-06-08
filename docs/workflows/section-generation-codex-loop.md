@@ -90,7 +90,10 @@ For each approved topic:
 6. Do not invent dependency labels.
 7. If a needed dependency target is missing, emit an unresolved dependency
    comment in the requested form rather than inventing a label.
-8. When the chapter is expected to satisfy current house rules, include the
+8. Include scoped validators for the generated topic:
+   `python tools\governance\validate_note_blocks.py --root <target-repo> --chapter <chapter-name> --section <topic-name>` and
+   `python tools\governance\audit_proof_layout.py --root <target-repo> --chapter <chapter-name> --section <topic-name> --strict`.
+9. When the chapter is expected to satisfy current house rules, include the
    chapter validator in the prompt's validation commands:
    `python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root>`.
    Use `--generate-missing-capstone` only when the task explicitly authorizes

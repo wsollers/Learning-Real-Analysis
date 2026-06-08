@@ -8,7 +8,9 @@ governance documents linked from `docs/architecture/README.md`.
 
 ```mermaid
 flowchart LR
-    governance["lra-governance<br/>standards, prompts, validators, wrappers"]
+    governance["lra-governance<br/>canonical standards, prompts, validators"]
+    wrapper["leaf governance wrappers<br/>delegate at runtime"]
+    missing["clear failure<br/>lra-governance not present"]
     common["lra-common<br/>shared LaTeX infrastructure"]
     volumes["lra-volume-i ... lra-volume-viii<br/>volume-owned content"]
     mono["Learning-Real-Analysis<br/>integrated book source"]
@@ -20,15 +22,27 @@ flowchart LR
     explorer["lra-knowledge-explorer<br/>graph extraction and explorer"]
     output["lra-volumes-output<br/>published PDFs"]
 
-    governance -->|"governance sync / wrapper generation"| common
-    governance -->|"governance sync / wrapper generation"| volumes
-    governance -->|"governance sync / wrapper generation"| mono
-    governance -->|"governance sync / wrapper generation"| lean
-    governance -->|"governance sync / wrapper generation"| nurbs
-    governance -->|"governance sync / wrapper generation"| numerical
-    governance -->|"governance sync / wrapper generation"| extractor
-    governance -->|"governance sync / wrapper generation"| profiles
-    governance -->|"governance sync / wrapper generation"| explorer
+    governance -->|"sync governance docs and thin wrappers"| common
+    governance -->|"sync governance docs and thin wrappers"| volumes
+    governance -->|"sync governance docs and thin wrappers"| mono
+    governance -->|"sync governance docs and thin wrappers"| lean
+    governance -->|"sync governance docs and thin wrappers"| nurbs
+    governance -->|"sync governance docs and thin wrappers"| numerical
+    governance -->|"sync governance docs and thin wrappers"| extractor
+    governance -->|"sync governance docs and thin wrappers"| profiles
+    governance -->|"sync governance docs and thin wrappers"| explorer
+
+    common --> wrapper
+    volumes --> wrapper
+    mono --> wrapper
+    lean --> wrapper
+    nurbs --> wrapper
+    numerical --> wrapper
+    extractor --> wrapper
+    profiles --> wrapper
+    explorer --> wrapper
+    wrapper -->|"find sibling repo or LRA_GOVERNANCE_ROOT"| governance
+    wrapper -. abort if unavailable .-> missing
 
     common -->|"common/, bibliography/, macros, preambles"| volumes
     common -->|"common/, bibliography/, macros, preambles"| mono
@@ -53,6 +67,13 @@ flowchart TB
         volumeSource["Volume source repos<br/>lra-volume-*"]
         commonSource["Shared LaTeX source<br/>lra-common"]
         monoSource["Integrated source<br/>Learning-Real-Analysis"]
+        governanceSource["Governance source<br/>lra-governance"]
+    end
+
+    subgraph governanceRuntime["Governance Checks"]
+        leafWrappers["Leaf repo wrappers<br/>tools/governance and scripts"]
+        canonicalChecks["Canonical validators<br/>lra-governance/tools/governance"]
+        governanceMissing["Fail with actionable message<br/>lra-governance is not present"]
     end
 
     subgraph build["PDF Build Workflow"]
@@ -76,7 +97,16 @@ flowchart TB
 
     commonSource -->|"synced infrastructure"| volumeSource
     commonSource -->|"synced infrastructure"| monoSource
+    governanceSource -->|"synced guidance and wrappers"| volumeSource
+    governanceSource -->|"synced guidance and wrappers"| commonSource
+    governanceSource -->|"synced guidance and wrappers"| monoSource
     volumeSource -->|"volume sync"| monoSource
+    volumeSource --> leafWrappers
+    commonSource --> leafWrappers
+    monoSource --> leafWrappers
+    leafWrappers -->|"delegate"| canonicalChecks
+    canonicalChecks -->|"governance pass/fail"| volumeSource
+    leafWrappers -. governance root missing .-> governanceMissing
 
     volumeSource --> dockerfile
     monoSource --> dockerfile
@@ -97,6 +127,10 @@ flowchart TB
 - Solid arrows are approved sync, build, or generation paths.
 - Dotted arrows are staging paths that require review before content enters an
   owning source repository.
+- Leaf repository governance tools are wrappers only. They delegate to the
+  canonical implementations in `lra-governance/tools/governance`, using a
+  sibling `lra-governance` checkout or `LRA_GOVERNANCE_ROOT`; if neither is
+  available, they fail with a clear setup message.
 - PDF workflows must build through the checked-in Docker image definition and
   must validate the produced PDF before publishing to `lra-volumes-output`.
 - Generated explorer data is derived from integrated source structure; it is

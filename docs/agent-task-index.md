@@ -27,6 +27,55 @@ default. Select the smallest file set that matches the task.
 External repository references are marked with `[external:<repo>]`. They are
 task inputs, not local `lra-governance` files.
 
+## Governance Tool Resolution
+
+Governance tool implementations are canonical in
+`lra-governance/tools/governance/`.
+
+Leaf repositories may provide same-path wrapper scripts such as
+`tools/governance/validate_note_blocks.py` and
+`tools/governance/validate_chapter_house_rules.py`. These wrappers must delegate
+to the canonical `lra-governance` implementation. They must not copy or fork the
+tool logic.
+
+When a task requires a governance validator:
+
+1. Run the leaf-local wrapper if it exists.
+2. If no wrapper exists and an adjacent `lra-governance` checkout exists, run
+   the canonical tool from `lra-governance/tools/governance/`.
+3. If neither is available, stop the task and report that `lra-governance` is
+   not present, so governance compliance cannot be certified.
+
+Wrappers may locate the canonical repo through `LRA_GOVERNANCE_ROOT`; otherwise
+they should look for a sibling `lra-governance` checkout in a local multi-repo
+workspace.
+
+## Validator Targeting
+
+Governance validators should be run at the narrowest scope that matches the
+edit: section, then chapter, then volume, then whole repo. Prefer named targets
+over hand-built paths when the validator supports them.
+
+If the correct target is not obvious, run the validator's discovery mode first:
+
+```powershell
+python tools\governance\validate_note_blocks.py --root <target-repo> --list-targets
+python tools\governance\audit_volume_layout.py --root <target-repo> --list-targets
+python tools\governance\audit_proof_layout.py --root <target-repo> --list-targets
+```
+
+Then run the scoped check, for example:
+
+```powershell
+python tools\governance\validate_note_blocks.py --root <target-repo> --chapter <chapter-name> --section <topic-name>
+python tools\governance\audit_proof_layout.py --root <target-repo> --chapter <chapter-name> --section <topic-name> --strict
+```
+
+Use whole-repo validation only for repo-wide changes or explicit legacy-debt
+audits. For generated notes, `validate_note_blocks.py --chapter <name>` targets
+that chapter's `notes/` tree, and `--section <name>` targets one
+`notes/{topic}/` tree.
+
 ## Loading Discipline
 
 1. Read `AGENTS.md`.
