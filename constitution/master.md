@@ -100,6 +100,31 @@ Breadcrumbs are wrapper-level navigation, not note-body mathematics.
 
 ---
 
+## Section Router Policy
+
+Section routers own the visible chapter-section spine and the short orientation
+for the section.
+
+- A chapter `index.tex` router must use a non-starred `\chapter{...}` heading
+  and contain exactly one breadcrumb box before routed content inputs.
+- An active notes section router, `notes/<section>/index.tex`, must begin with
+  a non-starred `\section{...}` heading. Sections are table-of-contents
+  entries and must not use `\section*`.
+- The section heading is followed immediately by exactly one gray Toolkit box.
+  Toolkit boxes belong in the section router, not in routed subsection/topic
+  body files.
+- The Toolkit is followed immediately by exactly one short `remark*` block
+  titled `Exposition`. This exposition introduces the mathematical role of the
+  section in reference voice and should be brief.
+- Routed subsection/topic body files use starred subsection headings by
+  default, such as `\subsection*{...}`, so the table of contents remains a
+  chapter-section spine rather than a full topic inventory.
+- Subsection/topic body files should not open with generic section-level
+  Exposition. The section router owns that orientation; body-file exposition
+  should be local and mathematically substantive.
+
+---
+
 ## Axiom Atomicity Policy
 
 Axioms follow the same atomicity discipline as definitions and theorem-like

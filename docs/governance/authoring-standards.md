@@ -40,8 +40,28 @@ propositions, corollaries, computational rules, and one-off conveniences are
 normally unboxed unless the section explicitly treats them as structural and
 load-bearing.
 
-Each section begins with exactly one gray Toolkit box at the top. Chapter
-entries use the required breadcrumb and roadmap structure.
+Chapter entries use the required breadcrumb and roadmap structure. The chapter
+`index.tex` router must use a non-starred `\chapter{...}` heading and contain
+exactly one breadcrumb box before routed content inputs.
+
+Each active notes section router, `notes/<section>/index.tex`, begins with a
+non-starred `\section{...}` so the chapter table of contents exposes the
+section spine. Sections must not use `\section*`.
+
+Immediately after the section heading, the section router contains exactly one
+gray Toolkit box. The Toolkit orients the section's vocabulary and formal
+payload; it is not repeated in subsection/topic body files.
+
+Immediately after the Toolkit, the section router contains one short
+`remark*` block titled `Exposition`. This section-level exposition introduces
+the mathematical role of the section in a precise reference voice. It should
+be brief, normally one paragraph and no more than about 100 words. The first
+routed `\input` follows this exposition.
+
+Subsection/topic body files should use starred subsection headings by default,
+such as `\subsection*{...}`, so the table of contents remains a chapter-section
+spine rather than a full topic inventory. Subsection body files should not open
+with generic orienting exposition; the section router owns that orientation.
 
 ## Figures
 
@@ -83,6 +103,11 @@ ordinary explanatory prose directly under a section or subsection heading. Use
 formal environments for mathematical objects, `remark*` blocks for exposition
 and interpretation, `example*` or `remark*` example metadata for examples and
 non-examples, and the shared `dependencies` environment for dependency lists.
+
+Section-level exposition belongs in the section router immediately after the
+Toolkit. Item-adjacent exposition remains available in body files when it is
+mathematically substantive and attached to a definition, theorem, example, or
+local concept cluster.
 
 ## Multi-Definition Source Passages
 
