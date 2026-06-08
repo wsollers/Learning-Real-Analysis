@@ -1,0 +1,305 @@
+% =========================================================
+% Computational Geometry — Convex Hulls
+% =========================================================
+
+\subsection*{Convexity and Hulls}
+
+\begin{topicbox}{Convexity and Convex Hulls}
+\begin{exposition}
+This formulation makes precise the geometric idea of filling in all straight
+segments forced by a point set. Convex combinations give an algebraic language
+for the same operation, and the convex hull records the smallest set closed
+under that operation.
+\end{exposition}
+
+\begin{definition}[Convex Set]
+\label{def:computational-geometry-convex-set}
+A set \(S \subseteq \mathbb{R}^2\) is \emph{convex} if for every pair of points
+\(a,b\in S\) and every \(\lambda\in[0,1]\),
+\[
+  \lambda a+(1-\lambda)b\in S.
+\]
+Equivalently, \(S\) contains the line segment between any two of its points.
+\end{definition}
+
+\begin{definition}[Convex Combination]
+\label{def:computational-geometry-convex-combination}
+A \emph{convex combination} of points
+\(q_1,\dots,q_n\in\mathbb{R}^2\) is a point of the form
+\[
+  \sum_{i=1}^{n}\lambda_i q_i,
+  \qquad
+  \lambda_i\ge 0 \text{ for all } i,
+  \qquad
+  \sum_{i=1}^{n}\lambda_i=1.
+\]
+The numbers \(\lambda_i\) are called the weights.
+\end{definition}
+
+\begin{definition}[Convex Hull]
+\label{def:computational-geometry-convex-hull}
+The \emph{convex hull} of a set \(P\subseteq\mathbb{R}^2\), written
+\(\conv(P)\), is the set of all convex combinations of finitely many points of
+\(P\):
+\[
+  \conv(P)
+  =
+  \left\{
+    \sum_{i=1}^{n}\lambda_i q_i
+    \;\middle|\;
+    n\ge 1,\ q_i\in P,\ \lambda_i\ge 0,\ \sum_{i=1}^{n}\lambda_i=1
+  \right\}.
+\]
+Equivalently, \(\conv(P)\) is the smallest convex set containing \(P\), i.e. the
+intersection of all convex sets that contain \(P\).
+\end{definition}
+
+\begin{lemma}[Convex hull as the smallest convex set]
+\label{lem:computational-geometry-convex-hull-smallest-convex-set}
+Let \(P\subseteq\mathbb{R}^2\). Then \(\conv(P)\) is convex, contains \(P\), and
+is contained in every convex set that contains \(P\). Hence
+\[
+  \conv(P)
+  =
+  \bigcap\{K\subseteq\mathbb{R}^2 : K\text{ is convex and }P\subseteq K\}.
+\]
+\end{lemma}
+
+\begin{remark*}[Proof]
+See
+\hyperref[prf:computational-geometry-convex-hull-smallest-convex-set]{the proof stub}.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:computational-geometry-convex-set]{Convex Set}
+  \item \hyperref[def:computational-geometry-convex-combination]{Convex Combination}
+  \item \hyperref[def:computational-geometry-convex-hull]{Convex Hull}
+\end{itemize}
+\end{dependencies}
+\end{topicbox}
+
+\subsection*{Supporting Functionals}
+
+\begin{topicbox}{Supporting Functionals and Vertices}
+\begin{exposition}
+This topic isolates the passage from geometry to optimization. A supporting
+line is a geometric certificate that a convex set lies on one side of a
+boundary, while a linear functional turns that certificate into a maximum.
+\end{exposition}
+
+\begin{definition}[Extreme Point]
+\label{def:computational-geometry-extreme-point}
+Let \(S\subseteq\mathbb{R}^2\) be convex. A point \(p\in S\) is an
+\emph{extreme point} of \(S\) if whenever
+\[
+  p=\lambda a+(1-\lambda)b,
+  \qquad
+  a,b\in S,\quad \lambda\in(0,1),
+\]
+it follows that \(a=b=p\). For a finite point set \(P\), the extreme points of
+\(\conv(P)\) are called the vertices of the convex hull.
+\end{definition}
+
+\begin{definition}[Supporting Line]
+\label{def:computational-geometry-supporting-line}
+A line \(\ell\subseteq\mathbb{R}^2\) is a \emph{supporting line} of a convex set
+\(S\) at a point \(p\in S\) if \(p\in\ell\) and \(S\) lies entirely in one of the
+two closed half-planes bounded by \(\ell\). Equivalently, there exists
+\(d\in\mathbb{R}^2\setminus\{0\}\) such that
+\[
+  \ell=\{x\in\mathbb{R}^2:\langle d,x\rangle=\langle d,p\rangle\}
+\]
+and
+\[
+  \langle d,q\rangle\le \langle d,p\rangle
+  \qquad
+  \text{for all } q\in S.
+\]
+\end{definition}
+
+\begin{lemma}[Linear functionals preserve convex combinations]
+\label{lem:computational-geometry-linear-functionals-convex-combinations}
+Let \(d\in\mathbb{R}^2\), and let
+\[
+  z=\sum_{i=1}^{n}\lambda_i q_i
+\]
+be a convex combination of points \(q_1,\dots,q_n\in\mathbb{R}^2\). Then
+\[
+  \langle d,z\rangle
+  =
+  \sum_{i=1}^{n}\lambda_i\langle d,q_i\rangle.
+\]
+Consequently, if \(\langle d,q_i\rangle\le M\) for every \(i\), then
+\[
+  \langle d,z\rangle\le M.
+\]
+\end{lemma}
+
+\begin{remark*}[Proof]
+See
+\hyperref[prf:computational-geometry-linear-functionals-convex-combinations]{the proof stub}.
+\end{remark*}
+
+\begin{theorem}[Supporting functional characterization of hull vertices]
+\label{thm:computational-geometry-supporting-functional-hull-vertices}
+Let \(P\subset\mathbb{R}^2\) be finite and in general position. A point \(p\in P\)
+is a vertex of \(\conv(P)\) if and only if there exists a direction
+\(d\in\mathbb{R}^2\setminus\{0\}\) such that
+\[
+  \langle d,p\rangle>\langle d,q\rangle
+  \qquad
+  \text{for all } q\in P\setminus\{p\}.
+\]
+Equivalently, \(p\) is the unique point of \(P\) attaining
+\[
+  \max_{q\in P}\langle d,q\rangle.
+\]
+Thus every hull vertex is a maximum of \(P\) under some linear functional.
+\end{theorem}
+
+\begin{remark*}[Proof]
+See
+\hyperref[prf:computational-geometry-supporting-functional-hull-vertices]{the proof stub}.
+\end{remark*}
+
+\begin{remark*}[Finite maximum form]
+The maximum is used here because \(P\) is finite. This is the finite-set version
+of the same supporting-functional intuition that appears in supremum language
+for more general sets.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:computational-geometry-convex-combination]{Convex Combination}
+  \item \hyperref[def:computational-geometry-convex-hull]{Convex Hull}
+  \item \hyperref[def:computational-geometry-extreme-point]{Extreme Point}
+  \item \hyperref[def:computational-geometry-supporting-line]{Supporting Line}
+  \item \hyperref[lem:computational-geometry-linear-functionals-convex-combinations]{Linear Functionals Preserve Convex Combinations}
+\end{itemize}
+\end{dependencies}
+\end{topicbox}
+
+\subsection*{Upper Hull Structure}
+
+\begin{topicbox}{Monotone Slopes and Greedy Construction}
+\begin{exposition}
+This topic converts the supporting-line description into an ordered planar
+construction. Under the general-position assumptions, each relevant maximum is
+unique, and the upper hull can be recognized by the strict monotonicity of
+successive slopes.
+\end{exposition}
+
+\begin{assumption}[General Position for the Hull Theorems]
+\label{ass:computational-geometry-general-position}
+Let \(P \subset \mathbb{R}^2\) be a finite set in general position: the points
+have distinct \(x\)-coordinates and no three points are collinear. For
+\(p \in \mathbb{R}^2\), write \(x(p)\) and \(y(p)\) for its coordinates.
+\end{assumption}
+
+\begin{theorem}[Monotone slope characterization of the upper hull]
+\label{thm:computational-geometry-monotone-slope-upper-hull}
+Let \(P\subset\mathbb{R}^2\) be finite and in general position. Let
+\[
+  v_0,v_1,\dots,v_m
+\]
+be the vertices of the upper hull of \(P\), listed in increasing
+\(x\)-coordinate, and define
+\[
+  s_k
+  =
+  \frac{y(v_{k+1})-y(v_k)}{x(v_{k+1})-x(v_k)},
+  \qquad
+  k=0,1,\dots,m-1.
+\]
+Then
+\[
+  s_0>s_1>\cdots>s_{m-1}.
+\]
+Conversely, if points \(w_0,\dots,w_m\) satisfy
+\[
+  x(w_0)<x(w_1)<\cdots<x(w_m)
+\]
+and their consecutive slopes are strictly decreasing, then every \(w_k\) is a
+vertex of
+\[
+  \conv(\{w_0,\dots,w_m\}).
+\]
+The lower hull is characterized similarly, with strictly increasing consecutive
+slopes.
+\end{theorem}
+
+\begin{remark*}[Proof]
+See
+\hyperref[prf:computational-geometry-monotone-slope-upper-hull]{the proof stub}.
+\end{remark*}
+
+\begin{theorem}[Greedy slope construction of the upper hull]
+\label{thm:computational-geometry-greedy-slope-upper-hull}
+Let \(P\subset\mathbb{R}^2\) be finite and in general position. Define
+\[
+  v_0=\argmin_{p\in P}x(p).
+\]
+Given \(v_k\) with
+\[
+  x(v_k)<\max_{p\in P}x(p),
+\]
+define
+\[
+  v_{k+1}
+  =
+  \argmax_{\substack{q\in P\\x(q)>x(v_k)}}
+  \frac{y(q)-y(v_k)}{x(q)-x(v_k)}.
+\]
+Terminate once
+\[
+  v_k=\argmax_{p\in P}x(p).
+\]
+Then the points
+\[
+  v_0,v_1,\dots,v_m
+\]
+produced by this construction are exactly the vertices of the upper hull of
+\(P\), and the slopes encountered along the way are strictly decreasing.
+\end{theorem}
+
+\begin{remark*}[Proof]
+See
+\hyperref[prf:computational-geometry-greedy-slope-upper-hull]{the proof stub}.
+\end{remark*}
+
+\begin{remark*}[Uniqueness of choices]
+The distinct \(x\)-coordinates make the initial and terminal \(x\)-extreme
+points unique. The no-three-collinear condition makes the slope maximizer in
+the greedy step unique.
+\end{remark*}
+
+\begin{remark*}[Proof roadmap]
+The proof ladder is:
+\[
+\text{convex combinations}
+\to
+\text{linear functionals}
+\to
+\text{supporting lines}
+\to
+\text{monotone slopes}
+\to
+\text{greedy hull construction}.
+\]
+The first two lemmas are algebraic. The monotone slope theorem is an
+analytic-geometry statement about three ordered points. The greedy construction
+theorem is the algorithmic consequence.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:computational-geometry-convex-hull]{Convex Hull}
+  \item \hyperref[def:computational-geometry-supporting-line]{Supporting Line}
+  \item \hyperref[lem:computational-geometry-linear-functionals-convex-combinations]{Linear Functionals Preserve Convex Combinations}
+  \item \hyperref[thm:computational-geometry-supporting-functional-hull-vertices]{Supporting Functional Characterization of Hull Vertices}
+  \item TODO: finite set maximum
+  \item TODO: slope of a line
+\end{itemize}
+\end{dependencies}
+\end{topicbox}
