@@ -1,13 +1,13 @@
 # =============================================================
 # Dockerfile — LaTeX build environment
 # Project: Learning Real Analysis
-# Base:     texlive/texlive (full TeX Live, Debian bookworm)
+# Base:     texlive/texlive pinned by digest (full TeX Live, Debian)
 #
 # Engine:   LuaLaTeX (required for expl3, tcolorbox, TikZ stack)
 # Driver:   latexmk  (multi-pass: aux, bib, index, toc, hyperref)
 # =============================================================
 
-FROM texlive/texlive:latest
+FROM texlive/texlive:latest@sha256:2f9918a156cfc6c7527590e06f69bfb4fbc827278e4736c90e567382855d7cd1
 
 # -------------------------------------------------------------
 # System dependencies

@@ -19,14 +19,16 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Build LaTeX Docker image
+        run: docker build -t learning-real-analysis-latex -f docker/Dockerfile docker
+
       - name: Build LaTeX PDF
-        uses: xu-cheng/latex-action@v4
-        continue-on-error: true
-        with:
-          root_file: main.tex
-          latexmk_use_lualatex: true
-          latexmk_shell_escape: true
-          args: -f -file-line-error -interaction=nonstopmode -outdir=build
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace \
+            learning-real-analysis-latex \
+            latexmk -lualatex -interaction=nonstopmode -file-line-error -synctex=1 -shell-escape main.tex
 
       - name: Verify PDF output
         run: |
