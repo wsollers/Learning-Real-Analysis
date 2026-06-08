@@ -29,10 +29,39 @@ Volume II may carry lightweight verification metadata such as:
 - the target formalization repository,
 - the target module and declaration name when known.
 
-Do not inline formal proof code in the volume source. The volume points to the
-formalization; `lra-lean` owns the checked formal source, and
-`lra-knowledge-explorer` owns the UI surface that displays the mapped
-verification code.
+Do not inline formal proof code as ordinary volume prose. The volume points to
+the formalization; `lra-lean` owns the checked formal source, and
+`lra-knowledge-explorer` owns the UI surface that displays mapped verification
+code.
+
+Volume II may include rare, source-anchored `formalizationrecord` boxes for the
+Landau/Feferman number-system spine when all of the following hold:
+
+- the written theorem or definition is part of the number-system foundation,
+- the source anchor is explicit, such as `Landau, Foundations of Analysis,
+  Proposition X`,
+- the box names the reconstructed LaTeX theorem via `\Formalizes{...}`,
+- the box names the Lean declaration via `\LeanDeclaration{...}`,
+- the code shown is a verification record, not a second theorem statement.
+
+Use this pattern for archival bridge points only:
+
+```tex
+\begin{formalizationrecord}{Lean 4 Verification Record}
+\FormalizationSource{Landau, \emph{Foundations of Analysis}, Proposition X}
+\Formalizes{thm:addition-with-one}
+\LeanDeclaration{addition\_with\_one}
+
+\begin{leancode}
+...
+\end{leancode}
+\end{formalizationrecord}
+```
+
+When the intended Lean declaration is not available or not complete, include
+`\Unverified` in the record source. The command renders nothing and exists so
+validation and reporting tools can count pending verification records without
+making the PDF noisier.
 
 Use status wording that does not overclaim:
 
