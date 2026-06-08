@@ -3,7 +3,7 @@
 % File: volume-ii/numbers-summary/notes/notes-number-systems-summary.tex
 % =========================================================
 
-\section{Axiom Systems for $\mathbb{N}$, $\mathbb{Z}$, $\mathbb{Q}$, and $\mathbb{R}$}
+\section{Axiom Systems for $\mathbb{N}$, $\mathbb{W}$, $\mathbb{Z}$, $\mathbb{Q}$, and $\mathbb{R}$}
 \label{sec:number-systems-axioms}
 
 % ---------------------------------------------------------
@@ -11,18 +11,18 @@
 
 \begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Peano Axioms for $\mathbb{N}$}},
+  title={\small\textbf{One-Based Peano Axioms for $\mathbb{N}$}},
   fonttitle=\small\bfseries]
-Let $\mathbb{N}$ be a set with distinguished element $0$
+Let $\mathbb{N}$ be a set with distinguished element $1$
 and successor operation $n \mapsto n{+\!\!+}$.
 
 \medskip
 \begin{tabular}{@{} l p{0.80\linewidth} @{}}
-\textbf{P1} & $0 \in \mathbb{N}$. \\[4pt]
+\textbf{P1} & $1 \in \mathbb{N}$. \\[4pt]
 \textbf{P2} & $n \in \mathbb{N} \Rightarrow n{+\!\!+} \in \mathbb{N}$.
              \hfill\textit{(successor closure)} \\[4pt]
-\textbf{P3} & $n{+\!\!+} \neq 0$ for all $n \in \mathbb{N}$.
-             \hfill\textit{(zero has no predecessor)} \\[4pt]
+\textbf{P3} & $n{+\!\!+} \neq 1$ for all $n \in \mathbb{N}$.
+             \hfill\textit{(the first element has no predecessor)} \\[4pt]
 \textbf{P4} & $n{+\!\!+} = m{+\!\!+} \Rightarrow n = m$.
              \hfill\textit{(successor is injective)} \\[4pt]
 \textbf{P5} & If $P(0)$ holds and $P(n) \Rightarrow P(n{+\!\!+})$,
@@ -33,9 +33,9 @@ and successor operation $n \mapsto n{+\!\!+}$.
 
 \begin{remark}
 P1--P4 rule out wrap-around, ceiling, and rogue elements.
-P5 eliminates anything unreachable from $0$ by finite iteration of the
+P5 eliminates anything unreachable from $1$ by finite iteration of the
 successor.
-Addition, multiplication, and order are not axioms — they are \emph{defined}
+Addition, multiplication, and order are not axioms -- they are \emph{defined}
 recursively from the successor and then shown to satisfy familiar laws by
 induction.
 \end{remark}
@@ -52,6 +52,38 @@ The following are logically equivalent:
 One must assume at least one; the others follow.
 Well-ordering is the engine behind the Division Algorithm, Bézout's Identity,
 and unique prime factorization.
+\end{remark}
+
+% ---------------------------------------------------------
+\subsection{The Whole Numbers $\mathbb{W}$}
+
+\begin{tcolorbox}[colback=axiombox, colframe=axiomborder, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  title={\small\textbf{$\mathbb{W}$ as $\mathbb{N}$ with an Adjoined Zero}},
+  fonttitle=\small\bfseries]
+The whole numbers are
+\[
+\mathbb{W}=\mathbb{N}\cup\{0\},
+\qquad 0\notin\mathbb{N}.
+\]
+The successor, addition, multiplication, and order on $\mathbb{W}$ extend the
+corresponding structures on $\mathbb{N}$:
+\begin{itemize}
+  \item $S_{\mathbb{W}}(0)=1$, and $S_{\mathbb{W}}$ agrees with
+        $S_{\mathbb{N}}$ on $\mathbb{N}$;
+  \item $0$ is the additive identity;
+  \item $0$ is absorbing for multiplication;
+  \item $0$ is the least element of $\mathbb{W}$.
+\end{itemize}
+\end{tcolorbox}
+
+\begin{remark}[What $\mathbb{W}$ gains over $\mathbb{N}$, and what it lacks]
+\textbf{Gain:} an additive identity. This makes
+$(\mathbb{W},+,0)$ a commutative monoid and prepares the ordered-pair
+construction of the integers.
+
+\textbf{Lack:} additive inverses for nonzero elements. Subtraction is still
+not an internal operation in general, so $\mathbb{W}$ is not a ring.
 \end{remark}
 
 % ---------------------------------------------------------
@@ -111,9 +143,9 @@ and unique prime factorization.
 \end{tabular}
 \end{tcolorbox}
 
-\begin{remark}[What $\mathbb{Z}$ gains over $\mathbb{N}$, and what it lacks]
-\textbf{Gain:} Axiom A4 — additive inverses. Subtraction is always defined
-in $\mathbb{Z}$; it is not in $\mathbb{N}$.
+\begin{remark}[What $\mathbb{Z}$ gains over $\mathbb{W}$, and what it lacks]
+\textbf{Gain:} Axiom A4 -- additive inverses. Subtraction is always defined
+in $\mathbb{Z}$; it is not in $\mathbb{W}$.
 
 \textbf{Lack:} Multiplicative inverses. There is no $x \in \mathbb{Z}$
 with $2x = 1$, so M4 (every nonzero element is invertible) fails.
@@ -171,7 +203,7 @@ this holds in any ring.
 \end{remark}
 
 % ---------------------------------------------------------
-\subsection{Structural Comparison: $\mathbb{N}$, $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$}
+\subsection{Structural Comparison: $\mathbb{N}$, $\mathbb{W}$, $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{R}$}
 
 \begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -179,35 +211,35 @@ this holds in any ring.
   fonttitle=\small\bfseries]
 \small
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{@{} l l c c c c @{}}
+\begin{tabular}{@{} l l c c c c c @{}}
 \toprule
 \textbf{Group} & \textbf{Axiom} &
-$\mathbb{N}$ & $\mathbb{Z}$ & $\mathbb{Q}$ & $\mathbb{R}$ \\
+$\mathbb{N}$ & $\mathbb{W}$ & $\mathbb{Z}$ & $\mathbb{Q}$ & $\mathbb{R}$ \\
 \midrule
 Addition
-  & A1 commutativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & A2 associativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & A3 identity ($0$)         & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & A4 inverses ($-a$)        & $\times$   & \checkmark & \checkmark & \checkmark \\
+  & A1 commutativity          & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & A2 associativity          & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & A3 identity ($0$)         & $\times$   & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & A4 inverses ($-a$)        & $\times$   & $\times$   & \checkmark & \checkmark & \checkmark \\
 \midrule
 Multiplication
-  & M1 commutativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & M2 associativity          & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & M3 identity ($1$)         & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & M4 inverses ($1/a$)       & $\times$   & $\times$   & \checkmark & \checkmark \\
+  & M1 commutativity          & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & M2 associativity          & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & M3 identity ($1$)         & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & M4 inverses ($1/a$)       & $\times$   & $\times$   & $\times$   & \checkmark & \checkmark \\
 \midrule
-  & D distributivity          & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & D distributivity          & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
 \midrule
 Order
-  & O1--O3 total order        & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & O4--O5 order + arithmetic & \checkmark & \checkmark & \checkmark & \checkmark \\
-  & Well-ordering             & \checkmark & $\times$   & $\times$   & $\times$   \\
+  & O1--O3 total order        & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & O4--O5 order + arithmetic & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+  & Well-ordering             & \checkmark & \checkmark & $\times$   & $\times$   & $\times$   \\
 \midrule
 Completeness
-  & Least upper bound         & $\times$   & $\times$   & $\times$   & \checkmark \\
+  & Least upper bound         & $\times$   & $\times$   & $\times$   & $\times$   & \checkmark \\
 \midrule
 \multicolumn{2}{@{}l}{\textbf{Structure}} &
-\textit{semiring} & \textit{comm.\ ring} &
+\textit{positive arithmetic} & \textit{comm.\ semiring} & \textit{comm.\ ring} &
 \textit{ordered field} & \textit{complete ordered field} \\
 \bottomrule
 \end{tabular}
@@ -220,6 +252,8 @@ Completeness
 Each number system repairs exactly one deficiency of its predecessor:
 \[
 \mathbb{N}
+\;\xrightarrow{+\;0}\;
+\mathbb{W}
 \;\xrightarrow{+\;\mathrm{A4}}\;
 \mathbb{Z}
 \;\xrightarrow{+\;\mathrm{M4}}\;
@@ -227,14 +261,16 @@ Each number system repairs exactly one deficiency of its predecessor:
 \;\xrightarrow{+\;\mathrm{LUB}}\;
 \mathbb{R}.
 \]
-$\mathbb{N} \to \mathbb{Z}$: adjoin additive inverses so subtraction is
+$\mathbb{N} \to \mathbb{W}$: adjoin $0$ so addition has an identity.
+$\mathbb{W} \to \mathbb{Z}$: adjoin additive inverses so subtraction is
 always defined.
 $\mathbb{Z} \to \mathbb{Q}$: adjoin multiplicative inverses so division by
 any nonzero element is always defined.
 $\mathbb{Q} \to \mathbb{R}$: adjoin least upper bounds so every bounded
 increasing sequence converges.
 
-Note that $\mathbb{N}$ is the only system in the chain that is well-ordered.
+Note that $\mathbb{N}$ and $\mathbb{W}$ are the well-ordered systems in the
+chain.
 $\mathbb{Z}$ loses well-ordering the moment negative integers are introduced
 (the set of all negative integers has no least element).
 \end{remark}
