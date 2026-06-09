@@ -4,7 +4,7 @@
 \usepackage{xcolor}
 \usepackage{mdframed}
 \usepackage{tcolorbox}
-\tcbuselibrary{skins,breakable}
+\tcbuselibrary{skins,breakable,listings}
 
 % ============================================================
 % TikZ
@@ -294,6 +294,68 @@ depedgelab/.style={
 \NewDocumentEnvironment{exposition}{}%
   {\par\smallskip\noindent\ignorespaces}%
   {\par\smallskip}
+
+\newtcolorbox{formalizationrecord}[1]{%
+  enhanced,
+  breakable,
+  colback=structuretheorybox,
+  colframe=structuretheoryborder,
+  coltitle=black,
+  colbacktitle=structuretheoryborder!18!white,
+  fonttitle=\bfseries\small,
+  title={#1},
+  boxed title style={
+    boxrule=0.6pt,
+    arc=2pt,
+    colframe=structuretheoryborder,
+    colback=structuretheoryborder!18!white,
+    top=3pt,
+    bottom=3pt,
+    left=5pt,
+    right=5pt
+  },
+  attach boxed title to top left={xshift=6pt, yshift*=-\tcboxedtitleheight/2},
+  boxrule=0.6pt,
+  arc=2pt,
+  boxsep=0pt,
+  left=7pt,
+  right=7pt,
+  top=10pt,
+  bottom=4pt,
+  before skip=6pt,
+  after skip=8pt
+}
+
+\newtcblisting{leancode}{%
+  enhanced,
+  breakable,
+  listing only,
+  colback=white,
+  colframe=structuretheoryborder!35!white,
+  boxrule=0.4pt,
+  arc=1pt,
+  boxsep=0pt,
+  left=6pt,
+  right=6pt,
+  top=3pt,
+  bottom=3pt,
+  before skip=5pt,
+  after skip=0pt,
+  listing options={
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    aboveskip=0pt,
+    belowskip=0pt
+  }
+}
+
+\newcommand{\FormalizationSource}[1]{\textbf{Source anchor:} #1.\par}
+\newcommand{\Formalizes}[1]{\textbf{Formalizes:} \Cref{#1}.\par}
+\newcommand{\LeanDeclaration}[1]{\textbf{Lean declaration:} \texttt{#1}.\par}
+\NewDocumentCommand{\Unverified}{o}{}
 
 \newcommand{\NoLocalDependencies}{}
 
