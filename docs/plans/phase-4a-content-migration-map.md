@@ -164,7 +164,7 @@ Create destination landing stubs and router conventions for:
 - `volume-vii/numerical-analysis`
 - `volume-iv/algebra`
 - `volume-v/topology`
-- `volume-v/geometry`
+- `volume-v/<geometry-topic>`
 - `volume-vi/computational-linear-algebra`
 - `volume-viii/foundations` or the project-standard equivalent foundations cluster
 
@@ -176,7 +176,7 @@ Move `volume-v/numerical-analysis` to `volume-vii/numerical-analysis`, leaving a
 
 ### Batch 3: Geometry pilot
 
-Move one geometry subcluster from `volume-iii/geometry` to `volume-v/geometry` after confirming it has no broad cross-volume dependencies. A good pilot candidate should be chosen by label/reference audit, not by title alone.
+Move one geometry subcluster from `volume-iii/geometry` to its topic directory under `volume-v/` after confirming it has no broad cross-volume dependencies. A good pilot candidate should be chosen by label/reference audit, not by title alone.
 
 ### Batch 4: Algebra migration
 
