@@ -7,6 +7,7 @@
 % ---------------------------------------------------------
 
 \begin{definition}[Ring]
+\label{def:algebraic-geometry-ring}
 A set $R$ with two binary operations $+ : R \times R \to R$
 and $\cdot : R \times R \to R$ is a \emph{ring} if:
 
@@ -37,15 +38,22 @@ a \cdot (b + c) = a \cdot b + a \cdot c
 \end{enumerate}
 \end{definition}
 
-\begin{remark}
+\begin{remark*}[Standard quantified statement]
+A ring is a set equipped with addition and multiplication satisfying the
+additive-group, multiplicative-associativity, multiplicative-identity, and
+distributive laws.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
 A ring generalizes a field by dropping the requirement that
 nonzero elements have multiplicative inverses,
 and by not requiring multiplication to be commutative.
 When multiplication is commutative, we call $R$ a
 \emph{commutative ring}.
-\end{remark}
+\end{remark*}
 
 \begin{definition}[Commutative Ring]
+\label{def:algebraic-geometry-commutative-ring}
 A ring $R$ is \emph{commutative} if
 \[
 a \cdot b = b \cdot a
@@ -53,7 +61,11 @@ a \cdot b = b \cdot a
 \]
 \end{definition}
 
-\begin{remark}[Structural Summary]
+\begin{remark*}[Standard quantified statement]
+A ring $R$ is commutative when multiplication in $R$ is commutative.
+\end{remark*}
+
+\begin{remark*}[Structural Summary]
 The hierarchy of algebraic structures encountered so far is:
 
 \begin{center}
@@ -67,13 +79,14 @@ Field           & Abelian & Abelian on nonzero elements
 \end{center}
 
 Every field is a commutative ring, but not every commutative ring is a field.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
-\subsection{Polynomial Rings}
+\subsection*{Polynomial Rings}
 % ---------------------------------------------------------
 
 \begin{definition}[Polynomial]
+\label{def:polynomial-over-ring}
 Let $R$ be a commutative ring.
 A \emph{polynomial} in one variable over $R$ is a formal expression
 \[
@@ -83,13 +96,19 @@ where $n \in \mathbb{N}$, the \emph{coefficients} $a_0, a_1, \dots, a_n \in R$,
 and $x$ is a formal symbol called an \emph{indeterminate}.
 \end{definition}
 
-\begin{remark}
+\begin{remark*}[Standard quantified statement]
+A polynomial over $R$ is a finite formal sum $\sum_i a_i x^i$ with
+coefficients $a_i \in R$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
 The indeterminate $x$ is not a variable ranging over values in $R$.
 It is a formal placeholder that encodes the coefficient sequence.
 Two polynomials are equal if and only if all their coefficients are equal.
-\end{remark}
+\end{remark*}
 
 \begin{definition}[Degree]
+\label{def:degree-of-polynomial}
 Let $f = a_n x^n + \cdots + a_0$ be a polynomial over $R$.
 If $a_n \neq 0$, then the \emph{degree} of $f$ is
 \[
@@ -99,13 +118,19 @@ The coefficient $a_n$ is called the \emph{leading coefficient} of $f$.
 A polynomial with leading coefficient $1$ is called \emph{monic}.
 \end{definition}
 
-\begin{remark}
+\begin{remark*}[Standard quantified statement]
+For a nonzero polynomial $f=a_nx^n+\cdots+a_0$ with leading coefficient
+$a_n\neq 0$, the degree of $f$ is $n$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
 The zero polynomial $f = 0$ has no leading coefficient.
 Its degree is left undefined, or assigned $-\infty$ by convention
 to preserve the identity $\deg(fg) = \deg(f) + \deg(g)$.
-\end{remark}
+\end{remark*}
 
 \begin{definition}[Polynomial Ring]
+\label{def:polynomial-ring}
 Let $R$ be a commutative ring.
 The \emph{polynomial ring} over $R$ in one indeterminate $x$,
 denoted $R[x]$, is the set of all polynomials in $x$ with
@@ -121,7 +146,13 @@ defined by:
 \]
 \end{definition}
 
-\begin{example}
+\begin{remark*}[Standard quantified statement]
+The set $R[x]$ is the collection of finite formal sums in $x$ with
+coefficients in $R$, equipped with coefficientwise addition and Cauchy-product
+multiplication.
+\end{remark*}
+
+\begin{example*}[Polynomial arithmetic over the integers]
 Let $R = \mathbb{Z}$ and consider
 \[
 f = 2x^2 + 3x + 1, \qquad g = x + 4 \quad \in \mathbb{Z}[x].
@@ -133,9 +164,9 @@ f + g = 2x^2 + 4x + 5,
 \[
 f \cdot g = 2x^3 + 11x^2 + 13x + 4.
 \]
-\end{example}
+\end{example*}
 
-\begin{remark}[Structural Summary]
+\begin{remark*}[Structural Summary]
 With these operations, $R[x]$ is itself a commutative ring.
 The original ring $R$ embeds into $R[x]$ as the constant polynomials.
 
@@ -148,13 +179,14 @@ Field & Only in degenerate cases \\
 $R$ embeds in $R[x]$ & Always
 \end{tabular}
 \end{center}
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
-\subsection{Polynomial Rings in Several Variables}
+\subsection*{Polynomial Rings in Several Variables}
 % ---------------------------------------------------------
 
 \begin{definition}[Polynomial Ring in $n$ Variables]
+\label{def:polynomial-ring-in-n-variables}
 Let $R$ be a commutative ring and let $n \in \mathbb{N}$.
 The \emph{polynomial ring in $n$ variables} over $R$, denoted
 \[
@@ -174,7 +206,13 @@ the coefficients $a_\alpha \in R$, and
 $x^\alpha := x_1^{\alpha_1} \cdots x_n^{\alpha_n}$.
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+The ring $R[x_1,\dots,x_n]$ consists of finite formal sums
+$\sum_\alpha a_\alpha x^\alpha$ indexed by multi-indices.
+\end{remark*}
+
 \begin{definition}[Monomial]
+\label{def:monomial}
 A \emph{monomial} in $R[x_1, \dots, x_n]$ is a polynomial
 of the form
 \[
@@ -183,7 +221,12 @@ x^\alpha = x_1^{\alpha_1} \cdots x_n^{\alpha_n}
 for some multi-index $\alpha \in \mathbb{N}^n$.
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+A monomial in $R[x_1,\dots,x_n]$ is a single multi-index power $x^\alpha$.
+\end{remark*}
+
 \begin{definition}[Total Degree]
+\label{def:total-degree}
 The \emph{total degree} of the monomial $x^\alpha$ is
 \[
 |\alpha| := \alpha_1 + \alpha_2 + \cdots + \alpha_n.
@@ -192,16 +235,20 @@ The degree of a polynomial $f \in R[x_1,\dots,x_n]$ is
 the maximum total degree among all monomials with nonzero coefficient.
 \end{definition}
 
-\begin{example}
+\begin{remark*}[Standard quantified statement]
+The total degree of $x^\alpha$ is $|\alpha|=\alpha_1+\cdots+\alpha_n$.
+\end{remark*}
+
+\begin{example*}[Example]
 In $\mathbb{R}[x,y,z]$, the polynomial
 \[
 f = 3x^2 y + xy^2 z - 5z^3
 \]
 has three terms with total degrees $3$, $4$, and $3$ respectively.
 Hence $\deg(f) = 4$.
-\end{example}
+\end{example*}
 
-\begin{remark}[Relevance to Algebraic Geometry]
+\begin{remark*}[Relevance to Algebraic Geometry]
 Polynomial rings in several variables are the foundational
 algebraic object of algebraic geometry.
 The geometric objects studied in subsequent sections ---
@@ -211,13 +258,14 @@ for a field $k$.
 The interplay between the algebra of $k[x_1,\dots,x_n]$
 and the geometry of its zero sets is the central theme
 of Clader--Ross.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
-\subsection{Ideals}
+\subsection*{Ideals}
 % ---------------------------------------------------------
 
 \begin{definition}[Ideal]
+\label{def:ideal}
 Let $R$ be a commutative ring.
 A subset $I \subseteq R$ is an \emph{ideal} of $R$ if:
 \begin{enumerate}
@@ -227,7 +275,13 @@ A subset $I \subseteq R$ is an \emph{ideal} of $R$ if:
 \end{enumerate}
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+An ideal of $R$ is an additive subgroup of $R$ closed under multiplication by
+arbitrary elements of $R$.
+\end{remark*}
+
 \begin{definition}[Generated Ideal]
+\label{def:generated-ideal}
 Let $R$ be a commutative ring and let $f_1, \dots, f_m \in R$.
 The \emph{ideal generated by} $f_1, \dots, f_m$ is
 \[
@@ -237,36 +291,60 @@ The \emph{ideal generated by} $f_1, \dots, f_m$ is
 An ideal of this form is called \emph{finitely generated}.
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+The ideal generated by $f_1,\dots,f_m$ is the set of all finite
+$R$-linear combinations of those generators.
+\end{remark*}
+
 \begin{definition}[Finitely Generated Ideal]
+\label{def:finitely-generated-ideal}
 An ideal $I \subseteq R$ is \emph{finitely generated} if there exist
 $f_1, \dots, f_m \in R$ such that $I = \langle f_1, \dots, f_m \rangle$.
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+An ideal $I$ is finitely generated when $I=\langle f_1,\dots,f_m\rangle$
+for some finite list $f_1,\dots,f_m$ of elements of $R$.
+\end{remark*}
+
 \begin{definition}[Noetherian Ring]
+\label{def:noetherian-ring}
 A commutative ring $R$ is \emph{Noetherian} if every ideal of $R$
 is finitely generated.
 \end{definition}
 
+\begin{remark*}[Standard quantified statement]
+A commutative ring $R$ is Noetherian when every ideal $I\subseteq R$ is
+finitely generated.
+\end{remark*}
+
 \begin{theorem}[Hilbert Basis Theorem]
+\label{thm:hilbert-basis-theorem}
 If $R$ is a Noetherian ring, then the polynomial ring $R[x]$
 is also Noetherian.
 
 In particular, $k[x_1, \dots, x_n]$ is Noetherian for any field $k$.
+\hyperref[prf:hilbert-basis-theorem]{Go to proof.}
 \end{theorem}
 
-\begin{remark}
+\begin{remark*}[Standard quantified statement]
+If $R$ is Noetherian, then $R[x]$ is Noetherian.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
 The Hilbert Basis Theorem guarantees that every ideal in
 $k[x_1, \dots, x_n]$ is finitely generated.
 This is a foundational finiteness result:
 it means every algebraic variety can be cut out by
 finitely many polynomial equations.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
-\subsection{Quotient Rings}
+\subsection*{Quotient Rings}
 % ---------------------------------------------------------
 
 \begin{definition}[Quotient Ring]
+\label{def:quotient-ring}
 Let $R$ be a commutative ring and let $I \subseteq R$ be an ideal.
 The \emph{quotient ring} $R/I$ is the set of cosets
 \[
@@ -281,13 +359,18 @@ equipped with addition and multiplication defined by
 \]
 \end{definition}
 
-\begin{remark}
+\begin{remark*}[Standard quantified statement]
+For an ideal $I$ of $R$, the quotient $R/I$ is the set of additive cosets of
+$I$ with operations induced from $R$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
 The quotient ring $R/I$ is a commutative ring.
 Elements of $R/I$ are equivalence classes under the relation
 $a \sim b \iff a - b \in I$.
-\end{remark}
+\end{remark*}
 
-\begin{example}
+\begin{example*}[A complex quotient]
 In $\mathbb{R}[x]$, consider the ideal $I = \langle x^2 + 1 \rangle$.
 The quotient ring
 \[
@@ -295,9 +378,9 @@ The quotient ring
 \]
 since in the quotient, $x$ satisfies $x^2 = -1$,
 which is precisely the defining relation of $i \in \mathbb{C}$.
-\end{example}
+\end{example*}
 
-\begin{remark}[Structural Position]
+\begin{remark*}[Structural Position]
 Quotient rings of polynomial rings are the coordinate rings
 of affine varieties, which are studied in depth in the next chapter.
 The passage
@@ -306,4 +389,4 @@ k[x_1,\dots,x_n] \;\longrightarrow\; k[x_1,\dots,x_n]/I
 \]
 is the algebraic encoding of restricting from all of $\mathbb{A}^n$
 to the variety $V(I)$.
-\end{remark}
+\end{remark*}

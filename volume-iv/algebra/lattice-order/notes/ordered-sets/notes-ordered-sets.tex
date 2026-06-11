@@ -1,0 +1,169 @@
+% =========================================================
+% Ordered Sets: Partial, Strict, and Total Orders
+% =========================================================
+
+\section{Ordered Sets}
+\label{sec:ordered-sets}
+
+\begin{remark*}[Toolkit: Ordered Sets]
+Order is a relation, not a property.  A set carries no intrinsic ordering;
+an order is an additional structure imposed on the set by specifying which
+pairs of elements stand in the ordering relation.  The same underlying set
+can support many distinct orders simultaneously.  The atomic notions
+developed here are:
+\begin{itemize}
+  \item the \textbf{partial order} — the minimal framework in which order
+        makes sense;
+  \item the \textbf{strict partial order} — the asymmetric companion to the
+        partial order, and the native language of open-ball conditions and
+        limits;
+  \item the \textbf{total order} — the specialisation in which every pair of
+        elements is comparable.
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:lattice-order-partial-order
+% ---------------------------------------------------------
+
+\begin{definitionbox}{Definition (Partial Order)}
+\begin{definition}[Partial Order]
+\label{def:lattice-order-partial-order}
+A relation $\leq$ on a set $S$ is a \emph{partial order} if it satisfies,
+for all $a, b, c \in S$:
+\begin{enumerate}
+  \item \textbf{Reflexivity:} $a \leq a$.
+  \item \textbf{Anti-symmetry:} $a \leq b \land b \leq a \Longrightarrow a = b$.
+  \item \textbf{Transitivity:} $a \leq b \land b \leq c \Longrightarrow a \leq c$.
+\end{enumerate}
+The pair $(S, \leq)$ is called a \emph{partially ordered set}, or \emph{poset}.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{PartialOrder}(S, \leq)
+\;\coloneqq\;
+\bigl(\forall a \in S,\; a \leq a\bigr)
+\;\land\;
+\bigl(\forall a,b \in S,\; a \leq b \land b \leq a \Rightarrow a = b\bigr)
+\;\land\;
+\bigl(\forall a,b,c \in S,\; a \leq b \land b \leq c \Rightarrow a \leq c\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{PartialOrder}(S, \leq)
+\;\coloneqq\;
+\bigl(\exists a \in S,\; a \not\leq a\bigr)
+\;\lor\;
+\bigl(\exists a,b \in S,\; a \leq b \land b \leq a \land a \neq b\bigr)
+\;\lor\;
+\bigl(\exists a,b,c \in S,\; a \leq b \land b \leq c \land a \not\leq c\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Order is not an intrinsic quality of a set's elements — it is an external
+binary relation.  The three axioms together enforce that the relation be a
+consistent, cycle-free, directed comparison.  Reflexivity says every element
+is at least as large as itself.  Anti-symmetry is the formal engine behind
+squeeze arguments: if $a \leq b$ and $b \leq a$ then $a$ and $b$ cannot
+be distinct.  Transitivity ensures that the ordering chains: comparisons
+can be composed without breaking consistency.  The same set of objects can
+carry many distinct partial orders simultaneously — standard, reverse,
+or lexicographic — each defining a different relational geometry.
+\end{remark*}
+
+\NoLocalDependencies
+% ---------------------------------------------------------
+% def:lattice-order-strict-partial-order
+% ---------------------------------------------------------
+
+\begin{definition}[Strict Partial Order]
+\label{def:lattice-order-strict-partial-order}
+A relation $<$ on a set $S$ is a \emph{strict partial order} if it satisfies,
+for all $a, b, c \in S$:
+\begin{enumerate}
+  \item \textbf{Irreflexivity:} $\neg(a < a)$.
+  \item \textbf{Asymmetry:} $a < b \Longrightarrow \neg(b < a)$.
+  \item \textbf{Transitivity:} $a < b \land b < c \Longrightarrow a < c$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{StrictPartialOrder}(S, {<})
+\;\coloneqq\;
+\bigl(\forall a \in S,\; \neg(a < a)\bigr)
+\;\land\;
+\bigl(\forall a,b \in S,\; a < b \Rightarrow \neg(b < a)\bigr)
+\;\land\;
+\bigl(\forall a,b,c \in S,\; a < b \land b < c \Rightarrow a < c\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The strict order is the companion of the non-strict order, eliminating
+reflexivity and replacing anti-symmetry with the stronger asymmetry.
+Every strict partial order determines a partial order by
+$a \leq b \Longleftrightarrow (a < b \lor a = b)$, and every partial order
+determines a strict partial order by $a < b \Longleftrightarrow (a \leq b
+\land a \neq b)$.  In metric spaces and analysis, strict orders are the
+natural language of open conditions: open balls, open intervals, and limit
+definitions all use $<$ rather than $\leq$ to exclude boundary contact.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\begin{itemize}
+  \item \hyperref[def:lattice-order-partial-order]{Partial Order}
+\end{itemize}
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:lattice-order-total-order
+% ---------------------------------------------------------
+
+\begin{definitionbox}{Definition (Total Order)}
+\begin{definition}[Total Order]
+\label{def:lattice-order-total-order}
+A \hyperref[def:lattice-order-partial-order]{partial order} $\leq$ on a set $S$ is a
+\emph{total order} (or \emph{linear order}) if it additionally satisfies
+the \emph{law of trichotomy}: for all $a, b \in S$, exactly one of
+\[
+a < b, \qquad a = b, \qquad b < a
+\]
+holds.  The pair $(S, \leq)$ is called a \emph{totally ordered set}
+or a \emph{chain}.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{TotalOrder}(S, \leq)
+\;\coloneqq\;
+\operatorname{PartialOrder}(S, \leq)
+\;\land\;
+\forall a, b \in S,\;
+(a < b) \oplus (a = b) \oplus (b < a),
+\]
+where $\oplus$ denotes exclusive or.  Equivalently, comparability suffices:
+$\forall a,b \in S,\; a \leq b \lor b \leq a$.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A partial order permits elements to be incomparable: it is possible that
+neither $a \leq b$ nor $b \leq a$.  A total order removes this
+possibility entirely — every pair of elements is forced to be comparable.
+The rational numbers $\mathbb{Q}$ and real numbers $\mathbb{R}$ under their
+standard orderings are totally ordered fields.  By contrast, the power
+set $\mathcal{P}(X)$ of any set $X$ with more than one element, ordered
+by inclusion, is typically not a total order: the singletons $\{a\}$ and
+$\{b\}$ with $a \neq b$ are incomparable.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lattice-order-partial-order]{Partial order},
+\hyperref[def:lattice-order-strict-partial-order]{strict partial order}.
+\end{remark*}

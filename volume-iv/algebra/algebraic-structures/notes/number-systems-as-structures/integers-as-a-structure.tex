@@ -1,0 +1,468 @@
+```tex
+% =========================================================
+% Volume IV  §1.7.?  — Z as a Model of the Arithmetic Signature
+% Light Vol-IV style:
+%   \begin{definition}/\begin{remark*}/\algebraTopicToolkit
+%
+% WIRING NOTE (cross-volume):
+%   Verify exact Volume II labels before final commit.
+%
+% Expected targets:
+%   def:arithmetic-signature
+%   def:integer-operations
+%   def:ring
+%   def:positive-cone
+%   thm:z-is-ring
+%   thm:z-is-integral-domain
+%   thm:z-is-ordered-ring
+%   thm:n-embeds-in-z
+%   thm:z-embeds-in-q
+%   def:structure-expansion
+%   def:structure-reduction
+% =========================================================
+
+\subsection*{The Integers as a Structure}
+\label{subsec:integers-as-a-structure}
+
+\algebraTopicToolkit{$\mathbb{Z}$ as a Model of the Ring Signature}{
+We exhibit $\mathbb{Z}$ as a concrete \emph{model}: fix the ring signature,
+take the carrier and operations constructed in Volume~II, interpret each
+symbol, and discharge satisfaction by citing the Volume~II theorem that
+$\mathbb{Z}$ satisfies the ring axioms. Order is then added by expansion, and
+various algebraic fragments are recovered by reduction.
+}
+
+% ---------------------------------------------------------
+% Signature
+% ---------------------------------------------------------
+
+\begin{remark*}[Exposition]
+A model is a signature together with an interpretation on a carrier. The
+signature here is the ring fragment of the
+\hyperref[def:arithmetic-signature]{arithmetic signature},
+\[
+\mathcal{L}_{\mathrm{ring}}
+=
+\{+,\cdot,-,0,1\},
+\]
+with binary function symbols $+,\cdot$, unary function symbol $-$, and
+constant symbols $0,1$.
+
+The order symbol $<$ is deliberately absent. It enters only through expansion.
+\end{remark*}
+
+% ---------------------------------------------------------
+% Model
+% ---------------------------------------------------------
+
+\begin{definition}[The Integer Model $\mathcal{Z}$]
+\label{def:integer-model}
+
+The \textbf{integer model} is the
+$\mathcal{L}_{\mathrm{ring}}$-structure
+
+\[
+\mathcal{Z}
+=
+\bigl(
+\mathbb{Z};
++^{\mathcal Z},
+\cdot^{\mathcal Z},
+-^{\mathcal Z},
+0^{\mathcal Z},
+1^{\mathcal Z}
+\bigr),
+\]
+
+whose carrier $|\mathcal Z|=\mathbb Z$ is the set of integers constructed in
+Volume~II, and whose symbols are interpreted by the
+\hyperref[def:integer-operations]{integer operations}.
+
+Thus
+
+\[
++^{\mathcal Z}
+\]
+
+is integer addition,
+
+\[
+\cdot^{\mathcal Z}
+\]
+
+is integer multiplication,
+
+\[
+-^{\mathcal Z}
+\]
+
+is integer negation, and
+
+\[
+0^{\mathcal Z},
+\quad
+1^{\mathcal Z}
+\]
+
+are the distinguished integer constants.
+\end{definition}
+
+% ---------------------------------------------------------
+% Quantified statement
+% ---------------------------------------------------------
+
+\begin{remark*}[Standard quantified statement]
+
+\[
+|\mathcal Z|
+=
+\mathbb Z,
+\]
+
+\[
++^{\mathcal Z},
+\cdot^{\mathcal Z}
+:
+\mathbb Z\times\mathbb Z
+\to
+\mathbb Z,
+\]
+
+\[
+-^{\mathcal Z}
+:
+\mathbb Z
+\to
+\mathbb Z,
+\]
+
+\[
+0^{\mathcal Z},
+1^{\mathcal Z}
+\in
+\mathbb Z.
+\]
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Interpretation
+% ---------------------------------------------------------
+
+\begin{remark*}[Interpretation]
+
+Nothing new is constructed here.
+
+The carrier and operations were already built in Volume~II.
+
+The purpose of the model
+
+\[
+\mathcal Z
+\]
+
+is to package the integer system as a single mathematical object so that
+theorems may quantify over rings and then be applied directly to the integers.
+
+The signature is the type.
+
+The structure
+
+\[
+\mathcal Z
+\]
+
+is the instance.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Dependencies
+% ---------------------------------------------------------
+
+\begin{remark*}[Dependencies]
+
+\begin{itemize}
+    \item \hyperref[def:arithmetic-signature]{Arithmetic Signature}.
+    \item \hyperref[def:ring]{Ring}.
+    \item Volume~II construction of $\mathbb Z$.
+    \item \hyperref[def:integer-operations]{Integer Operations}.
+\end{itemize}
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Satisfaction
+% ---------------------------------------------------------
+
+\begin{remark*}[Satisfaction]
+
+The structure
+
+\[
+\mathcal Z
+\]
+
+is a model of the ring axioms:
+
+\[
+\mathcal Z
+\models
+\Sigma_{\mathrm{ring}},
+\]
+
+equivalently,
+
+\[
+\operatorname{Ring}
+(\mathbb Z,+,\cdot,0,1).
+\]
+
+This is not re-proved here.
+
+It is exactly the content of
+
+\hyperref[thm:z-is-ring]{$\mathbb Z$ Is a Ring}
+
+in Volume~II, which verifies each ring axiom against the integer operations.
+
+Likewise,
+
+\[
+\mathcal Z
+\models
+\Sigma_{\mathrm{id}},
+\]
+
+because
+
+\hyperref[thm:z-is-integral-domain]{$\mathbb Z$ Is an Integral Domain}
+
+shows that multiplication on the integers has no zero divisors.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Expansion
+% ---------------------------------------------------------
+
+\begin{remark*}[Expansion to the Ordered Ring]
+
+Adjoining the relation symbol $<$ gives the expansion
+
+\[
+\mathcal Z_{<}
+=
+(\mathbb Z;
++,
+\cdot,
+-,
+0,
+1,
+<),
+\]
+
+\[
+\operatorname{Expansion}
+(\mathcal Z_{<},\mathcal Z),
+\]
+
+in the sense of
+\hyperref[def:structure-expansion]{Structure Expansion}.
+
+The carrier is unchanged and exactly one interpreted symbol is added.
+
+The relation
+
+\[
+<^{\mathcal Z}
+\]
+
+is the usual integer order determined by the
+\hyperref[def:positive-cone]{positive cone}.
+
+That this expansion satisfies the ordered-ring axioms is witnessed by
+
+\hyperref[thm:z-is-ordered-ring]{$\mathbb Z$ Is an Ordered Ring}
+
+in Volume~II.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Additive reduct
+% ---------------------------------------------------------
+
+\begin{remark*}[Reduct to the Additive Group]
+
+Forgetting
+
+\[
+\cdot,
+1
+\]
+
+leaves the reduct
+
+\[
+\mathcal Z
+\!\restriction\!
+\{+,-,0\}
+=
+(\mathbb Z;+,-,0),
+\]
+
+\[
+\operatorname{Reduction}
+\!\bigl(
+\mathcal Z
+\!\restriction\!
+\{+,-,0\},
+\mathcal Z
+\bigr).
+\]
+
+This reduct is the additive abelian group of integers.
+
+It remembers addition and additive inverses while ignoring multiplication.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Multiplicative reduct
+% ---------------------------------------------------------
+
+\begin{remark*}[Reduct to the Multiplicative Monoid]
+
+Forgetting
+
+\[
++,
+-,
+0
+\]
+
+leaves
+
+\[
+\mathcal Z
+\!\restriction\!
+\{\cdot,1\}
+=
+(\mathbb Z;\cdot,1),
+\]
+
+the multiplicative commutative monoid of integers.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Blueprint
+% ---------------------------------------------------------
+
+\begin{remark*}[Blueprint Position]
+
+The integer model occupies the next stage after the natural numbers in the
+number-system hierarchy.
+
+It sits on the embedding chain
+
+\[
+\mathbb N
+\hookrightarrow
+\mathbb Z
+\hookrightarrow
+\mathbb Q
+\hookrightarrow
+\mathbb R.
+\]
+
+The first embedding is the canonical map
+
+\[
+n \longmapsto n,
+\]
+
+witnessed by
+
+\hyperref[thm:n-embeds-in-z]{$\mathbb N$ Embeds in $\mathbb Z$}.
+
+The second embedding is witnessed by
+
+\hyperref[thm:z-embeds-in-q]{$\mathbb Z$ Embeds in $\mathbb Q$}.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Structural meaning
+% ---------------------------------------------------------
+
+\begin{remark*}[Interpretation]
+
+The passage
+
+\[
+\mathbb N
+\longrightarrow
+\mathbb Z
+\]
+
+supplies exactly one new algebraic capability:
+
+\[
+\forall a\in\mathbb Z,
+\quad
+\exists(-a)\in\mathbb Z.
+\]
+
+Every integer has an additive inverse.
+
+This is the structural feature absent from the natural numbers.
+
+Consequently,
+
+\[
+(\mathbb N,+)
+\]
+
+is only a commutative monoid, whereas
+
+\[
+(\mathbb Z,+)
+\]
+
+is an abelian group.
+
+The passage
+
+\[
+\mathbb Z
+\longrightarrow
+\mathbb Q
+\]
+
+will later supply multiplicative inverses for nonzero elements and thereby
+upgrade the integer ring into a field.
+
+\end{remark*}
+
+% ---------------------------------------------------------
+% Closing observation
+% ---------------------------------------------------------
+
+\begin{remark*}[Structural Significance]
+
+The integer model is the first standard number system that satisfies the full
+ring signature.
+
+The natural numbers support addition and multiplication, but not additive
+inverses.
+
+The integers close precisely that gap.
+
+For this reason $\mathbb Z$ occupies the ring layer of the structural hierarchy,
+sitting between the semiring structure of $\mathbb N$ and the field structure of
+$\mathbb Q$.
+
+\end{remark*}
+```

@@ -1,0 +1,169 @@
+% =========================================================
+% Order-Preserving Maps, Embeddings, and Isomorphisms
+% =========================================================
+
+\section{Maps Between Ordered Sets}
+\label{sec:maps-ordered-sets}
+
+\begin{remark*}[Toolkit: Maps Between Ordered Sets]
+The structure-preserving maps between posets form a hierarchy of increasing
+strength.  An order-preserving map carries the direction of the order
+forward.  An order-embedding carries it in both directions.  An
+order-isomorphism is a surjective order-embedding — a perfect structural
+identification between two posets.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:order-preserving-map
+% ---------------------------------------------------------
+
+\begin{definitionbox}{Definition (Order-Preserving Map)}
+\begin{definition}[Order-Preserving Map]
+\label{def:order-preserving-map}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be partially ordered sets.  A map
+$\varphi : P \to Q$ is \emph{order-preserving} (or \emph{monotone}) if
+\[
+\forall x, y \in P, \quad
+x \leq_P y \;\Longrightarrow\; \varphi(x) \leq_Q \varphi(y).
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderPreserving}(\varphi, P, Q)
+\;\coloneqq\;
+\forall x, y \in P,\;
+x \leq_P y \Rightarrow \varphi(x) \leq_Q \varphi(y).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\neg\operatorname{OrderPreserving}(\varphi, P, Q)
+\;\coloneqq\;
+\exists x, y \in P,\;
+x \leq_P y \land \varphi(x) \not\leq_Q \varphi(y).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An order-preserving map carries the direction of the order from $P$ into
+$Q$: whenever $x$ is at or below $y$ in $P$, $\varphi(x)$ is at or below
+$\varphi(y)$ in $Q$.  The implication is one-directional — order-preserving
+maps need not reflect the order back.  Two order-preserving maps compose
+to an order-preserving map, making order-preserving maps the morphisms
+of the category of posets.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:lattice-order-partial-order]{Partial order}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:order-embedding
+% ---------------------------------------------------------
+
+\begin{definitionbox}{Definition (Order-Embedding)}
+\begin{definition}[Order-Embedding]
+\label{def:order-embedding}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be partially ordered sets.  A map
+$\varphi : P \to Q$ is an \emph{order-embedding} if
+\[
+\forall x, y \in P, \quad
+x \leq_P y \;\Longleftrightarrow\; \varphi(x) \leq_Q \varphi(y).
+\]
+When $\varphi$ is an order-embedding, one writes $\varphi : P \hookrightarrow Q$.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderEmbedding}(\varphi, P, Q)
+\;\coloneqq\;
+\forall x, y \in P,\;
+x \leq_P y \Longleftrightarrow \varphi(x) \leq_Q \varphi(y).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An order-embedding both preserves and reflects the order: the order
+structure of $P$ is faithfully copied into $Q$ without distortion.
+Unlike mere preservation, reflection means that order-relations between
+images in $Q$ genuinely originate from order-relations in $P$.  Every
+order-embedding is injective
+(\hyperref[lem:order-embedding-injective]{Lemma~\ref*{lem:order-embedding-injective}})
+and identifies $P$ order-isomorphically with its image in $Q$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:order-preserving-map]{Order-preserving map}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% def:order-isomorphism
+% ---------------------------------------------------------
+
+\begin{definitionbox}{Definition (Order-Isomorphism)}
+\begin{definition}[Order-Isomorphism]
+\label{def:order-isomorphism}
+An \hyperref[def:order-embedding]{order-embedding} $\varphi : P \to Q$
+that is surjective is an \emph{order-isomorphism}.  When an
+order-isomorphism exists, $P$ and $Q$ are said to be
+\emph{order-isomorphic}, written $P \cong Q$.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderIso}(\varphi, P, Q)
+\;\coloneqq\;
+\operatorname{OrderEmbedding}(\varphi, P, Q)
+\;\land\;
+\forall q \in Q,\; \exists p \in P,\; \varphi(p) = q.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An order-isomorphism is a bijection that perfectly translates the order
+of $P$ into $Q$ and back.  Two order-isomorphic posets are
+order-theoretically identical: any statement about $P$ expressed purely
+in terms of $\leq_P$ translates to an equally valid statement about $Q$
+under $\varphi$.  Order-isomorphism is the correct notion of equality
+for posets.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:order-embedding]{Order-embedding}.
+\end{remark*}
+
+% ---------------------------------------------------------
+% lem:order-embedding-injective
+% ---------------------------------------------------------
+
+\begin{lemma}[Every Order-Embedding Is Injective]
+\label{lem:order-embedding-injective}
+Let $(P, \leq_P)$ and $(Q, \leq_Q)$ be partially ordered sets, and let
+$\varphi : P \to Q$ be an order-embedding.  Then $\varphi$ is injective.
+\hyperref[prf:order-embedding-injective]{Go to proof.}
+\end{lemma}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{OrderEmbedding}(\varphi, P, Q)
+\;\Longrightarrow\;
+\forall x, y \in P,\; \varphi(x) = \varphi(y) \Rightarrow x = y.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Injectivity follows automatically from the biconditional in the embedding
+definition.  If $\varphi(x) = \varphi(y)$, the image is simultaneously
+$\leq$ and $\geq$ itself in $Q$; order-reflection pulls this back to $P$,
+and anti-symmetry then forces $x = y$.
+\end{remark*}
+
+\begin{remark*}[Dependencies]
+\hyperref[def:order-embedding]{Order-embedding},
+\hyperref[def:lattice-order-partial-order]{anti-symmetry of partial orders}.
+\end{remark*}
