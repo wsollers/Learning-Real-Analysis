@@ -46,30 +46,18 @@ Naming check:
 
 ### index.tex Content Check
 
-Verify the following elements appear in this exact order:
+Verify the following elements appear in this exact order, with no rendered content outside the skeleton:
 
-1. Breadcrumb box
-   - tcolorbox with breadcrumb palette?
-   - Title is chapter subject name (not "Breadcrumb")?
-   - Arrow chain present using $\;\to\;$ format?
-   - Current chapter bolded with \textbf{...}?
-   - Neighbors sourced correctly from chapter registry?
-   - Fits in box (at most two lines)?
+1. Non-starred chapter heading: `\chapter{...}`.
+2. Chapter label: `\label{chap:...}` or `\label{ch:...}`.
+3. Breadcrumb macro: `\breadcrumb{subject}{prior}{current}{next}`.
+4. Notes route: `\input{volume-*/chapter/notes/index}`.
+5. Proof heading: `\section*{Proofs}`.
+6. Print-aware proof route: `\LRAProofsInput{volume-*/chapter/proofs/index}`.
+7. Capstone heading: `\section*{Capstone}`.
+8. Print-aware capstone route: `\LRAExercisesInput{volume-*/chapter/proofs/exercises/index}`.
 
-2. Status box
-   - tcolorbox immediately after breadcrumb?
-   - Contains exactly: Status: Planned?
-
-3. Structural roadmap
-   - Present after status box?
-   - States what the chapter is expected to formalize?
-   - States which prior chapter it depends on?
-   - States which later chapter it feeds into?
-   - Does not invent theorem lists or detailed mathematical content?
-
-4. Placeholder \input chain
-   - Present only if section stubs already exist?
-   - Absent if no section stubs exist (absence is correct in that case)?
+Do not require status boxes, roadmap sections, or generated chapter exposition in the chapter router.
 
 ### Naming Discipline Check
 
