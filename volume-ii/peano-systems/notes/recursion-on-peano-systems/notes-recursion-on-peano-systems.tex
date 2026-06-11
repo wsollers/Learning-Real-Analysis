@@ -35,7 +35,7 @@ Peano System}.
 \end{remark*}
 \end{topicbox}
 
-\subsection{Arity Examples Before the Theorem}
+\subsection*{Arity Examples Before the Theorem}
 
 \begin{topicbox}{Iterator Configurations}
 \begin{exposition}
@@ -148,7 +148,7 @@ generate values in any set equipped with an appropriate update rule.
 \end{remark*}
 \end{topicbox}
 
-\subsection{Formal Development}
+\subsection*{Formal Development}
 
 \begin{topicbox}{Minimal Relations and Iterator Functions}
 \begin{exposition}
@@ -161,17 +161,14 @@ lecture-note presentations of the recursion theorem
 \citep{FefermanNumberSystems1964,hrbacek_jech1999,chi_recursion_wustl}.
 \end{exposition}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Iterator Data)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Iterator Data)}
 \begin{definition}[Iterator Data]
 \label{def:iterator-data-on-peano-system}
 Let $(P,S,1)$ be a Peano system, let $W$ be a set, let $c\in W$, and let
 $g:W\to W$ be a function. The triple $(W,c,g)$ is called \emph{iterator data}
 for $(P,S,1)$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -226,10 +223,7 @@ to pass from each value to the next value.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Iterator Relation)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Iterator Relation)}
 \begin{definition}[Iterator Relation]
 \label{def:iterator-relation}
 Let $(P,S,1)$ be a Peano system, and let $(W,c,g)$ be iterator data for it. A
@@ -244,7 +238,7 @@ and
 \bigl((n,w)\in R\Longrightarrow (S(n),g(w))\in R\bigr).
 \]
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -316,10 +310,7 @@ contains the required first pair and is closed under the recursive step.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Minimal Iterator Relation)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Minimal Iterator Relation)}
 \begin{definition}[Minimal Iterator Relation]
 \label{def:minimal-iterator-relation}
 Let $(P,S,1)$ be a Peano system, and let $(W,c,g)$ be iterator data for it.
@@ -331,7 +322,26 @@ R^*
 (W,c,g)\}.
 \]
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
+
+\begin{formalizationrecord}{Lean 4 Verification Record}
+\FormalizationSource{Feferman, \emph{The Number Systems}, Section 3.4; Mendelson, \emph{Number Systems and the Foundations of Analysis}, Section 2.2}
+\Formalizes{def:minimal-iterator-relation}
+\textbf{Lean module:} \texttt{LRA.VolumeII.PeanoSystems.Recursion}.\par
+\LeanDeclaration{minimal\_iterator\_relation}
+\textbf{Status:} checked against \texttt{lra-lean}.\par
+
+\begin{leancode}
+def minimal_iterator_relation
+    (ps : PeanoSystem)
+    (data : IteratorData ps)
+    (element : ps.carrier)
+    (value : data.target) : Prop :=
+  forall relation : ps.carrier -> data.target -> Prop,
+    iterator_relation ps data relation ->
+    relation element value
+\end{leancode}
+\end{formalizationrecord}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -374,7 +384,8 @@ successor-closure clauses.
 \begin{remark*}[Interpretation]
 The minimal iterator relation consists exactly of the stage-value pairs forced
 by the base pair and the successor closure rule. This is the $R^*$ construction
-used in the classical proof strategy
+used in Feferman's proof of recursive definition, and in the related
+set-theoretic presentations cited here
 \citep{FefermanNumberSystems1964,hrbacek_jech1999,chi_recursion_wustl}.
 \end{remark*}
 
@@ -384,10 +395,7 @@ used in the classical proof strategy
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Consistency of the Minimal Iterator Relation)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Consistency of the Minimal Iterator Relation)}
 \begin{lemma}[Consistency of the Minimal Iterator Relation]
 \label{lem:iterator-relation-consistency}
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
@@ -395,7 +403,7 @@ $R^*$ be the minimal iterator relation for $(W,c,g)$. Then $R^*$ is an
 iterator relation for $(W,c,g)$.
 \hyperref[prf:iterator-relation-consistency]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -437,10 +445,7 @@ admissible iterator relations.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Forced Values Are Unique)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Forced Values Are Unique)}
 \begin{lemma}[Forced Values Are Unique]
 \label{lem:forced-values-are-unique}
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
@@ -448,7 +453,7 @@ $R^*$ be the minimal iterator relation. If $(n,w_0)\in R^*$ and
 $(n,w_1)\in R^*$, then $w_0=w_1$.
 \hyperref[prf:forced-values-are-unique]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -486,7 +491,8 @@ R^* \text{ is not functional at every stage}.
 
 \begin{remark*}[Interpretation]
 No stage can be forced to carry two different values. This is the key
-determinacy step in the minimal-relation construction.
+determinacy step in the minimal-relation construction used to turn recursive
+specifications into functions \citep{FefermanNumberSystems1964}.
 \end{remark*}
 
 \begin{dependencies}
@@ -495,10 +501,7 @@ determinacy step in the minimal-relation construction.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Determinism of the Minimal Iterator Relation)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Determinism of the Minimal Iterator Relation)}
 \begin{lemma}[Determinism of the Minimal Iterator Relation]
 \label{lem:minimal-iterator-relation-deterministic}
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
@@ -506,7 +509,49 @@ $R^*$ be the minimal iterator relation. For each $n\in P$, there is at most one
 $w\in W$ such that $(n,w)\in R^*$.
 \hyperref[prf:minimal-iterator-relation-deterministic]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
+
+\begin{formalizationrecord}{Lean 4 Verification Record}
+\FormalizationSource{Feferman, \emph{The Number Systems}, Section 3.4; Mendelson, \emph{Number Systems and the Foundations of Analysis}, Section 2.2}
+\Formalizes{lem:minimal-iterator-relation-deterministic}
+\textbf{Lean module:} \texttt{LRA.VolumeII.PeanoSystems.Recursion}.\par
+\LeanDeclaration{minimal\_iterator\_relation\_deterministic}
+\textbf{Status:} checked against \texttt{lra-lean}.\par
+
+\begin{leancode}
+theorem minimal_iterator_relation_deterministic
+    (ps : PeanoSystem)
+    (data : IteratorData ps) :
+    forall element : ps.carrier,
+      forall first_value second_value : data.target,
+        minimal_iterator_relation ps data element first_value ->
+        minimal_iterator_relation ps data element second_value ->
+        first_value = second_value := by
+  apply induction_principle ps
+
+  case base_case =>
+    intro first_value second_value first_forced second_forced
+    exact
+      Eq.trans
+        (minimal_iterator_relation_base_unique ps data first_value first_forced)
+        (minimal_iterator_relation_base_unique ps data second_value second_forced).symm
+
+  case successor_step =>
+    intro element induction_hypothesis
+    intro first_successor_value second_successor_value
+    intro first_forced second_forced
+    cases minimal_iterator_relation_complete ps data element with
+    | intro current_value current_forced =>
+        exact
+          Eq.trans
+            (forced_successor_values_are_unique
+              ps data element current_value first_successor_value
+              induction_hypothesis current_forced first_forced)
+            (forced_successor_values_are_unique
+              ps data element current_value second_successor_value
+              induction_hypothesis current_forced second_forced).symm
+\end{leancode}
+\end{formalizationrecord}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -539,10 +584,7 @@ minimal iterator relation.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Completeness of the Minimal Iterator Relation)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Completeness of the Minimal Iterator Relation)}
 \begin{lemma}[Completeness of the Minimal Iterator Relation]
 \label{lem:minimal-iterator-relation-complete}
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
@@ -550,7 +592,41 @@ $R^*$ be the minimal iterator relation. For each $n\in P$, there exists
 $w\in W$ such that $(n,w)\in R^*$.
 \hyperref[prf:minimal-iterator-relation-complete]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
+
+\begin{formalizationrecord}{Lean 4 Verification Record}
+\FormalizationSource{Feferman, \emph{The Number Systems}, Section 3.4; Mendelson, \emph{Number Systems and the Foundations of Analysis}, Section 2.2}
+\Formalizes{lem:minimal-iterator-relation-complete}
+\textbf{Lean module:} \texttt{LRA.VolumeII.PeanoSystems.Recursion}.\par
+\LeanDeclaration{minimal\_iterator\_relation\_complete}
+\textbf{Status:} checked against \texttt{lra-lean}.\par
+
+\begin{leancode}
+theorem minimal_iterator_relation_complete
+    (ps : PeanoSystem)
+    (data : IteratorData ps) :
+    forall element : ps.carrier,
+      Exists (fun value : data.target =>
+        minimal_iterator_relation ps data element value) := by
+  apply induction_principle ps
+
+  case base_case =>
+    exact
+      Exists.intro
+        data.initial_value
+        (minimal_iterator_relation_is_iterator_relation ps data).left
+
+  case successor_step =>
+    intro element induction_hypothesis
+    cases induction_hypothesis with
+    | intro value value_is_forced =>
+        exact
+          Exists.intro
+            (data.step_rule value)
+            ((minimal_iterator_relation_is_iterator_relation ps data).right
+              element value value_is_forced)
+\end{leancode}
+\end{formalizationrecord}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -575,6 +651,13 @@ Completeness fails exactly when some stage of $P$ receives no value in the
 minimal iterator relation.
 \end{remark*}
 
+\begin{remark*}[Source alignment]
+This is the totality half of Feferman's minimal-relation construction for
+recursive definition: after determinacy gives at most one value at each stage,
+completeness gives at least one value at each stage
+\citep{FefermanNumberSystems1964}.
+\end{remark*}
+
 \begin{dependencies}
 \begin{itemize}
   \item \hyperref[lem:iterator-relation-consistency]{Consistency of the Minimal Iterator Relation}
@@ -582,10 +665,7 @@ minimal iterator relation.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Uniqueness of Iterator Functions)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Uniqueness of Iterator Functions)}
 \begin{lemma}[Uniqueness of Iterator Functions]
 \label{lem:uniqueness-of-iterator-functions}
 Let $(P,S,1)$ be a Peano system, and let $(W,c,g)$ be iterator data for it. If
@@ -602,7 +682,7 @@ and
 then $f=h$.
 \hyperref[prf:uniqueness-of-iterator-functions]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -667,10 +747,7 @@ failure of one of the successor clauses.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Existence of an Iterator Function)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Existence of an Iterator Function)}
 \begin{lemma}[Existence of an Iterator Function]
 \label{lem:existence-of-iterator-function}
 Let $(P,S,1)$ be a Peano system, and let $(W,c,g)$ be iterator data for it.
@@ -682,7 +759,7 @@ f(1)=c
 \]
 \hyperref[prf:existence-of-iterator-function]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -732,10 +809,7 @@ function.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Peano Iterator Theorem)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Peano Iterator Theorem)}
 \begin{theorem}[Peano Iterator Theorem]
 \label{thm:peano-iterator-theorem}
 Let $(P,S,1)$ be a Peano system, and let $(W,c,g)$ be iterator data for it.
@@ -747,7 +821,48 @@ f(1)=c
 \]
 \hyperref[prf:peano-iterator-theorem]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
+
+\begin{formalizationrecord}{Lean 4 Verification Record}
+\FormalizationSource{Feferman, \emph{The Number Systems}, Theorem 3.4; Mendelson, \emph{Number Systems and the Foundations of Analysis}, Section 2.2}
+\Formalizes{thm:peano-iterator-theorem}
+\textbf{Lean module:} \texttt{LRA.VolumeII.PeanoSystems.Recursion}.\par
+\LeanDeclaration{peano\_iterator\_theorem}
+\textbf{Status:} checked against \texttt{lra-lean}.\par
+
+\begin{leancode}
+theorem peano_iterator_theorem
+    (ps : PeanoSystem)
+    (target : Type)
+    (initial_value : target)
+    (step_rule : target -> target) :
+    Exists (fun iterator_function : ps.carrier -> target =>
+      And
+        (satisfies_iterator_clauses
+          ps target initial_value step_rule iterator_function)
+        (forall other_iterator : ps.carrier -> target,
+          satisfies_iterator_clauses
+            ps target initial_value step_rule other_iterator ->
+          forall element : ps.carrier,
+            other_iterator element = iterator_function element)) := by
+  refine
+    Exists.intro
+      (iter ps target initial_value step_rule)
+      ?_
+  constructor
+  exact iter_satisfies_iterator_clauses ps target initial_value step_rule
+  intro other_iterator other_satisfies element
+  exact
+    Eq.symm
+      (iterator_function_unique
+        ps target initial_value step_rule
+        (iter ps target initial_value step_rule)
+        other_iterator
+        (iter_satisfies_iterator_clauses ps target initial_value step_rule)
+        other_satisfies
+        element)
+\end{leancode}
+\end{formalizationrecord}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -815,10 +930,7 @@ classical ancestor \citep{dedekind1901essays}.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Iterator-Generated Function)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Iterator-Generated Function)}
 \begin{definition}[Iterator-Generated Function]
 \label{def:iterator-generated-function}
 Let $(P,S,1)$ be a Peano system, and let $(W,c,g)$ be iterator data for it.
@@ -830,7 +942,7 @@ f(1)=c
 \]
 is called the \emph{iterator-generated function determined by $(W,c,g)$}.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -881,10 +993,7 @@ Theorem as a named object available for later constructions.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Iterator Base Clause)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Iterator Base Clause)}
 \begin{theorem}[Iterator Base Clause]
 \label{thm:iterator-base-value}
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
@@ -894,7 +1003,7 @@ f(1)=c.
 \]
 \hyperref[prf:iterator-base-value]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -929,10 +1038,7 @@ is one of the clauses built into the unique recursive specification.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Iterator Successor Clause)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Iterator Successor Clause)}
 \begin{theorem}[Iterator Successor Clause]
 \label{thm:iterator-successor-step}
 Let $(P,S,1)$ be a Peano system, let $(W,c,g)$ be iterator data for it, and let
@@ -942,7 +1048,7 @@ $f$ be the iterator-generated function determined by $(W,c,g)$. Then
 \]
 \hyperref[prf:iterator-successor-step]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -979,17 +1085,14 @@ the update rule to the previous value at every Peano stage.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Iteration of a Self-Map)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Iteration of a Self-Map)}
 \begin{definition}[Iteration of a Self-Map]
 \label{def:iteration-of-a-self-map}
 Let $(P,S,1)$ be a Peano system, let $W$ be a set, let $c\in W$, and let
 $g:W\to W$. The iterator-generated function determined by $(W,c,g)$ is called
 the \emph{iteration of $g$ from $c$ along $P$}.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1026,10 +1129,7 @@ at every stage.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Corollary (Uniqueness of Binary Iterator Operations)}},
-  fonttitle=\small\bfseries]
+\begin{corollarybox}{Corollary (Uniqueness of Binary Iterator Operations)}
 \begin{corollary}[Uniqueness of Binary Iterator Operations]
 \label{cor:uniqueness-of-binary-iterator-operations}
 Let $(P,S,1)$ be a Peano system, let $A$ be a set, let $W$ be a set, and
@@ -1047,7 +1147,7 @@ G(a,S(n))=g_a(G(a,n))
 for all $a\in A$ and all $n\in P$, then $F=G$.
 \hyperref[prf:uniqueness-of-binary-iterator-operations]{Go to proof.}
 \end{corollary}
-\end{tcolorbox}
+\end{corollarybox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1114,10 +1214,7 @@ The state-encoding theorem below reduces that stage-dependent case to the
 Peano Iterator Theorem.
 \end{exposition}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Stage-Dependent Step Rule)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Stage-Dependent Step Rule)}
 \begin{definition}[Stage-Dependent Step Rule]
 \label{def:stage-dependent-step-rule}
 Let $(P,S,1)$ be a Peano system and let $W$ be a set. A
@@ -1126,7 +1223,7 @@ Let $(P,S,1)$ be a Peano system and let $W$ be a set. A
 \Phi:P\times W\to W.
 \]
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1168,10 +1265,7 @@ current Peano stage and the current value.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (General Recursive Function)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (General Recursive Function)}
 \begin{definition}[General Recursive Function]
 \label{def:general-recursive-function}
 Let $(P,S,1)$ be a Peano system, let $W$ be a set, let $c\in W$, and let
@@ -1184,7 +1278,7 @@ f(1)=c
 \forall n\in P\;(f(S(n))=\Phi(n,f(n))).
 \]
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1237,10 +1331,7 @@ iterator-generated functions.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=lembox, colframe=lemborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Lemma (Uniqueness of General Recursive Functions)}},
-  fonttitle=\small\bfseries]
+\begin{lemmabox}{Lemma (Uniqueness of General Recursive Functions)}
 \begin{lemma}[Uniqueness of General Recursive Functions]
 \label{lem:uniqueness-of-general-recursive-functions}
 Let $(P,S,1)$ be a Peano system, let $W$ be a set, let $c\in W$, and let
@@ -1257,7 +1348,7 @@ and
 then $f=h$.
 \hyperref[prf:uniqueness-of-general-recursive-functions]{Go to proof.}
 \end{lemma}
-\end{tcolorbox}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1321,10 +1412,7 @@ candidates cannot diverge without violating one of the defining clauses.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (General Recursion by State Encoding)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (General Recursion by State Encoding)}
 \begin{theorem}[General Recursion by State Encoding]
 \label{thm:general-recursion-by-state-encoding}
 Let $(P,S,1)$ be a Peano system, let $W$ be a set, let $c\in W$, and let
@@ -1340,7 +1428,7 @@ and
 \]
 \hyperref[prf:general-recursion-by-state-encoding]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1392,10 +1480,7 @@ state.
 \end{itemize}
 \end{dependencies}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (General Recursion Theorem)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (General Recursion Theorem)}
 \begin{theorem}[General Recursion Theorem]
 \label{thm:general-recursion-theorem-for-peano-system}
 Let $(P,S,1)$ be a Peano system, let $W$ be a set, let $c\in W$, and let
@@ -1408,7 +1493,7 @@ f(1)=c
 \]
 \hyperref[prf:general-recursion-theorem-for-peano-system]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -1478,10 +1563,7 @@ operations are not part of this section. They begin after the recursion
 principles have been established.
 \end{remark*}
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Uniqueness of Peano Systems up to Isomorphism)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Uniqueness of Peano Systems up to Isomorphism)}
 \begin{theorem}[Uniqueness of Peano Systems up to Isomorphism]
 \label{thm:uniqueness-of-peano-systems-up-to-isomorphism}
 Let $(P,S_P,1_P)$ and $(Q,S_Q,1_Q)$ be Peano systems. Then there exists a
@@ -1496,7 +1578,7 @@ and
 Thus any two Peano systems are isomorphic.
 \hyperref[prf:uniqueness-of-peano-systems-up-to-isomorphism]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
