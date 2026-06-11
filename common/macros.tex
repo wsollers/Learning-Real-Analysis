@@ -239,10 +239,41 @@
 % Extraction markers: signature, structure, classification, proof-vault-url
 % ============================================================
 \newcommand{\LRAProofFor}[1]{}            % proof-file target theorem/proposition/lemma/corollary label
+\newcommand{\LRAProofBodyStart}{\mbox{}\par\nobreak\noindent\ignorespaces}
 \newcommand{\SignatureMetadata}[1]{}       % future Knowledge Explorer signature node metadata
 \newcommand{\StructureMetadata}[1]{}       % future Knowledge Explorer structure blueprint metadata
 \newcommand{\ClassificationMetadata}[1]{}  % future Knowledge Explorer classification metadata
 \newcommand{\SyntacticMetadata}[1]{}       % future Knowledge Explorer syntactic object metadata
+
+% ============================================================
+% Print edition routing
+% ============================================================
+% Default: complete digital/PDF edition.
+% Print edition may be enabled either by:
+%   LRA_PRINT_EDITION=1 latexmk -lualatex main.tex
+% or by command-line TeX injection:
+%   lualatex "\def\LRAPrintEditionRequested{1}\input{main.tex}"
+%
+% In print edition, theorem-proof vaults, exercise vaults, and capstones are
+% not rendered. Source files remain present for local reference and tooling.
+\newif\ifLRAPrintEdition
+\LRAPrintEditionfalse
+\ifdefined\LRAPrintEditionRequested
+  \LRAPrintEditiontrue
+\fi
+\ifdefined\directlua
+  \directlua{
+    local v = os.getenv("LRA_PRINT_EDITION")
+    if v and v ~= "" and v ~= "0" and v:lower() ~= "false" and v:lower() ~= "no" then
+      tex.sprint("\\global\\LRAPrintEditiontrue")
+    end
+  }
+\fi
+
+\newcommand{\LRAContentInput}[1]{\input{#1}}
+\newcommand{\LRAProofsInput}[1]{\ifLRAPrintEdition\else\input{#1}\fi}
+\newcommand{\LRAExercisesInput}[1]{\ifLRAPrintEdition\else\input{#1}\fi}
+\newcommand{\LRACapstoneInput}[1]{\ifLRAPrintEdition\else\input{#1}\fi}
 
 
 % ------------------------------------------------------------
