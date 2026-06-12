@@ -271,9 +271,10 @@
 \fi
 
 \newcommand{\LRAContentInput}[1]{\input{#1}}
-\newcommand{\LRAProofsInput}[1]{\ifLRAPrintEdition\else\input{#1}\fi}
-\newcommand{\LRAExercisesInput}[1]{\ifLRAPrintEdition\else\input{#1}\fi}
-\newcommand{\LRACapstoneInput}[1]{\ifLRAPrintEdition\else\input{#1}\fi}
+\long\def\LRAExcludeFromPrintEditionBegin#1\LRAExcludeFromPrintEditionEnd{%
+  \ifLRAPrintEdition\else#1\fi
+}
+\let\LRAExcludeFromPrintEditionEnd\relax
 
 
 % ------------------------------------------------------------
