@@ -47,9 +47,10 @@ start on the same page as the previous proof.
 
 The machine-readable authority for proof folder architecture, topic matching,
 legacy refactor mode, and proof index reachability is
-`constitution/schema/file-schema.yaml`.
-Use `tools/governance/audit_proof_layout.py` for deterministic proof-layout
-classification when a task needs compliant/non-compliant proof lists.
+`docs/governance/volume-structure.schema.json`, enforced through
+`tools/governance/validate_volume.py`. Use
+`tools/governance/audit_proof_layout.py` for deterministic proof-layout
+classification when a task needs compliant/non-compliant proof-file lists.
 
 A full proof file contains:
 

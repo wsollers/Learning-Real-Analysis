@@ -36,8 +36,9 @@ chapter-slug/
     index.tex
   proofs/
     index.tex
-  exercises/
-    index.tex
+    exercises/
+      index.tex
+      capstone-{chapter-slug}.tex
 ```
 
 Optional directories or files may be created only when the repo convention uses
@@ -52,17 +53,28 @@ capstone/
 Do not create extra directories unless local conventions require them.
 
 The machine-readable authority for volume, chapter, and topic layout is
-`constitution/schema/file-schema.yaml`.
+`docs/governance/volume-structure.schema.json`.
 
 ## Chapter Index
 
 The chapter `index.tex` is the chapter-level router. It should contain, in the
-local repo's established style:
+canonical shape:
 
-- Chapter Status;
-- Rebuild Roadmap;
-- `\input` or include lines for `notes/`, `proofs/`, and `exercises/` indexes
-  when those indexes are part of the local chapter structure.
+- `\chapter{...}`;
+- `\label{chap:...}`;
+- `\breadcrumb{...}{...}{...}{...}`;
+- `\input{volume-x/chapter-slug/notes/index}`;
+- `\LRAExcludeFromPrintEditionBegin`;
+- `\section*{Proofs}`;
+- `\input{volume-x/chapter-slug/proofs/index}`;
+- `\section*{Capstone}`;
+- `\input{volume-x/chapter-slug/proofs/exercises/index}`;
+- `\LRAExcludeFromPrintEditionEnd`.
+
+The proof and capstone headings belong inside the print-edition exclusion
+block, so print builds do not render empty `Proofs` or `Capstone` sections.
+Within that block and everywhere below `proofs/`, routing uses ordinary
+`\input{...}`.
 
 The chapter `index.tex` should not contain long exposition. It should not
 contain definitions, theorems, examples, exercises, or proof material unless
@@ -71,56 +83,43 @@ generation.
 
 ## Notes Index
 
-The `notes/index.tex` file should contain only planned-status placeholder
-language and local router lines when needed.
+The `notes/index.tex` file is the chapter notes router. For each topic, it
+routes the topic index only:
 
-For chapters rebuilt from archived material, include the following placeholder
-meaning:
-
-```text
-<Chapter Name> Toolkit - Planned
-This section is a rebuild placeholder.
-This section is planned for the governance rebuild. No mathematical content has been restored here yet.
+```latex
+\input{volume-x/chapter-slug/notes/topic-title/index}
 ```
 
-For brand-new chapters not being rebuilt from archived material, use:
+The rendered topic heading belongs inside `notes/topic-title/index.tex`:
 
-```text
-This chapter is planned. Active mathematical content has not yet been added.
+```latex
+\section{Topic Title}
+\input{volume-x/chapter-slug/notes/topic-title/notes-topic-title}
 ```
+
+For a fresh stub with no authored content yet, the topic router may contain the
+section heading without body inputs.
 
 Do not add section names, dependencies, labels, or topic lists unless they are
 already supplied by a canonical registry or by the task.
 
 ## Proofs Index
 
-The `proofs/index.tex` file should contain only planned-status placeholder
-language and local router lines when needed.
-
-Use the following placeholder meaning:
-
-```text
-Proofs
-Proof entries for this chapter are planned. No proof files have been regenerated.
-```
+The `proofs/index.tex` file is router-only. It contains comments and `\input`
+lines for `proofs/{topic}/index`, followed by
+`proofs/exercises/index` as the final route.
 
 Do not create proof files for nonexistent statements. Proof file creation must
 also satisfy `proof-standards.md`.
 
 ## Exercises Index
 
-The `exercises/index.tex` file should contain only planned-status placeholder
-language and local router lines when needed.
+The exercises router lives at `proofs/exercises/index.tex`. It is router-only
+and routes `proofs/exercises/capstone-{chapter-slug}.tex`.
 
-Use the following placeholder meaning:
-
-```text
-Exercises
-Exercises for this chapter are planned. No exercise content has been restored here yet.
-```
-
-Do not invent exercises, capstone prompts, solutions, or exercise labels unless
-the task explicitly provides that content.
+Do not create root-level `exercises/`. Do not invent exercises, capstone
+prompts, solutions, or exercise labels unless the task explicitly provides that
+content.
 
 ## Chapter Metadata
 
