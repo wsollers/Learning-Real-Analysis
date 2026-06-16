@@ -4,13 +4,151 @@
 
 \section{Sets, Membership, and ZFC Axioms}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
+\begin{axiombox}{Axiom (Extensionality)}
+\begin{axiom}[Axiom of Extensionality]
+\label{ax:extensionality}
+Two sets are equal iff they have the same elements.
+\[
+\forall A \, \forall B \,
+\Bigl( A = B \iff \forall x \, (x \in A \leftrightarrow x \in B) \Bigr).
+\]
+\end{axiom}
+\end{axiombox}
 
-% ---------------------------------------------------------
-% Primitive Notions
-% ---------------------------------------------------------
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Empty Set)}
+\begin{axiom}[Axiom of Empty Set]
+\label{ax:empty-set}
+There exists a set with no elements.
+\[
+\exists A \, \forall x \, (x \notin A).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Pairing)}
+\begin{axiom}[Axiom of Pairing]
+\label{ax:pairing}
+For any two sets, there exists a set containing exactly those two sets.
+\[
+\forall A \, \forall B \, \exists C \,
+\forall x \, (x \in C \leftrightarrow (x = A \lor x = B)).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Union)}
+\begin{axiom}[Axiom of Union]
+\label{ax:union}
+For any family of sets, there exists a set containing exactly the elements of
+those sets.
+\[
+\forall A \, \exists U \,
+\forall x \,
+\bigl( x \in U \leftrightarrow \exists B \, (B \in A \land x \in B) \bigr).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Power Set)}
+\begin{axiom}[Axiom of Power Set]
+\label{ax:power-set}
+For any set, there exists a set of all its subsets.
+\[
+\forall A \, \exists P \,
+\forall x \, (x \in P \leftrightarrow x \subseteq A).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Infinity)}
+\begin{axiom}[Axiom of Infinity]
+\label{ax:infinity}
+There exists an infinite set.
+\[
+\exists A \,
+\Bigl( \varnothing \in A \land
+\forall x \, (x \in A \rightarrow x \cup \{x\} \in A) \Bigr).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom Schema (Separation)}
+\begin{axiom}[Axiom Schema of Separation]
+\label{ax:separation}
+Given a set and a property, there exists a subset containing exactly the
+elements satisfying that property. For any formula $\varphi(x)$,
+\[
+\forall A \, \exists B \,
+\forall x \, (x \in B \leftrightarrow (x \in A \land \varphi(x))).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom Schema (Replacement)}
+\begin{axiom}[Axiom Schema of Replacement]
+\label{ax:replacement}
+If $\varphi(x,y)$ defines a functional relation on a set $A$, then the image
+of $A$ under $\varphi$ is a set. For any formula $\varphi(x,y)$,
+\[
+\forall A\,
+\Bigl(
+\bigl(\forall x \in A\, \exists! y\, \varphi(x,y)\bigr)
+\rightarrow
+\exists B\, \forall y\,
+\bigl(y \in B \leftrightarrow \exists x \in A\, \varphi(x,y)\bigr)
+\Bigr).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Foundation)}
+\begin{axiom}[Axiom of Foundation]
+\label{ax:foundation}
+Every nonempty set has an $\in$-minimal element.
+\[
+\forall A \,
+\Bigl( A \neq \varnothing \rightarrow
+\exists x \in A \, (x \cap A = \varnothing) \Bigr).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
+\begin{axiombox}{Axiom (Choice)}
+\begin{axiom}[Axiom of Choice]
+\label{ax:choice}
+For any family of nonempty sets, there exists a selection function.
+\[
+\forall A \,
+\Bigl(
+(\forall B \in A \, (B \neq \varnothing))
+\rightarrow
+\exists f \,
+\forall B \in A \, (f(B) \in B)
+\Bigr).
+\]
+\end{axiom}
+\end{axiombox}
+
+\NoLocalDependencies
+
 \begin{definitionbox}{Definition (Set and Membership)}
 \begin{definition}[Set and Membership]\label{def:set-membership}
 In axiomatic set theory, the notions of \emph{set} and \emph{membership} are
@@ -41,106 +179,6 @@ number systems---are \emph{definitions} introduced within this axiomatic
 framework. Every proved result is a \emph{theorem} derived logically from the
 axioms via the rules of inference.
 \end{remark*}
-
-% ---------------------------------------------------------
-% ZFC AXIOMS — single axiom box
-% ---------------------------------------------------------
-\begin{axiombox}{Axiom System (ZFC)}
-
-\textbf{Axiom of Extensionality.}\label{ax:extensionality}\\
-Two sets are equal iff they have the same elements.
-\[
-\forall A \, \forall B \,
-\Bigl( A = B \iff \forall x \, (x \in A \leftrightarrow x \in B) \Bigr).
-\]
-
-\medskip
-\textbf{Axiom of Empty Set.}\label{ax:empty-set}\\
-There exists a set with no elements.
-\[
-\exists A \, \forall x \, (x \notin A).
-\]
-
-\medskip
-\textbf{Axiom of Pairing.}\label{ax:pairing}\\
-For any two sets, there exists a set containing exactly those two sets.
-\[
-\forall A \, \forall B \, \exists C \,
-\forall x \, (x \in C \leftrightarrow (x = A \lor x = B)).
-\]
-
-\medskip
-\textbf{Axiom of Union.}\label{ax:union}\\
-For any family of sets, there exists a set containing exactly the elements of
-those sets.
-\[
-\forall A \, \exists U \,
-\forall x \,
-\bigl( x \in U \leftrightarrow \exists B \, (B \in A \land x \in B) \bigr).
-\]
-
-\medskip
-\textbf{Axiom of Power Set.}\label{ax:power-set}\\
-For any set, there exists a set of all its subsets.
-\[
-\forall A \, \exists P \,
-\forall x \, (x \in P \leftrightarrow x \subseteq A).
-\]
-
-\medskip
-\textbf{Axiom of Infinity.}\label{ax:infinity}\\
-There exists an infinite set.
-\[
-\exists A \,
-\Bigl( \varnothing \in A \land
-\forall x \, (x \in A \rightarrow x \cup \{x\} \in A) \Bigr).
-\]
-
-\medskip
-\textbf{Axiom Schema of Separation.}\label{ax:separation}\\
-Given a set and a property, there exists a subset containing exactly the
-elements satisfying that property. For any formula $\varphi(x)$,
-\[
-\forall A \, \exists B \,
-\forall x \, (x \in B \leftrightarrow (x \in A \land \varphi(x))).
-\]
-
-\medskip
-\textbf{Axiom Schema of Replacement.}\label{ax:replacement}\\
-If $\varphi(x,y)$ defines a functional relation on a set $A$, then the image
-of $A$ under $\varphi$ is a set. For any formula $\varphi(x,y)$,
-\[
-\forall A\,
-\Bigl(
-\bigl(\forall x \in A\, \exists! y\, \varphi(x,y)\bigr)
-\rightarrow
-\exists B\, \forall y\,
-\bigl(y \in B \leftrightarrow \exists x \in A\, \varphi(x,y)\bigr)
-\Bigr).
-\]
-
-\medskip
-\textbf{Axiom of Foundation.}\label{ax:foundation}\\
-Every nonempty set has an $\in$-minimal element.
-\[
-\forall A \,
-\Bigl( A \neq \varnothing \rightarrow
-\exists x \in A \, (x \cap A = \varnothing) \Bigr).
-\]
-
-\medskip
-\textbf{Axiom of Choice.}\label{ax:choice}\\
-For any family of nonempty sets, there exists a selection function.
-\[
-\forall A \,
-\Bigl(
-(\forall B \in A \, (B \neq \varnothing))
-\rightarrow
-\exists f \,
-\forall B \in A \, (f(B) \in B)
-\Bigr).
-\]
-\end{axiombox}
 
 \begin{remark*}[Role of the axioms]
 The axioms are not statements to be proved, but rules specifying how $\in$
