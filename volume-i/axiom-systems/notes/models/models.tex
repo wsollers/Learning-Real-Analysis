@@ -1,20 +1,5 @@
-\subsection{Models}
+\subsection*{Models}
 \label{sec:axiom-systems-models}
-
-\begin{toolkitbox}{Models Toolkit --- Quick Reference}
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Role} & \textbf{Detail} \\
-\midrule
-Interpretation & assigns meanings to symbols & \hyperref[def:axiom-systems-interpretation]{Definition} \\
-Structure & domain with interpreted symbols & \hyperref[def:axiom-systems-structure]{Definition} \\
-Model & structure satisfying the theory & \hyperref[def:axiom-systems-model]{Definition} \\
-Satisfaction & truth of a statement in a structure & \hyperref[def:axiom-systems-satisfaction]{Definition} \\
-Countermodel & model where a statement fails & \hyperref[def:axiom-systems-countermodel]{Definition} \\
-\bottomrule
-\end{tabular}
-\end{toolkitbox}
 
 \begin{tcolorbox}[colback=structurebox, colframe=structureborder, arc=2pt,
   left=8pt, right=8pt, top=6pt, bottom=6pt,
@@ -76,11 +61,29 @@ The next sections use models to explain consistency and independence:
 \]
 \end{remark*}
 
+\begin{definitionbox}{Definition (Interpretation)}
 \begin{definition}[Interpretation]
 \label{def:axiom-systems-interpretation}
-An \emph{interpretation} is an assignment of meanings to the non-logical
-symbols of a signature.
+Let $\Sigma=(\mathcal{C},\mathcal{F},\mathcal{R},\operatorname{ar})$ be a
+first-order signature, and let $M$ be a nonempty set. An
+\emph{interpretation of $\Sigma$ on $M$} is an assignment $\mathcal{I}$ that
+maps each symbol of $\Sigma$ to concrete data over $M$: constants are assigned
+elements of $M$, function symbols are assigned operations on $M$, and relation
+symbols are assigned relations on $M$.
 \end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For every $c\in\mathcal{C}$, $\mathcal{I}(c)\in M$. For every
+$f\in\mathcal{F}$, if $\operatorname{ar}(f)=n$, then
+\[
+  \mathcal{I}(f):M^n\to M.
+\]
+For every $R\in\mathcal{R}$, if $\operatorname{ar}(R)=n$, then
+\[
+  \mathcal{I}(R)\subseteq M^n.
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
 An interpretation turns formal vocabulary into mathematical content. It tells
@@ -94,16 +97,46 @@ setting.
 \end{itemize}
 \end{dependencies}
 
-\begin{definition}[Structure]
+\begin{definitionbox}{Definition ($\mathcal{L}$-Structure)}
+\begin{definition}[$\mathcal{L}$-Structure]
 \label{def:axiom-systems-structure}
-A \emph{structure} is a domain together with interpretations of the symbols in
-a signature.
+Let $\mathcal{L}$ be a first-order signature. An
+\emph{$\mathcal{L}$-structure} is a pair
+\[
+  \mathfrak{M}=(M,\mathcal{I}),
+\]
+where $M$ is a nonempty domain and $\mathcal{I}$ is an interpretation of the
+symbols of $\mathcal{L}$ on $M$.
 \end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For every first-order signature $\mathcal{L}$, an $\mathcal{L}$-structure
+consists of a nonempty domain $M$ and an interpretation $\mathcal{I}$ such
+that every constant symbol is assigned an element of $M$, every $n$-ary
+function symbol is assigned a function $M^n\to M$, and every $n$-ary relation
+symbol is assigned a relation on $M^n$.
+\end{remark*}
 
 \begin{remark*}[Interpretation]
 A structure is the environment in which formal symbols receive meaning. The
 domain supplies the objects, and the interpretation explains how the symbols
 refer to objects, operations, and relations on that domain.
+\end{remark*}
+
+\begin{remark*}[Type-theoretic reading]
+In dependent type theory, this bundled data can be viewed schematically as
+\[
+\sum_{M:\mathrm{Type}}
+\left(\prod_{c\in\mathcal{C}} M\right)
+\times
+\left(\prod_{f\in\mathcal{F}}(M^{\operatorname{ar}(f)}\to M)\right)
+\times
+\left(\prod_{R\in\mathcal{R}}(M^{\operatorname{ar}(R)}\to \mathrm{Prop})\right).
+\]
+This is the same semantic package represented by a Lean structure carrying a
+carrier type, interpretations of constants and functions, and predicates for
+relations.
 \end{remark*}
 
 \begin{dependencies}
@@ -113,11 +146,26 @@ refer to objects, operations, and relations on that domain.
 \end{itemize}
 \end{dependencies}
 
+\begin{definitionbox}{Definition (Model)}
 \begin{definition}[Model]
 \label{def:axiom-systems-model}
-A \emph{model} is a structure in which all axioms, equivalently all statements
-of the theory, are satisfied.
+Let $\mathcal{L}$ be a first-order signature, let $T$ be a theory over
+$\mathcal{L}$, and let $\mathfrak{M}=(M,\mathcal{I})$ be an
+$\mathcal{L}$-structure. The structure $\mathfrak{M}$ is a \emph{model of
+$T$}, written $\mathfrak{M}\vDash T$, if every sentence in $T$ is true in
+$\mathfrak{M}$.
 \end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For every theory $T$ over $\mathcal{L}$ and every $\mathcal{L}$-structure
+$\mathfrak{M}$,
+\[
+  \mathfrak{M}\vDash T
+  \quad\Longleftrightarrow\quad
+  \forall \varphi\in T,\; \mathfrak{M}\vDash \varphi.
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
 A model is a structure that makes the theory true. It is not just an
@@ -132,16 +180,69 @@ assertions and their consequences hold.
 \end{itemize}
 \end{dependencies}
 
+\begin{definitionbox}{Definition (Satisfaction)}
 \begin{definition}[Satisfaction]
 \label{def:axiom-systems-satisfaction}
-A statement is \emph{satisfied} in a structure if it evaluates as true under
-the given interpretation.
+Let $\mathfrak{M}=(M,\mathcal{I})$ be an $\mathcal{L}$-structure. A
+\emph{variable assignment} is a function $s:\operatorname{Var}\to M$. The
+assignment extends recursively to a term-evaluation map $\bar{s}$ by
+\[
+  \bar{s}(x)=s(x),\qquad
+  \bar{s}(c)=\mathcal{I}(c),
+\]
+and
+\[
+  \bar{s}\bigl(f(t_1,\ldots,t_n)\bigr)
+  =
+  \mathcal{I}(f)\bigl(\bar{s}(t_1),\ldots,\bar{s}(t_n)\bigr).
+\]
+The satisfaction relation $\mathfrak{M}\vDash\varphi[s]$ is then defined by
+induction on formulas: atomic relations are tested inside the interpreted
+relation, equality is interpreted as equality in $M$, Boolean connectives are
+interpreted by the corresponding truth operations, and quantifiers range over
+all elements of $M$.
 \end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For terms $t_1,\ldots,t_n$ and an $n$-ary relation symbol $R$,
+\[
+  \mathfrak{M}\vDash R(t_1,\ldots,t_n)[s]
+  \quad\Longleftrightarrow\quad
+  \bigl(\bar{s}(t_1),\ldots,\bar{s}(t_n)\bigr)\in\mathcal{I}(R).
+\]
+For equality,
+\[
+  \mathfrak{M}\vDash (t_1=t_2)[s]
+  \quad\Longleftrightarrow\quad
+  \bar{s}(t_1)=\bar{s}(t_2).
+\]
+For quantifiers,
+\[
+  \mathfrak{M}\vDash(\forall x\,\varphi)[s]
+  \quad\Longleftrightarrow\quad
+  \forall a\in M,\; \mathfrak{M}\vDash\varphi[s[x\mapsto a]],
+\]
+and
+\[
+  \mathfrak{M}\vDash(\exists x\,\varphi)[s]
+  \quad\Longleftrightarrow\quad
+  \exists a\in M,\; \mathfrak{M}\vDash\varphi[s[x\mapsto a]].
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
 Satisfaction is the semantic test for a statement. Once the symbols have been
 interpreted in a structure, the statement can be checked as true or false in
 that setting.
+\end{remark*}
+
+\begin{remark*}[Sentences]
+If $\varphi$ is a sentence, then it has no free variables, so its truth does
+not depend on the initial assignment $s$. In that case the notation is
+shortened from $\mathfrak{M}\vDash\varphi[s]$ to $\mathfrak{M}\vDash\varphi$.
+This is the bridge from satisfaction of a single sentence to the definition of
+a model of a theory.
 \end{remark*}
 
 \begin{dependencies}
@@ -150,15 +251,61 @@ that setting.
 \end{itemize}
 \end{dependencies}
 
+\begin{definitionbox}{Definition (Countermodel)}
 \begin{definition}[Countermodel]
 \label{def:axiom-systems-countermodel}
-A \emph{countermodel} is a model of a theory in which a particular statement
-fails.
+Let $\Gamma\subseteq\operatorname{Sent}(\mathcal{L})$ be a set of premises,
+let $\varphi\in\operatorname{Sent}(\mathcal{L})$, and let $\mathfrak{M}$ be
+an $\mathcal{L}$-structure. A \emph{countermodel to the entailment
+$\Gamma\vDash\varphi$} is a structure $\mathfrak{M}$ that satisfies every
+sentence in $\Gamma$ but does not satisfy $\varphi$.
 \end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For $\Gamma\subseteq\operatorname{Sent}(\mathcal{L})$ and
+$\varphi\in\operatorname{Sent}(\mathcal{L})$,
+\[
+  \operatorname{CounterModel}(\mathfrak{M},\Gamma,\varphi)
+  \quad\Longleftrightarrow\quad
+  \bigl(\forall \gamma\in\Gamma,\; \mathfrak{M}\vDash\gamma\bigr)
+  \land
+  \bigl(\mathfrak{M}\not\vDash\varphi\bigr).
+\]
+Equivalently, for classical closed sentences,
+\[
+  \operatorname{CounterModel}(\mathfrak{M},\Gamma,\varphi)
+  \quad\Longleftrightarrow\quad
+  \bigl(\forall \gamma\in\Gamma,\; \mathfrak{M}\vDash\gamma\bigr)
+  \land
+  \bigl(\mathfrak{M}\vDash\neg\varphi\bigr).
+\]
+\end{remark*}
 
 \begin{remark*}[Interpretation]
 A countermodel shows that the theory does not force the statement. It keeps
 the axioms true while making the proposed statement false.
+\end{remark*}
+
+\begin{remark*}[Special cases]
+If $\Gamma=\emptyset$, then a countermodel to validity of $\varphi$ is a
+structure $\mathfrak{M}$ such that $\mathfrak{M}\vDash\neg\varphi$. For a
+theory $T$, models of $T$ satisfying $\varphi$ and models of $T$ satisfying
+$\neg\varphi$ witness the independence pattern: the theory alone does not
+settle $\varphi$.
+\end{remark*}
+
+\begin{remark*}[Lean reading]
+In a mechanized setting, invalidity is witnessed by constructing semantic
+data:
+\[
+  \exists\mathfrak{M}\,
+  \bigl((\forall\gamma\in\Gamma,\;\mathfrak{M}\vDash\gamma)
+  \land
+  \mathfrak{M}\vDash\neg\varphi\bigr).
+\]
+The constructed structure and satisfaction proofs are the certificate that the
+entailment cannot be valid.
 \end{remark*}
 
 \begin{dependencies}

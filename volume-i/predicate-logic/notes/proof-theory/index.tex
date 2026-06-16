@@ -1,8 +1,76 @@
+\section{Proof Theory}
+
 % =========================================================
 % Proof Theory — Orchestrator
 % =========================================================
 
+\begin{toolkitbox}{Quantifier Inference Rules — Quick Reference}
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Rule} & \textbf{Schema} & \textbf{Key restriction} & \textbf{Detail} \\
+\midrule
+UI  & $\forall x\,\varphi \Rightarrow \varphi[t/x]$ & $t$ free for $x$ & \hyperref[def:ui]{↓ Def} \\
+UG  & $\varphi \Rightarrow \forall x\,\varphi$ & $x$ not free in assumptions & \hyperref[def:ug]{↓ Def} \\
+EI  & $\exists x\,\varphi \Rightarrow \varphi[c/x]$ & $c$ fresh witness & \hyperref[def:ei]{↓ Def} \\
+EG  & $\varphi[t/x] \Rightarrow \exists x\,\varphi$ & none & \hyperref[def:eg]{↓ Def} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
 \input{volume-i/predicate-logic/notes/proof-theory/notes-inference-rules}
+
+\begin{toolkitbox}{Quantifier Proof Strategies — Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Goal shape} & \textbf{Strategy} & \textbf{Key rule} \\
+\midrule
+Prove $\forall x\,\varphi(x)$  & Fix an arbitrary $x$; prove $\varphi(x)$ for that $x$  & UG \\
+Prove $\exists x\,\varphi(x)$  & Produce a specific witness $t$; verify $\varphi(t)$     & EG \\
+Use $\forall x\,\varphi(x)$    & Instantiate at any term $t$ to get $\varphi(t)$         & UI \\
+Use $\exists x\,\varphi(x)$    & Introduce a fresh name $c$ for the witness             & EI \\
+Negate $\forall x\,\varphi$    & Becomes $\exists x\,\neg\varphi$                        & Neg.\ law \\
+Negate $\exists x\,\varphi$    & Becomes $\forall x\,\neg\varphi$                        & Neg.\ law \\
+\midrule
+Prove $\forall x\,\exists y\,\varphi(x,y)$ & Fix $x$; then construct $y$ depending on $x$ & UG then EG \\
+Prove $\exists y\,\forall x\,\varphi(x,y)$ & Find $y$ first; then verify for all $x$       & EG then UG \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
 \input{volume-i/predicate-logic/notes/proof-theory/notes-quantifier-strategies}
+
+\begin{toolkitbox}{Equality Rules — Quick Reference}
+\small
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Rule} & \textbf{Schema} & \textbf{Status} & \textbf{Detail} \\
+\midrule
+Reflexivity (EqI)   & $t = t$ & Primitive rule & \hyperref[def:eq-refl]{↓ Def} \\
+Equality Elim (EqE) & $t_1=t_2,\;\varphi[t_1/x] \Rightarrow \varphi[t_2/x]$ & Primitive rule & \hyperref[def:eq-elim]{↓ Def} \\
+Symmetry            & $t_1=t_2 \Rightarrow t_2=t_1$ & Derived & \hyperref[thm:eq-sym]{↓ Thm} \\
+Transitivity        & $t_1=t_2,\;t_2=t_3 \Rightarrow t_1=t_3$ & Derived & \hyperref[thm:eq-trans]{↓ Thm} \\
+Term substitution   & $f(\dots,t_1,\dots)=f(\dots,t_2,\dots)$ & Derived & \hyperref[thm:eq-term]{↓ Thm} \\
+Predicate substitution & $P(\dots,t_1,\dots)\Leftrightarrow P(\dots,t_2,\dots)$ & Derived & \hyperref[thm:eq-pred]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
 \input{volume-i/predicate-logic/notes/proof-theory/notes-equality}
+
+\begin{toolkitbox}{Soundness and Completeness — Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Property} & \textbf{Direction} & \textbf{Detail} \\
+\midrule
+Soundness    & $\Gamma \vdash \varphi \Rightarrow \Gamma \models \varphi$ & \hyperref[def:soundness]{↓ Def} \\
+Completeness & $\Gamma \models \varphi \Rightarrow \Gamma \vdash \varphi$ & \hyperref[def:completeness]{↓ Def} \\
+Soundness Theorem (FOL) & All standard FOL rules are sound & \hyperref[thm:fol-sound]{↓ Thm} \\
+Gödel's Completeness Theorem & FOL is complete & \hyperref[thm:godel-complete]{↓ Thm} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
 \input{volume-i/predicate-logic/notes/proof-theory/notes-soundness-completeness}

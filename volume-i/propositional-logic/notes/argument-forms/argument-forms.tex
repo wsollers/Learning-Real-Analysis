@@ -1,0 +1,157 @@
+\subsubsection*{Argument Forms}
+
+\begin{remark*}[Working vocabulary]
+This topic introduces argument forms, premises, conclusions, substitution
+instances, valid argument forms, invalid argument forms, and counterexample
+truth assignments.
+\end{remark*}
+
+% BEGIN GENERATED ARTIFACT: def:argument-form-propositional-logic
+\begin{definitionbox}{Definition (Argument Form)}
+\begin{definition}[Argument Form]
+\label{def:argument-form-propositional-logic}
+An \emph{argument form} is a schematic pattern consisting of a finite list of
+premise formulas and one conclusion formula.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{ArgumentForm}(\Gamma,\varphi)
+\Longleftrightarrow
+\Gamma\subseteq\WFF\text{ is finite and }\varphi\in\WFF.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ArgumentForm}(\Gamma,\varphi)\) means that \(\Gamma\) is the set
+or finite list of premises and \(\varphi\) is the conclusion.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An argument form records a pattern of inference independently of the particular
+subject matter. Its validity depends on truth preservation, not on whether the
+individual formulas happen to be true in one example.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:argument-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:valid-argument-form-propositional-logic
+\begin{definitionbox}{Definition (Valid Argument Form)}
+\begin{definition}[Valid Argument Form]
+\label{def:valid-argument-form-propositional-logic}
+An argument form with premises \(\Gamma\) and conclusion \(\varphi\) is
+\emph{valid} if every truth assignment that satisfies every formula in
+\(\Gamma\) also satisfies \(\varphi\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{ValidArgumentForm}(\Gamma,\varphi)
+\Longleftrightarrow
+(\forall v)\bigl((\forall\gamma\in\Gamma)(v\models\gamma)
+\to v\models\varphi\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ValidArgumentForm}(\Gamma,\varphi)\) means that truth of all
+premises forces truth of the conclusion under every truth assignment.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Validity is a preservation property. A valid argument form may have false
+premises in a particular instance, but it cannot have true premises and a false
+conclusion under the same truth assignment.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:argument-form-propositional-logic]{Argument Form}
+  \item \hyperref[def:satisfaction-propositional-formula]{Satisfaction of a Formula}
+  \item \hyperref[def:logical-consequence-propositional-logic]{Logical Consequence}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:valid-argument-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:counterexample-assignment-propositional-logic
+\begin{definitionbox}{Definition (Counterexample Assignment)}
+\begin{definition}[Counterexample Assignment]
+\label{def:counterexample-assignment-propositional-logic}
+A \emph{counterexample assignment} to an argument form \((\Gamma,\varphi)\) is a
+truth assignment that satisfies every premise in \(\Gamma\) and does not satisfy
+\(\varphi\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{CounterexampleAssignment}(v,\Gamma,\varphi)
+\Longleftrightarrow
+(\forall\gamma\in\Gamma)(v\models\gamma)\land v\not\models\varphi.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{CounterexampleAssignment}(v,\Gamma,\varphi)\) means that \(v\)
+shows the premises can all be true while the conclusion is false.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A counterexample assignment is the semantic witness to invalidity. Finding one
+settles the question: the argument form is not truth-preserving.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:valid-argument-form-propositional-logic]{Valid Argument Form}
+  \item \hyperref[def:truth-assignment-propositional-logic]{Truth Assignment}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:counterexample-assignment-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:truth-table-validity-test-argument-forms-propositional-logic
+\begin{theorembox}{Theorem (Truth-Table Validity Test for Argument Forms)}
+\begin{theorem}[Truth-Table Validity Test for Argument Forms]
+\label{thm:truth-table-validity-test-argument-forms-propositional-logic}
+An argument form \((\Gamma,\varphi)\) is valid if and only if no row of its truth
+table makes every formula in \(\Gamma\) true and \(\varphi\) false.
+
+\noindent\hyperref[prf:truth-table-validity-test-argument-forms-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{ValidArgumentForm}(\Gamma,\varphi)
+\Longleftrightarrow
+\neg(\exists v)\operatorname{CounterexampleAssignment}(v,\Gamma,\varphi).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+The argument form is valid exactly when there is no counterexample truth
+assignment.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The truth-table test is finite because only the variables appearing in the
+premises and conclusion matter. A failed row is a counterexample assignment; the
+absence of such rows proves semantic validity.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:valid-argument-form-propositional-logic]{Valid Argument Form}
+  \item \hyperref[def:counterexample-assignment-propositional-logic]{Counterexample Assignment}
+  \item \hyperref[def:truth-table-propositional-logic]{Truth Table}
+  \item \hyperref[thm:finite-truth-table-propositional-logic]{Finite Truth-Table Theorem}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:truth-table-validity-test-argument-forms-propositional-logic

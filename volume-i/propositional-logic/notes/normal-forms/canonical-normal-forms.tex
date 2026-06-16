@@ -1,0 +1,264 @@
+% BEGIN GENERATED ARTIFACT: def:truth-table-row-conjunction-propositional-logic
+\begin{definitionbox}{Definition (Truth-Table Row Conjunction)}
+\begin{definition}[Truth-Table Row Conjunction]
+\label{def:truth-table-row-conjunction-propositional-logic}
+Fix a finite variable list \(P_1,\ldots,P_n\) and a row \(r\) of the
+\hyperref[def:truth-table-propositional-logic]{truth table} for those
+variables. The \emph{truth-table row conjunction} for \(r\) is the conjunction
+\[
+L_1\land L_2\land\cdots\land L_n,
+\]
+where
+\[
+L_i=
+\begin{cases}
+P_i, & \text{if row }r\text{ makes }P_i\text{ true},\\
+\neg P_i, & \text{if row }r\text{ makes }P_i\text{ false}.
+\end{cases}
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For a fixed row \(r\) on variables \(P_1,\ldots,P_n\),
+\[
+\bigwedge_{i=1}^{n} L_i,
+\qquad
+L_i=
+\begin{cases}
+P_i, & r(P_i)=\True,\\
+\neg P_i, & r(P_i)=\False.
+\end{cases}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The row conjunction names exactly one truth-table row. It is true on that row
+and false on every row that disagrees with it on at least one listed variable.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:truth-table-propositional-logic]{Truth Table}
+  \item \hyperref[def:literal-propositional-logic]{Literal}
+  \item \hyperref[def:formula-variable-set-propositional-logic]{Variable Set of a Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:truth-table-row-conjunction-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:truth-table-row-clause-propositional-logic
+\begin{definitionbox}{Definition (Truth-Table Row Clause)}
+\begin{definition}[Truth-Table Row Clause]
+\label{def:truth-table-row-clause-propositional-logic}
+Fix a finite variable list \(P_1,\ldots,P_n\) and a row \(r\) of the
+\hyperref[def:truth-table-propositional-logic]{truth table} for those
+variables. The \emph{truth-table row clause} for \(r\) is the clause
+\[
+M_1\lor M_2\lor\cdots\lor M_n,
+\]
+where
+\[
+M_i=
+\begin{cases}
+P_i, & \text{if row }r\text{ makes }P_i\text{ false},\\
+\neg P_i, & \text{if row }r\text{ makes }P_i\text{ true}.
+\end{cases}
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For a fixed row \(r\) on variables \(P_1,\ldots,P_n\),
+\[
+\bigvee_{i=1}^{n} M_i,
+\qquad
+M_i=
+\begin{cases}
+P_i, & r(P_i)=\False,\\
+\neg P_i, & r(P_i)=\True.
+\end{cases}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The row clause excludes exactly one truth-table row. It is false on row \(r\)
+and true on every row that disagrees with \(r\) on at least one listed
+variable.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:truth-table-propositional-logic]{Truth Table}
+  \item \hyperref[def:clause-propositional-logic]{Clause}
+  \item \hyperref[def:formula-variable-set-propositional-logic]{Variable Set of a Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:truth-table-row-clause-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:canonical-disjunctive-normal-form-propositional-logic
+\begin{definitionbox}{Definition (Canonical Disjunctive Normal Form)}
+\begin{definition}[Canonical Disjunctive Normal Form]
+\label{def:canonical-disjunctive-normal-form-propositional-logic}
+Let \(\varphi\in\WFF\), and fix an ordering \(P_1,\ldots,P_n\) of the finite
+variable set of \(\varphi\). The \emph{canonical disjunctive normal form} of
+\(\varphi\) relative to this ordering is the disjunction of the
+\hyperref[def:truth-table-row-conjunction-propositional-logic]{truth-table row conjunctions}
+corresponding to the rows on which \(\varphi\) is true.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For \(\mathrm{Var}(\varphi)=\{P_1,\ldots,P_n\}\), the canonical
+disjunctive normal form is
+\[
+\bigvee_{\widehat v(\varphi)=\True}
+\bigl(L_1\land\cdots\land L_n\bigr),
+\]
+where each row conjunction is determined by the truth-table row of \(v\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Canonical DNF records exactly the truth-table rows on which the formula is
+true, using one row conjunction for each true row.
+\end{remark*}
+
+\begin{remark*}[Examples]
+If \(\varphi\) is a contradiction, then it has no true rows. Its canonical DNF
+is the empty disjunction, represented by the
+\hyperref[def:empty-clause-propositional-logic]{empty clause}.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:disjunctive-normal-form-propositional-logic]{Disjunctive Normal Form}
+  \item \hyperref[def:truth-table-row-conjunction-propositional-logic]{Truth-Table Row Conjunction}
+  \item \hyperref[def:truth-table-propositional-logic]{Truth Table}
+  \item \hyperref[def:empty-clause-propositional-logic]{Empty Clause}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:canonical-disjunctive-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:canonical-conjunctive-normal-form-propositional-logic
+\begin{definitionbox}{Definition (Canonical Conjunctive Normal Form)}
+\begin{definition}[Canonical Conjunctive Normal Form]
+\label{def:canonical-conjunctive-normal-form-propositional-logic}
+Let \(\varphi\in\WFF\), and fix an ordering \(P_1,\ldots,P_n\) of the finite
+variable set of \(\varphi\). The \emph{canonical conjunctive normal form} of
+\(\varphi\) relative to this ordering is the conjunction of the
+\hyperref[def:truth-table-row-clause-propositional-logic]{truth-table row clauses}
+corresponding to the rows on which \(\varphi\) is false.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For \(\mathrm{Var}(\varphi)=\{P_1,\ldots,P_n\}\), the canonical
+conjunctive normal form is
+\[
+\bigwedge_{\widehat v(\varphi)=\False}
+\bigl(M_1\lor\cdots\lor M_n\bigr),
+\]
+where each row clause is determined by the truth-table row of \(v\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Canonical CNF records exactly the truth-table rows on which the formula is
+false, using one row clause for each false row.
+\end{remark*}
+
+\begin{remark*}[Examples]
+If \(\varphi\) is a tautology, then it has no false rows. Its canonical CNF is
+the empty conjunction, represented by the
+\hyperref[def:empty-conjunction-propositional-logic]{empty conjunction}.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:conjunctive-normal-form-propositional-logic]{Conjunctive Normal Form}
+  \item \hyperref[def:truth-table-row-clause-propositional-logic]{Truth-Table Row Clause}
+  \item \hyperref[def:truth-table-propositional-logic]{Truth Table}
+  \item \hyperref[def:empty-conjunction-propositional-logic]{Empty Conjunction}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:canonical-conjunctive-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:canonical-disjunctive-normal-form-propositional-logic
+\begin{theorembox}{Theorem (Canonical Disjunctive Normal Form)}
+\begin{theorem}[Canonical Disjunctive Normal Form Theorem]
+\label{thm:canonical-disjunctive-normal-form-propositional-logic}
+Every formula \(\varphi\in\WFF\) is
+\hyperref[def:logical-equivalence-propositional-logic]{logically equivalent}
+to its
+\hyperref[def:canonical-disjunctive-normal-form-propositional-logic]{canonical disjunctive normal form}
+relative to a fixed ordering of its finitely many variables.
+\[
+\varphi\equiv \operatorname{CDNF}_{P_1,\ldots,P_n}(\varphi).
+\]
+\noindent\hyperref[prf:canonical-disjunctive-normal-form-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)\,
+\varphi\equiv \mathrm{CDNF}_{P_1,\ldots,P_n}(\varphi),
+\]
+where \(P_1,\ldots,P_n\) is a fixed ordering of the finitely many variables of
+\(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Canonical DNF rebuilds the formula from exactly the truth-table rows where the
+formula is true. Each row conjunction recognizes one true row, and the final
+disjunction accepts any of those rows.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:canonical-disjunctive-normal-form-propositional-logic]{Canonical Disjunctive Normal Form}
+  \item \hyperref[thm:finite-truth-table-propositional-logic]{Finite Truth-Table Theorem}
+  \item \hyperref[lem:coincidence-lemma-propositional-logic]{Coincidence Lemma for Propositional Logic}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:canonical-disjunctive-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:canonical-conjunctive-normal-form-propositional-logic
+\begin{theorembox}{Theorem (Canonical Conjunctive Normal Form)}
+\begin{theorem}[Canonical Conjunctive Normal Form Theorem]
+\label{thm:canonical-conjunctive-normal-form-propositional-logic}
+Every formula \(\varphi\in\WFF\) is
+\hyperref[def:logical-equivalence-propositional-logic]{logically equivalent}
+to its
+\hyperref[def:canonical-conjunctive-normal-form-propositional-logic]{canonical conjunctive normal form}
+relative to a fixed ordering of its finitely many variables.
+\[
+\varphi\equiv \operatorname{CCNF}_{P_1,\ldots,P_n}(\varphi).
+\]
+\noindent\hyperref[prf:canonical-conjunctive-normal-form-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)\,
+\varphi\equiv \mathrm{CCNF}_{P_1,\ldots,P_n}(\varphi),
+\]
+where \(P_1,\ldots,P_n\) is a fixed ordering of the finitely many variables of
+\(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Canonical CNF rebuilds the formula by excluding exactly the truth-table rows
+where the formula is false. Each row clause rejects one false row, and the
+final conjunction requires all false rows to be rejected.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:canonical-conjunctive-normal-form-propositional-logic]{Canonical Conjunctive Normal Form}
+  \item \hyperref[thm:finite-truth-table-propositional-logic]{Finite Truth-Table Theorem}
+  \item \hyperref[lem:coincidence-lemma-propositional-logic]{Coincidence Lemma for Propositional Logic}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:canonical-conjunctive-normal-form-propositional-logic

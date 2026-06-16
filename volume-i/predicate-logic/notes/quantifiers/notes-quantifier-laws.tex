@@ -1,163 +1,345 @@
 % =========================================================
-% Quantifier Laws: Negation, Commutation, Distribution,
-% Vacuous Quantification, and Renaming
+% Quantifier Laws
 % =========================================================
 
-\section{Quantifiers: Quantifier Laws}
+\subsection*{Quantifier Laws}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Quantifier Laws — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l l}
-\toprule
-\textbf{Law} & \textbf{Equivalence} & \textbf{Condition} & \textbf{Detail} \\
-\midrule
-Negation (1) & $\neg\forall x\,\varphi \equiv \exists x\,\neg\varphi$ & — & \hyperref[thm:qneg]{↓ Thm} \\
-Negation (2) & $\neg\exists x\,\varphi \equiv \forall x\,\neg\varphi$ & — & \hyperref[thm:qneg]{↓ Thm} \\
-Same-type commutation & $\forall x\,\forall y\,\varphi \equiv \forall y\,\forall x\,\varphi$ & same type & \hyperref[thm:qcomm]{↓ Thm} \\
-Distribution $\forall$/$\wedge$ & $\forall x\,(\varphi\wedge\psi)\equiv(\forall x\,\varphi)\wedge(\forall x\,\psi)$ & — & \hyperref[thm:qdist]{↓ Thm} \\
-Distribution $\exists$/$\vee$ & $\exists x\,(\varphi\vee\psi)\equiv(\exists x\,\varphi)\vee(\exists x\,\psi)$ & — & \hyperref[thm:qdist]{↓ Thm} \\
-Vacuous $\forall$ & $\forall x\,\varphi \equiv \varphi$ & $x \notin \mathrm{FV}(\varphi)$ & \hyperref[thm:vacuous]{↓ Thm} \\
-Renaming & $\forall x\,\varphi \equiv \forall y\,\varphi[y/x]$ & $y$ not free in $\varphi$ & \hyperref[thm:rename]{↓ Thm} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
+\begin{remark*}[Section toolkit: Quantifier algebra]
+Quantifier algebra is the predicate-logic analogue of propositional
+equivalence laws. These laws justify rewriting quantified formulas while
+preserving logical equivalence.
+\end{remark*}
 
-\vspace{1em}
-
-% ---------------------------------------------------------
-% Quantifier Negation
-% ---------------------------------------------------------
-
-\begin{proposition}[\texorpdfstring{\hyperref[prf:qneg]{Quantifier Negation Laws}}{Quantifier Negation Laws}]\label{thm:qneg}
-For any formula $\varphi$:
-\begin{align*}
-\neg \forall x\,\varphi &\;\equiv\; \exists x\,\neg \varphi, \\
-\neg \exists x\,\varphi &\;\equiv\; \forall x\,\neg \varphi.
-\end{align*}
-\end{proposition}
-
-\begin{remark}[English reading]
-To negate a universally quantified statement, swap $\forall$ for $\exists$ and
-negate the inner formula. To negate an existential, swap $\exists$ for $\forall$
-and negate. The negation pushes through the quantifier, flipping it.
-\end{remark}
-
-\begin{remark}[Procedure for negating nested quantifiers]
-When negating a statement with multiple quantifiers, push the negation inward
-past every quantifier, flipping each one, until it reaches the atomic predicate.
-For example:
+\begin{theorembox}{Theorem (Quantifier Negation Laws)}
+\begin{theorem}[Quantifier Negation Laws]
+\label{thm:qneg}
+For every formula \(\varphi\),
 \[
-\neg(\forall x\,\exists y\,\varphi)
-\equiv \exists x\,\neg(\exists y\,\varphi)
-\equiv \exists x\,\forall y\,\neg\varphi.
+\neg\forall x\,\varphi \equiv \exists x\,\neg\varphi,
+\qquad
+\neg\exists x\,\varphi \equiv \forall x\,\neg\varphi.
 \]
-\end{remark}
+\hyperref[prf:qneg]{Go to proof.}
+\end{theorem}
+\end{theorembox}
 
-\begin{remark}[General schema for negating quantified implications]
-For $Q_1 x_1 \cdots Q_n x_n (\varphi \rightarrow \psi)$ where each $Q_i \in \{\forall,\exists\}$:
+\begin{remark*}[Standard quantified statement]
 \[
-\neg\bigl(Q_1 x_1 \cdots Q_n x_n (\varphi \rightarrow \psi)\bigr)
-\;\equiv\;
-Q_1' x_1 \cdots Q_n' x_n (\varphi \wedge \neg \psi),
+\forall \varphi\in\mathsf{Form}_{\mathcal L}\quad
+\neg\forall x\,\varphi \equiv \exists x\,\neg\varphi
+\quad\text{and}\quad
+\neg\exists x\,\varphi \equiv \forall x\,\neg\varphi.
 \]
-where $Q_i' = \exists$ when $Q_i = \forall$, and $Q_i' = \forall$ when $Q_i = \exists$.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Common error]
-Negating only the predicate without flipping the quantifier is incorrect:
-$\neg(\forall x\,P(x)) \not\equiv \forall x\,\neg P(x)$.
-The right side asserts that \emph{every} element fails $P$, which is much
-stronger than merely asserting that not every element satisfies $P$.
-\end{remark}
+\begin{remark*}[Predicate reading]
+\(\operatorname{LogicalEquivalence}(\neg\forall x\,\varphi,\exists x\,\neg\varphi)\)
+and
+\(\operatorname{LogicalEquivalence}(\neg\exists x\,\varphi,\forall x\,\neg\varphi)\).
+\end{remark*}
 
-% ---------------------------------------------------------
-% Commutation
-% ---------------------------------------------------------
+\begin{remark*}[Interpretation]
+Negating a quantified statement flips the quantifier and pushes the negation
+into the scope.
+\end{remark*}
 
-\begin{proposition}[Quantifier Commutation]\label{thm:qcomm}
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:existential-q]{Existential Formula}
+  \item \hyperref[def:log-equiv]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Double Negation and Quantifiers)}
+\begin{theorem}[Double Negation and Quantifiers]
+\label{thm:quantifier-double-negation}
+For every formula \(\varphi\),
+\[
+\neg\neg\forall x\,\varphi \equiv \forall x\,\varphi,
+\qquad
+\neg\neg\exists x\,\varphi \equiv \exists x\,\varphi.
+\]
+\hyperref[prf:quantifier-double-negation]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varphi\in\mathsf{Form}_{\mathcal L}\quad
+\neg\neg\forall x\,\varphi \equiv \forall x\,\varphi
+\quad\text{and}\quad
+\neg\neg\exists x\,\varphi \equiv \exists x\,\varphi.
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{LogicalEquivalence}(\neg\neg Qx\,\varphi,Qx\,\varphi)\) for
+\(Q\in\{\forall,\exists\}\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Double negation does not change the quantifier form once the two negations are
+cancelled.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:qneg]{Quantifier Negation Laws}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Same-Type Quantifier Commutation)}
+\begin{theorem}[Same-Type Quantifier Commutation]
+\label{thm:qcomm}
 Quantifiers of the same type commute:
-\begin{align*}
-\forall x\,\forall y\,\varphi &\;\equiv\; \forall y\,\forall x\,\varphi, \\
-\exists x\,\exists y\,\varphi &\;\equiv\; \exists y\,\exists x\,\varphi.
-\end{align*}
-However, quantifiers of different types do \emph{not} commute in general:
 \[
-\forall x\,\exists y\,\varphi \;\not\equiv\; \exists y\,\forall x\,\varphi.
+\forall x\,\forall y\,\varphi \equiv \forall y\,\forall x\,\varphi,
+\qquad
+\exists x\,\exists y\,\varphi \equiv \exists y\,\exists x\,\varphi.
 \]
-\end{proposition}
+\hyperref[prf:qcomm]{Go to proof.}
+\end{theorem}
+\end{theorembox}
 
-\begin{remark}[Common error]
-Swapping $\forall$ and $\exists$ changes the meaning. The statement
-$\exists y\,\forall x\,\varphi$ requires a single uniform witness $y$ that
-works for all $x$, whereas $\forall x\,\exists y\,\varphi$ allows a different
-$y$ for each $x$.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varphi\in\mathsf{Form}_{\mathcal L}\quad
+\forall x\,\forall y\,\varphi \equiv \forall y\,\forall x\,\varphi
+\quad\text{and}\quad
+\exists x\,\exists y\,\varphi \equiv \exists y\,\exists x\,\varphi.
+\]
+\end{remark*}
 
-% ---------------------------------------------------------
-% Distribution
-% ---------------------------------------------------------
+\begin{remark*}[Predicate reading]
+The theorem asserts logical equivalence after swapping adjacent quantifiers of
+the same type.
+\end{remark*}
 
-\begin{proposition}[Quantifier Distribution]\label{thm:qdist}
-The following distribution equivalences hold:
-\begin{align*}
-\forall x\,(\varphi \wedge \psi) &\;\equiv\; (\forall x\,\varphi) \wedge (\forall x\,\psi), \\
-\exists x\,(\varphi \vee \psi) &\;\equiv\; (\exists x\,\varphi) \vee (\exists x\,\psi).
-\end{align*}
-The following do \emph{not} hold in general:
-\begin{align*}
-\forall x\,(\varphi \vee \psi) &\;\not\equiv\; (\forall x\,\varphi) \vee (\forall x\,\psi), \\
-\exists x\,(\varphi \wedge \psi) &\;\not\equiv\; (\exists x\,\varphi) \wedge (\exists x\,\psi).
-\end{align*}
-Additionally, when $x \notin \mathrm{FV}(\psi)$:
-\begin{align*}
-\forall x\,(\varphi \wedge \psi) &\;\equiv\; (\forall x\,\varphi) \wedge \psi, \\
-\exists x\,(\varphi \vee \psi) &\;\equiv\; (\exists x\,\varphi) \vee \psi.
-\end{align*}
-\end{proposition}
+\begin{remark*}[Interpretation]
+Two universal choices can be checked in either order, and two existential
+witnesses can be selected in either order.
+\end{remark*}
 
-\begin{remark}[Mnemonic]
-Universal distributes over conjunction ($\forall$/$\wedge$ match because both
-are ``all-or-nothing''); existential distributes over disjunction
-($\exists$/$\vee$ match because both assert ``at least one'').
-\end{remark}
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:existential-q]{Existential Formula}
+\end{itemize}
+\end{dependencies}
 
-% ---------------------------------------------------------
-% Vacuous Quantification
-% ---------------------------------------------------------
+\begin{theorembox}{Theorem (Mixed Quantifiers Do Not Commute)}
+\begin{theorem}[Mixed Quantifiers Do Not Commute]
+\label{thm:mixed-quantifiers-do-not-commute}
+In general,
+\[
+\forall x\,\exists y\,\varphi
+\not\equiv
+\exists y\,\forall x\,\varphi.
+\]
+\hyperref[prf:mixed-quantifiers-do-not-commute]{Go to proof.}
+\end{theorem}
+\end{theorembox}
 
-\begin{proposition}[\texorpdfstring{\hyperref[prf:vacuous]{Vacuous Quantification}}{Vacuous Quantification}]\label{thm:vacuous}
-If $x$ does not occur free in $\varphi$, then:
-\begin{align*}
-\forall x\,\varphi &\;\equiv\; \varphi, \\
-\exists x\,\varphi &\;\equiv\; \varphi.
-\end{align*}
-\end{proposition}
+\begin{remark*}[Standard quantified statement]
+\[
+\exists \varphi\in\mathsf{Form}_{\mathcal L}\quad
+\forall x\,\exists y\,\varphi
+\not\equiv
+\exists y\,\forall x\,\varphi.
+\]
+\end{remark*}
 
-\begin{remark}[English reading]
-A quantifier is vacuous if its bound variable does not appear free in the scope.
-Such quantifiers may be freely added or removed without changing meaning.
-\end{remark}
+\begin{remark*}[Predicate reading]
+\(\neg\operatorname{LogicalEquivalence}(\forall x\,\exists y\,\varphi,
+\exists y\,\forall x\,\varphi)\) in general.
+\end{remark*}
 
-% ---------------------------------------------------------
-% Renaming Bound Variables
-% ---------------------------------------------------------
+\begin{remark*}[Interpretation]
+The first form permits the witness \(y\) to depend on \(x\). The second form
+requires one uniform witness \(y\) that works for every \(x\).
+\end{remark*}
 
-\begin{proposition}[\texorpdfstring{\hyperref[prf:rename]{Renaming Bound Variables}}{Renaming Bound Variables}]\label{thm:rename}
-If $y$ does not occur in $\varphi$, then:
-\begin{align*}
-\forall x\,\varphi &\;\equiv\; \forall y\,\varphi[y/x], \\
-\exists x\,\varphi &\;\equiv\; \exists y\,\varphi[y/x].
-\end{align*}
-\end{proposition}
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:qcomm]{Same-Type Quantifier Commutation}
+\end{itemize}
+\end{dependencies}
 
-\begin{remark}[Consequence]
-This is a direct consequence of alpha-equivalence (Definition~\ref{def:alpha-equiv}).
-Renaming bound variables is the standard technique for avoiding variable
-capture when applying substitution rules.
-\end{remark}
+\begin{theorembox}{Theorem (Valid Quantifier Distribution)}
+\begin{theorem}[Valid Quantifier Distribution]
+\label{thm:qdist}
+For all formulas \(\varphi,\psi\),
+\[
+\forall x\,(\varphi\land\psi)
+\equiv
+(\forall x\,\varphi)\land(\forall x\,\psi),
+\]
+\[
+\exists x\,(\varphi\lor\psi)
+\equiv
+(\exists x\,\varphi)\lor(\exists x\,\psi).
+\]
+\hyperref[prf:qdist]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varphi,\psi\in\mathsf{Form}_{\mathcal L}\quad
+\forall x\,(\varphi\land\psi)
+\equiv
+(\forall x\,\varphi)\land(\forall x\,\psi)
+\]
+and
+\[
+\exists x\,(\varphi\lor\psi)
+\equiv
+(\exists x\,\varphi)\lor(\exists x\,\psi).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+The displayed universal-conjunction and existential-disjunction distributions
+are logical equivalences.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Universal quantification distributes over conjunction because both conjuncts
+must hold for every value. Existential quantification distributes over
+disjunction because a witness for either disjunct witnesses the disjunction.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:log-equiv]{Logical Equivalence}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:existential-q]{Existential Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Invalid Quantifier Distribution)}
+\begin{theorem}[Invalid Quantifier Distribution]
+\label{thm:invalid-quantifier-distribution}
+In general,
+\[
+\forall x\,(\varphi\lor\psi)
+\not\equiv
+(\forall x\,\varphi)\lor(\forall x\,\psi),
+\]
+\[
+\exists x\,(\varphi\land\psi)
+\not\equiv
+(\exists x\,\varphi)\land(\exists x\,\psi).
+\]
+\hyperref[prf:invalid-quantifier-distribution]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\exists \varphi,\psi\in\mathsf{Form}_{\mathcal L}\quad
+\forall x\,(\varphi\lor\psi)
+\not\equiv
+(\forall x\,\varphi)\lor(\forall x\,\psi),
+\]
+\[
+\exists \varphi,\psi\in\mathsf{Form}_{\mathcal L}\quad
+\exists x\,(\varphi\land\psi)
+\not\equiv
+(\exists x\,\varphi)\land(\exists x\,\psi).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+The displayed distribution patterns are not logical equivalences in general.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The invalid laws fail because witnesses or counterexamples may vary between
+the two subformulas.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:qdist]{Valid Quantifier Distribution}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Vacuous Quantification)}
+\begin{theorem}[Vacuous Quantification]
+\label{thm:vacuous}
+If \(x\) does not occur free in \(\varphi\), then
+\[
+\forall x\,\varphi\equiv\varphi,
+\qquad
+\exists x\,\varphi\equiv\varphi.
+\]
+\hyperref[prf:vacuous]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+x\notin\mathsf{FV}(\varphi)
+\Rightarrow
+(\forall x\,\varphi\equiv\varphi)
+\land
+(\exists x\,\varphi\equiv\varphi).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+Vacuous quantification preserves logical equivalence when the quantified
+variable is not free in the scope.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A quantifier that binds no occurrence has no semantic effect.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:quantifier-scope]{Quantifier Scope}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Renaming Bound Variables)}
+\begin{theorem}[Renaming Bound Variables]
+\label{thm:rename}
+If \(y\) is free for \(x\) in \(\varphi\) and no capture is introduced, then
+\[
+\forall x\,\varphi\equiv\forall y\,\varphi[y/x],
+\qquad
+\exists x\,\varphi\equiv\exists y\,\varphi[y/x].
+\]
+\hyperref[prf:rename]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+y \text{ free for } x \text{ in } \varphi
+\Rightarrow
+(\forall x\,\varphi\equiv\forall y\,\varphi[y/x])
+\land
+(\exists x\,\varphi\equiv\exists y\,\varphi[y/x]).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+Renaming bound variables preserves logical equivalence when the renaming is
+capture-avoiding.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Bound variable names are placeholders. Renaming them changes notation, not
+meaning, provided no free variable becomes captured.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:free-for]{Free for Substitution}
+  \item \hyperref[def:subst-notation]{Substitution Notation}
+\end{itemize}
+\end{dependencies}

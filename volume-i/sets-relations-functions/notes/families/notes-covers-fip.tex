@@ -7,28 +7,8 @@
 % ---------------------------------------------------------
 % TOOLKIT
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Covers and FIP — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Cover of $A$     & $\bigcup_{C \in \mathcal{C}} C \supseteq A$                     & \hyperref[def:cover-full]{↓ Def} \\
-Subcover         & Sub-collection of a cover that is still a cover                 & \hyperref[def:subcover]{↓ Def} \\
-Finite cover     & Cover with finitely many members                                & \hyperref[def:finite-cover]{↓ Def} \\
-Finite subcover  & Finite subcollection that is still a cover                      & \hyperref[def:subcover]{↓ Def} \\
-Open cover       & Cover whose members are all open sets                           & \hyperref[def:open-cover]{↓ Def} \\
-Finite Intersection Property & Every finite subcollection has nonempty intersection & \hyperref[def:fip]{↓ Def} \\
-FIP–cover duality & $\mathcal{C}$ covers $A$ $\iff$ closed complements fail FIP   & \hyperref[prop:fip-duality]{↓ Prop} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
 
-\vspace{1em}
-
+\begin{exposition}
 Compactness is one of the central concepts of analysis, and its definition is
 stated in terms of covers: a space is compact if every open cover has a finite
 subcover. This is a purely set-theoretic condition — it makes no reference to
@@ -37,15 +17,13 @@ here, with the vocabulary of covers. Once these definitions are in place, the
 definition of compactness will be a single sentence, and the difficulty will
 lie entirely in the geometric and analytic content, not the set-theoretic
 framework.
+\end{exposition}
 
 % ---------------------------------------------------------
 % Covers
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Cover, Subcover, Finite Cover)}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Definition (Cover, Subcover, Finite Cover)}
 \label{def:cover-full}
 Let $A$ be a set and $\mathcal{C}$ a collection of sets.
 
@@ -63,9 +41,9 @@ A cover is \emph{finite} if it has finitely many members. A \emph{finite
 subcover} is a subcover $\mathcal{C}' \subseteq \mathcal{C}$ with
 $|\mathcal{C}'| < \infty$.
 \end{enumerate}
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{remark}[The key question]
+\begin{remark*}[The key question]
 The condition of being a cover is easy to satisfy: take $\mathcal{C} =
 \mathcal{P}(A)$ and it is trivially a cover. The interesting question is
 whether large covers can be replaced by smaller ones — specifically, finite
@@ -73,35 +51,36 @@ ones. An infinite cover has infinitely many sets, which is hard to work with.
 A finite subcover is just as good for covering purposes, but is finite and
 therefore tractable. When a finite subcover always exists, no matter which
 cover one starts with, the space is called compact.
-\end{remark}
+\end{remark*}
 
+\begin{definitionbox}{Definition (Open Cover)}
 \begin{definition}[Open Cover]\label{def:open-cover}
 In a topological space $(X, \tau)$, an \emph{open cover} of a subset $A
 \subseteq X$ is a cover $\mathcal{C}$ of $A$ all of whose members are open
 sets: $\mathcal{C} \subseteq \tau$.
 \end{definition}
+\end{definitionbox}
 
-\begin{remark*}[Fully quantified form]
+\NoLocalDependencies
+
+\begin{remark*}[Standard quantified statement]
 $\mathcal{C}$ is an open cover of $A$ $\;\leftrightarrow\;$ $(\forall C \in \mathcal{C},\; C \in \tau) \;\wedge\; (\forall x \in A,\; \exists C \in \mathcal{C},\; x \in C)$.
 \end{remark*}
 
-\begin{remark}[Why open covers]
+\begin{remark*}[Why open covers]
 The emphasis on open covers in compactness is because open sets are the
 sets one controls in a topological space. An open cover $\{U_\alpha\}$ of
 $A$ means: every point of $A$ has at least one $U_\alpha$ containing it. A
 finite subcover then gives a list of finitely many open sets whose union
 already contains all of $A$. Compactness says this reduction is always
 possible, which is a very strong structural property.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Finite Intersection Property
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Finite Intersection Property)}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Definition (Finite Intersection Property)}
 \label{def:fip}
 A collection $\mathcal{F}$ of sets has the \emph{finite intersection
 property} (FIP) if every finite subcollection has nonempty intersection:
@@ -109,9 +88,9 @@ for all finite $\mathcal{F}' \subseteq \mathcal{F}$,
 \[
 \bigcap_{F \in \mathcal{F}'} F \;\neq\; \varnothing.
 \]
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{remark}[How to read the FIP]
+\begin{remark*}[How to read the FIP]
 The FIP is a consistency condition: no finite list of sets from $\mathcal{F}$
 is mutually exclusive. It does \emph{not} say the entire intersection
 $\bigcap_{F \in \mathcal{F}} F$ is nonempty — only that every \emph{finite}
@@ -123,12 +102,13 @@ since $(0, 1/n) \supseteq (0, 1/N)$ for the largest $N$ in the subcollection).
 But $\bigcap_{n=1}^\infty (0,1/n) = \varnothing$. Compact spaces are
 characterized by the property that the FIP implies nonempty total
 intersection.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % FIP–Cover duality
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition (FIP--Cover Duality)}
 \begin{proposition}[FIP--Cover Duality]\label{prop:fip-duality}
 Let $X$ be a set, $A \subseteq X$, and $\{U_\alpha\}_{\alpha \in I}$ a
 family of subsets of $X$. Let $F_\alpha = U_\alpha^c = X \setminus U_\alpha$.
@@ -141,14 +121,18 @@ Then:
 More precisely: the family $\{U_\alpha\}$ does \emph{not} cover $A$ if and
 only if the family of closed complements $\{F_\alpha\}$ has the FIP relative
 to $A$.
+\hyperref[prf:fip-duality]{Go to proof.}
 \end{proposition}
+\end{propositionbox}
 
-\begin{remark*}[Fully quantified form]
+\NoLocalDependencies
+
+\begin{remark*}[Standard quantified statement]
 $A \subseteq \bigcup_{\alpha \in I} U_\alpha \;\leftrightarrow\; \neg(\forall\text{ finite }I_0\subseteq I,\; \bigcap_{\alpha\in I_0} F_\alpha \cap A \neq \varnothing)$. Reading pointwise: $\forall x\in A,\;\exists\alpha\in I,\; x\in U_\alpha \;\leftrightarrow\; \{F_\alpha\cap A\}$ fails the FIP.
 \end{remark*}
 
 
-\begin{remark}[Proof by De Morgan]
+\begin{remark*}[Proof by De Morgan]
 The duality is a direct consequence of De Morgan's law for indexed families
 (Theorem~\ref{thm:preimage-ops}). The family $\{U_\alpha\}$ fails to cover
 $A$ means:
@@ -162,9 +146,9 @@ A \cap \bigcap_\alpha U_\alpha^c \neq \varnothing
 A \cap \bigcap_\alpha F_\alpha \neq \varnothing.
 \]
 Applying this to every finite subcollection gives the equivalence with the FIP.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Why this duality matters for compactness]
+\begin{remark*}[Why this duality matters for compactness]
 Compactness has two equivalent formulations:
 \begin{enumerate}[label=(\roman*)]
 \item Every open cover has a finite subcover.
@@ -177,13 +161,13 @@ sets). Both are purely set-theoretic conditions, and the equivalence is
 entirely a matter of set algebra. When compactness is encountered in topology
 and metric spaces, the only new content is the geometric meaning — the
 set-theoretic equivalence is established here.
-\end{remark}
+\end{remark*}
 
-\begin{example}[Nested closed sets and FIP]
+\begin{example*}[Nested closed sets and FIP]
 In $\mathbb{R}$, the family $\{[n, \infty) : n \in \mathbb{N}\}$ has the FIP:
 any finite subcollection $\{[n_1,\infty), \dots, [n_k,\infty)\}$ has
 intersection $[\max(n_i), \infty) \neq \varnothing$. But
 $\bigcap_{n=1}^\infty [n, \infty) = \varnothing$. This shows $\mathbb{R}$ is
 not compact (the family of closed sets has the FIP but empty total
 intersection). A compact space would not allow this failure.
-\end{example}
+\end{example*}

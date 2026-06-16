@@ -7,42 +7,23 @@
 % ---------------------------------------------------------
 % TOOLKIT
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Quantifier Proof Strategies — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Goal shape} & \textbf{Strategy} & \textbf{Key rule} \\
-\midrule
-Prove $\forall x\,\varphi(x)$  & Fix an arbitrary $x$; prove $\varphi(x)$ for that $x$  & UG \\
-Prove $\exists x\,\varphi(x)$  & Produce a specific witness $t$; verify $\varphi(t)$     & EG \\
-Use $\forall x\,\varphi(x)$    & Instantiate at any term $t$ to get $\varphi(t)$         & UI \\
-Use $\exists x\,\varphi(x)$    & Introduce a fresh name $c$ for the witness             & EI \\
-Negate $\forall x\,\varphi$    & Becomes $\exists x\,\neg\varphi$                        & Neg.\ law \\
-Negate $\exists x\,\varphi$    & Becomes $\forall x\,\neg\varphi$                        & Neg.\ law \\
-\midrule
-Prove $\forall x\,\exists y\,\varphi(x,y)$ & Fix $x$; then construct $y$ depending on $x$ & UG then EG \\
-Prove $\exists y\,\forall x\,\varphi(x,y)$ & Find $y$ first; then verify for all $x$       & EG then UG \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
 
-\vspace{1em}
-
+\begin{exposition}
 The inference rules UI, UG, EI, and EG were defined in the previous section.
 That section answered the question: what does each rule license? This section
 answers a different question: when the goal of a proof has a particular
 quantifier structure, which rule should be used, and what does the proof
 skeleton look like? The two questions are distinct, and both must be understood
 clearly before reading analysis proofs.
+\end{exposition}
 
+\begin{exposition}
 The single most important organizing principle is this: \emph{the shape of the
 goal determines the proof structure, and the shape of the hypothesis determines
 how to use it}. A $\forall$ goal calls for a different move than a $\exists$
 goal; a $\forall$ hypothesis is used differently from a $\exists$ hypothesis.
 The four combinations are the four strategies below.
+\end{exposition}
 
 % ---------------------------------------------------------
 % Proving a universal
@@ -50,10 +31,12 @@ The four combinations are the four strategies below.
 
 \section*{Strategy 1: Proving a Universal $\forall x\,\varphi(x)$}
 
+\begin{exposition}
 To prove $\forall x\,\varphi(x)$: introduce a fresh variable $x_0$ representing
 an \emph{arbitrary, unspecified} element of the domain. Prove $\varphi(x_0)$
 without making any assumption about $x_0$ beyond its being in the domain. Then
 apply Universal Generalization (UG) to conclude $\forall x\,\varphi(x)$.
+\end{exposition}
 
 \begin{quote}
 \textbf{Let} $x_0$ be an arbitrary element of the domain.\\
@@ -61,25 +44,27 @@ apply Universal Generalization (UG) to conclude $\forall x\,\varphi(x)$.
 \textbf{Therefore:} $\forall x\,\varphi(x)$. \quad (by UG)
 \end{quote}
 
+\begin{exposition}
 The critical constraint is that $x_0$ must be \emph{arbitrary}: no hypothesis
 in the proof may impose a condition on $x_0$ that is not universally true.
 Violating this constraint is the UG fallacy (``illicit generalization'').
+\end{exposition}
 
-\begin{remark}[Why ``let $x$ be arbitrary'' works]
+\begin{remark*}[Why ``let $x$ be arbitrary'' works]
 Fixing an arbitrary element $x_0$ is the formal counterpart of the English
 phrase ``let $x$ be any element.'' The word ``arbitrary'' means: the proof
 uses no information about $x_0$ that is specific to $x_0$ --- only information
 that applies to every element of the domain. If the argument goes through for
 such an unspecified $x_0$, it goes through for every $x$, so the universal
 follows.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[The UG side condition in practice]
+\begin{remark*}[The UG side condition in practice]
 UG requires that $x_0$ not appear free in any undischarged assumption. In
 practice: do not use any hypothesis of the form ``$x_0$ has property $P$''
 unless $P$ holds of every domain element. If a hypothesis says ``$x_0 > 0$,''
 then $x_0$ is not arbitrary, and UG to $\forall x$ is invalid.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Proving an existential
@@ -87,9 +72,11 @@ then $x_0$ is not arbitrary, and UG to $\forall x$ is invalid.
 
 \section*{Strategy 2: Proving an Existential $\exists x\,\varphi(x)$}
 
+\begin{exposition}
 To prove $\exists x\,\varphi(x)$: exhibit a specific term $t$ and verify that
 $\varphi(t)$ holds. Then apply Existential Generalization (EG) to conclude
 $\exists x\,\varphi(x)$.
+\end{exposition}
 
 \begin{quote}
 \textbf{Claim:} $\exists x\,\varphi(x)$.\\
@@ -98,16 +85,18 @@ $\exists x\,\varphi(x)$.
 \textbf{Therefore:} $\exists x\,\varphi(x)$. \quad (by EG)
 \end{quote}
 
+\begin{exposition}
 The entire burden of an existential proof is finding the right $t$. Once $t$
 is identified and verified, the logic is trivial: one application of EG.
+\end{exposition}
 
-\begin{remark}[Where the difficulty lies]
+\begin{remark*}[Where the difficulty lies]
 In existential proofs, the logical structure is simple but the mathematical
 insight is often deep. Finding the witness requires understanding the problem;
 verifying the witness is usually straightforward. This is why analysis proofs
 often say ``take $\delta = \min(\varepsilon/2, 1)$'' without explaining where
 that choice came from --- the work happened before the formal proof was written.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Using a universal
@@ -115,10 +104,12 @@ that choice came from --- the work happened before the formal proof was written.
 
 \section*{Strategy 3: Using a Universal $\forall x\,\varphi(x)$}
 
+\begin{exposition}
 If a hypothesis or established fact has the form $\forall x\,\varphi(x)$, one
 can instantiate it at \emph{any} specific term $t$ to obtain $\varphi(t)$, by
 Universal Instantiation (UI). There are no side conditions beyond $t$ being
 free for $x$ in $\varphi$.
+\end{exposition}
 
 \begin{quote}
 \textbf{Available:} $\forall x\,\varphi(x)$.\\
@@ -126,8 +117,10 @@ free for $x$ in $\varphi$.
 \textbf{Obtain:} $\varphi(t)$. \quad (by UI)
 \end{quote}
 
+\begin{exposition}
 UI can be applied repeatedly to the same universal statement with different
 choices of $t$.
+\end{exposition}
 
 % ---------------------------------------------------------
 % Using an existential
@@ -135,10 +128,12 @@ choices of $t$.
 
 \section*{Strategy 4: Using an Existential $\exists x\,\varphi(x)$}
 
+\begin{exposition}
 If a hypothesis has the form $\exists x\,\varphi(x)$, introduce a \emph{fresh
 constant} $c$ to name the (unknown, unspecified) witness, obtaining $\varphi(c)$
 by Existential Instantiation (EI). The constant $c$ must be new: it must not
 appear anywhere else in the proof.
+\end{exposition}
 
 \begin{quote}
 \textbf{Available:} $\exists x\,\varphi(x)$.\\
@@ -146,20 +141,22 @@ appear anywhere else in the proof.
 \textbf{Obtain:} $\varphi(c)$. \quad (by EI)
 \end{quote}
 
+\begin{exposition}
 The freshness requirement is not a technicality. Using a constant that already
 appears in the proof --- say, a constant $a$ introduced under a different
 assumption --- would illegally identify the witness with that specific element.
 The witness $c$ is only known to satisfy $\varphi(c)$; nothing else about it
 is known, and it cannot be equated with anything specific.
+\end{exposition}
 
-\begin{remark}[The scope of a witness constant]
+\begin{remark*}[The scope of a witness constant]
 Once $c$ is introduced by EI, it names the witness for the duration of the
 argument. Conclusions derived using $c$ depend on the existence of such a
 witness; they are valid (they do not depend on which specific element $c$
 actually names). However, $c$ cannot be exported outside the scope in which
 the existential was instantiated, and no universal generalization may be
 applied to $c$.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % The critical asymmetry: forall vs exists goals
@@ -167,10 +164,12 @@ applied to $c$.
 
 \section*{The Central Asymmetry: Universal vs.\ Existential Goals}
 
+\begin{exposition}
 The following comparison is the most important thing to understand about
 quantifier proof structure. Universal and existential goals require fundamentally
 different strategies, and confusing them is one of the most common serious errors
 in mathematical writing.
+\end{exposition}
 
 \begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
@@ -190,13 +189,13 @@ in mathematical writing.
 \end{tabular}
 \end{tcolorbox}
 
-\begin{remark}[Who controls the variable]
+\begin{remark*}[Who controls the variable]
 For a universal goal, the variable $x$ is chosen by the ``opponent'' of the
 proof: the proof must work no matter what $x$ is. The prover has no control
 over $x$; hence the term ``arbitrary.'' For an existential goal, the prover
 chooses the witness $t$; the power is entirely on the prover's side, but so is
 the obligation to produce something concrete and verifiable.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Nested quantifiers: the analysis prototype
@@ -204,14 +203,13 @@ the obligation to produce something concrete and verifiable.
 
 \section*{Nested Quantifiers: The $\forall\exists$ Pattern in Analysis}
 
+\begin{exposition}
 Every $\varepsilon$-$\delta$ proof in analysis is a proof of a statement with
 the pattern $\forall\varepsilon\,\exists\delta\,\cdots$. Understanding the
 proof structure of such statements is the direct payoff of this section.
+\end{exposition}
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Proof Skeleton: $\forall x\,\exists y\,\varphi(x,y)$}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Proof Skeleton: $\forall x\,\exists y\,\varphi(x,y)$}
 \begin{enumerate}[label=\textbf{Step \arabic*.}]
 \item \textbf{Fix arbitrary $x$.} \quad (Opening move for the outer $\forall$; $x$ is
   unspecified. This is Strategy 1.)
@@ -225,12 +223,9 @@ proof structure of such statements is the direct payoff of this section.
 \end{enumerate}
 The key insight: $y$ is chosen \emph{after} $x$ is fixed, so $y$ is allowed
 to depend on $x$.
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Proof Skeleton: $\exists y\,\forall x\,\varphi(x,y)$}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Proof Skeleton: $\exists y\,\forall x\,\varphi(x,y)$}
 \begin{enumerate}[label=\textbf{Step \arabic*.}]
 \item \textbf{Define $y$.} \quad (The witness for $\exists y$ must be chosen \emph{before}
   $x$ is introduced. This $y$ must work for \emph{every} $x$.)
@@ -242,9 +237,9 @@ to depend on $x$.
 \end{enumerate}
 The key contrast: $y$ is chosen \emph{before} $x$, so $y$ cannot depend on
 $x$. This is why $\exists y\,\forall x$ is a much stronger claim.
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{remark}[Why order determines strength]
+\begin{remark*}[Why order determines strength]
 In the $\forall\exists$ skeleton, the witness $y$ is constructed from $x$, so
 a different $y$ is allowed for each $x$. In the $\exists\forall$ skeleton, a
 single $y$ must work for all $x$ simultaneously. The first pattern appears
@@ -252,7 +247,7 @@ in continuity ($\delta$ may depend on $\varepsilon$ and $x$); the second in
 uniform continuity ($\delta$ may depend on $\varepsilon$ but not on $x$).
 The difference between continuity and uniform continuity is exactly the
 difference between these two proof skeletons.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Full worked example
@@ -260,10 +255,12 @@ difference between these two proof skeletons.
 
 \section*{A Complete Worked Example}
 
+\begin{exposition}
 The following proof traces every UI/UG/EI/EG step explicitly. In practice,
 proofs are written more concisely, but the logical structure is always this one.
+\end{exposition}
 
-\begin{example}[A worked multi-quantifier proof]
+\begin{example*}[A worked multi-quantifier proof]
 \textbf{Claim:} If $\forall x\,\exists y\,P(x,y)$ and $\forall x\,\forall y\,
 (P(x,y) \to Q(x,y))$, then $\forall x\,\exists y\,Q(x,y)$.
 
@@ -305,9 +302,9 @@ Step 2 fixes the arbitrary $x$. Steps 3--4 use the first hypothesis to obtain
 a witness $b$ depending on $a$. Steps 5--7 apply the second hypothesis to get
 the desired conclusion about $b$. Steps 8--9 wrap everything back up with
 EG and UG.
-\end{example}
+\end{example*}
 
-\begin{remark}[Reading analysis proofs]
+\begin{remark*}[Reading analysis proofs]
 A proof that begins ``Let $\varepsilon > 0$'' is executing Step 2 of the
 $\forall\exists$ skeleton with domain $\mathbb{R}_{>0}$. A sentence like
 ``take $\delta = \varepsilon/2$'' is executing Step 2 of the inner existential
@@ -316,4 +313,4 @@ $\varepsilon > 0$'' and ``take $\delta = \ldots$'' is scaffolding to find the
 right witness. Everything after ``take $\delta = \ldots$'' is the verification
 that the witness works. Once this structure is seen, every $\varepsilon$-$\delta$
 proof becomes readable by template.
-\end{remark}
+\end{remark*}

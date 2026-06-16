@@ -7,25 +7,8 @@
 % ---------------------------------------------------------
 % TOOLKIT
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Hasse Diagrams and Duality — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Cover relation    & $a \lessdot b$: $a < b$ with nothing strictly between       & \hyperref[def:cover-relation]{↓ Def} \\
-Hasse diagram     & Graph encoding a poset; edges only for cover relations      & \hyperref[def:hasse]{↓ Def} \\
-Dual poset        & $(A, \geq)$ obtained by reversing the order on $(A, \leq)$  & \hyperref[def:dual-poset]{↓ Def} \\
-Duality principle & Every theorem about posets yields a dual theorem for free   & \hyperref[prop:order-duality]{↓ Prop} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
 
-\vspace{1em}
-
+\begin{exposition}
 A partial order can be an enormous set of pairs, impossible to visualise
 directly.  The \emph{Hasse diagram} is a compression: it retains only the
 pairs that are ``immediate'' in the order, discarding those implied by
@@ -33,27 +16,25 @@ transitivity and reflexivity.  From the compressed diagram the full order
 can be recovered by taking transitive closure.  Hasse diagrams are the
 standard visual language for finite posets; knowing how to read and draw them
 is essential for understanding the order examples in topology and lattice theory.
+\end{exposition}
 
 % ---------------------------------------------------------
 % Cover Relation
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Cover Relation)}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Definition (Cover Relation)}
 \label{def:cover-relation}
 Let $(A, \leq)$ be a poset and $a, b \in A$.  We say $b$ \emph{covers} $a$,
 written $a \lessdot b$, if $a < b$ and there is no $c \in A$ with
 $a < c < b$.
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{remark*}[Fully quantified form]
+\begin{remark*}[Standard quantified statement]
 $a \lessdot b \;\leftrightarrow\; (a < b) \;\wedge\;
 \neg(\exists c \in A,\; a < c \;\wedge\; c < b)$.
 \end{remark*}
 
-\begin{remark}[Intuition]
+\begin{remark*}[Intuition]
 \label{rem:cover-intuition}
 The cover relation strips the partial order down to its ``essential edges.''
 If $a \lessdot b$, then $b$ is the \emph{immediate successor} of $a$: you
@@ -63,16 +44,13 @@ $a = a_0 \lessdot a_1 \lessdot \cdots \lessdot a_k = b$.  In an infinite
 poset, this factorisation may fail (e.g., in $(\mathbb{R}, \leq)$, no two
 distinct real numbers are in a cover relation because there is always a
 rational strictly between them).
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Hasse Diagram
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Hasse Diagram)}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Definition (Hasse Diagram)}
 \label{def:hasse}
 The \emph{Hasse diagram} of a finite poset $(A, \leq)$ is the directed graph
 whose vertices are the elements of $A$, with an upward edge from $a$ to $b$
@@ -84,18 +62,18 @@ whenever $a \lessdot b$.  Three graphical conventions apply:
   \item Direction is encoded by height: $a \lessdot b$ is drawn with $b$
         strictly above $a$, so arrowheads are unnecessary.
 \end{enumerate}
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{remark}[How to recover the full order]
+\begin{remark*}[How to recover the full order]
 \label{rem:hasse-recovery}
 The full order can be read back from the Hasse diagram: $a \leq b$ if and
 only if either $a = b$ or there is an upward path in the diagram from $a$ to
 $b$ (a sequence of cover edges going strictly upward).  The diagram is therefore
 a lossless encoding of the partial order, compressed by removing the redundant
 reflexive and transitive edges.
-\end{remark}
+\end{remark*}
 
-\begin{example}[Divisibility on $\{1,2,3,4,6,12\}$]
+\begin{example*}[Divisibility on $\{1,2,3,4,6,12\}$]
 \label{ex:hasse-divisibility}
 Order the set $D = \{1, 2, 3, 4, 6, 12\}$ by divisibility ($a \leq b$ iff
 $a \mid b$).  The covers are:
@@ -118,9 +96,9 @@ they sit at the same level with no path connecting them.  The join
 $4 \vee 6 = 12 = \mathrm{lcm}(4,6)$ and the meet $4 \wedge 6 = 2 = \gcd(4,6)$
 are readable from the diagram as the lowest common ancestor and the highest
 common descendant, respectively.
-\end{example}
+\end{example*}
 
-\begin{example}[Power set $\mathcal{P}(\{a,b,c\})$ under inclusion]
+\begin{example*}[Power set $\mathcal{P}(\{a,b,c\})$ under inclusion]
 \label{ex:hasse-power-set}
 The Hasse diagram of $(\mathcal{P}(\{a,b,c\}), \subseteq)$ has four levels:
 $\varnothing$ at the bottom; the three singletons $\{a\},\{b\},\{c\}$ one
@@ -129,9 +107,9 @@ and $\{a,b,c\}$ at the top.  Each singleton is covered by the two two-element
 sets containing it.  This diagram is the Boolean lattice $B_3$: it has a
 bottom ($\varnothing$), a top ($\{a,b,c\}$), and every element has a complement
 ($A' = \{a,b,c\} \setminus A$).
-\end{example}
+\end{example*}
 
-\begin{remark}[Limitation to finite posets]
+\begin{remark*}[Limitation to finite posets]
 \label{rem:hasse-infinite}
 For infinite posets such as $(\mathbb{N}, \leq)$, the cover relation is
 well-defined ($n \lessdot n+1$) but the full diagram cannot be drawn.  In
@@ -139,35 +117,33 @@ $(\mathbb{R}, \leq)$ or $(\mathbb{Q}, \leq)$, the cover relation is empty:
 no two elements are in a cover relation.  Hasse diagrams are a practical
 visualisation tool for finite or schematic examples and should not be used
 as a proof device in infinite settings.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Dual Poset
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Dual Poset)}},
-  fonttitle=\small\bfseries]
+\begin{propositionbox}{Definition (Dual Poset)}
 \label{def:dual-poset}
 Let $(A, \leq)$ be a poset.  The \emph{dual poset} is $(A, \geq)$, where
 $a \geq b$ is defined to mean $b \leq a$.  The dual is also written
 $(A, \leq^{\mathrm{op}})$.
-\end{tcolorbox}
+\end{propositionbox}
 
-\begin{remark}[Intuition]
+\begin{remark*}[Intuition]
 \label{rem:dual-intuition}
 The dual poset is obtained by flipping the Hasse diagram upside down.  Every
 structural feature is preserved but reflected: elements at the top are now at
 the bottom, minimal elements become maximal, upper bounds become lower bounds,
 and suprema become infima and vice versa (as established in
 Proposition~\ref{prop:sup-inf-duality}).
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Duality Principle
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[\texorpdfstring{\hyperref[prf:order-duality]{Duality Principle for Posets}}{Duality Principle for Posets}]
 \label{prop:order-duality}
 Let $\Phi$ be any first-order statement about a poset $(A, \leq)$ expressed
@@ -181,14 +157,17 @@ working in the dual poset).  Then:
 \]
 In particular, if $\Phi$ is a theorem about all posets, then so is $\Phi^*$.
 \end{proposition}
+\end{propositionbox}
 
-\begin{remark*}[Fully quantified form]
+\NoLocalDependencies
+
+\begin{remark*}[Standard quantified statement]
 $\forall$ posets $(A,\leq)$, $\forall$ first-order sentences $\Phi$ in the
 language of $\leq$: $(A,\leq)\models\Phi \;\leftrightarrow\; (A,\geq)\models\Phi^*$,
 where $\Phi^*$ substitutes $\geq$ for every $\leq$.
 \end{remark*}
 
-\begin{remark}[Theorems come in pairs at no extra cost]
+\begin{remark*}[Theorems come in pairs at no extra cost]
 \label{rem:duality-pairs}
 The duality principle means every proved theorem about posets automatically
 yields a second theorem — its dual — without any additional work.  You will
@@ -217,9 +196,9 @@ encounter this repeatedly in analysis.  Here are the most important instances:
         (a \wedge c)$ dualises to $a \vee (b \wedge c) =
         (a \vee b) \wedge (a \vee c)$: proving one gives the other for free.
 \end{itemize}
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Transition]
+\begin{remark*}[Transition]
 \label{rem:hasse-transition}
 The order vocabulary developed across the order sections — partial orders,
 total orders, well-orders, bounds, suprema, infima, lattices, directed sets,
@@ -229,4 +208,4 @@ axiom (existence of suprema) and the Dedekind cut or Cauchy sequence
 constructions, both of which use only the vocabulary established here.  In
 Volume~III, metric space arguments, the definition of compactness, and the
 construction of Lebesgue measure all draw on this vocabulary repeatedly.
-\end{remark}
+\end{remark*}

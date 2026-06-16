@@ -2,137 +2,300 @@
 % Logical Strength and Quantifier Order
 % =========================================================
 
-\section{Quantifiers: Logical Strength and Quantifier Order}
+\subsection*{Logical Strength and Quantifier Order}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Logical Strength — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Entailment $A \models B$ & $A$ is true implies $B$ is true & \hyperref[def:entailment]{↓ Def} \\
-Logical strength & $A$ stronger than $B$ if $A \models B$ but $B \not\models A$ & \hyperref[def:strength]{↓ Def} \\
-Model-set viewpoint & $A \models B \iff \mathrm{Mod}(A) \subseteq \mathrm{Mod}(B)$ & \hyperref[def:model-set]{↓ Def} \\
-Quantifier alternation & Alternating $\forall$/$\exists$ in prefix & \hyperref[def:q-alt]{↓ Def} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
+\begin{remark*}[Section toolkit: Strength and order]
+Quantifier order is one of the main new phenomena in predicate logic. In
+propositional logic, changing the order of independent connectives often keeps
+truth conditions recognizable. In predicate logic, moving \(\forall\) and
+\(\exists\) can change whether witnesses may depend on earlier choices.
+\end{remark*}
 
-\vspace{1em}
-
-% ---------------------------------------------------------
-% Entailment
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Logical Entailment)}},
-  fonttitle=\small\bfseries]
-\label{def:entailment}
-Let $A$ and $B$ be sentences. We write $A \models B$ and say that \emph{$A$
-entails $B$} if in every structure in which $A$ is true, $B$ is also true.
-Equivalently, $A \models B$ means $A \rightarrow B$ is valid.
-\end{tcolorbox}
-
-% ---------------------------------------------------------
-% Logical Strength
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Logical Strength)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Stronger Formula)}
+\begin{definition}[Stronger Formula]
 \label{def:strength}
-We say that \emph{$A$ is (logically) stronger than $B$} if $A \models B$ but
-$B \not\models A$.
-
-$A$ and $B$ are \emph{logically equivalent} if $A \models B$ and $B \models A$.
-\end{tcolorbox}
-
-\begin{remark}[English reading]
-``Stronger'' means ``harder to satisfy'' (fewer models make it true). If $A$ is
-stronger than $B$, then $A$ rules out more possibilities: every world where $A$
-holds is a world where $B$ holds, but not conversely.
-\end{remark}
-
-% ---------------------------------------------------------
-% Model-Set Viewpoint
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Model-Set Viewpoint)}},
-  fonttitle=\small\bfseries]
-\label{def:model-set}
-For a statement $A$, let $\mathrm{Mod}(A)$ denote the class of all structures
-in which $A$ is true. Then
+A sentence \(A\) is \emph{stronger than} a sentence \(B\) exactly when
 \[
-A \models B \quad\Longleftrightarrow\quad \mathrm{Mod}(A) \subseteq \mathrm{Mod}(B).
+A\models B
+\quad\text{and}\quad
+B\not\models A.
 \]
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[English reading]
-Strength is set inclusion of model classes. ``$A$ is stronger than $B$'' is
-literally $\mathrm{Mod}(A) \subsetneq \mathrm{Mod}(B)$: $A$ satisfies fewer
-structures than $B$.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+A \text{ is stronger than } B
+\Longleftrightarrow
+(\forall \mathcal M\;(\mathcal M\models A\Rightarrow\mathcal M\models B))
+\land
+(\exists \mathcal N\;(\mathcal N\models B\land\mathcal N\not\models A)).
+\]
+\end{remark*}
 
-% ---------------------------------------------------------
-% Quantifier Alternation
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Quantifier Alternation)}},
-  fonttitle=\small\bfseries]
-\label{def:q-alt}
-A \emph{quantifier alternation} occurs when $Q_i \neq Q_{i+1}$ for some $i$ in
-the prefix $Q_1 x_1 \cdots Q_k x_k$ of a formula. For example,
-$\forall x\,\exists y\,\Phi(x,y)$ has one alternation, while
-$\forall x\,\forall y\,\Phi(x,y)$ has none.
-\end{tcolorbox}
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{StrongerFormula}(A,B)\) means that \(A\) entails \(B\), but
+\(B\) does not entail \(A\).
+\end{remark*}
 
-\begin{remark}[Why alternation matters for strength]
-$\forall x\,\exists y\,\Phi(x,y)$ requires a rule assigning a (possibly
-$x$-dependent) witness $y$ to each $x$. In contrast,
-$\exists y\,\forall x\,\Phi(x,y)$ requires a single uniform witness $y$ that
-works for all $x$. Uniformity is strictly stronger than dependence.
-\end{remark}
+\begin{remark*}[Negated quantified statement]
+\[
+A\not\models B
+\quad\text{or}\quad
+B\models A.
+\]
+\end{remark*}
 
-\begin{remark}[Strength hierarchy]
-The following entailments hold:
-\begin{enumerate}
-  \item $\forall x\,\Phi(x) \models \exists x\,\Phi(x)$ (universal is stronger).
-  \item $\exists y\,\forall x\,\Phi(x,y) \models \forall x\,\exists y\,\Phi(x,y)$
-  (uniform witness is stronger than dependent witness).
-\end{enumerate}
-Neither converse holds in general.
-\end{remark}
+\begin{remark*}[Interpretation]
+The stronger sentence has fewer possible structures in which it is true. It
+rules out more cases.
+\end{remark*}
 
-\begin{example}[Swap failure on $\mathbb{R}$]
-Let the domain be $\mathbb{R}$ and $\Phi(x,y) = (y > x)$.
+\begin{remark*}[Examples]
+\(\forall x\,P(x)\) is stronger than \(\exists x\,P(x)\) over nonempty
+domains.
+\end{remark*}
 
-$\forall x\,\exists y\,(y > x)$ is true: given any $x$, take $y = x+1$.
-
-$\exists y\,\forall x\,(y > x)$ is false: no single real exceeds all reals.
-
-Hence $\exists y\,\forall x$ is strictly stronger than $\forall x\,\exists y$.
-\end{example}
-
-\begin{example}[Universal vs.\ existential]
-Let the domain be $\mathbb{R}$ and $\Phi(x) = (x^2 \geq 0)$.
-
-$\forall x\,(x^2 \geq 0)$ entails $\exists x\,(x^2 \geq 0)$, but not conversely.
-Thus the universal statement is strictly stronger.
-\end{example}
-
-\begin{remark}[Logical strength increases when you:]
+\begin{dependencies}
 \begin{itemize}
-  \item add conjuncts ($A \wedge B$ is stronger than $A$),
-  \item replace $\exists$ with $\forall$,
-  \item move existential quantifiers outward (requiring uniform witnesses),
-  \item introduce quantifier alternation.
+  \item \hyperref[def:log-consequence]{Logical Consequence}
 \end{itemize}
-\end{remark}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Weaker Formula)}
+\begin{definition}[Weaker Formula]
+\label{def:weaker-formula}
+A sentence \(B\) is \emph{weaker than} a sentence \(A\) exactly when \(A\) is
+stronger than \(B\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+B \text{ is weaker than } A
+\Longleftrightarrow
+A\models B
+\text{ and }
+B\not\models A.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{WeakerFormula}(B,A)\) means that \(B\) is entailed by \(A\) but
+does not entail \(A\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The weaker sentence permits more structures. It follows from the stronger
+sentence but carries less information.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:strength]{Stronger Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Quantifier Order)}
+\begin{definition}[Quantifier Order]
+\label{def:q-alt}
+The \emph{quantifier order} of a prenex formula is the ordered list of
+quantifiers in its prefix. A change of order is significant when it changes
+which witnesses may depend on earlier variables.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+Q_1x_1\cdots Q_nx_n\,\psi
+\text{ has quantifier order }
+(Q_1,\ldots,Q_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{QuantifierOrder}(\Phi,(Q_1,\ldots,Q_n))\) records the order of
+the quantifiers in the prefix of \(\Phi\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Quantifier order controls dependency. In \(\forall x\,\exists y\), the witness
+\(y\) may depend on \(x\). In \(\exists y\,\forall x\), the same \(y\) must work
+for all \(x\).
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:quantifier-prefix]{Quantifier Prefix}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Universal Implies Existential)}
+\begin{theorem}[Universal Implies Existential]
+\label{thm:universal-implies-existential}
+Over nonempty domains,
+\[
+\forall x\,\varphi(x)\models \exists x\,\varphi(x).
+\]
+\hyperref[prf:universal-implies-existential]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \mathcal M\;
+\bigl(\mathcal M\models\forall x\,\varphi(x)
+\Rightarrow
+\mathcal M\models\exists x\,\varphi(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{LogicalConsequence}(\{\forall x\,\varphi(x)\},\exists x\,\varphi(x))\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+If every domain element satisfies \(\varphi\), then at least one does because
+first-order structures have nonempty domains.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:structure]{Structure}
+  \item \hyperref[def:log-consequence]{Logical Consequence}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Existential Does Not Imply Universal)}
+\begin{theorem}[Existential Does Not Imply Universal]
+\label{thm:existential-not-universal}
+In general,
+\[
+\exists x\,\varphi(x)\not\models \forall x\,\varphi(x).
+\]
+\hyperref[prf:existential-not-universal]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\exists \mathcal M\;
+\bigl(\mathcal M\models\exists x\,\varphi(x)
+\land
+\mathcal M\not\models\forall x\,\varphi(x)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\neg\operatorname{LogicalConsequence}(\{\exists x\,\varphi(x)\},\forall x\,\varphi(x))\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+One witness does not make a universal claim true.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+In the real numbers, \(\exists x\,(x=0)\) is true, but
+\(\forall x\,(x=0)\) is false.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:universal-implies-existential]{Universal Implies Existential}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Uniform Witness Implies Dependent Witness)}
+\begin{theorem}[Uniform Witness Implies Dependent Witness]
+\label{thm:uniform-witness-implies-dependent-witness}
+For every formula \(\varphi(x,y)\),
+\[
+\exists y\,\forall x\,\varphi(x,y)
+\models
+\forall x\,\exists y\,\varphi(x,y).
+\]
+\hyperref[prf:uniform-witness-implies-dependent-witness]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \mathcal M\;
+\bigl(
+\mathcal M\models\exists y\,\forall x\,\varphi(x,y)
+\Rightarrow
+\mathcal M\models\forall x\,\exists y\,\varphi(x,y)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{LogicalConsequence}(\{\exists y\,\forall x\,\varphi(x,y)\},
+\forall x\,\exists y\,\varphi(x,y))\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A single witness \(y\) that works for every \(x\) can be reused as the
+witness required for each separate \(x\).
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:q-alt]{Quantifier Order}
+  \item \hyperref[def:log-consequence]{Logical Consequence}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Dependent Witness Need Not Be Uniform)}
+\begin{theorem}[Dependent Witness Need Not Be Uniform]
+\label{thm:dependent-witness-not-uniform}
+In general,
+\[
+\forall x\,\exists y\,\varphi(x,y)
+\not\models
+\exists y\,\forall x\,\varphi(x,y).
+\]
+\hyperref[prf:dependent-witness-not-uniform]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\exists \mathcal M\;
+\bigl(
+\mathcal M\models\forall x\,\exists y\,\varphi(x,y)
+\land
+\mathcal M\not\models\exists y\,\forall x\,\varphi(x,y)
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\neg\operatorname{LogicalConsequence}(\{\forall x\,\exists y\,\varphi(x,y)\},
+\exists y\,\forall x\,\varphi(x,y))\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The dependent-witness statement allows \(y\) to vary with \(x\). The uniform
+statement requires one \(y\) to handle all \(x\) at once.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+Over \(\mathbb R\), let \(\varphi(x,y)\) be \(y>x\). Then
+\(\forall x\,\exists y\,(y>x)\) is true, since \(y=x+1\) works for each \(x\).
+But \(\exists y\,\forall x\,(y>x)\) is false, since no real number is larger
+than every real number.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+Quantifier order matters because it records dependency. The phrase "for every
+\(x\), there exists \(y\)" permits a different \(y\) after \(x\) is known. The
+phrase "there exists \(y\) such that for every \(x\)" chooses \(y\) before
+seeing \(x\). This is a genuine expressive jump beyond propositional logic.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:uniform-witness-implies-dependent-witness]{Uniform Witness Implies Dependent Witness}
+\end{itemize}
+\end{dependencies}

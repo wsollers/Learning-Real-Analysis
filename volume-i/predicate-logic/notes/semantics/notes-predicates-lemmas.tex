@@ -1,101 +1,244 @@
 % =========================================================
-% Predicates, Relations, and Substitution Lemmas
+% Open Formulas, Definable Relations, and Substitution Lemmas
 % =========================================================
 
-\section{Semantics: Predicates, Relations, and Substitution Lemmas}
+\section{Semantics: Open Formulas, Definable Relations, and Substitution Lemmas}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Predicates and Substitution Lemmas — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Predicate & Open formula or truth-valued function on domain & \hyperref[def:predicate]{↓ Def} \\
-Substitution Lemma (terms) & Assign vs.\ substitute, same result & \hyperref[lem:subst-terms]{↓ Lem} \\
-Substitution Lemma (formulas) & Syntactic substitution $=$ semantic update & \hyperref[lem:subst-formulas]{↓ Lem} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
+\begin{remark*}[Section toolkit: Predicate vocabulary]
+This section separates three uses that are often blurred. A predicate symbol
+is object-language syntax from the signature. An open formula is a formula
+with free variables. A definable relation is the set-theoretic relation in a
+structure determined by an open formula.
+\end{remark*}
 
-\vspace{1em}
-
-% ---------------------------------------------------------
-% Predicate
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Predicate)}},
-  fonttitle=\small\bfseries]
+% The legacy label def:predicate is preserved on the closest equivalent item:
+% the syntactic open-formula notion previously called a predicate.
+\begin{definitionbox}{Definition (Open Formula)}
+\begin{definition}[Open Formula]
 \label{def:predicate}
-A \emph{predicate} is an expression containing one or more variables that
-represents a property or relation and becomes a proposition when all its
-variables are instantiated.
+An \emph{open formula} is a well-formed formula with at least one free
+variable. When the free variables are among \(x_1,\ldots,x_n\), it may be
+displayed as \(\varphi(x_1,\ldots,x_n)\).
+\end{definition}
+\end{definitionbox}
 
-Formally, a predicate has two equivalent views:
-\begin{enumerate}
-  \item \textbf{Syntactic view.} A predicate is an open formula
-  $\varphi(x_1,\dots,x_n)$ that has no truth value until specific objects are
-  substituted for its variables.
-  \item \textbf{Semantic view.} Given a domain $D$, an $n$-ary predicate
-  determines a function $P : D^n \to \{\mathsf{T}, \mathsf{F}\}$.
-\end{enumerate}
-\end{tcolorbox}
-
-\begin{remark}[Predicates vs.\ relations]
-A \emph{predicate} is a syntactic or semantic device: syntactically, an open
-formula; semantically, a truth-valued function. A \emph{relation} is a purely
-set-theoretic object: an $n$-ary relation on $D$ is a subset $R \subseteq D^n$.
-Under an interpretation, predicates and relations correspond via
-$P(a_1,\dots,a_n) \text{ is true} \iff (a_1,\dots,a_n) \in R$. Thus predicates
-belong to the language of logic, while relations belong to the structures
-interpreting that language.
-\end{remark}
-
-% ---------------------------------------------------------
-% Substitution Lemmas
-% ---------------------------------------------------------
-
-\begin{lemma}[Substitution Lemma for Terms]\label{lem:subst-terms}
-Let $\mathcal{M}$ be a structure, $s$ a variable assignment, $x$ a variable,
-and $d \in D$. For any term $t$,
+\begin{remark*}[Standard quantified statement]
 \[
-\llbracket t \rrbracket_{\mathcal{M},\,s[x\mapsto d]}
+\varphi \text{ is open}
+\Longleftrightarrow
+\varphi\in\mathsf{Form}_{\mathcal L}
+\text{ and }
+\mathsf{FV}(\varphi)\neq\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{OpenFormula}(\varphi)\) means that \(\varphi\) is a
+well-formed formula with at least one free variable.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\varphi\notin\mathsf{Form}_{\mathcal L}
+\quad\text{or}\quad
+\mathsf{FV}(\varphi)=\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{OpenFormula}(\varphi)\) means that \(\varphi\) is either
+not well formed or is a sentence.
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+An expression fails to be an open formula when it is not a well-formed formula
+or when all of its variables are bound.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\varphi\notin\mathsf{Form}_{\mathcal L}}_{\text{not well formed}}
+\quad\lor\quad
+\underbrace{\mathsf{FV}(\varphi)=\varnothing}_{\text{sentence, not open}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Open formulas are syntactic predicates in the lightest Volume I sense. They do
+not by themselves name a set-theoretic relation until a structure is fixed.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(P(x)\), \(x<y\), and \(\exists z\,R(x,z)\) are open formulas when the
+displayed variables remain free as indicated.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(\forall x\,P(x)\) is a sentence, not an open formula. A predicate symbol
+\(P\) alone is a symbol, not a formula.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:predicate-symbol]{Predicate Symbol}
+  \item \hyperref[def:wff-pred]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Definable Relation)}
+\begin{definition}[Definable Relation]
+\label{def:definable-relation}
+Let \(\mathcal M=\langle D,I\rangle\) be a structure and let
+\(\varphi(x_1,\ldots,x_n)\) be an open formula. The \emph{relation defined by}
+\(\varphi\) in \(\mathcal M\) is the set
+\[
+R_{\varphi}^{\mathcal M}
 =
-\llbracket t[d/x] \rrbracket_{\mathcal{M},\,s}.
+\{(a_1,\ldots,a_n)\in D^n:
+\mathcal M,s[x_1\mapsto a_1,\ldots,x_n\mapsto a_n]\models\varphi\}.
 \]
-\end{lemma}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[English reading]
-Evaluating a term after modifying an assignment is the same as substituting
-the value directly into the term and then evaluating. This shows that syntactic
-substitution and semantic update commute for terms.
-\end{remark}
-
-\begin{lemma}[Substitution Lemma for Formulas]\label{lem:subst-formulas}
-Let $\varphi$ be a formula, $t$ a term free for $x$ in $\varphi$. Then for
-any structure $\mathcal{M}$ and assignment $s$,
+\begin{remark*}[Standard quantified statement]
 \[
-\mathcal{M},s \models \varphi[t/x]
-\quad\Longleftrightarrow\quad
-\mathcal{M},\,s\bigl[x\mapsto \llbracket t \rrbracket_{\mathcal{M},s}\bigr] \models \varphi.
+(a_1,\ldots,a_n)\in R_{\varphi}^{\mathcal M}
+\Longleftrightarrow
+\mathcal M,s[x_1\mapsto a_1,\ldots,x_n\mapsto a_n]\models\varphi.
 \]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{DefinableRelation}(R,\varphi,M)\) means that \(R\) is the
+relation on the domain of \(M\) determined by \(\varphi\) in \(M\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+R\neq R_{\varphi}^{\mathcal M}.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{DefinableRelation}(R,\varphi,M)\) means that \(R\) is not
+the relation determined by \(\varphi\) in \(M\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed definable relation fails when at least one tuple is included or
+excluded differently from the satisfaction condition imposed by the formula.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{(a_1,\ldots,a_n)\in R \land
+\mathcal M,s[\vec x\mapsto\vec a]\not\models\varphi}_{\text{extra tuple}}
+\quad\lor\quad
+\underbrace{(a_1,\ldots,a_n)\notin R \land
+\mathcal M,s[\vec x\mapsto\vec a]\models\varphi}_{\text{missing tuple}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A relation is a set-theoretic subset of \(D^n\). A definable relation is one
+obtained from a formula after a structure supplies semantic meaning.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:predicate]{Open Formula}
+  \item \hyperref[def:structure]{Structure}
+  \item \hyperref[def:fol-satisfaction]{Satisfaction}
+\end{itemize}
+\end{dependencies}
+
+\begin{lemmabox}{Lemma (Substitution Lemma for Terms)}
+\begin{lemma}[Substitution Lemma for Terms]
+\label{lem:subst-terms}
+Let \(\mathcal M\) be a structure, let \(s\) be a variable assignment, let
+\(x\) be a variable, and let \(t\) and \(u\) be terms. Then
+\[
+\llbracket t[u/x]\rrbracket_{\mathcal M,s}
+=
+\llbracket t\rrbracket_{\mathcal M,\,
+s[x\mapsto\llbracket u\rrbracket_{\mathcal M,s}]}.
+\]
+\hyperref[prf:subst-terms]{Go to proof.}
 \end{lemma}
+\end{lemmabox}
 
-\begin{remark}[English reading]
-Satisfying $\varphi$ with $x$ replaced by $t$ is the same as satisfying
-$\varphi$ under the assignment that sends $x$ to the value of $t$. This lemma
-formally connects syntactic substitution with semantic evaluation and is
-essential for proving the soundness of Universal Instantiation.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall t\,\forall u\quad
+\llbracket t[u/x]\rrbracket_{\mathcal M,s}
+=
+\llbracket t\rrbracket_{\mathcal M,\,
+s[x\mapsto\llbracket u\rrbracket_{\mathcal M,s}]}.
+\]
+\end{remark*}
 
-\begin{remark}[Proof strategy]
-Both lemmas are proved by structural induction on the term (Lemma for terms)
-or formula (Lemma for formulas). The key cases are variables and quantifiers;
-the remaining cases follow directly from the inductive hypothesis.
-\end{remark}
+\begin{remark*}[Predicate reading]
+Term substitution commutes with semantic term evaluation in a fixed structure
+and assignment.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The lemma says that syntactically substituting a term before evaluation gives
+the same domain element as first evaluating the substituting term and then
+updating the assignment.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:subst-notation]{Substitution Notation}
+  \item \hyperref[def:free-for]{Free for Substitution}
+  \item \hyperref[def:term-interp]{Term Evaluation}
+\end{itemize}
+\end{dependencies}
+
+\begin{lemmabox}{Lemma (Substitution Lemma for Formulas)}
+\begin{lemma}[Substitution Lemma for Formulas]
+\label{lem:subst-formulas}
+Let \(\varphi\) be a formula and let \(u\) be a term free for \(x\) in
+\(\varphi\). For every structure \(\mathcal M\) and assignment \(s\),
+\[
+\mathcal M,s\models\varphi[u/x]
+\Longleftrightarrow
+\mathcal M,s[x\mapsto\llbracket u\rrbracket_{\mathcal M,s}]\models\varphi.
+\]
+\hyperref[prf:subst-formulas]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varphi\,\forall u\quad
+u \text{ free for } x \text{ in } \varphi
+\Rightarrow
+\bigl(
+\mathcal M,s\models\varphi[u/x]
+\Longleftrightarrow
+\mathcal M,s[x\mapsto\llbracket u\rrbracket_{\mathcal M,s}]\models\varphi
+\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+Formula substitution commutes with satisfaction when the substituted term is
+free for the variable being replaced.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This lemma connects the syntactic substitution operation from the syntax
+section with the semantic modified-assignment operation from the semantics
+section. The free-for condition prevents variable capture.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:subst-notation]{Substitution Notation}
+  \item \hyperref[def:free-for]{Free for Substitution}
+  \item \hyperref[def:fol-satisfaction]{Satisfaction}
+  \item \hyperref[lem:subst-terms]{Substitution Lemma for Terms}
+\end{itemize}
+\end{dependencies}

@@ -2,104 +2,234 @@
 % Prenex Normal Form
 % =========================================================
 
-\section{Quantifiers: Prenex Normal Form}
+\subsection*{Prenex Normal Form}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Prenex Normal Form — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Prenex normal form (PNF) & All quantifiers at front, quantifier-free matrix & \hyperref[def:pnf]{↓ Def} \\
-PNF Theorem & Every formula is equivalent to a PNF formula & \hyperref[thm:pnf]{↓ Thm} \\
-Quantifier-pulling rules & Equivalences for extracting quantifiers & \hyperref[def:pnf]{↓ Def} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
+\begin{remark*}[Section toolkit: Prenex normalization]
+Prenex normal form is the predicate-logic analogue of the normal-form
+procedures from propositional logic. It is a syntactic normalization procedure,
+not a semantic change: each step preserves logical equivalence.
+\end{remark*}
 
-\vspace{1em}
-
-% ---------------------------------------------------------
-% Prenex Normal Form
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Prenex Normal Form)}},
-  fonttitle=\small\bfseries]
-\label{def:pnf}
-A first-order formula is in \emph{prenex normal form} (PNF) if it has the shape
+\begin{definitionbox}{Definition (Quantifier Prefix)}
+\begin{definition}[Quantifier Prefix]
+\label{def:quantifier-prefix}
+A \emph{quantifier prefix} is a finite string
 \[
-Q_1 x_1\, Q_2 x_2 \cdots Q_n x_n \;\; \psi,
+Q_1x_1\,Q_2x_2\cdots Q_nx_n,
 \]
-where each $Q_i \in \{\forall,\exists\}$ and $\psi$ is quantifier-free. The
-string $Q_1 x_1 \cdots Q_n x_n$ is the \emph{quantifier prefix}; $\psi$ is
-the \emph{matrix}.
-\end{tcolorbox}
+where each \(Q_i\in\{\forall,\exists\}\) and each \(x_i\) is a variable.
+\end{definition}
+\end{definitionbox}
 
-% ---------------------------------------------------------
-% PNF Theorem
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Prenex Normal Form Theorem)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Standard quantified statement]
+\[
+\Pi=Q_1x_1\cdots Q_nx_n
+\Longleftrightarrow
+\forall i\leq n\;(Q_i\in\{\forall,\exists\}\text{ and }x_i\in\mathsf{Var}_{\mathcal L}).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{QuantifierPrefix}(\Pi)\) means that \(\Pi\) is a finite string
+of quantifier-variable pairs.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A prefix records all quantifier choices before the quantifier-free part of a
+prenex formula is read.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:existential-q]{Existential Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Matrix)}
+\begin{definition}[Matrix]
+\label{def:matrix-prenex}
+In a formula \(Q_1x_1\cdots Q_nx_n\,\psi\), the \emph{matrix} is the trailing
+formula \(\psi\). For prenex normal form, the matrix is required to be
+quantifier-free.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+Q_1x_1\cdots Q_nx_n\,\psi \text{ has matrix } \psi,
+\qquad
+\psi \text{ quantifier-free in prenex normal form.}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{Matrix}(\psi,\Phi)\) means that \(\psi\) is the matrix of the
+formula \(\Phi\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The matrix is the part of a prenex formula where the propositional connectives
+and atomic formulas remain after all quantifiers have been pulled forward.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:wff-pred]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Prenex Formula)}
+\begin{definition}[Prenex Formula]
+\label{def:prenex-formula}
+A \emph{prenex formula} is a formula of the form
+\[
+Q_1x_1\,Q_2x_2\cdots Q_nx_n\,\psi,
+\]
+where \(Q_1x_1\cdots Q_nx_n\) is a quantifier prefix and \(\psi\) is
+quantifier-free.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\Phi \text{ is prenex}
+\Longleftrightarrow
+\Phi=Q_1x_1\cdots Q_nx_n\,\psi
+\text{ with } \psi \text{ quantifier-free.}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{PrenexFormula}(\Phi)\) means that all quantifiers of \(\Phi\)
+occur in an initial prefix.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\Phi \text{ is not of the form } Q_1x_1\cdots Q_nx_n\,\psi
+\text{ with } \psi \text{ quantifier-free.}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Prenex formulas isolate quantifier order from the quantifier-free matrix.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(\forall x\,\exists y\,(P(x)\to R(x,y))\) is prenex.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(\forall x\,(P(x)\to\exists y\,R(x,y))\) is not prenex because a quantifier
+remains inside the matrix.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:quantifier-prefix]{Quantifier Prefix}
+  \item \hyperref[def:matrix-prenex]{Matrix}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Prenex Normal Form)}
+\begin{definition}[Prenex Normal Form]
+\label{def:pnf}
+A formula \(\psi\) is a \emph{prenex normal form} of a formula \(\varphi\)
+exactly when \(\psi\) is prenex and \(\varphi\equiv\psi\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\psi \text{ is a prenex normal form of } \varphi
+\Longleftrightarrow
+\psi \text{ is prenex}
+\text{ and }
+\varphi\equiv\psi.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{PrenexNormalForm}(\psi,\varphi)\) means that \(\psi\) is a
+prenex formula logically equivalent to \(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Prenex normal form changes the placement of quantifiers but not the meaning of
+the formula.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+Prenex normal form is not unique. Different choices of bound-variable names and
+different orders of valid pulling steps can produce different but logically
+equivalent prenex formulas.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+A prenex conversion proceeds in stages: eliminate implications and
+biconditionals, push negations inward, rename bound variables as needed, pull
+quantifiers forward, and leave a quantifier-free matrix.
+\end{remark*}
+
+\begin{remark*}[Examples]
+Starting with
+\[
+\neg\bigl(\forall x\,P(x)\to\exists y\,Q(y)\bigr),
+\]
+eliminate the implication, push the negation inward, and pull the quantifiers
+forward to obtain
+\[
+\forall x\,\forall y\,(P(x)\land\neg Q(y)).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:prenex-formula]{Prenex Formula}
+  \item \hyperref[def:log-equiv]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Existence of Prenex Normal Form)}
+\begin{theorem}[Existence of Prenex Normal Form]
 \label{thm:pnf}
-Every first-order formula is logically equivalent to a formula in prenex normal
-form.
-\end{tcolorbox}
+Every first-order formula is logically equivalent to some formula in prenex
+normal form.
+\hyperref[prf:pnf]{Go to proof.}
+\end{theorem}
+\end{theorembox}
 
-\begin{remark}[Proof strategy — conversion procedure]
-Given a formula $\varphi$, the following four steps produce an equivalent PNF:
-\begin{enumerate}
-  \item \textbf{Eliminate $\leftrightarrow$ and $\rightarrow$.}
-  Rewrite using only $\neg,\wedge,\vee$:
-  $(A \rightarrow B) \equiv (\neg A \vee B)$.
-  \item \textbf{Push negations inward (Negation Normal Form).}
-  Use De Morgan's laws and quantifier-negation laws until $\neg$ applies only
-  to atomic formulas.
-  \item \textbf{Standardize bound variables apart.}
-  Rename bound variables so that no variable is quantified twice and no bound
-  variable coincides with any free variable.
-  \item \textbf{Pull quantifiers outward.}
-  Apply the quantifier-pulling equivalences (below) to move all quantifiers
-  to the front.
-\end{enumerate}
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall \varphi\in\mathsf{Form}_{\mathcal L}\;
+\exists \psi\in\mathsf{Form}_{\mathcal L}\;
+(\psi \text{ is prenex}\land \varphi\equiv\psi).
+\]
+\end{remark*}
 
-\begin{remark}[Quantifier-pulling equivalences]
-The following hold when $x \notin \mathrm{FV}(\psi)$:
-\begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{ll}
-\toprule
-\textbf{Equivalence} & \textbf{Side condition} \\
-\midrule
-$(\forall x\,\phi)\wedge \psi \equiv \forall x\,(\phi\wedge \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
-$(\exists x\,\phi)\vee \psi \equiv \exists x\,(\phi\vee \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
-$(\forall x\,\phi)\vee \psi \equiv \forall x\,(\phi\vee \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
-$(\exists x\,\phi)\wedge \psi \equiv \exists x\,(\phi\wedge \psi)$ & $x \notin \mathrm{FV}(\psi)$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{remark}
+\begin{remark*}[Predicate reading]
+\(\forall\varphi\,
+\exists\psi\,\operatorname{PrenexNormalForm}(\psi,\varphi)\).
+\end{remark*}
 
-\begin{example}[PNF conversion]
-Normalize $\varphi := \neg\bigl(\forall x\,P(x) \rightarrow \exists y\,Q(y)\bigr)$.
+\begin{remark*}[Interpretation]
+Every formula can be converted into an equivalent one with all quantifiers at
+the front and a quantifier-free matrix at the end.
+\end{remark*}
 
-\textbf{Step 1 (eliminate $\rightarrow$):}
-$\varphi \equiv \neg\bigl(\neg\forall x\,P(x) \vee \exists y\,Q(y)\bigr)$.
+\begin{remark*}[Exposition]
+The proof proceeds by structural rewriting: remove implication and
+biconditional connectives, push negations inward, rename bound variables to
+avoid capture, and then pull quantifiers forward using equivalences whose side
+conditions have been made true by renaming.
+\end{remark*}
 
-\textbf{Step 2 (push $\neg$ inward):}
-$\varphi \equiv (\forall x\,P(x)) \wedge (\forall y\,\neg Q(y))$.
-
-\textbf{Step 3 (standardize apart):} Variables are already distinct.
-
-\textbf{Step 4 (pull quantifiers outward):}
-$\varphi \equiv \forall x\,\forall y\,(P(x) \wedge \neg Q(y))$.
-\end{example}
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:pnf]{Prenex Normal Form}
+  \item \hyperref[thm:qneg]{Quantifier Negation Laws}
+  \item \hyperref[thm:rename]{Renaming Bound Variables}
+  \item \hyperref[thm:qdist]{Valid Quantifier Distribution}
+\end{itemize}
+\end{dependencies}

@@ -1,0 +1,154 @@
+\subsubsection*{Connective Bases}
+
+% BEGIN GENERATED ARTIFACT: def:connective-basis-propositional-logic
+\begin{definitionbox}{Definition (Connective Basis)}
+\begin{definition}[Connective Basis]
+\label{def:connective-basis-propositional-logic}
+A \emph{connective basis} is a specified set \(B\) of propositional connectives
+allowed as primitive connectives for building formulas.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+B\text{ is a connective basis}
+\Longleftrightarrow
+B\subseteq\{\neg,\land,\lor,\to,\leftrightarrow,\ldots\}
+\]
+and formulas over \(B\) are built using only connectives from \(B\).
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ConnectiveBasis}(B)\) means that \(B\) is the chosen primitive
+connective vocabulary for a propositional language or fragment.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A connective basis controls which connectives are primitive, not which truth
+functions are expressible. Different bases may have the same expressive power.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-connective]{Logical Connective}
+  \item \hyperref[def:propositional-language]{Propositional Language}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:connective-basis-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:definable-connective-propositional-logic
+\begin{definitionbox}{Definition (Definable Connective)}
+\begin{definition}[Definable Connective]
+\label{def:definable-connective-propositional-logic}
+Let \(B\) be a connective basis. A connective \(\circ\) is \emph{definable from}
+\(B\) if there is a formula built using only connectives from \(B\) whose truth
+function agrees with the truth function of \(\circ\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\circ\text{ is definable from }B
+\Longleftrightarrow
+\exists\theta\in\WFF_B\;\bigl(f_{\theta}=f_{\circ}\bigr),
+\]
+where \(\WFF_B\) denotes the formulas built using only connectives from \(B\).
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{DefinableFrom}(\circ,B)\) means that \(\circ\) can be treated as
+an abbreviation for a formula pattern using only connectives from \(B\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Definability separates notation from expressive power. A connective can be
+omitted from the primitive syntax without losing its use, provided it is
+recoverable as a defined connective.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:connective-basis-propositional-logic]{Connective Basis}
+  \item \hyperref[def:truth-function-induced-by-formula]{Truth Function Induced by a Formula}
+  \item \hyperref[def:boolean-function-propositional-logic]{Boolean Function}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:definable-connective-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:functionally-complete-connective-set-propositional-logic
+\begin{definitionbox}{Definition (Functionally Complete Connective Set)}
+\begin{definition}[Functionally Complete Connective Set]
+\label{def:functionally-complete-connective-set-propositional-logic}
+A connective basis \(B\) is \emph{functionally complete} if every Boolean
+function \(f:\mathbb{B}^n\to\mathbb{B}\), for every \(n\ge 1\), is represented
+by some formula using only connectives from \(B\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{FunctionallyComplete}(B)
+\Longleftrightarrow
+(\forall n\ge 1)(\forall f:\mathbb{B}^n\to\mathbb{B})(\exists\varphi\in\WFF_B)
+\operatorname{Represents}(\varphi,f;P_1,\ldots,P_n).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{FunctionallyComplete}(B)\) means that formulas over \(B\) can
+represent every finite Boolean input-output table.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Functional completeness is the central expressive-power property for connective
+sets. It says that the basis can express all possible truth-functional behavior,
+not merely the connectives originally listed in the language.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:connective-basis-propositional-logic]{Connective Basis}
+  \item \hyperref[def:boolean-function-representation-propositional-logic]{Representation of a Boolean Function}
+  \item \hyperref[def:boolean-function-propositional-logic]{Boolean Function}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:functionally-complete-connective-set-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:expressively-equivalent-connective-sets-propositional-logic
+\begin{definitionbox}{Definition (Expressively Equivalent Connective Sets)}
+\begin{definition}[Expressively Equivalent Connective Sets]
+\label{def:expressively-equivalent-connective-sets-propositional-logic}
+Two connective bases \(B\) and \(C\) are \emph{expressively equivalent} if every
+connective in \(B\) is definable from \(C\), and every connective in \(C\) is
+definable from \(B\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+B\equiv_{\mathrm{expr}} C
+\Longleftrightarrow
+\bigl((\forall\circ\in B)\operatorname{DefinableFrom}(\circ,C)\bigr)
+\land
+\bigl((\forall\star\in C)\operatorname{DefinableFrom}(\star,B)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(B\equiv_{\mathrm{expr}} C\) means that the two bases can define exactly the
+same connective behavior.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Expressive equivalence lets a proof replace one primitive vocabulary with
+another. This is why a language can be simplified syntactically without changing
+which truth functions can be expressed.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:connective-basis-propositional-logic]{Connective Basis}
+  \item \hyperref[def:definable-connective-propositional-logic]{Definable Connective}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:expressively-equivalent-connective-sets-propositional-logic

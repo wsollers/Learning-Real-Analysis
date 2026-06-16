@@ -1,0 +1,172 @@
+% BEGIN GENERATED ARTIFACT: def:elementary-disjunction-propositional-logic
+\begin{definitionbox}{Definition (Elementary Disjunction)}
+\begin{definition}[Elementary Disjunction]
+\label{def:elementary-disjunction-propositional-logic}
+An \emph{elementary disjunction} is a finite disjunction of
+\hyperref[def:literal-propositional-logic]{literals}. That is, it is a
+\hyperref[def:clause-propositional-logic]{clause} of the form
+\[
+L_1\lor L_2\lor\cdots\lor L_k,
+\]
+where each \(L_i\) is a literal. The one-literal case is permitted.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+L_1\lor L_2\lor\cdots\lor L_k,
+\qquad
+L_i\text{ is a literal for each }i.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Elementary disjunctions are the clause-level building blocks used in
+conjunctive normal form. They record finite literal alternatives.
+\end{remark*}
+
+\begin{example*}[Examples]
+\[
+P,\qquad P\lor\neg Q,\qquad \neg P\lor R\lor S
+\]
+are elementary disjunctions.
+\end{example*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:clause-propositional-logic]{Clause}
+  \item \hyperref[def:literal-propositional-logic]{Literal}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:elementary-disjunction-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:maxterm-propositional-logic
+\begin{definitionbox}{Definition (Maxterm)}
+\begin{definition}[Maxterm]
+\label{def:maxterm-propositional-logic}
+Let \(P_1,\ldots,P_n\) be a finite list of propositional variables. A
+\emph{maxterm} relative to \(P_1,\ldots,P_n\) is an
+\hyperref[def:elementary-disjunction-propositional-logic]{elementary disjunction}
+that contains exactly one of \(P_i\) or \(\neg P_i\) for each
+\(i=1,\ldots,n\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+M=L_1\lor\cdots\lor L_n,
+\]
+where for each \(i\), exactly one of \(P_i\) or \(\neg P_i\) appears among the
+literals \(L_1,\ldots,L_n\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A maxterm relative to \(P_1,\ldots,P_n\) specifies one literal-level
+alternative for every variable in the list. It is false under exactly the
+assignment that makes each listed literal false.
+\end{remark*}
+
+\begin{example*}[Examples]
+Relative to \(P,Q,R\), the formula
+\[
+P\lor\neg Q\lor R
+\]
+is a maxterm. Relative to \(P,Q,R\), the formula \(P\lor R\) is not a maxterm
+because it omits both \(Q\) and \(\neg Q\).
+\end{example*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:elementary-disjunction-propositional-logic]{Elementary Disjunction}
+  \item \hyperref[def:formula-variable-set-propositional-logic]{Variable Set of a Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:maxterm-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:conjunctive-normal-form-propositional-logic
+\begin{definitionbox}{Definition (Conjunctive Normal Form)}
+\begin{definition}[Conjunctive Normal Form]
+\label{def:conjunctive-normal-form-propositional-logic}
+A formula is in \emph{conjunctive normal form}, abbreviated \emph{CNF}, when it
+is a finite conjunction of
+\hyperref[def:clause-propositional-logic]{clauses}. Equivalently, it has the
+shape
+\[
+C_1\land C_2\land\cdots\land C_m,
+\]
+where each \(C_j\) is a clause.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\varphi\text{ is in CNF}
+\Longleftrightarrow
+\varphi=C_1\land C_2\land\cdots\land C_m
+\]
+for finitely many clauses \(C_1,\ldots,C_m\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+CNF is a syntactic form used to expose clause-by-clause constraints. Replacing
+a formula by a
+\hyperref[def:logical-equivalence-propositional-logic]{logically equivalent}
+CNF formula turns global validity and
+\hyperref[def:contradiction-propositional-logic]{contradiction} questions into
+questions about the interaction of its clauses.
+\end{remark*}
+
+\begin{example*}[Examples]
+\[
+(P\lor Q)\land(\neg P\lor R)\land S
+\]
+is in CNF because each conjunct is a clause.
+\end{example*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:clause-propositional-logic]{Clause}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[def:contradiction-propositional-logic]{Contradiction}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:conjunctive-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:existence-conjunctive-normal-form-propositional-logic
+\begin{theorembox}{Theorem (Existence of Conjunctive Normal Form)}
+\begin{theorem}[Existence of Conjunctive Normal Form]
+\label{thm:existence-conjunctive-normal-form-propositional-logic}
+For every formula \(\varphi\in\WFF\), there exists a formula
+\(\psi\in\WFF\) such that \(\psi\) is in
+\hyperref[def:conjunctive-normal-form-propositional-logic]{conjunctive normal form}
+and
+\[
+\varphi\equiv\psi.
+\]
+\noindent\hyperref[prf:existence-conjunctive-normal-form-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)(\exists\psi\in\WFF)
+\bigl(\psi\text{ is in CNF}\land \varphi\equiv\psi\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+One first converts \(\varphi\) to negation normal form, then repeatedly applies
+distributive laws to move disjunctions below conjunctions. Replacement of
+logical equivalents preserves equivalence through every local rewrite.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:conjunctive-normal-form-propositional-logic]{Conjunctive Normal Form}
+  \item \hyperref[def:negation-normal-form-propositional-logic]{Negation Normal Form}
+  \item \hyperref[thm:distributive-laws-propositional-logic]{Distributive Laws for Propositional Logic}
+  \item \hyperref[thm:replacement-of-logical-equivalents-propositional-logic]{Replacement of Logical Equivalents}
+  \item \hyperref[thm:existence-negation-normal-form-propositional-logic]{Existence of Negation Normal Form}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:existence-conjunctive-normal-form-propositional-logic

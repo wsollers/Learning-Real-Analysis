@@ -1,0 +1,158 @@
+% BEGIN GENERATED ARTIFACT: def:negation-normal-form-propositional-logic
+\begin{definitionbox}{Definition (Negation Normal Form)}
+\begin{definition}[Negation Normal Form]
+\label{def:negation-normal-form-propositional-logic}
+A formula is in \emph{negation normal form} if it uses only propositional
+variables, negated propositional variables, conjunction, and disjunction, and
+every negation occurs immediately before a propositional variable.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+For a formula \(\varphi\in\WFF\),
+\[
+\varphi\text{ is in negation normal form}
+\Longleftrightarrow
+\varphi\text{ is built from literals using only }\land\text{ and }\lor.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{NegationNormalForm}(\varphi)
+\]
+means that \(\varphi\) has no conditionals, no biconditionals, and no negation
+outside the literal level.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Negation normal form is the first cleanup stage for propositional formulas.
+It does not force a formula to be a disjunction of terms or a conjunction of
+clauses; it only restricts the available connectives and pushes negation down
+to propositional variables.
+\end{remark*}
+
+\begin{remark*}[Examples]
+The formulas \(P\), \(\neg P\), \(P\land(\neg Q\lor R)\), and
+\((P\lor Q)\land(\neg R\lor S)\) are in negation normal form.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+The formulas \(P\to Q\), \(P\leftrightarrow Q\), and \(\neg(P\land Q)\) are not
+in negation normal form. The first two use connectives not allowed in negation
+normal form, and the last has a negation applied to a compound formula.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:literal-propositional-logic]{Literal}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:negation-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:nnf-conversion-procedure-propositional-logic
+\begin{definitionbox}{Definition (NNF Conversion Procedure)}
+\begin{definition}[NNF Conversion Procedure]
+\label{def:nnf-conversion-procedure-propositional-logic}
+The \emph{NNF conversion procedure} converts a propositional formula to an
+equivalent formula in negation normal form by the following steps:
+\begin{enumerate}
+\item eliminate biconditionals using biconditional equivalence laws;
+\item eliminate conditionals using conditional equivalence laws;
+\item eliminate double negations;
+\item push negations inward using De Morgan laws.
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+Starting with \(\varphi\in\WFF\), repeatedly apply the equivalences
+\[
+\alpha\leftrightarrow\beta
+\equiv
+(\alpha\to\beta)\land(\beta\to\alpha),
+\qquad
+\alpha\to\beta\equiv\neg\alpha\lor\beta,
+\]
+\[
+\neg\neg\alpha\equiv\alpha,
+\qquad
+\neg(\alpha\land\beta)\equiv\neg\alpha\lor\neg\beta,
+\qquad
+\neg(\alpha\lor\beta)\equiv\neg\alpha\land\neg\beta,
+\]
+until negations occur only immediately before propositional variables and only
+\(\land\) and \(\lor\) remain above the literal level.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{NNFConversionProcedure}(\varphi,\psi)
+\]
+means that \(\psi\) is obtained from \(\varphi\) by eliminating
+biconditionals and conditionals, removing double negations, and pushing
+remaining negations inward.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The procedure is a syntax-directed rewrite process. Each rewrite step is backed
+by a logical equivalence law, so the output formula has the same truth
+conditions as the input formula.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:conditional-equivalence-laws-propositional-logic]{Conditional Equivalence Laws}
+  \item \hyperref[thm:biconditional-equivalence-laws-propositional-logic]{Biconditional Equivalence Laws}
+  \item \hyperref[thm:de-morgan-laws-propositional-logic]{De Morgan Laws for Propositional Logic}
+  \item \hyperref[thm:basic-boolean-equivalence-laws-propositional-logic]{Basic Boolean Equivalence Laws}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:nnf-conversion-procedure-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:existence-negation-normal-form-propositional-logic
+\begin{theorembox}{Theorem (Existence of Negation Normal Form)}
+\begin{theorem}[Existence of Negation Normal Form]
+\label{thm:existence-negation-normal-form-propositional-logic}
+For every formula \(\varphi\in\WFF\), there exists a formula \(\psi\in\WFF\)
+such that \(\psi\) is in negation normal form and
+\[
+\varphi\equiv\psi.
+\]
+
+\noindent\hyperref[prf:existence-negation-normal-form-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)(\exists\psi\in\WFF)
+\bigl(\psi\text{ is in negation normal form}\land \varphi\equiv\psi\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\operatorname{NegationNormalFormExists}(\varphi)
+\]
+means that \(\varphi\) has a logically equivalent representative in negation
+normal form.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every propositional formula can be rewritten so that negation appears only at
+the variable level. This makes negation normal form a semantic normalizing step:
+it changes shape while preserving logical equivalence.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:negation-normal-form-propositional-logic]{Negation Normal Form}
+  \item \hyperref[def:nnf-conversion-procedure-propositional-logic]{NNF Conversion Procedure}
+  \item \hyperref[thm:replacement-of-logical-equivalents-propositional-logic]{Replacement of Logical Equivalents}
+  \item \hyperref[thm:structural-induction-propositional-formulas]{Structural Induction for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:existence-negation-normal-form-propositional-logic

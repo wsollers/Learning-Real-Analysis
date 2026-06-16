@@ -4,165 +4,396 @@
 
 \section{Semantics: Structures and Variable Assignments}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Structures — Quick Reference}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Section toolkit: Semantic setup]
+This section is the first point at which semantic objects enter the Predicate
+Logic chapter. A language supplies the symbols; a structure supplies a domain
+and interpretations for the non-logical symbols; an assignment supplies values
+for variables; term evaluation turns terms into domain elements.
+
+\begin{center}
 \small
 \begin{tabular}{l l l}
 \toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\textbf{Item} & \textbf{Notation} & \textbf{Role} \\
 \midrule
-First-order language $\mathcal{L}$ & Signature specifying symbols & \hyperref[def:fo-language]{↓ Def} \\
-Structure $\mathcal{M} = \langle D, I \rangle$ & Interpretation of $\mathcal{L}$ & \hyperref[def:structure]{↓ Def} \\
-Variable assignment $s$ & Function assigning domain elements to variables & \hyperref[def:var-assign]{↓ Def} \\
-Modified assignment $s[x \mapsto d]$ & Change $s$ at $x$ only & \hyperref[def:mod-assign]{↓ Def} \\
-Term interpretation $\llbracket t \rrbracket_{\mathcal{M},s}$ & Semantic value of a term & \hyperref[def:term-interp]{↓ Def} \\
+First-order language & \(\mathcal L\) & symbol stock with arities \\
+Structure & \(\mathcal M=\langle D,I\rangle\) & semantic object for \(\mathcal L\) \\
+Variable assignment & \(s:\mathsf{Var}_{\mathcal L}\to D\) & values for variables \\
+Modified assignment & \(s[x\mapsto d]\) & update at one variable \\
+Term evaluation & \(\llbracket t\rrbracket_{\mathcal M,s}\) & value of a term \\
 \bottomrule
 \end{tabular}
-\end{tcolorbox}
+\end{center}
+\end{remark*}
 
-\vspace{1em}
-
-% ---------------------------------------------------------
-% First-Order Language
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (First-Order Language)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (First-Order Language)}
+\begin{definition}[First-Order Language]
 \label{def:fo-language}
-A \emph{first-order language} $\mathcal{L}$ consists of:
+A \emph{first-order language} \(\mathcal L\) consists of variables, logical
+symbols, and a signature of non-logical symbols: constant symbols, function
+symbols with assigned arities, and predicate symbols with assigned arities.
+Equality may be included as a distinguished logical predicate.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{A first-order language } \mathcal L \text{ has symbol classes}\\
+&\mathsf{Var}_{\mathcal L},\quad
+\mathsf{Const}_{\mathcal L},\quad
+\mathsf{Func}_{\mathcal L}^{(n)},\quad
+\mathsf{Pred}_{\mathcal L}^{(n)}
+\quad(n\geq 1),
+\end{aligned}
+\]
+together with the usual logical connectives, quantifiers, and punctuation.
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{FirstOrderLanguage}(L)\) means that \(L\) supplies the variable
+stock, logical symbols, and arity-indexed non-logical symbols used to form
+first-order terms and formulas.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+L \text{ is not equipped with the required first-order symbol classes and arities.}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{FirstOrderLanguage}(L)\) means that \(L\) lacks some
+required syntactic stock or arity assignment.
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed language fails when its non-logical symbols are not sorted by role,
+when positive-arity symbols have no arity, or when the logical grammar is not
+specified.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\mathsf{Const}_{L}}_{\text{constant symbols}}
+\qquad
+\underbrace{\mathsf{Func}_{L}^{(n)}}_{\text{function symbols with arity}}
+\qquad
+\underbrace{\mathsf{Pred}_{L}^{(n)}}_{\text{predicate symbols with arity}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A first-order language is still syntax. It says which expressions can be
+formed, but it does not assign objects, functions, or relations to the
+non-logical symbols.
+\end{remark*}
+
+\begin{remark*}[Examples]
+The arithmetic language with constant symbols \(0,1\), function symbols
+\(S,+,\cdot\), and predicate symbol \(<\) is a first-order language once the
+arities are fixed.
+\end{remark*}
+
+\begin{dependencies}
 \begin{itemize}
-  \item a set of constant symbols,
-  \item a set of function symbols, each with a specified arity, and
-  \item a set of predicate symbols, each with a specified arity.
+  \item \hyperref[def:variable]{Variable}
+  \item \hyperref[def:constant-symbol]{Constant Symbol}
+  \item \hyperref[def:function-symbol]{Function Symbol}
+  \item \hyperref[def:predicate-symbol]{Predicate Symbol}
 \end{itemize}
-Every first-order language also includes a countable set of variables and the
-logical symbols $\neg, \wedge, \vee, \rightarrow, \leftrightarrow, \forall,
-\exists$, and (optionally) $=$.
-\end{tcolorbox}
+\end{dependencies}
 
-\begin{remark}[English reading]
-A first-order language is the alphabet of a formal system. It specifies which
-non-logical names are available (constants, functions, predicates) but says
-nothing yet about what those names mean. Meaning is supplied by a structure.
-\end{remark}
-
-% ---------------------------------------------------------
-% Structure
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Structure)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Structure)}
+\begin{definition}[Structure]
 \label{def:structure}
-Let $\mathcal{L}$ be a first-order language. A \emph{structure} (or
-\emph{interpretation}) for $\mathcal{L}$ is a pair
+Let \(\mathcal L\) be a first-order language. A \emph{structure} for
+\(\mathcal L\) is a pair
 \[
-\mathcal{M} = \langle D, I \rangle,
+\mathcal M=\langle D,I\rangle
 \]
-where $D$ is a nonempty set called the \emph{domain of discourse} (or
-\emph{universe}), and $I$ is an interpretation function assigning:
+where \(D\) is a nonempty set and \(I\) assigns each constant symbol an element
+of \(D\), each \(n\)-ary function symbol a function \(D^n\to D\), and each
+\(n\)-ary predicate symbol a relation on \(D^n\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\text{Let } \mathcal L \text{ be a first-order language.}\\
+&\mathcal M=\langle D,I\rangle \text{ is a structure for } \mathcal L\\
+&\Longleftrightarrow
+D\neq\varnothing,\;
+I(c)\in D,\;
+I(f):D^n\to D,\;
+I(P)\subseteq D^n
+\end{aligned}
+\]
+for each \(c\in\mathsf{Const}_{\mathcal L}\),
+\(f\in\mathsf{Func}_{\mathcal L}^{(n)}\), and
+\(P\in\mathsf{Pred}_{\mathcal L}^{(n)}\).
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{Structure}(M,L)\) means that \(M\) is a structure for the
+first-order language \(L\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+D=\varnothing
+\quad\text{or}\quad
+I \text{ fails to assign the required object, function, or relation to some symbol.}
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{Structure}(M,L)\) means that \(M\) is not a well-formed
+structure for \(L\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed structure fails if the domain is empty, if a symbol is left
+uninterpreted, or if the assigned object has the wrong arity or type.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{D=\varnothing}_{\text{empty domain}}
+\quad\lor\quad
+\underbrace{I(c)\notin D}_{\text{bad constant value}}
+\quad\lor\quad
+\underbrace{I(f):D^n\not\to D}_{\text{bad function arity}}
+\quad\lor\quad
+\underbrace{I(P)\not\subseteq D^n}_{\text{bad predicate relation}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A structure is the minimal semantic object needed in Volume I. It gives
+meaning to the non-logical symbols of a language. Systematic topics such as
+substructures, expansions, reducts, and elementary classes belong to Volume
+VIII Model Theory.
+\end{remark*}
+
+\begin{remark*}[Examples]
+The natural numbers with their usual interpretations of \(0,S,+,\cdot,<\)
+form a structure for the arithmetic language.
+\end{remark*}
+
+\begin{dependencies}
 \begin{itemize}
-  \item to each constant symbol $c$: an element $I(c) \in D$,
-  \item to each $n$-ary function symbol $f$: a function $I(f) : D^n \to D$,
-  \item to each $n$-ary predicate symbol $P$: a relation $I(P) \subseteq D^n$.
+  \item \hyperref[def:fo-language]{First-Order Language}
 \end{itemize}
-\end{tcolorbox}
+\end{dependencies}
 
-\begin{remark}[English reading]
-A structure gives the language its meaning. The domain specifies the universe
-of objects being reasoned about, and the interpretation function assigns each
-non-logical symbol a concrete mathematical object.
-\end{remark}
-
-\begin{remark}[Nonempty domain convention]
-Throughout classical first-order logic, the domain $D$ is required to be
-nonempty. Without this, the inference $\forall x\,\varphi \Rightarrow
-\exists x\,\varphi$ (subalternation) would fail: a universal statement is
-vacuously true in an empty domain while the existential statement is false.
-\end{remark}
-
-\begin{remark}[Source note]
-Some texts use the term \emph{interpretation} and others use \emph{structure};
-the two are synonymous. The notation $\mathcal{M}$, $\mathfrak{A}$, or
-$\mathbf{A}$ all appear in the literature.
-\end{remark}
-
-% ---------------------------------------------------------
-% Variable Assignment
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Variable Assignment)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Variable Assignment)}
+\begin{definition}[Variable Assignment]
 \label{def:var-assign}
-Let $\mathcal{M} = \langle D, I \rangle$ be a structure for $\mathcal{L}$.
-A \emph{variable assignment} is a function
+Let \(\mathcal M=\langle D,I\rangle\) be a structure for \(\mathcal L\).
+A \emph{variable assignment} for \(\mathcal M\) is a function
 \[
-s : \mathsf{Var} \to D
+s:\mathsf{Var}_{\mathcal L}\to D.
 \]
-that assigns to each variable an element of the domain.
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[English reading]
-A structure assigns meaning to non-logical symbols; a variable assignment
-assigns meaning to variables. Together they determine the truth value of every
-formula in the language.
-\end{remark}
-
-% ---------------------------------------------------------
-% Modified Assignment
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Modified Assignment)}},
-  fonttitle=\small\bfseries]
-\label{def:mod-assign}
-Let $s$ be a variable assignment, $x$ a variable, and $d \in D$. The
-\emph{modified assignment} $s[x \mapsto d]$ is defined by
+\begin{remark*}[Standard quantified statement]
 \[
-s[x \mapsto d](y) =
+s \text{ is a variable assignment for } \mathcal M
+\Longleftrightarrow
+\mathrm{dom}(s)=\mathsf{Var}_{\mathcal L}
+\text{ and }
+\mathrm{ran}(s)\subseteq D.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{VariableAssignment}(s,M)\) means that \(s\) assigns a domain
+element of \(M\) to each variable of the language of \(M\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\mathrm{dom}(s)\neq\mathsf{Var}_{\mathcal L}
+\quad\text{or}\quad
+\exists x\in\mathsf{Var}_{\mathcal L}\;(s(x)\notin D).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{VariableAssignment}(s,M)\) means that \(s\) is not a
+function assigning each variable a domain element of \(M\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+An assignment fails when it leaves a variable without a value or assigns a
+value outside the domain.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\mathrm{dom}(s)\neq\mathsf{Var}_{\mathcal L}}_{\text{missing variable value}}
+\quad\lor\quad
+\underbrace{s(x)\notin D}_{\text{value outside domain}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Structures interpret non-logical symbols; assignments interpret variables.
+Open formulas require assignments, while sentences eventually do not depend on
+the particular assignment.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:structure]{Structure}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Modified Assignment)}
+\begin{definition}[Modified Assignment]
+\label{def:mod-assign}
+Let \(s:\mathsf{Var}_{\mathcal L}\to D\), let \(x\in\mathsf{Var}_{\mathcal L}\),
+and let \(d\in D\). The \emph{modified assignment} \(s[x\mapsto d]\) is the
+assignment defined by
+\[
+s[x\mapsto d](y)=
 \begin{cases}
-d & \text{if } y = x, \\
-s(y) & \text{if } y \neq x.
+d, & y=x,\\
+s(y), & y\neq x.
 \end{cases}
 \]
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[Consequence]
-Modified assignments are the formal device for evaluating quantified formulas.
-The clause $\mathcal{M}, s \models \forall x\,\varphi$ checks $\mathcal{M},
-s[x \mapsto d] \models \varphi$ for every $d \in D$, testing the formula
-as $x$ ranges over all domain elements.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\forall y\in\mathsf{Var}_{\mathcal L}\quad
+s[x\mapsto d](y)=d \Longleftrightarrow y=x,
+\qquad
+s[x\mapsto d](y)=s(y) \Longleftrightarrow y\neq x.
+\]
+\end{remark*}
 
-% ---------------------------------------------------------
-% Term Interpretation
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Interpretation of a Term)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ModifiedAssignment}(s,x,d,s')\) means that \(s'\) is the
+assignment obtained from \(s\) by sending \(x\) to \(d\) and leaving every
+other variable unchanged.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+s'(x)\neq d
+\quad\text{or}\quad
+\exists y\in\mathsf{Var}_{\mathcal L}\;(y\neq x\land s'(y)\neq s(y)).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{ModifiedAssignment}(s,x,d,s')\) means that \(s'\) is not the
+one-variable update of \(s\) at \(x\) with value \(d\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed modified assignment fails if it does not change \(x\) to \(d\), or
+if it changes some variable other than \(x\).
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{s'(x)\neq d}_{\text{target variable not updated}}
+\quad\lor\quad
+\underbrace{\exists y\neq x\;(s'(y)\neq s(y))}_{\text{unwanted extra change}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Modified assignments are the semantic mechanism behind quantifiers. To test a
+quantified formula, the assignment is varied at the bound variable while all
+other variable values remain fixed.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:var-assign]{Variable Assignment}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Term Evaluation)}
+\begin{definition}[Term Evaluation]
 \label{def:term-interp}
-The \emph{interpretation} of a term $t$ in $\mathcal{M}$ under $s$, denoted
-$\llbracket t \rrbracket_{\mathcal{M},s}$, is defined recursively:
-\begin{enumerate}
-  \item If $t$ is a variable $x$: $\llbracket x \rrbracket_{\mathcal{M},s} = s(x)$.
-  \item If $t$ is a constant $c$: $\llbracket c \rrbracket_{\mathcal{M},s} = I(c)$.
-  \item If $t = f(t_1,\dots,t_n)$:
-  $\llbracket f(t_1,\dots,t_n) \rrbracket_{\mathcal{M},s}
-  = I(f)\bigl(\llbracket t_1 \rrbracket_{\mathcal{M},s},\dots,
-  \llbracket t_n \rrbracket_{\mathcal{M},s}\bigr)$.
-\end{enumerate}
-\end{tcolorbox}
+Let \(\mathcal M=\langle D,I\rangle\) be a structure and \(s\) a variable
+assignment. The \emph{value} of a term \(t\), denoted
+\(\llbracket t\rrbracket_{\mathcal M,s}\), is defined recursively by
+\[
+\llbracket x\rrbracket_{\mathcal M,s}=s(x),\qquad
+\llbracket c\rrbracket_{\mathcal M,s}=I(c),
+\]
+and
+\[
+\llbracket f(t_1,\ldots,t_n)\rrbracket_{\mathcal M,s}
+=
+I(f)\bigl(\llbracket t_1\rrbracket_{\mathcal M,s},\ldots,
+\llbracket t_n\rrbracket_{\mathcal M,s}\bigr).
+\]
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[English reading]
-This is the semantic counterpart of the recursive term definition. Each
-formation rule for terms has a corresponding clause that computes a domain
-element from the interpretations of its components.
-\end{remark}
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&\llbracket x\rrbracket_{\mathcal M,s}=s(x),\\
+&\llbracket c\rrbracket_{\mathcal M,s}=I(c),\\
+&\llbracket f(t_1,\ldots,t_n)\rrbracket_{\mathcal M,s}
+=I(f)(\llbracket t_1\rrbracket_{\mathcal M,s},\ldots,
+\llbracket t_n\rrbracket_{\mathcal M,s}).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{TermEvaluation}(M,s,t,a)\) means that the term \(t\) evaluates
+to the domain element \(a\) in \(M\) under \(s\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\llbracket t\rrbracket_{\mathcal M,s}\neq a.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{TermEvaluation}(M,s,t,a)\) means that \(a\) is not the value
+of \(t\) in \(M\) under \(s\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Term evaluation fails to have the proposed value when a variable, constant, or
+function-application clause computes a different domain element.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{s(x)\neq a}_{\text{variable case}}
+\quad\lor\quad
+\underbrace{I(c)\neq a}_{\text{constant case}}
+\quad\lor\quad
+\underbrace{I(f)(a_1,\ldots,a_n)\neq a}_{\text{function case}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Term evaluation is the semantic counterpart of term formation. It assigns a
+domain element to each grammatical term once a structure and assignment are
+fixed.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:term]{Term}
+  \item \hyperref[def:structure]{Structure}
+  \item \hyperref[def:var-assign]{Variable Assignment}
+\end{itemize}
+\end{dependencies}

@@ -1,160 +1,374 @@
 % =========================================================
-% Universal, Existential, Unique Existential, and Bounded Quantifiers
+% Universal, Existential, Sentence, Open Formula, and Scope
 % =========================================================
 
-\section{Quantifiers: Universal, Existential, and Bounded}
+\subsection*{Basic Syntax and Semantics}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Basic Quantifiers — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l l}
-\toprule
-\textbf{Symbol} & \textbf{Reading} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-$\forall x\,\varphi$ & For all $x$, $\varphi$ & True for every domain element & \hyperref[def:universal-q]{↓ Def} \\
-$\exists x\,\varphi$ & There exists $x$ such that $\varphi$ & True for some domain element & \hyperref[def:existential-q]{↓ Def} \\
-$\exists! x\,\varphi$ & There exists exactly one $x$ such that $\varphi$ & Existence + uniqueness & \hyperref[def:unique-exist]{↓ Def} \\
-$\forall x \in A\,\varphi$ & For all $x$ in $A$, $\varphi$ & Restricted universal & \hyperref[def:bounded-q]{↓ Def} \\
-$\exists x \in A\,\varphi$ & There exists $x$ in $A$ such that $\varphi$ & Restricted existential & \hyperref[def:bounded-q]{↓ Def} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
-
-\vspace{1em}
-
-% ---------------------------------------------------------
-% Universal Quantifier
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Universal Quantifier)}},
-  fonttitle=\small\bfseries]
-\label{def:universal-q}
-The \emph{universal quantifier}, denoted $\forall$, is a logical operator that
-binds a variable and asserts that a formula holds for all elements of the
-domain of discourse.
-
-If $\varphi$ is a formula and $x$ is a variable, then $\forall x\,\varphi$ is
-a formula, read ``for all $x$, $\varphi$.''
-\end{tcolorbox}
-
-\begin{remark}[English reading]
-The universal quantifier expresses a global condition over the entire domain.
-It does not claim the domain is nonempty on its own, but by the nonempty domain
-convention, there is always at least one element to instantiate.
-\end{remark}
-
-% ---------------------------------------------------------
-% Existential Quantifier
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Existential Quantifier)}},
-  fonttitle=\small\bfseries]
-\label{def:existential-q}
-The \emph{existential quantifier}, denoted $\exists$, is a logical operator that
-binds a variable and asserts that a formula holds for at least one element of
-the domain of discourse.
-
-If $\varphi$ is a formula and $x$ is a variable, then $\exists x\,\varphi$ is
-a formula, read ``there exists an $x$ such that $\varphi$.''
-\end{tcolorbox}
-
-\begin{remark}[English reading]
-The existential quantifier expresses a local condition. It does not specify
-which element witnesses the claim; it merely asserts that such a witness exists
-somewhere in the domain.
-\end{remark}
-
-% ---------------------------------------------------------
-% Unique Existential Quantifier
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Unique Existential Quantifier)}},
-  fonttitle=\small\bfseries]
-\label{def:unique-exist}
-The \emph{unique existential quantifier} $\exists!$ asserts that there exists
-exactly one element satisfying a given property. It is an abbreviation:
-\[
-\exists! x\,\varphi
-\;:=\;
-\exists x\,\bigl(\varphi \wedge \forall y\,(\varphi[y/x] \rightarrow y = x)\bigr),
-\]
-where $y$ is a variable not occurring in $\varphi$.
-
-Equivalently,
-\[
-\exists! x\,\varphi
-\;\equiv\;
-\exists x\,\varphi \;\wedge\; \forall x\,\forall y\,
-\bigl((\varphi \wedge \varphi[y/x]) \rightarrow x = y\bigr).
-\]
-\end{tcolorbox}
-
-\begin{remark}[English reading]
-$\exists! x\,\varphi$ combines existence (at least one $x$ satisfies $\varphi$)
-and uniqueness (at most one such $x$ exists). It is not a primitive quantifier
-but a convenient abbreviation.
-\end{remark}
-
-\begin{example}
-``There is exactly one even prime number'' formalizes as
-$\exists! x\,(P(x) \wedge E(x))$, where $P(x)$ means ``$x$ is prime'' and
-$E(x)$ means ``$x$ is even.''
-\end{example}
-
-% ---------------------------------------------------------
-% Bounded Quantifiers
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Bounded Quantifiers)}},
-  fonttitle=\small\bfseries]
-\label{def:bounded-q}
-Let $A$ be a set (or a predicate defining a set). The \emph{bounded
-quantifiers} are abbreviations:
-\begin{align*}
-\forall x \in A\,\varphi &\;:=\; \forall x\,(x \in A \rightarrow \varphi), \\
-\exists x \in A\,\varphi &\;:=\; \exists x\,(x \in A \wedge \varphi).
-\end{align*}
-\end{tcolorbox}
-
-\begin{remark}[Asymmetry]
-Bounded universal uses implication ($\rightarrow$), while bounded existential
-uses conjunction ($\wedge$). This is not arbitrary: if the set $A$ is empty,
-$\forall x \in A\,\varphi$ is vacuously true (there is no $x$ to violate the
-implication), while $\exists x \in A\,\varphi$ is false (no witness exists).
-\end{remark}
-
-\begin{remark}[Common error]
-Writing $\forall x \in A\,\varphi$ as $\forall x\,(x \in A \wedge \varphi)$
-is wrong: this would assert that every element is in $A$, not just that every
-element of $A$ satisfies $\varphi$.
-\end{remark}
-
-\begin{theorem}[Negation of Bounded Quantifiers]\label{thm:neg-bounded}
-Let $A$ be a set and $\varphi$ a formula. Then:
-\begin{align*}
-\neg(\forall x \in A\,\varphi) &\;\equiv\; \exists x \in A\,\neg\varphi, \\
-\neg(\exists x \in A\,\varphi) &\;\equiv\; \forall x \in A\,\neg\varphi.
-\end{align*}
-\end{theorem}
-
-\begin{remark*}[Fully quantified form]
-$\neg(\forall x\,(x\in A \to \varphi)) \;\equiv\; \exists x\,(x\in A \wedge \neg\varphi)$, and $\neg(\exists x\,(x\in A \wedge \varphi)) \;\equiv\; \forall x\,(x\in A \to \neg\varphi)$.
+\begin{remark*}[Section toolkit: Quantifier grammar]
+This section records the basic quantifier forms and the boundary between open
+formulas and sentences. Quantifiers bind variables. A formula with free
+variables requires an assignment for semantic evaluation; a sentence has no
+free variables and has a truth value in a structure.
 \end{remark*}
 
+\begin{remark*}[Exposition]
+Sentences have no free variables and have truth values in structures. Open
+formulas may contain free variables and require assignments. Quantifiers turn
+some free occurrences into bound occurrences by placing them inside a scope.
+\end{remark*}
 
+\begin{definitionbox}{Definition (Universal Formula)}
+\begin{definition}[Universal Formula]
+\label{def:universal-q}
+A \emph{universal formula} is a well-formed formula of the form
+\[
+\forall x\,\varphi,
+\]
+where \(x\) is a variable and \(\varphi\) is a well-formed formula.
+\end{definition}
+\end{definitionbox}
 
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\,\varphi\in\mathsf{Form}_{\mathcal L}
+\Longleftrightarrow
+x\in\mathsf{Var}_{\mathcal L}
+\text{ and }
+\varphi\in\mathsf{Form}_{\mathcal L}.
+\]
+\end{remark*}
 
-\begin{remark}
-The domain restriction $x \in A$ is preserved under negation because it
-functions as a constraint on which elements are quantified over, not as part
-of the claim being negated.
-\end{remark}
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{UniversalFormula}(\Phi)\) means that \(\Phi\) is a formula
+whose outermost constructor is a universal quantifier.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\Phi \text{ is not of the form } \forall x\,\varphi.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A universal formula asserts that its scope holds for every value assigned to
+the bound variable.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(\forall x\,P(x)\) and \(\forall x\,\exists y\,R(x,y)\) are universal
+formulas.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(P(x)\) and \(\exists x\,P(x)\) are not universal formulas.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:variable]{Variable}
+  \item \hyperref[def:wff-pred]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Existential Formula)}
+\begin{definition}[Existential Formula]
+\label{def:existential-q}
+An \emph{existential formula} is a well-formed formula of the form
+\[
+\exists x\,\varphi,
+\]
+where \(x\) is a variable and \(\varphi\) is a well-formed formula.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\exists x\,\varphi\in\mathsf{Form}_{\mathcal L}
+\Longleftrightarrow
+x\in\mathsf{Var}_{\mathcal L}
+\text{ and }
+\varphi\in\mathsf{Form}_{\mathcal L}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ExistentialFormula}(\Phi)\) means that \(\Phi\) is a formula
+whose outermost constructor is an existential quantifier.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\Phi \text{ is not of the form } \exists x\,\varphi.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An existential formula asserts that its scope holds for at least one value of
+the bound variable.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(\exists x\,P(x)\) and \(\exists x\,\forall y\,R(x,y)\) are existential
+formulas.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(P(x)\) and \(\forall x\,P(x)\) are not existential formulas.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:variable]{Variable}
+  \item \hyperref[def:wff-pred]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Bounded Quantifier)}
+\begin{definition}[Bounded Quantifier]
+\label{def:bounded-q}
+A \emph{bounded quantifier} is an abbreviation that restricts a quantifier to a
+specified set or predicate:
+\[
+\forall x\in A\,\varphi
+\quad\coloneqq\quad
+\forall x\,(x\in A\to\varphi),
+\]
+\[
+\exists x\in A\,\varphi
+\quad\coloneqq\quad
+\exists x\,(x\in A\land\varphi).
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\in A\,\varphi \equiv \forall x\,(x\in A\to\varphi),
+\qquad
+\exists x\in A\,\varphi \equiv \exists x\,(x\in A\land\varphi).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{BoundedQuantifier}(\Phi)\) means that \(\Phi\) uses a
+restricted universal or existential quantifier.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\Phi \text{ is not an abbreviation of either displayed bounded form.}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The restricted universal uses implication, while the restricted existential
+uses conjunction. This preserves the usual behavior on empty sets.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(\forall x\in A\,P(x)\) and \(\exists x\in A\,P(x)\) are bounded-quantifier
+formulas.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(\forall x\,(x\in A\land P(x))\) is not the correct expansion of the bounded
+universal form.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:existential-q]{Existential Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Sentence)}
+\begin{definition}[Sentence]
+\label{def:sentence-predicate-logic}
+A \emph{sentence} is a well-formed formula with no free variables.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\varphi \text{ is a sentence}
+\Longleftrightarrow
+\varphi\in\mathsf{Form}_{\mathcal L}
+\text{ and }
+\mathsf{FV}(\varphi)=\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{Sentence}(\varphi)\) means that \(\varphi\) is a well-formed
+formula with no free variables.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\varphi\notin\mathsf{Form}_{\mathcal L}
+\quad\text{or}\quad
+\mathsf{FV}(\varphi)\neq\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Sentences have truth values in structures without reference to a particular
+assignment.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(\forall x\,P(x)\) and \(\exists x\,\forall y\,R(x,y)\) are sentences when all
+variables shown are bound.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(P(x)\) and \(\exists y\,R(x,y)\) are not sentences when \(x\) remains free.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:wff-pred]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Open Formula)}
+\begin{definition}[Open Formula]
+\label{def:open-formula-quantifiers}
+An \emph{open formula} is a well-formed formula with at least one free
+variable.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\varphi \text{ is open}
+\Longleftrightarrow
+\varphi\in\mathsf{Form}_{\mathcal L}
+\text{ and }
+\mathsf{FV}(\varphi)\neq\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{OpenFormula}(\varphi)\) means that \(\varphi\) has at least one
+free variable.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\varphi\notin\mathsf{Form}_{\mathcal L}
+\quad\text{or}\quad
+\mathsf{FV}(\varphi)=\varnothing.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Open formulas may become true or false only after a structure and assignment
+are fixed.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(P(x)\) and \(R(x,y)\) are open formulas.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+\(\forall x\,P(x)\) is a sentence rather than an open formula.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:wff-pred]{Well-Formed Formula}
+  \item \hyperref[def:predicate]{Open Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Quantifier Scope)}
+\begin{definition}[Quantifier Scope]
+\label{def:quantifier-scope}
+In a formula \(Qx\,\varphi\), where \(Q\in\{\forall,\exists\}\), the
+\emph{scope} of the quantifier \(Qx\) is the formula \(\varphi\). Occurrences
+of \(x\) inside that scope are bound by the quantifier unless an inner
+quantifier for \(x\) intervenes.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+Qx\,\varphi \text{ has scope } \varphi,
+\qquad
+Q\in\{\forall,\exists\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{Scope}(x,\varphi)\) means that \(\varphi\) is the scope governed
+by the quantifier binding \(x\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\varphi \text{ is not the formula governed by the displayed quantifier on } x.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Scope determines which variable occurrences a quantifier controls. Scope errors
+are the main source of incorrect translations from English into predicate
+logic.
+\end{remark*}
+
+\begin{remark*}[Examples]
+In \(\forall x\,(P(x)\to Q(x))\), the scope is \((P(x)\to Q(x))\). In
+\((\forall x\,P(x))\to Q(x)\), the final occurrence of \(x\) is outside the
+scope of the quantifier.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:existential-q]{Existential Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Negation of Bounded Quantifiers)}
+\begin{theorem}[Negation of Bounded Quantifiers]
+\label{thm:neg-bounded}
+Let \(A\) be a set and let \(\varphi\) be a formula. Then
+\[
+\neg(\forall x\in A\,\varphi)\equiv \exists x\in A\,\neg\varphi,
+\qquad
+\neg(\exists x\in A\,\varphi)\equiv \forall x\in A\,\neg\varphi.
+\]
+\hyperref[prf:neg-bounded]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\neg\forall x\,(x\in A\to\varphi)
+\equiv
+\exists x\,(x\in A\land\neg\varphi),
+\qquad
+\neg\exists x\,(x\in A\land\varphi)
+\equiv
+\forall x\,(x\in A\to\neg\varphi).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+The theorem records the negation law for bounded universal and bounded
+existential formulas.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The domain restriction is preserved under negation. What changes is the
+quantifier and the inner assertion.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:bounded-q]{Bounded Quantifier}
+  \item \hyperref[thm:qneg]{Quantifier Negation Laws}
+\end{itemize}
+\end{dependencies}

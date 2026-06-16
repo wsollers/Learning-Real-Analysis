@@ -1,0 +1,208 @@
+% BEGIN GENERATED ARTIFACT: def:elementary-conjunction-propositional-logic
+\begin{definitionbox}{Definition (Elementary Conjunction)}
+\begin{definition}[Elementary Conjunction]
+\label{def:elementary-conjunction-propositional-logic}
+An \emph{elementary conjunction} is a finite conjunction of
+\hyperref[def:literal-propositional-logic]{literals}. That is, it is a
+\hyperref[def:term-propositional-logic]{term} of the form
+\[
+L_1\land L_2\land\cdots\land L_k,
+\]
+where each \(L_i\) is a literal. The one-literal case is permitted.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+L_1\land L_2\land\cdots\land L_k,
+\qquad
+L_i\text{ is a literal for each }i.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Elementary conjunctions are the conjunction terms used as the building blocks
+of disjunctive normal form. They record simultaneous literal requirements.
+\end{remark*}
+
+\begin{example*}[Examples]
+\[
+P,\qquad P\land\neg Q,\qquad \neg P\land R\land S
+\]
+are elementary conjunctions.
+\end{example*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:term-propositional-logic]{Term}
+  \item \hyperref[def:literal-propositional-logic]{Literal}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:elementary-conjunction-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:minterm-propositional-logic
+\begin{definitionbox}{Definition (Minterm)}
+\begin{definition}[Minterm]
+\label{def:minterm-propositional-logic}
+Let \(P_1,\ldots,P_n\) be a finite list of propositional variables. A
+\emph{minterm} relative to \(P_1,\ldots,P_n\) is an
+\hyperref[def:elementary-conjunction-propositional-logic]{elementary conjunction}
+that contains exactly one of \(P_i\) or \(\neg P_i\) for each
+\(i=1,\ldots,n\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+M=L_1\land\cdots\land L_n,
+\]
+where for each \(i\), exactly one of \(P_i\) or \(\neg P_i\) appears among the
+literals \(L_1,\ldots,L_n\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A minterm relative to \(P_1,\ldots,P_n\) specifies one complete truth-value
+assignment on those variables: choosing \(P_i\) requires \(P_i\) to be true,
+and choosing \(\neg P_i\) requires \(P_i\) to be false.
+\end{remark*}
+
+\begin{example*}[Examples]
+Relative to \(P,Q,R\), the formula
+\[
+P\land\neg Q\land R
+\]
+is a minterm. Relative to \(P,Q,R\), the formula \(P\land R\) is not a
+minterm because it omits both \(Q\) and \(\neg Q\).
+\end{example*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:elementary-conjunction-propositional-logic]{Elementary Conjunction}
+  \item \hyperref[def:formula-variable-set-propositional-logic]{Variable Set of a Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:minterm-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: def:disjunctive-normal-form-propositional-logic
+\begin{definitionbox}{Definition (Disjunctive Normal Form)}
+\begin{definition}[Disjunctive Normal Form]
+\label{def:disjunctive-normal-form-propositional-logic}
+A formula is in \emph{disjunctive normal form}, abbreviated \emph{DNF}, when it
+is a finite disjunction of
+\hyperref[def:elementary-conjunction-propositional-logic]{elementary conjunctions}.
+Equivalently, it has the shape
+\[
+C_1\lor C_2\lor\cdots\lor C_m,
+\]
+where each \(C_j\) is an elementary conjunction.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\varphi\text{ is in DNF}
+\Longleftrightarrow
+\varphi=C_1\lor C_2\lor\cdots\lor C_m
+\]
+for finitely many elementary conjunctions \(C_1,\ldots,C_m\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+DNF is a syntactic form, but it is used semantically: once a formula is replaced
+by a \hyperref[def:logical-equivalence-propositional-logic]{logically equivalent}
+DNF formula, questions about
+\hyperref[def:satisfiable-formula-propositional-logic]{satisfiability} reduce
+to questions about individual conjunction terms.
+\end{remark*}
+
+\begin{example*}[Examples]
+\[
+(P\land Q)\lor(\neg P\land R)\lor S
+\]
+is in DNF because each disjunct is an elementary conjunction.
+\end{example*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:elementary-conjunction-propositional-logic]{Elementary Conjunction}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[def:satisfiable-formula-propositional-logic]{Satisfiable Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:disjunctive-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:existence-disjunctive-normal-form-propositional-logic
+\begin{theorembox}{Theorem (Existence of Disjunctive Normal Form)}
+\begin{theorem}[Existence of Disjunctive Normal Form]
+\label{thm:existence-disjunctive-normal-form-propositional-logic}
+For every formula \(\varphi\in\WFF\), there exists a formula
+\(\psi\in\WFF\) such that \(\psi\) is in
+\hyperref[def:disjunctive-normal-form-propositional-logic]{disjunctive normal form}
+and
+\[
+\varphi\equiv\psi.
+\]
+\noindent\hyperref[prf:existence-disjunctive-normal-form-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)(\exists\psi\in\WFF)
+\bigl(\psi\text{ is in DNF}\land \varphi\equiv\psi\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+One first converts \(\varphi\) to negation normal form, then repeatedly applies
+distributive laws to move conjunctions below disjunctions. Replacement of
+logical equivalents preserves equivalence at each step.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:disjunctive-normal-form-propositional-logic]{Disjunctive Normal Form}
+  \item \hyperref[def:negation-normal-form-propositional-logic]{Negation Normal Form}
+  \item \hyperref[thm:distributive-laws-propositional-logic]{Distributive Laws for Propositional Logic}
+  \item \hyperref[thm:replacement-of-logical-equivalents-propositional-logic]{Replacement of Logical Equivalents}
+  \item \hyperref[thm:existence-negation-normal-form-propositional-logic]{Existence of Negation Normal Form}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:existence-disjunctive-normal-form-propositional-logic
+
+% BEGIN GENERATED ARTIFACT: thm:dnf-satisfiability-criterion-propositional-logic
+\begin{theorembox}{Theorem (DNF Satisfiability Criterion)}
+\begin{theorem}[DNF Satisfiability Criterion]
+\label{thm:dnf-satisfiability-criterion-propositional-logic}
+Let \(\psi\) be a formula in
+\hyperref[def:disjunctive-normal-form-propositional-logic]{disjunctive normal form}.
+Then \(\psi\) is
+\hyperref[def:satisfiable-formula-propositional-logic]{satisfiable} if and only
+if at least one conjunction term in \(\psi\) contains no
+\hyperref[def:complementary-literals-propositional-logic]{complementary pair of literals}.
+\noindent\hyperref[prf:dnf-satisfiability-criterion-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\psi\text{ is a satisfiable DNF formula}
+\Longleftrightarrow
+\text{some conjunction term of }\psi\text{ has no complementary literals.}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A DNF formula is true exactly when at least one of its conjunction terms is
+true. A conjunction term can be made true exactly when it does not require both
+a variable and its negation.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:disjunctive-normal-form-propositional-logic]{Disjunctive Normal Form}
+  \item \hyperref[def:complementary-literals-propositional-logic]{Complementary Literals}
+  \item \hyperref[def:satisfiable-formula-propositional-logic]{Satisfiable Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:dnf-satisfiability-criterion-propositional-logic
