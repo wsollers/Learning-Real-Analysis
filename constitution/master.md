@@ -147,7 +147,7 @@ Dependency tracking is structurally important, but empty local dependency
 notices should not clutter note prose.
 
 - If a statement-level item has substantive local dependencies, record them in
-  a visible `\begin{remark*}[Dependencies] ... \end{remark*}` block.
+  a visible `\begin{dependencies} ... \end{dependencies}` block.
 - If a statement-level item is foundational within the current local note
   scope and has no local dependencies to display, do not print a visible
   dependencies remark that says `No local dependencies.`.
