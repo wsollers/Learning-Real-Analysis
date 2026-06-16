@@ -1,37 +1,9 @@
 % =========================================================
 % Section: Understanding Derivatives --- Monotonicity and Extrema
 % =========================================================
-
-\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Understanding Derivatives --- toolkit}]
-\textbf{Concept family:} Monotonicity, local behavior, and qualitative consequences of the derivative.
-
-\medskip
-\textbf{Atomic items in this section:}
-\begin{itemize}
-  \item Definition: Increasing at a Point
-  \item Definition: Decreasing at a Point
-  \item Theorem: Zero Derivative Implies Constant
-  \item Corollary: Equal Derivatives Imply Difference Is Constant
-  \item Theorem: Nondecreasing Iff Nonnegative Derivative
-  \item Theorem: Nonincreasing Iff Nonpositive Derivative
-  \item Lemma: Positive Derivative Implies Locally Increasing
-  \item Lemma: Negative Derivative Implies Locally Decreasing
-  \item Theorem: First Derivative Test: Relative Maximum
-  \item Theorem: First Derivative Test: Relative Minimum
-  \item Theorem: Darboux's Theorem
-\end{itemize}
-
-\medskip
-\textbf{Cross-references (canonical definitions in the functions chapter):}
-\begin{itemize}
-  \item \hyperref[def:function-strictly-increasing]{Definition: Strictly Increasing Function}
-  \item \hyperref[def:function-strictly-decreasing]{Definition: Strictly Decreasing Function}
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder]
+\begin{definitionbox}{Definition (Increasing at a Point)}
 \begin{definition}[Increasing at a Point]
 \label{def:increasing-at-a-point}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$. We say that $f$ is \emph{increasing at $c$} if there exists $\delta > 0$ such that for all
@@ -42,7 +14,7 @@ y \in A \cap (c,c+\delta),
 \]
 we have $f(x) \leq f(c) \leq f(y)$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -55,15 +27,15 @@ we have $f(x) \leq f(c) \leq f(y)$.
 $f$ is increasing at $c$ if $c$ lies between the values of $f$ on either side in some punctured neighbourhood: $f$ is smaller to the left and larger to the right (weakly). This is a strictly local notion --- it says nothing about $f$ outside the $\delta$-neighbourhood of $c$. A function can be increasing at $c$ without being increasing (globally or on any interval). The non-strict inequalities permit the function to be flat on one or both sides of $c$, distinguishing this from the notion of a strict local increase.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:function-strictly-increasing]{Definition: Strictly Increasing Function (functions chapter)}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder]
+\begin{definitionbox}{Definition (Decreasing at a Point)}
 \begin{definition}[Decreasing at a Point]
 \label{def:decreasing-at-a-point}
 Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c \in A$. We say that $f$ is \emph{decreasing at $c$} if there exists $\delta > 0$ such that for all
@@ -74,7 +46,7 @@ y \in A \cap (c,c+\delta),
 \]
 we have $f(x) \geq f(c) \geq f(y)$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -83,15 +55,15 @@ we have $f(x) \geq f(c) \geq f(y)$.
 \]
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:increasing-at-a-point]{Definition: Increasing at a Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder]
+\begin{theorembox}{Theorem (Zero Derivative Implies Constant)}
 \begin{theorem}[Zero Derivative Implies Constant]
 \label{thm:zero-derivative-implies-constant}
 Let $I := [a,b] \subseteq \mathbb{R}$ be a closed interval, and let $f : I \to \mathbb{R}$ be continuous on $I$ and differentiable on $(a,b)$. If
@@ -101,7 +73,7 @@ f'(x) = 0 \qquad \text{for all } x \in (a,b),
 then $f$ is constant on $I$.
 \hyperref[prf:zero-derivative-implies-constant]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -130,14 +102,15 @@ If $f$ is not constant on $I$, then $f'$ is not identically zero on $(a,b)$.
 The MVT is the engine here: if $f'(x) = 0$ everywhere on $(a,b)$, then for any two points $x_1 < x_2$ in $I$, the MVT supplies a $c$ with $f(x_2)-f(x_1) = f'(c)(x_2-x_1) = 0$, so $f(x_1) = f(x_2)$. Since this holds for all pairs, $f$ is constant. The theorem is the foundation of antiderivative uniqueness: two antiderivatives of the same function differ by a constant. The contrapositive is used in ODE uniqueness arguments --- if a solution is not identically the zero solution, its derivative is not identically zero somewhere.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:mean-value-theorem]{Theorem: Mean Value Theorem}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{corollarybox}{Corollary}
 \begin{corollary}[Equal Derivatives Imply Difference Is Constant]
 \label{cor:equal-derivatives-constant-difference}
 Let $I := [a,b] \subseteq \mathbb{R}$, and let $f, g : I \to \mathbb{R}$ be continuous on $I$ and differentiable on $(a,b)$. If
@@ -147,6 +120,7 @@ f'(x) = g'(x) \qquad \text{for all } x \in (a,b),
 then there exists $C \in \mathbb{R}$ such that $f(x) = g(x) + C$ for all $x \in I$.
 \hyperref[prf:equal-derivatives-constant-difference]{Go to proof.}
 \end{corollary}
+\end{corollarybox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -175,15 +149,15 @@ If $f - g$ is not a constant function, then $f'$ and $g'$ disagree somewhere.
 This is the corollary that makes antiderivatives well-defined up to a constant: any two antiderivatives of the same function on an interval differ by a constant. The proof is one line --- apply the previous theorem to $h = f - g$, whose derivative is $(f-g)' = f'-g' = 0$.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:zero-derivative-implies-constant]{Theorem: Zero Derivative Implies Constant}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder]
+\begin{theorembox}{Theorem (Nondecreasing Iff Nonnegative Derivative)}
 \begin{theorem}[Nondecreasing Iff Nonnegative Derivative]
 \label{thm:nondecreasing-iff-nonneg-derivative}
 Let $I \subseteq \mathbb{R}$ be an interval, and let $f : I \to \mathbb{R}$ be differentiable on $I$. Then $f$ is nondecreasing on $I$ if and only if
@@ -192,7 +166,7 @@ f'(x) \geq 0 \qquad \text{for all } x \in I.
 \]
 \hyperref[prf:nondecreasing-iff-nonneg-derivative]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -223,15 +197,16 @@ The derivative is the instantaneous rate of change; requiring it to be nonnegati
 Note carefully: $f' \geq 0$ characterises \emph{nondecreasing} (weak), not \emph{strictly increasing} (strict). Strict monotonicity requires $f' > 0$ at all but isolated points. The function $f(x) = x^3$ satisfies $f'(0) = 0$ but is strictly increasing; $f' \geq 0$ with equality only at isolated points is sufficient for strict increase, but $f' > 0$ everywhere is not necessary.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:mean-value-theorem]{Theorem: Mean Value Theorem}
   \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Nonincreasing Iff Nonpositive Derivative]
 \label{thm:nonincreasing-iff-nonpos-derivative}
 Let $I \subseteq \mathbb{R}$ be an interval, and let $f : I \to \mathbb{R}$ be differentiable on $I$. Then $f$ is nonincreasing on $I$ if and only if
@@ -240,6 +215,7 @@ f'(x) \leq 0 \qquad \text{for all } x \in I.
 \]
 \hyperref[prf:nonincreasing-iff-nonpos-derivative]{Go to proof.}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -261,14 +237,15 @@ f'(x) \leq 0 \qquad \text{for all } x \in I.
 \]
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:nondecreasing-iff-nonneg-derivative]{Theorem: Nondecreasing Iff Nonnegative Derivative}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{lemmabox}{Lemma}
 \begin{lemma}[Positive Derivative Implies Locally Increasing]
 \label{lem:positive-derivative-implies-locally-increasing}
 Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, let $c \in I$, and suppose that $f$ is differentiable at $c$. If $f'(c) > 0$, then there exists $\delta > 0$ such that
@@ -281,6 +258,7 @@ f(x) > f(c) \quad \text{for all } x \in I \text{ with } c < x < c + \delta.
 \]
 \hyperref[prf:positive-derivative-implies-locally-increasing]{Go to proof.}
 \end{lemma}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -314,14 +292,15 @@ f'(c) \leq 0.
 If the instantaneous rate of change is strictly positive at $c$, the function is genuinely climbing through $c$: it is strictly below $f(c)$ immediately to the left and strictly above immediately to the right. The proof is a direct $\varepsilon$-$\delta$ argument: take $\varepsilon = f'(c)/2 > 0$; the definition of the derivative supplies $\delta$ such that the difference quotient is within $\varepsilon$ of $f'(c)$, forcing it to be positive, which then forces the correct sign on $f(x) - f(c)$. This lemma is the key ingredient in the proof of the First Derivative Test.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{lemmabox}{Lemma}
 \begin{lemma}[Negative Derivative Implies Locally Decreasing]
 \label{lem:negative-derivative-implies-locally-decreasing}
 Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, let $c \in I$, and suppose that $f$ is differentiable at $c$. If $f'(c) < 0$, then there exists $\delta > 0$ such that
@@ -334,6 +313,7 @@ f(x) < f(c) \quad \text{for all } x \in I \text{ with } c < x < c + \delta.
 \]
 \hyperref[prf:negative-derivative-implies-locally-decreasing]{Go to proof.}
 \end{lemma}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -358,15 +338,15 @@ f(x) < f(c) \quad \text{for all } x \in I \text{ with } c < x < c + \delta.
 \]
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[lem:positive-derivative-implies-locally-increasing]{Lemma: Positive Derivative Implies Locally Increasing}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder]
+\begin{theorembox}{Theorem (First Derivative Test: Relative Maximum)}
 \begin{theorem}[First Derivative Test: Relative Maximum]
 \label{thm:first-derivative-test-maximum}
 Let $I := [a,b] \subseteq \mathbb{R}$, let $f : I \to \mathbb{R}$ be continuous on $I$, and let $c \in (a,b)$. Suppose $f$ is differentiable on $(a,c)$ and $(c,b)$. If there exists $\delta > 0$ such that $(c-\delta,c+\delta) \subseteq I$ and
@@ -378,7 +358,7 @@ f'(x) \leq 0 \quad \text{for all } x \in (c,c+\delta),
 then $f$ has a relative maximum at $c$.
 \hyperref[prf:first-derivative-test-maximum]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \begin{align*}
@@ -395,16 +375,17 @@ then $f$ has a relative maximum at $c$.
 If the function is nondecreasing immediately to the left of $c$ and nonincreasing immediately to the right, then $c$ is a local maximum --- the function climbs to $c$ and then falls away. The proof integrates: by the nondecreasing characterisation applied on $(c-\delta,c)$, $f(x) \leq f(c)$ for $x < c$; by the nonincreasing characterisation on $(c,c+\delta)$, $f(x) \leq f(c)$ for $x > c$. The sign condition on $f'$ replaces the Interior Extremum Theorem's converse (which did not hold in general) --- here we are asserting a sufficient condition, not proving a necessary one. The test is applicable even when $f'(c) = 0$ or $f'(c)$ does not exist.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:nondecreasing-iff-nonneg-derivative]{Theorem: Nondecreasing Iff Nonnegative Derivative}
   \item \hyperref[thm:nonincreasing-iff-nonpos-derivative]{Theorem: Nonincreasing Iff Nonpositive Derivative}
   \item \hyperref[def:relative-maximum]{Definition: Relative Maximum}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[First Derivative Test: Relative Minimum]
 \label{thm:first-derivative-test-minimum}
 Let $I := [a,b] \subseteq \mathbb{R}$, let $f : I \to \mathbb{R}$ be continuous on $I$, and let $c \in (a,b)$. Suppose $f$ is differentiable on $(a,c)$ and $(c,b)$. If there exists $\delta > 0$ such that $(c-\delta,c+\delta) \subseteq I$ and
@@ -416,6 +397,7 @@ f'(x) \geq 0 \quad \text{for all } x \in (c,c+\delta),
 then $f$ has a relative minimum at $c$.
 \hyperref[prf:first-derivative-test-minimum]{Go to proof.}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \begin{align*}
@@ -428,16 +410,16 @@ then $f$ has a relative minimum at $c$.
 \end{align*}
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:first-derivative-test-maximum]{Theorem: First Derivative Test: Relative Maximum}
   \item \hyperref[def:relative-minimum]{Definition: Relative Minimum}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=corbox, colframe=corborder]
+\begin{theorembox}{Theorem (Darboux's Theorem)}
 \begin{theorem}[Darboux's Theorem]
 \label{thm:darboux}
 Let $I := [a,b] \subseteq \mathbb{R}$ and let $f : I \to \mathbb{R}$ be differentiable on $I$. If $k$ is a real number strictly between $f'(a)$ and $f'(b)$, then there exists $c \in (a,b)$ such that
@@ -446,7 +428,7 @@ f'(c) = k.
 \]
 \hyperref[prf:darboux]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -475,10 +457,10 @@ A function whose derivative fails the intermediate value property cannot be a de
 The Intermediate Value Theorem (IVT) says continuous functions have the intermediate value property (IVP). Darboux's theorem says derivatives also have the IVP --- even without being continuous. This is a striking rigidity result: the class of functions that can appear as derivatives is severely constrained. A derivative cannot have a jump discontinuity (it may be discontinuous, but only via oscillation). The proof does not use continuity of $f'$; it uses differentiability of $f$ to construct an auxiliary function $g(x) = f(x) - kx$ whose derivative changes sign, then applies the Extreme Value Theorem and Interior Extremum Theorem to force an interior extremum where $g'(c) = f'(c) - k = 0$.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:extreme-value-theorem]{Theorem: Extreme Value Theorem}
   \item \hyperref[thm:interior-extremum-theorem]{Theorem: Interior Extremum Theorem}
   \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}

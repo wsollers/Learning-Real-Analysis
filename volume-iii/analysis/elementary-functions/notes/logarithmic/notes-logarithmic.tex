@@ -11,28 +11,10 @@
 % ---------------------------------------------------------
 % Toolkit
 % ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Toolkit --- Logarithmic Functions}]
-\begin{itemize}
-  \item $\ln : (0,\infty) \to \mathbb{R}$: inverse of $e^x$.
-    Equivalently, $\ln x = \int_1^x 1/t\, dt$.
-  \item Functional equation: $\ln(xy) = \ln x + \ln y$.
-    Converts products to sums.
-  \item $(\ln x)' = 1/x$;\; $\ln 1 = 0$;\; $\ln e = 1$.
-  \item Change of base: $\log_a x = \ln x / \ln a$.
-  \item Fundamental logarithmic limit:
-    $\lim_{x \to 0}\ln(1+x)/x = 1$.
-  \item Growth dominance: for all $r > 0$,
-    $(\ln x)/x^r \to 0$ as $x \to \infty$ and
-    $x^r \ln x \to 0$ as $x \to 0^+$.
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 % Definition — Natural Logarithm
 % ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Definition --- Natural Logarithm}]
+\begin{definitionbox}{Definition (Natural Logarithm)}
 \begin{definition}[Natural Logarithm]
 \label{def:natural-logarithm}
 The \textbf{natural logarithm} $\ln : (0,\infty) \to \mathbb{R}$ is
@@ -46,7 +28,7 @@ Equivalently, $\ln x$ is defined by the integral
   \ln x \;:=\; \int_1^x \frac{1}{t}\, dt.
 \]
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -63,6 +45,17 @@ Equivalently, $\ln x$ is defined by the integral
   x > 0 \;\wedge\; e^y = x
   \;\colonequiv\;
   x > 0 \;\wedge\; y = \int_1^x \frac{1}{t}\,dt.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}\!\left(\frac{\ln(1+x)}{x},\,0,\,1\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
+  \operatorname{InputTolerance}(x,0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}\!\left(\frac{\ln(1+x)}{x},1,\varepsilon\right).
 \]
 \end{remark*}
 
@@ -105,6 +98,7 @@ the binary logarithm is $\log_2$.
 % Proposition — Fundamental Logarithmic Limit
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition (Fundamental Logarithmic Limit)}
 \begin{proposition}[Fundamental Logarithmic Limit]
 \label{prop:limit-logarithm-fundamental}
 \[
@@ -114,6 +108,7 @@ the binary logarithm is $\log_2$.
 \smallskip\noindent
 \hyperref[prf:limit-logarithm-fundamental]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -131,17 +126,6 @@ the binary logarithm is $\log_2$.
   \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
   0<|x|<\delta \;\wedge\;
   \left|\frac{\ln(1+x)}{x}-1\right|\geq\varepsilon_0.
-\]
-\end{remark*}
-
-\begin{remark*}[Definition predicate reading]
-\[
-  \operatorname{FunctionLimit}\!\left(\frac{\ln(1+x)}{x},\,0,\,1\right)
-  \;\colonequiv\;
-  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
-  \operatorname{InputTolerance}(x,0,\delta)
-  \Rightarrow
-  \operatorname{OutputTolerance}\!\left(\frac{\ln(1+x)}{x},1,\varepsilon\right).
 \]
 \end{remark*}
 
@@ -163,6 +147,7 @@ for $|x| < 1$). Dividing by $x$ gives $1 - x/2 + x^2/3 - \cdots
 % Proposition — Every Power Dominates the Logarithm
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition (Every Power Dominates the Logarithm)}
 \begin{proposition}[Every Power Dominates the Logarithm]
 \label{prop:power-dominates-log}
 For every $r > 0$:
@@ -175,6 +160,7 @@ For every $r > 0$:
 \smallskip\noindent
 \hyperref[prf:power-dominates-log]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -185,21 +171,21 @@ For every $r > 0$:
 \]
 \end{remark*}
 
-\begin{remark*}[Negated quantified statement]
-\[
-  \neg\left(\lim_{x\to\infty}\frac{\ln x}{x^r}=0\right)
-  \;\iff\;
-  \exists\varepsilon_0>0,\;\forall M>0,\;\exists x>M:\;
-  x^{-r}|\ln x|\geq\varepsilon_0.
-\]
-\end{remark*}
-
 \begin{remark*}[Definition predicate reading]
 \[
   \operatorname{LimitAtInfinity}(x^{-r}\ln x,\,+\infty,\,0)
   \;\colonequiv\;
   \forall\varepsilon>0,\;\exists M\in\mathbb{R},\;\forall x:\;
   x>M \Rightarrow \operatorname{OutputTolerance}(x^{-r}\ln x,0,\varepsilon).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to\infty}\frac{\ln x}{x^r}=0\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall M>0,\;\exists x>M:\;
+  x^{-r}|\ln x|\geq\varepsilon_0.
 \]
 \end{remark*}
 

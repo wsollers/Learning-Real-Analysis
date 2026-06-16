@@ -4,29 +4,13 @@
 % Volume III - Analysis
 % =========================================================
 
-\subsection{Approximation of Continuous Functions}
+\subsection*{Approximation of Continuous Functions}
 \label{sec:approximation}
-
-\begin{tcolorbox}[title={Toolkit --- Approximation}]
-\begin{itemize}
-  \item Hierarchy: step functions $\subset$ piecewise linear $\subset$
-    polynomials. All three classes are dense in $(C([a,b]),\|\cdot\|_\infty)$.
-  \item All three results use Heine--Cantor: $\operatorname{UniformlyContinuous}(f,[a,b])$
-    provides the controlling $\delta$.
-  \item Bernstein polynomials: $B_n(x)=\sum_{k=0}^n f(k/n)\binom{n}{k}x^k(1-x)^{n-k}$.
-  \item Step function approximation feeds directly into Riemann
-    integrability of continuous functions.
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 % Theorem --- Step Function Approximation
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Step Function Approximation)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Step Function Approximation)}
 \begin{theorem}[Step Function Approximation]
 \label{thm:step-function-approximation}
 Let $f:[a,b]\to\mathbb{R}$ be continuous and let $\varepsilon>0$.
@@ -36,7 +20,7 @@ Then there exists a step function $s_\varepsilon:[a,b]\to\mathbb{R}$ such that
 \]
 \hyperref[prf:step-function-approximation]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -92,19 +76,15 @@ The statement fails precisely when a continuous $f$ and tolerance $\varepsilon$ 
 Uniform continuity on $[a,b]$ guarantees that $f$ does not oscillate rapidly at small scales, so subdividing the interval finely enough allows a step function to track $f$ within any prescribed uniform error. The typical construction samples $f$ at one point of each subinterval and keeps that value constant across the piece. Failure would mean that no matter how the interval is partitioned, some subinterval forces an error at least $\varepsilon$, contradicting uniform continuity. The result is a foundational approximation fact used to show that continuous functions on compact intervals are Riemann integrable and to connect continuous functions with simple combinatorial models.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \hyperref[thm:heine-cantor]{Heine--Cantor Theorem}.
-\end{remark*}
-
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Definition --- Piecewise Linear Function
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Piecewise Linear Function)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Piecewise Linear Function)}
 \begin{definition}[Piecewise Linear Function]
 \label{def:piecewise-linear-function}
 Let $a,b \in \mathbb{R}$ with $a<b$ and let $g:[a,b]\to\mathbb{R}$.
@@ -113,7 +93,7 @@ $m \in \mathbb{N}$ with $m \ge 1$ and points
 $a=x_0<x_1<\cdots<x_m=b$ such that $g|_{[x_{k-1},x_k]}$ is affine
 for every $k\in\{1,\ldots,m\}$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -194,10 +174,12 @@ nodes that covers the whole interval.
 % Theorem --- Piecewise Linear Approximation
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Piecewise Linear Approximation]
 \label{thm:piecewise-linear-approximation}
 Let $f\colon[a,b]\to\mathbb{R}$ be continuous and let $\varepsilon>0$. Then there exists a continuous piecewise linear function $\ell_\varepsilon\colon[a,b]\to\mathbb{R}$ such that $\sup_{x\in[a,b]}|f(x)-\ell_\varepsilon(x)|<\varepsilon$. \hyperref[prf:piecewise-linear-approximation]{Go to proof.}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -218,16 +200,13 @@ Every continuous function on a compact interval can be uniformly approximated by
 % Theorem --- Weierstrass Approximation Theorem
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Weierstrass Approximation Theorem)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Weierstrass Approximation Theorem)}
 \begin{theorem}[Weierstrass Approximation Theorem]
 \label{thm:weierstrass-approximation}
 Let $f:[a,b]\to\mathbb{R}$ be continuous. For every $\varepsilon>0$ there exists a polynomial $p_\varepsilon\in\mathbb{R}[x]$ such that $\|f-p_\varepsilon\|_{\infty,[a,b]}<\varepsilon$.
 \hyperref[prf:weierstrass-approximation]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -251,16 +230,15 @@ Let $f:[a,b]\to\mathbb{R}$ be continuous. For every $\varepsilon>0$ there exists
 Every continuous function on a closed interval can be uniformly approximated by polynomials, so polynomials are dense in the space of continuous functions under the supremum norm. The result holds because convolutions with Bernstein polynomials preserve continuity and converge uniformly to the original function. Failure would mean there exists a uniform tolerance that no polynomial can match, contradicting the approximation scheme built from Bernstein polynomials. Geometrically, the theorem states that the graph of a continuous function can be matched arbitrarily well by the graph of a polynomial, so polynomial graphs form a flexible mesh that can shadow any continuous curve on a compact interval.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 Depends on \hyperref[thm:bernstein-approximation]{thm:bernstein-approximation}.
-\end{remark*}
-
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Definition --- Bernstein Polynomial
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[title={Definition --- Bernstein Polynomial}]
+\begin{definitionbox}{Definition (Bernstein Polynomial)}
 \begin{definition}[Bernstein Polynomial]
 \label{def:bernstein-polynomial}
 Let $n \in \mathbb{N}$ and let $f:[0,1]\to\mathbb{R}$.
@@ -270,18 +248,7 @@ if and only if, for every $x \in [0,1]$,
 B_n(x)=\sum_{k=0}^{n} f\!\left(\frac{k}{n}\right)\binom{n}{k}x^k(1-x)^{n-k}.
 \]
 \end{definition}
-
-\begin{remark*}[Standard quantified statement]
-\[
-\begin{aligned}
-&B_n \text{ is the } n\text{th Bernstein polynomial of } f \\
-&\quad\Longleftrightarrow\quad
-\forall x \in [0,1],\;
-B_n(x)=\sum_{k=0}^{n} f\!\left(\frac{k}{n}\right)\binom{n}{k}x^k(1-x)^{n-k}.
-\end{aligned}
-\]
-\end{remark*}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -317,15 +284,12 @@ The nth Bernstein polynomial samples f at the uniformly spaced nodes k/n, weight
 % Theorem --- Bernstein Approximation Theorem
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Bernstein Approximation Theorem)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Bernstein Approximation Theorem)}
 \begin{theorem}[Bernstein Approximation Theorem]
 \label{thm:bernstein-approximation}
 Let $f:[0,1]\to\mathbb{R}$ be continuous, and for each $n\in\mathbb{N}$ let $B_n$ denote the $n$th Bernstein polynomial of $f$. Then for every $\varepsilon>0$ there exists $n_\varepsilon\in\mathbb{N}$ such that $\|f-B_n\|_\infty<\varepsilon$ for all $n\ge n_\varepsilon$. \hyperref[prf:bernstein-approximation]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -340,6 +304,6 @@ Let $f:[0,1]\to\mathbb{R}$ be continuous, and for each $n\in\mathbb{N}$ let $B_n
 The theorem asserts that the Bernstein polynomials of a continuous function on $[0,1]$ converge uniformly to the original function, so the entire graph of $f$ can be approximated to any prescribed sup-norm accuracy by explicit degree-$n$ polynomials once $n$ is large enough. The proof works by showing that the Bernstein operators preserve positivity and linear growth while averaging values of $f$, which forces the uniform error to vanish as $n\to\infty$. This matters because it gives an elementary constructive route from continuous functions to polynomials, strengthening the Weierstrass approximation theorem with a concrete approximating sequence. The approximation can fail only when $f$ is not continuous on $[0,1]$, in which case the Bernstein polynomials may smooth out jumps and no longer capture the original function in the sup norm. Geometrically, each $B_n$ is a convex combination of the samples $f(k/n)$, so the polygons formed by these samples become finer and eventually hug the graph of $f$ everywhere on the interval.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \hyperref[def:continuous-at-point]{Definition (Continuity at a Point)}, \hyperref[def:bernstein-polynomial]{Definition (Bernstein Polynomial)}.
-\end{remark*}
+\end{dependencies}

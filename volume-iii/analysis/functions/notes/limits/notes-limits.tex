@@ -11,31 +11,11 @@
 % ---------------------------------------------------------
 % Toolkit
 % ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Toolkit --- Limits of Functions}]
-\begin{itemize}
-  \item $\lim_{x \to c} f(x) = L$ requires $c$ to be a cluster point
-    of $\operatorname{dom}(f)$. The value $f(c)$ is irrelevant;
-    $f$ need not be defined at $c$.
-  \item The input condition is punctured:
-    $0<|x-c|<\delta$ means
-    $0 < |x-c| < \delta$. This is what separates limits from
-    continuity, where $\operatorname{Within}(x,c,\delta)$
-    permits $x = c$.
-  \item Three equivalent forms: $\varepsilon$-$\delta$, neighbourhood,
-    sequential. The Sequential Criterion is the primary working tool.
-  \item Bridge principle: algebra of sequence limits transfers
-    automatically via the Sequential Criterion.
-  \item A finite limit implies $\exists\delta>0\;\exists M>0\;\forall x\in A\;(0<|x-c|<\delta\Rightarrow |f(x)|\leq M)$.
-  \item Limits are local: behavior far from $c$ is irrelevant.
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 % Tao scaffolding
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder]
+\begin{definitionbox}{Definition ($\varepsilon$-Closeness of a Function to a Value)}
 \begin{definition}[$\varepsilon$-Closeness of a Function to a Value]
 \label{def:eps-close-function}
 Let $X \subseteq \mathbb{R}$, let $f : X \to \mathbb{R}$, let
@@ -43,8 +23,7 @@ $L \in \mathbb{R}$, and let $\varepsilon > 0$. The function $f$ is
 \textbf{$\varepsilon$-close to $L$} if $|f(x)-L|\leq\varepsilon$ for
 all $x\in X$.
 \end{definition}
-
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -63,7 +42,7 @@ condition to a punctured neighbourhood of $c$.
 
 \NoLocalDependencies
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder]
+\begin{definitionbox}{Definition (Local $\delta$-Closeness Near a Point)}
 \begin{definition}[Local $\delta$-Closeness Near a Point]
 \label{def:delta-close-function}
 Let $f : X \to \mathbb{R}$, let $L \in \mathbb{R}$, let $x_0$ be
@@ -73,8 +52,7 @@ is \textbf{$\varepsilon$-close to $L$ near $x_0$ within $\delta$} if
   \forall x \in X\;\bigl(|x-x_0|<\delta\Rightarrow |f(x)-L|\leq\varepsilon\bigr).
 \]
 \end{definition}
-
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -91,17 +69,17 @@ this with $\operatorname{InputTolerance}$ (punctured) and asserts
 that for every $\varepsilon$ such a $\delta$ exists.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:eps-close-function]{$\varepsilon$-Closeness of a Function to a Value}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Definition — Limit of a Function
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder]
+\begin{definitionbox}{Definition (Limit of a Function)}
 \begin{definition}[Limit of a Function]
 \label{def:limit-function}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -115,7 +93,7 @@ $\lim_{x \to c} f(x) = L$, if
 \smallskip\noindent
 \hyperref[prf:limit-unique]{\textit{Go to uniqueness proof.}}
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -250,17 +228,17 @@ $\varepsilon$; (iv) the condition is about all $x$ near $c$
 simultaneously, not just one.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:cluster-point-r]{Cluster Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Definition — Sequential Form of Limit
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder]
+\begin{definitionbox}{Definition (Sequential Definition of Limit)}
 \begin{definition}[Sequential Definition of Limit]
 \label{def:limit-function-sequential}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -268,8 +246,7 @@ The limit $\lim_{x \to c} f(x) = L$ in the \textbf{sequential
 sense} holds if for every sequence $(x_n) \subseteq A \setminus \{c\}$
 with $x_n \to c$, the sequence $(f(x_n))$ converges to $L$.
 \end{definition}
-
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -305,17 +282,18 @@ sequence). The $\varepsilon$-$\delta$ form is better for constructing
 explicit $\delta$ functions.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
   \item \hyperref[def:cluster-point-r]{Cluster Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Proposition — Neighbourhood Form
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[Neighbourhood Form of the Limit]
 \label{prop:limit-neighbourhood-equiv}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -327,6 +305,7 @@ $x\in V_\delta^*(c)\cap A$ implies $f(x)\in V_\varepsilon(L)$.
 \smallskip\noindent
 \hyperref[prf:limit-neighbourhood-equiv]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -351,18 +330,19 @@ fit inside the $\varepsilon$-ball around $L$. This is the form of
 continuity used in metric space topology.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
   \item \hyperref[def:epsilon-neighbourhood]{$\varepsilon$-Neighbourhood}
   \item \hyperref[def:deleted-epsilon-neighbourhood]{Deleted $\varepsilon$-Neighbourhood}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Uniqueness of Limits
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Uniqueness of Limits of Functions]
 \label{thm:limit-unique}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -371,6 +351,7 @@ Then $f$ has at most one limit at $c$.
 \smallskip\noindent
 \hyperref[prf:limit-unique]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -379,6 +360,11 @@ Then $f$ has at most one limit at $c$.
   \lim_{x\to c}f(x)=L'
   \;\Rightarrow\; L = L'.
 \]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Failure of uniqueness would mean that two distinct real numbers both satisfy
+the limit definition at the same cluster point.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
@@ -397,16 +383,17 @@ behavior of $f$ near $c$. Uniqueness is what licenses writing
 $\lim_{x\to c} f(x) = L$ as an equation rather than an assertion.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Proposition — Sequential Criterion
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[Sequential Criterion for Function Limits]
 \label{prop:sequential-criterion-limits}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -417,6 +404,7 @@ $f(x_n)\to L$.
 \smallskip\noindent
 \hyperref[prf:sequential-criterion-limits]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -455,17 +443,18 @@ $(x_n) \subseteq A \setminus \{c\}$ with $x_n \to c$ and
 $f(x_n) \not\to L$.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
   \item \hyperref[def:limit-function-sequential]{Sequential Definition of Limit}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Corollary — Three Equivalent Forms
 % ---------------------------------------------------------
 
+\begin{corollarybox}{Corollary}
 \begin{corollary}[Three Equivalent Forms of the Function Limit]
 \label{cor:limit-three-equiv}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -476,6 +465,7 @@ of the same limit condition.
 \smallskip\noindent
 \hyperref[prf:limit-three-equiv]{\textit{Go to proof.}}
 \end{corollary}
+\end{corollarybox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -500,18 +490,19 @@ generalisation. The sequential form is best for importing sequence
 results and constructing counterexamples.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
   \item \hyperref[prop:limit-neighbourhood-equiv]{Neighbourhood Form of the Limit}
   \item \hyperref[prop:sequential-criterion-limits]{Sequential Criterion for Function Limits}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Limit Implies Local Boundedness
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Limit Implies Local Boundedness]
 \label{thm:limit-implies-local-bounding}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -522,6 +513,7 @@ $x \in A$ with $0<|x-c|<\delta$.
 \smallskip\noindent
 \hyperref[prf:limit-implies-local-bounding]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -547,16 +539,17 @@ boundedness is a coarser statement than limit existence, but it is
 what is needed for the product and quotient rules.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Bounded Limits
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Bounded Limits]
 \label{thm:bounded-limits}
 Let $f : A \to \mathbb{R}$, let $c$ be a cluster point of $A$, and
@@ -567,6 +560,7 @@ $a \leq L \leq b$.
 \smallskip\noindent
 \hyperref[prf:bounded-limits]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -586,16 +580,17 @@ proof applies the Sequential Criterion and that sequence result
 directly.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Squeeze Theorem for Function Limits
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Squeeze Theorem for Function Limits]
 \label{thm:squeeze-function-limits}
 Let $f, g, h : A \to \mathbb{R}$ and let $c$ be a cluster point of
@@ -613,6 +608,7 @@ Then $\lim_{x\to c}h(x)=L$.
 \smallskip\noindent
 \hyperref[prf:squeeze-function-limits]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -632,17 +628,18 @@ new $\varepsilon$-$\delta$ argument is needed. The condition
 $f \leq h \leq g$ is only required near $c$, not globally.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
   \item \hyperref[thm:bounded-limits]{Bounded Limits}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Limits Are Local
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Limits Are Local]
 \label{thm:limits-are-local}
 Let $E \subseteq X \subseteq \mathbb{R}$, let $x_0$ be a cluster
@@ -657,6 +654,7 @@ Then
 \smallskip\noindent
 \hyperref[prf:limits-are-local]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -675,16 +673,17 @@ justifies focusing all limit arguments on small balls around $c$
 without any loss of generality.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Proposition — Limit of Absolute Value
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[Limit of Absolute Value]
 \label{prop:limit-absolute-value}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -694,6 +693,7 @@ $\lim_{x\to c}|f(x)|=|L|$.
 \smallskip\noindent
 \hyperref[prf:limit-absolute-value]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -730,16 +730,17 @@ $f$ forces convergence of $|f|$, but convergence of $|f|$ alone does not
 recover the original limiting sign.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Composition of Limits
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Composition of Limits]
 \label{thm:composition-of-limits}
 Let $f : A \to B$, let $g : B \to \mathbb{R}$, let $c_1$ be a
@@ -751,6 +752,7 @@ $g(c_2) = L$. Then $\lim_{x\to c_1}g(f(x))=L$.
 \smallskip\noindent
 \hyperref[prf:composition-of-limits]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -762,6 +764,11 @@ $g(c_2) = L$. Then $\lim_{x\to c_1}g(f(x))=L$.
   \;\Rightarrow\;
   \lim_{x\to c_1}g(f(x))=L.
 \]
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The composition conclusion can fail if the outer function is not controlled
+at the intermediate value reached by the inner limit.
 \end{remark*}
 
 \begin{remark*}[Failure mode decomposition]
@@ -782,16 +789,17 @@ is satisfied directly. This hypothesis is equivalent to requiring $g$
 to be continuous at $c_2$ (within $B$).
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem — Monotone Limit Theorem
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Monotone Limit Theorem]
 \label{thm:monotone-limit-theorem}
 Let $a < b$ and let $f : (a,b) \to \mathbb{R}$ be monotone and
@@ -806,6 +814,7 @@ For increasing $f$ and every $x_0 \in (a,b)$:
 \smallskip\noindent
 \hyperref[prf:monotone-limit-theorem]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -829,19 +838,20 @@ possible. The theorem establishes that monotone functions can only
 have jump discontinuities — never oscillatory ones.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:function-monotone]{Monotone Function}
   \item \hyperref[def:function-bounded]{Bounded Function}
   \item \hyperref[def:left-hand-limit]{Left-Hand Limit}
   \item \hyperref[def:right-hand-limit]{Right-Hand Limit}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Proposition — Cauchy Criterion for Function Limits
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[Cauchy Criterion for Function Limits]
 \label{prop:cauchy-criterion-limits}
 Let $f : A \to \mathbb{R}$ and let $c$ be a cluster point of $A$.
@@ -861,6 +871,7 @@ $L \in \mathbb{R}$ if and only if
 \smallskip\noindent
 \hyperref[prf:cauchy-criterion-limits]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -882,8 +893,8 @@ Cauchy completeness criterion for sequences, and relies on the
 completeness of $\mathbb{R}$ in exactly the same way.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:limit-function]{Limit of a Function}
 \end{itemize}
-\end{remark*}
+\end{dependencies}

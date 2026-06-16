@@ -4,38 +4,18 @@
 % Volume III - Analysis
 % =========================================================
 
-\subsection{Gauges and Tagged Partitions}
+\subsection*{Gauges and Tagged Partitions}
 \label{sec:gauges-tagged-partitions}
-
-\begin{tcolorbox}[title={Toolkit --- Gauges and Tagged Partitions}]
-\begin{itemize}
-  \item A \textbf{gauge} $\delta:I\to(0,\infty)$ is a variable-width
-    tolerance function allowing the mesh to depend on position.
-  \item A tagged partition $\dot{\mathcal{P}}$ is $\delta$-fine if
-    each subinterval $I_i$ lies inside the $\delta(t_i)$-neighbourhood
-    of its tag $t_i$: $\operatorname{Within}(x,t_i,\delta(t_i))$ for
-    all $x\in[x_{i-1},x_i]$.
-  \item \textbf{Cousin's theorem}: every gauge on $[a,b]$ admits a
-    $\delta$-fine tagged partition.
-  \item Gauge proofs of Boundedness, EVT, Location of Roots, and
-    Heine--Cantor directly construct the required constants from a
-    $\delta$-fine partition.
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 % Definition --- Partition
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Partition)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Partition)}
 \begin{definition}[Partition]
-\label{def:partition}
+\label{def:interval-partition}
 Let $a<b$ and set $I=[a,b]$. A finite ordered set $P=\{x_0,\ldots,x_n\}$ with $n\in\mathbb{N}$ and $n\ge 1$ is a partition of $I$ if and only if $x_0=a$, $x_n=b$, and $x_0<x_1<\cdots<x_n$. In this case the closed subintervals $[x_{i-1},x_i]$ for $i=1,\ldots,n$ subdivide $I$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -99,15 +79,12 @@ A partition records the finite list of nodes that slice a closed interval into a
 % Definition --- Tagged Partition
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Tagged Partition)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Tagged Partition)}
 \begin{definition}[Tagged Partition]
 \label{def:tagged-partition}
 Let $a,b \in \mathbb{R}$ with $a < b$. A list $\dot{\mathcal{P}}=\{([x_{i-1},x_i],t_i)\}_{i=1}^n$ is a tagged partition of $[a,b]$ if and only if the subintervals determine a partition $P=\{[x_{i-1},x_i]\}_{i=1}^n$ of $[a,b]$ with $a=x_0 < x_1 < \cdots < x_n=b$, and each tag satisfies $t_i \in [x_{i-1},x_i]$ for $i=1,\ldots,n$. Equivalently, a tagged partition is exactly a partition $P$ of $[a,b]$ together with one tag chosen inside every subinterval of $P$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -170,24 +147,20 @@ A list fails to be a tagged partition either because the subintervals do not for
 A tagged partition augments the usual subdivision of a closed interval by selecting a representative sampling point inside each component subinterval. These tags serve as evaluation points for Riemann sums and gauge integrals. The construction encapsulates both the geometric slicing of the interval and the analytic data needed for sample values. Failure occurs when the slices no longer tile the interval in order or when a sample point is chosen outside its slice, breaking the correspondence between tags and subintervals.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
-\hyperref[def:partition]{Definition~\ref*{def:partition}}.
-\end{remark*}
-
+\begin{dependencies}
+\hyperref[def:interval-partition]{Definition~\ref*{def:interval-partition}}.
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Definition --- Gauge
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Gauge)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Gauge)}
 \begin{definition}[Gauge]
 \label{def:gauge}
 Let $a,b \in \mathbb{R}$ with $a<b$ and set $I=[a,b]$. A gauge on $I$ is a function $\delta:I\to(0,\infty)$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -250,15 +223,12 @@ A gauge assigns to each point of the closed interval a positive radius, encoding
 % Definition --- delta-fine Partition
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition ($\delta$-Fine Partition)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition ($\delta$-Fine Partition)}
 \begin{definition}[$\delta$-Fine Partition]
 \label{def:delta-fine-partition}
 Let $[a,b]$ be a closed interval, let $\delta:[a,b]\to(0,\infty)$ be a gauge, and let $\dot{\mathcal{P}}=\{([x_{i-1},x_i],t_i)\}_{i=1}^n$ be a tagged partition of $[a,b]$. The tagged partition $\dot{\mathcal{P}}$ is $\delta$-fine if and only if for every $i \in \{1,\dots,n\}$ and every $x \in [x_{i-1},x_i]$ the inequality $|x-t_i|<\delta(t_i)$ holds.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -303,20 +273,21 @@ A tagged partition fails to be $\delta$-fine precisely when some subinterval con
 A $\delta$-fine tagged partition refines the interval so that each subinterval sits entirely inside the open ball centered at its tag with radius dictated by the gauge. This ensures that when summing local contributions, every evaluation point remains within a tolerance chosen for that location, a key requirement for gauge-based integral constructions. Failure occurs when a subinterval is too wide for the tolerance prescribed at its tag, so some point of the subinterval lies on or outside the allowed neighborhood.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \hyperref[def:gauge]{Definition \ref*{def:gauge}}; \hyperref[def:tagged-partition]{Definition \ref*{def:tagged-partition}}
-\end{remark*}
-
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Lemma --- Every Point Is Covered by a Tag
 % ---------------------------------------------------------
 
+\begin{lemmabox}{Lemma}
 \begin{lemma}[Every Point Is Covered by a Tag]
 \label{lem:every-point-covered-by-tag}
 Let $\dot{\mathcal{P}}=\{([x_{i-1},x_i],t_i)\}_{i=1}^n$ be a tagged partition of $[a,b]$ that is $\delta$-fine on $[a,b]$, and let $x\in[a,b]$. Then there exists $i\in\{1,\ldots,n\}$ such that $|x-t_i|<\delta(t_i)$.
 \hyperref[prf:every-point-covered-by-tag]{Go to proof.}
 \end{lemma}
+\end{lemmabox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -331,27 +302,23 @@ Let $\dot{\mathcal{P}}=\{([x_{i-1},x_i],t_i)\}_{i=1}^n$ be a tagged partition of
 A $\delta$-fine tagged partition matches each subinterval to a tag that lies inside the interval and records the gauge radius allowed at that tag. The lemma asserts that every point of the underlying interval falls within the gauge ball centered at one of the tags, so the gauge control at that tag can be applied to the point. This coverage property is the mechanism that transfers local control encoded by the gauge to arbitrary points of the interval.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \hyperref[def:tagged-partition]{Definition~\ref*{def:tagged-partition}},
 \hyperref[def:delta-fine-partition]{Definition~\ref*{def:delta-fine-partition}}.
-\end{remark*}
-
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Theorem --- Cousin's Theorem
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=thmbox, colframe=thmborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Theorem (Cousin's Theorem)}},
-  fonttitle=\small\bfseries]
+\begin{theorembox}{Theorem (Cousin's Theorem)}
 \begin{theorem}[Cousin's Theorem]
 \label{thm:cousins-theorem}
 Every gauge $\delta:[a,b]\to(0,\infty)$ on a closed interval $[a,b]$
 admits a $\delta$-fine tagged partition of $[a,b]$.
 \hyperref[prf:cousins-theorem]{Go to proof.}
 \end{theorem}
-\end{tcolorbox}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -433,11 +400,11 @@ the Nested Interval Property to rule out a gauge that defeats all finite
 tagged partitions.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \hyperref[def:gauge]{Definition~\ref*{def:gauge}},
 \hyperref[def:tagged-partition]{Definition~\ref*{def:tagged-partition}},
 \hyperref[def:delta-fine-partition]{Definition~\ref*{def:delta-fine-partition}}.
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 % Remark --- Gauge Proofs of Classical Theorems

@@ -1,0 +1,57 @@
+\newpage
+\phantomsection
+\label{prf:special-case-product-rule}
+\LRAProofFor{cor:power-rule-special-case}
+
+\begin{remark*}[Return]
+\hyperref[cor:power-rule-special-case]{Return to Theorem}
+\end{remark*}
+
+\begin{corollary*}[Power Rule (Special Case)]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, let $f : I \to \mathbb{R}$ be differentiable at $c$, and let $n \in \mathbb{N}$. Then $f^n$ is differentiable at $c$ and $(f^n)'(c) = n(f(c))^{n-1}f'(c)$.
+\end{corollary*}
+
+\begin{proof}[Professional Standard Proof]
+\LRAProofBodyStart
+Set $f_1 = f_2 = \cdots = f_n = f$ in the Extended Product Rule to obtain $(f^n)'(c) = \sum_{k=1}^{n} f_k'(c) \prod_{\substack{i=1\\i\neq k}}^{n} f_i(c)$. Since each $f_k = f$, each derivative $f_k'(c) = f'(c)$ and each remaining product equals $(f(c))^{n-1}$. Therefore each term in the sum equals $f'(c)(f(c))^{n-1}$. Summing $n$ identical terms yields $(f^n)'(c) = n \cdot f'(c) \cdot (f(c))^{n-1} = n(f(c))^{n-1}f'(c)$.
+\end{proof}
+
+\begin{proof}[Detailed Learning Proof]
+\LRAProofBodyStart
+
+\textbf{Step 1.} Apply the Extended Product Rule with all factors equal to $f$.
+
+Set $f_1 = f_2 = \cdots = f_n = f$. By the Extended Product Rule,
+\[
+  (f^n)'(c) = (f_1 f_2 \cdots f_n)'(c) = \sum_{k=1}^{n} f_k'(c) \prod_{\substack{i=1\\i\neq k}}^{n} f_i(c).
+\]
+This expresses the derivative of the $n$-fold product as a sum where each term differentiates exactly one factor and evaluates the remaining factors at $c$.
+
+\textbf{Step 2.} Simplify each term in the sum.
+
+Since $f_k = f$ for every $k$, each factor $f_k'(c) = f'(c)$. The remaining product contains $n-1$ factors each equal to $f(c)$:
+\[
+  \prod_{\substack{i=1\\i\neq k}}^{n} f_i(c) = (f(c))^{n-1}.
+\]
+Each term in the sum is therefore $f'(c) \cdot (f(c))^{n-1}$, independently of the choice of $k$. The index $k$ determines which factor is differentiated, but since all factors are the same function, this choice does not affect the result.
+
+\textbf{Step 3.} Evaluate the sum.
+
+Since the summand is constant in $k$, summing over $k = 1, \ldots, n$ gives a factor of $n$:
+\[
+  (f^n)'(c) = \sum_{k=1}^{n} f'(c)(f(c))^{n-1} = n \cdot f'(c) \cdot (f(c))^{n-1} = n(f(c))^{n-1}f'(c).
+\]
+This completes the derivation of the power rule formula.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The argument is a direct specialization of the Extended Product Rule. Setting all $n$ factors equal to $f$ causes every term in the product rule sum to collapse to the same value $f'(c)(f(c))^{n-1}$. Counting the $n$ identical terms yields the power rule formula. No induction is needed beyond what is already encoded in the Extended Product Rule.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[cor:extended-product-rule]{Extended Product Rule}
+\end{itemize}
+\end{dependencies}
+
+\clearpage
