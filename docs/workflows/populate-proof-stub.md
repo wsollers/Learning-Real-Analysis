@@ -16,7 +16,7 @@ TODO proof bodies with canonical proof content.
 6. Run:
 
 ```bash
-python scripts/validate_leaf_proofs.py --root . --strict
+python scripts/build_volume.py --validate-only
 ```
 
 ## Invariant

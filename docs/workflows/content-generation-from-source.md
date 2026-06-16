@@ -222,27 +222,15 @@ Before returning output, check:
 - citations and labels use the project's canonical order;
 - labels are semantic and stable.
 
-For newly generated note files or note directories, run the note-block
-validator at the narrowest generated scope:
+For newly generated note files or note directories, run the integrated volume
+validator:
 
 ```powershell
-python tools\governance\validate_note_blocks.py --root <target-repo> --chapter <chapter-name> --section <topic-name>
+python tools\governance\validate_volume.py <target-repo> --fail-on-errors
 ```
 
-If the target names are not obvious, discover them first with
-`python tools\governance\validate_note_blocks.py --root <target-repo> --list-targets`.
-Explicit paths are still accepted for ad hoc checks.
-
-When running inside a leaf volume repo, this path may be a local wrapper. The
-wrapper must delegate to the canonical implementation in
-`lra-governance/tools/governance/`; if `lra-governance` is not available, it
-must fail with a clear error instead of skipping validation.
-
-The legacy convenience command is:
-
-```powershell
-python scripts\validate_note_blocks.py --root . <new-notes-directory>
-```
+Use the scoped audit tools only when a task needs a focused inventory or
+refactor report.
 
 ## House Rules
 
