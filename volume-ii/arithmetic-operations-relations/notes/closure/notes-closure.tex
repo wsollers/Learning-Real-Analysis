@@ -1,0 +1,215 @@
+\begin{definitionbox}{Definition (Unary Arithmetic Operation)}
+\begin{definition}[Unary Arithmetic Operation]
+\label{def:unary-arithmetic-operation}
+Let $K$ be a domain. A \emph{unary arithmetic operation} on $K$ is a function
+\[
+O:K\to K.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{UnaryOperation}_K(O)
+\Longleftrightarrow
+\forall x\in K,\ O(x)\in K.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Unary closure is the abstract form behind successor, negation, and other
+single-input transformations.
+\end{remark*}
+
+\NoLocalDependencies
+\end{definitionbox}
+
+\begin{definitionbox}{Definition (Binary Arithmetic Operation)}
+\begin{definition}[Binary Arithmetic Operation]
+\label{def:binary-arithmetic-operation}
+Let $K$ be a domain. A \emph{binary arithmetic operation} on $K$ is a function
+\[
+O:K\times K\to K.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{BinaryOperation}_K(O)
+\Longleftrightarrow
+\forall x,y\in K,\ x\mathbin{O}y\in K.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Binary closure is the abstract form behind addition and multiplication.
+\end{remark*}
+
+\NoLocalDependencies
+\end{definitionbox}
+
+\begin{definitionbox}{Definition (Unary Closure)}
+\begin{definition}[Unary Closure]
+\label{def:unary-closure}
+A unary operation $O$ is \emph{closed on $K$} if applying it to an element of
+$K$ produces an element of $K$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\in K,\ O(x)\in K.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The operation does not leave the domain.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:unary-arithmetic-operation]{Unary Arithmetic Operation}
+\end{itemize}
+\end{dependencies}
+\end{definitionbox}
+
+\begin{definitionbox}{Definition (Binary Closure)}
+\begin{definition}[Binary Closure]
+\label{def:binary-closure}
+A binary operation $O$ is \emph{closed on $K$} if combining two elements of
+$K$ produces an element of $K$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x,y\in K,\ x\mathbin{O}y\in K.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The operation is internal to the domain.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:binary-arithmetic-operation]{Binary Arithmetic Operation}
+\end{itemize}
+\end{dependencies}
+\end{definitionbox}
+
+\begin{definitionbox}{Definition (Operation Well-Definedness)}
+\begin{definition}[Operation Well-Definedness]
+\label{def:operation-well-definedness}
+Let $\sim$ be an equivalence relation on $A$. A binary operation $O$ respects
+$\sim$ if
+\[
+a\sim a' \land b\sim b' \Longrightarrow
+a\mathbin{O}b \sim a'\mathbin{O}b'.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,a',b,b'\in A,\,
+\bigl(a\sim a'\land b\sim b'\bigr)
+\Longrightarrow
+a\mathbin{O}b \sim a'\mathbin{O}b'.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the condition that lets an operation descend to equivalence classes.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+\end{itemize}
+\end{dependencies}
+\end{definitionbox}
+
+\begin{lemmabox}{Lemma (Left Respect)}
+\begin{lemma}[Left Respect]
+\label{lem:operation-left-respect}
+If a binary operation respects $\sim$, then
+\[
+a\sim a' \Longrightarrow a\mathbin{O}b\sim a'\mathbin{O}b.
+\]
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,a',b\in A,\,
+a\sim a' \Rightarrow a\mathbin{O}b\sim a'\mathbin{O}b.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Full respect includes respect in the left coordinate.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:operation-well-definedness]{Operation Well-Definedness}
+\end{itemize}
+\end{dependencies}
+
+\begin{lemmabox}{Lemma (Right Respect)}
+\begin{lemma}[Right Respect]
+\label{lem:operation-right-respect}
+If a binary operation respects $\sim$, then
+\[
+b\sim b' \Longrightarrow a\mathbin{O}b\sim a\mathbin{O}b'.
+\]
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b,b'\in A,\,
+b\sim b' \Rightarrow a\mathbin{O}b\sim a\mathbin{O}b'.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Full respect includes respect in the right coordinate.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:operation-well-definedness]{Operation Well-Definedness}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Operation)}
+\begin{theorem}[Induced Operation]
+\label{thm:induced-operation-well-defined}
+The operation
+\[
+[a]\mathbin{\overline{O}}[b]:=[a\mathbin{O}b]
+\]
+on $A/{\sim}$ is well-defined if and only if $O$ respects $\sim$.
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{WellDefined}(\overline{O})
+\Longleftrightarrow
+\forall a,a',b,b'\in A,\,
+\bigl(a\sim a'\land b\sim b'\bigr)
+\Rightarrow
+a\mathbin{O}b\sim a'\mathbin{O}b'.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This theorem is the abstract engine behind quotient constructions such as
+integers and rationals.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:quotient-set]{Quotient Set}
+  \item \hyperref[def:operation-well-definedness]{Operation Well-Definedness}
+\end{itemize}
+\end{dependencies}

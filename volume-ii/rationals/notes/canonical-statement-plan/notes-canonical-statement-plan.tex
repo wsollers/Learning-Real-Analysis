@@ -1,0 +1,175 @@
+\label{sec:canonical-rational-statement-plan}
+
+\begin{topicbox}{Architecture Rule for the Rational Numbers}
+\begin{exposition}
+The rational-number chapter is organized around a local-versus-generic
+separation. Local results open the quotient construction box: prefractions,
+fraction equivalence, well-defined operations, field axioms, order, density,
+gaps, and the embedding of $\mathbb{Z}$ into $\mathbb{Q}$. Generic field and
+ring consequences are not re-proved here. They are cited as corollaries from
+the general algebraic infrastructure developed earlier.
+\end{exposition}
+
+\begin{remark*}[Partiality of reciprocal]
+The new structural issue relative to $\mathbb{Z}$ is that reciprocal is a
+partial operation. It is defined only on nonzero rational classes, so the
+nonzero predicate must be proved well-defined before reciprocal is introduced.
+\end{remark*}
+\end{topicbox}
+
+\begin{topicbox}{Construction of \texorpdfstring{$\mathbb{Q}$}{Q}}
+\begin{itemize}
+  \item Def \texttt{def:nonzero-integers}: $\mathbb{Z}^{*}:=\mathbb{Z}\setminus\{0\}$.
+  \item Def \texttt{def:prefraction}: a prefraction is $(a,b)\in\mathbb{Z}\times\mathbb{Z}^{*}$, read as $a/b$.
+  \item Def \texttt{def:prefraction-set}: $\operatorname{PreQ}:=\mathbb{Z}\times\mathbb{Z}^{*}$.
+  \item Def \texttt{def:fraction-equivalence}: $(a,b)\sim_Q(c,d)$ iff $a d=b c$.
+  \item Lem \texttt{lem:fraction-equivalence-reflexive}: $(a,b)\sim_Q(a,b)$.
+  \item Lem \texttt{lem:fraction-equivalence-symmetric}: $(a,b)\sim_Q(c,d)\Rightarrow(c,d)\sim_Q(a,b)$.
+  \item Lem \texttt{lem:fraction-equivalence-transitive}: fraction equivalence is transitive; depends on nonzero multiplicative cancellation in $\mathbb{Z}$.
+  \item Thm \texttt{thm:fraction-equivalence-relation}: $\sim_Q$ is an equivalence relation on $\operatorname{PreQ}$.
+  \item Def \texttt{def:rationals}: $\mathbb{Q}:=\operatorname{PreQ}/\sim_Q$.
+  \item Def \texttt{def:rational-class-notation}: $[a,b]$ denotes the $\sim_Q$-class of $(a,b)$ with $b\ne0$.
+  \item Def \texttt{def:zero-in-q}: $0_Q:=[0,1]$.
+  \item Def \texttt{def:one-in-q}: $1_Q:=[1,1]$.
+  \item Lem \texttt{lem:vanishing-criterion-q}: $[a,b]=0_Q$ iff $a=0$.
+  \item Thm \texttt{thm:zero-is-a-rational}: $0_Q\in\mathbb{Q}$.
+  \item Thm \texttt{thm:one-is-a-rational}: $1_Q\in\mathbb{Q}$.
+  \item Thm \texttt{thm:zero-not-one-in-q}: $0_Q\ne1_Q$; depends on $0_Z\ne1_Z$.
+\end{itemize}
+\end{topicbox}
+
+\begin{topicbox}{Operations on Rational Classes}
+\begin{itemize}
+  \item Def \texttt{def:addition-on-q-classes}: $[a,b]+[c,d]:=[ad+bc,bd]$.
+  \item Lem \texttt{lem:addition-denominator-nonzero-q}: $b\ne0$ and $d\ne0$ imply $bd\ne0$.
+  \item Lem \texttt{lem:addition-on-q-respects-left-equivalence}: addition respects fraction equivalence in the left argument.
+  \item Lem \texttt{lem:addition-on-q-respects-right-equivalence}: addition respects fraction equivalence in the right argument.
+  \item Lem \texttt{lem:addition-on-q-respects-equivalence}: addition respects fraction equivalence in both arguments.
+  \item Thm \texttt{thm:addition-on-q-well-defined}: addition is a well-defined operation $\mathbb{Q}\times\mathbb{Q}\to\mathbb{Q}$.
+  \item Thm \texttt{thm:addition-on-q-associative}: $(x+y)+z=x+(y+z)$.
+  \item Thm \texttt{thm:addition-on-q-commutative}: $x+y=y+x$.
+  \item Thm \texttt{thm:zero-left-additive-identity-on-q}: $0_Q+x=x$.
+  \item Cor \texttt{cor:zero-right-additive-identity-on-q}: $x+0_Q=x$.
+  \item Def \texttt{def:negation-on-q-classes}: $-[a,b]:=[-a,b]$.
+  \item Lem \texttt{lem:negation-on-q-respects-equivalence}: negation respects fraction equivalence.
+  \item Thm \texttt{thm:negation-on-q-well-defined}: negation is well-defined on $\mathbb{Q}$.
+  \item Thm \texttt{thm:negation-left-additive-inverse-on-q}: $(-x)+x=0_Q$.
+  \item Cor \texttt{cor:negation-right-additive-inverse-on-q}: $x+(-x)=0_Q$.
+  \item Thm \texttt{thm:every-rational-has-additive-inverse}: every rational has a two-sided additive inverse.
+  \item Def \texttt{def:subtraction-on-q}: $x-y:=x+(-y)$.
+  \item Thm \texttt{thm:subtraction-on-q-well-defined}: subtraction is well-defined.
+  \item Def \texttt{def:multiplication-on-q-classes}: $[a,b]\cdot[c,d]:=[ac,bd]$.
+  \item Lem \texttt{lem:multiplication-denominator-nonzero-q}: $b\ne0$ and $d\ne0$ imply $bd\ne0$.
+  \item Lem \texttt{lem:multiplication-on-q-respects-left-equivalence}: multiplication respects equivalence in the left argument.
+  \item Lem \texttt{lem:multiplication-on-q-respects-right-equivalence}: multiplication respects equivalence in the right argument.
+  \item Lem \texttt{lem:multiplication-on-q-respects-equivalence}: multiplication respects equivalence in both arguments.
+  \item Thm \texttt{thm:multiplication-on-q-well-defined}: multiplication is well-defined on $\mathbb{Q}$.
+  \item Thm \texttt{thm:multiplication-on-q-associative}: $(xy)z=x(yz)$.
+  \item Thm \texttt{thm:multiplication-on-q-commutative}: $xy=yx$.
+  \item Thm \texttt{thm:one-left-multiplicative-identity-on-q}: $1_Qx=x$.
+  \item Cor \texttt{cor:one-right-multiplicative-identity-on-q}: $x1_Q=x$.
+  \item Lem \texttt{lem:nonzero-predicate-well-defined-q}: $[a,b]\ne0_Q$ iff $a\ne0$.
+  \item Def \texttt{def:reciprocal-on-q-classes}: for $a\ne0$, $[a,b]^{-1}:=[b,a]$.
+  \item Lem \texttt{lem:reciprocal-denominator-nonzero-q}: $a\ne0$ puts $(b,a)$ in $\operatorname{PreQ}$.
+  \item Lem \texttt{lem:reciprocal-on-q-respects-equivalence}: reciprocal respects equivalence on nonzero classes.
+  \item Thm \texttt{thm:reciprocal-on-q-well-defined}: reciprocal is a well-defined map $\mathbb{Q}\setminus\{0_Q\}\to\mathbb{Q}\setminus\{0_Q\}$.
+  \item Thm \texttt{thm:reciprocal-left-multiplicative-inverse-on-q}: $x\ne0_Q\Rightarrow x^{-1}x=1_Q$.
+  \item Cor \texttt{cor:reciprocal-right-multiplicative-inverse-on-q}: $x\ne0_Q\Rightarrow xx^{-1}=1_Q$.
+  \item Thm \texttt{thm:every-nonzero-rational-has-multiplicative-inverse}: every nonzero rational has a two-sided multiplicative inverse.
+  \item Def \texttt{def:division-on-q}: for $y\ne0_Q$, $x/y:=x\cdot y^{-1}$.
+  \item Thm \texttt{thm:division-on-q-well-defined}: division is well-defined on $\mathbb{Q}\times(\mathbb{Q}\setminus\{0_Q\})$.
+  \item Thm \texttt{thm:left-distributivity-on-q}: $x(y+z)=xy+xz$.
+  \item Cor \texttt{cor:right-distributivity-on-q}: $(y+z)x=yx+zx$.
+\end{itemize}
+\end{topicbox}
+
+\begin{topicbox}{Field Structure and Generic Field Laws}
+\begin{itemize}
+  \item Thm \texttt{thm:q-additive-abelian-group}: $(\mathbb{Q},+,0_Q)$ is an abelian group.
+  \item Thm \texttt{thm:q-nonzero-multiplicative-abelian-group}: $(\mathbb{Q}\setminus\{0_Q\},\cdot,1_Q)$ is an abelian group.
+  \item Thm \texttt{thm:q-is-a-field}: $\mathbb{Q}$ is a field.
+  \item Cor \texttt{cor:zero-product-on-q}: $xy=0_Q$ iff $x=0_Q$ or $y=0_Q$; cites the generic field zero-product theorem.
+  \item Cor \texttt{cor:double-negation-on-q}: $-(-x)=x$; cites the generic ring result.
+  \item Cor \texttt{cor:negation-of-product-on-q}: $(-x)y=-(xy)=x(-y)$; cites the generic ring result.
+  \item Cor \texttt{cor:product-of-negatives-on-q}: $(-x)(-y)=xy$; cites the generic ring result.
+  \item Cor \texttt{cor:additive-cancellation-on-q}: $x+z=y+z\Rightarrow x=y$; cites generic group cancellation.
+  \item Cor \texttt{cor:multiplicative-cancellation-on-q}: $z\ne0_Q$ and $xz=yz$ imply $x=y$; cites generic field cancellation.
+  \item Cor \texttt{cor:uniqueness-additive-inverse-on-q}: additive inverses are unique.
+  \item Cor \texttt{cor:uniqueness-multiplicative-inverse-on-q}: multiplicative inverses of nonzero elements are unique.
+  \item Cor \texttt{cor:inverse-of-one-is-one-on-q}: $1_Q^{-1}=1_Q$.
+  \item Cor \texttt{cor:inverse-of-product-on-q}: if $x,y\ne0$, then $(xy)^{-1}=x^{-1}y^{-1}$.
+  \item Cor \texttt{cor:inverse-of-inverse-on-q}: if $x\ne0$, then $(x^{-1})^{-1}=x$.
+  \item Def \texttt{def:integer-power-on-q}: $x^n$ for $n\in\mathbb{Z}$, with $x\ne0_Q$ when $n<0$.
+  \item Cor \texttt{cor:exponent-addition-on-q}: $x^{m+n}=x^m x^n$.
+  \item Cor \texttt{cor:power-of-power-on-q}: $(x^m)^n=x^{mn}$.
+  \item Cor \texttt{cor:power-of-product-on-q}: $(xy)^n=x^n y^n$.
+\end{itemize}
+\end{topicbox}
+
+\begin{topicbox}{Order on \texorpdfstring{$\mathbb{Q}$}{Q}}
+\begin{itemize}
+  \item Def \texttt{def:positive-rational}: $[a,b]$ is positive iff $ab>0$ in $\mathbb{Z}$.
+  \item Lem \texttt{lem:positivity-respects-equivalence-q}: positivity respects fraction equivalence.
+  \item Thm \texttt{thm:positivity-on-q-well-defined}: positivity is well-defined on $\mathbb{Q}$.
+  \item Def \texttt{def:strict-order-on-q}: $x<y$ iff $y-x$ is positive.
+  \item Def \texttt{def:order-on-q}: $x\le y$ iff $x<y$ or $x=y$.
+  \item Prop \texttt{prop:product-of-positives-is-positive-q}: positive rationals have positive product.
+  \item Thm \texttt{thm:sign-trichotomy-on-q}: exactly one of $x<0_Q$, $x=0_Q$, $0_Q<x$ holds.
+  \item Thm \texttt{thm:trichotomy-on-q}: exactly one of $x<y$, $x=y$, $y<x$ holds.
+  \item Thm \texttt{thm:strict-order-on-q-irreflexive}: not $x<x$.
+  \item Thm \texttt{thm:strict-order-on-q-asymmetric}: $x<y\Rightarrow\neg(y<x)$.
+  \item Thm \texttt{thm:strict-order-on-q-transitive}: $x<y$ and $y<z$ imply $x<z$.
+  \item Thm \texttt{thm:order-on-q-reflexive}: $x\le x$.
+  \item Thm \texttt{thm:order-on-q-antisymmetric}: $x\le y$ and $y\le x$ imply $x=y$.
+  \item Thm \texttt{thm:order-on-q-transitive}: $x\le y$ and $y\le z$ imply $x\le z$.
+  \item Thm \texttt{thm:order-on-q-total}: $x\le y$ or $y\le x$.
+  \item Thm \texttt{thm:q-totally-ordered-set}: $(\mathbb{Q},\le)$ is a total order.
+  \item Thm \texttt{thm:left-addition-preserves-strict-order-on-q}: $x<y\Rightarrow z+x<z+y$.
+  \item Cor \texttt{cor:right-addition-preserves-strict-order-on-q}: $x<y\Rightarrow x+z<y+z$.
+  \item Thm \texttt{thm:left-addition-preserves-order-on-q}: $x\le y\Rightarrow z+x\le z+y$.
+  \item Cor \texttt{cor:right-addition-preserves-order-on-q}: $x\le y\Rightarrow x+z\le y+z$.
+  \item Cor \texttt{cor:addition-reflects-order-on-q}: addition by a fixed rational reflects strict and non-strict order.
+  \item Thm \texttt{thm:left-positive-multiplication-preserves-strict-order-on-q}: positive left multiplication preserves strict order.
+  \item Cor \texttt{cor:right-positive-multiplication-preserves-strict-order-on-q}: positive right multiplication preserves strict order.
+  \item Thm \texttt{thm:positive-multiplication-preserves-order-on-q}: positive multiplication preserves non-strict order.
+  \item Thm \texttt{thm:negative-multiplication-reverses-strict-order-on-q}: negative multiplication reverses strict order.
+  \item Thm \texttt{thm:reciprocal-reverses-order-on-positives-q}: $0_Q<x<y\Rightarrow0_Q<y^{-1}<x^{-1}$.
+  \item Thm \texttt{thm:sign-of-reciprocal-q}: reciprocals preserve positive and negative sign.
+  \item Def \texttt{def:absolute-value-on-q}: $|x|:=x$ if $0_Q\le x$, and $|x|:=-x$ otherwise.
+  \item Thm \texttt{thm:absolute-value-nonnegative-on-q}: $0_Q\le |x|$.
+  \item Thm \texttt{thm:absolute-value-zero-iff-on-q}: $|x|=0_Q$ iff $x=0_Q$.
+  \item Thm \texttt{thm:absolute-value-multiplicative-on-q}: $|xy|=|x||y|$.
+  \item Thm \texttt{thm:triangle-inequality-on-q}: $|x+y|\le |x|+|y|$.
+  \item Thm \texttt{thm:absolute-value-of-reciprocal-q}: $x\ne0_Q\Rightarrow |x^{-1}|=|x|^{-1}$.
+  \item Thm \texttt{thm:q-is-an-ordered-field}: $\mathbb{Q}$ is an ordered field.
+\end{itemize}
+\end{topicbox}
+
+\begin{topicbox}{Density, Gaps, and Embedding}
+\begin{itemize}
+  \item Lem \texttt{lem:midpoint-between-q}: $x<y\Rightarrow x<(x+y)2_Q^{-1}<y$.
+  \item Thm \texttt{thm:density-of-q}: between any two rationals lies a rational.
+  \item Prop \texttt{prop:no-least-positive-rational}: every positive rational has a smaller positive rational.
+  \item Thm \texttt{thm:archimedean-property-of-q}: for $0_Q<x$, some $n\in\mathbb{N}$ has $y<nx$.
+  \item Cor \texttt{cor:reciprocals-arbitrarily-small-q}: reciprocals of naturals become arbitrarily small.
+  \item Thm \texttt{thm:no-rational-square-root-of-two}: no rational square is $2_Q$.
+  \item Def \texttt{def:gap-set-q}: $S:=\{q\in\mathbb{Q}:0_Q<q\land q^2<2_Q\}$.
+  \item Prop \texttt{prop:gap-set-bounded-above-q}: the gap set is nonempty and bounded above.
+  \item Thm \texttt{thm:gap-set-no-rational-supremum-q}: the gap set has no rational supremum.
+  \item Cor \texttt{cor:q-order-incomplete}: $\mathbb{Q}$ is not order-complete.
+  \item Def \texttt{def:cauchy-sequence-in-q}: rational Cauchy sequence.
+  \item Def \texttt{def:null-sequence-in-q}: rational null sequence.
+  \item Lem \texttt{lem:rational-limit-unique}: a convergent rational sequence has at most one rational limit.
+  \item Def \texttt{def:embedding-z-into-q}: $\iota:\mathbb{Z}\to\mathbb{Q}$, $\iota(n):=[n,1]$.
+  \item Thm \texttt{thm:embedding-z-into-q-preserves-zero}: $\iota(0_Z)=0_Q$.
+  \item Thm \texttt{thm:embedding-z-into-q-preserves-one}: $\iota(1_Z)=1_Q$.
+  \item Thm \texttt{thm:embedding-z-into-q-injective}: $\iota(m)=\iota(n)\Rightarrow m=n$.
+  \item Thm \texttt{thm:embedding-z-into-q-preserves-addition}: $\iota(m+n)=\iota(m)+\iota(n)$.
+  \item Thm \texttt{thm:embedding-z-into-q-preserves-multiplication}: $\iota(mn)=\iota(m)\iota(n)$.
+  \item Thm \texttt{thm:embedding-z-into-q-preserves-order}: $m\le n$ iff $\iota(m)\le\iota(n)$.
+  \item Thm \texttt{thm:z-embeds-into-q}: $\iota$ is an injective order-preserving ring homomorphism.
+  \item Thm \texttt{thm:q-is-field-of-fractions-of-z}: every rational is a quotient of integer images.
+  \item Cor \texttt{cor:embedding-z-into-q-not-surjective}: $\iota(\mathbb{Z})\subsetneq\mathbb{Q}$.
+  \item Rem \texttt{rem:why-real-numbers-are-introduced}: $\mathbb{Q}$ is an ordered field but order-incomplete, motivating $\mathbb{R}$.
+\end{itemize}
+\end{topicbox}
