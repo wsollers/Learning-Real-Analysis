@@ -5,7 +5,8 @@
 # workflows that used to fan IN and race on push to this repo. Here the
 # monorepo is the ONLY writer: it pulls each leaf read-only, mirrors it into
 # place, and makes ONE commit. A concurrency group serialises overlapping
-# runs so they queue instead of colliding.
+# runs so they queue instead of colliding, and the push step rebases+retries
+# so a race (e.g. several manual dispatches in flight) can't fail the run.
 #
 # Manual trigger only. Optionally pass `targets` to limit the run, e.g.
 # "iii", or "iii v lean". Default "all".
@@ -39,6 +40,7 @@ jobs:
         with:
           token: ${{ secrets.SYNC_PAT }}
           path: monorepo
+          fetch-depth: 0      # full history so push-time rebase works cleanly
 
       - name: Assemble selected leaves
         env:
@@ -122,4 +124,32 @@ jobs:
             exit 0
           fi
           git commit -m "chore: assemble monorepo from leaves (targets: ${{ github.event.inputs.targets }})"
-          git push
+
+          # Push, but tolerate a concurrent push to main: rebase onto the
+          # latest tip and retry. The mirror is idempotent, so if a competing
+          # run already wrote equivalent content the rebase drops our (now
+          # empty) commit and the push is a no-op. A genuine rebase conflict
+          # (rare; would need two runs editing the same path differently) is
+          # resolved by resetting to remote, since remote already holds an
+          # equivalent mirror.
+          pushed=0
+          for i in 1 2 3 4 5; do
+            if git push; then
+              pushed=1
+              break
+            fi
+            echo "push attempt $i rejected (concurrent push); rebasing onto latest main..."
+            if ! git pull --rebase origin main; then
+              git rebase --abort 2>/dev/null || true
+              echo "::warning::rebase conflict; resetting to remote (mirror is idempotent)"
+              git reset --hard origin/main
+              pushed=1
+              break
+            fi
+            sleep $(( (RANDOM % 5) + 2 ))
+          done
+
+          if [ "$pushed" -ne 1 ]; then
+            echo "::error::push failed after 5 attempts (persistent contention on main)"
+            exit 1
+          fi
