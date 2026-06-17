@@ -50,10 +50,27 @@ TARGET_ENVS = {
 
 REMARK_ENV = "remark*"
 
+# Semantic statement boxes: \newtcolorbox wrappers from common/boxes.tex. Source
+# now wraps each theorem-like env as
+#   \begin{definitionbox}{..}\begin{definition}..\end{definition}\end{definitionbox}
+# so trailing remark*/dependencies blocks sit AFTER the box close, not after
+# \end{<env>}. These names must be treated both as the enclosing wrapper (so the
+# trailing window jumps past the box close) and as node-opening fences.
+SEMANTIC_BOX_ENVS = {
+    "tcolorbox",
+    "definitionbox",
+    "definitionalbox",
+    "axiombox",
+    "theorembox",
+    "lemmabox",
+    "propositionbox",
+    "corollarybox",
+}
+
 # Environments whose \begin signals we must not scan past when looking for
 # a trailing dependencies block.  Includes all theorem-like envs plus
 # structural wrappers that open a new logical node.
-LOOKAHEAD_FENCE_ENVS = TARGET_ENVS | {"topicbox", "tcolorbox"}
+LOOKAHEAD_FENCE_ENVS = TARGET_ENVS | {"topicbox"} | SEMANTIC_BOX_ENVS
 
 SECTIONING_ENVS = {
     "section",
@@ -343,7 +360,9 @@ def gather_tex_files(root: Path) -> list[Path]:
 
 
 def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]], dict[str, str]]:
-    proof_root = chapter_root / "proofs" / "notes"
+    # Proofs live under proofs/<topic>/prf-*.tex (older trees used proofs/notes/);
+    # scan the whole proofs/ subtree so either layout resolves.
+    proof_root = chapter_root / "proofs"
     label_to_proof: dict[str, dict[str, Any]] = {}
     theorem_return_to_proof: dict[str, str] = {}
     if not proof_root.exists():
@@ -394,7 +413,7 @@ def enclosing_tcolorbox_end(envs: list[EnvBlock], env: EnvBlock) -> int | None:
     parent = env.parent
     while parent is not None:
         parent_env = envs[parent]
-        if parent_env.name == "tcolorbox":
+        if parent_env.name in SEMANTIC_BOX_ENVS:
             return parent_env.end_end
         parent = parent_env.parent
     return None
