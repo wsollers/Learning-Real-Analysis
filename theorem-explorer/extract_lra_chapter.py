@@ -142,6 +142,7 @@ class ExtractedItem:
     proof_return_targets: list[str] = field(default_factory=list)
     proof_raw_latex_b64: str | None = None
     proof_file_blocks: list[dict[str, Any]] = field(default_factory=list)
+    proof_dependency_refs: list[str] = field(default_factory=list)
     text_preview: str = ""
     definitional_root: bool = False
 
@@ -422,6 +423,18 @@ def live_tex_closure(index_file: Path, chapter_root: Path) -> list[Path]:
     return order
 
 
+def extract_dependencies_block(text: str) -> list[str]:
+    r"""Return the sorted hyperref labels inside every ``\begin{dependencies}``
+    block in ``text``. Used for proof files: the proof's dependency block records
+    what the *proof* uses, which is distinct from the theorem's conceptual
+    dependencies declared in the notes (those remain the `depends_on` set)."""
+    refs: set[str] = set()
+    for env in parse_env_tree(text):
+        if env.name == "dependencies":
+            refs.update(h for h in HYPERREF_RE.findall(env.raw(text)) if ":" in h)
+    return sorted(refs)
+
+
 def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]], dict[str, str]]:
     # Proofs live under proofs/<topic>/prf-*.tex (older trees used proofs/notes/);
     # scan the whole proofs/ subtree so either layout resolves.
@@ -471,6 +484,7 @@ def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]]
             "proof_return_targets": return_theorem_targets,
             "proof_raw_latex_b64": b64(text),
             "proof_file_blocks": file_blocks,
+            "proof_dependency_refs": extract_dependencies_block(text),
         }
         for lbl in labels:
             if lbl.startswith("prf:"):
@@ -760,6 +774,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
                 item.proof_return_targets = matched_proof["proof_return_targets"]
                 item.proof_raw_latex_b64 = matched_proof["proof_raw_latex_b64"]
                 item.proof_file_blocks = matched_proof["proof_file_blocks"]
+                item.proof_dependency_refs = matched_proof.get("proof_dependency_refs", [])
 
             items.append(item)
     return items
@@ -786,6 +801,11 @@ def build_edges(items: Iterable[ExtractedItem]) -> list[dict[str, str]]:
                 edges.append({"from": edge[0], "to": edge[1], "kind": edge[2]})
         for dep in item.dependency_refs:
             edge = (item.id, dep, "depends_on")
+            if edge not in seen:
+                seen.add(edge)
+                edges.append({"from": edge[0], "to": edge[1], "kind": edge[2]})
+        for dep in item.proof_dependency_refs:
+            edge = (item.id, dep, "proof_depends_on")
             if edge not in seen:
                 seen.add(edge)
                 edges.append({"from": edge[0], "to": edge[1], "kind": edge[2]})
@@ -817,6 +837,7 @@ def item_to_json(item: ExtractedItem) -> dict[str, Any]:
         "remark_blocks": item.remark_blocks,
         "expositions": item.expositions,
         "proof_file_blocks": item.proof_file_blocks,
+        "proof_dependency_refs": item.proof_dependency_refs,
         "text_preview": item.text_preview,
         "definitional_root": item.definitional_root,
     }
