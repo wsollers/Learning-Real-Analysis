@@ -1,23 +1,28 @@
 # ---------------------------------------------------------------------------
 # assemble-from-leaves.yml
 #
-# Single mono-side orchestrator. Replaces the per-leaf sync-to-monorepo.yml
-# workflows that used to fan IN and race on push to this repo. Here the
-# monorepo is the ONLY writer: it pulls each leaf read-only, mirrors it into
-# place, and makes ONE commit. A concurrency group serialises overlapping
-# runs so they queue instead of colliding, and the push step rebases+retries
-# so a race (e.g. several manual dispatches in flight) can't fail the run.
+# THE single manual entry point for the whole pipeline. One invocation:
+#   1. Mirrors each requested leaf into the monorepo (single writer, one commit).
+#   2. Triggers the knowledge-explorer rebuild (lra-knowledge-explorer/rebuild.yml),
+#      which extracts from the freshly-updated monorepo, pushes knowledge.json +
+#      graph-edges.json into the explorer, and deploys it to GitHub Pages.
 #
-# Manual trigger only. Optionally pass `targets` to limit the run, e.g.
-# "iii", or "iii v lean". Default "all".
+# Manual only (workflow_dispatch). Nothing here fires automatically — the old
+# push-triggered auto-dispatch (trigger-knowledge-rebuild.yml) has been removed,
+# so the explorer rebuilds ONLY when you run this workflow.
 #
-# Requires secret SYNC_PAT (PAT with repo scope) — already present in this
-# repo (trigger-knowledge-rebuild.yml uses it). Pushing with the PAT rather
-# than GITHUB_TOKEN is deliberate: it lets the resulting commit trigger
-# trigger-knowledge-rebuild.yml downstream, so the knowledge graph rebuilds.
+# Why the explorer rebuild is a dispatch rather than inline: GitHub Pages can
+# only be deployed by a workflow running in the explorer repo, and the
+# extraction + Pages deploy already live in lra-knowledge-explorer/rebuild.yml.
+# We reuse it rather than duplicate it.
+#
+# Targets: pass `targets` to limit the mirror, e.g. "iii", or "iii v lean".
+# Default "all".
+#
+# Requires secret SYNC_PAT (PAT with repo scope) — present in this repo.
 # ---------------------------------------------------------------------------
 
-name: Assemble monorepo from leaves
+name: Assemble monorepo and rebuild explorer
 
 on:
   workflow_dispatch:
@@ -129,8 +134,7 @@ jobs:
           # latest tip and retry. The mirror is idempotent, so if a competing
           # run already wrote equivalent content the rebase drops our (now
           # empty) commit and the push is a no-op. A genuine rebase conflict
-          # (rare; would need two runs editing the same path differently) is
-          # resolved by resetting to remote, since remote already holds an
+          # (rare) is resolved by resetting to remote, which already holds an
           # equivalent mirror.
           pushed=0
           for i in 1 2 3 4 5; do
@@ -153,3 +157,21 @@ jobs:
             echo "::error::push failed after 5 attempts (persistent contention on main)"
             exit 1
           fi
+
+  rebuild-explorer:
+    name: Rebuild knowledge explorer
+    needs: assemble
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch explorer rebuild (extract + push JSON + deploy Pages)
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.SYNC_PAT }}
+          repository: wsollers/lra-knowledge-explorer
+          event-type: lra-rebuild
+          client-payload: |
+            {
+              "source_repo": "${{ github.repository }}",
+              "triggered_by": "${{ github.actor }}",
+              "targets": "${{ github.event.inputs.targets }}"
+            }
