@@ -68,6 +68,53 @@ def resolve_output_dir(chapter_root: Path, output_dir: Path | None) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     return out_dir
 
+
+_PRIMITIVE_DEFINITIONS_CACHE: dict[str, frozenset[str]] = {}
+
+
+def _find_root_policy(chapter_root: Path) -> Path | None:
+    r"""Locate the dependency-root policy YAML by walking up from a chapter root.
+
+    The governance audit reads ``<repo>/volume-*/docs/governance/
+    dependency-root-policy.yaml``.  Pass 2 runs over the monorepo, so the same
+    file lives at ``<monorepo>/volume-*/docs/governance/...``; we search the
+    chapter's ancestors for ``docs/governance/dependency-root-policy.yaml`` and
+    return the first hit.  Returns None when no policy is present (the common
+    case while ``primitive_definitions`` is empty).
+    """
+    rel = Path("docs") / "governance" / "dependency-root-policy.yaml"
+    for ancestor in [chapter_root, *chapter_root.parents]:
+        candidate = ancestor / rel
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def load_primitive_definitions(chapter_root: Path, policy_path: Path | None = None) -> frozenset[str]:
+    r"""Return the set of policy-declared primitive-definition labels.
+
+    Defensive by design, mirroring the audit's ``load_policy``: a missing file, a
+    missing ``pyyaml`` dependency, or a malformed document all yield an empty set
+    rather than failing the extraction run.  Cached per policy path so repeated
+    chapter conversions don't re-read the file.
+    """
+    path = policy_path or _find_root_policy(chapter_root)
+    if path is None or not path.exists():
+        return frozenset()
+    key = str(path.resolve())
+    cached = _PRIMITIVE_DEFINITIONS_CACHE.get(key)
+    if cached is not None:
+        return cached
+    try:
+        import yaml  # pyyaml is already a pipeline dependency (rebuild.yml)
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        primitives = frozenset(str(x) for x in (data.get("primitive_definitions") or []))
+    except Exception:
+        primitives = frozenset()
+    _PRIMITIVE_DEFINITIONS_CACHE[key] = primitives
+    return primitives
+
+
 FIELD_DEFAULTS: dict[str, Any] = {
     "id": "",
     "kind": "",
@@ -110,6 +157,12 @@ FIELD_DEFAULTS: dict[str, Any] = {
     "has_proof_file": False,
     "ignored": False,
     "is_theorem_like": True,
+    # Root / terminal classification (mirrors the governance audit's allowed_root):
+    # a node is a legitimate leaf of the dependency tree iff it is an axiom, a
+    # \DefinitionalRoot-tagged primitive, or a policy-listed primitive definition.
+    "definitional_root": False,
+    "is_root": False,
+    "root_kind": "",          # "axiom" | "definitional" | "primitive" | ""
     "depends_on_titles": [],
     "used_by_titles": [],
     "prereq_titles": [],
@@ -508,6 +561,11 @@ def build_multiple_primary_statement_warning(node: dict[str, Any]) -> dict[str, 
 
 
 def build_missing_dependencies_warning(node: dict[str, Any]) -> dict[str, Any] | None:
+    # Roots legitimately have no dependencies: axioms, \DefinitionalRoot primitives,
+    # and policy-declared primitive definitions all bottom out a chain by design.
+    # Suppress the false "missing Dependencies remark" warning for them.
+    if node.get("is_root") or node.get("definitional_root") or node.get("kind") == "Axiom":
+        return None
     headings = {
         (blk.get("title") or "").strip().lower()
         for blk in node.get("remark_blocks", [])
@@ -650,7 +708,7 @@ def build_proof_spacing_artifact_warning(node: dict[str, Any]) -> dict[str, Any]
     return warning
 
 
-def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, Any], dict[str, Any] | None]:
+def build_node(seed_node: dict[str, Any], chapter_name: str, primitive_definitions: frozenset[str] = frozenset()) -> tuple[dict[str, Any], dict[str, Any] | None]:
     node = json.loads(json.dumps(FIELD_DEFAULTS))
     node["id"] = seed_node["id"]
     node["kind"] = seed_node.get("kind", "")
@@ -667,6 +725,23 @@ def build_node(seed_node: dict[str, Any], chapter_name: str) -> tuple[dict[str, 
     node["statement_display"] = latex_to_basic_html(statement_tex)
     node["has_proof_file"] = bool(seed_node.get("proof_source_path"))
     node["is_theorem_like"] = True
+
+    # Root / terminal classification — mirror the governance audit's allowed_root:
+    #   ax -> root ; \DefinitionalRoot -> root ; label/id in policy primitives -> root.
+    definitional_root = bool(seed_node.get("definitional_root", False))
+    label = seed_node.get("label") or ""
+    is_axiom = node["kind"] == "Axiom"
+    in_policy = (label in primitive_definitions) or (node["id"] in primitive_definitions)
+    node["definitional_root"] = definitional_root
+    if is_axiom:
+        node["root_kind"] = "axiom"
+    elif definitional_root:
+        node["root_kind"] = "definitional"
+    elif in_policy:
+        node["root_kind"] = "primitive"
+    else:
+        node["root_kind"] = ""
+    node["is_root"] = bool(is_axiom or definitional_root or in_policy)
 
     remark_fields = classify_remark_fields(seed_node.get("remark_blocks", []))
     node.update(remark_fields)
@@ -915,10 +990,11 @@ def convert_chapter(chapter_root: Path, output_dir: Path | None = None) -> tuple
     seed_dir = out_dir if output_dir is not None else (chapter_root / ".explorer")
     knowledge_seed, edge_seed = load_seed(seed_dir)
     chapter_name = knowledge_seed.get("chapter") or chapter_root.name
+    primitive_definitions = load_primitive_definitions(chapter_root)
     nodes: list[dict[str, Any]] = []
     errors: list[dict[str, Any]] = []
     for seed in knowledge_seed.get("nodes", []):
-        node, error = build_node(seed, chapter_name)
+        node, error = build_node(seed, chapter_name, primitive_definitions)
         nodes.append(node)
         title_warning = build_missing_environment_title_warning(seed, node)
         if title_warning:

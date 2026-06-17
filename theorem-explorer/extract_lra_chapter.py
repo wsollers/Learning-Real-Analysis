@@ -68,6 +68,14 @@ LABEL_RE = re.compile(r"\\label\{([^{}]+)\}")
 HYPERREF_RE = re.compile(r"\\hyperref\[([^\]]+)\]")
 INPUT_RE = re.compile(r"\\(?:input|include)\{([^{}]+)\}")
 SECTION_RE = re.compile(r"\\(?:section|subsection|subsubsection)\{([^{}]+)\}")
+# Definitional roots: a bare \DefinitionalRoot macro placed in the trailing
+# window after a formal environment marks that item as a primitive / undefined
+# notion (a legitimate leaf of the dependency tree).  Detection mirrors the
+# governance audit (tools/governance/dependency_graph.py): the macro is matched
+# on a word boundary, and the trailing window is bounded by the next formal
+# environment / structural wrapper or the next sectioning command.
+DEFINITIONAL_ROOT_RE = re.compile(r"\\DefinitionalRoot\b")
+DEFROOT_BOUNDARY_RE = re.compile(r"\\(?:chapter|section|subsection|subsubsection)\*?\{")
 STRIP_CMD_RE = re.compile(r"\\[A-Za-z@]+\*?(?:\[[^\]]*\])?(?:\{[^{}]*\})?")
 WHITESPACE_RE = re.compile(r"\s+")
 HTML_LIST_TAG_RE = re.compile(r"</?(?:ul|ol|li)\b[^>]*>", re.IGNORECASE)
@@ -118,6 +126,7 @@ class ExtractedItem:
     proof_raw_latex_b64: str | None = None
     proof_file_blocks: list[dict[str, Any]] = field(default_factory=list)
     text_preview: str = ""
+    definitional_root: bool = False
 
 
 def b64(s: str) -> str:
@@ -497,6 +506,49 @@ def collect_dependencies(text: str, envs: list[EnvBlock], idx: int) -> list[str]
     return []
 
 
+def collect_definitional_root(text: str, envs: list[EnvBlock], idx: int) -> bool:
+    r"""Return True if a bare ``\DefinitionalRoot`` macro appears in the trailing
+    window after the theorem-like item at ``envs[idx]``.
+
+    A definitional root is a primitive / undefined notion: the explorer's
+    equivalent of an axiom-like terminal (Euclid's "point" / "line").  This
+    mirrors the governance audit's ``root_kind_after_block`` so the two systems
+    agree on what counts as a root:
+
+      - the window runs from the item's own ``\end{...}`` up to the next formal
+        environment / structural wrapper (``LOOKAHEAD_FENCE_ENVS``) or the next
+        sectioning command, whichever comes first;
+      - ``\DefinitionalRoot`` is loose text, not an environment, so it is found by
+        scanning the window directly rather than through the env tree;
+      - scanning starts at ``current.end_end`` so the macro is detected whether it
+        sits inside the enclosing tcolorbox (between ``\end{definition}`` and the
+        box close) or after the box, before the next node;
+      - comments are masked first so a commented-out macro is not a false hit.
+    """
+    current = envs[idx]
+    start = current.end_end
+
+    # Boundary 1 — the next formal env / structural wrapper that opens a new node.
+    boundary = len(text)
+    for j in range(idx + 1, len(envs)):
+        nxt = envs[j]
+        if nxt.begin_start <= start:
+            # Children of this item, or the enclosing wrapper that opened before
+            # it — already accounted for; skip.
+            continue
+        if nxt.name in LOOKAHEAD_FENCE_ENVS:
+            boundary = nxt.begin_start
+            break
+
+    # Boundary 2 — the next sectioning command, if it comes earlier.
+    section = DEFROOT_BOUNDARY_RE.search(text, start)
+    if section and section.start() < boundary:
+        boundary = section.start()
+
+    window = strip_comments_keep_length(text[start:boundary])
+    return bool(DEFINITIONAL_ROOT_RE.search(window))
+
+
 def make_fallback_id(kind: str, path: Path, ordinal: int) -> str:
     stem = re.sub(r"[^A-Za-z0-9]+", "-", path.stem).strip("-").lower()
     return f"{kind.lower()}:{stem}:{ordinal:03d}"
@@ -561,6 +613,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
             theorem_refs = sorted({h for h in HYPERREF_RE.findall(raw) if h.startswith(("def:", "thm:", "lem:", "prop:", "cor:", "ax:"))})
             remarks = collect_trailing_remarks(text, envs, idx)
             dependency_refs = collect_dependencies(text, envs, idx)
+            definitional_root = collect_definitional_root(text, envs, idx)
             source_path = relative_posix(path, chapter_root)
             section_slug = find_section_slug(path, chapter_root)
             expositions = exposition_metadata(remarks, item_id, kind, label, section_slug, source_path)
@@ -585,6 +638,7 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
                 remark_blocks=remarks,
                 expositions=expositions,
                 text_preview=clean_preview(raw),
+                definitional_root=definitional_root,
             )
 
             matched_proof = None
@@ -664,6 +718,7 @@ def item_to_json(item: ExtractedItem) -> dict[str, Any]:
         "expositions": item.expositions,
         "proof_file_blocks": item.proof_file_blocks,
         "text_preview": item.text_preview,
+        "definitional_root": item.definitional_root,
     }
 
 
