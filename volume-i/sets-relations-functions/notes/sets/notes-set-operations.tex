@@ -18,6 +18,12 @@ $\varnothing$.
 \end{definition}
 \end{definitionbox}
 
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[ax:empty-set]{Axiom of Empty Set}
+\end{itemize}
+\end{dependencies}
+
 \begin{remark*}[Vacuous truth]
 Statements of the form $\forall x \in \varnothing,\; P(x)$ are
 \emph{vacuously true}: there is no element $x \in \varnothing$ for which
@@ -38,12 +44,25 @@ A \subseteq B \;\;\Longleftrightarrow\;\; \forall x \, (x \in A \rightarrow x \i
 \end{definition}
 \end{definitionbox}
 
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[ax:separation]{Axiom Schema of Separation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
 \begin{definitionbox}{Definition (Proper Subset)}
 \begin{definition}[Proper Subset]\label{def:proper-subset}
 $A$ is a \emph{proper subset} of $B$, written $A \subsetneq B$, if
 $A \subseteq B$ and $A \neq B$.
 \end{definition}
 \end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:subset]{Subset}
+\end{itemize}
+\end{dependencies}
 
 \begin{remark*}[Notation convention]
 Some authors write $A \subset B$ for a proper subset; others use it to mean
@@ -81,6 +100,13 @@ A \cup B \;=\; \{\, x \mid x \in A \lor x \in B \,\}.
 \end{definition}
 \end{definitionbox}
 
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:set-membership]{Set and Membership}
+  \item \hyperref[ax:separation]{Axiom Schema of Separation}
+\end{itemize}
+\end{dependencies}
+
 \input{volume-i/sets-relations-functions/notes/sets/figure-union}
 
 \begin{definitionbox}{Definition (Intersection)}
@@ -93,6 +119,13 @@ A \cap B \;=\; \{\, x \mid x \in A \land x \in B \,\}.
 \end{definition}
 \end{definitionbox}
 
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:set-membership]{Set and Membership}
+  \item \hyperref[ax:separation]{Axiom Schema of Separation}
+\end{itemize}
+\end{dependencies}
+
 \input{volume-i/sets-relations-functions/notes/sets/figure-intersection}
 
 \begin{definitionbox}{Definition (Set Difference)}
@@ -104,6 +137,13 @@ A \setminus B \;=\; \{\, x \mid x \in A \land x \notin B \,\}.
 \]
 \end{definition}
 \end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:set-membership]{Set and Membership}
+  \item \hyperref[ax:separation]{Axiom Schema of Separation}
+\end{itemize}
+\end{dependencies}
 
 \input{volume-i/sets-relations-functions/notes/sets/figure-set-difference}
 
@@ -139,6 +179,13 @@ A^c \;=\; U \setminus A.
 \end{definition}
 \end{definitionbox}
 
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:set-membership]{Set and Membership}
+  \item \hyperref[ax:separation]{Axiom Schema of Separation}
+\end{itemize}
+\end{dependencies}
+
 \begin{definitionbox}{Definition (Cartesian Product)}
 \begin{definition}[Cartesian Product]\label{def:cartesian-product}
 The \emph{Cartesian product} of sets $A$ and $B$ is:
@@ -169,6 +216,13 @@ subsets of $A$:
 \end{definition}
 \end{definitionbox}
 
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[ax:power-set]{Axiom of Power Set}
+\end{itemize}
+\end{dependencies}
+
 \begin{remark*}[Size]
 If $A$ has $n$ elements, then $|\mathcal{P}(A)| = 2^n$. For infinite $A$,
 Cantor's theorem shows $|\mathcal{P}(A)| > |A|$ strictly.
@@ -178,18 +232,29 @@ Cantor's theorem shows $|\mathcal{P}(A)| > |A|$ strictly.
 % De Morgan — Theorem box (named, major result of section)
 % ---------------------------------------------------------
 \begin{theorembox}{Theorem (De Morgan's Laws)}
-\label{thm:de-morgan}
+\begin{theorem}[De Morgan's Laws]\label{thm:de-morgan}
 Let $U$ be a universe and $A,B \subseteq U$. Then
 \[
 (A \cup B)^c = A^c \cap B^c
 \quad\text{and}\quad
 (A \cap B)^c = A^c \cup B^c.
 \]
+\hyperref[prf:de-morgan]{Go to proof.}
+\end{theorem}
 \end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 $\forall A, B \subseteq U:\; \forall x\,\bigl(x \notin A \cup B \leftrightarrow (x \notin A \wedge x \notin B)\bigr)$, and dually $\forall x\,\bigl(x \notin A \cap B \leftrightarrow (x \notin A \vee x \notin B)\bigr)$.
 \end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:union]{Union}
+  \item \hyperref[def:intersection]{Intersection}
+  \item \hyperref[def:complement]{Complement}
+\end{itemize}
+\end{dependencies}
+
 \begin{remark*}[Connection to propositional logic]
 De Morgan's laws mirror the propositional logic identities $\neg(P \lor Q) \equiv \neg P \land \neg Q$ and $\neg(P \land Q) \equiv \neg P \lor \neg Q$ under the correspondence $\cap \leftrightarrow \land$, $\cup \leftrightarrow \lor$, $A^c \leftrightarrow \neg A$.
 \end{remark*}
@@ -203,11 +268,18 @@ complements unchanged.
 \end{definition}
 \end{definitionbox}
 
-\NoLocalDependencies
-
 \begin{remark*}[Standard quantified statement]
 $\forall$ expressions $E, E'$ over $U$: $E$ and $E'$ are dual iff $E'$ is obtained from $E$ by the substitution $\cup \mapsto \cap,\; \cap \mapsto \cup,\; \varnothing \mapsto U,\; U \mapsto \varnothing$.
 \end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:union]{Union}
+  \item \hyperref[def:intersection]{Intersection}
+  \item \hyperref[def:empty-set]{Empty Set}
+  \item \hyperref[def:complement]{Complement}
+\end{itemize}
+\end{dependencies}
 
 \begin{corollarybox}{Corollary}
 \begin{corollary}[\texorpdfstring{\hyperref[prf:set-duality]{Principle of Set Duality}}{Principle of Set Duality}]\label{cor:set-duality}
@@ -217,11 +289,16 @@ replaced by its dual.
 \end{corollary}
 \end{corollarybox}
 
-\NoLocalDependencies
-
 \begin{remark*}[Standard quantified statement]
 For any identity $\forall A_1,\dots,A_n \subseteq U:\; E(A_i,\cup,\cap,\varnothing,U) = E'(A_i,\cup,\cap,\varnothing,U)$, the dual identity $\forall A_1,\dots,A_n \subseteq U:\; E^d = E'^d$ holds, where $E^d$ replaces $\cup\leftrightarrow\cap$ and $\varnothing\leftrightarrow U$.
 \end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:set-duality]{Set Duality}
+  \item \hyperref[ax:extensionality]{Axiom of Extensionality}
+\end{itemize}
+\end{dependencies}
 
 \begin{remark*}[Using duality in proofs]
 To prove a statement involving unions and intersections, it often suffices to
