@@ -939,8 +939,9 @@ def attach_edge_lists(nodes: list[dict[str, Any]], edges: list[dict[str, str]]) 
     for e in edges:
         frm, to, kind = e["from"], e["to"], e["kind"]
         if kind == "depends_on":
-            by_id[to]["depends_on_ids"].append(frm)
-            by_id[frm]["used_by_ids"].append(to)
+            # Edge frm->to means "frm depends on to": frm's depends_on, to's used_by.
+            by_id[frm]["depends_on_ids"].append(to)
+            by_id[to]["used_by_ids"].append(frm)
         elif kind == "used_by":
             by_id[frm]["used_by_ids"].append(to)
             by_id[to]["depends_on_ids"].append(frm)
