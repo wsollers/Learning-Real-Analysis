@@ -4,75 +4,171 @@
 
 \section{Reference: Summary Tables}
 
-\section*{Comparison: Propositional vs.\ Predicate Logic}
+\begin{toolkitbox}{Predicate Logic Summary Toolkit --- Quick Reference}
+\small
+\begin{tabular}{p{0.30\linewidth} p{0.38\linewidth} p{0.22\linewidth}}
+\toprule
+\textbf{Reference area} & \textbf{Use it to check} & \textbf{Main danger} \\
+\midrule
+Syntax objects & What kind of expression has been formed & Treating open formulas as sentences \\
+Semantic objects & What must be supplied to evaluate a formula & Forgetting assignments \\
+Translation patterns & How English quantifier phrases become formulas & Using the wrong connective \\
+Proof cues & Which rule matches the goal or premise & Illegal witnesses \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\begin{remark*}[Orientation]
+These tables collect the local working vocabulary for predicate logic. They
+are meant for quick lookup while translating statements and checking proofs.
+When a table gives a schema, variables and predicate letters are placeholders;
+the surrounding domain and intended predicates must still be supplied.
+\end{remark*}
+
+\subsection*{Syntax Objects}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.22\linewidth} p{0.35\linewidth} p{0.33\linewidth}}
+\toprule
+\textbf{Object} & \textbf{Role} & \textbf{Example} \\
+\midrule
+Variable & Placeholder that may be bound or free & $x,y,z$ \\
+Constant symbol & Name-like symbol of the language & $0$, $c$ \\
+Function symbol & Symbol forming terms from terms & $f(x)$, $+(x,y)$ \\
+Predicate symbol & Relation symbol forming atomic formulas & $P(x)$, $R(x,y)$ \\
+Term & Object-denoting expression & $x$, $c$, $f(x)$ \\
+Atomic formula & Predicate applied to terms, or equality of terms & $R(x,c)$, $t=s$ \\
+Formula & Expression built using connectives and quantifiers & $\forall x\,(P(x)\rightarrow Q(x))$ \\
+Sentence & Formula with no free variables & $\exists x\,P(x)$ \\
+Open formula & Formula with at least one free variable & $P(x)\wedge Q(y)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Semantics Objects}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.24\linewidth} p{0.40\linewidth} p{0.26\linewidth}}
+\toprule
+\textbf{Object} & \textbf{Role} & \textbf{Notation} \\
+\midrule
+Structure & Supplies a domain and interpretations for symbols & $\mathcal M$ \\
+Variable assignment & Sends variables to objects in the domain & $s$ \\
+Modified assignment & Changes one variable value and leaves the rest fixed & $s[x\mapsto a]$ \\
+Term evaluation & Value of a term in a structure under an assignment & $t^{\mathcal M}[s]$ \\
+Satisfaction & Formula holds in a structure under an assignment & $\mathcal M,s\models\varphi$ \\
+Truth in a structure & Sentence holds in a structure & $\mathcal M\models\sigma$ \\
+Model of a theory & Structure satisfying every sentence in a theory & $\mathcal M\models T$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark*}[Interpretation]
+Syntax asks whether an expression is well formed. Semantics asks whether that
+well-formed expression is true relative to a structure, and, for open formulas,
+relative to an assignment. Sentences are special because their truth does not
+depend on a variable assignment.
+\end{remark*}
+
+\subsection*{Quantifier Translations}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
-\hline
-\textbf{Aspect} & \textbf{Propositional Logic} & \textbf{Predicate Logic} \\ \hline
-Atomic formulas & Propositional variables (e.g.\ $P$, $Q$) & Predicate symbols applied to terms (e.g.\ $P(x)$, $R(x,y)$) \\ \hline
-Internal structure & No internal structure & Terms, variables, constants, functions \\ \hline
-Dependence on variables & None & May contain free variables \\ \hline
-Semantic interpretation & Assigned a truth value directly & True or false relative to a structure and assignment \\ \hline
-Use of quantifiers & Not available & Essential component \\ \hline
-Semantic evaluation & Truth tables & Satisfaction in a structure \\ \hline
+\begin{tabular}{p{0.30\linewidth} p{0.38\linewidth} p{0.22\linewidth}}
+\toprule
+\textbf{English form} & \textbf{Logical form} & \textbf{Cue} \\
+\midrule
+All $A$ are $B$ & $\forall x\,(A(x)\rightarrow B(x))$ & Universal uses implication \\
+No $A$ are $B$ & $\forall x\,(A(x)\rightarrow \neg B(x))$ & Universal exclusion \\
+Some $A$ are $B$ & $\exists x\,(A(x)\wedge B(x))$ & Existential uses conjunction \\
+Some $A$ are not $B$ & $\exists x\,(A(x)\wedge \neg B(x))$ & Counterexample form \\
+Every $A$ has a $B$ & $\forall x\,(A(x)\rightarrow \exists y\,(B(y)\wedge R(x,y)))$ & Witness may depend on $x$ \\
+There is one $B$ for every $A$ & $\exists y\,(B(y)\wedge \forall x\,(A(x)\rightarrow R(x,y)))$ & Uniform witness \\
+\bottomrule
 \end{tabular}
 \end{center}
 
-\vspace{1em}
-
-\section*{Quantifier Rules Summary}
+\subsection*{Quantifier Negation Laws}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.35}
-\begin{tabular}{|p{4cm}|p{6cm}|p{5cm}|}
-\hline
-\textbf{Rule Name} & \textbf{Schema} & \textbf{Conditions / Notes} \\ \hline
-Universal Instantiation & $\forall x\,\varphi \Rightarrow \varphi[t/x]$ & $t$ must be free for $x$ in $\varphi$ \\ \hline
-Existential Generalization & $\varphi[t/x] \Rightarrow \exists x\,\varphi$ & $t$ may be any term \\ \hline
-Existential Instantiation & $\exists x\,\varphi \Rightarrow \varphi[c/x]$ & $c$ is a new constant symbol \\ \hline
-Universal Generalization & $\varphi \Rightarrow \forall x\,\varphi$ & $x$ not free in any undischarged assumption \\ \hline
-Quantifier Negation & $\neg\forall x\,\varphi \equiv \exists x\,\neg\varphi$ & — \\ \cline{2-3}
-                    & $\neg\exists x\,\varphi \equiv \forall x\,\neg\varphi$ & — \\ \hline
-Quantifier Commutation & $\forall x\,\forall y\,\varphi \equiv \forall y\,\forall x\,\varphi$ & Same quantifier type only \\ \cline{2-3}
-                       & $\exists x\,\exists y\,\varphi \equiv \exists y\,\exists x\,\varphi$ & — \\ \hline
-Vacuous Quantification & $\forall x\,\varphi \equiv \varphi$ & $x$ not free in $\varphi$ \\ \cline{2-3}
-                       & $\exists x\,\varphi \equiv \varphi$ & — \\ \hline
-Renaming Bound Variables & $\forall x\,\varphi \equiv \forall y\,\varphi[y/x]$ & $y$ not free in $\varphi$ \\ \hline
+\begin{tabular}{p{0.36\linewidth} p{0.36\linewidth} p{0.18\linewidth}}
+\toprule
+\textbf{Negated form} & \textbf{Equivalent form} & \textbf{Reading} \\
+\midrule
+$\neg\forall x\,\varphi$ & $\exists x\,\neg\varphi$ & A counterexample exists \\
+$\neg\exists x\,\varphi$ & $\forall x\,\neg\varphi$ & No witness exists \\
+\bottomrule
 \end{tabular}
 \end{center}
 
-\vspace{1em}
-
-\section*{Syntax to Semantics Overview}
+\subsection*{Proof-Rule Cues}
 
 \begin{center}
-\resizebox{\linewidth}{!}{%
-\begin{tikzpicture}[
-  node distance=3.2cm,
-  every node/.style={draw, rectangle, rounded corners, align=center, inner sep=8pt},
-  arrow/.style={->, thick}
-]
-
-\node (var) {\textbf{Variables}\\ $x_1,\dots,x_n$};
-\node (term) [right=of var] {\textbf{Terms}\\ $t_1,\dots,t_n$};
-\node (atom) [right=of term] {\textbf{Atomic Formula}\\ $P(t_1,\dots,t_n)$};
-\node (form) [right=of atom] {\textbf{Formula}\\ $\forall x\,\varphi,\;\exists x\,\varphi$};
-\node (rel)  [right=of form] {\textbf{Truth in Structure}\\ $\mathcal{M}, s \models \varphi$};
-
-\draw[arrow] (var)  -- node[above]{\small substitution} (term);
-\draw[arrow] (term) -- node[above]{\small formation} (atom);
-\draw[arrow] (atom) -- node[above]{\small logical construction} (form);
-\draw[arrow] (form) -- node[above]{\small satisfaction} (rel);
-
-\end{tikzpicture}
-}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.25\linewidth} p{0.35\linewidth} p{0.30\linewidth}}
+\toprule
+\textbf{Rule} & \textbf{Use when} & \textbf{Side condition} \\
+\midrule
+Universal instantiation & You have $\forall x\,\varphi$ and need an instance & Term must be free for $x$ \\
+Universal generalization & You have proved the arbitrary case & No dependence on special assumptions \\
+Existential instantiation & You have $\exists x\,\varphi$ and need a witness name & Use a fresh temporary constant \\
+Existential generalization & You have one instance and need existence & Replace the instance by a quantified variable \\
+Equality substitution & You know $s=t$ and need to replace equals & Substitute only in valid positions \\
+\bottomrule
+\end{tabular}
 \end{center}
 
-\begin{remark}
-Variables and terms belong purely to syntax. Predicates form atomic formulas.
-Logical connectives and quantifiers build complex formulas. A structure and
-variable assignment then determine whether a formula is satisfied, with
-quantifiers ranging over the domain of discourse.
-\end{remark}
+\subsection*{Common Proof Strategies}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.25\linewidth} p{0.34\linewidth} p{0.31\linewidth}}
+\toprule
+\textbf{Goal} & \textbf{Strategy} & \textbf{Check} \\
+\midrule
+Prove universal & Let an arbitrary object be given, then prove the instance & The object must remain arbitrary \\
+Prove existential & Construct or identify one witness & Verify all required properties \\
+Disprove universal & Produce a counterexample & Show the object satisfies the domain condition \\
+Disprove existential & Prove every possible witness fails & Usually rewrite as a universal negation \\
+Prove implication & Assume the antecedent, prove the consequent & Discharge the assumption properly \\
+Prove equivalence & Prove both implications & Track each direction separately \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Common Fallacies}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{0.28\linewidth} p{0.34\linewidth} p{0.28\linewidth}}
+\toprule
+\textbf{Fallacy} & \textbf{Bad form} & \textbf{Correction} \\
+\midrule
+Universal/existential confusion & $\forall x\,P(x)$ for ``some $P$'' & Use $\exists x\,P(x)$ \\
+All with conjunction & $\forall x\,(A(x)\wedge B(x))$ & $\forall x\,(A(x)\rightarrow B(x))$ \\
+Some with implication & $\exists x\,(A(x)\rightarrow B(x))$ & $\exists x\,(A(x)\wedge B(x))$ \\
+Invalid quantifier reversal & Swap $\forall x\exists y$ with $\exists y\forall x$ & Preserve dependency order \\
+Free variable left open & $P(x)$ as a sentence & Bind $x$ or state the assignment context \\
+Variable capture & Substitute into a binding scope blindly & Rename bound variables first \\
+Illicit generalization & Generalize from a special object & Prove the arbitrary case \\
+Illicit instantiation & Reuse an old constant as a witness & Introduce a fresh witness \\
+Affirming the consequent & $P\rightarrow Q$, $Q$, therefore $P$ & Use modus ponens or contrapositive \\
+Denying the antecedent & $P\rightarrow Q$, $\neg P$, therefore $\neg Q$ & Use modus tollens only with $\neg Q$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{example}[Reading a quantifier pattern]\label{ex:predicate-logic-summary-quantifier-pattern}
+The formulas
+\[
+\forall x\exists y\,R(x,y)
+\qquad\text{and}\qquad
+\exists y\forall x\,R(x,y)
+\]
+have the same symbols but different dependency structure. In the first formula
+the witness $y$ may vary with $x$. In the second formula one witness must work
+for every $x$.
+\end{example}

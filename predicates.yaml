@@ -15,6 +15,687 @@ design:
 predicates:
 
 # =========================================================
+# Logic Syntax
+# =========================================================
+
+- id: pred:variable
+  name: Variable
+  operator: \operatorname{Variable}
+  category: logic-syntax
+  arity: 1
+  arguments: [x]
+  optional_arguments: [L]
+  formal: x \in \mathsf{Var}_{\mathcal L}
+  reading_template: >
+    Variable(x [, L]) \Longleftrightarrow x is a variable symbol of the
+    first-order language L.
+
+- id: pred:constant-symbol
+  name: ConstantSymbol
+  operator: \operatorname{ConstantSymbol}
+  category: logic-syntax
+  arity: 1
+  arguments: [c]
+  optional_arguments: [L]
+  formal: c \in \mathsf{Const}_{\mathcal L}
+  reading_template: >
+    ConstantSymbol(c [, L]) \Longleftrightarrow c is a constant symbol of the
+    first-order language L.
+
+- id: pred:function-symbol
+  name: FunctionSymbol
+  operator: \operatorname{FunctionSymbol}
+  category: logic-syntax
+  arity: 1
+  arguments: [f]
+  optional_arguments: [L]
+  formal: \exists n \ge 1 \; f \in \mathsf{Func}_{\mathcal L}^{(n)}
+  reading_template: >
+    FunctionSymbol(f [, L]) \Longleftrightarrow f is a positive-arity function
+    symbol of the first-order language L.
+
+- id: pred:predicate-symbol
+  name: PredicateSymbol
+  operator: \operatorname{PredicateSymbol}
+  category: logic-syntax
+  arity: 1
+  arguments: [P]
+  optional_arguments: [L]
+  formal: \exists n \ge 1 \; P \in \mathsf{Pred}_{\mathcal L}^{(n)}
+  reading_template: >
+    PredicateSymbol(P [, L]) \Longleftrightarrow P is a positive-arity predicate
+    symbol of the first-order language L.
+
+- id: pred:term
+  name: Term
+  operator: \operatorname{Term}
+  category: logic-syntax
+  arity: 1
+  arguments: [t]
+  optional_arguments: [L]
+  formal: t \in \mathsf{Term}_{\mathcal L}
+  reading_template: >
+    Term(t [, L]) \Longleftrightarrow t is a term of the first-order language L.
+
+- id: pred:atomic-formula
+  name: AtomicFormula
+  operator: \operatorname{AtomicFormula}
+  category: logic-syntax
+  arity: 1
+  arguments: [phi]
+  optional_arguments: [L]
+  formal: \varphi \in \mathsf{Atom}_{\mathcal L}
+  reading_template: >
+    AtomicFormula(phi [, L]) \Longleftrightarrow phi is an atomic formula of
+    the first-order language L.
+
+- id: pred:well-formed-formula
+  name: WellFormedFormula
+  operator: \operatorname{WellFormedFormula}
+  category: logic-syntax
+  arity: 1
+  arguments: [phi]
+  optional_arguments: [L]
+  formal: \varphi \in \mathsf{Form}_{\mathcal L}
+  reading_template: >
+    WellFormedFormula(phi [, L]) \Longleftrightarrow phi is a well-formed
+    formula of the first-order language L.
+
+- id: pred:molecular-formula
+  name: MolecularFormula
+  operator: \operatorname{MolecularFormula}
+  category: logic-syntax
+  arity: 1
+  arguments: [phi]
+  optional_arguments: [L]
+  formal: \varphi \in \mathsf{Form}_{\mathcal L} \setminus \mathsf{Atom}_{\mathcal L}
+  reading_template: >
+    MolecularFormula(phi [, L]) \Longleftrightarrow phi is a non-atomic
+    well-formed formula of the first-order language L.
+
+# =========================================================
+# Logic Semantics
+# =========================================================
+
+- id: pred:first-order-language
+  name: FirstOrderLanguage
+  operator: \operatorname{FirstOrderLanguage}
+  category: logic-semantics
+  arity: 1
+  arguments: [L]
+  optional_arguments: []
+  formal: L \text{ is a first-order language}
+  reading_template: >
+    FirstOrderLanguage(L) \Longleftrightarrow L has the symbol stock and arity
+    assignments of a first-order language.
+
+- id: pred:signature
+  name: Signature
+  operator: \operatorname{Signature}
+  category: logic-semantics
+  arity: 1
+  arguments: [L]
+  optional_arguments: []
+  formal: L \text{ has a first-order signature}
+  reading_template: >
+    Signature(L) \Longleftrightarrow L has a sorted non-logical vocabulary with
+    arities.
+
+- id: pred:structure
+  name: Structure
+  operator: \operatorname{Structure}
+  category: logic-semantics
+  arity: 2
+  arguments: [M, L]
+  optional_arguments: []
+  formal: M \text{ is a structure for } L
+  reading_template: >
+    Structure(M,L) \Longleftrightarrow M is a structure for the first-order
+    language L.
+
+- id: pred:variable-assignment
+  name: VariableAssignment
+  operator: \operatorname{VariableAssignment}
+  category: logic-semantics
+  arity: 2
+  arguments: [s, M]
+  optional_arguments: []
+  formal: s:\mathsf{Var}_{\mathcal L}\to D
+  reading_template: >
+    VariableAssignment(s,M) \Longleftrightarrow s assigns domain elements of M
+    to variables.
+
+- id: pred:modified-assignment
+  name: ModifiedAssignment
+  operator: \operatorname{ModifiedAssignment}
+  category: logic-semantics
+  arity: 4
+  arguments: [s, x, d, s_prime]
+  optional_arguments: []
+  formal: s'=s[x\mapsto d]
+  reading_template: >
+    ModifiedAssignment(s,x,d,s_prime) \Longleftrightarrow s_prime agrees with
+    s away from x and sends x to d.
+
+- id: pred:term-evaluation
+  name: TermEvaluation
+  operator: \operatorname{TermEvaluation}
+  category: logic-semantics
+  arity: 4
+  arguments: [M, s, t, a]
+  optional_arguments: []
+  formal: \llbracket t\rrbracket_{M,s}=a
+  reading_template: >
+    TermEvaluation(M,s,t,a) \Longleftrightarrow t evaluates to a in M under s.
+
+- id: pred:satisfaction
+  name: Satisfaction
+  operator: \operatorname{Satisfaction}
+  category: logic-semantics
+  arity: 3
+  arguments: [M, s, phi]
+  optional_arguments: []
+  formal: M,s\models\varphi
+  reading_template: >
+    Satisfaction(M,s,phi) \Longleftrightarrow phi is satisfied in M under s.
+
+- id: pred:truth-in-structure
+  name: TruthInStructure
+  operator: \operatorname{TruthInStructure}
+  category: logic-semantics
+  arity: 2
+  arguments: [M, phi]
+  optional_arguments: []
+  formal: M\models\varphi
+  reading_template: >
+    TruthInStructure(M,phi) \Longleftrightarrow the sentence phi is true in M.
+
+- id: pred:valid-formula
+  name: ValidFormula
+  operator: \operatorname{ValidFormula}
+  category: logic-semantics
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \models\varphi
+  reading_template: >
+    ValidFormula(phi) \Longleftrightarrow phi is satisfied in every structure
+    under every assignment.
+
+- id: pred:satisfiable-formula
+  name: SatisfiableFormula
+  operator: \operatorname{SatisfiableFormula}
+  category: logic-semantics
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \exists M\,\exists s\;(M,s\models\varphi)
+  reading_template: >
+    SatisfiableFormula(phi) \Longleftrightarrow phi is satisfied in some
+    structure under some assignment.
+
+- id: pred:model-of-sentence
+  name: ModelOfSentence
+  operator: \operatorname{ModelOfSentence}
+  category: logic-semantics
+  arity: 2
+  arguments: [M, phi]
+  optional_arguments: []
+  formal: M\models\varphi
+  reading_template: >
+    ModelOfSentence(M,phi) \Longleftrightarrow M is a model of the sentence phi.
+
+- id: pred:model-of-theory
+  name: ModelOfTheory
+  operator: \operatorname{ModelOfTheory}
+  category: logic-semantics
+  arity: 2
+  arguments: [M, T]
+  optional_arguments: []
+  formal: M\models T
+  reading_template: >
+    ModelOfTheory(M,T) \Longleftrightarrow M satisfies every sentence in T.
+
+- id: pred:theory
+  name: Theory
+  operator: \operatorname{Theory}
+  category: logic-semantics
+  arity: 1
+  arguments: [T]
+  optional_arguments: []
+  formal: T \text{ is a set of sentences}
+  reading_template: >
+    Theory(T) \Longleftrightarrow T is a set of sentences in a fixed
+    first-order language.
+
+- id: pred:logical-consequence
+  name: LogicalConsequence
+  operator: \operatorname{LogicalConsequence}
+  category: logic-semantics
+  arity: 2
+  arguments: [T, phi]
+  optional_arguments: []
+  formal: T\models\varphi
+  reading_template: >
+    LogicalConsequence(T,phi) \Longleftrightarrow every model of T is a model
+    of phi.
+
+- id: pred:logical-equivalence
+  name: LogicalEquivalence
+  operator: \operatorname{LogicalEquivalence}
+  category: logic-semantics
+  arity: 2
+  arguments: [phi, psi]
+  optional_arguments: []
+  formal: \varphi\equiv\psi
+  reading_template: >
+    LogicalEquivalence(phi,psi) \Longleftrightarrow phi and psi have the same
+    truth value in every structure.
+
+- id: pred:open-formula
+  name: OpenFormula
+  operator: \operatorname{OpenFormula}
+  category: logic-semantics
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \mathsf{FV}(\varphi)\neq\varnothing
+  reading_template: >
+    OpenFormula(phi) \Longleftrightarrow phi is a well-formed formula with at
+    least one free variable.
+
+- id: pred:definable-relation
+  name: DefinableRelation
+  operator: \operatorname{DefinableRelation}
+  category: logic-semantics
+  arity: 3
+  arguments: [R, phi, M]
+  optional_arguments: []
+  formal: R=R_{\varphi}^{M}
+  reading_template: >
+    DefinableRelation(R,phi,M) \Longleftrightarrow R is the relation determined
+    by phi in M.
+
+# =========================================================
+# Logic Quantifiers
+# =========================================================
+
+- id: pred:universal-formula
+  name: UniversalFormula
+  operator: \operatorname{UniversalFormula}
+  category: logic-quantifiers
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \Phi=\forall x\,\varphi
+  reading_template: >
+    UniversalFormula(phi) \Longleftrightarrow phi has outermost universal
+    quantifier form.
+
+- id: pred:existential-formula
+  name: ExistentialFormula
+  operator: \operatorname{ExistentialFormula}
+  category: logic-quantifiers
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \Phi=\exists x\,\varphi
+  reading_template: >
+    ExistentialFormula(phi) \Longleftrightarrow phi has outermost existential
+    quantifier form.
+
+- id: pred:bounded-quantifier
+  name: BoundedQuantifier
+  operator: \operatorname{BoundedQuantifier}
+  category: logic-quantifiers
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \Phi \text{ uses } \forall x\in A \text{ or } \exists x\in A
+  reading_template: >
+    BoundedQuantifier(phi) \Longleftrightarrow phi uses a restricted quantifier
+    abbreviation.
+
+- id: pred:sentence
+  name: Sentence
+  operator: \operatorname{Sentence}
+  category: logic-quantifiers
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \mathsf{FV}(\varphi)=\varnothing
+  reading_template: >
+    Sentence(phi) \Longleftrightarrow phi is a well-formed formula with no free
+    variables.
+
+- id: pred:scope
+  name: Scope
+  operator: \operatorname{Scope}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [x, phi]
+  optional_arguments: []
+  formal: \varphi \text{ is the scope of a quantifier binding } x
+  reading_template: >
+    Scope(x,phi) \Longleftrightarrow phi is the scope governed by the
+    quantifier binding x.
+
+- id: pred:bound-occurrence
+  name: BoundOccurrence
+  operator: \operatorname{BoundOccurrence}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [x, phi]
+  optional_arguments: []
+  formal: x \text{ occurs bound in } \varphi
+  reading_template: >
+    BoundOccurrence(x,phi) \Longleftrightarrow an occurrence of x in phi is
+    governed by a quantifier binding x.
+
+- id: pred:free-occurrence
+  name: FreeOccurrence
+  operator: \operatorname{FreeOccurrence}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [x, phi]
+  optional_arguments: []
+  formal: x \text{ occurs free in } \varphi
+  reading_template: >
+    FreeOccurrence(x,phi) \Longleftrightarrow an occurrence of x in phi is not
+    governed by a quantifier binding x.
+
+- id: pred:quantifier-prefix
+  name: QuantifierPrefix
+  operator: \operatorname{QuantifierPrefix}
+  category: logic-quantifiers
+  arity: 1
+  arguments: [Pi]
+  optional_arguments: []
+  formal: \Pi=Q_1x_1\cdots Q_nx_n
+  reading_template: >
+    QuantifierPrefix(Pi) \Longleftrightarrow Pi is a finite string of
+    quantifier-variable pairs.
+
+- id: pred:matrix
+  name: Matrix
+  operator: \operatorname{Matrix}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [psi, phi]
+  optional_arguments: []
+  formal: \psi \text{ is the matrix of } \Phi
+  reading_template: >
+    Matrix(psi,phi) \Longleftrightarrow psi is the matrix of phi.
+
+- id: pred:prenex-formula
+  name: PrenexFormula
+  operator: \operatorname{PrenexFormula}
+  category: logic-quantifiers
+  arity: 1
+  arguments: [phi]
+  optional_arguments: []
+  formal: \Phi=Q_1x_1\cdots Q_nx_n\,\psi
+  reading_template: >
+    PrenexFormula(phi) \Longleftrightarrow all quantifiers of phi occur in an
+    initial prefix.
+
+- id: pred:prenex-normal-form
+  name: PrenexNormalForm
+  operator: \operatorname{PrenexNormalForm}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [psi, phi]
+  optional_arguments: []
+  formal: \psi \text{ is prenex and } \varphi\equiv\psi
+  reading_template: >
+    PrenexNormalForm(psi,phi) \Longleftrightarrow psi is a prenex formula
+    logically equivalent to phi.
+
+- id: pred:stronger-formula
+  name: StrongerFormula
+  operator: \operatorname{StrongerFormula}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [A, B]
+  optional_arguments: []
+  formal: A\models B \text{ and } B\not\models A
+  reading_template: >
+    StrongerFormula(A,B) \Longleftrightarrow A entails B and B does not entail
+    A.
+
+- id: pred:weaker-formula
+  name: WeakerFormula
+  operator: \operatorname{WeakerFormula}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [B, A]
+  optional_arguments: []
+  formal: A\models B \text{ and } B\not\models A
+  reading_template: >
+    WeakerFormula(B,A) \Longleftrightarrow B is entailed by A and does not
+    entail A.
+
+- id: pred:quantifier-order
+  name: QuantifierOrder
+  operator: \operatorname{QuantifierOrder}
+  category: logic-quantifiers
+  arity: 2
+  arguments: [phi, order]
+  optional_arguments: []
+  formal: \Phi \text{ has quantifier order } (Q_1,\ldots,Q_n)
+  reading_template: >
+    QuantifierOrder(phi,order) \Longleftrightarrow order records the quantifier
+    order in the prefix of phi.
+
+# =========================================================
+# Logic Translation
+# =========================================================
+
+- id: pred:translation-key
+  name: TranslationKey
+  operator: \operatorname{TranslationKey}
+  category: logic-translation
+  arity: 1
+  arguments: [K]
+  optional_arguments: []
+  formal: K \text{ specifies a domain and symbol readings}
+  reading_template: >
+    TranslationKey(K) \Longleftrightarrow K records the domain and symbol
+    readings for a translation exercise.
+
+- id: pred:domain-of-discourse
+  name: DomainOfDiscourse
+  operator: \operatorname{DomainOfDiscourse}
+  category: logic-translation
+  arity: 2
+  arguments: [D, K]
+  optional_arguments: []
+  formal: D \text{ is the domain fixed by } K
+  reading_template: >
+    DomainOfDiscourse(D,K) \Longleftrightarrow D is the collection over which
+    variables range under translation key K.
+
+- id: pred:translation-predicate-symbol
+  name: TranslationPredicateSymbol
+  operator: \operatorname{TranslationPredicateSymbol}
+  category: logic-translation
+  arity: 2
+  arguments: [P, K]
+  optional_arguments: []
+  formal: P \text{ has a unary predicate reading in } K
+  reading_template: >
+    TranslationPredicateSymbol(P,K) \Longleftrightarrow P is used as a unary
+    predicate symbol with a fixed reading in K.
+
+- id: pred:translation-relation-symbol
+  name: TranslationRelationSymbol
+  operator: \operatorname{TranslationRelationSymbol}
+  category: logic-translation
+  arity: 3
+  arguments: [R, n, K]
+  optional_arguments: []
+  formal: R \text{ has arity } n \text{ in } K
+  reading_template: >
+    TranslationRelationSymbol(R,n,K) \Longleftrightarrow R is used as an n-ary
+    relation symbol with a fixed reading in K.
+
+- id: pred:translation-constant
+  name: TranslationConstant
+  operator: \operatorname{TranslationConstant}
+  category: logic-translation
+  arity: 2
+  arguments: [c, K]
+  optional_arguments: []
+  formal: c \text{ names a fixed object in } K
+  reading_template: >
+    TranslationConstant(c,K) \Longleftrightarrow c is a constant symbol naming
+    a fixed object in K.
+
+- id: pred:translation-variable
+  name: TranslationVariable
+  operator: \operatorname{TranslationVariable}
+  category: logic-translation
+  arity: 2
+  arguments: [x, K]
+  optional_arguments: []
+  formal: x \text{ is used as a variable under } K
+  reading_template: >
+    TranslationVariable(x,K) \Longleftrightarrow x is used as a variable in
+    translations governed by K.
+
+- id: pred:universal-translation-pattern
+  name: UniversalTranslationPattern
+  operator: \operatorname{UniversalTranslationPattern}
+  category: logic-translation
+  arity: 2
+  arguments: [A, B]
+  optional_arguments: []
+  formal: \forall x\,(A(x)\to B(x))
+  reading_template: >
+    UniversalTranslationPattern(A,B) \Longleftrightarrow restricted universal
+    translation uses implication from A to B.
+
+- id: pred:existential-translation-pattern
+  name: ExistentialTranslationPattern
+  operator: \operatorname{ExistentialTranslationPattern}
+  category: logic-translation
+  arity: 2
+  arguments: [A, B]
+  optional_arguments: []
+  formal: \exists x\,(A(x)\land B(x))
+  reading_template: >
+    ExistentialTranslationPattern(A,B) \Longleftrightarrow restricted
+    existential translation uses conjunction of A and B.
+
+- id: pred:conditional-translation-pattern
+  name: ConditionalTranslationPattern
+  operator: \operatorname{ConditionalTranslationPattern}
+  category: logic-translation
+  arity: 2
+  arguments: [A, B]
+  optional_arguments: []
+  formal: A\to B
+  reading_template: >
+    ConditionalTranslationPattern(A,B) \Longleftrightarrow conditional English
+    is translated by implication from A to B.
+
+- id: pred:negation-translation-pattern
+  name: NegationTranslationPattern
+  operator: \operatorname{NegationTranslationPattern}
+  category: logic-translation
+  arity: 2
+  arguments: [phi, psi]
+  optional_arguments: []
+  formal: \psi \equiv \neg\varphi \text{ with negations pushed inward}
+  reading_template: >
+    NegationTranslationPattern(phi,psi) \Longleftrightarrow psi is the inward
+    negation form of phi.
+
+- id: pred:scope-ambiguity
+  name: ScopeAmbiguity
+  operator: \operatorname{ScopeAmbiguity}
+  category: logic-translation
+  arity: 3
+  arguments: [E, phi, psi]
+  optional_arguments: []
+  formal: \varphi \not\equiv_{\mathrm{scope}} \psi
+  reading_template: >
+    ScopeAmbiguity(E,phi,psi) \Longleftrightarrow English sentence E admits
+    candidate translations phi and psi with different scope.
+
+- id: pred:categorical-a-form
+  name: CategoricalAForm
+  operator: \operatorname{CategoricalAForm}
+  category: logic-translation
+  arity: 3
+  arguments: [A, B, phi]
+  optional_arguments: []
+  formal: \varphi=\forall x\,(A(x)\to B(x))
+  reading_template: >
+    CategoricalAForm(A,B,phi) \Longleftrightarrow phi is the universal
+    affirmative categorical translation.
+
+- id: pred:categorical-e-form
+  name: CategoricalEForm
+  operator: \operatorname{CategoricalEForm}
+  category: logic-translation
+  arity: 3
+  arguments: [A, B, phi]
+  optional_arguments: []
+  formal: \varphi=\forall x\,(A(x)\to \neg B(x))
+  reading_template: >
+    CategoricalEForm(A,B,phi) \Longleftrightarrow phi is the universal
+    negative categorical translation.
+
+- id: pred:categorical-i-form
+  name: CategoricalIForm
+  operator: \operatorname{CategoricalIForm}
+  category: logic-translation
+  arity: 3
+  arguments: [A, B, phi]
+  optional_arguments: []
+  formal: \varphi=\exists x\,(A(x)\land B(x))
+  reading_template: >
+    CategoricalIForm(A,B,phi) \Longleftrightarrow phi is the particular
+    affirmative categorical translation.
+
+- id: pred:categorical-o-form
+  name: CategoricalOForm
+  operator: \operatorname{CategoricalOForm}
+  category: logic-translation
+  arity: 3
+  arguments: [A, B, phi]
+  optional_arguments: []
+  formal: \varphi=\exists x\,(A(x)\land \neg B(x))
+  reading_template: >
+    CategoricalOForm(A,B,phi) \Longleftrightarrow phi is the particular
+    negative categorical translation.
+
+- id: pred:contradictory-pair
+  name: ContradictoryPair
+  operator: \operatorname{ContradictoryPair}
+  category: logic-translation
+  arity: 2
+  arguments: [phi, psi]
+  optional_arguments: []
+  formal: \psi \equiv \neg\varphi
+  reading_template: >
+    ContradictoryPair(phi,psi) \Longleftrightarrow phi and psi cannot both be
+    true and cannot both be false.
+
+- id: pred:contrary-with-existential-import
+  name: ContraryWithExistentialImport
+  operator: \operatorname{ContraryWithExistentialImport}
+  category: logic-translation
+  arity: 2
+  arguments: [phi, psi]
+  optional_arguments: []
+  formal: \exists x\,A(x)\to \neg(\varphi\land\psi)
+  reading_template: >
+    ContraryWithExistentialImport(phi,psi) \Longleftrightarrow phi and psi are
+    contrary after an explicit subject-existence assumption.
+
+# =========================================================
 # Order / Set Structure
 # =========================================================
 
@@ -219,7 +900,7 @@ predicates:
   arity: 3
   arguments: [x, c, r]
   optional_arguments: []
-  formal: |x - c| < r
+  formal: '|x - c| < r'
   note: >
     General proximity predicate. x lies strictly within radius r of
     center c. Used for both input and output conditions when the
@@ -275,7 +956,7 @@ predicates:
   arity: 3
   arguments: [y, L, \varepsilon]
   optional_arguments: []
-  formal: |y - L| < \varepsilon
+  formal: '|y - L| < \varepsilon'
   note: >
     Output approximation predicate. Asserts that y is within
     varepsilon of the target value L. This is the standard output
@@ -346,7 +1027,7 @@ predicates:
   arity: 2
   arguments: [x_n, X]
   optional_arguments: []
-  formal: x : \mathbb{N} \to X
+  formal: 'x : \mathbb{N} \to X'
   note: >
     Canonical form requires ambient space X.
     Do NOT use bare Sequence(x_n) without space context.
@@ -355,7 +1036,7 @@ predicates:
   name: Subsequence
   category: subsequence
   arity: 2
-  arguments: [x_{n_k}, x_n]
+  arguments: ['x_{n_k}', 'x_n']
   optional_arguments: []
   formal: \exists \sigma \; (StrictlyIncreasing(\sigma) \land \forall k \in \mathbb{N} \; (x_{n_k} = x_{\sigma(k)}))
 
@@ -656,7 +1337,7 @@ predicates:
   name: Function
   category: function
   arity: 3
-  arguments: [f, A, \mathbb{R}]
+  arguments: ['f', 'A', '\mathbb{R}']
   optional_arguments: []
 
 - id: pred:injective
@@ -930,7 +1611,7 @@ predicates:
   name: ClosedBall
   category: balls
   arity: 3
-  arguments: [x, r, \overline{B}_r(x)]
+  arguments: ['x', 'r', '\overline{B}_r(x)']
   optional_arguments: [M, d]
 
 - id: pred:open-set
@@ -1600,7 +2281,7 @@ predicates:
   arity: 1
   arguments: [V]
   optional_arguments: []
-  formal: "\\exists \\text{ list } v_1, \\ldots, v_m \\in V{:}\; \\operatorname{Spans}(v_1,\\ldots,v_m, V)"
+  formal: '\exists \text{ list } v_1, \ldots, v_m \in V{:}\; \operatorname{Spans}(v_1,\ldots,v_m, V)'
   note: "Axler 2.9. V is finite-dimensional if some finite list spans it."
 
 - id: pred:infinite-dimensional
@@ -1627,7 +2308,7 @@ predicates:
   arity: 3
   arguments: [T, V, W]
   optional_arguments: []
-  formal: "T : V \\to W \\land (\\forall u,v \\in V{:}\; T(u+v) = Tu + Tv) \\land (\\forall \\lambda \\in \\mathbf{F}, v \\in V{:}\; T(\\lambda v) = \\lambda Tv)"
+  formal: 'T : V \to W \land (\forall u,v \in V{:}\; T(u+v) = Tu + Tv) \land (\forall \lambda \in \mathbf{F}, v \in V{:}\; T(\lambda v) = \lambda Tv)'
   note: "Axler 3.1. Additivity and homogeneity. A linear map takes 0 to 0 (3.10)."
 
 - id: pred:null-space
