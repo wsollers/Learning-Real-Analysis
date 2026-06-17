@@ -33,17 +33,27 @@
 \newtheorem*{axiom*}{Axiom}
 \newtheorem*{assumption*}{Assumption}
 
-% dependencies: typesets "Remark (Dependencies)." as an italic head,
-% then forces the body onto the next line. Implemented as a plain
-% environment to avoid amsthm's space-after-head dimension parsing,
-% which rejects \newline in this version of MiKTeX.
-\newenvironment{dependencies}{%
-  \par\addvspace{6pt}%
-  \noindent{\itshape Remark} (Dependencies).\par%
-  \addvspace{2pt}%
-}{%
-  \par\addvspace{6pt}%
-}
+% dependencies: typesets "Remark (Dependencies)." as an italic head in the
+% digital edition. In print edition, swallow the full body so dependency lists
+% remain available to source tooling without occupying page space.
+\NewDocumentEnvironment{dependencies}{+b}{%
+  \ifdefined\LRAPrintEdition
+    \ifLRAPrintEdition
+    \else
+      \par\addvspace{6pt}%
+      \noindent{\itshape Remark} (Dependencies).\par%
+      \addvspace{2pt}%
+      #1%
+      \par\addvspace{6pt}%
+    \fi
+  \else
+    \par\addvspace{6pt}%
+    \noindent{\itshape Remark} (Dependencies).\par%
+    \addvspace{2pt}%
+    #1%
+    \par\addvspace{6pt}%
+  \fi
+}{}
 
 \NewDocumentEnvironment{lra-not-visible}{+b}{}{}
 
