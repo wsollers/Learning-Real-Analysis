@@ -1,0 +1,177 @@
+# ---------------------------------------------------------------------------
+# assemble-from-leaves.yml
+#
+# THE single manual entry point for the whole pipeline. One invocation:
+#   1. Mirrors each requested leaf into the monorepo (single writer, one commit).
+#   2. Triggers the knowledge-explorer rebuild (lra-knowledge-explorer/rebuild.yml),
+#      which extracts from the freshly-updated monorepo, pushes knowledge.json +
+#      graph-edges.json into the explorer, and deploys it to GitHub Pages.
+#
+# Manual only (workflow_dispatch). Nothing here fires automatically — the old
+# push-triggered auto-dispatch (trigger-knowledge-rebuild.yml) has been removed,
+# so the explorer rebuilds ONLY when you run this workflow.
+#
+# Why the explorer rebuild is a dispatch rather than inline: GitHub Pages can
+# only be deployed by a workflow running in the explorer repo, and the
+# extraction + Pages deploy already live in lra-knowledge-explorer/rebuild.yml.
+# We reuse it rather than duplicate it.
+#
+# Targets: pass `targets` to limit the mirror, e.g. "iii", or "iii v lean".
+# Default "all".
+#
+# Requires secret SYNC_PAT (PAT with repo scope) — present in this repo.
+# ---------------------------------------------------------------------------
+
+name: Assemble monorepo and rebuild explorer
+
+on:
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: 'Space-separated targets: volume ids (i..viii), "lean", "nurbs", or "all".'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: monorepo-assemble
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SYNC_PAT }}
+          path: monorepo
+          fetch-depth: 0      # full history so push-time rebase works cleanly
+
+      - name: Assemble selected leaves
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+        run: |
+          set -uo pipefail
+
+          REQ="${{ github.event.inputs.targets }}"
+          [ -z "$REQ" ] && REQ="all"
+
+          ALL_VOLUMES="i ii iii iv v vi vii viii"
+
+          want() {
+            case " $REQ " in
+              *" all "*) return 0 ;;
+              *" $1 "*)  return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          clone() {
+            rm -rf _leaf
+            if ! git clone --depth 1 \
+                "https://x-access-token:${GH_TOKEN}@github.com/wsollers/$1.git" _leaf 2>/dev/null; then
+              echo "::warning::could not clone wsollers/$1 — skipping"
+              return 1
+            fi
+          }
+
+          # --- Volumes: leaf volume-X/ -> monorepo/volume-X/, plus any bib files
+          for v in $ALL_VOLUMES; do
+            want "$v" || continue
+            echo "::group::volume-$v"
+            if clone "lra-volume-$v"; then
+              if [ -d "_leaf/volume-$v" ]; then
+                mkdir -p "monorepo/volume-$v"
+                rsync -av --delete "_leaf/volume-$v/" "monorepo/volume-$v/"
+              else
+                echo "::warning::lra-volume-$v has no volume-$v/ directory"
+              fi
+              if [ -d "_leaf/bibliography" ]; then
+                mkdir -p monorepo/bibliography
+                cp -f _leaf/bibliography/*.bib monorepo/bibliography/ 2>/dev/null || true
+              fi
+            fi
+            echo "::endgroup::"
+          done
+
+          # --- lean: repo root (minus .github, README) -> monorepo/lean/
+          if want lean; then
+            echo "::group::lean"
+            if clone "lra-lean"; then
+              mkdir -p monorepo/lean
+              rsync -av --delete --exclude='.github/' --exclude='README.md' \
+                _leaf/ monorepo/lean/
+            fi
+            echo "::endgroup::"
+          fi
+
+          # --- nurbs: repo root (minus .github, README) -> monorepo/nurbs_dde/
+          if want nurbs; then
+            echo "::group::nurbs"
+            if clone "lra-nurbs"; then
+              mkdir -p monorepo/nurbs_dde
+              rsync -av --delete --exclude='.github/' --exclude='README.md' \
+                _leaf/ monorepo/nurbs_dde/
+            fi
+            echo "::endgroup::"
+          fi
+
+          rm -rf _leaf
+
+      - name: Commit and push if changed
+        run: |
+          cd monorepo
+          git config user.name  "lra-assemble-bot"
+          git config user.email "assemble-bot@noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to assemble."
+            exit 0
+          fi
+          git commit -m "chore: assemble monorepo from leaves (targets: ${{ github.event.inputs.targets }})"
+
+          # Push, but tolerate a concurrent push to main: rebase onto the
+          # latest tip and retry. The mirror is idempotent, so if a competing
+          # run already wrote equivalent content the rebase drops our (now
+          # empty) commit and the push is a no-op. A genuine rebase conflict
+          # (rare) is resolved by resetting to remote, which already holds an
+          # equivalent mirror.
+          pushed=0
+          for i in 1 2 3 4 5; do
+            if git push; then
+              pushed=1
+              break
+            fi
+            echo "push attempt $i rejected (concurrent push); rebasing onto latest main..."
+            if ! git pull --rebase origin main; then
+              git rebase --abort 2>/dev/null || true
+              echo "::warning::rebase conflict; resetting to remote (mirror is idempotent)"
+              git reset --hard origin/main
+              pushed=1
+              break
+            fi
+            sleep $(( (RANDOM % 5) + 2 ))
+          done
+
+          if [ "$pushed" -ne 1 ]; then
+            echo "::error::push failed after 5 attempts (persistent contention on main)"
+            exit 1
+          fi
+
+  rebuild-explorer:
+    name: Rebuild knowledge explorer
+    needs: assemble
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch explorer rebuild (extract + push JSON + deploy Pages)
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.SYNC_PAT }}
+          repository: wsollers/lra-knowledge-explorer
+          event-type: lra-rebuild
+          client-payload: |
+            {
+              "source_repo": "${{ github.repository }}",
+              "triggered_by": "${{ github.actor }}",
+              "targets": "${{ github.event.inputs.targets }}"
+            }

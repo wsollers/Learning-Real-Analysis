@@ -17,7 +17,17 @@ This script:
 
 Chapters extracted:
   Auto-discovered: every chapter (a directory that owns a notes/ subdir) under
-  volumes i-iv. Edit VOLUMES below to widen (volume-v ... volume-viii) or narrow.
+  the volumes listed in VOLUMES below.
+
+Cross-chapter edge resolution:
+  Pass 2 validates each edge's target against a SINGLE chapter's node IDs and
+  drops anything cross-chapter as "dangling". That is correct locally but wrong
+  globally: a dependency like def:upper-bound -> def:ordered-set legitimately
+  points at a definition that lives in another chapter (e.g. volume-i). So the
+  merge step here takes edges from each chapter's PASS-1 seed (which still holds
+  the cross-chapter edges) and resolves dangling references ONCE, against the
+  union of every chapter's node IDs. Nodes still come from pass 2 (it enriches
+  them).
 """
 
 from __future__ import annotations
@@ -34,8 +44,21 @@ EXPLORER_DIR = REPO_ROOT / "theorem-explorer"
 PASS1_SCRIPT = EXPLORER_DIR / "extract_lra_chapter.py"
 PASS2_SCRIPT = EXPLORER_DIR / "seed_to_knowledge_json_v3_fixed6.py"
 
-# Volumes whose chapters are extracted. Append "volume-v" ... "volume-viii" to widen.
-VOLUMES = ["volume-i", "volume-ii", "volume-iii", "volume-iv"]
+# Volumes whose chapters are extracted.
+VOLUMES = [
+    "volume-i",
+    "volume-ii",
+    "volume-iii",
+    "volume-iv",
+    "volume-v",
+    "volume-vi",
+    "volume-vii",
+    "volume-viii",
+]
+
+# Edge targets with one of these prefixes refer to a knowledge node and must
+# resolve to a real node ID. Other targets (proof files, proof labels) do not.
+NODE_REF_PREFIXES = ("def:", "thm:", "lem:", "prop:", "cor:", "ax:")
 
 
 def discover_chapters(repo_root: Path) -> list[Path]:
@@ -105,58 +128,83 @@ def load_json(path: Path) -> dict | list | None:
 
 
 def merge_knowledge(chapter_roots: list[Path]) -> None:
-    """Merge per-chapter knowledge.json files into a single combined file."""
+    """Merge per-chapter outputs into a single combined graph.
+
+    Nodes come from pass 2 (enriched). Edges come from each chapter's PASS-1
+    seed (graph-edges-seed.json), which still contains cross-chapter dependency
+    edges that pass 2 drops per-chapter. Dangling references are then resolved
+    exactly once, against the union of every chapter's node IDs, so a legitimate
+    cross-chapter dependency (def:upper-bound -> def:ordered-set) survives while
+    a genuinely missing target is still skipped.
+    """
     all_nodes: list[dict] = []
-    all_edges: list[dict] = []
+    all_seed_edges: list[dict] = []
     all_errors: list[dict] = []
-    all_edge_errors: list[dict] = []
     chapter_names: list[str] = []
 
     for chapter_root in chapter_roots:
         exp = chapter_root / ".explorer"
-        k = load_json(exp / "knowledge.json")
-        e = load_json(exp / "graph-edges.json")
-        pe = load_json(exp / "proof-errors.json")
-        ge = load_json(exp / "graph-edge-errors.json")
+        k = load_json(exp / "knowledge.json")            # pass 2: enriched nodes
+        e = load_json(exp / "graph-edges-seed.json")     # pass 1: complete edges
+        pe = load_json(exp / "proof-errors.json")        # pass 2: proof-match errors
 
         if k and "nodes" in k:
             all_nodes.extend(k["nodes"])
             chapter_names.append(k.get("metadata", {}).get("chapter", chapter_root.name))
         if e and isinstance(e, list):
-            all_edges.extend(e)
+            all_seed_edges.extend(e)
         if pe and "errors" in pe:
             all_errors.extend(pe["errors"])
-        if ge and "errors" in ge:
-            all_edge_errors.extend(ge["errors"])
 
-    # Deduplicate edges
+    # Global node-id set — the authority for what a dependency may resolve to.
+    node_ids = {n.get("id") for n in all_nodes if n.get("id")}
+
+    # Deduplicate edges.
     seen_edges: set[tuple] = set()
     deduped_edges: list[dict] = []
-    for edge in all_edges:
+    for edge in all_seed_edges:
         key = (edge.get("from"), edge.get("to"), edge.get("kind"))
         if key not in seen_edges:
             seen_edges.add(key)
             deduped_edges.append(edge)
+
+    # Resolve dangling edges globally. Only node-targeting edges (depends_on,
+    # references) must point at a known node; proof-file / proof-label edges
+    # (has_proof_file, links_to_proof) target non-node IDs and pass through.
+    resolved_edges: list[dict] = []
+    edge_errors: list[dict] = []
+    for edge in deduped_edges:
+        target = edge.get("to", "")
+        if target.startswith(NODE_REF_PREFIXES) and target not in node_ids:
+            edge_errors.append({
+                "type": "dangling_graph_edge_reference",
+                "source_node_id": edge.get("from"),
+                "missing_target_id": target,
+                "relationship_kind": edge.get("kind"),
+                "message": "Edge target not found among ANY extracted node IDs (global check); edge skipped.",
+            })
+            continue
+        resolved_edges.append(edge)
 
     combined = {
         "metadata": {
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "chapters": chapter_names,
             "node_count": len(all_nodes),
-            "edge_count": len(deduped_edges),
-            "error_count": len(all_errors) + len(all_edge_errors),
+            "edge_count": len(resolved_edges),
+            "error_count": len(all_errors) + len(edge_errors),
             "schema_version": "0.4",
             "script": "run_extraction.py",
         },
         "nodes": all_nodes,
-        "edges": deduped_edges,
+        "edges": resolved_edges,
     }
 
     COMBINED_KNOWLEDGE.write_text(
         json.dumps(combined, indent=2, ensure_ascii=False), encoding="utf-8"
     )
     COMBINED_EDGES.write_text(
-        json.dumps(deduped_edges, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(resolved_edges, indent=2, ensure_ascii=False), encoding="utf-8"
     )
     COMBINED_ERRORS.write_text(
         json.dumps({
@@ -171,8 +219,8 @@ def merge_knowledge(chapter_roots: list[Path]) -> None:
         json.dumps({
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "chapters": chapter_names,
-            "error_count": len(all_edge_errors),
-            "errors": all_edge_errors,
+            "error_count": len(edge_errors),
+            "errors": edge_errors,
         }, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
