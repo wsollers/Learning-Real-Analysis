@@ -359,6 +359,69 @@ def gather_tex_files(root: Path) -> list[Path]:
     return sorted(p for p in root.rglob("*.tex") if p.is_file())
 
 
+def _find_repo_root(start: Path, sample_target: str) -> Path | None:
+    r"""Find the ancestor of ``start`` under which a repo-root-relative
+    ``\input`` target (e.g. ``volume-ii/reals/notes/x/index``) resolves. LRA
+    ``\input`` paths are relative to the LaTeX compile root — the directory that
+    holds the ``volume-*`` dirs."""
+    if not sample_target:
+        return None
+    first = Path(sample_target).parts[0]
+    p = start
+    while True:
+        if (p / first).is_dir():
+            return p
+        if p == p.parent:
+            return None
+        p = p.parent
+
+
+def _resolve_input_target(target: str, repo_root: Path | None, including_file: Path) -> Path | None:
+    r"""Resolve one ``\input``/``\include`` target to a real ``.tex`` file.
+    Targets omit the ``.tex`` extension and are normally repo-root-relative;
+    fall back to a path relative to the including file's own directory."""
+    target = target.strip()
+    names = [target] if target.endswith(".tex") else [target + ".tex", target + "/index.tex"]
+    roots = [r for r in (repo_root, including_file.parent) if r is not None]
+    for root in roots:
+        for name in names:
+            cand = root / name
+            if cand.is_file():
+                return cand.resolve()
+    return None
+
+
+def live_tex_closure(index_file: Path, chapter_root: Path) -> list[Path]:
+    r"""Return the ``.tex`` files reachable from ``index_file`` by transitively
+    following ``\input``/``\include`` — the files the book actually compiles, in
+    document order. Intermediate index files are included (harmless: they carry
+    no theorem environments). Returns ``[]`` if ``index_file`` is absent so the
+    caller can fall back to a directory scan."""
+    if not index_file.is_file():
+        return []
+    head = strip_comments_keep_length(read_file(index_file))
+    repo_root = None
+    for t in INPUT_RE.findall(head):
+        repo_root = _find_repo_root(chapter_root, t)
+        if repo_root:
+            break
+    seen: set[Path] = set()
+    order: list[Path] = []
+    stack = [index_file.resolve()]
+    while stack:
+        f = stack.pop()
+        if f in seen or not f.is_file():
+            continue
+        seen.add(f)
+        order.append(f)
+        body = strip_comments_keep_length(read_file(f))
+        resolved = [r for r in (_resolve_input_target(t, repo_root, f)
+                                for t in INPUT_RE.findall(body)) if r]
+        for nxt in reversed(resolved):   # reversed so the first \input is popped first
+            stack.append(nxt)
+    return order
+
+
 def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]], dict[str, str]]:
     # Proofs live under proofs/<topic>/prf-*.tex (older trees used proofs/notes/);
     # scan the whole proofs/ subtree so either layout resolves.
@@ -368,7 +431,15 @@ def collect_proof_catalog(chapter_root: Path) -> tuple[dict[str, dict[str, Any]]
     if not proof_root.exists():
         return label_to_proof, theorem_return_to_proof
 
-    for path in gather_tex_files(proof_root):
+    proof_index = proof_root / "index.tex"
+    live = live_tex_closure(proof_index, chapter_root)
+    if live:
+        proof_root_resolved = proof_root.resolve()
+        proof_files = [p for p in live if proof_root_resolved in p.parents]
+    else:
+        proof_files = gather_tex_files(proof_root)
+
+    for path in proof_files:
         text = read_file(path)
         labels = LABEL_RE.findall(text)
         envs = parse_env_tree(text)
@@ -612,7 +683,17 @@ def extract_note_items(chapter_root: Path) -> list[ExtractedItem]:
     if not notes_root.exists():
         return items
 
-    for path in gather_tex_files(notes_root):
+    notes_index = notes_root / "index.tex"
+    live = live_tex_closure(notes_index, chapter_root)
+    if live:
+        notes_root_resolved = notes_root.resolve()
+        tex_files = [p for p in live if notes_root_resolved in p.parents]
+    else:
+        print(f"[WARN] {chapter_root.name}: no notes/index.tex found; falling back "
+              f"to a full directory scan (may include unwired/legacy files).")
+        tex_files = gather_tex_files(notes_root)
+
+    for path in tex_files:
         text = read_file(path)
         envs = parse_env_tree(text)
         ordinal = 0
