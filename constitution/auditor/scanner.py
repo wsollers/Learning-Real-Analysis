@@ -27,6 +27,7 @@ class EnvironmentEntry:
     file: str                   # relative path from chapter root
     display_title: str
     proof_file: str | None      # relative path, or null
+    root_kind: str = ""         # "" | "definitional" — \DefinitionalRoot marks a primitive root
 
 
 @dataclass
@@ -66,10 +67,44 @@ _PROOF_LABEL = re.compile(r"\\label\{(prf:[a-z0-9\-]+)\}")
 # Matches: \hyperref[thm:...]{Return to Theorem} and analogous theorem-like returns.
 _RETURN_LINK = re.compile(r"\\hyperref\[([a-z]+:[a-z0-9\-]+)\]\{Return")
 
+# Matches a bare \DefinitionalRoot macro (mirrors tools/governance/dependency_graph.py).
+_DEFINITIONAL_ROOT = re.compile(r"\\DefinitionalRoot\b")
+# Sectioning command that bounds the trailing window after an environment block.
+_SECTION_BOUNDARY = re.compile(r"\\(?:chapter|section|subsection|subsubsection)\*?\{")
+
 
 # ---------------------------------------------------------------------------
 # Notes scanner
 # ---------------------------------------------------------------------------
+
+def _definitional_root_labels(text: str) -> set[str]:
+    r"""Return the set of formal labels in *text* tagged with \DefinitionalRoot.
+
+    Mirrors tools/governance/dependency_graph.py: for each theorem-like block,
+    scan the window from the block's \end{...} up to the next theorem-like
+    environment or sectioning command; if \DefinitionalRoot appears there, the
+    block's label is a primitive (definitional) root.
+    """
+    roots: set[str] = set()
+    for m in _ENV_OPEN.finditer(text):
+        env = m.group(1).lower()
+        end = re.search(r"\\end\{" + re.escape(env) + r"\}", text[m.end():], re.IGNORECASE)
+        if not end:
+            continue
+        end_pos = m.end() + end.end()
+        boundary = len(text)
+        nxt = _ENV_OPEN.search(text, end_pos)
+        if nxt:
+            boundary = min(boundary, nxt.start())
+        sec = _SECTION_BOUNDARY.search(text, end_pos)
+        if sec:
+            boundary = min(boundary, sec.start())
+        if _DEFINITIONAL_ROOT.search(text[end_pos:boundary]):
+            lm = _LABEL.search(text[m.start():end_pos])
+            if lm:
+                roots.add(lm.group(1))
+    return roots
+
 
 def _scan_notes_file(
     tex_path: Path,
@@ -141,6 +176,15 @@ def _scan_notes_file(
             ))
 
         i += 1
+
+    # Tag primitive / undefined notions: a \DefinitionalRoot macro in the window
+    # after an environment marks that label as a definitional root (a legitimate
+    # leaf of the dependency tree), mirroring the governance audit.
+    droots = _definitional_root_labels(text)
+    if droots:
+        for entry in entries:
+            if entry.label in droots:
+                entry.root_kind = "definitional"
 
     return entries, warnings
 
@@ -258,6 +302,15 @@ def scan_chapter(chapter_path: Path) -> ScanResult:
 # chapter.yaml serialization
 # ---------------------------------------------------------------------------
 
+def _environment_to_dict(entry: EnvironmentEntry) -> dict:
+    """asdict for an environment entry, omitting an empty root_kind so ordinary
+    (non-root) environments keep their original five-field shape in chapter.yaml."""
+    data = asdict(entry)
+    if not data.get("root_kind"):
+        data.pop("root_kind", None)
+    return data
+
+
 def scan_result_to_yaml(
     result: ScanResult,
     existing_yaml: dict | None = None,
@@ -288,7 +341,7 @@ def scan_result_to_yaml(
         doc["status"] = "in-progress"
         doc["dependencies"] = {"prior": "", "next": ""}
 
-    doc["environments"] = [asdict(e) for e in result.environments]
+    doc["environments"] = [_environment_to_dict(e) for e in result.environments]
     doc["proof_files"]  = [asdict(p) for p in result.proof_files]
 
     return yaml.dump(doc, default_flow_style=False, allow_unicode=True, sort_keys=False)
@@ -331,7 +384,9 @@ def trueup_diff(
             s = scanned_envs[lbl]
             e = existing_envs[lbl]
             # Compare all fields except proof_file (may be intentionally null in yaml)
-            if any(s[k] != e.get(k) for k in ("type", "file", "display_title")):
+            # Normalize so a missing key and an empty "" value compare equal
+            # (existing yaml entries predate the root_kind field).
+            if any((s.get(k) or "") != (e.get(k) or "") for k in ("type", "file", "display_title", "root_kind")):
                 changed.append(lbl)
 
     return TrueUpReport(
