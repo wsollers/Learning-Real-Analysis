@@ -1,0 +1,125 @@
+# ---------------------------------------------------------------------------
+# assemble-from-leaves.yml
+#
+# Single mono-side orchestrator. Replaces the per-leaf sync-to-monorepo.yml
+# workflows that used to fan IN and race on push to this repo. Here the
+# monorepo is the ONLY writer: it pulls each leaf read-only, mirrors it into
+# place, and makes ONE commit. A concurrency group serialises overlapping
+# runs so they queue instead of colliding.
+#
+# Manual trigger only. Optionally pass `targets` to limit the run, e.g.
+# "iii", or "iii v lean". Default "all".
+#
+# Requires secret SYNC_PAT (PAT with repo scope) — already present in this
+# repo (trigger-knowledge-rebuild.yml uses it). Pushing with the PAT rather
+# than GITHUB_TOKEN is deliberate: it lets the resulting commit trigger
+# trigger-knowledge-rebuild.yml downstream, so the knowledge graph rebuilds.
+# ---------------------------------------------------------------------------
+
+name: Assemble monorepo from leaves
+
+on:
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: 'Space-separated targets: volume ids (i..viii), "lean", "nurbs", or "all".'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: monorepo-assemble
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SYNC_PAT }}
+          path: monorepo
+
+      - name: Assemble selected leaves
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT }}
+        run: |
+          set -uo pipefail
+
+          REQ="${{ github.event.inputs.targets }}"
+          [ -z "$REQ" ] && REQ="all"
+
+          ALL_VOLUMES="i ii iii iv v vi vii viii"
+
+          want() {
+            case " $REQ " in
+              *" all "*) return 0 ;;
+              *" $1 "*)  return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          clone() {
+            rm -rf _leaf
+            if ! git clone --depth 1 \
+                "https://x-access-token:${GH_TOKEN}@github.com/wsollers/$1.git" _leaf 2>/dev/null; then
+              echo "::warning::could not clone wsollers/$1 — skipping"
+              return 1
+            fi
+          }
+
+          # --- Volumes: leaf volume-X/ -> monorepo/volume-X/, plus any bib files
+          for v in $ALL_VOLUMES; do
+            want "$v" || continue
+            echo "::group::volume-$v"
+            if clone "lra-volume-$v"; then
+              if [ -d "_leaf/volume-$v" ]; then
+                mkdir -p "monorepo/volume-$v"
+                rsync -av --delete "_leaf/volume-$v/" "monorepo/volume-$v/"
+              else
+                echo "::warning::lra-volume-$v has no volume-$v/ directory"
+              fi
+              if [ -d "_leaf/bibliography" ]; then
+                mkdir -p monorepo/bibliography
+                cp -f _leaf/bibliography/*.bib monorepo/bibliography/ 2>/dev/null || true
+              fi
+            fi
+            echo "::endgroup::"
+          done
+
+          # --- lean: repo root (minus .github, README) -> monorepo/lean/
+          if want lean; then
+            echo "::group::lean"
+            if clone "lra-lean"; then
+              mkdir -p monorepo/lean
+              rsync -av --delete --exclude='.github/' --exclude='README.md' \
+                _leaf/ monorepo/lean/
+            fi
+            echo "::endgroup::"
+          fi
+
+          # --- nurbs: repo root (minus .github, README) -> monorepo/nurbs_dde/
+          if want nurbs; then
+            echo "::group::nurbs"
+            if clone "lra-nurbs"; then
+              mkdir -p monorepo/nurbs_dde
+              rsync -av --delete --exclude='.github/' --exclude='README.md' \
+                _leaf/ monorepo/nurbs_dde/
+            fi
+            echo "::endgroup::"
+          fi
+
+          rm -rf _leaf
+
+      - name: Commit and push if changed
+        run: |
+          cd monorepo
+          git config user.name  "lra-assemble-bot"
+          git config user.email "assemble-bot@noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to assemble."
+            exit 0
+          fi
+          git commit -m "chore: assemble monorepo from leaves (targets: ${{ github.event.inputs.targets }})"
+          git push
