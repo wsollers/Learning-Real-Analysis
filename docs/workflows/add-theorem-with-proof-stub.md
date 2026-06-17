@@ -16,7 +16,7 @@ or proof source files directly in `Learning-Real-Analysis`.
 7. Run:
 
 ```bash
-python scripts/validate_leaf_proofs.py --root . --strict
+python scripts/build_volume.py --validate-only
 ```
 
 The theorem and proof stub should be committed together. If validation fails,

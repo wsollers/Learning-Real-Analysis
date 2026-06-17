@@ -128,7 +128,7 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 17. remark*[Exposition] (if broader conceptual framing materially helps)
 18. remark*[Examples] (definitions only, if concept-boundary value is high)
 19. remark*[Non-Examples] (definitions only, if concept-boundary value is high)
-20. remark*[Dependencies] or \NoLocalDependencies
+20. dependencies environment or \NoLocalDependencies
 ```
 
 ## Environment Body
@@ -314,8 +314,8 @@ Use this option shape:
 
 ## Dependencies
 
-- Use `\begin{remark*}[Dependencies]` when there are substantive local
-  dependencies to display.
+- Use `\begin{dependencies}` when there are substantive local dependencies
+  to display.
 - A dependency is a formal mathematical item only: definition, theorem, lemma,
   proposition, corollary, or axiom.
 - Dependency blocks are graph-aware mathematical route records. They are not

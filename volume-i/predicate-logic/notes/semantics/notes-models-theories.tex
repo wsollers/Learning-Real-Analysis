@@ -4,119 +4,312 @@
 
 \section{Semantics: Models, Theories, and Logical Consequence}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Models and Theories — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Model $\mathcal{M} \models \Gamma$ & Structure satisfying all sentences of $\Gamma$ & \hyperref[def:model]{↓ Def} \\
-Theory & Set of sentences; consistent if it has a model & \hyperref[def:theory]{↓ Def} \\
-Logical consequence $\Gamma \models \varphi$ & True in every model of $\Gamma$ & \hyperref[def:log-consequence]{↓ Def} \\
-Logical equivalence $\varphi \equiv \psi$ & Mutually entailing formulas & \hyperref[def:log-equiv]{↓ Def} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
+\begin{remark*}[Section toolkit: Minimal model notation]
+Volume I uses theories only as sets of sentences so that the notation
+\(\mathcal M\models T\) and \(T\models\varphi\) can be read. The systematic
+study of theories and their classes of models belongs to Volume VIII Model
+Theory.
+\end{remark*}
 
-\vspace{1em}
-
-% ---------------------------------------------------------
-% Model
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Model)}},
-  fonttitle=\small\bfseries]
+\begin{definitionbox}{Definition (Model of a Sentence)}
+\begin{definition}[Model of a Sentence]
 \label{def:model}
-Let $\varphi$ be a sentence and $\mathcal{M}$ a structure. We say that
-$\mathcal{M}$ is a \emph{model} of $\varphi$ if $\mathcal{M} \models \varphi$.
+Let \(\varphi\) be a sentence and let \(\mathcal M\) be a structure for the
+language of \(\varphi\). The structure \(\mathcal M\) is a \emph{model of}
+\(\varphi\) exactly when \(\mathcal M\models\varphi\).
+\end{definition}
+\end{definitionbox}
 
-More generally, if $\Gamma$ is a set of sentences, then $\mathcal{M}$ is a
-model of $\Gamma$ if $\mathcal{M} \models \gamma$ for every $\gamma \in \Gamma$.
-In this case, we write $\mathcal{M} \models \Gamma$.
-\end{tcolorbox}
+\begin{remark*}[Standard quantified statement]
+\[
+\mathcal M \text{ is a model of } \varphi
+\Longleftrightarrow
+\mathcal M\models\varphi.
+\]
+\end{remark*}
 
-% ---------------------------------------------------------
-% Theory
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Theory)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ModelOfSentence}(M,\varphi)\) means that \(M\) is a model of
+the sentence \(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\mathcal M \text{ is not a model of } \varphi
+\Longleftrightarrow
+\mathcal M\not\models\varphi.
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{ModelOfSentence}(M,\varphi)\) means that \(\varphi\) is not
+true in \(M\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+The only failure mode is semantic: the sentence is false in the proposed
+structure.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\mathcal M}_{\text{proposed structure}}
+\qquad
+\underbrace{\mathcal M\not\models\varphi}_{\text{sentence false in the structure}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A model is not an extra kind of object. It is a structure viewed relative to a
+sentence that it makes true.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:truth-structure]{Truth in a Structure}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Model of a Set of Sentences)}
+\begin{definition}[Model of a Set of Sentences]
+\label{def:model-theory-set}
+Let \(T\) be a set of sentences and let \(\mathcal M\) be a structure for their
+common language. The structure \(\mathcal M\) is a \emph{model of} \(T\),
+written \(\mathcal M\models T\), exactly when
+\(\mathcal M\models\theta\) for every \(\theta\in T\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\mathcal M\models T
+\Longleftrightarrow
+\forall \theta\in T\;(\mathcal M\models\theta).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ModelOfTheory}(M,T)\) means that \(M\) is a model of every
+sentence in \(T\).
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\mathcal M\not\models T
+\Longleftrightarrow
+\exists \theta\in T\;(\mathcal M\not\models\theta).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{ModelOfTheory}(M,T)\) means that at least one sentence of
+\(T\) is false in \(M\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed model of a set of sentences fails by a single sentence of the set
+that is false in the structure.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\exists \theta\in T}_{\text{failed sentence}}
+\qquad
+\underbrace{\mathcal M\not\models\theta}_{\text{not true in the structure}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The notation \(\mathcal M\models T\) abbreviates a universal check over the
+sentences in \(T\). No additional theory of model classes is developed here.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:model]{Model of a Sentence}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Theory)}
+\begin{definition}[Theory]
 \label{def:theory}
-A \emph{theory} is a set of sentences.
+In Volume I, a \emph{theory} is a set of sentences in a fixed first-order
+language.
+\end{definition}
+\end{definitionbox}
 
-A theory $T$ is \emph{satisfiable} (or \emph{consistent}) if it has at least
-one model.
+\begin{remark*}[Standard quantified statement]
+\[
+T \text{ is a theory}
+\Longleftrightarrow
+\forall \theta\in T\;(\theta \text{ is a sentence of the fixed language}).
+\]
+\end{remark*}
 
-A theory $T$ is \emph{complete} if for every sentence $\varphi$ in the
-language, either $T \models \varphi$ or $T \models \neg\varphi$.
-\end{tcolorbox}
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{Theory}(T)\) means that \(T\) is a set of sentences in a fixed
+first-order language.
+\end{remark*}
 
-\begin{remark}[Source note]
-In some texts, a theory is required to be closed under logical consequence: if
-$T \models \varphi$ then $\varphi \in T$. In other texts, a theory is simply
-any set of axioms from which consequences are derived. Both usages appear in
-the literature.
-\end{remark}
+\begin{remark*}[Negated quantified statement]
+\[
+\exists \theta\in T\;(\theta \text{ is not a sentence of the fixed language}).
+\]
+\end{remark*}
 
-% ---------------------------------------------------------
-% Logical Consequence
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Logical Consequence)}},
-  fonttitle=\small\bfseries]
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{Theory}(T)\) means that \(T\) is not a set consisting only
+of sentences of the fixed language.
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A proposed theory fails in this minimal sense when it contains something other
+than a sentence of the fixed language.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\theta\in T}_{\text{member of the proposed theory}}
+\qquad
+\underbrace{\theta \text{ is not a sentence}}_{\text{bad member}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is intentionally modest. Complete theories, elementary classes,
+categoricity, saturation, types, diagrams, and elementary extensions are
+Volume VIII topics. A theory may be called satisfiable in Volume I when it has
+at least one model.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:truth-structure]{Truth in a Structure}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Logical Consequence)}
+\begin{definition}[Logical Consequence]
 \label{def:log-consequence}
-Let $\Gamma$ be a set of formulas and $\varphi$ a formula. We say that
-$\varphi$ is a \emph{logical consequence} of $\Gamma$, written
-$\Gamma \models \varphi$, if for every structure $\mathcal{M}$ and every
-variable assignment $s$:
+Let \(T\) be a set of sentences and let \(\varphi\) be a sentence in the same
+language. The sentence \(\varphi\) is a \emph{logical consequence} of \(T\),
+written \(T\models\varphi\), exactly when every model of \(T\) is a model of
+\(\varphi\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
 \[
-\text{if } \mathcal{M}, s \models \gamma \text{ for all } \gamma \in \Gamma,
-\text{ then } \mathcal{M}, s \models \varphi.
+T\models\varphi
+\Longleftrightarrow
+\forall \mathcal M\;(\mathcal M\models T \Rightarrow \mathcal M\models\varphi).
 \]
-Equivalently, every model of $\Gamma$ is a model of $\varphi$.
-\end{tcolorbox}
+\end{remark*}
 
-\begin{remark}[English reading]
-Logical consequence says: if all the hypotheses in $\Gamma$ are true in some
-structure, then $\varphi$ must be true there too. This is the semantic notion
-of entailment.
-\end{remark}
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{LogicalConsequence}(T,\varphi)\) means that every model of
+\(T\) is a model of \(\varphi\).
+\end{remark*}
 
-\begin{remark}[Notation]
-The notation $\models \varphi$ (empty left-hand side) means $\varphi$ is
-valid: it is a logical consequence of the empty set of premises.
-\end{remark}
-
-% ---------------------------------------------------------
-% Logical Equivalence
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Logical Equivalence)}},
-  fonttitle=\small\bfseries]
-\label{def:fol-log-equiv}
-Two formulas $\varphi$ and $\psi$ are \emph{logically equivalent}, written
-$\varphi \equiv \psi$, if each is a logical consequence of the other:
+\begin{remark*}[Negated quantified statement]
 \[
-\varphi \equiv \psi
-\quad\Longleftrightarrow\quad
-(\varphi \models \psi \text{ and } \psi \models \varphi).
+T\not\models\varphi
+\Longleftrightarrow
+\exists \mathcal M\;(\mathcal M\models T \land \mathcal M\not\models\varphi).
 \]
-Equivalently, $\varphi$ and $\psi$ have the same truth value in every structure
-under every variable assignment.
-\end{tcolorbox}
+\end{remark*}
 
-\begin{remark}[Consequence]
-Logical equivalence is the semantic counterpart of provable bi-implication.
-Two logically equivalent formulas are interchangeable in any context without
-changing truth values.
-\end{remark}
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{LogicalConsequence}(T,\varphi)\) means that some structure
+models \(T\) while failing \(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Logical consequence fails by a countermodel: a structure satisfying all
+sentences of \(T\) but not satisfying \(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\mathcal M\models T}_{\text{premises true}}
+\qquad
+\underbrace{\mathcal M\not\models\varphi}_{\text{conclusion false}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Logical consequence is semantic entailment. The premises in \(T\) leave no
+room, across structures, for \(\varphi\) to fail.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:model-theory-set]{Model of a Set of Sentences}
+  \item \hyperref[def:theory]{Theory}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Logical Equivalence)}
+\begin{definition}[Logical Equivalence]
+\label{def:log-equiv}
+Two sentences \(\varphi\) and \(\psi\) are \emph{logically equivalent}, written
+\(\varphi\equiv\psi\), exactly when each is a logical consequence of the other:
+\[
+\varphi\models\psi
+\quad\text{and}\quad
+\psi\models\varphi.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\varphi\equiv\psi
+\Longleftrightarrow
+\forall \mathcal M\;(\mathcal M\models\varphi \Longleftrightarrow \mathcal M\models\psi).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{LogicalEquivalence}(\varphi,\psi)\) means that \(\varphi\) and
+\(\psi\) have the same truth value in every structure.
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\varphi\not\equiv\psi
+\Longleftrightarrow
+\exists \mathcal M\;\bigl((\mathcal M\models\varphi \land \mathcal M\not\models\psi)
+\lor
+(\mathcal M\models\psi \land \mathcal M\not\models\varphi)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg\operatorname{LogicalEquivalence}(\varphi,\psi)\) means that some
+structure separates the two sentences.
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+Logical equivalence fails when one sentence is true and the other false in the
+same structure.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{\mathcal M\models\varphi \land \mathcal M\not\models\psi}_{\text{first separation}}
+\quad\lor\quad
+\underbrace{\mathcal M\models\psi \land \mathcal M\not\models\varphi}_{\text{second separation}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Logical equivalence is semantic interchangeability at the sentence level. It
+records sameness of truth across all structures in the relevant language.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:log-consequence]{Logical Consequence}
+\end{itemize}
+\end{dependencies}

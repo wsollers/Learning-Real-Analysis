@@ -1,6 +1,9 @@
 # lra-volume Overlay
 
 Stub overlay for `lra-volume-i` through `lra-volume-viii`.
+Named volume overlays, such as `lra-volume-ii.md`, may add narrow
+cross-repository metadata contracts while keeping implementation ownership in
+the specialist repo.
 
 Owned concerns:
 

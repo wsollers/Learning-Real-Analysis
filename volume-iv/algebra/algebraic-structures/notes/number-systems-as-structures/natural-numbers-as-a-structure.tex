@@ -1,0 +1,182 @@
+% =========================================================
+% Volume IV  §1.7.?  — N as a Model of the Arithmetic Signature
+% Replaces the one-line stub. Light Vol-IV style:
+%   \begin{definition}/\begin{remark*}/\algebraTopicToolkit, no tcolorbox.
+%
+% WIRING NOTE (cross-volume):
+%   Verify the exact Volume II labels before final commit. Intended targets:
+%   def:arithmetic-signature, def:peano-system, def:natural-number-operations,
+%   thm:n-is-peano-system, thm:n-is-commutative-semiring,
+%   thm:n-is-well-ordered, thm:n-embeds-in-z.
+% =========================================================
+
+\subsection*{The Natural Numbers as a Structure}
+\label{subsec:natural-numbers-as-a-structure}
+
+\algebraTopicToolkit{$\mathbb{N}$ as a Model of the Arithmetic Signature}{
+We exhibit $\mathbb{N}$ as a concrete \emph{model}: fix the arithmetic
+signature, take the carrier and operations built in Volume~II, interpret each
+symbol, and discharge satisfaction by citing the Volume~II theorem that
+$\mathbb{N}$ obeys the relevant natural-number axioms. The successor fragment
+recovers the Peano-system view; the additive and multiplicative fragments are
+obtained by reduction.
+}
+
+% ---- 1. the signature being interpreted ----
+\begin{remark*}[Exposition]
+A model is a signature together with an interpretation on a carrier. The
+signature here is the natural-number fragment of the
+\hyperref[def:arithmetic-signature]{arithmetic signature},
+\[
+\mathcal{L}_{\mathbb{N}}=\{S,+,\cdot,0,1\},
+\]
+with unary function symbol $S$, binary function symbols $+,\cdot$, and
+constant symbols $0,1$. The order symbol $<$ is deliberately absent; it enters
+by expansion below.
+\end{remark*}
+
+% ---- 2. the model itself ----
+\begin{definition}[The Natural Number Model $\mathcal{N}$]
+\label{def:natural-number-model}
+The \textbf{natural number model} is the $\mathcal{L}_{\mathbb{N}}$-structure
+\[
+\mathcal{N}
+=
+\bigl(\mathbb{N};\,
+S^{\mathcal{N}},\,+^{\mathcal{N}},\,\cdot^{\mathcal{N}},
+\,0^{\mathcal{N}},\,1^{\mathcal{N}}\bigr),
+\]
+whose carrier $|\mathcal{N}|=\mathbb{N}$ is the set of natural numbers
+constructed in Volume~II, and whose symbols are interpreted by the
+\hyperref[def:natural-number-operations]{natural-number operations}:
+$S^{\mathcal{N}}$ is successor, $+^{\mathcal{N}}$ is natural-number addition,
+$\cdot^{\mathcal{N}}$ is natural-number multiplication, and
+$0^{\mathcal{N}},1^{\mathcal{N}}$ are the natural-number constants $0$ and $1$.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+|\mathcal{N}|=\mathbb{N},\qquad
+S^{\mathcal{N}}:\mathbb{N}\to\mathbb{N},\qquad
++^{\mathcal{N}},\cdot^{\mathcal{N}}:\mathbb{N}\times\mathbb{N}\to\mathbb{N},
+\qquad
+0^{\mathcal{N}},1^{\mathcal{N}}\in\mathbb{N}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Nothing here is new mathematics: the carrier, successor, addition, and
+multiplication are exactly the objects built in Volume~II. The model only
+packages them as a single object $\mathcal{N}$, so that ``$\mathbb{N}$'' can be
+handed to any theorem that quantifies over arithmetic structures. The signature
+is the type; $\mathcal{N}$ is the instance.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:arithmetic-signature]{Arithmetic Signature}.
+  \item \hyperref[def:peano-system]{Peano System}.
+  \item Volume~II: construction of $\mathbb{N}$ and the
+        \hyperref[def:natural-number-operations]{natural-number operations}.
+\end{itemize}
+\end{dependencies}
+
+% ---- 3. satisfaction: the keystone, wired to Volume II ----
+\begin{remark*}[Satisfaction]
+$\mathcal{N}$ is a \emph{model} of the natural-number axioms:
+\[
+\mathcal{N}\models \Sigma_{\mathbb{N}},
+\qquad\text{equivalently}\qquad
+\operatorname{PeanoSystem}(\mathbb{N},S,0).
+\]
+This is not re-proved here. It is exactly the content of
+\hyperref[thm:n-is-peano-system]{$\mathbb{N}$ Is a Peano System} in
+Volume~II, which verifies the Peano axioms against the constructed successor
+operation. The algebraic arithmetic fragment is witnessed separately by
+\hyperref[thm:n-is-commutative-semiring]{$\mathbb{N}$ Is a Commutative Semiring},
+which verifies the laws of addition and multiplication on $\mathbb{N}$.
+\end{remark*}
+
+% ---- 4. expansion to the ordered natural-number model ----
+\begin{remark*}[Expansion to the ordered natural-number model]
+Adjoining the relation symbol $<$ gives the expansion
+\[
+\mathcal{N}_{<}=(\mathbb{N};S,+,\cdot,0,1,<),
+\qquad
+\operatorname{Expansion}(\mathcal{N}_{<},\mathcal{N}),
+\]
+in the sense of \hyperref[def:structure-expansion]{Structure Expansion}: the
+carrier is unchanged and exactly one new interpreted symbol is added. Here
+$<^{\mathcal{N}}$ is the usual order on $\mathbb{N}$. That this expansion has
+the expected order behavior is witnessed by
+\hyperref[thm:n-is-well-ordered]{$\mathbb{N}$ Is Well-Ordered} in Volume~II.
+\end{remark*}
+
+% ---- 5. reduct to the Peano successor structure ----
+\begin{remark*}[Reduct to the successor structure]
+Forgetting $+,\cdot,1$ leaves the successor reduct
+\[
+\mathcal{N}\!\restriction\!\{S,0\}
+=
+(\mathbb{N};S,0),
+\qquad
+\operatorname{Reduction}\!\bigl(\mathcal{N}\!\restriction\!\{S,0\},\,\mathcal{N}\bigr),
+\]
+in the sense of \hyperref[def:structure-reduction]{Structure Reduction}: the
+same carrier with fewer visible symbols. This reduct is the Peano-system view
+of the natural numbers.
+\end{remark*}
+
+% ---- 6. reduct to the additive monoid ----
+\begin{remark*}[Reduct to the additive monoid]
+Forgetting $S,\cdot,1$ leaves the additive reduct
+\[
+\mathcal{N}\!\restriction\!\{+,0\}
+=
+(\mathbb{N};+,0),
+\qquad
+\operatorname{Reduction}\!\bigl(\mathcal{N}\!\restriction\!\{+,0\},\,\mathcal{N}\bigr).
+\]
+This reduct is the additive commutative monoid of natural numbers: it remembers
+addition and the additive identity, but forgets multiplication and successor as
+primitive symbols.
+\end{remark*}
+
+% ---- 7. reduct to the multiplicative monoid ----
+\begin{remark*}[Reduct to the multiplicative monoid]
+Forgetting $S,+,0$ leaves the multiplicative reduct
+\[
+\mathcal{N}\!\restriction\!\{\cdot,1\}
+=
+(\mathbb{N};\cdot,1),
+\qquad
+\operatorname{Reduction}\!\bigl(\mathcal{N}\!\restriction\!\{\cdot,1\},\,\mathcal{N}\bigr).
+\]
+This reduct is the multiplicative commutative monoid of natural numbers.
+\end{remark*}
+
+% ---- 8. blueprint position + embedding chain ----
+\begin{remark*}[Blueprint position]
+In the structural blueprint $\mathcal{N}$ is the initial counting structure: it is
+the first model in the number-system hierarchy and the source of the successor,
+addition, multiplication, and induction principles used later. It sits at the head
+of the canonical embedding chain
+\[
+\mathbb{N}\hookrightarrow\mathbb{Z}\hookrightarrow\mathbb{Q}\hookrightarrow\mathbb{R}.
+\]
+The first arrow is the canonical embedding of Volume~II,
+\hyperref[thm:n-embeds-in-z]{$\mathbb{N}$ Embeds in $\mathbb{Z}$}. Passing
+from $\mathbb{N}$ to $\mathbb{Z}$ supplies additive inverses; passing from
+$\mathbb{Z}$ to $\mathbb{Q}$ supplies multiplicative inverses for nonzero
+elements; passing from $\mathbb{Q}$ to $\mathbb{R}$ supplies the analytic
+completeness needed for real analysis.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+$\mathbb{N}$ is not a group, ring, or field under its usual arithmetic operations:
+subtraction and division are not closed operations on all of $\mathbb{N}$. Its
+natural algebraic home is the Peano-system and commutative-semiring layer.
+This is exactly why the number-system hierarchy proceeds from
+$\mathbb{N}$ to $\mathbb{Z}$, then to $\mathbb{Q}$, and finally to
+$\mathbb{R}$.
+\end{remark*}

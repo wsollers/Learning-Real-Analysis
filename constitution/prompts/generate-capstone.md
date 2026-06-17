@@ -108,12 +108,12 @@ TODO
 ...
 \end{proof}
 
-\begin{remark*}[Dependencies]~\\
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[{label}]{{Name}}
   \item \hyperref[{label}]{{Name}}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 ```
 
 ## Examples of Dependency Ceiling Violations

@@ -39,6 +39,41 @@ To prove a property $P$ holds for all terms:
 The recursive structure of terms determines the structure of the proof.
 \end{example}
 
+\begin{remark*}[Exposition]
+Structural induction is the proof principle paired with structural recursion.
+Both follow the constructors of the object being studied. Structural recursion
+defines a function by giving its value on the base cases and then giving its
+value on each constructed object in terms of the values already defined on the
+immediate parts. Structural induction proves a predicate or property by showing
+that it holds for the base cases and is preserved by every constructor.
+
+Thus structural induction is like ordinary mathematical induction: it proves a
+statement $P(x)$ for every object $x$ in a recursively generated class. The
+difference is that the next step is not always the Peano successor
+$n\mapsto n\pp$. The next step is whatever constructor builds the object. For
+natural numbers the constructors are $0$ and successor. For formulas the
+constructors are atomic formulas, negation, binary connectives, and
+quantifiers. For trees the constructors are leaves and nodes.
+
+A useful way to see this is to attach a syntax tree to each well-formed
+formula. Define trees for propositional formulas recursively:
+\begin{itemize}[itemsep=2pt]
+  \item if $P\in\Prop$, then $\operatorname{leaf}(P)$ is a tree;
+  \item if $T$ is the tree for $\varphi$, then
+    $\operatorname{node}(\neg,T)$ is the tree for $\neg\varphi$;
+  \item if $T_\varphi$ and $T_\psi$ are the trees for $\varphi$ and $\psi$,
+    then $\operatorname{node}(\circ,T_\varphi,T_\psi)$ is the tree for
+    $(\varphi\circ\psi)$.
+\end{itemize}
+Operations on this tree are recursive in the same sense. The depth of a leaf is
+$0$; the depth of a negation node is one plus the depth of its child; the depth
+of a binary node is one plus the maximum of the depths of its two children.
+Structural induction then proves statements about all such trees, and hence
+about all formulas, by checking the leaf case, the negation-node case, and the
+binary-node case. The proof follows the same recursive blueprint as the
+definition.
+\end{remark*}
+
 \begin{remark}[Where structural induction appears in this project]
 Induction on $\mathbb{N}$ is structural induction on the Peano
 structure $(\mathbb{N}, 0, S)$: the base case is $n = 0$, the

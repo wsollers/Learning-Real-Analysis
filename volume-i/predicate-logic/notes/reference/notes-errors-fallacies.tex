@@ -2,8 +2,9 @@
 % Common Errors and Fallacies
 % =========================================================
 
-\section{Reference: Common Errors and Fallacies}
+\subsection*{Common Errors and Fallacies}
 
+<<<<<<< HEAD
 \begin{toolkitbox}{Predicate Logic Error Toolkit --- Quick Reference}
 \small
 \begin{tabular}{p{0.28\linewidth} p{0.34\linewidth} p{0.28\linewidth}}
@@ -209,3 +210,57 @@ and then fixes one object $c$ such that $\forall x\,R(x,c)$. The diagnostic is
 incorrectly.'' The original statement allows $y$ to depend on $x$; it does not
 provide one uniform witness.
 \end{example}
+=======
+\begin{remark*}[Translation and proof errors]
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{p{0.25\linewidth} p{0.25\linewidth} p{0.25\linewidth} p{0.17\linewidth}}
+\toprule
+\textbf{Error} & \textbf{Incorrect form} & \textbf{Corrected form} & \textbf{Explanation} \\
+\midrule
+Confusing \(\forall\) and \(\exists\) &
+\(\exists x\,P(x)\) for ``every \(x\) has \(P\)'' &
+\(\forall x\,P(x)\) &
+Existence does not give universality. \\
+Universal conjunction &
+\(\forall x\,(A(x)\land B(x))\) &
+\(\forall x\,(A(x)\to B(x))\) &
+The antecedent restricts the domain. \\
+Existential implication &
+\(\exists x\,(A(x)\to B(x))\) &
+\(\exists x\,(A(x)\land B(x))\) &
+The witness must be both \(A\) and \(B\). \\
+Scope error &
+\(\exists y\forall x\,R(x,y)\) &
+\(\forall x\exists y\,R(x,y)\), when each \(x\) may have its own \(y\) &
+Quantifier order controls dependence. \\
+Variable capture &
+\(\varphi[t/x]\) without checking bound variables &
+Rename bound variables before substitution &
+Substitution must not create unintended binding. \\
+Free variable left in a sentence &
+\(\forall x\,R(x,y)\) as a closed claim &
+\(\forall x\forall y\,R(x,y)\), or bind \(y\) as intended &
+A sentence has no free variables. \\
+Affirming the consequent &
+\(P\to Q,\;Q\;\therefore P\) &
+Invalid; use a counterexample valuation or structure &
+The consequent may hold for another reason. \\
+Denying the antecedent &
+\(P\to Q,\;\neg P\;\therefore\neg Q\) &
+Invalid; use a counterexample valuation or structure &
+Failure of \(P\) does not force failure of \(Q\). \\
+Invalid quantifier reversal &
+\(\forall x\exists y\,R(x,y)\Rightarrow \exists y\forall x\,R(x,y)\) &
+Invalid without extra hypotheses &
+Dependent witnesses need not be uniform. \\
+\bottomrule
+\end{tabular}
+\end{remark*}
+
+\begin{remark*}[Failure-mode checklist]
+Before accepting a translation or inference, check the domain, each symbol
+reading, every bound-variable scope, and whether the final formula is intended
+to be a sentence. Then test suspicious implications by trying to build one
+case where the premise is true and the conclusion false.
+\end{remark*}
+>>>>>>> 591349ed2a1982198e862953b73959c91a638d59

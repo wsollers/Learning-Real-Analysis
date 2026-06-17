@@ -1,0 +1,57 @@
+\newpage
+\phantomsection
+\label{prf:interior-extremum-theorem}
+\LRAProofFor{thm:interior-extremum-theorem}
+
+\begin{remark*}[Return]
+\hyperref[thm:interior-extremum-theorem]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Interior Extremum Theorem]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $f : I \to \mathbb{R}$, and let $c \in I$. If $f$ has a relative extremum at $c$ and is differentiable at $c$, then $f'(c) = 0$.
+\end{theorem*}
+
+\begin{proof}[Professional Standard Proof]
+\LRAProofBodyStart
+Consider the case where $f$ has a relative maximum at $c$. By definition, there exists $\delta > 0$ such that $(c - \delta, c + \delta) \subseteq I$ and $f(x) - f(c) \leq 0$ for all $x \in (c - \delta, c + \delta)$.
+
+For $x \in (c, c + \delta)$, the quotient $\frac{f(x) - f(c)}{x - c} \leq 0$ since the numerator is nonpositive and the denominator is positive. By order preservation for limits, $f'_+(c) \leq 0$.
+
+For $x \in (c - \delta, c)$, the quotient $\frac{f(x) - f(c)}{x - c} \geq 0$ since the numerator is nonpositive and the denominator is negative. By order preservation for limits, $f'_-(c) \geq 0$.
+
+Since $f$ is differentiable at $c$, the one-sided derivatives exist and agree: $f'(c) = f'_+(c) = f'_-(c)$. Therefore $0 \geq f'(c) \geq 0$, which forces $f'(c) = 0$.
+
+The case of a relative minimum follows by applying the argument to $-f$ at $c$.
+\end{proof}
+
+\begin{proof}[Detailed Learning Proof]
+\LRAProofBodyStart
+
+\textbf{Step 1.} Establish the constraint from the relative maximum. Since $f$ has a relative maximum at $c$, by definition there exists $\delta > 0$ such that $(c - \delta, c + \delta) \subseteq I$ and $f(x) - f(c) \leq 0$ for all $x \in (c - \delta, c + \delta)$. This inequality means $f(c)$ is the largest value in the interval, so every other value satisfies $f(x) \leq f(c)$.
+
+\textbf{Step 2.} Analyze the difference quotient for $x > c$. For any $x \in (c, c + \delta)$, the increment $f(x) - f(c) \leq 0$ by Step 1, and the displacement $x - c > 0$. Therefore the difference quotient satisfies $\frac{f(x) - f(c)}{x - c} \leq 0$. This inequality holds for all $x$ in the right half-neighborhood of $c$.
+
+\textbf{Step 3.} Apply order preservation to obtain $f'_+(c) \leq 0$. Since the difference quotient is nonpositive throughout the interval $(c, c + \delta)$, and the right-hand derivative is the limit of this quotient as $x$ approaches $c$ from the right, order preservation for limits gives $f'_+(c) = \lim_{x \to c^+} \frac{f(x) - f(c)}{x - c} \leq 0$.
+
+\textbf{Step 4.} Analyze the difference quotient for $x < c$. For any $x \in (c - \delta, c)$, the increment $f(x) - f(c) \leq 0$ by Step 1, and the displacement $x - c < 0$. When a nonpositive number is divided by a negative number, the result is nonnegative, so $\frac{f(x) - f(c)}{x - c} \geq 0$. This inequality holds for all $x$ in the left half-neighborhood of $c$.
+
+\textbf{Step 5.} Apply order preservation to obtain $f'_-(c) \geq 0$. Since the difference quotient is nonnegative throughout the interval $(c - \delta, c)$, order preservation for limits gives $f'_-(c) = \lim_{x \to c^-} \frac{f(x) - f(c)}{x - c} \geq 0$.
+
+\textbf{Step 6.} Use differentiability to conclude $f'(c) = 0$. Since $f$ is differentiable at $c$, the one-sided derivatives exist and are equal: $f'(c) = f'_+(c) = f'_-(c)$. From Steps 3 and 5, this common value satisfies both $f'(c) \leq 0$ and $f'(c) \geq 0$. The only real number satisfying both inequalities is $0$, so $f'(c) = 0$.
+
+\textbf{Step 7.} Handle the minimum case. If $f$ has a relative minimum at $c$, then $-f$ has a relative maximum at $c$. Applying the above argument to $-f$ gives $(-f)'(c) = 0$, which means $-f'(c) = 0$, so $f'(c) = 0$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses a direct approach that reads the sign of the difference quotient separately on each side of the critical point. The relative maximum condition provides a uniform constraint $f(x) - f(c) \leq 0$ throughout a neighborhood of $c$. However, the sign of the difference quotient depends on the sign of the displacement $x - c$, which changes across $c$. By analyzing the left and right sides separately, the proof obtains complementary inequalities on the one-sided derivatives that together force the derivative to be zero. No contradiction argument is needed—the conclusion emerges directly from the sandwich $0 \geq f'(c) \geq 0$.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relative-maximum]{Definition of Relative Maximum}
+  \item \hyperref[thm:order-preservation-limits]{Order Preservation for Limits}
+  \item \hyperref[thm:differentiability-one-sided]{Differentiability and One-Sided Derivatives}
+\end{itemize}
+\end{dependencies}
+
+\clearpage

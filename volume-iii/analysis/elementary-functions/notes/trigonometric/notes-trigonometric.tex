@@ -11,28 +11,10 @@
 % ---------------------------------------------------------
 % Toolkit
 % ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Toolkit --- Trigonometric Functions}]
-\begin{itemize}
-  \item $\sin x$ and $\cos x$ are defined by absolutely convergent
-    power series; properties are derived analytically, not from
-    geometry.
-  \item Pythagorean identity: $\sin^2 x + \cos^2 x = 1$. Proof:
-    the derivative of the left side is $0$ and its value at $0$
-    is $1$.
-  \item Addition formulas follow from $e^{i(x+y)} = e^{ix}e^{iy}$.
-  \item Fundamental trigonometric limit: $\lim_{x \to 0}\sin x/x = 1$.
-  \item Second fundamental limit: $\lim_{x\to 0}(1-\cos x)/x^2 = 1/2$.
-  \item Inverse functions $\arcsin$, $\arccos$, $\arctan$ are defined
-    by restricting $\sin$, $\cos$, $\tan$ to monotone subdomains.
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 % Definition — Sine and Cosine
 % ---------------------------------------------------------
-
-\begin{tcolorbox}[title={Definition --- Sine and Cosine}]
+\begin{definitionbox}{Definition (Sine and Cosine)}
 \begin{definition}[Sine and Cosine via Power Series]
 \label{def:sine-cosine}
 The \textbf{sine} and \textbf{cosine} functions are defined for all
@@ -48,7 +30,7 @@ $x \in \mathbb{R}$ by the absolutely convergent power series
   \;=\; 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots
 \]
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -94,6 +76,7 @@ Euler's identity $e^{i\pi} + 1 = 0$ follows immediately.
 % Proposition — Pythagorean Identity
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition (Pythagorean Identity)}
 \begin{proposition}[Pythagorean Identity]
 \label{prop:pythagorean-identity}
 For all $x \in \mathbb{R}$:
@@ -104,10 +87,20 @@ For all $x \in \mathbb{R}$:
 \smallskip\noindent
 \hyperref[prf:pythagorean-identity]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
   \forall x \in \mathbb{R} :\; \sin^2 x + \cos^2 x = 1.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{PythagoreanIdentity}(x)
+  \;\colonequiv\;
+  \operatorname{Sine}(x,s) \;\wedge\; \operatorname{Cosine}(x,c)
+  \;\wedge\; s^2 + c^2 = 1.
 \]
 \end{remark*}
 
@@ -120,15 +113,6 @@ For all $x \in \mathbb{R}$:
 The negation has no witness --- the identity holds universally.
 \end{remark*}
 
-\begin{remark*}[Definition predicate reading]
-\[
-  \operatorname{PythagoreanIdentity}(x)
-  \;\colonequiv\;
-  \operatorname{Sine}(x,s) \;\wedge\; \operatorname{Cosine}(x,c)
-  \;\wedge\; s^2 + c^2 = 1.
-\]
-\end{remark*}
-
 \begin{remark*}[Proof strategy]
 Define $f(x) := \sin^2 x + \cos^2 x$. Then $f'(x) = 2\sin x \cos x
 + 2\cos x(-\sin x) = 0$, so $f$ is constant. Since $f(0) = 0 + 1 =
@@ -139,6 +123,7 @@ Define $f(x) := \sin^2 x + \cos^2 x$. Then $f'(x) = 2\sin x \cos x
 % Proposition — Addition Formulas
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition (Addition Formulas)}
 \begin{proposition}[Addition Formulas]
 \label{prop:trig-addition-formulas}
 For all $x, y \in \mathbb{R}$:
@@ -151,10 +136,21 @@ For all $x, y \in \mathbb{R}$:
 \smallskip\noindent
 \hyperref[prf:trig-addition-formulas]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
   \forall x,y\in\mathbb{R}:\;
+  \sin(x+y) = \sin x\cos y + \cos x\sin y
+  \;\wedge\;
+  \cos(x+y) = \cos x\cos y - \sin x\sin y.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{TrigAddition}(x,y)
+  \;\colonequiv\;
   \sin(x+y) = \sin x\cos y + \cos x\sin y
   \;\wedge\;
   \cos(x+y) = \cos x\cos y - \sin x\sin y.
@@ -169,16 +165,6 @@ For all $x, y \in \mathbb{R}$:
   \sin(x+y) \neq \sin x\cos y + \cos x\sin y.
 \]
 The negation has no witness.
-\end{remark*}
-
-\begin{remark*}[Definition predicate reading]
-\[
-  \operatorname{TrigAddition}(x,y)
-  \;\colonequiv\;
-  \sin(x+y) = \sin x\cos y + \cos x\sin y
-  \;\wedge\;
-  \cos(x+y) = \cos x\cos y - \sin x\sin y.
-\]
 \end{remark*}
 
 \begin{remark*}[Proof strategy]
@@ -199,6 +185,7 @@ and imaginary parts yields both addition formulas simultaneously.
 % Definition — Tangent and other trig functions
 % ---------------------------------------------------------
 
+\begin{definitionbox}{Definition}
 \begin{definition}[Tangent, Cotangent, Secant, Cosecant]
 \label{def:other-trig}
 \[
@@ -210,6 +197,7 @@ and imaginary parts yields both addition formulas simultaneously.
 $\tan x$ and $\sec x$ are defined where $\cos x \neq 0$,
 i.e., $x \neq \pi/2 + k\pi$ for $k \in \mathbb{Z}$.
 \end{definition}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -236,6 +224,7 @@ Dividing by $\sin^2 x$: $\cot^2 x + 1 = \csc^2 x$.
 % Definition — Inverse Trigonometric Functions
 % ---------------------------------------------------------
 
+\begin{definitionbox}{Definition}
 \begin{definition}[Inverse Trigonometric Functions]
 \label{def:inverse-trig}
 \begin{itemize}
@@ -247,6 +236,7 @@ Dividing by $\sin^2 x$: $\cot^2 x + 1 = \csc^2 x$.
     of $\tan\big|_{(-\pi/2,\pi/2)}$.
 \end{itemize}
 \end{definition}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -261,6 +251,17 @@ Dividing by $\sin^2 x$: $\cot^2 x + 1 = \csc^2 x$.
   \operatorname{Arctan}(y,x)
   \;\colonequiv\;
   x\in(-\pi/2,\pi/2) \;\wedge\; \tan x = y.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+  \operatorname{FunctionLimit}\!\left(\frac{\sin x}{x},\,0,\,1\right)
+  \;\colonequiv\;
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
+  \operatorname{InputTolerance}(x,0,\delta)
+  \Rightarrow
+  \operatorname{OutputTolerance}\!\left(\frac{\sin x}{x},1,\varepsilon\right).
 \]
 \end{remark*}
 
@@ -287,6 +288,7 @@ supremum and infimum of its range.
 % Theorem — Fundamental Trigonometric Limit
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem (Fundamental Trigonometric Limit)}
 \begin{theorem}[Fundamental Trigonometric Limit]
 \label{thm:fundamental-trig-limit}
 \[
@@ -296,6 +298,7 @@ supremum and infimum of its range.
 \smallskip\noindent
 \hyperref[prf:fundamental-trig-limit]{\textit{Go to proof.}}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -313,17 +316,6 @@ supremum and infimum of its range.
   \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
   0<|x|<\delta \;\wedge\;
   \left|\frac{\sin x}{x}-1\right|\geq\varepsilon_0.
-\]
-\end{remark*}
-
-\begin{remark*}[Definition predicate reading]
-\[
-  \operatorname{FunctionLimit}\!\left(\frac{\sin x}{x},\,0,\,1\right)
-  \;\colonequiv\;
-  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x:\;
-  \operatorname{InputTolerance}(x,0,\delta)
-  \Rightarrow
-  \operatorname{OutputTolerance}\!\left(\frac{\sin x}{x},1,\varepsilon\right).
 \]
 \end{remark*}
 
@@ -349,6 +341,7 @@ differentiation.
 % Proposition — Second Fundamental Trigonometric Limit
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition (Second Fundamental Trigonometric Limit)}
 \begin{proposition}[Second Fundamental Trigonometric Limit]
 \label{prop:limit-one-minus-cos}
 \[
@@ -358,22 +351,13 @@ differentiation.
 \smallskip\noindent
 \hyperref[prf:limit-one-minus-cos]{\textit{Go to proof.}}
 \end{proposition}
+\end{propositionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
   \forall\varepsilon>0,\;\exists\delta>0:\;
   0<|x|<\delta \Rightarrow
   \left|\frac{1-\cos x}{x^2}-\frac{1}{2}\right|<\varepsilon.
-\]
-\end{remark*}
-
-\begin{remark*}[Negated quantified statement]
-\[
-  \neg\left(\lim_{x\to 0}\frac{1-\cos x}{x^2}=\frac{1}{2}\right)
-  \;\iff\;
-  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
-  0<|x|<\delta \;\wedge\;
-  \left|\frac{1-\cos x}{x^2}-\frac{1}{2}\right|\geq\varepsilon_0.
 \]
 \end{remark*}
 
@@ -385,6 +369,16 @@ differentiation.
   \operatorname{InputTolerance}(x,0,\delta)
   \Rightarrow
   \operatorname{OutputTolerance}\!\left(\frac{1-\cos x}{x^2},\tfrac{1}{2},\varepsilon\right).
+\]
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+  \neg\left(\lim_{x\to 0}\frac{1-\cos x}{x^2}=\frac{1}{2}\right)
+  \;\iff\;
+  \exists\varepsilon_0>0,\;\forall\delta>0,\;\exists x:\;
+  0<|x|<\delta \;\wedge\;
+  \left|\frac{1-\cos x}{x^2}-\frac{1}{2}\right|\geq\varepsilon_0.
 \]
 \end{remark*}
 

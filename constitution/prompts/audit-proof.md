@@ -78,7 +78,7 @@ description when not PASS.
 - Prose only -- not a re-statement of the steps?
 
 ### Layer 9 -- Dependencies Remark
-- \begin{remark*}[Dependencies] ... \end{remark*} present?
+- \begin{dependencies} ... \end{dependencies} present?
 - Lists all definitions, axioms, lemmas, theorems used in the proof?
 - Each item has an explicit \hyperref[...]{...} link?
 - No links to other proof labels (prf:)?

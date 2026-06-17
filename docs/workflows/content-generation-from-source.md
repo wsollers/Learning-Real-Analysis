@@ -222,19 +222,15 @@ Before returning output, check:
 - citations and labels use the project's canonical order;
 - labels are semantic and stable.
 
-For newly generated note files or note directories, run the note-block
+For newly generated note files or note directories, run the integrated volume
 validator:
 
 ```powershell
-python tools\governance\validate_note_blocks.py --root <target-repo> <new-notes-directory>
+python tools\governance\validate_volume.py <target-repo> --fail-on-errors
 ```
 
-When running inside a leaf volume repo that carries a synced local copy of the
-tool, the equivalent command is:
-
-```powershell
-python scripts\validate_note_blocks.py --root . <new-notes-directory>
-```
+Use the scoped audit tools only when a task needs a focused inventory or
+refactor report.
 
 ## House Rules
 

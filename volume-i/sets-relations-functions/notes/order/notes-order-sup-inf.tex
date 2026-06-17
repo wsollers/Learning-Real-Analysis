@@ -7,32 +7,12 @@
 % ---------------------------------------------------------
 % TOOLKIT
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Supremum, Infimum, and Bounds — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l}
-\toprule
-\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
-\midrule
-Upper bound       & $u \geq s$ for all $s \in S$                       & \hyperref[def:bounds]{↓ Def} \\
-Lower bound       & $\ell \leq s$ for all $s \in S$                    & \hyperref[def:bounds]{↓ Def} \\
-Supremum          & Least upper bound of $S$                           & \hyperref[def:sup-inf]{↓ Def} \\
-Infimum           & Greatest lower bound of $S$                        & \hyperref[def:sup-inf]{↓ Def} \\
-Uniqueness        & Suprema and infima are unique when they exist       & \hyperref[prop:sup-unique]{↓ Prop} \\
-Max/min vs.\ sup/inf & Maximum $\Rightarrow$ supremum; not conversely & \hyperref[rem:max-vs-sup]{↓ Rem} \\
-Duality           & $\sup$ in $(A,\leq)$ = $\inf$ in $(A,\geq)$        & \hyperref[prop:sup-inf-duality]{↓ Prop} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
-
-\vspace{1em}
 
 % ---------------------------------------------------------
 % Motivation
 % ---------------------------------------------------------
 
+\begin{exposition}
 Every student of analysis encounters the least upper bound property of
 $\mathbb{R}$ early and prominently.  But this property is not a peculiarity
 of real numbers: it is an order-theoretic concept that can be formulated in
@@ -40,7 +20,9 @@ any partially ordered set.  Before we reach $\mathbb{R}$, it is essential to
 understand supremum and infimum in their natural habitat — abstract ordered
 sets — so that when the completeness axiom appears in Volume~II, you will
 recognise exactly what it is asserting and why $\mathbb{Q}$ fails to satisfy it.
+\end{exposition}
 
+\begin{exposition}
 The definitions in this section are also the backbone of measure theory.
 The extended real line $\overline{\mathbb{R}} = \mathbb{R} \cup \{-\infty,
 +\infty\}$, equipped with the usual order, is the ambient poset in which
@@ -48,19 +30,22 @@ measures take their values.  Countable additivity, the monotone convergence
 theorem, and Fatou's lemma are all statements about suprema of sequences.
 Understanding supremum and infimum at the abstract level here means those
 later theorems will feel inevitable rather than arbitrary.
+\end{exposition}
 
 % ---------------------------------------------------------
 % Upper and Lower Bounds (restate cleanly here for self-containment)
 % ---------------------------------------------------------
 
+\begin{exposition}
 The definition of upper and lower bound was given in
 \hyperref[def:bounds]{the Ordered Sets section}.  For convenience
 we recall: $u \in A$ is an \emph{upper bound} of $S \subseteq A$ if
 $\forall s \in S,\ s \leq u$; a \emph{lower bound} satisfies the
 reverse.  We say $S$ is \emph{bounded above} (resp.\ \emph{bounded below},
 \emph{bounded}) if it has at least one upper (resp.\ lower, both) bound.
+\end{exposition}
 
-\begin{remark}[Bounds depend on the ambient poset]
+\begin{remark*}[Bounds depend on the ambient poset]
 \label{rem:bounds-ambient}
 Whether $S$ is bounded above depends on the poset $(A, \leq)$, not on
 $S$ alone.  The set $\{r \in \mathbb{Q} : r^2 < 2\}$ is bounded above in
@@ -70,17 +55,14 @@ $(\mathbb{R}, \leq)$ has supremum $\sqrt{2} \in \mathbb{R}$.  Being
 bounded above is necessary but not sufficient for a supremum to exist;
 the completeness axiom for $\mathbb{R}$ is precisely the assertion that
 sufficiency holds in $\mathbb{R}$.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Supremum and Infimum
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Supremum and Infimum)}},
-  fonttitle=\small\bfseries]
-\label{def:sup-inf}
+\begin{definitionbox}{Definition (Supremum and Infimum)}
+\begin{definition}[Supremum and Infimum]\label{def:sup-inf}
 Let $(A, \leq)$ be a poset and $S \subseteq A$.
 
 The \emph{supremum} (or \emph{least upper bound}) of $S$, written
@@ -98,9 +80,10 @@ $\inf S$, is an element $\ell^* \in A$ satisfying:
   \item $\ell^*$ is the \emph{greatest} lower bound: if $\ell$ is \emph{any}
         lower bound of $S$, then $\ell \leq \ell^*$.
 \end{enumerate}
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark*}[Fully quantified form]
+\begin{remark*}[Standard quantified statement]
 $u^* = \sup S \;\leftrightarrow\; (\forall s \in S,\; s \leq u^*) \;\wedge\;
 (\forall u \in A,\; (\forall s \in S,\; s \leq u) \;\rightarrow\; u^* \leq u)$.
 
@@ -108,7 +91,7 @@ $\ell^* = \inf S \;\leftrightarrow\; (\forall s \in S,\; \ell^* \leq s) \;\wedge
 (\forall \ell \in A,\; (\forall s \in S,\; \ell \leq s) \;\rightarrow\; \ell \leq \ell^*)$.
 \end{remark*}
 
-\begin{remark}[How to read these definitions]
+\begin{remark*}[How to read these definitions]
 \label{rem:sup-reading}
 Condition (i) says $u^*$ is a \emph{candidate}: it stands above everything in
 $S$. Condition (ii) says $u^*$ is the \emph{best} candidate: it is at most as
@@ -123,36 +106,40 @@ proofs in analysis: to verify that $u^* = \sup S$, you show (i) $u^*$
 is an upper bound, and (ii) for every $\varepsilon > 0$, the value
 $u^* - \varepsilon$ is \emph{not} an upper bound, i.e., there exists
 $s \in S$ with $s > u^* - \varepsilon$.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Uniqueness
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[\texorpdfstring{\hyperref[prf:sup-unique]{Uniqueness of Supremum and Infimum}}{Uniqueness of Supremum and Infimum}]
 \label{prop:sup-unique}
 Let $(A, \leq)$ be a poset and $S \subseteq A$.  If $\sup S$ exists, it is
 unique.  If $\inf S$ exists, it is unique.
 \end{proposition}
+\end{propositionbox}
 
-\begin{remark*}[Fully quantified form]
+\NoLocalDependencies
+
+\begin{remark*}[Standard quantified statement]
 $\forall u^*, v^* \in A$: if both $u^*$ and $v^*$ satisfy the two conditions
 in the definition of $\sup S$, then $u^* = v^*$.
 \end{remark*}
 
-\begin{remark}[Proof idea]
+\begin{remark*}[Proof idea]
 If $u^*$ and $v^*$ are both suprema, then $u^*$ is an upper bound, so
 the minimality of $v^*$ gives $v^* \leq u^*$; and symmetrically $u^* \leq v^*$.
 Antisymmetry of the partial order then forces $u^* = v^*$.  This is a
 standard antisymmetry argument: when two elements are mutually $\leq$-related
 in a partial order, they must be equal.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Sup need not lie in S; max vs sup
 % ---------------------------------------------------------
 
-\begin{remark}[Supremum need not belong to $S$]
+\begin{remark*}[Supremum need not belong to $S$]
 \label{rem:max-vs-sup}
 The set $S = (0,1) \subseteq \mathbb{R}$ is open: it contains neither
 endpoint.  Yet $\sup S = 1$ and $\inf S = 0$.  Neither $0$ nor $1$
@@ -169,13 +156,13 @@ This distinction is critical in analysis.  A continuous function on a
 closed bounded interval always achieves its maximum (the Extreme Value
 Theorem), but on an open interval it may approach a supremum without
 ever attaining it.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Sup need not exist
 % ---------------------------------------------------------
 
-\begin{remark}[Supremum need not exist]
+\begin{remark*}[Supremum need not exist]
 \label{rem:sup-nonexistence}
 Being bounded above is necessary but not sufficient for a supremum to exist.
 Consider $S = \{r \in \mathbb{Q} : r^2 < 2\}$ in the poset $(\mathbb{Q},\leq)$.
@@ -192,13 +179,13 @@ This is the precise failure that the \emph{completeness axiom} for
 $\mathbb{R}$ corrects: it asserts that every nonempty subset of $\mathbb{R}$
 that is bounded above has a supremum in $\mathbb{R}$.  The rational numbers
 satisfy every other ordered field axiom but fail this one.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Examples
 % ---------------------------------------------------------
 
-\begin{example}[Sup and inf in divisibility]
+\begin{example*}[Sup and inf in divisibility]
 \label{ex:sup-divisibility}
 Order the set $D = \{1,2,3,4,6,12\}$ by divisibility: $a \leq b$ iff $a \mid b$.
 Take $S = \{4, 6\}$.
@@ -215,9 +202,9 @@ The common divisors are $\{1,2\}$; the greatest is $2$, so $\inf S = 2 =
 This example reveals a deep pattern: in any divisibility poset, $\sup$ computes
 the least common multiple and $\inf$ computes the greatest common divisor.
 Order theory and number theory are speaking the same language.
-\end{example}
+\end{example*}
 
-\begin{example}[Sup and inf for function spaces]
+\begin{example*}[Sup and inf for function spaces]
 \label{ex:sup-functions}
 Let $B(X)$ be the set of bounded real-valued functions on a set $X$, ordered
 pointwise: $f \leq g$ iff $f(x) \leq g(x)$ for all $x \in X$.  For a
@@ -226,12 +213,13 @@ $(\sup_\alpha f_\alpha)(x) = \sup_\alpha f_\alpha(x)$.  In measure theory and
 integration theory, one constantly takes suprema and infima of sequences of
 functions; this example shows that such operations are instances of the
 abstract sup/inf defined here.
-\end{example}
+\end{example*}
 
 % ---------------------------------------------------------
 % Useful characterisation
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[\texorpdfstring{\hyperref[prf:sup-char]{Characterisation of Supremum}}{Characterisation of Supremum}]
 \label{prop:sup-char}
 Let $(A, \leq)$ be a poset, $S \subseteq A$, and $u^* \in A$.  Then
@@ -242,13 +230,16 @@ $u^* = \sup S$ if and only if:
         $v < s$.
 \end{enumerate}
 \end{proposition}
+\end{propositionbox}
 
-\begin{remark*}[Fully quantified form]
+\NoLocalDependencies
+
+\begin{remark*}[Standard quantified statement]
 $u^* = \sup S \;\leftrightarrow\; (\forall s \in S,\; s \leq u^*) \;\wedge\;
 (\forall v \in A,\; v < u^* \;\rightarrow\; \exists s \in S,\; v < s)$.
 \end{remark*}
 
-\begin{remark}[Why this characterisation is useful]
+\begin{remark*}[Why this characterisation is useful]
 \label{rem:sup-char-utility}
 Condition (ii) here is the contrapositive of the minimality condition in
 the definition.  In analysis this is the working form: to check that
@@ -257,12 +248,13 @@ upper bound.  In $\mathbb{R}$ this becomes: for every $\varepsilon > 0$,
 there exists $s \in S$ with $s > u^* - \varepsilon$.  This is the exact
 form used in the proof that $\sup$ interacts correctly with limits,
 integrals, and measures.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Duality
 % ---------------------------------------------------------
 
+\begin{propositionbox}{Proposition}
 \begin{proposition}[\texorpdfstring{\hyperref[prf:sup-inf-duality]{Duality of Supremum and Infimum}}{Duality of Supremum and Infimum}]
 \label{prop:sup-inf-duality}
 Let $(A, \leq)$ be a poset and $S \subseteq A$.  Then
@@ -273,26 +265,29 @@ In particular: if every nonempty bounded-above subset of $(A,\leq)$ has a
 supremum, then every nonempty bounded-below subset of $(A,\leq)$ has an
 infimum.
 \end{proposition}
+\end{propositionbox}
 
-\begin{remark*}[Fully quantified form]
+\NoLocalDependencies
+
+\begin{remark*}[Standard quantified statement]
 $\forall S \subseteq A$: $\ell^*$ is the infimum of $S$ in $(A,\leq)$
 $\;\leftrightarrow\;$ $\ell^*$ is the supremum of $S$ in $(A,\geq)$.
 \end{remark*}
 
-\begin{remark}[Consequence for $\mathbb{R}$]
+\begin{remark*}[Consequence for $\mathbb{R}$]
 \label{rem:inf-from-completeness}
 This proposition explains why the completeness axiom for $\mathbb{R}$ is
 stated only for suprema: the infimum statement comes for free by duality.
 The axiom says every nonempty bounded-above subset has a supremum; the
 proposition immediately gives that every nonempty bounded-below subset has
 an infimum.  You will use this constantly without comment in Volume~II.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Connection to sup/inf of sequences
 % ---------------------------------------------------------
 
-\begin{remark}[Sequences and sup/inf]
+\begin{remark*}[Sequences and sup/inf]
 \label{rem:seq-sup-inf}
 A sequence $(a_n)_{n=1}^{\infty}$ in $\mathbb{R}$ is a function
 $\mathbb{N} \to \mathbb{R}$, so its range $\{a_n : n \in \mathbb{N}\}$ is a
@@ -310,9 +305,9 @@ $\overline{\mathbb{R}}$ (the extended reals, where $\pm\infty$ are adjoined
 to supply missing bounds) is a direct application of the completeness of
 $\mathbb{R}$.  Mastering the abstract definitions here makes those formulas
 transparent rather than mysterious.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Transition]
+\begin{remark*}[Transition]
 \label{rem:transition-to-lattice}
 Supremum and infimum are defined for arbitrary subsets of a poset, but they
 need not always exist.  When \emph{every} two-element subset $\{a,b\}$ has
@@ -321,4 +316,4 @@ binary operations $a \vee b = \sup\{a,b\}$ and $a \wedge b = \inf\{a,b\}$.
 This additional structure is called a \emph{lattice}, and it is developed in
 the next section.  Lattices are the precise abstract setting for the
 $\sigma$-algebras and topologies encountered in measure theory and topology.
-\end{remark}
+\end{remark*}

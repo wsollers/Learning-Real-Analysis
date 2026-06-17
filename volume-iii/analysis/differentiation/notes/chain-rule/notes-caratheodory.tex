@@ -1,22 +1,9 @@
 % =========================================================
 % Section: Carathéodory Factorization and Chain Rule
 % =========================================================
-
-\begin{tcolorbox}[colback=gray!8, colframe=gray!40, title=\textbf{Carathéodory and Chain Rule --- toolkit}]
-\textbf{Concept family:} The Carathéodory factorization of the derivative, its characterization theorem, and the Chain Rule.
-
-\medskip
-\textbf{Atomic items in this section:}
-\begin{itemize}
-  \item Definition: Carathéodory Factorization
-  \item Theorem: Carathéodory Characterization of Differentiability
-  \item Theorem: Chain Rule
-\end{itemize}
-\end{tcolorbox}
-
 % ---------------------------------------------------------
 
-\begin{tcolorbox}[colback=defbox, colframe=defborder]
+\begin{definitionbox}{Definition (Carathéodory Factorization)}
 \begin{definition}[Carathéodory Factorization]
 \label{def:caratheodory-factorization}
 Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in I$. We say that $f$ admits a \emph{Carathéodory factorization} at $c$ if there exists a function $\phi : I \to \mathbb{R}$, continuous at $c$, such that
@@ -25,7 +12,7 @@ f(x) = f(c) + (x-c)\,\phi(x) \qquad \text{for all } x \in I.
 \]
 In this case, $f$ is differentiable at $c$ and $f'(c) = \phi(c)$.
 \end{definition}
-\end{tcolorbox}
+\end{definitionbox}
 
 \begin{remark*}[Standard quantified statement]
 \[
@@ -55,15 +42,16 @@ The Carathéodory factorization replaces the difference quotient --- a function 
 \textbf{Carathéodory vs.\ Lipschitz.} Both control the increment $f(x)-f(c)$ by the factor $(x-c)$, but differently. The Carathéodory factorization requires the slope function $\phi(x)$ to extend \emph{continuously} to $c$; it controls the \emph{behaviour} of the slope, not just its size. The Lipschitz condition $|f(x)-f(c)| \leq L|x-c|$ only bounds the size of the increment. Carathéodory implies Lipschitz: if $\phi$ is continuous at $c$ it is bounded near $c$, so $|f(x)-f(c)| = |\phi(x)||x-c| \leq K|x-c|$ for some $K$ near $c$. The converse fails: $f(x)=|x|$ is Lipschitz on $\mathbb{R}$ with constant $1$ but the slope function takes values $\pm 1$ on either side of $0$ with no continuous extension.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-  \item \hyperref[def:continuous-at]{Definition: Continuous at a Point}
+  \item \hyperref[def:continuous-at-point]{Definition: Continuous at a Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Carathéodory Characterization of Differentiability]
 \label{thm:caratheodory-characterization-of-differentiability}
 Let $I \subseteq \mathbb{R}$ be an interval, let $f : I \to \mathbb{R}$, and let $c \in I$. The following are equivalent:
@@ -76,7 +64,9 @@ f(x) = f(c) + (x-c)\,\phi(x) \qquad \text{for all } x \in I.
 \end{enumerate}
 In this case, $\phi(c) = f'(c)$.
 \hyperref[prf:caratheodory-theorem]{Go to proof.}
+\hyperref[prf:caratheodory-characterization-of-differentiability]{Go to proof.}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \begin{align*}
@@ -93,16 +83,17 @@ In this case $\phi(c) = f'(c)$.
 This theorem establishes that differentiability and the existence of a Carathéodory factorization are exactly the same condition. The proof is a two-direction construction: in the forward direction, define $\phi$ as the difference quotient extended by $f'(c)$ at $c$ and verify continuity from the definition of the derivative; in the backward direction, recover the difference quotient from $\phi$ and read off its limit as $\phi(c)$. The theorem's power is that it converts every future differentiability argument into a continuity argument: to show $g \circ f$ is differentiable, find a continuous Carathéodory function for it; composing the Carathéodory functions of $f$ and $g$ yields one automatically.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:caratheodory-factorization]{Definition: Carathéodory Factorization}
   \item \hyperref[def:derivative-at-a-point]{Definition: Derivative at a Point}
-  \item \hyperref[def:continuous-at]{Definition: Continuous at a Point}
+  \item \hyperref[def:continuous-at-point]{Definition: Continuous at a Point}
 \end{itemize}
-\end{remark*}
+\end{dependencies}
 
 % ---------------------------------------------------------
 
+\begin{theorembox}{Theorem}
 \begin{theorem}[Chain Rule]
 \label{thm:chain-rule}
 Let $I, J \subseteq \mathbb{R}$ be intervals, let $f : I \to \mathbb{R}$ and $g : J \to \mathbb{R}$, and suppose that $f(I) \subseteq J$. Let $c \in I$. If $f$ is differentiable at $c$ and $g$ is differentiable at $f(c)$, then the composition $g \circ f$ is differentiable at $c$, and
@@ -111,6 +102,7 @@ Let $I, J \subseteq \mathbb{R}$ be intervals, let $f : I \to \mathbb{R}$ and $g 
 \]
 \hyperref[prf:chain-rule]{Go to proof.}
 \end{theorem}
+\end{theorembox}
 
 \begin{remark*}[Standard quantified statement]
 \begin{align*}
@@ -128,11 +120,11 @@ g(f(x)) - g(f(c)) = \phi_g(f(x))\cdot(f(x)-f(c)) = \phi_g(f(x))\cdot\phi_f(x)\cd
 The function $x \mapsto \phi_g(f(x))\cdot\phi_f(x)$ is continuous at $c$ --- the product of two continuous functions --- and its value at $c$ is $g'(f(c))\cdot f'(c)$. By the characterization theorem, $g\circ f$ is differentiable with the stated derivative. The naive proof via difference quotients fails because $f(x) = f(c)$ for $x$ near $c$ is possible, causing division by zero; Carathéodory avoids this entirely.
 \end{remark*}
 
-\begin{remark*}[Dependencies]
+\begin{dependencies}
 \begin{itemize}
   \item \hyperref[thm:caratheodory-characterization-of-differentiability]{Theorem: Carathéodory Characterization of Differentiability}
   \item \hyperref[thm:differentiable-implies-continuous]{Theorem: Differentiable Implies Continuous}
-  \item \hyperref[thm:continuity-composition]{Theorem: Continuity of Composite Functions}
-  \item \hyperref[thm:continuity-product]{Theorem: Product of Continuous Functions is Continuous}
+  \item \hyperref[thm:composition-of-limits]{Theorem: Composition of Limits}
+  \item \hyperref[thm:limit-product]{Theorem: Product Rule for Function Limits}
 \end{itemize}
-\end{remark*}
+\end{dependencies}

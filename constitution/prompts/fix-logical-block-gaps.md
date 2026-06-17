@@ -46,7 +46,7 @@ blocks appear in this exact order. Omit only when the trigger is not met.
 10. remark*[Exposition]                            — when broader conceptual framing materially helps
 11. remark*[Examples]                              — defs only, when concept-boundary value is high
 12. remark*[Non-Examples]                          — defs only, when concept-boundary value is high
-13. remark*[Dependencies] or \NoLocalDependencies  — always
+13. dependencies environment or \NoLocalDependencies  — always
 ```
 
 ### Notation discipline (DESIGN.md Rule A)
@@ -199,7 +199,7 @@ Generate:
 **Missing:** `remark*[Contrapositive quantified statement]`,
 `remark*[Contrapositive predicate reading]`, and a
 `remark*[Strict implication note]`
-**Insert before:** the existing `\begin{remark*}[Dependencies]` block
+**Insert before:** the existing `\begin{dependencies}` block
 (i.e., after the existing Interpretation block)
 **Context:** This is a one-way implication:
 $\operatorname{Lipschitz}(f,A,K) \Rightarrow \operatorname{UniformlyContinuous}(f,A)$.

@@ -88,5 +88,5 @@ If stub chapter:
 - Must not use neighbors from training data or general knowledge.
 - Must not add chapters not present in the registry.
 - Must not produce the roadmap -- that is a separate block.
-- Must not produce structural roadmap content inside the breadcrumb box.
+- Must not produce chapter overview content inside the breadcrumb box.
 - Must not be inserted into the main note body `.tex` file.

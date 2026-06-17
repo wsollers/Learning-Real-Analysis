@@ -7,120 +7,94 @@
 % ---------------------------------------------------------
 % TOOLKIT
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Quantifier Inference Rules — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l l}
-\toprule
-\textbf{Rule} & \textbf{Schema} & \textbf{Key restriction} & \textbf{Detail} \\
-\midrule
-UI  & $\forall x\,\varphi \Rightarrow \varphi[t/x]$ & $t$ free for $x$ & \hyperref[def:ui]{↓ Def} \\
-UG  & $\varphi \Rightarrow \forall x\,\varphi$ & $x$ not free in assumptions & \hyperref[def:ug]{↓ Def} \\
-EI  & $\exists x\,\varphi \Rightarrow \varphi[c/x]$ & $c$ fresh witness & \hyperref[def:ei]{↓ Def} \\
-EG  & $\varphi[t/x] \Rightarrow \exists x\,\varphi$ & none & \hyperref[def:eg]{↓ Def} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
-
-\vspace{1em}
 
 % ---------------------------------------------------------
 % Universal Instantiation
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Universal Instantiation — UI)}},
-  fonttitle=\small\bfseries]
-\label{def:ui}
+\begin{definitionbox}{Definition (Universal Instantiation — UI)}
+\begin{definition}[Universal Instantiation — UI]\label{def:ui}
 From a universally quantified statement, infer any instance obtained by
 substituting a term for the bound variable:
 \[
 \forall x\,\varphi \;\Rightarrow\; \varphi[t/x].
 \]
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[Side condition]
+\begin{remark*}[Side condition]
 The term $t$ must be free for $x$ in $\varphi$. If $t$ contains a variable
 that would become bound after substitution, the inference is invalid.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Universal Generalization
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Universal Generalization — UG)}},
-  fonttitle=\small\bfseries]
-\label{def:ug}
+\begin{definitionbox}{Definition (Universal Generalization — UG)}
+\begin{definition}[Universal Generalization — UG]\label{def:ug}
 From a formula, infer a universally quantified statement:
 \[
 \varphi \;\Rightarrow\; \forall x\,\varphi.
 \]
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[Restriction on UG]
+\begin{remark*}[Restriction on UG]
 The variable $x$ must not occur free in any undischarged assumption on which
 $\varphi$ depends. This restriction ensures that $x$ is truly arbitrary —
 not tied to a specific hypothesis about $x$.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Arbitrary element argument]
+\begin{remark*}[Arbitrary element argument]
 To prove $\forall x\,\varphi(x)$, fix an arbitrary element $x$ (introducing no
 special assumptions about $x$), prove $\varphi(x)$, and then apply UG. The
 variable $x$ must remain unconstrained throughout.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Existential Instantiation
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Existential Instantiation — EI)}},
-  fonttitle=\small\bfseries]
-\label{def:ei}
+\begin{definitionbox}{Definition (Existential Instantiation — EI)}
+\begin{definition}[Existential Instantiation — EI]\label{def:ei}
 From an existentially quantified statement, infer an instance with a fresh
 constant (witness):
 \[
 \exists x\,\varphi \;\Rightarrow\; \varphi[c/x].
 \]
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[Witness discipline for EI]
+\begin{remark*}[Witness discipline for EI]
 The constant $c$ must be fresh: it must not appear in $\varphi$, in any
 undischarged assumption, or in the final conclusion of the proof. The constant
 represents an arbitrary but fixed witness to the existential claim, not a
 specific known object.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Common error]
+\begin{remark*}[Common error]
 Using a witness constant introduced by EI outside its allowed scope, or
 choosing $c$ before establishing the existential premise, invalidates the proof.
-\end{remark}
+\end{remark*}
 
 % ---------------------------------------------------------
 % Existential Generalization
 % ---------------------------------------------------------
-\begin{tcolorbox}[colback=propbox, colframe=propborder, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Definition (Existential Generalization — EG)}},
-  fonttitle=\small\bfseries]
-\label{def:eg}
+\begin{definitionbox}{Definition (Existential Generalization — EG)}
+\begin{definition}[Existential Generalization — EG]\label{def:eg}
 From a formula containing a term, infer an existential statement:
 \[
 \varphi[t/x] \;\Rightarrow\; \exists x\,\varphi.
 \]
-\end{tcolorbox}
+\end{definition}
+\end{definitionbox}
 
-\begin{remark}[No side conditions]
+\begin{remark*}[No side conditions]
 EG has no side conditions: any term $t$ may be replaced by an existentially
 quantified variable. To prove $\exists x\,\varphi(x)$, explicitly exhibit a
 term $t$ such that $\varphi(t)$ holds, then apply EG.
-\end{remark}
+\end{remark*}
 
-\begin{remark}[Counterexample argument]
+\begin{remark*}[Counterexample argument]
 To refute $\forall x\,\varphi(x)$: produce a single term $t$ such that
 $\neg\varphi(t)$ holds. To refute $\exists x\,\varphi(x)$: show that $\varphi(t)$
 fails for every term $t$ in the domain.
-\end{remark}
+\end{remark*}

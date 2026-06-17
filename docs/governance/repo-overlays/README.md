@@ -7,7 +7,7 @@ They must not become divergent forks of global rules.
 
 Specialist rule placement:
 
-- Lean-specific rules belong only in `lra-lean.md`.
+- Lean-specific proof implementation rules belong only in `lra-lean.md`.
 - C++ / Vulkan / simulation rules belong only in `lra-nurbs.md`.
 - Numerical-analysis / benchmark / plotting rules belong only in
   `lra-numerical-analysis.md`.
@@ -15,7 +15,8 @@ Specialist rule placement:
   candidate staging rules belong only in `lra-pdf-extractor.md`.
 - Source-profile selection, source classification, active-profile export, and
   project attachment staging rules belong only in `lra-source-profiles.md`.
-- Volume repos receive only volume-content guidance.
+- Volume repos receive only volume-content guidance, except where a named
+  volume overlay records cross-repository metadata contracts.
 
 Specialist overlays now include:
 
@@ -25,6 +26,11 @@ Specialist overlays now include:
 - `lra-numerical-analysis.md`
 - `lra-pdf-extractor.md`
 - `lra-source-profiles.md`
+
+Volume-class overlays now include:
+
+- `lra-volume.md`
+- `lra-volume-ii.md`
 
 Each generated downstream wrapper should combine the global rules with exactly
 the matching overlay. Overlays should link to local README or workflow files

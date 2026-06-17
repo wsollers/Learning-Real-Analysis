@@ -1,0 +1,181 @@
+% BEGIN GENERATED TOPIC: normal-forms-conversion-procedures
+\begin{remark*}[Equivalence-preserving conversion]
+Normal form conversion is a rewrite process that replaces a formula by a
+logically equivalent formula with a prescribed syntactic shape. Each local
+rewrite is justified by an equivalence law, and each replacement inside a
+larger formula is justified by
+\hyperref[thm:replacement-of-logical-equivalents-propositional-logic]{Replacement of Logical Equivalents}.
+
+The goal is not to preserve the exact parse tree of the original formula. The
+goal is to preserve truth value under every valuation while moving the formula
+toward
+\hyperref[def:negation-normal-form-propositional-logic]{negation normal form},
+\hyperref[def:disjunctive-normal-form-propositional-logic]{disjunctive normal form},
+or
+\hyperref[def:conjunctive-normal-form-propositional-logic]{conjunctive normal form}.
+\end{remark*}
+
+\begin{remark*}[Step 1: eliminate biconditionals]
+Replace every biconditional by an equivalent formula using the
+\hyperref[thm:biconditional-equivalence-laws-propositional-logic]{Biconditional Equivalence Laws}.
+A standard replacement is
+\[
+\alpha\leftrightarrow\beta
+\quad\rightsquigarrow\quad
+(\alpha\rightarrow\beta)\land(\beta\rightarrow\alpha).
+\]
+After this step, no occurrence of \(\leftrightarrow\) remains.
+\end{remark*}
+
+\begin{remark*}[Step 2: eliminate conditionals]
+Replace every conditional by an equivalent disjunction using the
+\hyperref[thm:conditional-equivalence-laws-propositional-logic]{Conditional Equivalence Laws}.
+The standard replacement is
+\[
+\alpha\rightarrow\beta
+\quad\rightsquigarrow\quad
+\neg\alpha\lor\beta.
+\]
+After this step, the only connectives still present are \(\neg\), \(\land\),
+and \(\lor\).
+\end{remark*}
+
+\begin{remark*}[Step 3: push negations inward]
+Use
+\hyperref[thm:de-morgan-laws-propositional-logic]{De Morgan Laws for Propositional Logic}
+and double-negation simplification to move every negation down to the literal
+level:
+\[
+\neg(\alpha\land\beta)\rightsquigarrow \neg\alpha\lor\neg\beta,
+\qquad
+\neg(\alpha\lor\beta)\rightsquigarrow \neg\alpha\land\neg\beta,
+\qquad
+\neg\neg\alpha\rightsquigarrow \alpha.
+\]
+When this step terminates, the result is in negation normal form: negations
+occur only immediately in front of propositional variables.
+\end{remark*}
+
+\begin{remark*}[Step 4A: distribute for DNF]
+To obtain DNF from negation normal form, distribute conjunction over
+disjunction using the
+\hyperref[thm:distributive-laws-propositional-logic]{Distributive Laws for Propositional Logic}:
+\[
+\alpha\land(\beta\lor\gamma)
+\quad\rightsquigarrow\quad
+(\alpha\land\beta)\lor(\alpha\land\gamma),
+\]
+and similarly
+\[
+(\beta\lor\gamma)\land\alpha
+\quad\rightsquigarrow\quad
+(\beta\land\alpha)\lor(\gamma\land\alpha).
+\]
+Repeatedly applying these rewrites moves disjunctions outward until the formula
+is a finite disjunction of conjunction terms.
+\end{remark*}
+
+\begin{remark*}[Step 4B: distribute for CNF]
+To obtain CNF from negation normal form, distribute disjunction over
+conjunction:
+\[
+\alpha\lor(\beta\land\gamma)
+\quad\rightsquigarrow\quad
+(\alpha\lor\beta)\land(\alpha\lor\gamma),
+\]
+and similarly
+\[
+(\beta\land\gamma)\lor\alpha
+\quad\rightsquigarrow\quad
+(\beta\lor\alpha)\land(\gamma\lor\alpha).
+\]
+Repeatedly applying these rewrites moves conjunctions outward until the formula
+is a finite conjunction of clauses.
+\end{remark*}
+
+\begin{remark*}[DNF conversion workflow]
+To convert a formula to DNF:
+\begin{enumerate}
+  \item eliminate biconditionals;
+  \item eliminate conditionals;
+  \item push negations inward to obtain negation normal form;
+  \item distribute conjunction over disjunction until the result is a finite
+        disjunction of elementary conjunctions.
+\end{enumerate}
+The resulting formula is logically equivalent to the original formula, but it
+need not be the shortest or only possible DNF representation.
+\end{remark*}
+
+\begin{remark*}[CNF conversion workflow]
+To convert a formula to CNF:
+\begin{enumerate}
+  \item eliminate biconditionals;
+  \item eliminate conditionals;
+  \item push negations inward to obtain negation normal form;
+  \item distribute disjunction over conjunction until the result is a finite
+        conjunction of clauses.
+\end{enumerate}
+The resulting formula is logically equivalent to the original formula, but it
+need not be the shortest or only possible CNF representation.
+\end{remark*}
+
+\begin{remark*}[Termination]
+The first three stages terminate because they remove or strictly simplify
+specific connective patterns. Eliminating biconditionals reduces the number of
+\(\leftrightarrow\) symbols. Eliminating conditionals reduces the number of
+\(\rightarrow\) symbols. Pushing negations inward reduces the distance between
+each negation and the propositional variables it governs, while double
+negations shorten the formula.
+
+The distribution stages terminate when guided by a target measure: for DNF,
+keep applying distributions that move \(\lor\) outward past \(\land\); for CNF,
+keep applying distributions that move \(\land\) outward past \(\lor\). Each
+application lowers the number of target-obstructing connective patterns, even
+though it may duplicate subformulas.
+\end{remark*}
+
+\begin{remark*}[Correctness]
+Correctness is by equivalence preservation. Each rewrite instance is one of the
+listed logical equivalence laws:
+\hyperref[thm:biconditional-equivalence-laws-propositional-logic]{biconditional laws},
+\hyperref[thm:conditional-equivalence-laws-propositional-logic]{conditional laws},
+\hyperref[thm:de-morgan-laws-propositional-logic]{De Morgan laws}, or
+\hyperref[thm:distributive-laws-propositional-logic]{distributive laws}.
+Replacement of logical equivalents permits the rewrite to occur inside an
+arbitrary larger formula. Therefore the final normal form is logically
+equivalent to the original formula.
+\end{remark*}
+
+\begin{remark*}[Non-uniqueness]
+Ordinary DNF and CNF are not unique. Reordering terms or clauses, reordering
+literals inside a term or clause, duplicating a term, deleting a redundant
+term, or applying absorption-style simplifications can produce different
+formulas with the same truth table and the same normal-form type.
+
+Canonical normal forms impose extra conventions to remove this freedom. The
+ordinary conversion procedures in this topic do not impose those conventions.
+\end{remark*}
+
+\begin{remark*}[Size blowup]
+Distribution can duplicate subformulas. As a result, converting a compact
+formula to DNF or CNF can produce a formula whose size is much larger than the
+original. This size blowup is a syntactic cost of forcing a formula into a
+flat disjunction-of-terms or conjunction-of-clauses shape.
+\end{remark*}
+
+\begin{remark*}[Comparison]
+\[
+\begin{array}{c|c|c}
+\text{Target form} & \text{Final outer connective pattern} & \text{Distribution used}\\
+\hline
+\text{NNF} & \text{negations only at literals} & \text{none}\\
+\text{DNF} & \text{disjunction of conjunction terms} &
+\land\text{ over }\lor\\
+\text{CNF} & \text{conjunction of clauses} &
+\lor\text{ over }\land
+\end{array}
+\]
+All three workflows use equivalence-preserving rewrites. DNF and CNF share the
+same first three stages and differ only in the final distribution direction.
+\end{remark*}
+% END GENERATED TOPIC: normal-forms-conversion-procedures

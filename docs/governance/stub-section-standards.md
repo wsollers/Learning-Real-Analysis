@@ -51,23 +51,17 @@ notes/
     index.tex
 ```
 
-The file should contain a planned-section placeholder. Use the section title in
-place of `Axioms`:
-
-```text
-Axioms Toolkit - Planned
-
-This section is a rebuild placeholder.
-
-This section is planned for the governance rebuild. No mathematical content has been restored here yet.
-```
+The file is the topic router. It may contain comments, the topic's rendered
+`\section{...}` heading, and `\input` lines only. It must not contain
+placeholder prose, formal content, labels, or proof material.
 
 Do not add definitions, theorems, examples, dependencies, topic lists, or
 labels unless they are already supplied by a canonical registry or by the task.
 
 The machine-readable authority for matched `notes/{topic}/` and
-`proofs/{topic}/` section architecture is `constitution/schema/file-schema.yaml`.
-Use `tools/governance/audit_volume_layout.py` to audit topic-pair routing.
+`proofs/{topic}/` section architecture is
+`docs/governance/volume-structure.schema.json`. Use
+`tools/governance/validate_volume.py` to audit topic-pair routing.
 
 ## Required Proof Structure
 
@@ -79,13 +73,9 @@ proofs/
     index.tex
 ```
 
-The file should contain:
-
-```text
-Proofs for this section are planned.
-
-No proof files have been regenerated.
-```
+The file is a router-only topic index. It may contain comments and `\input`
+lines only. It must not contain proof-status prose, rendered headings, formal
+content, or proof material.
 
 Do not create proof files for nonexistent statements. Proof file creation must
 also satisfy `proof-standards.md`.
@@ -98,12 +88,22 @@ After generating a section stub, update the chapter's notes router:
 notes/index.tex
 ```
 
-to include the new section in the correct order, using the repository's
-preferred routing style. A common form is:
+to include the new topic router in the correct order, using the repository's
+canonical routing style:
 
 ```latex
-\input{notes/axioms/index}
+\input{volume-x/chapter-slug/notes/axioms/index}
 ```
+
+The rendered topic heading belongs inside the topic router:
+
+```latex
+\section{Axioms}
+\input{volume-x/chapter-slug/notes/axioms/notes-axioms}
+```
+
+For a fresh stub with no authored content yet, the topic router may contain the
+section heading without body inputs.
 
 Then update the chapter's proofs router:
 
@@ -112,14 +112,14 @@ proofs/index.tex
 ```
 
 to include the matching proof section, using the repository's preferred
-routing style. A common form is:
+routing style. The exercises router remains last:
 
 ```latex
-\input{proofs/axioms/index}
+\input{volume-x/chapter-slug/proofs/axioms/index}
+\input{volume-x/chapter-slug/proofs/exercises/index}
 ```
 
-Inspect nearby chapters and follow the local routing convention. Do not invent
-a new routing style.
+Do not route proof topics after `proofs/exercises/index`.
 
 ## Ordering Rule
 

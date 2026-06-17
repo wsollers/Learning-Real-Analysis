@@ -6,6 +6,7 @@ family.
 Modules:
 
 - `repository-layout.md`
+- `workflow-data-flow.md`
 - `volume-layout.md`
 - `multi-repo-sync.md`
 - `theorem-explorer-pipeline.md`

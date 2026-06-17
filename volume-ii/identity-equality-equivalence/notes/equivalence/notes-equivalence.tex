@@ -1,0 +1,507 @@
+\begin{definitionbox}{Definition (Equivalence Relation)}
+\begin{definition}[Equivalence Relation]
+\label{def:equivalence-relation}
+Let $A$ be a set. A relation $\sim$ on $A$ is an \emph{equivalence relation}
+if it is reflexive, symmetric, and transitive.
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{EquivalenceRelation}_A(\sim)
+\Longleftrightarrow
+\Bigl(\forall x\in A,\ x\sim x\Bigr)
+\land
+\Bigl(\forall x,y\in A,\ x\sim y \Rightarrow y\sim x\Bigr)
+\land
+\Bigl(\forall x,y,z\in A,\ (x\sim y\land y\sim z)\Rightarrow x\sim z\Bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+An equivalence relation formalizes sameness for a chosen purpose.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:reflexive]{Reflexive Relation}
+  \item \hyperref[def:symmetric]{Symmetric Relation}
+  \item \hyperref[def:transitive]{Transitive Relation}
+\end{itemize}
+\end{dependencies}
+\end{definitionbox}
+
+\begin{corollarybox}{Corollary (Equality Is the Finest Equivalence)}
+\begin{corollary}[Equality Is the Finest Equivalence]
+\label{cor:equality-is-finest-equivalence}
+Let $\sim$ be an equivalence relation on $A$. For all $a,b\in A$,
+\[
+a=b \Longrightarrow a\sim b.
+\]
+\end{corollary}
+\end{corollarybox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b\in A,\,
+a=b\Longrightarrow a\sim b.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Equality is the finest equivalence relation because it identifies only objects
+that are already the same. Any coarser equivalence relation must at least
+identify equal representatives.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+  \item \hyperref[ax:equality-reflexivity]{Reflexivity of Equality}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Equivalence Class)}
+\begin{definition}[Equivalence Class]
+\label{def:equivalence-class}
+Let $\sim$ be an equivalence relation on $A$. The \emph{equivalence class}
+of $a\in A$ is
+\[
+[a] := \{x\in A \mid x\sim a\}.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+x\in [a] \Longleftrightarrow x\sim a.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The class $[a]$ collects all elements that are equivalent to the
+representative $a$.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+\end{itemize}
+\end{dependencies}
+\end{definitionbox}
+
+\begin{definitionbox}{Definition (Quotient Set)}
+\begin{definition*}[Quotient Set]
+The \emph{quotient set} of $A$ by $\sim$ is the set of equivalence classes
+\[
+A/{\sim} := \{[a]\mid a\in A\}.
+\]
+\end{definition*}
+\end{definitionbox}
+
+\begin{theorembox}{Theorem (Equivalence Classes Partition the Domain)}
+\begin{theorem}[Equivalence Classes Partition the Domain]
+\label{thm:equivalence-classes-partition-domain}
+The equivalence classes of an equivalence relation on $A$ are nonempty, cover
+$A$, and are pairwise disjoint.
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a\in A,\ a\in[a],
+\qquad
+A=\bigcup_{a\in A}[a],
+\qquad
+[a]\cap[b]\ne\emptyset \Longrightarrow [a]=[b].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Equivalence classes divide the domain into non-overlapping blocks.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+  \item \hyperref[def:equivalence-class]{Equivalence Class}
+\end{itemize}
+\end{dependencies}
+
+\begin{propositionbox}{Proposition (Representatives Related iff Classes Equal)}
+\begin{proposition}[Representatives Related iff Classes Equal]
+\label{prop:representatives-related-iff-classes-equal}
+\[
+a\sim b \Longleftrightarrow [a]=[b].
+\]
+\end{proposition}
+\end{propositionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b\in A,\ a\sim b \Longleftrightarrow [a]=[b].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Changing representatives inside an equivalence class does not change the
+class.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:equivalence-classes-partition-domain]{Equivalence Classes Partition the Domain}
+\end{itemize}
+\end{dependencies}
+
+\subsection*{Canonical Projection}
+
+\begin{definitionbox}{Definition (Canonical Projection)}
+\begin{definition}[Canonical Projection]
+\label{def:canonical-projection}
+Let $\sim$ be an equivalence relation on $A$. The \emph{canonical projection}
+is the map
+\[
+\pi:A\to A/{\sim},
+\qquad
+\pi(a):=[a].
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:quotient-set]{Quotient Set}
+  \item \hyperref[def:equivalence-class]{Equivalence Class}
+\end{itemize}
+\end{dependencies}
+
+\begin{propositionbox}{Proposition (Projection Is Surjective)}
+\begin{proposition}[Projection Is Surjective]
+\label{prop:projection-is-surjective}
+The canonical projection $\pi:A\to A/{\sim}$ is surjective.
+\end{proposition}
+\end{propositionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall C\in A/{\sim}\,\exists a\in A,\ \pi(a)=C.
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:canonical-projection]{Canonical Projection}
+  \item \hyperref[def:quotient-set]{Quotient Set}
+\end{itemize}
+\end{dependencies}
+
+\begin{propositionbox}{Proposition (Projection Identifies Exactly the Equivalent Elements)}
+\begin{proposition}[Projection Identifies Exactly the Equivalent Elements]
+\label{prop:projection-identifies-equivalent-elements}
+For all $a,b\in A$,
+\[
+\pi(a)=\pi(b)\Longleftrightarrow a\sim b.
+\]
+\end{proposition}
+\end{propositionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:canonical-projection]{Canonical Projection}
+  \item \hyperref[prop:representatives-related-iff-classes-equal]{Representatives Related iff Classes Equal}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Existence of a Quotient)}
+\begin{theorem}[Existence of a Quotient]
+\label{thm:existence-of-a-quotient}
+For any equivalence relation $\sim$ on $A$, the quotient set $A/{\sim}$ exists
+as the set of equivalence classes, and the canonical projection
+\[
+\pi:A\to A/{\sim}
+\]
+is well-defined.
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+  \item \hyperref[def:quotient-set]{Quotient Set}
+  \item \hyperref[def:canonical-projection]{Canonical Projection}
+\end{itemize}
+\end{dependencies}
+
+\subsection*{Induced Structure on a Quotient}
+
+\begin{definitionbox}{Definition (Operation Respects an Equivalence)}
+\begin{definition}[Operation Respects an Equivalence]
+\label{def:operation-respects-equivalence}
+Let $O:A\times A\to A$ be a binary operation and let $\sim$ be an equivalence
+relation on $A$. The operation $O$ \emph{respects} $\sim$ if
+\[
+\forall a,a',b,b'\in A,\,
+\bigl(a\sim a'\land b\sim b'\bigr)
+\Longrightarrow
+\bigl(a\mathbin{O}b\bigr)\sim\bigl(a'\mathbin{O}b'\bigr).
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+  \item \hyperref[def:binary-arithmetic-operation]{Binary Arithmetic Operation}
+  \item \hyperref[def:cartesian-product-rel]{Cartesian Product}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Left and Right Respect)}
+\begin{definition}[Left and Right Respect]
+\label{def:left-right-respect-equivalence}
+The operation $O$ \emph{respects} $\sim$ on the left if
+\[
+a\sim a'\Longrightarrow (a\mathbin{O}b)\sim(a'\mathbin{O}b),
+\]
+and respects $\sim$ on the right if
+\[
+b\sim b'\Longrightarrow (a\mathbin{O}b)\sim(a\mathbin{O}b').
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:operation-respects-equivalence]{Operation Respects an Equivalence}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+\end{itemize}
+\end{dependencies}
+
+\begin{lemmabox}{Lemma (Respect Splits)}
+\begin{lemma}[Respect Splits]
+\label{lem:respect-splits}
+A binary operation $O$ respects $\sim$ if and only if it respects $\sim$ on
+the left and on the right.
+\end{lemma}
+\end{lemmabox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:operation-respects-equivalence]{Operation Respects an Equivalence}
+  \item \hyperref[def:left-right-respect-equivalence]{Left and Right Respect}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Operation on a Quotient)}
+\begin{theorem}[Induced Operation on a Quotient]
+\label{thm:induced-operation-on-quotient}
+If $O:A\times A\to A$ respects $\sim$, then
+\[
+[a]\mathbin{\overline{O}}[b]:=[a\mathbin{O}b]
+\]
+defines a well-defined binary operation on $A/{\sim}$.
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:operation-respects-equivalence]{Operation Respects an Equivalence}
+  \item \hyperref[prop:representatives-related-iff-classes-equal]{Representatives Related iff Classes Equal}
+  \item \hyperref[thm:existence-of-a-quotient]{Existence of a Quotient}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Unary Operation)}
+\begin{theorem}[Induced Unary Operation]
+\label{thm:induced-unary-operation-on-quotient}
+Let $f:A\to A$. If
+\[
+a\sim a'\Longrightarrow f(a)\sim f(a'),
+\]
+then
+\[
+\overline{f}([a]):=[f(a)]
+\]
+defines a well-defined unary operation on $A/{\sim}$.
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[prop:representatives-related-iff-classes-equal]{Representatives Related iff Classes Equal}
+  \item \hyperref[thm:existence-of-a-quotient]{Existence of a Quotient}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Predicate Respects an Equivalence)}
+\begin{definition}[Predicate Respects an Equivalence]
+\label{def:predicate-respects-equivalence}
+Let $P$ be a predicate on $A$. The predicate $P$ \emph{respects} $\sim$ if
+\[
+\forall a,a'\in A,\,
+a\sim a'\Longrightarrow \bigl(P(a)\Longleftrightarrow P(a')\bigr).
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+  \item \hyperref[def:predicate]{Predicate}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Predicate on a Quotient)}
+\begin{theorem}[Induced Predicate on a Quotient]
+\label{thm:induced-predicate-on-quotient}
+If $P$ respects $\sim$, then
+\[
+\overline{P}([a]):\Longleftrightarrow P(a)
+\]
+defines a well-defined predicate on $A/{\sim}$.
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:predicate-respects-equivalence]{Predicate Respects an Equivalence}
+  \item \hyperref[prop:representatives-related-iff-classes-equal]{Representatives Related iff Classes Equal}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Relation Respects an Equivalence)}
+\begin{definition}[Relation Respects an Equivalence]
+\label{def:relation-respects-equivalence}
+Let $R$ be a binary relation on $A$. The relation $R$ \emph{respects} $\sim$
+if
+\[
+\forall a,a',b,b'\in A,\,
+\bigl(a\sim a'\land b\sim b'\bigr)
+\Longrightarrow
+\bigl(R(a,b)\Longleftrightarrow R(a',b')\bigr).
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:equivalence-relation]{Equivalence Relation}
+  \item \hyperref[def:relation]{Relation}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Relation on a Quotient)}
+\begin{theorem}[Induced Relation on a Quotient]
+\label{thm:induced-relation-on-quotient}
+If $R$ respects $\sim$, then
+\[
+\overline{R}([a],[b]):\Longleftrightarrow R(a,b)
+\]
+defines a well-defined binary relation on $A/{\sim}$.
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation-respects-equivalence]{Relation Respects an Equivalence}
+  \item \hyperref[prop:representatives-related-iff-classes-equal]{Representatives Related iff Classes Equal}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Map out of a Quotient)}
+\begin{theorem}[Induced Map out of a Quotient]
+\label{thm:induced-map-out-of-quotient}
+Let $g:A\to B$. If
+\[
+a\sim a'\Longrightarrow g(a)=g(a'),
+\]
+then there is a unique well-defined map
+\[
+\overline{g}:A/{\sim}\to B
+\]
+such that
+\[
+\overline{g}([a])=g(a)
+\qquad\text{and}\qquad
+\overline{g}\circ\pi=g,
+\]
+where $\pi:A\to A/{\sim}$ is the canonical projection.
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:canonical-projection]{Canonical Projection}
+  \item \hyperref[prop:projection-identifies-equivalent-elements]{Projection Identifies Exactly the Equivalent Elements}
+  \item \hyperref[prop:projection-is-surjective]{Projection Is Surjective}
+\end{itemize}
+\end{dependencies}
+
+\begin{theorembox}{Theorem (Induced Partial Operation on a Quotient)}
+\begin{theorem}[Induced Partial Operation on a Quotient]
+\label{thm:induced-partial-operation-on-quotient}
+Let $D\subseteq A$ be saturated under $\sim$, meaning
+\[
+a\in D\land a\sim a'\Longrightarrow a'\in D.
+\]
+If $f:D\to A$ respects $\sim$ on $D$, then
+\[
+\overline{f}([a]):=[f(a)]
+\]
+is a well-defined partial operation on $A/{\sim}$ with domain
+\[
+D/{\sim}:=\{[a]\in A/{\sim}:a\in D\}.
+\]
+\end{theorem}
+\end{theorembox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:induced-unary-operation-on-quotient]{Induced Unary Operation}
+  \item \hyperref[thm:induced-predicate-on-quotient]{Induced Predicate on a Quotient}
+\end{itemize}
+\end{dependencies}
+
+\begin{propositionbox}{Proposition (Representative Independence Is Necessary)}
+\begin{proposition}[Representative Independence Is Necessary]
+\label{prop:representative-independence-is-necessary}
+If a rule on classes
+\[
+[a]\mathbin{\overline{O}}[b]:=[a\mathbin{O}b]
+\]
+is well-defined on $A/{\sim}$, then $O$ respects $\sim$.
+\end{proposition}
+\end{propositionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:operation-respects-equivalence]{Operation Respects an Equivalence}
+  \item \hyperref[prop:projection-identifies-equivalent-elements]{Projection Identifies Exactly the Equivalent Elements}
+  \item \hyperref[thm:induced-operation-on-quotient]{Induced Operation on a Quotient}
+\end{itemize}
+\end{dependencies}
+
+\begin{lemmabox}{Lemma (Distinct Equivalence Classes Are Disjoint)}
+\begin{lemma}[Distinct Equivalence Classes Are Disjoint]
+\label{lem:distinct-equivalence-classes-are-disjoint}
+\[
+[a]\ne[b] \Longrightarrow [a]\cap[b]=\emptyset.
+\]
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall a,b\in A,\ [a]\ne[b] \Longrightarrow [a]\cap[b]=\emptyset.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Two equivalence classes either coincide or do not overlap.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:equivalence-classes-partition-domain]{Equivalence Classes Partition the Domain}
+\end{itemize}
+\end{dependencies}

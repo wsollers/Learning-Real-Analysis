@@ -1,0 +1,995 @@
+% BEGIN GENERATED ARTIFACT: def:truth-value-propositional-logic
+\begin{definitionbox}{Definition (Truth Value)}
+\begin{definition}[Truth Value]
+\label{def:truth-value-propositional-logic}
+The set of truth values is
+\[
+\mathbb{B} := \{\mathrm{False},\mathrm{True}\}.
+\]
+Some sources identify this set with \(\{0,1\}\), with \(0\) read as false and \(1\) read as true.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\mathbb{B}=\{\mathrm{False},\mathrm{True}\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Truth values are the semantic targets of propositional formulas. Syntax determines which strings are formulas; semantics later assigns elements of \(\mathbb{B}\) to formulas.
+\end{remark*}
+
+\begin{dependencies}
+\NoLocalDependencies
+\end{dependencies}
+% END GENERATED ARTIFACT: def:truth-value-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:propositional-language
+\begin{definitionbox}{Definition (Propositional Language)}
+\begin{definition}[Propositional Language]
+\label{def:propositional-language}
+A propositional language consists of:
+\begin{enumerate}
+\item a set \(\Prop\) of propositional variables;
+\item logical connectives;
+\item punctuation symbols such as parentheses;
+\item recursive formation rules specifying the well-formed formulas.
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\mathcal L_{\mathrm{prop}}
+=
+(\Prop,\{\neg,\land,\lor,\to,\leftrightarrow\},\text{punctuation},\text{formation rules}).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The language supplies symbols and grammar. It does not yet assign truth values, truth conditions, or logical consequence.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:truth-value-propositional-logic]{Truth Value}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:propositional-language
+% BEGIN GENERATED ARTIFACT: def:propositional-variable
+\begin{definitionbox}{Definition (Propositional Variable)}
+\begin{definition}[Propositional Variable]
+\label{def:propositional-variable}
+A propositional variable is an atomic symbol intended to stand for a proposition. A standard supply of variables is
+\[
+\Prop=\{P_1,P_2,P_3,\ldots\}.
+\]
+Informally, variables are often written \(P,Q,R,S,\ldots\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{PropositionalVariable}(P)\Longleftrightarrow P\in\Prop.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{PropositionalVariable}(P)\) means \(P\in\Prop\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A propositional variable has no internal syntactic structure in propositional logic. It is a basic symbol from which more complex formulas are formed.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(P,Q,R,P_1,P_2\) are propositional variables when they belong to \(\Prop\).
+\end{remark*}
+
+\begin{remark*}[Non-examples]
+\(\neg P\), \(P\land Q\), and \((P\to Q)\) are not propositional variables; they are compound formulas.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:propositional-language]{Propositional Language}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:propositional-variable
+% BEGIN GENERATED ARTIFACT: def:logical-connective
+\begin{definitionbox}{Definition (Logical Connective)}
+\begin{definition}[Logical Connective]
+\label{def:logical-connective}
+The standard primitive propositional connectives are
+\[
+\neg,\qquad \land,\qquad \lor,\qquad \to,\qquad \leftrightarrow.
+\]
+The connective \(\neg\) is unary. The connectives \(\land,\lor,\to,\leftrightarrow\) are binary.
+
+\[
+\begin{array}{c|c|c|c|c}
+\text{Symbol} & \text{Name} & \text{Arity} & \text{Formation pattern} & \text{Reading}\\
+\hline
+\neg & \text{negation} & \text{unary} & \neg\varphi & \text{not }\varphi\\
+\land & \text{conjunction} & \text{binary} & (\varphi\land\psi) & \varphi\text{ and }\psi\\
+\lor & \text{disjunction} & \text{binary} & (\varphi\lor\psi) & \varphi\text{ or }\psi\\
+\to & \text{conditional} & \text{binary} & (\varphi\to\psi) & \text{if }\varphi,\text{ then }\psi\\
+\leftrightarrow & \text{biconditional} & \text{binary} & (\varphi\leftrightarrow\psi) & \varphi\text{ iff }\psi
+\end{array}
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{UnaryConnective}(\neg)
+\quad\text{and}\quad
+\operatorname{BinaryConnective}(\land)\land \operatorname{BinaryConnective}(\lor)\land \operatorname{BinaryConnective}(\to)\land \operatorname{BinaryConnective}(\leftrightarrow).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Arity records how many formulas a connective uses to form a new formula. The truth behavior of these connectives belongs to semantics, not to the syntactic definition.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:propositional-language]{Propositional Language}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:logical-connective
+% BEGIN GENERATED ARTIFACT: def:well-formed-formula
+\begin{definitionbox}{Definition (Well-Formed Formula)}
+\begin{definition}[Well-Formed Formula]
+\label{def:well-formed-formula}
+The set \(\WFF\) of well-formed formulas is the smallest set of strings satisfying the following formation rules:
+\begin{enumerate}
+\item Every propositional variable \(P\in\Prop\) belongs to \(\WFF\).
+\item If \(\varphi\in\WFF\), then \(\neg\varphi\in\WFF\).
+\item If \(\varphi,\psi\in\WFF\) and \(\circ\in\{\land,\lor,\to,\leftrightarrow\}\), then \((\varphi\circ\psi)\in\WFF\).
+\item No string is a well-formed formula unless it is obtained by finitely many applications of the previous clauses.
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\WFF
+=
+\bigcap
+\left\{
+S :
+\Prop\subseteq S,\;
+(\forall\varphi\in S)(\neg\varphi\in S),\;
+(\forall\varphi,\psi\in S)
+(\forall\circ\in\{\land,\lor,\to,\leftrightarrow\})
+\bigl((\varphi\circ\psi)\in S\bigr)
+\right\}.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{WellFormedFormula}(\varphi)\) means \(\varphi\in\WFF\), read as “\(\varphi\) is a well-formed formula.”
+\end{remark*}
+
+\begin{remark*}[Negated quantified statement]
+\[
+\sigma\notin\WFF
+\Longleftrightarrow
+\exists S
+\left[
+\Prop\subseteq S
+\land
+(\forall\varphi\in S)(\neg\varphi\in S)
+\land
+(\forall\varphi,\psi\in S)
+(\forall\circ\in\{\land,\lor,\to,\leftrightarrow\})
+((\varphi\circ\psi)\in S)
+\land
+\sigma\notin S
+\right].
+\]
+\end{remark*}
+
+\begin{remark*}[Negation predicate reading]
+\(\neg \operatorname{WellFormedFormula}(\sigma)\) means the string \(\sigma\) is excluded by at least one formation-closed set containing \(\Prop\); equivalently, it is not generated by finitely many applications of the formation rules.
+\end{remark*}
+
+\begin{remark*}[Failure modes]
+A string fails to be well formed when it violates the formation grammar: an
+operand may be missing, a connective may be missing, parentheses may be
+unmatched, or the string may not be generated by finitely many formation steps.
+\end{remark*}
+
+\begin{remark*}[Failure mode decomposition]
+\[
+\underbrace{P\land}_{\text{missing right operand}}
+\qquad
+\underbrace{(P\ Q)}_{\text{missing binary connective}}
+\qquad
+\underbrace{\neg\lor P}_{\text{negation applied to a non-formula}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Well-formed formulas are exactly the strings to which the semantic and proof-theoretic machinery of propositional logic applies.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(P\), \(\neg P\), \((P\to Q)\), and \((P\to(Q\lor R))\) are well-formed formulas.
+\end{remark*}
+
+\begin{remark*}[Non-examples]
+\(P\land\), \((P Q)\), and \(\neg\lor P\) are not well-formed formulas.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:propositional-variable]{Propositional Variable}
+  \item \hyperref[def:logical-connective]{Logical Connective}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:well-formed-formula
+% BEGIN GENERATED ARTIFACT: lem:closure-under-formation-propositional-formulas
+\begin{lemmabox}{Lemma (Closure Under Formation)}
+\begin{lemma}[Closure Under Formation]
+\label{lem:closure-under-formation-propositional-formulas}
+The set \(\WFF\) is closed under the propositional formation rules.
+
+That is, if \(\varphi\in\WFF\), then
+\[
+\neg\varphi\in\WFF.
+\]
+If \(\varphi,\psi\in\WFF\) and
+\[
+\circ\in\{\land,\lor,\to,\leftrightarrow\},
+\]
+then
+\[
+(\varphi\circ\psi)\in\WFF.
+\]
+
+\noindent\hyperref[prf:closure-under-formation-propositional-formulas]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)(\neg\varphi\in\WFF)
+\]
+and
+\[
+(\forall\varphi,\psi\in\WFF)
+(\forall\circ\in\{\land,\lor,\to,\leftrightarrow\})
+((\varphi\circ\psi)\in\WFF).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Closure says that every legal use of a formation rule produces another
+well-formed formula. It is the forward direction of the recursive grammar.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: lem:closure-under-formation-propositional-formulas
+% BEGIN GENERATED ARTIFACT: thm:minimality-of-well-formed-formulas
+\begin{theorembox}{Theorem (Minimality of Well-Formed Formulas)}
+\begin{theorem}[Minimality of Well-Formed Formulas]
+\label{thm:minimality-of-well-formed-formulas}
+Let \(S\) be a set of strings over the propositional alphabet. Suppose:
+\begin{enumerate}
+  \item \(\Prop\subseteq S\);
+  \item if \(\varphi\in S\), then \(\neg\varphi\in S\);
+  \item if \(\varphi,\psi\in S\) and
+        \(\circ\in\{\land,\lor,\to,\leftrightarrow\}\), then
+        \((\varphi\circ\psi)\in S\).
+\end{enumerate}
+Then
+\[
+\WFF\subseteq S.
+\]
+
+\noindent\hyperref[prf:minimality-of-well-formed-formulas]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+(\forall S)\Big[
+&\Prop\subseteq S
+\land
+(\forall\varphi\in S)(\neg\varphi\in S)\\
+&\land
+(\forall\varphi,\psi\in S)
+(\forall\circ\in\{\land,\lor,\to,\leftrightarrow\})
+((\varphi\circ\psi)\in S)
+\Big]
+\to
+\WFF\subseteq S.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Minimality is the formal content of the clause ``nothing else is a wff.'' It says
+that \(\WFF\) is contained in every set of strings that contains the
+propositional variables and is closed under the formation rules.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:minimality-of-well-formed-formulas
+% BEGIN GENERATED ARTIFACT: def:atomic-formula-propositional-logic
+\begin{definitionbox}{Definition (Atomic Formula)}
+\begin{definition}[Atomic Formula]
+\label{def:atomic-formula-propositional-logic}
+An atomic formula is a well-formed formula that is a propositional variable.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{AtomicFormula}(\varphi)
+\Longleftrightarrow
+\varphi\in\WFF\land\varphi\in\Prop.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{AtomicFormula}(\varphi)\) means that \(\varphi\) is a propositional variable viewed as a well-formed formula.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Atomic formulas are the base cases of the recursive grammar. They contain no connective structure.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:propositional-variable]{Propositional Variable}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:atomic-formula-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:molecular-formula-propositional-logic
+\begin{definitionbox}{Definition (Molecular Formula)}
+\begin{definition}[Molecular Formula]
+\label{def:molecular-formula-propositional-logic}
+A molecular formula is a well-formed formula that is not atomic. Equivalently, it is a well-formed formula formed using at least one logical connective.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{MolecularFormula}(\varphi)
+\Longleftrightarrow
+\varphi\in\WFF\land\neg \operatorname{AtomicFormula}(\varphi).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{MolecularFormula}(\varphi)\) means that \(\varphi\) has nontrivial connective structure.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Molecular formulas are exactly the formulas obtained by applying negation or a binary connective at least once.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:atomic-formula-propositional-logic]{Atomic Formula}
+  \item \hyperref[def:logical-connective]{Logical Connective}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:molecular-formula-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:main-connective-propositional-logic
+\begin{definitionbox}{Definition (Main Connective)}
+\begin{definition}[Main Connective]
+\label{def:main-connective-propositional-logic}
+The main connective of a molecular formula is the connective introduced at the final formation step:
+\begin{enumerate}
+\item for \(\neg\varphi\), the main connective is \(\neg\);
+\item for \((\varphi\circ\psi)\), the main connective is \(\circ\).
+\end{enumerate}
+Atomic formulas have no main connective.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{MainConnective}(\neg\varphi,\neg)
+\quad\text{and}\quad
+\operatorname{MainConnective}((\varphi\circ\psi),\circ).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{MainConnective}(\varphi,c)\) means that \(c\) is the outermost connective introduced in the final formation step of \(\varphi\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The main connective identifies the outermost syntactic operation. It is the first connective used when analyzing a formula from the outside inward.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:molecular-formula-propositional-logic]{Molecular Formula}
+  \item \hyperref[def:logical-connective]{Logical Connective}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:main-connective-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:structural-induction-propositional-formulas
+\begin{theorembox}{Theorem (Structural Induction for Propositional Formulas)}
+\begin{theorem}[Structural Induction for Propositional Formulas]
+\label{thm:structural-induction-propositional-formulas}
+Let \(A(\varphi)\) be a property of well-formed formulas. Suppose:
+\begin{enumerate}
+\item \(A(P)\) holds for every \(P\in\Prop\);
+\item if \(A(\varphi)\) holds, then \(A(\neg\varphi)\) holds;
+\item if \(A(\varphi)\) and \(A(\psi)\) hold, then \(A((\varphi\circ\psi))\) holds for every \(\circ\in\{\land,\lor,\to,\leftrightarrow\}\).
+\end{enumerate}
+Then \(A(\theta)\) holds for every \(\theta\in\WFF\).
+
+\noindent\hyperref[prf:structural-induction-propositional-formulas]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\left[
+(\forall P\in\Prop)A(P)
+\land
+(\forall\varphi\in\WFF)(A(\varphi)\to A(\neg\varphi))
+\land
+(\forall\varphi,\psi\in\WFF)
+(\forall\circ\in\{\land,\lor,\to,\leftrightarrow\})
+\bigl((A(\varphi)\land A(\psi))\to A((\varphi\circ\psi))\bigr)
+\right]
+\to
+(\forall\theta\in\WFF)A(\theta).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+To prove a statement for all formulas, it suffices to prove it for propositional variables and show it is preserved by each formula-forming operation.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:structural-induction-propositional-formulas
+% BEGIN GENERATED ARTIFACT: thm:structural-recursion-propositional-formulas
+\begin{theorembox}{Theorem (Structural Recursion for Propositional Formulas)}
+\begin{theorem}[Structural Recursion for Propositional Formulas]
+\label{thm:structural-recursion-propositional-formulas}
+To define a function \(F\) on \(\WFF\), it suffices to specify:
+\begin{enumerate}
+\item \(F(P)\) for every \(P\in\Prop\);
+\item \(F(\neg\varphi)\) in terms of \(F(\varphi)\);
+\item \(F((\varphi\circ\psi))\) in terms of \(F(\varphi)\), \(F(\psi)\), and \(\circ\).
+\end{enumerate}
+When these clauses respect the formation rules, they determine a unique function on \(\WFF\).
+
+\noindent\hyperref[prf:structural-recursion-propositional-formulas]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\text{recursive data on the formation clauses of }\WFF
+\Longrightarrow
+\exists!F:\WFF\to X
+\text{ satisfying those clauses}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Structural recursion justifies recursive definitions such as variables of a formula, subformulas, depth, connective count, syntax tree, and truth evaluation.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[thm:structural-induction-propositional-formulas]{Structural Induction for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:structural-recursion-propositional-formulas
+% BEGIN GENERATED ARTIFACT: lem:constructor-disjointness-propositional-formulas
+\begin{lemmabox}{Lemma (Constructor Disjointness for Propositional Formulas)}
+\begin{lemma}[Constructor Disjointness for Propositional Formulas]
+\label{lem:constructor-disjointness-propositional-formulas}
+The three outer formation cases for propositional formulas are disjoint:
+\begin{enumerate}
+\item no propositional variable is a negation formula;
+\item no propositional variable is a binary formula;
+\item no negation formula is a binary formula.
+\end{enumerate}
+
+\noindent\hyperref[prf:constructor-disjointness-propositional-formulas]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+P\in\Prop\Rightarrow
+\left[
+(\forall\varphi\in\WFF)(P\ne\neg\varphi)
+\land
+(\forall\varphi,\psi\in\WFF)(\forall\circ)(P\ne(\varphi\circ\psi))
+\right]
+\]
+and
+\[
+(\forall\varphi,\psi,\chi\in\WFF)(\forall\circ)
+\bigl(\neg\varphi\ne(\psi\circ\chi)\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\underbrace{P}_{\text{atomic}}
+\qquad
+\underbrace{\neg\varphi}_{\text{negation case}}
+\qquad
+\underbrace{(\varphi\circ\psi)}_{\text{binary case}}
+\]
+belong to three distinct outer-form classes.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A formula cannot be parsed as two different outer formation types.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:atomic-formula-propositional-logic]{Atomic Formula}
+  \item \hyperref[def:main-connective-propositional-logic]{Main Connective}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: lem:constructor-disjointness-propositional-formulas
+% BEGIN GENERATED ARTIFACT: lem:constructor-injectivity-propositional-formulas
+\begin{lemmabox}{Lemma (Constructor Injectivity for Propositional Formulas)}
+\begin{lemma}[Constructor Injectivity for Propositional Formulas]
+\label{lem:constructor-injectivity-propositional-formulas}
+The propositional formula constructors are injective:
+\begin{enumerate}
+\item if \(\neg\varphi=\neg\psi\), then \(\varphi=\psi\);
+\item if \((\varphi\circ\psi)=(\alpha\star\beta)\), then \(\varphi=\alpha\), \(\psi=\beta\), and \(\circ=\star\).
+\end{enumerate}
+
+\noindent\hyperref[prf:constructor-injectivity-propositional-formulas]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi,\psi\in\WFF)
+(\neg\varphi=\neg\psi\to\varphi=\psi)
+\]
+and
+\[
+(\forall\varphi,\psi,\alpha,\beta\in\WFF)
+(\forall\circ,\star\in\{\land,\lor,\to,\leftrightarrow\})
+\left[
+(\varphi\circ\psi)=(\alpha\star\beta)
+\to
+(\varphi=\alpha\land\psi=\beta\land\circ=\star)
+\right].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+If two formulas are built by the same outer constructor and are equal as strings, then their immediate constituents are equal.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:logical-connective]{Logical Connective}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: lem:constructor-injectivity-propositional-formulas
+% BEGIN GENERATED ARTIFACT: thm:unique-decomposition-propositional-formulas
+\begin{theorembox}{Theorem (Unique Decomposition for Propositional Formulas)}
+\begin{theorem}[Unique Decomposition for Propositional Formulas]
+\label{thm:unique-decomposition-propositional-formulas}
+Every \(\varphi\in\WFF\) has exactly one outermost form:
+\begin{enumerate}
+\item \(\varphi=P\) for a unique \(P\in\Prop\);
+\item \(\varphi=\neg\psi\) for a unique \(\psi\in\WFF\);
+\item \(\varphi=(\psi\circ\chi)\) for unique \(\psi,\chi\in\WFF\) and a unique binary connective \(\circ\in\{\land,\lor,\to,\leftrightarrow\}\).
+\end{enumerate}
+
+\noindent\hyperref[prf:unique-decomposition-propositional-formulas]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall\varphi\in\WFF,\quad
+\text{exactly one of the following holds:}
+\]
+\[
+\varphi\in\Prop,\qquad
+\exists!\psi\in\WFF\,(\varphi=\neg\psi),\qquad
+\exists!\psi,\chi\in\WFF\;\exists!\circ\in\{\land,\lor,\to,\leftrightarrow\}\,(\varphi=(\psi\circ\chi)).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\varphi
+\in
+\underbrace{\Prop}_{\text{atomic case}}
+\quad\text{or}\quad
+\varphi=
+\underbrace{\neg\psi}_{\text{negation case}}
+\quad\text{or}\quad
+\varphi=
+\underbrace{(\psi\circ\chi)}_{\text{binary case}},
+\]
+and exactly one of these alternatives holds.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Unique decomposition makes recursive definitions and induction on formulas unambiguous.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[lem:constructor-disjointness-propositional-formulas]{Constructor Disjointness for Propositional Formulas}
+  \item \hyperref[lem:constructor-injectivity-propositional-formulas]{Constructor Injectivity for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:unique-decomposition-propositional-formulas
+% BEGIN GENERATED ARTIFACT: def:parse-tree-propositional-logic
+\begin{definitionbox}{Definition (Parse Tree)}
+\begin{definition}[Parse Tree]
+\label{def:parse-tree-propositional-logic}
+The parse tree, or syntax tree, of a well-formed formula is the tree representation of its recursive construction:
+\begin{enumerate}
+\item a propositional variable is represented by a single leaf;
+\item a formula \(\neg\varphi\) is represented by a root labeled \(\neg\) with one child, the parse tree of \(\varphi\);
+\item a formula \((\varphi\circ\psi)\) is represented by a root labeled \(\circ\) with two children, the parse trees of \(\varphi\) and \(\psi\).
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Tree}:\WFF\to\{\text{finite rooted labeled trees}\}
+\]
+is defined recursively by the three formation clauses for propositional formulas.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The parse tree records the same structure described by unique decomposition. It turns the recursive construction of a formula into a visible tree.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[thm:unique-decomposition-propositional-formulas]{Unique Decomposition for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:parse-tree-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:unique-syntax-tree-propositional-formulas
+\begin{theorembox}{Theorem (Unique Syntax Tree for Propositional Formulas)}
+\begin{theorem}[Unique Syntax Tree for Propositional Formulas]
+\label{thm:unique-syntax-tree-propositional-formulas}
+Every propositional well-formed formula has a unique parse tree.
+
+\noindent\hyperref[prf:unique-syntax-tree-propositional-formulas]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall\varphi\in\WFF,\quad \exists!T\; (T=\operatorname{Tree}(\varphi)).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A formula has exactly one tree representation of its recursive construction. This is the tree form of unique decomposition.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:parse-tree-propositional-logic]{Parse Tree}
+  \item \hyperref[thm:unique-decomposition-propositional-formulas]{Unique Decomposition for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:unique-syntax-tree-propositional-formulas
+% BEGIN GENERATED ARTIFACT: def:formula-variable-set-propositional-logic
+\begin{definitionbox}{Definition (Variable Set of a Formula)}
+\begin{definition}[Variable Set of a Formula]
+\label{def:formula-variable-set-propositional-logic}
+The variable set \(\operatorname{Var}(\varphi)\) of a formula \(\varphi\) is defined recursively:
+\begin{enumerate}
+\item if \(\varphi=P\in\Prop\), then \(\operatorname{Var}(\varphi)=\{P\}\);
+\item if \(\varphi=\neg\psi\), then \(\operatorname{Var}(\varphi)=\operatorname{Var}(\psi)\);
+\item if \(\varphi=(\psi\circ\chi)\), then
+\[
+\operatorname{Var}(\varphi)=\operatorname{Var}(\psi)\cup\operatorname{Var}(\chi).
+\]
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Var}(P)=\{P\},\qquad
+\operatorname{Var}(\neg\psi)=\operatorname{Var}(\psi),\qquad
+\operatorname{Var}((\psi\circ\chi))=\operatorname{Var}(\psi)\cup\operatorname{Var}(\chi).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The variable set records exactly which propositional variables occur in a formula.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[thm:structural-recursion-propositional-formulas]{Structural Recursion for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:formula-variable-set-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:subformula-propositional-logic
+\begin{definitionbox}{Definition (Subformula)}
+\begin{definition}[Subformula]
+\label{def:subformula-propositional-logic}
+The set \(\operatorname{Sub}(\varphi)\) of subformulas of a formula \(\varphi\) is defined recursively:
+\begin{enumerate}
+\item if \(\varphi\) is atomic, then \(\operatorname{Sub}(\varphi)=\{\varphi\}\);
+\item if \(\varphi=\neg\psi\), then
+\[
+\operatorname{Sub}(\varphi)=\{\varphi\}\cup\operatorname{Sub}(\psi);
+\]
+\item if \(\varphi=(\psi\circ\chi)\), then
+\[
+\operatorname{Sub}(\varphi)=\{\varphi\}\cup\operatorname{Sub}(\psi)\cup\operatorname{Sub}(\chi).
+\]
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{Sub}(P)=\{P\},\qquad
+\operatorname{Sub}(\neg\psi)=\{\neg\psi\}\cup\operatorname{Sub}(\psi),
+\]
+\[
+\operatorname{Sub}((\psi\circ\chi))
+=
+\{(\psi\circ\chi)\}\cup\operatorname{Sub}(\psi)\cup\operatorname{Sub}(\chi).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Subformulas are the formulas that occur at nodes of the parse tree.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[thm:unique-decomposition-propositional-formulas]{Unique Decomposition for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Proper Subformula)}
+\begin{definition}[Proper Subformula]
+\label{def:proper-subformula}
+Let \(\varphi\in\WFF\). A \emph{proper subformula} of \(\varphi\) is a
+formula \(\psi\) such that
+\[
+\psi\in\operatorname{Sub}(\varphi)
+\quad\text{and}\quad
+\psi\neq\varphi.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{ProperSubformula}(\psi,\varphi)
+\Longleftrightarrow
+\psi\in\operatorname{Sub}(\varphi)\land\psi\neq\varphi.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Proper subformulas are the strict syntactic parts of a formula. They exclude the
+whole formula itself.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:subformula-propositional-logic]{Subformula}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+
+% END GENERATED ARTIFACT: def:subformula-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:formula-depth-propositional-logic
+\begin{definitionbox}{Definition (Formula Depth)}
+\begin{definition}[Formula Depth]
+\label{def:formula-depth-propositional-logic}
+The depth of a formula \(\varphi\), denoted \(\operatorname{depth}(\varphi)\), is defined recursively:
+\begin{enumerate}
+\item if \(\varphi\) is atomic, then \(\operatorname{depth}(\varphi)=0\);
+\item if \(\varphi=\neg\psi\), then \(\operatorname{depth}(\varphi)=\operatorname{depth}(\psi)+1\);
+\item if \(\varphi=(\psi\circ\chi)\), then
+\[
+\operatorname{depth}(\varphi)=\max\{\operatorname{depth}(\psi),\operatorname{depth}(\chi)\}+1.
+\]
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{depth}(P)=0,\qquad
+\operatorname{depth}(\neg\psi)=\operatorname{depth}(\psi)+1,
+\]
+\[
+\operatorname{depth}((\psi\circ\chi))
+=
+\max\{\operatorname{depth}(\psi),\operatorname{depth}(\chi)\}+1.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Formula depth measures the height of the syntax tree. Some authors call this the rank, complexity, or formation depth of the formula.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:parse-tree-propositional-logic]{Parse Tree}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:formula-depth-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:connective-count-propositional-logic
+\begin{definitionbox}{Definition (Connective Count)}
+\begin{definition}[Connective Count]
+\label{def:connective-count-propositional-logic}
+The connective count of a formula \(\varphi\), denoted \(\operatorname{conn}(\varphi)\), is defined recursively:
+\begin{enumerate}
+\item if \(\varphi\) is atomic, then \(\operatorname{conn}(\varphi)=0\);
+\item if \(\varphi=\neg\psi\), then \(\operatorname{conn}(\varphi)=\operatorname{conn}(\psi)+1\);
+\item if \(\varphi=(\psi\circ\chi)\), then
+\[
+\operatorname{conn}(\varphi)=\operatorname{conn}(\psi)+\operatorname{conn}(\chi)+1.
+\]
+\end{enumerate}
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{conn}(P)=0,\qquad
+\operatorname{conn}(\neg\psi)=\operatorname{conn}(\psi)+1,
+\]
+\[
+\operatorname{conn}((\psi\circ\chi))
+=
+\operatorname{conn}(\psi)+\operatorname{conn}(\chi)+1.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Formula depth measures the height of the syntax tree. Connective count measures the number of connective nodes in the syntax tree.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:parse-tree-propositional-logic]{Parse Tree}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:connective-count-propositional-logic
+% BEGIN GENERATED ARTIFACT: lem:proper-subformula-depth-propositional-logic
+\begin{lemmabox}{Lemma (Proper Subformula Depth)}
+\begin{lemma}[Proper Subformula Depth]
+\label{lem:proper-subformula-depth-propositional-logic}
+If \(\psi\) is a proper subformula of \(\varphi\), then
+\[
+\operatorname{depth}(\psi)<\operatorname{depth}(\varphi).
+\]
+
+\noindent\hyperref[prf:proper-subformula-depth-propositional-logic]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi,\psi\in\WFF)
+\left[
+\psi\in\operatorname{Sub}(\varphi)\land \psi\ne\varphi
+\to
+\operatorname{depth}(\psi)<\operatorname{depth}(\varphi)
+\right].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every descent into a proper subformula lowers formula depth. This justifies induction on formula depth and recursive proofs over subformulas.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:subformula-propositional-logic]{Subformula}
+  \item \hyperref[def:formula-depth-propositional-logic]{Formula Depth}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: lem:proper-subformula-depth-propositional-logic
+% BEGIN GENERATED ARTIFACT: lem:finiteness-of-variables-propositional-formulas
+\begin{lemmabox}{Lemma (Finiteness of Variables in a Formula)}
+\begin{lemma}[Finiteness of Variables in a Formula]
+\label{lem:finiteness-of-variables-propositional-formulas}
+For every \(\varphi\in\WFF\), the set \(\operatorname{Var}(\varphi)\) is finite.
+
+\noindent\hyperref[prf:finiteness-of-variables-propositional-formulas]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)\quad
+\operatorname{Var}(\varphi)\text{ is finite}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every formula depends on only finitely many propositional variables, even though the language may contain infinitely many variables.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:formula-variable-set-propositional-logic]{Variable Set of a Formula}
+  \item \hyperref[thm:structural-induction-propositional-formulas]{Structural Induction for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: lem:finiteness-of-variables-propositional-formulas
+% BEGIN GENERATED ARTIFACT: lem:finiteness-of-subformulas-propositional-formulas
+\begin{lemmabox}{Lemma (Finiteness of Subformulas)}
+\begin{lemma}[Finiteness of Subformulas]
+\label{lem:finiteness-of-subformulas-propositional-formulas}
+For every \(\varphi\in\WFF\), the set \(\operatorname{Sub}(\varphi)\) is finite.
+
+\noindent\hyperref[prf:finiteness-of-subformulas-propositional-formulas]{Go to proof.}
+\end{lemma}
+\end{lemmabox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi\in\WFF)\quad
+\operatorname{Sub}(\varphi)\text{ is finite}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Every formula has only finitely many syntactic parts.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:subformula-propositional-logic]{Subformula}
+  \item \hyperref[thm:structural-induction-propositional-formulas]{Structural Induction for Propositional Formulas}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: lem:finiteness-of-subformulas-propositional-formulas

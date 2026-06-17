@@ -1,0 +1,72 @@
+\newpage
+\phantomsection
+\label{prf:product-rule}
+\LRAProofFor{thm:product-rule}
+
+\begin{remark*}[Return]
+\hyperref[thm:product-rule]{Return to Theorem}
+\end{remark*}
+
+\begin{theorem*}[Product Rule]
+Let $I \subseteq \mathbb{R}$ be an open interval, let $c \in I$, and let $f, g : I \to \mathbb{R}$ be differentiable at $c$. Then $fg$ is differentiable at $c$ and $(fg)'(c) = f'(c)g(c) + f(c)g'(c)$.
+\end{theorem*}
+
+\begin{proof}[Professional Standard Proof]
+\LRAProofBodyStart
+Set $h := fg$. For $x \in I$ with $x \neq c$, the difference quotient is
+\[
+  \frac{h(x) - h(c)}{x - c} = \frac{f(x)g(x) - f(c)g(c)}{x - c}.
+\]
+Add and subtract $f(x)g(c)$ to obtain
+\[
+  \frac{f(x)g(x) - f(x)g(c) + f(x)g(c) - f(c)g(c)}{x - c}
+  = f(x) \cdot \frac{g(x) - g(c)}{x - c} + g(c) \cdot \frac{f(x) - f(c)}{x - c}.
+\]
+As $x \to c$, the sum rule and product rule for limits give
+\[
+  \lim_{x \to c} \frac{h(x) - h(c)}{x - c}
+  = \left(\lim_{x \to c} f(x)\right) g'(c) + g(c) f'(c).
+\]
+Since differentiability implies continuity, $\lim_{x \to c} f(x) = f(c)$, yielding $(fg)'(c) = f(c)g'(c) + g(c)f'(c)$.
+\end{proof}
+
+\begin{proof}[Detailed Learning Proof]
+\LRAProofBodyStart
+
+\textbf{Step 1.} Form the difference quotient of the product function $h = fg$. For $x \in I$ with $x \neq c$, the difference quotient becomes
+\[
+  \frac{h(x) - h(c)}{x - c} = \frac{f(x)g(x) - f(c)g(c)}{x - c}.
+\]
+This expression involves the product of two functions in both the numerator terms, making direct application of limit laws difficult.
+
+\textbf{Step 2.} Insert the auxiliary term $f(x)g(c)$ by adding and subtracting it in the numerator:
+\[
+  \frac{f(x)g(x) - f(x)g(c) + f(x)g(c) - f(c)g(c)}{x - c}.
+\]
+Factor the first pair as $f(x)[g(x) - g(c)]$ and the second pair as $g(c)[f(x) - f(c)]$ to obtain
+\[
+  f(x) \cdot \frac{g(x) - g(c)}{x - c} + g(c) \cdot \frac{f(x) - f(c)}{x - c}.
+\]
+This decomposition isolates the difference quotients of $f$ and $g$ separately, making them accessible to the definition of derivative.
+
+\textbf{Step 3.} Apply limit laws as $x \to c$. The sum rule for limits distributes the limit across the sum, and the product rule for limits handles the first term:
+\[
+  \lim_{x \to c} \frac{h(x) - h(c)}{x - c} = \left(\lim_{x \to c} f(x)\right)\left(\lim_{x \to c} \frac{g(x) - g(c)}{x - c}\right) + g(c)\left(\lim_{x \to c} \frac{f(x) - f(c)}{x - c}\right).
+\]
+Since $f$ is differentiable at $c$, it is continuous at $c$, so $\lim_{x \to c} f(x) = f(c)$. The difference quotient limits equal $g'(c)$ and $f'(c)$ by the definition of differentiability. Therefore $h'(c) = f(c)g'(c) + g(c)f'(c)$.
+\end{proof}
+
+\begin{remark*}[Proof structure]
+The proof uses a direct approach via the definition of derivative. The key insight is the add-and-subtract technique that inserts $f(x)g(c)$ to decouple the increments of $f$ and $g$. This splits the difference quotient of the product into a sum of two terms, each containing exactly one difference quotient. The continuity of $f$ at $c$, which follows from its differentiability, provides the crucial factor $\lim_{x \to c} f(x) = f(c)$ needed to evaluate the limit.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:derivative-at-point]{Definition of Differentiability at a Point}
+  \item \hyperref[thm:diff-implies-cont]{Differentiability Implies Continuity}
+  \item \hyperref[thm:limit-sum]{Sum Rule for Limits}
+  \item \hyperref[thm:limit-product]{Product Rule for Limits}
+\end{itemize}
+\end{dependencies}
+
+\clearpage

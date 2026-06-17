@@ -1,0 +1,629 @@
+% BEGIN GENERATED ARTIFACT: def:propositional-equivalence-law
+\begin{definitionbox}{Definition (Propositional Equivalence Law)}
+\begin{definition}[Propositional Equivalence Law]
+\label{def:propositional-equivalence-law}
+A propositional equivalence law is a valid schema of the form
+\[
+\varphi\equiv\psi,
+\]
+with \(\varphi,\psi\in\WFF\). Each instance of the schema says that the two formulas have the same truth value under every truth assignment.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{PropositionalEquivalenceLaw}(\varphi,\psi)
+\Longleftrightarrow
+\varphi,\psi\in\WFF
+\land
+\varphi\equiv\psi.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{PropositionalEquivalenceLaw}(\varphi,\psi)
+\]
+means that \(\varphi\equiv\psi\) is a valid logical-equivalence schema.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Equivalence laws are the algebraic rewrite rules of propositional logic. They allow formulas to be transformed without changing truth conditions.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:propositional-equivalence-law
+% BEGIN GENERATED ARTIFACT: thm:logical-equivalence-equivalence-relation
+\begin{theorembox}{Theorem (Logical Equivalence is an Equivalence Relation)}
+\begin{theorem}[Logical Equivalence is an Equivalence Relation]
+\label{thm:logical-equivalence-equivalence-relation}
+Logical equivalence is reflexive, symmetric, and transitive on \(\WFF\):
+\[
+\varphi\equiv\varphi,
+\qquad
+\varphi\equiv\psi\Longrightarrow\psi\equiv\varphi,
+\]
+and
+\[
+(\varphi\equiv\psi\land\psi\equiv\chi)
+\Longrightarrow
+\varphi\equiv\chi.
+\]
+
+\noindent\hyperref[prf:logical-equivalence-equivalence-relation]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(\forall\varphi\in\WFF)(\varphi\equiv\varphi),\\
+&(\forall\varphi,\psi\in\WFF)(\varphi\equiv\psi\to\psi\equiv\varphi),\\
+&(\forall\varphi,\psi,\chi\in\WFF)
+((\varphi\equiv\psi\land\psi\equiv\chi)\to\varphi\equiv\chi).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Logical equivalence behaves like equality at the semantic level.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:logical-equivalence-equivalence-relation
+% BEGIN GENERATED ARTIFACT: thm:basic-boolean-equivalence-laws-propositional-logic
+\begin{theorembox}{Theorem (Basic Boolean Equivalence Laws)}
+\begin{theorem}[Basic Boolean Equivalence Laws]
+\label{thm:basic-boolean-equivalence-laws-propositional-logic}
+For all formulas \(\varphi,\psi,\chi\in\WFF\), the following logical equivalences hold.
+
+Commutativity:
+\[
+\varphi\land\psi\equiv\psi\land\varphi,
+\qquad
+\varphi\lor\psi\equiv\psi\lor\varphi.
+\]
+
+Associativity:
+\[
+(\varphi\land\psi)\land\chi
+\equiv
+\varphi\land(\psi\land\chi),
+\qquad
+(\varphi\lor\psi)\lor\chi
+\equiv
+\varphi\lor(\psi\lor\chi).
+\]
+
+Idempotence:
+\[
+\varphi\land\varphi\equiv\varphi,
+\qquad
+\varphi\lor\varphi\equiv\varphi.
+\]
+
+Double negation:
+\[
+\neg\neg\varphi\equiv\varphi.
+\]
+
+\noindent\hyperref[prf:basic-boolean-equivalence-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi,\psi,\chi\in\WFF)
+\left[
+\begin{gathered}
+\varphi\land\psi\equiv\psi\land\varphi,\quad
+\varphi\lor\psi\equiv\psi\lor\varphi,\\
+(\varphi\land\psi)\land\chi\equiv\varphi\land(\psi\land\chi),\quad
+(\varphi\lor\psi)\lor\chi\equiv\varphi\lor(\psi\lor\chi),\\
+\varphi\land\varphi\equiv\varphi,\quad
+\varphi\lor\varphi\equiv\varphi,\quad
+\neg\neg\varphi\equiv\varphi
+\end{gathered}
+\right].
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+These are the basic algebraic laws for conjunction, disjunction, and negation.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[thm:unique-extension-truth-assignment-propositional-logic]{Unique Extension of a Truth Assignment}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:basic-boolean-equivalence-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:identity-domination-laws-propositional-logic
+\begin{theorembox}{Theorem (Identity and Domination Laws)}
+\begin{theorem}[Identity and Domination Laws]
+\label{thm:identity-domination-laws-propositional-logic}
+Let \(\top\) be any tautological formula and let \(\bot\) be any contradictory formula. Then for every \(\varphi\in\WFF\):
+\[
+\varphi\land\top\equiv\varphi,
+\qquad
+\varphi\lor\bot\equiv\varphi,
+\]
+and
+\[
+\varphi\land\bot\equiv\bot,
+\qquad
+\varphi\lor\top\equiv\top.
+\]
+
+\noindent\hyperref[prf:identity-domination-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&(\operatorname{Tautology}(\top)\land \operatorname{Contradiction}(\bot))
+\to
+(\forall\varphi\in\WFF)\\
+&\quad
+\left[
+(\varphi\land\top\equiv\varphi)
+\land
+(\varphi\lor\bot\equiv\varphi)
+\land
+(\varphi\land\bot\equiv\bot)
+\land
+(\varphi\lor\top\equiv\top)
+\right].
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Tautologies act like true constants; contradictions act like false constants.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:tautology-propositional-logic]{Tautology}
+  \item \hyperref[def:contradiction-propositional-logic]{Contradiction}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:identity-domination-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:de-morgan-laws-propositional-logic
+\begin{theorembox}{Theorem (De Morgan Laws for Propositional Logic)}
+\begin{theorem}[De Morgan Laws for Propositional Logic]
+\label{thm:de-morgan-laws-propositional-logic}
+For all \(\varphi,\psi\in\WFF\),
+\[
+\neg(\varphi\land\psi)
+\equiv
+\neg\varphi\lor\neg\psi,
+\]
+and
+\[
+\neg(\varphi\lor\psi)
+\equiv
+\neg\varphi\land\neg\psi.
+\]
+
+\noindent\hyperref[prf:de-morgan-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{gathered}
+(\forall\varphi,\psi\in\WFF)
+\left[
+\neg(\varphi\land\psi)
+\equiv
+\neg\varphi\lor\neg\psi
+\right],\\
+(\forall\varphi,\psi\in\WFF)
+\left[
+\neg(\varphi\lor\psi)
+\equiv
+\neg\varphi\land\neg\psi
+\right].
+\end{gathered}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\underbrace{\neg(\varphi\land\psi)}_{\text{not both}}
+\equiv
+\underbrace{\neg\varphi\lor\neg\psi}_{\text{at least one fails}},
+\qquad
+\underbrace{\neg(\varphi\lor\psi)}_{\text{neither}}
+\equiv
+\underbrace{\neg\varphi\land\neg\psi}_{\text{both fail}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Negation swaps conjunction with disjunction when pushed inward.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[thm:unique-extension-truth-assignment-propositional-logic]{Unique Extension of a Truth Assignment}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:de-morgan-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:distributive-laws-propositional-logic
+\begin{theorembox}{Theorem (Distributive Laws for Propositional Logic)}
+\begin{theorem}[Distributive Laws for Propositional Logic]
+\label{thm:distributive-laws-propositional-logic}
+For all \(\varphi,\psi,\chi\in\WFF\),
+\[
+\varphi\land(\psi\lor\chi)
+\equiv
+(\varphi\land\psi)\lor(\varphi\land\chi),
+\]
+and
+\[
+\varphi\lor(\psi\land\chi)
+\equiv
+(\varphi\lor\psi)\land(\varphi\lor\chi).
+\]
+
+\noindent\hyperref[prf:distributive-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{gathered}
+(\forall\varphi,\psi,\chi\in\WFF)
+\left[
+\varphi\land(\psi\lor\chi)
+\equiv
+(\varphi\land\psi)\lor(\varphi\land\chi)
+\right],\\
+(\forall\varphi,\psi,\chi\in\WFF)
+\left[
+\varphi\lor(\psi\land\chi)
+\equiv
+(\varphi\lor\psi)\land(\varphi\lor\chi)
+\right].
+\end{gathered}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Conjunction distributes over disjunction, and disjunction distributes over conjunction. These laws are the main algebraic engine behind CNF and DNF conversion.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[thm:unique-extension-truth-assignment-propositional-logic]{Unique Extension of a Truth Assignment}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:distributive-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:absorption-laws-propositional-logic
+\begin{theorembox}{Theorem (Absorption Laws)}
+\begin{theorem}[Absorption Laws]
+\label{thm:absorption-laws-propositional-logic}
+For all \(\varphi,\psi\in\WFF\),
+\[
+\varphi\land(\varphi\lor\psi)\equiv\varphi,
+\]
+and
+\[
+\varphi\lor(\varphi\land\psi)\equiv\varphi.
+\]
+
+\noindent\hyperref[prf:absorption-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{gathered}
+(\forall\varphi,\psi\in\WFF)
+\left[
+\varphi\land(\varphi\lor\psi)\equiv\varphi
+\right],\\
+(\forall\varphi,\psi\in\WFF)
+\left[
+\varphi\lor(\varphi\land\psi)\equiv\varphi
+\right].
+\end{gathered}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Once \(\varphi\) is already required, adding \(\varphi\lor\psi\) contributes no additional constraint. Dually, once \(\varphi\) is already allowed, adding \(\varphi\land\psi\) contributes no additional possibility.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[thm:basic-boolean-equivalence-laws-propositional-logic]{Basic Boolean Equivalence Laws}
+  \item \hyperref[thm:distributive-laws-propositional-logic]{Distributive Laws for Propositional Logic}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:absorption-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:conditional-equivalence-laws-propositional-logic
+\begin{theorembox}{Theorem (Conditional Equivalence Laws)}
+\begin{theorem}[Conditional Equivalence Laws]
+\label{thm:conditional-equivalence-laws-propositional-logic}
+For all \(\varphi,\psi\in\WFF\),
+\[
+\varphi\to\psi
+\equiv
+\neg\varphi\lor\psi,
+\]
+and
+\[
+\neg(\varphi\to\psi)
+\equiv
+\varphi\land\neg\psi.
+\]
+
+\noindent\hyperref[prf:conditional-equivalence-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{gathered}
+(\forall\varphi,\psi\in\WFF)
+\left[
+\varphi\to\psi
+\equiv
+\neg\varphi\lor\psi
+\right],\\
+(\forall\varphi,\psi\in\WFF)
+\left[
+\neg(\varphi\to\psi)
+\equiv
+\varphi\land\neg\psi
+\right].
+\end{gathered}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\underbrace{\varphi\to\psi}_{\text{no counterexample}}
+\equiv
+\underbrace{\neg\varphi\lor\psi}_{\text{premise false or conclusion true}},
+\qquad
+\underbrace{\neg(\varphi\to\psi)}_{\text{counterexample}}
+\equiv
+\underbrace{\varphi\land\neg\psi}_{\text{premise true and conclusion false}}.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A conditional fails exactly when the antecedent is true and the consequent is false.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[thm:unique-extension-truth-assignment-propositional-logic]{Unique Extension of a Truth Assignment}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:conditional-equivalence-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:biconditional-equivalence-laws-propositional-logic
+\begin{theorembox}{Theorem (Biconditional Equivalence Laws)}
+\begin{theorem}[Biconditional Equivalence Laws]
+\label{thm:biconditional-equivalence-laws-propositional-logic}
+For all \(\varphi,\psi\in\WFF\),
+\[
+\varphi\leftrightarrow\psi
+\equiv
+(\varphi\to\psi)\land(\psi\to\varphi),
+\]
+and
+\[
+\varphi\leftrightarrow\psi
+\equiv
+(\varphi\land\psi)\lor(\neg\varphi\land\neg\psi).
+\]
+
+\noindent\hyperref[prf:biconditional-equivalence-laws-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{gathered}
+(\forall\varphi,\psi\in\WFF)
+\left[
+\varphi\leftrightarrow\psi
+\equiv
+(\varphi\to\psi)\land(\psi\to\varphi)
+\right],\\
+(\forall\varphi,\psi\in\WFF)
+\left[
+\varphi\leftrightarrow\psi
+\equiv
+(\varphi\land\psi)\lor(\neg\varphi\land\neg\psi)
+\right].
+\end{gathered}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\varphi\leftrightarrow\psi
+\quad\Longleftrightarrow\quad
+(\varphi\to\psi)\land(\psi\to\varphi)
+\]
+and also
+\[
+\varphi\leftrightarrow\psi
+\quad\Longleftrightarrow\quad
+(\varphi\land\psi)\lor(\neg\varphi\land\neg\psi).
+\]
+The biconditional says that the two formulas have the same truth value.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A biconditional says that two formulas have the same truth value: both true or both false.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[thm:conditional-equivalence-laws-propositional-logic]{Conditional Equivalence Laws}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:biconditional-equivalence-laws-propositional-logic
+% BEGIN GENERATED ARTIFACT: def:formula-context-propositional-logic
+\begin{definitionbox}{Definition (Formula Context)}
+\begin{definition}[Formula Context]
+\label{def:formula-context-propositional-logic}
+A formula context \(C[-]\) is a well-formed formula with one distinguished placeholder occurrence \([-]\). For each well-formed formula \(\varphi\), the expression \(C[\varphi]\) denotes the formula obtained by replacing the placeholder with \(\varphi\).
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\operatorname{FormulaContext}(C[-])
+\Longrightarrow
+(\forall\varphi\in\WFF)(C[\varphi]\in\WFF).
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\[
+\operatorname{FormulaContext}(C[-])
+\]
+means that \(C[-]\) is a one-hole propositional formula context.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A formula context is a syntactic environment into which a formula can be inserted. Contexts make precise the idea of replacing a subformula inside a larger formula.
+\end{remark*}
+
+\begin{remark*}[Examples]
+If
+\[
+C[-] := ([-]\land R),
+\]
+then
+\[
+C[P]=(P\land R)
+\]
+and
+\[
+C[Q\lor S]=((Q\lor S)\land R).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:well-formed-formula]{Well-Formed Formula}
+  \item \hyperref[def:subformula-propositional-logic]{Subformula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:formula-context-propositional-logic
+% BEGIN GENERATED ARTIFACT: thm:replacement-of-logical-equivalents-propositional-logic
+\begin{theorembox}{Theorem (Replacement of Logical Equivalents)}
+\begin{theorem}[Replacement of Logical Equivalents]
+\label{thm:replacement-of-logical-equivalents-propositional-logic}
+Replacing logically equivalent formulas inside a formula context preserves logical equivalence:
+\[
+\varphi\equiv\psi
+\Longrightarrow
+C[\varphi]\equiv C[\psi].
+\]
+
+\noindent\hyperref[prf:replacement-of-logical-equivalents-propositional-logic]{Go to proof.}
+\end{theorem}
+\end{theorembox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+(\forall\varphi,\psi\in\WFF)
+(\forall C[-])
+\left[
+\operatorname{FormulaContext}(C[-])
+\land
+\varphi\equiv\psi
+\to
+C[\varphi]\equiv C[\psi]
+\right].
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\[
+\varphi\equiv\psi
+\quad\Longrightarrow\quad
+C[\varphi]\equiv C[\psi].
+\]
+A logical equivalence may be used inside a larger formula context without changing
+the truth behavior of the whole formula.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Logical equivalence is substitutive: equivalent formulas may be replaced inside larger formulas without changing truth behavior.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+The equivalence laws in this section may be used as replacement rules inside
+larger formulas. If a formula contains a subformula matching one side of a listed
+equivalence law, that subformula may be replaced by the other side.
+
+Common replacement rules include:
+\[
+\neg\neg\varphi \equiv \varphi,
+\]
+\[
+\neg(\varphi\land\psi)\equiv \neg\varphi\lor\neg\psi,
+\qquad
+\neg(\varphi\lor\psi)\equiv \neg\varphi\land\neg\psi,
+\]
+\[
+\varphi\to\psi\equiv \neg\varphi\lor\psi,
+\]
+\[
+\varphi\leftrightarrow\psi
+\equiv
+(\varphi\to\psi)\land(\psi\to\varphi),
+\]
+and
+\[
+\varphi\leftrightarrow\psi
+\equiv
+(\varphi\land\psi)\lor(\neg\varphi\land\neg\psi).
+\]
+\end{remark*}
+
+\begin{remark*}[Exposition]
+The laws in this section allow formulas to be manipulated algebraically. They are not new formation rules; they are semantic equivalences. Later sections use these laws to transform formulas into normal forms and to reduce the set of primitive connectives.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+The algebra of propositions is the bridge from semantics to computation: once formulas are equivalent, they can be rewritten without changing truth behavior.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:formula-context-propositional-logic]{Formula Context}
+  \item \hyperref[def:logical-equivalence-propositional-logic]{Logical Equivalence}
+  \item \hyperref[lem:coincidence-lemma-propositional-logic]{Coincidence Lemma for Propositional Logic}
+  \item \hyperref[thm:unique-extension-truth-assignment-propositional-logic]{Unique Extension of a Truth Assignment}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: thm:replacement-of-logical-equivalents-propositional-logic

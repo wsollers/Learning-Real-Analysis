@@ -2,75 +2,473 @@
 % English-to-Logic Translation and Scope Ambiguity
 % =========================================================
 
-\section{Translation: English to Logic and Scope Ambiguity}
+\subsection*{English to Logic and Scope Ambiguity}
 
-% ---------------------------------------------------------
-% TOOLKIT
-% ---------------------------------------------------------
-\begin{tcolorbox}[colback=gray!6, colframe=gray!40, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt,
-  title={\small\textbf{Translation — Quick Reference}},
-  fonttitle=\small\bfseries]
-\small
-\begin{tabular}{l l l l}
-\toprule
-\textbf{English pattern} & \textbf{Logical form} & \textbf{Negation} & \textbf{Detail} \\
-\midrule
-Everyone has $P$ & $\forall x\,P(x)$ & $\exists x\,\neg P(x)$ & \hyperref[tab:translations]{↓ Table} \\
-Someone has $P$ & $\exists x\,P(x)$ & $\forall x\,\neg P(x)$ & \hyperref[tab:translations]{↓ Table} \\
-Everyone likes something & $\forall x\,\exists y\,L(x,y)$ & $\exists x\,\forall y\,\neg L(x,y)$ & \hyperref[tab:translations]{↓ Table} \\
-Someone likes everything & $\exists x\,\forall y\,L(x,y)$ & $\forall x\,\exists y\,\neg L(x,y)$ & \hyperref[tab:translations]{↓ Table} \\
-Scope ambiguity & Two readings differ by quantifier order & — & \hyperref[tab:scope-ambiguity]{↓ Table} \\
-\bottomrule
-\end{tabular}
-\end{tcolorbox}
+% BEGIN GENERATED ARTIFACT: def:translation-key-predicate-logic
+\begin{definitionbox}{Definition (Translation Key)}
+\begin{definition}[Translation Key]
+\label{def:translation-key-predicate-logic}
+A \emph{translation key} is a finite record that fixes a domain of discourse and
+assigns intended English readings to the constant symbols, predicate symbols,
+and relation symbols used in a translation.
+\end{definition}
+\end{definitionbox}
 
-\vspace{1em}
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&K \text{ is a translation key}\\
+&\Longleftrightarrow
+K \text{ specifies a domain and readings for each non-logical symbol used.}
+\end{aligned}
+\]
+\end{remark*}
 
-\begin{remark}[Translation discipline]
-When translating a symbolic formula into natural language, respect the original
-quantifier nesting of the formula. Do not reorder quantifiers unless explicitly
-asked to normalize or rewrite the expression.
-\end{remark}
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{TranslationKey}(K)\) means that \(K\) supplies the domain and
+symbol readings needed to parse a translated formula.
+\end{remark*}
 
-\begin{center}\label{tab:translations}
-\renewcommand{\arraystretch}{1.35}
-\begin{tabular}{|p{5cm}|p{4.5cm}|p{4.5cm}|}
-\hline
-\textbf{English} & \textbf{Logical Form} & \textbf{Negation} \\ \hline
-Everyone has property $P$ & $\forall x\,P(x)$ & $\exists x\,\neg P(x)$ \\ \hline
-Someone has property $P$ & $\exists x\,P(x)$ & $\forall x\,\neg P(x)$ \\ \hline
-Everyone likes something & $\forall x\,\exists y\,L(x,y)$ & $\exists x\,\forall y\,\neg L(x,y)$ \\ \hline
-Someone likes everything & $\exists x\,\forall y\,L(x,y)$ & $\forall x\,\exists y\,\neg L(x,y)$ \\ \hline
-Every student passed every exam & $\forall x\,\forall y\,P(x,y)$ & $\exists x\,\exists y\,\neg P(x,y)$ \\ \hline
-Some student passed every exam & $\exists x\,\forall y\,P(x,y)$ & $\forall x\,\exists y\,\neg P(x,y)$ \\ \hline
-\end{tabular}
-\end{center}
+\begin{remark*}[Interpretation]
+A translation key prevents hidden changes of meaning. The same symbol must keep
+the same reading throughout one exercise unless the key is explicitly replaced.
+\end{remark*}
 
-\vspace{1em}
+\begin{remark*}[Examples]
+For the English sentence ``Every applicant submitted some form,'' a key may
+take the domain to be people and forms, with \(A(x)\) for ``\(x\) is an
+applicant,'' \(F(y)\) for ``\(y\) is a form,'' and \(S(x,y)\) for ``\(x\)
+submitted \(y\).''
+\end{remark*}
 
-\begin{remark}[Scope determines meaning]\label{tab:scope-ambiguity}
-Natural language often leaves quantifier scope ambiguous. Formal logic resolves
-this by fixing a precise quantifier order. Changing the order of quantifiers
-generally changes the meaning of the statement.
-\end{remark}
+\begin{remark*}[Non-Examples]
+Using \(P(x)\) once for ``\(x\) is a person'' and later for ``\(x\) passed'' is
+not a translation key; it is a change of vocabulary inside one translation.
+\end{remark*}
 
-\begin{center}
-\renewcommand{\arraystretch}{1.35}
-\begin{tabular}{|p{4.5cm}|p{4.5cm}|p{6cm}|}
-\hline
-\textbf{English} & \textbf{Logical Form} & \textbf{Meaning} \\ \hline
-\multirow{2}{*}{Everyone loves someone}
-  & $\forall x\,\exists y\,L(x,y)$ & Each person may love a different person. \\
-  & $\exists y\,\forall x\,L(x,y)$ & There is one person whom everyone loves. \\ \hline
-\multirow{2}{*}{Every student passed an exam}
-  & $\forall x\,\exists y\,P(x,y)$ & Each student passed at least one (possibly different) exam. \\
-  & $\exists y\,\forall x\,P(x,y)$ & There is a single exam that all students passed. \\ \hline
-\multirow{2}{*}{A teacher knows every student}
-  & $\exists x\,\forall y\,K(x,y)$ & There is one teacher who knows all students. \\
-  & $\forall y\,\exists x\,K(x,y)$ & Every student is known by at least one teacher. \\ \hline
-\multirow{2}{*}{Every function has a zero}
-  & $\forall f\,\exists x\,Z(f,x)$ & Each function has at least one (possibly different) zero. \\
-  & $\exists x\,\forall f\,Z(f,x)$ & There is a single point that is a zero of every function. \\ \hline
-\end{tabular}
-\end{center}
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:constant-symbol]{Constant Symbol}
+  \item \hyperref[def:predicate-symbol]{Predicate Symbol}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:translation-key-predicate-logic
+
+% BEGIN GENERATED ARTIFACT: def:domain-of-discourse-predicate-logic
+\begin{definitionbox}{Definition (Domain of Discourse)}
+\begin{definition}[Domain of Discourse]
+\label{def:domain-of-discourse-predicate-logic}
+The \emph{domain of discourse} for a translation is the collection of objects
+over which the variables of the translated formulas range.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+D \text{ is the domain of discourse }
+\Longleftrightarrow
+\text{ each variable in the translation ranges over objects in }D.
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{DomainOfDiscourse}(D,K)\) means that \(D\) is the domain fixed
+by the translation key \(K\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The domain decides what the quantifiers are allowed to talk about. If the
+domain is people, then an exam must either be named by a separate sort-like
+predicate or represented by a different translation choice.
+\end{remark*}
+
+\begin{remark*}[Examples]
+For ``All cats are mammals,'' one may use the domain of all animals and write
+\(\forall x\,(C(x)\to M(x))\). With the smaller domain of cats, the same English
+claim may be written \(\forall x\,M(x)\).
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+Writing \(\forall x\,M(x)\) while silently changing the domain from animals to
+cats halfway through the exercise is not a valid translation.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:translation-key-predicate-logic]{Translation Key}
+  \item \hyperref[def:variable]{Variable}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:domain-of-discourse-predicate-logic
+
+% BEGIN GENERATED ARTIFACT: def:translation-predicate-relation-symbol
+\begin{definitionbox}{Definition (Predicate and Relation Symbols in a Translation)}
+\begin{definition}[Predicate and Relation Symbols in a Translation]
+\label{def:translation-predicate-relation-symbol}
+In a translation key, a unary predicate symbol names a property of one object,
+and an \(n\)-ary relation symbol names a relation among \(n\) objects.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&P \text{ is unary in }K &&\Longleftrightarrow P(x) \text{ has one argument,}\\
+&R \text{ is }n\text{-ary in }K &&\Longleftrightarrow R(x_1,\ldots,x_n)
+  \text{ has }n\text{ arguments.}
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{TranslationPredicateSymbol}(P,K)\) records that \(P\) has a
+fixed predicate reading in \(K\), and \(\operatorname{TranslationRelationSymbol}(R,n,K)\)
+records that \(R\) is used with arity \(n\) in \(K\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Object-language predicate symbols such as \(P,Q,R\) are symbols inside the
+formal language. Metalinguistic predicate readings such as
+\(\operatorname{Term}(t)\) or \(\operatorname{AtomicFormula}(\varphi)\) are
+repository descriptions of syntax; they are not formulas being translated.
+\end{remark*}
+
+\begin{remark*}[Examples]
+\(A(x)\) may mean ``\(x\) is an athlete.'' \(L(x,y)\) may mean ``\(x\) likes
+\(y\).'' The arity is part of the key: \(L(x)\) and \(L(x,y)\) are not the same
+symbol use.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+Writing \(L(x,y,z)\) after declaring \(L(x,y)\) as ``\(x\) likes \(y\)'' is an
+arity error.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:predicate-symbol]{Predicate Symbol}
+  \item \hyperref[def:atomic-formula]{Atomic Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:translation-predicate-relation-symbol
+
+% BEGIN GENERATED ARTIFACT: def:translation-constants-variables
+\begin{definitionbox}{Definition (Constants and Variables in a Translation)}
+\begin{definition}[Constants and Variables in a Translation]
+\label{def:translation-constants-variables}
+A \emph{constant} names a fixed object from the translation key, while a
+\emph{variable} marks a place bound by a quantifier or left open for later
+binding.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&c \text{ is a translation constant} &&\Longleftrightarrow c
+  \text{ names one fixed object,}\\
+&x \text{ is a translation variable} &&\Longleftrightarrow x
+  \text{ is available for quantification or free occurrence.}
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{TranslationConstant}(c,K)\) means that \(c\) names a fixed
+object in \(K\), and \(\operatorname{TranslationVariable}(x,K)\) means that
+\(x\) is used as a variable in translations governed by \(K\).
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Constants do not range. Variables do range when bound by quantifiers. Confusing
+the two usually leaves a formula with the wrong dependency pattern.
+\end{remark*}
+
+\begin{remark*}[Examples]
+If \(a\) names Alice, then \(P(a)\) says Alice is a participant. The formula
+\(\forall x\,(S(x)\to P(x))\) uses \(x\) as a bound variable.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+The expression \(\forall a\,S(a)\) is not appropriate if \(a\) has already been
+declared as a constant naming Alice.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:constant-symbol]{Constant Symbol}
+  \item \hyperref[def:variable]{Variable}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:translation-constants-variables
+
+% BEGIN GENERATED ARTIFACT: prop:universal-translation-pattern
+\begin{propositionbox}{Proposition (Universal Translation Pattern)}
+\begin{proposition}[Universal Translation Pattern]
+\label{prop:universal-translation-pattern}
+In a broad domain, an English statement of the form ``All \(A\) are \(B\)''
+is translated by
+\[
+\forall x\,(A(x)\to B(x)).
+\]
+
+\noindent\hyperref[prf:universal-translation-pattern]{Go to proof.}
+\end{proposition}
+\end{propositionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\forall x\,(A(x)\to B(x)).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{UniversalTranslationPattern}(A,B)\) records the implication
+schema for translating universal restricted claims.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The antecedent \(A(x)\) restricts attention to the relevant objects. Objects
+outside \(A\) do not have to satisfy \(B\).
+\end{remark*}
+
+\begin{remark*}[Exposition]
+``All cats are mammals'' becomes \(\forall x\,(C(x)\to M(x))\). ``No cats are
+reptiles'' becomes \(\forall x\,(C(x)\to \neg R(x))\). The form
+\(\forall x\,(C(x)\land M(x))\) says every object in the domain is both a cat
+and a mammal, which is far stronger than the intended restricted claim. In a
+broad domain, ``all,'' ``every,'' and ``any'' usually translate restricted
+claims with implication.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:universal-q]{Universal Formula}
+  \item \hyperref[def:molecular]{Molecular Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: prop:universal-translation-pattern
+
+% BEGIN GENERATED ARTIFACT: prop:existential-translation-pattern
+\begin{propositionbox}{Proposition (Existential Translation Pattern)}
+\begin{proposition}[Existential Translation Pattern]
+\label{prop:existential-translation-pattern}
+In a broad domain, an English statement of the form ``Some \(A\) are \(B\)''
+is translated by
+\[
+\exists x\,(A(x)\land B(x)).
+\]
+
+\noindent\hyperref[prf:existential-translation-pattern]{Go to proof.}
+\end{proposition}
+\end{propositionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\exists x\,(A(x)\land B(x)).
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{ExistentialTranslationPattern}(A,B)\) records the conjunction
+schema for translating existential restricted claims.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The witness must satisfy both restrictions at once. Existence is not merely a
+conditional promise about what would happen if an \(A\) existed.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+``Some cats are black'' becomes \(\exists x\,(C(x)\land B(x))\). ``Some cats are
+not black'' becomes \(\exists x\,(C(x)\land \neg B(x))\). The form
+\(\exists x\,(C(x)\to B(x))\) may be true because the witness is not a cat, so
+it does not translate ``Some cats are black.'' In a broad domain, ``some,''
+``there is,'' and ``at least one'' usually translate restricted claims with
+conjunction.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:existential-q]{Existential Formula}
+  \item \hyperref[def:molecular]{Molecular Formula}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: prop:existential-translation-pattern
+
+% BEGIN GENERATED ARTIFACT: prop:conditional-translation-pattern
+\begin{propositionbox}{Proposition (Conditional Translation Pattern)}
+\begin{proposition}[Conditional Translation Pattern]
+\label{prop:conditional-translation-pattern}
+An English statement of the form ``If \(A\), then \(B\)'' is translated by
+\[
+A\to B,
+\]
+with quantifiers placed according to the variables occurring in \(A\) and \(B\).
+
+\noindent\hyperref[prf:conditional-translation-pattern]{Go to proof.}
+\end{proposition}
+\end{propositionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+A\to B.
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{ConditionalTranslationPattern}(A,B)\) records the implication
+schema for conditional English.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Conditionals are especially common inside universal translations. The
+conditional separates the restricting condition from the asserted consequence.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+``Every applicant who is eligible is interviewed'' becomes
+\(\forall x\,((A(x)\land E(x))\to I(x))\). The form
+\(\forall x\,(A(x)\land E(x)\land I(x))\) says every object is an eligible
+applicant who is interviewed, which is not the intended conditional claim.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[prop:universal-translation-pattern]{Universal Translation Pattern}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: prop:conditional-translation-pattern
+
+% BEGIN GENERATED ARTIFACT: prop:negation-translation-pattern
+\begin{propositionbox}{Proposition (Negation Translation Pattern)}
+\begin{proposition}[Negation Translation Pattern]
+\label{prop:negation-translation-pattern}
+The negation of a translated quantified statement is obtained by negating the
+whole formula and then pushing the negation inward using the quantifier
+negation laws.
+
+\noindent\hyperref[prf:negation-translation-pattern]{Go to proof.}
+\end{proposition}
+\end{propositionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+\neg\forall x\,\varphi &\Longleftrightarrow \exists x\,\neg\varphi,\\
+\neg\exists x\,\varphi &\Longleftrightarrow \forall x\,\neg\varphi.
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Predicate reading]
+\(\operatorname{NegationTranslationPattern}(\varphi,\psi)\) records that
+\(\psi\) is obtained from \(\neg\varphi\) by pushing negation through the
+quantifiers and connectives.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The negation of ``all'' is ``some not.'' The negation of ``some'' is ``none.''
+For restricted universal claims, negating the implication produces a witness
+that satisfies the restriction and fails the consequent.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+The negation of \(\forall x\,(A(x)\to B(x))\) is
+\(\exists x\,(A(x)\land \neg B(x))\). The negation of
+\(\exists x\,(A(x)\land B(x))\) is \(\forall x\,(A(x)\to \neg B(x))\). The
+negation of \(\forall x\,(A(x)\to B(x))\) is not
+\(\forall x\,(A(x)\to \neg B(x))\); that latter formula says every \(A\) fails
+to be \(B\), not merely that some counterexample exists.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[thm:qneg]{Quantifier Negation Laws}
+  \item \hyperref[prop:universal-translation-pattern]{Universal Translation Pattern}
+  \item \hyperref[prop:existential-translation-pattern]{Existential Translation Pattern}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: prop:negation-translation-pattern
+
+% BEGIN GENERATED ARTIFACT: def:scope-ambiguity-translation
+\begin{definitionbox}{Definition (Scope Ambiguity)}
+\begin{definition}[Scope Ambiguity]
+\label{def:scope-ambiguity-translation}
+A sentence has \emph{scope ambiguity} when the same ordinary-language wording
+admits two or more translations with different quantifier nesting or different
+connective scope.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+&E \text{ has scope ambiguity}\\
+&\Longleftrightarrow
+\text{ there exist distinct candidate translations }\varphi,\psi
+\text{ of }E\text{ with different scope.}
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Definition predicate reading]
+\(\operatorname{ScopeAmbiguity}(E,\varphi,\psi)\) means that the English
+sentence \(E\) can reasonably be translated by \(\varphi\) or by \(\psi\), and
+the difference is a scope difference.
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Scope is not cosmetic. Changing the outer quantifier can change whether a
+single witness works for everyone or whether each object may have its own
+witness.
+\end{remark*}
+
+\begin{remark*}[Exposition]
+The formulas \(\forall x\exists y\,R(x,y)\) and
+\(\exists y\forall x\,R(x,y)\) are not interchangeable. The first allows the
+witness \(y\) to depend on \(x\); the second requires one \(y\) that works for
+every \(x\). Symbols such as \(A(x)\), \(B(x)\), and \(R(x,y)\) are
+object-language formula patterns used in translations. Expressions such as
+\(\operatorname{TranslationKey}(K)\), \(\operatorname{Term}(t)\), and
+\(\operatorname{AtomicFormula}(\varphi)\) are metalinguistic predicate readings
+used by the project to describe mathematical objects.
+\[
+\begin{array}{lll}
+\text{All }A\text{ are }B
+  &\leadsto& \forall x\,(A(x)\to B(x))\\
+\text{Some }A\text{ are }B
+  &\leadsto& \exists x\,(A(x)\land B(x))\\
+\text{No }A\text{ are }B
+  &\leadsto& \forall x\,(A(x)\to \neg B(x))\\
+\text{Some }A\text{ are not }B
+  &\leadsto& \exists x\,(A(x)\land \neg B(x))\\
+\text{Every }A\text{ has a }B
+  &\leadsto& \forall x\,(A(x)\to \exists y\,(B(y)\land R(x,y)))\\
+\text{There is a }B\text{ for every }A
+  &\leadsto& \exists y\,(B(y)\land \forall x\,(A(x)\to R(x,y))).
+\end{array}
+\]
+\end{remark*}
+
+\begin{remark*}[Examples]
+``Every \(A\) has a \(B\)'' is usually
+\(\forall x\,(A(x)\to \exists y\,(B(y)\land R(x,y)))\). ``There is a \(B\) for
+every \(A\)'' is usually
+\(\exists y\,(B(y)\land \forall x\,(A(x)\to R(x,y)))\). The bare patterns
+\(\forall x\exists y\,R(x,y)\) and \(\exists y\forall x\,R(x,y)\) make the same
+scope contrast visible.
+\end{remark*}
+
+\begin{remark*}[Non-Examples]
+Renaming a bound variable from \(x\) to \(z\) does not create a scope ambiguity.
+The scope is unchanged.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:quantifier-scope]{Quantifier Scope}
+  \item \hyperref[def:q-alt]{Quantifier Order}
+\end{itemize}
+\end{dependencies}
+% END GENERATED ARTIFACT: def:scope-ambiguity-translation

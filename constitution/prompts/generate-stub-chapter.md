@@ -45,50 +45,31 @@ Return the contents for each file below, clearly labeled by filename.
 
 Structure in this exact order:
 
-**1. Breadcrumb Box**
 ```latex
-\begin{tcolorbox}[breadcrumb style]
-  \centering
-  $\text{{prior chapter}} \;\to\; \text{{chapter subject}} \;\to\; \textbf{{{chapter display title}}} \;\to\; \text{{next chapter}}$
-\end{tcolorbox}
+% =========================================================
+% Chapter: {chapter display title}
+% =========================================================
+\chapter{{{chapter display title}}}
+\label{{chap:{chapter subject name}}}
+
+\breadcrumb{{{chapter subject name}}}{{{prior chapter display title}}}{{{chapter display title}}}{{{next chapter display title}}}
+
+\input{{{volume path}/{chapter subject name}/notes/index}}
+
+\section*{{Proofs}}
+\LRAProofsInput{{{volume path}/{chapter subject name}/proofs/index}}
+
+\section*{{Capstone}}
+\LRAExercisesInput{{{volume path}/{chapter subject name}/proofs/exercises/index}}
 ```
-- Title of box is chapter subject name (not "Breadcrumb").
-- Arrow format: $\;\to\;$ between each neighbor.
-- Current chapter bolded: \textbf{...}.
-- Neighbors from chapter registry only -- do not invent.
-- Fits in box; at most two lines.
-- Breadcrumb belongs in this `index.tex` wrapper, not in a note body file.
 
-**2. Status Box**
-```latex
-\begin{tcolorbox}[status style]
-  \textbf{Status:} Planned
-\end{tcolorbox}
-```
-- Immediately after breadcrumb. No content between them.
+Rules:
+- Use the `\breadcrumb{...}{...}{...}{...}` macro, not a hand-rolled box.
+- Do not include status boxes, roadmap sections, or generated exposition in the chapter router.
+- Notes content starts in `{chapter}/notes/index.tex`.
+- Proof and capstone routes must use the print-aware macros shown above.
+- Comments and blank lines are allowed; rendered content outside the skeleton is not.
 
-**3. Structural Roadmap**
-```latex
-\section*{Roadmap}
-
-This chapter formalizes {brief description of what the chapter covers}.
-
-\textbf{Depends on:} {prior chapter display title} ---
-{one sentence on what is inherited}.
-
-\textbf{Feeds into:} {next chapter display title} ---
-{one sentence on what this chapter supplies to the next}.
-```
-- States what the chapter is expected to formalize.
-- States prior chapter dependency.
-- States downstream chapter consequence.
-- Does not invent theorem lists.
-- Does not invent detailed mathematical content.
-- Prose is authoritative record voice. No first/second person.
-
-**4. Placeholder \input chain**
-- Include only if section stubs already exist.
-- If no section stubs exist: omit entirely. A missing input chain is correct.
 
 ---
 

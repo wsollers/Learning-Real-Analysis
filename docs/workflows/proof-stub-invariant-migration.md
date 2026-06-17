@@ -26,7 +26,7 @@ Apply only after reviewing the report:
 
 ```bash
 python scripts/migrate_existing_proofs_to_invariant.py --root . --apply
-python scripts/validate_leaf_proofs.py --root . --strict
+python scripts/build_volume.py --validate-only
 ```
 
 ## Sync Gate
