@@ -16,13 +16,8 @@ This script:
   4. Prints a summary of node counts, edge counts, and any errors found.
 
 Chapters extracted:
-  - volume-ii/peano-systems
-  - volume-ii/natural-numbers
-  - volume-ii/rationals
-  - volume-iii/analysis/bounding
-  - volume-iii/analysis/functions
-  - volume-iii/analysis/continuity
-  - volume-iii/analysis/differentiation
+  Auto-discovered: every chapter (a directory that owns a notes/ subdir) under
+  volumes i-iv. Edit VOLUMES below to widen (volume-v ... volume-viii) or narrow.
 """
 
 from __future__ import annotations
@@ -39,15 +34,30 @@ EXPLORER_DIR = REPO_ROOT / "theorem-explorer"
 PASS1_SCRIPT = EXPLORER_DIR / "extract_lra_chapter.py"
 PASS2_SCRIPT = EXPLORER_DIR / "seed_to_knowledge_json_v3_fixed6.py"
 
-CHAPTERS = [
-    REPO_ROOT / "volume-ii" / "peano-systems",
-    REPO_ROOT / "volume-ii" / "natural-numbers",
-    REPO_ROOT / "volume-ii" / "rationals",
-    REPO_ROOT / "volume-iii" / "analysis" / "bounding",
-    REPO_ROOT / "volume-iii" / "analysis" / "functions",
-    REPO_ROOT / "volume-iii" / "analysis" / "continuity",
-    REPO_ROOT / "volume-iii" / "analysis" / "differentiation",
-]
+# Volumes whose chapters are extracted. Append "volume-v" ... "volume-viii" to widen.
+VOLUMES = ["volume-i", "volume-ii", "volume-iii", "volume-iv"]
+
+
+def discover_chapters(repo_root: Path) -> list[Path]:
+    """Every chapter under VOLUMES: a directory that owns a notes/ subdirectory.
+
+    Robust to nesting (volume-iii/analysis/continuity,
+    volume-iii/discrete-calculus/foundations, ...). The proofs/notes tree is
+    excluded — only a chapter's own notes/ marks a chapter root. main() still
+    skips anything that has since lost its notes/ dir, so this stays safe.
+    """
+    chapters: set[Path] = set()
+    for vol in VOLUMES:
+        vol_dir = repo_root / vol
+        if not vol_dir.exists():
+            continue
+        for notes_dir in vol_dir.rglob("notes"):
+            if notes_dir.is_dir() and notes_dir.parent.name not in {"proofs", "notes"}:
+                chapters.add(notes_dir.parent)
+    return sorted(chapters)
+
+
+CHAPTERS = discover_chapters(REPO_ROOT)
 
 COMBINED_KNOWLEDGE = EXPLORER_DIR / "knowledge.json"
 COMBINED_EDGES = EXPLORER_DIR / "graph-edges.json"
