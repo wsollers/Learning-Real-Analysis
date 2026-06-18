@@ -5,6 +5,7 @@ All commands are dispatched from here.
 """
 
 import argparse
+import subprocess
 import sys
 import yaml
 from pathlib import Path
@@ -361,29 +362,16 @@ def cmd_generate_proof(args: argparse.Namespace) -> None:
 
 
 def cmd_generate_proof_stubs(args: argparse.Namespace) -> None:
-    from auditor.generators.proof_stubs import generate_chapter_proof_stubs
+    if args.overwrite:
+        raise SystemExit("proof-stubs uses the canonical no-overwrite generator; --overwrite is retired.")
+    if args.update_chapter_yaml:
+        raise SystemExit("proof-stubs no longer updates chapter.yaml; run trueup/scan separately.")
 
-    report = generate_chapter_proof_stubs(
-        chapter_path=Path(args.path),
-        write=args.write,
-        overwrite=args.overwrite,
-        update_chapter_yaml=args.update_chapter_yaml,
-    )
-
-    mode = "WRITE" if args.write else "DRY_RUN"
-    print("# Proof Stub Generation")
-    print(f"- **Mode:** {mode}")
-    print(f"- **Chapter:** `{report['chapter_path']}`")
-    print(f"- **Update chapter.yaml:** {report['update_chapter_yaml']}")
-    print(f"- **Items:** {len(report['items'])}")
-    print()
-    print("| Statement Label | Proof Label | Status | Output | Message |")
-    print("|-----------------|-------------|--------|--------|---------|")
-    for item in report["items"]:
-        print(
-            f"| `{item['label']}` | `{item['proof_label']}` | "
-            f"{item['status']} | `{item['output_file']}` | {item['message']} |"
-        )
+    generator = config.REPO_ROOT / "tools" / "migration" / "create_missing_proofs.py"
+    cmd = [sys.executable, str(generator), "--root", str(Path(args.path).resolve())]
+    if args.write:
+        cmd.append("--apply")
+    subprocess.run(cmd, check=True)
 
 
 def cmd_generate_stub_chapter(args: argparse.Namespace) -> None:

@@ -103,7 +103,12 @@ wrong, fix the new migration tool, delete generated stubs, and regenerate them.
    - `top_level_prose`;
    - `plain_remark_or_example`;
    - `raw_tcolorbox_wrapper`;
-   - `unwrapped_math_env`.
+   - `unwrapped_math_env`;
+   - `decoration_order`: write a mechanical fixer that moves existing
+     `dependencies` blocks before later decoration remarks such as `Standard
+     quantified statement`, without changing mathematical content. Initial
+     target: the Volume III elementary-functions files currently failing this
+     rule.
 
 2. Required semantic blocks:
    - `missing_interpretation`;
