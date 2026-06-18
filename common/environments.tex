@@ -17,6 +17,9 @@
 \newtheorem{example}[theorem]{Example}
 \newtheorem{principle}[theorem]{Principle}
 
+\newcounter{workedexample}[section]
+\renewcommand{\theworkedexample}{\thesection.\arabic{workedexample}}
+
 % Unnumbered variants
 \theoremstyle{plain}
 \newtheorem*{theorem*}{Theorem}
@@ -56,6 +59,21 @@
 }{}
 
 \NewDocumentEnvironment{lra-not-visible}{+b}{}{}
+
+% Worked examples are digital-edition learning artifacts. They are numbered,
+% labelable, and source-extractable, but excluded from print builds and do not
+% participate in theorem numbering.
+\NewDocumentEnvironment{workedexample}{O{} +b}{%
+  \LRAExcludeFromPrintEditionBegin
+  \refstepcounter{workedexample}%
+  \par\addvspace{6pt}%
+  \noindent{\itshape Example~\theworkedexample
+  \if\relax\detokenize{#1}\relax\else\space(#1)\fi.}\par%
+  \addvspace{2pt}%
+  #2%
+  \par\addvspace{6pt}%
+  \LRAExcludeFromPrintEditionEnd
+}{}
 
 \theoremstyle{remark}
 \newtheorem*{remark*}{Remark}
