@@ -69,7 +69,9 @@ exposition may satisfy the interpretation requirement.
 - Label is lowercase, semantic, hyphen-separated?
 
 ### box
-- For def: present on first appearance, absent on subsequent appearances?
+- For def: present only when the definition is load-bearing for the section or
+  chapter; absent for auxiliary definitions, notation declarations, routine
+  derived notions, and second appearances?
 - For thm: present only if theorem has proper name, is primary result, cited later?
 - For ax: always present?
 - For prop: if boxed, uses `colback=propbox, colframe=propborder` and is structurally promoted?

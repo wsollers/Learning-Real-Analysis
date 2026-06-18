@@ -98,6 +98,19 @@ Each layer has one job:
 
 Do not over-symbolize exposition. Use prose where prose is the correct layer.
 
+## Statement Boxes
+
+Boxes are structural emphasis, not the default presentation of every formal
+environment. A definition, theorem, lemma, proposition, or corollary may be
+boxed when it is load-bearing for the section or chapter, named and repeatedly
+cited, or otherwise the structurally dominant result being introduced. Do not
+box merely because an item is a first appearance or because it has a label.
+
+Unboxed formal environments remain fully valid repository artifacts. They still
+need atomic scope, stable labels, required logical/dependency blocks, and the
+same extraction discipline as boxed statements. When a statement is boxed, use
+the matching shared semantic wrapper; never hand-roll local `tcolorbox` styling.
+
 Generated note prose must live inside its owning LaTeX layer. Do not leave
 ordinary explanatory prose directly under a section or subsection heading. Use
 formal environments for mathematical objects, `remark*` blocks for exposition

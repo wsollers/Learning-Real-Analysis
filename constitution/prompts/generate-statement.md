@@ -94,8 +94,10 @@ Before writing any LaTeX, perform these checks silently and apply results:
 3. Proof-usage check: generate negation/failure-mode/contrapositive blocks
    only when the form is mathematically useful or required by the artifact
    matrix. For definitions, the negation and failure modes are normally useful.
-4. Box check: definitions and axioms are boxed by default. Named primary
-   theorem-like results are boxed when required by the artifact matrix.
+4. Box check: boxes are selective structural emphasis. Definitions are not
+   boxed merely because they are first appearances; box them only when they are
+   load-bearing for the section or chapter. Axioms are boxed by default. Named
+   primary theorem-like results are boxed when required by the artifact matrix.
 5. Proof-link check: include proof links only when the artifact type and
    provided context require them.
 6. Label check: if the caller supplies a canonical label, use that exact
@@ -155,6 +157,8 @@ level is `N` or when a conditional trigger is not met. Never reorder.
 ## Box Wrapper
 
 Use house `tcolorbox` colors. Never emit a bare `\begin{tcolorbox}`.
+Do not box merely because the item is a definition or theorem-like
+environment. If unboxed, emit the formal environment directly.
 
 - Definitions:
   `colback=defbox, colframe=defborder`, title `Definition (<Title>)`.

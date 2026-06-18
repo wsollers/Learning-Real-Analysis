@@ -48,7 +48,7 @@ _EXPECTED_BOX_COLORS = {
     "cor": ("corbox", "corborder"),
 }
 
-_BOX_REQUIRED_TYPES = {"def", "ax"}
+_BOX_REQUIRED_TYPES = {"ax"}
 
 _DEFINITION_REQUIRED_REMARKS = {
     "standard quantified statement",
