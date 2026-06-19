@@ -32,6 +32,12 @@ proofs/
   {topic}/prf-*.tex
 ```
 
+Every canonical chapter root must be routed from the volume root `index.tex`.
+The accepted route target is the chapter router, for example
+`\input{volume-ii/complex-numbers/index}`. A chapter directory that has the
+canonical shape but is absent from the volume root router is an orphaned chapter
+and must fail validation.
+
 Topic index files under `notes/{topic}/` and `proofs/{topic}/` are router-only:
 comments and input lines only. Rendered sectioning belongs in chapter-level
 notes routing or body files, not topic routers.
