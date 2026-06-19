@@ -71,7 +71,7 @@ explicitly retired.
 | `tools/governance/audit_proof_layout.py` | Deterministic | Strong proof layout validator. |
 | `tools/governance/validate_volume.py` | Deterministic | Primary composable volume validator with shape fail-fast. |
 | `tools/governance/validators/*.py` | Deterministic | Small validator modules for routing, proof contracts, capstones, dependencies, labels, formal decoration, and structure. |
-| `tools/governance/validate_chapter_house_rules.py` | Deterministic legacy | Broad strict chapter validator. Useful as a comparison source; no longer the target architecture. |
+| Retired chapter house-rule validator | Deterministic legacy | Removed after useful structural checks were folded into `validate_volume.py` modules or explicitly retired as stale/mutating behavior. |
 | `tools/governance/audit_volume_layout.py` | Deterministic legacy | Volume/chapter routing and layout validation. Useful as comparison/fallback until parity retirement. |
 | `tools/governance/test_parity_fixtures.py` | Deterministic test | Now includes `validate_volume.py` expected code coverage for the broken parity fixture. |
 | `capabilities/author-definition/verify.py` | Deterministic | Bound file verifier for generated definitions. Narrow. |
@@ -83,17 +83,17 @@ explicitly retired.
 
 | Legacy check | Current deterministic coverage | Gap |
 |---|---|---|
-| Environment label present, prefix, lowercase slug | Covered by `validate_decoration.py`, `validate_chapter_house_rules.py`, and generated-block validator. | Low. |
-| Box presence and house colors | Covered by generated-block validator, `validate_chapter_house_rules.py`, and box-color audit. | Low for generated/current forms. Legacy wrapper variants should remain tested. |
-| Proof link from theorem-like statement | Covered by `validate_chapter_house_rules.py` and decoration rules. | Low. |
-| Required decoration blocks present | Covered for key blocks by `validate_decoration.py`, `validate_chapter_house_rules.py`, and `author-definition/verify.py`. | Medium. Coverage is not full artifact-matrix parity for every optional/conditional/dependent block. |
-| Decoration block order | Covered by `validate_chapter_house_rules.py`; partly by decoration rules. | Low/medium. Needs parity fixtures for all block-order cases. |
-| Forbidden decoration blocks by artifact type | Covered by `validate_chapter_house_rules.py`. | Low. |
-| Dependent block parent/child rules | Covered by `validate_chapter_house_rules.py`. | Low/medium. Needs broader tests for each dependent pair. |
-| Dependencies block or `\NoLocalDependencies` | Covered by generated-block validator and chapter house rules. | Low. |
-| Dependency targets are formal labels, not proof labels | Covered by generated-block validator and chapter house rules. | Low. |
-| Source crosswalk citation presence | Covered by chapter house rules. | Medium. Validator checks citation presence, not provenance semantics. |
-| Examples/non-examples do not introduce labels/formal statements | Covered by chapter house rules. | Low/medium. |
+| Environment label present, prefix, lowercase slug | Covered by `validate_volume.py` modules and generated-block validation. | Low. |
+| Box presence and house colors | Covered by generated-block validation and `validate_volume.py` modules. | Low for generated/current forms. Legacy wrapper variants should remain tested. |
+| Proof link from theorem-like statement | Covered by decoration rules and proof/coverage validators. | Low. |
+| Required decoration blocks present | Covered for key blocks by `validate_volume.py` modules and `author-definition/verify.py`. | Medium. Coverage is not full artifact-matrix parity for every optional/conditional/dependent block. |
+| Decoration block order | Covered by `formal_decoration.py`; needs parity fixtures for all block-order cases. | Low/medium. |
+| Forbidden decoration blocks by artifact type | Covered by `formal_decoration.py`. | Low. |
+| Dependent block parent/child rules | Covered by `formal_decoration.py`; needs broader tests for each dependent pair. | Low/medium. |
+| Dependencies block or `\NoLocalDependencies` | Covered by generated-block validation and dependency validators. | Low. |
+| Dependency targets are formal labels, not proof labels | Covered by generated-block validation and dependency validators. | Low. |
+| Source crosswalk citation presence | Covered structurally by decoration validation where applicable. | Medium. Validator checks citation presence, not provenance semantics. |
+| Examples/non-examples do not introduce labels/formal statements | Covered by block discipline and formal decoration validators. | Low/medium. |
 | Predicate names not in formal bodies | Covered for `\operatorname` leakage and some known predicate forms. | Medium. It does not fully prove all predicate-language leakage. |
 | Predicate names registered in canonical source | Partly covered by `author-definition/verify.py` and ontology validator. | High. Chapter-wide usage parity still depends on symbol auditor prompt. |
 | Notation matches `notation.yaml` | Not fully covered. | High. Existing validators catch some style/shape issues, not full notation registry consistency. |
@@ -102,14 +102,14 @@ explicitly retired.
 | Correct contrapositive | Not deterministically covered. | High. Requires semantic logic or structured hypothesis/conclusion representation. |
 | Quantifier variables all fixed/explicit | Not deterministically covered except some style triggers. | High. |
 | Atomicity of formal item | Not deterministically covered. | High. This is repository-identity critical and still judgment-heavy. |
-| Figure atomicity / embedded TikZ | Covered by chapter house rules for inline/nontrivial TikZ placement. | Low/medium. "Nontrivial" remains heuristic. |
+| Figure atomicity / embedded TikZ | Partly covered by current structural validators; nontrivial figure judgment remains heuristic. | Low/medium. |
 | JSON audit-report schema output | Covered only for prompt-backed auditor path. | Medium. Deterministic validators emit their own records, not the legacy audit JSON shape. |
 
 ### Proof Auditor Versus Validators
 
 | Legacy check | Current deterministic coverage | Gap |
 |---|---|---|
-| Layer order | Covered by `audit_proof_layout.py` and chapter house rules. | Low. |
+| Layer order | Covered by `audit_proof_layout.py` and `validate_volume.py` proof modules. | Low. |
 | `\newpage`, `\phantomsection`, proof label, `\LRAProofFor` | Covered. | Low. |
 | Label root and filename match | Covered. | Low. |
 | Return navigation | Covered. | Low. |
@@ -118,9 +118,9 @@ explicitly retired.
 | Professional and detailed proof layers present | Covered. | Low. |
 | Proof structure remark present | Covered. | Low. |
 | Dependencies block present and formal targets only | Covered. | Low. |
-| Proof topic/index reachability | Covered by `audit_proof_layout.py`, `audit_volume_layout.py`, and chapter house rules. | Low. |
+| Proof topic/index reachability | Covered by `audit_proof_layout.py`, `audit_volume_layout.py`, and `validate_volume.py` proof modules. | Low. |
 | Stub squareness | Covered by `audit_proof_layout.py`, decoration rules, and proof-stub generator. | Low. |
-| No proof-structuring/flash macros | Covered by chapter house rules for known prohibited macros. | Medium. Custom macro universe is not exhaustively classified. |
+| No proof-structuring/flash macros | Partly covered by proof and block-discipline validators. | Medium. Custom macro universe is not exhaustively classified. |
 | No topicbox/exposition in proof files | Mostly covered by top-level environment discipline. | Medium. Needs explicit parity fixture. |
 | Professional proof is compact and rigorous | Not covered. | High. This is semantic/quality judgment. |
 | Detailed proof steps are genuine logical milestones | Not covered. | High. |
@@ -131,8 +131,8 @@ explicitly retired.
 
 | Legacy check | Current deterministic coverage | Gap |
 |---|---|---|
-| Chapter required paths | Covered by `validate_chapter_house_rules.py` and `audit_volume_layout.py`. | Low. |
-| Chapter router heading/label/breadcrumb/input order | Covered by `validate_chapter_house_rules.py` and volume layout audit. | Low. |
+| Chapter required paths | Covered by `validate_volume.py` shape/router modules and `audit_volume_layout.py`. | Low. |
+| Chapter router heading/label/breadcrumb/input order | Covered by `validate_volume.py` router modules and volume layout audit. | Low. |
 | Notes/proofs topic routing | Covered. | Low. |
 | Capstone standard location/routing | Covered. | Low. |
 | Folder/file naming discipline | Covered for many chapter files. | Low/medium. |
@@ -146,7 +146,7 @@ explicitly retired.
 | Legacy check | Current deterministic coverage | Gap |
 |---|---|---|
 | Registry YAML parses and internal references are valid | Covered by ontology validator. | Low. |
-| Predicate `\operatorname{...}` leakage into formal bodies | Partly covered by generated-block validator and chapter house rules. | Medium. |
+| Predicate `\operatorname{...}` leakage into formal bodies | Partly covered by generated-block validation and formal decoration checks. | Medium. |
 | Missing predicate names in chapter usage | Partly covered for generated definitions. | High. No full deterministic chapter scanner against predicates.yaml parity. |
 | Predicate arity/form consistency | Not fully covered. | High. |
 | Missing notation items | Not fully covered. | High. |

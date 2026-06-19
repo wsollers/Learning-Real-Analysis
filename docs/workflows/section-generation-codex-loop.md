@@ -91,13 +91,11 @@ For each approved topic:
 7. If a needed dependency target is missing, emit an unresolved dependency
    comment in the requested form rather than inventing a label.
 8. Include the integrated volume validator for the generated topic's owning
-   volume:
+   volume. A chapter-filtered report may be included while iterating, but the
+   acceptance gate is the unfiltered full-volume command:
    `python tools\governance\validate_volume.py <target-repo> --fail-on-errors`.
-9. When the chapter is expected to satisfy current house rules, include the
-   chapter validator in the prompt's validation commands:
-   `python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root>`.
-   Use `--generate-missing-capstone` only when the task explicitly authorizes
-   creating the standard planned capstone stub.
+9. If a task needs a focused report, use `audit_volume_layout.py` or
+   `audit_proof_layout.py` in addition to the integrated validator.
 
 ## Phase 5: Codex Execution
 

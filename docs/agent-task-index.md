@@ -50,9 +50,9 @@ workspace.
 
 ## Validator Targeting
 
-Governance validators should be run at the narrowest scope that matches the
-edit: section, then chapter, then volume, then whole repo. Prefer named targets
-over hand-built paths when the validator supports them.
+Governance validators should keep full-volume acceptance as the gate. Use
+scoped report modes only to reduce noise while working on a chapter or section.
+Prefer named targets over hand-built paths when the validator supports them.
 
 If the correct target is not obvious, run the validator's discovery mode first:
 
@@ -65,13 +65,18 @@ python tools\governance\audit_proof_layout.py --root <target-repo> --list-target
 Then run the scoped check, for example:
 
 ```powershell
-python tools\governance\validate_volume.py <target-repo> --fail-on-errors
+python tools\governance\validate_volume.py <target-repo> --chapter <chapter-name>
 python tools\governance\audit_proof_layout.py --root <target-repo> --chapter <chapter-name> --section <topic-name> --strict
 ```
 
-Use whole-repo validation only for repo-wide changes or explicit legacy-debt
-audits. For generated notes, use `validate_volume.py` as the integrated
-acceptance validator; use the scoped audit tools only when a task needs a
+Before commit or push, run the unfiltered gate:
+
+```powershell
+python tools\governance\validate_volume.py <target-repo> --fail-on-errors
+```
+
+For generated notes, use `validate_volume.py` as the integrated acceptance
+validator; use `--chapter` or scoped audit tools only when a task needs a
 focused inventory or refactor report.
 
 ## Loading Discipline
@@ -108,7 +113,7 @@ or data files. Prose docs should point to them instead of restating them.
 | --- | --- | --- | --- | --- | --- | --- |
 | Generate chapter artifacts from payload | `docs/workflows/artifact-payload-generation.md`, `docs/governance/atomic-artifact-standards.md`, `docs/governance/notation-standards.md`, `docs/governance/dependency-standards.md` | ordered JSON/JSONL payload, appendable artifact registries, canonical predicates/notation/relations YAML | `tools/import_artifact_payload.py`, `tools/chapter_artifact.py`, deterministic local audit commands | `docs/workflows/proof-layout-audit.md` | payload file, appendable YAML registry, generated notation page, generated LaTeX blocks, proof stubs, chapter manifest, audit report | importer dry-run/write, artifact validate, true-up, box-color audit, proof-layout audit, latexmk build, local registry/symbol check when available without AI |
 | Generate section through Codex loop | `docs/workflows/section-generation-codex-loop.md`, `docs/governance/atomic-artifact-standards.md`, `docs/governance/dependency-standards.md`, `docs/governance/proof-standards.md`, `docs/governance/notation-standards.md` | active label map, approved ASCII topic outline, `constitution/schema/block-registry.yaml`, `constitution/schema/artifact-matrix.yaml`, `constitution/schema/file-schema.yaml` | disposable target-repo `codex-prompt`, `tools/governance/validate_volume.py`, volume build wrapper | `docs/governance/extraction-standards.md`, `docs/governance/repo-overlays/lra-volume.md` | topic-split notes files, proof stubs, updated notes/proofs indexes, deleted `codex-prompt`, commit report | user approval before prompt, integrated volume validation, index reachability, LuaLaTeX/build status, prompt deletion before commit |
-| Validate chapter house rules | `docs/governance/authoring-standards.md`, `docs/governance/dependency-standards.md`, `docs/governance/proof-standards.md`, `docs/governance/exercise-vault-standards.md` | `constitution/schema/block-registry.yaml`, `constitution/schema/artifact-matrix.yaml`, `constitution/schema/file-schema.yaml` | `tools/governance/validate_chapter_house_rules.py` | `docs/workflows/proof-layout-audit.md`, nearby chapter examples | chapter compliance report, optional generated planned capstone stub | `python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root>`, optional `--generate-missing-capstone` only when stub creation is authorized, JSON report when automation consumes results |
+| Validate volume house rules | `docs/governance/authoring-standards.md`, `docs/governance/dependency-standards.md`, `docs/governance/proof-standards.md`, `docs/governance/exercise-vault-standards.md` | `constitution/schema/block-registry.yaml`, `constitution/schema/artifact-matrix.yaml`, `constitution/schema/file-schema.yaml` | `tools/governance/validate_volume.py` | `docs/workflows/proof-layout-audit.md`, nearby chapter examples | integrated compliance report | `python tools\governance\validate_volume.py <target-repo> --fail-on-errors`; use `--chapter <chapter-name>` only to filter the report while still running the full volume |
 | Add theorem with proof stub | `docs/workflows/add-theorem-with-proof-stub.md`, `docs/governance/proof-standards.md`, `docs/governance/dependency-standards.md` | `constitution/schema/file-schema.yaml`, `constitution/schema/artifact-matrix.yaml` | `tools/governance/validate_volume.py`, `tools/governance/audit_proof_layout.py` | `docs/governance/atomic-artifact-standards.md`, `docs/architecture/volume-layout.md` | theorem/proposition/lemma/corollary source, canonical proof stub | integrated volume validation, proof layout audit, volume build |
 | Add definition | `docs/governance/authoring-standards.md`, `docs/governance/atomic-artifact-standards.md`, `docs/governance/notation-standards.md`, `docs/governance/dependency-standards.md` | `constitution/schema/artifact-matrix.yaml`, `constitution/schema/block-registry.yaml` | `tools/governance/validate_volume.py`, volume build or local extractor when available | `docs/governance/model-standards.md` | definition source and any notation/predicate updates | integrated volume validation, YAML parse when data changes, volume build, extractor audit when available |
 | Add proof or populate existing proof stub | `docs/workflows/populate-proof-stub.md`, `docs/governance/proof-standards.md`, `docs/governance/dependency-standards.md`, nearby populated proof files | `constitution/schema/file-schema.yaml` | `tools/governance/validate_volume.py`, `tools/governance/audit_proof_layout.py` | `docs/governance/handwritten-proof-vault-standards.md` | existing proof file populated in place | integrated volume validation, proof layout audit, volume build |

@@ -34,25 +34,23 @@ reasonably own the content.
     files before proposing a new schema system.
 11. When any file under `constitution/schema/` changes, update or explicitly
     audit the deterministic validators that enforce it in the same change.
-    For chapter-local rules in `file-schema.yaml`, `block-registry.yaml`, or
-    `artifact-matrix.yaml`, update
-    `tools/governance/validate_chapter_house_rules.py` or document why the
-    requirement is delegated to another validator.
+    For volume, chapter, file, block, or artifact-matrix rules, update the
+    relevant `tools/governance/validate_volume.py` module or document why the
+    requirement is delegated to another deterministic validator.
 
 ## Mechanical Checks
 
 Run the checks that are available for the audit target. Typical checks include:
 
 ```powershell
-python -m py_compile tools\governance\audit_proof_layout.py tools\governance\audit_volume_layout.py
+python -m py_compile tools\governance\audit_proof_layout.py tools\governance\audit_volume_layout.py tools\governance\validate_volume.py
 ```
 
-If schema files changed, also compile the chapter house-rule validator and run
-one chapter smoke audit:
+If schema files changed, also run the integrated validator against an affected
+leaf volume:
 
 ```powershell
-python -m py_compile tools\governance\validate_chapter_house_rules.py
-python tools\governance\validate_chapter_house_rules.py --chapter <chapter-root> --format json
+python tools\governance\validate_volume.py <target-repo> --fail-on-errors
 ```
 
 ```powershell
