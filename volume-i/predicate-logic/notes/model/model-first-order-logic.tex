@@ -1,0 +1,165 @@
+% BEGIN MODEL ARTIFACT: model:first-order-logic
+\begin{modelbox}{Model (First-Order Logic)}
+\begin{model}[First-Order Logic]\label{model:first-order-logic}
+\modeldepends{
+  Languages, Axioms, and Models,
+  First-Order Language,
+  Variable,
+  Constant Symbol,
+  Function Symbol,
+  Predicate Symbol,
+  Term,
+  Atomic Formula,
+  Well-Formed Formula,
+  Structure,
+  Variable Assignment,
+  Modified Assignment,
+  Term Evaluation,
+  Satisfaction,
+  Truth in a Structure,
+  Model of a Sentence,
+  Logical Consequence
+}
+
+First-order logic is presented as a model whose syntax is a first-order
+language and whose semantics is given by structures, variable assignments, term
+evaluation, and satisfaction.
+
+\begin{modelsorts}
+  \modelsort{\mathsf{Var}_{\mathcal L}}{\text{the variables of }\mathcal L}
+    {The syntactic placeholders assigned domain elements.}
+  \modelsort{\mathsf{Const}_{\mathcal L}}{\text{the constant symbols of }\mathcal L}
+    {The nullary non-logical symbols.}
+  \modelsort{\mathsf{Func}_{\mathcal L}^{(n)}}{\text{the }n\text{-ary function symbols of }\mathcal L}
+    {The positive-arity term-forming operation symbols.}
+  \modelsort{\mathsf{Pred}_{\mathcal L}^{(n)}}{\text{the }n\text{-ary predicate symbols of }\mathcal L}
+    {The atomic-formula-forming relation symbols.}
+  \modelsort{\mathsf{Term}_{\mathcal L}}{\text{the terms of }\mathcal L}
+    {The syntactic expressions that denote objects under an assignment.}
+  \modelsort{\mathsf{Form}_{\mathcal L}}{\text{the well-formed formulas of }\mathcal L}
+    {The syntactic expressions evaluated by satisfaction.}
+  \modelsort{D}{\text{a nonempty domain}}
+    {The semantic universe of a structure.}
+\end{modelsorts}
+
+\begin{modelconstants}
+  \modelconstant{\False}{Truth Value}
+  \modelconstant{\True}{Truth Value}
+\end{modelconstants}
+
+\begin{modelarity}
+  \arity{c}{0}
+  \arity{f}{n}
+  \arity{P}{n}
+  \arity{\neg_{\mathsf{Form}}}{1}
+  \arity{\land_{\mathsf{Form}}}{2}
+  \arity{\lor_{\mathsf{Form}}}{2}
+  \arity{\to_{\mathsf{Form}}}{2}
+  \arity{\leftrightarrow_{\mathsf{Form}}}{2}
+  \arity{\forall x}{1}
+  \arity{\exists x}{1}
+\end{modelarity}
+
+\begin{modelfunctions}
+  \modelfunction{I(c)}{D}
+    {The interpretation of a constant symbol.}
+  \modelfunction{I(f)}{D^{n}\to D}
+    {The interpretation of an \(n\)-ary function symbol.}
+  \modelfunction{\llbracket t\rrbracket_{\mathcal M,s}}{\mathsf{Term}_{\mathcal L}\to D}
+    {The value of a term in a structure under an assignment.}
+  \modelfunction{s_{x\mapsto d}}{\mathsf{Var}_{\mathcal L}\to D}
+    {The assignment obtained by changing only the value of \(x\).}
+  \modelfunction{\neg^{\mathbb{B}}}{\mathbb{B}\to\mathbb{B}}
+    {Truth-value negation.}
+  \modelfunction{\land^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value conjunction.}
+  \modelfunction{\lor^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value disjunction.}
+  \modelfunction{\to^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value implication.}
+  \modelfunction{\leftrightarrow^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value biconditional.}
+\end{modelfunctions}
+
+\begin{modelrelations}
+  \modelrelation{I(P)}{I(P)\subseteq D^{n}}
+    {The interpretation of an \(n\)-ary predicate symbol.}
+  \modelrelation{=_{D}}{a=_{D}b}
+    {Equality on the semantic domain.}
+  \modelrelation{\models}{\mathcal M,s\models\varphi}
+    {Satisfaction of a formula in a structure under an assignment.}
+  \modelrelation{\models}{\mathcal M\models\varphi}
+    {Truth of a sentence in a structure.}
+  \modelrelation{\models}{\Gamma\models\varphi}
+    {Semantic consequence over all structures and assignments.}
+\end{modelrelations}
+
+\begin{modelsemantics}
+  \modelclause{A structure for \(\mathcal L\) is a pair
+  \(\mathcal M=\langle D,I\rangle\), where \(D\neq\varnothing\) and \(I\)
+  interprets each non-logical symbol with the required type and arity.}
+  \modelclause{A variable assignment is a function
+  \(s:\mathsf{Var}_{\mathcal L}\to D\).}
+  \modelclause{Term evaluation assigns a domain element
+  \(\llbracket t\rrbracket_{\mathcal M,s}\in D\) to each term.}
+  \modelclause{Formula satisfaction is the recursive relation
+  \(\mathcal M,s\models\varphi\).}
+  \modelclause{A sentence \(\varphi\) is true in \(\mathcal M\), written
+  \(\mathcal M\models\varphi\), when it is satisfied under every assignment.}
+  \modelclause{Semantic consequence \(\Gamma\models\varphi\) means every
+  structure and assignment satisfying all formulas in \(\Gamma\) also satisfies
+  \(\varphi\).}
+\end{modelsemantics}
+
+\begin{modelbridge}
+  \bridgeclause{\(\llbracket x\rrbracket_{\mathcal M,s}=s(x)\) for each
+  variable \(x\in\mathsf{Var}_{\mathcal L}\).}
+  \bridgeclause{\(\llbracket c\rrbracket_{\mathcal M,s}=I(c)\) for each
+  constant symbol \(c\in\mathsf{Const}_{\mathcal L}\).}
+  \bridgeclause{\(\llbracket f(t_1,\ldots,t_n)\rrbracket_{\mathcal M,s}
+  =I(f)(\llbracket t_1\rrbracket_{\mathcal M,s},\ldots,
+  \llbracket t_n\rrbracket_{\mathcal M,s})\).}
+  \bridgeclause{\(\mathcal M,s\models P(t_1,\ldots,t_n)\) if and only if
+  \((\llbracket t_1\rrbracket_{\mathcal M,s},\ldots,
+  \llbracket t_n\rrbracket_{\mathcal M,s})\in I(P)\).}
+  \bridgeclause{\(\mathcal M,s\models t_1=t_2\) if and only if
+  \(\llbracket t_1\rrbracket_{\mathcal M,s}
+  =_{D}\llbracket t_2\rrbracket_{\mathcal M,s}\).}
+  \bridgeclause{\(\mathcal M,s\models\neg\varphi\) if and only if
+  \(\mathcal M,s\not\models\varphi\).}
+  \bridgeclause{\(\mathcal M,s\models(\varphi\land\psi)\) if and only if
+  \(\mathcal M,s\models\varphi\) and \(\mathcal M,s\models\psi\).}
+  \bridgeclause{\(\mathcal M,s\models(\varphi\lor\psi)\) if and only if
+  \(\mathcal M,s\models\varphi\) or \(\mathcal M,s\models\psi\).}
+  \bridgeclause{\(\mathcal M,s\models(\varphi\to\psi)\) if and only if
+  \(\mathcal M,s\not\models\varphi\) or \(\mathcal M,s\models\psi\).}
+  \bridgeclause{\(\mathcal M,s\models(\varphi\leftrightarrow\psi)\) if and
+  only if \(\mathcal M,s\models\varphi\) and \(\mathcal M,s\models\psi\), or
+  \(\mathcal M,s\not\models\varphi\) and \(\mathcal M,s\not\models\psi\).}
+  \bridgeclause{\(\mathcal M,s\models\forall x\,\varphi\) if and only if
+  \(\mathcal M,s[x\mapsto d]\models\varphi\) for every \(d\in D\).}
+  \bridgeclause{\(\mathcal M,s\models\exists x\,\varphi\) if and only if
+  \(\mathcal M,s[x\mapsto d]\models\varphi\) for some \(d\in D\).}
+\end{modelbridge}
+
+\begin{modelaxioms}
+  \modelaxiom{Every structure has a nonempty domain.}
+  \modelaxiom{Each interpreted symbol respects its declared arity and semantic
+  type.}
+  \modelaxiom{The logical connectives use the classical two-valued truth
+  functions.}
+  \modelaxiom{The quantifiers range over the domain \(D\) of the current
+  structure.}
+\end{modelaxioms}
+
+\begin{modelconsequences}
+  \modelconsequence{Closed formulas, or sentences, have truth values in a
+  structure independent of the particular variable assignment.}
+  \modelconsequence{A structure is a model of a sentence exactly when the
+  sentence is true in that structure.}
+  \modelconsequence{Validity and logical consequence are defined by universal
+  quantification over all structures for the language.}
+\end{modelconsequences}
+\end{model}
+\end{modelbox}
+% END MODEL ARTIFACT: model:first-order-logic

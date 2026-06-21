@@ -1,0 +1,213 @@
+% =========================================================
+% Asymptotic Notation: Little-o Language
+% =========================================================
+
+\subsection*{Little-o Notation}
+\label{subsec:little-o-notation}
+
+Asymptotic notation separates the main term of an expression from the part
+that becomes negligible in a limiting process. The notation $f=o(g)$ means
+that $f$ is smaller than every fixed multiple of $g$ near the limiting point.
+It does not say that $f$ is zero. It says that $f$ is negligible relative to
+the chosen scale $g$.
+
+\begin{definition}[Little-o at a Point]
+\label{def:little-o-at-a-point}
+Let $a\in\mathbb{R}$, let $f$ and $g$ be real-valued functions defined on a
+punctured neighbourhood of $a$, and suppose $g(x)\neq 0$ for all $x$ sufficiently
+close to $a$ with $x\neq a$. We write
+\[
+  f(x)=o(g(x))\qquad (x\to a)
+\]
+if and only if for every $\varepsilon>0$ there exists $\delta>0$ such that
+\[
+  0<|x-a|<\delta
+  \quad\Longrightarrow\quad
+  |f(x)|\leq \varepsilon |g(x)|.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+f(x)=o(g(x))\ (x\to a)
+\Longleftrightarrow
+&\forall\varepsilon>0\;\exists\delta>0\;\forall x\\
+&\bigl(0<|x-a|<\delta
+  \Rightarrow |f(x)|\leq \varepsilon |g(x)|\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The scale $g$ is the unit of comparison. The assertion $f=o(g)$ says that no
+matter how small a tolerance multiple $\varepsilon g$ is chosen, $f$ eventually
+fits inside that multiple.
+\end{remark*}
+
+\NoLocalDependencies
+
+\begin{definition}[Little-o at Infinity]
+\label{def:little-o-at-infinity}
+Let $f$ and $g$ be real-valued functions defined on some interval
+$(M,\infty)$, and suppose $g(x)\neq 0$ for all sufficiently large $x$. We write
+\[
+  f(x)=o(g(x))\qquad (x\to\infty)
+\]
+if and only if for every $\varepsilon>0$ there exists $R>0$ such that
+\[
+  x>R
+  \quad\Longrightarrow\quad
+  |f(x)|\leq \varepsilon |g(x)|.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\begin{aligned}
+f(x)=o(g(x))\ (x\to\infty)
+\Longleftrightarrow
+&\forall\varepsilon>0\;\exists R>0\;\forall x\\
+&\bigl(x>R\Rightarrow |f(x)|\leq \varepsilon |g(x)|\bigr).
+\end{aligned}
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The point version and the infinity version have the same logical shape. Only
+the neighbourhood changes: small punctured intervals around $a$ are replaced
+by tails $(R,\infty)$.
+\end{remark*}
+
+\NoLocalDependencies
+
+\begin{definition}[Increment Little-o]
+\label{def:increment-little-o}
+Let $r$ be a real-valued function defined for all sufficiently small nonzero
+$h$. We write
+\[
+  r(h)=o(h)\qquad (h\to 0)
+\]
+if and only if for every $\varepsilon>0$ there exists $\delta>0$ such that
+\[
+  0<|h|<\delta
+  \quad\Longrightarrow\quad
+  |r(h)|\leq \varepsilon |h|.
+\]
+\end{definition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+r(h)=o(h)\ (h\to 0)
+\Longleftrightarrow
+\forall\varepsilon>0\;\exists\delta>0\;\forall h\,
+\bigl(0<|h|<\delta\Rightarrow |r(h)|\leq \varepsilon |h|\bigr).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+This is the form used in first-order approximation. A remainder $r(h)$ is
+smaller than the increment $h$ itself, so the quotient $r(h)/h$ tends to zero.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:little-o-at-a-point]{Little-o at a Point}
+\end{itemize}
+\end{dependencies}
+
+\begin{proposition}[Little-o Quotient Characterisation]
+\label{prop:little-o-quotient-characterization}
+Let $a\in\mathbb{R}$, and let $f$ and $g$ be real-valued functions defined on a
+punctured neighbourhood of $a$, with $g(x)\neq 0$ for $x$ sufficiently close to
+$a$ and $x\neq a$. Then
+\[
+  f(x)=o(g(x))\ (x\to a)
+  \quad\Longleftrightarrow\quad
+  \frac{f(x)}{g(x)}\to 0\ (x\to a).
+\]
+
+\smallskip\noindent
+\hyperref[prf:little-o-quotient-characterization]{Go to proof.}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+\left[\forall\varepsilon>0\;\exists\delta>0\;
+0<|x-a|<\delta\Rightarrow |f(x)|\leq\varepsilon |g(x)|\right]
+\Longleftrightarrow
+\frac{f(x)}{g(x)}\to 0.
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+The quotient form is often the fastest test for little-o. The epsilon form is
+often the safest proof form because it avoids manipulating a quotient until the
+nonvanishing of the scale has been checked.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:little-o-at-a-point]{Little-o at a Point}
+\end{itemize}
+\end{dependencies}
+
+\begin{proposition}[Sum Rule for Little-o]
+\label{prop:little-o-sum-rule}
+If $f_1(x)=o(g(x))$ and $f_2(x)=o(g(x))$ as $x\to a$, then
+\[
+  f_1(x)+f_2(x)=o(g(x))\qquad (x\to a).
+\]
+
+\smallskip\noindent
+\hyperref[prf:little-o-sum-rule]{Go to proof.}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+f_1=o(g)\land f_2=o(g)
+\Longrightarrow
+f_1+f_2=o(g).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+Negligible errors can be added. The proof is the usual epsilon-budget split:
+make each error smaller than half the final tolerance.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:little-o-at-a-point]{Little-o at a Point}
+\end{itemize}
+\end{dependencies}
+
+\begin{proposition}[Bounded Factor Rule for Little-o]
+\label{prop:little-o-bounded-factor-rule}
+If $f(x)=o(g(x))$ as $x\to a$ and $m$ is bounded near $a$, then
+\[
+  m(x)f(x)=o(g(x))\qquad (x\to a).
+\]
+
+\smallskip\noindent
+\hyperref[prf:little-o-bounded-factor-rule]{Go to proof.}
+\end{proposition}
+
+\begin{remark*}[Standard quantified statement]
+\[
+f=o(g)\land \exists M>0\;\exists\eta>0\;\forall x\,
+\bigl(0<|x-a|<\eta\Rightarrow |m(x)|\leq M\bigr)
+\Longrightarrow mf=o(g).
+\]
+\end{remark*}
+
+\begin{remark*}[Interpretation]
+A bounded multiplier cannot turn a negligible error into a main-order term. It
+only changes the constant in the epsilon estimate.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:little-o-at-a-point]{Little-o at a Point}
+\end{itemize}
+\end{dependencies}

@@ -1,0 +1,133 @@
+\section{Order}
+
+% order/index.tex
+%
+% Dependency order:
+%   notes-order           --- posets, strict order, bounds, well-order, chains, nets
+%   notes-order-sup-inf   --- upper/lower bounds, supremum, infimum, duality of sup/inf
+%   notes-order-lattices  --- lattices, complete lattices, Boolean lattices, Knaster--Tarski
+%   notes-order-hasse-sup-duality --- Hasse diagrams, cover relation, duality principle
+%   notes-order-extensions --- preorders, Szpilrajn, OWC
+%   notes-order-induced    --- induced orders, order embeddings
+
+\begin{toolkitbox}{Ordered Sets --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Ordered set        & $(A, \leq)$: set with a partial order                        & \hyperref[def:ordered-set]{$\downarrow$ Def} \\
+Strict order       & $a < b \iff a \leq b \land a \neq b$                         & \hyperref[def:strict-order]{$\downarrow$ Def} \\
+Comparable / incomparable & $a \leq b$ or $b \leq a$ / neither              & \hyperref[def:comparable]{$\downarrow$ Def} \\
+Total (linear) order & Partial order with all pairs comparable                  & \hyperref[def:linear-order]{$\downarrow$ Def} \\
+Upper / lower bound & $u \geq s$ / $\ell \leq s$ for all $s \in S$               & \hyperref[def:bounds]{$\downarrow$ Def} \\
+Minimal / maximal  & No smaller/larger element in $S$                            & \hyperref[def:min-max]{$\downarrow$ Def} \\
+Least / greatest   & Smaller/larger than all elements of $S$                     & \hyperref[def:least-greatest]{$\downarrow$ Def} \\
+Order-preserving   & $a \leq b \Rightarrow f(a) \leq' f(b)$                       & \hyperref[def:order-pres]{$\downarrow$ Def} \\
+Order isomorphism  & Bijective order-preserving map with order-preserving inverse & \hyperref[def:order-iso]{$\downarrow$ Def} \\
+Well-ordered set   & Every nonempty subset has a least element                   & \hyperref[def:well-order]{$\downarrow$ Def} \\
+Chain / antichain  & All comparable / none comparable                            & \hyperref[def:chain]{$\downarrow$ Def} \\
+Initial segment    & Downward-closed subset                                      & \hyperref[def:initial-segment]{$\downarrow$ Def} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\input{volume-i/orderings/notes/order/notes-order}
+
+\begin{toolkitbox}{Supremum, Infimum, and Bounds --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Upper bound       & $u \geq s$ for all $s \in S$                       & \hyperref[def:bounds]{$\downarrow$ Def} \\
+Lower bound       & $\ell \leq s$ for all $s \in S$                    & \hyperref[def:bounds]{$\downarrow$ Def} \\
+Supremum          & Least upper bound of $S$                           & \hyperref[def:sup-inf]{$\downarrow$ Def} \\
+Infimum           & Greatest lower bound of $S$                        & \hyperref[def:sup-inf]{$\downarrow$ Def} \\
+Uniqueness        & Suprema and infima are unique when they exist       & \hyperref[prop:sup-unique]{$\downarrow$ Prop} \\
+Max/min vs.\ sup/inf & Maximum $\Rightarrow$ supremum; not conversely & \hyperref[rem:max-vs-sup]{$\downarrow$ Rem} \\
+Duality           & $\sup$ in $(A,\leq)$ = $\inf$ in $(A,\geq)$        & \hyperref[prop:sup-inf-duality]{$\downarrow$ Prop} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\input{volume-i/orderings/notes/order/notes-order-sup-inf}
+
+\begin{toolkitbox}{Lattices --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Lattice              & Poset with $\sup\{a,b\}$ and $\inf\{a,b\}$ for all $a,b$   & \hyperref[def:lattice]{$\downarrow$ Def} \\
+Join / Meet          & $a \vee b = \sup\{a,b\}$; $a \wedge b = \inf\{a,b\}$        & \hyperref[def:lattice]{$\downarrow$ Def} \\
+Complete lattice     & Every subset has sup and inf                                & \hyperref[def:complete-lattice]{$\downarrow$ Def} \\
+Distributive lattice & $a \wedge (b \vee c) = (a \wedge b) \vee (a \wedge c)$      & \hyperref[def:distributive-lattice]{$\downarrow$ Def} \\
+Boolean lattice      & Complemented distributive lattice                           & \hyperref[def:boolean-lattice]{$\downarrow$ Def} \\
+$\mathcal{P}(X)$     & Complete Boolean lattice under $\subseteq$                  & \hyperref[ex:power-set-lattice]{$\downarrow$ Ex} \\
+$\sigma$-algebras    & Sub-lattices of $\mathcal{P}(X)$ closed under countable ops  & \hyperref[rem:sigma-alg-lattice]{$\downarrow$ Rem} \\
+Knaster--Tarski      & Every monotone map on a complete lattice has a fixed point   & \hyperref[thm:knaster-tarski]{$\downarrow$ Thm} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\input{volume-i/orderings/notes/order/notes-order-lattices}
+
+\begin{toolkitbox}{Hasse Diagrams and Duality --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Cover relation    & $a \lessdot b$: $a < b$ with nothing strictly between       & \hyperref[def:cover-relation]{$\downarrow$ Def} \\
+Hasse diagram     & Graph encoding a poset; edges only for cover relations      & \hyperref[def:hasse]{$\downarrow$ Def} \\
+Dual poset        & $(A, \geq)$ obtained by reversing the order on $(A, \leq)$  & \hyperref[def:dual-poset]{$\downarrow$ Def} \\
+Duality principle & Every theorem about posets yields a dual theorem for free   & \hyperref[prop:order-duality]{$\downarrow$ Prop} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\input{volume-i/orderings/notes/order/notes-order-hasse-sup-duality}
+
+\begin{toolkitbox}{Order Extensions --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Preorder            & Reflexive, transitive (not necessarily antisymmetric)         & \hyperref[def:preorder]{$\downarrow$ Def} \\
+Loset               & Linear order = complete partial order                        & \hyperref[def:loset]{$\downarrow$ Def} \\
+Symmetric part      & $xIy \iff xRy \land yRx$                                     & \hyperref[def:sym-asym]{$\downarrow$ Def} \\
+Asymmetric part     & $xPy \iff xRy \land \lnot(yRx)$                              & \hyperref[def:sym-asym]{$\downarrow$ Def} \\
+Transitive closure  & Smallest transitive relation containing $R$                  & \hyperref[def:trans-closure]{$\downarrow$ Def} \\
+Extension           & $\succsim'$ agrees with $\succsim$ on strict and weak ranks  & \hyperref[def:extension]{$\downarrow$ Def} \\
+OWC                 & $xT(\succsim)y \Rightarrow \lnot(y \succ x)$                 & \hyperref[def:owc]{$\downarrow$ Def} \\
+Szpilrajn's Thm     & Every partial order extends to a linear order                & \hyperref[thm:szpilrajn]{$\downarrow$ Thm} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\input{volume-i/orderings/notes/order/notes-order-extensions}
+
+\begin{toolkitbox}{Induced Orders and Order Embeddings --- Quick Reference}
+\small
+\begin{tabular}{l l l}
+\toprule
+\textbf{Concept} & \textbf{Meaning} & \textbf{Detail} \\
+\midrule
+Induced preorder    & $x \leq_f y \;\Leftrightarrow\; f(x) \leq' f(y)$; always a preorder  & \hyperref[def:induced-order]{$\downarrow$ Def} \\
+Induced partial order & Induced order is a partial order iff $f$ is injective              & \hyperref[prop:induced-poset]{$\downarrow$ Prop} \\
+$f$-indistinguishable & $x \sim_f y$: both $x \leq_f y$ and $y \leq_f x$                   & \hyperref[def:f-indist]{$\downarrow$ Def} \\
+Order embedding     & Injective, order-preserving, and order-reflecting                     & \hyperref[def:order-embedding]{$\downarrow$ Def} \\
+Embedding vs.\ isomorphism & Embedding is iso onto image; isomorphism is surjective too & \hyperref[prop:embedding-iso]{$\downarrow$ Prop} \\
+Suborder            & Restriction of $\leq'$ to a subset $S \subseteq B$                   & \hyperref[def:suborder]{$\downarrow$ Def} \\
+\midrule
+\multicolumn{2}{l}{\textit{Key results:}} & \\
+\midrule
+\multicolumn{2}{l}{$\leq_f$ preorder: always. \quad Antisymmetry: iff $f$ injective.}       & \hyperref[prop:induced-poset]{$\downarrow$} \\
+\multicolumn{2}{l}{$f$ order embedding $\Rightarrow$ $(A,\leq_f) \cong (f(A), \leq')$.}    & \hyperref[prop:embedding-iso]{$\downarrow$} \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+\input{volume-i/orderings/notes/order/notes-order-induced}

@@ -1,0 +1,107 @@
+% BEGIN MODEL ARTIFACT: model:classical-propositional-logic
+\begin{modelbox}{Model (Classical Propositional Logic)}
+\begin{model}[Classical Propositional Logic]\label{model:classical-propositional-logic}
+\modeldepends{
+  Propositional Language,
+  Truth Value,
+  Truth Assignment,
+  Extension of a Truth Assignment to Formulas,
+  Satisfaction of a Formula,
+  Satisfaction of a Set of Formulas,
+  Logical Consequence,
+  Unique Extension of a Truth Assignment
+}
+
+Classical propositional logic is presented as a two-valued model whose syntax
+is a propositional language and whose semantics is an interpretation into the
+two-element Boolean algebra.
+
+\begin{modelsorts}
+  \modelsort{\Prop}{\text{a set of propositional variables}}
+    {The syntactic atoms of the language.}
+  \modelsort{\WFF}{\text{the set of well-formed formulas over }\Prop}
+    {The formulas generated from atoms and connectives.}
+  \modelsort{\mathbb{B}}{\{\False,\True\}}
+    {The semantic truth-value domain.}
+\end{modelsorts}
+
+\begin{modelconstants}
+  \modelconstant{\False}{Truth Value}
+  \modelconstant{\True}{Truth Value}
+\end{modelconstants}
+
+\begin{modelarity}
+  \arity{\neg_{\WFF}}{1}
+  \arity{\land_{\WFF}}{2}
+  \arity{\lor_{\WFF}}{2}
+  \arity{\to_{\WFF}}{2}
+  \arity{\leftrightarrow_{\WFF}}{2}
+\end{modelarity}
+
+\begin{modelfunctions}
+  \modelfunction{\neg^{\mathbb{B}}}{\mathbb{B}\to\mathbb{B}}
+    {Truth-value negation.}
+  \modelfunction{\land^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value conjunction.}
+  \modelfunction{\lor^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value disjunction.}
+  \modelfunction{\to^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value implication.}
+  \modelfunction{\leftrightarrow^{\mathbb{B}}}{\mathbb{B}^{2}\to\mathbb{B}}
+    {Truth-value biconditional.}
+\end{modelfunctions}
+
+\begin{modelrelations}
+  \modelrelation{\models}{v\models\varphi}
+    {Satisfaction of a formula by a truth assignment.}
+  \modelrelation{\models}{v\models\Gamma}
+    {Satisfaction of every formula in a set of formulas.}
+  \modelrelation{\models}{\Gamma\models\varphi}
+    {Semantic consequence from assumptions to a conclusion.}
+\end{modelrelations}
+
+\begin{modelsemantics}
+  \modelclause{A truth assignment is a function
+  \(v:\Prop\to\mathbb{B}\).}
+  \modelclause{Formula satisfaction is defined by
+  \(v\models\varphi\) if and only if \(\widehat v(\varphi)=\True\).}
+  \modelclause{Set satisfaction is defined by
+  \(v\models\Gamma\) if and only if \(v\models\gamma\) for every
+  \(\gamma\in\Gamma\).}
+  \modelclause{Semantic consequence is defined by
+  \(\Gamma\models\varphi\) if and only if every truth assignment satisfying
+  \(\Gamma\) also satisfies \(\varphi\).}
+\end{modelsemantics}
+
+\begin{modelbridge}
+  \bridgeclause{\(\widehat v(P)=v(P)\) for every propositional variable
+  \(P\in\Prop\).}
+  \bridgeclause{\(\widehat v(\neg_{\WFF}\varphi)=
+  \neg^{\mathbb{B}}\widehat v(\varphi)\).}
+  \bridgeclause{\(\widehat v(\varphi\land_{\WFF}\psi)=
+  \land^{\mathbb{B}}(\widehat v(\varphi),\widehat v(\psi))\).}
+  \bridgeclause{\(\widehat v(\varphi\lor_{\WFF}\psi)=
+  \lor^{\mathbb{B}}(\widehat v(\varphi),\widehat v(\psi))\).}
+  \bridgeclause{\(\widehat v(\varphi\to_{\WFF}\psi)=
+  \to^{\mathbb{B}}(\widehat v(\varphi),\widehat v(\psi))\).}
+  \bridgeclause{\(\widehat v(\varphi\leftrightarrow_{\WFF}\psi)=
+  \leftrightarrow^{\mathbb{B}}(\widehat v(\varphi),\widehat v(\psi))\).}
+\end{modelbridge}
+
+\begin{modelaxioms}
+  \modelaxiom{The semantic algebra is the two-element Boolean algebra
+  \[
+  \mathbb{B}=(\{\False,\True\},\neg^{\mathbb{B}},
+  \land^{\mathbb{B}},\lor^{\mathbb{B}},\to^{\mathbb{B}},
+  \leftrightarrow^{\mathbb{B}}).
+  \]}
+\end{modelaxioms}
+
+\begin{modelconsequences}
+  \modelconsequence{Every truth assignment \(v:\Prop\to\mathbb{B}\) extends
+  uniquely to a function \(\widehat v:\WFF\to\mathbb{B}\) satisfying the
+  bridge clauses.}
+\end{modelconsequences}
+\end{model}
+\end{modelbox}
+% END MODEL ARTIFACT: model:classical-propositional-logic

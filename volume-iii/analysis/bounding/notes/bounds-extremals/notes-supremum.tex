@@ -71,14 +71,25 @@ an existential witness once existence has been established.
 \hline
 \textbf{Concept} & \textbf{Predicate $P_A(x)$} & \textbf{Predicate Form} & \textbf{Existence Form} \\
 \hline
+Bound
+&
+\(\begin{aligned}
+&\bigl[\forall a \in A\;(a \le x)\bigr]\\
+&{}\lor \bigl[\forall a \in A\;(x \le a)\bigr]
+\end{aligned}\)
+&
+$x$ is a bound for $A$
+&
+$A$ has a bound
+\\[0.2em]
+
 Upper bound
 &
 $\forall a \in A \; (a \le x)$
 &
 $x$ is an upper bound of $A$
 &
-$A$ is bounded above$
-$
+$A$ is bounded above
 \\[0.2em]
 
 Lower bound
@@ -88,58 +99,61 @@ $\forall a \in A \; (x \le a)$
 $x$ is a lower bound of $A$
 &
 $A$ is bounded below
-$
-$
+\\
+
+Bounded
+&
+\(\operatorname{BoundedAbove}(A)\land \operatorname{BoundedBelow}(A)\)
+&
+--
+&
+$A$ is bounded
 \\
 \hline
 
 Maximum
 &
-$(x \in A) \land \forall a \in A \; (a \le x)$
+\((x \in A) \land \operatorname{UpperBound}(x,A)\)
 &
 $x$ is a maximum of $A$
 &
 $A$ has a maximum
-$
-$
 \\[0.2em]
 
 Minimum
 &
-$(x \in A) \land \forall a \in A \; (x \le a)$
+\((x \in A) \land \operatorname{LowerBound}(x,A)\)
 &
 $x$ is a minimum of $A$
 &
 $A$ has a minimum
-$
-$
 \\
 \hline
 
 Supremum
 &
-$UpperBound(x,A)
-\land
-\forall u \in S \; (UpperBound(u,A) \rightarrow x \le u)$
+\(\begin{aligned}
+&\operatorname{UpperBound}(x,A)\\
+&{}\land \forall u \in S\,
+  (\operatorname{UpperBound}(u,A)\rightarrow x\le u)
+\end{aligned}\)
 &
 $x$ is the supremum of $A$
 &
 $A$ has a supremum
-$
-$
 \\[0.2em]
 
 Infimum
 &
-$LowerBound(x,A)
-\land
-\forall \ell \in S \; (LowerBound(\ell,A) \rightarrow \ell \le x)$
+\(\begin{aligned}
+&\operatorname{LowerBound}(x,A)\\
+&{}\land \forall \ell \in S\,
+  (\operatorname{LowerBound}(\ell,A)\rightarrow \ell\le x)
+\end{aligned}\)
 &
 $x$ is the infimum of $A$
 &
 $A$ has an infimum
-$
-$
 \\
 \hline
 \end{tabular}
@@ -173,17 +187,37 @@ the least or greatest comparison against all competing bounds.
 
 \subsection*{Bounds and Extremal Elements}
 
-% =========================================================
-% Bounds and Extremal Elements
-% House style
-% =========================================================
+\begin{definitionbox}{Definition (Bound)}
+\begin{definition}[Bound]
+\label{def:bound}
+Let $(S,\le)$ be an ordered set, let $A\subseteq S$, and let $b\in S$. The element $b$ is a \emph{bound} for $A$ if and only if $b$ is a uniform one-sided comparison point for all elements of $A$:
+\[
+\operatorname{Bound}(b,A)
+\Longleftrightarrow
+\bigl[\forall x\in A\;(x\le b)\bigr]
+\lor
+\bigl[\forall x\in A\;(b\le x)\bigr].
+\]
+\end{definition}
+\end{definitionbox}
 
-\subsection*{Bounds and Extremal Elements}
+\begin{remark*}[Orientation]
+A bound always has a direction. The first alternative bounds $A$ from above,
+and the second alternative bounds $A$ from below. Thus ``bound'' is the common
+template, while upper and lower bounds are the two oriented cases.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+\end{itemize}
+\end{dependencies}
 
 \begin{definitionbox}{Definition (Upper Bound)}
 \begin{definition}[Upper Bound]
 \label{def:upper-bound}
-Let $(S,\le)$ be an ordered set, let $A\subseteq S$, and let $u\in S$. The element $u$ is an \emph{upper bound} of $A$ if and only if $x\le u$ for every $x\in A$.
+Let $(S,\le)$ be an ordered set, let $A\subseteq S$, and let $u\in S$. The element $u$ is an \emph{upper bound} of $A$ if and only if $u$ is a bound for $A$ from above, meaning $x\le u$ for every $x\in A$.
 \end{definition}
 \end{definitionbox}
 
@@ -240,13 +274,38 @@ An upper bound caps a subset of an ordered structure from above, so every elemen
 \begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:bound]{Bound}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Bounded Above)}
+\begin{definition}[Bounded Above]
+\label{def:bounded-above}
+Let $(S,\le)$ be an ordered set and let $A\subseteq S$. The set $A$ is \emph{bounded above} in $S$ if and only if there exists $u\in S$ such that $u$ is an upper bound of $A$.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Existence reading]
+\[
+A\text{ is bounded above in }S
+\Longleftrightarrow
+\exists u\in S\;\operatorname{UpperBound}(u,A).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:upper-bound]{Upper Bound}
 \end{itemize}
 \end{dependencies}
 
 \begin{definitionbox}{Definition (Lower Bound)}
 \begin{definition}[Lower Bound]
 \label{def:lower-bound}
-Let $(S,\le)$ be an ordered set, $A\subseteq S$, and $l\in S$. The element $l$ is a \emph{lower bound} of $A$ if and only if every $x\in A$ satisfies $l\le x$.
+Let $(S,\le)$ be an ordered set, $A\subseteq S$, and $l\in S$. The element $l$ is a \emph{lower bound} of $A$ if and only if $l$ is a bound for $A$ from below, meaning every $x\in A$ satisfies $l\le x$.
 \end{definition}
 \end{definitionbox}
 
@@ -303,13 +362,64 @@ A lower bound clamps the set $A$ from below: starting at $l$ and moving upward a
 \begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:bound]{Bound}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Bounded Below)}
+\begin{definition}[Bounded Below]
+\label{def:bounded-below}
+Let $(S,\le)$ be an ordered set and let $A\subseteq S$. The set $A$ is \emph{bounded below} in $S$ if and only if there exists $l\in S$ such that $l$ is a lower bound of $A$.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Existence reading]
+\[
+A\text{ is bounded below in }S
+\Longleftrightarrow
+\exists l\in S\;\operatorname{LowerBound}(l,A).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:lower-bound]{Lower Bound}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Bounded)}
+\begin{definition}[Bounded]
+\label{def:bounded}
+Let $(S,\le)$ be an ordered set and let $A\subseteq S$. The set $A$ is \emph{bounded} in $S$ if and only if $A$ is bounded above in $S$ and bounded below in $S$.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Two-sided existence reading]
+\[
+A\text{ is bounded in }S
+\Longleftrightarrow
+\bigl(\exists u\in S\;\operatorname{UpperBound}(u,A)\bigr)
+\land
+\bigl(\exists l\in S\;\operatorname{LowerBound}(l,A)\bigr).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:bounded-above]{Bounded Above}
+  \item \hyperref[def:bounded-below]{Bounded Below}
 \end{itemize}
 \end{dependencies}
 
 \begin{definitionbox}{Definition (Minimum)}
 \begin{definition}[Minimum]
 \label{def:minimum}
-Let $(S,\le)$ be an ordered set, $A\subseteq S$, and $m\in A$. The element $m$ is the \emph{minimum} of $A$ if and only if for every $x\in A$ one has $m\le x$.
+Let $(S,\le)$ be an ordered set, $A\subseteq S$, and $m\in S$. The element $m$ is the \emph{minimum} of $A$ if and only if $m\in A$ and $m$ is a lower bound of $A$.
 \end{definition}
 \end{definitionbox}
 
@@ -327,6 +437,9 @@ Let $(S,\le)$ be an ordered set, $A\subseteq S$, and $m\in A$. The element $m$ i
 \begin{remark*}[Definition predicate reading]
 \[
 \operatorname{Minimum}(m,A)\coloneqq (m\in A)\land \forall x\in A\;(m\le x).
+\]
+\[
+\operatorname{Minimum}(m,A)\Longleftrightarrow (m\in A)\land \operatorname{LowerBound}(m,A).
 \]
 \end{remark*}
 
@@ -367,13 +480,16 @@ A minimum point both belongs to the set and sits at its absolute bottom: every o
 \begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:bound]{Bound}
+  \item \hyperref[def:lower-bound]{Lower Bound}
 \end{itemize}
 \end{dependencies}
 
 \begin{definitionbox}{Definition (Maximum)}
 \begin{definition}[Maximum]
 \label{def:maximum}
-Let $(S,\le)$ be an ordered set and let $A \subseteq S$. An element $M \in S$ is the maximum of $A$ if and only if $M \in A$ and every $x \in A$ satisfies $x \le M$.
+Let $(S,\le)$ be an ordered set and let $A \subseteq S$. An element $M \in S$ is the maximum of $A$ if and only if $M \in A$ and $M$ is an upper bound of $A$.
 \end{definition}
 \end{definitionbox}
 
@@ -391,6 +507,9 @@ Let $(S,\le)$ be an ordered set and let $A \subseteq S$. An element $M \in S$ is
 \begin{remark*}[Definition predicate reading]
 \[
 \operatorname{Maximum}(M,A) \coloneqq (M \in A) \land \forall x \in A\;(x \le M).
+\]
+\[
+\operatorname{Maximum}(M,A)\Longleftrightarrow (M\in A)\land \operatorname{UpperBound}(M,A).
 \]
 \end{remark*}
 
@@ -432,6 +551,9 @@ A maximum is an element of the set that simultaneously belongs to the set and do
 \begin{dependencies}
 \begin{itemize}
   \item \hyperref[def:ordered-set]{Ordered Set}
+  \item \hyperref[def:subset]{Subset}
+  \item \hyperref[def:bound]{Bound}
+  \item \hyperref[def:upper-bound]{Upper Bound}
 \end{itemize}
 \end{dependencies}
 
@@ -1003,10 +1125,7 @@ $N$.
 
 \end{tikzpicture}
 
-\smallskip
-\noindent
-\textbf{Caption (R7.5, R13.8):} 
-Figure \ref{fig:supremum-algebra}: The Monotonicity of Supremum Under Set Inclusion.
-This visualization illustrates the arithmetic consequence of set inclusion, $A \subseteq B \subset \mathbb{R}$. The topology of the sets is represented by nested blobs: $A$ (green) is contained within $B$ (gray). Vertically dashed projections link the supremal boundary of each set down to the shared real axis, defining the unique points $s_A = \operatorname{sup}(A)$ and $s_B = \operatorname{sup}(B)$. The figure demonstrates that because the territory of $A$ is restricted by $B$, its maximum guard point $s_A$ cannot exceed $s_B$. Finally, the shaded regions to the right illustrate the territories of upper bounds ($U_A$ and $U_B$), clearly showing that $U_B$ is a proper subset of $U_A$. Any value guarding the larger set $B$ necessarily satisfies the guard condition for the smaller set $A$.
+\caption{The Monotonicity of Supremum Under Set Inclusion.
+This visualization illustrates the arithmetic consequence of set inclusion, $A \subseteq B \subset \mathbb{R}$. The topology of the sets is represented by nested blobs: $A$ (green) is contained within $B$ (gray). Vertically dashed projections link the supremal boundary of each set down to the shared real axis, defining the unique points $s_A = \operatorname{sup}(A)$ and $s_B = \operatorname{sup}(B)$. The figure demonstrates that because the territory of $A$ is restricted by $B$, its maximum guard point $s_A$ cannot exceed $s_B$. Finally, the shaded regions to the right illustrate the territories of upper bounds ($U_A$ and $U_B$), clearly showing that $U_B$ is a proper subset of $U_A$. Any value guarding the larger set $B$ necessarily satisfies the guard condition for the smaller set $A$.}
 \label{fig:supremum-algebra}
 \end{figure}

@@ -1,0 +1,489 @@
+% ============================================================
+%  \S{}0  Foundational Analysis Properties
+%  volume-iii/analysis/real-analysis/notes/proof-techniques/
+%  00-proof-patterns-and-algorithms.tex
+% ============================================================
+
+\section{Foundational Analysis Properties}
+\label{sec:foundational-analysis-properties}
+
+\begingroup
+\sloppy
+\emergencystretch=3em
+
+\begin{toolkitbox}{Summary of Foundational Analysis Properties}
+\small
+\begin{tabular}{p{0.22\linewidth} p{0.25\linewidth} p{0.43\linewidth}}
+\toprule
+\textbf{Concept} & \textbf{Goal} & \textbf{Proof mechanism / logical form} \\
+\midrule
+Well-definedness
+  & Consistency
+  & $x\sim y \Rightarrow F(x)=F(y)$ \\
+Existence
+  & Feasibility
+  & $\exists x\;P(x)$ \\
+Uniqueness
+  & Singularity
+  & $P(x_1)\land P(x_2)\Rightarrow x_1=x_2$ \\
+Linearity
+  & Decomposition
+  & $L(f+g)=L(f)+L(g)$ and $L(cf)=cL(f)$ \\
+Uniformity
+  & One choice works globally
+  & $\forall\varepsilon>0,\exists\delta>0,\forall x,y,\;Q(\varepsilon,\delta,x,y)$ \\
+Equivalence
+  & Interchangeable descriptions
+  & $A\Rightarrow B$ and $B\Rightarrow A$ \\
+Characterisation
+  & Usable test
+  & $P(x)\Longleftrightarrow C(x)$ \\
+Estimate
+  & Control
+  & $A\leq B$, $|A|<\varepsilon$, or $d(A,B)<\varepsilon$ \\
+Boundedness
+  & Two-sided control
+  & $\exists l,u\in S\;\forall x\in A\;(l\leq x\leq u)$ \\
+Upper/lower control
+  & One-sided domination
+  & $\forall x\in A\;(x\leq u)$ or $\forall x\in A\;(l\leq x)$ \\
+Extremality
+  & Realized optimality
+  & $m\in A\land \operatorname{Bound}(m,A)$ \\
+Least/greatest character
+  & Optimal bound
+  & $\operatorname{Bound}(b,A)\land \forall c\,(\operatorname{Bound}(c,A)\Rightarrow b\preceq c)$ \\
+Monotonicity
+  & Order preservation
+  & Start with $x\leq y$ and prove $f(x)\leq f(y)$, or the reverse \\
+Closure
+  & Staying inside a class
+  & $P(x)\land P(y)\Rightarrow P(x\star y)$ \\
+Approximation
+  & Arbitrary precision
+  & $\forall\varepsilon>0\;\exists x\;d(x,a)<\varepsilon$ \\
+\bottomrule
+\end{tabular}
+\end{toolkitbox}
+
+Many proofs in analysis are not isolated inventions. They prove recurring
+structural properties: a definition is independent of choices, an object
+exists, there is only one possible object, an operation respects addition and
+scalars, a single parameter works everywhere, or two definitions describe the
+same phenomenon. Naming the property first tells us what the proof must do.
+
+\subsection*{Well-Definedness}
+\label{subsec:property-well-definedness}
+
+Well-definedness appears whenever an object is defined using choices:
+representatives of equivalence classes, selected sequences, selected
+partitions, or selected approximations. The goal is to prove that different
+allowed choices give the same output.
+\[
+  x\sim x' \Rightarrow F(x)=F(x').
+\]
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Identify the choice built into the definition.
+  \item Take two allowed choices, usually $x$ and $x'$ with $x\sim x'$.
+  \item Compute or compare the two proposed outputs.
+  \item Show the outputs agree in the codomain.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Crucial logic]
+The output must be independent of the chosen representative. If changing the
+representative changes the output, the proposed definition is not a function
+on the quotient or chosen domain.
+\end{remark}
+
+\subsection*{Existence}
+\label{subsec:property-existence}
+
+Existence proves that at least one object satisfying a property is available:
+\[
+  \exists x\;P(x).
+\]
+In analysis the object might be a limit, a supremum, a point in an interval,
+a subsequence, a bound, an index $N$, a radius $\delta$, or a partition.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Determine every requirement in the property $P$.
+  \item Produce a candidate explicitly, or invoke a theorem that guarantees
+        one.
+  \item Verify the candidate belongs to the required domain.
+  \item Verify the candidate satisfies every part of $P$.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Constructive and nonconstructive existence]
+A constructive proof names the object directly. A nonconstructive proof uses
+a theorem such as completeness, the intermediate value theorem, or
+Bolzano--Weierstrass. In both cases, the final burden is the same: the object
+must satisfy the stated property.
+\end{remark}
+
+\subsection*{Uniqueness}
+\label{subsec:property-uniqueness}
+
+Uniqueness proves that at most one object can satisfy a property:
+\[
+  P(x_1)\land P(x_2)\Rightarrow x_1=x_2.
+\]
+It does not by itself prove existence. It only proves that two successful
+candidates cannot be distinct.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Assume $x_1$ and $x_2$ both satisfy $P$.
+  \item Use the defining property of $x_1$ and the defining property of $x_2$.
+  \item Derive two-sided comparison, zero distance, or identical defining
+        data.
+  \item Conclude $x_1=x_2$.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Common analysis forms]
+For suprema, show $s\leq t$ and $t\leq s$. For limits, show
+$|L-M|<\varepsilon$ for every $\varepsilon>0$, hence $L=M$. In metric spaces,
+show $d(x_1,x_2)=0$.
+\end{remark}
+
+\subsection*{Linearity}
+\label{subsec:property-linearity}
+
+Linearity proves that an operation decomposes over addition and scalar
+multiplication:
+\[
+  L(f+g)=L(f)+L(g),
+  \qquad
+  L(cf)=cL(f).
+\]
+The goal is not merely algebraic neatness. Linearity says that a complicated
+input can be analysed by splitting it into simpler pieces.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Take arbitrary admissible inputs $f,g$ and scalar $c$.
+  \item Expand $L(f+g)$ using the definition of $L$ and the definition of
+        addition.
+  \item Rearrange the expression until $L(f)+L(g)$ appears.
+  \item Repeat with $L(cf)$ and show it equals $cL(f)$.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Typical analysis examples]
+Limits, derivatives, integrals, and many summation operators have linearity
+theorems. Each proof follows the same shape: expand the left side, split the
+expression, and identify the two pieces.
+\end{remark}
+
+\subsection*{Uniformity}
+\label{subsec:property-uniformity}
+
+Uniformity means that one choice works for all relevant points at once. The
+prototype is not just uniform continuity, but any statement where a witness is
+chosen before the point is allowed to vary:
+\[
+  \forall\varepsilon>0,\;\exists\delta>0,\;\forall x,y,\;Q(\varepsilon,\delta,x,y).
+\]
+The key phrase is ``one choice.'' The same $N$, $\delta$, bound, or partition
+must work globally over the specified domain.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Fix the tolerance or target requirement.
+  \item Choose a single witness that depends only on the allowed global data.
+  \item Let the point, pair of points, function, or index vary arbitrarily.
+  \item Verify that the same witness works in every permitted case.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Contrast with pointwise statements]
+Pointwise statements allow the witness to depend on the point. Uniform
+statements do not. The order of quantifiers is the whole issue:
+\[
+  \forall x\,\exists\delta
+  \quad\text{is pointwise, while}\quad
+  \exists\delta\,\forall x
+  \quad\text{is uniform.}
+\]
+\end{remark}
+
+\subsection*{Equivalence}
+\label{subsec:property-equivalence}
+
+Equivalence proves that two statements are logically interchangeable:
+\[
+  A\Longleftrightarrow B.
+\]
+Such theorems are common because analysis often has several descriptions of
+the same phenomenon: epsilon-delta, sequential, order-theoretic, topological,
+or integral.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Prove $A\Rightarrow B$.
+  \item Prove $B\Rightarrow A$.
+  \item Keep the assumptions for the two directions separate.
+  \item After both directions are proved, either description may be used.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Typical analysis examples]
+Sequential and epsilon-delta definitions of continuity are equivalent.
+Riemann and Darboux integrability are equivalent under the appropriate
+hypotheses. A set is closed exactly when it contains the limits of all
+convergent sequences from the set.
+\end{remark}
+
+\subsection*{Characterisation}
+\label{subsec:property-characterisation}
+
+A characterisation is an equivalence whose purpose is to turn a definition
+into a usable test:
+\[
+  P(x)\Longleftrightarrow C(x).
+\]
+The theorem does not merely say two statements agree. It supplies a criterion
+that can be used in later proofs.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Identify the original definition.
+  \item Identify the proposed criterion.
+  \item Prove definition $\Rightarrow$ criterion.
+  \item Prove criterion $\Rightarrow$ definition.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Typical analysis examples]
+The epsilon characterisation of the supremum turns least-upper-bound language
+into an approximation rule. Cauchy criteria turn convergence questions into
+internal distance estimates. Sequential criteria turn topological conditions
+into statements about sequences.
+\end{remark}
+
+\subsection*{Estimates and Bounds}
+\label{subsec:property-estimates}
+
+An estimate proves control:
+\[
+  A\leq B,\qquad |A|<\varepsilon,\qquad d(A,B)<\varepsilon.
+\]
+The aim is not to compute the exact value. The aim is to put the target
+quantity inside a range that is strong enough for the theorem.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Identify the quantity that must be controlled.
+  \item Replace it by a larger or simpler quantity using valid inequalities.
+  \item Use hypotheses to replace variable terms by constants or small
+        errors.
+  \item End with the required bound.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Typical analysis examples]
+Showing a sequence is bounded, proving an error term tends to zero, bounding
+a Riemann-sum error, or proving $|f(x)-L|<\varepsilon$ are all estimate
+problems. The proof is a chain of control.
+\end{remark}
+
+\subsection*{Boundedness}
+\label{subsec:property-boundedness}
+
+Boundedness proves two-sided control. In an ordered setting, the usual form is
+that a set or sequence is bounded above and bounded below:
+\[
+  \exists l,u\in S\;\forall x\in A\;(l\leq x\leq u).
+\]
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Prove bounded above by finding a candidate upper bound.
+  \item Prove bounded below by finding a candidate lower bound.
+  \item Verify both candidates work for every element under consideration.
+  \item Conclude that the object is bounded.
+\end{enumerate}
+\end{remark}
+
+\subsection*{Upper and Lower Control}
+\label{subsec:property-upper-lower-control}
+
+Upper and lower control prove one-sided domination. The proof focuses on a
+candidate bound and checks that every element lies on the required side of it:
+\[
+  \forall x\in A\;(x\leq u),
+  \qquad
+  \forall x\in A\;(l\leq x).
+\]
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Name the candidate upper or lower bound.
+  \item Let an arbitrary element of the set be given.
+  \item Use the hypotheses or definition of the set to compare that element
+        with the candidate.
+  \item Since the element was arbitrary, conclude the one-sided bound.
+\end{enumerate}
+\end{remark}
+
+\subsection*{Extremality}
+\label{subsec:property-extremality}
+
+Extremality proves that an optimal value is actually realized by the object
+being studied. A maximum is not merely an upper bound; it is an upper bound
+that belongs to the set. A minimum is the corresponding realized lower bound.
+\[
+  \operatorname{Maximum}(m,A)
+  \Longleftrightarrow
+  (m\in A)\land \operatorname{UpperBound}(m,A),
+\]
+\[
+  \operatorname{Minimum}(m,A)
+  \Longleftrightarrow
+  (m\in A)\land \operatorname{LowerBound}(m,A).
+\]
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Prove the candidate belongs to the set.
+  \item Prove the candidate is the appropriate one-sided bound.
+  \item Combine membership with the bound condition.
+  \item Conclude maximum or minimum.
+\end{enumerate}
+\end{remark}
+
+\subsection*{Least and Greatest Character}
+\label{subsec:property-least-greatest-character}
+
+Least and greatest character proves optimality among competitors. For a
+supremum, the candidate must first be an upper bound, and then it must be no
+larger than every other upper bound. Infimum proofs reverse the direction.
+\[
+  \operatorname{Supremum}(s,A)
+  \Longleftrightarrow
+  \operatorname{UpperBound}(s,A)
+  \land
+  \forall u\in S\,
+  \bigl(\operatorname{UpperBound}(u,A)\Rightarrow s\leq u\bigr),
+\]
+\[
+  \operatorname{Infimum}(i,A)
+  \Longleftrightarrow
+  \operatorname{LowerBound}(i,A)
+  \land
+  \forall l\in S\,
+  \bigl(\operatorname{LowerBound}(l,A)\Rightarrow l\leq i\bigr).
+\]
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Prove the candidate is a bound of the required kind.
+  \item Let an arbitrary competing bound be given.
+  \item Compare the candidate with that competing bound.
+  \item Conclude the candidate is the least upper bound or greatest lower
+        bound.
+\end{enumerate}
+\end{remark}
+
+\subsection*{Monotonicity}
+\label{subsec:property-monotonicity}
+
+Monotonicity proves order preservation or order reversal:
+\[
+  x\leq y \Rightarrow f(x)\leq f(y),
+  \qquad
+  x\leq y \Rightarrow f(y)\leq f(x).
+\]
+The proof begins with an arbitrary ordered pair and carries that order through
+the definitions.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Take arbitrary points $x$ and $y$ with $x\leq y$.
+  \item Expand the definitions of the function or operation.
+  \item Use order rules and hypotheses to compare the outputs.
+  \item Conclude that the order is preserved or reversed.
+\end{enumerate}
+\end{remark}
+
+\subsection*{Closure}
+\label{subsec:property-closure}
+
+Closure proves that a class is stable under an operation. One starts with
+objects already known to belong to the class, combines them, and then verifies
+that the result still satisfies the defining property.
+\[
+  P(x)\land P(y)\Rightarrow P(x\star y).
+\]
+For closure under scalar operations, the same pattern becomes
+\[
+  P(x)\Rightarrow P(c\star x)
+\]
+for every admissible scalar or parameter $c$.
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Take arbitrary objects from the class.
+  \item Form the object produced by the operation.
+  \item Check every condition in the definition of the class.
+  \item Conclude the result remains inside the class.
+\end{enumerate}
+\end{remark}
+
+\subsection*{Approximation}
+\label{subsec:property-approximation}
+
+Approximation proves arbitrary precision. The proof usually begins with a
+tolerance and constructs an object close enough to a target:
+\[
+  \forall\varepsilon>0\;\exists x\;d(x,a)<\varepsilon.
+\]
+
+\begin{remark}[Proof sketch]
+\begin{enumerate}
+  \item Fix an arbitrary tolerance $\varepsilon>0$.
+  \item Choose or construct an approximating object.
+  \item Estimate the error between the approximation and the target.
+  \item Show the error is below $\varepsilon$.
+\end{enumerate}
+\end{remark}
+
+\subsection*{A Classification Pass}
+\label{subsec:property-classification-pass}
+
+Before proving a theorem, classify its job:
+\begin{itemize}
+  \item Does the statement depend on choices? Check well-definedness.
+  \item Does it ask for an object? Prove existence.
+  \item Does it say only one object can work? Prove uniqueness.
+  \item Does it say an operation splits across sums and scalars? Prove
+        linearity.
+  \item Does one witness have to work for every point? Prove uniformity.
+  \item Does it say two descriptions agree? Prove equivalence.
+  \item Does it give a test for a definition? Prove a characterisation.
+  \item Does it ask for smallness or control? Prove an estimate.
+  \item Does it ask for two-sided order control? Prove boundedness.
+  \item Does it ask for one-sided order control? Prove an upper or lower
+        bound.
+  \item Does it ask for a realized best element? Prove extremality.
+  \item Does it ask for the best bound among all bounds? Prove least or
+        greatest character.
+  \item Does it preserve or reverse order? Prove monotonicity.
+  \item Does it stay inside a class after an operation? Prove closure.
+  \item Does it ask for arbitrary precision? Prove approximation.
+\end{itemize}
+
+\begin{remark}[The point]
+The classification does not solve the proof, but it tells us what a completed
+proof must contain. For example, an existence proof must exhibit or obtain an
+object, while a uniqueness proof must compare two candidates. An equivalence
+proof must have two directions, while a uniformity proof must choose one
+witness before the arbitrary point is fixed.
+\end{remark}
+
+\endgroup

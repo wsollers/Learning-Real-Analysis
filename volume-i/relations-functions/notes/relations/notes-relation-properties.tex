@@ -1,0 +1,378 @@
+% =========================================================
+% Properties of Relations
+% =========================================================
+
+\section{Properties of Relations}
+
+% ---------------------------------------------------------
+% TOOLKIT
+% ---------------------------------------------------------
+
+% ---------------------------------------------------------
+% Individual property definitions
+% ---------------------------------------------------------
+\begin{definitionbox}{Definition (Reflexive Relation)}
+\begin{definition}[Reflexive Relation]\label{def:reflexive}
+A binary relation $R\subseteq A\times A$ is \emph{reflexive} on $A$ if every
+element of the domain is related to itself:
+\[
+  \forall a\in A,\ (a,a)\in R.
+\]
+In infix notation, this is the condition $\forall a\in A,\ aRa$.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+Reflexivity is a universal requirement over the whole domain:
+\[
+  \operatorname{Reflexive}_A(R)
+  \iff
+  \forall a\in A,\ (a,a)\in R.
+\]
+For first-order logic with equality, the corresponding logical baseline is
+the identity axiom
+\[
+  \forall x\,(x=x),
+\]
+which forces equality to behave reflexively in every structure.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Irreflexive Relation)}
+\begin{definition}[Irreflexive Relation]\label{def:irreflexive}
+A binary relation $R\subseteq A\times A$ is \emph{irreflexive} on $A$ if no
+element of the domain is related to itself:
+\[
+  \forall a\in A,\ (a,a)\notin R.
+\]
+In infix notation, this is the condition $\forall a\in A,\ \neg(aRa)$.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+Irreflexivity is not the same as merely failing to be reflexive:
+\[
+  \operatorname{Irreflexive}_A(R)
+  \iff
+  \forall a\in A,\ \neg(aRa),
+\]
+whereas
+\[
+  \neg\operatorname{Reflexive}_A(R)
+  \iff
+  \exists a\in A,\ \neg(aRa).
+\]
+Thus a relation may be neither reflexive nor irreflexive. In first-order
+axiomatizations of strict order, irreflexivity is commonly imposed by the
+axiom
+\[
+  \forall x\,\neg(x<x).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{remark*}[Independence of reflexive and irreflexive]
+A relation may be neither reflexive nor irreflexive (if some but not all
+elements satisfy $(a,a)\in R$). However, a relation cannot be both reflexive
+and irreflexive unless $A = \varnothing$.
+\end{remark*}
+
+\begin{definitionbox}{Definition (Symmetric Relation)}
+\begin{definition}[Symmetric Relation]\label{def:symmetric}
+A binary relation $R\subseteq A\times A$ is \emph{symmetric} on $A$ if every
+related pair also appears in the reverse order:
+\[
+  \forall a,b\in A,\ (a,b)\in R \rightarrow (b,a)\in R.
+\]
+In infix notation, this is $\forall a,b\in A,\ aRb\rightarrow bRa$.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+Symmetry is a conditional property:
+\[
+  \operatorname{Symmetric}_A(R)
+  \iff
+  \forall a,b\in A,\ (aRb\rightarrow bRa).
+\]
+It does not require every pair to be related; it requires only that any
+existing directed relation can be reversed. For first-order logic with
+equality, symmetry is expressed by the identity axiom
+\[
+  \forall x\forall y\,(x=y\rightarrow y=x).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Antisymmetric Relation)}
+\begin{definition}[Antisymmetric Relation]\label{def:antisymmetric}
+A binary relation $R\subseteq A\times A$ is \emph{antisymmetric} on $A$ if any
+two elements related in both directions must be equal:
+\[
+  \forall a,b\in A,\;
+  \bigl((a,b)\in R\land(b,a)\in R\bigr)\rightarrow a=b.
+\]
+In infix notation, this is
+$\forall a,b\in A,\ ((aRb\land bRa)\rightarrow a=b)$.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+Antisymmetry forbids two-way relation cycles between distinct elements:
+\[
+  \operatorname{Antisymmetric}_A(R)
+  \iff
+  \forall a,b\in A,\ ((aRb\land bRa)\rightarrow a=b).
+\]
+It is not the same as asymmetry. Antisymmetry permits $aRa$; asymmetry forbids
+it. Thus $\leq$ is antisymmetric, while $<$ is asymmetric. In first-order
+axiomatizations of partial orders, antisymmetry is usually written
+\[
+  \forall x\forall y\,((x\leq y\land y\leq x)\rightarrow x=y).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Asymmetric Relation)}
+\begin{definition}[Asymmetric Relation]\label{def:asymmetric}
+A binary relation $R\subseteq A\times A$ is \emph{asymmetric} on $A$ if every
+related pair excludes the reverse pair:
+\[
+  \forall a,b\in A,\;
+  (a,b)\in R \rightarrow (b,a)\notin R.
+\]
+In infix notation, this is
+$\forall a,b\in A,\ (aRb\rightarrow\neg(bRa))$.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+Asymmetry is the strict one-way condition
+\[
+  \operatorname{Asymmetric}_A(R)
+  \iff
+  \forall a,b\in A,\ (aRb\rightarrow\neg(bRa)).
+\]
+It implies irreflexivity by taking $a=b$, and it implies antisymmetry because
+two-way relation between distinct elements is impossible. Conversely, a
+relation that is both irreflexive and antisymmetric is asymmetric. For strict
+orders, the typical first-order axiom is
+\[
+  \forall x\forall y\,(x<y\rightarrow\neg(y<x)).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{remark*}[Asymmetric vs.\ antisymmetric]
+Every asymmetric relation is antisymmetric, but not conversely. $\leq$ on
+$\mathbb{R}$ is antisymmetric but not asymmetric (since $1 \leq 1$). Strict
+order $<$ is both asymmetric and irreflexive.
+\end{remark*}
+
+\begin{definitionbox}{Definition (Transitive Relation)}
+\begin{definition}[Transitive Relation]\label{def:transitive}
+A binary relation $R\subseteq A\times A$ is \emph{transitive} on $A$ if any
+two composable related pairs collapse to a direct related pair:
+\[
+  \forall a,b,c\in A,\;
+  \bigl((a,b)\in R\land(b,c)\in R\bigr)\rightarrow(a,c)\in R.
+\]
+In infix notation, this is
+$\forall a,b,c\in A,\ ((aRb\land bRc)\rightarrow aRc)$.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+Transitivity is the formal chaining law:
+\[
+  \operatorname{Transitive}_A(R)
+  \iff
+  \forall a,b,c\in A,\ ((aRb\land bRc)\rightarrow aRc).
+\]
+For equality, the corresponding first-order axiom is
+\[
+  \forall x\forall y\forall z\,((x=y\land y=z)\rightarrow x=z).
+\]
+Together with reflexivity and symmetry, transitivity gives equivalence
+relations; together with reflexivity and antisymmetry, it gives partial
+orders.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Total (Connex) Relation)}
+\begin{definition}[Total (Connex) Relation]\label{def:total-rel}
+$R$ is \emph{total} (or \emph{connex}) if every pair is comparable:
+\[
+\forall a,b \in A, \;
+(a,b) \in R \lor (b,a) \in R.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:universal-q]{Universal Formula}
+\end{itemize}
+\end{dependencies}
+
+% ---------------------------------------------------------
+% Structural classes
+% ---------------------------------------------------------
+\begin{definitionbox}{Definition (Equivalence Relation)}
+\begin{definition}[Equivalence Relation]\label{def:equivalence-rel}
+$R$ is an \emph{equivalence relation} on $A$ if it is reflexive, symmetric,
+and transitive.
+\end{definition}
+\end{definitionbox}\begin{remark*}[Standard quantified statement]
+$R$ is an equivalence relation on $A$ iff:
+\[
+(\forall a \in A,\; (a,a)\in R)\;\wedge\;
+(\forall a,b \in A,\; (a,b)\in R \to (b,a)\in R)\;\wedge\;
+(\forall a,b,c \in A,\; (a,b)\in R \wedge (b,c)\in R \to (a,c)\in R).
+\]
+\end{remark*}
+
+\begin{remark*}[Role in mathematics]
+Equivalence relations axiomatize the idea of ``sameness up to a chosen
+criterion.'' They partition sets into equivalence classes and are the basis
+for quotient constructions throughout algebra, topology, and analysis.
+\end{remark*}
+
+\begin{definitionbox}{Definition (Preorder)}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:relation]{Relation}
+  \item \hyperref[def:reflexive]{Reflexive Relation}
+  \item \hyperref[def:symmetric]{Symmetric Relation}
+  \item \hyperref[def:transitive]{Transitive Relation}
+\end{itemize}
+\end{dependencies}
+\begin{definition}[Preorder]\label{def:preorder}
+$R$ is a \emph{preorder} on $A$ if it is reflexive and transitive.
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Standard quantified statement]
+$R$ is a preorder on $A$ iff:
+\[
+(\forall a \in A,\; (a,a)\in R)\;\wedge\;
+(\forall a,b,c \in A,\; (a,b)\in R \wedge (b,c)\in R \to (a,c)\in R).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:reflexive]{Reflexive Relation}
+  \item \hyperref[def:transitive]{Transitive Relation}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Partial Order)}
+\begin{definition}[Partial Order]\label{def:partial-order}
+$R$ is a \emph{partial order} on $A$ if it is reflexive, antisymmetric, and
+transitive.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+$R$ is a partial order on $A$ iff:
+\[
+(\forall a \in A,\; (a,a)\in R)\;\wedge\;
+(\forall a,b \in A,\; (a,b)\in R \wedge (b,a)\in R \to a=b)\;\wedge\;
+(\forall a,b,c \in A,\; (a,b)\in R \wedge (b,c)\in R \to (a,c)\in R).
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:reflexive]{Reflexive Relation}
+  \item \hyperref[def:antisymmetric]{Antisymmetric Relation}
+  \item \hyperref[def:transitive]{Transitive Relation}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Total Order)}
+\begin{definition}[Total Order]\label{def:total-order}
+$R$ is a \emph{total order} on $A$ if it is a partial order and is total.
+\end{definition}
+\end{definitionbox}
+
+
+\begin{remark*}[Standard quantified statement]
+$R$ is a total order on $A$ iff $R$ is a partial order on $A$ and additionally:
+\[
+\forall a, b \in A,\; (a,b)\in R \vee (b,a)\in R.
+\]
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:partial-order]{Partial Order}
+  \item \hyperref[def:total-rel]{Total Relation}
+\end{itemize}
+\end{dependencies}
+
+\begin{remark*}[Using structural properties in proofs]
+When $R$ is asserted to be an equivalence relation or partial order, this is
+shorthand for the conjunction of its defining properties. In proofs, cite
+only the specific component needed: ``since $R$ is a partial order,
+antisymmetry implies \dots'' rather than restating all properties.
+\end{remark*}
+
+\begin{example*}[Using a structural property in a proof]
+Let $R$ be an equivalence relation on $A$. For any $a,b \in A$,
+$(a,b) \in R \Rightarrow [a] = [b]$, where $[a] = \{x \in A \mid (a,x) \in R\}$.
+\end{example*}
+
+
+
+\begin{remark*}[Properties are logically independent]
+No basic property implies another in general. A relation may be transitive
+without being reflexive, or symmetric without being transitive. The structural
+classes are distinguished precisely by requiring specific combinations.
+\end{remark*}

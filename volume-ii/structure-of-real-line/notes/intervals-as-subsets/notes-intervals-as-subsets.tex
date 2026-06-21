@@ -30,3 +30,173 @@ Boundedness says $E$ fits inside a single closed interval --- it does not run of
   \item \hyperref[thm:triangle-inequality]{Triangle Inequality}
 \end{itemize}
 \end{dependencies}
+
+\subsection*{Set Operations on Intervals}
+\label{subsec:set-operations-on-intervals}
+
+\begin{topicbox}{Intervals as Sets}
+\begin{exposition}
+Once intervals are regarded as subsets of $\mathbb{R}$, the usual set
+operations apply to them. This is the first place where intervals behave like
+the building blocks of topology rather than merely as pieces of notation on
+the number line. Intersections often remain intervals, while unions,
+complements, and differences may split into several interval pieces.
+\end{exposition}
+\end{topicbox}
+
+\begin{definitionbox}{Definition (Union of Intervals)}
+\begin{definition}[Union of Intervals]
+\label{def:union-of-intervals}
+Let $I,J\subseteq\mathbb{R}$ be intervals. Their \emph{union} is the set
+\[
+I\cup J=\{x\in\mathbb{R}:x\in I\text{ or }x\in J\}.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:open-interval]{Open Interval}
+  \item \hyperref[def:closed-interval]{Closed Interval}
+  \item \hyperref[def:union]{Union}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Intersection of Intervals)}
+\begin{definition}[Intersection of Intervals]
+\label{def:intersection-of-intervals}
+Let $I,J\subseteq\mathbb{R}$ be intervals. Their \emph{intersection} is the set
+\[
+I\cap J=\{x\in\mathbb{R}:x\in I\text{ and }x\in J\}.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:open-interval]{Open Interval}
+  \item \hyperref[def:closed-interval]{Closed Interval}
+  \item \hyperref[def:intersection]{Intersection}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Complement of an Interval)}
+\begin{definition}[Complement of an Interval]
+\label{def:complement-of-interval}
+Let $I\subseteq\mathbb{R}$ be an interval. Its \emph{complement} in
+$\mathbb{R}$ is the set
+\[
+I^{c}=\mathbb{R}\setminus I
+=\{x\in\mathbb{R}:x\notin I\}.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:open-interval]{Open Interval}
+  \item \hyperref[def:closed-interval]{Closed Interval}
+  \item \hyperref[def:complement]{Complement}
+\end{itemize}
+\end{dependencies}
+
+\begin{definitionbox}{Definition (Difference of Intervals)}
+\begin{definition}[Difference of Intervals]
+\label{def:difference-of-intervals}
+Let $I,J\subseteq\mathbb{R}$ be intervals. The \emph{difference} of $I$ by
+$J$ is the set
+\[
+I\setminus J=\{x\in\mathbb{R}:x\in I\text{ and }x\notin J\}
+=I\cap J^{c}.
+\]
+\end{definition}
+\end{definitionbox}
+
+\begin{remark*}[Predicate readings]
+For any $x\in\mathbb{R}$,
+\[
+x\in I\cup J \Longleftrightarrow (x\in I)\lor(x\in J),
+\]
+\[
+x\in I\cap J \Longleftrightarrow (x\in I)\land(x\in J),
+\]
+\[
+x\in I^c \Longleftrightarrow x\notin I,
+\qquad
+x\in I\setminus J \Longleftrightarrow (x\in I)\land(x\notin J).
+\]
+These are set-theoretic operations; no arithmetic operation is being performed
+on the endpoints.
+\end{remark*}
+
+\begin{dependencies}
+\begin{itemize}
+  \item \hyperref[def:open-interval]{Open Interval}
+  \item \hyperref[def:closed-interval]{Closed Interval}
+  \item \hyperref[def:left-half-open-interval]{Left-Half-Open Interval}
+  \item \hyperref[def:right-half-open-interval]{Right-Half-Open Interval}
+  \item \hyperref[def:union-of-intervals]{Union of Intervals}
+  \item \hyperref[def:intersection-of-intervals]{Intersection of Intervals}
+  \item \hyperref[def:complement-of-interval]{Complement of an Interval}
+\end{itemize}
+\end{dependencies}
+
+\begin{remark*}[Intersections of intervals]
+The intersection of two intervals is either empty or another interval. For
+example, if $a\leq b$ and $c\leq d$, then
+\[
+[a,b]\cap[c,d]
+=
+\begin{cases}
+[\max\{a,c\},\min\{b,d\}], & \max\{a,c\}\leq \min\{b,d\},\\
+\varnothing, & \max\{a,c\}>\min\{b,d\}.
+\end{cases}
+\]
+Endpoint inclusion follows the endpoint rules of the original intervals.
+\end{remark*}
+
+\begin{remark*}[Unions of intervals]
+The union of two intervals need not be an interval:
+\[
+(0,1)\cup(2,3)
+\]
+has a gap. If two intervals overlap or touch without a missing endpoint, their
+union is again an interval, for instance
+\[
+(0,2]\cup[2,5)=(0,5).
+\]
+The missing or included endpoints determine whether the joined set is truly
+one interval.
+\end{remark*}
+
+\begin{remark*}[Complements of intervals]
+The complement of a bounded interval usually splits into two rays:
+\[
+(a,b)^c=(-\infty,a]\cup[b,\infty),
+\qquad
+[a,b]^c=(-\infty,a)\cup(b,\infty).
+\]
+Complements reverse endpoint inclusion: an endpoint excluded from the interval
+is included in the complement, and an endpoint included in the interval is
+excluded from the complement.
+\end{remark*}
+
+\begin{remark*}[Differences of intervals]
+A difference is an intersection with a complement, so it can also split:
+\[
+(0,5)\setminus[2,3]=(0,2)\cup(3,5).
+\]
+If the removed interval only cuts off one side, the result may remain a single
+interval:
+\[
+(0,5)\setminus(3,\infty)=(0,3].
+\]
+The bracket at $3$ appears because $3\notin(3,\infty)$, so it is not removed.
+\end{remark*}
+
+\begin{remark*}[Topological motivation]
+Open sets in $\mathbb{R}$ are built from unions of open intervals. Closed sets
+are understood through complements of open sets. Boundaries arise when a point
+is not cleanly inside a set or its complement. Thus interval set operations are
+the grammar behind the metric topology of the real line.
+\end{remark*}
