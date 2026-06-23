@@ -155,7 +155,9 @@ vault index.
 
 ## EXIF Stripping
 
-EXIF stripping is mandatory.
+EXIF stripping is mandatory. The standard workflow is the Linux Docker pipeline
+in `lra-proof-vault`, because it fixes the processing toolchain used for
+metadata stripping, OCR, Markdown/TeX artifact generation, and validation.
 
 Raw mobile images must never be committed. Only sanitized copies may enter git.
 
@@ -183,12 +185,17 @@ Acceptable sanitization methods include:
 - ImageMagick `-strip`;
 - Python Pillow re-save without metadata.
 
+The Docker pipeline must run all three sanitization layers when the tools are
+available: Pillow re-save, ExifTool metadata removal, and ImageMagick stripping.
+Manual sanitization is only a fallback when the Docker pipeline is unavailable,
+and the fallback must still produce a sanitized copy before git staging.
+
 If sanitization cannot be verified, stop and report the issue instead of
 committing the image.
 
 ## Future Memorialization Workflow
 
-The future command:
+The command:
 
 ```text
 Memorialize proof image
@@ -197,26 +204,59 @@ Memorialize proof image
 should perform the following steps:
 
 1. Store the incoming image in a staging area outside tracked git content.
-2. Sanitize the image by removing embedded metadata.
-3. Create or update route-style proof-vault metadata.
-4. OCR the sanitized image into a plain-text artifact, preserving OCR mistakes
+2. Run the Docker photo pipeline from `lra-proof-vault`.
+3. Sanitize the image by removing embedded metadata with Pillow, ExifTool, and
+   ImageMagick stripping.
+4. Create or update route-style proof-vault metadata.
+5. OCR the sanitized image into a plain-text artifact, preserving OCR mistakes
    rather than silently correcting them.
-5. Translate the OCR text into a reviewed Markdown proof artifact and a
+6. Translate the OCR text into a reviewed Markdown proof artifact and a
    reviewed TeX proof artifact. The TeX artifact is the display source consumed
    by Knowledge Explorer.
-6. Record `ocr_text_path`, `markdown_path`, `tex_path`, `text_source`, and
+7. Record `ocr_text_path`, `markdown_path`, `tex_path`, `text_source`, and
    `text_review_status` on the attempt metadata.
-7. Commit the proof vault repository.
-8. Push the proof vault repository.
-9. Add a `\ProofVaultURL{...}` backlink to the canonical theorem proof file.
-10. If the proof was accepted as correct and the canonical proof file has been
+8. Commit the proof vault repository.
+9. Push the proof vault repository.
+10. Add a `\ProofVaultURL{...}` backlink to the canonical theorem proof file.
+11. If the proof was accepted as correct and the canonical proof file has been
    populated, update the owning volume repo's tracked `proofs-to-do.md`
    artifact: change the proof label marker from `()` to `(✅)` and update the
    open/completed counts.
-11. Commit the canonical repository.
-12. Push the canonical repository.
+12. Commit the canonical repository.
+13. Push the canonical repository.
 
 No raw image may be committed at any stage of this workflow.
+
+The standard one-photo command shape is:
+
+```powershell
+docker run --rm `
+  -v F:\repos:/repos `
+  -w /repos/lra-proof-vault `
+  lra-proof-vault `
+  --root /repos/lra-proof-vault `
+  --repos-root /repos `
+  --file /repos/path/to/photo.jpg `
+  --theorem-id <stable-theorem-label> `
+  --review-status <review-status> `
+  --from-canonical-proof
+```
+
+For existing vault records, the standard audit/backfill command is:
+
+```powershell
+docker run --rm `
+  -v F:\repos:/repos `
+  -w /repos/lra-proof-vault `
+  lra-proof-vault `
+  --backfill-existing `
+  --root /repos/lra-proof-vault `
+  --repos-root /repos `
+  --refresh-placeholder-ocr
+```
+
+The backfill command must report every `medium: handwritten-photo` attempt as
+complete, or the run must stop for repair before deployment.
 
 ## Backlink Rules
 
@@ -287,9 +327,14 @@ Each reviewed proof attempt should carry three text artifacts:
 The governance extraction pipeline copies the contents of these files into
 `lra-knowledge-explorer/proof-vault-index.json` as `ocr_text`, `markdown`, and
 `tex`. The Knowledge Explorer renders `tex` with KaTeX and keeps the OCR and
-Markdown artifacts available for inspection.
+Markdown artifacts available for inspection. The deployable proof-vault index
+must include only attempts with `review_status: reviewed-correct` and
+`text_review_status: accepted`.
 
-When an older accepted attempt is backfilled and OCR is unavailable, the OCR
-artifact must say so explicitly. The generated Markdown and TeX may be
-reconstructed from the accepted canonical proof, but the attempt metadata must
-set `text_source: canonical-proof-reconstruction` rather than claiming OCR.
+When OCR runs and produces usable text, the attempt metadata should use
+`text_source: canonical-proof-with-ocr` if the polished Markdown/TeX are
+reconstructed from the accepted canonical proof. When OCR runs but produces no
+usable text, the OCR artifact must say so explicitly, and the metadata should
+use `text_source: canonical-proof-with-empty-ocr`. When OCR is unavailable
+entirely, the OCR artifact must say so explicitly, and the metadata should use
+`text_source: canonical-proof-reconstruction` rather than claiming OCR.
