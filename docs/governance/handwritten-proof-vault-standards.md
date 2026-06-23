@@ -58,8 +58,8 @@ theorem directory:
 volume-i/
   chapter-01-propositional-logic/
     thm-unique-readability/
-      proof-2026-05-31-001.jpg
-      proof-2026-05-31-001.md
+      attempts/
+        proof-2026-05-31-001.jpg
       metadata.yaml
 ```
 
@@ -68,51 +68,57 @@ the repository.
 
 ## Metadata Requirements
 
-Each memorialized proof record should include a `metadata.yaml` file using the
-current template fields:
+Each memorialized proof folder must include a `metadata.yaml` file keyed by
+the route snapshot imported into `lra-proof-vault/routing/`. The stable
+identity is `theorem_id`; route fields such as `vault_path`, `theorem_tex`,
+and `proof_tex` may move when leaf volume routes are regenerated.
+
+The current route-style metadata shape is:
 
 ```yaml
+theorem_id:
+theorem_title:
+route_confidence: confirmed
+source_repo:
 volume:
 chapter:
-chapter_slug:
-
-theorem_label:
-theorem_title:
-
-proof_file:
-image_file:
-
-review_status:
-reviewed_with_chatgpt:
-review_date:
-created_date:
-
-canonical_repo:
-canonical_path:
-
-github_url:
-
-notes_file:
+section:
+subsection:
+theorem_tex:
+proof_tex:
+proof_label:
+vault_path:
+source_commit:
+route_version:
+canonical_routes:
+  theorem_tex:
+  proof_tex:
+  proof_label:
+  vault_path:
+  source_repo:
+  source_commit:
+  route_version:
+attempts:
+- attempt_id:
+  date:
+  medium: handwritten-photo
+  source_path: attempts/proof-YYYY-MM-DD-001.jpg
+  rendered_html:
+  ocr_text_path:
+  markdown_path:
+  tex_path:
+  text_source:
+  text_review_status:
+  origin:
+  review_status:
+  notes:
+  tags: []
 ```
 
-The root `theorem-map.yaml` file must also include one entry for each
-memorialized proof record. Each map entry must include at least:
-
-```yaml
-theorem_label:
-theorem_title:
-canonical_repo:
-canonical_path:
-vault_record:
-github_url:
-image_file:
-review_status:
-```
-
-The `github_url` field is required in both `metadata.yaml` and
-`theorem-map.yaml`. This allows consumers such as the Knowledge Explorer to
-read proof-vault links from the root map without opening each per-record
-metadata file.
+Consumers such as the Knowledge Explorer should not depend on the legacy root
+`theorem-map.yaml` file. The governance extraction pipeline builds
+`lra-knowledge-explorer/proof-vault-index.json` directly from route-style
+metadata and legacy markdown records where present.
 
 Allowed metadata includes:
 
@@ -192,13 +198,23 @@ should perform the following steps:
 
 1. Store the incoming image in a staging area outside tracked git content.
 2. Sanitize the image by removing embedded metadata.
-3. Create proof-vault metadata.
-4. Create a markdown record for the proof artifact.
-5. Commit the proof vault repository.
-6. Push the proof vault repository.
-7. Add a `\ProofVaultURL{...}` backlink to the canonical theorem proof file.
-8. Commit the canonical repository.
-9. Push the canonical repository.
+3. Create or update route-style proof-vault metadata.
+4. OCR the sanitized image into a plain-text artifact, preserving OCR mistakes
+   rather than silently correcting them.
+5. Translate the OCR text into a reviewed Markdown proof artifact and a
+   reviewed TeX proof artifact. The TeX artifact is the display source consumed
+   by Knowledge Explorer.
+6. Record `ocr_text_path`, `markdown_path`, `tex_path`, `text_source`, and
+   `text_review_status` on the attempt metadata.
+7. Commit the proof vault repository.
+8. Push the proof vault repository.
+9. Add a `\ProofVaultURL{...}` backlink to the canonical theorem proof file.
+10. If the proof was accepted as correct and the canonical proof file has been
+   populated, update the owning volume repo's tracked `proofs-to-do.md`
+   artifact: change the proof label marker from `()` to `(✅)` and update the
+   open/completed counts.
+11. Commit the canonical repository.
+12. Push the canonical repository.
 
 No raw image may be committed at any stage of this workflow.
 
@@ -239,6 +255,9 @@ Backlinks must satisfy the following rules:
 - it must not make the handwritten proof the source of truth;
 - it must preserve existing labels, dependency blocks, and extraction-visible
   structure.
+- if the memorialized proof is reviewed correct and used to populate the
+  canonical proof file, the owning volume's tracked `proofs-to-do.md` must mark
+  the proof with `(✅)`.
 
 If a canonical theorem or proof file does not exist, report the missing target
 instead of inventing one.
@@ -256,3 +275,21 @@ The extracted proof content must be converted into:
 - a dependencies block using extraction-visible `\hyperref[...]` targets.
 
 A direct transcription alone is not a complete canonical proof file.
+
+## Explorer Text Artifacts
+
+Each reviewed proof attempt should carry three text artifacts:
+
+- `*.ocr.txt`: source-faithful OCR output from the sanitized image;
+- `*.proof.md`: reviewed Markdown presentation of the proof;
+- `*.proof.tex`: reviewed TeX presentation suitable for KaTeX rendering.
+
+The governance extraction pipeline copies the contents of these files into
+`lra-knowledge-explorer/proof-vault-index.json` as `ocr_text`, `markdown`, and
+`tex`. The Knowledge Explorer renders `tex` with KaTeX and keeps the OCR and
+Markdown artifacts available for inspection.
+
+When an older accepted attempt is backfilled and OCR is unavailable, the OCR
+artifact must say so explicitly. The generated Markdown and TeX may be
+reconstructed from the accepted canonical proof, but the attempt metadata must
+set `text_source: canonical-proof-reconstruction` rather than claiming OCR.
