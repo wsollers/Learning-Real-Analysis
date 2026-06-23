@@ -5,16 +5,27 @@ artifacts.
 
 ## Inputs
 
-Use the integrated source tree in `Learning-Real-Analysis` unless a task
-explicitly targets a repo-local audit. Canonical YAML remains in
-`Learning-Real-Analysis`:
+Use the local split volume repositories as the canonical TeX source for
+explorer extraction:
+
+- `lra-volume-i`
+- `lra-volume-ii`
+- `lra-volume-iii`
+
+The integrated `Learning-Real-Analysis` monorepo must not be used as an
+extraction source; it may lag the split repositories. Missing expected volume
+repositories, missing chapter directories, missing `notes/index.tex`, or
+missing `proofs/index.tex` are hard errors.
+
+Canonical YAML remains in `Learning-Real-Analysis` until those shared metadata
+files are split out:
 
 - `predicates.yaml`
 - `notation.yaml`
 - `relations.yaml`
 
-Split repos may be scanned, but tools that need canonical YAML should receive
-the monorepo root explicitly.
+Tools that need canonical YAML should receive the monorepo root explicitly, but
+formal statements and proofs must be read from the split volume repos.
 
 ## Expected Source Shape
 
@@ -61,8 +72,11 @@ Stage 2 generates data:
 
 - regenerate `chapter.yaml` from volume source;
 - validate dependency block shape and source compliance;
-- extract formal nodes and dependency edges from the volume repos with the
-  canonical governance reader.
+- extract formal nodes, authored proof files, and dependency edges from the
+  split volume repos with the same live TeX file inventory provider used by the
+  validators (`tools/governance/core/file_inventory.py`);
+- fail if extraction and validation would not be reading the same reachable
+  `notes/index.tex` and `proofs/index.tex` closures.
 
 The first conservative Stage 2 command is read-only against the volume repos.
 It derives a chapter manifest from source, extracts dependency data, validates
@@ -84,6 +98,8 @@ Stage 3 combines data:
 Stage 4 deploys data:
 
 - copy validated explorer artifacts into `lra-knowledge-explorer`;
+- confirm proof tabs in the explorer are populated from live volume proof files
+  before falling back to proof-vault handwritten attempt records;
 - build `proof-vault-index.json` from route-style metadata in
   `lra-proof-vault`, including reviewed proof attempt OCR text, Markdown, and
   TeX display artifacts when `ocr_text_path`, `markdown_path`, and `tex_path`
