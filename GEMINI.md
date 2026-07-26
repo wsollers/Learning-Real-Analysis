@@ -1,54 +1,31 @@
 <!--
-GENERATED FILE — DO NOT EDIT BY HAND.
+GENERATED POINTER WRAPPER — DO NOT EDIT BY HAND.
 
 Source repo: wsollers/lra-governance
-Source commit: d98bb51fc80e683b38a9d1e76f4a0c91037ede0a
-Generated from:
-- docs/governance/...
-- docs/architecture/...
-- docs/governance/repo-overlays/learning-real-analysis.md
+Canonical overlay: docs/governance/repo-overlays/learning-real-analysis.md
 
 Regenerate from lra-governance.
-Emergency downstream edits must be ported upstream before the next sync.
+Emergency downstream edits must be ported upstream before regeneration.
 -->
 
 # Gemini Instructions
 
-## Global Agent Rules
+This repository uses canonical LRA governance by pointer, not by copied rules.
 
-- Treat generated instruction files as derived artifacts.
-- Follow the owning repository boundary for every task.
-- Do not include secrets, credentials, tokens, or machine-local private values.
-- Do not modify mathematical content during governance or wrapper-generation tasks.
-- Do not touch `Learning-Real-Analysis/scripts/`.
-- Port emergency downstream instruction repairs back to `lra-governance`.
+Repository: `Learning-Real-Analysis`
+Canonical task router: `docs/agent-task-index.md`
+Canonical repo overlay: `docs/governance/repo-overlays/learning-real-analysis.md`
 
-## Repo Overlay
+Resolve canonical governance in this order:
 
-# Learning-Real-Analysis Overlay
+1. `LRA_GOVERNANCE_ROOT`;
+2. sibling `../lra-governance`;
+3. an explicit `lra-governance` checkout supplied by the build image or task.
 
-Stub overlay for the monorepo integration hub.
+If canonical governance cannot be resolved, stop and report that
+`lra-governance` is not present.
 
-Owned concerns:
+Follow `AGENTS.md` in this repository as the local pointer wrapper. Do not
+treat this file as a local source of truth.
 
-- assembled monorepo integration,
-- omnibus builds,
-- canonical predicate / notation / relation YAML files,
-- cross-volume extraction integration,
-- sync receiver behavior.
-
-Do not touch the intentionally untracked `scripts/` directory as part of this
-governance migration.
-
-## Agent Scope
-
-Agents working here may coordinate across integrated content, canonical YAML,
-and extraction dispatch, but must not treat downstream synced copies as their
-own source of truth.
-
-Canonical YAML edits are allowed only when the task explicitly targets
-`predicates.yaml`, `notation.yaml`, or `relations.yaml`.
-
-## Provider Notes
-
-Gemini should follow this wrapper and the generated repo overlay.
+Provider note: Gemini should follow this pointer wrapper and canonical governance.

@@ -1,57 +1,31 @@
 <!--
-GENERATED FILE — DO NOT EDIT BY HAND.
+GENERATED POINTER WRAPPER — DO NOT EDIT BY HAND.
 
 Source repo: wsollers/lra-governance
-Source commit: d98bb51fc80e683b38a9d1e76f4a0c91037ede0a
-Generated from:
-- docs/governance/...
-- docs/architecture/...
-- docs/governance/repo-overlays/learning-real-analysis.md
+Canonical overlay: docs/governance/repo-overlays/learning-real-analysis.md
 
 Regenerate from lra-governance.
-Emergency downstream edits must be ported upstream before the next sync.
+Emergency downstream edits must be ported upstream before regeneration.
 -->
 
 # LRA Repository Instructions
 
-This file is intended for `.github/instructions/lra.instructions.md`. Keep it
-concise and refer to canonical governance docs rather than copying large docs.
+This repository uses canonical LRA governance by pointer, not by copied rules.
 
-## Global Agent Rules
+Repository: `Learning-Real-Analysis`
+Canonical task router: `docs/agent-task-index.md`
+Canonical repo overlay: `docs/governance/repo-overlays/learning-real-analysis.md`
 
-- Treat generated instruction files as derived artifacts.
-- Follow the owning repository boundary for every task.
-- Do not include secrets, credentials, tokens, or machine-local private values.
-- Do not modify mathematical content during governance or wrapper-generation tasks.
-- Do not touch `Learning-Real-Analysis/scripts/`.
-- Port emergency downstream instruction repairs back to `lra-governance`.
+Resolve canonical governance in this order:
 
-## Repo Overlay
+1. `LRA_GOVERNANCE_ROOT`;
+2. sibling `../lra-governance`;
+3. an explicit `lra-governance` checkout supplied by the build image or task.
 
-# Learning-Real-Analysis Overlay
+If canonical governance cannot be resolved, stop and report that
+`lra-governance` is not present.
 
-Stub overlay for the monorepo integration hub.
+Follow `AGENTS.md` in this repository as the local pointer wrapper. Do not
+treat this file as a local source of truth.
 
-Owned concerns:
-
-- assembled monorepo integration,
-- omnibus builds,
-- canonical predicate / notation / relation YAML files,
-- cross-volume extraction integration,
-- sync receiver behavior.
-
-Do not touch the intentionally untracked `scripts/` directory as part of this
-governance migration.
-
-## Agent Scope
-
-Agents working here may coordinate across integrated content, canonical YAML,
-and extraction dispatch, but must not treat downstream synced copies as their
-own source of truth.
-
-Canonical YAML edits are allowed only when the task explicitly targets
-`predicates.yaml`, `notation.yaml`, or `relations.yaml`.
-
-## Provider Notes
-
-Keep provider-specific guidance concise and defer durable policy to governance docs.
+Provider note: Keep provider-specific guidance concise and defer durable policy to canonical governance.
